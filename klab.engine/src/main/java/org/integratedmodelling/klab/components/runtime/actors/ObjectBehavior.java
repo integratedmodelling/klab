@@ -113,7 +113,8 @@ public class ObjectBehavior {
 					.addObservationListener(new ISession.ObservationListener() {
 				@Override
 				public void newObservation(IObservation observation, ISubject context) {
-					// TODO filter if a filter was configured
+					// TODO filter if a filter was configured; also may need to have a "current context"
+					// in the scope and match the context to it before firing.
 					fire(observation, false);
 				}
 

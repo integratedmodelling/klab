@@ -15,6 +15,8 @@ public class ViewAction {
 
 	public enum Operation {
 		UserAction,
+		Enable, // true/false
+		Update  // according to type; data may also contain new attribute values
 	}
 
 	/**

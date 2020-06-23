@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.ViewComponent;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 
 import akka.actor.typed.ActorRef;
@@ -155,7 +156,7 @@ public abstract class KlabAction {
 			if (this.expression == null) {
 				this.expression = new ObjectExpression((IKimExpression) arg.getValue(), scope.runtimeScope);
 			}
-			return this.expression.eval(scope.runtimeScope, identity);
+			return this.expression.eval(scope.runtimeScope, identity, Parameters.create(scope.symbolTable));
 
 		case BOOLEAN:
 		case CLASS:

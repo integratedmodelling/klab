@@ -71,7 +71,7 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	
 		void newContext(ISubject context);
 	}
-
+	
 	/**
 	 * The observation action called on ISession always creates a new root subject.
 	 * The URN must specify a

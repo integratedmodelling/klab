@@ -64,7 +64,7 @@ public class SystemBehavior {
 			throw new KlabIllegalStatusException("Actors shouldn't stop themselves.");
 		}
 	}
-	
+
 	/**
 	 * Notify a user action from a view to the actor that must process it as a
 	 * message.
@@ -77,7 +77,7 @@ public class SystemBehavior {
 		ViewAction action;
 		IRuntimeScope scope;
 		String appId;
-		
+
 		public UserAction(ViewAction action, String appId, IRuntimeScope scope) {
 			this.action = action;
 			this.appId = appId;
@@ -103,7 +103,7 @@ public class SystemBehavior {
 		long notifyId;
 		String componentId;
 		String appId;
-		
+
 		public BindUserAction(long notifyId, String appId, String componentId) {
 			this.notifyId = notifyId;
 			this.componentId = componentId;
@@ -114,6 +114,22 @@ public class SystemBehavior {
 		public BindUserAction direct() {
 			return new BindUserAction(notifyId, null, componentId);
 		}
+	}
+
+	/**
+	 * Sent before stopping to ensure that listeners are unregistered and any other
+	 * cleanup operations are performed.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static class Cleanup implements KlabMessage {
+
+		@Override
+		public KlabMessage direct() {
+			return null;
+		}
+
 	}
 
 	/**
@@ -158,7 +174,7 @@ public class SystemBehavior {
 		public Spawn direct() {
 			return new Spawn(identity, null);
 		}
-		
+
 	}
 
 	/**

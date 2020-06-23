@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.actors.behavior;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -60,7 +61,7 @@ public class Behavior implements IBehavior {
 		 * @return
 		 */
 		public boolean isImplicit() {
-			return value == null;
+			return value == null || value.getValue() == null;
 		}
 
 		// Call only if isIdentifier() returns true
@@ -86,8 +87,18 @@ public class Behavior implements IBehavior {
 			case ANYVALUE:
 				return value != null && !(value instanceof Throwable);
 			case ANYTRUE:
-				return value != null && !(value instanceof Throwable)
+				boolean ret = value != null && !(value instanceof Throwable)
 						&& !(value instanceof Boolean && !((Boolean) value));
+//				if (ret) {
+//					scope.symbolTable.put("$", value);
+//					if (value instanceof Collection) {
+//						int n = 1;
+//						for (Object v : ((Collection<?>)value)) {
+//							scope.symbolTable.put("$" + (n++), v);
+//						}
+//					}
+//				}
+				return ret;
 			case BOOLEAN:
 				return value instanceof Boolean && value.equals(this.value.getValue());
 			case CLASS:

@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabAction.Compone
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.BindUserAction;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.ViewAction;
@@ -40,7 +41,8 @@ import akka.actor.typed.ActorRef;
  * <li>:hfill, :vfill, :fill</li>
  * <li>:disabled {!disabled for completeness}</li>
  * <li>:hidden {!hidden}</li>
- * <li>:vbox :hbox [:grid = default] for component layout (in annotation or for groups)</li>
+ * <li>:vbox :hbox [:grid = default] for component layout (in annotation or for
+ * groups)</li>
  * </ul>
  * <p>
  * With argument:
@@ -96,7 +98,7 @@ public class ViewBehavior {
 
 		Boolean dynamic = null;
 		String name;
-		
+
 		public KlabWidgetAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
 			super(identity, arguments, scope, sender, callId);
@@ -106,12 +108,12 @@ public class ViewBehavior {
 		public String getName() {
 			return name;
 		}
-		
+
 		@Override
 		public void setName(String name) {
 			this.name = name;
 		}
-		
+
 		@Override
 		void run(Scope scope) {
 
@@ -143,6 +145,30 @@ public class ViewBehavior {
 				identity.getActor().tell(new BindUserAction(scope.listenerId, scope.appId, bindId));
 			}
 		}
+
+		@Override
+		public final void onMessage(KlabMessage message, Scope scope) {
+
+			if (message instanceof KActorsMessage) {
+
+				KActorsMessage mess = (KActorsMessage)message;
+				
+				ViewAction action = getResponse(mess, scope);
+				action.setComponentTag(this.getName());
+				session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.ViewAction, action);
+			}
+		}
+
+		/**
+		 * Create the view action response for the passed message to the widget. Should
+		 * only fill in the functional fields as the rest will be done in the
+		 * superclass.
+		 * 
+		 * @param message
+		 * @param scope
+		 * @return
+		 */
+		protected abstract ViewAction getResponse(KActorsMessage message, Scope scope);
 
 		/**
 		 * Called only by static calls. Dynamic ones will use the call scope.
@@ -234,12 +260,13 @@ public class ViewBehavior {
 		}
 
 		@Override
-		public void onMessage(KlabMessage message, Scope scope) {
-			// TODO Auto-generated method stub
-			
+		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
+			ViewAction ret = new ViewAction();
+			return ret;
 		}
+
 	}
-	
+
 	@Action(id = "checkbutton")
 	public static class CheckButton extends KlabWidgetAction {
 
@@ -263,12 +290,13 @@ public class ViewBehavior {
 		}
 
 		@Override
-		public void onMessage(KlabMessage message, Scope scope) {
-			// TODO Auto-generated method stub
-			
+		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
+			ViewAction ret = new ViewAction();
+			return ret;
 		}
+
 	}
-	
+
 	@Action(id = "radiobutton")
 	public static class RadioButton extends KlabWidgetAction {
 
@@ -292,10 +320,11 @@ public class ViewBehavior {
 		}
 
 		@Override
-		public void onMessage(KlabMessage message, Scope scope) {
-			// TODO Auto-generated method stub
-			
+		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
+			ViewAction ret = new ViewAction();
+			return ret;
 		}
+
 	}
 
 	@Action(id = "label")
@@ -321,10 +350,11 @@ public class ViewBehavior {
 		}
 
 		@Override
-		public void onMessage(KlabMessage message, Scope scope) {
-			// TODO Auto-generated method stub
-			
+		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
+			ViewAction ret = new ViewAction();
+			return ret;
 		}
+
 	}
 
 	@Action(id = "textinput")
@@ -350,10 +380,11 @@ public class ViewBehavior {
 		}
 
 		@Override
-		public void onMessage(KlabMessage message, Scope scope) {
-			// TODO Auto-generated method stub
-			
+		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
+			ViewAction ret = new ViewAction();
+			return ret;
 		}
+
 	}
 
 	@Action(id = "tree")
@@ -372,7 +403,7 @@ public class ViewBehavior {
 			message.getAttributes().putAll(getMetadata(arguments, scope));
 			if (!message.getAttributes().containsKey("name")) {
 				// tree "name" is the root element if it's a string
-				 message.setName(message.getTree().getValues().get(message.getTree().getRootId()).get("id"));
+				message.setName(message.getTree().getValues().get(message.getTree().getRootId()).get("id"));
 			}
 			return message;
 		}
@@ -383,10 +414,11 @@ public class ViewBehavior {
 		}
 
 		@Override
-		public void onMessage(KlabMessage message, Scope scope) {
-			// TODO Auto-generated method stub
-			
+		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
+			ViewAction ret = new ViewAction();
+			return ret;
 		}
+
 	}
 
 	@Action(id = "panel")
@@ -420,9 +452,9 @@ public class ViewBehavior {
 		}
 
 		@Override
-		public void onMessage(KlabMessage message, Scope scope) {
-			// TODO Auto-generated method stub
-			
+		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
+			ViewAction ret = new ViewAction();
+			return ret;
 		}
 	}
 
@@ -463,9 +495,9 @@ public class ViewBehavior {
 		}
 
 		@Override
-		public void onMessage(KlabMessage message, Scope scope) {
-			// TODO Auto-generated method stub
-			
+		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
+			ViewAction ret = new ViewAction();
+			return ret;
 		}
 	}
 
@@ -500,10 +532,17 @@ public class ViewBehavior {
 		 * TODO engage the template system to merge with the runtime context
 		 */
 		/*
-		 * FIXME The insertBeginning (which should be more generic) is needed because of a bug in the
-		 * Nebula component. May be bad for the sensible HTML in the explorer?
+		 * FIXME The insertBeginning (which should be more generic) is needed because of
+		 * a bug in the Nebula component. May be bad for the sensible HTML in the
+		 * explorer?
 		 */
-		template = StringUtils.insertBeginning(StringUtils.stripLeadingWhitespace(template), "&nbsp;");
+		template = StringUtils.insertBeginning(StringUtils.stripLeadingWhitespace(template), "&nbsp;", (string) -> {
+			String tr = string.trim();
+			if (tr.startsWith("* ") || tr.startsWith(". ") || tr.matches("[0-9]+\\.\\s")) {
+				return true;
+			}
+			return false;
+		});
 		return MarkdownUtils.INSTANCE.format(template);
 	}
 

@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 import java.util.concurrent.Future;
 
@@ -15,12 +17,11 @@ import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.api.runtime.ISession.ObservationListener;
+import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.rest.SpatialExtent;
 
 import akka.actor.typed.ActorRef;
 
@@ -48,12 +49,11 @@ public class RuntimeBehavior {
 	 * Set the root context
 	 */
 	@Action(id = "context", fires = Type.OBSERVATION, description = "Used with a URN as parameter, creates the context from an observe statement. If used without parameters, fire the observation when a new context is established")
-	public static class Observe extends KlabAction {
+	public static class Context extends KlabAction {
 
 		String listenerId = null;
-		IRuntimeScope lsc = null;
 
-		public Observe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+		public Context(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
 			super(identity, arguments, scope, sender, callId);
 		}
@@ -62,14 +62,11 @@ public class RuntimeBehavior {
 		void run(KlabActor.Scope scope) {
 
 			if (arguments.getUnnamedKeys().isEmpty()) {
-				this.lsc = scope.runtimeScope;
 				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
 						.addObservationListener(new ISession.ObservationListener() {
 							@Override
 							public void newContext(ISubject observation) {
-								if (scope.runtimeScope.getRootSubject().equals(observation)) {
-									fire(observation, false);
-								}
+								fire(observation, false);
 							}
 
 							@Override
@@ -80,58 +77,93 @@ public class RuntimeBehavior {
 
 				Object arg = evaluateArgument(0, scope);
 				if (arg instanceof Urn) {
-					try {
-						Future<ISubject> future = ((Session) identity).observe(((Urn) arg).getUrn());
-						fire(future.get(), true);
-					} catch (Throwable e) {
-						fail();
-					}
+
+//					new Thread() {
+//
+//						@Override
+//						public void run() {
+
+							try {
+								Future<ISubject> future = ((Session) identity).observe(((Urn) arg).getUrn());
+								fire(future.get(), true);
+							} catch (Throwable e) {
+								fail();
+							}
+//						}
+//					}.start();
+
 				}
 			}
 		}
 
 		@Override
 		public void dispose() {
-			if (this.listenerId == null) {
+			if (this.listenerId != null) {
 				scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
 						.removeObservationListener(this.listenerId);
 			}
 		}
 	}
 
-	@Action(id = "new", fires = Type.ANYVALUE, description = "Create a new actor with the specified behavior. Use a tag to name it for later referral.")
-	public static class New extends KlabAction implements KlabAction.Actor {
+	/**
+	 * Set the root context
+	 */
+	@Action(id = "locate", fires = Type.MAP, description = "Listens to setting of spatial extent outside of a context")
+	public static class Locate extends KlabAction {
 
-		public New(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+		String listenerId = null;
+
+		public Locate(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
 			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override
 		void run(KlabActor.Scope scope) {
-			List<Object> args = new ArrayList<>();
-			for (Object arg : arguments.values()) {
-				args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg, scope) : arg);
+
+			if (arguments.getUnnamedKeys().isEmpty()) {
+				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(Session.class)
+						.addROIListener(new Session.ROIListener() {
+
+							@Override
+							public void onChange(final SpatialExtent extent) {
+								/**
+								 * Geolocate and fire in a separate thread to avoid holding up the actor.
+								 */
+//								new Thread() {
+//
+//									@Override
+//									public void run() {
+
+										/*
+										 * TODO use a configurable geocoder that can be set up with
+										 * a scaled resource set
+										 */
+										
+										String geocoded = Geocoder.INSTANCE.geocode(extent);
+										Map<String, Object> ret = new HashMap<>();
+										ret.put("description", geocoded);
+										ret.put("resolution", extent.getGridResolution());
+										ret.put("unit", extent.getGridUnit());
+										ret.put("envelope", new double[] { extent.getWest(), extent.getSouth(),
+												extent.getEast(), extent.getNorth() });
+
+										fire(ret, false);
+//
+//									}
+//								}.start();
+							}
+						});
+			} else {
+				// TODO set from a previously saved map
 			}
-//			scope.runtimeScope.getMonitor().error(args.toArray());
 		}
 
 		@Override
-		public String getName() {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public void setName(String name) {
-			// TODO Auto-generated method stub
-
-		}
-
-		@Override
-		public void onMessage(KlabMessage message, Scope scope) {
-			// TODO Auto-generated method stub
-
+		public void dispose() {
+			if (this.listenerId != null) {
+				scope.getMonitor().getIdentity().getParentIdentity(Session.class).removeROIListener(this.listenerId);
+			}
 		}
 	}
 

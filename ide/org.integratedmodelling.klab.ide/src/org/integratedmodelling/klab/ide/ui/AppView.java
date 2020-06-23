@@ -255,11 +255,14 @@ public class AppView extends Composite {
 		Composite footer = null;
 		Composite center = null;
 
-		int ncols = 1;
+		int ncols = 0;
 		if (view.getLeftPanels().size() > 0) {
 			ncols++;
 		}
 		if (view.getRightPanels().size() > 0) {
+			ncols++;
+		}
+		if (view.getPanels().size() > 0) {
 			ncols++;
 		}
 
@@ -285,37 +288,38 @@ public class AppView extends Composite {
 			}
 			description.setImage(logo);
 			description.setDescription(view.getDescription());
-			description.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, ncols, 1));
+			description.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false, ncols == 0 ? 1 : ncols, 1));
 		}
 
-		center = new Composite(ret, SWT.NONE);
-		center.setLayout(gridLayout(ncols, false));
-		center.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
+		if (ncols > 0) {
+			center = new Composite(ret, SWT.NONE);
+			center.setLayout(gridLayout(ncols, false));
+			center.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true));
 
+			Composite leftArea = null;
+			Composite rightArea = null;
+			Composite centerArea = null;
 
-		Composite leftArea = null;
-		Composite rightArea = null;
-		Composite centerArea = null;
+			if (view.getLeftPanels().size() > 0) {
+				leftArea = makePanel(view.getLeftPanels(), center);
+				leftArea.setLayoutData(new GridData(ncols == 1 ? SWT.FILL : SWT.LEFT, SWT.TOP, true, true));
+			}
 
-		if (view.getLeftPanels().size() > 0) {
-			leftArea = makePanel(view.getLeftPanels(), center);
-			leftArea.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
-		}
+			if (view.getPanels().size() > 0) {
+				centerArea = makePanel(view.getPanels(), center);
+				centerArea.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
+			}
 
-		if (view.getPanels().size() > 0) {
-			centerArea = makePanel(view.getPanels(), center);
-			centerArea.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
-		}
-		
-		if (view.getRightPanels().size() > 0) {
-			rightArea = makePanel(view.getRightPanels(), center);
-			rightArea.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
-		}
+			if (view.getRightPanels().size() > 0) {
+				rightArea = makePanel(view.getRightPanels(), center);
+				rightArea.setLayoutData(new GridData(ncols == 1 ? SWT.FILL : SWT.LEFT, SWT.TOP, true, true));
+			}
 
-		if (view.getFooter() != null) {
-			footer = new Composite(ret, SWT.NONE);
-			footer.setLayout(gridLayout(view.getFooter().getComponents().size(), false));
-			footer.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
+			if (view.getFooter() != null) {
+				footer = new Composite(ret, SWT.NONE);
+				footer.setLayout(gridLayout(view.getFooter().getComponents().size(), false));
+				footer.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, true));
+			}
 		}
 		
 		return ret;

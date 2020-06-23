@@ -21,10 +21,9 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Function;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import org.integratedmodelling.klab.utils.Pair;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -666,19 +665,19 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 	}
 
 	/**
-	 * Ad-hoc behavior in need for generalization: insert the patch after every newline unless the
-	 * previous line was empty.
+	 * Ad-hoc behavior in need for generalization: insert the patch after every
+	 * newline unless the previous line was empty.
 	 * 
 	 * @param stripLeadingWhitespace
 	 * @param string
 	 * @return
 	 */
-	public static String insertBeginning(String string, String patch) {
+	public static String insertBeginning(String string, String patch, Function<String, Boolean> filter) {
 		String lines[] = string.split("\\r?\\n");
 		StringBuffer ret = new StringBuffer(string.length() + (lines.length * patch.length()));
 		boolean wasEmpty = true;
 		for (String line : lines) {
-			if (!wasEmpty && !line.trim().isEmpty()) {
+			if (!wasEmpty && !line.trim().isEmpty() && (filter == null || !filter.apply(line))) {
 				ret.append(patch);
 			}
 			ret.append(line + "\n");

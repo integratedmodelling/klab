@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.BindUserAction;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Cleanup;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fire;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
@@ -53,11 +54,12 @@ import org.integratedmodelling.klab.utils.Path;
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.PostStop;
+import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Receive;
+import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.ReceiveBuilder;
-import akka.actor.typed.scaladsl.Behaviors;
 
 public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
@@ -172,7 +174,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			 * values. Otherwise match to $, $1, ... #n
 			 */
 			if (match.isIdentifier(ret)) {
-				// TODO list still not handled
 				ret.symbolTable.put(match.getIdentifier(), value);
 			} else if (match.isImplicit()) {
 				ret.symbolTable.put("$", value);
@@ -195,6 +196,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.sender = scope.sender;
 			this.viewId = scope.viewId;
 			this.symbolTable.putAll(scope.symbolTable);
+			this.identity = scope.identity;
 		}
 
 		public String toString() {
@@ -272,26 +274,29 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				.onMessage(Fire.class, this::reactToFire).onMessage(UserAction.class, this::reactToViewAction)
 				.onMessage(BindUserAction.class, this::bindViewAction)
 				.onMessage(KActorsMessage.class, this::executeCall).onMessage(Stop.class, this::stopChild)
-				.onSignal(PostStop.class, signal -> onPostStop());
+				.onMessage(Cleanup.class, this::cleanup).onSignal(PostStop.class, signal -> onPostStop());
 	}
 
-	protected KlabActor onPostStop() {
-		
+	protected Behavior<KlabMessage> cleanup(Cleanup message) {
 		/*
 		 * this may intercept listeners
 		 */
 		for (KlabAction action : actionCache.values()) {
 			action.dispose();
 		}
-		
+
+		return this;
+	}
+
+	protected KlabActor onPostStop() {
+
 		// TODO deactivate the underlying observation, send changes
 		return this;
 	}
 
 	/**
-	 * This also stops self if called w/o appId. This should not be possible
-	 * accidentally as the direct() method of {@link Stop} throws an illegal state
-	 * exception.
+	 * Stop a child after cleaning up. Do nothing if child does not exist (may be
+	 * leftover IDs from a client connected to another engine).
 	 * 
 	 * @param message
 	 * @return
@@ -299,12 +304,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected Behavior<KlabMessage> stopChild(Stop message) {
 
 		if (message.appId != null && receivers.containsKey(message.appId)) {
+			receivers.get(message.appId).tell(new Cleanup());
 			getContext().stop(receivers.get(message.appId));
 			receivers.remove(message.appId);
 			return Behaviors.same();
 		}
 
-		return Behaviors.stopped();
+		return Behaviors.same();
 
 	}
 
@@ -673,8 +679,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 						 * assign ID and store for later use
 						 */
 						if (message.arguments.containsKey("tag")) {
-							((KlabAction.Actor) a)
-									.setName(message.arguments.get("tag", KActorsValue.class).getValue().toString());
+							Object t = message.arguments.get("tag");
+							if (t instanceof KActorsValue) {
+								t = ((KActorsValue)t).getValue();
+							}
+							((KlabAction.Actor) a).setName(t.toString());
 							this.localActors.put(((KlabAction.Actor) a).getName(), (KlabAction.Actor) a);
 						}
 					}
@@ -716,7 +725,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			} else if (message.identity instanceof Session) {
 				behavior = SessionActor.create((Session) message.identity, message.appId);
 			}
-			ActorRef<KlabMessage> actor = getContext().spawn(behavior, message.identity.getId());
+			ActorRef<KlabMessage> actor = getContext().spawn(
+					Behaviors.supervise(behavior).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)), message.identity.getId());
 			message.identity.instrument(actor);
 		}
 

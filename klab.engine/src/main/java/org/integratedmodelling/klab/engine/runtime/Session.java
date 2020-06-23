@@ -190,8 +190,15 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
 	private View view;
 	Map<String, ISession.ObservationListener> observationListeners = Collections.synchronizedMap(new LinkedHashMap<>());
+	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
 
-
+	public interface ROIListener {
+		
+		public void onChange(SpatialExtent extent);
+		
+	}
+	
+	
 	// a simple monitor that will only compile all notifications into a list to be
 	// sent back to clients
 	class ReportingMonitor implements IMonitor {
@@ -564,6 +571,17 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	public void removeObservationListener(String listenerId) {
 		observationListeners.remove(listenerId);
 	}
+	
+	public String addROIListener(ROIListener listener) {
+		String ret = NameGenerator.newName();
+		roiListeners.put(ret, listener);
+		return ret;
+	}
+
+	public void removeROIListener(String listenerId) {
+		roiListeners.remove(listenerId);
+	}
+
 
 	/**
 	 * Register a task. It may be a ITask or a IScript, which only have the Future
@@ -952,6 +970,10 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 		monitor.send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
 
+		for (ROIListener listener : roiListeners.values()) {
+			listener.onChange(extent);
+		}
+		
 		this.regionOfInterest = extent;
 	}
 

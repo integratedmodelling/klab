@@ -77,6 +77,7 @@ import akka.actor.typed.ActorRef;
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.PostStop;
+import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -344,7 +345,7 @@ public enum Actors implements IActorsService {
 	 * @return
 	 */
 	public <T> ActorRef<T> createActor(Behavior<T> create, IIdentity identity) {
-		return ActorSystem.create(create,
+		return ActorSystem.create(Behaviors.supervise(create).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
 				identity instanceof IUserIdentity ? sanitize(((IUserIdentity) identity).getUsername())
 						: identity.getId());
 	}
