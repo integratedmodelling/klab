@@ -28,6 +28,7 @@ import org.eclipse.swt.events.ModifyEvent;
 import org.eclipse.swt.events.ModifyListener;
 import org.eclipse.swt.events.SelectionAdapter;
 import org.eclipse.swt.events.SelectionEvent;
+import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.graphics.Color;
 import org.eclipse.swt.graphics.Font;
 import org.eclipse.swt.graphics.Image;
@@ -393,14 +394,14 @@ public class AppView extends Composite {
 			if (getTag(component) != null) {
 				reactors.put(getTag(component), checkbutton);
 			}
+			setAttributes(checkbutton, component.getAttributes());
 			break;
 		case Combo:
 			break;
 		case Container:
 		case MultiContainer:
 		case Group:
-			/* Control group = */makeContainer(component, parent, defaults);
-//			group.setLayoutData(new GridData(SWT.FILL, SWT.TOP, true, false));
+			makeContainer(component, parent, defaults);
 			break;
 		case Map:
 			break;
@@ -414,6 +415,7 @@ public class AppView extends Composite {
 			if (getTag(component) != null) {
 				reactors.put(getTag(component), label);
 			}
+			setAttributes(label, component.getAttributes());
 			break;
 		case PushButton:
 			Button button = new Button(parent, SWT.NONE);
@@ -428,6 +430,7 @@ public class AppView extends Composite {
 			if (getTag(component) != null) {
 				reactors.put(getTag(component), button);
 			}
+			setAttributes(button, component.getAttributes());
 			button.setLayoutData(getGridData(component, SWT.LEFT, SWT.TOP, false, false, defaults));
 			break;
 		case RadioButton:
@@ -443,6 +446,7 @@ public class AppView extends Composite {
 			if (getTag(component) != null) {
 				reactors.put(getTag(component), radiobutton);
 			}
+			setAttributes(radiobutton, component.getAttributes());
 			break;
 		case TextInput:
 			Text text = new Text(parent, SWT.BORDER);
@@ -460,6 +464,7 @@ public class AppView extends Composite {
 			if (getTag(component) != null) {
 				reactors.put(getTag(component), text);
 			}
+			setAttributes(text, component.getAttributes());
 			break;
 		case Tree:
 			TreeViewer viewer = new TreeViewer(parent, getSWTFlags(component));
@@ -469,11 +474,24 @@ public class AppView extends Composite {
 			TreeWrapper tree = new TreeWrapper(component.getTree());
 			viewer.setContentProvider(new TreeContentProvider(tree));
 			viewer.setLabelProvider(new TreeLabelProvider());
-			// TODO add needed listeners based on metadata and options
+			viewer.getTree().addSelectionListener(new SelectionListener() {
+				
+				@Override
+				public void widgetSelected(SelectionEvent e) {
+					System.out.println("Selection " + e);
+				}
+				
+				@Override
+				public void widgetDefaultSelected(SelectionEvent e) {
+					// TODO Auto-generated method stub
+					
+				}
+			});
 			viewer.setInput(tree);
 			if (getTag(component) != null) {
 				reactors.put(getTag(component), viewer.getTree());
 			}
+			setAttributes(viewer.getTree(), component.getAttributes());
 			break;
 		case Table:
 			break;
@@ -484,6 +502,7 @@ public class AppView extends Composite {
 			if (getTag(component) != null) {
 				reactors.put(getTag(component), textViewer);
 			}
+			setAttributes(textViewer, component.getAttributes());
 			break;
 		case TreeItem:
 			break;
@@ -781,7 +800,7 @@ public class AppView extends Composite {
 		String name = null;
 		boolean equal; // equal column width
 	}
-
+	
 	/**
 	 * Group may have tags that specify the layout or not. If they don't have any of
 	 * :hbox, :vbox or :shelf (for now), they will be arranged as grids with all the
@@ -854,6 +873,14 @@ public class AppView extends Composite {
 		});
 	}
 
+	private void setAttributes(Control control, Map<String, String> attributes) {
+		for (String attribute : attributes.keySet()) {
+			switch (attribute) {
+			
+			}
+		}
+	}
+	
 	private void refreshView() {
 		Point ps = getParent().getParent().getSize();
 		this.setLayout(gridLayout(1, true));
@@ -896,6 +923,7 @@ public class AppView extends Composite {
 	}
 
 	public void updateWidget(ViewAction component) {
+		
 		Control control = reactors.get(component.getComponentTag());
 		if (control != null) {
 			switch (component.getOperation()) {
@@ -918,7 +946,7 @@ public class AppView extends Composite {
 					}
 				}
 				if (component.getData() != null) {
-					// TODO update from metadata: colors, borders, fonts etc
+					setAttributes(control, component.getData());
 				}
 				break;
 			case UserAction:
