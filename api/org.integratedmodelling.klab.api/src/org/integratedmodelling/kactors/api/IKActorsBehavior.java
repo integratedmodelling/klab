@@ -16,30 +16,46 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 
 	enum Type {
 		/**
-		 * The behavior defines an observed actor
+		 * The behavior defines an observed actor. Normally bound to observations
+		 * through a k.IM bind annotation.
 		 */
 		BEHAVIOR,
 		/**
 		 * The behavior will be incorporated in a session actor, creating a
-		 * session-level application
+		 * session-level application. Apps can only be run directly through CLI,
+		 * drag/drop (modeler) or URL identification (explorer) and may access project
+		 * resources (such as logos) from the apps directory.
 		 */
 		APP,
 		/**
 		 * The behavior will be incorporated in a user actor, intercepting any calls
-		 * that won't make it to other actors.
+		 * that won't make it to other actors. A user actor definition is the only
+		 * k.Actors resource that must be located outside of a project, typically in a
+		 * user profile and saved to the k.LAB data directory.
 		 */
 		USER,
 		/**
 		 * The behavior is a collection of actions to be incorporated in another actor
 		 * definition as a collection of traits ("personality"). In an app context it
-		 * can simply be declared as a "library".
+		 * can simply be declared as a "library". Traits are imported using the 'import'
+		 * clause in the k.Actors preamble, or explicitly with a system action; they
+		 * cannot be bound to anything directly.
 		 */
 		TRAITS,
 
 		/**
-		 * The behavior is an app defining a collection of annotated unit tests
+		 * The behavior is an app defining a collection of annotated unit tests. Can
+		 * only be run directly and explicitly.
 		 */
-		UNITTEST
+		UNITTEST,
+
+		/**
+		 * A component is an actor that should be created only by other actors and
+		 * normally provides a piece of behavior including UI elements, or anything else
+		 * that makes it "composable". The system will reject any bindings to components
+		 * and only let this be created using the 'new' verb in apps.
+		 */
+		COMPONENT
 	}
 
 	enum Platform {
@@ -105,20 +121,21 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 	String getLabel();
 
 	/**
-	 * Description (as per preamble). This should/could be in metadata but we still have some
-	 * API weirdness with IKimMetadata being cumbersome.
+	 * Description (as per preamble). This should/could be in metadata but we still
+	 * have some API weirdness with IKimMetadata being cumbersome.
 	 * 
 	 * @return
 	 */
 	String getDescription();
-	
+
 	/**
-	 * If a logo pathname (relative to the application) has been specified, return it.
+	 * If a logo pathname (relative to the application) has been specified, return
+	 * it.
 	 * 
 	 * @return
 	 */
 	String getLogo();
-	
+
 	/**
 	 * Name of project we are declared into. Null if not in a project.
 	 * 

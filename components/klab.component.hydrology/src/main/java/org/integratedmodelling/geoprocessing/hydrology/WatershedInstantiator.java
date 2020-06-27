@@ -92,7 +92,7 @@ public class WatershedInstantiator implements IInstantiator, IExpression {
 			WTaskMonitor monitor = new WTaskMonitor(context.getMonitor());
 
 			OmsExtractBasin ebasin = new OmsExtractBasin();
-			ebasin.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue);
+			ebasin.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false);
 			ebasin.pm = monitor;
 			ebasin.pEast = point.getX();
 			ebasin.pNorth = point.getY();

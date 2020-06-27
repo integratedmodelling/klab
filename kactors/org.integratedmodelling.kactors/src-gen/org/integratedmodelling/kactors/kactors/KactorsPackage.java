@@ -151,13 +151,22 @@ public interface KactorsPackage extends EPackage
   int PREAMBLE__TEST = 4;
 
   /**
+   * The feature id for the '<em><b>Component</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PREAMBLE__COMPONENT = 5;
+
+  /**
    * The feature id for the '<em><b>User</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PREAMBLE__USER = 5;
+  int PREAMBLE__USER = 6;
 
   /**
    * The feature id for the '<em><b>Library</b></em>' attribute.
@@ -166,7 +175,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__LIBRARY = 6;
+  int PREAMBLE__LIBRARY = 7;
 
   /**
    * The feature id for the '<em><b>Behavior</b></em>' attribute.
@@ -175,7 +184,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__BEHAVIOR = 7;
+  int PREAMBLE__BEHAVIOR = 8;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -184,7 +193,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__NAME = 8;
+  int PREAMBLE__NAME = 9;
 
   /**
    * The feature id for the '<em><b>Label</b></em>' attribute.
@@ -193,7 +202,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__LABEL = 9;
+  int PREAMBLE__LABEL = 10;
 
   /**
    * The feature id for the '<em><b>Imports</b></em>' attribute list.
@@ -202,7 +211,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__IMPORTS = 10;
+  int PREAMBLE__IMPORTS = 11;
 
   /**
    * The feature id for the '<em><b>Worldview</b></em>' attribute.
@@ -211,7 +220,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__WORLDVIEW = 11;
+  int PREAMBLE__WORLDVIEW = 12;
 
   /**
    * The feature id for the '<em><b>Observable</b></em>' attribute.
@@ -220,7 +229,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__OBSERVABLE = 12;
+  int PREAMBLE__OBSERVABLE = 13;
 
   /**
    * The feature id for the '<em><b>Observables</b></em>' containment reference.
@@ -229,7 +238,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__OBSERVABLES = 13;
+  int PREAMBLE__OBSERVABLES = 14;
 
   /**
    * The feature id for the '<em><b>Description</b></em>' attribute.
@@ -238,7 +247,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__DESCRIPTION = 14;
+  int PREAMBLE__DESCRIPTION = 15;
 
   /**
    * The feature id for the '<em><b>Permissions</b></em>' attribute.
@@ -247,7 +256,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__PERMISSIONS = 15;
+  int PREAMBLE__PERMISSIONS = 16;
 
   /**
    * The feature id for the '<em><b>Authors</b></em>' attribute list.
@@ -256,7 +265,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__AUTHORS = 16;
+  int PREAMBLE__AUTHORS = 17;
 
   /**
    * The feature id for the '<em><b>Style</b></em>' attribute.
@@ -265,7 +274,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__STYLE = 17;
+  int PREAMBLE__STYLE = 18;
 
   /**
    * The feature id for the '<em><b>Logo</b></em>' attribute.
@@ -274,7 +283,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__LOGO = 18;
+  int PREAMBLE__LOGO = 19;
 
   /**
    * The feature id for the '<em><b>Version</b></em>' attribute.
@@ -283,7 +292,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__VERSION = 19;
+  int PREAMBLE__VERSION = 20;
 
   /**
    * The feature id for the '<em><b>Created</b></em>' containment reference.
@@ -292,7 +301,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATED = 20;
+  int PREAMBLE__CREATED = 21;
 
   /**
    * The feature id for the '<em><b>Createcomment</b></em>' attribute.
@@ -301,7 +310,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATECOMMENT = 21;
+  int PREAMBLE__CREATECOMMENT = 22;
 
   /**
    * The feature id for the '<em><b>Modified</b></em>' containment reference.
@@ -310,7 +319,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODIFIED = 22;
+  int PREAMBLE__MODIFIED = 23;
 
   /**
    * The feature id for the '<em><b>Modcomment</b></em>' attribute.
@@ -319,7 +328,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODCOMMENT = 23;
+  int PREAMBLE__MODCOMMENT = 24;
 
   /**
    * The number of structural features of the '<em>Preamble</em>' class.
@@ -328,7 +337,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE_FEATURE_COUNT = 24;
+  int PREAMBLE_FEATURE_COUNT = 25;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl <em>Definition</em>}' class.
@@ -350,31 +359,13 @@ public interface KactorsPackage extends EPackage
   int DEFINITION__ANNOTATIONS = 0;
 
   /**
-   * The feature id for the '<em><b>Component</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DEFINITION__COMPONENT = 1;
-
-  /**
-   * The feature id for the '<em><b>Actor</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int DEFINITION__ACTOR = 2;
-
-  /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DEFINITION__NAME = 3;
+  int DEFINITION__NAME = 1;
 
   /**
    * The feature id for the '<em><b>Arguments</b></em>' containment reference.
@@ -383,7 +374,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEFINITION__ARGUMENTS = 4;
+  int DEFINITION__ARGUMENTS = 2;
 
   /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
@@ -392,7 +383,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEFINITION__BODY = 5;
+  int DEFINITION__BODY = 3;
 
   /**
    * The number of structural features of the '<em>Definition</em>' class.
@@ -401,7 +392,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEFINITION_FEATURE_COUNT = 6;
+  int DEFINITION_FEATURE_COUNT = 4;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ArgumentDeclarationImpl <em>Argument Declaration</em>}' class.
@@ -2747,6 +2738,17 @@ public interface KactorsPackage extends EPackage
   EAttribute getPreamble_Test();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#isComponent <em>Component</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Component</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Preamble#isComponent()
+   * @see #getPreamble()
+   * @generated
+   */
+  EAttribute getPreamble_Component();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#isUser <em>User</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2975,28 +2977,6 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getDefinition_Annotations();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Definition#isComponent <em>Component</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Component</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Definition#isComponent()
-   * @see #getDefinition()
-   * @generated
-   */
-  EAttribute getDefinition_Component();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Definition#isActor <em>Actor</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Actor</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Definition#isActor()
-   * @see #getDefinition()
-   * @generated
-   */
-  EAttribute getDefinition_Actor();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Definition#getName <em>Name</em>}'.
@@ -5357,6 +5337,14 @@ public interface KactorsPackage extends EPackage
     EAttribute PREAMBLE__TEST = eINSTANCE.getPreamble_Test();
 
     /**
+     * The meta object literal for the '<em><b>Component</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PREAMBLE__COMPONENT = eINSTANCE.getPreamble_Component();
+
+    /**
      * The meta object literal for the '<em><b>User</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -5525,22 +5513,6 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference DEFINITION__ANNOTATIONS = eINSTANCE.getDefinition_Annotations();
-
-    /**
-     * The meta object literal for the '<em><b>Component</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute DEFINITION__COMPONENT = eINSTANCE.getDefinition_Component();
-
-    /**
-     * The meta object literal for the '<em><b>Actor</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute DEFINITION__ACTOR = eINSTANCE.getDefinition_Actor();
 
     /**
      * The meta object literal for the '<em><b>Name</b></em>' attribute feature.

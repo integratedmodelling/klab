@@ -9,7 +9,6 @@ public class KActorsAction extends KActorCodeStatement implements IKActorsAction
 
 	private String name;
 	private KActorsConcurrentGroup code;
-	private Type type = Type.ACTION;
 
 	public KActorsAction(Definition definition, KActorsBehavior parent) {
 		super(definition, parent);
@@ -20,11 +19,6 @@ public class KActorsAction extends KActorCodeStatement implements IKActorsAction
 			}
 		}
 		this.code = new KActorsConcurrentGroup(definition.getBody().getLists(), this);
-		if (definition.isActor()) {
-			this.type = Type.ACTOR;
-		} else if (definition.isComponent()) {
-			this.type = Type.COMPONENT;
-		}
 	}
 
 	@Override
@@ -35,11 +29,6 @@ public class KActorsAction extends KActorCodeStatement implements IKActorsAction
 	@Override
 	public IKActorsStatement getCode() {
 		return code;
-	}
-
-	@Override
-	public Type getType() {
-		return type;
 	}
 
 }

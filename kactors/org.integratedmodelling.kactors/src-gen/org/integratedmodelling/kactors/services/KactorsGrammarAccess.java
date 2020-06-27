@@ -80,16 +80,18 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cAppJobKeyword_1_0_0_1_0 = (Keyword)cAppAssignment_1_0_0_1.eContents().get(0);
 		private final Assignment cTestAssignment_1_0_1 = (Assignment)cAlternatives_1_0.eContents().get(1);
 		private final Keyword cTestTestcaseKeyword_1_0_1_0 = (Keyword)cTestAssignment_1_0_1.eContents().get(0);
-		private final Assignment cUserAssignment_1_0_2 = (Assignment)cAlternatives_1_0.eContents().get(2);
-		private final Keyword cUserUserKeyword_1_0_2_0 = (Keyword)cUserAssignment_1_0_2.eContents().get(0);
-		private final Assignment cLibraryAssignment_1_0_3 = (Assignment)cAlternatives_1_0.eContents().get(3);
-		private final Alternatives cLibraryAlternatives_1_0_3_0 = (Alternatives)cLibraryAssignment_1_0_3.eContents().get(0);
-		private final Keyword cLibraryTraitKeyword_1_0_3_0_0 = (Keyword)cLibraryAlternatives_1_0_3_0.eContents().get(0);
-		private final Keyword cLibraryLibraryKeyword_1_0_3_0_1 = (Keyword)cLibraryAlternatives_1_0_3_0.eContents().get(1);
-		private final Assignment cBehaviorAssignment_1_0_4 = (Assignment)cAlternatives_1_0.eContents().get(4);
-		private final Alternatives cBehaviorAlternatives_1_0_4_0 = (Alternatives)cBehaviorAssignment_1_0_4.eContents().get(0);
-		private final Keyword cBehaviorBehaviorKeyword_1_0_4_0_0 = (Keyword)cBehaviorAlternatives_1_0_4_0.eContents().get(0);
-		private final Keyword cBehaviorBehaviourKeyword_1_0_4_0_1 = (Keyword)cBehaviorAlternatives_1_0_4_0.eContents().get(1);
+		private final Assignment cComponentAssignment_1_0_2 = (Assignment)cAlternatives_1_0.eContents().get(2);
+		private final Keyword cComponentComponentKeyword_1_0_2_0 = (Keyword)cComponentAssignment_1_0_2.eContents().get(0);
+		private final Assignment cUserAssignment_1_0_3 = (Assignment)cAlternatives_1_0.eContents().get(3);
+		private final Keyword cUserUserKeyword_1_0_3_0 = (Keyword)cUserAssignment_1_0_3.eContents().get(0);
+		private final Assignment cLibraryAssignment_1_0_4 = (Assignment)cAlternatives_1_0.eContents().get(4);
+		private final Alternatives cLibraryAlternatives_1_0_4_0 = (Alternatives)cLibraryAssignment_1_0_4.eContents().get(0);
+		private final Keyword cLibraryTraitKeyword_1_0_4_0_0 = (Keyword)cLibraryAlternatives_1_0_4_0.eContents().get(0);
+		private final Keyword cLibraryLibraryKeyword_1_0_4_0_1 = (Keyword)cLibraryAlternatives_1_0_4_0.eContents().get(1);
+		private final Assignment cBehaviorAssignment_1_0_5 = (Assignment)cAlternatives_1_0.eContents().get(5);
+		private final Alternatives cBehaviorAlternatives_1_0_5_0 = (Alternatives)cBehaviorAssignment_1_0_5.eContents().get(0);
+		private final Keyword cBehaviorBehaviorKeyword_1_0_5_0_0 = (Keyword)cBehaviorAlternatives_1_0_5_0.eContents().get(0);
+		private final Keyword cBehaviorBehaviourKeyword_1_0_5_0_1 = (Keyword)cBehaviorAlternatives_1_0_5_0.eContents().get(1);
 		private final Assignment cNameAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
 		private final RuleCall cNamePathNameParserRuleCall_1_1_0 = (RuleCall)cNameAssignment_1_1.eContents().get(0);
 		private final Assignment cLabelAssignment_2 = (Assignment)cGroup.eContents().get(2);
@@ -155,7 +157,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//Preamble:
 		//	{Preamble} ((((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' |
-		//	user?='user' | library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour')) name=PathName)?
+		//	component?='component' | user?='user' | library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour'))
+		//	name=PathName)?
 		//	label=STRING? (('import' imports+=PathName (',' imports+=PathName)*)? & ('worldview' worldview=PathName)? &
 		//	('observable' (observable=OBSERVABLE | observables=List))? & ('description' description=STRING)? & ('permissions'
 		//	permissions=STRING)? & ('author' authors+=STRING)* & ('style' style=PathName)? & ('logo' logo=(Path | STRING))? &
@@ -164,23 +167,24 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		@Override public ParserRule getRule() { return rule; }
 		
 		//{Preamble} ((((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' |
-		//user?='user' | library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour')) name=PathName)? label=STRING?
-		//(('import' imports+=PathName (',' imports+=PathName)*)? & ('worldview' worldview=PathName)? & ('observable'
-		//(observable=OBSERVABLE | observables=List))? & ('description' description=STRING)? & ('permissions'
-		//permissions=STRING)? & ('author' authors+=STRING)* & ('style' style=PathName)? & ('logo' logo=(Path | STRING))? &
-		//('version' version=VersionNumber)? & ('created' created=Date createcomment=STRING?)? & ('modified' modified=Date
-		//modcomment=STRING?)?)
+		//component?='component' | user?='user' | library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour'))
+		//name=PathName)? label=STRING? (('import' imports+=PathName (',' imports+=PathName)*)? & ('worldview'
+		//worldview=PathName)? & ('observable' (observable=OBSERVABLE | observables=List))? & ('description'
+		//description=STRING)? & ('permissions' permissions=STRING)? & ('author' authors+=STRING)* & ('style' style=PathName)? &
+		//('logo' logo=(Path | STRING))? & ('version' version=VersionNumber)? & ('created' created=Date createcomment=STRING?)?
+		//& ('modified' modified=Date modcomment=STRING?)?)
 		public Group getGroup() { return cGroup; }
 		
 		//{Preamble}
 		public Action getPreambleAction_0() { return cPreambleAction_0; }
 		
-		//((((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' | user?='user' |
-		//library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour')) name=PathName)?
+		//((((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' |
+		//component?='component' | user?='user' | library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour'))
+		//name=PathName)?
 		public Group getGroup_1() { return cGroup_1; }
 		
-		//(((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' | user?='user' |
-		//library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour'))
+		//(((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' |
+		//component?='component' | user?='user' | library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour'))
 		public Alternatives getAlternatives_1_0() { return cAlternatives_1_0; }
 		
 		//((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app' | app?='job')
@@ -228,35 +232,41 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//'testcase'
 		public Keyword getTestTestcaseKeyword_1_0_1_0() { return cTestTestcaseKeyword_1_0_1_0; }
 		
+		//component?='component'
+		public Assignment getComponentAssignment_1_0_2() { return cComponentAssignment_1_0_2; }
+		
+		//'component'
+		public Keyword getComponentComponentKeyword_1_0_2_0() { return cComponentComponentKeyword_1_0_2_0; }
+		
 		//user?='user'
-		public Assignment getUserAssignment_1_0_2() { return cUserAssignment_1_0_2; }
+		public Assignment getUserAssignment_1_0_3() { return cUserAssignment_1_0_3; }
 		
 		//'user'
-		public Keyword getUserUserKeyword_1_0_2_0() { return cUserUserKeyword_1_0_2_0; }
+		public Keyword getUserUserKeyword_1_0_3_0() { return cUserUserKeyword_1_0_3_0; }
 		
 		//library?=('trait' | 'library')
-		public Assignment getLibraryAssignment_1_0_3() { return cLibraryAssignment_1_0_3; }
+		public Assignment getLibraryAssignment_1_0_4() { return cLibraryAssignment_1_0_4; }
 		
 		//('trait' | 'library')
-		public Alternatives getLibraryAlternatives_1_0_3_0() { return cLibraryAlternatives_1_0_3_0; }
+		public Alternatives getLibraryAlternatives_1_0_4_0() { return cLibraryAlternatives_1_0_4_0; }
 		
 		//'trait'
-		public Keyword getLibraryTraitKeyword_1_0_3_0_0() { return cLibraryTraitKeyword_1_0_3_0_0; }
+		public Keyword getLibraryTraitKeyword_1_0_4_0_0() { return cLibraryTraitKeyword_1_0_4_0_0; }
 		
 		//'library'
-		public Keyword getLibraryLibraryKeyword_1_0_3_0_1() { return cLibraryLibraryKeyword_1_0_3_0_1; }
+		public Keyword getLibraryLibraryKeyword_1_0_4_0_1() { return cLibraryLibraryKeyword_1_0_4_0_1; }
 		
 		//behavior?=('behavior' | 'behaviour')
-		public Assignment getBehaviorAssignment_1_0_4() { return cBehaviorAssignment_1_0_4; }
+		public Assignment getBehaviorAssignment_1_0_5() { return cBehaviorAssignment_1_0_5; }
 		
 		//('behavior' | 'behaviour')
-		public Alternatives getBehaviorAlternatives_1_0_4_0() { return cBehaviorAlternatives_1_0_4_0; }
+		public Alternatives getBehaviorAlternatives_1_0_5_0() { return cBehaviorAlternatives_1_0_5_0; }
 		
 		//'behavior'
-		public Keyword getBehaviorBehaviorKeyword_1_0_4_0_0() { return cBehaviorBehaviorKeyword_1_0_4_0_0; }
+		public Keyword getBehaviorBehaviorKeyword_1_0_5_0_0() { return cBehaviorBehaviorKeyword_1_0_5_0_0; }
 		
 		//'behaviour'
-		public Keyword getBehaviorBehaviourKeyword_1_0_4_0_1() { return cBehaviorBehaviourKeyword_1_0_4_0_1; }
+		public Keyword getBehaviorBehaviourKeyword_1_0_5_0_1() { return cBehaviorBehaviourKeyword_1_0_5_0_1; }
 		
 		//name=PathName
 		public Assignment getNameAssignment_1_1() { return cNameAssignment_1_1; }
@@ -453,12 +463,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cAnnotationsAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cAnnotationsAnnotationParserRuleCall_0_0 = (RuleCall)cAnnotationsAssignment_0.eContents().get(0);
-		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
-		private final Assignment cComponentAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
-		private final Keyword cComponentComponentKeyword_1_0_0 = (Keyword)cComponentAssignment_1_0.eContents().get(0);
-		private final Assignment cActorAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
-		private final Keyword cActorActorKeyword_1_1_0 = (Keyword)cActorAssignment_1_1.eContents().get(0);
-		private final Keyword cActionKeyword_1_2 = (Keyword)cAlternatives_1.eContents().get(2);
+		private final Keyword cActionKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		private final Assignment cNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_2_0 = (RuleCall)cNameAssignment_2.eContents().get(0);
 		private final Assignment cArgumentsAssignment_3 = (Assignment)cGroup.eContents().get(3);
@@ -476,12 +481,11 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		// *  reactive behavior.
 		// * 
 		// */ Definition:
-		//	annotations+=Annotation* (component?='component' | actor?='actor' | 'action') name=LOWERCASE_ID
-		//	arguments=ArgumentDeclaration? ':' body=MessageBody;
+		//	annotations+=Annotation*
+		//	'action' name=LOWERCASE_ID arguments=ArgumentDeclaration? ':' body=MessageBody;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//annotations+=Annotation* (component?='component' | actor?='actor' | 'action') name=LOWERCASE_ID
-		//arguments=ArgumentDeclaration? ':' body=MessageBody
+		//annotations+=Annotation* 'action' name=LOWERCASE_ID arguments=ArgumentDeclaration? ':' body=MessageBody
 		public Group getGroup() { return cGroup; }
 		
 		//annotations+=Annotation*
@@ -490,23 +494,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//Annotation
 		public RuleCall getAnnotationsAnnotationParserRuleCall_0_0() { return cAnnotationsAnnotationParserRuleCall_0_0; }
 		
-		//(component?='component' | actor?='actor' | 'action')
-		public Alternatives getAlternatives_1() { return cAlternatives_1; }
-		
-		//component?='component'
-		public Assignment getComponentAssignment_1_0() { return cComponentAssignment_1_0; }
-		
-		//'component'
-		public Keyword getComponentComponentKeyword_1_0_0() { return cComponentComponentKeyword_1_0_0; }
-		
-		//actor?='actor'
-		public Assignment getActorAssignment_1_1() { return cActorAssignment_1_1; }
-		
-		//'actor'
-		public Keyword getActorActorKeyword_1_1_0() { return cActorActorKeyword_1_1_0; }
-		
 		//'action'
-		public Keyword getActionKeyword_1_2() { return cActionKeyword_1_2; }
+		public Keyword getActionKeyword_1() { return cActionKeyword_1; }
 		
 		//name=LOWERCASE_ID
 		public Assignment getNameAssignment_2() { return cNameAssignment_2; }
@@ -4157,7 +4146,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//Preamble:
 	//	{Preamble} ((((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app' | app?='job') | test?='testcase' |
-	//	user?='user' | library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour')) name=PathName)?
+	//	component?='component' | user?='user' | library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour'))
+	//	name=PathName)?
 	//	label=STRING? (('import' imports+=PathName (',' imports+=PathName)*)? & ('worldview' worldview=PathName)? &
 	//	('observable' (observable=OBSERVABLE | observables=List))? & ('description' description=STRING)? & ('permissions'
 	//	permissions=STRING)? & ('author' authors+=STRING)* & ('style' style=PathName)? & ('logo' logo=(Path | STRING))? &
@@ -4180,8 +4170,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	// *  reactive behavior.
 	// * 
 	// */ Definition:
-	//	annotations+=Annotation* (component?='component' | actor?='actor' | 'action') name=LOWERCASE_ID
-	//	arguments=ArgumentDeclaration? ':' body=MessageBody;
+	//	annotations+=Annotation*
+	//	'action' name=LOWERCASE_ID arguments=ArgumentDeclaration? ':' body=MessageBody;
 	public DefinitionElements getDefinitionAccess() {
 		return pDefinition;
 	}

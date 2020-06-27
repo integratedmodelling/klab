@@ -77,6 +77,8 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 			this.type = Type.USER;
 		} else if (preamble.isTest()) {
 			this.type = Type.UNITTEST;
+		} else if (preamble.isComponent()) {
+			this.type = Type.COMPONENT;
 		}
 		
 		if (preamble.isDesktop()) {

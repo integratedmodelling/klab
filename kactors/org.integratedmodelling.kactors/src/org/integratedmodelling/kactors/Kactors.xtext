@@ -17,6 +17,7 @@ Preamble: {Preamble}
 		(
 			((mobile?='mobile' |  desktop?='desktop' | web?='web')? app?='app'| app?='job') | 
 			test?='testcase' | 
+			component?='component' | 
 			user?='user' | 
 			library?=('trait'|'library') |
 			behavior?=('behavior'|'behaviour')
@@ -49,7 +50,7 @@ Preamble: {Preamble}
  */
 Definition:
 	annotations+=Annotation*
-	(component?='component' | actor?='actor' | 'action') name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
+	 'action' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
 
 ArgumentDeclaration: {ArgumentDeclaration}
 	'(' (ids+=LOWERCASE_ID (',' ids+=LOWERCASE_ID)*)? ')'

@@ -36,6 +36,7 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isWeb <em>Web</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isApp <em>App</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isTest <em>Test</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isComponent <em>Component</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isUser <em>User</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isLibrary <em>Library</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isBehavior <em>Behavior</em>}</li>
@@ -160,6 +161,26 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @ordered
    */
   protected boolean test = TEST_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isComponent() <em>Component</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isComponent()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean COMPONENT_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isComponent() <em>Component</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isComponent()
+   * @generated
+   * @ordered
+   */
+  protected boolean component = COMPONENT_EDEFAULT;
 
   /**
    * The default value of the '{@link #isUser() <em>User</em>}' attribute.
@@ -635,6 +656,31 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     test = newTest;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__TEST, oldTest, test));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isComponent()
+  {
+    return component;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setComponent(boolean newComponent)
+  {
+    boolean oldComponent = component;
+    component = newComponent;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__COMPONENT, oldComponent, component));
   }
 
   /**
@@ -1207,6 +1253,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return isApp();
       case KactorsPackage.PREAMBLE__TEST:
         return isTest();
+      case KactorsPackage.PREAMBLE__COMPONENT:
+        return isComponent();
       case KactorsPackage.PREAMBLE__USER:
         return isUser();
       case KactorsPackage.PREAMBLE__LIBRARY:
@@ -1274,6 +1322,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return;
       case KactorsPackage.PREAMBLE__TEST:
         setTest((Boolean)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__COMPONENT:
+        setComponent((Boolean)newValue);
         return;
       case KactorsPackage.PREAMBLE__USER:
         setUser((Boolean)newValue);
@@ -1363,6 +1414,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__TEST:
         setTest(TEST_EDEFAULT);
         return;
+      case KactorsPackage.PREAMBLE__COMPONENT:
+        setComponent(COMPONENT_EDEFAULT);
+        return;
       case KactorsPackage.PREAMBLE__USER:
         setUser(USER_EDEFAULT);
         return;
@@ -1444,6 +1498,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return app != APP_EDEFAULT;
       case KactorsPackage.PREAMBLE__TEST:
         return test != TEST_EDEFAULT;
+      case KactorsPackage.PREAMBLE__COMPONENT:
+        return component != COMPONENT_EDEFAULT;
       case KactorsPackage.PREAMBLE__USER:
         return user != USER_EDEFAULT;
       case KactorsPackage.PREAMBLE__LIBRARY:
@@ -1507,6 +1563,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     result.append(app);
     result.append(", test: ");
     result.append(test);
+    result.append(", component: ");
+    result.append(component);
     result.append(", user: ");
     result.append(user);
     result.append(", library: ");

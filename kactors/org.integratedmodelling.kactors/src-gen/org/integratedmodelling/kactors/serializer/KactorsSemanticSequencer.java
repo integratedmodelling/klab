@@ -347,7 +347,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     Definition returns Definition
 	 *
 	 * Constraint:
-	 *     (annotations+=Annotation* (component?='component' | actor?='actor')? name=LOWERCASE_ID arguments=ArgumentDeclaration? body=MessageBody)
+	 *     (annotations+=Annotation* name=LOWERCASE_ID arguments=ArgumentDeclaration? body=MessageBody)
 	 */
 	protected void sequence_Definition(ISerializationContext context, Definition semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -645,6 +645,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 ((mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app') | 
 	 *                 app?='job' | 
 	 *                 test?='testcase' | 
+	 *                 component?='component' | 
 	 *                 user?='user' | 
 	 *                 library?='trait' | 
 	 *                 library?='library' | 

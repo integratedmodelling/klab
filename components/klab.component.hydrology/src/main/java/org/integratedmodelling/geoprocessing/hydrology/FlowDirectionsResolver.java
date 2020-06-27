@@ -32,7 +32,7 @@ public class FlowDirectionsResolver implements IResolver<IState>, IExpression {
 		IState dem = context.getArtifact("hydrologically_corrected_elevation", IState.class);
 
 		OmsFlowDirections algorithm = new OmsFlowDirections();
-		algorithm.inPit = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_INT, floatNovalue);
+		algorithm.inPit = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_INT, floatNovalue, false);
 		algorithm.pm = new TaskMonitor(context.getMonitor());
 		algorithm.doProcess = true;
 		algorithm.doReset = false;

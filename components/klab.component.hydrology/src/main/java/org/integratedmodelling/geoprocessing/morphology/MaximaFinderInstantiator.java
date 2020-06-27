@@ -97,7 +97,7 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 				throw new IllegalArgumentException(
 						"maxima extractor: no input state named '" + chmId + "' found in context");
 			}
-			algorithm.inDsmDtmDiff = GeotoolsUtils.INSTANCE.stateToCoverage(state, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue);
+			algorithm.inDsmDtmDiff = GeotoolsUtils.INSTANCE.stateToCoverage(state, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false);
 		} else if (surfaceId != null) {
 
 			// differentiate the surface
@@ -107,7 +107,7 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 						"maxima extractor: no input state named '" + surfaceId + "' found in context");
 			}
 			StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
-			algorithm.inDsmDtmDiff = GeotoolsUtils.INSTANCE.stateToCoverage(state, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue,
+			algorithm.inDsmDtmDiff = GeotoolsUtils.INSTANCE.stateToCoverage(state, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false,
 					(value) -> {
 						if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
 							value = ((Number) value).doubleValue() - summary.getRange().get(0);

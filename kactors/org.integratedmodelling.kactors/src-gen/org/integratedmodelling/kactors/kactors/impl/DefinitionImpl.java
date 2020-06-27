@@ -34,8 +34,6 @@ import org.integratedmodelling.kactors.kactors.MessageBody;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl#getAnnotations <em>Annotations</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl#isComponent <em>Component</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl#isActor <em>Actor</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl#getArguments <em>Arguments</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl#getBody <em>Body</em>}</li>
@@ -54,46 +52,6 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
    * @ordered
    */
   protected EList<Annotation> annotations;
-
-  /**
-   * The default value of the '{@link #isComponent() <em>Component</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isComponent()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean COMPONENT_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isComponent() <em>Component</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isComponent()
-   * @generated
-   * @ordered
-   */
-  protected boolean component = COMPONENT_EDEFAULT;
-
-  /**
-   * The default value of the '{@link #isActor() <em>Actor</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isActor()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean ACTOR_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isActor() <em>Actor</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isActor()
-   * @generated
-   * @ordered
-   */
-  protected boolean actor = ACTOR_EDEFAULT;
 
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
@@ -169,56 +127,6 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
       annotations = new EObjectContainmentEList<Annotation>(Annotation.class, this, KactorsPackage.DEFINITION__ANNOTATIONS);
     }
     return annotations;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public boolean isComponent()
-  {
-    return component;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setComponent(boolean newComponent)
-  {
-    boolean oldComponent = component;
-    component = newComponent;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.DEFINITION__COMPONENT, oldComponent, component));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public boolean isActor()
-  {
-    return actor;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setActor(boolean newActor)
-  {
-    boolean oldActor = actor;
-    actor = newActor;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.DEFINITION__ACTOR, oldActor, actor));
   }
 
   /**
@@ -378,10 +286,6 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
     {
       case KactorsPackage.DEFINITION__ANNOTATIONS:
         return getAnnotations();
-      case KactorsPackage.DEFINITION__COMPONENT:
-        return isComponent();
-      case KactorsPackage.DEFINITION__ACTOR:
-        return isActor();
       case KactorsPackage.DEFINITION__NAME:
         return getName();
       case KactorsPackage.DEFINITION__ARGUMENTS:
@@ -406,12 +310,6 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
       case KactorsPackage.DEFINITION__ANNOTATIONS:
         getAnnotations().clear();
         getAnnotations().addAll((Collection<? extends Annotation>)newValue);
-        return;
-      case KactorsPackage.DEFINITION__COMPONENT:
-        setComponent((Boolean)newValue);
-        return;
-      case KactorsPackage.DEFINITION__ACTOR:
-        setActor((Boolean)newValue);
         return;
       case KactorsPackage.DEFINITION__NAME:
         setName((String)newValue);
@@ -439,12 +337,6 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
       case KactorsPackage.DEFINITION__ANNOTATIONS:
         getAnnotations().clear();
         return;
-      case KactorsPackage.DEFINITION__COMPONENT:
-        setComponent(COMPONENT_EDEFAULT);
-        return;
-      case KactorsPackage.DEFINITION__ACTOR:
-        setActor(ACTOR_EDEFAULT);
-        return;
       case KactorsPackage.DEFINITION__NAME:
         setName(NAME_EDEFAULT);
         return;
@@ -470,10 +362,6 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
     {
       case KactorsPackage.DEFINITION__ANNOTATIONS:
         return annotations != null && !annotations.isEmpty();
-      case KactorsPackage.DEFINITION__COMPONENT:
-        return component != COMPONENT_EDEFAULT;
-      case KactorsPackage.DEFINITION__ACTOR:
-        return actor != ACTOR_EDEFAULT;
       case KactorsPackage.DEFINITION__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KactorsPackage.DEFINITION__ARGUMENTS:
@@ -495,11 +383,7 @@ public class DefinitionImpl extends MinimalEObjectImpl.Container implements Defi
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (component: ");
-    result.append(component);
-    result.append(", actor: ");
-    result.append(actor);
-    result.append(", name: ");
+    result.append(" (name: ");
     result.append(name);
     result.append(')');
     return result.toString();

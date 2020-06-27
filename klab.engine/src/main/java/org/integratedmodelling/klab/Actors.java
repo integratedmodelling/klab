@@ -772,9 +772,8 @@ public enum Actors implements IActorsService {
 			visitViewActions(((IKActorsStatement.While) statement).getBody(), parent, level,
 					scope.optional().repeated());
 			break;
-		case FIRE_VALUE:
-			break;
 		default:
+			// nothing to do for fire and instantiation
 			break;
 		}
 	}

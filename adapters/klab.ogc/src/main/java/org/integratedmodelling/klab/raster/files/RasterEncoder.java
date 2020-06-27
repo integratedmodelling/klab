@@ -276,7 +276,7 @@ public class RasterEncoder implements IResourceEncoder {
 
 		GridCoverage2D ret = null;
 		AbstractGridFormat format = GridFormatFinder.findFormat(mainFile);
-		// this is a bit hacky but does make more geotiffs work
+		// this is a bit hackey but does make more geotiffs work
 		Hints hints = new Hints();
 		if (format instanceof GeoTiffFormat) {
 			hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);

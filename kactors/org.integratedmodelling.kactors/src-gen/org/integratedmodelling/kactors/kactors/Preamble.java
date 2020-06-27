@@ -21,6 +21,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isWeb <em>Web</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isApp <em>App</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isTest <em>Test</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isComponent <em>Component</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isUser <em>User</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isLibrary <em>Library</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isBehavior <em>Behavior</em>}</li>
@@ -157,6 +158,28 @@ public interface Preamble extends EObject
    * @generated
    */
   void setTest(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Component</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Component</em>' attribute.
+   * @see #setComponent(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Component()
+   * @model
+   * @generated
+   */
+  boolean isComponent();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isComponent <em>Component</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Component</em>' attribute.
+   * @see #isComponent()
+   * @generated
+   */
+  void setComponent(boolean value);
 
   /**
    * Returns the value of the '<em><b>User</b></em>' attribute.

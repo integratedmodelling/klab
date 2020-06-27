@@ -104,7 +104,7 @@ public class SpatialDisplay {
 		String name;
 
 		Layer getLayer() {
-			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, scale);
+			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, scale, true);
 			Layer layer = new GridCoverageLayer(coverage,
 					SLD.wrapSymbolizers(Renderer.INSTANCE.getRasterSymbolizer(state, scale).getFirst()));
 			layer.setTitle(state.getObservable().getName());

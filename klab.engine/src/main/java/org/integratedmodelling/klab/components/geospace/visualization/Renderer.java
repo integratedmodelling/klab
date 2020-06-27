@@ -115,7 +115,7 @@ public enum Renderer {
 
 			Viewport vport = new Viewport(viewport[0], viewport.length == 1 ? viewport[0] : viewport[1]);
 			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT,
-					Float.NaN);
+					Float.NaN, false);
 			IEnvelope envelope = space.getEnvelope();
 			IProjection projection = space.getProjection();
 			int[] imagesize = vport.getSize(grid.getXCells(), grid.getYCells());

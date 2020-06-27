@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.geospace.utils;
 
+import java.awt.Color;
 import java.awt.image.DataBuffer;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
@@ -11,9 +12,13 @@ import javax.media.jai.RasterFactory;
 import javax.media.jai.iterator.RandomIter;
 import javax.media.jai.iterator.RandomIterFactory;
 
+import org.geotools.coverage.Category;
 import org.geotools.coverage.GridSampleDimension;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
+import org.geotools.styling.ColorMap;
+import org.geotools.styling.ColorMapEntry;
+import org.geotools.styling.RasterSymbolizer;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -23,8 +28,11 @@ import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
+import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
+import org.opengis.filter.expression.Literal;
 
 public enum GeotoolsUtils {
 
@@ -45,12 +53,12 @@ public enum GeotoolsUtils {
 //		return stateToCoverage(state.at(locator), DataBuffer.TYPE_FLOAT, noDataValue);
 //	}
 
-	public GridCoverage2D stateToCoverage(IState state, ILocator locator) {
-		return stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT, Float.NaN);
+	public GridCoverage2D stateToCoverage(IState state, ILocator locator, boolean addKey) {
+		return stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT, Float.NaN, addKey);
 	}
 
-	public GridCoverage2D stateToCoverage(IState state, ILocator locator, int type, Float noDataValue) {
-		return stateToCoverage(state, locator, type, noDataValue, null);
+	public GridCoverage2D stateToCoverage(IState state, ILocator locator, int type, Float noDataValue, boolean addKey) {
+		return stateToCoverage(state, locator, type, noDataValue, addKey, null);
 	}
 
 	/**
@@ -61,15 +69,15 @@ public enum GeotoolsUtils {
 	 * @throws IllegalArgumentException if the state is not suitable for a raster
 	 *                                  representation.
 	 */
-	public GridCoverage2D stateToCoverage(IState state, ILocator locator, int type, Float noDataValue,
+	public GridCoverage2D stateToCoverage(IState state, ILocator locator, int type, Float noDataValue, boolean addKey,
 			Function<Object, Object> transformation) {
 
 		ISpace space = state.getScale().getSpace();
-		if (!(space instanceof Space) || ((Space)space).getGrid() == null) {
+		if (!(space instanceof Space) || ((Space) space).getGrid() == null) {
 			throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
 		}
-		Grid grid = (Grid) ((Space)space).getGrid();
-		
+		Grid grid = (Grid) ((Space) space).getGrid();
+
 		/*
 		 * build a coverage.
 		 * 
@@ -116,19 +124,57 @@ public enum GeotoolsUtils {
 			}
 		}
 
-//		GridSampleDimension[] ziopopr = new GridSampleDimension[] {
-//			GridSampleDimension
-//		};
-		
-		return rasterFactory.create(state.getObservable().getName(), raster, ((Space)space).getShape().getJTSEnvelope()/* , ziopopr*/);
-		
+		GridSampleDimension key = null;
+		boolean pork = false;
+		if (addKey) {
+			Pair<RasterSymbolizer, String> rs = Renderer.INSTANCE.getRasterSymbolizer(state, locator);
+			RasterSymbolizer symbolizer = rs == null ? null : rs.getFirst();
+			if (symbolizer != null && symbolizer.getColorMap() != null) {
+				Category[] categories = new Category[symbolizer.getColorMap().getColorMapEntries().length];
+				int i = 0;
+				
+				for (ColorMapEntry entry : symbolizer.getColorMap().getColorMapEntries()) {
+
+					Category category = null;
+					Object value = null;
+					Color color = Color.decode(entry.getColor().toString());
+					String label = entry.getLabel();
+					
+					if (entry.getQuantity() instanceof Literal) {
+						value = ((Literal)entry.getQuantity()).getValue();
+					}
+					
+					if (value instanceof Number) {
+						category = new Category(label, color, ((Number)value).doubleValue());
+					} else {
+						System.out.println("CIOIOCIOIOI");
+						pork = true;
+					}
+					
+					categories[i] = category;
+					i++;
+				}
+				key = new GridSampleDimension("Categories created following k.LAB model specifications", categories, symbolizer.getUnitOfMeasure());
+			}
+			
+		}
+
+		if (key == null || pork) {
+			return rasterFactory.create(state.getObservable().getName(), raster,
+					((Space) space).getShape().getJTSEnvelope());
+		}
+
+		return rasterFactory.create(state.getObservable().getName(), raster,
+				((Space) space).getShape().getJTSEnvelope(), new GridSampleDimension[] {key});
+
 	}
 
 	public void coverageToState(GridCoverage2D layer, IState state) {
 		coverageToState(layer, state, null, null);
 	}
 
-	public void coverageToState(GridCoverage2D layer, IState state, IScale locator, Function<Double, Double> transformation) {
+	public void coverageToState(GridCoverage2D layer, IState state, IScale locator,
+			Function<Double, Double> transformation) {
 		coverageToState(layer, state, locator, transformation, null);
 	}
 
@@ -136,8 +182,8 @@ public enum GeotoolsUtils {
 	 * Dump the data from a coverage into a pre-existing state.
 	 * 
 	 */
-	public void coverageToState(GridCoverage2D layer, IState state, IScale locator, Function<Double, Double> transformation,
-			Function<long[], Boolean> coordinateChecker) {
+	public void coverageToState(GridCoverage2D layer, IState state, IScale locator,
+			Function<Double, Double> transformation, Function<long[], Boolean> coordinateChecker) {
 
 		ISpace ext = state.getScale().getSpace();
 
