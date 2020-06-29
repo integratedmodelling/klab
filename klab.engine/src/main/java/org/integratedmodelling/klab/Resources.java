@@ -1024,7 +1024,7 @@ public enum Resources implements IResourceService {
 		Urn urn = new Urn(resource.getUrn(), urnParameters);
 		if (urn.isUniversal()) {
 			// use it locally only if we have the adapter.
-			local = getResourceAdapter(urn.getCatalog()) != null;
+			local = getUrnAdapter(urn.getCatalog()) != null;
 		}
 
 		if (local) {
@@ -1043,6 +1043,7 @@ public enum Resources implements IResourceService {
 					return builder.build();
 				} catch (Throwable e) {
 					// just return null later
+					context.getMonitor().error("could not extract data from " + resource.getUrn() + ": " + e.getMessage());
 				}
 
 			} else {

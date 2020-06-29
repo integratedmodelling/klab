@@ -191,9 +191,9 @@ public class SpatialDisplay {
 	 * 
 	 * @param shape
 	 */
-	public void add(Shape shape) {
+	public void add(IShape shape) {
 		SLDesc slDesc = getSLDesc("shapes_" + shape.getGeometryType().name());
-		slDesc.addFeature(shape);
+		slDesc.addFeature((Shape)shape);
 	}
 
 	public void add(Envelope shape, String layer) {
@@ -226,10 +226,10 @@ public class SpatialDisplay {
 	 * @param shape
 	 * @param layer
 	 */
-	public void add(Shape shape, String layer) {
+	public void add(IShape shape, String layer) {
 
 		SLDesc slDesc = getSLDesc(layer);
-		slDesc.addFeature(shape);
+		slDesc.addFeature((Shape)shape);
 	}
 
 	/**
