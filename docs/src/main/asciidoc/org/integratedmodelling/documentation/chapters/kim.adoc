@@ -597,8 +597,8 @@ Binary operators do not alter the basic semantics of a concept but _restrict_ it
 |Description
 
 |within [... each]
-|Observable *+within+* Countable
-|Contextualization operator: constrains the context in which the observable can be observed. Its operand must be compatible with any context already declared in the concept's parent hierarchy.
+|Observable *+within+* Subject
+|Continuant inherency operator: constrains the _context_ in which the observable can be observed. Its operand must be compatible with any context already declared in the concept's parent hierarchy. The inherency is mandatorily _continuant_, i.e. it is not time-sensitive and exists at all times.
 |of [...each]
 |Observable *+of+* Countable
 |Inherency operator: defines a non-contextual different inherency for the observable without changing its context. For example "Height of Tree" can be observed as a quality within a Region as the height is inherent to each tree but the quality can be observed over a region that contains trees. In explicit expressions it is limited to Countables as arguments; inherency to qualities is subsumed in quality operators (e.g. uncertainty of <quality>) and not allowed as an explicit observable.
@@ -623,20 +623,15 @@ Binary operators do not alter the basic semantics of a concept but _restrict_ it
 |causing 
 |(Process, Event) causing (Process, Event)
 |Active causality operator
-|during ...
+|during [each]...
 |Events
-|Concurrency operator
+|Concurrency operator. When paired with _each_ in model observables, it specifies the _temporal inherency_ to a specific event type for the observation of an occurrent (normally a process), and does not affect semantics.
 |linking ... to ...
 |Relationships
 |Mutual interaction operator
 |===
 
 === Abstract and subjective status
-
-=== On properties, roles and attributes
-
-- OWL properties can be declared (syntax later)
-- Yet, using properties can lead to more obscure semantics where using roles and attributes keeps their meaning out in the open. Example: limiting factors as a property or as a role with implications.
 
 === The root-level concept and its role in k.LAB
 
@@ -733,13 +728,21 @@ Observable syntax is not limited to setting constraints on values of qualities; 
 im:Orientation of each earth:Site 
 ----
 
-is a logical expression that contains a keyword `each` that would not be admitted in a concept declaration, as it affects the _way_ this attribute is resolved (by resolving a _set_ of sites first, then classifying the abstract orientation to a concrete attribute in each) rather than its inherent meaning. Such forms are used to declare classifier models, which will be discussed <<section-kim-models,later>>.
-
-=== Ranges, units and currencies
-
-=== Value operators
+is a logical expression that contains a keyword `each` that would not be admitted in a concept declaration, as it affects the _way_ this attribute is resolved (by resolving a _set_ of sites first, then classifying the abstract orientation to a concrete attribute in each) rather than its inherent meaning. Such forms are used to specify _observable inherency_, one of the main sources of k.LAB's power and flexibility -- and our next topic.
 
 
+=== Understanding inherency in observables
+
+==== Context inherency (`of`/`within`)
+
+==== Temporal inherency (`during each`)
+
+==== Predicate inherency (`of each`)
+
+=== On properties, roles and attributes
+
+- OWL properties can be declared (syntax later)
+- Yet, using properties can lead to more obscure semantics where using roles and attributes keeps their meaning out in the open. Example: limiting factors as a property or as a role with implications.
 
 === Rules of composition for observables
 
@@ -848,11 +851,12 @@ Composed of a _trigger_ part (possibly implicit) and an _action_ part.
 
 ==== Triggers
 
-===== on <event>
+Triggers refer to the phases of contextualization, which may vary according to the type of model, but are fixed and known for each type. Events and other conditions during the simulation are handled using _behaviors_ rather than triggers.
 
 Event can be the keyword `definition`
 
-Absence of a trigger is equivalent to `on definition`:
+Absence of a trigger is equivalent to `on definition`
+
 
 [code,kim]
 ----
@@ -864,6 +868,8 @@ example
 ==== Actions
 
 ===== set [target] to <expression>
+
+Only admitted when the target is a quality. The target can be omitted if it is the main observable in quality models, when `set to` is used to modify the value upon initialization. Quality models with additional outputs (e.g. uncertainty associated to the output) can use additional, targeted `set to` clauses. The target is mandatory if the main observable is a process. In all cases, the name after `target` must be that of an output observable in the model.
 
 ===== integrate [target] to <expression>
 
@@ -882,6 +888,10 @@ NOTE: need specific section for the language
 === Non-semantic models
 
 === Learning models
+
+=== Configurable parameters 
+
+for models and URNs
 
 === Documenting models
 

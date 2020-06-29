@@ -55,6 +55,7 @@ public class ShowInfo implements ICommand {
 
 			if (observable != null) {
 				ret += "\nObservation type: " + observable.getDescription() + "\n";
+				ret += "Generic: " + (observable.isGeneric() ? "true" : "false") + "\n";
 			}
 
 		}

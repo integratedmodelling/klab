@@ -425,7 +425,6 @@ public class Scheduler implements IScheduler {
 	}
 
 	public void schedule(Action action, Observation targetObservation, Time time, RuntimeScope runtimeScope) {
-		// TODO Auto-generated method stub
 
 		/*
 		 * make a scale from the scheduling specs and merge

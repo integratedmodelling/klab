@@ -344,7 +344,7 @@ public interface IKimConcept extends IKimStatement {
 	 * builders) and inspect specific clauses.
 	 */
 	public enum ObservableRole {
-		TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT
+		TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT, TEMPORAL_INHERENT
 	}
 
 	/**
@@ -542,5 +542,12 @@ public interface IKimConcept extends IKimStatement {
 	ObservableRole getDistributedInherent();
 
 	boolean isTraitObservable();
+
+	/**
+	 * Return any temporal inherency for this occurrent ('during each').
+	 * 
+	 * @return
+	 */
+	IKimConcept getTemporalInherent();
 
 }

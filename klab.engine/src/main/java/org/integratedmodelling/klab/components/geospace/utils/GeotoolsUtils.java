@@ -41,18 +41,6 @@ public enum GeotoolsUtils {
 	Map<IConcept, Integer> conceptMap = new HashMap<>();
 	GridCoverageFactory rasterFactory = new GridCoverageFactory();
 
-//	/**
-//	 * Turn a state into a grid coverage.
-//	 * 
-//	 * @param state
-//	 * @return a Geotools grid coverage
-//	 * @throws IllegalArgumentException if the state is not suitable for a raster
-//	 *                                  representation.
-//	 */
-//	public GridCoverage2D stateToCoverage(IState state, ILocator locator, float noDataValue) {
-//		return stateToCoverage(state.at(locator), DataBuffer.TYPE_FLOAT, noDataValue);
-//	}
-
 	public GridCoverage2D stateToCoverage(IState state, ILocator locator, boolean addKey) {
 		return stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT, Float.NaN, addKey);
 	}

@@ -120,6 +120,12 @@ public class ObservationStrategy {
 				ret.add(new ObservationStrategy(Observable.promote(target), Mode.INSTANTIATION));
 			}
 		}
+		
+		if (observable.getTemporalInherent() != null) {
+			if (((Model) model).findDependency(observable.getTemporalInherent()) == null) {
+				ret.add(new ObservationStrategy(Observable.promote(observable.getTemporalInherent()), Mode.INSTANTIATION));
+			}
+		}
 
 		/*
 		 * If we're classifying a countable with a trait and we don't have the

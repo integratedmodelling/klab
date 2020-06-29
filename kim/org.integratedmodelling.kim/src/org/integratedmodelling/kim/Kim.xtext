@@ -396,7 +396,7 @@ ConceptDeclaration:
 			// cause towards event (?)
 			('causing'   caused=SimpleConceptDeclaration)? &
 			// concomitant with event (?)
-			('during'   during=SimpleConceptDeclaration)? &
+			('during'   ((distributedTemporalInherency?='each')? during=SimpleConceptDeclaration))? &
 			// context or secondary inherency
 			('within' ((distributedWithinInherency?='each')? context=SimpleConceptDeclaration))? &
 			// for relationships: specialize source and target types

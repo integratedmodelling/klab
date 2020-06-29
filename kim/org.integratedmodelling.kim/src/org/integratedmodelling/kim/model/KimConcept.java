@@ -92,6 +92,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 	private KimConcept cooccurrent = null;
 	private KimConcept relationshipSource = null;
 	private KimConcept relationshipTarget = null;
+	private KimConcept temporalInherent = null;
 
 	private KimConcept validParent = null;
 
@@ -160,6 +161,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		this.template = other.template;
 		this.descriptor = other.descriptor;
 		this.traitObservable = other.traitObservable;
+		this.temporalInherent = other.temporalInherent;
 		this.distributedInherent = other.distributedInherent;
 	}
 
@@ -375,17 +377,22 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			}
 		}
 		if (declaration.getDuring() != null) {
-			ret.cooccurrent = normalize(declaration.getDuring(), null, parent, false);
-			if (ret.cooccurrent == null) {
+			KimConcept cocc = normalize(declaration.getDuring(), null, parent, false);
+			if (cocc == null) {
 				return null;
 			}
-			if (ret.cooccurrent.type.isEmpty()) {
+			if (cocc.type.isEmpty()) {
 				ret.type.clear();
-			} else if (ret.cooccurrent.is(Type.SUBJECTIVE)) {
+			} else if (cocc.is(Type.SUBJECTIVE)) {
 				subjective = true;
 			}
-			if (ret.cooccurrent.isTemplate()) {
+			if (cocc.isTemplate()) {
 				ret.template = true;
+			}
+			if (declaration.isDistributedTemporalInherency()) {
+				ret.temporalInherent = cocc;
+			} else {
+				ret.cooccurrent = cocc;
 			}
 		}
 		if (declaration.getAdjacent() != null) {
@@ -465,6 +472,8 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			ret.type.remove(Type.ABSTRACT);
 		}
 
+		
+		
 		/*
 		 * expression operands (between self and them)
 		 */
@@ -767,6 +776,11 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			complex = true;
 		}
 
+		if (temporalInherent != null) {
+			ret += " during each " + temporalInherent;
+			complex = true;
+		}
+		
 		if (adjacent != null) {
 			ret += " adjacent to " + adjacent;
 			complex = true;
@@ -1053,6 +1067,18 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			compresent.visit(visitor);
 		}
 
+		if (cooccurrent != null) {
+			cooccurrent.visit(visitor);
+		}
+		
+		if (adjacent != null) {
+			adjacent.visit(visitor);
+		}
+		
+		if (temporalInherent != null) {
+			temporalInherent.visit(visitor);
+		}
+
 		if (motivation != null) {
 			motivation.visit(visitor);
 		}
@@ -1184,6 +1210,8 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			case TRAIT:
 				ret.traits.clear();
 				break;
+			case TEMPORAL_INHERENT:
+				ret.temporalInherent = null;
 			default:
 				break;
 			}
@@ -1225,6 +1253,9 @@ public class KimConcept extends KimStatement implements IKimConcept {
 				break;
 			case INHERENT:
 				ret.inherent = null;
+				break;
+			case TEMPORAL_INHERENT:
+				ret.temporalInherent = null;
 				break;
 			case ROLE:
 				ret.roles = copyWithout(ret.roles, declaration);
@@ -1287,6 +1318,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		if (cooccurrent != null) {
 			ret += "-during-" + cooccurrent.getCodeName();
 		}
+		
+		if (temporalInherent != null) {
+			ret += "-during-each-" + temporalInherent.getCodeName();
+		}
 
 		if (motivation != null) {
 			ret += "-for-" + motivation.getCodeName();
@@ -1307,14 +1342,26 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		return ret;
 	}
 
+	@Override
 	public KimConcept getRelationshipSource() {
 		return relationshipSource;
 	}
 
+	@Override
+	public KimConcept getTemporalInherent() {
+		return temporalInherent;
+	}
+
+	public void setTemporalInherent(KimConcept event) {
+		temporalInherent = event;
+	}
+
+	
 	public void setRelationshipSource(KimConcept relationshipSource) {
 		this.relationshipSource = relationshipSource;
 	}
 
+	@Override
 	public KimConcept getRelationshipTarget() {
 		return relationshipTarget;
 	}
