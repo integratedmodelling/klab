@@ -781,13 +781,22 @@ public interface KimPackage extends EPackage
   int URN__NAME = 0;
 
   /**
+   * The feature id for the '<em><b>Strings</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int URN__STRINGS = 1;
+
+  /**
    * The number of structural features of the '<em>Urn</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int URN_FEATURE_COUNT = 1;
+  int URN_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.LookupTableImpl <em>Lookup Table</em>}' class.
@@ -5360,6 +5369,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getUrn_Name();
+
+  /**
+   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kim.kim.Urn#getStrings <em>Strings</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Strings</em>'.
+   * @see org.integratedmodelling.kim.kim.Urn#getStrings()
+   * @see #getUrn()
+   * @generated
+   */
+  EAttribute getUrn_Strings();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.LookupTable <em>Lookup Table</em>}'.
@@ -9995,6 +10015,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute URN__NAME = eINSTANCE.getUrn_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Strings</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute URN__STRINGS = eINSTANCE.getUrn_Strings();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.LookupTableImpl <em>Lookup Table</em>}' class.

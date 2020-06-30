@@ -8,11 +8,28 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.math3.distribution.BetaDistribution;
+import org.apache.commons.math3.distribution.BinomialDistribution;
+import org.apache.commons.math3.distribution.CauchyDistribution;
+import org.apache.commons.math3.distribution.ExponentialDistribution;
+import org.apache.commons.math3.distribution.FDistribution;
+import org.apache.commons.math3.distribution.GeometricDistribution;
+import org.apache.commons.math3.distribution.HypergeometricDistribution;
 import org.apache.commons.math3.distribution.IntegerDistribution;
+import org.apache.commons.math3.distribution.LaplaceDistribution;
+import org.apache.commons.math3.distribution.LevyDistribution;
 import org.apache.commons.math3.distribution.LogNormalDistribution;
+import org.apache.commons.math3.distribution.LogisticDistribution;
+import org.apache.commons.math3.distribution.NakagamiDistribution;
 import org.apache.commons.math3.distribution.NormalDistribution;
+import org.apache.commons.math3.distribution.ParetoDistribution;
+import org.apache.commons.math3.distribution.PascalDistribution;
+import org.apache.commons.math3.distribution.PoissonDistribution;
 import org.apache.commons.math3.distribution.RealDistribution;
+import org.apache.commons.math3.distribution.TDistribution;
+import org.apache.commons.math3.distribution.TriangularDistribution;
 import org.apache.commons.math3.distribution.UniformRealDistribution;
+import org.apache.commons.math3.distribution.WeibullDistribution;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -106,14 +123,28 @@ public class RandomAdapter implements IUrnAdapter {
 	public static final String DATA = "data";
 	public static final String NAME = "random";
 
+	public static final String P0 = "p0";
+	public static final String P1 = "p1";
+	public static final String P2 = "p2";
+	public static final String P3 = "p3";
+
 	public static String[] namespace_ids = new String[] { DATA, EVENTS, OBJECTS };
 	public static String[] shape_ids = new String[] { LINES, POINTS, POLYGONS };
 	public static String[] distribution_ids = new String[] { POISSON, PASCAL, HYPERGEOMETRIC, GEOMETRIC, BINOMIAL,
 			LAPLACE, EXPONENTIAL, F, T, NAKAGAMI, BETA, CAUCHY, TRIANGULAR, GAMMA, PARETO, WEIBULL, LEVY, GAUSSIAN,
 			LOGNORMAL, LOGISTIC, UNIFORM };
-	public static String[] object_attribute_ids = new String[] { FRACTION, XDIVS, YDIVS, VERTICES, STD, GRID };
+	public static String[] object_attribute_ids = new String[] { FRACTION, XDIVS, YDIVS, VERTICES, STD, GRID, P0, P1,
+			P2, P3 };
 
 	private Map<String, Object> distributions = Collections.synchronizedMap(new HashMap<>());
+
+	
+	public RandomAdapter() {
+		Arrays.sort(namespace_ids);
+		Arrays.sort(shape_ids);
+		Arrays.sort(distribution_ids);
+		Arrays.sort(object_attribute_ids);
+	}
 	
 	@Override
 	public String getName() {
@@ -200,9 +231,7 @@ public class RandomAdapter implements IUrnAdapter {
 					if (Arrays.binarySearch(object_attribute_ids, attribute) < 0) {
 						Object value = getAttributeValue(urn.getParameters().get(attribute));
 						if (value != null) {
-							Builder sbuilder = obuilder.startState(attribute);
-							sbuilder.add(value);
-							sbuilder.finishState();
+							obuilder.withMetadata(attribute, value);
 						}
 					}
 				}
@@ -215,23 +244,22 @@ public class RandomAdapter implements IUrnAdapter {
 	private synchronized Object getAttributeValue(String string) {
 		if (NumberUtils.encodesDouble(string) || NumberUtils.encodesLong(string)) {
 			return Double.parseDouble(string);
-		} 
+		}
 		String[] tokens = Utils.parseAsFunctionCall(string);
 		if (tokens != null && Arrays.binarySearch(distribution_ids, tokens[0]) >= 0) {
 			return sampleDistribution(tokens);
 		}
-		
+
 		return null;
 	}
 
 	private Double sampleDistribution(String[] tokens) {
 		Object distribution = getDistribution(tokens);
 		if (distribution instanceof RealDistribution) {
-			return ((RealDistribution)distribution).sample();
+			return ((RealDistribution) distribution).sample();
+		} else if (distribution instanceof IntegerDistribution) {
+			return (double)((IntegerDistribution) distribution).sample();
 		}
-		
-		// TODO other distributions
-		
 		return null;
 	}
 
@@ -270,29 +298,28 @@ public class RandomAdapter implements IUrnAdapter {
 		}
 		stateBuilder.finishState();
 	}
-	
+
 	private Object getDistribution(Urn urn) {
-		
+
 		List<String> tokens = new ArrayList<>();
 		tokens.add(urn.getResourceId());
-		for (int i = 0; ; i++) {
-			if (!urn.getParameters().containsKey("p"+i)) {
+		for (int i = 0;; i++) {
+			if (!urn.getParameters().containsKey("p" + i)) {
 				break;
 			}
 			tokens.add(urn.getParameters().get("p" + i));
 		}
-		
+
 		return getDistribution(tokens.toArray(new String[tokens.size()]));
 	}
-	
-	
+
 	private synchronized Object getDistribution(String[] tokens) {
-		
+
 		String signature = Arrays.toString(tokens);
 		if (distributions.containsKey(signature)) {
 			return distributions.get(signature);
 		}
-		
+
 		List<Double> params = new ArrayList<>();
 		for (int i = 1; i < tokens.length; i++) {
 			try {
@@ -303,56 +330,154 @@ public class RandomAdapter implements IUrnAdapter {
 		}
 
 		Object ret = null;
-		
+
 		switch (tokens[0]) {
 		case UNIFORM:
-			ret = new UniformRealDistribution();
+			if (params.size() == 0) {
+				ret = new UniformRealDistribution();
+			} else if (params.size() == 2) {
+				ret = new UniformRealDistribution(params.get(0), params.get(1));
+			}
+			break;
 		case LOGISTIC:
+			if (params.size() == 2) {
+				ret = new LogisticDistribution(params.get(0), params.get(1));
+			}
 			break;
 		case LOGNORMAL:
-			ret = new LogNormalDistribution();
+			if (params.size() == 0) {
+				ret = new LogNormalDistribution();
+			} else if (params.size() == 2) {
+				ret = new LogNormalDistribution(params.get(0), params.get(1));
+			}
+			break;
 		case GAUSSIAN:
-			ret = new NormalDistribution();
+			if (params.size() == 0) {
+				ret = new NormalDistribution();
+			} else if (params.size() == 2) {
+				ret = new NormalDistribution(params.get(0), params.get(1));
+			}
+			break;
 		case LEVY:
+			if (params.size() == 2) {
+				ret = new LevyDistribution(params.get(0), params.get(1));
+			}
 			break;
 		case WEIBULL:
+			if (params.size() == 2) {
+				ret = new WeibullDistribution(params.get(0), params.get(1));
+			} else if (params.size() == 3) {
+				ret = new WeibullDistribution(params.get(0), params.get(1), params.get(2));
+			}
 			break;
 		case PARETO:
+			if (params.size() == 0) {
+				ret = new ParetoDistribution();
+			} else if (params.size() == 2) {
+				ret = new ParetoDistribution(params.get(0), params.get(1));
+			} else if (params.size() == 3) {
+				ret = new ParetoDistribution(params.get(0), params.get(1), params.get(2));
+			}
 			break;
 		case GAMMA:
+			if (params.size() == 0) {
+				ret = new ParetoDistribution();
+			} else if (params.size() == 2) {
+				ret = new ParetoDistribution(params.get(0), params.get(1));
+			} else if (params.size() == 3) {
+				ret = new ParetoDistribution(params.get(0), params.get(1), params.get(2));
+			}
 			break;
 		case TRIANGULAR:
+			if (params.size() == 3) {
+				ret = new TriangularDistribution(params.get(0), params.get(1), params.get(2));
+			}
 			break;
 		case CAUCHY:
+			if (params.size() == 0) {
+				ret = new CauchyDistribution();
+			} else if (params.size() == 2) {
+				ret = new CauchyDistribution(params.get(0), params.get(1));
+			} else if (params.size() == 3) {
+				ret = new CauchyDistribution(params.get(0), params.get(1), params.get(2));
+			}
 			break;
 		case BETA:
+			if (params.size() == 2) {
+				ret = new BetaDistribution(params.get(0), params.get(1));
+			} else if (params.size() == 3) {
+				ret = new BetaDistribution(params.get(0), params.get(1), params.get(2));
+			}
 			break;
 		case NAKAGAMI:
+			if (params.size() == 2) {
+				ret = new NakagamiDistribution(params.get(0), params.get(1));
+			} else if (params.size() == 3) {
+				ret = new NakagamiDistribution(params.get(0), params.get(1), params.get(2));
+			}
 			break;
 		case T:
+			if (params.size() == 1) {
+				ret = new TDistribution(params.get(0));
+			} else if (params.size() == 2) {
+				ret = new TDistribution(params.get(0), params.get(1));
+			}
 			break;
 		case F:
+			if (params.size() == 2) {
+				ret = new FDistribution(params.get(0), params.get(1));
+			} else if (params.size() == 3) {
+				ret = new FDistribution(params.get(0), params.get(1), params.get(2));
+			}
 			break;
 		case EXPONENTIAL:
+			if (params.size() == 1) {
+				ret = new ExponentialDistribution(params.get(0));
+			} else if (params.size() == 2) {
+				ret = new ExponentialDistribution(params.get(0), params.get(1));
+			}
 			break;
 		case LAPLACE:
+			if (params.size() == 2) {
+				ret = new LaplaceDistribution(params.get(0), params.get(1));
+			}
 			break;
 		case BINOMIAL:
+			if (params.size() == 2) {
+				ret = new BinomialDistribution(params.get(0).intValue(), params.get(1));
+			}
 			break;
 		case GEOMETRIC:
+			if (params.size() == 1) {
+				ret = new GeometricDistribution(params.get(0));
+			}
 			break;
 		case HYPERGEOMETRIC:
+			if (params.size() == 3) {
+				ret = new HypergeometricDistribution(params.get(0).intValue(), params.get(1).intValue(),
+						params.get(2).intValue());
+			}
 			break;
 		case PASCAL:
+			if (params.size() == 2) {
+				ret = new PascalDistribution(params.get(0).intValue(), params.get(1));
+			}
 			break;
 		case POISSON:
+			if (params.size() == 1) {
+				ret = new PoissonDistribution(params.get(0));
+			} else if (params.size() == 2) {
+				ret = new PoissonDistribution(params.get(0), params.get(1));
+			}
 			break;
 		}
-		
-		if (ret != null) {
-			distributions.put(signature, ret);
+
+		if (ret == null) {
+			throw new IllegalArgumentException("random adapter: distribution " + tokens[0] + " called with wrong parameters or unknown");
 		}
-		
+
+		distributions.put(signature, ret);
+
 		return ret;
 	}
 

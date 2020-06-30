@@ -53,7 +53,8 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getClassifierRHSWithIdAccess().getAlternatives_1_1(), "rule__ClassifierRHSWithId__Alternatives_1_1");
 			builder.put(grammarAccess.getClassifierRHSWithIdAccess().getAlternatives_1_4(), "rule__ClassifierRHSWithId__Alternatives_1_4");
 			builder.put(grammarAccess.getClassifierRHSWithIdAccess().getIdAlternatives_6_0(), "rule__ClassifierRHSWithId__IdAlternatives_6_0");
-			builder.put(grammarAccess.getUrnAccess().getNameAlternatives_0(), "rule__Urn__NameAlternatives_0");
+			builder.put(grammarAccess.getUrnAccess().getAlternatives(), "rule__Urn__Alternatives");
+			builder.put(grammarAccess.getUrnAccess().getNameAlternatives_0_0(), "rule__Urn__NameAlternatives_0_0");
 			builder.put(grammarAccess.getHeaderRowAccess().getElementsAlternatives_0_0(), "rule__HeaderRow__ElementsAlternatives_0_0");
 			builder.put(grammarAccess.getHeaderRowAccess().getElementsAlternatives_1_1_0(), "rule__HeaderRow__ElementsAlternatives_1_1_0");
 			builder.put(grammarAccess.getTableClassifierAccess().getAlternatives(), "rule__TableClassifier__Alternatives");
@@ -652,7 +653,8 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getClassifierRHSWithIdAccess().getExpressionAssignment_7_1(), "rule__ClassifierRHSWithId__ExpressionAssignment_7_1");
 			builder.put(grammarAccess.getClassifierRHSWithIdAccess().getNodataAssignment_8(), "rule__ClassifierRHSWithId__NodataAssignment_8");
 			builder.put(grammarAccess.getClassifierRHSWithIdAccess().getStarAssignment_9(), "rule__ClassifierRHSWithId__StarAssignment_9");
-			builder.put(grammarAccess.getUrnAccess().getNameAssignment(), "rule__Urn__NameAssignment");
+			builder.put(grammarAccess.getUrnAccess().getNameAssignment_0(), "rule__Urn__NameAssignment_0");
+			builder.put(grammarAccess.getUrnAccess().getStringsAssignment_1(), "rule__Urn__StringsAssignment_1");
 			builder.put(grammarAccess.getLookupTableAccess().getTableAssignment_2(), "rule__LookupTable__TableAssignment_2");
 			builder.put(grammarAccess.getTableAccess().getHeadersAssignment_0_0(), "rule__Table__HeadersAssignment_0_0");
 			builder.put(grammarAccess.getTableAccess().getRowsAssignment_1(), "rule__Table__RowsAssignment_1");

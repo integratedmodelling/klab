@@ -256,11 +256,12 @@ class KimValidator extends AbstractKimValidator {
 		var EObject mo = urn.eContainer?.eContainer;
 		var ModelStatement model = if(mo !== null && mo instanceof ModelStatement) mo as ModelStatement else null;
 		for (u : model.body.urns) {
-			val UrnDescriptor ud = Kim.INSTANCE.getUrnDescriptor(u.name);
+			val urnValue = Kim.INSTANCE.getUrnValue(u)
+			val UrnDescriptor ud = Kim.INSTANCE.getUrnDescriptor(urnValue);
 			if (ud === null || ud.isDead || !ud.isAccessible) {
 				if (ud !== null) {
 					if (!ud.isKnown) {
-						warning('URN ' + u.name + (
+						warning('URN ' + urnValue + (
 						if (ud.isDead) {
 							' is not functional at the moment'
 						} else {
@@ -286,7 +287,7 @@ class KimValidator extends AbstractKimValidator {
 			}
 		}
 	}
-
+	
 	@Check
 	def checkTable(Table table) {
 		var ncols = -1;
@@ -701,7 +702,7 @@ class KimValidator extends AbstractKimValidator {
 //				descriptor.resourceMerger = model.merging
 				// data source - function or literal/remote URN
 				for (urn : model.urns) {
-					descriptor.resourceUrns.add(urn.name)
+					descriptor.resourceUrns.add(Kim.INSTANCE.getUrnValue(urn))
 				}
 
 				/* if (model.function !== null) {

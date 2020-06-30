@@ -1656,6 +1656,13 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 * subset and to aggregate. This must apply also to event folders, which must
 		 * only show the current events.
 		 */
+		for (String key : catalog.keySet()) {
+			IArtifact artifact = catalog.get(key);
+			if (artifact instanceof ObservationGroup && artifact.getType().isOccurrent()) {
+				// TODO wrap into a temporally constrained group
+				System.out.println("PIPPA DI DIO");
+			} 
+		}
 
 		return ret;
 	}

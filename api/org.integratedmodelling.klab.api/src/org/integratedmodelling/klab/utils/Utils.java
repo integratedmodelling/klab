@@ -452,11 +452,11 @@ public class Utils {
 		}
 
 		String[] ret = new String[1 + (parms == null ? 0 : parms.length)];
-		ret[0] = id;
+		ret[0] = id.trim();
 		if (parms != null) {
 			int n = 1;
 			for (String p : parms) {
-				ret[n++] = p;
+				ret[n++] = p.trim();
 			}
 		}
 

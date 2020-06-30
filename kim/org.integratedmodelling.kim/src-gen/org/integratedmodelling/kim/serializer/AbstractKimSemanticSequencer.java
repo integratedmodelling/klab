@@ -508,29 +508,29 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         metadata=Metadata | 
 	 *                         properties+=PropertyStatement
 	 *                     )? 
-	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
-	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
-	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (implications+=Implication implications+=Implication*)? 
+	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
 	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
+	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
 	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
+	 *                     (
+	 *                         alias?='equals'? 
+	 *                         coreConcept?='core'? 
+	 *                         (nothing?='nothing' | (parents+=ConceptDeclaration ((connectors+=',' | connectors+='or' | connectors+='and') parents+=ConceptDeclaration)*))
+	 *                     )? 
 	 *                     (
 	 *                         roles+=ConceptDeclaration 
 	 *                         roles+=ConceptDeclaration* 
 	 *                         (targetObservables+=ConceptDeclaration targetObservables+=ConceptDeclaration*)? 
 	 *                         restrictedObservables+=ConceptDeclaration 
 	 *                         restrictedObservables+=ConceptDeclaration*
-	 *                     )? 
-	 *                     (
-	 *                         alias?='equals'? 
-	 *                         coreConcept?='core'? 
-	 *                         (nothing?='nothing' | (parents+=ConceptDeclaration ((connectors+=',' | connectors+='or' | connectors+='and') parents+=ConceptDeclaration)*))
 	 *                     )?
 	 *                 )+
 	 *             ) | 
@@ -682,10 +682,10 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
@@ -713,10 +713,10 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
@@ -1629,7 +1629,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     Urn returns Urn
 	 *
 	 * Constraint:
-	 *     (name=PathName | name=UrnId | name=STRING | name=LocalFilePath)
+	 *     (name=PathName | name=UrnId | name=LocalFilePath | strings+=STRING+)
 	 */
 	protected void sequence_Urn(ISerializationContext context, Urn semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

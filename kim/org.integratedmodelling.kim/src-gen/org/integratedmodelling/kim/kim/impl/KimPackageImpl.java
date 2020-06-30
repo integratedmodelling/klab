@@ -1332,6 +1332,17 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EAttribute getUrn_Strings()
+  {
+    return (EAttribute)urnEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getLookupTable()
   {
     return lookupTableEClass;
@@ -5517,6 +5528,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     urnEClass = createEClass(URN);
     createEAttribute(urnEClass, URN__NAME);
+    createEAttribute(urnEClass, URN__STRINGS);
 
     lookupTableEClass = createEClass(LOOKUP_TABLE);
     createEReference(lookupTableEClass, LOOKUP_TABLE__TABLE);
@@ -6050,6 +6062,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     initEClass(urnEClass, Urn.class, "Urn", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getUrn_Name(), ecorePackage.getEString(), "name", null, 0, 1, Urn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getUrn_Strings(), ecorePackage.getEString(), "strings", null, 0, -1, Urn.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(lookupTableEClass, LookupTable.class, "LookupTable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getLookupTable_Table(), this.getTable(), null, "table", null, 0, 1, LookupTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

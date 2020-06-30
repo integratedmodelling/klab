@@ -69,6 +69,7 @@ import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Quantity;
+import org.integratedmodelling.kim.kim.Urn;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.kim.validation.KimValidator;
@@ -1940,6 +1941,20 @@ public enum Kim {
 
 	public boolean isKimFile(File file) {
 		return file.toString().endsWith(".kim") ||  file.toString().endsWith(".tql");
+	}
+	
+	public String getUrnValue(Urn urn) {
+		if (urn.getName() != null) {
+			return urn.getName();
+		}
+		if (urn.getStrings() != null) {
+			StringBuffer sbuf = new StringBuffer(512);
+			for (String s : urn.getStrings()) {
+				sbuf.append(s);
+			}
+			return sbuf.toString();
+		}
+		return null;
 	}
 
 }

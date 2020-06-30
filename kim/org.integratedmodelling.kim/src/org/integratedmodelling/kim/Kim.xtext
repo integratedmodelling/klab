@@ -39,12 +39,9 @@ ModelBodyStatement:
 	(instantiator?='each')? 
 		(
 			(
-//				(models+=PathName (',' models+=PathName)*) | 
 				(urns+=Urn (',' urns+=Urn)*) | 
-//				function=Function | 
 				number=Number | 
 				boolean=('true' | 'false') //| 
-//				concept=SimpleObservableSemantics
 			)
 			 'as'
 		)? 
@@ -98,8 +95,8 @@ ClassifierRHSWithId returns ClassifierRHS:
 	star?='*';	
 	
 Urn:
-	// String used when there are strange chars or keywords in the URN.
-	name=(PathName|UrnId|STRING|LocalFilePath)
+	// String used when there are strange chars or keywords in the URN. Consecutive strings will be merged.
+	name=(PathName|UrnId|LocalFilePath) | strings+=STRING+
 ;
 
 // Lookup table literal

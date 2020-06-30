@@ -166,15 +166,6 @@ public class KimModel extends KimStatement implements IKimModel {
 		this.resourceUrns = resourceUrn;
 	}
 
-//	@Override
-//	public Optional<IServiceCall> getResourceFunction() {
-//		return resourceFunction == null ? Optional.empty() : Optional.of(resourceFunction);
-//	}
-
-//	public void setResourceFunction(IServiceCall resourceFunction) {
-//		this.resourceFunction = resourceFunction;
-//	}
-
 	@Override
 	public Optional<Object> getInlineValue() {
 		return inlineValue == null ? Optional.empty() : Optional.of(inlineValue);
@@ -232,13 +223,5 @@ public class KimModel extends KimStatement implements IKimModel {
 		this.scope = scope;
 	}
 
-//	@Override
-//	public boolean isResourceMerger() {
-//		return resourceMerger;
-//	}
-//
-//	public void setResourceMerger(boolean resourceMerger) {
-//		this.resourceMerger = resourceMerger;
-//	}
 
 }

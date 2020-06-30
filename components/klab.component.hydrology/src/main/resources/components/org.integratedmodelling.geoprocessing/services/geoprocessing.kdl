@@ -5,7 +5,7 @@
 @version 0.10.0
 @namespace im.geoprocessing
 
-export object buffer
+filter object buffer
 	"Transforms or creates spatial objects by adding a buffer to their spatial extent."
 	 label 'Distance buffering'
 {

@@ -449,7 +449,6 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//(urns+=Urn (',' urns+=Urn)* | number=Number | boolean=('true' | 'false'))
 		public Alternatives getAlternatives_1_0() { return cAlternatives_1_0; }
 		
-		////				(models+=PathName (',' models+=PathName)*) | 
 		//urns+=Urn (',' urns+=Urn)*
 		public Group getGroup_1_0_0() { return cGroup_1_0_0; }
 		
@@ -471,7 +470,6 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Urn
 		public RuleCall getUrnsUrnParserRuleCall_1_0_0_1_1_0() { return cUrnsUrnParserRuleCall_1_0_0_1_1_0; }
 		
-		////				function=Function | 
 		//number=Number
 		public Assignment getNumberAssignment_1_0_1() { return cNumberAssignment_1_0_1; }
 		
@@ -1197,35 +1195,44 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	public class UrnElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Urn");
-		private final Assignment cNameAssignment = (Assignment)rule.eContents().get(1);
-		private final Alternatives cNameAlternatives_0 = (Alternatives)cNameAssignment.eContents().get(0);
-		private final RuleCall cNamePathNameParserRuleCall_0_0 = (RuleCall)cNameAlternatives_0.eContents().get(0);
-		private final RuleCall cNameUrnIdParserRuleCall_0_1 = (RuleCall)cNameAlternatives_0.eContents().get(1);
-		private final RuleCall cNameSTRINGTerminalRuleCall_0_2 = (RuleCall)cNameAlternatives_0.eContents().get(2);
-		private final RuleCall cNameLocalFilePathParserRuleCall_0_3 = (RuleCall)cNameAlternatives_0.eContents().get(3);
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Assignment cNameAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final Alternatives cNameAlternatives_0_0 = (Alternatives)cNameAssignment_0.eContents().get(0);
+		private final RuleCall cNamePathNameParserRuleCall_0_0_0 = (RuleCall)cNameAlternatives_0_0.eContents().get(0);
+		private final RuleCall cNameUrnIdParserRuleCall_0_0_1 = (RuleCall)cNameAlternatives_0_0.eContents().get(1);
+		private final RuleCall cNameLocalFilePathParserRuleCall_0_0_2 = (RuleCall)cNameAlternatives_0_0.eContents().get(2);
+		private final Assignment cStringsAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
+		private final RuleCall cStringsSTRINGTerminalRuleCall_1_0 = (RuleCall)cStringsAssignment_1.eContents().get(0);
 		
 		//Urn:
-		//	name=(PathName | UrnId | STRING | LocalFilePath);
+		//	name=(PathName | UrnId | LocalFilePath) | strings+=STRING+;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//// String used when there are strange chars or keywords in the URN.
-		//name=(PathName | UrnId | STRING | LocalFilePath)
-		public Assignment getNameAssignment() { return cNameAssignment; }
+		//// String used when there are strange chars or keywords in the URN. Consecutive strings will be merged.
+		//name=(PathName | UrnId | LocalFilePath) | strings+=STRING+
+		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//(PathName | UrnId | STRING | LocalFilePath)
-		public Alternatives getNameAlternatives_0() { return cNameAlternatives_0; }
+		//// String used when there are strange chars or keywords in the URN. Consecutive strings will be merged.
+		//name=(PathName | UrnId | LocalFilePath)
+		public Assignment getNameAssignment_0() { return cNameAssignment_0; }
+		
+		//(PathName | UrnId | LocalFilePath)
+		public Alternatives getNameAlternatives_0_0() { return cNameAlternatives_0_0; }
 		
 		//PathName
-		public RuleCall getNamePathNameParserRuleCall_0_0() { return cNamePathNameParserRuleCall_0_0; }
+		public RuleCall getNamePathNameParserRuleCall_0_0_0() { return cNamePathNameParserRuleCall_0_0_0; }
 		
 		//UrnId
-		public RuleCall getNameUrnIdParserRuleCall_0_1() { return cNameUrnIdParserRuleCall_0_1; }
-		
-		//STRING
-		public RuleCall getNameSTRINGTerminalRuleCall_0_2() { return cNameSTRINGTerminalRuleCall_0_2; }
+		public RuleCall getNameUrnIdParserRuleCall_0_0_1() { return cNameUrnIdParserRuleCall_0_0_1; }
 		
 		//LocalFilePath
-		public RuleCall getNameLocalFilePathParserRuleCall_0_3() { return cNameLocalFilePathParserRuleCall_0_3; }
+		public RuleCall getNameLocalFilePathParserRuleCall_0_0_2() { return cNameLocalFilePathParserRuleCall_0_0_2; }
+		
+		//strings+=STRING+
+		public Assignment getStringsAssignment_1() { return cStringsAssignment_1; }
+		
+		//STRING
+		public RuleCall getStringsSTRINGTerminalRuleCall_1_0() { return cStringsSTRINGTerminalRuleCall_1_0; }
 	}
 	public class LookupTableElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.LookupTable");
@@ -10809,7 +10816,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Urn:
-	//	name=(PathName | UrnId | STRING | LocalFilePath);
+	//	name=(PathName | UrnId | LocalFilePath) | strings+=STRING+;
 	public UrnElements getUrnAccess() {
 		return pUrn;
 	}

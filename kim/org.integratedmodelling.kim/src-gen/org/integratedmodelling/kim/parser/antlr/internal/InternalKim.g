@@ -2094,70 +2094,76 @@ ruleUrn returns [EObject current=null]
 	(
 		(
 			(
-				{
-					newCompositeNode(grammarAccess.getUrnAccess().getNamePathNameParserRuleCall_0_0());
-				}
-				lv_name_0_1=rulePathName
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getUrnRule());
+				(
+					{
+						newCompositeNode(grammarAccess.getUrnAccess().getNamePathNameParserRuleCall_0_0_0());
 					}
-					set(
-						$current,
-						"name",
-						lv_name_0_1,
-						"org.integratedmodelling.kim.Kim.PathName");
-					afterParserOrEnumRuleCall();
-				}
-				    |
-				{
-					newCompositeNode(grammarAccess.getUrnAccess().getNameUrnIdParserRuleCall_0_1());
-				}
-				lv_name_0_2=ruleUrnId
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getUrnRule());
+					lv_name_0_1=rulePathName
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getUrnRule());
+						}
+						set(
+							$current,
+							"name",
+							lv_name_0_1,
+							"org.integratedmodelling.kim.Kim.PathName");
+						afterParserOrEnumRuleCall();
 					}
-					set(
-						$current,
-						"name",
-						lv_name_0_2,
-						"org.integratedmodelling.kim.Kim.UrnId");
-					afterParserOrEnumRuleCall();
-				}
-				    |
-				lv_name_0_3=RULE_STRING
+					    |
+					{
+						newCompositeNode(grammarAccess.getUrnAccess().getNameUrnIdParserRuleCall_0_0_1());
+					}
+					lv_name_0_2=ruleUrnId
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getUrnRule());
+						}
+						set(
+							$current,
+							"name",
+							lv_name_0_2,
+							"org.integratedmodelling.kim.Kim.UrnId");
+						afterParserOrEnumRuleCall();
+					}
+					    |
+					{
+						newCompositeNode(grammarAccess.getUrnAccess().getNameLocalFilePathParserRuleCall_0_0_2());
+					}
+					lv_name_0_3=ruleLocalFilePath
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getUrnRule());
+						}
+						set(
+							$current,
+							"name",
+							lv_name_0_3,
+							"org.integratedmodelling.kim.Kim.LocalFilePath");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				lv_strings_1_0=RULE_STRING
 				{
-					newLeafNode(lv_name_0_3, grammarAccess.getUrnAccess().getNameSTRINGTerminalRuleCall_0_2());
+					newLeafNode(lv_strings_1_0, grammarAccess.getUrnAccess().getStringsSTRINGTerminalRuleCall_1_0());
 				}
 				{
 					if ($current==null) {
 						$current = createModelElement(grammarAccess.getUrnRule());
 					}
-					setWithLastConsumed(
+					addWithLastConsumed(
 						$current,
-						"name",
-						lv_name_0_3,
+						"strings",
+						lv_strings_1_0,
 						"org.eclipse.xtext.common.Terminals.STRING");
 				}
-				    |
-				{
-					newCompositeNode(grammarAccess.getUrnAccess().getNameLocalFilePathParserRuleCall_0_3());
-				}
-				lv_name_0_4=ruleLocalFilePath
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getUrnRule());
-					}
-					set(
-						$current,
-						"name",
-						lv_name_0_4,
-						"org.integratedmodelling.kim.Kim.LocalFilePath");
-					afterParserOrEnumRuleCall();
-				}
 			)
-		)
+		)+
 	)
 ;
 
