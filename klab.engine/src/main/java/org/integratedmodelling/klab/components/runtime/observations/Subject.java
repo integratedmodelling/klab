@@ -25,6 +25,10 @@ public class Subject extends CountableObservation implements ISubject {
     super(name, observable, scale, context);
   }
   
+  protected Subject(Subject other) {
+	  super(other);
+  }
+  
   @Override
   public Collection<IEvent> getEvents() {
     // TODO Auto-generated method stub

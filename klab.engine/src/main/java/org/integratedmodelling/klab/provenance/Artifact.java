@@ -47,8 +47,26 @@ public abstract class Artifact implements IArtifact {
 	 * additional logics.
 	 */
 	boolean empty;
-	long timestamp = System.currentTimeMillis();
+	protected long timestamp = System.currentTimeMillis();
 	private String generatorActivityId;
+	
+	public Artifact() {}
+	
+	/**
+	 * Used only to create filtering wrappers for observations
+	 * @param other
+	 */
+	protected Artifact(Artifact other) {
+		this.annotations.addAll(other.annotations);
+		this.activities.addAll(other.activities);
+		this.peers.putAll(other.peers);
+		this.archetype = other.archetype;
+		this.metadata.putAll(other.metadata);
+		this.empty = other.empty;
+		this.generatorActivityId = other.generatorActivityId;
+		this.timestamp = other.timestamp;
+	}
+	
 	
 	public void chain(IArtifact data) {
 		throw new IllegalStateException("chain() should only be called on a group");

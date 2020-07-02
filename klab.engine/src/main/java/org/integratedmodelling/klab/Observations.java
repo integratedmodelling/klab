@@ -52,7 +52,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
-import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
@@ -219,7 +218,7 @@ public enum Observations implements IObservationService {
 			ILocator locator, int childLevel, String viewId) {
 
 		ObservationReference ret = new ObservationReference();
-		
+
 		ret.setEmpty(observation.isEmpty());
 
 		// for now
@@ -256,7 +255,7 @@ public enum Observations implements IObservationService {
 
 		IArtifact parent = observation.getScope().getParentOf(observation);
 		IArtifact parentArtifact = observation.getScope().getParentArtifactOf(observation);
-		
+
 		ret.setId(observation.getId());
 		ret.setContextId(((Observation) observation).getObservationContextId());
 		ret.setUrn(observation.getUrn());
@@ -374,8 +373,8 @@ public enum Observations implements IObservationService {
 			}
 
 			/*
-			 * compute available export formats. This may change after an update so it's done also in
-			 * ObservationChange.
+			 * compute available export formats. This may change after an update so it's
+			 * done also in ObservationChange.
 			 */
 			ret.getExportFormats().addAll(getExportFormats(observation));
 
@@ -493,7 +492,7 @@ public enum Observations implements IObservationService {
 						org.integratedmodelling.klab.components.network.model.Network.ADAPTER_ID));
 			}
 		}
-		
+
 		/*
 		 * For now only one adapter is kept per format. Later we may offer the option by
 		 * using a set instead of a map and implementing equals() for ExportFormat to
@@ -558,7 +557,8 @@ public enum Observations implements IObservationService {
 		return ret;
 	}
 
-	public Observer makeROIObserver(final SpatialExtent regionOfInterest, ITime time, Namespace namespace, IMonitor monitor) {
+	public Observer makeROIObserver(final SpatialExtent regionOfInterest, ITime time, Namespace namespace,
+			IMonitor monitor) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
 		observable.setName(Geocoder.INSTANCE.geocode(regionOfInterest));
 		observable.setOptional(true);
@@ -683,6 +683,22 @@ public enum Observations implements IObservationService {
 			return (ITime) locator;
 		}
 		return null;
+	}
+
+	/**
+	 * Return whether the passed observation has a temporal identity. This applies
+	 * to events, processes, groups of events, and states that either belong to
+	 * events or are affected by processes.
+	 * 
+	 * @param observation
+	 * @return
+	 */
+	public boolean occurs(IObservation observation) {
+		return 
+				observation instanceof IProcess || 
+				observation instanceof IEvent ||
+				observation.getScope().getParentOf(observation) instanceof IEvent ||
+				((IRuntimeScope)observation.getScope()).getStructure().getOwningProcess(observation) != null;
 	}
 
 }

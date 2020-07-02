@@ -9,12 +9,27 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- The random URN adapter accessible through klab:random URNs now creates objects
+  and events, with optional attributes that can have fixed values or take them
+  from all sorts of distributions. 
+- Syntactic support for "new <behavior> [(args)]" verb in k.Actors that creates
+  new actors from a behavior. A #tag in the arguments references the new actor for
+  later use.
+- Distinction between "library" (behavior for importing of actions) and "component"
+  which produces a peer UI layout within a parent layout when loaded with "new". 
+- Groups of events can be located in time (using the at() method) so that
+  they only produce the events that are happening when iterated. The unlocated
+  group still produces all events.
+- Syntactic support for 'during each' operator, which does not affect the 
+  semantics but schedules processes so that they only happen during events.
+- In models, long URNs can be specified in multiple consecutive strings, which are 
+  merged before use.
 - Each behavior is loaded into a separate actor and external messages to affect 
   that behavior must include the resulting appId. The main actor receives the messages
   and dispatches them if an appId is included. Bookkeeping and logics to start/stop/pause
   each behavior being added. Concurrent applications now fully supported.
 - UI layout communicated to view from actors with view components. Marshalling
-  mechanism for inclusion of UI-driven actions in place and working. Some support
+  mechanism for inclusion of UI-driven actions in place and working. Begin support
   for UI in the IDE.
 - k.Actors improvements include parsing of keys (introduced by : or ! for naked
   negative keys that encode false) for group and value metadata and addition of

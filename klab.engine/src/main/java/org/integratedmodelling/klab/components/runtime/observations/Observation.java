@@ -52,8 +52,6 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	private Observable observable;
 	private ObservationGroup group = null;
-	// last modification. Must be correct for any cache to work.
-	private long timestamp = System.currentTimeMillis();
 	// used to store the "main" status from annotations or because of directly
 	// observed. Should eventually
 	// come from provenance.
@@ -82,6 +80,25 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	// tracks the setting of the actor so we can avoid the ask pattern
 	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
 
+	protected Observation(Observation other) {
+		super(other);
+		this.observable = other.observable;
+		this.group = other.group;
+		this.main = other.main;
+		this.lastUpdate = other.lastUpdate;
+		this.creationTime = other.creationTime;
+		this.exitTime = other.exitTime;
+		this.dynamic = other.dynamic;
+		this.observationContextId = other.observationContextId;
+		this.contextualized = other.contextualized;
+		this.view = other.view;
+		this.changeset.addAll(other.changeset);
+		this.modificationListeners.addAll(other.modificationListeners);
+		this.actor = other.actor;
+		this.globalState.putAll(other.globalState);
+		this.actorSet = other.actorSet;
+	}
+	
 	public String getUrn() {
 		return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
 	}

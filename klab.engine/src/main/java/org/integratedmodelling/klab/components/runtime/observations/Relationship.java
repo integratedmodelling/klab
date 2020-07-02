@@ -10,6 +10,10 @@ public class Relationship extends CountableObservation implements IRelationship 
 	public Relationship(String name, Observable observable, Scale scale, IRuntimeScope context) {
 		super(name, observable, scale, context);
 	}
+	
+	protected Relationship(Relationship other) {
+		super(other);
+	}
 
 	@Override
 	public Subject getSource() {

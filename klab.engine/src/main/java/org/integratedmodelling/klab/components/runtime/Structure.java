@@ -2,8 +2,10 @@ package org.integratedmodelling.klab.components.runtime;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.observations.IProcess;
@@ -38,7 +40,8 @@ public class Structure implements IArtifact.Structure {
 			DefaultEdge.class);
 	private Graph<IArtifact, DefaultEdge> artifactStructure = new DefaultDirectedGraph<IArtifact, DefaultEdge>(
 			DefaultEdge.class);
-
+	private Map<String, IProcess> derivedOccurrents = new HashMap<>();
+	
 	@Override
 	public IArtifact getRootArtifact() {
 		for (IArtifact artifact : logicalStructure.vertexSet()) {
@@ -85,7 +88,7 @@ public class Structure implements IArtifact.Structure {
 		}
 		return null;
 	}
-	
+
 	@Override
 	public boolean contains(IArtifact artifact) {
 		return artifactStructure.containsVertex(artifact);
@@ -105,6 +108,13 @@ public class Structure implements IArtifact.Structure {
 
 		// these are redirected no matter what.
 		if (parentArtifact instanceof IProcess) {
+
+			/*
+			 * we keep the information about the artifact being owned by a process, so
+			 * that we can tell the occurrence when it's relevant.
+			 */
+			this.derivedOccurrents.put(childArtifact.getId(), (IProcess)parentArtifact);
+
 			parentArtifact = getArtifactParent(parentArtifact);
 		}
 
@@ -170,8 +180,9 @@ public class Structure implements IArtifact.Structure {
 		if (artifactStructure.containsVertex(object)) {
 			artifactStructure.removeVertex(object);
 		}
+		derivedOccurrents.remove(object.getId());		
 	}
-
+	
 	public void swap(IArtifact original, IArtifact replacement) {
 
 		if (logicalStructure.containsVertex(original)) {
@@ -210,6 +221,11 @@ public class Structure implements IArtifact.Structure {
 				artifactStructure.addEdge(replacement, target);
 			}
 		}
+	}
+	
+	@Override
+	public IProcess getOwningProcess(IArtifact artifact) {
+		return derivedOccurrents.get(artifact.getId());
 	}
 
 }

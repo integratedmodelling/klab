@@ -1659,8 +1659,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		for (String key : catalog.keySet()) {
 			IArtifact artifact = catalog.get(key);
 			if (artifact instanceof ObservationGroup && artifact.getType().isOccurrent()) {
-				// TODO wrap into a temporally constrained group
-				System.out.println("PIPPA DI DIO");
+				ret.catalog.put(key, ((IObservation)artifact).at(ret.scale.getTime()));
 			} 
 		}
 

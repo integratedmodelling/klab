@@ -39,6 +39,13 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	 */
 	private Set<IConcept> predicates = new LinkedHashSet<>();
 
+	protected DirectObservation(DirectObservation other) {
+		super(other);
+		this.name = other.name;
+		this.active = other.active;
+		this.predicates.addAll(other.predicates);
+	}
+	
 	protected DirectObservation(String name, Observable observable, Scale scale, IRuntimeScope context) {
 		super(observable, scale, context);
 		this.name = name;

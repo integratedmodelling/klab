@@ -47,6 +47,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.random.RandomShapes;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.AttributeReference;
@@ -113,6 +114,8 @@ public class RandomAdapter implements IUrnAdapter {
 	private static final String STD = "std";
 	private static final String VERTICES = "vertices";
 	private static final String GRID = "grid";
+	private static final String DURATION = "duration";
+	private static final String START = "start";
 
 	public static final String POLYGONS = "polygons";
 	public static final String LINES = "lines";
@@ -134,18 +137,17 @@ public class RandomAdapter implements IUrnAdapter {
 			LAPLACE, EXPONENTIAL, F, T, NAKAGAMI, BETA, CAUCHY, TRIANGULAR, GAMMA, PARETO, WEIBULL, LEVY, GAUSSIAN,
 			LOGNORMAL, LOGISTIC, UNIFORM };
 	public static String[] object_attribute_ids = new String[] { FRACTION, XDIVS, YDIVS, VERTICES, STD, GRID, P0, P1,
-			P2, P3 };
+			P2, P3, DURATION, START };
 
 	private Map<String, Object> distributions = Collections.synchronizedMap(new HashMap<>());
 
-	
 	public RandomAdapter() {
 		Arrays.sort(namespace_ids);
 		Arrays.sort(shape_ids);
 		Arrays.sort(distribution_ids);
 		Arrays.sort(object_attribute_ids);
 	}
-	
+
 	@Override
 	public String getName() {
 		return NAME;
@@ -258,7 +260,7 @@ public class RandomAdapter implements IUrnAdapter {
 		if (distribution instanceof RealDistribution) {
 			return ((RealDistribution) distribution).sample();
 		} else if (distribution instanceof IntegerDistribution) {
-			return (double)((IntegerDistribution) distribution).sample();
+			return (double) ((IntegerDistribution) distribution).sample();
 		}
 		return null;
 	}
@@ -267,10 +269,38 @@ public class RandomAdapter implements IUrnAdapter {
 
 		List<IExtent> extents = new ArrayList<>();
 		if (EVENTS.equals(urn.getNamespace())) {
+
+			/*
+			 * TODO tie to parameters
+			 */
+			String[] tspecs = new String[3];
 			// this is the time of the extent of computation
 			ITime time = scope.getScale().getTime();
-			// TODO modify as needed by specs
-			extents.add(time);
+
+			long start = time.getStart().getMilliseconds();
+			long duration = time.getEnd().getMilliseconds() - start;
+			
+			if (urn.getParameters().containsKey(START)) {
+				// same - use ref = 0-1 and refer to length of timestep in ms
+				Object d = getAttributeValue(START);
+				if (d instanceof Number && ((Number)d).doubleValue() > 0) {
+					if (((Number)d).doubleValue() >= duration) {
+						d = duration;
+					}
+					start += (long)((double)duration * ((Number)d).doubleValue());
+				}
+			}
+			
+			if (urn.getParameters().containsKey(DURATION)) {
+				// expected to produce a number of intervals
+				Object d = getAttributeValue(DURATION);
+				if (d instanceof Number && ((Number)d).doubleValue() > 0) {
+					duration = (long)((double)duration * ((Number)d).doubleValue());
+				}
+			}
+			
+			extents.add(Time.create(start, start+duration));
+
 		} else {
 			// full extent for a continuant
 			extents.add(scope.getContextSubject().getScale().getTime());
@@ -473,7 +503,8 @@ public class RandomAdapter implements IUrnAdapter {
 		}
 
 		if (ret == null) {
-			throw new IllegalArgumentException("random adapter: distribution " + tokens[0] + " called with wrong parameters or unknown");
+			throw new IllegalArgumentException(
+					"random adapter: distribution " + tokens[0] + " called with wrong parameters or unknown");
 		}
 
 		distributions.put(signature, ret);
