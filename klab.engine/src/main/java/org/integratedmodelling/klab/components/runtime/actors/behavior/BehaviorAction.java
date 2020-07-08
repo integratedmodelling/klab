@@ -21,7 +21,6 @@ public class BehaviorAction implements IBehavior.Action {
 	 */
 	private IKActorsAction statement;
 	private Behavior behavior;
-//	private CallSequence calls;
 	private List<IAnnotation> annotations = new ArrayList<>();
 	private String viewId;
 

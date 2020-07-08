@@ -194,7 +194,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 			}
 		}
 
-		if (formalName != null) {
+		if (formalName != null && !formalName.isEmpty()) {
 			ret += " named " + formalName;
 		}
 

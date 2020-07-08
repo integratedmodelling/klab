@@ -16,8 +16,10 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.wb.swt.ResourceManager;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimLoader;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -170,6 +172,18 @@ public class Activator extends AbstractUIPlugin {
 			public void createWorldviewPeerConcept(String coreConcept, String worldviewConcept) {
 				// this is a pure syntactic validator, no action due and no harm done as long
 				// as the engine doesn't use the same.
+			}
+
+			@Override
+			public String getObservableInformation(IKimObservable observable, boolean formatted) {
+				// TODO Auto-generated method stub
+				return "";
+			}
+
+			@Override
+			public String getConceptInformation(IKimConcept observable, boolean formatted) {
+				// TODO Auto-generated method stub
+				return "";
 			}
 
 		});

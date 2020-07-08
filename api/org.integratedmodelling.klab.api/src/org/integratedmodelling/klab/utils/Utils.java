@@ -228,6 +228,9 @@ public class Utils {
 				if (cls.equals(Integer.class)) {
 					return (T) new Integer(((Number) ret).intValue());
 				}
+				if (cls.equals(Short.class)) {
+					return (T) new Short(((Number) ret).shortValue());
+				}
 				if (cls.equals(Float.class)) {
 					return (T) new Float(((Number) ret).floatValue());
 				}
@@ -244,6 +247,9 @@ public class Utils {
 			if (cls.equals(Long.class)) {
 				return (T) new Long(((Boolean) ret) ? 1 : 0);
 			}
+			if (cls.equals(Short.class)) {
+				return (T) new Short(((Boolean) ret) ? (short)1 : 0);
+			}
 			if (cls.equals(Integer.class)) {
 				return (T) new Integer(((Boolean) ret) ? 1 : 0);
 			}
@@ -257,6 +263,9 @@ public class Utils {
 			}
 			if (cls.equals(Long.class)) {
 				return (T) new Long(Long.parseLong((String) ret));
+			}
+			if (cls.equals(Short.class)) {
+				return (T) new Short(Short.parseShort((String) ret));
 			}
 			if (cls.equals(Integer.class)) {
 				return (T) new Integer(Integer.parseInt((String) ret));

@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimLookupTable;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -132,6 +133,18 @@ public class KimValidator implements Kim.Validator {
 	@Override
 	public void createWorldviewPeerConcept(String coreConcept, String worldviewConcept) {
 		KimKnowledgeProcessor.INSTANCE.setWorldviewPeer(coreConcept, worldviewConcept);
+	}
+
+	@Override
+	public String getObservableInformation(IKimObservable observable, boolean formatted) {
+		// TODO Auto-generated method stub
+		return "";
+	}
+
+	@Override
+	public String getConceptInformation(IKimConcept observable, boolean formatted) {
+		// TODO Auto-generated method stub
+		return "";
 	}
 
 }

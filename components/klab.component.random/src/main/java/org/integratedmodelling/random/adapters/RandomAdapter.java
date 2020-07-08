@@ -65,19 +65,22 @@ import org.integratedmodelling.klab.utils.Utils;
  * <dt>data</dt>
  * <dd>produces numbers for states with the distribution set in the fourth field
  * (resource ID). Range, distribution and sequence vary according to parameters
- * min, max, mean, std, variance, alpha, beta, seed; defaults to normalized
- * distributions.</dd>
+ * <code>min</code>, <code>max</code>, <code>mean</code>, <code>std</code>,
+ * <code>variance</code>, <code>alpha</code>, <code>beta</code>,
+ * <code>seed</code>; defaults to normalized distributions.</dd>
  * <dt>events</dt>
  * <dd>produces random events with the shape and duration defined in parameters.
- * The fourth field (resource ID) can be polygons, points or lines. By default,
- * will produce non-overlapping shapes occupying a 10x10 grid in the context and
- * with a probability of 10% at each tick and a duration between 0.1 and 2x the
- * event frequency. Non-spatial events will be supported later.</dd>
+ * The fourth field (resource ID) can be <code>polygons</code>,
+ * <code>points</code> or <code>lines</code>. By default, will produce
+ * non-overlapping shapes occupying a 10x10 grid in the context and with a
+ * probability of 10% at each tick and a duration between 0.1 and 2x the event
+ * frequency. Non-spatial events will be supported later.</dd>
  * <dt>objects</dt>
  * <dd>produces random objects with the shape defined in parameters. The fourth
- * field (resource ID) can be polygons, points or lines. By default, will
- * produce non-overlapping shapes in a 10x10 grid with a 50% probability per
- * cell. Non-spatial objects will be supported later.</dd> *
+ * field (resource ID) can be <code>polygons</code>, <code>points</code> or
+ * <code>lines</code>. By default, will produce non-overlapping shapes in a
+ * 10x10 grid with a 50% probability per cell. Non-spatial objects will be
+ * supported later.</dd> *
  * </dl>
  * 
  * @author Ferd
@@ -279,27 +282,27 @@ public class RandomAdapter implements IUrnAdapter {
 
 			long start = time.getStart().getMilliseconds();
 			long duration = time.getEnd().getMilliseconds() - start;
-			
+
 			if (urn.getParameters().containsKey(START)) {
 				// same - use ref = 0-1 and refer to length of timestep in ms
 				Object d = getAttributeValue(START);
-				if (d instanceof Number && ((Number)d).doubleValue() > 0) {
-					if (((Number)d).doubleValue() >= duration) {
+				if (d instanceof Number && ((Number) d).doubleValue() > 0) {
+					if (((Number) d).doubleValue() >= duration) {
 						d = duration;
 					}
-					start += (long)((double)duration * ((Number)d).doubleValue());
+					start += (long) ((double) duration * ((Number) d).doubleValue());
 				}
 			}
-			
+
 			if (urn.getParameters().containsKey(DURATION)) {
 				// expected to produce a number of intervals
 				Object d = getAttributeValue(DURATION);
-				if (d instanceof Number && ((Number)d).doubleValue() > 0) {
-					duration = (long)((double)duration * ((Number)d).doubleValue());
+				if (d instanceof Number && ((Number) d).doubleValue() > 0) {
+					duration = (long) ((double) duration * ((Number) d).doubleValue());
 				}
 			}
-			
-			extents.add(Time.create(start, start+duration));
+
+			extents.add(Time.create(start, start + duration));
 
 		} else {
 			// full extent for a continuant
