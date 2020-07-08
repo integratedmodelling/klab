@@ -416,4 +416,12 @@ public class NumberUtils {
 		// increment n and return
 		return ++n;
 	}
+
+	public static long[] asLong(int[] vals) {
+		long[] ret = new long[vals.length];
+		for (int i = 0; i < vals.length; i++) {
+			ret[i] = vals[i];
+		}
+		return ret;
+	}
 }

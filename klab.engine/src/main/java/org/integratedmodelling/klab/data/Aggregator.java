@@ -9,8 +9,10 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -32,22 +34,87 @@ public class Aggregator {
 	private IMonitor monitor;
 	boolean dataWarning = false;
 
+	IUnit unit; // destination unit
+	boolean isArealDensity = false;
+	boolean isRate = false;
+	boolean isLengthDensity = false;
+	boolean isVolumeDensity = false;
+
 	public Aggregator(IObservable destinationObservable, IMonitor monitor) {
 		this.observable = destinationObservable;
 		this.aggregation = getAggregation(destinationObservable);
 		this.monitor = monitor;
+		this.unit = this.observable.getUnit();
+		if (this.unit == null && this.observable.getCurrency() != null) {
+			this.unit = this.observable.getCurrency().getUnit();
+		}
+		if (this.unit != null) {
+			isArealDensity = Units.INSTANCE.isArealDensity(unit);
+			isRate = Units.INSTANCE.isRate(unit);
+			isLengthDensity = Units.INSTANCE.isLengthDensity(unit);
+			isVolumeDensity = Units.INSTANCE.isVolumeDensity(unit);
+		}
 	}
 
 	public void add(Object value, IObservable observable, ILocator locator) {
+
 		if (Observations.INSTANCE.isData(value)) {
+
+			/*
+			 * adapt value
+			 */
+			if ( observable.getUnit() != null && this.unit != null) {
+				
+			} else if (observable.getCurrency() != null && this.unit != null) {
+				
+			}
+
 			addenda.add(new Triple<>(value, observable, locator));
 		}
 	}
 
 	public Object get(ILocator locator) {
+		
 		Object ret = null;
 		Object[] rets = null;
 		int n = 0;
+
+		for (Triple<Object, IObservable, ILocator> triple : addenda) {
+			if (ret == null) {
+				ret = triple.getFirst();
+			} else {
+				if (rets == null) {
+					rets = new Object[addenda.size()];
+					/*
+					 * handle: unit/currency conversion; unit/currency aggregation/distribution
+					 */
+					if (this.observable.getUnit() != null
+							&& !this.observable.getUnit().equals(triple.getSecond().getUnit())) {
+						// TODO
+					} else if (this.observable.getCurrency() != null
+							&& !this.observable.getCurrency().equals(triple.getSecond().getCurrency())) {
+						// TODO
+					}
+					rets[0] = ret;
+				}
+				rets[++n] = triple.getFirst();
+			}
+		}
+		return rets != null ? aggregate(rets, this.aggregation, monitor) : ret;
+	}
+
+	/**
+	 * Perform the final aggregation.
+	 * 
+	 * @param iMonitor
+	 * @return
+	 */
+	public Object aggregate() {
+		
+		Object ret = null;
+		Object[] rets = null;
+		int n = 0;
+
 		for (Triple<Object, IObservable, ILocator> triple : addenda) {
 			if (ret == null) {
 				ret = triple.getFirst();
@@ -59,11 +126,7 @@ public class Aggregator {
 				rets[++n] = triple.getFirst();
 			}
 		}
-		return rets != null ? aggregate(rets) : ret;
-	}
-
-	private Object aggregate(Object[] values) {
-		return aggregate(values, aggregation, monitor);
+		return rets != null ? aggregate(rets, this.aggregation, monitor) : ret;
 	}
 
 	public Object getAndReset(ILocator locator) {
@@ -249,12 +312,26 @@ public class Aggregator {
 		case VERIFICATION:
 			return Aggregation.MAJORITY;
 		case QUANTIFICATION:
-			// NO - depends on whether the unit is extensive too
+			// NO - depends on whether the unit is extensive too, and there may be a
+			// conversion factor
 			return observable.getType().is(Type.EXTENSIVE_PROPERTY) ? Aggregation.SUM : Aggregation.MEAN;
 		default:
 			break;
 		}
 		return null;
+	}
+
+	/**
+	 * If the value requires a specific adjustment based on a locator, do that and
+	 * return the result.
+	 * 
+	 * @param value
+	 * @param locator
+	 * @return
+	 */
+	public Object adjust(Object value, ILocator locator) {
+		// TODO Auto-generated method stub
+		return value;
 	}
 
 }

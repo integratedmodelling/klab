@@ -51,6 +51,7 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimMacro;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
@@ -413,6 +414,26 @@ public enum Kim {
 		 * @return prototype or null
 		 */
 		IPrototype getAnnotationPrototype(String functionId);
+
+		/**
+		 * Return readable information about an observable, optionally with <b> or
+		 * <li>tags for display.
+		 * 
+		 * @param observable
+		 * @param formatted
+		 * @return
+		 */
+		String getObservableInformation(IKimObservable observable, boolean formatted);
+
+		/**
+		 * Return readable information about an observable, optionally with <b> or
+		 * <li>tags for display.
+		 * 
+		 * @param observable
+		 * @param formatted
+		 * @return
+		 */
+		String getConceptInformation(IKimConcept observable, boolean formatted);
 
 		/**
 		 * Return a descriptor for the passed URN. Never return null - if a URN is
@@ -778,7 +799,8 @@ public enum Kim {
 
 		UrnDescriptor ret = null;
 		if (!urn.contains(":") || urn.startsWith("klab:")) {
-			// FIXME this should validate model URNs when admissible, ensuring they are declared
+			// FIXME this should validate model URNs when admissible, ensuring they are
+			// declared
 			return validUrn(urn);
 		}
 		if (validatorCallback != null) {
@@ -849,7 +871,7 @@ public enum Kim {
 		EnumSet<Type> ret = EnumSet.copyOf(original);
 		ret.removeAll(IKimConcept.DIRECT_OBSERVABLE_TYPES);
 		ret.removeAll(IKimConcept.ALL_TRAIT_TYPES);
-		
+
 		for (Type t : quality) {
 			ret.add(t);
 			if (t == Type.DISTANCE) {
@@ -1449,7 +1471,8 @@ public enum Kim {
 		if (model == null && StringUtil.countMatches(string, ":") >= 3) {
 			// URN - TODO support it: add a new KimModel that only observers the URN.
 		}
-		return model == null || model.getObservables().size() == 0 ? null : (KimObservable) model.getObservables().get(0);
+		return model == null || model.getObservables().size() == 0 ? null
+				: (KimObservable) model.getObservables().get(0);
 	}
 
 	public KimObservable createNonSemanticObservable(String type, String name) {
@@ -1940,9 +1963,9 @@ public enum Kim {
 	}
 
 	public boolean isKimFile(File file) {
-		return file.toString().endsWith(".kim") ||  file.toString().endsWith(".tql");
+		return file.toString().endsWith(".kim") || file.toString().endsWith(".tql");
 	}
-	
+
 	public String getUrnValue(Urn urn) {
 		if (urn.getName() != null) {
 			return urn.getName();

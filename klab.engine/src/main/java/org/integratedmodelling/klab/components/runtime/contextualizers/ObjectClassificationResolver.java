@@ -24,8 +24,11 @@ import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.geospace.extents.GridLocator;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -37,6 +40,8 @@ public class ObjectClassificationResolver
 
 	IArtifact classified;
 	IConcept classifier;
+	GridLocator glocator = null;
+	IGrid grid = null;
 	List<IDocumentationProvider.Item> documentation = new ArrayList<>();
 
 	// don't remove - only used as expression
@@ -65,12 +70,16 @@ public class ObjectClassificationResolver
 		Map<Object, Double> cache = new HashMap<>();
 		Map<Object, Long> count = new HashMap<>();
 
-		if (!(classified instanceof IState) || !(classifier instanceof ObservationGroup)) {
+		if (!(classified instanceof IState) || !(classifier.is(Type.COUNTABLE))) {
 			throw new IllegalArgumentException("Object classification requires a state classified through objects");
 		}
 
+		if (grid == null && ret.getScale().getSpace() != null && ret.getScale().getSpace() instanceof Space) {
+			this.grid = ((Space) ret.getScale().getSpace()).getGrid();
+		}
+
 		IState values = (IState) classified;
-		ObservationGroup classf = (ObservationGroup) classifier;
+		ObservationGroup classf = context.getArtifact(classifier, ObservationGroup.class);
 
 		/*
 		 * TODO some values are extensive. others aren't
@@ -87,8 +96,17 @@ public class ObjectClassificationResolver
 						? Units.INSTANCE.getTimeExtentUnit(values.getObservable().getUnit())
 						: null;
 
-		for (IArtifact a : classf) {
-			// compute covered quantity and set into table
+		if (glocator == null && grid != null) {
+
+			/*
+			 * TODO subscribe to artifact to revise the locator if objects are added or
+			 * removed. The slow and easy solution would be to just set a flag and if it's
+			 * true recreate the locator even if it's not null.
+			 */
+			this.glocator = new GridLocator(ret.getScale(), classf);
+			for (IArtifact a : classf) {
+				// compute covered quantity and set into table
+			}
 		}
 
 		for (ILocator locator : ret.getScale()) {
@@ -97,7 +115,8 @@ public class ObjectClassificationResolver
 			// // Observations.INSTANCE.getSpaceAndTimeExtents(locator);
 			// }
 
-			for (IArtifact a : classf) {
+			for (IArtifact a : glocator.getObservations(locator)) {
+				
 				// set the artifact's value wherever it's covering the locator
 				if (!cache.containsKey(a)) {
 					continue;

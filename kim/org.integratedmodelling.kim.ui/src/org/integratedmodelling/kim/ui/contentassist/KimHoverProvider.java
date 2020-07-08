@@ -10,9 +10,12 @@ import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
+import org.integratedmodelling.kim.model.Kim.Validator;
 
 public class KimHoverProvider extends DefaultEObjectHoverProvider {
 
+	
+	
 	@Override
 	protected String getFirstLine(EObject o) {
 
@@ -70,7 +73,9 @@ public class KimHoverProvider extends DefaultEObjectHoverProvider {
 							+ (cd.is(Type.DELIBERATIVE) ? "deliberative " : "")
 							+ "agent <b>" + name + "</b>";
 				}
-				return (cd.is(Type.ABSTRACT) ? "abstract " : "") + ret;
+
+				return ret;
+				
 			} else {
 				return "Undefined concept <b>" + name + "</b>";
 			}

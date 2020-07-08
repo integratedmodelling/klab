@@ -16,7 +16,8 @@
 package org.integratedmodelling.klab.api.runtime;
 
 /**
- * The Interface IEventBus.
+ * The Interface IEventBus. Will probably be eliminated in favor of using
+ * k.Actors.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
