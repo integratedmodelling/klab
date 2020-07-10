@@ -138,6 +138,7 @@ public enum Actors implements IActorsService {
 		layoutMetadata.add("hidden");
 		layoutMetadata.add("hbox");
 		layoutMetadata.add("vbox");
+		layoutMetadata.add("inputgroup");
 		layoutMetadata.add("pager");
 		layoutMetadata.add("shelf");
 		layoutMetadata.add("tabs");
@@ -345,7 +346,8 @@ public enum Actors implements IActorsService {
 	 * @return
 	 */
 	public <T> ActorRef<T> createActor(Behavior<T> create, IIdentity identity) {
-		return ActorSystem.create(Behaviors.supervise(create).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
+		return ActorSystem.create(
+				Behaviors.supervise(create).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
 				identity instanceof IUserIdentity ? sanitize(((IUserIdentity) identity).getUsername())
 						: identity.getId());
 	}
@@ -683,10 +685,12 @@ public enum Actors implements IActorsService {
 
 	public ViewComponent getChildComponent(IKActorsStatement.ConcurrentGroup group, ViewComponent parent,
 			ViewScope scope) {
+
 		ViewComponent ret = new ViewComponent();
 		ret.setIdentity(scope.identity);
 		ret.setApplicationId(scope.applicationId);
-		ret.setType(ViewComponent.Type.Group);
+		ret.setType(group.getGroupMetadata().containsKey("inputgroup") ? ViewComponent.Type.InputGroup
+				: ViewComponent.Type.Group);
 		if (group.getGroupMetadata().containsKey("name")) {
 			ret.setName(group.getGroupMetadata().get("name").getValue().toString());
 		}
@@ -737,6 +741,22 @@ public enum Actors implements IActorsService {
 			for (IKActorsStatement sequence : ((IKActorsStatement.ConcurrentGroup) statement).getStatements()) {
 				visitViewActions(sequence, parent, level + 1, scope);
 			}
+
+			if (parent.getType() != ViewComponent.Type.InputGroup && parent.getComponents().size() > 0) {
+				// check if all children are radiobuttons and force the type to inputgroup if
+				// so.
+				boolean radio = true;
+				for (ViewComponent child : parent.getComponents()) {
+					if (child.getType() != ViewComponent.Type.RadioButton) {
+						radio = false;
+						break;
+					}
+				}
+				if (radio) {
+					parent.setType(ViewComponent.Type.InputGroup);
+				}
+			}
+
 			break;
 		case DO_STATEMENT:
 			// visit code with scope.optional().repeated()
