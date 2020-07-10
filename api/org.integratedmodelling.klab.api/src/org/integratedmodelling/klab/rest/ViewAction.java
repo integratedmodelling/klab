@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.rest;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -37,6 +38,7 @@ public class ViewAction {
 	private Integer intValue = null;
 	private String stringValue = null;
 	private Date dateValue = null;
+	private List<String> listValue = null;
 	private Map<String, String> data = null;
 	private Operation operation = Operation.UserAction;
 
@@ -147,6 +149,14 @@ public class ViewAction {
 		return "ViewAction [componentTag=" + componentTag + ", booleanValue=" + booleanValue + ", doubleValue="
 				+ doubleValue + ", intValue=" + intValue + ", stringValue=" + stringValue + ", dateValue=" + dateValue
 				+ ", data=" + data + ", operation=" + operation + "]";
+	}
+
+	public List<String> getListValue() {
+		return listValue;
+	}
+
+	public void setListValue(List<String> listValue) {
+		this.listValue = listValue;
 	}
 	
 	

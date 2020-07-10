@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
@@ -21,7 +22,6 @@ import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
 import org.integratedmodelling.klab.data.storage.FileMappedStorage;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.NumberUtils;
 
 /**
  * Initialize with a grid, pass as many shapes as needed, and quickly figure out
@@ -43,7 +43,6 @@ public class GridLocator {
 
 	IStorage<Short> storage;
 	IGrid grid;
-	Map<Short, String> indices = Collections.synchronizedMap(new HashMap<>());
 	Map<Short, IDirectObservation> objects = Collections.synchronizedMap(new HashMap<>());
 	
 	public GridLocator(IScale scale, IObjectArtifact artifacts) {
@@ -69,17 +68,26 @@ public class GridLocator {
 			}
 		}
 		rasterizer.finish((n, vals) -> {
-			storage.put(n, new Offset(geometry, NumberUtils.asLong(vals)));
+			storage.put(n, new Offset(geometry, new long[] { grid.getOffset(vals[0], vals[1]) } ));
 		});
 	}
 
 	public List<IObservation> getObservations(ILocator locator) {
 		List<IObservation> ret = new ArrayList<>();
-		short n = storage.get(locator);
-		if (n >= 1) {
+		Short n = storage.get(locator instanceof IScale ? ((IScale)locator).getSpace() : locator);
+		if (n != null && n >= 1) {
 			ret.add(objects.get(n));
 		}
 		return ret;
+	}
+
+	public void distributeValues(Map<IDirectObservation, Object> aggregated, IState state) {
+		for (ILocator locator : state.getScale()) {
+			Short v = storage.get(((IScale)locator).getSpace());
+			if (v != null && v >= 1) {
+				state.set(locator, aggregated.get(objects.get(v)));
+			}
+		}
 	}
 
 }

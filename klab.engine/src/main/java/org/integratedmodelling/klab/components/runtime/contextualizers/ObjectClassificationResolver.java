@@ -12,17 +12,14 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimServiceCall;
-import org.integratedmodelling.klab.Observations;
-import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
-import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -30,6 +27,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.GridLocator;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
@@ -67,8 +65,7 @@ public class ObjectClassificationResolver
 	@Override
 	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
 
-		Map<Object, Double> cache = new HashMap<>();
-		Map<Object, Long> count = new HashMap<>();
+		Map<IArtifact, Aggregator> aggregators = new HashMap<>();
 
 		if (!(classified instanceof IState) || !(classifier.is(Type.COUNTABLE))) {
 			throw new IllegalArgumentException("Object classification requires a state classified through objects");
@@ -78,23 +75,7 @@ public class ObjectClassificationResolver
 			this.grid = ((Space) ret.getScale().getSpace()).getGrid();
 		}
 
-		IState values = (IState) classified;
 		ObservationGroup classf = context.getArtifact(classifier, ObservationGroup.class);
-
-		/*
-		 * TODO some values are extensive. others aren't
-		 */
-		boolean isExtensive = values.getObservable().is(Type.EXTENSIVE_PROPERTY)
-				|| values.getObservable().is(Type.VALUE);
-
-		IUnit propagateSpace = (ret.getScale().getSpace() != null
-				&& Units.INSTANCE.isArealDensity(values.getObservable().getUnit()))
-						? Units.INSTANCE.getArealExtentUnit(values.getObservable().getUnit())
-						: null;
-		IUnit propagateTime = (ret.getScale().getTime() != null
-				&& Units.INSTANCE.isRate(values.getObservable().getUnit()))
-						? Units.INSTANCE.getTimeExtentUnit(values.getObservable().getUnit())
-						: null;
 
 		if (glocator == null && grid != null) {
 
@@ -105,38 +86,37 @@ public class ObjectClassificationResolver
 			 */
 			this.glocator = new GridLocator(ret.getScale(), classf);
 			for (IArtifact a : classf) {
-				// compute covered quantity and set into table
+				aggregators.put(a, new Aggregator(ret.getObservable(), context.getMonitor()));
 			}
 		}
-
+		
 		for (ILocator locator : ret.getScale()) {
-
-			// if (propagateSpace || propagateTime) {
-			// // Observations.INSTANCE.getSpaceAndTimeExtents(locator);
-			// }
 
 			for (IArtifact a : glocator.getObservations(locator)) {
 				
 				// set the artifact's value wherever it's covering the locator
-				if (!cache.containsKey(a)) {
-					continue;
+				Aggregator aggregator = aggregators.get(a);
+				if (aggregator != null) {
+					aggregator.add(((IState)classified).get(locator), ((IState)classified).getObservable(), locator);
 				}
-
-				IState view = Observations.INSTANCE.getStateView(ret, ((IObservation) a).getScale(), context);
-				view.fill(cache.get(a));
 			}
+
 		}
 
-		/*
-		 * TODO set the table into the documentation outputs
-		 */
-		addDocumentationTags(cache);
+		Map<IDirectObservation, Object> aggregated = new HashMap<>();
+		for (IArtifact a : aggregators.keySet()) {
+			aggregated.put((IDirectObservation)a, aggregators.get(a).aggregate());
+		}		
+		
+		this.glocator.distributeValues(aggregated, ret);
+		
+		addDocumentationTags(aggregated);
+		
 		return ret;
 	}
 
-	private void addDocumentationTags(Map<Object, Double> cache) {
+	private void addDocumentationTags(Map<IDirectObservation, Object> cache) {
 		// TODO Auto-generated method stub
-
 	}
 
 	@Override
