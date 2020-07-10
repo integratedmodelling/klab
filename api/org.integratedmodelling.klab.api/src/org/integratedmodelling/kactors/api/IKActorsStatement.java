@@ -37,6 +37,14 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 		public List<IKActorsStatement> getStatements();
 
 		Map<String, IKActorsValue> getGroupMetadata();
+		
+		/**
+		 * Actions with the corresponding pattern to match to fired values. If the value
+		 * is null, any fired values matches.
+		 * 
+		 * @return
+		 */
+		List<Pair<IKActorsValue, IKActorsStatement>> getGroupActions();
 
 	}
 

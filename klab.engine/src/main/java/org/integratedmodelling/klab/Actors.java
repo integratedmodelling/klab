@@ -689,8 +689,8 @@ public enum Actors implements IActorsService {
 		ViewComponent ret = new ViewComponent();
 		ret.setIdentity(scope.identity);
 		ret.setApplicationId(scope.applicationId);
-		ret.setType(group.getGroupMetadata().containsKey("inputgroup") ? ViewComponent.Type.InputGroup
-				: ViewComponent.Type.Group);
+		boolean isActive = group.getGroupMetadata().containsKey("inputgroup");
+		ret.setType(isActive ? ViewComponent.Type.InputGroup : ViewComponent.Type.Group);
 		if (group.getGroupMetadata().containsKey("name")) {
 			ret.setName(group.getGroupMetadata().get("name").getValue().toString());
 		}
@@ -743,16 +743,18 @@ public enum Actors implements IActorsService {
 			}
 
 			if (parent.getType() != ViewComponent.Type.InputGroup && parent.getComponents().size() > 0) {
-				// check if all children are radiobuttons and force the type to inputgroup if
-				// so.
-				boolean radio = true;
-				for (ViewComponent child : parent.getComponents()) {
-					if (child.getType() != ViewComponent.Type.RadioButton) {
-						radio = false;
-						break;
+				// check if all children are radiobuttons or there are group actions, and force
+				// the type to inputgroup if so.
+				boolean activeGroup = ((IKActorsStatement.ConcurrentGroup) statement).getGroupActions().size() > 0;
+				if (!activeGroup) {
+					for (ViewComponent child : parent.getComponents()) {
+						if (child.getType() != ViewComponent.Type.RadioButton) {
+							activeGroup = false;
+							break;
+						}
 					}
 				}
-				if (radio) {
+				if (activeGroup) {
 					parent.setType(ViewComponent.Type.InputGroup);
 				}
 			}

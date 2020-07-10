@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class KActorsActionCall extends KActorsStatement implements Call {
 
-	public class ActionDescriptor {
+	public static class ActionDescriptor {
 		// no match means "on any firing" (should be a defaulted value, maybe with
 		// validation).
 		KActorsValue match;

@@ -12,6 +12,8 @@ import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Statement;
 import org.integratedmodelling.kactors.kactors.StatementGroup;
 import org.integratedmodelling.kactors.kactors.StatementList;
+import org.integratedmodelling.kactors.model.KActorsActionCall.ActionDescriptor;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * A code block is a list of concurrent sequences, each being a list of serial
@@ -24,6 +26,7 @@ public class KActorsConcurrentGroup extends KActorsStatement implements Concurre
 
 	List<IKActorsStatement> sequences = new ArrayList<>();
 	Map<String, IKActorsValue> groupMetadata = new HashMap<>();
+	private List<ActionDescriptor> actions = new ArrayList<>();
 
 	public KActorsConcurrentGroup(List<StatementList> statementGroup, KActorCodeStatement parent) {
 		super(parent, Type.CONCURRENT_GROUP);
@@ -78,6 +81,15 @@ public class KActorsConcurrentGroup extends KActorsStatement implements Concurre
 	@Override
 	public Map<String, IKActorsValue> getGroupMetadata() {
 		return groupMetadata;
+	}
+
+	@Override
+	public List<Pair<IKActorsValue, IKActorsStatement>> getGroupActions() {
+		List<Pair<IKActorsValue, IKActorsStatement>> ret = new ArrayList<>();
+		for (ActionDescriptor ad : actions) {
+			ret.add(new Pair<>(ad.match, ad.action));
+		}
+		return ret;
 	}
 
 }
