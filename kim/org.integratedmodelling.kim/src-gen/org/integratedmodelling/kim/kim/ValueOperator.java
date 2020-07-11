@@ -4,6 +4,8 @@
  */
 package org.integratedmodelling.kim.kim;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -121,26 +123,16 @@ public interface ValueOperator extends EObject
   void setComparisonQuantity(Quantity value);
 
   /**
-   * Returns the value of the '<em><b>Comparison Concept</b></em>' containment reference.
+   * Returns the value of the '<em><b>Comparison Concept</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.ConceptDeclaration}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Comparison Concept</em>' containment reference.
-   * @see #setComparisonConcept(ConceptDeclaration)
+   * @return the value of the '<em>Comparison Concept</em>' containment reference list.
    * @see org.integratedmodelling.kim.kim.KimPackage#getValueOperator_ComparisonConcept()
    * @model containment="true"
    * @generated
    */
-  ConceptDeclaration getComparisonConcept();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonConcept <em>Comparison Concept</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Comparison Concept</em>' containment reference.
-   * @see #getComparisonConcept()
-   * @generated
-   */
-  void setComparisonConcept(ConceptDeclaration value);
+  EList<ConceptDeclaration> getComparisonConcept();
 
   /**
    * Returns the value of the '<em><b>Comparison Observable</b></em>' containment reference.

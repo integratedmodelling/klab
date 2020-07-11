@@ -1967,7 +1967,7 @@ public interface KimPackage extends EPackage
   int VALUE_OPERATOR__COMPARISON_QUANTITY = 3;
 
   /**
-   * The feature id for the '<em><b>Comparison Concept</b></em>' containment reference.
+   * The feature id for the '<em><b>Comparison Concept</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -6609,10 +6609,10 @@ public interface KimPackage extends EPackage
   EReference getValueOperator_ComparisonQuantity();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonConcept <em>Comparison Concept</em>}'.
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonConcept <em>Comparison Concept</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Comparison Concept</em>'.
+   * @return the meta object for the containment reference list '<em>Comparison Concept</em>'.
    * @see org.integratedmodelling.kim.kim.ValueOperator#getComparisonConcept()
    * @see #getValueOperator()
    * @generated
@@ -10961,7 +10961,7 @@ public interface KimPackage extends EPackage
     EReference VALUE_OPERATOR__COMPARISON_QUANTITY = eINSTANCE.getValueOperator_ComparisonQuantity();
 
     /**
-     * The meta object literal for the '<em><b>Comparison Concept</b></em>' containment reference feature.
+     * The meta object literal for the '<em><b>Comparison Concept</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated

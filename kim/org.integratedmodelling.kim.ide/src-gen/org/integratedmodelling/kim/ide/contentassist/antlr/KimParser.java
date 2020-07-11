@@ -354,6 +354,8 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getObservableSemanticsAccess().getGroup_3_5(), "rule__ObservableSemantics__Group_3_5__0");
 			builder.put(grammarAccess.getValueOperatorAccess().getGroup_0(), "rule__ValueOperator__Group_0__0");
 			builder.put(grammarAccess.getValueOperatorAccess().getGroup_0_0_1(), "rule__ValueOperator__Group_0_0_1__0");
+			builder.put(grammarAccess.getValueOperatorAccess().getGroup_0_1_2(), "rule__ValueOperator__Group_0_1_2__0");
+			builder.put(grammarAccess.getValueOperatorAccess().getGroup_0_1_2_1(), "rule__ValueOperator__Group_0_1_2_1__0");
 			builder.put(grammarAccess.getValueOperatorAccess().getGroup_0_1_3(), "rule__ValueOperator__Group_0_1_3__0");
 			builder.put(grammarAccess.getAnnotatedObservableSemanticsAccess().getGroup(), "rule__AnnotatedObservableSemantics__Group__0");
 			builder.put(grammarAccess.getAnnotatedObservableSemanticsAccess().getGroup_1(), "rule__AnnotatedObservableSemantics__Group_1__0");
@@ -799,7 +801,8 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getValueOperatorAccess().getDownToAssignment_0_0_1_0(), "rule__ValueOperator__DownToAssignment_0_0_1_0");
 			builder.put(grammarAccess.getValueOperatorAccess().getComparisonValueAssignment_0_1_0(), "rule__ValueOperator__ComparisonValueAssignment_0_1_0");
 			builder.put(grammarAccess.getValueOperatorAccess().getComparisonQuantityAssignment_0_1_1(), "rule__ValueOperator__ComparisonQuantityAssignment_0_1_1");
-			builder.put(grammarAccess.getValueOperatorAccess().getComparisonConceptAssignment_0_1_2(), "rule__ValueOperator__ComparisonConceptAssignment_0_1_2");
+			builder.put(grammarAccess.getValueOperatorAccess().getComparisonConceptAssignment_0_1_2_0(), "rule__ValueOperator__ComparisonConceptAssignment_0_1_2_0");
+			builder.put(grammarAccess.getValueOperatorAccess().getComparisonConceptAssignment_0_1_2_1_1(), "rule__ValueOperator__ComparisonConceptAssignment_0_1_2_1_1");
 			builder.put(grammarAccess.getValueOperatorAccess().getComparisonObservableAssignment_0_1_3_1(), "rule__ValueOperator__ComparisonObservableAssignment_0_1_3_1");
 			builder.put(grammarAccess.getValueOperatorAccess().getTotalAssignment_1(), "rule__ValueOperator__TotalAssignment_1");
 			builder.put(grammarAccess.getValueOperatorAccess().getAveragedAssignment_2(), "rule__ValueOperator__AveragedAssignment_2");

@@ -3781,8 +3781,13 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cComparisonValueNumberParserRuleCall_0_1_0_0 = (RuleCall)cComparisonValueAssignment_0_1_0.eContents().get(0);
 		private final Assignment cComparisonQuantityAssignment_0_1_1 = (Assignment)cAlternatives_0_1.eContents().get(1);
 		private final RuleCall cComparisonQuantityQuantityParserRuleCall_0_1_1_0 = (RuleCall)cComparisonQuantityAssignment_0_1_1.eContents().get(0);
-		private final Assignment cComparisonConceptAssignment_0_1_2 = (Assignment)cAlternatives_0_1.eContents().get(2);
-		private final RuleCall cComparisonConceptConceptDeclarationParserRuleCall_0_1_2_0 = (RuleCall)cComparisonConceptAssignment_0_1_2.eContents().get(0);
+		private final Group cGroup_0_1_2 = (Group)cAlternatives_0_1.eContents().get(2);
+		private final Assignment cComparisonConceptAssignment_0_1_2_0 = (Assignment)cGroup_0_1_2.eContents().get(0);
+		private final RuleCall cComparisonConceptConceptDeclarationParserRuleCall_0_1_2_0_0 = (RuleCall)cComparisonConceptAssignment_0_1_2_0.eContents().get(0);
+		private final Group cGroup_0_1_2_1 = (Group)cGroup_0_1_2.eContents().get(1);
+		private final Keyword cCommaKeyword_0_1_2_1_0 = (Keyword)cGroup_0_1_2_1.eContents().get(0);
+		private final Assignment cComparisonConceptAssignment_0_1_2_1_1 = (Assignment)cGroup_0_1_2_1.eContents().get(1);
+		private final RuleCall cComparisonConceptConceptDeclarationParserRuleCall_0_1_2_1_1_0 = (RuleCall)cComparisonConceptAssignment_0_1_2_1_1.eContents().get(0);
 		private final Group cGroup_0_1_3 = (Group)cAlternatives_0_1.eContents().get(3);
 		private final Keyword cLeftParenthesisKeyword_0_1_3_0 = (Keyword)cGroup_0_1_3.eContents().get(0);
 		private final Assignment cComparisonObservableAssignment_0_1_3_1 = (Assignment)cGroup_0_1_3.eContents().get(1);
@@ -3797,17 +3802,18 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//ValueOperator:
 		//	(modifier=VALUE_OPERATOR | downTo='down' 'to') (comparisonValue=Number | comparisonQuantity=Quantity |
-		//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')') | total='total' |
-		//	averaged='averaged' | summed='summed';
+		//	comparisonConcept+=ConceptDeclaration (',' comparisonConcept+=ConceptDeclaration)* | '('
+		//	comparisonObservable=ObservableSemantics ')') | total='total' | averaged='averaged' | summed='summed';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(modifier=VALUE_OPERATOR | downTo='down' 'to') (comparisonValue=Number | comparisonQuantity=Quantity |
-		//comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')') | total='total' |
-		//averaged='averaged' | summed='summed'
+		//comparisonConcept+=ConceptDeclaration (',' comparisonConcept+=ConceptDeclaration)* | '('
+		//comparisonObservable=ObservableSemantics ')') | total='total' | averaged='averaged' | summed='summed'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//(modifier=VALUE_OPERATOR | downTo='down' 'to') (comparisonValue=Number | comparisonQuantity=Quantity |
-		//comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')')
+		//comparisonConcept+=ConceptDeclaration (',' comparisonConcept+=ConceptDeclaration)* | '('
+		//comparisonObservable=ObservableSemantics ')')
 		public Group getGroup_0() { return cGroup_0; }
 		
 		//(modifier=VALUE_OPERATOR | downTo='down' 'to')
@@ -3831,8 +3837,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'to'
 		public Keyword getToKeyword_0_0_1_1() { return cToKeyword_0_0_1_1; }
 		
-		//(comparisonValue=Number | comparisonQuantity=Quantity | comparisonConcept=ConceptDeclaration | '('
-		//comparisonObservable=ObservableSemantics ')')
+		//(comparisonValue=Number | comparisonQuantity=Quantity | comparisonConcept+=ConceptDeclaration (','
+		//comparisonConcept+=ConceptDeclaration)* | '(' comparisonObservable=ObservableSemantics ')')
 		public Alternatives getAlternatives_0_1() { return cAlternatives_0_1; }
 		
 		//comparisonValue=Number
@@ -3847,11 +3853,26 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Quantity
 		public RuleCall getComparisonQuantityQuantityParserRuleCall_0_1_1_0() { return cComparisonQuantityQuantityParserRuleCall_0_1_1_0; }
 		
-		//comparisonConcept=ConceptDeclaration
-		public Assignment getComparisonConceptAssignment_0_1_2() { return cComparisonConceptAssignment_0_1_2; }
+		//comparisonConcept+=ConceptDeclaration (',' comparisonConcept+=ConceptDeclaration)*
+		public Group getGroup_0_1_2() { return cGroup_0_1_2; }
+		
+		//comparisonConcept+=ConceptDeclaration
+		public Assignment getComparisonConceptAssignment_0_1_2_0() { return cComparisonConceptAssignment_0_1_2_0; }
 		
 		//ConceptDeclaration
-		public RuleCall getComparisonConceptConceptDeclarationParserRuleCall_0_1_2_0() { return cComparisonConceptConceptDeclarationParserRuleCall_0_1_2_0; }
+		public RuleCall getComparisonConceptConceptDeclarationParserRuleCall_0_1_2_0_0() { return cComparisonConceptConceptDeclarationParserRuleCall_0_1_2_0_0; }
+		
+		//(',' comparisonConcept+=ConceptDeclaration)*
+		public Group getGroup_0_1_2_1() { return cGroup_0_1_2_1; }
+		
+		//','
+		public Keyword getCommaKeyword_0_1_2_1_0() { return cCommaKeyword_0_1_2_1_0; }
+		
+		//comparisonConcept+=ConceptDeclaration
+		public Assignment getComparisonConceptAssignment_0_1_2_1_1() { return cComparisonConceptAssignment_0_1_2_1_1; }
+		
+		//ConceptDeclaration
+		public RuleCall getComparisonConceptConceptDeclarationParserRuleCall_0_1_2_1_1_0() { return cComparisonConceptConceptDeclarationParserRuleCall_0_1_2_1_1_0; }
 		
 		//'(' comparisonObservable=ObservableSemantics ')'
 		public Group getGroup_0_1_3() { return cGroup_0_1_3; }
@@ -11132,8 +11153,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//ValueOperator:
 	//	(modifier=VALUE_OPERATOR | downTo='down' 'to') (comparisonValue=Number | comparisonQuantity=Quantity |
-	//	comparisonConcept=ConceptDeclaration | '(' comparisonObservable=ObservableSemantics ')') | total='total' |
-	//	averaged='averaged' | summed='summed';
+	//	comparisonConcept+=ConceptDeclaration (',' comparisonConcept+=ConceptDeclaration)* | '('
+	//	comparisonObservable=ObservableSemantics ')') | total='total' | averaged='averaged' | summed='summed';
 	public ValueOperatorElements getValueOperatorAccess() {
 		return pValueOperator;
 	}

@@ -329,7 +329,7 @@ ObservableSemantics:
 
 ValueOperator:
 	(modifier=VALUE_OPERATOR | downTo='down' 'to') 
-		(comparisonValue=Number| comparisonQuantity=Quantity | comparisonConcept=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')')) |
+		(comparisonValue=Number| comparisonQuantity=Quantity | comparisonConcept+=ConceptDeclaration (',' comparisonConcept+=ConceptDeclaration)* | ('(' comparisonObservable=ObservableSemantics ')')) |
 	total='total' | 
 	averaged='averaged' | 
 	summed='summed'

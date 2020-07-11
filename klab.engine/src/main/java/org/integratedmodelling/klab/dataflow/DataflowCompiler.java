@@ -731,7 +731,8 @@ public class DataflowCompiler {
 			 */
 
 			Observable modelObservable = null;
-
+			boolean assigned = false;
+			
 			if (Units.INSTANCE.needsUnits(observable)) {
 
 				for (ModelD md : models) {
@@ -749,6 +750,7 @@ public class DataflowCompiler {
 						if (modelObservable.getUnit() != null) {
 							observable.withUnit(modelObservable.getUnit());
 							chosenUnits.put(baseUnit.toString(), modelObservable.getUnit());
+							assigned = true;
 						} else {
 							if (!chosenUnits.containsKey(baseUnit.toString())) {
 								if (Units.INSTANCE.needsUnitScaling(observable)) {
@@ -762,10 +764,12 @@ public class DataflowCompiler {
 							} else {
 								observable.withUnit(chosenUnits.get(baseUnit.toString()));
 							}
+							assigned = true;
 						}
 					} else if (observable.getUnit() == null) {
 						observable.withUnit(modelObservable.getUnit() == null ? baseUnit : modelObservable.getUnit());
 						chosenUnits.put(baseUnit.toString(), observable.getUnit());
+						assigned = true;
 					}
 				}
 
@@ -779,6 +783,15 @@ public class DataflowCompiler {
 					modelObservable = new Observable(modelObservable).withUnit(chosenUnits.get(baseUnit.toString()));
 				}
 			}
+
+			/*
+			 * Fix the units if they were assigned here and there are countable aggregators
+			 * that interfere with the spatial or temporal distribution of the original units.
+			 */
+			if (assigned) {
+				Observables.INSTANCE.contextualizeUnitsForAggregation(this.observable);
+			}
+			
 
 			/**
 			 * Record the source in the catalog only after any fluid units have been

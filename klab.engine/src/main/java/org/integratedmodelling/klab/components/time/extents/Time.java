@@ -147,6 +147,13 @@ public class Time extends Extent implements ITime {
 		return ret;
 	}
 
+	public static Time partial() {
+		Time ret = new Time();
+		ret.extentType = ITime.Type.LOGICAL;
+		ret.partial = true;
+		return ret;
+	}
+	
 	public static Time create(int year) {
 		Time ret = new Time();
 		ret.extentType = ITime.Type.PHYSICAL;

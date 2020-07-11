@@ -221,6 +221,24 @@ public enum Units implements IUnitService {
 		return null;
 	}
 
+	@Override
+	public IUnit getLinealExtentUnit(IUnit unit) {
+
+		if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				javax.measure.unit.Unit<?> su = pu.getUnit(i);
+				int power = pu.getUnitPow(i);
+				if (su.getDimension().equals(Dimension.LENGTH.pow(1)) && power == -1) {
+					return new Unit(su);
+				} else if (su.getDimension().equals(Dimension.LENGTH) && power == -1) {
+					return new Unit(su.pow(1));
+				}
+			}
+		}
+		return null;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -394,22 +412,34 @@ public enum Units implements IUnitService {
 		Unit unit = (Unit) refUnit;
 
 		for (ExtentDimension dim : extentDimensions) {
+			
+			int spatial = getSpatialDimensionality(unit);
+			int temporal = getTemporalDimensionality(unit);
+			
 			switch (dim) {
 			case AREAL:
-				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m^2")).getUnit()));
+				if (spatial >= 2) {
+					unit = new Unit(((Unit) unit).getUnit().times(((Unit) getArealExtentUnit(unit)).getUnit()));
+				}
 				break;
 			case CONCEPTUAL:
 				break;
 			case LINEAL:
-				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m")).getUnit()));
+				if (spatial >= 1) {
+					unit = new Unit(((Unit) unit).getUnit().times(((Unit) getLinealExtentUnit(unit)).getUnit()));
+				}
 				break;
 			case PUNTAL:
 				break;
 			case TEMPORAL:
-				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("s")).getUnit()));
+				if (temporal >= 1) {
+					unit = new Unit(((Unit) unit).getUnit().times(((Unit) getTimeExtentUnit(unit)).getUnit()));
+				}
 				break;
 			case VOLUMETRIC:
-				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m^3")).getUnit()));
+				if (spatial >= 3) {
+					unit = new Unit(((Unit) unit).getUnit().times(((Unit) getVolumeExtentUnit(unit)).getUnit()));
+				}
 				break;
 			default:
 				break;

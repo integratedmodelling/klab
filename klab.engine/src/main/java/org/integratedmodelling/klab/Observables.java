@@ -21,10 +21,12 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement.DescriptionType;
 import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimObservable;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
@@ -39,6 +41,8 @@ import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
@@ -903,6 +907,84 @@ public enum Observables implements IObservableService {
 
 	private String decl(IConcept concept) {
 		return concept == null ? "NONE" : concept.getDefinition();
+	}
+
+	/**
+	 * Take an observable whose units were assigned by default and check if it is
+	 * being aggregated by a countable observable whose spatial and/or temporal
+	 * nature imply a unit distribution change; if so, modify it to have the
+	 * appropriate units.
+	 * 
+	 * @param observable
+	 */
+	public void contextualizeUnitsForAggregation(Observable observable) {
+
+		if (observable.getUnit() == null) {
+			return;
+		}
+
+		List<IConcept> ops = new ArrayList<>();
+		for (Pair<ValueOperator, Object> operator : observable.getValueOperators()) {
+
+			if (operator.getFirst() == ValueOperator.BY) {
+				Object operand = operator.getSecond();
+				if (operand instanceof IConcept) {
+					ops.add((IConcept) operand);
+				} else if (operand instanceof List) {
+					for (Object o : ((List<?>) operand)) {
+						if (o instanceof IConcept) {
+							ops.add((IConcept) o);
+						}
+					}
+				}
+			}
+
+		}
+
+		CoreOntology coreOntology = Resources.INSTANCE.getUpperOntology();
+
+		if (coreOntology == null) {
+			return;
+		}
+
+		IUnit originalUnit = observable.getUnit();
+		boolean changed = false;
+
+		for (IConcept dop : ops) {
+
+			ExtentDimension spatial = null;
+			ITime.Resolution temporal = null;
+
+			if (dop.is(Type.COUNTABLE)) {
+				if (dop.is(Type.EVENT)) {
+					temporal = coreOntology.getTemporalNature(dop);
+				}
+				spatial = coreOntology.getSpatialNature(dop);
+			}
+
+			if (spatial != null || temporal != null) {
+
+				int originalSpatialDimension = Units.INSTANCE.getSpatialDimensionality(originalUnit);
+				int originalTemporalDimension = Units.INSTANCE.getTemporalDimensionality(originalUnit);
+
+				if (spatial != null && originalSpatialDimension == spatial.dimensionality) {
+					originalUnit = Units.INSTANCE.removeExtents(originalUnit, Collections.singleton(spatial));
+					changed = true;
+				}
+
+				if (temporal != null && originalTemporalDimension == 1) {
+					originalUnit = Units.INSTANCE.removeExtents(originalUnit,
+							Collections.singleton(ExtentDimension.TEMPORAL));
+					changed = true;
+				}
+
+			}
+		}
+
+		if (changed) {
+			observable.withUnit(originalUnit);
+		}
+
 	}
 
 }

@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Spatial (Areal, Lineal, Puntal, Volumetric) and commonsense temporal (Yearly, 
+  Monthly, Weekly, Daily, Hourly) identities are now core identities so they can
+  be used when assessing default units for aggregation by scaled countables (continuants
+  for space and events for time).
+- The 'by', 'without' and other value operators that take concepts as arguments can
+  now use a comma-separated list of concepts (implementation for now is only
+  syntactical).
 - The random URN adapter accessible through klab:random URNs now creates objects
   and events, with optional attributes that can have fixed values or take them
   from all sorts of distributions. 
