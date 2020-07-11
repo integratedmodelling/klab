@@ -1,12 +1,11 @@
 package org.integratedmodelling.klab;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -412,10 +411,10 @@ public enum Units implements IUnitService {
 		Unit unit = (Unit) refUnit;
 
 		for (ExtentDimension dim : extentDimensions) {
-			
+
 			int spatial = getSpatialDimensionality(unit);
 			int temporal = getTemporalDimensionality(unit);
-			
+
 			switch (dim) {
 			case AREAL:
 				if (spatial >= 2) {
@@ -549,7 +548,7 @@ public enum Units implements IUnitService {
 		if (observable.is(Type.MONEY) || observable.is(Type.MONETARY) || observable.is(Type.NUMEROSITY)) {
 			return Unit.unitless();
 		}
-		
+
 		if (observable.is(Type.RATIO)) {
 			IConcept numerator = Observables.INSTANCE.getDescribedType(observable.getType());
 			IConcept denominator = Observables.INSTANCE.getComparisonType(observable.getType());
@@ -605,7 +604,7 @@ public enum Units implements IUnitService {
 
 		return ret;
 	}
-	
+
 	public Unit getDefaultUnitFor(IConcept concept) {
 		if (concept.is(Type.RATIO)) {
 			IConcept numerator = Observables.INSTANCE.getDescribedType(concept);
@@ -696,7 +695,8 @@ public enum Units implements IUnitService {
 				Boolean rescalesInherent = observable.getType().getMetadata().get(IMetadata.IM_RESCALES_INHERENT,
 						Boolean.class);
 				if (rescalesInherent == null) {
-					if (Observables.INSTANCE.getDescribedType(observable.getType()) != null) {
+					if (Observables.INSTANCE.getDirectInherentType(observable.getType()) != null
+							|| Observables.INSTANCE.getDescribedType(observable.getType()) != null) {
 						rescalesInherent = true;
 					} else {
 						rescalesInherent = false;
@@ -757,7 +757,7 @@ public enum Units implements IUnitService {
 
 		IUnit fullyContextualized = contextualize(baseUnit, aggregatable);
 
-		List<Unit> potentialUnits = new ArrayList<>();
+		Set<Unit> potentialUnits = new LinkedHashSet<>();
 		for (Set<ExtentDimension> set : Sets.powerSet(aggregatable)) {
 			Unit aggregated = (Unit) Units.INSTANCE.removeExtents(fullyContextualized, set);
 			potentialUnits.add(aggregated.withAggregatedDimensions(set));
@@ -771,10 +771,15 @@ public enum Units implements IUnitService {
 			Set<ExtentDimension> whitelist = new HashSet<>();
 			Set<ExtentDimension> blacklist = new HashSet<>();
 			for (ExtentDimension d : constraints.keySet()) {
+				
 				if (!aggregatable.contains(d)) {
 					continue;
 				}
-				if (constraints.get(d) == ExtentDistribution.EXTENSIVE) {
+				
+				/**
+				 * FIXME something is wrong here - the "chosen" remains null
+				 */
+				if (constraints.get(d) == ExtentDistribution.INTENSIVE) {
 					whitelist.add(d);
 				} else {
 					blacklist.add(d);
@@ -782,8 +787,9 @@ public enum Units implements IUnitService {
 			}
 
 			for (Unit punit : potentialUnits) {
-				if (Sets.intersection(punit.getAggregatedDimensions(), whitelist).size() == whitelist.size()
-						&& Sets.intersection(punit.getAggregatedDimensions(), blacklist).size() == 0) {
+				Set<ExtentDimension> udims = punit.getAggregatedDimensions();
+				if (Sets.intersection(udims, whitelist).size() == whitelist.size()
+						&& Sets.intersection(udims, blacklist).size() == 0) {
 					chosen = punit;
 					break;
 				}
