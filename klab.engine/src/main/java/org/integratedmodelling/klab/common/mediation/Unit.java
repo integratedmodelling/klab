@@ -17,7 +17,6 @@ package org.integratedmodelling.klab.common.mediation;
 
 import java.text.ParseException;
 import java.util.ArrayList;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,6 +34,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -57,7 +57,9 @@ public class Unit implements IUnit {
 	int _startLine;
 	int _endLine;
 	String statement;
-	Set<ExtentDimension> aggregatedDimensions = EnumSet.noneOf(ExtentDimension.class);
+	// this is the adopted contextualization, if any (results only from a
+	// contextualize op)
+	Map<ExtentDimension, ExtentDistribution> aggregatedDimensions = new HashMap<>();
 	boolean wasContextualized = false;
 
 	/**
@@ -135,7 +137,7 @@ public class Unit implements IUnit {
 	/** {@inheritDoc} */
 	@Override
 	public boolean equals(Object o) {
-		return o instanceof Unit && toString().equals(((Unit) o).toString());
+		return o instanceof Unit && toUTFString().equals(((Unit) o).toUTFString());
 	}
 
 	@Override
@@ -233,7 +235,7 @@ public class Unit implements IUnit {
 	}
 
 	@Override
-	public Set<ExtentDimension> getAggregatedDimensions() {
+	public Map<ExtentDimension, ExtentDistribution> getAggregatedDimensions() {
 		return aggregatedDimensions;
 	}
 
@@ -388,7 +390,11 @@ public class Unit implements IUnit {
 		boolean regular = true;
 		Unit recontextualizer = this;
 		double contextualConversion = 1.0;
-		for (ExtentDimension ed : matching.getAggregatedDimensions()) {
+
+		/**
+		 * FIXME revise!
+		 */
+		for (ExtentDimension ed : matching.getAggregatedDimensions().keySet()) {
 
 			IExtent dim = ((Scale) scale).getDimension(ed.spatial ? Type.SPACE : Type.TIME);
 			Pair<IUnit, IUnit> split = recontextualizer.splitExtent(ed);
@@ -412,8 +418,8 @@ public class Unit implements IUnit {
 		return new RecontextualizingUnit((Unit) observable.getUnit(), recontextualizer, contextualConversion, !regular);
 	}
 
-	public Unit withAggregatedDimensions(Set<ExtentDimension> set) {
-		this.aggregatedDimensions.addAll(set);
+	public Unit withAggregatedDimensions(Map<ExtentDimension, ExtentDistribution> set) {
+		this.aggregatedDimensions.putAll(set);
 		wasContextualized = true;
 		return this;
 	}

@@ -588,7 +588,7 @@ public class Model extends KimObject implements IModel {
 			 */
 			if (statedUnit.isCompatible(contextualization.getChosenUnit())) {
 				statedUnit.getAggregatedDimensions()
-						.addAll(contextualization.getChosenUnit().getAggregatedDimensions());
+						.putAll(contextualization.getChosenUnit().getAggregatedDimensions());
 				return;
 			}
 
@@ -597,7 +597,10 @@ public class Model extends KimObject implements IModel {
 			 */
 			for (IUnit unit : contextualization.getCandidateUnits()) {
 				if (statedUnit.isCompatible(unit)) {
-					statedUnit.getAggregatedDimensions().addAll(unit.getAggregatedDimensions());
+					if (unit.getAggregatedDimensions().isEmpty()) {
+						System.out.println("ZIOPORCO");
+					}
+					statedUnit.getAggregatedDimensions().putAll(unit.getAggregatedDimensions());
 					monitor.warn("This observable's unit implies " + unit.getAggregatedDimensions()
 							+ " aggregation over a " + ((Geometry) this.geometry).getLabel()
 							+ " context. If this is intentional, add an @extensive annotation to the "

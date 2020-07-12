@@ -755,60 +755,106 @@ public enum Units implements IUnitService {
 			}
 		}
 
-		IUnit fullyContextualized = contextualize(baseUnit, aggregatable);
+		Set<ExtentDimension> implied = new HashSet<>(aggregatable);
+		for (ExtentDimension ed : constraints.keySet()) {
+			aggregatable.add(ed);
+			if (constraints.get(ed) == ExtentDistribution.EXTENSIVE) {
+				implied.remove(ed);
+			} else {
+				implied.add(ed);
+			}
+		}
 
-		Set<Unit> potentialUnits = new LinkedHashSet<>();
+		/**
+		 * "Correct" unit given the geometry and the constraints
+		 */
+		IUnit chosen = contextualize(baseUnit, implied);
+
+		/**
+		 * all possible other transformations vs. the stated dimensions
+		 */
+		Map<ExtentDimension, ExtentDistribution> context = new HashMap<>();
+
+		// all intensive
+		Unit fullyContextualized = (Unit)contextualize(baseUnit, aggregatable);
+		Set<IUnit> potentialUnits = new LinkedHashSet<>();
+		if (!chosen.equals(fullyContextualized)) {
+			for (ExtentDimension ed : aggregatable) {
+				context.put(ed, ExtentDistribution.INTENSIVE);
+			}
+			potentialUnits.add(fullyContextualized.withAggregatedDimensions(new HashMap<>(context)));
+		}
+		Unit fullyExtensive = (Unit)Units.INSTANCE.removeExtents(fullyContextualized, aggregatable);
+		if (!chosen.equals(fullyExtensive)) {
+			for (ExtentDimension ed : aggregatable) {
+				context.put(ed, ExtentDistribution.EXTENSIVE);
+			}
+			potentialUnits.add(fullyExtensive.withAggregatedDimensions(new HashMap<>(context)));
+		}
+		
 		for (Set<ExtentDimension> set : Sets.powerSet(aggregatable)) {
-			Unit aggregated = (Unit) Units.INSTANCE.removeExtents(fullyContextualized, set);
-			potentialUnits.add(aggregated.withAggregatedDimensions(set));
-		}
-
-		IUnit chosen = null;
-
-		if (constraints == null || constraints.isEmpty()) {
-			chosen = fullyContextualized;
-		} else {
-			Set<ExtentDimension> whitelist = new HashSet<>();
-			Set<ExtentDimension> blacklist = new HashSet<>();
-			for (ExtentDimension d : constraints.keySet()) {
-				
-				if (!aggregatable.contains(d)) {
-					continue;
-				}
-				
-				/**
-				 * FIXME something is wrong here - the "chosen" remains null
-				 */
-				if (constraints.get(d) == ExtentDistribution.INTENSIVE) {
-					whitelist.add(d);
-				} else {
-					blacklist.add(d);
-				}
+			if (set.isEmpty()) {
+				continue;
 			}
-
-			for (Unit punit : potentialUnits) {
-				Set<ExtentDimension> udims = punit.getAggregatedDimensions();
-				if (Sets.intersection(udims, whitelist).size() == whitelist.size()
-						&& Sets.intersection(udims, blacklist).size() == 0) {
-					chosen = punit;
-					break;
+			// reset
+			for (ExtentDimension ed : context.keySet()) {
+				context.put(ed, ExtentDistribution.EXTENSIVE);
+			}
+			Unit aggregated = (Unit) Units.INSTANCE.contextualize(fullyExtensive, set);
+			if (!aggregated.equals(chosen)) {
+				for (ExtentDimension ed : set) {
+					context.put(ed, ExtentDistribution.INTENSIVE);
 				}
+				potentialUnits.add(aggregated.withAggregatedDimensions(new HashMap<>(context)));
 			}
 		}
 
-		final Set<IUnit> candidates = new HashSet<IUnit>(potentialUnits);
-		final IUnit correctUnit = chosen;
+////		IUnit chosen = null;
+//
+//		if (constraints == null || constraints.isEmpty()) {
+//			chosen = fullyContextualized;
+//		} else {
+//			Set<ExtentDimension> whitelist = new HashSet<>();
+//			Set<ExtentDimension> blacklist = new HashSet<>();
+//			for (ExtentDimension d : constraints.keySet()) {
+//				
+//				if (!aggregatable.contains(d)) {
+//					continue;
+//				}
+//				
+//				/**
+//				 * FIXME something is wrong here - the "chosen" remains null
+//				 */
+//				if (constraints.get(d) == ExtentDistribution.INTENSIVE) {
+//					whitelist.add(d);
+//				} else {
+//					blacklist.add(d);
+//				}
+//			}
+//
+//			for (Unit punit : potentialUnits) {
+//				Set<ExtentDimension> udims = punit.getAggregatedDimensions();
+//				if (Sets.intersection(udims, whitelist).size() == whitelist.size()
+//						&& Sets.intersection(udims, blacklist).size() == 0) {
+//					chosen = punit;
+//					break;
+//				}
+//			}
+//		}
+//
+//		final Set<IUnit> candidates = new HashSet<IUnit>(potentialUnits);
+//		final IUnit correctUnit = chosen;
 
 		return new UnitContextualization() {
 
 			@Override
 			public IUnit getChosenUnit() {
-				return correctUnit;
+				return chosen;
 			}
 
 			@Override
 			public Collection<IUnit> getCandidateUnits() {
-				return candidates;
+				return potentialUnits;
 			}
 		};
 	}

@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Blacklist (synchronized) projects by adding their (comma-separated) names to
+  property klab.project.blacklist. For ARIES users, advisable for im.data.usa 
+  until USGS gets its act together.
 - Spatial (Areal, Lineal, Puntal, Volumetric) and commonsense temporal (Yearly, 
   Monthly, Weekly, Daily, Hourly) identities are now core identities so they can
   be used when assessing default units for aggregation by scaled countables (continuants
