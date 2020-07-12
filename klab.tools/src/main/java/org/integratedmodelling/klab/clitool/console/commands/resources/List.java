@@ -21,6 +21,7 @@ public class List implements ICommand {
         boolean verbose = call.getParameters().get("verbose", false);
         boolean online = call.getParameters().get("online", false);
         boolean forceUpdate = call.getParameters().get("force", false);
+        String nodeId = call.getParameters().get("node", (String)null);
 
         ArrayList<String> resourceIds = new ArrayList<>();
         if (call.getParameters().get("arguments", java.util.List.class).size() > 0) {

@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.node.controllers;
 
 import java.io.File;
 import java.security.Principal;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.API;
@@ -77,6 +79,21 @@ public class ResourceController {
 			throw new KlabResourceNotFoundException("resource " + urn + " not found on this node");
 		}
 		return ((Resource) resource).getReference();
+	}
+	
+	@GetMapping(value = API.NODE.RESOURCE.LIST, produces = "application/json")
+	@ResponseBody
+	public List<ResourceReference> listResources(Principal principal) {
+		List<ResourceReference> ret = new ArrayList<>();
+		for (String urn : resourceManager.getOnlineResources()) {
+			if (resourceManager.canAccess(urn, (EngineAuthorization)principal)) {
+				IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
+				if (resource != null) {
+					ret.add(((Resource)resource).getReference());
+				}
+			}
+		}
+		return ret;
 	}
 
 	/**
