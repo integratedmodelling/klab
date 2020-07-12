@@ -234,6 +234,12 @@ public enum Annotations implements IAnnotationService {
 
 		if (object instanceof IObservable) {
 
+			for (IAnnotation annotation : ((IObservable)object).getAnnotations()) {
+				if (!collection.containsKey(annotation.getName())) {
+					collection.put(annotation.getName(), annotation);
+				}
+			}
+
 			/*
 			 * collect from roles, traits and main in this order
 			 */

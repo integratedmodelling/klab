@@ -800,7 +800,7 @@ public enum Units implements IUnitService {
 			for (ExtentDimension ed : context.keySet()) {
 				context.put(ed, ExtentDistribution.EXTENSIVE);
 			}
-			Unit aggregated = (Unit) Units.INSTANCE.contextualize(fullyExtensive, set);
+			Unit aggregated = (Unit) Units.INSTANCE.contextualize(baseUnit, set);
 			if (!aggregated.equals(chosen)) {
 				for (ExtentDimension ed : set) {
 					context.put(ed, ExtentDistribution.INTENSIVE);

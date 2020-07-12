@@ -579,9 +579,10 @@ public class Model extends KimObject implements IModel {
 				setErrors(true);
 				return;
 			}
-
+			
+			Map<ExtentDimension, ExtentDistribution> constraints = getExtentConstraints(observable, monitor);
 			UnitContextualization contextualization = Units.INSTANCE.getContextualization(baseUnit, this.geometry,
-					getExtentConstraints(observable, monitor));
+					constraints);
 
 			/*
 			 * if it's the same as the expected, everything's OK; inherit any aggregation
@@ -597,13 +598,10 @@ public class Model extends KimObject implements IModel {
 			 */
 			for (IUnit unit : contextualization.getCandidateUnits()) {
 				if (statedUnit.isCompatible(unit)) {
-					if (unit.getAggregatedDimensions().isEmpty()) {
-						System.out.println("ZIOPORCO");
-					}
 					statedUnit.getAggregatedDimensions().putAll(unit.getAggregatedDimensions());
 					monitor.warn("This observable's unit implies " + unit.getAggregatedDimensions()
 							+ " aggregation over a " + ((Geometry) this.geometry).getLabel()
-							+ " context. If this is intentional, add an @extensive annotation to the "
+							+ " context. If this is intentional, add @extensive/@intensive annotations to the "
 							+ (getObservables().get(0).equals(observable) ? "model" : "observable")
 							+ " to remove this warning.", observable);
 					return;
@@ -617,7 +615,7 @@ public class Model extends KimObject implements IModel {
 			monitor.error("Unit " + statedUnit + " is incompatible with this observable in a "
 					+ ((Geometry) this.geometry).getLabel() + " context"
 					+ (baseUnit.isCompatible(contextualization.getChosenUnit())
-							? ". You may add an @intensive annotation to the model to force its dimensionality."
+							? ". You may add @intensive/@extensive annotations to force dimensionality."
 							: ""),
 					observable);
 		}
