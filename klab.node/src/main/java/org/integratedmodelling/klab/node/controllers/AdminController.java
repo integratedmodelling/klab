@@ -48,7 +48,10 @@ public class AdminController {
 	public Map<String, Object> getStatus(@PathVariable String component) {
 		Component comp = Extensions.INSTANCE.getComponent(component);
 		if (comp != null) {
-			return ((Metadata) comp.getStatus()).getData();
+			Map<String, Object> ret = ((Metadata) comp.getStatus()).getData();
+			ret.put("name", component);
+			ret.put("version", comp.getVersion());
+			return ret;
 		}
 		return null;
 	}

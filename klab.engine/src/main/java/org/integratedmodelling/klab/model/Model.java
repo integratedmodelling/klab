@@ -579,7 +579,7 @@ public class Model extends KimObject implements IModel {
 				setErrors(true);
 				return;
 			}
-			
+
 			Map<ExtentDimension, ExtentDistribution> constraints = getExtentConstraints(observable, monitor);
 			UnitContextualization contextualization = Units.INSTANCE.getContextualization(baseUnit, this.geometry,
 					constraints);
@@ -637,54 +637,63 @@ public class Model extends KimObject implements IModel {
 		 * each observable. If so, they completely replace the annotation set (there is
 		 * no inheritance).
 		 */
-		Collection<IAnnotation> annotations = isModel ? Annotations.INSTANCE.collectAnnotations(this)
-				: Annotations.INSTANCE.collectAnnotations(observable);
+		Collection<IAnnotation> annotations = filterAnnotations(isModel ? Annotations.INSTANCE.collectAnnotations(this)
+				: Annotations.INSTANCE.collectAnnotations(observable));
 		if (!isModel && annotations.isEmpty()) {
-			annotations = Annotations.INSTANCE.collectAnnotations(this);
+			annotations = filterAnnotations(Annotations.INSTANCE.collectAnnotations(this));
 		}
 
 		for (IAnnotation annotation : annotations) {
-			if (annotation.getName().equals("extensive") || annotation.getName().equals("intensive")) {
-				for (Object o : annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, List.class)) {
-					switch (o.toString()) {
-					case "space":
-					case "area":
-						ret.put(ExtentDimension.AREAL,
-								annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-										: ExtentDistribution.INTENSIVE);
-						break;
-					case "line":
-						ret.put(ExtentDimension.LINEAL,
-								annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-										: ExtentDistribution.INTENSIVE);
-						break;
-					case "volume":
-						ret.put(ExtentDimension.VOLUMETRIC,
-								annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-										: ExtentDistribution.INTENSIVE);
-						break;
-					case "time":
-						ret.put(ExtentDimension.TEMPORAL,
-								annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-										: ExtentDistribution.INTENSIVE);
-						break;
-					case "numerosity":
-						ret.put(ExtentDimension.CONCEPTUAL,
-								annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-										: ExtentDistribution.INTENSIVE);
-						break;
-					default:
-						if (monitor != null) {
-							monitor.error(
-									"Illegal extent in " + annotation.getName() + " annotation: " + o
-											+ ": allowed are space|area, line, volume, time and numerosity",
-									getStatement());
-						}
+
+			for (Object o : annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, List.class)) {
+				switch (o.toString()) {
+				case "space":
+				case "area":
+					ret.put(ExtentDimension.AREAL,
+							annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+									: ExtentDistribution.INTENSIVE);
+					break;
+				case "line":
+					ret.put(ExtentDimension.LINEAL,
+							annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+									: ExtentDistribution.INTENSIVE);
+					break;
+				case "volume":
+					ret.put(ExtentDimension.VOLUMETRIC,
+							annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+									: ExtentDistribution.INTENSIVE);
+					break;
+				case "time":
+					ret.put(ExtentDimension.TEMPORAL,
+							annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+									: ExtentDistribution.INTENSIVE);
+					break;
+				case "numerosity":
+					ret.put(ExtentDimension.CONCEPTUAL,
+							annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+									: ExtentDistribution.INTENSIVE);
+					break;
+				default:
+					if (monitor != null) {
+						monitor.error(
+								"Illegal extent in " + annotation.getName() + " annotation: " + o
+										+ ": allowed are space|area, line, volume, time and numerosity",
+								getStatement());
 					}
 				}
 			}
 		}
 
+		return ret;
+	}
+
+	private Collection<IAnnotation> filterAnnotations(Collection<IAnnotation> object) {
+		List<IAnnotation> ret = new ArrayList<>();
+		for (IAnnotation annotation : object) {
+			if ("intensive".equals(annotation.getName()) || "extensive".equals(annotation.getName())) {
+				ret.add(annotation);
+			}
+		}
 		return ret;
 	}
 

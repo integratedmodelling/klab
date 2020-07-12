@@ -78,6 +78,10 @@ public class Unit implements IUnit {
 //		translations.put("L", "dm^3");
 	}
 
+	public static Unit create(IUnit unit) {
+		return new Unit(((Unit)unit)._unit);
+	}
+	
 	/**
 	 * Create a unit from a string.
 	 *
