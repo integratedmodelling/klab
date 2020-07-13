@@ -23,6 +23,7 @@ package org.integratedmodelling.klab.communication.client;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -329,7 +330,6 @@ public class Client extends RestTemplate implements IClient {
 	}
 
 	@Override
-//	@SuppressWarnings({ "rawtypes" })
 	public <T extends Object> T post(String url, Object data, Class<? extends T> cls) {
 
 		url = checkEndpoint(url);
@@ -462,7 +462,7 @@ public class Client extends RestTemplate implements IClient {
 	 * @return the deserialized result
 	 */
 	@Override
-	@SuppressWarnings({ "rawtypes" })
+	@SuppressWarnings({"unchecked" })
 	public <T> T get(String url, Class<? extends T> cls, Object... parameters) {
 
 		url = checkEndpoint(url);
@@ -497,7 +497,12 @@ public class Client extends RestTemplate implements IClient {
 			}
 		}
 
-		ResponseEntity<Map> response = exchange(url, HttpMethod.GET, entity, Map.class);
+		ResponseEntity<?> response = null;
+		if (cls.isArray()) {
+			response = exchange(url, HttpMethod.GET, entity, List.class);
+		} else {
+			response = exchange(url, HttpMethod.GET, entity, Map.class);
+		}
 
 		switch (response.getStatusCodeValue()) {
 		case 302:
@@ -510,15 +515,36 @@ public class Client extends RestTemplate implements IClient {
 		if (response.getBody() == null) {
 			return null;
 		}
-		if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
-			Object exception = response.getBody().get("exception");
-			// Object path = response.getBody().get("path");
-			Object message = response.getBody().get("message");
-			// Object error = response.getBody().get("error");
-			throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+		if (response.getBody() instanceof Map) {
+			if (((Map<?, ?>) response.getBody()).containsKey("exception")
+					&& ((Map<?, ?>) response.getBody()).get("exception") != null) {
+				Object exception = ((Map<?, ?>) response.getBody()).get("exception");
+				// Object path = response.getBody().get("path");
+				Object message = ((Map<?, ?>) response.getBody()).get("message");
+				// Object error = response.getBody().get("error");
+				throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+			}
+
+			return objectMapper.convertValue(response.getBody(), cls);
+
+		} else if (response.getBody() instanceof List) {
+
+			List<?> list = (List<?>)response.getBody();
+			Object ret = Array.newInstance(cls.getComponentType(), (((List<?>) response.getBody()).size()));
+			for (int i = 0; i < list.size(); i++) {
+				Object object = list.get(i);
+				if (object instanceof Map) {
+					object = objectMapper.convertValue(object, cls.getComponentType());
+				}
+				Array.set(ret, i, object);
+			}
+			
+			return (T)ret;
+
 		}
 
-		return objectMapper.convertValue(response.getBody(), cls);
+		return null;
+
 	}
 
 	@Override
@@ -554,9 +580,6 @@ public class Client extends RestTemplate implements IClient {
 				throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
 			}
 
-			if (response.getBody() == null) {
-				return null;
-			}
 			if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
 				Object exception = response.getBody().get("exception");
 				// Object path = response.getBody().get("path");

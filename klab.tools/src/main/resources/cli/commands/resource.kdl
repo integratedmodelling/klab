@@ -40,7 +40,11 @@ void 'list'
 	optional boolean force
 		"Force immediate re-check of all resources. Default false."
 		default false
-
+		
+	optional text node
+		"A node name when a listing of its public resources is wanted. Only resources visible to the current user will be retrieved."
+		
+		
 	class org.integratedmodelling.klab.clitool.console.commands.resources.List
 }
 

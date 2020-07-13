@@ -9,9 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- One-way aggregation working properly both by category and object, using the
+  spatial nature of the context or of the aggregating artifact to define
+  unit collapse. N-way aggregation supported only syntactically for now.
 - Blacklist (synchronized) projects by adding their (comma-separated) names to
   property klab.project.blacklist. For ARIES users, advisable for im.data.usa 
-  until USGS gets its act together.
+  until USGS gets its act together. Projects aren't removed from the deploy
+  directory, so they should be removed manually after adding to the blacklist.
 - Spatial (Areal, Lineal, Puntal, Volumetric) and commonsense temporal (Yearly, 
   Monthly, Weekly, Daily, Hourly) identities are now core identities so they can
   be used when assessing default units for aggregation by scaled countables (continuants
@@ -133,6 +137,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   accessibility, performance or content.
 - Implement publishing of vector and raster files to node-connected Geoserver and 
   enhancement of vector/raster public resources to WFS/WCS ones.
+### Fixed
+- Several fixes in unit validation.
 
 ## [0.10.0.222] -- 2020/02/01
 ### Added
