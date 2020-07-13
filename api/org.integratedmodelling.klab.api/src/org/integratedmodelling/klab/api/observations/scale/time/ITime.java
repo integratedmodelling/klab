@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.observations.scale.time;
 
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
@@ -331,5 +332,13 @@ public interface ITime extends IExtent {
 	 * @return
 	 */
 	boolean intersects(Dimension dimension);
+
+	/**
+	 * Return the length of the period in the passed unit, which must be temporal.
+	 * 
+	 * @param temporalUnit
+	 * @return
+	 */
+	double getLength(IUnit temporalUnit);
 
 }
