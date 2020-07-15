@@ -48,9 +48,12 @@ void 'list'
 	class org.integratedmodelling.klab.clitool.console.commands.resources.List
 }
 
-void clear
-	"Remove all resources in the local workspace."
+void delete
+	"Individual or bulk removal of resources, in the local workspace or remotely on nodes. No node clear is possible."
 {
+	optional text node
+		"A node name to delete resources."
+
 	class org.integratedmodelling.klab.clitool.console.commands.resources.Clear
 }
 

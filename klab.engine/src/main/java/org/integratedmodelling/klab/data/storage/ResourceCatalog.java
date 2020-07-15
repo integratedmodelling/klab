@@ -319,7 +319,7 @@ public class ResourceCatalog implements IResourceCatalog {
 	}
 
 	@Override
-	public IResource rename(IResource resource, String newUrn) {
+	public IResource rename(IResource resource, String newUrn, String updateMessage) {
 		// TODO
 		return null;
 	}
@@ -328,6 +328,11 @@ public class ResourceCatalog implements IResourceCatalog {
 		// TODO
 		// ENSURE THE RESOURCE TIMESTAMP IS NEW
 		return null;
+	}
+
+	@Override
+	public IResource update(IResource resource, String message) {
+		return update(((Resource)resource).getReference());
 	}
 
 }

@@ -453,6 +453,62 @@ public class Client extends RestTemplate implements IClient {
 		}
 		return url;
 	}
+	
+	/**
+	 * Issue a DELETE request. Called remove to avoid conflict with super.
+	 * 
+	 * @param url
+	 * @param parameters
+	 * @return
+	 */
+	public Object remove(String url, Object... parameters) {
+
+		url = checkEndpoint(url);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", "application/json");
+		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+		if (authToken != null) {
+			headers.set(HttpHeaders.AUTHORIZATION, authToken);
+		}
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		if (parameters != null) {
+			String params = "";
+			for (int i = 0; i < parameters.length; i++) {
+				String key = parameters[i].toString();
+				String nakedKey = key;
+				String val = parameters[++i].toString();
+				if (!(key.startsWith("{") && key.endsWith("}"))) {
+					key = "{" + key + "}";
+				} else {
+					nakedKey = key.substring(1, key.length() - 1);
+				}
+				if (url.contains(key)) {
+					url = url.replace(key, val);
+				} else {
+					params += (params.isEmpty() ? "" : "&") + nakedKey + "=" + Escape.forURL(val);
+				}
+			}
+			if (!params.isEmpty()) {
+				url += "?" + params;
+			}
+		}
+
+		ResponseEntity<?> response = exchange(url, HttpMethod.DELETE, entity, Object.class);
+		
+		switch (response.getStatusCodeValue()) {
+		case 302:
+		case 403:
+			throw new KlabAuthorizationException("unauthorized request " + url);
+		case 404:
+			throw new KlabInternalErrorException("internal: request " + url + " was not recognized");
+		case 503:
+			throw new KlabInternalErrorException("internal: request " + url + " caused a server error");
+		}
+
+		return response.getBody();
+	}
 
 	/**
 	 * Instrumented for header communication and error parsing
@@ -509,7 +565,9 @@ public class Client extends RestTemplate implements IClient {
 		case 403:
 			throw new KlabAuthorizationException("unauthorized request " + url);
 		case 404:
-			throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
+			throw new KlabInternalErrorException("internal: request " + url + " was not recognized");
+		case 503:
+			throw new KlabInternalErrorException("internal: request " + url + " caused a server error");
 		}
 
 		if (response.getBody() == null) {

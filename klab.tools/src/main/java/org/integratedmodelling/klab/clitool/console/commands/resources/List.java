@@ -74,7 +74,7 @@ public class List implements ICommand {
 				}
 			}
 		} else {
-			return "Node " + nodeId + (node == null ? "does not exist" : "is offline");
+			return "Node " + nodeId + (node == null ? " does not exist" : " is offline");
 		}
 		return ret.toString();
 	}

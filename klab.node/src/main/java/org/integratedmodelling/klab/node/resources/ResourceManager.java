@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.TimerTask;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.auth.KlabPermissions;
@@ -31,7 +33,7 @@ import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.controllers.EngineController;
 import org.integratedmodelling.klab.rest.Group;
-import org.integratedmodelling.klab.rest.ResourceReference;	
+import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -146,6 +148,21 @@ public class ResourceManager {
 
 	}
 
+	public void updateResource(String urn, ResourceReference content, EngineAuthorization user, IMonitor monitor) {
+		if (!canAccess(urn, user)) {
+			throw new SecurityException(urn);
+		}
+		catalog.update(urn, content, "Updated on " + new Date() + " by " + user.getUsername());
+	}
+
+	public boolean deleteResource(String urn, EngineAuthorization user, IMonitor monitor) {
+		if (!canAccess(urn, user)) {
+			throw new SecurityException(urn);
+		}
+		return catalog.remove(urn) != null;
+	}
+
+	
 	public ITicket publishResource(ResourceReference resourceReference, File uploadArchive, EngineAuthorization user,
 			IMonitor monitor) {
 
@@ -179,6 +196,7 @@ public class ResourceManager {
 					}
 					ret.resolve("urn", resource.getUrn());
 				} catch (Throwable t) {
+					Logging.INSTANCE.error("exception when publishing " + resourceReference.getUrn() + ": " + t.getMessage());
 					ret.error("Publishing failed with exception: " + t.getMessage());
 				}
 			}

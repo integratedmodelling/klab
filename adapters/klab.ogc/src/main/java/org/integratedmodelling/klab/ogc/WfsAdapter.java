@@ -59,6 +59,8 @@ public class WfsAdapter implements IResourceAdapter {
 
     static Map<String, WFSDataStore> dataStores = new HashMap<>();
 
+    public static final String ID = "wfs";
+    
     public static final int TIMEOUT = 100000;
     public static final int BUFFER_SIZE = 512;
 
@@ -71,7 +73,7 @@ public class WfsAdapter implements IResourceAdapter {
 
     @Override
     public String getName() {
-        return "wfs";
+        return ID;
     }
 
     @Override

@@ -79,8 +79,7 @@ public class Aggregator {
 						 */
 						if (incomingSpatialDimensionality == 2) {
 							IUnit arealUnit = Units.INSTANCE.getArealExtentUnit(observable.getUnit());
-							double factor = incomingScale.getSpace().getShape().getArea(arealUnit);
-							nval *= factor;
+							nval *= incomingScale.getSpace().getShape().getArea(arealUnit);
 						} else if (incomingSpatialDimensionality == 3) {
 							// TODO not equipped yet
 							throw new KlabUnsupportedFeatureException("volumetric extents are still unsupported");
@@ -97,8 +96,7 @@ public class Aggregator {
 						 * adjust for temporal coverage
 						 */
 						IUnit temporalUnit = Units.INSTANCE.getTimeExtentUnit(observable.getUnit());
-						double factor = incomingScale.getTime().getLength(temporalUnit);
-						nval *= factor;
+						nval *= incomingScale.getTime().getLength(temporalUnit);
 						distribution.add(ExtentDimension.TEMPORAL);
 					}
 
@@ -120,37 +118,7 @@ public class Aggregator {
 			addenda.add(new Triple<>(value, observable, locator));
 		}
 	}
-
-//	public Object get(ILocator locator) {
-//
-//		Object ret = null;
-//		Object[] rets = null;
-//		int n = 0;
-//
-//		for (Triple<Object, IObservable, ILocator> triple : addenda) {
-//			if (ret == null) {
-//				ret = triple.getFirst();
-//			} else {
-//				if (rets == null) {
-//					rets = new Object[addenda.size()];
-//					/*
-//					 * handle: unit/currency conversion; unit/currency aggregation/distribution
-//					 */
-//					if (this.observable.getUnit() != null
-//							&& !this.observable.getUnit().equals(triple.getSecond().getUnit())) {
-//						// TODO
-//					} else if (this.observable.getCurrency() != null
-//							&& !this.observable.getCurrency().equals(triple.getSecond().getCurrency())) {
-//						// TODO
-//					}
-//					rets[0] = ret;
-//				}
-//				rets[++n] = triple.getFirst();
-//			}
-//		}
-//		return rets != null ? aggregate(rets, this.aggregation, monitor) : ret;
-//	}
-
+	
 	/**
 	 * Perform the final aggregation.
 	 * 
@@ -176,12 +144,6 @@ public class Aggregator {
 		}
 		return rets != null ? aggregate(rets, this.aggregation, monitor) : ret;
 	}
-
-//	public Object getAndReset(ILocator locator) {
-//		Object ret = get(locator);
-//		addenda.clear();
-//		return ret;
-//	}
 
 	public Object aggregate(Object[] values, Aggregation aggregation, IMonitor monitor) {
 
