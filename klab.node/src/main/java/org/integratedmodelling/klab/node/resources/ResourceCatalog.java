@@ -15,12 +15,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -30,8 +32,10 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.NodeAuthenticationManager;
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -75,6 +79,10 @@ public class ResourceCatalog implements IResourceCatalog {
 		commonExtensions.add(".tiff");
 		commonExtensions.add(".csv");
 		commonExtensions.add(".xsl");
+	}
+
+	public ResourceReference getDescriptor(String urn) {
+		return resources.get(urn);
 	}
 
 	private String sanitizeResourceId(String id) {
@@ -137,7 +145,7 @@ public class ResourceCatalog implements IResourceCatalog {
 					StandardCharsets.UTF_8);
 
 			// publish, validate and insert
-			ret = publisher.publish(resource, Klab.INSTANCE.getRootMonitor());
+			ret = publisher.publish(resource, this, Klab.INSTANCE.getRootMonitor());
 			((Resource) ret).validate(Resources.INSTANCE);
 			put(ret.getUrn(), ret);
 			resourcePaths.put(ret.getUrn(), resourcePath);
@@ -177,15 +185,15 @@ public class ResourceCatalog implements IResourceCatalog {
 				throw new KlabIOException(t);
 			}
 		}
-		
+
 		String id = reference.getMetadata().containsKey(Resource.PREFERRED_LOCALNAME_METADATA_KEY)
 				? reference.getMetadata().get(Resource.PREFERRED_LOCALNAME_METADATA_KEY)
 				: reference.getLocalName();
-		
+
 		if (!importSettings.isEmpty()) {
 			id = importSettings.getProperty(IResourcePublisher.SUGGESTED_RESOURCE_ID_PROPERTY, id);
 		}
-				
+
 		/*
 		 * fix the resource reference
 		 */
@@ -262,7 +270,8 @@ public class ResourceCatalog implements IResourceCatalog {
 	}
 
 	private String removeProject(String localPath) {
-		// remove project/resources/folder/, leaving only the local file paths from the data directory
+		// remove project/resources/folder/, leaving only the local file paths from the
+		// data directory
 		String ret = Path.getRemainder(localPath, "/");
 		ret = Path.getRemainder(ret, "/");
 		return Path.getRemainder(ret, "/");
@@ -286,26 +295,33 @@ public class ResourceCatalog implements IResourceCatalog {
 			throw new IllegalStateException(
 					"cannot import resource " + reference.getUrn() + ": adapter is not recognized or cannot publish");
 		}
-		
+
 		try {
 			// write out the modified resource, overwriting the original
-			FileUtils.writeStringToFile(metadata, JsonUtils.printAsJson(((Resource)ret).getReference()),
-				StandardCharsets.UTF_8);
+			FileUtils.writeStringToFile(metadata, JsonUtils.printAsJson(((Resource) ret).getReference()),
+					StandardCharsets.UTF_8);
 		} catch (IOException e) {
 			throw new KlabIOException(e);
 		}
-		
-		ret = publisher.publish(ret, Klab.INSTANCE.getRootMonitor());
 
 		/*
 		 * validate and load into catalog
 		 */
 		((Resource) ret).validate(Resources.INSTANCE);
-
 		put(ret.getUrn(), ret);
 		resourcePaths.put(ret.getUrn(), resourcePath);
 
-		return ret;
+		/**
+		 * Call the publisher after the resource has been inserted, passing the catalog
+		 * for updates or modifications.
+		 */
+		IResource published = publisher.publish(ret, this, Klab.INSTANCE.getRootMonitor());
+
+		if (published == null) {
+			remove(ret.getUrn());
+		}
+		
+		return published;
 	}
 
 	@Override
@@ -333,7 +349,7 @@ public class ResourceCatalog implements IResourceCatalog {
 		ResourceReference ref = resources.get(key);
 		return ref == null ? null : new Resource(ref);
 	}
-	
+
 	@Override
 	public IResource put(String key, IResource value) {
 
@@ -392,7 +408,8 @@ public class ResourceCatalog implements IResourceCatalog {
 
 	@Override
 	public void putAll(Map<? extends String, ? extends IResource> m) {
-		throw new IllegalStateException("putAll cannot be called on a public resource catalog: all insertions must be atomic");
+		throw new IllegalStateException(
+				"putAll cannot be called on a public resource catalog: all insertions must be atomic");
 	}
 
 	@Override
@@ -492,16 +509,42 @@ public class ResourceCatalog implements IResourceCatalog {
 		throw new IllegalStateException("Public resources cannot be copied");
 	}
 
-	@Override
-	public IResource rename(IResource resource, String newUrn) {
-		// TODO just update the URN and refresh catalogs/namespaces
-		return resource;
-	}
+	/**
+	 * Update the resource currently identified by an urn to the contents of the
+	 * metadata passed. Catch renamings and behave accordingly.
+	 * 
+	 * @param urn
+	 * @param reference
+	 * @return
+	 */
+	public IResource update(String urn, ResourceReference reference, String message) {
 
-	public IResource update(ResourceReference reference) {
-		// TODO record all changes, up version
-		// ENSURE THE RESOURCE TIMESTAMP IS NEW
-		return null;
+		File path = resourcePaths.get(urn);
+		ResourceReference oldResource = getDescriptor(urn);
+
+		if (path == null || oldResource == null) {
+			throw new KlabResourceAccessException("cannot update non-existing resource " + reference.getUrn());
+		}
+
+		boolean renaming = urn.equals(reference.getUrn());
+		ResourceReference newResource = reference;
+		newResource.getHistory().add(oldResource);
+		newResource.getNotifications().add(new Notification(message, Level.INFO.getName(), System.currentTimeMillis()));
+		Version version = Version.create(oldResource.getVersion());
+		newResource.setVersion(version.withMajor(version.getMajor() + 1).toString());
+		newResource.setResourceTimestamp(System.currentTimeMillis());
+
+		if (renaming) {
+			this.resourcePaths.remove(urn);
+			this.resources.remove(urn);
+		}
+
+		File metadata = new File(path + File.separator + "resource.json");
+		JsonUtils.save(newResource, metadata);
+		this.resourcePaths.put(newResource.getUrn(), path);
+		this.resources.put(newResource.getUrn(), newResource);
+
+		return get(reference.getUrn());
 	}
 
 	public String getDefaultNamespace() {
@@ -518,6 +561,18 @@ public class ResourceCatalog implements IResourceCatalog {
 		File metadata = new File(temporary + File.separator + "resource.json");
 		ResourceReference reference = JsonUtils.load(metadata, ResourceReference.class);
 		return new Pair<>(temporary, reference.getUrn());
+	}
+
+	@Override
+	public IResource rename(IResource resource, String newUrn, String message) {
+		ResourceReference reference = getDescriptor(resource.getUrn());
+		reference.setUrn(newUrn);
+		return update(resource.getUrn(), reference, message);
+	}
+
+	@Override
+	public IResource update(IResource resource, String updateMessage) {
+		return update(resource.getUrn(), ((Resource) resource).getReference(), updateMessage);
 	}
 
 }

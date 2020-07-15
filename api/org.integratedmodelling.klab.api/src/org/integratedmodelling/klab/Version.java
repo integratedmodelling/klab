@@ -201,6 +201,16 @@ public class Version implements Comparable<Version>, Serializable {
 		return this;
 	}
 
+	public Version withMajor(int major) {
+		this.major = major;
+		return this;
+	}
+
+	public Version withMinor(int minor) {
+		this.minor = minor;
+		return this;
+	}
+
 	/**
 	 * Gets the major.
 	 *

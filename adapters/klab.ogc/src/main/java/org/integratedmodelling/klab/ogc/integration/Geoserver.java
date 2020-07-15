@@ -452,4 +452,8 @@ public class Geoserver {
 
 	}
 
+	public String getServiceUrl() {
+		return url.endsWith("ows") ? url : (url + "/ows");
+	}
+
 }

@@ -7,8 +7,10 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
@@ -163,12 +165,13 @@ public enum Annotations implements IAnnotationService {
 	/**
 	 * Collect the annotations from an k.IM object and its semantic lineage,
 	 * ensuring that downstream annotations of the same name override those
-	 * upstream.
+	 * upstream. Any string parameter filters the annotations collected.
 	 * 
 	 * @param object
 	 * @return all annotations from upstream
 	 */
 	public Collection<IAnnotation> collectAnnotations(Object... objects) {
+
 		Map<String, IAnnotation> ret = new HashMap<>();
 		for (Object object : objects) {
 			if (object instanceof IKimObject) {

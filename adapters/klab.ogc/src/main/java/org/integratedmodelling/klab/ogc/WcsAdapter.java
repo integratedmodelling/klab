@@ -45,6 +45,8 @@ import org.integratedmodelling.klab.raster.wcs.WcsValidator;
 		"namespace" })
 public class WcsAdapter implements IResourceAdapter {
 
+	public static final String ID = "wcs";
+	
 	/**
 	 * Map all service URLs encountered to their handlers.
 	 * TODO see if we want to cache this.
@@ -73,7 +75,7 @@ public class WcsAdapter implements IResourceAdapter {
 	
 	@Override
 	public String getName() {
-		return "wcs";
+		return ID;
 	}
 
 	@Override

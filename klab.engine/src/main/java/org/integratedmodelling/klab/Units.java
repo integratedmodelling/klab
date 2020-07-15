@@ -43,6 +43,7 @@ public enum Units implements IUnitService {
 	public IUnit SECONDS = getUnit("s");
 	public IUnit YEARS = getUnit("year");
 	public IUnit HOURS = getUnit("h");
+	public IUnit MILLISECONDS = getUnit("ms");
 
 	private Map<String, Unit> defaultUnitCache = Collections.synchronizedMap(new HashMap<>());
 
@@ -771,12 +772,12 @@ public enum Units implements IUnitService {
 		IUnit chosen = contextualize(baseUnit, implied);
 
 		/**
-		 * all possible other transformations vs. the stated dimensions
+		 * all possible other transformations of the base unit vs. the stated dimensions
 		 */
 		Map<ExtentDimension, ExtentDistribution> context = new HashMap<>();
 
 		// all intensive
-		Unit fullyContextualized = (Unit)contextualize(baseUnit, aggregatable);
+		Unit fullyContextualized = (Unit) contextualize(baseUnit, aggregatable);
 		Set<IUnit> potentialUnits = new LinkedHashSet<>();
 		if (!chosen.equals(fullyContextualized)) {
 			for (ExtentDimension ed : aggregatable) {
@@ -784,14 +785,17 @@ public enum Units implements IUnitService {
 			}
 			potentialUnits.add(fullyContextualized.withAggregatedDimensions(new HashMap<>(context)));
 		}
-		Unit fullyExtensive = (Unit)Units.INSTANCE.removeExtents(fullyContextualized, aggregatable);
+		// all extensive
+		Unit fullyExtensive = Unit.create(baseUnit); // (Unit)Units.INSTANCE.removeExtents(fullyContextualized,
+														// aggregatable);
 		if (!chosen.equals(fullyExtensive)) {
 			for (ExtentDimension ed : aggregatable) {
 				context.put(ed, ExtentDistribution.EXTENSIVE);
 			}
 			potentialUnits.add(fullyExtensive.withAggregatedDimensions(new HashMap<>(context)));
 		}
-		
+
+		// all other non-trivial variations
 		for (Set<ExtentDimension> set : Sets.powerSet(aggregatable)) {
 			if (set.isEmpty()) {
 				continue;

@@ -42,6 +42,7 @@ import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -50,6 +51,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
@@ -916,8 +918,9 @@ public enum Observables implements IObservableService {
 	 * appropriate units.
 	 * 
 	 * @param observable
+	 * @param scale      scale of contextualization
 	 */
-	public void contextualizeUnitsForAggregation(Observable observable) {
+	public void contextualizeUnitsForAggregation(Observable observable, IScale scale) {
 
 		if (observable.getUnit() == null) {
 			return;
@@ -950,6 +953,9 @@ public enum Observables implements IObservableService {
 		IUnit originalUnit = observable.getUnit();
 		boolean changed = false;
 
+		ExtentDimension dspatial = null;
+		ITime.Resolution dtemporal = null;
+
 		for (IConcept dop : ops) {
 
 			ExtentDimension spatial = null;
@@ -960,24 +966,48 @@ public enum Observables implements IObservableService {
 					temporal = coreOntology.getTemporalNature(dop);
 				}
 				spatial = coreOntology.getSpatialNature(dop);
+			} else if (dop.is(Type.QUALITY)) {
+				spatial = scale.getSpace() == null ? null
+						: (scale.isSpatiallyDistributed()
+								? ExtentDimension.spatial(scale.getSpace().getDimensionality())
+								: null);
+				temporal = scale.getTime() == null ? null
+						: (scale.isTemporallyDistributed() ? scale.getTime().getResolution() : null);
 			}
 
 			if (spatial != null || temporal != null) {
 
-				int originalSpatialDimension = Units.INSTANCE.getSpatialDimensionality(originalUnit);
-				int originalTemporalDimension = Units.INSTANCE.getTemporalDimensionality(originalUnit);
+				if (changed) {
 
-				if (spatial != null && originalSpatialDimension == spatial.dimensionality) {
-					originalUnit = Units.INSTANCE.removeExtents(originalUnit, Collections.singleton(spatial));
-					changed = true;
+					/*
+					 * verify that we are not mixing classifiers with different dimensionalities.
+					 */
+					if ((dspatial != null && !dspatial.equals(spatial))
+							|| (dtemporal != null && !dtemporal.equals(temporal))) {
+						throw new KlabContextualizationException(
+								"aggregation: cannot combine classifiers that imply incompatible dimensionalities");
+					}
+
+				} else {
+
+					dspatial = spatial;
+					dtemporal = temporal;
+
+					int originalSpatialDimension = Units.INSTANCE.getSpatialDimensionality(originalUnit);
+					int originalTemporalDimension = Units.INSTANCE.getTemporalDimensionality(originalUnit);
+
+					if (spatial != null && originalSpatialDimension == spatial.dimensionality) {
+						originalUnit = Units.INSTANCE.removeExtents(originalUnit, Collections.singleton(spatial));
+						changed = true;
+					}
+
+					if (temporal != null && originalTemporalDimension == 1) {
+						originalUnit = Units.INSTANCE.removeExtents(originalUnit,
+								Collections.singleton(ExtentDimension.TEMPORAL));
+						changed = true;
+					}
+
 				}
-
-				if (temporal != null && originalTemporalDimension == 1) {
-					originalUnit = Units.INSTANCE.removeExtents(originalUnit,
-							Collections.singleton(ExtentDimension.TEMPORAL));
-					changed = true;
-				}
-
 			}
 		}
 

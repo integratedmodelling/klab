@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -12,6 +13,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
@@ -35,6 +37,7 @@ public class ObjectClassificationResolver
 		implements IResolver<IState>, IProcessor, IExpression, IDocumentationProvider {
 
 	static final public String FUNCTION_ID = "klab.runtime.aggregate";
+	public static final String TABLE_ID = "aggregated.value.table";
 
 	IArtifact classified;
 	IConcept classifier;
@@ -89,15 +92,15 @@ public class ObjectClassificationResolver
 				aggregators.put(a, new Aggregator(ret.getObservable(), context.getMonitor()));
 			}
 		}
-		
+
 		for (ILocator locator : ret.getScale()) {
 
 			for (IArtifact a : glocator.getObservations(locator)) {
-				
+
 				// set the artifact's value wherever it's covering the locator
 				Aggregator aggregator = aggregators.get(a);
 				if (aggregator != null) {
-					aggregator.add(((IState)classified).get(locator), ((IState)classified).getObservable(), locator);
+					aggregator.add(((IState) classified).get(locator), ((IState) classified).getObservable(), locator);
 				}
 			}
 
@@ -105,18 +108,59 @@ public class ObjectClassificationResolver
 
 		Map<IDirectObservation, Object> aggregated = new HashMap<>();
 		for (IArtifact a : aggregators.keySet()) {
-			aggregated.put((IDirectObservation)a, aggregators.get(a).aggregate());
-		}		
-		
+			aggregated.put((IDirectObservation) a, aggregators.get(a).aggregate());
+		}
+
 		this.glocator.distributeValues(aggregated, ret);
-		
+
 		addDocumentationTags(aggregated);
-		
+
 		return ret;
 	}
 
 	private void addDocumentationTags(Map<IDirectObservation, Object> cache) {
-		// TODO Auto-generated method stub
+
+		final StringBuffer body = new StringBuffer(1024);
+		String separator = "";
+		for (String h : new String[] { Concepts.INSTANCE.getDisplayLabel(classifier),
+				Concepts.INSTANCE.getDisplayLabel(((IState) classified).getObservable()) }) {
+			body.append((separator.isEmpty() ? "" : "|") + h);
+			separator += ((separator.isEmpty() ? "" : " |") + " :---");
+		}
+		body.append("\n");
+		body.append(separator + "\n");
+
+		for (IDirectObservation key : cache.keySet()) {
+			boolean first = true;
+			Object value = cache.get(key);
+			if (value instanceof Number) {
+				value = NumberFormat.getInstance().format(value);
+			}
+			for (Object item : new Object[] { key.getName(), value }) {
+				body.append((first ? "" : "|") + item);
+				first = false;
+			}
+			body.append("\n");
+		}
+
+		documentation.add(new IDocumentationProvider.Item() {
+
+			@Override
+			public String getTitle() {
+				return Concepts.INSTANCE.getDisplayName(((IState) classified).getObservable()) + " aggregated by "
+						+ Concepts.INSTANCE.getDisplayLabel(classifier);
+			}
+
+			@Override
+			public String getMarkdownContents() {
+				return body.toString();
+			}
+
+			@Override
+			public String getId() {
+				return TABLE_ID;
+			}
+		});
 	}
 
 	@Override

@@ -789,7 +789,7 @@ public class DataflowCompiler {
 			 * that interfere with the spatial or temporal distribution of the original units.
 			 */
 			if (assigned) {
-				Observables.INSTANCE.contextualizeUnitsForAggregation(this.observable);
+				Observables.INSTANCE.contextualizeUnitsForAggregation(this.observable, context.getScale());
 			}
 			
 

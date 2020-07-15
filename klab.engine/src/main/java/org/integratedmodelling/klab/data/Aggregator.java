@@ -15,7 +15,10 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Triple;
 
 /**
@@ -33,12 +36,10 @@ public class Aggregator {
 	private Aggregation aggregation;
 	private IMonitor monitor;
 	boolean dataWarning = false;
+	int temporalDimensionality = 0;
+	int spatialDimensionality = 0;
 
 	IUnit unit; // destination unit
-	boolean isArealDensity = false;
-	boolean isRate = false;
-	boolean isLengthDensity = false;
-	boolean isVolumeDensity = false;
 
 	public Aggregator(IObservable destinationObservable, IMonitor monitor) {
 		this.observable = destinationObservable;
@@ -47,62 +48,77 @@ public class Aggregator {
 		this.unit = this.observable.getUnit();
 		if (this.unit == null && this.observable.getCurrency() != null) {
 			this.unit = this.observable.getCurrency().getUnit();
+			this.temporalDimensionality = Units.INSTANCE.getTemporalDimensionality(this.unit);
+			this.spatialDimensionality = Units.INSTANCE.getSpatialDimensionality(this.unit);
 		}
-		if (this.unit != null) {
-			isArealDensity = Units.INSTANCE.isArealDensity(unit);
-			isRate = Units.INSTANCE.isRate(unit);
-			isLengthDensity = Units.INSTANCE.isLengthDensity(unit);
-			isVolumeDensity = Units.INSTANCE.isVolumeDensity(unit);
-		}
+
 	}
 
 	public void add(Object value, IObservable observable, ILocator locator) {
 
 		if (Observations.INSTANCE.isData(value)) {
 
-			/*
-			 * adapt value
-			 */
-			if ( observable.getUnit() != null && this.unit != null) {
+			if (this.aggregation == Aggregation.SUM && value instanceof Number && locator instanceof IScale) {
 				
-			} else if (observable.getCurrency() != null && this.unit != null) {
+				double nval = ((Number)value).doubleValue();
+				IScale incomingScale = (IScale)locator;
 				
+				/*
+				 * adapt value
+				 */
+				if (observable.getUnit() != null && this.unit != null) {
+					
+					int incomingSpatialDimensionality = Units.INSTANCE.getSpatialDimensionality(observable.getUnit());
+					int incomingTemporalDimensionality = Units.INSTANCE.getTemporalDimensionality(observable.getUnit());
+					
+					List<ExtentDimension> distribution = new ArrayList<>();
+					if (incomingSpatialDimensionality >=2 && spatialDimensionality == 0 && incomingScale.getSpace() != null) {
+
+						/*
+						 * aggregate over the spatial coverage of original locator
+						 */
+						if (incomingSpatialDimensionality == 2) {
+							IUnit arealUnit = Units.INSTANCE.getArealExtentUnit(observable.getUnit());
+							nval *= incomingScale.getSpace().getShape().getArea(arealUnit);
+						} else if (incomingSpatialDimensionality == 3) {
+							// TODO not equipped yet
+							throw new KlabUnsupportedFeatureException("volumetric extents are still unsupported");
+							// IUnit volumeUnit = Units.INSTANCE.getVolumeExtentUnit(observable.getUnit());
+							// double factor = incomingScale.getSpace().getShape().getVolume(volumeUnit);
+							// nval *= factor;
+						}
+						
+						distribution.add(ExtentDimension.spatial(incomingSpatialDimensionality));
+					}
+					if (incomingTemporalDimensionality >=2 && temporalDimensionality == 0 && incomingScale.getTime() != null) {
+						
+						/*
+						 * adjust for temporal coverage
+						 */
+						IUnit temporalUnit = Units.INSTANCE.getTimeExtentUnit(observable.getUnit());
+						nval *= incomingScale.getTime().getLength(temporalUnit);
+						distribution.add(ExtentDimension.TEMPORAL);
+					}
+
+					/*
+					 * transform value w.r.t. base units if needed
+					 */
+					IUnit baseUnit = observable.getUnit();
+					if (distribution.size() > 0) {
+						baseUnit = Units.INSTANCE.removeExtents(baseUnit, distribution);
+					}
+					
+					value = this.unit.convert(nval, baseUnit);
+					
+				} else if (observable.getCurrency() != null && this.unit != null) {
+
+				}
 			}
 
 			addenda.add(new Triple<>(value, observable, locator));
 		}
 	}
-
-	public Object get(ILocator locator) {
-		
-		Object ret = null;
-		Object[] rets = null;
-		int n = 0;
-
-		for (Triple<Object, IObservable, ILocator> triple : addenda) {
-			if (ret == null) {
-				ret = triple.getFirst();
-			} else {
-				if (rets == null) {
-					rets = new Object[addenda.size()];
-					/*
-					 * handle: unit/currency conversion; unit/currency aggregation/distribution
-					 */
-					if (this.observable.getUnit() != null
-							&& !this.observable.getUnit().equals(triple.getSecond().getUnit())) {
-						// TODO
-					} else if (this.observable.getCurrency() != null
-							&& !this.observable.getCurrency().equals(triple.getSecond().getCurrency())) {
-						// TODO
-					}
-					rets[0] = ret;
-				}
-				rets[++n] = triple.getFirst();
-			}
-		}
-		return rets != null ? aggregate(rets, this.aggregation, monitor) : ret;
-	}
-
+	
 	/**
 	 * Perform the final aggregation.
 	 * 
@@ -110,7 +126,7 @@ public class Aggregator {
 	 * @return
 	 */
 	public Object aggregate() {
-		
+
 		Object ret = null;
 		Object[] rets = null;
 		int n = 0;
@@ -127,12 +143,6 @@ public class Aggregator {
 			}
 		}
 		return rets != null ? aggregate(rets, this.aggregation, monitor) : ret;
-	}
-
-	public Object getAndReset(ILocator locator) {
-		Object ret = get(locator);
-		addenda.clear();
-		return ret;
 	}
 
 	public Object aggregate(Object[] values, Aggregation aggregation, IMonitor monitor) {
@@ -314,6 +324,7 @@ public class Aggregator {
 		case QUANTIFICATION:
 			// NO - depends on whether the unit is extensive too, and there may be a
 			// conversion factor
+//			if (observable.getType().is(Type.EXTENSIVE_PROPERTY) && this.unit)
 			return observable.getType().is(Type.EXTENSIVE_PROPERTY) ? Aggregation.SUM : Aggregation.MEAN;
 		default:
 			break;

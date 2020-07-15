@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.raster.wcs;
 
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -26,7 +27,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 public class WcsPublisher implements IResourcePublisher {
 
   @Override
-  public IResource publish(IResource localResource, IMonitor monitor) throws KlabException {
+  public IResource publish(IResource localResource, IResourceCatalog catalog, IMonitor monitor) throws KlabException {
     // nothing to do except maybe validation
     return localResource;
   }

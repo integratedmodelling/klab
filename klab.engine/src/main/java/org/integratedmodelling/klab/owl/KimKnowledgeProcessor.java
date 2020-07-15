@@ -376,7 +376,7 @@ public enum KimKnowledgeProcessor {
 
 				operand = declareInternal((IKimConcept) operator.getSecond(), (Ontology) declarationOntology, monitor);
 				declaration += " " + operator.getSecond();
-				ret.setReferenceName(ret.getName() + "_"
+				ret.setReferenceName(ret.getReferenceName() + "_"
 						+ ((IKimConcept) operator.getSecond()).getCodeName().replaceAll("\\-", "_"));
 
 			} else if (operator.getSecond() instanceof IKimObservable) {
