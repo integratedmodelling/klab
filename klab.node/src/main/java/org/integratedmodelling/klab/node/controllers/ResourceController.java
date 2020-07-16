@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -68,6 +69,11 @@ public class ResourceController {
 			throw new SecurityException(request.getUrn());
 		}
 		// TODO also check that the principal can access the adapter
+
+		// TODO log and record
+		Logging.INSTANCE.info("authorized access to " + request.getUrn() + " by "
+				+ ((EngineAuthorization) principal).getFullyQualifiedUsername());
+
 		return resourceManager.getResourceData(request.getUrn(), geometry);
 	}
 
@@ -81,7 +87,7 @@ public class ResourceController {
 	@GetMapping(value = API.NODE.RESOURCE.RESOLVE_URN, produces = "application/json")
 	@ResponseBody
 	public ResourceReference resolveUrn(@PathVariable String urn, Principal principal) {
-			
+
 		IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
 		if (!resourceManager.canAccess(urn, (EngineAuthorization) principal)) {
 			throw new SecurityException(urn);
