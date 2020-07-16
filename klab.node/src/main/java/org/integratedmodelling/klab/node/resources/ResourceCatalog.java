@@ -346,7 +346,8 @@ public class ResourceCatalog implements IResourceCatalog {
 
 	@Override
 	public IResource get(Object key) {
-		ResourceReference ref = resources.get(key);
+		Urn urn = new Urn(key.toString());
+		ResourceReference ref = resources.get(urn.getUrn());
 		return ref == null ? null : new Resource(ref);
 	}
 
@@ -394,7 +395,7 @@ public class ResourceCatalog implements IResourceCatalog {
 	@Override
 	public IResource remove(Object key) {
 		IResource ret = get(key);
-		File resourcePath = resourcePaths.remove(ret);
+		File resourcePath = resourcePaths.remove(key);
 		if (resourcePath != null) {
 			try {
 				FileUtils.deleteDirectory(resourcePath);

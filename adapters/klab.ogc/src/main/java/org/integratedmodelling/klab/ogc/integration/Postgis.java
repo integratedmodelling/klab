@@ -261,7 +261,7 @@ public class Postgis {
 
 		// create datastore for db (if needed) and feature type for table in Geoserver
 		Geoserver geoserver = Geoserver.create();
-		if (geoserver.publishPostgisVector(postgis, "klabtest", table)) {
+		if (geoserver.publishPostgisVector(postgis, "klabtest", table) != null) {
 			System.out.println("Store published to Geoserver as " + "klabtest:" + table);
 		} else {
 			System.out.println("Store publishing to Geoserver failed");

@@ -124,7 +124,7 @@ public class ResourceManager {
 
 			EncodingDataBuilder builder = new EncodingDataBuilder();
 			adapter.getEncodedData(kurn, builder, geometry,
-					new ResourceScope(adapter.getResource(urn), null, builder.getMonitor()));
+					new ResourceScope(adapter.getResource(urn), geometry, builder.getMonitor()));
 			return builder.buildEncoded();
 
 		}
@@ -142,7 +142,7 @@ public class ResourceManager {
 		}
 
 		adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), geometry, builder,
-				new ResourceScope(resource, null, builder.getMonitor()));
+				new ResourceScope(resource, geometry, builder.getMonitor()));
 
 		return builder.buildEncoded();
 
@@ -162,7 +162,6 @@ public class ResourceManager {
 		return catalog.remove(urn) != null;
 	}
 
-	
 	public ITicket publishResource(ResourceReference resourceReference, File uploadArchive, EngineAuthorization user,
 			IMonitor monitor) {
 
@@ -196,7 +195,8 @@ public class ResourceManager {
 					}
 					ret.resolve("urn", resource.getUrn());
 				} catch (Throwable t) {
-					Logging.INSTANCE.error("exception when publishing " + resourceReference.getUrn() + ": " + t.getMessage());
+					Logging.INSTANCE
+							.error("exception when publishing " + resourceReference.getUrn() + ": " + t.getMessage());
 					ret.error("Publishing failed with exception: " + t.getMessage());
 				}
 			}
@@ -240,9 +240,9 @@ public class ResourceManager {
 
 	public boolean canAccess(String urn, EngineAuthorization user) {
 
-		if (Urns.INSTANCE.isUniversal(urn)) {
+		Urn u = new Urn(urn);
 
-			Urn u = new Urn(urn);
+		if (Urns.INSTANCE.isUniversal(urn)) {
 
 			/*
 			 * just check if the adapter is allowed
@@ -261,7 +261,7 @@ public class ResourceManager {
 			}
 		}
 
-		IResource resource = catalog.get(urn);
+		IResource resource = catalog.get(u.getUrn());
 		if (resource != null) {
 			if (user.getRoles().contains(Role.ROLE_ADMINISTRATOR)) {
 				return true;

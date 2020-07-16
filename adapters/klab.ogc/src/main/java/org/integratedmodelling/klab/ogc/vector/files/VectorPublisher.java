@@ -79,24 +79,34 @@ public class VectorPublisher implements IResourceEnhancer {
 							.getMainFile(resource);
 
 					String table = postgis.publish(file, urn);
-					if (table != null && geoserver.publishPostgisVector(postgis, urn.getNamespace(), table)) {
+					if (table != null) {
 
 						Logging.INSTANCE.info("PostGIS ingestion of " + resource.getUrn() + " successful");
+						Logging.INSTANCE.info("Geoserver enabled: attempting ingestion of " + resource.getUrn());
 
-						ResourceReference descriptor = ((Resource) resource).getReference();
-						descriptor.setAdapterType(WfsAdapter.ID);
-						descriptor.getLocalPaths().clear();
-						descriptor.getParameters().put("serviceUrl", geoserver.getServiceUrl());
-						descriptor.getParameters().put("wfsVersion", "1.0.0");
-						descriptor.getParameters().put("wfsIdentifier", urn.getNamespace() + ":" + table);
-						
-						Resource res = new Resource(descriptor);
-						ret = (Resource) catalog.update(res,
-								"Published to PostGIS/Geoserver by vector adapter on " + new Date());
+						String id = geoserver.publishPostgisVector(postgis, urn.getNamespace(), table);
+
+						if (id != null) {
+
+							Logging.INSTANCE.info("Geoserver ingestion of " + resource.getUrn() + " successful");
+
+							ResourceReference descriptor = ((Resource) resource).getReference();
+							descriptor.setAdapterType(WfsAdapter.ID);
+							descriptor.getLocalPaths().clear();
+							descriptor.getParameters().put("serviceUrl", geoserver.getServiceUrl());
+							descriptor.getParameters().put("wfsVersion", "1.0.0");
+							descriptor.getParameters().put("wfsIdentifier", id);
+
+							Resource res = new Resource(descriptor);
+							ret = (Resource) catalog.update(res,
+									"Published to PostGIS/Geoserver by vector adapter on " + new Date());
+						} else {
+							Logging.INSTANCE.error("Geoserver ingestion of " + resource.getUrn() + " failed");
+						}
 					}
 				}
 			} else {
-				Logging.INSTANCE.warn("PostGIS ingestion of " + resource.getUrn() + " failed");
+				Logging.INSTANCE.error("PostGIS ingestion of " + resource.getUrn() + " failed");
 			}
 		} else {
 			Logging.INSTANCE.warn("Geoserver ingestion of " + resource.getUrn() + " failed");

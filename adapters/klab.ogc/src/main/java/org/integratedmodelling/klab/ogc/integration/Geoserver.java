@@ -201,7 +201,7 @@ public class Geoserver {
 	 * @param table     table name
 	 * @return
 	 */
-	public boolean publishPostgisVector(Postgis postgis, String namespace, String table) {
+	public String publishPostgisVector(Postgis postgis, String namespace, String table) {
 
 		namespace = requireNamespace(namespace);
 		String datastore = postgis.getDatabase();
@@ -349,10 +349,12 @@ public class Geoserver {
 				request = request.basicAuth(username, password);
 			}
 
-			return request.body(payload).asEmpty().isSuccess();
+			if (request.body(payload).asEmpty().isSuccess()) {
+				return namespace + ":" + table;
+			}
 		}
 
-		return false;
+		return null;
 	}
 
 	private boolean deleteFeatureType(String namespace, String datastore, String featuretype) {

@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.components.runtime.artifacts.ObjectArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.scale.Scale;
@@ -158,6 +159,12 @@ public class LocalData implements IKlabData {
 	 */
 	public LocalData(Map<?, ?> data, IRuntimeScope context) {
 
+		if (data.containsKey("error")) {
+			String errorMessage = data.get("error") + ": " + data.get("message");
+//			context.getMonitor().error(errorMessage);
+			throw new KlabResourceAccessException(errorMessage);
+		}
+		
 		if (data.containsKey("states")) {
 			for (Object s : (Iterable<?>) data.get("states")) {
 
