@@ -10,7 +10,9 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.runtime.ITicket;
+import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
@@ -106,13 +108,28 @@ public class ResourceController {
 	 */
 	@GetMapping(value = API.NODE.RESOURCE.LIST, produces = "application/json")
 	@ResponseBody
-	public List<ResourceReference> listResources(Principal principal) {
+	public List<ResourceReference> listResources(Principal principal, @RequestParam(required = false) String query) {
 		List<ResourceReference> ret = new ArrayList<>();
-		for (String urn : resourceManager.getOnlineResources()) {
-			if (resourceManager.canAccess(urn, (EngineAuthorization) principal)) {
-				IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
-				if (resource != null) {
-					ret.add(((Resource) resource).getReference());
+		if (query != null) {
+			for (Match match : resourceManager.queryResources(query)) {
+				if (resourceManager.canAccess(match.getId(), (EngineAuthorization) principal)) {
+					IResource resource = resourceManager.getResource(match.getId(),
+							((EngineAuthorization) principal).getGroups());
+					if (resource != null) {
+						ResourceReference ref = ((Resource) resource).getReference();
+						ref.getMetadata().put(IMetadata.IM_SEARCH_SCORE, match.getScore()+"");
+						ret.add(ref);
+					}
+				}
+			}
+		} else {
+			for (String urn : resourceManager.getOnlineResources()) {
+				if (resourceManager.canAccess(urn, (EngineAuthorization) principal)) {
+					IResource resource = resourceManager.getResource(urn,
+							((EngineAuthorization) principal).getGroups());
+					if (resource != null) {
+						ret.add(((Resource) resource).getReference());
+					}
 				}
 			}
 		}

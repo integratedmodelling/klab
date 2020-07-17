@@ -24,9 +24,11 @@ import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.data.encoding.EncodingDataBuilder;
+import org.integratedmodelling.klab.engine.indexing.ResourceIndexer;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.node.NodeApplication;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
@@ -53,12 +55,15 @@ public class ResourceManager {
 	 * updated, which doesn't happen automatically at put().
 	 */
 	private ResourceCatalog catalog;
-
 	private Set<String> onlineResourceUrns = Collections.synchronizedSet(new LinkedHashSet<>());
 	private Set<String> offlineResourceUrns = Collections.synchronizedSet(new LinkedHashSet<>());
 
 	public ResourceManager() {
 		this.catalog = new ResourceCatalog();
+		for (String resource : this.catalog.keySet()) {
+			ResourceIndexer.INSTANCE.index(this.catalog.get(resource));
+		}
+		ResourceIndexer.INSTANCE.commitChanges();
 		this.resourceChecker = new Timer(true);
 		this.resourceChecker.scheduleAtFixedRate(new TimerTask() {
 
@@ -193,6 +198,10 @@ public class ResourceManager {
 					} else {
 						resource = catalog.importResource(resourceReference, user);
 					}
+					if (resource != null) {
+						ResourceIndexer.INSTANCE.index(resource);
+						ResourceIndexer.INSTANCE.commitChanges();
+					}
 					ret.resolve("urn", resource.getUrn());
 				} catch (Throwable t) {
 					Logging.INSTANCE
@@ -236,6 +245,10 @@ public class ResourceManager {
 
 	public String getDefaultNamespace() {
 		return catalog.getDefaultNamespace();
+	}
+	
+	public List<Match> queryResources(String query) {
+		return ResourceIndexer.INSTANCE.query(query);
 	}
 
 	public boolean canAccess(String urn, EngineAuthorization user) {
