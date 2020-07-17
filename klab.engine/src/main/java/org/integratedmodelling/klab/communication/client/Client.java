@@ -557,7 +557,7 @@ public class Client extends RestTemplate implements IClient {
 		if (cls.isArray()) {
 			response = exchange(url, HttpMethod.GET, entity, List.class);
 		} else if (String.class.equals(cls)) {
-			response = exchange(url, HttpMethod.GET, entity, Map.class);
+			response = basicTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 		} else /* if (Map.class.isAssignableFrom(cls)) */ {
 			response = exchange(url, HttpMethod.GET, entity, Map.class);
 		} 
@@ -568,6 +568,7 @@ public class Client extends RestTemplate implements IClient {
 			throw new KlabAuthorizationException("unauthorized request " + url);
 		case 404:
 			throw new KlabInternalErrorException("internal: request " + url + " was not recognized");
+		case 406:
 		case 503:
 			throw new KlabInternalErrorException("internal: request " + url + " caused a server error");
 		}
