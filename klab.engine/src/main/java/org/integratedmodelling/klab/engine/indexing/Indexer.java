@@ -36,7 +36,10 @@ import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.IStatement;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.engine.indexing.SearchContext.Constraint;
@@ -75,6 +78,32 @@ public enum Indexer {
 			nrtReopenThread.setDaemon(true);
 			nrtReopenThread.start();
 
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
+	}
+
+	public void index(IResource resource) {
+
+		try {
+
+			Document document = new Document();
+
+			Urn urn = new Urn(resource.getUrn());
+
+			document.add(new StringField("id", urn.getUrn(), Store.YES));
+			document.add(new StringField("namespace", urn.getNamespace(), Store.YES));
+			document.add(new StringField("catalog", urn.getCatalog(), Store.YES));
+			document.add(new TextField("name", urn.getUrn(), Store.YES));
+			for (String key : resource.getMetadata().keySet()) {
+				if (IMetadata.DC_DESCRIPTION.equals(key)) {
+					document.add(new TextField("description", resource.getMetadata().get(key).toString(), Store.YES));
+				} else {
+					document.add(new TextField(key, resource.getMetadata().get(key).toString(), Store.YES));
+				}
+			}
+
+			this.writer.addDocument(document);
 		} catch (IOException e) {
 			throw new KlabIOException(e);
 		}

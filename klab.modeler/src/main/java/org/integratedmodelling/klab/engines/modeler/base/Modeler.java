@@ -96,7 +96,7 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 			Map<String, Object> props = new HashMap<>();
 			props.put("server.port", "" + port);
 			props.put("spring.main.banner-mode", "off");
-			props.put("logging.file.path", Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_LOG_FILE,
+			props.put("logging.file", Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_LOG_FILE,
 					Configuration.INSTANCE.getDataPath("logs") + File.separator + "klab.log"));
 			props.put("server.servlet.contextPath", contextPath);
 			props.put("spring.servlet.multipart.max-file-size", "1024MB"); //
@@ -116,6 +116,8 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 		props.put("server.port", "" + port);
 		props.put("spring.main.banner-mode", "off");
 		props.put("server.servlet.contextPath", contextPath);
+		props.put("logging.file", Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_LOG_FILE,
+				Configuration.INSTANCE.getDataPath("logs") + File.separator + "klab.log"));
 		engine = Engine.start(options);
 		SpringApplication app = new SpringApplication(Modeler.class);
 		app.setDefaultProperties(props);

@@ -317,7 +317,8 @@ public interface API {
 
 			/**
 			 * List all resources available to the requesting engine. Parameterize for
-			 * verbose or short return.
+			 * verbose or short return, or add a query parameter to search for URN and
+			 * metadata.
 			 * 
 			 * GET
 			 */
