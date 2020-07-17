@@ -1,11 +1,14 @@
 package org.integratedmodelling.klab.engines.modeler.base;
 
+import java.io.File;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.PreDestroy;
 
+import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.EngineStartupOptions;
 import org.springframework.boot.SpringApplication;
@@ -93,6 +96,8 @@ public class Modeler implements ApplicationListener<ApplicationReadyEvent> {
 			Map<String, Object> props = new HashMap<>();
 			props.put("server.port", "" + port);
 			props.put("spring.main.banner-mode", "off");
+			props.put("logging.file.path", Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_LOG_FILE,
+					Configuration.INSTANCE.getDataPath("logs") + File.separator + "klab.log"));
 			props.put("server.servlet.contextPath", contextPath);
 			props.put("spring.servlet.multipart.max-file-size", "1024MB"); //
 			props.put("spring.servlet.multipart.max-request-size", "1024MB");

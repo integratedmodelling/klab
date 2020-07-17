@@ -87,6 +87,7 @@ public class Layout extends ViewComponent {
 	private String description;
 	private String logo;
 	private String projectId;
+	private String styleSpecs = null;
 	
 	// this is for layout management in clients, not API
 	private int index;
@@ -192,5 +193,13 @@ public class Layout extends ViewComponent {
 
 	public void setProjectId(String projectId) {
 		this.projectId = projectId;
+	}
+
+	public String getStyleSpecs() {
+		return styleSpecs;
+	}
+
+	public void setStyleSpecs(String styleSpecs) {
+		this.styleSpecs = styleSpecs;
 	}
 }
