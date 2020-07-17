@@ -33,6 +33,15 @@ void cd
 	class org.integratedmodelling.klab.clitool.console.commands.Cd
 }
 
+void log
+	"Tail the logfile of this engine or any node. Pass the number of lines, defaults at 100."
+{
+	optional text node
+		"An online node to which we have admin access." 
+
+	class org.integratedmodelling.klab.clitool.console.commands.Log
+}
+
 void version
 	"Print version and build information"
 {
