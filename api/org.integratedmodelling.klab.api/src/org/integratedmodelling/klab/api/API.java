@@ -212,6 +212,7 @@ public interface API {
 
 			public static final String P_COMPONENT = "{component}";
 			public static final String P_PROPERTY = "{component}";
+			public static final String P_LINES = "{lines}";
 
 			/**
 			 * 
@@ -232,6 +233,11 @@ public interface API {
 			 * 
 			 */
 			public static final String GET_PROPERTY = "/properties/get/" + P_PROPERTY;
+			
+			/**
+			 * 
+			 */
+			public static final String GET_LOG = "logs/get/" + P_LINES;
 
 		}
 
