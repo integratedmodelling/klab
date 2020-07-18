@@ -31,7 +31,7 @@ Preamble: {Preamble}
 		('description' description=STRING)? &
 		('permissions' permissions=STRING)? &
 		('author' authors+=STRING)* &
-		('style' style=PathName)? &
+		('style' (style=PathName ('with' inlineStyle=Map)? | inlineStyle=Map)?) &
 		('logo' logo=(Path|STRING))? &
 		('version' version=VersionNumber)? & 
 		('created' created=Date (createcomment=STRING)?)? &
@@ -262,7 +262,7 @@ Classifier:
 	'in' set=List | 
 	string=STRING | 
 	observable=OBSERVABLE | 
-	id = LOWERCASE_ID |
+	id = (LOWERCASE_ID | LOWERCASE_ID_DASH) |
 	op=REL_OPERATOR expression=Number | 
 	nodata='unknown' |
 	star?='*';	
@@ -376,6 +376,9 @@ VersionNumber:
 
 terminal LOWERCASE_ID:
 	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
+
+terminal LOWERCASE_ID_DASH:
+	('a'..'z') ('a'..'z' | '0'..'9'| '_' | '-')*;
 
 terminal ARGVALUE:
 	'$' ('$' | ('0'..'9')*);

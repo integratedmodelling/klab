@@ -308,6 +308,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         string=STRING | 
 	 *         observable=OBSERVABLE | 
 	 *         id=LOWERCASE_ID | 
+	 *         id=LOWERCASE_ID_DASH | 
 	 *         (op=REL_OPERATOR expression=Number) | 
 	 *         nodata='unknown' | 
 	 *         star?='*'
@@ -663,12 +664,13 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 description=STRING | 
 	 *                 permissions=STRING | 
 	 *                 authors+=STRING | 
-	 *                 style=PathName | 
+	 *                 inlineStyle=Map | 
 	 *                 logo=Path | 
 	 *                 logo=STRING | 
 	 *                 version=VersionNumber
 	 *             )? 
 	 *             (imports+=PathName imports+=PathName*)? 
+	 *             (style=PathName inlineStyle=Map?)? 
 	 *             (created=Date createcomment=STRING?)? 
 	 *             (modified=Date modcomment=STRING?)?
 	 *         )+

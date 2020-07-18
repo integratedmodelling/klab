@@ -37,6 +37,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPreambleAccess().getLibraryAlternatives_1_0_4_0(), "rule__Preamble__LibraryAlternatives_1_0_4_0");
 			builder.put(grammarAccess.getPreambleAccess().getBehaviorAlternatives_1_0_5_0(), "rule__Preamble__BehaviorAlternatives_1_0_5_0");
 			builder.put(grammarAccess.getPreambleAccess().getAlternatives_3_2_1(), "rule__Preamble__Alternatives_3_2_1");
+			builder.put(grammarAccess.getPreambleAccess().getAlternatives_3_6_1(), "rule__Preamble__Alternatives_3_6_1");
 			builder.put(grammarAccess.getPreambleAccess().getLogoAlternatives_3_7_1_0(), "rule__Preamble__LogoAlternatives_3_7_1_0");
 			builder.put(grammarAccess.getMessageCallAccess().getAlternatives_0(), "rule__MessageCall__Alternatives_0");
 			builder.put(grammarAccess.getStatementAccess().getAlternatives_0(), "rule__Statement__Alternatives_0");
@@ -58,6 +59,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getClassifierAccess().getAlternatives_0(), "rule__Classifier__Alternatives_0");
 			builder.put(grammarAccess.getClassifierAccess().getAlternatives_1_1(), "rule__Classifier__Alternatives_1_1");
 			builder.put(grammarAccess.getClassifierAccess().getAlternatives_1_4(), "rule__Classifier__Alternatives_1_4");
+			builder.put(grammarAccess.getClassifierAccess().getIdAlternatives_6_0(), "rule__Classifier__IdAlternatives_6_0");
 			builder.put(grammarAccess.getHeaderRowAccess().getElementsAlternatives_0_0(), "rule__HeaderRow__ElementsAlternatives_0_0");
 			builder.put(grammarAccess.getHeaderRowAccess().getElementsAlternatives_1_1_0(), "rule__HeaderRow__ElementsAlternatives_1_1_0");
 			builder.put(grammarAccess.getTableClassifierAccess().getAlternatives(), "rule__TableClassifier__Alternatives");
@@ -95,6 +97,8 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPreambleAccess().getGroup_3_4(), "rule__Preamble__Group_3_4__0");
 			builder.put(grammarAccess.getPreambleAccess().getGroup_3_5(), "rule__Preamble__Group_3_5__0");
 			builder.put(grammarAccess.getPreambleAccess().getGroup_3_6(), "rule__Preamble__Group_3_6__0");
+			builder.put(grammarAccess.getPreambleAccess().getGroup_3_6_1_0(), "rule__Preamble__Group_3_6_1_0__0");
+			builder.put(grammarAccess.getPreambleAccess().getGroup_3_6_1_0_1(), "rule__Preamble__Group_3_6_1_0_1__0");
 			builder.put(grammarAccess.getPreambleAccess().getGroup_3_7(), "rule__Preamble__Group_3_7__0");
 			builder.put(grammarAccess.getPreambleAccess().getGroup_3_8(), "rule__Preamble__Group_3_8__0");
 			builder.put(grammarAccess.getPreambleAccess().getGroup_3_9(), "rule__Preamble__Group_3_9__0");
@@ -227,7 +231,9 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPreambleAccess().getDescriptionAssignment_3_3_1(), "rule__Preamble__DescriptionAssignment_3_3_1");
 			builder.put(grammarAccess.getPreambleAccess().getPermissionsAssignment_3_4_1(), "rule__Preamble__PermissionsAssignment_3_4_1");
 			builder.put(grammarAccess.getPreambleAccess().getAuthorsAssignment_3_5_1(), "rule__Preamble__AuthorsAssignment_3_5_1");
-			builder.put(grammarAccess.getPreambleAccess().getStyleAssignment_3_6_1(), "rule__Preamble__StyleAssignment_3_6_1");
+			builder.put(grammarAccess.getPreambleAccess().getStyleAssignment_3_6_1_0_0(), "rule__Preamble__StyleAssignment_3_6_1_0_0");
+			builder.put(grammarAccess.getPreambleAccess().getInlineStyleAssignment_3_6_1_0_1_1(), "rule__Preamble__InlineStyleAssignment_3_6_1_0_1_1");
+			builder.put(grammarAccess.getPreambleAccess().getInlineStyleAssignment_3_6_1_1(), "rule__Preamble__InlineStyleAssignment_3_6_1_1");
 			builder.put(grammarAccess.getPreambleAccess().getLogoAssignment_3_7_1(), "rule__Preamble__LogoAssignment_3_7_1");
 			builder.put(grammarAccess.getPreambleAccess().getVersionAssignment_3_8_1(), "rule__Preamble__VersionAssignment_3_8_1");
 			builder.put(grammarAccess.getPreambleAccess().getCreatedAssignment_3_9_1(), "rule__Preamble__CreatedAssignment_3_9_1");

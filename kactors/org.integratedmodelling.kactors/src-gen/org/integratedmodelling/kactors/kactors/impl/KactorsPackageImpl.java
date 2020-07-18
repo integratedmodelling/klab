@@ -686,9 +686,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Logo()
+  public EReference getPreamble_InlineStyle()
   {
-    return (EAttribute)preambleEClass.getEStructuralFeatures().get(19);
+    return (EReference)preambleEClass.getEStructuralFeatures().get(19);
   }
 
   /**
@@ -697,7 +697,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Version()
+  public EAttribute getPreamble_Logo()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(20);
   }
@@ -708,9 +708,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EAttribute getPreamble_Version()
+  {
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(21);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getPreamble_Created()
   {
-    return (EReference)preambleEClass.getEStructuralFeatures().get(21);
+    return (EReference)preambleEClass.getEStructuralFeatures().get(22);
   }
 
   /**
@@ -721,7 +732,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getPreamble_Createcomment()
   {
-    return (EAttribute)preambleEClass.getEStructuralFeatures().get(22);
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(23);
   }
 
   /**
@@ -732,7 +743,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getPreamble_Modified()
   {
-    return (EReference)preambleEClass.getEStructuralFeatures().get(23);
+    return (EReference)preambleEClass.getEStructuralFeatures().get(24);
   }
 
   /**
@@ -743,7 +754,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getPreamble_Modcomment()
   {
-    return (EAttribute)preambleEClass.getEStructuralFeatures().get(24);
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(25);
   }
 
   /**
@@ -3122,6 +3133,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(preambleEClass, PREAMBLE__PERMISSIONS);
     createEAttribute(preambleEClass, PREAMBLE__AUTHORS);
     createEAttribute(preambleEClass, PREAMBLE__STYLE);
+    createEReference(preambleEClass, PREAMBLE__INLINE_STYLE);
     createEAttribute(preambleEClass, PREAMBLE__LOGO);
     createEAttribute(preambleEClass, PREAMBLE__VERSION);
     createEReference(preambleEClass, PREAMBLE__CREATED);
@@ -3438,6 +3450,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getPreamble_Permissions(), ecorePackage.getEString(), "permissions", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Authors(), ecorePackage.getEString(), "authors", null, 0, -1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Style(), ecorePackage.getEString(), "style", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getPreamble_InlineStyle(), this.getMap(), null, "inlineStyle", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Logo(), ecorePackage.getEString(), "logo", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Version(), ecorePackage.getEString(), "version", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getPreamble_Created(), this.getDate(), null, "created", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

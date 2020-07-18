@@ -71,9 +71,9 @@ public class ResourceManager {
 			public void run() {
 				checkResources();
 			}
-		}, 0, Integer.parseInt(
+		}, 0, Long.parseLong(
 				// six minutes default
-				Configuration.INSTANCE.getProperty(NodeApplication.RESOURCE_CHECKING_INTERVAL_SECONDS, "360")));
+				Configuration.INSTANCE.getProperty(NodeApplication.RESOURCE_CHECKING_INTERVAL_SECONDS, "360")) * 1000L);
 
 	}
 

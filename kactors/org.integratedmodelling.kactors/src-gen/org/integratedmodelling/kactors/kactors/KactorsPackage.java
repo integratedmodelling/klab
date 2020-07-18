@@ -277,13 +277,22 @@ public interface KactorsPackage extends EPackage
   int PREAMBLE__STYLE = 18;
 
   /**
+   * The feature id for the '<em><b>Inline Style</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PREAMBLE__INLINE_STYLE = 19;
+
+  /**
    * The feature id for the '<em><b>Logo</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PREAMBLE__LOGO = 19;
+  int PREAMBLE__LOGO = 20;
 
   /**
    * The feature id for the '<em><b>Version</b></em>' attribute.
@@ -292,7 +301,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__VERSION = 20;
+  int PREAMBLE__VERSION = 21;
 
   /**
    * The feature id for the '<em><b>Created</b></em>' containment reference.
@@ -301,7 +310,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATED = 21;
+  int PREAMBLE__CREATED = 22;
 
   /**
    * The feature id for the '<em><b>Createcomment</b></em>' attribute.
@@ -310,7 +319,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATECOMMENT = 22;
+  int PREAMBLE__CREATECOMMENT = 23;
 
   /**
    * The feature id for the '<em><b>Modified</b></em>' containment reference.
@@ -319,7 +328,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODIFIED = 23;
+  int PREAMBLE__MODIFIED = 24;
 
   /**
    * The feature id for the '<em><b>Modcomment</b></em>' attribute.
@@ -328,7 +337,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODCOMMENT = 24;
+  int PREAMBLE__MODCOMMENT = 25;
 
   /**
    * The number of structural features of the '<em>Preamble</em>' class.
@@ -337,7 +346,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE_FEATURE_COUNT = 25;
+  int PREAMBLE_FEATURE_COUNT = 26;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl <em>Definition</em>}' class.
@@ -2890,6 +2899,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EAttribute getPreamble_Style();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Preamble#getInlineStyle <em>Inline Style</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Inline Style</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Preamble#getInlineStyle()
+   * @see #getPreamble()
+   * @generated
+   */
+  EReference getPreamble_InlineStyle();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#getLogo <em>Logo</em>}'.
@@ -5447,6 +5467,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute PREAMBLE__STYLE = eINSTANCE.getPreamble_Style();
+
+    /**
+     * The meta object literal for the '<em><b>Inline Style</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference PREAMBLE__INLINE_STYLE = eINSTANCE.getPreamble_InlineStyle();
 
     /**
      * The meta object literal for the '<em><b>Logo</b></em>' attribute feature.
