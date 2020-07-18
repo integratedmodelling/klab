@@ -79,8 +79,7 @@ public class VectorEncoder implements IResourceEncoder {
 	protected FeatureSource<SimpleFeatureType, SimpleFeature> getFeatureSource(IResource resource, IGeometry geometry) {
 
 		File mainFile = null;
-		IProject project = Resources.INSTANCE.getProject(((Resource) resource).getLocalProjectName());
-		File rootPath = project.getRoot().getParentFile();
+		File rootPath = Resources.INSTANCE.getFilesystemLocation(resource);
 
 		for (String path : resource.getLocalPaths()) {
 			if (VectorAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {

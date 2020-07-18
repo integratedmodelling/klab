@@ -149,6 +149,19 @@ public enum Configuration implements IConfigurationService {
 		return getProperty("klab." + service + "." + property, null);
 	}
 
+	/**
+	 * Applies the standard k.LAB property pattern "klab.{service}.{property}" and
+	 * retrieves the correspondent property.
+	 * 
+	 * @param service
+	 * @param property
+	 * @param defaultValue
+	 * @return
+	 */
+	public String getServiceProperty(String service, String property, String defaultValue) {
+		return getProperty("klab." + service + "." + property, defaultValue);
+	}
+	
 	/** {@inheritDoc} */
 	@Override
 	public OS getOS() {

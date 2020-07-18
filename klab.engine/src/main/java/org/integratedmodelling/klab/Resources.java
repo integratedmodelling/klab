@@ -1043,7 +1043,8 @@ public enum Resources implements IResourceService {
 					return builder.build();
 				} catch (Throwable e) {
 					// just return null later
-					context.getMonitor().error("could not extract data from " + resource.getUrn() + ": " + e.getMessage());
+					context.getMonitor()
+							.error("could not extract data from " + resource.getUrn() + ": " + e.getMessage());
 				}
 
 			} else {
@@ -1703,6 +1704,19 @@ public enum Resources implements IResourceService {
 		// TODO Auto-generated method stub
 		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
 
+	}
+
+	@Override
+	public File getFilesystemLocation(IResource resource) {
+		File rootPath = null;
+		Urn urn = new Urn(resource.getUrn());
+		if (urn.isLocal()) {
+			IProject project = Resources.INSTANCE.getProject(((Resource) resource).getLocalProjectName());
+			rootPath = project.getRoot().getParentFile();
+		} else if (!urn.isUniversal()) {
+			rootPath = new File(resource.getLocalPath());
+		}
+		return rootPath;
 	}
 
 }
