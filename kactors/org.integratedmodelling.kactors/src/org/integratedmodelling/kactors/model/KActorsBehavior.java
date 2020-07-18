@@ -2,7 +2,10 @@ package org.integratedmodelling.kactors.model;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
@@ -28,6 +31,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 	private Platform platform = Platform.ANY;
 	private File file;
 	private String style;
+	private Map<String, String> styleSpecs;
 	private List<IKActorsBehavior> imports = new ArrayList<>();
 	private List<IKActorsAction> actions = new ArrayList<>();
 	private String label;
@@ -36,7 +40,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 	private String projectId;
 
 	public KActorsBehavior(Model model, BehaviorDescriptor descriptor) {
-		
+
 		super(model, null);
 		this.projectId = descriptor.projectName;
 		if (model.getPreamble() != null) {
@@ -55,20 +59,29 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 	}
 
 	private void loadPreamble(Preamble preamble) {
-		
+
 		this.name = preamble.getName();
-		
+
 		// TODO metadata and the like
 		if (preamble.getVersion() != null) {
 			this.version = Version.create(preamble.getVersion());
 		}
-		
+
 		this.observable = preamble.getObservable();
 		this.style = preamble.getStyle();
 		this.label = preamble.getLabel();
 		this.description = preamble.getDescription();
 		this.logo = preamble.getLogo();
-		
+
+		if (preamble.getInlineStyle() != null) {
+			this.styleSpecs = new LinkedHashMap<>();
+			Map<KActorsValue, KActorsValue> map = KActorsValue.parseMap(preamble.getInlineStyle(), this);
+			// turn into a string map for later serialization
+			for (Entry<KActorsValue, KActorsValue> entry : map.entrySet()) {
+				this.styleSpecs.put(entry.getKey().getValue().toString(), entry.getValue().getValue().toString());
+			}
+		}
+
 		if (preamble.isApp()) {
 			this.type = Type.APP;
 		} else if (preamble.isLibrary()) {
@@ -80,7 +93,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		} else if (preamble.isComponent()) {
 			this.type = Type.COMPONENT;
 		}
-		
+
 		if (preamble.isDesktop()) {
 			this.platform = Platform.DESKTOP;
 		} else if (preamble.isWeb()) {
@@ -94,7 +107,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 			if (imported != null) {
 				this.imports.add(imported);
 			}
-		}	
+		}
 	}
 
 	@Override
@@ -171,5 +184,12 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 	public void setProjectId(String projectId) {
 		this.projectId = projectId;
 	}
+	
+	@Override
+	public Map<String, String> getStyleSpecs() {
+		return styleSpecs;
+	}
+
+
 
 }

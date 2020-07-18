@@ -918,8 +918,7 @@ rulePreamble returns [EObject current=null]
 					}
 				)
 			)
-					)+
-					{getUnorderedGroupHelper().canLeave(grammarAccess.getPreambleAccess().getUnorderedGroup_3())}?
+					)*
 				)
 			)
 				{ 
@@ -4885,9 +4884,29 @@ ruleClassifier returns [EObject current=null]
 		    |
 		(
 			(
-				lv_star_18_0='*'
 				{
-					newLeafNode(lv_star_18_0, grammarAccess.getClassifierAccess().getStarAsteriskKeyword_9_0());
+					newCompositeNode(grammarAccess.getClassifierAccess().getMapMapParserRuleCall_9_0());
+				}
+				lv_map_18_0=ruleMap
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getClassifierRule());
+					}
+					set(
+						$current,
+						"map",
+						lv_map_18_0,
+						"org.integratedmodelling.kactors.Kactors.Map");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_star_19_0='*'
+				{
+					newLeafNode(lv_star_19_0, grammarAccess.getClassifierAccess().getStarAsteriskKeyword_10_0());
 				}
 				{
 					if ($current==null) {

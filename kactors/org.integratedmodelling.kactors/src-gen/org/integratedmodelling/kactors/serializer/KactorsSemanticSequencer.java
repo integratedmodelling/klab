@@ -311,6 +311,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         id=LOWERCASE_ID_DASH | 
 	 *         (op=REL_OPERATOR expression=Number) | 
 	 *         nodata='unknown' | 
+	 *         map=Map | 
 	 *         star?='*'
 	 *     )
 	 */

@@ -169,8 +169,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//	name=PathName)?
 		//	label=STRING? (('import' imports+=PathName (',' imports+=PathName)*)? & ('worldview' worldview=PathName)? &
 		//	('observable' (observable=OBSERVABLE | observables=List))? & ('description' description=STRING)? & ('permissions'
-		//	permissions=STRING)? & ('author' authors+=STRING)* & 'style' (style=PathName ('with' inlineStyle=Map)? |
-		//	inlineStyle=Map)? & ('logo' logo=(Path | STRING))? & ('version' version=VersionNumber)? & ('created' created=Date
+		//	permissions=STRING)? & ('author' authors+=STRING)* & ('style' (style=PathName ('with' inlineStyle=Map)? |
+		//	inlineStyle=Map)?)? & ('logo' logo=(Path | STRING))? & ('version' version=VersionNumber)? & ('created' created=Date
 		//	createcomment=STRING?)? & ('modified' modified=Date modcomment=STRING?)?);
 		@Override public ParserRule getRule() { return rule; }
 		
@@ -178,9 +178,9 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//component?='component' | user?='user' | library?=('trait' | 'library') | behavior?=('behavior' | 'behaviour'))
 		//name=PathName)? label=STRING? (('import' imports+=PathName (',' imports+=PathName)*)? & ('worldview'
 		//worldview=PathName)? & ('observable' (observable=OBSERVABLE | observables=List))? & ('description'
-		//description=STRING)? & ('permissions' permissions=STRING)? & ('author' authors+=STRING)* & 'style' (style=PathName
-		//('with' inlineStyle=Map)? | inlineStyle=Map)? & ('logo' logo=(Path | STRING))? & ('version' version=VersionNumber)? &
-		//('created' created=Date createcomment=STRING?)? & ('modified' modified=Date modcomment=STRING?)?)
+		//description=STRING)? & ('permissions' permissions=STRING)? & ('author' authors+=STRING)* & ('style' (style=PathName
+		//('with' inlineStyle=Map)? | inlineStyle=Map)?)? & ('logo' logo=(Path | STRING))? & ('version' version=VersionNumber)?
+		//& ('created' created=Date createcomment=STRING?)? & ('modified' modified=Date modcomment=STRING?)?)
 		public Group getGroup() { return cGroup; }
 		
 		//{Preamble}
@@ -290,8 +290,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//(('import' imports+=PathName (',' imports+=PathName)*)? & ('worldview' worldview=PathName)? & ('observable'
 		//(observable=OBSERVABLE | observables=List))? & ('description' description=STRING)? & ('permissions'
-		//permissions=STRING)? & ('author' authors+=STRING)* & 'style' (style=PathName ('with' inlineStyle=Map)? |
-		//inlineStyle=Map)? & ('logo' logo=(Path | STRING))? & ('version' version=VersionNumber)? & ('created' created=Date
+		//permissions=STRING)? & ('author' authors+=STRING)* & ('style' (style=PathName ('with' inlineStyle=Map)? |
+		//inlineStyle=Map)?)? & ('logo' logo=(Path | STRING))? & ('version' version=VersionNumber)? & ('created' created=Date
 		//createcomment=STRING?)? & ('modified' modified=Date modcomment=STRING?)?)
 		public UnorderedGroup getUnorderedGroup_3() { return cUnorderedGroup_3; }
 		
@@ -388,7 +388,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//STRING
 		public RuleCall getAuthorsSTRINGTerminalRuleCall_3_5_1_0() { return cAuthorsSTRINGTerminalRuleCall_3_5_1_0; }
 		
-		//'style' (style=PathName ('with' inlineStyle=Map)? | inlineStyle=Map)?
+		//('style' (style=PathName ('with' inlineStyle=Map)? | inlineStyle=Map)?)?
 		public Group getGroup_3_6() { return cGroup_3_6; }
 		
 		//'style'
@@ -2564,19 +2564,21 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cExpressionNumberParserRuleCall_7_1_0 = (RuleCall)cExpressionAssignment_7_1.eContents().get(0);
 		private final Assignment cNodataAssignment_8 = (Assignment)cAlternatives.eContents().get(8);
 		private final Keyword cNodataUnknownKeyword_8_0 = (Keyword)cNodataAssignment_8.eContents().get(0);
-		private final Assignment cStarAssignment_9 = (Assignment)cAlternatives.eContents().get(9);
-		private final Keyword cStarAsteriskKeyword_9_0 = (Keyword)cStarAssignment_9.eContents().get(0);
+		private final Assignment cMapAssignment_9 = (Assignment)cAlternatives.eContents().get(9);
+		private final RuleCall cMapMapParserRuleCall_9_0 = (RuleCall)cMapAssignment_9.eContents().get(0);
+		private final Assignment cStarAssignment_10 = (Assignment)cAlternatives.eContents().get(10);
+		private final Keyword cStarAsteriskKeyword_10_0 = (Keyword)cStarAssignment_10.eContents().get(0);
 		
 		//Classifier:
 		//	(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
 		//	(rightLimit='inclusive' | 'exclusive')? | num=Number |
 		//	'in' set=List | string=STRING | observable=OBSERVABLE | id=(LOWERCASE_ID | LOWERCASE_ID_DASH) | op=REL_OPERATOR
-		//	expression=Number | nodata='unknown' | star?='*';
+		//	expression=Number | nodata='unknown' | map=Map | star?='*';
 		@Override public ParserRule getRule() { return rule; }
 		
 		//(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
 		//(rightLimit='inclusive' | 'exclusive')? | num=Number | 'in' set=List | string=STRING | observable=OBSERVABLE |
-		//id=(LOWERCASE_ID | LOWERCASE_ID_DASH) | op=REL_OPERATOR expression=Number | nodata='unknown' | star?='*'
+		//id=(LOWERCASE_ID | LOWERCASE_ID_DASH) | op=REL_OPERATOR expression=Number | nodata='unknown' | map=Map | star?='*'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//(boolean='true' | boolean='false')
@@ -2699,11 +2701,17 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//'unknown'
 		public Keyword getNodataUnknownKeyword_8_0() { return cNodataUnknownKeyword_8_0; }
 		
+		//map=Map
+		public Assignment getMapAssignment_9() { return cMapAssignment_9; }
+		
+		//Map
+		public RuleCall getMapMapParserRuleCall_9_0() { return cMapMapParserRuleCall_9_0; }
+		
 		//star?='*'
-		public Assignment getStarAssignment_9() { return cStarAssignment_9; }
+		public Assignment getStarAssignment_10() { return cStarAssignment_10; }
 		
 		//'*'
-		public Keyword getStarAsteriskKeyword_9_0() { return cStarAsteriskKeyword_9_0; }
+		public Keyword getStarAsteriskKeyword_10_0() { return cStarAsteriskKeyword_10_0; }
 	}
 	public class LookupTableElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.LookupTable");
@@ -4192,8 +4200,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	//	name=PathName)?
 	//	label=STRING? (('import' imports+=PathName (',' imports+=PathName)*)? & ('worldview' worldview=PathName)? &
 	//	('observable' (observable=OBSERVABLE | observables=List))? & ('description' description=STRING)? & ('permissions'
-	//	permissions=STRING)? & ('author' authors+=STRING)* & 'style' (style=PathName ('with' inlineStyle=Map)? |
-	//	inlineStyle=Map)? & ('logo' logo=(Path | STRING))? & ('version' version=VersionNumber)? & ('created' created=Date
+	//	permissions=STRING)? & ('author' authors+=STRING)* & ('style' (style=PathName ('with' inlineStyle=Map)? |
+	//	inlineStyle=Map)?)? & ('logo' logo=(Path | STRING))? & ('version' version=VersionNumber)? & ('created' created=Date
 	//	createcomment=STRING?)? & ('modified' modified=Date modcomment=STRING?)?);
 	public PreambleElements getPreambleAccess() {
 		return pPreamble;
@@ -4535,7 +4543,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	//	(boolean='true' | boolean='false') | int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number
 	//	(rightLimit='inclusive' | 'exclusive')? | num=Number |
 	//	'in' set=List | string=STRING | observable=OBSERVABLE | id=(LOWERCASE_ID | LOWERCASE_ID_DASH) | op=REL_OPERATOR
-	//	expression=Number | nodata='unknown' | star?='*';
+	//	expression=Number | nodata='unknown' | map=Map | star?='*';
 	public ClassifierElements getClassifierAccess() {
 		return pClassifier;
 	}

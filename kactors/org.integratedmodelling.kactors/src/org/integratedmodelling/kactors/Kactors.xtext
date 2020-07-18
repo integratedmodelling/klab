@@ -31,7 +31,7 @@ Preamble: {Preamble}
 		('description' description=STRING)? &
 		('permissions' permissions=STRING)? &
 		('author' authors+=STRING)* &
-		('style' (style=PathName ('with' inlineStyle=Map)? | inlineStyle=Map)?) &
+		('style' (style=PathName ('with' inlineStyle=Map)? | inlineStyle=Map)?)? &
 		('logo' logo=(Path|STRING))? &
 		('version' version=VersionNumber)? & 
 		('created' created=Date (createcomment=STRING)?)? &
@@ -265,6 +265,7 @@ Classifier:
 	id = (LOWERCASE_ID | LOWERCASE_ID_DASH) |
 	op=REL_OPERATOR expression=Number | 
 	nodata='unknown' |
+	map=Map |
 	star?='*';	
 
 // Lookup table literal. May be overkill.

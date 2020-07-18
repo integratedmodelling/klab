@@ -2116,9 +2116,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EReference getClassifier_Map()
+  {
+    return (EReference)classifierEClass.getEStructuralFeatures().get(13);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getClassifier_Star()
   {
-    return (EAttribute)classifierEClass.getEStructuralFeatures().get(13);
+    return (EAttribute)classifierEClass.getEStructuralFeatures().get(14);
   }
 
   /**
@@ -3287,6 +3298,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(classifierEClass, CLASSIFIER__OP);
     createEReference(classifierEClass, CLASSIFIER__EXPRESSION);
     createEAttribute(classifierEClass, CLASSIFIER__NODATA);
+    createEReference(classifierEClass, CLASSIFIER__MAP);
     createEAttribute(classifierEClass, CLASSIFIER__STAR);
 
     lookupTableEClass = createEClass(LOOKUP_TABLE);
@@ -3604,6 +3616,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getClassifier_Op(), this.getREL_OPERATOR(), null, "op", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getClassifier_Expression(), this.getNumber(), null, "expression", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifier_Nodata(), ecorePackage.getEString(), "nodata", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getClassifier_Map(), this.getMap(), null, "map", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifier_Star(), ecorePackage.getEBoolean(), "star", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(lookupTableEClass, LookupTable.class, "LookupTable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

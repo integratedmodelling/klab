@@ -189,6 +189,7 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Classifier/op"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Classifier/expression"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Classifier/nodata"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Classifier/map"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Classifier/star"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//LookupTable">

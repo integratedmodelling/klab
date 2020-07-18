@@ -2,6 +2,7 @@ package org.integratedmodelling.kactors.model;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -12,7 +13,9 @@ import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Literal;
+import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Quantity;
@@ -36,9 +39,12 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 	private Type type;
 	private Object value;
 	private Map<String, KActorsValue> metadata = new HashMap<>();
-	
+
 	// to support costly translations from implementations
 	private Object data;
+	// if true when used in matching, the value matched will be any value except the
+	// stated
+	private boolean exclusive;
 
 	/**
 	 * Create a value that will be matched by anything except errors or null.
@@ -68,6 +74,67 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		this.value = value;
 	}
 
+	public KActorsValue(Classifier value, KActorCodeStatement parent) {
+		super(value, parent);
+		if (value.getOp() != null) {
+			Number op = parseNumber(value.getExpression());
+			if (value.getOp().isGe()) {
+				this.value = new Range(op.doubleValue(), null, false, true);
+				this.type = Type.RANGE;
+			} else if (value.getOp().isGt()) {
+				this.value = new Range(op.doubleValue(), null, true, true);
+				this.type = Type.RANGE;
+			} else if (value.getOp().isLe()) {
+				this.value = new Range(null, op.doubleValue(), true, false);
+				this.type = Type.RANGE;
+			} else if (value.getOp().isLt()) {
+				this.value = new Range(null, op.doubleValue(), true, true);
+				this.type = Type.RANGE;
+			} else if (value.getOp().isEq()) {
+				this.value = op.doubleValue();
+				this.type = Type.NUMBER;
+			} else if (value.getOp().isNe()) {
+				this.value = op.doubleValue();
+				this.type = Type.NUMBER;
+				this.setExclusive(true);
+			}
+		} else if (value.getBoolean() != null) {
+			this.value = "true".equals(value.getBoolean());
+		} else if (value.getId() != null) {
+			this.value = value.getId();
+			this.type = Type.IDENTIFIER;
+		} else if (value.getInt0() != null) {
+			Number from = parseNumber(value.getInt0());
+			Number to = parseNumber(value.getInt1());
+			String lt = value.getLeftLimit();
+			String rt = value.getRightLimit();
+			if (lt == null)
+				lt = "inclusive";
+			if (rt == null)
+				rt = "exclusive";
+			this.value = new Range(from.doubleValue(), to.doubleValue(), lt.equals("exclusive"),
+					rt.equals("exclusive"));
+			type = Type.RANGE;
+		} else if (value.getNodata() != null) {
+			this.type = Type.NODATA;
+		} else if (value.getNum() != null) {
+			this.value = parseNumber(value.getNum());
+		} else if (value.getObservable() != null) {
+			this.type = Type.OBSERVABLE;
+			this.value = value.getObservable().substring(1, value.getObservable().length() - 1);
+		} else if (value.getSet() != null) {
+			this.type = Type.LIST;
+			this.value = parseList(value.getSet(), this);
+		} else if (value.getString() != null) {
+			this.value = value.getString();
+			this.type = Type.STRING;
+		} else if (value.getMap() != null) {
+			this.value = parseMap(value.getMap(), this);
+			this.type = Type.MAP;
+		}
+
+	}
+
 	public KActorsValue(Value value, KActorCodeStatement parent) {
 		super(value, parent);
 		if (value.getId() != null) {
@@ -86,13 +153,13 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.value = value.getObservable().substring(1, value.getObservable().length() - 1);
 		} else if (value.getList() != null) {
 			this.type = Type.LIST;
-			this.value = parseList(value.getList());
+			this.value = parseList(value.getList(), this);
 		} else if (value.getArgvalue() != null) {
 			this.type = Type.NUMBERED_PATTERN;
 			this.value = value.getArgvalue();
 		} else if (value.getMap() != null) {
 			this.type = Type.MAP;
-			// TODO
+			this.value = parseMap(value.getMap(), this);
 		} else if (value.getTable() != null) {
 			this.type = Type.TABLE;
 			// TODO
@@ -103,7 +170,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.type = Type.TREE;
 			this.value = parseTree(value.getTree(), this);
 		}
-		
+
 		if (value.getMetadata() != null) {
 			for (MetadataPair pair : value.getMetadata().getPairs()) {
 				String key = pair.getKey().substring(1);
@@ -117,7 +184,15 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 				metadata.put(key, v);
 			}
 		}
-		
+
+	}
+
+	public static Map<KActorsValue, KActorsValue> parseMap(org.integratedmodelling.kactors.kactors.Map map, KActorCodeStatement parent) {
+		Map<KActorsValue, KActorsValue> ret = new LinkedHashMap<>();
+		for (MapEntry entry : map.getEntries()) {
+			ret.put(new KActorsValue(entry.getClassifier(), parent), new KActorsValue(entry.getValue(), parent));
+		}
+		return ret;
 	}
 
 	public KActorsValue(Match match, KActorCodeStatement parent) {
@@ -138,7 +213,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.value = match.getObservable().substring(0, match.getObservable().length() - 1);
 		} else if (match.getSet() != null) {
 			this.type = Type.SET;
-			this.value = parseList(match.getSet());
+			this.value = parseList(match.getSet(), this);
 		} else if (match.getBoolean() != null) {
 			this.type = Type.BOOLEAN;
 			this.value = Boolean.parseBoolean(match.getBoolean());
@@ -147,7 +222,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.value = match.getType();
 		} else if (match.getList() != null) {
 			this.type = Type.LIST;
-			this.value = parseList(match.getList());
+			this.value = parseList(match.getList(), this);
 		}
 	}
 
@@ -169,10 +244,10 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		return ret;
 	}
 
-	public List<?> parseList(org.integratedmodelling.kactors.kactors.List list) {
+	public List<?> parseList(org.integratedmodelling.kactors.kactors.List list, KActorCodeStatement parent) {
 		List<Object> ret = new ArrayList<>();
 		for (Value val : list.getContents()) {
-			ret.add(new KActorsValue(val, this));
+			ret.add(new KActorsValue(val, parent));
 		}
 		return ret;
 	}
@@ -202,7 +277,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		return null;
 	}
 
-	public Number parseNumber(org.integratedmodelling.kactors.kactors.Number number) {
+	public static Number parseNumber(org.integratedmodelling.kactors.kactors.Number number) {
 		ICompositeNode node = NodeModelUtils.findActualNodeFor(number);
 		if (number.isExponential() || number.isDecimal()) {
 			return Double.parseDouble(node.getText().trim());
@@ -270,12 +345,13 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 	}
 
 	private Tree getSubTree(Value value) {
-		if (value.getList() != null && value.getList().getContents().size() == 1 && value.getList().getContents().get(0).getTree() != null) {
+		if (value.getList() != null && value.getList().getContents().size() == 1
+				&& value.getList().getContents().get(0).getTree() != null) {
 			return value.getList().getContents().get(0).getTree();
 		}
 		return null;
 	}
-	
+
 	private KActorsValue addNode(Tree treeNode, KActorCodeStatement parent, Graph<KActorsValue, DefaultEdge> ret) {
 		KActorsValue value = new KActorsValue(treeNode.getRoot(), parent);
 		ret.addVertex(value);
@@ -307,15 +383,15 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 		IConceptService cservice = Services.INSTANCE.getService(IConceptService.class);
 
-		Map<String,String> ret = new HashMap<>();
+		Map<String, String> ret = new HashMap<>();
 		ret.put("id", value == null ? "null" : value.toString());
 		ret.put("type", type.name());
-		
-		switch(type) {
+
+		switch (type) {
 		case OBSERVABLE:
 			Object o = getValue();
 			if (cservice != null && o instanceof ISemantic) {
-				ret.put("label", cservice.getDisplayLabel(((ISemantic)o).getType()));
+				ret.put("label", cservice.getDisplayLabel(((ISemantic) o).getType()));
 				break;
 			}
 		case ANYTHING:
@@ -345,15 +421,24 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			ret.put("label", ret.get("id"));
 			break;
 		}
-		
+
 		/*
 		 * metadata may override anything
 		 */
 		for (String key : metadata.keySet()) {
 			ret.put(key, metadata.get(key).getValue().toString());
 		}
-		
+
 		return ret;
+	}
+
+	@Override
+	public boolean isExclusive() {
+		return exclusive;
+	}
+
+	public void setExclusive(boolean exclusive) {
+		this.exclusive = exclusive;
 	}
 
 }

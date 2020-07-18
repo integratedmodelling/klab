@@ -249,6 +249,7 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="expression" eType="#//Number"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="nodata" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="map" eType="#//Map" containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="star" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="LookupTable">

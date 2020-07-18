@@ -1687,13 +1687,22 @@ public interface KactorsPackage extends EPackage
   int CLASSIFIER__NODATA = 12;
 
   /**
+   * The feature id for the '<em><b>Map</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CLASSIFIER__MAP = 13;
+
+  /**
    * The feature id for the '<em><b>Star</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CLASSIFIER__STAR = 13;
+  int CLASSIFIER__STAR = 14;
 
   /**
    * The number of structural features of the '<em>Classifier</em>' class.
@@ -1702,7 +1711,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_FEATURE_COUNT = 14;
+  int CLASSIFIER_FEATURE_COUNT = 15;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.LookupTableImpl <em>Lookup Table</em>}' class.
@@ -4307,6 +4316,17 @@ public interface KactorsPackage extends EPackage
   EAttribute getClassifier_Nodata();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Classifier#getMap <em>Map</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Map</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Classifier#getMap()
+   * @see #getClassifier()
+   * @generated
+   */
+  EReference getClassifier_Map();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Classifier#isStar <em>Star</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -6555,6 +6575,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute CLASSIFIER__NODATA = eINSTANCE.getClassifier_Nodata();
+
+    /**
+     * The meta object literal for the '<em><b>Map</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CLASSIFIER__MAP = eINSTANCE.getClassifier_Map();
 
     /**
      * The meta object literal for the '<em><b>Star</b></em>' attribute feature.

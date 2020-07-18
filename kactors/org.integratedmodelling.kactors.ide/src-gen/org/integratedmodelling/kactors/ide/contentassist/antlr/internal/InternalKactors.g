@@ -2251,9 +2251,15 @@ rule__Classifier__Alternatives
 	)
 	|
 	(
-		{ before(grammarAccess.getClassifierAccess().getStarAssignment_9()); }
-		(rule__Classifier__StarAssignment_9)
-		{ after(grammarAccess.getClassifierAccess().getStarAssignment_9()); }
+		{ before(grammarAccess.getClassifierAccess().getMapAssignment_9()); }
+		(rule__Classifier__MapAssignment_9)
+		{ after(grammarAccess.getClassifierAccess().getMapAssignment_9()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getClassifierAccess().getStarAssignment_10()); }
+		(rule__Classifier__StarAssignment_10)
+		{ after(grammarAccess.getClassifierAccess().getStarAssignment_10()); }
 	)
 ;
 finally {
@@ -12141,7 +12147,7 @@ rule__Preamble__UnorderedGroup_3
 	}
 :
 	rule__Preamble__UnorderedGroup_3__0
-	{getUnorderedGroupHelper().canLeave(grammarAccess.getPreambleAccess().getUnorderedGroup_3())}?
+	?
 ;
 finally {
 	getUnorderedGroupHelper().leave(grammarAccess.getPreambleAccess().getUnorderedGroup_3());
@@ -15216,19 +15222,34 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Classifier__StarAssignment_9
+rule__Classifier__MapAssignment_9
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getClassifierAccess().getStarAsteriskKeyword_9_0()); }
+		{ before(grammarAccess.getClassifierAccess().getMapMapParserRuleCall_9_0()); }
+		ruleMap
+		{ after(grammarAccess.getClassifierAccess().getMapMapParserRuleCall_9_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Classifier__StarAssignment_10
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getClassifierAccess().getStarAsteriskKeyword_10_0()); }
 		(
-			{ before(grammarAccess.getClassifierAccess().getStarAsteriskKeyword_9_0()); }
+			{ before(grammarAccess.getClassifierAccess().getStarAsteriskKeyword_10_0()); }
 			'*'
-			{ after(grammarAccess.getClassifierAccess().getStarAsteriskKeyword_9_0()); }
+			{ after(grammarAccess.getClassifierAccess().getStarAsteriskKeyword_10_0()); }
 		)
-		{ after(grammarAccess.getClassifierAccess().getStarAsteriskKeyword_9_0()); }
+		{ after(grammarAccess.getClassifierAccess().getStarAsteriskKeyword_10_0()); }
 	)
 ;
 finally {

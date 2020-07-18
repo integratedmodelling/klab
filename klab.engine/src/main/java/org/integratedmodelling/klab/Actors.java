@@ -61,6 +61,7 @@ import org.integratedmodelling.klab.rest.BehaviorReference;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -82,6 +83,7 @@ import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
+import nonapi.io.github.classgraph.json.JSONUtils;
 
 public enum Actors implements IActorsService {
 
@@ -593,6 +595,10 @@ public enum Actors implements IActorsService {
 		view.setPlatform(behavior.getPlatform());
 		view.setLogo(behavior.getStatement().getLogo());
 		view.setProjectId(behavior.getProject());
+		
+		if (behavior.getStatement().getStyleSpecs() != null) {
+			view.setStyleSpecs(JsonUtils.printAsJson(behavior.getStatement().getStyleSpecs()));
+		}
 
 		for (IBehavior.Action action : behavior.getActions()) {
 
