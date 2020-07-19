@@ -19,8 +19,10 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
+import org.integratedmodelling.kactors.api.IKActorsStatement.Instantiation;
 import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Model;
@@ -83,7 +85,6 @@ import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
-import nonapi.io.github.classgraph.json.JSONUtils;
 
 public enum Actors implements IActorsService {
 
@@ -595,7 +596,7 @@ public enum Actors implements IActorsService {
 		view.setPlatform(behavior.getPlatform());
 		view.setLogo(behavior.getStatement().getLogo());
 		view.setProjectId(behavior.getProject());
-		
+
 		if (behavior.getStatement().getStyleSpecs() != null) {
 			view.setStyleSpecs(JsonUtils.printAsJson(behavior.getStatement().getStyleSpecs()));
 		}
@@ -657,20 +658,23 @@ public enum Actors implements IActorsService {
 	}
 
 	private class ViewScope {
-		String identity;
+
+		String identityId;
+		IIdentity identity;
 		String applicationId;
 		boolean optional = false;
 		boolean repeated = false;
 		private Integer groupCounter = new Integer(0);
 
 		public ViewScope(IIdentity identity, String applicationId) {
-			this.identity = identity == null ? null : identity.getId();
+			this.identity = identity;
+			this.identityId = identity == null ? null : identity.getId();
 			this.applicationId = applicationId;
 		}
 
 		public ViewScope(ViewScope scope) {
 			this.applicationId = scope.applicationId;
-			this.identity = scope.identity;
+			this.identityId = scope.identityId;
 			this.repeated = scope.repeated;
 			this.optional = scope.optional;
 			this.groupCounter = scope.groupCounter;
@@ -693,7 +697,7 @@ public enum Actors implements IActorsService {
 			ViewScope scope) {
 
 		ViewComponent ret = new ViewComponent();
-		ret.setIdentity(scope.identity);
+		ret.setIdentity(scope.identityId);
 		ret.setApplicationId(scope.applicationId);
 		boolean isActive = group.getGroupMetadata().containsKey("inputgroup");
 		ret.setType(isActive ? ViewComponent.Type.InputGroup : ViewComponent.Type.Group);
@@ -800,6 +804,15 @@ public enum Actors implements IActorsService {
 			visitViewActions(((IKActorsStatement.While) statement).getBody(), parent, level,
 					scope.optional().repeated());
 			break;
+		case INSTANTIATION:
+			IBehavior behavior = getBehavior(((Instantiation) statement).getBehavior());
+			if (behavior != null && behavior.getDestination() == Type.COMPONENT) {
+				component = getView(behavior, scope.identity, scope.applicationId);
+				if (component != null) {
+					parent.getComponents().add(component);
+				}
+			}
+			break;
 		default:
 			// nothing to do for fire and instantiation
 			break;
@@ -844,7 +857,7 @@ public enum Actors implements IActorsService {
 				}
 
 				setViewMetadata(ret, statement.getArguments());
-				ret.setIdentity(scope.identity);
+				ret.setIdentity(scope.identityId);
 				ret.setApplicationId(scope.applicationId);
 				ret.setId(((KActorsActionCall) statement).getInternalId());
 

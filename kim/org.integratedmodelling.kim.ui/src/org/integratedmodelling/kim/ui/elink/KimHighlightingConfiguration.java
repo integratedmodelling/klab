@@ -150,6 +150,7 @@ public class KimHighlightingConfiguration extends DefaultHighlightingConfigurati
 	protected TextStyle dangerTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(255, 0, 0));
+		// overstrike would be better than italic but it doesn't seem to be possible.
 		textStyle.setStyle(SWT.BOLD | SWT.ITALIC);
 		return textStyle;
 	}

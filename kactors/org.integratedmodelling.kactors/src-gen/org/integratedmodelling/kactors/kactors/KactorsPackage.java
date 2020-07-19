@@ -2247,13 +2247,22 @@ public interface KactorsPackage extends EPackage
   int KEY_VALUE_PAIR__KEY = 0;
 
   /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int KEY_VALUE_PAIR__VALUE = 1;
+
+  /**
    * The feature id for the '<em><b>Tag</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int KEY_VALUE_PAIR__TAG = 1;
+  int KEY_VALUE_PAIR__TAG = 2;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2262,7 +2271,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int KEY_VALUE_PAIR__NAME = 2;
+  int KEY_VALUE_PAIR__NAME = 3;
 
   /**
    * The feature id for the '<em><b>Interactive</b></em>' attribute.
@@ -2271,16 +2280,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int KEY_VALUE_PAIR__INTERACTIVE = 3;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int KEY_VALUE_PAIR__VALUE = 4;
+  int KEY_VALUE_PAIR__INTERACTIVE = 4;
 
   /**
    * The number of structural features of the '<em>Key Value Pair</em>' class.
@@ -5535,6 +5535,17 @@ public interface KactorsPackage extends EPackage
   EAttribute getKeyValuePair_Key();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Value</em>'.
+   * @see org.integratedmodelling.kactors.kactors.KeyValuePair#getValue()
+   * @see #getKeyValuePair()
+   * @generated
+   */
+  EReference getKeyValuePair_Value();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getTag <em>Tag</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5566,17 +5577,6 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EAttribute getKeyValuePair_Interactive();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getValue <em>Value</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Value</em>'.
-   * @see org.integratedmodelling.kactors.kactors.KeyValuePair#getValue()
-   * @see #getKeyValuePair()
-   * @generated
-   */
-  EReference getKeyValuePair_Value();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.UnitElement <em>Unit Element</em>}'.
@@ -8444,6 +8444,14 @@ public interface KactorsPackage extends EPackage
     EAttribute KEY_VALUE_PAIR__KEY = eINSTANCE.getKeyValuePair_Key();
 
     /**
+     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference KEY_VALUE_PAIR__VALUE = eINSTANCE.getKeyValuePair_Value();
+
+    /**
      * The meta object literal for the '<em><b>Tag</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -8466,14 +8474,6 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute KEY_VALUE_PAIR__INTERACTIVE = eINSTANCE.getKeyValuePair_Interactive();
-
-    /**
-     * The meta object literal for the '<em><b>Value</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference KEY_VALUE_PAIR__VALUE = eINSTANCE.getKeyValuePair_Value();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.UnitElementImpl <em>Unit Element</em>}' class.

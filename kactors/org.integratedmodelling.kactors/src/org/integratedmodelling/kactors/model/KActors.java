@@ -183,11 +183,23 @@ public enum KActors {
 	 * @param project
 	 * @return
 	 */
-	public List<IKActorsBehavior> getBehaviors(String project, IKActorsBehavior.Type type) {
+	public List<IKActorsBehavior> getBehaviors(String project, IKActorsBehavior.Type... type) {
 		List<IKActorsBehavior> ret = new ArrayList<>();
 		for (BehaviorDescriptor bd : behaviors.values()) {
-			if (project.equals(bd.projectName) && bd.behavior.getType() == type) {
-				ret.add(bd.behavior);
+			if (project.equals(bd.projectName)) {
+				boolean ok = true;
+				if (type != null) {
+					ok = false;
+					for (IKActorsBehavior.Type t : type) {
+						if (bd.behavior.getType() == t) {
+							ok = true;
+							break;
+						}
+					}
+				}
+				if (ok) {
+					ret.add(bd.behavior);
+				}
 			}
 		}
 		return ret;

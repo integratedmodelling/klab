@@ -248,7 +248,7 @@ Map:
 ;
 
 Tree:
-	root=ValueWithoutTree (=> '<-' (value+=ValueWithoutTree | => ('(' value+=Tree ')')))+
+	root=ValueWithMetadataWithoutTree (=> '<-' (value+=ValueWithMetadataWithoutTree | => ('(' value+=Tree ')')))+
 ;
 
 MapEntry:
@@ -316,7 +316,7 @@ ParameterList:
 	pairs+=KeyValuePair (=> (',')? pairs+=KeyValuePair)*;
 	
 KeyValuePair:
-    key=KEY |
+    key=KEY (value=Value)? |
     tag=TAG |
 	((name=(LOWERCASE_ID) (interactive?='?=' | '='))? value=Value);
 
@@ -368,6 +368,7 @@ Path:
  * Observable semantics rules from k.IM. Syntax peers for concepts are exclusively to allow syntax highlighting 
  * and validation of observables through the imported k.IM validator (as behaviors are read after model files).
  * Concepts can only be referenced in full notation for obvious reasons.
+ * ------------------------------------------------------------------------------------------------------------
  */
 
 ObservableSemantics:

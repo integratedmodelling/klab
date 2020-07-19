@@ -9,6 +9,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Syntax highlighting in k.Actors now shows different classes of actions with
+  matching colors. In addition, observables are now parsed and decorated using
+  same colors as k.IM. Any k.Actors keyword in namespace IDs can be quoted using a 
+  backtick in front of it.
 - One-way aggregation working properly both by category and object, using the
   spatial nature of the context or of the aggregating artifact to define
   unit collapse. N-way aggregation supported only syntactically for now.

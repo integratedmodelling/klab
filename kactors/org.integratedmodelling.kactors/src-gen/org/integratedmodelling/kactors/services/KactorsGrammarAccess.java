@@ -2435,12 +2435,12 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Tree");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cRootAssignment_0 = (Assignment)cGroup.eContents().get(0);
-		private final RuleCall cRootValueWithoutTreeParserRuleCall_0_0 = (RuleCall)cRootAssignment_0.eContents().get(0);
+		private final RuleCall cRootValueWithMetadataWithoutTreeParserRuleCall_0_0 = (RuleCall)cRootAssignment_0.eContents().get(0);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Keyword cLessThanSignHyphenMinusKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
 		private final Alternatives cAlternatives_1_1 = (Alternatives)cGroup_1.eContents().get(1);
 		private final Assignment cValueAssignment_1_1_0 = (Assignment)cAlternatives_1_1.eContents().get(0);
-		private final RuleCall cValueValueWithoutTreeParserRuleCall_1_1_0_0 = (RuleCall)cValueAssignment_1_1_0.eContents().get(0);
+		private final RuleCall cValueValueWithMetadataWithoutTreeParserRuleCall_1_1_0_0 = (RuleCall)cValueAssignment_1_1_0.eContents().get(0);
 		private final Group cGroup_1_1_1 = (Group)cAlternatives_1_1.eContents().get(1);
 		private final Group cGroup_1_1_1_0 = (Group)cGroup_1_1_1.eContents().get(0);
 		private final Keyword cLeftParenthesisKeyword_1_1_1_0_0 = (Keyword)cGroup_1_1_1_0.eContents().get(0);
@@ -2449,32 +2449,32 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cRightParenthesisKeyword_1_1_1_0_2 = (Keyword)cGroup_1_1_1_0.eContents().get(2);
 		
 		//Tree:
-		//	root=ValueWithoutTree (=> '<-' (value+=ValueWithoutTree | => ('(' value+=Tree ')')))+;
+		//	root=ValueWithMetadataWithoutTree (=> '<-' (value+=ValueWithMetadataWithoutTree | => ('(' value+=Tree ')')))+;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//root=ValueWithoutTree (=> '<-' (value+=ValueWithoutTree | => ('(' value+=Tree ')')))+
+		//root=ValueWithMetadataWithoutTree (=> '<-' (value+=ValueWithMetadataWithoutTree | => ('(' value+=Tree ')')))+
 		public Group getGroup() { return cGroup; }
 		
-		//root=ValueWithoutTree
+		//root=ValueWithMetadataWithoutTree
 		public Assignment getRootAssignment_0() { return cRootAssignment_0; }
 		
-		//ValueWithoutTree
-		public RuleCall getRootValueWithoutTreeParserRuleCall_0_0() { return cRootValueWithoutTreeParserRuleCall_0_0; }
+		//ValueWithMetadataWithoutTree
+		public RuleCall getRootValueWithMetadataWithoutTreeParserRuleCall_0_0() { return cRootValueWithMetadataWithoutTreeParserRuleCall_0_0; }
 		
-		//(=> '<-' (value+=ValueWithoutTree | => ('(' value+=Tree ')')))+
+		//(=> '<-' (value+=ValueWithMetadataWithoutTree | => ('(' value+=Tree ')')))+
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//=> '<-'
 		public Keyword getLessThanSignHyphenMinusKeyword_1_0() { return cLessThanSignHyphenMinusKeyword_1_0; }
 		
-		//(value+=ValueWithoutTree | => ('(' value+=Tree ')'))
+		//(value+=ValueWithMetadataWithoutTree | => ('(' value+=Tree ')'))
 		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
 		
-		//value+=ValueWithoutTree
+		//value+=ValueWithMetadataWithoutTree
 		public Assignment getValueAssignment_1_1_0() { return cValueAssignment_1_1_0; }
 		
-		//ValueWithoutTree
-		public RuleCall getValueValueWithoutTreeParserRuleCall_1_1_0_0() { return cValueValueWithoutTreeParserRuleCall_1_1_0_0; }
+		//ValueWithMetadataWithoutTree
+		public RuleCall getValueValueWithMetadataWithoutTreeParserRuleCall_1_1_0_0() { return cValueValueWithMetadataWithoutTreeParserRuleCall_1_1_0_0; }
 		
 		//=> ('(' value+=Tree ')')
 		public Group getGroup_1_1_1() { return cGroup_1_1_1; }
@@ -3326,8 +3326,11 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	public class KeyValuePairElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.KeyValuePair");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Assignment cKeyAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
-		private final RuleCall cKeyKEYTerminalRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
+		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
+		private final Assignment cKeyAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
+		private final RuleCall cKeyKEYTerminalRuleCall_0_0_0 = (RuleCall)cKeyAssignment_0_0.eContents().get(0);
+		private final Assignment cValueAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
+		private final RuleCall cValueValueParserRuleCall_0_1_0 = (RuleCall)cValueAssignment_0_1.eContents().get(0);
 		private final Assignment cTagAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
 		private final RuleCall cTagTAGTerminalRuleCall_1_0 = (RuleCall)cTagAssignment_1.eContents().get(0);
 		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
@@ -3342,17 +3345,26 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cValueValueParserRuleCall_2_1_0 = (RuleCall)cValueAssignment_2_1.eContents().get(0);
 		
 		//KeyValuePair:
-		//	key=KEY | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value;
+		//	key=KEY value=Value? | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//key=KEY | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value
+		//key=KEY value=Value? | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
+		//key=KEY value=Value?
+		public Group getGroup_0() { return cGroup_0; }
+		
 		//key=KEY
-		public Assignment getKeyAssignment_0() { return cKeyAssignment_0; }
+		public Assignment getKeyAssignment_0_0() { return cKeyAssignment_0_0; }
 		
 		//KEY
-		public RuleCall getKeyKEYTerminalRuleCall_0_0() { return cKeyKEYTerminalRuleCall_0_0; }
+		public RuleCall getKeyKEYTerminalRuleCall_0_0_0() { return cKeyKEYTerminalRuleCall_0_0_0; }
+		
+		//value=Value?
+		public Assignment getValueAssignment_0_1() { return cValueAssignment_0_1; }
+		
+		//Value
+		public RuleCall getValueValueParserRuleCall_0_1_0() { return cValueValueParserRuleCall_0_1_0; }
 		
 		//tag=TAG
 		public Assignment getTagAssignment_1() { return cTagAssignment_1; }
@@ -4035,6 +4047,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		// * Observable semantics rules from k.IM. Syntax peers for concepts are exclusively to allow syntax highlighting 
 		// * and validation of observables through the imported k.IM validator (as behaviors are read after model files).
 		// * Concepts can only be referenced in full notation for obvious reasons.
+		// * ------------------------------------------------------------------------------------------------------------
 		// */ ObservableSemantics:
 		//	declaration=ConceptDeclaration (('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? &
 		//	(valueOperators+=ValueOperator valueOperators+=ValueOperator*)? & (optional?='optional' | 'required')? & (from=Number
@@ -6173,7 +6186,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Tree:
-	//	root=ValueWithoutTree (=> '<-' (value+=ValueWithoutTree | => ('(' value+=Tree ')')))+;
+	//	root=ValueWithMetadataWithoutTree (=> '<-' (value+=ValueWithMetadataWithoutTree | => ('(' value+=Tree ')')))+;
 	public TreeElements getTreeAccess() {
 		return pTree;
 	}
@@ -6311,7 +6324,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//KeyValuePair:
-	//	key=KEY | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value;
+	//	key=KEY value=Value? | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value;
 	public KeyValuePairElements getKeyValuePairAccess() {
 		return pKeyValuePair;
 	}
@@ -6436,6 +6449,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	// * Observable semantics rules from k.IM. Syntax peers for concepts are exclusively to allow syntax highlighting 
 	// * and validation of observables through the imported k.IM validator (as behaviors are read after model files).
 	// * Concepts can only be referenced in full notation for obvious reasons.
+	// * ------------------------------------------------------------------------------------------------------------
 	// */ ObservableSemantics:
 	//	declaration=ConceptDeclaration (('in' (unit=Unit | currency=Currency) | 'per' unit=Unit)? &
 	//	(valueOperators+=ValueOperator valueOperators+=ValueOperator*)? & (optional?='optional' | 'required')? & (from=Number
