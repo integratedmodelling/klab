@@ -327,26 +327,26 @@ public interface Preamble extends EObject
   void setWorldview(String value);
 
   /**
-   * Returns the value of the '<em><b>Observable</b></em>' attribute.
+   * Returns the value of the '<em><b>Observable</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Observable</em>' attribute.
-   * @see #setObservable(String)
+   * @return the value of the '<em>Observable</em>' containment reference.
+   * @see #setObservable(Observable)
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Observable()
-   * @model
+   * @model containment="true"
    * @generated
    */
-  String getObservable();
+  Observable getObservable();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getObservable <em>Observable</em>}' attribute.
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getObservable <em>Observable</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Observable</em>' attribute.
+   * @param value the new value of the '<em>Observable</em>' containment reference.
    * @see #getObservable()
    * @generated
    */
-  void setObservable(String value);
+  void setObservable(Observable value);
 
   /**
    * Returns the value of the '<em><b>Observables</b></em>' containment reference.

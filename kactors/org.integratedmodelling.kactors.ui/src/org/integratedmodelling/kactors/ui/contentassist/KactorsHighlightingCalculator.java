@@ -8,6 +8,7 @@ import org.eclipse.xtext.ide.editor.syntaxcoloring.DefaultSemanticHighlightingCa
 import org.eclipse.xtext.ide.editor.syntaxcoloring.IHighlightedPositionAcceptor;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.INode;
+import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.CancelIndicator;
 import org.integratedmodelling.kactors.kactors.MessageCall;
@@ -16,6 +17,10 @@ import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.CodeAssistant;
 import org.integratedmodelling.kactors.model.KActors.CodeAssistant.BehaviorId;
 import org.integratedmodelling.kactors.services.KactorsGrammarAccess;
+import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 
 import com.google.inject.Inject;
 
@@ -47,7 +52,7 @@ public class KactorsHighlightingCalculator extends DefaultSemanticHighlightingCa
 				EObject object = ((RuleCall) node.getGrammarElement()).eContainer();
 
 				if (object instanceof Assignment && node.getOffset() > start) {
-					
+
 					if (rule.getName().equals("Annotation")) {
 						boolean known = false;
 //						if (node.getSemanticElement() instanceof Annotation) {
@@ -76,7 +81,7 @@ public class KactorsHighlightingCalculator extends DefaultSemanticHighlightingCa
 						if (KActors.INSTANCE.getCodeAssistant() != null) {
 							EObject sem = node.getSemanticElement();
 							if (sem instanceof MessageCall) {
-								type = KActors.INSTANCE.getCodeAssistant().classifyVerb(((MessageCall)sem).getName());
+								type = KActors.INSTANCE.getCodeAssistant().classifyVerb(((MessageCall) sem).getName());
 							}
 						}
 						switch (type) {
@@ -115,6 +120,57 @@ public class KactorsHighlightingCalculator extends DefaultSemanticHighlightingCa
 						default:
 							break;
 						}
+					} else if (rule.getName().equals("NamespaceId")) {
+						String concept = NodeModelUtils.getTokenText(node);
+						if (concept.startsWith("`")) {
+							concept = concept.substring(1);
+						}
+						ConceptDescriptor cdesc = Kim.INSTANCE.getConceptDescriptor(concept);
+
+						if (cdesc == null || cdesc.is(IKimConcept.Type.NOTHING)) {
+							acceptor.addPosition((start = node.getOffset()), node.getLength(),
+									KactorsHighlightingConfiguration.DANGER_ID);
+						} else if (cdesc.is(Type.OBSERVABLE)) {
+							if (cdesc.is(Type.QUALITY)) {
+								acceptor.addPosition((start = node.getOffset()), node.getLength(),
+										cdesc.is(Type.ABSTRACT) ? KactorsHighlightingConfiguration.ABSTRACT_QUALITY_ID
+												: KactorsHighlightingConfiguration.QUALITY_ID);
+							} else if (cdesc.is(Type.SUBJECT) || cdesc.is(Type.AGENT)) {
+								acceptor.addPosition((start = node.getOffset()), node.getLength(),
+										cdesc.is(Type.ABSTRACT) ? KactorsHighlightingConfiguration.ABSTRACT_SUBJECT_ID
+												: KactorsHighlightingConfiguration.SUBJECT_ID);
+							} else if (cdesc.is(Type.EVENT)) {
+								acceptor.addPosition((start = node.getOffset()), node.getLength(),
+										cdesc.is(Type.ABSTRACT) ? KactorsHighlightingConfiguration.ABSTRACT_EVENT_ID
+												: KactorsHighlightingConfiguration.EVENT_ID);
+							} else if (cdesc.is(Type.PROCESS)) {
+								acceptor.addPosition((start = node.getOffset()), node.getLength(),
+										cdesc.is(Type.ABSTRACT) ? KactorsHighlightingConfiguration.ABSTRACT_PROCESS_ID
+												: KactorsHighlightingConfiguration.PROCESS_ID);
+							} else if (cdesc.is(Type.RELATIONSHIP)) {
+								acceptor.addPosition((start = node.getOffset()), node.getLength(),
+										cdesc.is(Type.ABSTRACT)
+												? KactorsHighlightingConfiguration.ABSTRACT_RELATIONSHIP_ID
+												: KactorsHighlightingConfiguration.RELATIONSHIP_ID);
+							}
+						} else if (cdesc.is(Type.TRAIT)) {
+							acceptor.addPosition((start = node.getOffset()), node.getLength(),
+									cdesc.is(Type.ABSTRACT) ? KactorsHighlightingConfiguration.ABSTRACT_TRAIT_ID
+											: KactorsHighlightingConfiguration.TRAIT_ID);
+						} else if (cdesc.is(Type.ROLE)) {
+							acceptor.addPosition((start = node.getOffset()), node.getLength(),
+									cdesc.is(Type.ABSTRACT) ? KactorsHighlightingConfiguration.ABSTRACT_ROLE_ID
+											: KactorsHighlightingConfiguration.ROLE_ID);
+						} else if (cdesc.is(Type.CONFIGURATION)) {
+							acceptor.addPosition((start = node.getOffset()), node.getLength(),
+									cdesc.is(Type.ABSTRACT) ? KactorsHighlightingConfiguration.ABSTRACT_CONFIGURATION_ID
+											: KactorsHighlightingConfiguration.CONFIGURATION_ID);
+						} else if (cdesc.is(Type.EXTENT)) {
+							acceptor.addPosition((start = node.getOffset()), node.getLength(),
+									cdesc.is(Type.ABSTRACT) ? KactorsHighlightingConfiguration.ABSTRACT_EXTENT_ID
+											: KactorsHighlightingConfiguration.EXTENT_ID);
+						}
+
 					}
 //					else if (node.getSemanticElement() instanceof Concept
 //							|| node.getSemanticElement() instanceof ConceptReference) {

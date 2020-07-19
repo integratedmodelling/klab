@@ -26,10 +26,12 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	protected AbstractElementAlias match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q;
 	protected AbstractElementAlias match_Classifier_ExclusiveKeyword_1_1_1_q;
 	protected AbstractElementAlias match_Classifier_ExclusiveKeyword_1_4_1_q;
+	protected AbstractElementAlias match_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0;
 	protected AbstractElementAlias match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q;
 	protected AbstractElementAlias match_MessageCall___LeftParenthesisKeyword_0_0_1_0_RightParenthesisKeyword_0_0_1_2__q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_4_0_1_0_q;
+	protected AbstractElementAlias match_ObservableSemantics_RequiredKeyword_1_2_1_a;
 	protected AbstractElementAlias match_ParameterList_CommaKeyword_1_0_0_q;
 	protected AbstractElementAlias match_Preamble_StyleKeyword_3_6_0_a;
 	protected AbstractElementAlias match_Preamble_StyleKeyword_3_6_0_p;
@@ -43,10 +45,12 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 		match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getAnnotationAccess().getLeftParenthesisKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getAnnotationAccess().getRightParenthesisKeyword_1_2()));
 		match_Classifier_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getClassifierAccess().getExclusiveKeyword_1_1_1());
 		match_Classifier_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getClassifierAccess().getExclusiveKeyword_1_4_1());
+		match_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getConceptAccess().getFromKeyword_3_1_1()), new TokenAlias(false, false, grammarAccess.getConceptAccess().getToKeyword_3_1_0()));
 		match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q = new AlternativeAlias(false, true, new TokenAlias(false, false, grammarAccess.getDateAccess().getADKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getDateAccess().getCEKeyword_1_1()));
 		match_MessageCall___LeftParenthesisKeyword_0_0_1_0_RightParenthesisKeyword_0_0_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getMessageCallAccess().getLeftParenthesisKeyword_0_0_1_0()), new TokenAlias(false, false, grammarAccess.getMessageCallAccess().getRightParenthesisKeyword_0_0_1_2()));
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
 		match_Number_PlusSignKeyword_4_0_1_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_4_0_1_0());
+		match_ObservableSemantics_RequiredKeyword_1_2_1_a = new TokenAlias(true, true, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_1_2_1());
 		match_ParameterList_CommaKeyword_1_0_0_q = new TokenAlias(false, true, grammarAccess.getParameterListAccess().getCommaKeyword_1_0_0());
 		match_Preamble_StyleKeyword_3_6_0_a = new TokenAlias(true, true, grammarAccess.getPreambleAccess().getStyleKeyword_3_6_0());
 		match_Preamble_StyleKeyword_3_6_0_p = new TokenAlias(true, false, grammarAccess.getPreambleAccess().getStyleKeyword_3_6_0());
@@ -85,6 +89,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 				emit_Classifier_ExclusiveKeyword_1_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Classifier_ExclusiveKeyword_1_4_1_q.equals(syntax))
 				emit_Classifier_ExclusiveKeyword_1_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0.equals(syntax))
+				emit_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q.equals(syntax))
 				emit_Date___ADKeyword_1_0_or_CEKeyword_1_1__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_MessageCall___LeftParenthesisKeyword_0_0_1_0_RightParenthesisKeyword_0_0_1_2__q.equals(syntax))
@@ -93,6 +99,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 				emit_Number_PlusSignKeyword_0_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Number_PlusSignKeyword_4_0_1_0_q.equals(syntax))
 				emit_Number_PlusSignKeyword_4_0_1_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_ObservableSemantics_RequiredKeyword_1_2_1_a.equals(syntax))
+				emit_ObservableSemantics_RequiredKeyword_1_2_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ParameterList_CommaKeyword_1_0_0_q.equals(syntax))
 				emit_ParameterList_CommaKeyword_1_0_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Preamble_StyleKeyword_3_6_0_a.equals(syntax))
@@ -154,6 +162,17 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	
 	/**
 	 * Ambiguous syntax:
+	 *     'to' | 'from'
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     distance?='distance' (ambiguity) concept=SimpleConceptDeclaration
+	 */
+	protected void emit_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
 	 *     ('AD' | 'CE')?
 	 *
 	 * This ambiguous syntax occurs at:
@@ -200,6 +219,88 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	
 	/**
 	 * Ambiguous syntax:
+	 *     'required'*
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     currency=Currency (ambiguity) 'in' currency=Currency
+	 *     currency=Currency (ambiguity) 'in' unit=Unit
+	 *     currency=Currency (ambiguity) 'named' name=LOWERCASE_ID
+	 *     currency=Currency (ambiguity) 'named' name=STRING
+	 *     currency=Currency (ambiguity) 'per' unit=Unit
+	 *     currency=Currency (ambiguity) (rule end)
+	 *     currency=Currency (ambiguity) from=Number
+	 *     currency=Currency (ambiguity) optional?='optional'
+	 *     currency=Currency (ambiguity) valueOperators+=ValueOperator
+	 *     declaration=ConceptDeclaration (ambiguity) 'in' currency=Currency
+	 *     declaration=ConceptDeclaration (ambiguity) 'in' unit=Unit
+	 *     declaration=ConceptDeclaration (ambiguity) 'named' name=LOWERCASE_ID
+	 *     declaration=ConceptDeclaration (ambiguity) 'named' name=STRING
+	 *     declaration=ConceptDeclaration (ambiguity) 'per' unit=Unit
+	 *     declaration=ConceptDeclaration (ambiguity) (rule end)
+	 *     declaration=ConceptDeclaration (ambiguity) from=Number
+	 *     declaration=ConceptDeclaration (ambiguity) optional?='optional'
+	 *     declaration=ConceptDeclaration (ambiguity) valueOperators+=ValueOperator
+	 *     name=LOWERCASE_ID (ambiguity) 'in' currency=Currency
+	 *     name=LOWERCASE_ID (ambiguity) 'in' unit=Unit
+	 *     name=LOWERCASE_ID (ambiguity) 'named' name=LOWERCASE_ID
+	 *     name=LOWERCASE_ID (ambiguity) 'named' name=STRING
+	 *     name=LOWERCASE_ID (ambiguity) 'per' unit=Unit
+	 *     name=LOWERCASE_ID (ambiguity) (rule end)
+	 *     name=LOWERCASE_ID (ambiguity) from=Number
+	 *     name=LOWERCASE_ID (ambiguity) optional?='optional'
+	 *     name=LOWERCASE_ID (ambiguity) valueOperators+=ValueOperator
+	 *     name=STRING (ambiguity) 'in' currency=Currency
+	 *     name=STRING (ambiguity) 'in' unit=Unit
+	 *     name=STRING (ambiguity) 'named' name=LOWERCASE_ID
+	 *     name=STRING (ambiguity) 'named' name=STRING
+	 *     name=STRING (ambiguity) 'per' unit=Unit
+	 *     name=STRING (ambiguity) (rule end)
+	 *     name=STRING (ambiguity) from=Number
+	 *     name=STRING (ambiguity) optional?='optional'
+	 *     name=STRING (ambiguity) valueOperators+=ValueOperator
+	 *     optional?='optional' (ambiguity) 'in' currency=Currency
+	 *     optional?='optional' (ambiguity) 'in' unit=Unit
+	 *     optional?='optional' (ambiguity) 'named' name=LOWERCASE_ID
+	 *     optional?='optional' (ambiguity) 'named' name=STRING
+	 *     optional?='optional' (ambiguity) 'per' unit=Unit
+	 *     optional?='optional' (ambiguity) (rule end)
+	 *     optional?='optional' (ambiguity) from=Number
+	 *     optional?='optional' (ambiguity) optional?='optional'
+	 *     optional?='optional' (ambiguity) valueOperators+=ValueOperator
+	 *     to=Number (ambiguity) 'in' currency=Currency
+	 *     to=Number (ambiguity) 'in' unit=Unit
+	 *     to=Number (ambiguity) 'named' name=LOWERCASE_ID
+	 *     to=Number (ambiguity) 'named' name=STRING
+	 *     to=Number (ambiguity) 'per' unit=Unit
+	 *     to=Number (ambiguity) (rule end)
+	 *     to=Number (ambiguity) from=Number
+	 *     to=Number (ambiguity) optional?='optional'
+	 *     to=Number (ambiguity) valueOperators+=ValueOperator
+	 *     unit=Unit (ambiguity) 'in' currency=Currency
+	 *     unit=Unit (ambiguity) 'in' unit=Unit
+	 *     unit=Unit (ambiguity) 'named' name=LOWERCASE_ID
+	 *     unit=Unit (ambiguity) 'named' name=STRING
+	 *     unit=Unit (ambiguity) 'per' unit=Unit
+	 *     unit=Unit (ambiguity) (rule end)
+	 *     unit=Unit (ambiguity) from=Number
+	 *     unit=Unit (ambiguity) optional?='optional'
+	 *     unit=Unit (ambiguity) valueOperators+=ValueOperator
+	 *     valueOperators+=ValueOperator (ambiguity) 'in' currency=Currency
+	 *     valueOperators+=ValueOperator (ambiguity) 'in' unit=Unit
+	 *     valueOperators+=ValueOperator (ambiguity) 'named' name=LOWERCASE_ID
+	 *     valueOperators+=ValueOperator (ambiguity) 'named' name=STRING
+	 *     valueOperators+=ValueOperator (ambiguity) 'per' unit=Unit
+	 *     valueOperators+=ValueOperator (ambiguity) (rule end)
+	 *     valueOperators+=ValueOperator (ambiguity) from=Number
+	 *     valueOperators+=ValueOperator (ambiguity) optional?='optional'
+	 *     valueOperators+=ValueOperator (ambiguity) valueOperators+=ValueOperator
+	 */
+	protected void emit_ObservableSemantics_RequiredKeyword_1_2_1_a(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
 	 *     ','?
 	 *
 	 * This ambiguous syntax occurs at:
@@ -221,7 +322,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     (rule start) (ambiguity) 'logo' logo=Path
 	 *     (rule start) (ambiguity) 'logo' logo=STRING
 	 *     (rule start) (ambiguity) 'modified' modified=Date
-	 *     (rule start) (ambiguity) 'observable' observable=OBSERVABLE
+	 *     (rule start) (ambiguity) 'observable' observable=Observable
 	 *     (rule start) (ambiguity) 'observable' observables=List
 	 *     (rule start) (ambiguity) 'permissions' permissions=STRING
 	 *     (rule start) (ambiguity) 'version' version=VersionNumber
@@ -234,7 +335,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     authors+=STRING (ambiguity) 'logo' logo=Path
 	 *     authors+=STRING (ambiguity) 'logo' logo=STRING
 	 *     authors+=STRING (ambiguity) 'modified' modified=Date
-	 *     authors+=STRING (ambiguity) 'observable' observable=OBSERVABLE
+	 *     authors+=STRING (ambiguity) 'observable' observable=Observable
 	 *     authors+=STRING (ambiguity) 'observable' observables=List
 	 *     authors+=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     authors+=STRING (ambiguity) 'version' version=VersionNumber
@@ -247,7 +348,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     createcomment=STRING (ambiguity) 'logo' logo=Path
 	 *     createcomment=STRING (ambiguity) 'logo' logo=STRING
 	 *     createcomment=STRING (ambiguity) 'modified' modified=Date
-	 *     createcomment=STRING (ambiguity) 'observable' observable=OBSERVABLE
+	 *     createcomment=STRING (ambiguity) 'observable' observable=Observable
 	 *     createcomment=STRING (ambiguity) 'observable' observables=List
 	 *     createcomment=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     createcomment=STRING (ambiguity) 'version' version=VersionNumber
@@ -260,7 +361,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     created=Date (ambiguity) 'logo' logo=Path
 	 *     created=Date (ambiguity) 'logo' logo=STRING
 	 *     created=Date (ambiguity) 'modified' modified=Date
-	 *     created=Date (ambiguity) 'observable' observable=OBSERVABLE
+	 *     created=Date (ambiguity) 'observable' observable=Observable
 	 *     created=Date (ambiguity) 'observable' observables=List
 	 *     created=Date (ambiguity) 'permissions' permissions=STRING
 	 *     created=Date (ambiguity) 'version' version=VersionNumber
@@ -273,7 +374,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     description=STRING (ambiguity) 'logo' logo=Path
 	 *     description=STRING (ambiguity) 'logo' logo=STRING
 	 *     description=STRING (ambiguity) 'modified' modified=Date
-	 *     description=STRING (ambiguity) 'observable' observable=OBSERVABLE
+	 *     description=STRING (ambiguity) 'observable' observable=Observable
 	 *     description=STRING (ambiguity) 'observable' observables=List
 	 *     description=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     description=STRING (ambiguity) 'version' version=VersionNumber
@@ -286,7 +387,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     imports+=PathName (ambiguity) 'logo' logo=Path
 	 *     imports+=PathName (ambiguity) 'logo' logo=STRING
 	 *     imports+=PathName (ambiguity) 'modified' modified=Date
-	 *     imports+=PathName (ambiguity) 'observable' observable=OBSERVABLE
+	 *     imports+=PathName (ambiguity) 'observable' observable=Observable
 	 *     imports+=PathName (ambiguity) 'observable' observables=List
 	 *     imports+=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     imports+=PathName (ambiguity) 'version' version=VersionNumber
@@ -299,7 +400,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     inlineStyle=Map (ambiguity) 'logo' logo=Path
 	 *     inlineStyle=Map (ambiguity) 'logo' logo=STRING
 	 *     inlineStyle=Map (ambiguity) 'modified' modified=Date
-	 *     inlineStyle=Map (ambiguity) 'observable' observable=OBSERVABLE
+	 *     inlineStyle=Map (ambiguity) 'observable' observable=Observable
 	 *     inlineStyle=Map (ambiguity) 'observable' observables=List
 	 *     inlineStyle=Map (ambiguity) 'permissions' permissions=STRING
 	 *     inlineStyle=Map (ambiguity) 'version' version=VersionNumber
@@ -312,7 +413,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     label=STRING (ambiguity) 'logo' logo=Path
 	 *     label=STRING (ambiguity) 'logo' logo=STRING
 	 *     label=STRING (ambiguity) 'modified' modified=Date
-	 *     label=STRING (ambiguity) 'observable' observable=OBSERVABLE
+	 *     label=STRING (ambiguity) 'observable' observable=Observable
 	 *     label=STRING (ambiguity) 'observable' observables=List
 	 *     label=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     label=STRING (ambiguity) 'version' version=VersionNumber
@@ -325,7 +426,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     logo=Path (ambiguity) 'logo' logo=Path
 	 *     logo=Path (ambiguity) 'logo' logo=STRING
 	 *     logo=Path (ambiguity) 'modified' modified=Date
-	 *     logo=Path (ambiguity) 'observable' observable=OBSERVABLE
+	 *     logo=Path (ambiguity) 'observable' observable=Observable
 	 *     logo=Path (ambiguity) 'observable' observables=List
 	 *     logo=Path (ambiguity) 'permissions' permissions=STRING
 	 *     logo=Path (ambiguity) 'version' version=VersionNumber
@@ -338,7 +439,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     logo=STRING (ambiguity) 'logo' logo=Path
 	 *     logo=STRING (ambiguity) 'logo' logo=STRING
 	 *     logo=STRING (ambiguity) 'modified' modified=Date
-	 *     logo=STRING (ambiguity) 'observable' observable=OBSERVABLE
+	 *     logo=STRING (ambiguity) 'observable' observable=Observable
 	 *     logo=STRING (ambiguity) 'observable' observables=List
 	 *     logo=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     logo=STRING (ambiguity) 'version' version=VersionNumber
@@ -351,7 +452,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     modcomment=STRING (ambiguity) 'logo' logo=Path
 	 *     modcomment=STRING (ambiguity) 'logo' logo=STRING
 	 *     modcomment=STRING (ambiguity) 'modified' modified=Date
-	 *     modcomment=STRING (ambiguity) 'observable' observable=OBSERVABLE
+	 *     modcomment=STRING (ambiguity) 'observable' observable=Observable
 	 *     modcomment=STRING (ambiguity) 'observable' observables=List
 	 *     modcomment=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     modcomment=STRING (ambiguity) 'version' version=VersionNumber
@@ -364,7 +465,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     modified=Date (ambiguity) 'logo' logo=Path
 	 *     modified=Date (ambiguity) 'logo' logo=STRING
 	 *     modified=Date (ambiguity) 'modified' modified=Date
-	 *     modified=Date (ambiguity) 'observable' observable=OBSERVABLE
+	 *     modified=Date (ambiguity) 'observable' observable=Observable
 	 *     modified=Date (ambiguity) 'observable' observables=List
 	 *     modified=Date (ambiguity) 'permissions' permissions=STRING
 	 *     modified=Date (ambiguity) 'version' version=VersionNumber
@@ -377,25 +478,25 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     name=PathName (ambiguity) 'logo' logo=Path
 	 *     name=PathName (ambiguity) 'logo' logo=STRING
 	 *     name=PathName (ambiguity) 'modified' modified=Date
-	 *     name=PathName (ambiguity) 'observable' observable=OBSERVABLE
+	 *     name=PathName (ambiguity) 'observable' observable=Observable
 	 *     name=PathName (ambiguity) 'observable' observables=List
 	 *     name=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     name=PathName (ambiguity) 'version' version=VersionNumber
 	 *     name=PathName (ambiguity) 'worldview' worldview=PathName
 	 *     name=PathName (ambiguity) (rule end)
-	 *     observable=OBSERVABLE (ambiguity) 'author' authors+=STRING
-	 *     observable=OBSERVABLE (ambiguity) 'created' created=Date
-	 *     observable=OBSERVABLE (ambiguity) 'description' description=STRING
-	 *     observable=OBSERVABLE (ambiguity) 'import' imports+=PathName
-	 *     observable=OBSERVABLE (ambiguity) 'logo' logo=Path
-	 *     observable=OBSERVABLE (ambiguity) 'logo' logo=STRING
-	 *     observable=OBSERVABLE (ambiguity) 'modified' modified=Date
-	 *     observable=OBSERVABLE (ambiguity) 'observable' observable=OBSERVABLE
-	 *     observable=OBSERVABLE (ambiguity) 'observable' observables=List
-	 *     observable=OBSERVABLE (ambiguity) 'permissions' permissions=STRING
-	 *     observable=OBSERVABLE (ambiguity) 'version' version=VersionNumber
-	 *     observable=OBSERVABLE (ambiguity) 'worldview' worldview=PathName
-	 *     observable=OBSERVABLE (ambiguity) (rule end)
+	 *     observable=Observable (ambiguity) 'author' authors+=STRING
+	 *     observable=Observable (ambiguity) 'created' created=Date
+	 *     observable=Observable (ambiguity) 'description' description=STRING
+	 *     observable=Observable (ambiguity) 'import' imports+=PathName
+	 *     observable=Observable (ambiguity) 'logo' logo=Path
+	 *     observable=Observable (ambiguity) 'logo' logo=STRING
+	 *     observable=Observable (ambiguity) 'modified' modified=Date
+	 *     observable=Observable (ambiguity) 'observable' observable=Observable
+	 *     observable=Observable (ambiguity) 'observable' observables=List
+	 *     observable=Observable (ambiguity) 'permissions' permissions=STRING
+	 *     observable=Observable (ambiguity) 'version' version=VersionNumber
+	 *     observable=Observable (ambiguity) 'worldview' worldview=PathName
+	 *     observable=Observable (ambiguity) (rule end)
 	 *     observables=List (ambiguity) 'author' authors+=STRING
 	 *     observables=List (ambiguity) 'created' created=Date
 	 *     observables=List (ambiguity) 'description' description=STRING
@@ -403,7 +504,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     observables=List (ambiguity) 'logo' logo=Path
 	 *     observables=List (ambiguity) 'logo' logo=STRING
 	 *     observables=List (ambiguity) 'modified' modified=Date
-	 *     observables=List (ambiguity) 'observable' observable=OBSERVABLE
+	 *     observables=List (ambiguity) 'observable' observable=Observable
 	 *     observables=List (ambiguity) 'observable' observables=List
 	 *     observables=List (ambiguity) 'permissions' permissions=STRING
 	 *     observables=List (ambiguity) 'version' version=VersionNumber
@@ -416,7 +517,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     permissions=STRING (ambiguity) 'logo' logo=Path
 	 *     permissions=STRING (ambiguity) 'logo' logo=STRING
 	 *     permissions=STRING (ambiguity) 'modified' modified=Date
-	 *     permissions=STRING (ambiguity) 'observable' observable=OBSERVABLE
+	 *     permissions=STRING (ambiguity) 'observable' observable=Observable
 	 *     permissions=STRING (ambiguity) 'observable' observables=List
 	 *     permissions=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     permissions=STRING (ambiguity) 'version' version=VersionNumber
@@ -429,7 +530,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     style=PathName (ambiguity) 'logo' logo=Path
 	 *     style=PathName (ambiguity) 'logo' logo=STRING
 	 *     style=PathName (ambiguity) 'modified' modified=Date
-	 *     style=PathName (ambiguity) 'observable' observable=OBSERVABLE
+	 *     style=PathName (ambiguity) 'observable' observable=Observable
 	 *     style=PathName (ambiguity) 'observable' observables=List
 	 *     style=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     style=PathName (ambiguity) 'version' version=VersionNumber
@@ -442,7 +543,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     version=VersionNumber (ambiguity) 'logo' logo=Path
 	 *     version=VersionNumber (ambiguity) 'logo' logo=STRING
 	 *     version=VersionNumber (ambiguity) 'modified' modified=Date
-	 *     version=VersionNumber (ambiguity) 'observable' observable=OBSERVABLE
+	 *     version=VersionNumber (ambiguity) 'observable' observable=Observable
 	 *     version=VersionNumber (ambiguity) 'observable' observables=List
 	 *     version=VersionNumber (ambiguity) 'permissions' permissions=STRING
 	 *     version=VersionNumber (ambiguity) 'version' version=VersionNumber
@@ -455,7 +556,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     worldview=PathName (ambiguity) 'logo' logo=Path
 	 *     worldview=PathName (ambiguity) 'logo' logo=STRING
 	 *     worldview=PathName (ambiguity) 'modified' modified=Date
-	 *     worldview=PathName (ambiguity) 'observable' observable=OBSERVABLE
+	 *     worldview=PathName (ambiguity) 'observable' observable=Observable
 	 *     worldview=PathName (ambiguity) 'observable' observables=List
 	 *     worldview=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     worldview=PathName (ambiguity) 'version' version=VersionNumber
@@ -497,8 +598,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     modified=Date (ambiguity) style=PathName
 	 *     name=PathName (ambiguity) inlineStyle=Map
 	 *     name=PathName (ambiguity) style=PathName
-	 *     observable=OBSERVABLE (ambiguity) inlineStyle=Map
-	 *     observable=OBSERVABLE (ambiguity) style=PathName
+	 *     observable=Observable (ambiguity) inlineStyle=Map
+	 *     observable=Observable (ambiguity) style=PathName
 	 *     observables=List (ambiguity) inlineStyle=Map
 	 *     observables=List (ambiguity) style=PathName
 	 *     permissions=STRING (ambiguity) inlineStyle=Map

@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.eclipse.emf.ecore.EObject;
 import org.eclipse.xtext.nodemodel.ICompositeNode;
+import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
@@ -18,6 +19,7 @@ import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MetadataPair;
+import org.integratedmodelling.kactors.kactors.Observable;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Value;
@@ -121,7 +123,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.value = parseNumber(value.getNum());
 		} else if (value.getObservable() != null) {
 			this.type = Type.OBSERVABLE;
-			this.value = value.getObservable().substring(1, value.getObservable().length() - 1);
+			this.value = parseObservable(value.getObservable());
 		} else if (value.getSet() != null) {
 			this.type = Type.LIST;
 			this.value = parseList(value.getSet(), this);
@@ -132,9 +134,15 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.value = parseMap(value.getMap(), this);
 			this.type = Type.MAP;
 		}
-
 	}
 
+	public static String parseObservable(Observable observable) {
+		INode node = NodeModelUtils.getNode(observable);
+		String ret = NodeModelUtils.getTokenText(node).trim();
+		// remove leading spaces and backquotes
+		return ret.substring(1, ret.length() - 1).trim().replace("`", "");
+	}
+	
 	public KActorsValue(Value value, KActorCodeStatement parent) {
 		super(value, parent);
 		if (value.getId() != null) {
@@ -150,7 +158,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.value = parseQuantity(value.getQuantity());
 		} else if (value.getObservable() != null) {
 			this.type = Type.OBSERVABLE;
-			this.value = value.getObservable().substring(1, value.getObservable().length() - 1);
+			this.value = parseObservable(value.getObservable());
 		} else if (value.getList() != null) {
 			this.type = Type.LIST;
 			this.value = parseList(value.getList(), this);
@@ -210,7 +218,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.value = parseQuantity(match.getQuantity());
 		} else if (match.getObservable() != null) {
 			this.type = Type.OBSERVABLE;
-			this.value = match.getObservable().substring(0, match.getObservable().length() - 1);
+			this.value = parseObservable(match.getObservable());
 		} else if (match.getSet() != null) {
 			this.type = Type.SET;
 			this.value = parseList(match.getSet(), this);

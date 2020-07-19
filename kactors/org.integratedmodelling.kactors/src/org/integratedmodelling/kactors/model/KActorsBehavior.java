@@ -67,7 +67,9 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 			this.version = Version.create(preamble.getVersion());
 		}
 
-		this.observable = preamble.getObservable();
+		if (preamble.getObservable() != null) {
+			this.observable = KActorsValue.parseObservable(preamble.getObservable());
+		}
 		this.style = preamble.getStyle();
 		this.label = preamble.getLabel();
 		this.description = preamble.getDescription();

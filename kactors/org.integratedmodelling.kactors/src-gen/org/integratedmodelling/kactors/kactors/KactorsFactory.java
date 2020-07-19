@@ -258,6 +258,15 @@ public interface KactorsFactory extends EFactory
   Classifier createClassifier();
 
   /**
+   * Returns a new object of class '<em>Observable</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Observable</em>'.
+   * @generated
+   */
+  Observable createObservable();
+
+  /**
    * Returns a new object of class '<em>Lookup Table</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -400,6 +409,42 @@ public interface KactorsFactory extends EFactory
    * @generated
    */
   Date createDate();
+
+  /**
+   * Returns a new object of class '<em>Observable Semantics</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Observable Semantics</em>'.
+   * @generated
+   */
+  ObservableSemantics createObservableSemantics();
+
+  /**
+   * Returns a new object of class '<em>Value Operator</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Value Operator</em>'.
+   * @generated
+   */
+  ValueOperator createValueOperator();
+
+  /**
+   * Returns a new object of class '<em>Concept Declaration</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Concept Declaration</em>'.
+   * @generated
+   */
+  ConceptDeclaration createConceptDeclaration();
+
+  /**
+   * Returns a new object of class '<em>Concept</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Concept</em>'.
+   * @generated
+   */
+  Concept createConcept();
 
   /**
    * Returns the package supported by this factory.

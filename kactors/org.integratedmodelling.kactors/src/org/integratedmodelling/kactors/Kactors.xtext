@@ -27,7 +27,7 @@ Preamble: {Preamble}
 	(
 		('import' imports+=PathName (',' imports+=PathName)*)? &
 		('worldview' worldview=PathName)? &
-		('observable' (observable=OBSERVABLE | observables=List))? &
+		('observable' (observable=Observable | observables=List))? &
 		('description' description=STRING)? &
 		('permissions' permissions=STRING)? &
 		('author' authors+=STRING)* &
@@ -162,7 +162,7 @@ Value:
 	id=PathName |
 	list=List |
 	map=Map |
-	observable=OBSERVABLE | 
+	observable=Observable | 
 	expression=EXPR |
 	table=LookupTable |
 	quantity=Quantity
@@ -176,7 +176,7 @@ ValueWithMetadata returns Value:
 	 id=PathName |
 	 list=List |
 	 map=Map |
-	 observable=OBSERVABLE | 
+	 observable=Observable | 
 	 expression=EXPR |
 	 table=LookupTable |
 	 quantity=Quantity) 
@@ -190,7 +190,7 @@ ValueWithoutTree returns Value:
 	urn=UrnId | 
 	list=List |
 	map=Map |
-	observable=OBSERVABLE | 
+	observable=Observable | 
 	expression=EXPR |
 	table=LookupTable |
 	quantity=Quantity
@@ -203,10 +203,10 @@ ValueWithMetadataWithoutTree returns Value:
 	urn=UrnId | 
 	list=List |
 	map=Map |
-	observable=OBSERVABLE | 
+	observable=Observable | 
 	expression=EXPR |
 	table=LookupTable |
-	quantity=Quantity)
+	quantity=Quantity) 
 	(metadata=Metadata)?
 	;
 
@@ -216,7 +216,7 @@ Match:
 	boolean=('true'|'false') '->' body=StatementList  |
 	type=CAMELCASE_ID '->' body=StatementList |
 	regexp=REGEXP '->' body=StatementList |
-	observable=OBSERVABLE '->' body=StatementList |
+	observable=Observable '->' body=StatementList |
 	literal=Literal '->' body=StatementList |
 	list=List '->' body=StatementList |
 	'in' set=List '->' body=StatementList | 
@@ -248,7 +248,7 @@ Map:
 ;
 
 Tree:
-	root=ValueWithMetadataWithoutTree (=> '<-' (value+=ValueWithMetadataWithoutTree | ('(' value+=Tree ')')))+ 
+	root=ValueWithoutTree (=> '<-' (value+=ValueWithoutTree | => ('(' value+=Tree ')')))+
 ;
 
 MapEntry:
@@ -261,12 +261,16 @@ Classifier:
 	num=Number | 
 	'in' set=List | 
 	string=STRING | 
-	observable=OBSERVABLE | 
+	observable=Observable | 
 	id = (LOWERCASE_ID | LOWERCASE_ID_DASH) |
 	op=REL_OPERATOR expression=Number | 
 	nodata='unknown' |
 	map=Map |
 	star?='*';	
+
+Observable:
+	'{' observable=ObservableSemantics '}'
+;
 
 // Lookup table literal. May be overkill.
 LookupTable: {LookupTable}
@@ -288,7 +292,7 @@ TableClassifier:
 	(boolean='true' | boolean='false') | 
 	num=Number | 
 	string=STRING | 
-	observable=OBSERVABLE | 
+	observable=Observable | 
 	op=REL_OPERATOR expression=Number | 
 	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
 	'in' set=List | 
@@ -312,10 +316,9 @@ ParameterList:
 	pairs+=KeyValuePair (=> (',')? pairs+=KeyValuePair)*;
 	
 KeyValuePair:
-	((name=(LOWERCASE_ID) (interactive?='?=' | '='))?
-	 value=Value) |
     key=KEY |
-    tag=TAG;
+    tag=TAG |
+	((name=(LOWERCASE_ID) (interactive?='?=' | '='))? value=Value);
 
 UnitElement:
 	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |
@@ -349,6 +352,10 @@ PathName:
 	LOWERCASE_ID ('.' LOWERCASE_ID)*
 ;
 
+QuotablePathName:
+	(LOWERCASE_ID|QUOTED_LOWERCASE_ID) ('.' LOWERCASE_ID)*
+;
+
 ArgPathName:
 	(ARGVALUE | LOWERCASE_ID) ('.' LOWERCASE_ID)?
 ;
@@ -356,6 +363,134 @@ ArgPathName:
 Path:
 	(LOWERCASE_ID|UPPERCASE_ID) (('.' | '/') (LOWERCASE_ID|UPPERCASE_ID))*
 ;
+
+/*
+ * Observable semantics rules from k.IM. Syntax peers for concepts are exclusively to allow syntax highlighting 
+ * and validation of observables through the imported k.IM validator (as behaviors are read after model files).
+ * Concepts can only be referenced in full notation for obvious reasons.
+ */
+
+ObservableSemantics:
+	declaration=ConceptDeclaration
+	(
+		(
+			('in' (unit=Unit | currency=Currency)) |
+			('per' unit=Unit)
+		)? &
+		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+		(optional?='optional' | 'required')? &
+		(from=Number 'to' to=Number)? &
+		('named' name=(LOWERCASE_ID|STRING))?
+	);
+	
+ValueOperator:
+	(modifier=VALUE_OPERATOR | downTo='down' 'to') 
+		(comparisonValue=Number| comparisonQuantity=Quantity | comparisonConcept+=ConceptDeclaration (',' comparisonConcept+=ConceptDeclaration)* | ('(' comparisonObservable=ObservableSemantics ')')) |
+	total='total' | 
+	averaged='averaged' | 
+	summed='summed'
+;
+
+ConceptDeclaration:
+	
+	main+=Concept+ 
+		// binary semantic operators; also 'as', 'by' and 'follows' handled in other rules
+		(
+			// primary inherency (when secondary is given using 'within')
+			('of' ((distributedOfInherency?='each')? inherency=SimpleConceptDeclaration))? &
+			// purpose (achievement event created from target)
+			('for' ((distributedForInherency?='each')? motivation=SimpleConceptDeclaration))? &
+			// compresence (subject, process, event, presence or partitioned quality)
+			('with' compresent=SimpleConceptDeclaration)? &
+			// cause towards self - causant can be anything (?)
+			('caused' 'by' causant=SimpleConceptDeclaration)? &
+			// spatial adjacency (see 'follows' operator for temporal adjacency in events) - subject, event or relationship
+			('adjacent' 'to' adjacent=SimpleConceptDeclaration)? &
+			// being contained - subject
+			('contained' 'in' container=SimpleConceptDeclaration)? &
+			// containing - subject
+			('containing' contained=SimpleConceptDeclaration)? &
+			// cause towards event (?)
+			('causing'   caused=SimpleConceptDeclaration)? &
+			// concomitant with event (?)
+			('during'   ((distributedTemporalInherency?='each')? during=SimpleConceptDeclaration))? &
+			// context or secondary inherency
+			('within' ((distributedWithinInherency?='each')? context=SimpleConceptDeclaration))? &
+			// for relationships: specialize source and target types
+			('linking' relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?
+		)?
+;	
+
+VALUE_OPERATOR:
+	'>'  |
+	'>=' |
+	'<='|
+	'<'|
+	'where'|
+	'=='|
+	'='|
+	'without'|
+	'!='|
+	'plus'|
+	'minus'|
+	'times'|
+	'over' |
+	'by' 
+;
+	
+Concept:
+	(negated?=('not'|'no'))? name=NamespaceId 
+		// if the following is there, the name becomes an alias for the authority concept
+		(authConcept?='identified' 'as' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH))? |
+	// unary operators
+	presence?='presence' 'of' concept=SimpleConceptDeclaration |
+	count?='count' 'of' concept=SimpleConceptDeclaration |
+	distance?='distance' ('to' | 'from') concept=SimpleConceptDeclaration |
+	probability?='probability' 'of' concept=SimpleConceptDeclaration |
+	assessment?='assessment' 'of' concept=SimpleConceptDeclaration |
+	('change' (change?='in' | rate?='rate' 'of') | change?='changed') concept=SimpleConceptDeclaration |
+	uncertainty?='uncertainty' 'of' concept=SimpleConceptDeclaration |
+	magnitude?='magnitude' 'of' concept=SimpleConceptDeclaration |
+	level?='level' 'of' concept=SimpleConceptDeclaration |
+	type?='type' 'of' concept=SimpleConceptDeclaration |
+	observability?='observability' 'of' concept=SimpleConceptDeclaration |
+	proportion?='proportion' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? |
+	percentage?='percentage' 'of' concept=SimpleConceptDeclaration (=> 'in' other=SimpleConceptDeclaration)? |
+	ratio?='ratio' 'of' concept=SimpleConceptDeclaration => 'to' other=SimpleConceptDeclaration |
+	(monetary?='monetary')? value?='value' 'of' concept=SimpleConceptDeclaration (=> 'over' other=SimpleConceptDeclaration)? |
+	occurrence?='occurrence' 'of' concept=SimpleConceptDeclaration |
+	// this form specifies an authority concept with no alias (the authority may provide a default label)
+	authConcept?='identity' (stringIdentifier=(ID|STRING|UPPERCASE_ID|CAMELCASE_ID) | intIdentifier=INT) 'by' authority=(UPPERCASE_ID|UPPERCASE_PATH) |
+	'(' declaration=Expression ')';
+	
+
+// ^ allows quoting namespaces that have the same names as keywords
+NamespaceId:
+	QuotablePathName ':' CAMELCASE_ID;
+	
+Expression returns ConceptDeclaration:
+	Term
+;
+
+Term returns ConceptDeclaration:
+	Factor (operators+='or' operands+=Factor)*
+;
+Factor returns ConceptDeclaration:
+	// semantic operator 'follows' (events only) is chainable with intersection syntax and precedence
+	ConceptDeclaration (operators+=('and'|'follows') operands+=Term)*
+;
+
+/*
+ * Declaration without inherency and context, used in Concept to ensure that
+ * the 'within' and 'of' remain outer-level unless parenthesesized.
+ */
+SimpleConceptDeclaration returns ConceptDeclaration:
+	(name=STRING)? main+=Concept+
+;
+
+/**
+ * ----- end concept stuff from k.IM grammar
+ */
 
 terminal KEY:
 	(':'|'!')('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
@@ -378,6 +513,9 @@ VersionNumber:
 terminal LOWERCASE_ID:
 	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
 
+terminal QUOTED_LOWERCASE_ID:
+	('`')('a'..'z')('a'..'z' | '0'..'9'| '_')*;
+
 terminal LOWERCASE_ID_DASH:
 	('a'..'z') ('a'..'z' | '0'..'9'| '_' | '-')*;
 
@@ -393,8 +531,8 @@ terminal EMBEDDEDTEXT:
 terminal REGEXP:
 	'%' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '%' | '\\') | !('\\' | '%'))* '%';
 	
-terminal OBSERVABLE:
-	'{' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\') | !('\\' | '}'))* '}';
+//terminal OBSERVABLE:
+//	'{' ('\\' ('b' | 't' | 'n' | 'f' | 'r' | 'u' | '\\') | !('\\' | '}'))* '}';
 		
 terminal SEPARATOR:
 	'---' ('-')*;

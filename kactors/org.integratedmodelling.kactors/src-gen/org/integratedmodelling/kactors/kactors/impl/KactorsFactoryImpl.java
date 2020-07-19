@@ -18,6 +18,8 @@ import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.Classifier;
+import org.integratedmodelling.kactors.kactors.Concept;
+import org.integratedmodelling.kactors.kactors.ConceptDeclaration;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
@@ -39,6 +41,8 @@ import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Model;
+import org.integratedmodelling.kactors.kactors.Observable;
+import org.integratedmodelling.kactors.kactors.ObservableSemantics;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.kactors.Quantity;
@@ -55,6 +59,7 @@ import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
 import org.integratedmodelling.kactors.kactors.UnitOp;
 import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kactors.kactors.ValueOperator;
 import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
@@ -135,6 +140,7 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.TREE: return createTree();
       case KactorsPackage.MAP_ENTRY: return createMapEntry();
       case KactorsPackage.CLASSIFIER: return createClassifier();
+      case KactorsPackage.OBSERVABLE: return createObservable();
       case KactorsPackage.LOOKUP_TABLE: return createLookupTable();
       case KactorsPackage.TABLE: return createTable();
       case KactorsPackage.HEADER_ROW: return createHeaderRow();
@@ -151,6 +157,10 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.REL_OPERATOR: return createREL_OPERATOR();
       case KactorsPackage.NUMBER: return createNumber();
       case KactorsPackage.DATE: return createDate();
+      case KactorsPackage.OBSERVABLE_SEMANTICS: return createObservableSemantics();
+      case KactorsPackage.VALUE_OPERATOR: return createValueOperator();
+      case KactorsPackage.CONCEPT_DECLARATION: return createConceptDeclaration();
+      case KactorsPackage.CONCEPT: return createConcept();
       default:
         throw new IllegalArgumentException("The class '" + eClass.getName() + "' is not a valid classifier");
     }
@@ -508,6 +518,18 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
    * @generated
    */
   @Override
+  public Observable createObservable()
+  {
+    ObservableImpl observable = new ObservableImpl();
+    return observable;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public LookupTable createLookupTable()
   {
     LookupTableImpl lookupTable = new LookupTableImpl();
@@ -692,6 +714,54 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     DateImpl date = new DateImpl();
     return date;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ObservableSemantics createObservableSemantics()
+  {
+    ObservableSemanticsImpl observableSemantics = new ObservableSemanticsImpl();
+    return observableSemantics;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ValueOperator createValueOperator()
+  {
+    ValueOperatorImpl valueOperator = new ValueOperatorImpl();
+    return valueOperator;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ConceptDeclaration createConceptDeclaration()
+  {
+    ConceptDeclarationImpl conceptDeclaration = new ConceptDeclarationImpl();
+    return conceptDeclaration;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Concept createConcept()
+  {
+    ConceptImpl concept = new ConceptImpl();
+    return concept;
   }
 
   /**

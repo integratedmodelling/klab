@@ -16,6 +16,7 @@ import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Map;
+import org.integratedmodelling.kactors.kactors.Observable;
 import org.integratedmodelling.kactors.kactors.REL_OPERATOR;
 
 /**
@@ -168,24 +169,14 @@ public class ClassifierImpl extends MinimalEObjectImpl.Container implements Clas
   protected String string = STRING_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getObservable() <em>Observable</em>}' attribute.
+   * The cached value of the '{@link #getObservable() <em>Observable</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getObservable()
    * @generated
    * @ordered
    */
-  protected static final String OBSERVABLE_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getObservable() <em>Observable</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getObservable()
-   * @generated
-   * @ordered
-   */
-  protected String observable = OBSERVABLE_EDEFAULT;
+  protected Observable observable;
 
   /**
    * The default value of the '{@link #getId() <em>Id</em>}' attribute.
@@ -604,7 +595,7 @@ public class ClassifierImpl extends MinimalEObjectImpl.Container implements Clas
    * @generated
    */
   @Override
-  public String getObservable()
+  public Observable getObservable()
   {
     return observable;
   }
@@ -614,13 +605,38 @@ public class ClassifierImpl extends MinimalEObjectImpl.Container implements Clas
    * <!-- end-user-doc -->
    * @generated
    */
-  @Override
-  public void setObservable(String newObservable)
+  public NotificationChain basicSetObservable(Observable newObservable, NotificationChain msgs)
   {
-    String oldObservable = observable;
+    Observable oldObservable = observable;
     observable = newObservable;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.CLASSIFIER__OBSERVABLE, oldObservable, observable));
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.CLASSIFIER__OBSERVABLE, oldObservable, newObservable);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setObservable(Observable newObservable)
+  {
+    if (newObservable != observable)
+    {
+      NotificationChain msgs = null;
+      if (observable != null)
+        msgs = ((InternalEObject)observable).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.CLASSIFIER__OBSERVABLE, null, msgs);
+      if (newObservable != null)
+        msgs = ((InternalEObject)newObservable).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.CLASSIFIER__OBSERVABLE, null, msgs);
+      msgs = basicSetObservable(newObservable, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.CLASSIFIER__OBSERVABLE, newObservable, newObservable));
   }
 
   /**
@@ -866,6 +882,8 @@ public class ClassifierImpl extends MinimalEObjectImpl.Container implements Clas
         return basicSetNum(null, msgs);
       case KactorsPackage.CLASSIFIER__SET:
         return basicSetSet(null, msgs);
+      case KactorsPackage.CLASSIFIER__OBSERVABLE:
+        return basicSetObservable(null, msgs);
       case KactorsPackage.CLASSIFIER__OP:
         return basicSetOp(null, msgs);
       case KactorsPackage.CLASSIFIER__EXPRESSION:
@@ -955,7 +973,7 @@ public class ClassifierImpl extends MinimalEObjectImpl.Container implements Clas
         setString((String)newValue);
         return;
       case KactorsPackage.CLASSIFIER__OBSERVABLE:
-        setObservable((String)newValue);
+        setObservable((Observable)newValue);
         return;
       case KactorsPackage.CLASSIFIER__ID:
         setId((String)newValue);
@@ -1014,7 +1032,7 @@ public class ClassifierImpl extends MinimalEObjectImpl.Container implements Clas
         setString(STRING_EDEFAULT);
         return;
       case KactorsPackage.CLASSIFIER__OBSERVABLE:
-        setObservable(OBSERVABLE_EDEFAULT);
+        setObservable((Observable)null);
         return;
       case KactorsPackage.CLASSIFIER__ID:
         setId(ID_EDEFAULT);
@@ -1065,7 +1083,7 @@ public class ClassifierImpl extends MinimalEObjectImpl.Container implements Clas
       case KactorsPackage.CLASSIFIER__STRING:
         return STRING_EDEFAULT == null ? string != null : !STRING_EDEFAULT.equals(string);
       case KactorsPackage.CLASSIFIER__OBSERVABLE:
-        return OBSERVABLE_EDEFAULT == null ? observable != null : !OBSERVABLE_EDEFAULT.equals(observable);
+        return observable != null;
       case KactorsPackage.CLASSIFIER__ID:
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KactorsPackage.CLASSIFIER__OP:
@@ -1101,8 +1119,6 @@ public class ClassifierImpl extends MinimalEObjectImpl.Container implements Clas
     result.append(rightLimit);
     result.append(", string: ");
     result.append(string);
-    result.append(", observable: ");
-    result.append(observable);
     result.append(", id: ");
     result.append(id);
     result.append(", nodata: ");

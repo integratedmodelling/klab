@@ -22,6 +22,7 @@ import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Map;
+import org.integratedmodelling.kactors.kactors.Observable;
 import org.integratedmodelling.kactors.kactors.Preamble;
 
 /**
@@ -315,24 +316,14 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   protected String worldview = WORLDVIEW_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getObservable() <em>Observable</em>}' attribute.
+   * The cached value of the '{@link #getObservable() <em>Observable</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getObservable()
    * @generated
    * @ordered
    */
-  protected static final String OBSERVABLE_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getObservable() <em>Observable</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getObservable()
-   * @generated
-   * @ordered
-   */
-  protected String observable = OBSERVABLE_EDEFAULT;
+  protected Observable observable;
 
   /**
    * The cached value of the '{@link #getObservables() <em>Observables</em>}' containment reference.
@@ -866,7 +857,7 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
-  public String getObservable()
+  public Observable getObservable()
   {
     return observable;
   }
@@ -876,13 +867,38 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * <!-- end-user-doc -->
    * @generated
    */
-  @Override
-  public void setObservable(String newObservable)
+  public NotificationChain basicSetObservable(Observable newObservable, NotificationChain msgs)
   {
-    String oldObservable = observable;
+    Observable oldObservable = observable;
     observable = newObservable;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__OBSERVABLE, oldObservable, observable));
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__OBSERVABLE, oldObservable, newObservable);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setObservable(Observable newObservable)
+  {
+    if (newObservable != observable)
+    {
+      NotificationChain msgs = null;
+      if (observable != null)
+        msgs = ((InternalEObject)observable).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.PREAMBLE__OBSERVABLE, null, msgs);
+      if (newObservable != null)
+        msgs = ((InternalEObject)newObservable).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.PREAMBLE__OBSERVABLE, null, msgs);
+      msgs = basicSetObservable(newObservable, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__OBSERVABLE, newObservable, newObservable));
   }
 
   /**
@@ -1285,6 +1301,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__OBSERVABLE:
+        return basicSetObservable(null, msgs);
       case KactorsPackage.PREAMBLE__OBSERVABLES:
         return basicSetObservables(null, msgs);
       case KactorsPackage.PREAMBLE__INLINE_STYLE:
@@ -1415,7 +1433,7 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         setWorldview((String)newValue);
         return;
       case KactorsPackage.PREAMBLE__OBSERVABLE:
-        setObservable((String)newValue);
+        setObservable((Observable)newValue);
         return;
       case KactorsPackage.PREAMBLE__OBSERVABLES:
         setObservables((List)newValue);
@@ -1508,7 +1526,7 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         setWorldview(WORLDVIEW_EDEFAULT);
         return;
       case KactorsPackage.PREAMBLE__OBSERVABLE:
-        setObservable(OBSERVABLE_EDEFAULT);
+        setObservable((Observable)null);
         return;
       case KactorsPackage.PREAMBLE__OBSERVABLES:
         setObservables((List)null);
@@ -1587,7 +1605,7 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__WORLDVIEW:
         return WORLDVIEW_EDEFAULT == null ? worldview != null : !WORLDVIEW_EDEFAULT.equals(worldview);
       case KactorsPackage.PREAMBLE__OBSERVABLE:
-        return OBSERVABLE_EDEFAULT == null ? observable != null : !OBSERVABLE_EDEFAULT.equals(observable);
+        return observable != null;
       case KactorsPackage.PREAMBLE__OBSERVABLES:
         return observables != null;
       case KactorsPackage.PREAMBLE__DESCRIPTION:
@@ -1653,8 +1671,6 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     result.append(imports);
     result.append(", worldview: ");
     result.append(worldview);
-    result.append(", observable: ");
-    result.append(observable);
     result.append(", description: ");
     result.append(description);
     result.append(", permissions: ");
