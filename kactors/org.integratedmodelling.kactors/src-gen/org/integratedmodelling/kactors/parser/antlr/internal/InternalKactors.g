@@ -7033,13 +7033,23 @@ ruleQuotablePathName returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRu
 				$current.merge(kw);
 				newLeafNode(kw, grammarAccess.getQuotablePathNameAccess().getFullStopKeyword_1_0());
 			}
-			this_LOWERCASE_ID_3=RULE_LOWERCASE_ID
-			{
-				$current.merge(this_LOWERCASE_ID_3);
-			}
-			{
-				newLeafNode(this_LOWERCASE_ID_3, grammarAccess.getQuotablePathNameAccess().getLOWERCASE_IDTerminalRuleCall_1_1());
-			}
+			(
+				this_LOWERCASE_ID_3=RULE_LOWERCASE_ID
+				{
+					$current.merge(this_LOWERCASE_ID_3);
+				}
+				{
+					newLeafNode(this_LOWERCASE_ID_3, grammarAccess.getQuotablePathNameAccess().getLOWERCASE_IDTerminalRuleCall_1_1_0());
+				}
+				    |
+				this_QUOTED_LOWERCASE_ID_4=RULE_QUOTED_LOWERCASE_ID
+				{
+					$current.merge(this_QUOTED_LOWERCASE_ID_4);
+				}
+				{
+					newLeafNode(this_QUOTED_LOWERCASE_ID_4, grammarAccess.getQuotablePathNameAccess().getQUOTED_LOWERCASE_IDTerminalRuleCall_1_1_1());
+				}
+			)
 		)*
 	)
 ;

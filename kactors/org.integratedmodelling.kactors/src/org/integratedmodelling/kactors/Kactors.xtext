@@ -353,7 +353,7 @@ PathName:
 ;
 
 QuotablePathName:
-	(LOWERCASE_ID|QUOTED_LOWERCASE_ID) ('.' LOWERCASE_ID)*
+	(LOWERCASE_ID|QUOTED_LOWERCASE_ID) ('.' (LOWERCASE_ID|QUOTED_LOWERCASE_ID))*
 ;
 
 ArgPathName:
@@ -464,7 +464,8 @@ Concept:
 	'(' declaration=Expression ')';
 	
 
-// ^ allows quoting namespaces that have the same names as keywords
+// backtick allows quoting namespaces that have the same names as keywords. If the keyword is inside the namespace,
+// use a string.
 NamespaceId:
 	QuotablePathName ':' CAMELCASE_ID;
 	

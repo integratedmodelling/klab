@@ -122,8 +122,8 @@ public class KactorsHighlightingCalculator extends DefaultSemanticHighlightingCa
 						}
 					} else if (rule.getName().equals("NamespaceId")) {
 						String concept = NodeModelUtils.getTokenText(node);
-						if (concept.startsWith("`")) {
-							concept = concept.substring(1);
+						if (concept.contains("`")) {
+							concept = concept.replace("`", "");
 						}
 						ConceptDescriptor cdesc = Kim.INSTANCE.getConceptDescriptor(concept);
 

@@ -80,6 +80,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getNumberAccess().getAlternatives_4_0_1(), "rule__Number__Alternatives_4_0_1");
 			builder.put(grammarAccess.getDateAccess().getAlternatives_1(), "rule__Date__Alternatives_1");
 			builder.put(grammarAccess.getQuotablePathNameAccess().getAlternatives_0(), "rule__QuotablePathName__Alternatives_0");
+			builder.put(grammarAccess.getQuotablePathNameAccess().getAlternatives_1_1(), "rule__QuotablePathName__Alternatives_1_1");
 			builder.put(grammarAccess.getArgPathNameAccess().getAlternatives_0(), "rule__ArgPathName__Alternatives_0");
 			builder.put(grammarAccess.getPathAccess().getAlternatives_0(), "rule__Path__Alternatives_0");
 			builder.put(grammarAccess.getPathAccess().getAlternatives_1_0(), "rule__Path__Alternatives_1_0");

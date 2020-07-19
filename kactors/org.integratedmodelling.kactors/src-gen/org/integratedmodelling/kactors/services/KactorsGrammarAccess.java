@@ -3870,13 +3870,15 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cQUOTED_LOWERCASE_IDTerminalRuleCall_0_1 = (RuleCall)cAlternatives_0.eContents().get(1);
 		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
 		private final Keyword cFullStopKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final RuleCall cLOWERCASE_IDTerminalRuleCall_1_1 = (RuleCall)cGroup_1.eContents().get(1);
+		private final Alternatives cAlternatives_1_1 = (Alternatives)cGroup_1.eContents().get(1);
+		private final RuleCall cLOWERCASE_IDTerminalRuleCall_1_1_0 = (RuleCall)cAlternatives_1_1.eContents().get(0);
+		private final RuleCall cQUOTED_LOWERCASE_IDTerminalRuleCall_1_1_1 = (RuleCall)cAlternatives_1_1.eContents().get(1);
 		
 		//QuotablePathName:
-		//	(LOWERCASE_ID | QUOTED_LOWERCASE_ID) ('.' LOWERCASE_ID)*;
+		//	(LOWERCASE_ID | QUOTED_LOWERCASE_ID) ('.' (LOWERCASE_ID | QUOTED_LOWERCASE_ID))*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(LOWERCASE_ID | QUOTED_LOWERCASE_ID) ('.' LOWERCASE_ID)*
+		//(LOWERCASE_ID | QUOTED_LOWERCASE_ID) ('.' (LOWERCASE_ID | QUOTED_LOWERCASE_ID))*
 		public Group getGroup() { return cGroup; }
 		
 		//(LOWERCASE_ID | QUOTED_LOWERCASE_ID)
@@ -3888,14 +3890,20 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//QUOTED_LOWERCASE_ID
 		public RuleCall getQUOTED_LOWERCASE_IDTerminalRuleCall_0_1() { return cQUOTED_LOWERCASE_IDTerminalRuleCall_0_1; }
 		
-		//('.' LOWERCASE_ID)*
+		//('.' (LOWERCASE_ID | QUOTED_LOWERCASE_ID))*
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//'.'
 		public Keyword getFullStopKeyword_1_0() { return cFullStopKeyword_1_0; }
 		
+		//(LOWERCASE_ID | QUOTED_LOWERCASE_ID)
+		public Alternatives getAlternatives_1_1() { return cAlternatives_1_1; }
+		
 		//LOWERCASE_ID
-		public RuleCall getLOWERCASE_IDTerminalRuleCall_1_1() { return cLOWERCASE_IDTerminalRuleCall_1_1; }
+		public RuleCall getLOWERCASE_IDTerminalRuleCall_1_1_0() { return cLOWERCASE_IDTerminalRuleCall_1_1_0; }
+		
+		//QUOTED_LOWERCASE_ID
+		public RuleCall getQUOTED_LOWERCASE_IDTerminalRuleCall_1_1_1() { return cQUOTED_LOWERCASE_IDTerminalRuleCall_1_1_1; }
 	}
 	public class ArgPathNameElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.ArgPathName");
@@ -5400,7 +5408,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cColonKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		private final RuleCall cCAMELCASE_IDTerminalRuleCall_2 = (RuleCall)cGroup.eContents().get(2);
 		
-		//// ^ allows quoting namespaces that have the same names as keywords
+		//// backtick allows quoting namespaces that have the same names as keywords. If the keyword is inside the namespace,
+		//// use a string.
 		//NamespaceId:
 		//	QuotablePathName ':' CAMELCASE_ID;
 		@Override public ParserRule getRule() { return rule; }
@@ -6394,7 +6403,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//QuotablePathName:
-	//	(LOWERCASE_ID | QUOTED_LOWERCASE_ID) ('.' LOWERCASE_ID)*;
+	//	(LOWERCASE_ID | QUOTED_LOWERCASE_ID) ('.' (LOWERCASE_ID | QUOTED_LOWERCASE_ID))*;
 	public QuotablePathNameElements getQuotablePathNameAccess() {
 		return pQuotablePathName;
 	}
@@ -6516,7 +6525,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		return getConceptAccess().getRule();
 	}
 	
-	//// ^ allows quoting namespaces that have the same names as keywords
+	//// backtick allows quoting namespaces that have the same names as keywords. If the keyword is inside the namespace,
+	//// use a string.
 	//NamespaceId:
 	//	QuotablePathName ':' CAMELCASE_ID;
 	public NamespaceIdElements getNamespaceIdAccess() {

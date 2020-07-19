@@ -3196,6 +3196,27 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__QuotablePathName__Alternatives_1_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getQuotablePathNameAccess().getLOWERCASE_IDTerminalRuleCall_1_1_0()); }
+		RULE_LOWERCASE_ID
+		{ after(grammarAccess.getQuotablePathNameAccess().getLOWERCASE_IDTerminalRuleCall_1_1_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getQuotablePathNameAccess().getQUOTED_LOWERCASE_IDTerminalRuleCall_1_1_1()); }
+		RULE_QUOTED_LOWERCASE_ID
+		{ after(grammarAccess.getQuotablePathNameAccess().getQUOTED_LOWERCASE_IDTerminalRuleCall_1_1_1()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__ArgPathName__Alternatives_0
 	@init {
 		int stackSize = keepStackSize();
@@ -12796,9 +12817,9 @@ rule__QuotablePathName__Group_1__1__Impl
 	}
 :
 (
-	{ before(grammarAccess.getQuotablePathNameAccess().getLOWERCASE_IDTerminalRuleCall_1_1()); }
-	RULE_LOWERCASE_ID
-	{ after(grammarAccess.getQuotablePathNameAccess().getLOWERCASE_IDTerminalRuleCall_1_1()); }
+	{ before(grammarAccess.getQuotablePathNameAccess().getAlternatives_1_1()); }
+	(rule__QuotablePathName__Alternatives_1_1)
+	{ after(grammarAccess.getQuotablePathNameAccess().getAlternatives_1_1()); }
 )
 ;
 finally {
