@@ -17,11 +17,15 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 	public static final String KNOWN_ANNOTATION_ID = "knownannotation";
 	public static final String UNKNOWN_ANNOTATION_ID = "unknownannotation";
 	public static final String VOID_MODEL_ID = "voidmodel";
+	public static final String KEY_ID = "key";
 	public static final String DANGER_ID = "danger";
 	public static final String VERSION_NUMBER_ID = "versionNumber";
 	public static final String DEFINITION_ID = "definition";
 	public static final String CODE_ID = "code";
 
+	/**
+	 * TODO FIXME remove most of these, copied from k.IM
+	 */
 	public static final String QUALITY_ID = "quality";
 	public static final String SUBJECT_ID = "subject";
 	public static final String EVENT_ID = "event";
@@ -30,6 +34,7 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 	public static final String CONFIGURATION_ID = "configuration";
 	public static final String TRAIT_ID = "trait";
 	public static final String ROLE_ID = "role";
+	public static final String MARKDOWN_ID = "markdown";
 	public static final String EXTENT_ID = "extent";
 	public static final String ABSTRACT_QUALITY_ID = "abstractquality";
 	public static final String ABSTRACT_SUBJECT_ID = "abstractsubject";
@@ -40,6 +45,15 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 	public static final String ABSTRACT_TRAIT_ID = "abstracttrait";
 	public static final String ABSTRACT_ROLE_ID = "abstractrole";
 	public static final String ABSTRACT_EXTENT_ID = "abstractextent";
+	public static final String UNKNOWN_VERB_ID = "unknownverb";
+	public static final String VIEW_VERB_ID = "viewverb";
+	public static final String SESSION_VERB_ID = "sessionverb";
+	public static final String LOCAL_VERB_ID = "localverb";
+	public static final String IMPORTED_VERB_ID = "importedverb";
+	public static final String OBJECT_VERB_ID = "objectverb";
+	public static final String STATE_VERB_ID = "stateverb";
+	public static final String USER_VERB_ID = "userverb";
+	public static final String AMBIGUOUS_VERB_ID = "ambiguousverb";
 
 	@Override
 	public void configure(IHighlightingConfigurationAcceptor acceptor) {
@@ -60,6 +74,7 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 		acceptor.acceptDefaultHighlighting(DEFINITION_ID, "Concept definition", definitionTextStyle());
 		acceptor.acceptDefaultHighlighting(CODE_ID, "Expression code", codeTextStyle());
 		acceptor.acceptDefaultHighlighting(QUALITY_ID, "Quality", qualityTextStyle());
+		acceptor.acceptDefaultHighlighting(MARKDOWN_ID, "Markdown text", markdownTextStyle());
 		acceptor.acceptDefaultHighlighting(SUBJECT_ID, "Subject", subjectTextStyle());
 		acceptor.acceptDefaultHighlighting(EVENT_ID, "Event", eventTextStyle());
 		acceptor.acceptDefaultHighlighting(PROCESS_ID, "Process", processTextStyle());
@@ -67,16 +82,28 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 		acceptor.acceptDefaultHighlighting(CONFIGURATION_ID, "Configuration", configurationTextStyle());
 		acceptor.acceptDefaultHighlighting(TRAIT_ID, "Trait", traitTextStyle());
 		acceptor.acceptDefaultHighlighting(ROLE_ID, "Role", roleTextStyle());
+		acceptor.acceptDefaultHighlighting(KEY_ID, "Key", keyTextStyle());
 		acceptor.acceptDefaultHighlighting(EXTENT_ID, "Extent", extentTextStyle());
 		acceptor.acceptDefaultHighlighting(ABSTRACT_QUALITY_ID, "Quality", abstractQualityTextStyle());
 		acceptor.acceptDefaultHighlighting(ABSTRACT_SUBJECT_ID, "Subject", abstractSubjectTextStyle());
 		acceptor.acceptDefaultHighlighting(ABSTRACT_EVENT_ID, "Event", abstractEventTextStyle());
 		acceptor.acceptDefaultHighlighting(ABSTRACT_PROCESS_ID, "Process", abstractProcessTextStyle());
 		acceptor.acceptDefaultHighlighting(ABSTRACT_RELATIONSHIP_ID, "Relationship", abstractRelationshipTextStyle());
-		acceptor.acceptDefaultHighlighting(ABSTRACT_CONFIGURATION_ID, "Configuration", abstractConfigurationTextStyle());
+		acceptor.acceptDefaultHighlighting(ABSTRACT_CONFIGURATION_ID, "Configuration",
+				abstractConfigurationTextStyle());
 		acceptor.acceptDefaultHighlighting(ABSTRACT_TRAIT_ID, "Trait", abstractTraitTextStyle());
 		acceptor.acceptDefaultHighlighting(ABSTRACT_ROLE_ID, "Role", abstractRoleTextStyle());
 		acceptor.acceptDefaultHighlighting(ABSTRACT_EXTENT_ID, "Extent", abstractExtentTextStyle());
+		acceptor.acceptDefaultHighlighting(UNKNOWN_VERB_ID, "Unknown action", unknownVerbTextStyle());
+		acceptor.acceptDefaultHighlighting(VIEW_VERB_ID, "View action", viewVerbTextStyle());
+		acceptor.acceptDefaultHighlighting(SESSION_VERB_ID, "Session action", sessionVerbTextStyle());
+		acceptor.acceptDefaultHighlighting(LOCAL_VERB_ID, "Local action", localVerbTextStyle());
+		acceptor.acceptDefaultHighlighting(IMPORTED_VERB_ID, "Imported action", importedVerbTextStyle());
+		acceptor.acceptDefaultHighlighting(OBJECT_VERB_ID, "Object action", objectVerbTextStyle());
+		acceptor.acceptDefaultHighlighting(STATE_VERB_ID, "State action", stateVerbTextStyle());
+		acceptor.acceptDefaultHighlighting(USER_VERB_ID, "User action", userVerbTextStyle());
+		acceptor.acceptDefaultHighlighting(AMBIGUOUS_VERB_ID, "Ambiguous action", ambiguousVerbTextStyle());
+
 	}
 
 	protected TextStyle unclassifiedURNTextStyle() {
@@ -161,6 +188,13 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 		return textStyle;
 	}
 
+	protected TextStyle keyTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(139, 64, 0));
+		textStyle.setStyle(SWT.ITALIC);
+		return textStyle;
+	}
+
 	protected TextStyle versionTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(0, 153, 153));
@@ -183,6 +217,12 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 	protected TextStyle subjectTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(153, 76, 0));
+		return textStyle;
+	}
+
+	protected TextStyle markdownTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(100, 100, 80));
 		return textStyle;
 	}
 
@@ -215,6 +255,69 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(0, 100, 100));
 		// textStyle.setStyle(SWT.ITALIC);
+		return textStyle;
+	}
+
+	protected TextStyle unknownVerbTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(100, 100, 100));
+		textStyle.setStyle(SWT.ITALIC | SWT.BOLD);
+		return textStyle;
+	}
+
+	protected TextStyle stateVerbTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(0, 104, 0));
+		textStyle.setStyle(SWT.BOLD);
+		return textStyle;
+	}
+
+	protected TextStyle objectVerbTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(153, 76, 0));
+		textStyle.setStyle(SWT.BOLD);
+		return textStyle;
+	}
+
+	protected TextStyle userVerbTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(100, 100, 100));
+		textStyle.setStyle(SWT.BOLD);
+		return textStyle;
+	}
+	
+	protected TextStyle ambiguousVerbTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(200, 0, 0));
+		textStyle.setStyle(SWT.BOLD);
+		return textStyle;
+	}
+
+	protected TextStyle viewVerbTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(0, 153, 153));
+		textStyle.setStyle(SWT.BOLD);
+		return textStyle;
+	}
+
+	protected TextStyle sessionVerbTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(100, 100, 100));
+		textStyle.setStyle(SWT.BOLD);
+		return textStyle;
+	}
+
+	protected TextStyle localVerbTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(20, 20, 20));
+		textStyle.setStyle(SWT.BOLD);
+		return textStyle;
+	}
+
+	protected TextStyle importedVerbTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(20, 20, 20));
+		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 

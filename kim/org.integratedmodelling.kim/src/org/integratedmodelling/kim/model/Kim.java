@@ -66,12 +66,14 @@ import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.MapEntry;
 import org.integratedmodelling.kim.kim.Metadata;
+import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Quantity;
 import org.integratedmodelling.kim.kim.Urn;
 import org.integratedmodelling.kim.kim.Value;
+import org.integratedmodelling.kim.utils.ParseHelper;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
@@ -107,6 +109,20 @@ public enum Kim {
 
 	@Inject
 	private IGrammarAccess grammarAccess;
+
+	@Inject
+	ParseHelper<Model> observableParser;
+
+	public IKimObservable declare(String declaration) {
+		try {
+			ObservableSemantics parsed = observableParser.parse(declaration).getObservable();
+			KimObservable interpreted = Kim.INSTANCE.declareObservable(parsed);
+			return interpreted;
+		} catch (Exception e) {
+			// just return null
+		}
+		return null;
+	}
 
 	/**
 	 * Call before keyword list can be obtained

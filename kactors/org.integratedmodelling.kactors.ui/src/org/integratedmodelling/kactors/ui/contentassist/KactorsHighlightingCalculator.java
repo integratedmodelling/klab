@@ -10,7 +10,11 @@ import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.resource.XtextResource;
 import org.eclipse.xtext.util.CancelIndicator;
+import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kactors.model.KActors;
+import org.integratedmodelling.kactors.model.KActors.CodeAssistant;
+import org.integratedmodelling.kactors.model.KActors.CodeAssistant.BehaviorId;
 import org.integratedmodelling.kactors.services.KactorsGrammarAccess;
 
 import com.google.inject.Inject;
@@ -43,7 +47,7 @@ public class KactorsHighlightingCalculator extends DefaultSemanticHighlightingCa
 				EObject object = ((RuleCall) node.getGrammarElement()).eContainer();
 
 				if (object instanceof Assignment && node.getOffset() > start) {
-
+					
 					if (rule.getName().equals("Annotation")) {
 						boolean known = false;
 //						if (node.getSemanticElement() instanceof Annotation) {
@@ -67,6 +71,50 @@ public class KactorsHighlightingCalculator extends DefaultSemanticHighlightingCa
 					} else if (rule.getName().equals("VersionNumber")) {
 						acceptor.addPosition((start = node.getOffset()), node.getLength(),
 								KactorsHighlightingConfiguration.VERSION_NUMBER_ID);
+					} else if (rule.getName().equals("ArgPathName")) {
+						CodeAssistant.BehaviorId type = BehaviorId.LOCAL;
+						if (KActors.INSTANCE.getCodeAssistant() != null) {
+							EObject sem = node.getSemanticElement();
+							if (sem instanceof MessageCall) {
+								type = KActors.INSTANCE.getCodeAssistant().classifyVerb(((MessageCall)sem).getName());
+							}
+						}
+						switch (type) {
+						case IMPORTED:
+							acceptor.addPosition((start = node.getOffset()), node.getLength(),
+									KactorsHighlightingConfiguration.IMPORTED_VERB_ID);
+							break;
+						case LOCAL:
+							acceptor.addPosition((start = node.getOffset()), node.getLength(),
+									KactorsHighlightingConfiguration.LOCAL_VERB_ID);
+							break;
+						case OBJECT:
+							acceptor.addPosition((start = node.getOffset()), node.getLength(),
+									KactorsHighlightingConfiguration.OBJECT_VERB_ID);
+							break;
+						case SESSION:
+							acceptor.addPosition((start = node.getOffset()), node.getLength(),
+									KactorsHighlightingConfiguration.SESSION_VERB_ID);
+							break;
+						case STATE:
+							acceptor.addPosition((start = node.getOffset()), node.getLength(),
+									KactorsHighlightingConfiguration.STATE_VERB_ID);
+							break;
+						case UNKNOWN:
+							acceptor.addPosition((start = node.getOffset()), node.getLength(),
+									KactorsHighlightingConfiguration.UNKNOWN_VERB_ID);
+							break;
+						case USER:
+							acceptor.addPosition((start = node.getOffset()), node.getLength(),
+									KactorsHighlightingConfiguration.USER_VERB_ID);
+							break;
+						case VIEW:
+							acceptor.addPosition((start = node.getOffset()), node.getLength(),
+									KactorsHighlightingConfiguration.VIEW_VERB_ID);
+							break;
+						default:
+							break;
+						}
 					}
 //					else if (node.getSemanticElement() instanceof Concept
 //							|| node.getSemanticElement() instanceof ConceptReference) {
@@ -126,16 +174,15 @@ public class KactorsHighlightingCalculator extends DefaultSemanticHighlightingCa
 //								}
 //							}
 //						}
-					} 
-				else if (node.getSemanticElement() instanceof Value/*
-																	 * && ((Value) node.getSemanticElement()).getExpr()
-																	 * != null
-																	 */) {
+				} else if (node.getSemanticElement() instanceof Value/*
+																		 * && ((Value)
+																		 * node.getSemanticElement()).getExpr() != null
+																		 */) {
 
-						acceptor.addPosition((start = node.getOffset()), node.getLength(),
-								KactorsHighlightingConfiguration.CODE_ID);
+					acceptor.addPosition((start = node.getOffset()), node.getLength(),
+							KactorsHighlightingConfiguration.CODE_ID);
 
-					} 
+				}
 //					else if (node.getSemanticElement() instanceof Urn) {
 //
 //						String text = node.getText().trim();

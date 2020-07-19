@@ -16,6 +16,8 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.wb.swt.ResourceManager;
+import org.integratedmodelling.kactors.model.KActors;
+import org.integratedmodelling.kactors.model.KActors.CodeAssistant;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimLoader;
@@ -48,6 +50,7 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.AttributeReference;
+import org.integratedmodelling.klab.rest.BehaviorReference;
 import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectReference;
@@ -91,6 +94,53 @@ public class Activator extends AbstractUIPlugin {
 		 * TODO retrieve from preferences if so configured.
 		 */
 		String initialSessionId = null;
+
+		/**
+		 * Install k.Actors code assistant
+		 */
+		KActors.INSTANCE.setCodeAssistant(new CodeAssistant() {
+
+			@Override
+			public BehaviorId classifyVerb(String call) {
+				Set<BehaviorReference> behavior = KimData.INSTANCE.getBehaviorFor(call);
+				return behavior == null ? BehaviorId.LOCAL
+						: (behavior.size() > 1 ? BehaviorId.AMBIGUOUS : getBehaviorId(behavior.iterator().next()));
+			}
+
+			private BehaviorId getBehaviorId(BehaviorReference behavior) {
+				switch (behavior.getName()) {
+				case "view": 
+					return BehaviorId.VIEW;
+				case "user": 
+					return BehaviorId.USER;
+				case "object": 
+					return BehaviorId.OBJECT;
+				case "state": 
+					return BehaviorId.STATE;
+				case "session": 
+					return BehaviorId.SESSION;
+				}
+				return BehaviorId.LOCAL;
+			}
+
+			@Override
+			public String getLabel(String call) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public String getDescription(String call) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Collection<org.integratedmodelling.kactors.api.IKActorsValue.Type> getFiredType(String call) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
 
 		/*
 		 * install k.IM validator at client side, talking to engine
@@ -348,7 +398,7 @@ public class Activator extends AbstractUIPlugin {
 		request.setActive(true);
 		this.engineStatusMonitor.getBus().post(Message.create(this.engineStatusMonitor.getSessionId(),
 				IMessage.MessageClass.Notification, IMessage.Type.EngineEvent, request));
-		
+
 		/*
 		 * offer to import any k.LAB local projects that are not in the workspace and
 		 * have the engine load those projects it does not have. TODO may also offer to
@@ -471,7 +521,7 @@ public class Activator extends AbstractUIPlugin {
 					Message.create(get().engineStatusMonitor.getSessionId(), object).inResponseTo(originalMessageId));
 		}
 	}
-	
+
 	public static void post(Consumer<IMessage> responseHandler, Object... object) {
 		if (get().engineStatusMonitor.isRunning()) {
 			get().engineStatusMonitor.getBus().post(Message.create(get().engineStatusMonitor.getSessionId(), object),

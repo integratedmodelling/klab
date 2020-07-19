@@ -5,6 +5,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -56,6 +57,28 @@ public enum KActors {
 		Object translate(KActorsValue container, Object value);
 	}
 
+	/**
+	 * Install one of these to enable in-editor documentation, highlighting and
+	 * call/fire validation
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public interface CodeAssistant {
+
+		enum BehaviorId {
+			VIEW, SESSION, LOCAL, IMPORTED, OBJECT, STATE, USER, UNKNOWN, AMBIGUOUS
+		}
+
+		BehaviorId classifyVerb(String call);
+
+		String getLabel(String call);
+
+		String getDescription(String call);
+
+		Collection<KActorsValue.Type> getFiredType(String call);
+	}
+
 	class BehaviorDescriptor {
 		String name;
 		File file;
@@ -72,6 +95,7 @@ public enum KActors {
 
 	List<Notifier> notifiers = new ArrayList<>();
 	private ValueTranslator valueTranslator = null;
+	private CodeAssistant codeAssistant = null;
 	Map<String, BehaviorDescriptor> behaviors = new HashMap<>();
 
 	private Injector getInjector() {
@@ -255,7 +279,6 @@ public enum KActors {
 	public void setValueTranslator(ValueTranslator valueTranslator) {
 		this.valueTranslator = valueTranslator;
 	}
-	
 
 	public void add(File file) {
 		loadResources(Collections.singletonList(file));
@@ -263,12 +286,19 @@ public enum KActors {
 
 	public void delete(File file) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	public void touch(File file) {
 		loadResources(Collections.singletonList(file));
 	}
 
+	public CodeAssistant getCodeAssistant() {
+		return codeAssistant;
+	}
+
+	public void setCodeAssistant(CodeAssistant codeAssistant) {
+		this.codeAssistant = codeAssistant;
+	}
 
 }
