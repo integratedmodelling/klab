@@ -120,7 +120,7 @@ public class Activator extends AbstractUIPlugin {
 				case "session": 
 					return BehaviorId.SESSION;
 				}
-				return BehaviorId.LOCAL;
+				return BehaviorId.IMPORTED;
 			}
 
 			@Override
