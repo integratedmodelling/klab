@@ -267,42 +267,42 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 
 	protected TextStyle stateVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(0, 104, 0));
+		textStyle.setColor(new RGB(6, 127, 16));
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 
 	protected TextStyle objectVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(153, 76, 0));
+		textStyle.setColor(new RGB(127, 62, 6));
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 
 	protected TextStyle userVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(100, 100, 100));
+		textStyle.setColor(new RGB(57, 69, 127));
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 	
 	protected TextStyle ambiguousVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(200, 0, 0));
+		textStyle.setColor(new RGB(252, 60, 12));
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 
 	protected TextStyle viewVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(0, 153, 153));
+		textStyle.setColor(new RGB(63, 8, 165));
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 
 	protected TextStyle sessionVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(100, 100, 100));
+		textStyle.setColor(new RGB(204, 68, 10));
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
