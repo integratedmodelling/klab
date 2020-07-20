@@ -13,9 +13,10 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.api.runtime.ISession.ObservationListener;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
+import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.utils.Pair;
 
 import akka.actor.typed.ActorRef;
@@ -38,14 +39,28 @@ public class ObjectBehavior {
 				Object arg = evaluateArgument(0, scope);
 				if (arg instanceof IObservable) {
 					try {
-						Future<IObservation> future = ((ISubject) identity).observe(((IObservable) arg).getDefinition());
+						Future<IObservation> future = ((ISubject) identity)
+								.observe(((IObservable) arg).getDefinition());
 						fire(future.get(), true);
 					} catch (Throwable e) {
 						fail(e);
 					}
 				}
+			} else if (this.identity instanceof Session) {
+
+				try {
+					Object arg = evaluateArgument(0, scope);
+					if (arg instanceof IObservable) {
+						Future<ISubject> future = ((Session) this.identity)
+								.observe(((IObservable) arg).getDefinition());
+						fire(future.get(), true);
+					}
+				} catch (Throwable e) {
+					fail(e);
+				}
+
 			} else {
-				fail(this.identity + ": observations can only be made within subjects");
+				fail(this.identity + ": observations can only be made within subjects or sessions");
 			}
 
 		}
@@ -111,23 +126,23 @@ public class ObjectBehavior {
 		void run(KlabActor.Scope scope) {
 			this.listener = scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
 					.addObservationListener(new ISession.ObservationListener() {
-				@Override
-				public void newObservation(IObservation observation, ISubject context) {
-					// TODO filter if a filter was configured; also may need to have a "current context"
-					// in the scope and match the context to it before firing.
-					fire(observation, false);
-				}
+						@Override
+						public void newObservation(IObservation observation, ISubject context) {
+							// TODO filter if a filter was configured; also may need to have a "current
+							// context"
+							// in the scope and match the context to it before firing.
+							fire(observation, false);
+						}
 
-				@Override
-				public void newContext(ISubject context) {
-				}
-			});
+						@Override
+						public void newContext(ISubject context) {
+						}
+					});
 		}
 
 		@Override
 		public void dispose() {
-			scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
-			.removeObservationListener(this.listener);
+			scope.getMonitor().getIdentity().getParentIdentity(ISession.class).removeObservationListener(this.listener);
 		}
 	}
 

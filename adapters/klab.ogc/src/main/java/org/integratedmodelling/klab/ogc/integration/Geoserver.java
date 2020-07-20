@@ -35,7 +35,8 @@ public class Geoserver {
 	}
 
 	public static Geoserver create() {
-		return new Geoserver();
+		Geoserver ret = new Geoserver();
+		return ret;
 	}
 
 	public static boolean isEnabled() {
