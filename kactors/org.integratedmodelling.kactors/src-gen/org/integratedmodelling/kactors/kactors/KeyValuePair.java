@@ -15,10 +15,10 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getKey <em>Key</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getTag <em>Tag</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#isInteractive <em>Interactive</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getValue <em>Value</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getKeyValuePair()
@@ -48,28 +48,6 @@ public interface KeyValuePair extends EObject
    * @generated
    */
   void setKey(String value);
-
-  /**
-   * Returns the value of the '<em><b>Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Value</em>' containment reference.
-   * @see #setValue(Value)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getKeyValuePair_Value()
-   * @model containment="true"
-   * @generated
-   */
-  Value getValue();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getValue <em>Value</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Value</em>' containment reference.
-   * @see #getValue()
-   * @generated
-   */
-  void setValue(Value value);
 
   /**
    * Returns the value of the '<em><b>Tag</b></em>' attribute.
@@ -136,5 +114,27 @@ public interface KeyValuePair extends EObject
    * @generated
    */
   void setInteractive(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Value</em>' containment reference.
+   * @see #setValue(Value)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getKeyValuePair_Value()
+   * @model containment="true"
+   * @generated
+   */
+  Value getValue();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getValue <em>Value</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Value</em>' containment reference.
+   * @see #getValue()
+   * @generated
+   */
+  void setValue(Value value);
 
 } // KeyValuePair

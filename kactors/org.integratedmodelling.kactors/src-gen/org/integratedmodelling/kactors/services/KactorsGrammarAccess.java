@@ -3326,11 +3326,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	public class KeyValuePairElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.KeyValuePair");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final Assignment cKeyAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
-		private final RuleCall cKeyKEYTerminalRuleCall_0_0_0 = (RuleCall)cKeyAssignment_0_0.eContents().get(0);
-		private final Assignment cValueAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
-		private final RuleCall cValueValueParserRuleCall_0_1_0 = (RuleCall)cValueAssignment_0_1.eContents().get(0);
+		private final Assignment cKeyAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final RuleCall cKeyKEYTerminalRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
 		private final Assignment cTagAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
 		private final RuleCall cTagTAGTerminalRuleCall_1_0 = (RuleCall)cTagAssignment_1.eContents().get(0);
 		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
@@ -3345,26 +3342,17 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cValueValueParserRuleCall_2_1_0 = (RuleCall)cValueAssignment_2_1.eContents().get(0);
 		
 		//KeyValuePair:
-		//	key=KEY value=Value? | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value;
+		//	key=KEY | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//key=KEY value=Value? | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value
+		//key=KEY | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//key=KEY value=Value?
-		public Group getGroup_0() { return cGroup_0; }
-		
 		//key=KEY
-		public Assignment getKeyAssignment_0_0() { return cKeyAssignment_0_0; }
+		public Assignment getKeyAssignment_0() { return cKeyAssignment_0; }
 		
 		//KEY
-		public RuleCall getKeyKEYTerminalRuleCall_0_0_0() { return cKeyKEYTerminalRuleCall_0_0_0; }
-		
-		//value=Value?
-		public Assignment getValueAssignment_0_1() { return cValueAssignment_0_1; }
-		
-		//Value
-		public RuleCall getValueValueParserRuleCall_0_1_0() { return cValueValueParserRuleCall_0_1_0; }
+		public RuleCall getKeyKEYTerminalRuleCall_0_0() { return cKeyKEYTerminalRuleCall_0_0; }
 		
 		//tag=TAG
 		public Assignment getTagAssignment_1() { return cTagAssignment_1; }
@@ -6324,7 +6312,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//KeyValuePair:
-	//	key=KEY value=Value? | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value;
+	//	key=KEY | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value;
 	public KeyValuePairElements getKeyValuePairAccess() {
 		return pKeyValuePair;
 	}

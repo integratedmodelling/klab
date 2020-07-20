@@ -6060,49 +6060,28 @@ ruleKeyValuePair returns [EObject current=null]
 	(
 		(
 			(
-				(
-					lv_key_0_0=RULE_KEY
-					{
-						newLeafNode(lv_key_0_0, grammarAccess.getKeyValuePairAccess().getKeyKEYTerminalRuleCall_0_0_0());
+				lv_key_0_0=RULE_KEY
+				{
+					newLeafNode(lv_key_0_0, grammarAccess.getKeyValuePairAccess().getKeyKEYTerminalRuleCall_0_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getKeyValuePairRule());
 					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getKeyValuePairRule());
-						}
-						setWithLastConsumed(
-							$current,
-							"key",
-							lv_key_0_0,
-							"org.integratedmodelling.kactors.Kactors.KEY");
-					}
-				)
+					setWithLastConsumed(
+						$current,
+						"key",
+						lv_key_0_0,
+						"org.integratedmodelling.kactors.Kactors.KEY");
+				}
 			)
-			(
-				(
-					{
-						newCompositeNode(grammarAccess.getKeyValuePairAccess().getValueValueParserRuleCall_0_1_0());
-					}
-					lv_value_1_0=ruleValue
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getKeyValuePairRule());
-						}
-						set(
-							$current,
-							"value",
-							lv_value_1_0,
-							"org.integratedmodelling.kactors.Kactors.Value");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)?
 		)
 		    |
 		(
 			(
-				lv_tag_2_0=RULE_TAG
+				lv_tag_1_0=RULE_TAG
 				{
-					newLeafNode(lv_tag_2_0, grammarAccess.getKeyValuePairAccess().getTagTAGTerminalRuleCall_1_0());
+					newLeafNode(lv_tag_1_0, grammarAccess.getKeyValuePairAccess().getTagTAGTerminalRuleCall_1_0());
 				}
 				{
 					if ($current==null) {
@@ -6111,7 +6090,7 @@ ruleKeyValuePair returns [EObject current=null]
 					setWithLastConsumed(
 						$current,
 						"tag",
-						lv_tag_2_0,
+						lv_tag_1_0,
 						"org.integratedmodelling.kactors.Kactors.TAG");
 				}
 			)
@@ -6121,9 +6100,9 @@ ruleKeyValuePair returns [EObject current=null]
 			(
 				(
 					(
-						lv_name_3_0=RULE_LOWERCASE_ID
+						lv_name_2_0=RULE_LOWERCASE_ID
 						{
-							newLeafNode(lv_name_3_0, grammarAccess.getKeyValuePairAccess().getNameLOWERCASE_IDTerminalRuleCall_2_0_0_0());
+							newLeafNode(lv_name_2_0, grammarAccess.getKeyValuePairAccess().getNameLOWERCASE_IDTerminalRuleCall_2_0_0_0());
 						}
 						{
 							if ($current==null) {
@@ -6132,7 +6111,7 @@ ruleKeyValuePair returns [EObject current=null]
 							setWithLastConsumed(
 								$current,
 								"name",
-								lv_name_3_0,
+								lv_name_2_0,
 								"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
 						}
 					)
@@ -6140,9 +6119,9 @@ ruleKeyValuePair returns [EObject current=null]
 				(
 					(
 						(
-							lv_interactive_4_0='?='
+							lv_interactive_3_0='?='
 							{
-								newLeafNode(lv_interactive_4_0, grammarAccess.getKeyValuePairAccess().getInteractiveQuestionMarkEqualsSignKeyword_2_0_1_0_0());
+								newLeafNode(lv_interactive_3_0, grammarAccess.getKeyValuePairAccess().getInteractiveQuestionMarkEqualsSignKeyword_2_0_1_0_0());
 							}
 							{
 								if ($current==null) {
@@ -6153,9 +6132,9 @@ ruleKeyValuePair returns [EObject current=null]
 						)
 					)
 					    |
-					otherlv_5='='
+					otherlv_4='='
 					{
-						newLeafNode(otherlv_5, grammarAccess.getKeyValuePairAccess().getEqualsSignKeyword_2_0_1_1());
+						newLeafNode(otherlv_4, grammarAccess.getKeyValuePairAccess().getEqualsSignKeyword_2_0_1_1());
 					}
 				)
 			)?
@@ -6164,7 +6143,7 @@ ruleKeyValuePair returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getKeyValuePairAccess().getValueValueParserRuleCall_2_1_0());
 					}
-					lv_value_6_0=ruleValue
+					lv_value_5_0=ruleValue
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getKeyValuePairRule());
@@ -6172,7 +6151,7 @@ ruleKeyValuePair returns [EObject current=null]
 						set(
 							$current,
 							"value",
-							lv_value_6_0,
+							lv_value_5_0,
 							"org.integratedmodelling.kactors.Kactors.Value");
 						afterParserOrEnumRuleCall();
 					}

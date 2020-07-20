@@ -316,7 +316,7 @@ ParameterList:
 	pairs+=KeyValuePair (=> (',')? pairs+=KeyValuePair)*;
 	
 KeyValuePair:
-    key=KEY (value=Value)? |
+    key=KEY  |
     tag=TAG |
 	((name=(LOWERCASE_ID) (interactive?='?=' | '='))? value=Value);
 

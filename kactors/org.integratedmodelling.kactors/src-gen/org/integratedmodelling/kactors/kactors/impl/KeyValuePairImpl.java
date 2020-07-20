@@ -25,10 +25,10 @@ import org.integratedmodelling.kactors.kactors.Value;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.KeyValuePairImpl#getKey <em>Key</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.KeyValuePairImpl#getValue <em>Value</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.KeyValuePairImpl#getTag <em>Tag</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.KeyValuePairImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.KeyValuePairImpl#isInteractive <em>Interactive</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.KeyValuePairImpl#getValue <em>Value</em>}</li>
  * </ul>
  *
  * @generated
@@ -54,16 +54,6 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
    * @ordered
    */
   protected String key = KEY_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getValue()
-   * @generated
-   * @ordered
-   */
-  protected Value value;
 
   /**
    * The default value of the '{@link #getTag() <em>Tag</em>}' attribute.
@@ -126,6 +116,16 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
   protected boolean interactive = INTERACTIVE_EDEFAULT;
 
   /**
+   * The cached value of the '{@link #getValue() <em>Value</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getValue()
+   * @generated
+   * @ordered
+   */
+  protected Value value;
+
+  /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -169,56 +169,6 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
     key = newKey;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.KEY_VALUE_PAIR__KEY, oldKey, key));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Value getValue()
-  {
-    return value;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetValue(Value newValue, NotificationChain msgs)
-  {
-    Value oldValue = value;
-    value = newValue;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.KEY_VALUE_PAIR__VALUE, oldValue, newValue);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setValue(Value newValue)
-  {
-    if (newValue != value)
-    {
-      NotificationChain msgs = null;
-      if (value != null)
-        msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.KEY_VALUE_PAIR__VALUE, null, msgs);
-      if (newValue != null)
-        msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.KEY_VALUE_PAIR__VALUE, null, msgs);
-      msgs = basicSetValue(newValue, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.KEY_VALUE_PAIR__VALUE, newValue, newValue));
   }
 
   /**
@@ -302,6 +252,56 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
    * @generated
    */
   @Override
+  public Value getValue()
+  {
+    return value;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetValue(Value newValue, NotificationChain msgs)
+  {
+    Value oldValue = value;
+    value = newValue;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.KEY_VALUE_PAIR__VALUE, oldValue, newValue);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setValue(Value newValue)
+  {
+    if (newValue != value)
+    {
+      NotificationChain msgs = null;
+      if (value != null)
+        msgs = ((InternalEObject)value).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.KEY_VALUE_PAIR__VALUE, null, msgs);
+      if (newValue != null)
+        msgs = ((InternalEObject)newValue).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.KEY_VALUE_PAIR__VALUE, null, msgs);
+      msgs = basicSetValue(newValue, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.KEY_VALUE_PAIR__VALUE, newValue, newValue));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -324,14 +324,14 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
     {
       case KactorsPackage.KEY_VALUE_PAIR__KEY:
         return getKey();
-      case KactorsPackage.KEY_VALUE_PAIR__VALUE:
-        return getValue();
       case KactorsPackage.KEY_VALUE_PAIR__TAG:
         return getTag();
       case KactorsPackage.KEY_VALUE_PAIR__NAME:
         return getName();
       case KactorsPackage.KEY_VALUE_PAIR__INTERACTIVE:
         return isInteractive();
+      case KactorsPackage.KEY_VALUE_PAIR__VALUE:
+        return getValue();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -349,9 +349,6 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
       case KactorsPackage.KEY_VALUE_PAIR__KEY:
         setKey((String)newValue);
         return;
-      case KactorsPackage.KEY_VALUE_PAIR__VALUE:
-        setValue((Value)newValue);
-        return;
       case KactorsPackage.KEY_VALUE_PAIR__TAG:
         setTag((String)newValue);
         return;
@@ -360,6 +357,9 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
         return;
       case KactorsPackage.KEY_VALUE_PAIR__INTERACTIVE:
         setInteractive((Boolean)newValue);
+        return;
+      case KactorsPackage.KEY_VALUE_PAIR__VALUE:
+        setValue((Value)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -378,9 +378,6 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
       case KactorsPackage.KEY_VALUE_PAIR__KEY:
         setKey(KEY_EDEFAULT);
         return;
-      case KactorsPackage.KEY_VALUE_PAIR__VALUE:
-        setValue((Value)null);
-        return;
       case KactorsPackage.KEY_VALUE_PAIR__TAG:
         setTag(TAG_EDEFAULT);
         return;
@@ -389,6 +386,9 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
         return;
       case KactorsPackage.KEY_VALUE_PAIR__INTERACTIVE:
         setInteractive(INTERACTIVE_EDEFAULT);
+        return;
+      case KactorsPackage.KEY_VALUE_PAIR__VALUE:
+        setValue((Value)null);
         return;
     }
     super.eUnset(featureID);
@@ -406,14 +406,14 @@ public class KeyValuePairImpl extends MinimalEObjectImpl.Container implements Ke
     {
       case KactorsPackage.KEY_VALUE_PAIR__KEY:
         return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
-      case KactorsPackage.KEY_VALUE_PAIR__VALUE:
-        return value != null;
       case KactorsPackage.KEY_VALUE_PAIR__TAG:
         return TAG_EDEFAULT == null ? tag != null : !TAG_EDEFAULT.equals(tag);
       case KactorsPackage.KEY_VALUE_PAIR__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KactorsPackage.KEY_VALUE_PAIR__INTERACTIVE:
         return interactive != INTERACTIVE_EDEFAULT;
+      case KactorsPackage.KEY_VALUE_PAIR__VALUE:
+        return value != null;
     }
     return super.eIsSet(featureID);
   }

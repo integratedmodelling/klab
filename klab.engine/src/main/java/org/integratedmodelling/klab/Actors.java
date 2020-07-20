@@ -644,6 +644,16 @@ public enum Actors implements IActorsService {
 
 			}
 
+			/*
+			 * Components make their own view from the main method without annotations
+			 */
+			if (panel == null && behavior.getDestination() == Type.COMPONENT && action.getName().equals("main")) {
+				view.getPanels().add(panel = new ViewPanel(action.getId(), behavior.getStatement().getStyle()));
+				for (IAnnotation annotation : action.getAnnotations()) {
+					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
+				}
+			}
+
 			if (panel != null) {
 				/*
 				 * visit action for view calls: if there is any call to the view actor, add the
