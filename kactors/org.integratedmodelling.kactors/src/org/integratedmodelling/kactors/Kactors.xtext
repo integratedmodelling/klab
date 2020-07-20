@@ -316,9 +316,10 @@ ParameterList:
 	pairs+=KeyValuePair (=> (',')? pairs+=KeyValuePair)*;
 	
 KeyValuePair:
-    key=KEY  |
     tag=TAG |
-	((name=(LOWERCASE_ID) (interactive?='?=' | '='))? value=Value);
+	(name=(LOWERCASE_ID) (interactive?='?=' | '='))? value=Value |
+    key=KEY 
+;
 
 UnitElement:
 	id=(CAMELCASE_ID|LOWERCASE_ID|UPPERCASE_ID) |

@@ -71,7 +71,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getLiteralAccess().getAlternatives(), "rule__Literal__Alternatives");
 			builder.put(grammarAccess.getLiteralAccess().getBooleanAlternatives_4_0(), "rule__Literal__BooleanAlternatives_4_0");
 			builder.put(grammarAccess.getKeyValuePairAccess().getAlternatives(), "rule__KeyValuePair__Alternatives");
-			builder.put(grammarAccess.getKeyValuePairAccess().getAlternatives_2_0_1(), "rule__KeyValuePair__Alternatives_2_0_1");
+			builder.put(grammarAccess.getKeyValuePairAccess().getAlternatives_1_0_1(), "rule__KeyValuePair__Alternatives_1_0_1");
 			builder.put(grammarAccess.getUnitElementAccess().getAlternatives(), "rule__UnitElement__Alternatives");
 			builder.put(grammarAccess.getUnitElementAccess().getIdAlternatives_0_0(), "rule__UnitElement__IdAlternatives_0_0");
 			builder.put(grammarAccess.getREL_OPERATORAccess().getAlternatives(), "rule__REL_OPERATOR__Alternatives");
@@ -206,8 +206,8 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getParameterListAccess().getGroup(), "rule__ParameterList__Group__0");
 			builder.put(grammarAccess.getParameterListAccess().getGroup_1(), "rule__ParameterList__Group_1__0");
 			builder.put(grammarAccess.getParameterListAccess().getGroup_1_0(), "rule__ParameterList__Group_1_0__0");
-			builder.put(grammarAccess.getKeyValuePairAccess().getGroup_2(), "rule__KeyValuePair__Group_2__0");
-			builder.put(grammarAccess.getKeyValuePairAccess().getGroup_2_0(), "rule__KeyValuePair__Group_2_0__0");
+			builder.put(grammarAccess.getKeyValuePairAccess().getGroup_1(), "rule__KeyValuePair__Group_1__0");
+			builder.put(grammarAccess.getKeyValuePairAccess().getGroup_1_0(), "rule__KeyValuePair__Group_1_0__0");
 			builder.put(grammarAccess.getUnitElementAccess().getGroup_1(), "rule__UnitElement__Group_1__0");
 			builder.put(grammarAccess.getUnitAccess().getGroup(), "rule__Unit__Group__0");
 			builder.put(grammarAccess.getUnitAccess().getGroup_2(), "rule__Unit__Group_2__0");
@@ -525,11 +525,11 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getLiteralAccess().getBooleanAssignment_4(), "rule__Literal__BooleanAssignment_4");
 			builder.put(grammarAccess.getParameterListAccess().getPairsAssignment_0(), "rule__ParameterList__PairsAssignment_0");
 			builder.put(grammarAccess.getParameterListAccess().getPairsAssignment_1_1(), "rule__ParameterList__PairsAssignment_1_1");
-			builder.put(grammarAccess.getKeyValuePairAccess().getKeyAssignment_0(), "rule__KeyValuePair__KeyAssignment_0");
-			builder.put(grammarAccess.getKeyValuePairAccess().getTagAssignment_1(), "rule__KeyValuePair__TagAssignment_1");
-			builder.put(grammarAccess.getKeyValuePairAccess().getNameAssignment_2_0_0(), "rule__KeyValuePair__NameAssignment_2_0_0");
-			builder.put(grammarAccess.getKeyValuePairAccess().getInteractiveAssignment_2_0_1_0(), "rule__KeyValuePair__InteractiveAssignment_2_0_1_0");
-			builder.put(grammarAccess.getKeyValuePairAccess().getValueAssignment_2_1(), "rule__KeyValuePair__ValueAssignment_2_1");
+			builder.put(grammarAccess.getKeyValuePairAccess().getTagAssignment_0(), "rule__KeyValuePair__TagAssignment_0");
+			builder.put(grammarAccess.getKeyValuePairAccess().getNameAssignment_1_0_0(), "rule__KeyValuePair__NameAssignment_1_0_0");
+			builder.put(grammarAccess.getKeyValuePairAccess().getInteractiveAssignment_1_0_1_0(), "rule__KeyValuePair__InteractiveAssignment_1_0_1_0");
+			builder.put(grammarAccess.getKeyValuePairAccess().getValueAssignment_1_1(), "rule__KeyValuePair__ValueAssignment_1_1");
+			builder.put(grammarAccess.getKeyValuePairAccess().getKeyAssignment_2(), "rule__KeyValuePair__KeyAssignment_2");
 			builder.put(grammarAccess.getUnitElementAccess().getIdAssignment_0(), "rule__UnitElement__IdAssignment_0");
 			builder.put(grammarAccess.getUnitElementAccess().getUnitAssignment_1_1(), "rule__UnitElement__UnitAssignment_1_1");
 			builder.put(grammarAccess.getUnitAccess().getRootAssignment_1(), "rule__Unit__RootAssignment_1");

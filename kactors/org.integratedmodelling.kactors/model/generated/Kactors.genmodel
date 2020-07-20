@@ -249,11 +249,11 @@
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//ParameterList/pairs"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//KeyValuePair">
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//KeyValuePair/key"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//KeyValuePair/tag"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//KeyValuePair/name"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//KeyValuePair/interactive"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//KeyValuePair/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//KeyValuePair/key"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//UnitElement">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//UnitElement/id"/>

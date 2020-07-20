@@ -3326,69 +3326,69 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	public class KeyValuePairElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.KeyValuePair");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
-		private final Assignment cKeyAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
-		private final RuleCall cKeyKEYTerminalRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
-		private final Assignment cTagAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
-		private final RuleCall cTagTAGTerminalRuleCall_1_0 = (RuleCall)cTagAssignment_1.eContents().get(0);
-		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
-		private final Group cGroup_2_0 = (Group)cGroup_2.eContents().get(0);
-		private final Assignment cNameAssignment_2_0_0 = (Assignment)cGroup_2_0.eContents().get(0);
-		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_2_0_0_0 = (RuleCall)cNameAssignment_2_0_0.eContents().get(0);
-		private final Alternatives cAlternatives_2_0_1 = (Alternatives)cGroup_2_0.eContents().get(1);
-		private final Assignment cInteractiveAssignment_2_0_1_0 = (Assignment)cAlternatives_2_0_1.eContents().get(0);
-		private final Keyword cInteractiveQuestionMarkEqualsSignKeyword_2_0_1_0_0 = (Keyword)cInteractiveAssignment_2_0_1_0.eContents().get(0);
-		private final Keyword cEqualsSignKeyword_2_0_1_1 = (Keyword)cAlternatives_2_0_1.eContents().get(1);
-		private final Assignment cValueAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
-		private final RuleCall cValueValueParserRuleCall_2_1_0 = (RuleCall)cValueAssignment_2_1.eContents().get(0);
+		private final Assignment cTagAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final RuleCall cTagTAGTerminalRuleCall_0_0 = (RuleCall)cTagAssignment_0.eContents().get(0);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final Group cGroup_1_0 = (Group)cGroup_1.eContents().get(0);
+		private final Assignment cNameAssignment_1_0_0 = (Assignment)cGroup_1_0.eContents().get(0);
+		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_1_0_0_0 = (RuleCall)cNameAssignment_1_0_0.eContents().get(0);
+		private final Alternatives cAlternatives_1_0_1 = (Alternatives)cGroup_1_0.eContents().get(1);
+		private final Assignment cInteractiveAssignment_1_0_1_0 = (Assignment)cAlternatives_1_0_1.eContents().get(0);
+		private final Keyword cInteractiveQuestionMarkEqualsSignKeyword_1_0_1_0_0 = (Keyword)cInteractiveAssignment_1_0_1_0.eContents().get(0);
+		private final Keyword cEqualsSignKeyword_1_0_1_1 = (Keyword)cAlternatives_1_0_1.eContents().get(1);
+		private final Assignment cValueAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cValueValueParserRuleCall_1_1_0 = (RuleCall)cValueAssignment_1_1.eContents().get(0);
+		private final Assignment cKeyAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
+		private final RuleCall cKeyKEYTerminalRuleCall_2_0 = (RuleCall)cKeyAssignment_2.eContents().get(0);
 		
 		//KeyValuePair:
-		//	key=KEY | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value;
+		//	tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value | key=KEY;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//key=KEY | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value
+		//tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value | key=KEY
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//key=KEY
-		public Assignment getKeyAssignment_0() { return cKeyAssignment_0; }
-		
-		//KEY
-		public RuleCall getKeyKEYTerminalRuleCall_0_0() { return cKeyKEYTerminalRuleCall_0_0; }
-		
 		//tag=TAG
-		public Assignment getTagAssignment_1() { return cTagAssignment_1; }
+		public Assignment getTagAssignment_0() { return cTagAssignment_0; }
 		
 		//TAG
-		public RuleCall getTagTAGTerminalRuleCall_1_0() { return cTagTAGTerminalRuleCall_1_0; }
+		public RuleCall getTagTAGTerminalRuleCall_0_0() { return cTagTAGTerminalRuleCall_0_0; }
 		
 		//(name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value
-		public Group getGroup_2() { return cGroup_2; }
+		public Group getGroup_1() { return cGroup_1; }
 		
 		//(name=LOWERCASE_ID (interactive?='?=' | '='))?
-		public Group getGroup_2_0() { return cGroup_2_0; }
+		public Group getGroup_1_0() { return cGroup_1_0; }
 		
 		//name=LOWERCASE_ID
-		public Assignment getNameAssignment_2_0_0() { return cNameAssignment_2_0_0; }
+		public Assignment getNameAssignment_1_0_0() { return cNameAssignment_1_0_0; }
 		
 		//LOWERCASE_ID
-		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_2_0_0_0() { return cNameLOWERCASE_IDTerminalRuleCall_2_0_0_0; }
+		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_1_0_0_0() { return cNameLOWERCASE_IDTerminalRuleCall_1_0_0_0; }
 		
 		//(interactive?='?=' | '=')
-		public Alternatives getAlternatives_2_0_1() { return cAlternatives_2_0_1; }
+		public Alternatives getAlternatives_1_0_1() { return cAlternatives_1_0_1; }
 		
 		//interactive?='?='
-		public Assignment getInteractiveAssignment_2_0_1_0() { return cInteractiveAssignment_2_0_1_0; }
+		public Assignment getInteractiveAssignment_1_0_1_0() { return cInteractiveAssignment_1_0_1_0; }
 		
 		//'?='
-		public Keyword getInteractiveQuestionMarkEqualsSignKeyword_2_0_1_0_0() { return cInteractiveQuestionMarkEqualsSignKeyword_2_0_1_0_0; }
+		public Keyword getInteractiveQuestionMarkEqualsSignKeyword_1_0_1_0_0() { return cInteractiveQuestionMarkEqualsSignKeyword_1_0_1_0_0; }
 		
 		//'='
-		public Keyword getEqualsSignKeyword_2_0_1_1() { return cEqualsSignKeyword_2_0_1_1; }
+		public Keyword getEqualsSignKeyword_1_0_1_1() { return cEqualsSignKeyword_1_0_1_1; }
 		
 		//value=Value
-		public Assignment getValueAssignment_2_1() { return cValueAssignment_2_1; }
+		public Assignment getValueAssignment_1_1() { return cValueAssignment_1_1; }
 		
 		//Value
-		public RuleCall getValueValueParserRuleCall_2_1_0() { return cValueValueParserRuleCall_2_1_0; }
+		public RuleCall getValueValueParserRuleCall_1_1_0() { return cValueValueParserRuleCall_1_1_0; }
+		
+		//key=KEY
+		public Assignment getKeyAssignment_2() { return cKeyAssignment_2; }
+		
+		//KEY
+		public RuleCall getKeyKEYTerminalRuleCall_2_0() { return cKeyKEYTerminalRuleCall_2_0; }
 	}
 	public class UnitElementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.UnitElement");
@@ -6312,7 +6312,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//KeyValuePair:
-	//	key=KEY | tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value;
+	//	tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value | key=KEY;
 	public KeyValuePairElements getKeyValuePairAccess() {
 		return pKeyValuePair;
 	}

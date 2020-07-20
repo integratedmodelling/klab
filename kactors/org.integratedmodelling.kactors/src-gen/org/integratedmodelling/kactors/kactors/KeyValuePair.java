@@ -14,11 +14,11 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getKey <em>Key</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getTag <em>Tag</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#isInteractive <em>Interactive</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getValue <em>Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getKey <em>Key</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getKeyValuePair()
@@ -27,28 +27,6 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface KeyValuePair extends EObject
 {
-  /**
-   * Returns the value of the '<em><b>Key</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Key</em>' attribute.
-   * @see #setKey(String)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getKeyValuePair_Key()
-   * @model
-   * @generated
-   */
-  String getKey();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getKey <em>Key</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Key</em>' attribute.
-   * @see #getKey()
-   * @generated
-   */
-  void setKey(String value);
-
   /**
    * Returns the value of the '<em><b>Tag</b></em>' attribute.
    * <!-- begin-user-doc -->
@@ -136,5 +114,27 @@ public interface KeyValuePair extends EObject
    * @generated
    */
   void setValue(Value value);
+
+  /**
+   * Returns the value of the '<em><b>Key</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Key</em>' attribute.
+   * @see #setKey(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getKeyValuePair_Key()
+   * @model
+   * @generated
+   */
+  String getKey();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getKey <em>Key</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Key</em>' attribute.
+   * @see #getKey()
+   * @generated
+   */
+  void setKey(String value);
 
 } // KeyValuePair

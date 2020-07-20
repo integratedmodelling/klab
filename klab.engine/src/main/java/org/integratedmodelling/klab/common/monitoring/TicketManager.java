@@ -83,6 +83,11 @@ public class TicketManager implements ITicketManager {
 		return ret;
 	}
 
+	@Override
+	public List<ITicket> getTickets() {
+		return new ArrayList<>(catalog.values());
+	}
+	
 	private Set<String> findIds(Object[] selectors) {
 		Set<String> ret = new HashSet<>();
 		for (Ticket ticket : catalog.values()) {

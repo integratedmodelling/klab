@@ -71,7 +71,7 @@ public class Geoserver {
 				}
 				HttpResponse<JsonNode> result = request.asJson();
 				JSONObject response = result.getBody().getObject();
-				if (response.has("namespaces") && response.get("namespaces") instanceof JSONObject) {
+				if (response.has("namespaces")) {
 					return true;
 				}
 			} catch (UnirestException e) {

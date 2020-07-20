@@ -2238,22 +2238,13 @@ public interface KactorsPackage extends EPackage
   int KEY_VALUE_PAIR = 36;
 
   /**
-   * The feature id for the '<em><b>Key</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int KEY_VALUE_PAIR__KEY = 0;
-
-  /**
    * The feature id for the '<em><b>Tag</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int KEY_VALUE_PAIR__TAG = 1;
+  int KEY_VALUE_PAIR__TAG = 0;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2262,7 +2253,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int KEY_VALUE_PAIR__NAME = 2;
+  int KEY_VALUE_PAIR__NAME = 1;
 
   /**
    * The feature id for the '<em><b>Interactive</b></em>' attribute.
@@ -2271,7 +2262,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int KEY_VALUE_PAIR__INTERACTIVE = 3;
+  int KEY_VALUE_PAIR__INTERACTIVE = 2;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -2280,7 +2271,16 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int KEY_VALUE_PAIR__VALUE = 4;
+  int KEY_VALUE_PAIR__VALUE = 3;
+
+  /**
+   * The feature id for the '<em><b>Key</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int KEY_VALUE_PAIR__KEY = 4;
 
   /**
    * The number of structural features of the '<em>Key Value Pair</em>' class.
@@ -5524,17 +5524,6 @@ public interface KactorsPackage extends EPackage
   EClass getKeyValuePair();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getKey <em>Key</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Key</em>'.
-   * @see org.integratedmodelling.kactors.kactors.KeyValuePair#getKey()
-   * @see #getKeyValuePair()
-   * @generated
-   */
-  EAttribute getKeyValuePair_Key();
-
-  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getTag <em>Tag</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5577,6 +5566,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getKeyValuePair_Value();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getKey <em>Key</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Key</em>'.
+   * @see org.integratedmodelling.kactors.kactors.KeyValuePair#getKey()
+   * @see #getKeyValuePair()
+   * @generated
+   */
+  EAttribute getKeyValuePair_Key();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.UnitElement <em>Unit Element</em>}'.
@@ -8436,14 +8436,6 @@ public interface KactorsPackage extends EPackage
     EClass KEY_VALUE_PAIR = eINSTANCE.getKeyValuePair();
 
     /**
-     * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute KEY_VALUE_PAIR__KEY = eINSTANCE.getKeyValuePair_Key();
-
-    /**
      * The meta object literal for the '<em><b>Tag</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -8474,6 +8466,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference KEY_VALUE_PAIR__VALUE = eINSTANCE.getKeyValuePair_Value();
+
+    /**
+     * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute KEY_VALUE_PAIR__KEY = eINSTANCE.getKeyValuePair_Key();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.UnitElementImpl <em>Unit Element</em>}' class.

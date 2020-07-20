@@ -819,6 +819,7 @@ public enum Actors implements IActorsService {
 			if (behavior != null && behavior.getDestination() == Type.COMPONENT) {
 				component = getView(behavior, scope.identity, scope.applicationId);
 				if (component != null) {
+					component.setParentId(parent.getId());
 					parent.getComponents().add(component);
 				}
 			}
