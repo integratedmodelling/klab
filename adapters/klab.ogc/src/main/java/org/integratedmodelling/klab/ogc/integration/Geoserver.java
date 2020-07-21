@@ -10,6 +10,8 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Urn;
+import org.openrdf.http.protocol.transaction.operations.RemoveNamespaceOperation;
+import org.openrdf.query.algebra.DeleteData;
 
 import kong.unirest.GetRequest;
 import kong.unirest.HttpRequestWithBody;
@@ -169,9 +171,31 @@ public class Geoserver {
 	 * @return
 	 */
 	private boolean deleteCoverageStore(String namespace, String name) {
-		return Unirest
-				.delete(this.url + "/rest/workspaces/" + namespace + "/coveragestores/" + name + "?purge=metadata")
-				.connectTimeout(timeout).asEmpty().isSuccess();
+		HttpRequestWithBody request = Unirest.delete(
+				this.url + "/rest/workspaces/" + namespace + "/coveragestores/" + name + "?recurse=true&purge=metadata")
+				.connectTimeout(timeout);
+		if (this.username != null) {
+			request = request.basicAuth(username, password);
+		}
+		return request.asEmpty().isSuccess();
+	}
+
+	private boolean deleteNamespace(String namespace) {
+		HttpRequestWithBody request = Unirest.delete(this.url + "/rest/namespaces/" + namespace)
+				.connectTimeout(timeout);
+		if (this.username != null) {
+			request = request.basicAuth(username, password);
+		}
+		return request.asEmpty().isSuccess();
+	}
+
+	private boolean deleteWorkspace(String namespace) {
+		HttpRequestWithBody request = Unirest.delete(this.url + "/rest/workspaces/" + namespace)
+				.connectTimeout(timeout);
+		if (this.username != null) {
+			request = request.basicAuth(username, password);
+		}
+		return request.asEmpty().isSuccess();
 	}
 
 	public Set<String> getDatastores(String namespace) {
@@ -299,8 +323,35 @@ public class Geoserver {
 	}
 
 	private boolean deleteFeatureType(String namespace, String datastore, String featuretype) {
-		return Unirest.delete(this.url + "/rest/workspaces/" + namespace + "/datastores/" + datastore + "/featuretypes/"
-				+ featuretype).connectTimeout(timeout).asEmpty().isSuccess();
+		HttpRequestWithBody request = Unirest.delete(this.url + "/rest/workspaces/" + namespace + "/datastores/"
+				+ datastore + "/featuretypes/" + featuretype).connectTimeout(timeout);
+		if (this.username != null) {
+			request = request.basicAuth(username, password);
+		}
+		return request.asEmpty().isSuccess();
+	}
+
+	private boolean deleteDatastore(String namespace, String datastore) {
+		HttpRequestWithBody request = Unirest
+				.delete(this.url + "/rest/workspaces/" + namespace + "/datastores/" + datastore + "?recurse=true")
+				.connectTimeout(timeout);
+		if (this.username != null) {
+			request = request.basicAuth(username, password);
+		}
+		return request.asEmpty().isSuccess();
+	}
+
+	public void clear() {
+		// TODO Auto-generated method stub
+		for (String namespace : getNamespaces()) {
+			for (String datastore : getDatastores(namespace)) {
+				deleteDatastore(namespace, datastore);
+			}
+			for (String coveragestore : getCoveragestores(namespace)) {
+				deleteCoverageStore(namespace, coveragestore);
+			}
+			deleteNamespace(namespace);
+		}
 	}
 
 	public Set<String> getFeatureTypes(String namespace, String datastore) {
@@ -395,10 +446,10 @@ public class Geoserver {
 				for (String featuretype : geoserver.getFeatureTypes(namespace, datastore)) {
 					System.out.println("     FT " + featuretype);
 				}
-
 			}
 		}
-
+		System.out.println("DELETING EVERYTHING - CIÖCIA LÉ");
+		geoserver.clear();
 	}
 
 	public String getServiceUrl() {
