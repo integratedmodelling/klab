@@ -55,7 +55,7 @@ public class Status implements ICommand {
 				Map<?, ?> data = node.getClient().get(API.NODE.ADMIN.COMPONENT_GET_STATUS, Map.class,
 						API.NODE.ADMIN.P_COMPONENT, component);
 				
-				ret += MapUtils.dump(data);
+				ret += JsonUtils.printAsJson(data);
 				
 			}
 		}

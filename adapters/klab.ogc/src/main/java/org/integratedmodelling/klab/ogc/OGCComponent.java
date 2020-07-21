@@ -15,7 +15,7 @@ public class OGCComponent {
 	public static final String ID = "org.integratedmodelling.ogc";
 	
 	@Setup(asynchronous = false)
-	void clearStorage() {
+	public boolean clearStorage() {
 
 		Logging.INSTANCE.info("Clearing all OGC-related storage...");
 		int n = 0;
@@ -38,6 +38,8 @@ public class OGCComponent {
 		}
 
 		Logging.INSTANCE.info("OGC setup: " + n + " operations done");
+		
+		return true;
 	}
 
 	@GetStatus
