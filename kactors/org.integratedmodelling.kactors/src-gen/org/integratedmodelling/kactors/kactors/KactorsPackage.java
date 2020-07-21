@@ -223,7 +223,7 @@ public interface KactorsPackage extends EPackage
   int PREAMBLE__WORLDVIEW = 12;
 
   /**
-   * The feature id for the '<em><b>Observable</b></em>' attribute.
+   * The feature id for the '<em><b>Observable</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -277,13 +277,22 @@ public interface KactorsPackage extends EPackage
   int PREAMBLE__STYLE = 18;
 
   /**
+   * The feature id for the '<em><b>Inline Style</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PREAMBLE__INLINE_STYLE = 19;
+
+  /**
    * The feature id for the '<em><b>Logo</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PREAMBLE__LOGO = 19;
+  int PREAMBLE__LOGO = 20;
 
   /**
    * The feature id for the '<em><b>Version</b></em>' attribute.
@@ -292,7 +301,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__VERSION = 20;
+  int PREAMBLE__VERSION = 21;
 
   /**
    * The feature id for the '<em><b>Created</b></em>' containment reference.
@@ -301,7 +310,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATED = 21;
+  int PREAMBLE__CREATED = 22;
 
   /**
    * The feature id for the '<em><b>Createcomment</b></em>' attribute.
@@ -310,7 +319,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATECOMMENT = 22;
+  int PREAMBLE__CREATECOMMENT = 23;
 
   /**
    * The feature id for the '<em><b>Modified</b></em>' containment reference.
@@ -319,7 +328,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODIFIED = 23;
+  int PREAMBLE__MODIFIED = 24;
 
   /**
    * The feature id for the '<em><b>Modcomment</b></em>' attribute.
@@ -328,7 +337,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODCOMMENT = 24;
+  int PREAMBLE__MODCOMMENT = 25;
 
   /**
    * The number of structural features of the '<em>Preamble</em>' class.
@@ -337,7 +346,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE_FEATURE_COUNT = 25;
+  int PREAMBLE_FEATURE_COUNT = 26;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl <em>Definition</em>}' class.
@@ -1222,7 +1231,7 @@ public interface KactorsPackage extends EPackage
   int VALUE__MAP = 6;
 
   /**
-   * The feature id for the '<em><b>Observable</b></em>' attribute.
+   * The feature id for the '<em><b>Observable</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -1331,7 +1340,7 @@ public interface KactorsPackage extends EPackage
   int MATCH__REGEXP = 4;
 
   /**
-   * The feature id for the '<em><b>Observable</b></em>' attribute.
+   * The feature id for the '<em><b>Observable</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -1633,7 +1642,7 @@ public interface KactorsPackage extends EPackage
   int CLASSIFIER__STRING = 7;
 
   /**
-   * The feature id for the '<em><b>Observable</b></em>' attribute.
+   * The feature id for the '<em><b>Observable</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -1678,13 +1687,22 @@ public interface KactorsPackage extends EPackage
   int CLASSIFIER__NODATA = 12;
 
   /**
+   * The feature id for the '<em><b>Map</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CLASSIFIER__MAP = 13;
+
+  /**
    * The feature id for the '<em><b>Star</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CLASSIFIER__STAR = 13;
+  int CLASSIFIER__STAR = 14;
 
   /**
    * The number of structural features of the '<em>Classifier</em>' class.
@@ -1693,7 +1711,35 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_FEATURE_COUNT = 14;
+  int CLASSIFIER_FEATURE_COUNT = 15;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ObservableImpl <em>Observable</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kactors.kactors.impl.ObservableImpl
+   * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getObservable()
+   * @generated
+   */
+  int OBSERVABLE = 26;
+
+  /**
+   * The feature id for the '<em><b>Observable</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE__OBSERVABLE = 0;
+
+  /**
+   * The number of structural features of the '<em>Observable</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE_FEATURE_COUNT = 1;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.LookupTableImpl <em>Lookup Table</em>}' class.
@@ -1703,7 +1749,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getLookupTable()
    * @generated
    */
-  int LOOKUP_TABLE = 26;
+  int LOOKUP_TABLE = 27;
 
   /**
    * The feature id for the '<em><b>Table</b></em>' containment reference.
@@ -1731,7 +1777,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTable()
    * @generated
    */
-  int TABLE = 27;
+  int TABLE = 28;
 
   /**
    * The feature id for the '<em><b>Headers</b></em>' containment reference.
@@ -1768,7 +1814,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getHeaderRow()
    * @generated
    */
-  int HEADER_ROW = 28;
+  int HEADER_ROW = 29;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' attribute list.
@@ -1796,7 +1842,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTableRow()
    * @generated
    */
-  int TABLE_ROW = 29;
+  int TABLE_ROW = 30;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -1824,7 +1870,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTableClassifier()
    * @generated
    */
-  int TABLE_CLASSIFIER = 30;
+  int TABLE_CLASSIFIER = 31;
 
   /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
@@ -1854,7 +1900,7 @@ public interface KactorsPackage extends EPackage
   int TABLE_CLASSIFIER__STRING = 2;
 
   /**
-   * The feature id for the '<em><b>Observable</b></em>' attribute.
+   * The feature id for the '<em><b>Observable</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -1996,7 +2042,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getQuantity()
    * @generated
    */
-  int QUANTITY = 31;
+  int QUANTITY = 32;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -2051,7 +2097,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getAnnotation()
    * @generated
    */
-  int ANNOTATION = 32;
+  int ANNOTATION = 33;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2088,7 +2134,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getLiteral()
    * @generated
    */
-  int LITERAL = 33;
+  int LITERAL = 34;
 
   /**
    * The feature id for the '<em><b>Number</b></em>' containment reference.
@@ -2161,7 +2207,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getParameterList()
    * @generated
    */
-  int PARAMETER_LIST = 34;
+  int PARAMETER_LIST = 35;
 
   /**
    * The feature id for the '<em><b>Pairs</b></em>' containment reference list.
@@ -2189,43 +2235,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getKeyValuePair()
    * @generated
    */
-  int KEY_VALUE_PAIR = 35;
-
-  /**
-   * The feature id for the '<em><b>Name</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int KEY_VALUE_PAIR__NAME = 0;
-
-  /**
-   * The feature id for the '<em><b>Interactive</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int KEY_VALUE_PAIR__INTERACTIVE = 1;
-
-  /**
-   * The feature id for the '<em><b>Value</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int KEY_VALUE_PAIR__VALUE = 2;
-
-  /**
-   * The feature id for the '<em><b>Key</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int KEY_VALUE_PAIR__KEY = 3;
+  int KEY_VALUE_PAIR = 36;
 
   /**
    * The feature id for the '<em><b>Tag</b></em>' attribute.
@@ -2234,7 +2244,43 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int KEY_VALUE_PAIR__TAG = 4;
+  int KEY_VALUE_PAIR__TAG = 0;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int KEY_VALUE_PAIR__NAME = 1;
+
+  /**
+   * The feature id for the '<em><b>Interactive</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int KEY_VALUE_PAIR__INTERACTIVE = 2;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int KEY_VALUE_PAIR__VALUE = 3;
+
+  /**
+   * The feature id for the '<em><b>Key</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int KEY_VALUE_PAIR__KEY = 4;
 
   /**
    * The number of structural features of the '<em>Key Value Pair</em>' class.
@@ -2253,7 +2299,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUnitElement()
    * @generated
    */
-  int UNIT_ELEMENT = 36;
+  int UNIT_ELEMENT = 37;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2290,7 +2336,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUnit()
    * @generated
    */
-  int UNIT = 37;
+  int UNIT = 38;
 
   /**
    * The feature id for the '<em><b>Root</b></em>' containment reference.
@@ -2336,7 +2382,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getCurrency()
    * @generated
    */
-  int CURRENCY = 38;
+  int CURRENCY = 39;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2382,7 +2428,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getREL_OPERATOR()
    * @generated
    */
-  int REL_OPERATOR = 39;
+  int REL_OPERATOR = 40;
 
   /**
    * The feature id for the '<em><b>Gt</b></em>' attribute.
@@ -2455,7 +2501,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getNumber()
    * @generated
    */
-  int NUMBER = 40;
+  int NUMBER = 41;
 
   /**
    * The feature id for the '<em><b>Negative</b></em>' attribute.
@@ -2546,7 +2592,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getDate()
    * @generated
    */
-  int DATE = 41;
+  int DATE = 42;
 
   /**
    * The feature id for the '<em><b>Year</b></em>' attribute.
@@ -2630,6 +2676,658 @@ public interface KactorsPackage extends EPackage
   int DATE_FEATURE_COUNT = 8;
 
   /**
+   * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ObservableSemanticsImpl <em>Observable Semantics</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kactors.kactors.impl.ObservableSemanticsImpl
+   * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getObservableSemantics()
+   * @generated
+   */
+  int OBSERVABLE_SEMANTICS = 43;
+
+  /**
+   * The feature id for the '<em><b>Declaration</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE_SEMANTICS__DECLARATION = 0;
+
+  /**
+   * The feature id for the '<em><b>Unit</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE_SEMANTICS__UNIT = 1;
+
+  /**
+   * The feature id for the '<em><b>Currency</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE_SEMANTICS__CURRENCY = 2;
+
+  /**
+   * The feature id for the '<em><b>Value Operators</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE_SEMANTICS__VALUE_OPERATORS = 3;
+
+  /**
+   * The feature id for the '<em><b>Optional</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE_SEMANTICS__OPTIONAL = 4;
+
+  /**
+   * The feature id for the '<em><b>From</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE_SEMANTICS__FROM = 5;
+
+  /**
+   * The feature id for the '<em><b>To</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE_SEMANTICS__TO = 6;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE_SEMANTICS__NAME = 7;
+
+  /**
+   * The number of structural features of the '<em>Observable Semantics</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 8;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ValueOperatorImpl <em>Value Operator</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kactors.kactors.impl.ValueOperatorImpl
+   * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getValueOperator()
+   * @generated
+   */
+  int VALUE_OPERATOR = 44;
+
+  /**
+   * The feature id for the '<em><b>Modifier</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__MODIFIER = 0;
+
+  /**
+   * The feature id for the '<em><b>Down To</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__DOWN_TO = 1;
+
+  /**
+   * The feature id for the '<em><b>Comparison Value</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__COMPARISON_VALUE = 2;
+
+  /**
+   * The feature id for the '<em><b>Comparison Quantity</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__COMPARISON_QUANTITY = 3;
+
+  /**
+   * The feature id for the '<em><b>Comparison Concept</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__COMPARISON_CONCEPT = 4;
+
+  /**
+   * The feature id for the '<em><b>Comparison Observable</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__COMPARISON_OBSERVABLE = 5;
+
+  /**
+   * The feature id for the '<em><b>Total</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__TOTAL = 6;
+
+  /**
+   * The feature id for the '<em><b>Averaged</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__AVERAGED = 7;
+
+  /**
+   * The feature id for the '<em><b>Summed</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR__SUMMED = 8;
+
+  /**
+   * The number of structural features of the '<em>Value Operator</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE_OPERATOR_FEATURE_COUNT = 9;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ConceptDeclarationImpl <em>Concept Declaration</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kactors.kactors.impl.ConceptDeclarationImpl
+   * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getConceptDeclaration()
+   * @generated
+   */
+  int CONCEPT_DECLARATION = 45;
+
+  /**
+   * The feature id for the '<em><b>Main</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__MAIN = 0;
+
+  /**
+   * The feature id for the '<em><b>Distributed Of Inherency</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__DISTRIBUTED_OF_INHERENCY = 1;
+
+  /**
+   * The feature id for the '<em><b>Inherency</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__INHERENCY = 2;
+
+  /**
+   * The feature id for the '<em><b>Distributed For Inherency</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__DISTRIBUTED_FOR_INHERENCY = 3;
+
+  /**
+   * The feature id for the '<em><b>Motivation</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__MOTIVATION = 4;
+
+  /**
+   * The feature id for the '<em><b>Compresent</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__COMPRESENT = 5;
+
+  /**
+   * The feature id for the '<em><b>Causant</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__CAUSANT = 6;
+
+  /**
+   * The feature id for the '<em><b>Adjacent</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__ADJACENT = 7;
+
+  /**
+   * The feature id for the '<em><b>Container</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__CONTAINER = 8;
+
+  /**
+   * The feature id for the '<em><b>Contained</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__CONTAINED = 9;
+
+  /**
+   * The feature id for the '<em><b>Caused</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__CAUSED = 10;
+
+  /**
+   * The feature id for the '<em><b>Distributed Temporal Inherency</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__DISTRIBUTED_TEMPORAL_INHERENCY = 11;
+
+  /**
+   * The feature id for the '<em><b>During</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__DURING = 12;
+
+  /**
+   * The feature id for the '<em><b>Distributed Within Inherency</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__DISTRIBUTED_WITHIN_INHERENCY = 13;
+
+  /**
+   * The feature id for the '<em><b>Context</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__CONTEXT = 14;
+
+  /**
+   * The feature id for the '<em><b>Relationship Source</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__RELATIONSHIP_SOURCE = 15;
+
+  /**
+   * The feature id for the '<em><b>Relationship Target</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__RELATIONSHIP_TARGET = 16;
+
+  /**
+   * The feature id for the '<em><b>Operators</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__OPERATORS = 17;
+
+  /**
+   * The feature id for the '<em><b>Operands</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__OPERANDS = 18;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__NAME = 19;
+
+  /**
+   * The number of structural features of the '<em>Concept Declaration</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION_FEATURE_COUNT = 20;
+
+  /**
+   * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ConceptImpl <em>Concept</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kactors.kactors.impl.ConceptImpl
+   * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getConcept()
+   * @generated
+   */
+  int CONCEPT = 46;
+
+  /**
+   * The feature id for the '<em><b>Negated</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__NEGATED = 0;
+
+  /**
+   * The feature id for the '<em><b>Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__NAME = 1;
+
+  /**
+   * The feature id for the '<em><b>Auth Concept</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__AUTH_CONCEPT = 2;
+
+  /**
+   * The feature id for the '<em><b>String Identifier</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__STRING_IDENTIFIER = 3;
+
+  /**
+   * The feature id for the '<em><b>Int Identifier</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__INT_IDENTIFIER = 4;
+
+  /**
+   * The feature id for the '<em><b>Authority</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__AUTHORITY = 5;
+
+  /**
+   * The feature id for the '<em><b>Presence</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__PRESENCE = 6;
+
+  /**
+   * The feature id for the '<em><b>Concept</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__CONCEPT = 7;
+
+  /**
+   * The feature id for the '<em><b>Count</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__COUNT = 8;
+
+  /**
+   * The feature id for the '<em><b>Distance</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__DISTANCE = 9;
+
+  /**
+   * The feature id for the '<em><b>Probability</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__PROBABILITY = 10;
+
+  /**
+   * The feature id for the '<em><b>Assessment</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__ASSESSMENT = 11;
+
+  /**
+   * The feature id for the '<em><b>Change</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__CHANGE = 12;
+
+  /**
+   * The feature id for the '<em><b>Rate</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__RATE = 13;
+
+  /**
+   * The feature id for the '<em><b>Uncertainty</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__UNCERTAINTY = 14;
+
+  /**
+   * The feature id for the '<em><b>Magnitude</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__MAGNITUDE = 15;
+
+  /**
+   * The feature id for the '<em><b>Level</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__LEVEL = 16;
+
+  /**
+   * The feature id for the '<em><b>Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__TYPE = 17;
+
+  /**
+   * The feature id for the '<em><b>Observability</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__OBSERVABILITY = 18;
+
+  /**
+   * The feature id for the '<em><b>Proportion</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__PROPORTION = 19;
+
+  /**
+   * The feature id for the '<em><b>Other</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__OTHER = 20;
+
+  /**
+   * The feature id for the '<em><b>Percentage</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__PERCENTAGE = 21;
+
+  /**
+   * The feature id for the '<em><b>Ratio</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__RATIO = 22;
+
+  /**
+   * The feature id for the '<em><b>Monetary</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__MONETARY = 23;
+
+  /**
+   * The feature id for the '<em><b>Value</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__VALUE = 24;
+
+  /**
+   * The feature id for the '<em><b>Occurrence</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__OCCURRENCE = 25;
+
+  /**
+   * The feature id for the '<em><b>Declaration</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__DECLARATION = 26;
+
+  /**
+   * The number of structural features of the '<em>Concept</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_FEATURE_COUNT = 27;
+
+  /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.UnitOp <em>Unit Op</em>}' enum.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -2637,7 +3335,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUnitOp()
    * @generated
    */
-  int UNIT_OP = 42;
+  int UNIT_OP = 47;
 
 
   /**
@@ -2826,15 +3524,15 @@ public interface KactorsPackage extends EPackage
   EAttribute getPreamble_Worldview();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#getObservable <em>Observable</em>}'.
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Preamble#getObservable <em>Observable</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Observable</em>'.
+   * @return the meta object for the containment reference '<em>Observable</em>'.
    * @see org.integratedmodelling.kactors.kactors.Preamble#getObservable()
    * @see #getPreamble()
    * @generated
    */
-  EAttribute getPreamble_Observable();
+  EReference getPreamble_Observable();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Preamble#getObservables <em>Observables</em>}'.
@@ -2890,6 +3588,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EAttribute getPreamble_Style();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Preamble#getInlineStyle <em>Inline Style</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Inline Style</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Preamble#getInlineStyle()
+   * @see #getPreamble()
+   * @generated
+   */
+  EReference getPreamble_InlineStyle();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#getLogo <em>Logo</em>}'.
@@ -3809,15 +4518,15 @@ public interface KactorsPackage extends EPackage
   EReference getValue_Map();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#getObservable <em>Observable</em>}'.
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getObservable <em>Observable</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Observable</em>'.
+   * @return the meta object for the containment reference '<em>Observable</em>'.
    * @see org.integratedmodelling.kactors.kactors.Value#getObservable()
    * @see #getValue()
    * @generated
    */
-  EAttribute getValue_Observable();
+  EReference getValue_Observable();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#getExpression <em>Expression</em>}'.
@@ -3929,15 +4638,15 @@ public interface KactorsPackage extends EPackage
   EAttribute getMatch_Regexp();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Match#getObservable <em>Observable</em>}'.
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Match#getObservable <em>Observable</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Observable</em>'.
+   * @return the meta object for the containment reference '<em>Observable</em>'.
    * @see org.integratedmodelling.kactors.kactors.Match#getObservable()
    * @see #getMatch()
    * @generated
    */
-  EAttribute getMatch_Observable();
+  EReference getMatch_Observable();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Match#getLiteral <em>Literal</em>}'.
@@ -4232,15 +4941,15 @@ public interface KactorsPackage extends EPackage
   EAttribute getClassifier_String();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Classifier#getObservable <em>Observable</em>}'.
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Classifier#getObservable <em>Observable</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Observable</em>'.
+   * @return the meta object for the containment reference '<em>Observable</em>'.
    * @see org.integratedmodelling.kactors.kactors.Classifier#getObservable()
    * @see #getClassifier()
    * @generated
    */
-  EAttribute getClassifier_Observable();
+  EReference getClassifier_Observable();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Classifier#getId <em>Id</em>}'.
@@ -4287,6 +4996,17 @@ public interface KactorsPackage extends EPackage
   EAttribute getClassifier_Nodata();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Classifier#getMap <em>Map</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Map</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Classifier#getMap()
+   * @see #getClassifier()
+   * @generated
+   */
+  EReference getClassifier_Map();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Classifier#isStar <em>Star</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4296,6 +5016,27 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EAttribute getClassifier_Star();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Observable <em>Observable</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Observable</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Observable
+   * @generated
+   */
+  EClass getObservable();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Observable#getObservable <em>Observable</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Observable</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Observable#getObservable()
+   * @see #getObservable()
+   * @generated
+   */
+  EReference getObservable_Observable();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.LookupTable <em>Lookup Table</em>}'.
@@ -4436,15 +5177,15 @@ public interface KactorsPackage extends EPackage
   EAttribute getTableClassifier_String();
 
   /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getObservable <em>Observable</em>}'.
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getObservable <em>Observable</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Observable</em>'.
+   * @return the meta object for the containment reference '<em>Observable</em>'.
    * @see org.integratedmodelling.kactors.kactors.TableClassifier#getObservable()
    * @see #getTableClassifier()
    * @generated
    */
-  EAttribute getTableClassifier_Observable();
+  EReference getTableClassifier_Observable();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.TableClassifier#getOp <em>Op</em>}'.
@@ -4783,6 +5524,17 @@ public interface KactorsPackage extends EPackage
   EClass getKeyValuePair();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getTag <em>Tag</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Tag</em>'.
+   * @see org.integratedmodelling.kactors.kactors.KeyValuePair#getTag()
+   * @see #getKeyValuePair()
+   * @generated
+   */
+  EAttribute getKeyValuePair_Tag();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getName <em>Name</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4825,17 +5577,6 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EAttribute getKeyValuePair_Key();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.KeyValuePair#getTag <em>Tag</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Tag</em>'.
-   * @see org.integratedmodelling.kactors.kactors.KeyValuePair#getTag()
-   * @see #getKeyValuePair()
-   * @generated
-   */
-  EAttribute getKeyValuePair_Tag();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.UnitElement <em>Unit Element</em>}'.
@@ -5228,6 +5969,750 @@ public interface KactorsPackage extends EPackage
   EAttribute getDate_Ms();
 
   /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.ObservableSemantics <em>Observable Semantics</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Observable Semantics</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ObservableSemantics
+   * @generated
+   */
+  EClass getObservableSemantics();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ObservableSemantics#getDeclaration <em>Declaration</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Declaration</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ObservableSemantics#getDeclaration()
+   * @see #getObservableSemantics()
+   * @generated
+   */
+  EReference getObservableSemantics_Declaration();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ObservableSemantics#getUnit <em>Unit</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Unit</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ObservableSemantics#getUnit()
+   * @see #getObservableSemantics()
+   * @generated
+   */
+  EReference getObservableSemantics_Unit();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ObservableSemantics#getCurrency <em>Currency</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Currency</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ObservableSemantics#getCurrency()
+   * @see #getObservableSemantics()
+   * @generated
+   */
+  EReference getObservableSemantics_Currency();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.ObservableSemantics#getValueOperators <em>Value Operators</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Value Operators</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ObservableSemantics#getValueOperators()
+   * @see #getObservableSemantics()
+   * @generated
+   */
+  EReference getObservableSemantics_ValueOperators();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.ObservableSemantics#isOptional <em>Optional</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Optional</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ObservableSemantics#isOptional()
+   * @see #getObservableSemantics()
+   * @generated
+   */
+  EAttribute getObservableSemantics_Optional();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ObservableSemantics#getFrom <em>From</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>From</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ObservableSemantics#getFrom()
+   * @see #getObservableSemantics()
+   * @generated
+   */
+  EReference getObservableSemantics_From();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ObservableSemantics#getTo <em>To</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>To</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ObservableSemantics#getTo()
+   * @see #getObservableSemantics()
+   * @generated
+   */
+  EReference getObservableSemantics_To();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.ObservableSemantics#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ObservableSemantics#getName()
+   * @see #getObservableSemantics()
+   * @generated
+   */
+  EAttribute getObservableSemantics_Name();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.ValueOperator <em>Value Operator</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Value Operator</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ValueOperator
+   * @generated
+   */
+  EClass getValueOperator();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.ValueOperator#getModifier <em>Modifier</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Modifier</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ValueOperator#getModifier()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EAttribute getValueOperator_Modifier();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.ValueOperator#getDownTo <em>Down To</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Down To</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ValueOperator#getDownTo()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EAttribute getValueOperator_DownTo();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ValueOperator#getComparisonValue <em>Comparison Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Comparison Value</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ValueOperator#getComparisonValue()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EReference getValueOperator_ComparisonValue();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ValueOperator#getComparisonQuantity <em>Comparison Quantity</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Comparison Quantity</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ValueOperator#getComparisonQuantity()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EReference getValueOperator_ComparisonQuantity();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.ValueOperator#getComparisonConcept <em>Comparison Concept</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Comparison Concept</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ValueOperator#getComparisonConcept()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EReference getValueOperator_ComparisonConcept();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ValueOperator#getComparisonObservable <em>Comparison Observable</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Comparison Observable</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ValueOperator#getComparisonObservable()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EReference getValueOperator_ComparisonObservable();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.ValueOperator#getTotal <em>Total</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Total</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ValueOperator#getTotal()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EAttribute getValueOperator_Total();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.ValueOperator#getAveraged <em>Averaged</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Averaged</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ValueOperator#getAveraged()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EAttribute getValueOperator_Averaged();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.ValueOperator#getSummed <em>Summed</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Summed</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ValueOperator#getSummed()
+   * @see #getValueOperator()
+   * @generated
+   */
+  EAttribute getValueOperator_Summed();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration <em>Concept Declaration</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Concept Declaration</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration
+   * @generated
+   */
+  EClass getConceptDeclaration();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getMain <em>Main</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Main</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getMain()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_Main();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#isDistributedOfInherency <em>Distributed Of Inherency</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Distributed Of Inherency</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#isDistributedOfInherency()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EAttribute getConceptDeclaration_DistributedOfInherency();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getInherency <em>Inherency</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Inherency</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getInherency()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_Inherency();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#isDistributedForInherency <em>Distributed For Inherency</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Distributed For Inherency</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#isDistributedForInherency()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EAttribute getConceptDeclaration_DistributedForInherency();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getMotivation <em>Motivation</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Motivation</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getMotivation()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_Motivation();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getCompresent <em>Compresent</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Compresent</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getCompresent()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_Compresent();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getCausant <em>Causant</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Causant</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getCausant()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_Causant();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getAdjacent <em>Adjacent</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Adjacent</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getAdjacent()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_Adjacent();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getContainer <em>Container</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Container</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getContainer()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_Container();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getContained <em>Contained</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Contained</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getContained()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_Contained();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getCaused <em>Caused</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Caused</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getCaused()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_Caused();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#isDistributedTemporalInherency <em>Distributed Temporal Inherency</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Distributed Temporal Inherency</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#isDistributedTemporalInherency()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EAttribute getConceptDeclaration_DistributedTemporalInherency();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getDuring <em>During</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>During</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getDuring()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_During();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#isDistributedWithinInherency <em>Distributed Within Inherency</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Distributed Within Inherency</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#isDistributedWithinInherency()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EAttribute getConceptDeclaration_DistributedWithinInherency();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getContext <em>Context</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Context</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getContext()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_Context();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getRelationshipSource <em>Relationship Source</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Relationship Source</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getRelationshipSource()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_RelationshipSource();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getRelationshipTarget <em>Relationship Target</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Relationship Target</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getRelationshipTarget()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_RelationshipTarget();
+
+  /**
+   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getOperators <em>Operators</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Operators</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getOperators()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EAttribute getConceptDeclaration_Operators();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getOperands <em>Operands</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Operands</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getOperands()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EReference getConceptDeclaration_Operands();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration#getName()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EAttribute getConceptDeclaration_Name();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Concept <em>Concept</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Concept</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept
+   * @generated
+   */
+  EClass getConcept();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isNegated <em>Negated</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Negated</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isNegated()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Negated();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#getName <em>Name</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Name</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#getName()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Name();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isAuthConcept <em>Auth Concept</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Auth Concept</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isAuthConcept()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_AuthConcept();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#getStringIdentifier <em>String Identifier</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>String Identifier</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#getStringIdentifier()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_StringIdentifier();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#getIntIdentifier <em>Int Identifier</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Int Identifier</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#getIntIdentifier()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_IntIdentifier();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#getAuthority <em>Authority</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Authority</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#getAuthority()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Authority();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isPresence <em>Presence</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Presence</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isPresence()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Presence();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Concept#getConcept <em>Concept</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Concept</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#getConcept()
+   * @see #getConcept()
+   * @generated
+   */
+  EReference getConcept_Concept();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isCount <em>Count</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Count</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isCount()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Count();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isDistance <em>Distance</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Distance</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isDistance()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Distance();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isProbability <em>Probability</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Probability</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isProbability()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Probability();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isAssessment <em>Assessment</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Assessment</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isAssessment()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Assessment();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isChange <em>Change</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Change</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isChange()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Change();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isRate <em>Rate</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Rate</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isRate()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Rate();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isUncertainty <em>Uncertainty</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Uncertainty</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isUncertainty()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Uncertainty();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isMagnitude <em>Magnitude</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Magnitude</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isMagnitude()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Magnitude();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isLevel <em>Level</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Level</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isLevel()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Level();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isType <em>Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Type</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isType()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Type();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isObservability <em>Observability</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Observability</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isObservability()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Observability();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isProportion <em>Proportion</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Proportion</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isProportion()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Proportion();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Concept#getOther <em>Other</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Other</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#getOther()
+   * @see #getConcept()
+   * @generated
+   */
+  EReference getConcept_Other();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isPercentage <em>Percentage</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Percentage</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isPercentage()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Percentage();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isRatio <em>Ratio</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Ratio</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isRatio()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Ratio();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isMonetary <em>Monetary</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Monetary</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isMonetary()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Monetary();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isValue <em>Value</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Value</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isValue()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Value();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Concept#isOccurrence <em>Occurrence</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Occurrence</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#isOccurrence()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Occurrence();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Concept#getDeclaration <em>Declaration</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Declaration</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Concept#getDeclaration()
+   * @see #getConcept()
+   * @generated
+   */
+  EReference getConcept_Declaration();
+
+  /**
    * Returns the meta object for enum '{@link org.integratedmodelling.kactors.kactors.UnitOp <em>Unit Op</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5401,12 +6886,12 @@ public interface KactorsPackage extends EPackage
     EAttribute PREAMBLE__WORLDVIEW = eINSTANCE.getPreamble_Worldview();
 
     /**
-     * The meta object literal for the '<em><b>Observable</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Observable</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute PREAMBLE__OBSERVABLE = eINSTANCE.getPreamble_Observable();
+    EReference PREAMBLE__OBSERVABLE = eINSTANCE.getPreamble_Observable();
 
     /**
      * The meta object literal for the '<em><b>Observables</b></em>' containment reference feature.
@@ -5447,6 +6932,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute PREAMBLE__STYLE = eINSTANCE.getPreamble_Style();
+
+    /**
+     * The meta object literal for the '<em><b>Inline Style</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference PREAMBLE__INLINE_STYLE = eINSTANCE.getPreamble_InlineStyle();
 
     /**
      * The meta object literal for the '<em><b>Logo</b></em>' attribute feature.
@@ -6165,12 +7658,12 @@ public interface KactorsPackage extends EPackage
     EReference VALUE__MAP = eINSTANCE.getValue_Map();
 
     /**
-     * The meta object literal for the '<em><b>Observable</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Observable</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute VALUE__OBSERVABLE = eINSTANCE.getValue_Observable();
+    EReference VALUE__OBSERVABLE = eINSTANCE.getValue_Observable();
 
     /**
      * The meta object literal for the '<em><b>Expression</b></em>' attribute feature.
@@ -6255,12 +7748,12 @@ public interface KactorsPackage extends EPackage
     EAttribute MATCH__REGEXP = eINSTANCE.getMatch_Regexp();
 
     /**
-     * The meta object literal for the '<em><b>Observable</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Observable</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute MATCH__OBSERVABLE = eINSTANCE.getMatch_Observable();
+    EReference MATCH__OBSERVABLE = eINSTANCE.getMatch_Observable();
 
     /**
      * The meta object literal for the '<em><b>Literal</b></em>' containment reference feature.
@@ -6489,12 +7982,12 @@ public interface KactorsPackage extends EPackage
     EAttribute CLASSIFIER__STRING = eINSTANCE.getClassifier_String();
 
     /**
-     * The meta object literal for the '<em><b>Observable</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Observable</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute CLASSIFIER__OBSERVABLE = eINSTANCE.getClassifier_Observable();
+    EReference CLASSIFIER__OBSERVABLE = eINSTANCE.getClassifier_Observable();
 
     /**
      * The meta object literal for the '<em><b>Id</b></em>' attribute feature.
@@ -6529,12 +8022,38 @@ public interface KactorsPackage extends EPackage
     EAttribute CLASSIFIER__NODATA = eINSTANCE.getClassifier_Nodata();
 
     /**
+     * The meta object literal for the '<em><b>Map</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CLASSIFIER__MAP = eINSTANCE.getClassifier_Map();
+
+    /**
      * The meta object literal for the '<em><b>Star</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EAttribute CLASSIFIER__STAR = eINSTANCE.getClassifier_Star();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.ObservableImpl <em>Observable</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kactors.kactors.impl.ObservableImpl
+     * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getObservable()
+     * @generated
+     */
+    EClass OBSERVABLE = eINSTANCE.getObservable();
+
+    /**
+     * The meta object literal for the '<em><b>Observable</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OBSERVABLE__OBSERVABLE = eINSTANCE.getObservable_Observable();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.LookupTableImpl <em>Lookup Table</em>}' class.
@@ -6651,12 +8170,12 @@ public interface KactorsPackage extends EPackage
     EAttribute TABLE_CLASSIFIER__STRING = eINSTANCE.getTableClassifier_String();
 
     /**
-     * The meta object literal for the '<em><b>Observable</b></em>' attribute feature.
+     * The meta object literal for the '<em><b>Observable</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EAttribute TABLE_CLASSIFIER__OBSERVABLE = eINSTANCE.getTableClassifier_Observable();
+    EReference TABLE_CLASSIFIER__OBSERVABLE = eINSTANCE.getTableClassifier_Observable();
 
     /**
      * The meta object literal for the '<em><b>Op</b></em>' containment reference feature.
@@ -6917,6 +8436,14 @@ public interface KactorsPackage extends EPackage
     EClass KEY_VALUE_PAIR = eINSTANCE.getKeyValuePair();
 
     /**
+     * The meta object literal for the '<em><b>Tag</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute KEY_VALUE_PAIR__TAG = eINSTANCE.getKeyValuePair_Tag();
+
+    /**
      * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -6947,14 +8474,6 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute KEY_VALUE_PAIR__KEY = eINSTANCE.getKeyValuePair_Key();
-
-    /**
-     * The meta object literal for the '<em><b>Tag</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute KEY_VALUE_PAIR__TAG = eINSTANCE.getKeyValuePair_Tag();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.UnitElementImpl <em>Unit Element</em>}' class.
@@ -7255,6 +8774,558 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute DATE__MS = eINSTANCE.getDate_Ms();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.ObservableSemanticsImpl <em>Observable Semantics</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kactors.kactors.impl.ObservableSemanticsImpl
+     * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getObservableSemantics()
+     * @generated
+     */
+    EClass OBSERVABLE_SEMANTICS = eINSTANCE.getObservableSemantics();
+
+    /**
+     * The meta object literal for the '<em><b>Declaration</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OBSERVABLE_SEMANTICS__DECLARATION = eINSTANCE.getObservableSemantics_Declaration();
+
+    /**
+     * The meta object literal for the '<em><b>Unit</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OBSERVABLE_SEMANTICS__UNIT = eINSTANCE.getObservableSemantics_Unit();
+
+    /**
+     * The meta object literal for the '<em><b>Currency</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OBSERVABLE_SEMANTICS__CURRENCY = eINSTANCE.getObservableSemantics_Currency();
+
+    /**
+     * The meta object literal for the '<em><b>Value Operators</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OBSERVABLE_SEMANTICS__VALUE_OPERATORS = eINSTANCE.getObservableSemantics_ValueOperators();
+
+    /**
+     * The meta object literal for the '<em><b>Optional</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute OBSERVABLE_SEMANTICS__OPTIONAL = eINSTANCE.getObservableSemantics_Optional();
+
+    /**
+     * The meta object literal for the '<em><b>From</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OBSERVABLE_SEMANTICS__FROM = eINSTANCE.getObservableSemantics_From();
+
+    /**
+     * The meta object literal for the '<em><b>To</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference OBSERVABLE_SEMANTICS__TO = eINSTANCE.getObservableSemantics_To();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute OBSERVABLE_SEMANTICS__NAME = eINSTANCE.getObservableSemantics_Name();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.ValueOperatorImpl <em>Value Operator</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kactors.kactors.impl.ValueOperatorImpl
+     * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getValueOperator()
+     * @generated
+     */
+    EClass VALUE_OPERATOR = eINSTANCE.getValueOperator();
+
+    /**
+     * The meta object literal for the '<em><b>Modifier</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE_OPERATOR__MODIFIER = eINSTANCE.getValueOperator_Modifier();
+
+    /**
+     * The meta object literal for the '<em><b>Down To</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE_OPERATOR__DOWN_TO = eINSTANCE.getValueOperator_DownTo();
+
+    /**
+     * The meta object literal for the '<em><b>Comparison Value</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE_OPERATOR__COMPARISON_VALUE = eINSTANCE.getValueOperator_ComparisonValue();
+
+    /**
+     * The meta object literal for the '<em><b>Comparison Quantity</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE_OPERATOR__COMPARISON_QUANTITY = eINSTANCE.getValueOperator_ComparisonQuantity();
+
+    /**
+     * The meta object literal for the '<em><b>Comparison Concept</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE_OPERATOR__COMPARISON_CONCEPT = eINSTANCE.getValueOperator_ComparisonConcept();
+
+    /**
+     * The meta object literal for the '<em><b>Comparison Observable</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE_OPERATOR__COMPARISON_OBSERVABLE = eINSTANCE.getValueOperator_ComparisonObservable();
+
+    /**
+     * The meta object literal for the '<em><b>Total</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE_OPERATOR__TOTAL = eINSTANCE.getValueOperator_Total();
+
+    /**
+     * The meta object literal for the '<em><b>Averaged</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE_OPERATOR__AVERAGED = eINSTANCE.getValueOperator_Averaged();
+
+    /**
+     * The meta object literal for the '<em><b>Summed</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE_OPERATOR__SUMMED = eINSTANCE.getValueOperator_Summed();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.ConceptDeclarationImpl <em>Concept Declaration</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kactors.kactors.impl.ConceptDeclarationImpl
+     * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getConceptDeclaration()
+     * @generated
+     */
+    EClass CONCEPT_DECLARATION = eINSTANCE.getConceptDeclaration();
+
+    /**
+     * The meta object literal for the '<em><b>Main</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__MAIN = eINSTANCE.getConceptDeclaration_Main();
+
+    /**
+     * The meta object literal for the '<em><b>Distributed Of Inherency</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT_DECLARATION__DISTRIBUTED_OF_INHERENCY = eINSTANCE.getConceptDeclaration_DistributedOfInherency();
+
+    /**
+     * The meta object literal for the '<em><b>Inherency</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__INHERENCY = eINSTANCE.getConceptDeclaration_Inherency();
+
+    /**
+     * The meta object literal for the '<em><b>Distributed For Inherency</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT_DECLARATION__DISTRIBUTED_FOR_INHERENCY = eINSTANCE.getConceptDeclaration_DistributedForInherency();
+
+    /**
+     * The meta object literal for the '<em><b>Motivation</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__MOTIVATION = eINSTANCE.getConceptDeclaration_Motivation();
+
+    /**
+     * The meta object literal for the '<em><b>Compresent</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__COMPRESENT = eINSTANCE.getConceptDeclaration_Compresent();
+
+    /**
+     * The meta object literal for the '<em><b>Causant</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__CAUSANT = eINSTANCE.getConceptDeclaration_Causant();
+
+    /**
+     * The meta object literal for the '<em><b>Adjacent</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__ADJACENT = eINSTANCE.getConceptDeclaration_Adjacent();
+
+    /**
+     * The meta object literal for the '<em><b>Container</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__CONTAINER = eINSTANCE.getConceptDeclaration_Container();
+
+    /**
+     * The meta object literal for the '<em><b>Contained</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__CONTAINED = eINSTANCE.getConceptDeclaration_Contained();
+
+    /**
+     * The meta object literal for the '<em><b>Caused</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__CAUSED = eINSTANCE.getConceptDeclaration_Caused();
+
+    /**
+     * The meta object literal for the '<em><b>Distributed Temporal Inherency</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT_DECLARATION__DISTRIBUTED_TEMPORAL_INHERENCY = eINSTANCE.getConceptDeclaration_DistributedTemporalInherency();
+
+    /**
+     * The meta object literal for the '<em><b>During</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__DURING = eINSTANCE.getConceptDeclaration_During();
+
+    /**
+     * The meta object literal for the '<em><b>Distributed Within Inherency</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT_DECLARATION__DISTRIBUTED_WITHIN_INHERENCY = eINSTANCE.getConceptDeclaration_DistributedWithinInherency();
+
+    /**
+     * The meta object literal for the '<em><b>Context</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__CONTEXT = eINSTANCE.getConceptDeclaration_Context();
+
+    /**
+     * The meta object literal for the '<em><b>Relationship Source</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__RELATIONSHIP_SOURCE = eINSTANCE.getConceptDeclaration_RelationshipSource();
+
+    /**
+     * The meta object literal for the '<em><b>Relationship Target</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__RELATIONSHIP_TARGET = eINSTANCE.getConceptDeclaration_RelationshipTarget();
+
+    /**
+     * The meta object literal for the '<em><b>Operators</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT_DECLARATION__OPERATORS = eINSTANCE.getConceptDeclaration_Operators();
+
+    /**
+     * The meta object literal for the '<em><b>Operands</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT_DECLARATION__OPERANDS = eINSTANCE.getConceptDeclaration_Operands();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT_DECLARATION__NAME = eINSTANCE.getConceptDeclaration_Name();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.ConceptImpl <em>Concept</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kactors.kactors.impl.ConceptImpl
+     * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getConcept()
+     * @generated
+     */
+    EClass CONCEPT = eINSTANCE.getConcept();
+
+    /**
+     * The meta object literal for the '<em><b>Negated</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__NEGATED = eINSTANCE.getConcept_Negated();
+
+    /**
+     * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__NAME = eINSTANCE.getConcept_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Auth Concept</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__AUTH_CONCEPT = eINSTANCE.getConcept_AuthConcept();
+
+    /**
+     * The meta object literal for the '<em><b>String Identifier</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__STRING_IDENTIFIER = eINSTANCE.getConcept_StringIdentifier();
+
+    /**
+     * The meta object literal for the '<em><b>Int Identifier</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__INT_IDENTIFIER = eINSTANCE.getConcept_IntIdentifier();
+
+    /**
+     * The meta object literal for the '<em><b>Authority</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__AUTHORITY = eINSTANCE.getConcept_Authority();
+
+    /**
+     * The meta object literal for the '<em><b>Presence</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__PRESENCE = eINSTANCE.getConcept_Presence();
+
+    /**
+     * The meta object literal for the '<em><b>Concept</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT__CONCEPT = eINSTANCE.getConcept_Concept();
+
+    /**
+     * The meta object literal for the '<em><b>Count</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__COUNT = eINSTANCE.getConcept_Count();
+
+    /**
+     * The meta object literal for the '<em><b>Distance</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__DISTANCE = eINSTANCE.getConcept_Distance();
+
+    /**
+     * The meta object literal for the '<em><b>Probability</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__PROBABILITY = eINSTANCE.getConcept_Probability();
+
+    /**
+     * The meta object literal for the '<em><b>Assessment</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__ASSESSMENT = eINSTANCE.getConcept_Assessment();
+
+    /**
+     * The meta object literal for the '<em><b>Change</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__CHANGE = eINSTANCE.getConcept_Change();
+
+    /**
+     * The meta object literal for the '<em><b>Rate</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__RATE = eINSTANCE.getConcept_Rate();
+
+    /**
+     * The meta object literal for the '<em><b>Uncertainty</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__UNCERTAINTY = eINSTANCE.getConcept_Uncertainty();
+
+    /**
+     * The meta object literal for the '<em><b>Magnitude</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__MAGNITUDE = eINSTANCE.getConcept_Magnitude();
+
+    /**
+     * The meta object literal for the '<em><b>Level</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__LEVEL = eINSTANCE.getConcept_Level();
+
+    /**
+     * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__TYPE = eINSTANCE.getConcept_Type();
+
+    /**
+     * The meta object literal for the '<em><b>Observability</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__OBSERVABILITY = eINSTANCE.getConcept_Observability();
+
+    /**
+     * The meta object literal for the '<em><b>Proportion</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__PROPORTION = eINSTANCE.getConcept_Proportion();
+
+    /**
+     * The meta object literal for the '<em><b>Other</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT__OTHER = eINSTANCE.getConcept_Other();
+
+    /**
+     * The meta object literal for the '<em><b>Percentage</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__PERCENTAGE = eINSTANCE.getConcept_Percentage();
+
+    /**
+     * The meta object literal for the '<em><b>Ratio</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__RATIO = eINSTANCE.getConcept_Ratio();
+
+    /**
+     * The meta object literal for the '<em><b>Monetary</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__MONETARY = eINSTANCE.getConcept_Monetary();
+
+    /**
+     * The meta object literal for the '<em><b>Value</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__VALUE = eINSTANCE.getConcept_Value();
+
+    /**
+     * The meta object literal for the '<em><b>Occurrence</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__OCCURRENCE = eINSTANCE.getConcept_Occurrence();
+
+    /**
+     * The meta object literal for the '<em><b>Declaration</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference CONCEPT__DECLARATION = eINSTANCE.getConcept_Declaration();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.UnitOp <em>Unit Op</em>}' enum.

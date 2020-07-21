@@ -18,6 +18,7 @@ import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Platform;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -83,11 +84,10 @@ public class KlabSession extends KlabPeer {
 	// six hours
 	private static final long MAX_TICKET_AGE = 1000l * 60l * 60l * 6l;
 
-
 	private AtomicLong queryCounter = new AtomicLong();
 	private Map<EngineEvent.Type, Set<Long>> engineEvents = Collections.synchronizedMap(new HashMap<>());
-	private SessionReference sessionReference; 
-	
+	private SessionReference sessionReference;
+
 	SessionMonitor sessionMonitor = new SessionMonitor() {
 
 		@Override
@@ -176,7 +176,7 @@ public class KlabSession extends KlabPeer {
 				resourceMonitor.add(ticket);
 			}
 		}
-		
+
 		// run the first network check in 10 seconds
 		new CheckNetworkTask().schedule(10000);
 		// start checking tickets in 5
@@ -253,7 +253,7 @@ public class KlabSession extends KlabPeer {
 		return ticket.getStatus() == ITicket.Status.OPEN
 				&& (System.currentTimeMillis() - ticket.getPostDate().getTime()) > MAX_TICKET_AGE;
 	}
-	
+
 	/*
 	 * --- public methods ---
 	 */
@@ -268,7 +268,8 @@ public class KlabSession extends KlabPeer {
 
 	public void processTicketEvent(ITicket ticket, boolean isNew) {
 		resourceMonitor.add(ticket);
-		// expose the resources view, which will set itself to public and refresh when it gets the message 
+		// expose the resources view, which will set itself to public and refresh when
+		// it gets the message
 		Eclipse.INSTANCE.openView(ResourcesView.ID, null);
 		send(IMessage.MessageClass.UserInterface,
 				isNew ? IMessage.Type.TicketCreated : IMessage.Type.TicketStatusChanged, ticket);
@@ -338,7 +339,8 @@ public class KlabSession extends KlabPeer {
 	}
 
 	public void launchApp(String behavior) {
-		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunApp, new LoadApplicationRequest(behavior, false, false));
+		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunApp,
+				new LoadApplicationRequest(behavior, false, false));
 	}
 
 	public void launchTest(String behavior) {
@@ -483,7 +485,8 @@ public class KlabSession extends KlabPeer {
 	public void handleCreateView(IMessage message, Layout component) {
 		if (component.getDestination() == IKActorsBehavior.Type.USER) {
 			Eclipse.INSTANCE.openView(SearchView.ID, null);
-		} else {
+		} else if (component.getPlatform() == null || component.getPlatform() == Platform.DESKTOP
+				|| component.getPlatform() == Platform.ANY) {
 			Eclipse.INSTANCE.openView(ApplicationView.ID, null);
 		}
 		send(message);
@@ -493,7 +496,7 @@ public class KlabSession extends KlabPeer {
 	public void handleCreateComponent(IMessage message, ViewComponent component) {
 		send(message);
 	}
-	
+
 	@MessageHandler(type = Type.ViewAction)
 	public void handleViewAction(IMessage message, ViewAction component) {
 		send(message);
@@ -566,5 +569,5 @@ public class KlabSession extends KlabPeer {
 	public List<String> getUserBehaviors() {
 		return this.sessionReference == null ? new ArrayList<>() : this.sessionReference.getUserAppUrns();
 	}
-	
+
 }

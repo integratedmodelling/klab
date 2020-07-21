@@ -2,6 +2,7 @@ package org.integratedmodelling.kactors.api;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.klab.api.actors.IBehavior;
 
@@ -142,5 +143,14 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 	 * @return
 	 */
 	String getProjectId();
+
+	/**
+	 * Optional map of style specification (CSS-like) encoded in k.Actors as a map
+	 * after "style [<name> with] #{ ... }", all values and keys converted to
+	 * strings.
+	 * 
+	 * @return
+	 */
+	Map<String, String> getStyleSpecs();
 
 }

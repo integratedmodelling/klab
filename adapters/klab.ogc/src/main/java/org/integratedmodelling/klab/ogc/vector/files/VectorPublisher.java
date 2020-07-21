@@ -69,6 +69,11 @@ public class VectorPublisher implements IResourceEnhancer {
 			Geoserver geoserver = Geoserver.create();
 			Urn urn = new Urn(resource.getUrn());
 
+			if (!geoserver.isOnline()) {
+				Logging.INSTANCE.warn("geoserver instance enabled but not reachable: aborting ingestion of " + resource.getUrn());
+				return resource;
+			}
+			
 			if (Postgis.isEnabled()) {
 				Postgis postgis = Postgis.create(urn);
 				if (postgis.isOnline()) {

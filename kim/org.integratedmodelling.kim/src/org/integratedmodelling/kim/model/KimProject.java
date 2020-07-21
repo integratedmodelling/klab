@@ -79,11 +79,11 @@ public class KimProject implements IKimProject {
 			 */
 			String segment = projectId + "/" + SOURCE_FOLDER;
 			int iseg = ouri.indexOf(segment);
-			if (iseg > 0) {				
-				segment = ouri.substring(iseg+segment.length() + 1);
+			if (iseg > 0) {
+				segment = ouri.substring(iseg + segment.length() + 1);
 				if (segment.endsWith(".kim")) {
 					segment = segment.substring(0, segment.length() - 4);
-				} 
+				}
 				return segment.replaceAll("\\/", "\\.");
 			}
 		}
@@ -146,7 +146,7 @@ public class KimProject implements IKimProject {
 		}
 		return result;
 	}
-	
+
 	@Override
 	public String getName() {
 		return name;
@@ -228,16 +228,17 @@ public class KimProject implements IKimProject {
 
 	@Override
 	public List<IKActorsBehavior> getBehaviors() {
-		return KActors.INSTANCE.getBehaviors(this.name, IKActorsBehavior.Type.BEHAVIOR);
+		return KActors.INSTANCE.getBehaviors(this.name, IKActorsBehavior.Type.BEHAVIOR, IKActorsBehavior.Type.TRAITS);
 	}
 
 	@Override
 	public List<IKActorsBehavior> getApps() {
-		return KActors.INSTANCE.getBehaviors(this.name, IKActorsBehavior.Type.APP);
+		return KActors.INSTANCE.getBehaviors(this.name, IKActorsBehavior.Type.APP, IKActorsBehavior.Type.COMPONENT,
+				IKActorsBehavior.Type.TRAITS);
 	}
 
 	@Override
 	public List<IKActorsBehavior> getTests() {
-		return KActors.INSTANCE.getBehaviors(this.name, IKActorsBehavior.Type.UNITTEST);
+		return KActors.INSTANCE.getBehaviors(this.name, IKActorsBehavior.Type.UNITTEST, IKActorsBehavior.Type.TRAITS);
 	}
 }

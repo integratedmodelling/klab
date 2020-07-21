@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.ide.navigator.model;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -125,6 +126,11 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
 	@Override
 	public String getProjectId() {
 		return behavior.getProjectId();
+	}
+
+	@Override
+	public Map<String, String> getStyleSpecs() {
+		return behavior.getStyleSpecs();
 	}
 
 }

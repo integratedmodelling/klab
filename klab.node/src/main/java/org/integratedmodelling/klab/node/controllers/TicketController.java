@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.node.controllers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
@@ -30,6 +33,19 @@ public class TicketController {
 		return t == null ? null : TicketManager.encode(t);
 	}
 	
+	/**
+	 * TODO secure to ADMIN_ROLE when admins have it
+	 */
+	@GetMapping(API.TICKET.LIST)
+	@ResponseBody
+	public List<TicketResponse.Ticket> listTickets(@PathVariable String ticket) {
+		List<TicketResponse.Ticket> ret = new ArrayList<>();
+		for (ITicket t : ticketService.getTickets()) {
+			ret.add(TicketManager.encode(t));
+		}
+		return ret;
+	}
+
 	@PostMapping(API.TICKET.QUERY)
 	@ResponseBody
 	public TicketResponse queryTickets(@RequestBody TicketRequest request) {

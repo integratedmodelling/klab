@@ -453,7 +453,7 @@ public class Client extends RestTemplate implements IClient {
 		}
 		return url;
 	}
-	
+
 	/**
 	 * Issue a DELETE request. Called remove to avoid conflict with super.
 	 * 
@@ -496,7 +496,7 @@ public class Client extends RestTemplate implements IClient {
 		}
 
 		ResponseEntity<?> response = exchange(url, HttpMethod.DELETE, entity, Object.class);
-		
+
 		switch (response.getStatusCodeValue()) {
 		case 302:
 		case 403:
@@ -518,13 +518,13 @@ public class Client extends RestTemplate implements IClient {
 	 * @return the deserialized result
 	 */
 	@Override
-	@SuppressWarnings({"unchecked" })
+	@SuppressWarnings({ "unchecked" })
 	public <T> T get(String url, Class<? extends T> cls, Object... parameters) {
 
 		url = checkEndpoint(url);
 
 		HttpHeaders headers = new HttpHeaders();
-		headers.set("Accept", "application/json");
+		headers.set("Accept", cls.equals(String.class) ? "text/plain" : "application/json");
 		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
 		if (authToken != null) {
 			headers.set(HttpHeaders.AUTHORIZATION, authToken);
@@ -556,9 +556,11 @@ public class Client extends RestTemplate implements IClient {
 		ResponseEntity<?> response = null;
 		if (cls.isArray()) {
 			response = exchange(url, HttpMethod.GET, entity, List.class);
-		} else {
+		} else if (String.class.equals(cls)) {
+			response = basicTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+		} else /* if (Map.class.isAssignableFrom(cls)) */ {
 			response = exchange(url, HttpMethod.GET, entity, Map.class);
-		}
+		} 
 
 		switch (response.getStatusCodeValue()) {
 		case 302:
@@ -566,14 +568,13 @@ public class Client extends RestTemplate implements IClient {
 			throw new KlabAuthorizationException("unauthorized request " + url);
 		case 404:
 			throw new KlabInternalErrorException("internal: request " + url + " was not recognized");
+		case 406:
 		case 503:
 			throw new KlabInternalErrorException("internal: request " + url + " caused a server error");
 		}
 
-		if (response.getBody() == null) {
-			return null;
-		}
 		if (response.getBody() instanceof Map) {
+
 			if (((Map<?, ?>) response.getBody()).containsKey("exception")
 					&& ((Map<?, ?>) response.getBody()).get("exception") != null) {
 				Object exception = ((Map<?, ?>) response.getBody()).get("exception");
@@ -587,7 +588,7 @@ public class Client extends RestTemplate implements IClient {
 
 		} else if (response.getBody() instanceof List) {
 
-			List<?> list = (List<?>)response.getBody();
+			List<?> list = (List<?>) response.getBody();
 			Object ret = Array.newInstance(cls.getComponentType(), (((List<?>) response.getBody()).size()));
 			for (int i = 0; i < list.size(); i++) {
 				Object object = list.get(i);
@@ -596,13 +597,14 @@ public class Client extends RestTemplate implements IClient {
 				}
 				Array.set(ret, i, object);
 			}
-			
-			return (T)ret;
 
+			return (T) ret;
+
+		} else if (response.getBody() != null && cls.isAssignableFrom(response.getBody().getClass())) {
+			return (T) response.getBody();
 		}
 
 		return null;
-
 	}
 
 	@Override

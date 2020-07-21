@@ -118,4 +118,9 @@ public class TicketManager implements ITicketManager {
 		}
 	}
 
+	@Override
+	public List<ITicket> getTickets() {
+		return new ArrayList<>(catalog.values());
+	}
+
 }

@@ -54,4 +54,12 @@ public interface IKActorsValue extends IKActorsCodeStatement {
 	 */
 	<T> T as(Class<? extends T> cls);
 
+	/**
+	 * If true, the value specifies a constraint that excludes its own value when used in 
+	 * matching.
+	 *
+	 * @return
+	 */
+	boolean isExclusive();
+
 }

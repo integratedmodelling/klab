@@ -19,8 +19,10 @@ import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
+import org.integratedmodelling.kactors.api.IKActorsStatement.Instantiation;
 import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Model;
@@ -61,6 +63,7 @@ import org.integratedmodelling.klab.rest.BehaviorReference;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -594,6 +597,10 @@ public enum Actors implements IActorsService {
 		view.setLogo(behavior.getStatement().getLogo());
 		view.setProjectId(behavior.getProject());
 
+		if (behavior.getStatement().getStyleSpecs() != null) {
+			view.setStyleSpecs(JsonUtils.printAsJson(behavior.getStatement().getStyleSpecs()));
+		}
+
 		for (IBehavior.Action action : behavior.getActions()) {
 
 			ViewPanel panel = null;
@@ -637,6 +644,16 @@ public enum Actors implements IActorsService {
 
 			}
 
+			/*
+			 * Components make their own view from the main method without annotations
+			 */
+			if (panel == null && behavior.getDestination() == Type.COMPONENT && action.getName().equals("main")) {
+				view.getPanels().add(panel = new ViewPanel(action.getId(), behavior.getStatement().getStyle()));
+				for (IAnnotation annotation : action.getAnnotations()) {
+					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
+				}
+			}
+
 			if (panel != null) {
 				/*
 				 * visit action for view calls: if there is any call to the view actor, add the
@@ -651,20 +668,23 @@ public enum Actors implements IActorsService {
 	}
 
 	private class ViewScope {
-		String identity;
+
+		String identityId;
+		IIdentity identity;
 		String applicationId;
 		boolean optional = false;
 		boolean repeated = false;
 		private Integer groupCounter = new Integer(0);
 
 		public ViewScope(IIdentity identity, String applicationId) {
-			this.identity = identity == null ? null : identity.getId();
+			this.identity = identity;
+			this.identityId = identity == null ? null : identity.getId();
 			this.applicationId = applicationId;
 		}
 
 		public ViewScope(ViewScope scope) {
 			this.applicationId = scope.applicationId;
-			this.identity = scope.identity;
+			this.identityId = scope.identityId;
 			this.repeated = scope.repeated;
 			this.optional = scope.optional;
 			this.groupCounter = scope.groupCounter;
@@ -687,7 +707,7 @@ public enum Actors implements IActorsService {
 			ViewScope scope) {
 
 		ViewComponent ret = new ViewComponent();
-		ret.setIdentity(scope.identity);
+		ret.setIdentity(scope.identityId);
 		ret.setApplicationId(scope.applicationId);
 		boolean isActive = group.getGroupMetadata().containsKey("inputgroup");
 		ret.setType(isActive ? ViewComponent.Type.InputGroup : ViewComponent.Type.Group);
@@ -794,6 +814,16 @@ public enum Actors implements IActorsService {
 			visitViewActions(((IKActorsStatement.While) statement).getBody(), parent, level,
 					scope.optional().repeated());
 			break;
+		case INSTANTIATION:
+			IBehavior behavior = getBehavior(((Instantiation) statement).getBehavior());
+			if (behavior != null && behavior.getDestination() == Type.COMPONENT) {
+				component = getView(behavior, scope.identity, scope.applicationId);
+				if (component != null) {
+					component.setParentId(parent.getId());
+					parent.getComponents().add(component);
+				}
+			}
+			break;
 		default:
 			// nothing to do for fire and instantiation
 			break;
@@ -838,7 +868,7 @@ public enum Actors implements IActorsService {
 				}
 
 				setViewMetadata(ret, statement.getArguments());
-				ret.setIdentity(scope.identity);
+				ret.setIdentity(scope.identityId);
 				ret.setApplicationId(scope.applicationId);
 				ret.setId(((KActorsActionCall) statement).getInternalId());
 

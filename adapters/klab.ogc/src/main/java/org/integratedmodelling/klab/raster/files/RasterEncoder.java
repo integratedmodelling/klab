@@ -254,7 +254,7 @@ public class RasterEncoder implements IResourceEncoder {
 	private GridCoverage getOriginalCoverage(IResource resource) {
 
 		File mainFile = null;
-		File rootPath = Resources.INSTANCE.getProject(resource.getLocalProjectName()).getRoot().getParentFile();
+		File rootPath = Resources.INSTANCE.getFilesystemLocation(resource);
 
 		for (String path : resource.getLocalPaths()) {
 			if (RasterAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {

@@ -15,6 +15,7 @@ package org.integratedmodelling.klab.api;
 
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.rest.TicketRequest;
 
 /**
  * This interface and its members describe the REST API of k.LAB. The API
@@ -136,7 +137,8 @@ public interface API {
 	public static interface TICKET {
 
 		/**
-		 * Retrieve the specific ticket with the passed ID.
+		 * Retrieve the specific ticket with the passed ID. If ticket==all, get a list
+		 * of all tickets.
 		 * 
 		 * GET
 		 */
@@ -145,9 +147,15 @@ public interface API {
 		/**
 		 * Retrieve all tickets matching the field values in the query string.
 		 * 
-		 * GET
+		 * POST with {@link TicketRequest} query data
 		 */
 		public static final String QUERY = "/ticket/query";
+		
+		/**
+		 * Retrieve all tickets as an array of JSON objects. Requires
+		 * ADMIN role.
+		 */
+		public static final String LIST = "/ticket/list";
 
 	}
 
@@ -212,6 +220,7 @@ public interface API {
 
 			public static final String P_COMPONENT = "{component}";
 			public static final String P_PROPERTY = "{component}";
+			public static final String P_LINES = "{lines}";
 
 			/**
 			 * 
@@ -232,6 +241,11 @@ public interface API {
 			 * 
 			 */
 			public static final String GET_PROPERTY = "/properties/get/" + P_PROPERTY;
+
+			/**
+			 * 
+			 */
+			public static final String GET_LOG = "logs/get/" + P_LINES;
 
 		}
 
@@ -311,7 +325,8 @@ public interface API {
 
 			/**
 			 * List all resources available to the requesting engine. Parameterize for
-			 * verbose or short return.
+			 * verbose or short return, or add a query parameter to search for URN and
+			 * metadata.
 			 * 
 			 * GET
 			 */
@@ -567,7 +582,6 @@ public interface API {
 			 */
 			public static final String OBSERVE_CONTEXT_URN = "/engine/session/observe/" + P_URN;
 		}
-		
 
 		/**
 		 * Handle engine-local non-semantic assets - import of resources or multiple
@@ -582,7 +596,8 @@ public interface API {
 			public static final String P_RESOURCEPATH = "{resourcepath}";
 
 			/**
-			 * Get a project resource as is (image, file or otherwise) by passing the path in the form
+			 * Get a project resource as is (image, file or otherwise) by passing the path
+			 * in the form
 			 */
 			public static final String GET_PROJECT_RESOURCE = "/engine/project/resource/get/" + P_PROJECT + "/"
 					+ P_RESOURCEPATH;

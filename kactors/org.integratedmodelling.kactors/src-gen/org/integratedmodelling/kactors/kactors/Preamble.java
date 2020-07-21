@@ -35,6 +35,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getPermissions <em>Permissions</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getAuthors <em>Authors</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getStyle <em>Style</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getInlineStyle <em>Inline Style</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getLogo <em>Logo</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getVersion <em>Version</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getCreated <em>Created</em>}</li>
@@ -326,26 +327,26 @@ public interface Preamble extends EObject
   void setWorldview(String value);
 
   /**
-   * Returns the value of the '<em><b>Observable</b></em>' attribute.
+   * Returns the value of the '<em><b>Observable</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Observable</em>' attribute.
-   * @see #setObservable(String)
+   * @return the value of the '<em>Observable</em>' containment reference.
+   * @see #setObservable(Observable)
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Observable()
-   * @model
+   * @model containment="true"
    * @generated
    */
-  String getObservable();
+  Observable getObservable();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getObservable <em>Observable</em>}' attribute.
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getObservable <em>Observable</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Observable</em>' attribute.
+   * @param value the new value of the '<em>Observable</em>' containment reference.
    * @see #getObservable()
    * @generated
    */
-  void setObservable(String value);
+  void setObservable(Observable value);
 
   /**
    * Returns the value of the '<em><b>Observables</b></em>' containment reference.
@@ -446,6 +447,28 @@ public interface Preamble extends EObject
    * @generated
    */
   void setStyle(String value);
+
+  /**
+   * Returns the value of the '<em><b>Inline Style</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Inline Style</em>' containment reference.
+   * @see #setInlineStyle(Map)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_InlineStyle()
+   * @model containment="true"
+   * @generated
+   */
+  Map getInlineStyle();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getInlineStyle <em>Inline Style</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Inline Style</em>' containment reference.
+   * @see #getInlineStyle()
+   * @generated
+   */
+  void setInlineStyle(Map value);
 
   /**
    * Returns the value of the '<em><b>Logo</b></em>' attribute.
