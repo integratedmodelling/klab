@@ -32,6 +32,7 @@ import org.opengis.feature.simple.SimpleFeatureType;
 public class Postgis {
 
 	private static String DEFAULT_POSTGRES_DATABASE = "klab";
+
 	private boolean useCatalogNames = false;
 	private String database = DEFAULT_POSTGRES_DATABASE;
 	private String pgurl;
@@ -39,7 +40,7 @@ public class Postgis {
 
 	private Postgis(Urn urn) {
 
-		if (useCatalogNames) {
+		if (urn != null && useCatalogNames) {
 			this.database = urn.getCatalog().replaceAll("\\.", "_");
 		}
 
@@ -66,50 +67,56 @@ public class Postgis {
 		boolean ok = false;
 
 		if (!hasDatabase) {
+			ok = createDatabase();
+		}
+		
+		this.active = ok;
+	}
 
-			String gurl = "jdbc:postgresql://" + Configuration.INSTANCE.getServiceProperty("postgres", "host");
-			if (Configuration.INSTANCE.getServiceProperty("postgres", "port") != null) {
-				gurl += ":" + Configuration.INSTANCE.getServiceProperty("postgres", "port") + "/";
-			}
+	private boolean createDatabase() {
 
-			try (Connection con = DriverManager.getConnection(gurl,
+		boolean ok = false;
+
+		String gurl = "jdbc:postgresql://" + Configuration.INSTANCE.getServiceProperty("postgres", "host");
+		if (Configuration.INSTANCE.getServiceProperty("postgres", "port") != null) {
+			gurl += ":" + Configuration.INSTANCE.getServiceProperty("postgres", "port") + "/";
+		}
+
+		try (Connection con = DriverManager.getConnection(gurl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
+
+			st.execute("CREATE DATABASE " + this.database + ";");
+			ok = true;
+
+		} catch (SQLException ex) {
+			ok = false;
+		}
+		if (ok) {
+			try (Connection con = DriverManager.getConnection(this.pgurl,
 					Configuration.INSTANCE.getServiceProperty("postgres", "user"),
 					Configuration.INSTANCE.getServiceProperty("postgres", "password"));
 					Statement st = con.createStatement()) {
 
-				st.execute("CREATE DATABASE " + this.database + ";");
-				ok = true;
+				st.execute("CREATE EXTENSION postgis;");
+				st.execute("CREATE EXTENSION postgis_topology;");
+				st.execute("CREATE EXTENSION fuzzystrmatch;");
+				st.execute("CREATE EXTENSION pointcloud;");
+				st.execute("CREATE EXTENSION pointcloud_postgis;");
+				st.execute("CREATE EXTENSION pgrouting;");
+				st.execute("CREATE EXTENSION postgis_raster;");
+				st.execute("CREATE EXTENSION postgis_sfcgal;");
+				st.execute("CREATE EXTENSION postgis_tiger_geocoder;");
+				st.execute("CREATE EXTENSION ogr_fdw;");
+				st.execute("CREATE EXTENSION address_standardizer;");
 
 			} catch (SQLException ex) {
 				ok = false;
 			}
-			if (ok) {
-				try (Connection con = DriverManager.getConnection(this.pgurl,
-						Configuration.INSTANCE.getServiceProperty("postgres", "user"),
-						Configuration.INSTANCE.getServiceProperty("postgres", "password"));
-						Statement st = con.createStatement()) {
-
-					st.execute("CREATE EXTENSION postgis;");
-					st.execute("CREATE EXTENSION postgis_topology;");
-					st.execute("CREATE EXTENSION fuzzystrmatch;");
-					st.execute("CREATE EXTENSION pointcloud;");
-					st.execute("CREATE EXTENSION pointcloud_postgis;");
-					st.execute("CREATE EXTENSION pgrouting;");
-					st.execute("CREATE EXTENSION postgis_raster;");
-					st.execute("CREATE EXTENSION postgis_sfcgal;");
-					st.execute("CREATE EXTENSION postgis_tiger_geocoder;");
-					st.execute("CREATE EXTENSION ogr_fdw;");
-					st.execute("CREATE EXTENSION address_standardizer;");
-
-				} catch (SQLException ex) {
-					ok = false;
-				}
-			}
-		} else {
-			ok = true;
 		}
-
-		this.active = ok;
+		
+		return ok;
 	}
 
 	public boolean isOnline() {
@@ -138,6 +145,15 @@ public class Postgis {
 	 */
 	public static Postgis create(Urn urn) {
 		return new Postgis(urn);
+	}
+
+	/**
+	 * Create an instance of postgis connected to the default 'klab' database.
+	 * 
+	 * @return
+	 */
+	public static Postgis create() {
+		return new Postgis(null);
 	}
 
 	/**
@@ -211,7 +227,7 @@ public class Postgis {
 			datastore.createSchema(schema);
 
 			long added = 0, errors = 0;
-			
+
 			try (FeatureWriter<SimpleFeatureType, SimpleFeature> writer = datastore.getFeatureWriterAppend(ret,
 					Transaction.AUTO_COMMIT)) {
 
@@ -223,14 +239,14 @@ public class Postgis {
 					toWrite.getUserData().putAll(feature.getUserData());
 					try {
 						writer.write();
-						added ++;
+						added++;
 					} catch (Throwable t) {
 						// just testing
 						if (errors == 0) {
 							Logging.INSTANCE.error(t);
 						}
 						errors++;
-						
+
 					}
 				}
 			} finally {
@@ -250,22 +266,26 @@ public class Postgis {
 			System.out.println("NOT ENABLED");
 			return;
 		}
+		
+		Postgis pg = Postgis.create();
+		System.out.println("DELETING EVERYTHING - CIÖCIA LÉ");
+		pg.clear();
 
-		Urn urn = new Urn("im.data:spain:infrastructure:admin");
-
-		// publish table in postgis
-		Postgis postgis = Postgis.create(urn);
-		System.out.println(postgis.isOnline() ? "OK" : "NAAH");
-		String table = postgis.publish(new File("E:\\Dropbox\\Data\\Administrativre\\Spain\\gadm36_ESP_4.shp"), urn);
-		System.out.println("Published table " + table);
-
-		// create datastore for db (if needed) and feature type for table in Geoserver
-		Geoserver geoserver = Geoserver.create();
-		if (geoserver.publishPostgisVector(postgis, "klabtest", table) != null) {
-			System.out.println("Store published to Geoserver as " + "klabtest:" + table);
-		} else {
-			System.out.println("Store publishing to Geoserver failed");
-		}
+//		Urn urn = new Urn("im.data:spain:infrastructure:admin");
+//
+//		// publish table in postgis
+//		Postgis postgis = Postgis.create(urn);
+//		System.out.println(postgis.isOnline() ? "OK" : "NAAH");
+//		String table = postgis.publish(new File("E:\\Dropbox\\Data\\Administrativre\\Spain\\gadm36_ESP_4.shp"), urn);
+//		System.out.println("Published table " + table);
+//
+//		// create datastore for db (if needed) and feature type for table in Geoserver
+//		Geoserver geoserver = Geoserver.create();
+//		if (geoserver.publishPostgisVector(postgis, "klabtest", table) != null) {
+//			System.out.println("Store published to Geoserver as " + "klabtest:" + table);
+//		} else {
+//			System.out.println("Store publishing to Geoserver failed");
+//		}
 	}
 
 	public String getPort() {
@@ -282,6 +302,38 @@ public class Postgis {
 
 	public String getPassword() {
 		return Configuration.INSTANCE.getServiceProperty("postgres", "password");
+	}
+
+	public boolean clear() {
+
+		boolean ok = false;
+		String gurl = "jdbc:postgresql://" + Configuration.INSTANCE.getServiceProperty("postgres", "host");
+		if (Configuration.INSTANCE.getServiceProperty("postgres", "port") != null) {
+			gurl += ":" + Configuration.INSTANCE.getServiceProperty("postgres", "port") + "/";
+		}
+
+		try (Connection con = DriverManager.getConnection(gurl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
+			
+			/**
+			 * Force disconnection of any user
+			 */
+			st.execute("UPDATE pg_database SET datallowconn = 'false' WHERE datname = '" + this.database + "';");
+			st.execute("SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = '" + this.database + "';");
+			st.execute("DROP DATABASE " + this.database + ";");
+			
+			ok = true;
+			
+		} catch (SQLException ex) {
+			Logging.INSTANCE.error(ex);
+		}
+		if (ok) {
+			createDatabase();
+		}
+		
+		return ok;
 	}
 
 }
