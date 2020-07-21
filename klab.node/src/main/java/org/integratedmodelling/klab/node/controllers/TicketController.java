@@ -38,7 +38,7 @@ public class TicketController {
 	 */
 	@GetMapping(API.TICKET.LIST)
 	@ResponseBody
-	public List<TicketResponse.Ticket> listTickets(@PathVariable String ticket) {
+	public List<TicketResponse.Ticket> listTickets() {
 		List<TicketResponse.Ticket> ret = new ArrayList<>();
 		for (ITicket t : ticketService.getTickets()) {
 			ret.add(TicketManager.encode(t));

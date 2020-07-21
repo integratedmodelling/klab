@@ -555,7 +555,7 @@ public class Client extends RestTemplate implements IClient {
 
 		ResponseEntity<?> response = null;
 		if (cls.isArray()) {
-			response = exchange(url, HttpMethod.GET, entity, List.class);
+			response = exchange(url, HttpMethod.GET, entity, Object.class);
 		} else if (String.class.equals(cls)) {
 			response = basicTemplate.exchange(url, HttpMethod.GET, entity, String.class);
 		} else /* if (Map.class.isAssignableFrom(cls)) */ {
@@ -575,18 +575,18 @@ public class Client extends RestTemplate implements IClient {
 
 		if (response.getBody() instanceof Map) {
 
-			if (((Map<?, ?>) response.getBody()).containsKey("exception")
-					&& ((Map<?, ?>) response.getBody()).get("exception") != null) {
-				Object exception = ((Map<?, ?>) response.getBody()).get("exception");
-				// Object path = response.getBody().get("path");
+			Object exception = ((Map<?, ?>) response.getBody()).get("exception");
+			Object error = ((Map<?, ?>) response.getBody()).get("error");
+
+			if (exception != null || error != null) {
 				Object message = ((Map<?, ?>) response.getBody()).get("message");
 				// Object error = response.getBody().get("error");
-				throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+				throw new KlabIOException("remote exception: " + (message == null ? (exception == null ? error : exception) : message));
 			}
 
 			return objectMapper.convertValue(response.getBody(), cls);
 
-		} else if (response.getBody() instanceof List) {
+		} else if (response.getBody() instanceof List && cls.isArray()) {
 
 			List<?> list = (List<?>) response.getBody();
 			Object ret = Array.newInstance(cls.getComponentType(), (((List<?>) response.getBody()).size()));

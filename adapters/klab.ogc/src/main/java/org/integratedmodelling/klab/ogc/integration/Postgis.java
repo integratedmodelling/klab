@@ -64,9 +64,9 @@ public class Postgis {
 			// no database
 		}
 
-		boolean ok = false;
+		boolean ok = hasDatabase;
 
-		if (!hasDatabase) {
+		if (!ok) {
 			ok = createDatabase();
 		}
 		
