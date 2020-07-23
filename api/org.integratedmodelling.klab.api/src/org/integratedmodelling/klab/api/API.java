@@ -150,10 +150,9 @@ public interface API {
 		 * POST with {@link TicketRequest} query data
 		 */
 		public static final String QUERY = "/ticket/query";
-		
+
 		/**
-		 * Retrieve all tickets as an array of JSON objects. Requires
-		 * ADMIN role.
+		 * Retrieve all tickets as an array of JSON objects. Requires ADMIN role.
 		 */
 		public static final String LIST = "/ticket/list";
 
@@ -209,6 +208,12 @@ public interface API {
 	}
 
 	public static interface NODE {
+
+		/**
+		 * Returns info about self and (if admin) users served between dates, eventually
+		 * with short and verbose formats listing login data and URN access.
+		 */
+		public static final String WHO = "who";
 
 		/**
 		 * Protected admin endpoints for configuration and component setup.

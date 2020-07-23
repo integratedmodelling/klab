@@ -1,8 +1,6 @@
 package org.integratedmodelling.klab.node.controllers;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Map;
 
 import javax.ws.rs.QueryParam;
@@ -16,7 +14,6 @@ import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.rest.TicketResponse;
-import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
