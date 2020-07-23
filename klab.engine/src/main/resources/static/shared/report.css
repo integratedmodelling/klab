@@ -1,84 +1,44 @@
-@media print {
-  #viewer-container, .q-layout-page {
-    display: block !important;
-  }
-  .q-layout-page-container.q-layout-transition {
-  	padding: 0 !important;
-  }
-  #mc-report-content table td {
-    word-break: break-all;
-  }
-  #mc-report-content {
-    display: block !important;
-    position: relative !important;
-    overflow: visible !important;
-    overflow-y: visible !important;
-    width: 100% !important;
-    height: 100% !important;
-    margin: 0 !important;
-    left: 0 !important;
-    border: none !important;
-  }
-}
-#mc-empty-report {
-  position: absolute;
-  width: 400px;
-  height: 80px;
-  left: calc((100% - 400px) / 2);
-  top: calc((100% - 80px) / 2);
-  margin-left: -200px;
-  margin-top: -40px;
-  padding: 0;
-  text-align: center;
-  font-size: 60px;
-  font-weight: bold;
-  color: rgb(17, 170, 187);
-}
-#mc-report-content {
-  position: absolute;
-  width: 1024px;
-  left: calc((100% - 1024px) / 2);
-  padding-top: 3em;
+.mc-report-content {
   background-color: #fff;
-  height: 100%;
   padding: 2em;
-  overflow: auto;
-  border: 1px solid #ddd;
 }
-#mc-report-content h1,
-#mc-report-content h2,
-#mc-report-content h3,
-#mc-report-content h4,
-#mc-report-content h5,
-#mc-report-content h6 {
+.mc-report-content h1,
+.mc-report-content h2,
+.mc-report-content h3,
+.mc-report-content h4,
+.mc-report-content h5,
+.mc-report-content h6 {
   font-weight: bold;
   color:   rgb(17, 170, 187);
 }
 
-#mc-report-content h1 {
+.mc-report-content h1 {
   font-size: 2em;
   margin: 0.6em 0;
 }
-#mc-report-content h2 {
+.mc-report-content h2 {
   font-size: 1.8em;
   margin: 0.5em 0;
 }
-#mc-report-content h3 {
+.mc-report-content h3 {
   font-size: 1.6em;
   margin: 0.4em 0;
 }
-#mc-report-content h4 {
+.mc-report-content h4 {
   font-size: 1.4em;
   margin: 0.3em 0;
 }
-#mc-report-content h5 {
+.mc-report-content h5 {
   font-size: 1.2em;
   margin: 0.2em 0;
 }
-#mc-report-content h6 {
+.mc-report-content h6 {
   font-size: 1.1em;
   margin: 0.1em 0;
 }
-#mc-report-content table {
+.mc-report-content table {
   border-spacing: 10px 5px;
+}
+.mc-report-content p {
+  text-align: justify;
 }
