@@ -163,6 +163,8 @@ public enum Actors implements IActorsService {
 		layoutMetadata.add("width");
 		layoutMetadata.add("cols");
 		layoutMetadata.add("equal");
+		layoutMetadata.add("collapse");
+		layoutMetadata.add("remove");
 	}
 
 	public IBehavior getBehavior(String behaviorId) {
