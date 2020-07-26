@@ -31,6 +31,8 @@ public class BehaviorReference {
 	private String description;
 	private List<Action> actions = new ArrayList<>();
 	private String color;
+	private String logo;
+	private String label;
 
 	public String getName() {
 		return name;
@@ -62,6 +64,22 @@ public class BehaviorReference {
 
 	public void setColor(String color) {
 		this.color = color;
+	}
+
+	public String getLogo() {
+		return logo;
+	}
+
+	public void setLogo(String logo) {
+		this.logo = logo;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 
 }

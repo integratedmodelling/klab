@@ -26,6 +26,7 @@ import java.util.logging.Level;
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.model.KActors;
+import org.integratedmodelling.kactors.model.KActorsBehavior;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
@@ -110,6 +111,7 @@ import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.rest.BehaviorReference;
 import org.integratedmodelling.klab.rest.ContextualizationRequest;
 import org.integratedmodelling.klab.rest.DataflowDetail;
 import org.integratedmodelling.klab.rest.DataflowState;
@@ -193,12 +195,11 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
 
 	public interface ROIListener {
-		
+
 		public void onChange(SpatialExtent extent);
-		
+
 	}
-	
-	
+
 	// a simple monitor that will only compile all notifications into a list to be
 	// sent back to clients
 	class ReportingMonitor implements IMonitor {
@@ -555,11 +556,11 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		}
 		return false;
 	}
-	
+
 	public Collection<ObservationListener> getObservationListeners() {
 		return observationListeners.values();
 	}
-	
+
 	@Override
 	public String addObservationListener(ISession.ObservationListener listener) {
 		String ret = NameGenerator.newName();
@@ -571,7 +572,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	public void removeObservationListener(String listenerId) {
 		observationListeners.remove(listenerId);
 	}
-	
+
 	public String addROIListener(ROIListener listener) {
 		String ret = NameGenerator.newName();
 		roiListeners.put(ret, listener);
@@ -581,7 +582,6 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	public void removeROIListener(String listenerId) {
 		roiListeners.remove(listenerId);
 	}
-
 
 	/**
 	 * Register a task. It may be a ITask or a IScript, which only have the Future
@@ -973,7 +973,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		for (ROIListener listener : roiListeners.values()) {
 			listener.onChange(extent);
 		}
-		
+
 		this.regionOfInterest = extent;
 	}
 
@@ -1568,7 +1568,11 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		ret.setTimeLastJoined(lastJoin);
 		ret.setTimeRetrieved(System.currentTimeMillis());
 		ret.setTimeLastActivity(lastActivity);
-		ret.getAppUrns().addAll(Actors.INSTANCE.getBehaviorIds(IKActorsBehavior.Type.APP));
+		for (String app : Actors.INSTANCE.getPublicApps()) {
+			ret.getPublicApps().add(((KActorsBehavior) Actors.INSTANCE.getBehavior(app).getStatement()).getReference());
+		}
+		// FIXME remove
+		ret.getAppUrns().addAll(Actors.INSTANCE.getPublicApps());
 		ret.getUserAppUrns().addAll(Actors.INSTANCE.getBehaviorIds(IKActorsBehavior.Type.USER));
 
 		IUserIdentity user = getParentIdentity(IUserIdentity.class);

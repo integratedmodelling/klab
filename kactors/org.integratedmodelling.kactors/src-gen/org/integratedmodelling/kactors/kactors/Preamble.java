@@ -16,10 +16,12 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isPublic <em>Public</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isMobile <em>Mobile</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isDesktop <em>Desktop</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isWeb <em>Web</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isApp <em>App</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isTask <em>Task</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isTest <em>Test</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isComponent <em>Component</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isUser <em>User</em>}</li>
@@ -50,6 +52,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Preamble extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Public</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Public</em>' attribute.
+   * @see #setPublic(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Public()
+   * @model
+   * @generated
+   */
+  boolean isPublic();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isPublic <em>Public</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Public</em>' attribute.
+   * @see #isPublic()
+   * @generated
+   */
+  void setPublic(boolean value);
+
   /**
    * Returns the value of the '<em><b>Mobile</b></em>' attribute.
    * <!-- begin-user-doc -->
@@ -137,6 +161,28 @@ public interface Preamble extends EObject
    * @generated
    */
   void setApp(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Task</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Task</em>' attribute.
+   * @see #setTask(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Task()
+   * @model
+   * @generated
+   */
+  boolean isTask();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isTask <em>Task</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Task</em>' attribute.
+   * @see #isTask()
+   * @generated
+   */
+  void setTask(boolean value);
 
   /**
    * Returns the value of the '<em><b>Test</b></em>' attribute.

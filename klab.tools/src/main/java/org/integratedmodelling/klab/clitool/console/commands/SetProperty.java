@@ -4,12 +4,8 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
-import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
-import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.clitool.CliRuntime;
-import org.integratedmodelling.klab.utils.BrowserUtils;
 
 public class SetProperty implements ICommand {
 

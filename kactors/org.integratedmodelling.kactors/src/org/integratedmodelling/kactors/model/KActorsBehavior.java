@@ -14,6 +14,7 @@ import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.model.KActors.BehaviorDescriptor;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.rest.BehaviorReference;
 
 /**
  * Syntactic peer for a k.Actors application, to be turned into an appropriate
@@ -38,6 +39,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 	private String description;
 	private String logo;
 	private String projectId;
+	private boolean isPublic;
 
 	public KActorsBehavior(Model model, BehaviorDescriptor descriptor) {
 
@@ -74,6 +76,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		this.label = preamble.getLabel();
 		this.description = preamble.getDescription();
 		this.logo = preamble.getLogo();
+		this.isPublic = preamble.isPublic();
 
 		if (preamble.getInlineStyle() != null) {
 			this.styleSpecs = new LinkedHashMap<>();
@@ -94,6 +97,8 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 			this.type = Type.UNITTEST;
 		} else if (preamble.isComponent()) {
 			this.type = Type.COMPONENT;
+		} else if (preamble.isTask()) {
+			this.type = Type.TASK;
 		}
 
 		if (preamble.isDesktop()) {
@@ -186,12 +191,31 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 	public void setProjectId(String projectId) {
 		this.projectId = projectId;
 	}
-	
+
 	@Override
 	public Map<String, String> getStyleSpecs() {
 		return styleSpecs;
 	}
 
+	@Override
+	public boolean isPublic() {
+		return isPublic;
+	}
 
+	/**
+	 * Return a descriptor for the behavior. Use the same bean that describes the
+	 * classes from the runtime actions coded in Java. Leave the actions empty but
+	 * fill in descriptors for logo, description and label.
+	 * 
+	 * @return
+	 */
+	public BehaviorReference getReference() {
+		BehaviorReference ret = new BehaviorReference();
+		ret.setName(this.getName());
+		ret.setLabel(this.getLabel());
+		ret.setDescription(this.getDescription());
+		ret.setLogo(this.getLogo());
+		return ret;
+	}
 
 }

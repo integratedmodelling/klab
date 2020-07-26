@@ -33,10 +33,12 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isPublic <em>Public</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isMobile <em>Mobile</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isDesktop <em>Desktop</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isWeb <em>Web</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isApp <em>App</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isTask <em>Task</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isTest <em>Test</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isComponent <em>Component</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isUser <em>User</em>}</li>
@@ -65,6 +67,26 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  */
 public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamble
 {
+  /**
+   * The default value of the '{@link #isPublic() <em>Public</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isPublic()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean PUBLIC_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isPublic() <em>Public</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isPublic()
+   * @generated
+   * @ordered
+   */
+  protected boolean public_ = PUBLIC_EDEFAULT;
+
   /**
    * The default value of the '{@link #isMobile() <em>Mobile</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -144,6 +166,26 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @ordered
    */
   protected boolean app = APP_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isTask() <em>Task</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isTask()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean TASK_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isTask() <em>Task</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isTask()
+   * @generated
+   * @ordered
+   */
+  protected boolean task = TASK_EDEFAULT;
 
   /**
    * The default value of the '{@link #isTest() <em>Test</em>}' attribute.
@@ -542,6 +584,31 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
+  public boolean isPublic()
+  {
+    return public_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setPublic(boolean newPublic)
+  {
+    boolean oldPublic = public_;
+    public_ = newPublic;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__PUBLIC, oldPublic, public_));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public boolean isMobile()
   {
     return mobile;
@@ -634,6 +701,31 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     app = newApp;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__APP, oldApp, app));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isTask()
+  {
+    return task;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setTask(boolean newTask)
+  {
+    boolean oldTask = task;
+    task = newTask;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__TASK, oldTask, task));
   }
 
   /**
@@ -1325,6 +1417,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__PUBLIC:
+        return isPublic();
       case KactorsPackage.PREAMBLE__MOBILE:
         return isMobile();
       case KactorsPackage.PREAMBLE__DESKTOP:
@@ -1333,6 +1427,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return isWeb();
       case KactorsPackage.PREAMBLE__APP:
         return isApp();
+      case KactorsPackage.PREAMBLE__TASK:
+        return isTask();
       case KactorsPackage.PREAMBLE__TEST:
         return isTest();
       case KactorsPackage.PREAMBLE__COMPONENT:
@@ -1392,6 +1488,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__PUBLIC:
+        setPublic((Boolean)newValue);
+        return;
       case KactorsPackage.PREAMBLE__MOBILE:
         setMobile((Boolean)newValue);
         return;
@@ -1403,6 +1502,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return;
       case KactorsPackage.PREAMBLE__APP:
         setApp((Boolean)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__TASK:
+        setTask((Boolean)newValue);
         return;
       case KactorsPackage.PREAMBLE__TEST:
         setTest((Boolean)newValue);
@@ -1486,6 +1588,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__PUBLIC:
+        setPublic(PUBLIC_EDEFAULT);
+        return;
       case KactorsPackage.PREAMBLE__MOBILE:
         setMobile(MOBILE_EDEFAULT);
         return;
@@ -1497,6 +1602,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return;
       case KactorsPackage.PREAMBLE__APP:
         setApp(APP_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__TASK:
+        setTask(TASK_EDEFAULT);
         return;
       case KactorsPackage.PREAMBLE__TEST:
         setTest(TEST_EDEFAULT);
@@ -1578,6 +1686,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__PUBLIC:
+        return public_ != PUBLIC_EDEFAULT;
       case KactorsPackage.PREAMBLE__MOBILE:
         return mobile != MOBILE_EDEFAULT;
       case KactorsPackage.PREAMBLE__DESKTOP:
@@ -1586,6 +1696,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return web != WEB_EDEFAULT;
       case KactorsPackage.PREAMBLE__APP:
         return app != APP_EDEFAULT;
+      case KactorsPackage.PREAMBLE__TASK:
+        return task != TASK_EDEFAULT;
       case KactorsPackage.PREAMBLE__TEST:
         return test != TEST_EDEFAULT;
       case KactorsPackage.PREAMBLE__COMPONENT:
@@ -1645,7 +1757,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (mobile: ");
+    result.append(" (public: ");
+    result.append(public_);
+    result.append(", mobile: ");
     result.append(mobile);
     result.append(", desktop: ");
     result.append(desktop);
@@ -1653,6 +1767,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     result.append(web);
     result.append(", app: ");
     result.append(app);
+    result.append(", task: ");
+    result.append(task);
     result.append(", test: ");
     result.append(test);
     result.append(", component: ");

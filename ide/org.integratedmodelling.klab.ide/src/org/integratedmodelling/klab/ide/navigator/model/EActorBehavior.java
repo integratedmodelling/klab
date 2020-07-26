@@ -133,4 +133,9 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
 		return behavior.getStyleSpecs();
 	}
 
+	@Override
+	public boolean isPublic() {
+		return behavior.isPublic();
+	}
+
 }

@@ -56,7 +56,14 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 		 * that makes it "composable". The system will reject any bindings to components
 		 * and only let this be created using the 'new' verb in apps.
 		 */
-		COMPONENT
+		COMPONENT,
+
+		/**
+		 * A task is a batch job run by a session without user involvement. It must have
+		 * a main and can only be run from the IDE, CLI or through an engine launched
+		 * with the task URN as an option (which will run the task and then exit).
+		 */
+		TASK
 	}
 
 	enum Platform {
@@ -152,5 +159,14 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 	 * @return
 	 */
 	Map<String, String> getStyleSpecs();
+
+	/**
+	 * True if 'public' was specified in front of the declaration, which makes the
+	 * behavior visible to clients before it is run. Only behaviors with getType()
+	 * == Type.APP can be public.
+	 * 
+	 * @return
+	 */
+	boolean isPublic();
 
 }

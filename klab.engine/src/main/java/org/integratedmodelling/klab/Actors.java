@@ -493,6 +493,16 @@ public enum Actors implements IActorsService {
 		return ret;
 	}
 
+	public Collection<String> getPublicApps() {
+		List<String> ret = new ArrayList<>();
+		for (String key : behaviors.keySet()) {
+			if (behaviors.get(key).getDestination() == Type.APP && behaviors.get(key).getStatement().isPublic()) {
+				ret.add(key);
+			}
+		}
+		return ret;
+	}
+
 	public void instrument(List<IAnnotation> annotations, Observation observation) {
 		instrument(annotations, observation, observation.getScope());
 	}
