@@ -240,6 +240,11 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	public int groupSize() {
 		return group == null ? 1 : group.groupSize();
 	}
+	
+	@Override
+	public IArtifact getGroupMember(int n) {
+		return group == null ? null : (group.groupSize() > n ? group.getGroupMember(n) : null);
+	}
 
 	public boolean isMain() {
 		return main;

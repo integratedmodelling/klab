@@ -191,6 +191,11 @@ public abstract class Artifact implements IArtifact {
 			public IGeometry getGeometry() {
 				return Geometry.empty();
 			}
+
+			@Override
+			public IArtifact getGroupMember(int n) {
+				return null;
+			}
 		};
 		ret.empty = true;
 		return ret;
@@ -262,5 +267,7 @@ public abstract class Artifact implements IArtifact {
 	public IMetadata getMetadata() {
 		return metadata;
 	}
+	
+	public abstract IArtifact getGroupMember(int n);
 
 }

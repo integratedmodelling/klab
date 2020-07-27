@@ -215,7 +215,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		ret.setLabel(this.getLabel());
 		ret.setDescription(this.getDescription());
 		ret.setLogo(this.getLogo());
-		ret.setPlatform(platform);
+		ret.setPlatform(this.platform);
 		return ret;
 	}
 

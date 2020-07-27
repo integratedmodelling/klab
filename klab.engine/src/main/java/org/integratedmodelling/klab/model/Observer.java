@@ -9,6 +9,7 @@ import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IObserver;
@@ -69,8 +70,8 @@ public class Observer extends KimObject implements IObserver {
 				 */
 				if (urn != null) {
 					VisitingDataBuilder builder = new VisitingDataBuilder(1);
-					Resources.INSTANCE.getResourceData(urn, builder, monitor);
-					return builder.getObjectCount() > 0 ? builder.getObjectScale(0).getExtents() : new ArrayList<>();
+					IKlabData data = Resources.INSTANCE.getResourceData(urn, builder, monitor);
+					return data.getObjectCount() > 0 ? data.getObjectScale(0).getExtents() : new ArrayList<>();
 				}
 				Envelope envelope = Envelope.create(regionOfInterest.getEast(), regionOfInterest.getWest(),
 						regionOfInterest.getSouth(), regionOfInterest.getNorth(), Projection.getLatLon());
@@ -105,8 +106,8 @@ public class Observer extends KimObject implements IObserver {
 				 */
 				if (urn != null) {
 					VisitingDataBuilder builder = new VisitingDataBuilder(1);
-					Resources.INSTANCE.getResourceData(urn, builder, monitor);
-					return builder.getObjectCount() > 0 ? builder.getObjectScale(0).getExtents() : new ArrayList<>();
+					IKlabData data = Resources.INSTANCE.getResourceData(urn, builder, monitor);
+					return data.getObjectCount() > 0 ? data.getObjectScale(0).getExtents() : new ArrayList<>();
 				}
 
 				double resolution = shape.getEnvelope().getResolutionForZoomLevel().getFirst();

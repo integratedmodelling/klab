@@ -120,6 +120,11 @@ public class ObservationGroup extends CountableObservation implements ISubjectiv
 	public int groupSize() {
 		return artifacts.size();
 	}
+	
+	@Override
+	public IArtifact getGroupMember(int n) {
+		return artifacts.size() > n ? artifacts.get(n) : null;
+	}
 
 	@Override
 	public void chain(IArtifact data) {

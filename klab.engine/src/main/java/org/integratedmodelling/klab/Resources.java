@@ -80,6 +80,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
@@ -962,15 +963,20 @@ public enum Resources implements IResourceService {
 	 * @return
 	 */
 	public IKlabData getResourceData(String urn, IKlabData.Builder builder, IMonitor monitor) {
-		Pair<String, Map<String, String>> split = Urns.INSTANCE.resolveParameters(urn);
-		IResource resource = resolveResource(urn);
-		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
-		if (adapter == null) {
-			throw new KlabUnsupportedFeatureException(
-					"adapter for resource of type " + resource.getAdapterType() + " not available");
+		Urn kurn = new Urn(urn);
+		if (kurn.isLocal()) {
+			IResource resource = resolveResource(urn);
+			IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+			if (adapter == null) {
+				throw new KlabUnsupportedFeatureException(
+						"adapter for resource of type " + resource.getAdapterType() + " not available");
+			}
+			adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), resource.getGeometry(), builder,
+					Expression.emptyContext(monitor));
+		} else {
+			throw new KlabInternalErrorException(
+					"getResourceData(): this call can only be used to access local resources");
 		}
-		adapter.getEncoder().getEncodedData(resource, split.getSecond(), resource.getGeometry(), builder,
-				Expression.emptyContext(monitor));
 		return builder.build();
 	}
 
@@ -984,18 +990,35 @@ public enum Resources implements IResourceService {
 	 * @return
 	 */
 	public IKlabData getResourceData(String urn, IKlabData.Builder builder, IGeometry geometry, IMonitor monitor) {
-		Pair<String, Map<String, String>> split = Urns.INSTANCE.resolveParameters(urn);
-		IResource resource = resolveResource(urn);
-		if (resource == null) {
-			throw new KlabResourceAccessException("Access to resource data failed for resource " + urn);
+
+		Urn kurn = new Urn(urn);
+		if (kurn.isLocal()) {
+			IResource resource = resolveResource(urn);
+			if (resource == null) {
+				throw new KlabResourceAccessException("Access to resource data failed for resource " + urn);
+			}
+			IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+			if (adapter == null) {
+				throw new KlabUnsupportedFeatureException(
+						"adapter for resource of type " + resource.getAdapterType() + " not available");
+			}
+			adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), geometry, builder,
+					Expression.emptyContext(geometry, monitor));
+		} else if (kurn.isUniversal()) {
+			// TODO
+		} else {
+			// TODO
+			INodeIdentity node = Network.INSTANCE.getNodeForResource(kurn);
+			if (node != null) {
+				ResourceDataRequest request = new ResourceDataRequest();
+				// send toString() with all parameters!
+				request.setUrn(urn.toString());
+				request.setGeometry(geometry.encode());
+				builder = new DecodingDataBuilder(
+						node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request, Map.class),
+						Expression.emptyContext(geometry, monitor));
+			}
 		}
-		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
-		if (adapter == null) {
-			throw new KlabUnsupportedFeatureException(
-					"adapter for resource of type " + resource.getAdapterType() + " not available");
-		}
-		adapter.getEncoder().getEncodedData(resource, split.getSecond(), geometry, builder,
-				Expression.emptyContext(geometry, monitor));
 		return builder.build();
 	}
 
@@ -1109,20 +1132,20 @@ public enum Resources implements IResourceService {
 				}
 
 				VisitingDataBuilder builder = new VisitingDataBuilder();
-				adapter.getEncodedData(kurn, builder, null, null);
+				IKlabData data = adapter.getEncodedData(kurn, builder, null, null);
 
 				// resource specifies one object
-				if (builder.getObjectCount() == 1) {
+				if (data.getObjectCount() == 1) {
 
-					if (builder.getObjectScale(0).getSpace() != null) {
+					if (data.getObjectScale(0).getSpace() != null) {
 						/*
 						 * build an observer from the data and return it
 						 */
-						return Observations.INSTANCE.makeROIObserver(builder.getObjectName(0),
-								builder.getObjectScale(0).getSpace().getShape(),
+						return Observations.INSTANCE.makeROIObserver(data.getObjectName(0),
+								data.getObjectScale(0).getSpace().getShape(),
 								org.integratedmodelling.klab.Time.INSTANCE
 										.getGenericCurrentExtent(Resolution.Type.YEAR),
-								builder.getObjectMetadata(0));
+								data.getObjectMetadata(0));
 					}
 				}
 			}

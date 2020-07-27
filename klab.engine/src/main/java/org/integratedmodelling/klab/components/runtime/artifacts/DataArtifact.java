@@ -112,4 +112,10 @@ public class DataArtifact extends Artifact implements IDataArtifact {
 		this.group.add(data);
 	}
 
+	@Override
+	public IArtifact getGroupMember(int n) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

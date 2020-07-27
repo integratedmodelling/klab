@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
@@ -172,7 +173,7 @@ public class RandomAdapter implements IUrnAdapter {
 	}
 
 	@Override
-	public void getEncodedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
+	public IKlabData getEncodedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
 		switch (urn.getNamespace()) {
 		case DATA:
 			makeData(urn, builder, geometry, context);
@@ -182,7 +183,7 @@ public class RandomAdapter implements IUrnAdapter {
 			makeObjects(urn, builder, geometry, context);
 			break;
 		}
-
+		return builder.build();
 	}
 
 	private void makeObjects(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
