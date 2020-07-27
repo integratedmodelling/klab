@@ -829,7 +829,7 @@ public enum Actors implements IActorsService {
 		case INSTANTIATION:
 			IBehavior behavior = getBehavior(((Instantiation) statement).getBehavior());
 			if (behavior != null && behavior.getDestination() == Type.COMPONENT) {
-				component = getView(behavior, scope.identity, scope.applicationId);
+				component = simplifyViewStructure(getView(behavior, scope.identity, scope.applicationId));
 				if (component != null) {
 					component.setParentId(parent.getId());
 					parent.getComponents().add(component);
@@ -840,6 +840,20 @@ public enum Actors implements IActorsService {
 			// nothing to do for fire and instantiation
 			break;
 		}
+	}
+
+	private ViewComponent simplifyViewStructure(Layout view) {
+		List<ViewPanel> panels = new ArrayList<>();
+		panels.addAll(view.getLeftPanels());
+		panels.addAll(view.getRightPanels());
+		panels.addAll(view.getPanels());
+		panels.add(view.getHeader());
+		panels.add(view.getFooter());
+		if (panels.size() == 1) {
+			// TODO merge style if defined in view preamble
+			return panels.get(0);
+		}
+		return view;
 	}
 
 	private ViewComponent getViewComponent(Call statement, ViewScope scope) {

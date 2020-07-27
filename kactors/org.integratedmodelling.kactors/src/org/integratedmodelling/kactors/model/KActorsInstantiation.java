@@ -3,7 +3,6 @@ package org.integratedmodelling.kactors.model;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Instantiation;
 import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.utils.Parameters;
 
 public class KActorsInstantiation extends KActorsStatement implements Instantiation {
 	

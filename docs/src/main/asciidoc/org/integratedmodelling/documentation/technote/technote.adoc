@@ -23,11 +23,13 @@ An additional component, *k.Hub*, manages authentication and organizes node acce
 
 The set of active, connected nodes at a given time forms what can be seen collectively as a distributed _container_, where scientific knowledge is found in three distinct layers:
 
-The *resource layer* deals with _resources_, i.e. any content that is not explicitly semantic. Resources are identified by unique Uniform Resource Names (URNs). They are imported or created, validated and tested locally at a provider's end, after which they can be documented, published on k.Servers, and curated remotely. Each resource can be automatically mirrored and can be resolved by any server. Resources have no semantics associated: each has a URN, a _data type_, a _contract_ for use (specifying needed inputs, provided outputs, options and attributes), a set of ISO-compliant metadata including access details, and a _geometry_ defining the mathematical aspects of their spatial and/or temporal topologies. Users of k.LAB rarely deal with resources directly, all interaction being mediated through the semantic layer.
+The *resource layer* deals with _resources_, i.e. stored, curated content that is not explicitly semantic. Resource content may be static (data or data services) or dynamic (equations, programs or computational services that may state required inputs by name and data type). Resources are identified by unique Uniform Resource Names (URNs). They are imported or created, validated and tested locally at a provider's end, after which they can be documented, published on k.Servers, and curated remotely. Each resource can be automatically mirrored and can be resolved by any server. Resources have no semantics associated: each has a URN, a _data type_, a _contract_ for use (needed inputs, provided outputs, options and attributes), a set of ISO-compliant metadata including mandatory credits and access details, and a _geometry_ defining the mathematical aspects of their spatial and/or temporal topologies. End users of k.LAB do not normally deal with resources directly, all interaction with them being mediated through the semantic layer.
 
 The *semantic layer* deals with semantic resources exist at the "conceptual"  level (models, concepts), at the "physical" level (semantically annotated observations, "live" within a session) and can be exported back to resources for publication and curation. In the semantic layer, links are made between resources and their meaning: by adopting a representational - principles of orthogonality and parsimony ... The *k.IM language*, a  language optimized for semantic annotation... , is central to the semantic layer and ensures...
 
 The *reactivity layer* connects _behaviors_ to any artifacts created during a k.LAB session, enabling individual-based modeling, interactive, reactive and distributed real-time simulations. It relies on the *k.Actors language* for behavior specification. _Actors_ that can receive a behavior include not only observations (agent-based modeling) but also sessions and users: behaviors bound to sessions provide an _application framework_ for both interactive and non-interactive applications that can be coded quickly and concisely and run indifferently on a desktop or online. Behaviors specified in k.Actors are mapped to the http://akka.io[Akka] framework to create interactive, distributed simulations and applications that operate using IoT technology both locally and remotely.
+
+
 
 ### The resource layer
 
@@ -104,11 +106,18 @@ From a technical perspective, this innovation can be reached by using well-estab
 
 ## Creating a k.LAB semantic network
 
-## Client applications
+## Deployment
 
-### Content providers
+### Content development
+
+#### Worldview
+    semantic server etc
 
 ### Content fruition
+
+#### End users
+ 
+#### Modelers and content developers
 
 ### Access and security
 

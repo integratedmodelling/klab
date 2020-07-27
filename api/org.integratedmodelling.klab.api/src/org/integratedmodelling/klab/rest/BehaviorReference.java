@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.rest;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Platform;
+
 public class BehaviorReference {
 
 	public static class Action {
@@ -33,7 +35,8 @@ public class BehaviorReference {
 	private String color;
 	private String logo;
 	private String label;
-
+	private Platform platform;
+	
 	public String getName() {
 		return name;
 	}
@@ -80,6 +83,14 @@ public class BehaviorReference {
 
 	public void setLabel(String label) {
 		this.label = label;
+	}
+
+	public Platform getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(Platform platform) {
+		this.platform = platform;
 	}
 
 }
