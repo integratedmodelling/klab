@@ -9,17 +9,10 @@ import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.context.event.ApplicationEnvironmentPreparedEvent;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.cloud.context.environment.EnvironmentChangeEvent;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationListener;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
-import org.springframework.context.event.ContextRefreshedEvent;
 import org.springframework.core.env.ConfigurableEnvironment;
 import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
@@ -35,7 +28,7 @@ import org.springframework.web.client.RestTemplate;
 		"org.integratedmodelling.klab.engine.rest.controllers.network",
 		"org.integratedmodelling.klab.engine.rest.messaging",
 		"org.integratedmodelling.klab.engine.rest.controllers.resources" })
-public class Cloud implements ApplicationListener<ApplicationPreparedEvent>{
+public class EngineRunner implements ApplicationListener<ApplicationPreparedEvent>{
 
 
 	@Bean
@@ -48,7 +41,7 @@ public class Cloud implements ApplicationListener<ApplicationPreparedEvent>{
 		return new RestTemplate(Arrays.asList(hmc));
 	}
 	
-	public Cloud() {
+	public EngineRunner() {
 	}
 	
 	private static Engine engine;
@@ -56,16 +49,16 @@ public class Cloud implements ApplicationListener<ApplicationPreparedEvent>{
 	private ICertificate certificate;
 
 
-	public static Cloud start(ApplicationPreparedEvent event) {
+	public static EngineRunner start(ApplicationPreparedEvent event) {
 		environment = event.getApplicationContext().getEnvironment();
 		return run();
 		
 	}
 
-	private static Cloud run() {
-		Cloud ret = new Cloud();
+	private static EngineRunner run() {
+		EngineRunner ret = new EngineRunner();
 		if(!ret.boot()){
-			throw new KlabException("hub failed to start");
+			throw new KlabException("Engine failed to start");
 		};
 		return ret;	
 	}
