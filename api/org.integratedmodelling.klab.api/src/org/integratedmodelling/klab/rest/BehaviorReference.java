@@ -33,6 +33,7 @@ public class BehaviorReference {
 	private String description;
 	private List<Action> actions = new ArrayList<>();
 	private String color;
+	private String projectId;
 	private String logo;
 	private String label;
 	private Platform platform;
@@ -91,6 +92,14 @@ public class BehaviorReference {
 
 	public void setPlatform(Platform platform) {
 		this.platform = platform;
+	}
+
+	public void setProjectId(String projectId) {
+		this.projectId = projectId;
+	}
+	
+	public String getProjectId() {
+		return this.projectId;
 	}
 
 }

@@ -117,6 +117,7 @@ import org.integratedmodelling.klab.rest.DataflowDetail;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DocumentationReference;
 import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.GroupReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.InterruptTask;
 import org.integratedmodelling.klab.rest.Layout;
@@ -1581,7 +1582,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			uid.setEmail(user.getEmailAddress());
 			uid.setId(user.getUsername());
 			for (Group group : user.getGroups()) {
-				uid.getGroups().add(group.getId());
+				uid.getGroups().add(new GroupReference(group));	
 			}
 			uid.setLastLogin(user.getLastLogin().toString());
 			ret.setOwner(uid);
