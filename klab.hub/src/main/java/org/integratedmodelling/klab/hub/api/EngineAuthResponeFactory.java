@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.hub.api;
 
 import java.io.IOException;
 import java.security.NoSuchProviderException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -65,11 +66,15 @@ public class EngineAuthResponeFactory {
 			String cipher, LicenseConfiguration config) throws NoSuchProviderException, IOException, PGPException {
 		Properties engineProperties = PropertiesFactory.fromProfile(profile, config).getProperties();
 		Properties cipherProperties = new CipherProperties().getCipherProperties(config, cipher);
+		ArrayList<String> warnings = new ArrayList<String>();
 		
 		DateTime expires = DateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
                 DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
+		if(expires.isAfter(DateTime.now().plusDays(30))) {
+			warnings.add("License set to expire on: " + expires.toString());
+		}
 		
-		if (expires.isAfter(DateTime.now())) {
+		if (expires.isAfterNow()) {
 			engineProperties.remove(KlabCertificate.KEY_EXPIRATION);
 	        cipherProperties.remove(KlabCertificate.KEY_EXPIRATION);
 	        engineProperties.remove(KlabCertificate.KEY_PARTNER_HUB);
@@ -80,11 +85,19 @@ public class EngineAuthResponeFactory {
 	    				DateTime.now().toString());
 	    		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engine.getGroups(),
 	    				DateTime.now().plusDays(90).toString(), engine.getId());
-
+	    		
+	    		ArrayList<String> expired = profile.checkGroupEntries();
+	    		if(!expired.isEmpty()) {
+	    			warnings.add("Following group(s) expired: " + expired.toString());
+	    		}
+	    		
 	    		Logging.INSTANCE.info("Remote Engine Run on hub with User: " + engine.getUsername());
 	    		HubReference hub = new GenerateHubReference().execute();
-	    		return new EngineAuthenticationResponse(authenticatedIdentity, hub,
+	    		EngineAuthenticationResponse resp = new EngineAuthenticationResponse(authenticatedIdentity, hub,
 	    				NetworkManager.INSTANCE.getNodes(engine.getGroups()));
+	    		if (!warnings.isEmpty()) {
+	    			resp.setWarnings(warnings);
+	    		}
 	        }
 		} else {
 			throw new LicenseExpiredException(profile.getUsername());
