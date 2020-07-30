@@ -37,7 +37,7 @@ public class WRBAuthority implements IAuthority {
 	}
 
 	@Override
-	public List<Identity> search(String query) {
+	public List<Identity> search(String query, String catalog) {
 		// not searchable
 		return null;
 	}

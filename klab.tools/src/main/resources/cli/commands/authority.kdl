@@ -1,0 +1,13 @@
+// Authority-related commands
+@klab 0.10.0
+@version 0.10.0
+@namespace authority
+
+void 'resolve'
+	"Resolve an authority identity to the authority descriptor and print it."
+{
+	optional boolean remote 
+		"If true, try to resolve remotely on all nodes supporting the authority."
+	
+	class org.integratedmodelling.klab.clitool.console.commands.authority.Resolve
+}

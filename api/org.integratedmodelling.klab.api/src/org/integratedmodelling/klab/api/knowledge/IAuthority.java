@@ -80,11 +80,9 @@ public interface IAuthority {
 	 * concept when called in {@link #getIdentity(String)}. Remaining fields should
 	 * be set so as to support the user in choosing an identity.
 	 * 
-	 * TODO this should return a list of the same descriptors returned by
-	 * getIdentity.
-	 * 
 	 * @param query
+	 * @param catalog may be null
 	 * @return
 	 */
-	List<Identity> search(String query);
+	List<Identity> search(String query, String catalog);
 }

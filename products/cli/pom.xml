@@ -46,7 +46,22 @@
 			<version>2.0.1.RELEASE</version>
 			<scope>provided</scope>
 		</dependency>
-
+		
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.authority.gbif</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.authority.iupac</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.authority.wrb</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.component.landcover</artifactId>

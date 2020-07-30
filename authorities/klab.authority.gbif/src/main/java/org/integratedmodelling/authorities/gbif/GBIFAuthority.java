@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
+import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.mapdb.DB;
@@ -40,9 +41,8 @@ public class GBIFAuthority implements IAuthority {
 	public static final String GENUS_RANK = "genus";
 	public static final String SPECIES_RANK = "species";
 
-	protected String rank;
+//	protected String rank;
 	private RestTemplate client = new RestTemplate();
-	private int rankIndex = -1;
 
 	DB db = null;
 	ConcurrentNavigableMap<String, String> cache = null;
@@ -60,38 +60,38 @@ public class GBIFAuthority implements IAuthority {
 		ranks.add(SPECIES_RANK);
 	}
 	
-	private IOntology getOntology() {
-		return OWL.INSTANCE.requireOntology("gbif_" + rank, OWL.INTERNAL_ONTOLOGY_PREFIX + "/authority/");
-	}
+//	private IOntology getOntology() {
+//		return OWL.INSTANCE.requireOntology("gbif_" + rank, OWL.INTERNAL_ONTOLOGY_PREFIX + "/authority/");
+//	}
 
-	protected GBIFAuthority(String rank) {
-		this.rank = rank;
-		for (int i = 0; i < ranks.size(); i++) {
-			if (rank.equals(ranks.get(i))) {
-				this.rankIndex = i;
-				break;
-			}
-		}
-		if (rankIndex < 0) {
-			throw new IllegalStateException("GBIF authority initialized with invalid rank");
-		}
+	protected GBIFAuthority() {
 		this.db = DBMaker
-				.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "gbif" + rank + ".db")
+				.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "gbif.db")
 				.make();
 		this.cache = db.treeMap("collectionName", Serializer.STRING, Serializer.STRING).createOrOpen();
 	}
 
 	@Override
-	public Identity getIdentity(String identityId, String catalog) {
+	public Identity getIdentity(String identityId, String rank) {
 
-//		IConcept ret = getOntology().getConcept("GBIF" + identityId);
-//		if (ret == null) {
 		Identity source = null;
 		// search cache first
 		String cached = cache.get(identityId);
 		if (cached != null) {
 			source = parseResult(JsonUtils.parseObject(cached, Map.class));
 		} else {
+
+			int rankIndex = -1;
+			for (int i = 0; i < ranks.size(); i++) {
+				if (rank.equals(ranks.get(i))) {
+					rankIndex = i;
+					break;
+				}
+			}
+			if (rankIndex < 0) {
+				throw new IllegalStateException("GBIF authority initialized with invalid rank");
+			}
+			
 			// if not in there, use network
 			source = parseResult(client.getForObject(getDescribeURL(identityId), Map.class));
 			// TODO check that the catalog is what we expect
@@ -99,13 +99,11 @@ public class GBIFAuthority implements IAuthority {
 			db.commit();
 		}
 
+		/*
+		 * TODO verify that the catalog is what we passed.
+		 */
+		
 		return source;
-
-//			if (source != null) {
-//				ret = makeIdentity(source);
-//			}
-//		}
-//		return null;//ret;
 	}
 
 	private IConcept makeIdentity(IMetadata source) {
@@ -150,9 +148,9 @@ public class GBIFAuthority implements IAuthority {
 	}
 
 	@Override
-	public List<Identity> search(String query) {
+	public List<Identity> search(String query, String catalog) {
 		List<Identity> ret = new ArrayList<>();
-		Object[] results = client.getForObject(getSearchURL(query, 0), Object[].class);
+		Object[] results = client.getForObject(getSearchURL(query, catalog, 0), Object[].class);
 		for (Object o : results) {
 			if (o instanceof Map<?, ?> && ((Map<?, ?>) o).containsKey("key")) {
 				Identity r = parseResult((Map<?, ?>) o);
@@ -168,8 +166,8 @@ public class GBIFAuthority implements IAuthority {
 		return ((Map<?, ?>) o).containsKey(string) ? ((Map<?, ?>) o).get(string).toString() : null;
 	}
 
-	private URI getSearchURL(String query, int page) {
-		String ret = "http://api.gbif.org/v1/species/suggest?q=" + Escape.forURL(query) + "&limit=100&rank=" + rank;
+	private URI getSearchURL(String query, String catalog, int page) {
+		String ret = "http://api.gbif.org/v1/species/suggest?q=" + Escape.forURL(query) + "&limit=100&rank=" + catalog;
 		if (page > 0) {
 			ret += "&offset=" + (page * pageSize);
 		}
@@ -190,15 +188,15 @@ public class GBIFAuthority implements IAuthority {
 	}
 
 //	@Override
-	public String getName() {
-		return "GBIF." + rank.toUpperCase();
-	}
+//	public String getName() {
+//		return "GBIF." + rank.toUpperCase();
+//	}
 
 //	@Override
 	public String getDescription() {
 		return "<b>Global Biodiversity Information Facility (GBIF)</b>\n\n"
-				+ "GBIF provides stable identities for taxonomic entities. The " + getName()
-				+ " authority provides k.LAB identities at the " + rank + " taxonomic rank.\n\n"
+				+ "GBIF provides stable identities for taxonomic entities. The available catalogs "
+				+ " authority provides k.LAB identities at different taxonomic ranks.\n\n"
 				+ "For more details, see the GBIF project at http://gbif.org";
 	}
 
@@ -210,7 +208,10 @@ public class GBIFAuthority implements IAuthority {
 
 	@Override
 	public Capabilities getCapabilities() {
-		// TODO Auto-generated method stub
-		return null;
+		AuthorityReference ref = new AuthorityReference();
+		ref.setSearchable(true);
+		ref.getDocumentationFormats().add("text/plain");
+		ref.setName(ID);
+		return ref;
 	}
 }

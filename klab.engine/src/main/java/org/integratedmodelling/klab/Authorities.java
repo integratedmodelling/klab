@@ -6,10 +6,12 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.extensions.Authority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.services.IAuthorityService;
+import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.utils.Path;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.ClassPathScanningCandidateComponentProvider;
@@ -22,7 +24,7 @@ public enum Authorities implements IAuthorityService {
 	Map<String, IAuthority> authorities = Collections.synchronizedMap(new HashMap<>());
 
 	private Authorities() {
-		
+
 		ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);
 		provider.addIncludeFilter(new AnnotationTypeFilter(Authority.class));
 
@@ -66,32 +68,39 @@ public enum Authorities implements IAuthorityService {
 	public IAuthority getAuthority(String authorityId) {
 		return authorities.get(authorityId);
 	}
-	
+
 	public IAuthority.Identity getIdentity(String authorityId, String identityId) {
-		
+
 		String auth = authorityId;
 		String catalog = null;
-		
+
 		if (auth.contains(".")) {
 			auth = Path.getFirst(authorityId, ".");
 			catalog = Path.getRemainder(authorityId, ".");
 		}
-		
+
 		/*
 		 * if we have the authority locally, use that
 		 */
+		IAuthority.Identity ret = null;
 		if (authorities.containsKey(auth)) {
-			authorities.get(auth).getIdentity(identityId, catalog);
+			ret = authorities.get(auth).getIdentity(identityId, catalog);
 		}
-		
+
 		/*
 		 * Lookup a service on the network and use the first that responds.
 		 */
-		for (INodeIdentity node : Network.INSTANCE.getNodesForAuthority(auth)) {
-			// TODO
-			break;
+		if (ret == null) {
+			for (INodeIdentity node : Network.INSTANCE.getNodesForAuthority(auth)) {
+				ret = node.getClient().get(API.AUTHORITY.RESOLVE, AuthorityIdentity.class, API.AUTHORITY.P_AUTHORITY,
+						auth, API.AUTHORITY.P_IDENTIFIER, identityId);
+				if (ret != null) {
+					break;
+				}
+			}
 		}
-		return null;
+
+		return ret;
 	}
 
 }
