@@ -1,6 +1,7 @@
-package org.integratedmodelling.klab.authorities;
+package org.integratedmodelling.authorities.gbif;
 
 import java.io.File;
+import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -8,14 +9,15 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentNavigableMap;
 
-import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.extensions.Authority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
-import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.mapdb.DB;
@@ -23,9 +25,12 @@ import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 import org.springframework.web.client.RestTemplate;
 
+@Authority(id = GBIFAuthority.ID, description = "", catalogs = { "KINGDOM", "PHYLUM", "CLASS", "ORDER", "FAMILY", "GENUS",
+		"SPECIES" }, version = Version.CURRENT)
 public class GBIFAuthority implements IAuthority {
 
 	static final int pageSize = 100;
+	static final public String ID = "GBIF";
 
 	public static final String KINGDOM_RANK = "kingdom";
 	public static final String PHYLUM_RANK = "phlyum";
@@ -54,13 +59,7 @@ public class GBIFAuthority implements IAuthority {
 		ranks.add(GENUS_RANK);
 		ranks.add(SPECIES_RANK);
 	}
-
-	static public void register() {
-		for (String rank : ranks) {
-			Authorities.INSTANCE.registerAuthority(new GBIFAuthority(rank));
-		}
-	}
-
+	
 	private IOntology getOntology() {
 		return OWL.INSTANCE.requireOntology("gbif_" + rank, OWL.INTERNAL_ONTOLOGY_PREFIX + "/authority/");
 	}
@@ -83,49 +82,48 @@ public class GBIFAuthority implements IAuthority {
 	}
 
 	@Override
-	public IConcept getIdentity(String identityId) {
-		
-		IConcept ret = getOntology().getConcept("GBIF" + identityId);
-		if (ret == null) {
-			IMetadata source = null;
-			// search cache first
-			String cached = cache.get(identityId);
-			if (cached != null) {
-				source = parseResult(JsonUtils.parseObject(cached, Map.class));
-			} else {
-				// if not in there, use network
-				source = parseResult(client.getForObject(getDescribeURL(identityId), Map.class));
-				cache.put(identityId, JsonUtils.asString(source));
-				db.commit();
-			}
-			
-			if (source != null) {
-				ret = makeIdentity(source);
-			}
+	public Identity getIdentity(String identityId, String catalog) {
+
+//		IConcept ret = getOntology().getConcept("GBIF" + identityId);
+//		if (ret == null) {
+		Identity source = null;
+		// search cache first
+		String cached = cache.get(identityId);
+		if (cached != null) {
+			source = parseResult(JsonUtils.parseObject(cached, Map.class));
+		} else {
+			// if not in there, use network
+			source = parseResult(client.getForObject(getDescribeURL(identityId), Map.class));
+			// TODO check that the catalog is what we expect
+			cache.put(identityId, JsonUtils.asString(source));
+			db.commit();
 		}
-		return ret;
+
+		return source;
+
+//			if (source != null) {
+//				ret = makeIdentity(source);
+//			}
+//		}
+//		return null;//ret;
 	}
 
 	private IConcept makeIdentity(IMetadata source) {
 		// TODO Auto-generated method stub
 		String conceptId = "GBIF" + source.get(IMetadata.IM_KEY, String.class);
-		// TODO call getIdentity() on all the upper levels using the proper authorities and 
+		// TODO call getIdentity() on all the upper levels using the proper authorities
+		// and
 		// link them as parents.
 		return null;
 	}
 
-	@Override
-	public boolean isSearchable() {
-		return true;
-	}
-
-	public IMetadata parseResult(Map<?,?> o) {
+	public Identity parseResult(Map<?, ?> o) {
 
 		if (o == null) {
 			return null;
 		}
-		
-		Metadata result = new Metadata();
+
+		AuthorityIdentity result = new AuthorityIdentity();
 
 		String key = getString(o, "key");
 		String kingdom = getString(o, "kingdom");
@@ -143,20 +141,21 @@ public class GBIFAuthority implements IAuthority {
 		String scientificName = getString(o, "scientificName");
 		String canonicalName = getString(o, "canonicalName");
 
-		result.put(IMetadata.IM_KEY, key);
-		result.put(IMetadata.DC_LABEL, canonicalName);
-		result.put(IMetadata.DC_COMMENT, scientificName);
-	
+		result.setId(key);
+		result.setLabel(canonicalName);
+		result.setDescription(scientificName);
+		// TODO
+
 		return result;
 	}
-	
+
 	@Override
-	public List<IMetadata> search(String query) {
-		List<IMetadata> ret = new ArrayList<>();
+	public List<Identity> search(String query) {
+		List<Identity> ret = new ArrayList<>();
 		Object[] results = client.getForObject(getSearchURL(query, 0), Object[].class);
 		for (Object o : results) {
 			if (o instanceof Map<?, ?> && ((Map<?, ?>) o).containsKey("key")) {
-				IMetadata r = parseResult((Map<?,?>)o);
+				Identity r = parseResult((Map<?, ?>) o);
 				if (r != null) {
 					ret.add(r);
 				}
@@ -190,16 +189,28 @@ public class GBIFAuthority implements IAuthority {
 		}
 	}
 
-	@Override
+//	@Override
 	public String getName() {
 		return "GBIF." + rank.toUpperCase();
 	}
 
-	@Override
+//	@Override
 	public String getDescription() {
 		return "<b>Global Biodiversity Information Facility (GBIF)</b>\n\n"
 				+ "GBIF provides stable identities for taxonomic entities. The " + getName()
 				+ " authority provides k.LAB identities at the " + rank + " taxonomic rank.\n\n"
 				+ "For more details, see the GBIF project at http://gbif.org";
+	}
+
+	@Override
+	public void document(String identityId, String mediaType, OutputStream destination) {
+		// TODO Auto-generated method stub
+
+	}
+
+	@Override
+	public Capabilities getCapabilities() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 }

@@ -22,113 +22,122 @@ import java.util.Set;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * Ontologies are not first-class objects in k.LAB. All retrieval of concepts should be
- * done through INamespace.
+ * Ontologies are not first-class objects in k.LAB. All retrieval of concepts
+ * should be done through INamespace.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IOntology  {
-    
+public interface IOntology {
 
-    /**
-     * The official URI of this ontology.
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    String getURI();
+	/**
+	 * The official URI of this ontology.
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	String getURI();
 
-    /**
-     * The simple name of this ontology.
-     *
-     * @return a {@link java.lang.String} object.
-     */
-    String getName();
+	/**
+	 * The simple name of this ontology.
+	 *
+	 * @return a {@link java.lang.String} object.
+	 */
+	String getName();
 
-    /**
-     * Iterate over all concepts
-     *
-     * @return an iterator over all the concepts contained in the ontology.
-     */
-    Collection<IConcept> getConcepts();
+	/**
+	 * Iterate over all concepts
+	 *
+	 * @return an iterator over all the concepts contained in the ontology.
+	 */
+	Collection<IConcept> getConcepts();
 
-    /**
-     * Iterate over all properties
-     *
-     * @return an iterator over all the properties contained in the ontology.
-     */
-    Collection<IProperty> getProperties();
+	/**
+	 * Iterate over all properties
+	 *
+	 * @return an iterator over all the properties contained in the ontology.
+	 */
+	Collection<IProperty> getProperties();
 
-    /**
-     * Return a concept, or null if not found.
-     *
-     * @param ID
-     *            the concept's ID
-     * @return the concept or null
-     */
-    IConcept getConcept(String ID);
+	/**
+	 * Return a concept, or null if not found.
+	 *
+	 * @param ID the concept's ID
+	 * @return the concept or null
+	 */
+	IConcept getConcept(String ID);
 
-    /**
-     * Return a property, or null if not found. The ID of the corresponding
-     * observable concept for a relationship may be passed as well as that of
-     * a straight property defined in OWL or k.IM.
-     *
-     * @param ID
-     *            the property's ID
-     * @return the property or null
-     */
-    IProperty getProperty(String ID);
+	/**
+	 * Return a property, or null if not found. The ID of the corresponding
+	 * observable concept for a relationship may be passed as well as that of a
+	 * straight property defined in OWL or k.IM.
+	 *
+	 * @param ID the property's ID
+	 * @return the property or null
+	 */
+	IProperty getProperty(String ID);
 
-    /**
-     * Write the ontology to the passed physical location. If writeImported is true, also
-     * write all imported ontologies with the same URI prefix using sensible file names.
-     *
-     * @param file a {@link java.io.File} object.
-     * @param writeImported
-     *            if true, export also all the imports recursively.
-     * @return true if write completed OK.
-     * @throws org.integratedmodelling.klab.exceptions.KlabException
-     */
-    boolean write(File file, boolean writeImported) throws KlabException;
+	/**
+	 * Create (if needed) and return the concept corresponding to the passed
+	 * authority and identity, whose ID must be stable across all instances, using
+	 * the closest authority service found on the k.LAB network.
+	 * 
+	 * @param authority
+	 * @param authorityIdentity
+	 * @return
+	 */
+	IConcept getIdentity(String authority, String authorityIdentity);
 
-    /**
-     * Define the ontology from a collection of axioms. Must work incrementally.
-     *
-     * @param axioms a {@link java.util.Collection} object.
-     * @return a list of error messages if any happened. Should not throw exceptions.
-     *
-     *         TODO provide a quicker define(Axiom ... axioms)
-     */
-    Collection<String> define(Collection<IAxiom> axioms);
+	/**
+	 * Write the ontology to the passed physical location. If writeImported is true,
+	 * also write all imported ontologies with the same URI prefix using sensible
+	 * file names.
+	 *
+	 * @param file          a {@link java.io.File} object.
+	 * @param writeImported if true, export also all the imports recursively.
+	 * @return true if write completed OK.
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException
+	 */
+	boolean write(File file, boolean writeImported) throws KlabException;
 
-    /**
-     * Return the number of (named, useful) concepts, hopefully quickly.
-     *
-     * @return number of concepts
-     */
-    int getConceptCount();
+	/**
+	 * Define the ontology from a collection of axioms. Must work incrementally.
+	 *
+	 * @param axioms a {@link java.util.Collection} object.
+	 * @return a list of error messages if any happened. Should not throw
+	 *         exceptions.
+	 *
+	 *         TODO provide a quicker define(Axiom ... axioms)
+	 */
+	Collection<String> define(Collection<IAxiom> axioms);
 
-    /**
-     * Return the number of (named, useful) properties, hopefully quickly.
-     *
-     * @return number of properties
-     */
-    int getPropertyCount();
+	/**
+	 * Return the number of (named, useful) concepts, hopefully quickly.
+	 *
+	 * @return number of concepts
+	 */
+	int getConceptCount();
 
-    /**
-     * Return any metadata or an empty metadata object.
-     *
-     * @return a {@link org.integratedmodelling.klab.api.knowledge.IMetadata} object.
-     */
-    IMetadata getMetadata();
+	/**
+	 * Return the number of (named, useful) properties, hopefully quickly.
+	 *
+	 * @return number of properties
+	 */
+	int getPropertyCount();
 
-    /**
-     * Return the imports, either direct (recursive = false) or the full closure.
-     * 
-     * @param recursive
-     * @return
-     */
-    Set<IOntology> getImports(boolean recursive);
+	/**
+	 * Return any metadata or an empty metadata object.
+	 *
+	 * @return a {@link org.integratedmodelling.klab.api.knowledge.IMetadata}
+	 *         object.
+	 */
+	IMetadata getMetadata();
 
+	/**
+	 * Return the imports, either direct (recursive = false) or the full closure.
+	 * 
+	 * @param recursive
+	 * @return
+	 */
+	Set<IOntology> getImports(boolean recursive);
 
 }

@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.ogc.VectorAdapter;
 import org.integratedmodelling.klab.ogc.WfsAdapter;
 import org.integratedmodelling.klab.ogc.integration.Geoserver;
 import org.integratedmodelling.klab.ogc.integration.Postgis;
+import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource;
 import org.integratedmodelling.klab.rest.ResourceReference;
 
 /**
@@ -83,7 +84,7 @@ public class VectorPublisher implements IResourceEnhancer {
 					File file = ((VectorAdapter) Resources.INSTANCE.getResourceAdapter(VectorAdapter.ID))
 							.getMainFile(resource);
 
-					String table = postgis.publish(file, urn);
+					PublishedResource table = postgis.publish(file, urn);
 					if (table != null) {
 
 						Logging.INSTANCE.info("PostGIS ingestion of " + resource.getUrn() + " successful");

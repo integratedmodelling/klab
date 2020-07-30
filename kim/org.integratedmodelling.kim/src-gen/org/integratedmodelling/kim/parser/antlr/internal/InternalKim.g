@@ -18014,9 +18014,11 @@ RULE_LOWERCASE_DASHID : 'a'..'z' ('a'..'z'|'0'..'9'|'-')*;
 
 RULE_SEPARATOR : '---' '-'*;
 
-RULE_UPPERCASE_ID : 'A'..'Z' ('A'..'Z'|'_')*;
+RULE_UPPERCASE_ID : 'A'..'Z' ('A'..'Z'|'_')+;
 
-RULE_UPPERCASE_PATH : RULE_UPPERCASE_ID ('.' RULE_UPPERCASE_ID)*;
+fragment RULE_UPPERCASE_ID_NUM : '0'..'9' ('0'..'9')+;
+
+RULE_UPPERCASE_PATH : RULE_UPPERCASE_ID ('.' (RULE_UPPERCASE_ID|RULE_UPPERCASE_ID_NUM))*;
 
 RULE_CAMELCASE_ID : 'A'..'Z' ('A'..'z'|'0'..'9')*;
 

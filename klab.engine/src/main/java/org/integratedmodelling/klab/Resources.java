@@ -863,38 +863,74 @@ public enum Resources implements IResourceService {
 	 * @param destinationDirectory
 	 * @throws IOException
 	 */
-	public void extractKnowledgeFromClasspath(File destinationDirectory) throws IOException {
+	public void extractKnowledgeFromClasspath(File destinationDirectory) {
+		try {
+			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+			org.springframework.core.io.Resource[] resources = resolver.getResources("/knowledge/**");
+			for (org.springframework.core.io.Resource resource : resources) {
 
-		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-		org.springframework.core.io.Resource[] resources = resolver.getResources("/knowledge/**");
-		for (org.springframework.core.io.Resource resource : resources) {
+				String path = null;
+				if (resource instanceof FileSystemResource) {
+					path = ((FileSystemResource) resource).getPath();
+				} else if (resource instanceof ClassPathResource) {
+					path = ((ClassPathResource) resource).getPath();
+				}
+				if (path == null) {
+					throw new KlabIOException("internal: cannot establish path for resource " + resource);
+				}
 
-			String path = null;
-			if (resource instanceof FileSystemResource) {
-				path = ((FileSystemResource) resource).getPath();
-			} else if (resource instanceof ClassPathResource) {
-				path = ((ClassPathResource) resource).getPath();
+				if (!path.endsWith("owl")) {
+					continue;
+				}
+
+				String filePath = path.substring(path.indexOf("knowledge/") + "knowledge/".length());
+
+				int pind = filePath.lastIndexOf('/');
+				if (pind >= 0) {
+					String fileDir = filePath.substring(0, pind);
+					File destDir = new File(destinationDirectory + File.separator + fileDir);
+					destDir.mkdirs();
+				}
+				File dest = new File(destinationDirectory + File.separator + filePath);
+				InputStream is = resource.getInputStream();
+				FileUtils.copyInputStreamToFile(is, dest);
+				is.close();
 			}
-			if (path == null) {
-				throw new IOException("internal: cannot establish path for resource " + resource);
-			}
+		} catch (IOException ex) {
+			throw new KlabIOException(ex);
+		}
+	}
 
-			if (!path.endsWith("owl")) {
-				continue;
-			}
 
-			String filePath = path.substring(path.indexOf("knowledge/") + "knowledge/".length());
+	/**
+	 * Only works for a flat hierarchy!
+	 * @param resourcePattern
+	 * @param destinationDirectory
+	 */
+	public void extractResourcesFromClasspath(String resourcePattern, File destinationDirectory) {
 
-			int pind = filePath.lastIndexOf('/');
-			if (pind >= 0) {
-				String fileDir = filePath.substring(0, pind);
-				File destDir = new File(destinationDirectory + File.separator + fileDir);
-				destDir.mkdirs();
+		try {
+			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+			org.springframework.core.io.Resource[] resources = resolver.getResources(resourcePattern);
+			for (org.springframework.core.io.Resource resource : resources) {
+
+				String path = null;
+				if (resource instanceof FileSystemResource) {
+					path = ((FileSystemResource) resource).getPath();
+				} else if (resource instanceof ClassPathResource) {
+					path = ((ClassPathResource) resource).getPath();
+				}
+				if (path == null) {
+					throw new KlabIOException("internal: cannot establish path for resource " + resource);
+				}
+				String fileName = MiscUtilities.getFileName(path);
+				File dest = new File(destinationDirectory + File.separator + fileName);
+				InputStream is = resource.getInputStream();
+				FileUtils.copyInputStreamToFile(is, dest);
+				is.close();
 			}
-			File dest = new File(destinationDirectory + File.separator + filePath);
-			InputStream is = resource.getInputStream();
-			FileUtils.copyInputStreamToFile(is, dest);
-			is.close();
+		} catch (IOException ex) {
+			throw new KlabIOException(ex);
 		}
 	}
 
@@ -1004,14 +1040,27 @@ public enum Resources implements IResourceService {
 			}
 			adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), geometry, builder,
 					Expression.emptyContext(geometry, monitor));
-		} else if (kurn.isUniversal()) {
-			// TODO
+
+		} else if (kurn.isUniversal() && getUrnAdapter(kurn.getCatalog()) != null) {
+
+			IUrnAdapter adapter = getUrnAdapter(kurn.getCatalog());
+			if (adapter == null) {
+				throw new KlabUnsupportedFeatureException(
+						"adapter for resource of type " + kurn.getCatalog() + " not available");
+			}
+
+			IContextualizationScope context = Expression.emptyContext(geometry, monitor);
+			try {
+				adapter.getEncodedData(kurn, builder, geometry, context);
+			} catch (Throwable e) {
+				// just return null later
+				context.getMonitor().error("could not extract data from " + urn + ": " + e.getMessage());
+			}
+
 		} else {
-			// TODO
 			INodeIdentity node = Network.INSTANCE.getNodeForResource(kurn);
 			if (node != null) {
 				ResourceDataRequest request = new ResourceDataRequest();
-				// send toString() with all parameters!
 				request.setUrn(urn.toString());
 				request.setGeometry(geometry.encode());
 				builder = new DecodingDataBuilder(
@@ -1039,7 +1088,6 @@ public enum Resources implements IResourceService {
 	 * @param context
 	 * @return KlabException if anything goes wrong
 	 */
-//	@Override
 	public IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			IContextualizationScope context) {
 
@@ -1142,8 +1190,7 @@ public enum Resources implements IResourceService {
 						 * build an observer from the data and return it
 						 */
 						return Observations.INSTANCE.makeROIObserver(data.getObjectName(0),
-								data.getObjectScale(0).getSpace().getShape(),
-								org.integratedmodelling.klab.Time.INSTANCE
+								data.getObjectScale(0).getSpace().getShape(), org.integratedmodelling.klab.Time.INSTANCE
 										.getGenericCurrentExtent(Resolution.Type.YEAR),
 								data.getObjectMetadata(0));
 					}

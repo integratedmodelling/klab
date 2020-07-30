@@ -1,9 +1,15 @@
 package org.integratedmodelling.klab.rest;
 
-public class AuthorityReference {
+import java.util.ArrayList;
+import java.util.List;
+
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
+
+public class AuthorityReference implements IAuthority.Capabilities {
 
 	private String name;
 	private boolean searchable;
+	private List<String> documentationFormats = new ArrayList<>();
 
 	public String getName() {
 		return name;
@@ -58,4 +64,14 @@ public class AuthorityReference {
 	public void setSearchable(boolean searchable) {
 		this.searchable = searchable;
 	}
+
+	@Override
+	public List<String> getDocumentationFormats() {
+		return documentationFormats;
+	}
+
+	public void setDocumentationFormats(List<String> documentationFormats) {
+		this.documentationFormats = documentationFormats;
+	}
+	
 }

@@ -2,16 +2,18 @@ package org.integratedmodelling.klab.ogc.integration;
 
 import java.io.File;
 import java.net.MalformedURLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Urn;
-import org.openrdf.http.protocol.transaction.operations.RemoveNamespaceOperation;
-import org.openrdf.query.algebra.DeleteData;
+import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource;
+import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource.Attribute;
 
 import kong.unirest.GetRequest;
 import kong.unirest.HttpRequestWithBody;
@@ -170,7 +172,7 @@ public class Geoserver {
 	 * @param name
 	 * @return
 	 */
-	private boolean deleteCoverageStore(String namespace, String name) {
+	public boolean deleteCoverageStore(String namespace, String name) {
 		HttpRequestWithBody request = Unirest.delete(
 				this.url + "/rest/workspaces/" + namespace + "/coveragestores/" + name + "?recurse=true&purge=metadata")
 				.connectTimeout(timeout);
@@ -180,7 +182,7 @@ public class Geoserver {
 		return request.asEmpty().isSuccess();
 	}
 
-	private boolean deleteNamespace(String namespace) {
+	public boolean deleteNamespace(String namespace) {
 		HttpRequestWithBody request = Unirest.delete(this.url + "/rest/namespaces/" + namespace)
 				.connectTimeout(timeout);
 		if (this.username != null) {
@@ -189,7 +191,7 @@ public class Geoserver {
 		return request.asEmpty().isSuccess();
 	}
 
-	private boolean deleteWorkspace(String namespace) {
+	public boolean deleteWorkspace(String namespace) {
 		HttpRequestWithBody request = Unirest.delete(this.url + "/rest/workspaces/" + namespace)
 				.connectTimeout(timeout);
 		if (this.username != null) {
@@ -243,69 +245,60 @@ public class Geoserver {
 	}
 
 	/**
-	 * <dataStore> <name>nyc</name> <connectionParameters> <host>localhost</host>
-	 * <port>5432</port> <database>nyc</database> <user>bob</user>
-	 * <passwd>postgres</passwd> <dbtype>postgis</dbtype> </connectionParameters>
-	 * </dataStore>
+	 * <pre>
+	 <featureType>
+	<name>annotations</name>
+	<nativeName>annotations</nativeName>
+	<title>Annotations</title>
+	<srs>EPSG:4326</srs>
+	<attributes>
+	<attribute>
+	  <name>the_geom</name>
+	  <binding>org.locationtech.jts.geom.Point</binding>
+	</attribute>
+	<attribute>
+	  <name>description</name>
+	  <binding>java.lang.String</binding>
+	</attribute>
+	<attribute>
+	  <name>timestamp</name>
+	  <binding>java.util.Date</binding>
+	</attribute>
+	</attributes>
+	</featureType>
+	 * </pre>
 	 * 
 	 * @param postgis   use the postgis that published the resource
 	 * @param namespace geoserver namespace (will be created if needed)
 	 * @param table     table name
 	 * @return
 	 */
-	public String publishPostgisVector(Postgis postgis, String namespace, String table) {
+	public String publishPostgisVector(Postgis postgis, String namespace, PublishedResource resource) {
 
 		namespace = requireNamespace(namespace);
 		String datastore = postgis.getDatabase();
 		if (requireDatastore(postgis, namespace)) {
 
-			if (getFeatureTypes(namespace, datastore).contains(table)) {
-				deleteFeatureType(namespace, datastore, table);
+			if (getFeatureTypes(namespace, datastore).contains(resource.name)) {
+				deleteFeatureType(namespace, datastore, resource.name);
 			}
 
 			Map<String, Object> payload = new HashMap<>();
 			Map<String, Object> data = new HashMap<>();
+			List<Map<?,?>> attributes = new ArrayList<>();
 
-			data.put("name", table);
+			for (Attribute attribute : resource.attributes) {
+				Map<String, Object> attr = new HashMap<>();
+				attr.put("name", attribute.name);
+				attr.put("binding", attribute.binding.getCanonicalName());
+			}
+			
+			data.put("name", resource.name);
+			data.put("nativeName", resource.name);
+			data.put("srs", resource.srs);
+			data.put("attributes", attributes);
 			payload.put("featureType", data);
-
-			/*
-			 * TODO add all other attributes to featureType (data)! Example: { "name":
-			 * "poi", "nativeName": "poi", "namespace": { "name": "tiger", "href":
-			 * "http://localhost:8080/geoserver/rest/namespaces/tiger.json" }, "title":
-			 * "Manhattan (NY) points of interest", "abstract":
-			 * "Points of interest in New York, New York (on Manhattan). One of the attributes contains the name of a file with a picture of the point of interest."
-			 * , "keywords": { "string": [ "poi", "Manhattan", "DS_poi",
-			 * "points_of_interest", "sampleKeyword\\@language=ab\\;",
-			 * "area of effect\\@language=bg\\;\\@vocabulary=technical\\;",
-			 * "Привет\\@language=ru\\;\\@vocabulary=friendly\\;" ] }, "metadataLinks": {
-			 * "metadataLink": [ { "type": "text/plain", "metadataType": "FGDC", "content":
-			 * "www.google.com" } ] }, "dataLinks": {
-			 * "org.geoserver.catalog.impl.DataLinkInfoImpl": [ { "type": "text/plain",
-			 * "content": "http://www.google.com" } ] }, "nativeCRS":
-			 * "GEOGCS[\"WGS 84\", \n  DATUM[\"World Geodetic System 1984\", \n    SPHEROID[\"WGS 84\", 6378137.0, 298.257223563, AUTHORITY[\"EPSG\",\"7030\"]], \n    AUTHORITY[\"EPSG\",\"6326\"]], \n  PRIMEM[\"Greenwich\", 0.0, AUTHORITY[\"EPSG\",\"8901\"]], \n  UNIT[\"degree\", 0.017453292519943295], \n  AXIS[\"Geodetic longitude\", EAST], \n  AXIS[\"Geodetic latitude\", NORTH], \n  AUTHORITY[\"EPSG\",\"4326\"]]"
-			 * , "srs": "EPSG:4326", "nativeBoundingBox": { "minx": -74.0118315772888,
-			 * "maxx": -74.00153046439813, "miny": 40.70754683896324, "maxy":
-			 * 40.719885123828675, "crs": "EPSG:4326" }, "latLonBoundingBox": { "minx":
-			 * -74.0118315772888, "maxx": -74.00857344353275, "miny": 40.70754683896324,
-			 * "maxy": 40.711945649065406, "crs": "EPSG:4326" }, "projectionPolicy":
-			 * "REPROJECT_TO_DECLARED", "enabled": true, "metadata": { "entry": [ { "@key":
-			 * "kml.regionateStrategy", "$": "external-sorting" }, { "@key":
-			 * "kml.regionateFeatureLimit", "$": "15" }, { "@key": "cacheAgeMax", "$":
-			 * "3000" }, { "@key": "cachingEnabled", "$": "true" }, { "@key":
-			 * "kml.regionateAttribute", "$": "NAME" }, { "@key": "indexingEnabled", "$":
-			 * "false" }, { "@key": "dirName", "$": "DS_poi_poi" } ] }, "store": { "@class":
-			 * "dataStore", "name": "tiger:nyc", "href":
-			 * "http://localhost:8080/geoserver/rest/workspaces/tiger/datastores/nyc.json"
-			 * }, "cqlFilter": "INCLUDE", "maxFeatures": 100, "numDecimals": 6,
-			 * "responseSRS": { "string": [ 4326 ] }, "overridingServiceSRS": true,
-			 * "skipNumberMatched": true, "circularArcPresent": true,
-			 * "linearizationTolerance": 10, "attributes": { "attribute": [ { "name":
-			 * "the_geom", "minOccurs": 0, "maxOccurs": 1, "nillable": true, "binding":
-			 * "org.locationtech.jts.geom.Point" }, {}, {}, {} ] } }
-			 * 
-			 */
-
+			
 			HttpRequestWithBody request = Unirest
 					.post(this.url + "/rest/workspaces/" + namespace + "/datastores/" + datastore + "/featuretypes")
 					.connectTimeout(timeout).header("Content-Type", "application/json");
@@ -315,7 +308,7 @@ public class Geoserver {
 			}
 
 			if (request.body(payload).asEmpty().isSuccess()) {
-				return namespace + ":" + table;
+				return namespace + ":" + resource.name;
 			}
 		}
 
@@ -331,7 +324,7 @@ public class Geoserver {
 		return request.asEmpty().isSuccess();
 	}
 
-	private boolean deleteDatastore(String namespace, String datastore) {
+	public boolean deleteDatastore(String namespace, String datastore) {
 		HttpRequestWithBody request = Unirest
 				.delete(this.url + "/rest/workspaces/" + namespace + "/datastores/" + datastore + "?recurse=true")
 				.connectTimeout(timeout);
@@ -341,8 +334,10 @@ public class Geoserver {
 		return request.asEmpty().isSuccess();
 	}
 
+	/**
+	 * Delete EVERYTHING. Use with appropriate caution. 
+	 */
 	public void clear() {
-		// TODO Auto-generated method stub
 		for (String namespace : getNamespaces()) {
 			for (String datastore : getDatastores(namespace)) {
 				deleteDatastore(namespace, datastore);
@@ -390,7 +385,6 @@ public class Geoserver {
 	/*
 	 * ---- Unirest calls for the relevant parts of the Geoserver API
 	 */
-
 	public Set<String> getNamespaces() {
 		Set<String> ret = new HashSet<>();
 		GetRequest request = Unirest.get(this.url + "/rest/namespaces").header("Accept", "application/json")

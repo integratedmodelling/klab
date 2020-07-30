@@ -10566,6 +10566,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	private final PathElements pPath;
 	private final TerminalRule tSEPARATOR;
 	private final TerminalRule tUPPERCASE_ID;
+	private final TerminalRule tUPPERCASE_ID_NUM;
 	private final TerminalRule tUPPERCASE_PATH;
 	private final TerminalRule tCAMELCASE_ID;
 	private final TerminalRule tBACKCASE_ID;
@@ -10679,6 +10680,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		this.pPath = new PathElements();
 		this.tSEPARATOR = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.SEPARATOR");
 		this.tUPPERCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.UPPERCASE_ID");
+		this.tUPPERCASE_ID_NUM = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.UPPERCASE_ID_NUM");
 		this.tUPPERCASE_PATH = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
 		this.tCAMELCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 		this.tBACKCASE_ID = (TerminalRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.BACKCASE_ID");
@@ -11983,13 +11985,19 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//terminal UPPERCASE_ID:
-	//	'A'..'Z' ('A'..'Z' | '_')*;
+	//	'A'..'Z' ('A'..'Z' | '_')+;
 	public TerminalRule getUPPERCASE_IDRule() {
 		return tUPPERCASE_ID;
 	}
 	
+	//terminal UPPERCASE_ID_NUM:
+	//	'0'..'9' '0'..'9'+;
+	public TerminalRule getUPPERCASE_ID_NUMRule() {
+		return tUPPERCASE_ID_NUM;
+	}
+	
 	//terminal UPPERCASE_PATH:
-	//	UPPERCASE_ID ('.' UPPERCASE_ID)*;
+	//	UPPERCASE_ID ('.' (UPPERCASE_ID | UPPERCASE_ID_NUM))*;
 	public TerminalRule getUPPERCASE_PATHRule() {
 		return tUPPERCASE_PATH;
 	}

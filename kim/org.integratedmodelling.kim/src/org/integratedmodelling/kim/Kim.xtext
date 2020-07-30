@@ -1016,10 +1016,13 @@ terminal SEPARATOR:
 ;
 
 terminal UPPERCASE_ID:
-	('A'..'Z') ('A'..'Z' | '_')*;
+	('A'..'Z') ('A'..'Z' | '_')+;
+
+terminal UPPERCASE_ID_NUM:
+	('0'..'9') ('0' .. '9')+;
 
 terminal UPPERCASE_PATH:
-	UPPERCASE_ID ('.' UPPERCASE_ID)*;
+	UPPERCASE_ID ('.' (UPPERCASE_ID|UPPERCASE_ID_NUM))*;
 
 terminal CAMELCASE_ID:
 	('A'..'Z') ('A'..'z'|'0'..'9')*;

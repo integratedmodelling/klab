@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.engine.resources;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -364,11 +363,7 @@ public class CoreOntology extends AbstractWorkspace {
 		IKimLoader ret = null;
 		if (!synced) {
 			synced = true;
-			try {
-				Resources.INSTANCE.extractKnowledgeFromClasspath(getRoot());
-			} catch (IOException e) {
-				throw new KlabIOException(e);
-			}
+			Resources.INSTANCE.extractKnowledgeFromClasspath(getRoot());
 		}
 		OWL.INSTANCE.initialize(getRoot(), monitor);
 

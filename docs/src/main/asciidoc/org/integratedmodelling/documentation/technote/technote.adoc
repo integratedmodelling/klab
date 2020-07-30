@@ -47,15 +47,24 @@ Search and discover API (no semantics: by metadata, author etc)
 
 ### The semantic layer
 
+The language syntax embodies and enforces consistency of the statements with the core observation ontology. [EXAMPLE]. This establishes the phenomenological basis and assembly rules for concepts representing the base categories of observables [subjects, qualities, processes, events, relationships] of which scientific observations can be made, and of predicates [attributes, roles, identities, realms] that further specify these observations. This approach incarnates the driving principles of:
+
+1. Phenomenological accuracy: ... [no space for ambiguity that even adoption of upper ontologies allows].
+2. Orthogonality: ...
+3. Parsimony: ...
+4. Expressiveness and user-friendliness: ... [color coding for main phen categories]
+
+In addition, a mechanism to interface with external vocabularies (authorities)...
+
 Two levels: the worldview (shared and synchronized, based on certificate) and models (annotation) where semantics is specified for resources and computational procedures (both curated from external sources or defined within k.LAB as components).
 
 (ontologies rigorously ONLY about the meaning, never the representation, metadata or distribution)
 
+Semantic servers (a forthcoming k.LAB component) and curated observables will further limit the ambiguity, hopefully leading to content developers being able to quickly home in on the semantics that guarantees the highest return for investment in terms of linking and interoperability of every new contribution.
+
 Operations here are _resolution_ of the concept in the context (producing a self-consistent _dataflow_ capable of computing an observation of it) and _contextualization_ (the computation of the dataflow to produce the contextualized observation). Machine reasoning is the principal means to resolve the concept, using inference to find ways to compute the observation from the findable information in the k.LAB resource layer.
 
 #### Concepts: the worldview
-
-Semantics used how - e.g. redistribution of contexts (watersheds) and inherency (height of tree); automatic modelling; 
 
 Concept declaration: k.IM embodies the core observation ontology and hides it behind English-like constructions that remain readable to non-initiated.
 
@@ -63,13 +72,18 @@ Concept use: extends the common "one concept, one artifact" paradigm of other se
 
 ... EXAMPLES
 
-Taxonomy of observables: includes relationships.
+Taxonomy of observables: includes relationships. NAH
 
 One worldview is shared by a network of connected k.LAB nodes, hubs and engine, and the commitment to a specific worldview is stored with the certificate that enables nodes, engines and users to connect to the network. While many worldviews can ,,,, is communally owned 
 
-#### Models
+#### Semantic modeling
 
-Taxonomy of observables implies a taxonomy of possible observations, which are specified by _models_. Models are usually short statements written in k.IM and either specifying algorithms in one of a set of expression languages or bridging to computations done either internally to the engine (functions) or externally as part of computable resources. The simples model simply provides semantics for a URN-specified resource:
+Same language allows writing only the relevant parts of models ... This is a completely new approach that guarantees 1) modularity 2)... (parsimony) 3) context independence and of course 4) interoperability to levels previusly unachieved.
+
+(Taxonomy of observables implies a taxonomy of possible observations, which are specified by _models_. Models are usually short statements written in k.IM and either specifying algorithms in one of a set of expression languages or bridging to computations done either internally to the engine (functions) or externally as part of computable resources. The simples model simply provides semantics for a URN-specified resource:
+Semantics used how - e.g. redistribution of contexts (watersheds) and inherency (height of tree); automatic modelling;)
+
+RUNTIME: RESOLUTION, CONTEXTUALIZATION (, DOCUMENTATION)
 
 <example>
 
@@ -80,13 +94,12 @@ Besides the shared worldview, information in the semantic layer is created by _c
 The k.IM language used to specify the worldview also has the `model` construct that allowa.....
 
 EXAMPLES OF MODELS 
-PARSIMONY
-MODULARITY
 
 ### Contextualization
 
 context + query* -> resolution -> dataflow -> artifacts
 
+Automated resolution of OCCURRENTS and INHERENTS - change propagation - observational inherency vs. quality inherency.
 
 #### Learning models
 

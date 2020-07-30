@@ -82,6 +82,7 @@
 		<module>components</module>
 		<!-- later (requires mvn 3.0.5 which can't be installed on sua) -->
 		<!--  <module>docs</module> -->
+		<module>authorities</module>
 	</modules>
 
 	<properties>

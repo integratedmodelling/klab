@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.authorities.swb;
+package org.integratedmodelling.authorities.wrb;
 
 /**
  * Contains all queries and endpoint info to fill the vocabulary at initialization.
