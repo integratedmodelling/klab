@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityReference;
@@ -26,8 +27,8 @@ import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
 import org.springframework.web.client.RestTemplate;
 
-@Authority(id = GBIFAuthority.ID, description = "", catalogs = { "KINGDOM", "PHYLUM", "CLASS", "ORDER", "FAMILY", "GENUS",
-		"SPECIES" }, version = Version.CURRENT)
+@Authority(id = GBIFAuthority.ID, description = "", catalogs = { "KINGDOM", "PHYLUM", "CLASS", "ORDER", "FAMILY",
+		"GENUS", "SPECIES" }, version = Version.CURRENT)
 public class GBIFAuthority implements IAuthority {
 
 	static final int pageSize = 100;
@@ -59,15 +60,14 @@ public class GBIFAuthority implements IAuthority {
 		ranks.add(GENUS_RANK);
 		ranks.add(SPECIES_RANK);
 	}
-	
+
 //	private IOntology getOntology() {
 //		return OWL.INSTANCE.requireOntology("gbif_" + rank, OWL.INTERNAL_ONTOLOGY_PREFIX + "/authority/");
 //	}
 
-	protected GBIFAuthority() {
-		this.db = DBMaker
-				.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "gbif.db")
-				.make();
+	public GBIFAuthority() {
+		this.db = DBMaker.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "gbif.db")
+				.closeOnJvmShutdown().make();
 		this.cache = db.treeMap("collectionName", Serializer.STRING, Serializer.STRING).createOrOpen();
 	}
 
@@ -81,17 +81,20 @@ public class GBIFAuthority implements IAuthority {
 			source = parseResult(JsonUtils.parseObject(cached, Map.class));
 		} else {
 
-			int rankIndex = -1;
-			for (int i = 0; i < ranks.size(); i++) {
-				if (rank.equals(ranks.get(i))) {
-					rankIndex = i;
-					break;
+			if (rank != null) {
+				rank = rank.toLowerCase();
+				int rankIndex = -1;
+				for (int i = 0; i < ranks.size(); i++) {
+					if (rank.equals(ranks.get(i))) {
+						rankIndex = i;
+						break;
+					}
+				}
+				if (rankIndex < 0) {
+					throw new KlabValidationException("GBIF authority: invalid catalog " + ranks);
 				}
 			}
-			if (rankIndex < 0) {
-				throw new IllegalStateException("GBIF authority initialized with invalid rank");
-			}
-			
+
 			// if not in there, use network
 			source = parseResult(client.getForObject(getDescribeURL(identityId), Map.class));
 			// TODO check that the catalog is what we expect
@@ -99,10 +102,12 @@ public class GBIFAuthority implements IAuthority {
 			db.commit();
 		}
 
-		/*
-		 * TODO verify that the catalog is what we passed.
-		 */
-		
+		if (rank != null) {
+			/*
+			 * TODO verify that the catalog is what we passed.
+			 */
+		}
+
 		return source;
 	}
 
@@ -142,7 +147,7 @@ public class GBIFAuthority implements IAuthority {
 		result.setId(key);
 		result.setLabel(canonicalName);
 		result.setDescription(scientificName);
-		// TODO
+		result.setConceptName("gbif" + key);
 
 		return result;
 	}
