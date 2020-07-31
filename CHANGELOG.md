@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Authority concepts should now be identified using the uppercase authority name as a 
+  namespace, which is now syntactically supported. The ID can be a lowercase or
+  uppercase ID, an integer, or a string. This enables a much more natural mapping
+  of identities to concepts and can be supplemented with editing tools so that
+  intermediate aliases can be reduced or eliminated. Syntax like IUPAC:water is
+  fully interoperable with IUPAC:H2O or any other definition; checking and testing
+  will be integrated with the editor and the 'identified as' syntax is now 
+  deprecated.
+- Brought back the IUPAC, GBIF and WRB authorities with modernized API and both
+  engine and node versions. WRB due for update to 2014 vocabulary with 
+  constraint validation; versions will be selectable using syntax like 
+  WRB.2014:"Thionic Vertisols", with 2014 as the default vocabulary.
 - Syntax highlighting in k.Actors now shows different classes of actions with
   matching colors. In addition, observables are now parsed and decorated using
   same colors as k.IM. Any k.Actors keyword in namespace IDs can be quoted using a 

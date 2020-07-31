@@ -13,7 +13,6 @@ import org.integratedmodelling.klab.rest.AuthorityIdentity;
 /**
  * Intermediate representation for a WRB identity, with methods to build a trait
  * composition that represents it semantically in the terms of the CREA WRB vocabulary.
- * 
  */
 public class WRBIdentity {
 
@@ -203,7 +202,6 @@ public class WRBIdentity {
 
         String group = WRBParser.getGroupTerm(token);
         if (group != null) {
-
             if (rsg != null) {
                 error("cannot have two soil group identifiers: " + group + " and " + rsg);
             } else {
@@ -247,6 +245,7 @@ public class WRBIdentity {
 
         ret.setId(getShortId());
         ret.setLabel(toString());
+        ret.setConceptName(getShortId());
 
         return ret;
     }
