@@ -3,7 +3,7 @@ package org.integratedmodelling.authorities.wrb.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class WrbIdentity {
+public class Identity {
 
 	public static class SpecifiedQualifier {
 		private Qualifier qualifier;
