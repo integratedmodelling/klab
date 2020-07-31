@@ -12,13 +12,17 @@ public class GroupEntry {
 	
 	public GroupEntry(MongoGroup group, DateTime experation) {
 		this.group = group;
-		this.experation = experation;
+		if(experation != null) {
+			this.experation = experation;
+		} else {
+			this.experation = DateTime.now().plusDays(365);
+		}
 		setInception();
 	}
 	
 	public GroupEntry(MongoGroup group) {
 		this.group = group;
-		this.experation = null;
+		this.experation = DateTime.now().plusDays(365);
 		setInception();
 	}
 	

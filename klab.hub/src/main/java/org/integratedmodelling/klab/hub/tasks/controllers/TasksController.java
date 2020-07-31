@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import javax.annotation.security.RolesAllowed;
 
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.Task;
 import org.integratedmodelling.klab.hub.api.TaskStatus;
 import org.integratedmodelling.klab.hub.api.TaskType;
@@ -21,14 +22,13 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
-@RequestMapping("/api/v2/tasks")
 @RestController
 public class TasksController {
 	
 	@Autowired
 	TaskService service;
 	
-	@GetMapping(value="/{id}", produces = "application/json")
+	@GetMapping(value=API.HUB.TASK_BASE_ID, produces = "application/json")
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> getTask(@PathVariable("id") String id) {
 		Optional<Task> task = service.getTask(id);
@@ -41,7 +41,7 @@ public class TasksController {
 		return resp;
 	}
 	
-	@GetMapping(value="", produces = "application/json")
+	@GetMapping(value=API.HUB.TASK_BASE, produces = "application/json")
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
 	public ResponseEntity<?> getTasks(@RequestParam("type") Optional<TaskType> type,
 			@RequestParam("status") Optional<TaskStatus> status) {
