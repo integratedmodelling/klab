@@ -402,6 +402,7 @@ ConceptDeclaration:
 ;
 
 ConceptReference:
+	name=AuthorityId |
 	name=CAMELCASE_ID | 
 	name=NamespaceId  |
 	templateType=('${' | '#{') (
@@ -1016,13 +1017,14 @@ terminal SEPARATOR:
 ;
 
 terminal UPPERCASE_ID:
-	('A'..'Z') ('A'..'Z' | '_')+;
+	('A'..'Z') ('A'..'Z' | '0'..'9' | '_')+;
 
-terminal UPPERCASE_ID_NUM:
-	('0'..'9') ('0' .. '9')+;
+//// number with a prefix, for versions and the like
+//terminal UPPERCASE_ID_NUM:
+//	('A'..'Z')+ ('0'..'9')('A'..'Z'|'0'..'9')+;
 
 terminal UPPERCASE_PATH:
-	UPPERCASE_ID ('.' (UPPERCASE_ID|UPPERCASE_ID_NUM))*;
+	UPPERCASE_ID ('.' (UPPERCASE_ID|INT))*;
 
 terminal CAMELCASE_ID:
 	('A'..'Z') ('A'..'z'|'0'..'9')*;
@@ -1032,6 +1034,10 @@ terminal BACKCASE_ID:
 	
 NamespaceId:
 	PathName ':' CAMELCASE_ID;
+	
+AuthorityId:
+	(UPPERCASE_PATH|UPPERCASE_ID) ':' (LOWERCASE_ID|UPPERCASE_ID|INT|STRING)
+;
 
 PropertyId:
 	(PathName | LOWERCASE_ID) ':' (LOWERCASE_ID|BACKCASE_ID|LOWERCASE_DASHID);

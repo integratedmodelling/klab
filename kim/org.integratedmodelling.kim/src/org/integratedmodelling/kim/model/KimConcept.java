@@ -606,6 +606,12 @@ public class KimConcept extends KimStatement implements IKimConcept {
 				}
 
 			} else {
+				
+				if (Character.isUpperCase(concept.getName().getName().charAt(0))) {
+					// AUTHORITY
+					System.out.println("ZIO PAPA AUTHORITY " + concept.getName().getName());
+				}
+
 				ret.name = concept.getName().getName();
 				if (ret.name != null && !ret.name.contains(":")) {
 					Namespace namespace = KimValidator.getNamespace(concept);

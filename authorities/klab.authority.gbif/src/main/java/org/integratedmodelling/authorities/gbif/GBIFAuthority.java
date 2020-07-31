@@ -5,6 +5,8 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentNavigableMap;
@@ -15,13 +17,12 @@ import org.integratedmodelling.klab.api.extensions.Authority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.JsonUtils;
+import org.integratedmodelling.klab.utils.StringUtils;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
@@ -67,7 +68,7 @@ public class GBIFAuthority implements IAuthority {
 
 	public GBIFAuthority() {
 		this.db = DBMaker.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "gbif.db")
-				.closeOnJvmShutdown().make();
+				.transactionEnable().closeOnJvmShutdown().make();
 		this.cache = db.treeMap("collectionName", Serializer.STRING, Serializer.STRING).createOrOpen();
 	}
 
@@ -78,7 +79,7 @@ public class GBIFAuthority implements IAuthority {
 		// search cache first
 		String cached = cache.get(identityId);
 		if (cached != null) {
-			source = parseResult(JsonUtils.parseObject(cached, Map.class));
+			source = JsonUtils.parseObject(cached, AuthorityIdentity.class);
 		} else {
 
 			if (rank != null) {
@@ -128,27 +129,47 @@ public class GBIFAuthority implements IAuthority {
 
 		AuthorityIdentity result = new AuthorityIdentity();
 
+		Map<String, String> desc = new HashMap<>();
+
 		String key = getString(o, "key");
-		String kingdom = getString(o, "kingdom");
-		String phylum = getString(o, "phylum");
+		desc.put(KINGDOM_RANK, getString(o, "kingdom"));
+		desc.put(PHYLUM_RANK, getString(o, "phylum"));
+		desc.put(CLASS_RANK, getString(o, "class"));
+		desc.put(ORDER_RANK, getString(o, "order"));
+		desc.put(FAMILY_RANK, getString(o, "family"));
+
 		String parent = getString(o, "parent");
-		String order = getString(o, "order");
-		String family = getString(o, "family");
-		String clss = getString(o, "class");
-		String kingdomKey = getString(o, "kingdomKey");
-		String classKey = getString(o, "classKey");
-		String phylumKey = getString(o, "phylumKey");
 		String parentKey = getString(o, "parentKey");
-		String orderKey = getString(o, "orderKey");
-		String familyKey = getString(o, "familyKey");
-		String scientificName = getString(o, "scientificName");
+//		String kingdomKey = getString(o, "kingdomKey");
+//		String classKey = getString(o, "classKey");
+//		String phylumKey = getString(o, "phylumKey");
+//		String orderKey = getString(o, "orderKey");
+//		String familyKey = getString(o, "familyKey");
+		String authorship = getString(o, "authorship");
 		String canonicalName = getString(o, "canonicalName");
+
+		String parents = null;
+		String rank = null;
+		if (parent != null) {
+			for (int i = ranks.size() - 1; i >= 0; i--) {
+				if (parent.equals(desc.get(ranks.get(i)))) {
+					rank = ranks.get(i + 1);
+					parents = desc.get(ranks.get(i));
+				} else if (parents != null && desc.get(ranks.get(i)) != null) {
+					parents += ", " + desc.get(ranks.get(i));
+				}
+			}
+		}
 
 		result.setId(key);
 		result.setLabel(canonicalName);
-		result.setDescription(scientificName);
+		result.setDescription((rank == null ? "" : (StringUtils.capitalize(rank) + ": ")) + canonicalName
+				+ ((authorship == null || authorship.isEmpty()) ? "" : (" (" + authorship + ")"))
+				+ (parents == null ? "" : (". " + parents + ".")));
 		result.setConceptName("gbif" + key);
-
+		if (parentKey != null) {
+			result.setParentIds(Collections.singletonList(parentKey));
+		}
 		return result;
 	}
 

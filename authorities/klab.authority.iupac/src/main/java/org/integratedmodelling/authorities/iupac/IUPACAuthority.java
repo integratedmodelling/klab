@@ -48,6 +48,7 @@ public class IUPACAuthority implements IAuthority {
 		this.db = DBMaker
 				.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "iupac.db")
 				.closeOnJvmShutdown()
+				.transactionEnable()
 				.make();
 		this.cache = db.treeMap("collectionName", Serializer.STRING, Serializer.STRING).createOrOpen();
 	}
@@ -79,6 +80,7 @@ public class IUPACAuthority implements IAuthority {
 		 * cache also the errors
 		 */
 		this.cache.put(original, JsonUtils.asString(ret));
+		this.db.commit();
 		
 		return ret;
 	}
