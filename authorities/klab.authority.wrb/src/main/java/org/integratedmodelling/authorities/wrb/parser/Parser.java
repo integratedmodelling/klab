@@ -139,57 +139,63 @@ public class Parser {
 				 * Check that all classifiers belong to the RSG and are compatible within the
 				 * RSG constraints.
 				 */
-				Map<Set<String>, Integer> useCount = new HashMap<>();
-				Set<String> principalIds = new HashSet<>();
-				for (SpecifiedQualifier sq : this.principalQualifiers) {
-					principalIds.add(sq.getQualifier().getName());
-					boolean ok = false;
-					for (Set<String> qset : rsg.getPrincipalQualifiers()) {
-						useCount.put(qset, 0);
-						if (qset.contains(sq.getQualifier().getName())
-								|| (sq.getQualifier().getParentQualifier() != null
-										&& qset.contains(sq.getQualifier().getParentQualifier()))) {
-							ok = true;
-							useCount.put(qset, useCount.get(qset) + 1);
+				if (rsg.getPrincipalQualifiers().size() > 0) {
+					Map<Set<String>, Integer> useCount = new HashMap<>();
+					Set<String> principalIds = new HashSet<>();
+					for (SpecifiedQualifier sq : this.principalQualifiers) {
+						principalIds.add(sq.getQualifier().getName());
+						boolean ok = false;
+						for (Set<String> qset : rsg.getPrincipalQualifiers()) {
+							useCount.put(qset, 0);
+							if (qset.contains(sq.getQualifier().getName())
+									|| (sq.getQualifier().getParentQualifier() != null
+											&& qset.contains(sq.getQualifier().getParentQualifier()))) {
+								ok = true;
+								useCount.put(qset, useCount.get(qset) + 1);
+							}
+						}
+						if (!ok) {
+							errors.add("Qualifier " + sq.getQualifier().getName()
+									+ " is not allowed as principal qualifier for soil group " + rsg.getName());
 						}
 					}
-					if (!ok) {
-						errors.add("Qualifier " + sq.getQualifier().getName()
-								+ " is not allowed as principal qualifier for soil group " + rsg.getName());
-					}
-				}
 
-				for (Set<String> sq : useCount.keySet()) {
-					if (useCount.get(sq) > 1) {
-						errors.add("Only one principal qualifier in the set " + sq + " can be used in a definition");
-					}
-				}
-
-				useCount.clear();
-				Set<String> secondaryIds = new HashSet<>();
-
-				for (SpecifiedQualifier sq : this.secondaryQualifiers) {
-					secondaryIds.add(sq.getQualifier().getName());
-					boolean ok = false;
-					for (Set<String> qset : rsg.getSupplementaryQualifiers()) {
-						useCount.put(qset, 0);
-						if (qset.contains(sq.getQualifier().getName())
-								|| (sq.getQualifier().getParentQualifier() != null
-										&& qset.contains(sq.getQualifier().getParentQualifier()))) {
-							ok = true;
-							useCount.put(qset, useCount.get(qset) + 1);
+					for (Set<String> sq : useCount.keySet()) {
+						if (useCount.get(sq) > 1) {
+							errors.add(
+									"Only one principal qualifier in the set " + sq + " can be used in a definition");
 						}
 					}
-					if (!ok) {
-						errors.add("Qualifier " + sq.getQualifier().getName()
-								+ " is not allowed as supplementary qualifier for soil group " + rsg.getName());
-					}
 				}
 
-				for (Set<String> sq : useCount.keySet()) {
-					if (useCount.get(sq) > 1) {
-						errors.add(
-								"Only one supplementary qualifier in the set " + sq + " can be used in a definition");
+				if (rsg.getSupplementaryQualifiers().size() > 0) {
+
+					Set<String> secondaryIds = new HashSet<>();
+					Map<Set<String>, Integer> useCount = new HashMap<>();
+
+					for (SpecifiedQualifier sq : this.secondaryQualifiers) {
+						secondaryIds.add(sq.getQualifier().getName());
+						boolean ok = false;
+						for (Set<String> qset : rsg.getSupplementaryQualifiers()) {
+							useCount.put(qset, 0);
+							if (qset.contains(sq.getQualifier().getName())
+									|| (sq.getQualifier().getParentQualifier() != null
+											&& qset.contains(sq.getQualifier().getParentQualifier()))) {
+								ok = true;
+								useCount.put(qset, useCount.get(qset) + 1);
+							}
+						}
+						if (!ok) {
+							errors.add("Qualifier " + sq.getQualifier().getName()
+									+ " is not allowed as supplementary qualifier for soil group " + rsg.getName());
+						}
+					}
+
+					for (Set<String> sq : useCount.keySet()) {
+						if (useCount.get(sq) > 1) {
+							errors.add("Only one supplementary qualifier in the set " + sq
+									+ " can be used in a definition");
+						}
 					}
 				}
 			}
@@ -276,11 +282,11 @@ public class Parser {
 				@Override
 				public int compare(SpecifiedQualifier o1, SpecifiedQualifier o2) {
 					String toCompare1 = o1.getStringForm();
-					if (o1.getSpecifier()!= null && demotedSpecifiers.contains(o1.getSpecifier().getName())) {
+					if (o1.getSpecifier() != null && demotedSpecifiers.contains(o1.getSpecifier().getName())) {
 						toCompare1 = o1.getQualifier().getName();
 					}
 					String toCompare2 = o2.getStringForm();
-					if (o2.getSpecifier()!= null && demotedSpecifiers.contains(o2.getSpecifier().getName())) {
+					if (o2.getSpecifier() != null && demotedSpecifiers.contains(o2.getSpecifier().getName())) {
 						toCompare2 = o2.getQualifier().getName();
 					}
 					return toCompare1.compareTo(toCompare2);
@@ -288,7 +294,7 @@ public class Parser {
 			});
 
 			ret.getErrors().addAll(errors);
-			
+
 			return ret;
 		}
 

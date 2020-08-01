@@ -16,7 +16,7 @@ public class Resolve implements ICommand {
 	@Override
 	public Object execute(IServiceCall call, ISession session) throws Exception {
 		String authority = null;
-		List<String> identities = new ArrayList<>();	
+		List<String> identities = new ArrayList<>();
 		for (Object arg : call.getParameters().get("arguments", java.util.List.class)) {
 			if (authority == null) {
 				authority = arg.toString();
@@ -24,18 +24,21 @@ public class Resolve implements ICommand {
 				identities.add(arg.toString());
 			}
 		}
-		
+
 		StringBuffer ret = new StringBuffer();
-		
-		for (String identity : identities) {
-			Identity resolved = Authorities.INSTANCE.getIdentity(authority, identity);
-			if (resolved == null) {
-				ret.append("\nIdentity " + authority + ":" + identity + ": UNKNOWN");
-			}
-			ret.append("\nIdentity " + authority + ":" + identity + ":\n");
-			ret.append(StringUtil.indent(JsonUtils.printAsJson(resolved), 3));
+
+		String identity = "";
+		for (String id : identities) {
+			identity += (identity.isEmpty() ? "" : " ") + id;
 		}
-		
+
+		Identity resolved = Authorities.INSTANCE.getIdentity(authority, identity);
+		if (resolved == null) {
+			ret.append("\nIdentity " + authority + ":" + identity + ": UNKNOWN");
+		}
+		ret.append("\nIdentity " + authority + ":" + identity + ":\n");
+		ret.append(StringUtil.indent(JsonUtils.printAsJson(resolved), 3));
+
 		return ret.toString();
 	}
 

@@ -143,6 +143,50 @@ public class Identity {
 	}
 
 	public String getDocumentation() {
+		
+		if (documentation == null) {
+			StringBuffer doc = new StringBuffer(512);
+			doc.append(toString());
+			doc.append("\n\n");
+
+			if (errors.size() > 0) {
+				doc.append("This WRB soil specification is invalid due to the following errors:\n\n");
+				for (String error : errors) {
+					doc.append(". " + error + "\n");
+				}
+			} else {
+
+				doc.append(soilGroup.getDescription());
+
+				if (principalQualifiers.size() > 0) {
+					doc.append("\n\nPrincipal qualifiers:");
+					for (SpecifiedQualifier sq : principalQualifiers) {
+						doc.append(sq.getStringForm() + "\n");
+						doc.append(": ");
+						doc.append(sq.getQualifier().getDescription());
+						if (sq.getSpecifier() != null) {
+							doc.append(" *" + sq.getQualifier().getDescription() + "*: "
+									+ sq.getSpecifier().getDescription());
+						}
+						doc.append("\n");
+					}
+				}
+				if (supplementaryQualifiers.size() > 0) {
+					doc.append("\n\nSupplementary qualifiers:");
+					for (SpecifiedQualifier sq : supplementaryQualifiers) {
+						doc.append(sq.getStringForm() + "\n");
+						doc.append(": ");
+						doc.append(sq.getQualifier().getDescription());
+						if (sq.getSpecifier() != null) {
+							doc.append(" *" + sq.getQualifier().getDescription() + "*: "
+									+ sq.getSpecifier().getDescription());
+						}
+						doc.append("\n");
+					}
+				}
+			}
+			this.documentation = doc.toString();
+		}
 		return documentation;
 	}
 
@@ -184,15 +228,13 @@ public class Identity {
 		AuthorityIdentity ret = new AuthorityIdentity();
 
 		if (errors.size() > 0) {
-			ret.setError(StringUtils.join(errors, "; "));
+			ret.setError(StringUtils.join(errors, ";\n"));
 		}
 
-		// TODO the code should be as specified by the standard
 		ret.setId(getNormalizedId());
 		ret.setLabel(toString());
 		ret.setConceptName(getNormalizedId());
-
-		// TODO build detailed description
+		ret.setDescription(getDocumentation());
 
 		return ret;
 	}

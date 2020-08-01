@@ -472,8 +472,6 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			ret.type.remove(Type.ABSTRACT);
 		}
 
-		
-		
 		/*
 		 * expression operands (between self and them)
 		 */
@@ -504,9 +502,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 	/*
 	 * rearrange the special variant of <single concrete attribute/role> <abstract
-	 * observable> to <attribute/role> of <observable>. Use only rescaling attributes for
-	 * qualities, where realms and identities are strictly identifying, and allow
-	 * identities and realms for countables where ambiguity is unlikely.
+	 * observable> to <attribute/role> of <observable>. Use only rescaling
+	 * attributes for qualities, where realms and identities are strictly
+	 * identifying, and allow identities and realms for countables where ambiguity
+	 * is unlikely.
 	 */
 	private void rearrangeSpecialForms() {
 		if (traits.size() + roles.size() == 1 && observable != null && observable.is(Type.ABSTRACT) && authority == null
@@ -606,8 +605,9 @@ public class KimConcept extends KimStatement implements IKimConcept {
 				}
 
 			} else {
-				
-				if (Character.isUpperCase(concept.getName().getName().charAt(0))) {
+
+				if (Character.isUpperCase(concept.getName().getName().charAt(0))
+						&& concept.getName().getName().indexOf(':') > 0) {
 					// AUTHORITY
 					System.out.println("ZIO PAPA AUTHORITY " + concept.getName().getName());
 				}
@@ -786,7 +786,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			ret += " during each " + temporalInherent;
 			complex = true;
 		}
-		
+
 		if (adjacent != null) {
 			ret += " adjacent to " + adjacent;
 			complex = true;
@@ -1076,11 +1076,11 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		if (cooccurrent != null) {
 			cooccurrent.visit(visitor);
 		}
-		
+
 		if (adjacent != null) {
 			adjacent.visit(visitor);
 		}
-		
+
 		if (temporalInherent != null) {
 			temporalInherent.visit(visitor);
 		}
@@ -1178,7 +1178,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		}
 		return ret;
 	}
-	
+
 	public KimConcept removeComponents(ObservableRole... roles) {
 
 		KimConcept ret = new KimConcept(this);
@@ -1324,7 +1324,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		if (cooccurrent != null) {
 			ret += "-during-" + cooccurrent.getCodeName();
 		}
-		
+
 		if (temporalInherent != null) {
 			ret += "-during-each-" + temporalInherent.getCodeName();
 		}
@@ -1362,7 +1362,6 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		temporalInherent = event;
 	}
 
-	
 	public void setRelationshipSource(KimConcept relationshipSource) {
 		this.relationshipSource = relationshipSource;
 	}
