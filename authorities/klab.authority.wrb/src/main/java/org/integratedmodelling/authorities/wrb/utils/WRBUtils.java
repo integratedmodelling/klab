@@ -18,6 +18,7 @@ import org.integratedmodelling.authorities.wrb.model.Qualifier;
 import org.integratedmodelling.authorities.wrb.model.ReferenceSoilGroup;
 import org.integratedmodelling.authorities.wrb.model.Specifier;
 import org.integratedmodelling.authorities.wrb.model.Vocabulary;
+import org.integratedmodelling.authorities.wrb.parser.Parser;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -43,6 +44,8 @@ public class WRBUtils {
 			throws KlabValidationException {
 
 		Identity.SpecifiedQualifier ret = new Identity.SpecifiedQualifier();
+		ret.setStringForm(term);
+
 		List<String> specs = new ArrayList<>();
 
 		while (true) {
@@ -198,10 +201,22 @@ public class WRBUtils {
 
 		return ret;
 	}
-	
+
+	// TODO move to tests
+	static String[] correctSamples = new String[] { "Regosols (Siltic)", "Leptic Regosols (Siltic)",
+			"Calcaric Leptic Regosols (Siltic)", "Histosols (Sapric)", "Sapric Histosols (Leptic, Ombric)",
+			"Leptic Sapric Histosols (Ombric)", "Ombric Leptic Sapric Histosols (Dystric)" };
 
 	public static void main(String[] args) throws IOException {
 		Vocabulary vocabulary = WRBUtils.read2014();
 		System.out.println(JsonUtils.printAsJson(vocabulary));
+		Parser parser = new Parser(vocabulary);
+		for (String d : correctSamples) {
+			System.out.println("Parsing '" + d + "':");
+			Identity def = parser.parse(d);
+			System.out.println(
+					"Reconstructed definition: " + def + "; concept ID: " + def.getAuthorityIdentity().getConceptName()
+							+ (def.getErrors().isEmpty() ? " [no errors]" : (" Errors: " + def.getErrors())));
+		}
 	}
 }

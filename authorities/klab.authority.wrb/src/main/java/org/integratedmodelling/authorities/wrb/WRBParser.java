@@ -11,7 +11,6 @@ import org.integratedmodelling.contrib.jtopas.StandardTokenizer;
 import org.integratedmodelling.contrib.jtopas.StandardTokenizerProperties;
 import org.integratedmodelling.contrib.jtopas.Token;
 import org.integratedmodelling.contrib.jtopas.Tokenizer;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 
