@@ -10,6 +10,8 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.logging.Level;
 
@@ -18,9 +20,11 @@ import org.eclipse.core.runtime.CoreException;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.client.utils.JsonUtils;
 import org.integratedmodelling.klab.common.CompileInfo;
+import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
@@ -33,6 +37,8 @@ import org.integratedmodelling.klab.ide.navigator.model.EScriptFolder;
 import org.integratedmodelling.klab.ide.navigator.model.ETestFolder;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.rest.AuthorityIdentity;
+import org.integratedmodelling.klab.rest.AuthorityResolutionRequest;
 import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
@@ -65,6 +71,7 @@ public class Klab {
 	 * view.
 	 */
 	private Map<String, Map<String, EResourceReference>> resourceCatalog = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, AuthorityIdentity> identityCache = Collections.synchronizedMap(new HashMap<>());
 	private List<ResourceAdapterReference> resourceAdapters = new ArrayList<>();
 	private Map<String, NamespaceCompilationResult> namespaceStatus = new HashMap<>();
 	private AtomicReference<NetworkReference> network = new AtomicReference<>();
@@ -134,7 +141,7 @@ public class Klab {
 	public NetworkReference getNetwork() {
 		return this.network.get();
 	}
-	
+
 	/*
 	 * sync the resource status and project errors with the capabilities from the
 	 * engine
@@ -195,8 +202,8 @@ public class Klab {
 		Eclipse.INSTANCE.refreshOpenEditors();
 		Eclipse.INSTANCE.notification("New resource imported",
 				"Resource <b>" + resource.getUrn()
-						+ "</b> is available and online.\nIt can be referenced within the <b>" + resource.getProjectName()
-						+ "</b> project as <b>" + resource.getLocalName()+"</b>.");
+						+ "</b> is available and online.\nIt can be referenced within the <b>"
+						+ resource.getProjectName() + "</b> project as <b>" + resource.getLocalName() + "</b>.");
 	}
 
 	public void notifyResourceUpdated(ResourceReference resource) {
@@ -293,15 +300,18 @@ public class Klab {
 	 * @return
 	 */
 	public EResourceReference getResource(String urn) {
-		String kurn = urn;
-		if (urn.contains("#")) {
-			kurn = kurn.substring(0, urn.indexOf("#"));
-		}
-		for (Map<String, EResourceReference> container : resourceCatalog.values()) {
-			EResourceReference ret = container.get(kurn);
-			if (ret != null) {
-				return ret;
+		Urn kurn = new Urn(urn);
+		if (kurn.isLocal()) {
+			for (Map<String, EResourceReference> container : resourceCatalog.values()) {
+				EResourceReference ret = container.get(kurn.getUrn());
+				if (ret != null) {
+					return ret;
+				}
 			}
+		} else if (kurn.isUniversal()) {
+			// TODO talk to the engine
+		} else {
+			// TODO talk to the engine
 		}
 		return null;
 	}
@@ -397,6 +407,23 @@ public class Klab {
 			res.setOnline(resource.isOnline());
 			res.setError(resource.isError());
 		}
+	}
+
+	public AuthorityIdentity getIdentityInformation(String authority, String identity, boolean formatted) {
+
+		AuthorityIdentity ret = identityCache.get(authority + ":" + identity);
+		if (ret == null) {
+
+			Future<IMessage> response = Activator.ask(IMessage.MessageClass.KimLifecycle,
+					IMessage.Type.AuthorityDocumentation, new AuthorityResolutionRequest(authority, identity));
+			try {
+				ret = response.get(300, TimeUnit.MILLISECONDS).getPayload(AuthorityIdentity.class);
+				identityCache.put(authority + ":" + identity, ret);
+			} catch (Throwable e) {
+				// just return null
+			}
+		}
+		return ret;
 	}
 
 }

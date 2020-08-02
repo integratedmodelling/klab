@@ -203,6 +203,11 @@ public class Identity {
 	 * @return
 	 */
 	public String getNormalizedId() {
+		
+		if (soilGroup == null) {
+			return null;
+		}
+		
 		if (normalizedId == null) {
 			String pclass = "";
 			String sclass = "";
@@ -245,7 +250,7 @@ public class Identity {
 			ret.append(primary.getStringForm());
 			ret.append(" ");
 		}
-		ret.append(soilGroup.getName());
+		ret.append(soilGroup == null ? "" : soilGroup.getName());
 		if (supplementaryQualifiers.size() > 0) {
 			ret.append(" (");
 			boolean first = true;

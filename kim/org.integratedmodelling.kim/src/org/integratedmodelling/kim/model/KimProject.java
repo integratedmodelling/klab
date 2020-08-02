@@ -185,7 +185,7 @@ public class KimProject implements IKimProject {
 	}
 
 	@Override
-	public List<IKimNamespace> getNamespaces() {
+	public synchronized List<IKimNamespace> getNamespaces() {
 		List<IKimNamespace> ret = new ArrayList<>();
 		for (String namespace : namespaces) {
 			ret.add(Kim.INSTANCE.getNamespace(namespace));

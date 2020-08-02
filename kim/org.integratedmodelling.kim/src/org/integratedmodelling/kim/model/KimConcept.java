@@ -16,6 +16,7 @@ import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.CollectionUtils;
+import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.SemanticType;
 
 /**
@@ -608,14 +609,26 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 				if (Character.isUpperCase(concept.getName().getName().charAt(0))
 						&& concept.getName().getName().indexOf(':') > 0) {
-					// AUTHORITY
-					System.out.println("ZIO PAPA AUTHORITY " + concept.getName().getName());
-				}
+					
+					/**
+					 * Namespace is an authority
+					 */
+					ret.name = concept.getName().getName();
+					ret.authority = Path.getFirst(ret.name, ":");
+					String term = Path.getLast(ret.name, ':');
+					if (term.startsWith("'") || term.startsWith("\"")) {
+						term = term.substring(1, term.length() - 1);
+					}
+					ret.authorityTerm = term;
+					ret.type.addAll(Kim.INSTANCE.getType("identity"));
+					
+				} else {
 
-				ret.name = concept.getName().getName();
-				if (ret.name != null && !ret.name.contains(":")) {
-					Namespace namespace = KimValidator.getNamespace(concept);
-					ret.name = (namespace == null ? "UNDEFINED" : Kim.getNamespaceId(namespace)) + ":" + ret.name;
+					ret.name = concept.getName().getName();
+					if (ret.name != null && !ret.name.contains(":")) {
+						Namespace namespace = KimValidator.getNamespace(concept);
+						ret.name = (namespace == null ? "UNDEFINED" : Kim.getNamespaceId(namespace)) + ":" + ret.name;
+					}
 				}
 			}
 			ret.negated = concept.isNegated();

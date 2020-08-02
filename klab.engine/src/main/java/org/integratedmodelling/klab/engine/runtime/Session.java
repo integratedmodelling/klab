@@ -33,6 +33,7 @@ import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Authentication;
+import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Currencies;
 import org.integratedmodelling.klab.Documentation;
@@ -58,6 +59,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.knowledge.IAuthority.Identity;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -111,7 +113,8 @@ import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.OWL;
-import org.integratedmodelling.klab.rest.BehaviorReference;
+import org.integratedmodelling.klab.rest.AuthorityIdentity;
+import org.integratedmodelling.klab.rest.AuthorityResolutionRequest;
 import org.integratedmodelling.klab.rest.ContextualizationRequest;
 import org.integratedmodelling.klab.rest.DataflowDetail;
 import org.integratedmodelling.klab.rest.DataflowState;
@@ -886,6 +889,19 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	}
 
 	@MessageHandler
+	private void handleAuthorityResolutionRequest(AuthorityResolutionRequest request, IMessage message) {
+		Identity ret = Authorities.INSTANCE.getIdentity(request.getAuthority(), request.getIdentity());
+		if (ret == null) {
+			ret = new AuthorityIdentity();
+			((AuthorityIdentity) ret).setError("Authority identity " + request.getAuthority() + ":"
+					+ request.getIdentity() + " could not be resolved");
+		}
+		monitor.send(Message
+				.create(this.token, IMessage.MessageClass.KimLifecycle, IMessage.Type.AuthorityDocumentation, ret)
+				.inResponseTo(message));
+	}
+
+	@MessageHandler
 	private void importResource(final ResourceImportRequest request, IMessage.Type type) {
 
 		if (type == IMessage.Type.ImportResource) {
@@ -1582,7 +1598,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			uid.setEmail(user.getEmailAddress());
 			uid.setId(user.getUsername());
 			for (Group group : user.getGroups()) {
-				uid.getGroups().add(new GroupReference(group));	
+				uid.getGroups().add(new GroupReference(group));
 			}
 			uid.setLastLogin(user.getLastLogin().toString());
 			ret.setOwner(uid);

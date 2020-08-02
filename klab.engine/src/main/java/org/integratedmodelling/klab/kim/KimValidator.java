@@ -147,4 +147,10 @@ public class KimValidator implements Kim.Validator {
 		return "";
 	}
 
+	@Override
+	public Pair<String, Boolean> getIdentityInformation(String authority, String identity, boolean formatted) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

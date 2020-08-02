@@ -214,6 +214,9 @@ public enum Kim {
 		private String documentation;
 		private IKimConceptStatement macro;
 
+		public ConceptDescriptor() {
+		}
+
 		public ConceptDescriptor(String id, Type... flags) {
 			this.name = id;
 			this.flags.addAll(Arrays.asList(flags));
@@ -261,6 +264,10 @@ public enum Kim {
 		@Override
 		public String getDocumentation() {
 			return documentation;
+		}
+
+		public void setDocumentation(String documentation) {
+			this.documentation = documentation;
 		}
 
 		@Override
@@ -381,6 +388,9 @@ public enum Kim {
 
 	public static interface Validator {
 
+		public static final String OFFLINE = "__OFFLINE__";
+		public static final String UNKNOWN_AUTHORITY = "__UNKNOWN_AUTHORITY__";
+
 		/**
 		 * Quickly check if the passed function name is known to the runtime.
 		 * 
@@ -450,6 +460,25 @@ public enum Kim {
 		 * @return
 		 */
 		String getConceptInformation(IKimConcept observable, boolean formatted);
+
+		/**
+		 * Return readable information about an authority concept, optionally with
+		 * formatting tags, along with a boolean that specifies whether the identity
+		 * parsed correctly or not. Return the following special values if:
+		 * <ul>
+		 * <li>OFFLINE if the authority cannot be contacted (engine is off) but is
+		 * potentially there;</li>
+		 * <li>UNKNOWN_AUTHORITY if the authority is known not to exist.</li>
+		 * </ul>
+		 * If any of the above is returned, the boolean will be ignored.
+		 * <p>
+		 * 
+		 * @param authority
+		 * @param identity
+		 * @param formatted
+		 * @return
+		 */
+		Pair<String, Boolean> getIdentityInformation(String authority, String identity, boolean formatted);
 
 		/**
 		 * Return a descriptor for the passed URN. Never return null - if a URN is
@@ -828,7 +857,33 @@ public enum Kim {
 	public ConceptDescriptor getConceptDescriptor(String conceptId) {
 		SemanticType st = new SemanticType(conceptId);
 		Map<String, ConceptDescriptor> map = null;
-		if (st.isCorrect()) {
+		if (Character.isUpperCase(st.getNamespace().charAt(0))) {
+
+			String term = st.getName();
+			if (term != null && term.startsWith("'") || term.startsWith("\"")) {
+				term = term.substring(1, term.length() - 1);
+			}
+			ConceptDescriptor cd = new ConceptDescriptor();
+			cd.setName(conceptId);
+			if (validatorCallback != null) {
+				Pair<String, Boolean> desc = null;
+				if (term != null && st.getNamespace() != null && !term.isEmpty() && !st.getNamespace().isEmpty()) {
+					desc = validatorCallback.getIdentityInformation(st.getNamespace(), term, true);
+				}
+				if (desc == null || Validator.OFFLINE.equals(desc.getFirst())) {
+					cd.setDocumentation("Authority identity: connect to an engine to validate");
+				} else if (!desc.getSecond() || Validator.UNKNOWN_AUTHORITY.equals(desc.getFirst())) {
+					cd.setDocumentation(Validator.UNKNOWN_AUTHORITY.equals(desc.getFirst())
+							? "The authority is unknown to the engine or the identifier is not admitted"
+							: desc.getFirst());
+					cd.getFlags().add(Type.NOTHING);
+				} else {
+					cd.setDocumentation(desc.getFirst());
+					cd.getFlags().addAll(getType("identity"));
+				}
+			}
+			return cd;
+		} else if (st.isCorrect()) {
 			map = namespaceRegister.get(st.getNamespace());
 		}
 		return map == null ? null : map.get(st.getName());

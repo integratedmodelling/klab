@@ -187,7 +187,7 @@ public interface IMessage {
 		 * display at context level or at the dataflow actuator level. Uses bean
 		 * {@link RuntimeDocumentation}.
 		 */
-		RuntimeDocumentation, DataflowDocumentation, TicketRequest, TicketResponse,
+		RuntimeDocumentation, DataflowDocumentation, TicketRequest, TicketResponse, AuthorityDocumentation,
 
 		/**
 		 * Class UserInterface: request addition of action to either context menu or

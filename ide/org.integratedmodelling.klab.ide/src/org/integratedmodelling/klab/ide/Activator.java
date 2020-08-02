@@ -7,6 +7,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -50,6 +51,7 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.AttributeReference;
+import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.BehaviorReference;
 import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.ProjectLoadRequest;
@@ -234,6 +236,24 @@ public class Activator extends AbstractUIPlugin {
 			public String getConceptInformation(IKimConcept observable, boolean formatted) {
 				// TODO Auto-generated method stub
 				return "";
+			}
+
+			@Override
+			public Pair<String, Boolean> getIdentityInformation(String authority, String identity, boolean formatted) {
+				
+				if (!engineMonitor().isRunning()) {
+					return Pair.create(OFFLINE, true);
+				}
+				AuthorityIdentity id = klab().getIdentityInformation(authority, identity, formatted);
+				if (id == null) {
+					return Pair.create(UNKNOWN_AUTHORITY, true);
+				}
+				
+				if (id.getError() != null && !id.getError().isEmpty()) {
+					return Pair.create(id.getError(), false);
+				}
+				
+				return Pair.create(id.getDescription(), true);
 			}
 
 		});
@@ -499,13 +519,19 @@ public class Activator extends AbstractUIPlugin {
 		if (get().engineStatusMonitor.isRunning()) {
 			client().with(session().getIdentity()).download(url, file);
 		}
-
 	}
 
 	public static void post(Object... object) {
 		if (get().engineStatusMonitor.isRunning()) {
 			get().engineStatusMonitor.getBus().post(Message.create(get().engineStatusMonitor.getSessionId(), object));
 		}
+	}
+	
+	public static Future<IMessage> ask(Object... object) {
+		if (get().engineStatusMonitor.isRunning()) {
+			return get().engineStatusMonitor.getBus().ask(Message.create(get().engineStatusMonitor.getSessionId(), object));
+		}
+		return null;
 	}
 
 	public static void reply(IMessage original, Object... object) {
