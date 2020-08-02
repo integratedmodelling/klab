@@ -27,6 +27,7 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
+import org.integratedmodelling.klab.api.knowledge.IAuthority.Identity;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -497,6 +498,11 @@ public enum Concepts implements IConceptService {
 
 	public boolean isInternal(IConcept c) {
 		return CoreOntology.CORE_ONTOLOGY_NAME.equals(c.getNamespace());
+	}
+
+	public Concept getAuthorityConcept(Identity identity) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

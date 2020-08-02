@@ -20,6 +20,7 @@ import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimConceptStatement;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
+import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Currencies;
 import org.integratedmodelling.klab.Observables;
@@ -434,6 +435,10 @@ public enum KimKnowledgeProcessor {
 		if (concept.getObservable() != null) {
 			main = declareInternal(concept.getObservable(), ontology, monitor);
 		} else if (concept.getName() != null) {
+			if (concept.getAuthority() != null) {
+				main = Concepts.INSTANCE.getAuthorityConcept(
+						Authorities.INSTANCE.getIdentity(concept.getAuthority(), concept.getAuthorityTerm()));
+			}
 			main = Concepts.INSTANCE.getConcept(concept.getName());
 		}
 

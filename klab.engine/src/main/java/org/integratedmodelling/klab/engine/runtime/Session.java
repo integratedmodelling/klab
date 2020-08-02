@@ -158,6 +158,7 @@ import org.integratedmodelling.klab.rest.ViewAction.Operation;
 import org.integratedmodelling.klab.rest.WatchRequest;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.FileUtils;
+import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
@@ -895,6 +896,9 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			ret = new AuthorityIdentity();
 			((AuthorityIdentity) ret).setError("Authority identity " + request.getAuthority() + ":"
 					+ request.getIdentity() + " could not be resolved");
+		} else if (ret.getDescription() != null) {
+			// reformat the documentation as HTML
+			((AuthorityIdentity) ret).setDescription(MarkdownUtils.INSTANCE.format(ret.getDescription()));
 		}
 		monitor.send(Message
 				.create(this.token, IMessage.MessageClass.KimLifecycle, IMessage.Type.AuthorityDocumentation, ret)

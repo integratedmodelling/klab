@@ -413,7 +413,6 @@ public class Klab {
 
 		AuthorityIdentity ret = identityCache.get(authority + ":" + identity);
 		if (ret == null) {
-
 			Future<IMessage> response = Activator.ask(IMessage.MessageClass.KimLifecycle,
 					IMessage.Type.AuthorityDocumentation, new AuthorityResolutionRequest(authority, identity));
 			try {

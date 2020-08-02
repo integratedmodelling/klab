@@ -66,14 +66,14 @@ public class IUPACAuthority implements IAuthority {
 		if (!isStdKey(identityId)) {
 			identityId = getIdentity(identityId);
 		}
-		String label = getIUPACName(identityId);
-		if (label == null) {
+		String officialName = getIUPACName(identityId);
+		if (officialName == null) {
 			ret.setError("Identity " + identityId + " is unknown to authority " + ID);
 		}
 		
 		ret.setConceptName(identityId.toLowerCase().replace('-', '_'));
-		ret.setDescription(label + " (" + getFormula(identityId) + ")");
-		ret.setLabel(label);
+		ret.setDescription(officialName + " (" + getFormula(identityId) + ")");
+		ret.setLabel(original);
 		ret.setId(identityId);
 		
 		/*
@@ -119,6 +119,7 @@ public class IUPACAuthority implements IAuthority {
 	public Capabilities getCapabilities() {
 		AuthorityReference ref = new AuthorityReference();
 		ref.setSearchable(true);
+		ref.setFuzzy(true);
 		ref.getDocumentationFormats().add("text/plain");
 		ref.getDocumentationFormats().add("image/png");
 		ref.setName(ID);

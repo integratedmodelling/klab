@@ -27,12 +27,23 @@ public interface IAuthority {
 	}
 
 	interface Capabilities {
+
 		/**
 		 * If true, users can use the search API.
 		 * 
 		 * @return
 		 */
 		boolean isSearchable();
+
+		/**
+		 * If true, the authority is capable of accepting unambiguous but different
+		 * identifiers for the same concept, such as water and h2o, which are resolved
+		 * through a search. If false, the authority can only deal with correct
+		 * identifiers or formulas.
+		 * 
+		 * @return
+		 */
+		boolean isFuzzy();
 
 		/**
 		 * Return the media type names for any documentation that this authority is
@@ -52,7 +63,7 @@ public interface IAuthority {
 	 * has multiple layers.
 	 * 
 	 * @param identityId
-	 * @param catalog may be null
+	 * @param catalog    may be null
 	 * @return
 	 */
 	Identity getIdentity(String identityId, String catalog);

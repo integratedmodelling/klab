@@ -9,6 +9,7 @@ public class AuthorityReference implements IAuthority.Capabilities {
 
 	private String name;
 	private boolean searchable;
+	private boolean fuzzy;
 	private List<String> documentationFormats = new ArrayList<>();
 
 	public String getName() {
@@ -72,6 +73,15 @@ public class AuthorityReference implements IAuthority.Capabilities {
 
 	public void setDocumentationFormats(List<String> documentationFormats) {
 		this.documentationFormats = documentationFormats;
+	}
+
+	@Override
+	public boolean isFuzzy() {
+		return fuzzy;
+	}
+
+	public void setFuzzy(boolean fuzzy) {
+		this.fuzzy = fuzzy;
 	}
 	
 }
