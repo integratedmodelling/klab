@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.JsonUtils;
+import org.integratedmodelling.klab.utils.UrlEscape;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
@@ -172,7 +173,8 @@ public class IUPACAuthority implements IAuthority {
 	public String getIdentity(String query) {
 
 		String ret = null;
-		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + Escape.forURL(query) + "/" + "stdinchikey")
+		String url = RESOLVER_URL + "/" + UrlEscape.escapeurl(query) + "/" + "stdinchikey";
+		HttpResponse<String> response = Unirest.get(url)
 				.asString();
 		if (response.isSuccess()) {
 			ret = response.getBody();

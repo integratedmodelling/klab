@@ -7,14 +7,64 @@ public interface IAuthority {
 
 	interface Identity {
 
+		/**
+		 * The official authority ID, which may be different from what the user
+		 * provided.
+		 * 
+		 * @return
+		 */
 		String getId();
 
+		/**
+		 * Stable and consistent ID suitable for naming the correspondent concept.
+		 * 
+		 * @return
+		 */
 		String getConceptName();
 
+		/**
+		 * The name of the authority, which must be capable of resolving any parents as
+		 * well. The first term will be used to name the ontology.
+		 * 
+		 * @return
+		 */
+		String getAuthorityName();
+
+		/**
+		 * If not null, this will be the type in the ontology to provide the superclass
+		 * for the identity. This must have been declared in the capabilities.
+		 * 
+		 * @return
+		 */
+		String getIdentityType();
+
+		/**
+		 * If the concept is expected to have a broader term from the same vocabulary,
+		 * return its ID here. This will be resolved recursively and used to build the
+		 * superclass, unless the authority capabilities require a different type.
+		 */
 		List<String> getParentIds();
 
+		/**
+		 * This may be given to define which property should constrain the parents (in
+		 * order). If empty and parents are given, they will be superclasses.
+		 * 
+		 * @return
+		 */
+		List<String> getParentRelationship();
+
+		/**
+		 * Description in text or markdown.
+		 * 
+		 * @return
+		 */
 		String getDescription();
 
+		/**
+		 * Label to use to build the local concept label and display.
+		 * 
+		 * @return
+		 */
 		String getLabel();
 
 		/**
@@ -54,6 +104,15 @@ public interface IAuthority {
 		 * @return
 		 */
 		List<String> getDocumentationFormats();
+
+		/**
+		 * If not null, the authority won't be loaded unless the certificate commits the
+		 * engine or node to the returned worldview.
+		 * 
+		 * @return
+		 */
+		String getWorldview();
+
 	}
 
 	/**

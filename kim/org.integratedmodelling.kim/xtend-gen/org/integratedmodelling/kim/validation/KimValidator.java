@@ -2516,9 +2516,7 @@ public class KimValidator extends AbstractKimValidator {
       for (final ConceptDeclaration trait : _actuallyInheritedTraits) {
         {
           EnumSet<IKimConcept.Type> ttype = this.checkDeclaration(trait);
-          boolean _contains = ttype.contains(IKimConcept.Type.TRAIT);
-          boolean _not_1 = (!_contains);
-          if (_not_1) {
+          if (((!ttype.contains(IKimConcept.Type.TRAIT)) && (!ttype.contains(IKimConcept.Type.AUTHORITY_IDENTITY)))) {
             this.error("Only traits can be inherited", concept, 
               KimPackage.Literals.CONCEPT_STATEMENT_BODY__ACTUALLY_INHERITED_TRAITS, i_1);
             ok = false;

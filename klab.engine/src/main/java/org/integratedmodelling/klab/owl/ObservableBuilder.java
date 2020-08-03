@@ -1633,7 +1633,9 @@ public class ObservableBuilder implements IObservable.Builder {
 
 		if (context != null) {
 			IConcept other = Observables.INSTANCE.getContextType(main);
-			if (other != null && !Observables.INSTANCE.isCompatible(context, other)) {
+			// use the version of isCompatible that allows for observations that are compatible with
+			// the context's context if the context is an occurrent (e.g. Precipitation of Storm)
+			if (other != null && !Observables.INSTANCE.isContextuallyCompatible(main, context, other)) {
 				monitor.error("cannot set the context type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
 						+ Concepts.INSTANCE.getDisplayName(context) + " as it already has an incompatible context: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);

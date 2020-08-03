@@ -609,7 +609,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 				if (Character.isUpperCase(concept.getName().getName().charAt(0))
 						&& concept.getName().getName().indexOf(':') > 0) {
-					
+
 					/**
 					 * Namespace is an authority
 					 */
@@ -621,7 +621,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 					}
 					ret.authorityTerm = term;
 					ret.type.addAll(Kim.INSTANCE.getType("identity"));
-					
+
 				} else {
 
 					ret.name = concept.getName().getName();

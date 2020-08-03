@@ -501,8 +501,16 @@ public enum Concepts implements IConceptService {
 	}
 
 	public Concept getAuthorityConcept(Identity identity) {
-		// TODO Auto-generated method stub
+		
+		if (identity == null) {
+			return null;
+		}
+		
 		return null;
+	}
+
+	public boolean isOccurrent(IConcept c) {
+		return c.is(Type.PROCESS) || c.is(Type.EVENT);
 	}
 
 }

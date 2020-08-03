@@ -331,7 +331,15 @@ public interface IKimConcept extends IKimStatement {
 		/**
 		 * A process that defines the change of its inherent quality.
 		 */
-		CHANGE;
+		CHANGE,
+
+		/**
+		 * Concept that have the syntax of authority references (with the uppercase
+		 * namespace) get this type even if not recognized by an online authority (in
+		 * which case they won't have the IDENTITY type but will still have this, so
+		 * that the syntactic validation won't fail).
+		 */
+		AUTHORITY_IDENTITY;
 
 		boolean isNumeric() {
 			return IKimConcept.CONTINUOUS_QUALITY_TYPES.contains(this);

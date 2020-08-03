@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.knowledge.IAuthority;
 public class AuthorityReference implements IAuthority.Capabilities {
 
 	private String name;
+	private String worldview;
 	private boolean searchable;
 	private boolean fuzzy;
 	private List<String> documentationFormats = new ArrayList<>();
@@ -82,6 +83,14 @@ public class AuthorityReference implements IAuthority.Capabilities {
 
 	public void setFuzzy(boolean fuzzy) {
 		this.fuzzy = fuzzy;
+	}
+
+	public String getWorldview() {
+		return worldview;
+	}
+
+	public void setWorldview(String worldview) {
+		this.worldview = worldview;
 	}
 	
 }

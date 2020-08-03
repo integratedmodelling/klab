@@ -1998,7 +1998,7 @@ class KimValidator extends AbstractKimValidator {
 			var i = 0
 			for (ConceptDeclaration trait : concept.actuallyInheritedTraits) {
 				var ttype = checkDeclaration(trait)
-				if (!ttype.contains(Type.TRAIT)) {
+				if (!ttype.contains(Type.TRAIT) && !ttype.contains(Type.AUTHORITY_IDENTITY)) {
 					error("Only traits can be inherited", concept,
 						KimPackage.Literals.CONCEPT_STATEMENT_BODY__ACTUALLY_INHERITED_TRAITS, i)
 					ok = false

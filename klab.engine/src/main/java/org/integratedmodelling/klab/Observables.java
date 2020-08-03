@@ -365,6 +365,36 @@ public enum Observables implements IObservableService {
 		return ret;
 	}
 
+	/**
+	 * Check for compatibility of context1 and context2 as the context for an
+	 * observation of focus (i.e., focus can be observed by an observation process
+	 * that happens in context1). Works like isCompatible, but if context1 is an
+	 * occurrent, it will let through situations where it affects focus in whatever
+	 * context it is, or where the its own context is the same as context2, thereby
+	 * there is a common context to refer to.
+	 * 
+	 * @param focus    the focal observable whose context we are checking
+	 * @param context1 the specific context of the observation (model) that will
+	 *                 observe focus
+	 * @param context2 the mandated context of focus
+	 * 
+	 * @return true if focus can be observed by an observation process that happens
+	 *         in context1.
+	 */
+	public boolean isContextuallyCompatible(IConcept focus, IConcept context1, IConcept context2) {
+		boolean ret = isCompatible(context1, context2, 0);
+		if (!ret && Concepts.INSTANCE.isOccurrent(context1)) {
+			ret = isAffectedBy(focus, context1);
+			IConcept itsContext = getContext(context1);
+			if (!ret) {
+				if (itsContext != null) {
+					ret = isCompatible(itsContext, context2);
+				}
+			}
+		}
+		return ret;
+	}
+
 	@Override
 	public boolean isCompatible(IConcept o1, IConcept o2) {
 		return isCompatible(o1, o2, 0);

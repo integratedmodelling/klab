@@ -1,11 +1,13 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 
 public class AuthorityIdentity implements IAuthority.Identity {
 
+	private List<String> parentRelationships = new ArrayList<>();
 	private String id;
 	private String conceptName;
 	private List<String> parentIds;
@@ -13,7 +15,9 @@ public class AuthorityIdentity implements IAuthority.Identity {
 	private String description;
 	private float score = 1.0f;
 	private String error;
-	
+	private String authorityName;
+	private String identityType;
+
 	@Override
 	public String getId() {
 		return id;
@@ -74,6 +78,37 @@ public class AuthorityIdentity implements IAuthority.Identity {
 
 	public void setError(String error) {
 		this.error = error;
+	}
+
+	@Override
+	public String getAuthorityName() {
+		return this.authorityName;
+	}
+
+	@Override
+	public String getIdentityType() {
+		return this.identityType;
+	}
+
+	@Override
+	public List<String> getParentRelationship() {
+		return this.parentRelationships;
+	}
+
+	public List<String> getParentRelationships() {
+		return parentRelationships;
+	}
+
+	public void setParentRelationships(List<String> parentRelationships) {
+		this.parentRelationships = parentRelationships;
+	}
+
+	public void setAuthorityName(String authorityName) {
+		this.authorityName = authorityName;
+	}
+
+	public void setIdentityType(String identityType) {
+		this.identityType = identityType;
 	}
 
 }

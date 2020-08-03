@@ -857,17 +857,21 @@ public enum Kim {
 	public ConceptDescriptor getConceptDescriptor(String conceptId) {
 		SemanticType st = new SemanticType(conceptId);
 		Map<String, ConceptDescriptor> map = null;
+		if (st.getNamespace() == null || st.getName() == null) {
+			return null;
+		}
 		if (Character.isUpperCase(st.getNamespace().charAt(0))) {
 
 			String term = st.getName();
-			if (term != null && term.startsWith("'") || term.startsWith("\"")) {
+			if (term.startsWith("'") || term.startsWith("\"")) {
 				term = term.substring(1, term.length() - 1);
 			}
 			ConceptDescriptor cd = new ConceptDescriptor();
 			cd.setName(conceptId);
+			cd.getFlags().add(Type.AUTHORITY_IDENTITY);
 			if (validatorCallback != null) {
 				Pair<String, Boolean> desc = null;
-				if (term != null && st.getNamespace() != null && !term.isEmpty() && !st.getNamespace().isEmpty()) {
+				if (term != null && !term.isEmpty() && !st.getNamespace().isEmpty()) {
 					desc = validatorCallback.getIdentityInformation(st.getNamespace(), term, true);
 				}
 				if (desc == null || Validator.OFFLINE.equals(desc.getFirst())) {
