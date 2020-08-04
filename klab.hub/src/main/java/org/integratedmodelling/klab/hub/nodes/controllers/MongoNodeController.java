@@ -16,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+import net.minidev.json.JSONObject;
+
 @RestController
 @RequestMapping("/api/v2/nodes")
 public class MongoNodeController {
@@ -30,7 +32,9 @@ public class MongoNodeController {
 	@GetMapping(value = "", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINSTRATOR')")
 	public ResponseEntity<?> getNodes() {
-		return new ResponseEntity<>(nodeService.getNodes(), HttpStatus.OK);
+		JSONObject resp = new JSONObject();
+		resp.appendField("nodes", nodeService.getNodes());
+		return new ResponseEntity<>(resp, HttpStatus.OK);
 	}
 	
 	@PutMapping(value = "/{nodeName}", produces = "application/json")
