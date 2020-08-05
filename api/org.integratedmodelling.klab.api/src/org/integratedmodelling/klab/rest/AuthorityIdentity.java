@@ -16,7 +16,7 @@ public class AuthorityIdentity implements IAuthority.Identity {
 	private float score = 1.0f;
 	private String error;
 	private String authorityName;
-	private String identityType;
+	private String baseIdentity;
 	private String locator;
 
 	@Override
@@ -88,7 +88,7 @@ public class AuthorityIdentity implements IAuthority.Identity {
 
 	@Override
 	public String getBaseIdentity() {
-		return this.identityType;
+		return this.baseIdentity;
 	}
 
 	@Override
@@ -108,8 +108,8 @@ public class AuthorityIdentity implements IAuthority.Identity {
 		this.authorityName = authorityName;
 	}
 
-	public void setIdentityType(String identityType) {
-		this.identityType = identityType;
+	public void setBaseIdentity(String baseIdentity) {
+		this.baseIdentity = baseIdentity;
 	}
 
 	@Override
