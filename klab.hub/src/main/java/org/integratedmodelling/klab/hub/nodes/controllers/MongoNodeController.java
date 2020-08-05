@@ -33,7 +33,7 @@ public class MongoNodeController {
 	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINSTRATOR')")
 	public ResponseEntity<?> getNodes() {
 		JSONObject resp = new JSONObject();
-		resp.appendField("nodes", nodeService.getNodes());
+		resp.appendField("nodes", nodeService.getAll());
 		return new ResponseEntity<>(resp, HttpStatus.OK);
 	}
 	
@@ -41,7 +41,7 @@ public class MongoNodeController {
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<Object> updateNode(@PathVariable("nodeName") String nodeName, @RequestBody MongoNode node) {
 		if(nodeName.equals(node.getName())) {
-			nodeService.updateNode(node);	
+			nodeService.update(node);	
 		} else {
 			throw new BadRequestException("Node name does not match url");
 		}
@@ -50,26 +50,22 @@ public class MongoNodeController {
 	
 	@DeleteMapping(value = "/{nodeName}", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
-	public ResponseEntity<Object> deleteNode(@PathVariable("nodeName") String nodeName,  @RequestBody MongoNode node) {
-		if(nodeName.equals(node.getName())) {
-			nodeService.deleteNode(node);	
-		} else {
-			throw new BadRequestException("Group name does not match name");
-		}
-		return new ResponseEntity<>("The Groups has been deleted successsfully", HttpStatus.OK);
+	public ResponseEntity<Object> deleteNode(@PathVariable("nodeName") String nodeName) {
+		nodeService.delete(nodeName);
+		return new ResponseEntity<>("The Node has been deleted successsfully", HttpStatus.OK);
 	}
 	
 	@GetMapping(value= "/{nodeName}", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<Object> getNode(@PathVariable("nodeName") String nodeName) {
-		MongoNode node = nodeService.getNode(nodeName);
+		MongoNode node = nodeService.getByName(nodeName);
 		return new ResponseEntity<>(node, HttpStatus.OK);		
 	}
 	
 	@PostMapping(value="", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<Object> createNode(@RequestBody MongoNode node) {
-		node = nodeService.createNode(node);
+		node = nodeService.create(node);
 		return new ResponseEntity<>(node, HttpStatus.CREATED);
 	}
 
