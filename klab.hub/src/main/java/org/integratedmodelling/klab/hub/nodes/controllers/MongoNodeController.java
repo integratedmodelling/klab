@@ -58,8 +58,9 @@ public class MongoNodeController {
 	@GetMapping(value= "/{nodeName}", produces = "application/json")
 	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<Object> getNode(@PathVariable("nodeName") String nodeName) {
-		MongoNode node = nodeService.getByName(nodeName);
-		return new ResponseEntity<>(node, HttpStatus.OK);		
+		JSONObject resp = new JSONObject();
+		resp.appendField("node", nodeService.getByName(nodeName));
+		return new ResponseEntity<>(resp, HttpStatus.OK);		
 	}
 	
 	@PostMapping(value="", produces = "application/json")
