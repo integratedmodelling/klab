@@ -388,12 +388,18 @@ public interface API {
 		public static final String CAPABILITIES = "/public/authority/" + P_AUTHORITY + "/capabilities";
 
 		/**
-		 * The Constant RESOLVE.
-		 *
-		 * GET JSON
+         * Resolve the identity and return all related data or errors.
+         * 
+         * GET JSON
 		 */
 		public static final String RESOLVE = "/public/authority/" + P_AUTHORITY + "/resolve/" + P_IDENTIFIER;
 
+		/**
+		 * Setup and/or reset caches for an authority
+		 */
+		public static final String SETUP = "/public/authority/" + P_AUTHORITY + "/setup";
+
+		
 		/**
 		 * The Constant QUERY.
 		 *
