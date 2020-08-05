@@ -5500,6 +5500,27 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__ConceptStatementBody__DefinedAuthorityAlternatives_3_3_1_0_1_0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getConceptStatementBodyAccess().getDefinedAuthorityUPPERCASE_IDTerminalRuleCall_3_3_1_0_1_0_0()); }
+		RULE_UPPERCASE_ID
+		{ after(grammarAccess.getConceptStatementBodyAccess().getDefinedAuthorityUPPERCASE_IDTerminalRuleCall_3_3_1_0_1_0_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getConceptStatementBodyAccess().getDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0_1()); }
+		RULE_UPPERCASE_PATH
+		{ after(grammarAccess.getConceptStatementBodyAccess().getDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0_1()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__ConceptStatementBody__Alternatives_3_14_0
 	@init {
 		int stackSize = keepStackSize();
@@ -41942,9 +41963,9 @@ rule__ConceptStatementBody__DefinedAuthorityAssignment_3_3_1_0_1
 	}
 :
 	(
-		{ before(grammarAccess.getConceptStatementBodyAccess().getDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0()); }
-		RULE_UPPERCASE_PATH
-		{ after(grammarAccess.getConceptStatementBodyAccess().getDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0()); }
+		{ before(grammarAccess.getConceptStatementBodyAccess().getDefinedAuthorityAlternatives_3_3_1_0_1_0()); }
+		(rule__ConceptStatementBody__DefinedAuthorityAlternatives_3_3_1_0_1_0)
+		{ after(grammarAccess.getConceptStatementBodyAccess().getDefinedAuthorityAlternatives_3_3_1_0_1_0()); }
 	)
 ;
 finally {

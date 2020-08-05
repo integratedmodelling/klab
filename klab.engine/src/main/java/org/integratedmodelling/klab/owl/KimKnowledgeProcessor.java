@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Path;
 
 /**
  * A singleton that handles translation of k.IM knowledge statements to internal
@@ -435,11 +436,12 @@ public enum KimKnowledgeProcessor {
 		if (concept.getObservable() != null) {
 			main = declareInternal(concept.getObservable(), ontology, monitor);
 		} else if (concept.getName() != null) {
-			if (concept.getAuthority() != null) {
-				main = Concepts.INSTANCE.getAuthorityConcept(
-						Authorities.INSTANCE.getIdentity(concept.getAuthority(), concept.getAuthorityTerm()));
+			if (concept.getName().contains(":") && Character.isUpperCase(concept.getName().charAt(0))) {
+				main = Concepts.INSTANCE.getAuthorityConcept(Authorities.INSTANCE
+						.getIdentity(Path.getFirst(concept.getName(), ":"), Path.getLast(concept.getName(), ':')));
+			} else {
+				main = Concepts.INSTANCE.getConcept(concept.getName());
 			}
-			main = Concepts.INSTANCE.getConcept(concept.getName());
 		}
 
 		if (main == null) {

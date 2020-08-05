@@ -5,8 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.commons.lang.StringUtils;
+import org.integratedmodelling.authorities.wrb.WRBAuthority;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
+import org.integratedmodelling.klab.utils.StringUtils;
 
 /**
  * The parsed RSG with all its components. This one does not need bean methods
@@ -235,11 +236,14 @@ public class Identity {
 		if (errors.size() > 0) {
 			ret.setError(StringUtils.join(errors, ";\n"));
 		}
-
+		
+		ret.setAuthorityName(WRBAuthority.ID);
 		ret.setId(getNormalizedId());
 		ret.setLabel(toString());
 		ret.setConceptName(getNormalizedId());
 		ret.setDescription(getDocumentation());
+		boolean ws = StringUtils.containsWhitespace(ret.getId());
+		ret.setLocator(WRBAuthority.ID + (ws ? ":'" : ":") + ret.getId() + (ws ? "':" : ":"));
 
 		return ret;
 	}

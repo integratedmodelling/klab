@@ -161,6 +161,7 @@ public class GBIFAuthority implements IAuthority {
 			}
 		}
 
+		result.setAuthorityName(ID);
 		result.setId(key);
 		result.setLabel(canonicalName);
 		result.setDescription((rank == null ? "" : (StringUtils.capitalize(rank) + ": ")) + canonicalName

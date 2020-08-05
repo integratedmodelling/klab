@@ -6344,7 +6344,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_3_3_1_0 = (Group)cAlternatives_3_3_1.eContents().get(0);
 		private final Keyword cAuthorityKeyword_3_3_1_0_0 = (Keyword)cGroup_3_3_1_0.eContents().get(0);
 		private final Assignment cDefinedAuthorityAssignment_3_3_1_0_1 = (Assignment)cGroup_3_3_1_0.eContents().get(1);
-		private final RuleCall cDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0 = (RuleCall)cDefinedAuthorityAssignment_3_3_1_0_1.eContents().get(0);
+		private final Alternatives cDefinedAuthorityAlternatives_3_3_1_0_1_0 = (Alternatives)cDefinedAuthorityAssignment_3_3_1_0_1.eContents().get(0);
+		private final RuleCall cDefinedAuthorityUPPERCASE_IDTerminalRuleCall_3_3_1_0_1_0_0 = (RuleCall)cDefinedAuthorityAlternatives_3_3_1_0_1_0.eContents().get(0);
+		private final RuleCall cDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0_1 = (RuleCall)cDefinedAuthorityAlternatives_3_3_1_0_1_0.eContents().get(1);
 		private final Assignment cUpperConceptAssignment_3_3_1_1 = (Assignment)cAlternatives_3_3_1.eContents().get(1);
 		private final RuleCall cUpperConceptConceptParserRuleCall_3_3_1_1_0 = (RuleCall)cUpperConceptAssignment_3_3_1_1.eContents().get(0);
 		private final Group cGroup_3_4 = (Group)cUnorderedGroup_3.eContents().get(4);
@@ -6539,9 +6541,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	coreConcept?='core'?) (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and')
 		//	parents+=ConceptDeclaration)*))? & ('exposes' contextualizedTraits+=ObservableSemantics (','
 		//	contextualizedTraits+=ObservableSemantics)* | specific?='exposing' contextualizesTraits+=ConceptDeclaration (','
-		//	contextualizesTraits+=ConceptDeclaration)*)? & ('defines' ('authority' definedAuthority=UPPERCASE_PATH |
-		//	upperConcept=Concept))? & ('requires' requirements+=IdentityRequirement (',' requirements+=IdentityRequirement)*)? &
-		//	('describes' describedQuality=ConceptDeclaration)? & ('increases' 'with'
+		//	contextualizesTraits+=ConceptDeclaration)*)? & ('defines' ('authority' definedAuthority=(UPPERCASE_ID |
+		//	UPPERCASE_PATH) | upperConcept=Concept))? & ('requires' requirements+=IdentityRequirement (','
+		//	requirements+=IdentityRequirement)*)? & ('describes' describedQuality=ConceptDeclaration)? & ('increases' 'with'
 		//	describedProportionality=ConceptDeclaration)? & ('decreases' 'with'
 		//	describedInverseProportionalityQuality=ConceptDeclaration)? & ('marks' describedNonzeroQuality=ConceptDeclaration)? &
 		//	('classifies' classifiesQuality=ConceptDeclaration)? & ('discretizes' discretizesQuality=ConceptDeclaration)? &
@@ -6568,14 +6570,15 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? & ('exposes'
 		//contextualizedTraits+=ObservableSemantics (',' contextualizedTraits+=ObservableSemantics)* | specific?='exposing'
 		//contextualizesTraits+=ConceptDeclaration (',' contextualizesTraits+=ConceptDeclaration)*)? & ('defines' ('authority'
-		//definedAuthority=UPPERCASE_PATH | upperConcept=Concept))? & ('requires' requirements+=IdentityRequirement (','
-		//requirements+=IdentityRequirement)*)? & ('describes' describedQuality=ConceptDeclaration)? & ('increases' 'with'
-		//describedProportionality=ConceptDeclaration)? & ('decreases' 'with'
-		//describedInverseProportionalityQuality=ConceptDeclaration)? & ('marks' describedNonzeroQuality=ConceptDeclaration)? &
-		//('classifies' classifiesQuality=ConceptDeclaration)? & ('discretizes' discretizesQuality=ConceptDeclaration)? &
-		//('inherits' actuallyInheritedTraits+=ConceptDeclaration (',' actuallyInheritedTraits+=ConceptDeclaration)*)? & ('has'
-		//'role' roles+=ConceptDeclaration (',' roles+=ConceptDeclaration)* ('targeting' targetObservables+=ConceptDeclaration
-		//(',' targetObservables+=ConceptDeclaration)*)? ('in' restrictedObservables+=ConceptDeclaration (','
+		//definedAuthority=(UPPERCASE_ID | UPPERCASE_PATH) | upperConcept=Concept))? & ('requires'
+		//requirements+=IdentityRequirement (',' requirements+=IdentityRequirement)*)? & ('describes'
+		//describedQuality=ConceptDeclaration)? & ('increases' 'with' describedProportionality=ConceptDeclaration)? &
+		//('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)? & ('marks'
+		//describedNonzeroQuality=ConceptDeclaration)? & ('classifies' classifiesQuality=ConceptDeclaration)? & ('discretizes'
+		//discretizesQuality=ConceptDeclaration)? & ('inherits' actuallyInheritedTraits+=ConceptDeclaration (','
+		//actuallyInheritedTraits+=ConceptDeclaration)*)? & ('has' 'role' roles+=ConceptDeclaration (','
+		//roles+=ConceptDeclaration)* ('targeting' targetObservables+=ConceptDeclaration (','
+		//targetObservables+=ConceptDeclaration)*)? ('in' restrictedObservables+=ConceptDeclaration (','
 		//restrictedObservables+=ConceptDeclaration)*))? & ('confers' conferredTraits+=ConceptDeclaration (','
 		//conferredTraits+=ConceptDeclaration)* ('to' conferredTargets+=ConceptDeclaration (','
 		//conferredTargets+=ConceptDeclaration)*)?)? & (('part' | constituent?='constituent' | constitutes?='consists')
@@ -6671,14 +6674,15 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//(connectors+=(',' | 'or' | 'and') parents+=ConceptDeclaration)*))? & ('exposes'
 		//contextualizedTraits+=ObservableSemantics (',' contextualizedTraits+=ObservableSemantics)* | specific?='exposing'
 		//contextualizesTraits+=ConceptDeclaration (',' contextualizesTraits+=ConceptDeclaration)*)? & ('defines' ('authority'
-		//definedAuthority=UPPERCASE_PATH | upperConcept=Concept))? & ('requires' requirements+=IdentityRequirement (','
-		//requirements+=IdentityRequirement)*)? & ('describes' describedQuality=ConceptDeclaration)? & ('increases' 'with'
-		//describedProportionality=ConceptDeclaration)? & ('decreases' 'with'
-		//describedInverseProportionalityQuality=ConceptDeclaration)? & ('marks' describedNonzeroQuality=ConceptDeclaration)? &
-		//('classifies' classifiesQuality=ConceptDeclaration)? & ('discretizes' discretizesQuality=ConceptDeclaration)? &
-		//('inherits' actuallyInheritedTraits+=ConceptDeclaration (',' actuallyInheritedTraits+=ConceptDeclaration)*)? & ('has'
-		//'role' roles+=ConceptDeclaration (',' roles+=ConceptDeclaration)* ('targeting' targetObservables+=ConceptDeclaration
-		//(',' targetObservables+=ConceptDeclaration)*)? ('in' restrictedObservables+=ConceptDeclaration (','
+		//definedAuthority=(UPPERCASE_ID | UPPERCASE_PATH) | upperConcept=Concept))? & ('requires'
+		//requirements+=IdentityRequirement (',' requirements+=IdentityRequirement)*)? & ('describes'
+		//describedQuality=ConceptDeclaration)? & ('increases' 'with' describedProportionality=ConceptDeclaration)? &
+		//('decreases' 'with' describedInverseProportionalityQuality=ConceptDeclaration)? & ('marks'
+		//describedNonzeroQuality=ConceptDeclaration)? & ('classifies' classifiesQuality=ConceptDeclaration)? & ('discretizes'
+		//discretizesQuality=ConceptDeclaration)? & ('inherits' actuallyInheritedTraits+=ConceptDeclaration (','
+		//actuallyInheritedTraits+=ConceptDeclaration)*)? & ('has' 'role' roles+=ConceptDeclaration (','
+		//roles+=ConceptDeclaration)* ('targeting' targetObservables+=ConceptDeclaration (','
+		//targetObservables+=ConceptDeclaration)*)? ('in' restrictedObservables+=ConceptDeclaration (','
 		//restrictedObservables+=ConceptDeclaration)*))? & ('confers' conferredTraits+=ConceptDeclaration (','
 		//conferredTraits+=ConceptDeclaration)* ('to' conferredTargets+=ConceptDeclaration (','
 		//conferredTargets+=ConceptDeclaration)*)?)? & (('part' | constituent?='constituent' | constitutes?='consists')
@@ -6820,26 +6824,32 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ConceptDeclaration
 		public RuleCall getContextualizesTraitsConceptDeclarationParserRuleCall_3_2_1_2_1_0() { return cContextualizesTraitsConceptDeclarationParserRuleCall_3_2_1_2_1_0; }
 		
-		//('defines' ('authority' definedAuthority=UPPERCASE_PATH | upperConcept=Concept))?
+		//('defines' ('authority' definedAuthority=(UPPERCASE_ID | UPPERCASE_PATH) | upperConcept=Concept))?
 		public Group getGroup_3_3() { return cGroup_3_3; }
 		
 		//'defines'
 		public Keyword getDefinesKeyword_3_3_0() { return cDefinesKeyword_3_3_0; }
 		
-		//('authority' definedAuthority=UPPERCASE_PATH | upperConcept=Concept)
+		//('authority' definedAuthority=(UPPERCASE_ID | UPPERCASE_PATH) | upperConcept=Concept)
 		public Alternatives getAlternatives_3_3_1() { return cAlternatives_3_3_1; }
 		
-		//'authority' definedAuthority=UPPERCASE_PATH
+		//'authority' definedAuthority=(UPPERCASE_ID | UPPERCASE_PATH)
 		public Group getGroup_3_3_1_0() { return cGroup_3_3_1_0; }
 		
 		//'authority'
 		public Keyword getAuthorityKeyword_3_3_1_0_0() { return cAuthorityKeyword_3_3_1_0_0; }
 		
-		//definedAuthority=UPPERCASE_PATH
+		//definedAuthority=(UPPERCASE_ID | UPPERCASE_PATH)
 		public Assignment getDefinedAuthorityAssignment_3_3_1_0_1() { return cDefinedAuthorityAssignment_3_3_1_0_1; }
 		
+		//(UPPERCASE_ID | UPPERCASE_PATH)
+		public Alternatives getDefinedAuthorityAlternatives_3_3_1_0_1_0() { return cDefinedAuthorityAlternatives_3_3_1_0_1_0; }
+		
+		//UPPERCASE_ID
+		public RuleCall getDefinedAuthorityUPPERCASE_IDTerminalRuleCall_3_3_1_0_1_0_0() { return cDefinedAuthorityUPPERCASE_IDTerminalRuleCall_3_3_1_0_1_0_0; }
+		
 		//UPPERCASE_PATH
-		public RuleCall getDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0() { return cDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0; }
+		public RuleCall getDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0_1() { return cDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0_1; }
 		
 		//upperConcept=Concept
 		public Assignment getUpperConceptAssignment_3_3_1_1() { return cUpperConceptAssignment_3_3_1_1; }
@@ -11422,9 +11432,9 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	coreConcept?='core'?) (nothing?='nothing' | parents+=ConceptDeclaration (connectors+=(',' | 'or' | 'and')
 	//	parents+=ConceptDeclaration)*))? & ('exposes' contextualizedTraits+=ObservableSemantics (','
 	//	contextualizedTraits+=ObservableSemantics)* | specific?='exposing' contextualizesTraits+=ConceptDeclaration (','
-	//	contextualizesTraits+=ConceptDeclaration)*)? & ('defines' ('authority' definedAuthority=UPPERCASE_PATH |
-	//	upperConcept=Concept))? & ('requires' requirements+=IdentityRequirement (',' requirements+=IdentityRequirement)*)? &
-	//	('describes' describedQuality=ConceptDeclaration)? & ('increases' 'with'
+	//	contextualizesTraits+=ConceptDeclaration)*)? & ('defines' ('authority' definedAuthority=(UPPERCASE_ID |
+	//	UPPERCASE_PATH) | upperConcept=Concept))? & ('requires' requirements+=IdentityRequirement (','
+	//	requirements+=IdentityRequirement)*)? & ('describes' describedQuality=ConceptDeclaration)? & ('increases' 'with'
 	//	describedProportionality=ConceptDeclaration)? & ('decreases' 'with'
 	//	describedInverseProportionalityQuality=ConceptDeclaration)? & ('marks' describedNonzeroQuality=ConceptDeclaration)? &
 	//	('classifies' classifiesQuality=ConceptDeclaration)? & ('discretizes' discretizesQuality=ConceptDeclaration)? &

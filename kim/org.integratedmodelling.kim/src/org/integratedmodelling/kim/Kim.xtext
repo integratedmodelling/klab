@@ -557,7 +557,7 @@ ConceptStatementBody:
      * First-class concepts in the root domain can also rebase the 
      * foundational concepts in the observation ontology.
      */
-		('defines' (('authority' definedAuthority=UPPERCASE_PATH) | upperConcept=Concept))? &
+		('defines' (('authority' definedAuthority=(UPPERCASE_ID|UPPERCASE_PATH)) | upperConcept=Concept))? &
 
 	/*
                * requires identity, context or realm.

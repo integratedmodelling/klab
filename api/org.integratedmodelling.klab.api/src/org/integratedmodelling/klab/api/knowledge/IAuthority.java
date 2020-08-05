@@ -31,12 +31,14 @@ public interface IAuthority {
 		String getAuthorityName();
 
 		/**
-		 * If not null, this will be the type in the ontology to provide the superclass
-		 * for the identity. This must have been declared in the capabilities.
+		 * If not null, this will be the label for the concept that provides a parent
+		 * for the identity. The authority must return an identity for it. It will be
+		 * declared as the base identity. If null, a base identity will be created from
+		 * the ontology ID and shared by all identities in the authority.
 		 * 
 		 * @return
 		 */
-		String getIdentityType();
+		String getBaseIdentity();
 
 		/**
 		 * If the concept is expected to have a broader term from the same vocabulary,
@@ -74,6 +76,14 @@ public interface IAuthority {
 		 * @return
 		 */
 		float getScore();
+
+		/**
+		 * The original declaration, including the authority namespace, to set into the
+		 * declaration metadata for the concept.
+		 * 
+		 * @return
+		 */
+		String getLocator();
 	}
 
 	interface Capabilities {

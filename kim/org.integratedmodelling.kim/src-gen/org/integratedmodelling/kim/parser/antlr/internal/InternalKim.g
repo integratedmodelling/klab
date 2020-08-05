@@ -11403,20 +11403,37 @@ ruleConceptStatementBody returns [EObject current=null]
 										}
 										(
 											(
-												lv_definedAuthority_29_0=RULE_UPPERCASE_PATH
-												{
-													newLeafNode(lv_definedAuthority_29_0, grammarAccess.getConceptStatementBodyAccess().getDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0());
-												}
-												{
-													if ($current==null) {
-														$current = createModelElement(grammarAccess.getConceptStatementBodyRule());
+												(
+													lv_definedAuthority_29_1=RULE_UPPERCASE_ID
+													{
+														newLeafNode(lv_definedAuthority_29_1, grammarAccess.getConceptStatementBodyAccess().getDefinedAuthorityUPPERCASE_IDTerminalRuleCall_3_3_1_0_1_0_0());
 													}
-													setWithLastConsumed(
-														$current,
-														"definedAuthority",
-														lv_definedAuthority_29_0,
-														"org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
-												}
+													{
+														if ($current==null) {
+															$current = createModelElement(grammarAccess.getConceptStatementBodyRule());
+														}
+														setWithLastConsumed(
+															$current,
+															"definedAuthority",
+															lv_definedAuthority_29_1,
+															"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
+													}
+													    |
+													lv_definedAuthority_29_2=RULE_UPPERCASE_PATH
+													{
+														newLeafNode(lv_definedAuthority_29_2, grammarAccess.getConceptStatementBodyAccess().getDefinedAuthorityUPPERCASE_PATHTerminalRuleCall_3_3_1_0_1_0_1());
+													}
+													{
+														if ($current==null) {
+															$current = createModelElement(grammarAccess.getConceptStatementBodyRule());
+														}
+														setWithLastConsumed(
+															$current,
+															"definedAuthority",
+															lv_definedAuthority_29_2,
+															"org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
+													}
+												)
 											)
 										)
 									)

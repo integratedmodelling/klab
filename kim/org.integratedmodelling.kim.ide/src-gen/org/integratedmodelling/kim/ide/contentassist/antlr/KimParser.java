@@ -148,6 +148,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getConceptStatementBodyAccess().getConnectorsAlternatives_3_1_1_1_1_0_0(), "rule__ConceptStatementBody__ConnectorsAlternatives_3_1_1_1_1_0_0");
 			builder.put(grammarAccess.getConceptStatementBodyAccess().getAlternatives_3_2(), "rule__ConceptStatementBody__Alternatives_3_2");
 			builder.put(grammarAccess.getConceptStatementBodyAccess().getAlternatives_3_3_1(), "rule__ConceptStatementBody__Alternatives_3_3_1");
+			builder.put(grammarAccess.getConceptStatementBodyAccess().getDefinedAuthorityAlternatives_3_3_1_0_1_0(), "rule__ConceptStatementBody__DefinedAuthorityAlternatives_3_3_1_0_1_0");
 			builder.put(grammarAccess.getConceptStatementBodyAccess().getAlternatives_3_14_0(), "rule__ConceptStatementBody__Alternatives_3_14_0");
 			builder.put(grammarAccess.getConceptStatementBodyAccess().getAuthoritiesAlternatives_3_22_2_0(), "rule__ConceptStatementBody__AuthoritiesAlternatives_3_22_2_0");
 			builder.put(grammarAccess.getQuantificationAccess().getAlternatives_1(), "rule__Quantification__Alternatives_1");

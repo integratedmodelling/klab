@@ -686,4 +686,13 @@ public class StringUtils extends org.apache.commons.lang.StringUtils {
 		return ret.toString();
 	}
 
+	public static boolean containsWhitespace(String string) {
+		for (int i = 0; i < string.length(); i++) {
+			if (Character.isWhitespace(string.charAt(i))) {
+				return true;
+			}
+		}
+		return false;
+	}
+
 }

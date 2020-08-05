@@ -17,6 +17,7 @@ public class AuthorityIdentity implements IAuthority.Identity {
 	private String error;
 	private String authorityName;
 	private String identityType;
+	private String locator;
 
 	@Override
 	public String getId() {
@@ -86,7 +87,7 @@ public class AuthorityIdentity implements IAuthority.Identity {
 	}
 
 	@Override
-	public String getIdentityType() {
+	public String getBaseIdentity() {
 		return this.identityType;
 	}
 
@@ -109,6 +110,15 @@ public class AuthorityIdentity implements IAuthority.Identity {
 
 	public void setIdentityType(String identityType) {
 		this.identityType = identityType;
+	}
+
+	@Override
+	public String getLocator() {
+		return locator;
+	}
+
+	public void setLocator(String locator) {
+		this.locator = locator;
 	}
 
 }

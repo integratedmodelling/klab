@@ -15,6 +15,7 @@ package org.integratedmodelling.klab;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -28,6 +29,7 @@ import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.klab.api.knowledge.IAuthority.Identity;
+import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -40,12 +42,17 @@ import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.owl.Axiom;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.owl.Ontology;
 import org.integratedmodelling.klab.owl.Property;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.springframework.util.StringUtils;
 
 /**
@@ -145,11 +152,11 @@ public enum Concepts implements IConceptService {
 	@Override
 	public String getDisplayName(ISemantic k) {
 		if (k instanceof IObservable) {
-			return getDisplayName((IObservable)k);
+			return getDisplayName((IObservable) k);
 		}
 		return getDisplayName(k.getType());
 	}
-	
+
 	private String getDisplayName(IConcept t) {
 
 		String ret = t.getMetadata().get(NS.DISPLAY_LABEL_PROPERTY, String.class);
@@ -188,7 +195,7 @@ public enum Concepts implements IConceptService {
 	@Override
 	public String getDisplayLabel(ISemantic k) {
 		if (k instanceof IObservable) {
-			return getDisplayLabel((IObservable)k);
+			return getDisplayLabel((IObservable) k);
 		}
 		return getDisplayLabel(k.getType());
 	}
@@ -501,12 +508,59 @@ public enum Concepts implements IConceptService {
 	}
 
 	public Concept getAuthorityConcept(Identity identity) {
-		
+
 		if (identity == null) {
 			return null;
 		}
-		
-		return null;
+
+		String oid = Path.getFirst(identity.getAuthorityName(), ".").toLowerCase();
+		Ontology ontology = OWL.INSTANCE.requireOntology(oid, OWL.INTERNAL_ONTOLOGY_PREFIX);
+		Concept ret = ontology.getConcept(identity.getConceptName());
+		if (ret == null) {
+
+			List<IAxiom> axioms = new ArrayList<>();
+			EnumSet<Type> type = Kim.INSTANCE.getType("identity");
+			type.add(Type.AUTHORITY_IDENTITY);
+
+			// lookup parent if any; otherwise ensure we have a suitable parent
+			String baseIdentity = identity.getBaseIdentity();
+			if (baseIdentity == null) {
+				baseIdentity = StringUtils.capitalize(oid.toLowerCase()) + "Identity";
+			} else {
+				// TODO recursively resolve the base identity
+				throw new KlabUnimplementedException(
+						"explicit base identities for authority concepts are still unimplemented");
+			}
+
+			String pName = "is" + baseIdentity;
+			Concept base = ontology.getConcept(baseIdentity);
+			if (base == null) {
+				axioms.add(Axiom.ClassAssertion(baseIdentity, type));
+				// TODO check - there should be a base identity per leaf vocabulary
+				axioms.add(Axiom.AnnotationAssertion(baseIdentity, NS.BASE_DECLARATION, "true"));
+				axioms.add(Axiom.ObjectPropertyAssertion(pName));
+				axioms.add(Axiom.ObjectPropertyRange(pName, baseIdentity));
+				axioms.add(Axiom.SubObjectProperty(NS.HAS_IDENTITY_PROPERTY, pName));
+				axioms.add(Axiom.AnnotationAssertion(baseIdentity, NS.TRAIT_RESTRICTING_PROPERTY, oid + ":" + pName));
+			}
+
+			// if we created the parent, add the restricting property and prepare to
+			// give it to the new identity
+
+			axioms.add(Axiom.ClassAssertion(identity.getConceptName(), type));
+			axioms.add(Axiom.SubClass(baseIdentity, identity.getConceptName()));
+			axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), IMetadata.DC_LABEL, identity.getLabel()));
+			axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), IMetadata.DC_COMMENT,
+					identity.getDescription()));
+			axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), NS.CONCEPT_DEFINITION_PROPERTY,
+					identity.getLocator()));
+
+			ontology.define(axioms);
+
+			ret = ontology.getConcept(identity.getConceptName());
+		}
+
+		return ret;
 	}
 
 	public boolean isOccurrent(IConcept c) {

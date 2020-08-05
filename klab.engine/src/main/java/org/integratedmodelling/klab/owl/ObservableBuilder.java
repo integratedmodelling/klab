@@ -1573,7 +1573,7 @@ public class ObservableBuilder implements IObservable.Builder {
 				IConcept base = Traits.INSTANCE.getBaseParentTrait(t);
 
 				if (base == null) {
-					monitor.error("base declaration for trait " + t + " cannot be found", declaration);
+					monitor.error("base declaration for trait " + t + " could not be found", declaration);
 				}
 
 				if (!baseTraits.add(base)) {

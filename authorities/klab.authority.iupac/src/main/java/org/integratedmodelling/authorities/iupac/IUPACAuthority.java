@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.JsonUtils;
+import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.UrlEscape;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
@@ -71,12 +72,15 @@ public class IUPACAuthority implements IAuthority {
 		if (officialName == null) {
 			ret.setError("Identity " + identityId + " is unknown to authority " + ID);
 		}
-		
+
+		ret.setAuthorityName(ID);
 		ret.setConceptName(identityId.toLowerCase().replace('-', '_'));
 		ret.setDescription(officialName + " (" + getFormula(identityId) + ")");
 		ret.setLabel(original);
 		ret.setId(identityId);
-		
+		boolean ws = StringUtils.containsWhitespace(original);
+		ret.setLocator(ID + (ws ? ":'" : ":") + original + (ws ? "':" : ":"));
+
 		/*
 		 * cache also the errors
 		 */
