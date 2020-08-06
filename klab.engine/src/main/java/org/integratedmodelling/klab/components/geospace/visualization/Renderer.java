@@ -253,6 +253,7 @@ public enum Renderer {
 
 					Map<?, ?> vals = annotation.getDeclared("values", Map.class);
 					List<Pair<Object, Color>> svals = new ArrayList<>();
+					Map<Integer, Pair<Object, Color>> mvals = new HashMap<Integer, Pair<Object, Color>> ();
 					Class<?> type = null;
 					for (Object o : vals.keySet()) {
 
@@ -266,9 +267,24 @@ public enum Renderer {
 						/*
 						 * accept everything but don't add keys that are not in the data.
 						 */
-						if (state.getDataKey() == null
-								|| (state.getDataKey() != null && state.getDataKey().reverseLookup(o) >= 0)) {
+						if (state.getDataKey() == null) {
 							svals.add(new Pair<>(o, parseColor(vals.get(o))));
+						} else {
+							int valueIndex = state.getDataKey().reverseLookup(o);
+							if ( valueIndex >= 0) {
+								mvals.put(valueIndex, new Pair<>(o, parseColor(vals.get(o))));
+							}
+						}
+					}
+					if (mvals.size() > 0) {
+						for (Pair<Integer,String> data : state.getDataKey().getAllValues()) {
+							Pair<Object, Color> p = mvals.get(data.getFirst());
+							if (p == null) {
+								Object o = state.getDataKey().lookup(data.getFirst());
+								p = new Pair<Object, Color>(o, Color.GRAY);
+								System.err.println("Value "+ data.getSecond() +" is not present in colormap");
+							}
+							svals.add(p);
 						}
 					}
 

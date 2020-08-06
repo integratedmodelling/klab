@@ -8,6 +8,10 @@ public class DataSummary {
 	private double nodataProportion;
 	private double minValue = Double.NaN;
 	private double maxValue = Double.NaN;
+	/**
+	 * is need on k.Explorer to know that the min and max has no sense
+	 */
+	private boolean categorized = false;
 	private List<Integer> histogram = new ArrayList<>();
 	private List<String> categories = new ArrayList<>();
 
@@ -50,6 +54,20 @@ public class DataSummary {
 
 	public void setMaxValue(double maxValue) {
 		this.maxValue = maxValue;
+	}
+
+	/**
+	 * @return the categorized
+	 */
+	public boolean isCategorized() {
+		return categorized;
+	}
+
+	/**
+	 * @param categorized the categorized to set
+	 */
+	public void setCategorized(boolean categorized) {
+		this.categorized = categorized;
 	}
 
 	/**

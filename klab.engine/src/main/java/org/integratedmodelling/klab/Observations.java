@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -164,36 +165,60 @@ public enum Observations implements IObservationService {
 		long tdata = 0;
 
 		ret.setStateTimestamp(((Observation) state).getTimestamp());
+		double min, max;
+		
+		List<Integer> dataKeys = state.getDataKey() != null
+				? state.getDataKey().getAllValues().stream().map(dataKey -> dataKey.getFirst()).collect(Collectors.toList())
+				: null;
+				
+		if (state.getDataKey() == null) {
+			SummaryStatistics statistics = new SummaryStatistics();
 
-		SummaryStatistics statistics = new SummaryStatistics();
-
-		for (Iterator<Number> it = state.iterator(locator, Number.class); it.hasNext();) {
-			tdata++;
-			Number d = it.next();
-			if (d != null) {
-				ndata++;
-				statistics.addValue(d.doubleValue());
-			} else {
-				nndat++;
+			for (Iterator<Number> it = state.iterator(locator, Number.class); it.hasNext();) {
+				tdata++;
+				Number d = it.next();
+				if (d != null) {
+					ndata++;
+					statistics.addValue(d.doubleValue());
+				} else {
+					nndat++;
+				}
 			}
+			min = statistics.getMin();
+			max = statistics.getMax();
+			ret.setDegenerate(ndata == 0 || !Double.isFinite(statistics.getMax()) || !Double.isFinite(statistics.getMax()));
+			ret.setNodataPercentage((double) nndat / (double) tdata);
+			ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
+			ret.setValueCount(ndata + nndat);
+			ret.setMean(statistics.getMean());
+			ret.setVariance(statistics.getVariance());
+			ret.setStandardDeviation(statistics.getStandardDeviation());
+			ret.setSingleValued(statistics.getMax() == statistics.getMin());
+		} else {
+			min = Double.MIN_VALUE;
+			max = Double.MAX_VALUE;
+			ret.setDegenerate(false);
+			ret.setNodataPercentage(0);
+			ret.setValueCount(dataKeys.size());
+			ret.setMean(Double.NaN);
+			ret.setVariance(Double.NaN);
+			ret.setStandardDeviation(Double.NaN);
+			ret.setSingleValued(false);
 		}
-
-		ret.setDegenerate(ndata == 0 || !Double.isFinite(statistics.getMax()) || !Double.isFinite(statistics.getMax()));
-		ret.setNodataPercentage((double) nndat / (double) tdata);
-		ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
-		ret.setValueCount(ndata + nndat);
-		ret.setMean(statistics.getMean());
-		ret.setVariance(statistics.getVariance());
-		ret.setStandardDeviation(statistics.getStandardDeviation());
-		ret.setSingleValued(statistics.getMax() == statistics.getMin());
+		ret.setRange(Arrays.asList(min, max));
 
 		if (ret.getNodataPercentage() < 1) {
-			Builder histogram = Histogram.builder(statistics.getMin(), statistics.getMax(),
+			Builder histogram = Histogram.builder(min, max,
 					state.getDataKey() == null ? 10 : state.getDataKey().size());
+			
 			for (Iterator<Number> it = state.iterator(locator, Number.class); it.hasNext();) {
 				Number d = it.next();
 				if (d != null) {
-					histogram.add(d.doubleValue());
+					if (dataKeys != null) {
+						histogram.addToIndex(dataKeys.indexOf(d));
+					} else {
+						histogram.add(d.doubleValue());
+					}
 				}
 			}
 			ret.setHistogram(histogram.build());
@@ -447,15 +472,22 @@ public enum Observations implements IObservationService {
 					ds.getHistogram().add(bin);
 				}
 			}
-			double step = (summary.getRange().get(1) - summary.getRange().get(0)) / (double) ds.getHistogram().size();
+			IDataKey dataKey = ((IState) observation).getDataKey(); 
+			if (dataKey != null && !dataKey.isOrdered()) { // isn't RAMP of INTERVAL
+				ds.setCategorized(true);
+				ds.getCategories().addAll(dataKey.getAllValues().stream().map(key -> key.getSecond()).collect(Collectors.toList()));
+			} else {
+				ds.setCategorized(false);
+				double step = (summary.getRange().get(1) - summary.getRange().get(0)) / (double) ds.getHistogram().size();
 
-			for (int i = 0; i < ds.getHistogram().size(); i++) {
-				// TODO use labels for categories
-				String lower = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * i));
-				String upper = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * (i + 1)));
-				ds.getCategories().add(lower + " to " + upper);
+				for (int i = 0; i < ds.getHistogram().size(); i++) {
+					// TODO use labels for categories
+					String lower = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * i));
+					String upper = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * (i + 1)));
+					ds.getCategories().add(lower + " to " + upper);
+				}
+
 			}
-
 			ret.setDataSummary(ds);
 		}
 
