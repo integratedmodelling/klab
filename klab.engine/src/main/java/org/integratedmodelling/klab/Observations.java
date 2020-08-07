@@ -473,7 +473,7 @@ public enum Observations implements IObservationService {
 				}
 			}
 			IDataKey dataKey = ((IState) observation).getDataKey(); 
-			if (dataKey != null && !dataKey.isOrdered()) { // isn't RAMP of INTERVAL
+			if (dataKey != null) {
 				ds.setCategorized(true);
 				ds.getCategories().addAll(dataKey.getAllValues().stream().map(key -> key.getSecond()).collect(Collectors.toList()));
 			} else {
