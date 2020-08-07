@@ -60,7 +60,7 @@ public class Trajectory implements Extentual {
         Observation observation;
         
         def getLength() {
-            return link.getLength();
+            // return link.getLength();
         }
         
         def getSubject() {
