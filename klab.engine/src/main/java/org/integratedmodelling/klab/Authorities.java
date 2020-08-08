@@ -22,6 +22,7 @@ public enum Authorities implements IAuthorityService {
 	INSTANCE;
 
 	Map<String, IAuthority> authorities = Collections.synchronizedMap(new HashMap<>());
+	Map<String, IAuthority> inactive = Collections.synchronizedMap(new HashMap<>());
 
 	private Authorities() {
 
@@ -69,6 +70,7 @@ public enum Authorities implements IAuthorityService {
 		return authorities.get(authorityId);
 	}
 
+	@Override
 	public IAuthority.Identity getIdentity(String authorityId, String identityId) {
 
 		String auth = authorityId;
@@ -101,6 +103,14 @@ public enum Authorities implements IAuthorityService {
 		}
 
 		return ret;
+	}
+
+	@Override
+	public void deactivateAuthority(String authority) {
+		IAuthority auth = authorities.remove(authority);
+		if (auth != null) {
+			inactive.put(authority, auth);
+		}
 	}
 
 }

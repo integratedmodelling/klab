@@ -395,9 +395,9 @@ public interface API {
 		public static final String RESOLVE = "/public/authority/" + P_AUTHORITY + "/resolve/" + P_IDENTIFIER;
 
 		/**
-		 * Setup and/or reset caches for an authority
+		 * Setup and/or reset caches for an authority. This is the only non-public endpoint.
 		 */
-		public static final String SETUP = "/public/authority/" + P_AUTHORITY + "/setup";
+		public static final String SETUP = "/authority/" + P_AUTHORITY + "/setup";
 
 		
 		/**

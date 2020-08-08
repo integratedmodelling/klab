@@ -5,6 +5,7 @@ import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentNavigableMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -38,7 +39,7 @@ import kong.unirest.Unirest;
 public class IUPACAuthority implements IAuthority {
 
 	public static final String ID = "IUPAC";
-	
+
 	private static final String KEY_PATTERN = "[A-Z]{14}-[A-Z]{10}-[A-Z]";
 	private static final String RESOLVER_URL = "https://cactus.nci.nih.gov/chemical/structure";
 
@@ -47,22 +48,19 @@ public class IUPACAuthority implements IAuthority {
 	private Pattern pattern;
 
 	public IUPACAuthority() {
-		this.db = DBMaker
-				.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "iupac.db")
-				.closeOnJvmShutdown()
-				.transactionEnable()
-				.make();
+		this.db = DBMaker.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "iupac.db")
+				.closeOnJvmShutdown().transactionEnable().make();
 		this.cache = db.treeMap("collectionName", Serializer.STRING, Serializer.STRING).createOrOpen();
 	}
-	
+
 	@Override
 	public Identity getIdentity(String identityId, String catalog) {
-		
+
 		String value = this.cache.get(identityId);
 		if (value != null) {
 			return JsonUtils.parseObject(value, AuthorityIdentity.class);
 		}
-		
+
 		String original = identityId;
 		AuthorityIdentity ret = new AuthorityIdentity();
 		if (!isStdKey(identityId)) {
@@ -86,13 +84,13 @@ public class IUPACAuthority implements IAuthority {
 		 */
 		this.cache.put(original, JsonUtils.asString(ret));
 		this.db.commit();
-		
+
 		return ret;
 	}
 
 	/**
-	 * Check for the official ID in XXXXXXXXXXXXXX-YYYYYYYYYY-Z format, with 
-	 * 14, 12 and 1 uppercase characters.
+	 * Check for the official ID in XXXXXXXXXXXXXX-YYYYYYYYYY-Z format, with 14, 12
+	 * and 1 uppercase characters.
 	 * 
 	 * @param identityId
 	 * @return
@@ -150,7 +148,7 @@ public class IUPACAuthority implements IAuthority {
 		}
 		return null;
 	}
-	
+
 	public String getInChl(String identity) {
 		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + Escape.forURL(identity) + "/" + "stdinchi")
 				.asString();
@@ -178,8 +176,7 @@ public class IUPACAuthority implements IAuthority {
 
 		String ret = null;
 		String url = RESOLVER_URL + "/" + UrlEscape.escapeurl(query) + "/" + "stdinchikey";
-		HttpResponse<String> response = Unirest.get(url)
-				.asString();
+		HttpResponse<String> response = Unirest.get(url).asString();
 		if (response.isSuccess()) {
 			ret = response.getBody();
 			if (ret.contains("=")) {
@@ -193,7 +190,8 @@ public class IUPACAuthority implements IAuthority {
 
 	public static void main(String[] args) {
 		IUPACAuthority auth = new IUPACAuthority();
-		for (String c : new String[] {"XLYOFNOQVPJJNP-UHFFFAOYSA-N", "Water", "Aspirin",  "Cyanometaacrylate", "Polyacrylamide" }) {
+		for (String c : new String[] { "XLYOFNOQVPJJNP-UHFFFAOYSA-N", "Water", "Aspirin", "Cyanometaacrylate",
+				"Polyacrylamide" }) {
 			System.out.println("Looking up " + c);
 			System.out.println("  Standard key: " + (auth.isStdKey(c) ? "YES" : "NO"));
 			String identity = auth.getIdentity(c);
@@ -210,6 +208,19 @@ public class IUPACAuthority implements IAuthority {
 				}
 			}
 		}
+	}
+
+	@Override
+	public boolean setup(Map<String, String> options) {
+		if ("true".equals(options.get("clearcache"))) {
+			try {
+				cache.clear();
+				db.commit();
+			} catch (Throwable t) {
+				return false;
+			}
+		}
+		return true;
 	}
 
 }

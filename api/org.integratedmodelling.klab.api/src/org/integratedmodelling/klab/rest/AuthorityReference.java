@@ -12,6 +12,7 @@ public class AuthorityReference implements IAuthority.Capabilities {
 	private boolean searchable;
 	private boolean fuzzy;
 	private List<String> documentationFormats = new ArrayList<>();
+	private String description;
 
 	public String getName() {
 		return name;
@@ -91,6 +92,14 @@ public class AuthorityReference implements IAuthority.Capabilities {
 
 	public void setWorldview(String worldview) {
 		this.worldview = worldview;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 	
 }

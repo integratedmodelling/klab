@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.api.knowledge;
 
 import java.io.OutputStream;
 import java.util.List;
+import java.util.Map;
 
 public interface IAuthority {
 
@@ -165,4 +166,14 @@ public interface IAuthority {
 	 * @return
 	 */
 	List<Identity> search(String query, String catalog);
+
+	/**
+	 * May be called explicitly through the API for authorities hosted by nodes that
+	 * need setup or reset actions.
+	 * 
+	 * @param options a map of options to specify actions.
+	 * @return true if setup was successful. Returning false should invalidate the
+	 *         authority.
+	 */
+	boolean setup(Map<String, String> options);
 }

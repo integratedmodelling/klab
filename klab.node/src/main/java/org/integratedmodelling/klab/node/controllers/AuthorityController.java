@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.node.controllers;
 
+import java.util.Map;
+
 import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.knowledge.IAuthority.Identity;
@@ -7,6 +9,8 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -29,6 +33,8 @@ public class AuthorityController {
 		throw new KlabResourceNotFoundException(
 				"Authority " + authority + " does not exist or cannot resolve identity " + identifier);
 	}
+	
+
 
 //	@PostMapping(value = API.AUTHORITY.QUERY, produces = "application/json")
 //	@ResponseBody

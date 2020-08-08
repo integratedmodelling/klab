@@ -209,7 +209,7 @@ public class Parser {
 
 			for (Set<String> siblings : families) {
 				for (String qq : siblings) {
-					if (principalQualifiers.contains(qq)) {
+					if (contains(principalQualifiers, qq)) {
 						useCount.put(siblings, useCount.get(siblings) == null ? 0 : (useCount.get(siblings) + 1));
 					}
 				}
@@ -224,7 +224,7 @@ public class Parser {
 			useCount.clear();
 			for (Set<String> siblings : families) {
 				for (String qq : siblings) {
-					if (secondaryQualifiers.contains(qq)) {
+					if (contains(secondaryQualifiers, qq)) {
 						useCount.put(siblings, useCount.get(siblings) == null ? 0 : (useCount.get(siblings) + 1));
 					}
 				}
@@ -366,6 +366,24 @@ public class Parser {
 		public void setErrors(Set<String> errors) {
 			this.errors = errors;
 		}
+	}
+
+	public boolean contains(List<SpecifiedQualifier> candidates, String qq) {
+		boolean qualifier = vocabulary.getQualifiers().containsKey(qq);
+		if (qualifier) {
+			for (SpecifiedQualifier q : candidates) {
+				if (qq.equals(q.getQualifier().getName())) {
+					return true;
+				}
+			}
+		} else {
+			for (SpecifiedQualifier q : candidates) {
+				if (q.getSpecifier() != null && qq.equals(q.getSpecifier().getName())) {
+					return true;
+				}
+			}
+		}
+		return false;
 	}
 
 }

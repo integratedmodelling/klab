@@ -73,4 +73,10 @@ public class WRBAuthority implements IAuthority {
 		return ref;
 	}
 
+	@Override
+	public boolean setup(Map<String, String> options) {
+		// TODO Auto-generated method stub
+		return true;
+	}
+
 }
