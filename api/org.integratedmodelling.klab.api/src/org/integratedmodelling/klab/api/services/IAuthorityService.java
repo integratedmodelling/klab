@@ -18,17 +18,42 @@ package org.integratedmodelling.klab.api.services;
 import java.util.Collection;
 
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
+import org.integratedmodelling.klab.api.knowledge.IAuthority.Identity;
 
 /**
- * The Interface IAuthorityService. For the time being simply a catalog of installed authorities.
+ * The Interface IAuthorityService. For the time being simply a catalog of
+ * installed authorities.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface IAuthorityService {
 
+	/**
+	 * 
+	 * @return
+	 */
 	Collection<IAuthority> getAuthorities();
-	
+
+	/**
+	 * 
+	 * @param authorityId
+	 * @return
+	 */
 	IAuthority getAuthority(String authorityId);
-	
+
+	/**
+	 * 
+	 * @param authority
+	 */
+	void deactivateAuthority(String authority);
+
+	/**
+	 * 
+	 * @param authorityId
+	 * @param identityId
+	 * @return
+	 */
+	Identity getIdentity(String authorityId, String identityId);
+
 }

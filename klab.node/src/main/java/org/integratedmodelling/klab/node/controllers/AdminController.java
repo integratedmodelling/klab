@@ -5,9 +5,11 @@ import java.util.Map;
 
 import javax.ws.rs.QueryParam;
 
+import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.data.Metadata;
@@ -19,6 +21,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -73,6 +76,16 @@ public class AdminController {
 			return ret;
 		}
 		return null;
+	}
+	
+	@PutMapping(value = API.AUTHORITY.SETUP)
+	public void setupAuthority(@PathVariable String authority, @RequestBody Map<String, String> options) {
+		IAuthority auth = Authorities.INSTANCE.getAuthority(authority);
+		if (auth != null) {
+			if (!auth.setup(options)) {
+				Authorities.INSTANCE.deactivateAuthority(authority);
+			}
+		}
 	}
 
 }

@@ -15,8 +15,6 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Authority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityReference;
@@ -62,10 +60,6 @@ public class GBIFAuthority implements IAuthority {
 		ranks.add(SPECIES_RANK);
 	}
 
-//	private IOntology getOntology() {
-//		return OWL.INSTANCE.requireOntology("gbif_" + rank, OWL.INTERNAL_ONTOLOGY_PREFIX + "/authority/");
-//	}
-
 	public GBIFAuthority() {
 		this.db = DBMaker.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "gbif.db")
 				.transactionEnable().closeOnJvmShutdown().make();
@@ -110,15 +104,6 @@ public class GBIFAuthority implements IAuthority {
 		}
 
 		return source;
-	}
-
-	private IConcept makeIdentity(IMetadata source) {
-		// TODO Auto-generated method stub
-		String conceptId = "GBIF" + source.get(IMetadata.IM_KEY, String.class);
-		// TODO call getIdentity() on all the upper levels using the proper authorities
-		// and
-		// link them as parents.
-		return null;
 	}
 
 	public Identity parseResult(Map<?, ?> o) {
@@ -214,12 +199,6 @@ public class GBIFAuthority implements IAuthority {
 		}
 	}
 
-//	@Override
-//	public String getName() {
-//		return "GBIF." + rank.toUpperCase();
-//	}
-
-//	@Override
 	public String getDescription() {
 		return "<b>Global Biodiversity Information Facility (GBIF)</b>\n\n"
 				+ "GBIF provides stable identities for taxonomic entities. The available catalogs "
@@ -237,8 +216,22 @@ public class GBIFAuthority implements IAuthority {
 	public Capabilities getCapabilities() {
 		AuthorityReference ref = new AuthorityReference();
 		ref.setSearchable(true);
+		ref.setDescription(getDescription());
 		ref.getDocumentationFormats().add("text/plain");
 		ref.setName(ID);
 		return ref;
+	}
+
+	@Override
+	public boolean setup(Map<String, String> options) {
+		if ("true".equals(options.get("clearcache"))) {
+			try {
+				cache.clear();
+				db.commit();
+			} catch (Throwable t) {
+				return false;
+			}
+		}
+		return true;
 	}
 }
