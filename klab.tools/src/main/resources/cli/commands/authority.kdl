@@ -11,3 +11,12 @@ void 'resolve'
 	
 	class org.integratedmodelling.klab.clitool.console.commands.authority.Resolve
 }
+
+void 'setup'
+	"Call a local or remote authority's 'setup' method with the passed options and print the result."
+{
+	optional text node 
+		"The node to access."
+	
+	class org.integratedmodelling.klab.clitool.console.commands.authority.Setup
+}
