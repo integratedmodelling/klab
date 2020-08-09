@@ -22,20 +22,20 @@ klab:
     port: 5432
     user: postgres_user
   certificate: |
-    #Certificate Generated On Wed May 06 19:10:47 CEST 2020
-    #Wed May 06 19:10:47 CEST 2020
+    #Certificate Generated On Sat Aug 08 21:09:37 CEST 2020
+    #Sat Aug 08 21:09:37 CEST 2020
     klab.user.email=support@integratedmodelling.org
     klab.partner.email=godzilla@semanticweb.org
     klab.nodename=knot
     klab.certificate.level=INSTITUTIONAL
-    klab.partner.hub=http\://172.17.0.1\:8080/hub
-    klab.signature=258e9a59-e290-4192-8133-5a975abad3ef
-    klab.validuntil=2020-11-04T19\:10\:47.412+01\:00
-    klab.certificate=-----BEGIN PGP MESSAGE-----\nVersion\: BCPG v1.64\n\nhQEMA/lPo1TgQLbzAQf6AgLCRc1pr1lNygQXpDc+TX4e0jhw2dG2gCZyiWEKXV4N\nVtw3yg1o3IiNC4WsFLzWIINpUz6i09/r/QvXAeRt2DM63sysNqek1kJpV70ATnoG\norrzyXcV8UV8tBvOUsSYngPg95DI4k87CfB0Dhd83KxV6NMNPvSsHzYYqVDgH89O\nSGtxDPHSW/jhIFXL6Pwi0Jkb+O/v8uniIDhJgKxOSZ6F6bGUA6uVljuCHC5RAnhq\nK5o4dRY3m5TyS+eOSRFs+jnbTM075s7smZZVHlaQx/50askEuOUix2v64Az2AIgp\nM2C61uYm4sgx/vjCNNbWQN540sUnIrSg5KT889JBcdLC5AEOMaaLJssyN7berDVb\nhvDbxnatKMNHawg5tGqgA77AAbV6eYmcIxGLFz6C+g9bTtKkzn8/E9JRxrpBC3Kn\nq3xXFmOnUDzbxoKwXmWQDHQFyxXZUpkSETJHpsasIzKfWaKAac7Aov2xUGLuCCL3\nCq1zpG2N852e2WzZP4SfrulZYbUxjosOTVNwAQUEnulo3ilBeYssy9AsvtLEGrj7\nJMwefep5dnibwoyCeYwdESLLQubznuciNS13ZWVsZz0Xt/GGPY5qy5XWQTheSrui\nrl+RXaGVULlhe/eyY0fCU4Ypnr2Ib+payVtNVQHr4vljG9jshBbf2lQNCdxBE7V3\nXEwIXCI+X05kWGR0E7Z//aYZIXANZzdEMn6qo3BFGmhhBuXjW2Z1oImI4/2YkFoK\nPB8zX2rkt4mRYt8ToZeQrV0o3KEafCkykKXBvLz0Mzg4glZU9kUYJD3I6XbLYNnL\ndgkyIfSs4hwQQqiP883ks2V1XU6+bxrbpACNPN1RVpsmYXm+w+84PJ+n4XwTDUcC\nvlMj0dmmfmih6U76A+3gx7jQR3mrc/4RhKxq+N4JN2ZbN8SMQoMWWtwIPMlt+kZV\nlwdEEzoylGXcbnZO5R9l7xhNtCEXq5QxtcYjALlY3VPffWWlRTTOqAulVRwN8nxF\nxskn81spbs68eKtKvzah4z+eyAhnJBjGfSwiEAn+XLbWP4/tQgHfDhToFoHH8yl4\nyFio7ms+CX0Th3eHuevYEfcTRADknqux6IQn0+pU7IA/Xnzh7SwMpsFUjJC/GFsX\nH3TupfjkmWC3Dw5GFpeYKU01+iwi44ky+QIbs9UoEnJsyj7qn5a+7fQDCFvW5ZbI\n/pynQISCLunU94Kf4foVyCUEVinzpMnIyP08n8msT/J/6ujRmM+b9xyYsdYqCX6Y\n9SUCQDT5vMyGs68fvXhVYT8DmEeMlmRuk47RG4BJ6Tchi15GYJ2XX6Pbznf2S/Ez\nkk2EFlG10Om6MIrvV5c+6+AsCeumsYYRfrFlmt2+kar1V42HBKB104YQQ2EjCqkK\nPVtAsb+/j8atFGGiL1lYYctR3LMridIWkfYnYuJLLDRpctsuKJSPGXYPLjM9Amrq\nDInzhnY2283sjUhW8u+zXtNRmzDT6BirC0Oj4pm2mlf1/BI8IJCb6Vh+7kQBEdZy\nUOb/chvwWGuhBemIu3k11jx4BEKpDFl7MBIazO5Ozsl3CYEoWDBlj+hBqjc1jRaI\n8Bzljiki\n\=g0ug\n-----END PGP MESSAGE-----\n
+    klab.partner.hub=http\://127.0.0.1\:8284/hub
+    klab.signature=241b3432-f9b7-417f-a5d1-05bb1ef55703
+    klab.validuntil=2021-02-06T21\:09\:37.714+01\:00
+    klab.certificate=-----BEGIN PGP MESSAGE-----\nVersion\: BCPG v1.64\n\nhQEMA3Qud0rs/oKUAQgAg1kC/zOtI0q6j2O3mM1d9tDexoyjAXKjJxzhfNSUTG0J\nAU1MVRRPj0zUH7sxgcFpwaQG4enclFJdZ1Opup9Ktqxuo42ZgTwV5/Yf7h446PS5\nUEFCake6eoGj2xNvlfhb8x3qnW2Upvz374EDmplMzfpF5ZWJLuuoF8vYVMs9bO8V\n38Kc9RmVEzNmJfJqRbRcBQ9IG1TppZfUQb1bitbJb8tbz/YJUr+dnT0Take3pFUe\nx/9Eda8VDQYOLMkc3u6ok80fdbFI6rg8LCvxtPlIPYPFBcFsz8s0Yqp09TGzKzM0\nYs6ooc0bhgdNAlV4gb1vV4WMhdshvusOES0G1Jf1a9LC6AGkDvYdXDrv23YNYMeS\nGBgfOnhtVIxj47OIblh3KDN7N01wAaNSmEqNmYDaWRbAOIt2AWW6r+EOuzUwHr93\nmQIqWqkRvdlXHz/EtHL02YzHi8UCAZNQkgqcf02GQqo4KCFN9otgFMqeDMQkgS5n\n4fDz6zVcaK8RYZPp6R7Y65DJKWyNPdG8mgmECNMawigIIxUcedeyooYOj5heJFn5\nsFuqCY+xvDhRqtrHKrrzcm16DPDnVxSt6evWgJVfnstmf0PbnfNrwTbsqtmLf3bi\ntJ8wXr+VlXWAqQNH3xzj6fkckPqpG5MdAlQCxGIAtPu0cAG7ItEo4KDrgZIEAE+6\nd9ZSAim34lI9YqtVjV4h7jn1psmWHmBvJHlhz5KZLWPoshNdch8D/5ZjTBVKUJJv\nYYoJaV/f0SubIiavJkTPdOfazB7HKLeaqELuzwelUnJ6+YGAL9AVqNp5b8Zm2+7t\nag9MJCsukHvxsUSvAWxe5CYUSzHLLniU852yrQo4HFaFJhc56i5NlCnNFKockYR/\nH2RgNASegXOyuRUam1RxswUhq9Eh2Fy//p0U8H0yruucHIwJEBdSE+LBqvi3UsrS\nCccEgPlbUAeZ0YOLRmB9gDdeQJoYjj5ooDZh+9tRu+wTIGLm2rtAsq5QCfE+6Kub\nzt3ccBT+0vARzxSIaQ44+qRHKknY1JqVNunyDzJ/d2qmvEjqJLVLXoMvU3duI2rf\nH5LT8LX7nokxdUgwIJm7n2mVEDUUa4SicBzumuBCeePUjTm56Og2tZlERF0dYeCT\njghAXNmY9VsXFiKBc3gQjVMmvTiPZFUof+meEiEH/DoDitWTf7MuWgKPc9SJMeFU\nAGUZp9DYd/P833L75/Y8MkvkeyoXnd2ksoa6+IagZyAl/2Sbv1oYo72syna7WnNU\nYOwt9R4MHw0/yc01OB5kpDz0EGjxy/f2zkWGx1t56fipmys6a9aZG3Py7646HPqS\n+LeujZCXfvMcvclJ2nkbxspo5vpNavJmcPq88gizCvMG5TljSaalI3FKRECnsWHa\n0llnX0CwCmVEkUL5h9qdd8K0N4UpaMibJg5gRo0BFNV32+85uC6XLRIhdqEPeLUS\nziANw+pxR8fo/orruYiSCJ+LtxXcOZJ+osxQJ+aktEtEYFL/k5LW3kINFcDGmal7\ntM2RLzYyTvPBTstTNjN/AAa2tLOomHyrBagtc8sjscGXwmQJ5REEnRkfjTdL0zMz\nMk94KEyMahNWfQ\=\=\n\=C0Ow\n-----END PGP MESSAGE-----\n
     klab.url=http\://172.17.0.1\:8080/node
     klab.wordlview=im
     klab.certificate.type=NODE
-    klab.partner.name=testHub
+    klab.partner.name=testhub
 server: 
   port: ${random.int(5000,5100)}
   servlet: 
@@ -43,11 +43,3 @@ server:
     multipart: 
       max-file-size: 100MB
       max-request-size: 100MB
-      
-spring:
-  cloud:
-    consul:
-      discovery:
-        tags: service-id = ${random.UUID()}
-        health-check-path: ${server.servlet.context-path}/actuator/health
-        health-check-interval: 5s

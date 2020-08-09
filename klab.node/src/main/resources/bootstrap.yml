@@ -1,4 +1,22 @@
 spring:
+  application:
+    name: node-service
+  cloud:
+    bus:
+      enabled: false
+    discovery:
+      enabled: false
+    consul:
+      enabled: false
+      config:
+        enabled: false
+    kubernetes:
+      discovery:
+        enabled: false
+
+---
+spring:
+  profiles: consul-development
   cloud:
     consul:
       enabled: true
@@ -11,3 +29,15 @@ spring:
         profileSeparator: '::'
         format: yaml
         data-key: data
+
+
+---
+spring:
+  profiles: kubernetes-development
+  cloud:
+    kubernetes:
+      reload:
+        enabled: true
+      config:
+        name: node-service
+        namespace: default

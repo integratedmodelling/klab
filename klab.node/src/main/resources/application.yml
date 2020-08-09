@@ -1,7 +1,7 @@
-spring:
-  application:
-    name: node-service
-  cloud:
-    consul:
-      discovery:
-        health-check-critical-timeout: 3m
+server:
+  port: 8287
+  servlet:
+    cotextPath: "/node"
+    multipart:
+      maxFile: 128MB
+      maxRequest: 128MB

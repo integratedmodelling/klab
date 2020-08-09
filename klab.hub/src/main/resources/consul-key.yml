@@ -49,8 +49,6 @@ spring:
       port: 8389
       validation: 
         enabled: true
-  profiles: 
-    active: development
   security: 
     oauth2: 
       client: 
