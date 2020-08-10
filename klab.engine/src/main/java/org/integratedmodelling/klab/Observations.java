@@ -88,6 +88,9 @@ import org.integratedmodelling.klab.utils.Utils;
 public enum Observations implements IObservationService {
 
 	INSTANCE;
+	
+	public static final String PRESENT_LABEL = "Present";
+	public static final String NOT_PRESENT_LABEL = "Not present";
 
 	Map<ILocator, Map<String, StateSummary>> summaryCache = new HashMap<>();
 
@@ -167,11 +170,22 @@ public enum Observations implements IObservationService {
 		ret.setStateTimestamp(((Observation) state).getTimestamp());
 		double min, max;
 		
-		List<Integer> dataKeys = state.getDataKey() != null
-				? state.getDataKey().getAllValues().stream().map(dataKey -> dataKey.getFirst()).collect(Collectors.toList())
+		List<Integer> dataKey = state.getDataKey() != null
+				? state.getDataKey().getAllValues().stream().map(dk -> dk.getFirst()).collect(Collectors.toList())
 				: null;
-				
-		if (state.getDataKey() == null) {
+		boolean isBoolean = state.getType() == IArtifact.Type.BOOLEAN;
+		
+		if (dataKey != null || isBoolean) {
+			min = Double.MIN_VALUE;
+			max = Double.MAX_VALUE;
+			ret.setDegenerate(false);
+			ret.setNodataPercentage(0);
+			ret.setValueCount(isBoolean ? 2 : dataKey.size());
+			ret.setMean(Double.NaN);
+			ret.setVariance(Double.NaN);
+			ret.setStandardDeviation(Double.NaN);
+			ret.setSingleValued(false);
+		} else {
 			SummaryStatistics statistics = new SummaryStatistics();
 
 			for (Iterator<Number> it = state.iterator(locator, Number.class); it.hasNext();) {
@@ -194,28 +208,21 @@ public enum Observations implements IObservationService {
 			ret.setVariance(statistics.getVariance());
 			ret.setStandardDeviation(statistics.getStandardDeviation());
 			ret.setSingleValued(statistics.getMax() == statistics.getMin());
-		} else {
-			min = Double.MIN_VALUE;
-			max = Double.MAX_VALUE;
-			ret.setDegenerate(false);
-			ret.setNodataPercentage(0);
-			ret.setValueCount(dataKeys.size());
-			ret.setMean(Double.NaN);
-			ret.setVariance(Double.NaN);
-			ret.setStandardDeviation(Double.NaN);
-			ret.setSingleValued(false);
-		}
+		} 
 		ret.setRange(Arrays.asList(min, max));
 
 		if (ret.getNodataPercentage() < 1) {
 			Builder histogram = Histogram.builder(min, max,
-					state.getDataKey() == null ? 10 : state.getDataKey().size());
+					isBoolean ? 2 : (dataKey == null ? 10 : dataKey.size()));
 			
 			for (Iterator<Number> it = state.iterator(locator, Number.class); it.hasNext();) {
 				Number d = it.next();
 				if (d != null) {
-					if (dataKeys != null) {
-						histogram.addToIndex(dataKeys.indexOf(d));
+					if (isBoolean) {
+						histogram.addToIndex(d.intValue());
+					}
+					if (dataKey != null) {
+						histogram.addToIndex(dataKey.indexOf(d));
 					} else {
 						histogram.add(d.doubleValue());
 					}
@@ -472,8 +479,12 @@ public enum Observations implements IObservationService {
 					ds.getHistogram().add(bin);
 				}
 			}
-			IDataKey dataKey = ((IState) observation).getDataKey(); 
-			if (dataKey != null) {
+			IDataKey dataKey = ((IState) observation).getDataKey();
+			if (observation.getType() == IArtifact.Type.BOOLEAN) {
+				ds.setCategorized(true);
+				ds.getCategories().add(0, NOT_PRESENT_LABEL);
+				ds.getCategories().add(1, PRESENT_LABEL);
+			} else if (dataKey != null) {
 				ds.setCategorized(true);
 				ds.getCategories().addAll(dataKey.getAllValues().stream().map(key -> key.getSecond()).collect(Collectors.toList()));
 			} else {

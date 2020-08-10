@@ -41,7 +41,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
-import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -157,6 +157,8 @@ public enum Renderer {
 		if (summary.isDegenerate()) {
 			return new Pair<>(null, NO_DATA_MESSAGE);
 		}
+		
+		boolean stateIsBoolean = state.getType() == IArtifact.Type.BOOLEAN;
 
 		if (summary.getRange().get(0).equals(summary.getRange().get(1))) {
 
@@ -166,8 +168,8 @@ public enum Renderer {
 			double value = summary.getRange().get(0);
 			if (state.getDataKey() != null) {
 				label = state.getDataKey().getLabels().get((int) value);
-			} else if (state.getType() == Type.BOOLEAN) {
-				label = value == 0 ? "Not present" : "Present";
+			} else if (stateIsBoolean) {
+				label = value == 0 ? Observations.NOT_PRESENT_LABEL : Observations.PRESENT_LABEL;
 			} else {
 				label = NumberFormat.getNumberInstance().format(value);
 			}
@@ -191,7 +193,7 @@ public enum Renderer {
 		double[] values = null;
 		double midpoint = Double.NaN;
 		String[] labels = null;
-		int colormapType = state.getDataKey() == null ? ColorMap.TYPE_RAMP
+		int colormapType = state.getDataKey() == null ? (stateIsBoolean ? ColorMap.TYPE_VALUES : ColorMap.TYPE_RAMP)
 				: (state.getDataKey().isOrdered() ? ColorMap.TYPE_INTERVALS : ColorMap.TYPE_VALUES);
 
 		double shadedRelief = 0.0;
@@ -255,10 +257,13 @@ public enum Renderer {
 					List<Pair<Object, Color>> svals = new ArrayList<>();
 					Map<Integer, Pair<Object, Color>> mvals = new HashMap<Integer, Pair<Object, Color>> ();
 					Class<?> type = null;
+					boolean hasDataKey = state.getDataKey() != null;
+					boolean isBoolean = false;
 					for (Object o : vals.keySet()) {
 
 						if (type == null) {
 							type = o.getClass();
+							isBoolean = Boolean.class.isAssignableFrom(type); 
 						} else if (!type.equals(o.getClass())) {
 							throw new IllegalArgumentException(
 									"color keys must be of the same type in a colormap specification");
@@ -267,13 +272,15 @@ public enum Renderer {
 						/*
 						 * accept everything but don't add keys that are not in the data.
 						 */
-						if (state.getDataKey() == null) {
-							svals.add(new Pair<>(o, parseColor(vals.get(o))));
-						} else {
+						if (isBoolean) {
+							svals.add(new Pair<>(((Boolean)o) ? 1.0 : 0.0, parseColor(vals.get(o))));
+						} else if (hasDataKey) {
 							int valueIndex = state.getDataKey().reverseLookup(o);
 							if ( valueIndex >= 0) {
 								mvals.put(valueIndex, new Pair<>(o, parseColor(vals.get(o))));
 							}
+						} else {
+							svals.add(new Pair<>(o, parseColor(vals.get(o))));
 						}
 					}
 					if (mvals.size() > 0) {
@@ -297,13 +304,6 @@ public enum Renderer {
 								: ColorMap.TYPE_INTERVALS;
 					} else if (Boolean.class.isAssignableFrom(type)) {
 						colormapType = ColorMap.TYPE_VALUES;
-						for (Pair<Object, Color> pair : svals) {
-							if ((Boolean) pair.getFirst()) {
-								pair.setFirst(1.0);
-							} else {
-								pair.setFirst(0.0);
-							}
-						}
 					} else {
 						throw new IllegalArgumentException(
 								"invalid color keys: must be number, boolean, concept or range");
@@ -326,7 +326,7 @@ public enum Renderer {
 						} else if (pair.getFirst() instanceof Boolean) {
 							values[i] = ((Boolean) pair.getFirst()) ? 1 : 0;
 							labels[i] = state.getObservable().getName() + " "
-									+ ((Boolean) pair.getFirst() ? "present" : "absent");
+									+ ((Boolean) pair.getFirst() ? Observations.PRESENT_LABEL : Observations.NOT_PRESENT_LABEL);
 						}
 
 						colors[i] = pair.getSecond();
@@ -363,7 +363,15 @@ public enum Renderer {
 		}
 
 		if (colors == null) {
-			if (state.getDataKey() == null) {
+			if (stateIsBoolean) {
+				colormapType = ColorMap.TYPE_VALUES;
+				Color[] jetcolors = jet(1.0f);
+				
+				colors = new Color[] { jetcolors[0], jetcolors[255] };
+				values = new double[] { 0.0, 1.0 };
+				labels = new String[] { Observations.NOT_PRESENT_LABEL, Observations.PRESENT_LABEL };
+				
+			} else if (state.getDataKey() == null) {
 				colors = jet(1.0f);
 			} else {
 

@@ -253,7 +253,7 @@ public class EngineViewController {
 				String descr = value instanceof Number
 						? NumberFormat.getInstance().format(((Number) value).doubleValue())
 						: (value instanceof IConcept ? Concepts.INSTANCE.getDisplayLabel(((IConcept) value))
-								: (value instanceof Boolean ? ((Boolean) value ? "Present" : "Not present")
+								: (value instanceof Boolean ? ((Boolean) value ? Observations.PRESENT_LABEL : Observations.NOT_PRESENT_LABEL)
 										: "No data"));
 
 				if (obs.getObservable().getUnit() != null) {
