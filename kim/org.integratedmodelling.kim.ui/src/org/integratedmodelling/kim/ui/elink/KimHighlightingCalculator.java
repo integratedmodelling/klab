@@ -16,6 +16,7 @@ import org.eclipse.xtext.util.CancelIndicator;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.Concept;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.DefinitionBody;
@@ -125,7 +126,18 @@ public class KimHighlightingCalculator extends DefaultSemanticHighlightingCalcul
 
 							ConceptDescriptor cdesc = Kim.INSTANCE.getConceptDescriptor(text);
 
-							if (cdesc == null || cdesc.is(Type.NOTHING)) {
+							// Agh
+							boolean isCore = node.getSemanticElement() instanceof Concept
+									&& node.getSemanticElement().eContainer() instanceof ConceptDeclaration
+									&& node.getSemanticElement().eContainer()
+											.eContainer() instanceof ConceptStatementBody
+									&& ((ConceptStatementBody) node.getSemanticElement().eContainer().eContainer())
+											.isCoreConcept();
+
+							if (isCore) {
+								acceptor.addPosition((start = node.getOffset()), node.getLength(),
+										KimHighlightingConfiguration.CORE_CONCEPT_ID);
+							} else if (cdesc == null || cdesc.is(Type.NOTHING)) {
 								acceptor.addPosition((start = node.getOffset()), node.getLength(),
 										KimHighlightingConfiguration.DANGER_ID);
 							} else if (cdesc.is(Type.OBSERVABLE)) {
