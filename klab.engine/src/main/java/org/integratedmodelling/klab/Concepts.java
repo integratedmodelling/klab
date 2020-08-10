@@ -52,7 +52,6 @@ import org.integratedmodelling.klab.owl.Property;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Path;
-import org.integratedmodelling.klab.utils.StringUtil;
 import org.springframework.util.StringUtils;
 
 /**
@@ -78,6 +77,10 @@ public enum Concepts implements IConceptService {
 
 	@Override
 	public KimConcept getDeclaration(IConcept concept) {
+		Ontology ontology = OWL.INSTANCE.getOntology(concept.getNamespace());
+		if (ontology == null || ontology.isInternal()) {
+			return null;
+		}
 		return declare(concept.getDefinition());
 	}
 
@@ -514,7 +517,14 @@ public enum Concepts implements IConceptService {
 		}
 
 		String oid = Path.getFirst(identity.getAuthorityName(), ".").toLowerCase();
+		boolean isNew = OWL.INSTANCE.getOntology(oid) == null;
 		Ontology ontology = OWL.INSTANCE.requireOntology(oid, OWL.INTERNAL_ONTOLOGY_PREFIX);
+		
+		if (isNew) {
+			ontology.setInternal(true);
+			Reasoner.INSTANCE.addOntology(ontology);
+		}
+		
 		Concept ret = ontology.getConcept(identity.getConceptName());
 		if (ret == null) {
 

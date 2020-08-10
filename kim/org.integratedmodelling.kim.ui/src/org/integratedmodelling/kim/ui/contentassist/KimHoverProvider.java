@@ -5,17 +5,15 @@ import org.eclipse.xtext.ui.editor.hover.html.DefaultEObjectHoverProvider;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.kim.Annotation;
 import org.integratedmodelling.kim.kim.Concept;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.ConceptReference;
 import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
-import org.integratedmodelling.kim.model.Kim.Validator;
 
 public class KimHoverProvider extends DefaultEObjectHoverProvider {
 
-	
-	
 	@Override
 	protected String getFirstLine(EObject o) {
 
@@ -28,6 +26,16 @@ public class KimHoverProvider extends DefaultEObjectHoverProvider {
 		}
 
 		if (name != null) {
+
+			// Agh
+			boolean isCore = o.eContainer() instanceof Concept
+					&& o.eContainer().eContainer() instanceof ConceptDeclaration
+					&& o.eContainer().eContainer().eContainer() instanceof ConceptStatementBody
+					&& ((ConceptStatementBody) o.eContainer().eContainer().eContainer()).isCoreConcept();
+
+			if (isCore) {
+				return "Core ontology concept <b>" + name + "</b>";
+			}
 
 			ConceptDescriptor cd = Kim.INSTANCE.getConceptDescriptor(name);
 			if (cd != null) {
@@ -50,8 +58,7 @@ public class KimHoverProvider extends DefaultEObjectHoverProvider {
 				} else if (cd.is(Type.PROCESS)) {
 					ret += (ret.isEmpty() ? "" : " ") + "process <b>" + name + "</b>";
 				} else if (cd.is(Type.RELATIONSHIP)) {
-					ret += (ret.isEmpty() ? "" : " ") 
-							+ (cd.is(Type.FUNCTIONAL) ? "functional " : "")
+					ret += (ret.isEmpty() ? "" : " ") + (cd.is(Type.FUNCTIONAL) ? "functional " : "")
 							+ (cd.is(Type.STRUCTURAL) ? "structural " : "")
 							+ (cd.is(Type.BIDIRECTIONAL) ? "bond <b>" : "relationship <b>") + name + "</b>";
 				} else if (cd.is(Type.EVENT)) {
@@ -67,15 +74,13 @@ public class KimHoverProvider extends DefaultEObjectHoverProvider {
 				} else if (cd.is(Type.SUBJECT)) {
 					ret += (ret.isEmpty() ? "" : " ") + "subject <b>" + name + "</b>";
 				} else if (cd.is(Type.AGENT)) {
-					ret += (ret.isEmpty() ? "" : " ") 
-							+ (cd.is(Type.INTERACTIVE) ? "interactive " : "")
+					ret += (ret.isEmpty() ? "" : " ") + (cd.is(Type.INTERACTIVE) ? "interactive " : "")
 							+ (cd.is(Type.REACTIVE) ? "reactive " : "")
-							+ (cd.is(Type.DELIBERATIVE) ? "deliberative " : "")
-							+ "agent <b>" + name + "</b>";
+							+ (cd.is(Type.DELIBERATIVE) ? "deliberative " : "") + "agent <b>" + name + "</b>";
 				}
 
 				return ret;
-				
+
 			} else {
 				return "Undefined concept <b>" + name + "</b>";
 			}

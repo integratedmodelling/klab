@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.utils.FileUtils;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
@@ -78,14 +79,16 @@ public class AdminController {
 		return null;
 	}
 	
-	@PutMapping(value = API.AUTHORITY.SETUP)
-	public void setupAuthority(@PathVariable String authority, @RequestBody Map<String, String> options) {
+	@PostMapping(value = API.AUTHORITY.SETUP)
+	public boolean setupAuthority(@PathVariable String authority, @RequestBody Map<String, String> options) {
 		IAuthority auth = Authorities.INSTANCE.getAuthority(authority);
 		if (auth != null) {
 			if (!auth.setup(options)) {
 				Authorities.INSTANCE.deactivateAuthority(authority);
+				return false;
 			}
 		}
+		return true;
 	}
 
 }
