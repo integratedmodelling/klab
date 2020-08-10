@@ -756,7 +756,7 @@ public class ModelKbox extends ObservableKbox {
 			m.setShape(spaceExtent);
 
 			m.setObservable(obs.getType().getDefinition());
-			m.setObservationType(obs.getDescription().name());
+			m.setObservationType(obs.getDescriptionType().name());
 			m.setObservableConcept(obs.getType());
 			// m.setObservationConcept(obs.getObservationType());
 

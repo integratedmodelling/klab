@@ -59,7 +59,7 @@ public class Info implements ICommand {
 	public static String describeObservable(IObservable obs, String prefix) {
 		String ret = prefix + obs;
 		ret += "\n" + prefix + "  Typeset: " + ((Concept)obs.getType()).getTypeSet();
-		ret += "\n" + prefix + "  Observation type: " + obs.getDescription();
+		ret += "\n" + prefix + "  Observation type: " + obs.getDescriptionType();
 		// units (fluid, needed, not, etc)
 		// 
 		return ret;

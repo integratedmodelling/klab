@@ -45,7 +45,7 @@ public class Compatible implements ICommand {
 
 		IObservable observable = Observable.promote(concept);
 		Set<Long> ids = Models.INSTANCE.getKbox().getCompatibleTypeIds(observable, context,
-				observable.getDescription().getResolutionMode());
+				observable.getDescriptionType().getResolutionMode());
 
 		for (long id : ids) {
 			String idst = "[" + id + "]";

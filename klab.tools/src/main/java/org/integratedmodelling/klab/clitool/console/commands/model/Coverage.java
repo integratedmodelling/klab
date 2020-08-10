@@ -62,7 +62,7 @@ public class Coverage implements ICommand {
 
 			IObservable observable = Observable.promote(concept);
 			Set<Long> ids = Models.INSTANCE.getKbox().getCompatibleTypeIds(observable, null,
-					observable.getDescription().getResolutionMode());
+					observable.getDescriptionType().getResolutionMode());
 
 			for (long id : ids) {
 				String idst = "[" + id + "]";

@@ -317,7 +317,7 @@ public class Aggregator {
 	}
 
 	public Aggregation getAggregation(IObservable observable) {
-		switch (observable.getDescription()) {
+		switch (observable.getDescriptionType()) {
 		case CATEGORIZATION:
 		case VERIFICATION:
 			return Aggregation.MAJORITY;

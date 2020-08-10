@@ -249,7 +249,7 @@ public class Observable implements IObservable {
 	}
 
 	@Override
-	public IActivity.Description getDescription() {
+	public IActivity.Description getDescriptionType() {
 		if (observationType == null && observable != null) {
 			if (observable.is(Type.CLASS)) {
 				observationType = IActivity.Description.CATEGORIZATION;

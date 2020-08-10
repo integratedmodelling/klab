@@ -709,7 +709,7 @@ public class ResolutionScope implements IResolutionScope {
 	private ResolutionScope getAdditionalScope(IObservable o) {
 		ResolutionScope ret = new ResolutionScope(this);
 		ret.observable = (Observable) o;
-		ret.mode = o.getDescription().getResolutionMode();
+		ret.mode = o.getDescriptionType().getResolutionMode();
 		return ret;
 	}
 

@@ -538,7 +538,7 @@ public class DataflowCompiler {
 
 		private void assignType(Actuator ret, Observable observable) {
 
-			switch (observable.getDescription()) {
+			switch (observable.getDescriptionType()) {
 			case CATEGORIZATION:
 				ret.setType(Type.CONCEPT);
 				break;

@@ -331,7 +331,7 @@ public interface IObservable extends ISemantic, IResolvable {
 	 *
 	 * @return the necessary observation type
 	 */
-	IActivity.Description getDescription();
+	IActivity.Description getDescriptionType();
 
 	/**
 	 * Return the type of the artifact correspondent to an observation of this

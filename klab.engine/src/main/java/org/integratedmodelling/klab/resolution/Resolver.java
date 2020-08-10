@@ -145,7 +145,7 @@ public class Resolver {
 			parentScope.setOriginalScope(
 					((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
 			return resolve((Observable) resolvable, parentScope,
-					((Observable) resolvable).getDescription().getResolutionMode());
+					((Observable) resolvable).getDescriptionType().getResolutionMode());
 		} else if (resolvable instanceof Model) {
 			parentScope.setOriginalScope(Scope.MODEL);
 			return resolve((Model) resolvable, parentScope);
