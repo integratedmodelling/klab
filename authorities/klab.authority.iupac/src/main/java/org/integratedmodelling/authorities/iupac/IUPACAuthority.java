@@ -16,7 +16,6 @@ import org.integratedmodelling.klab.api.extensions.Authority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityReference;
-import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.UrlEscape;
@@ -68,7 +67,9 @@ public class IUPACAuthority implements IAuthority {
 		}
 		String officialName = getIUPACName(identityId);
 		if (officialName == null) {
-			ret.setError("Identity " + identityId + " is unknown to authority " + ID);
+			// this can happen in non-error situations, e.g. with the Chlorophyll A key
+//			ret.setError("Identity " + identityId + " is unknown to authority " + ID);
+			officialName = original;
 		}
 
 		ret.setAuthorityName(ID);
@@ -131,7 +132,7 @@ public class IUPACAuthority implements IAuthority {
 
 	public List<String> getNames(String identity) {
 		List<String> ret = new ArrayList<>();
-		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + identity + "/" + "names").asString();
+		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + UrlEscape.escapeurl(identity) + "/" + "names").asString();
 		if (response.isSuccess()) {
 			for (String ss : response.getBody().split("\\r?\\n")) {
 				ret.add(ss);
@@ -141,7 +142,7 @@ public class IUPACAuthority implements IAuthority {
 	}
 
 	public String getFormula(String identity) {
-		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + Escape.forURL(identity) + "/" + "formula")
+		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + UrlEscape.escapeurl(identity) + "/" + "formula")
 				.asString();
 		if (response.isSuccess()) {
 			return response.getBody();
@@ -150,7 +151,7 @@ public class IUPACAuthority implements IAuthority {
 	}
 
 	public String getInChl(String identity) {
-		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + Escape.forURL(identity) + "/" + "stdinchi")
+		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + UrlEscape.escapeurl(identity) + "/" + "stdinchi")
 				.asString();
 		if (response.isSuccess()) {
 			String ret = response.getBody();
@@ -164,7 +165,7 @@ public class IUPACAuthority implements IAuthority {
 	}
 
 	public String getIUPACName(String identity) {
-		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + Escape.forURL(identity) + "/" + "iupac_name")
+		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + UrlEscape.escapeurl(identity) + "/" + "iupac_name")
 				.asString();
 		if (response.isSuccess()) {
 			return response.getBody();
