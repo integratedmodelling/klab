@@ -61,7 +61,7 @@ public class GBIFAuthority implements IAuthority {
 	}
 
 	public GBIFAuthority() {
-		this.db = DBMaker.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "gbif.db")
+		this.db = DBMaker.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "gbif_ids.db")
 				.transactionEnable().closeOnJvmShutdown().make();
 		this.cache = db.treeMap("collectionName", Serializer.STRING, Serializer.STRING).createOrOpen();
 	}

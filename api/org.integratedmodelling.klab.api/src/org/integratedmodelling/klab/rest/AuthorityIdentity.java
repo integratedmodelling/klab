@@ -14,10 +14,10 @@ public class AuthorityIdentity implements IAuthority.Identity {
 	private String label;
 	private String description;
 	private float score = 1.0f;
-	private String error;
 	private String authorityName;
 	private String baseIdentity;
 	private String locator;
+	private List<Notification> notifications = new ArrayList<>();
 
 	@Override
 	public String getId() {
@@ -72,15 +72,7 @@ public class AuthorityIdentity implements IAuthority.Identity {
 	public void setScore(float score) {
 		this.score = score;
 	}
-
-	public String getError() {
-		return error;
-	}
-
-	public void setError(String error) {
-		this.error = error;
-	}
-
+	
 	@Override
 	public String getAuthorityName() {
 		return this.authorityName;
@@ -119,6 +111,15 @@ public class AuthorityIdentity implements IAuthority.Identity {
 
 	public void setLocator(String locator) {
 		this.locator = locator;
+	}
+
+	@Override
+	public List<Notification> getNotifications() {
+		return notifications;
+	}
+
+	public void setNotifications(List<Notification> notifications) {
+		this.notifications = notifications;
 	}
 
 }

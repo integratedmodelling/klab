@@ -4,6 +4,8 @@ import java.io.OutputStream;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.klab.rest.Notification;
+
 public interface IAuthority {
 
 	interface Identity {
@@ -85,6 +87,14 @@ public interface IAuthority {
 		 * @return
 		 */
 		String getLocator();
+
+		/**
+		 * Any notifications from the authority. If any of these has level = error, no
+		 * concepts must be created.
+		 * 
+		 * @return
+		 */
+		List<Notification> getNotifications();
 	}
 
 	interface Capabilities {

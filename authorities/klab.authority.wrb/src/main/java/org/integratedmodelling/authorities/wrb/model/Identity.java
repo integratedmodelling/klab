@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.integratedmodelling.authorities.wrb.WRBAuthority;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.utils.StringUtils;
 
 /**
@@ -233,8 +235,8 @@ public class Identity {
 
 		AuthorityIdentity ret = new AuthorityIdentity();
 
-		if (errors.size() > 0) {
-			ret.setError(StringUtils.join(errors, ";\n"));
+		for (String error : errors) {
+			ret.getNotifications().add(new Notification(error, Level.SEVERE.getName()));
 		}
 		
 		ret.setAuthorityName(WRBAuthority.ID);

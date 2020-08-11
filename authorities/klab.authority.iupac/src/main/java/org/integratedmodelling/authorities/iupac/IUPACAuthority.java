@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentNavigableMap;
+import java.util.logging.Level;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -16,6 +17,7 @@ import org.integratedmodelling.klab.api.extensions.Authority;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityReference;
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.UrlEscape;
@@ -47,7 +49,7 @@ public class IUPACAuthority implements IAuthority {
 	private Pattern pattern;
 
 	public IUPACAuthority() {
-		this.db = DBMaker.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "iupac.db")
+		this.db = DBMaker.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "iupac_ids.db")
 				.closeOnJvmShutdown().transactionEnable().make();
 		this.cache = db.treeMap("collectionName", Serializer.STRING, Serializer.STRING).createOrOpen();
 	}
@@ -61,22 +63,40 @@ public class IUPACAuthority implements IAuthority {
 		}
 
 		String original = identityId;
+		String standardKey = null;
+		String standardName = null;
+	
 		AuthorityIdentity ret = new AuthorityIdentity();
 		if (!isStdKey(identityId)) {
-			identityId = getIdentity(identityId);
+			standardKey = getIdentity(identityId);
+			if (standardKey == null) {
+				ret.getNotifications().add(new Notification("Identity " + identityId + " is unknown to authority " + ID,
+						Level.SEVERE.getName()));
+			}
 		}
-		String officialName = getIUPACName(identityId);
-		if (officialName == null) {
-			// this can happen in non-error situations, e.g. with the Chlorophyll A key
-//			ret.setError("Identity " + identityId + " is unknown to authority " + ID);
-			officialName = original;
+		String officialName = null;
+		if (standardKey != null) {
+			standardName = getInChl(identityId);
+			officialName = getIUPACName(identityId);
+			if (officialName == null) {
+				ret.getNotifications().add(new Notification("Identity " + identityId + " has no common name in " + ID,
+						Level.INFO.getName()));
+				officialName = standardName;
+			}
+			if (standardName == null) {
+				ret.getNotifications().add(new Notification("Identity " + identityId + " has has no official IUPAC name",
+						Level.SEVERE.getName()));
+			}
 		}
 
 		ret.setAuthorityName(ID);
-		ret.setConceptName(identityId.toLowerCase().replace('-', '_'));
-		ret.setDescription(officialName + " (" + getFormula(identityId) + ")");
-		ret.setLabel(original);
-		ret.setId(identityId);
+
+		if (standardKey != null && standardName != null) {
+			ret.setConceptName(standardKey.toLowerCase().replace('-', '_'));
+			ret.setDescription(officialName + " (" + getFormula(identityId) + ")");
+			ret.setLabel(original);
+			ret.setId(identityId);
+		}
 		boolean ws = StringUtils.containsWhitespace(original);
 		ret.setLocator(ID + (ws ? ":'" : ":") + original + (ws ? "':" : ":"));
 
@@ -132,7 +152,8 @@ public class IUPACAuthority implements IAuthority {
 
 	public List<String> getNames(String identity) {
 		List<String> ret = new ArrayList<>();
-		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + UrlEscape.escapeurl(identity) + "/" + "names").asString();
+		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + UrlEscape.escapeurl(identity) + "/" + "names")
+				.asString();
 		if (response.isSuccess()) {
 			for (String ss : response.getBody().split("\\r?\\n")) {
 				ret.add(ss);
@@ -142,8 +163,8 @@ public class IUPACAuthority implements IAuthority {
 	}
 
 	public String getFormula(String identity) {
-		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + UrlEscape.escapeurl(identity) + "/" + "formula")
-				.asString();
+		HttpResponse<String> response = Unirest
+				.get(RESOLVER_URL + "/" + UrlEscape.escapeurl(identity) + "/" + "formula").asString();
 		if (response.isSuccess()) {
 			return response.getBody();
 		}
@@ -151,8 +172,8 @@ public class IUPACAuthority implements IAuthority {
 	}
 
 	public String getInChl(String identity) {
-		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + UrlEscape.escapeurl(identity) + "/" + "stdinchi")
-				.asString();
+		HttpResponse<String> response = Unirest
+				.get(RESOLVER_URL + "/" + UrlEscape.escapeurl(identity) + "/" + "stdinchi").asString();
 		if (response.isSuccess()) {
 			String ret = response.getBody();
 			if (ret.contains("=")) {
@@ -165,8 +186,8 @@ public class IUPACAuthority implements IAuthority {
 	}
 
 	public String getIUPACName(String identity) {
-		HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + UrlEscape.escapeurl(identity) + "/" + "iupac_name")
-				.asString();
+		HttpResponse<String> response = Unirest
+				.get(RESOLVER_URL + "/" + UrlEscape.escapeurl(identity) + "/" + "iupac_name").asString();
 		if (response.isSuccess()) {
 			return response.getBody();
 		}

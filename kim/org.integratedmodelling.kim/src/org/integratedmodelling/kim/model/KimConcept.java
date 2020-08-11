@@ -135,6 +135,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		// TODO Auto-generated constructor stub
 	}
 
+	public KimConcept(String name) {
+		this.name = name;
+	}
+	
 	public KimConcept(KimConcept other) {
 		super(other);
 		this.name = other.name;

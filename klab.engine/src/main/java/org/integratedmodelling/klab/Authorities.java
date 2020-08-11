@@ -3,6 +3,7 @@ package org.integratedmodelling.klab;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -23,7 +24,7 @@ public enum Authorities implements IAuthorityService {
 
 	Map<String, IAuthority> authorities = Collections.synchronizedMap(new HashMap<>());
 	Map<String, IAuthority> inactive = Collections.synchronizedMap(new HashMap<>());
-
+	
 	private Authorities() {
 
 		ClassPathScanningCandidateComponentProvider provider = new ClassPathScanningCandidateComponentProvider(false);

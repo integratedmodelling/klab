@@ -54,6 +54,7 @@ import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.BehaviorReference;
 import org.integratedmodelling.klab.rest.EngineEvent;
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.WatchRequest;
@@ -111,15 +112,15 @@ public class Activator extends AbstractUIPlugin {
 
 			private BehaviorId getBehaviorId(BehaviorReference behavior) {
 				switch (behavior.getName()) {
-				case "view": 
+				case "view":
 					return BehaviorId.VIEW;
-				case "user": 
+				case "user":
 					return BehaviorId.USER;
-				case "object": 
+				case "object":
 					return BehaviorId.OBJECT;
-				case "state": 
+				case "state":
 					return BehaviorId.STATE;
-				case "session": 
+				case "session":
 					return BehaviorId.SESSION;
 				}
 				return BehaviorId.IMPORTED;
@@ -240,7 +241,7 @@ public class Activator extends AbstractUIPlugin {
 
 			@Override
 			public Pair<String, Boolean> getIdentityInformation(String authority, String identity, boolean formatted) {
-				
+
 				if (!engineMonitor().isRunning()) {
 					return Pair.create(OFFLINE, true);
 				}
@@ -248,12 +249,23 @@ public class Activator extends AbstractUIPlugin {
 				if (id == null) {
 					return Pair.create(UNKNOWN_AUTHORITY, true);
 				}
-				
-				if (id.getError() != null && !id.getError().isEmpty()) {
-					return Pair.create(id.getError(), false);
+
+				String notifications = "";
+				String errors = "";
+				boolean error = false;
+
+				for (Notification notification : id.getNotifications()) {
+					if (Level.SEVERE.getName().equals(notification.getLevel())) {
+						errors += (errors.isEmpty() ? "ERROR: " : "\n\nERROR: ") + notification.getMessage();
+						error = true;
+					} else {
+						notifications += (errors.isEmpty() ? "" : "\n\n ") + notification.getLevel() + ": "
+								+ notification.getMessage();
+					}
 				}
-				
-				return Pair.create(id.getDescription(), true);
+
+				return Pair.create(errors + (error ? "\n\n" : "") + id.getDescription()
+						+ (notifications.isEmpty() ? "" : "\n\n") + notifications, true);
 			}
 
 		});
@@ -526,10 +538,11 @@ public class Activator extends AbstractUIPlugin {
 			get().engineStatusMonitor.getBus().post(Message.create(get().engineStatusMonitor.getSessionId(), object));
 		}
 	}
-	
+
 	public static Future<IMessage> ask(Object... object) {
 		if (get().engineStatusMonitor.isRunning()) {
-			return get().engineStatusMonitor.getBus().ask(Message.create(get().engineStatusMonitor.getSessionId(), object));
+			return get().engineStatusMonitor.getBus()
+					.ask(Message.create(get().engineStatusMonitor.getSessionId(), object));
 		}
 		return null;
 	}

@@ -894,8 +894,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		Identity ret = Authorities.INSTANCE.getIdentity(request.getAuthority(), request.getIdentity());
 		if (ret == null) {
 			ret = new AuthorityIdentity();
-			((AuthorityIdentity) ret).setError("Authority identity " + request.getAuthority() + ":"
-					+ request.getIdentity() + " could not be resolved");
+			ret.getNotifications().add(new Notification("Authority identity " + request.getAuthority() + ":"
+					+ request.getIdentity() + " could not be resolved", Level.SEVERE.getName()));
 		} else if (ret.getDescription() != null) {
 			// reformat the documentation as HTML
 			((AuthorityIdentity) ret).setDescription(MarkdownUtils.INSTANCE.format(ret.getDescription()));

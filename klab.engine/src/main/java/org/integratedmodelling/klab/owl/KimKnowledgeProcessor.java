@@ -438,7 +438,7 @@ public enum KimKnowledgeProcessor {
 		} else if (concept.getName() != null) {
 			if (concept.getName().contains(":") && Character.isUpperCase(concept.getName().charAt(0))) {
 				main = Concepts.INSTANCE.getAuthorityConcept(Authorities.INSTANCE
-						.getIdentity(Path.getFirst(concept.getName(), ":"), Path.getLast(concept.getName(), ':')));
+						.getIdentity(Path.getFirst(concept.getName(), ":"), removeTicks(Path.getLast(concept.getName(), ':'))));
 			} else {
 				main = Concepts.INSTANCE.getConcept(concept.getName());
 			}
@@ -553,7 +553,7 @@ public enum KimKnowledgeProcessor {
 
 		Concept ret = null;
 		try {
-
+			
 			ret = (Concept) builder.buildConcept();
 
 			/*
@@ -590,6 +590,16 @@ public enum KimKnowledgeProcessor {
 		}
 
 		return ret;
+	}
+
+	private String removeTicks(String id) {
+		if (id.startsWith("'") || id.startsWith("\"")) {
+			id = id.substring(1);
+		}
+		if (id.endsWith("'") || id.endsWith("\"")) {
+			id = id.substring(0, id.length() - 1);
+		}
+		return id;
 	}
 
 	private void createProperties(IConcept ret, Namespace ns) {

@@ -15,11 +15,13 @@ package org.integratedmodelling.klab;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -39,6 +41,7 @@ import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConceptService;
+import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
@@ -50,6 +53,7 @@ import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Ontology;
 import org.integratedmodelling.klab.owl.Property;
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Path;
@@ -62,6 +66,8 @@ public enum Concepts implements IConceptService {
 
 	INSTANCE;
 
+	private Set<String> authorityOntologyIds = Collections.synchronizedSet(new HashSet<>());
+	
 	private Concepts() {
 		Services.INSTANCE.registerService(this, IConceptService.class);
 	}
@@ -89,6 +95,18 @@ public enum Concepts implements IConceptService {
 
 	@Override
 	public KimConcept declare(String declaration) {
+		/*
+		 * declarations that are pure semantic types for internal ontologies are possible
+		 * with authority and core concepts. Check first if it's a semantic type with a 
+		 * namespace that matches either of these; if so, override the parser as the 
+		 * concepts are not k.IM-specified.
+		 */
+		if (SemanticType.validate(declaration)) {
+			SemanticType st = SemanticType.create(declaration);
+			if (CoreOntology.CORE_ONTOLOGY_NAME.equals(st.getNamespace()) || authorityOntologyIds.contains(st.getNamespace())) {
+				return new KimConcept(declaration);
+			}
+		}
 		return (KimConcept) Observables.INSTANCE.parseDeclaration(declaration).getMain();
 	}
 
@@ -514,11 +532,17 @@ public enum Concepts implements IConceptService {
 	}
 
 	public Concept getAuthorityConcept(Identity identity) {
-
+		
 		if (identity == null) {
 			return null;
 		}
 
+		for (Notification notification : identity.getNotifications()) {
+			if (Level.SEVERE.getName().equals(notification.getLevel())) {
+				return null;
+			}
+		}
+		
 		String oid = Path.getFirst(identity.getAuthorityName(), ".").toLowerCase();
 		boolean isNew = OWL.INSTANCE.getOntology(oid) == null;
 		Ontology ontology = OWL.INSTANCE.requireOntology(oid, OWL.INTERNAL_ONTOLOGY_PREFIX);
@@ -526,6 +550,7 @@ public enum Concepts implements IConceptService {
 		if (isNew) {
 			ontology.setInternal(true);
 			Reasoner.INSTANCE.addOntology(ontology);
+			authorityOntologyIds.add(oid);
 		}
 		
 		Concept ret = ontology.getConcept(identity.getConceptName());
