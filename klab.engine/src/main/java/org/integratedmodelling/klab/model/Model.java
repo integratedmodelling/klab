@@ -472,8 +472,8 @@ public class Model extends KimObject implements IModel {
 
 		for (IContextualizable resource : resources) {
 
-			if (this.observables.get(0).getDescription() == IActivity.Description.CHARACTERIZATION
-					|| this.observables.get(0).getDescription() == IActivity.Description.CLASSIFICATION) {
+			if (this.observables.get(0).getDescriptionType() == IActivity.Description.CHARACTERIZATION
+					|| this.observables.get(0).getDescriptionType() == IActivity.Description.CLASSIFICATION) {
 				// must be a filter
 				if (!isFilter(resource)) {
 					monitor.error("all computations in attribute contextualizers must be filters", this.getStatement());
@@ -744,7 +744,7 @@ public class Model extends KimObject implements IModel {
 			this.resources.addAll(candidateObservable.getComputation());
 		}
 		if (mainObservable.is(Type.COUNTABLE)
-				|| mainObservable.getDescription() == IActivity.Description.CLASSIFICATION) {
+				|| mainObservable.getDescriptionType() == IActivity.Description.CLASSIFICATION) {
 			this.instantiator = true;
 		}
 	}

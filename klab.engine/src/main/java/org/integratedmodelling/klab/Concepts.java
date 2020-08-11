@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
@@ -78,10 +79,12 @@ public enum Concepts implements IConceptService {
 	@Override
 	public KimConcept getDeclaration(IConcept concept) {
 		Ontology ontology = OWL.INSTANCE.getOntology(concept.getNamespace());
-		if (ontology == null || ontology.isInternal()) {
-			return null;
+		String definition = concept.getDefinition();
+		if (ontology == null || definition == null) {
+			IKimObservable obs = Kim.INSTANCE.declare(concept.getName());
+			return obs == null ? null : (KimConcept)obs.getMain();
 		}
-		return declare(concept.getDefinition());
+		return declare(definition);
 	}
 
 	@Override

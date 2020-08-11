@@ -213,7 +213,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder within(IConcept concept) {
 		this.context = concept;
-		if (!declarationIsComplete) {
+		if (this.declaration != null) {
 			this.declaration.setContext((KimConcept) Concepts.INSTANCE.getDeclaration(concept));
 		}
 		isTrivial = false;
@@ -1633,8 +1633,10 @@ public class ObservableBuilder implements IObservable.Builder {
 
 		if (context != null) {
 			IConcept other = Observables.INSTANCE.getContextType(main);
-			// use the version of isCompatible that allows for observations that are compatible with
-			// the context's context if the context is an occurrent (e.g. Precipitation of Storm)
+			// use the version of isCompatible that allows for observations that are
+			// compatible with
+			// the context's context if the context is an occurrent (e.g. Precipitation of
+			// Storm)
 			if (other != null && !Observables.INSTANCE.isContextuallyCompatible(main, context, other)) {
 				monitor.error("cannot set the context type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
 						+ Concepts.INSTANCE.getDisplayName(context) + " as it already has an incompatible context: "

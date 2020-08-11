@@ -1427,8 +1427,8 @@ public class Actuator implements IActuator {
 	}
 
 	public boolean isFilter() {
-		return observable.getDescription() == IActivity.Description.CHARACTERIZATION
-				|| observable.getDescription() == IActivity.Description.CLASSIFICATION;
+		return observable.getDescriptionType() == IActivity.Description.CHARACTERIZATION
+				|| observable.getDescriptionType() == IActivity.Description.CLASSIFICATION;
 	}
 
 	boolean hasDependency(IActuator dependency) {
