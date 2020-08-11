@@ -659,8 +659,8 @@ public enum Actors implements IActorsService {
 			/*
 			 * Components make their own view from the main method without annotations
 			 */
-			if (panel == null && behavior.getDestination() == Type.COMPONENT && action.getName().equals("main")) {
-				view.getPanels().add(panel = new ViewPanel(action.getId(), behavior.getStatement().getStyle()));
+			if (panel == null && behavior.getDestination() == Type.COMPONENT && action.getId().equals("main")) {
+				view.getPanels().add(panel = new ViewPanel(behavior.getId(), behavior.getStatement().getStyle()));
 				for (IAnnotation annotation : action.getAnnotations()) {
 					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
 				}
@@ -847,8 +847,12 @@ public enum Actors implements IActorsService {
 		panels.addAll(view.getLeftPanels());
 		panels.addAll(view.getRightPanels());
 		panels.addAll(view.getPanels());
-		panels.add(view.getHeader());
-		panels.add(view.getFooter());
+		if (view.getHeader() != null) {
+			panels.add(view.getHeader());
+		}
+		if (view.getFooter() != null) {
+			panels.add(view.getFooter());
+		}
 		if (panels.size() == 1) {
 			// TODO merge style if defined in view preamble
 			return panels.get(0);
