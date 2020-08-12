@@ -16,6 +16,8 @@ public interface UserGroupEntryService {
 	void removeUsersGroupsByNames(UpdateUsersGroups updateUserGroups);
 
 	void addPrelimenaryUserGroups(User user, DateTime experiation);
+	
+	void deleteGroupFromUsers(String groupName);
 
 	void removeGroupFromUsers(MongoGroup group);
 

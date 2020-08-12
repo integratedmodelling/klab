@@ -16,6 +16,8 @@ import org.integratedmodelling.klab.hub.config.dev.DevMongoModelsConfig;
 import org.integratedmodelling.klab.hub.config.dev.MongoConfigDev;
 import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
 import org.integratedmodelling.klab.hub.groups.services.GroupServiceImpl;
+import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
+import org.integratedmodelling.klab.hub.listeners.RemoveGroup;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.utils.FileCatalog;
 import org.junit.Before;
@@ -26,18 +28,22 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.core.annotation.Order;
 import org.springframework.dao.DuplicateKeyException;
 
-@SpringBootTest(classes = {MongoConfigDev.class})
+@SpringBootTest(classes = {MongoConfigDev.class, HubEventPublisher.class})
 @RunWith(SpringRunner.class)
 @ActiveProfiles(profiles = "development")
 public class GroupServiceTests {
 	
 	@Autowired
 	private MongoGroupRepository groupRepo;
+	
+	@Autowired
+	private HubEventPublisher<RemoveGroup> publisher;
+	
 	private GroupServiceImpl groupService;
 	
 	@Before
-	public void setuo() {
-		groupService = new GroupServiceImpl(groupRepo);
+	public void setup() {
+		groupService = new GroupServiceImpl(groupRepo, publisher);
 	}
 
 	@Test(expected = ConstraintViolationException.class)
@@ -54,7 +60,6 @@ public class GroupServiceTests {
 		MongoGroup group = new MongoGroup();
 		group.setName("Test");
 		group.setWorldview(false);
-		groupService.create(group);
 		groupService.create(group);
 	}
 	
@@ -83,6 +88,15 @@ public class GroupServiceTests {
 		update.setDescription("I have made an update");
 		MongoGroup updated = groupService.update(update);
 		assertEquals(updated, update);
+	}
+	
+	@Test
+	@Order(6)
+	public void pass_deleteGroup() {
+		Map<String, MongoGroup> groups = new HashMap<>();
+		groups = FileCatalog.create(DevMongoModelsConfig.class.getClassLoader().getResource("initial-groups.json"), MongoGroup.class);
+		MongoGroup group = groupService.getByName(groups.keySet().iterator().next());
+		groupService.delete(group);
 	}
 
 }

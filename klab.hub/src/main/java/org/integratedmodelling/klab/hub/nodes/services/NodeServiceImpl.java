@@ -56,4 +56,12 @@ public class NodeServiceImpl implements NodeService {
 		return nodeRepository.findByNameIgnoreCase(nodeName).isPresent();
 	}
 
+	@Override
+	public void removeGroupFromNodes(String groupName) {
+		nodeRepository.findAll().forEach(node -> {
+			node.removeGroupByName(groupName);
+			new UpdateMongoNode(node, nodeRepository).execute();
+		});
+	}
+
 }

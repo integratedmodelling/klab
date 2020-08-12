@@ -10,4 +10,5 @@ public interface NodeService {
 	public abstract void deleteNode(MongoNode node);
 	public abstract Collection<MongoNode> getNodes();
 	public abstract MongoNode getNode(String nodeName);
+	public abstract void removeGroupFromNodes(String groupName);
 }

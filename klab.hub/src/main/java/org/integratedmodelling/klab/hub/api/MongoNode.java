@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.data.annotation.TypeAlias;
@@ -32,6 +33,14 @@ public class MongoNode extends IdentityModel{
 
 	public void setGroups(Set<MongoGroup> groups) {
 		this.groups = groups;
+	}
+	
+	public void removeGroupByName(String groupName) {
+		this.getGroups().forEach(grp -> {
+			if(grp.getName().equalsIgnoreCase((groupName))) {
+				this.getGroups().remove(grp);
+			}
+		});
 	}
 
 	public String getUrl() {

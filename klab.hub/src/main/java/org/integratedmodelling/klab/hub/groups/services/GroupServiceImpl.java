@@ -11,6 +11,8 @@ import org.integratedmodelling.klab.hub.commands.GetMongoGroupByName;
 import org.integratedmodelling.klab.hub.commands.MongoGroupExists;
 import org.integratedmodelling.klab.hub.commands.UpdateMongoGroup;
 import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
+import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
+import org.integratedmodelling.klab.hub.listeners.RemoveGroup;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,14 @@ public class GroupServiceImpl implements GroupService {
 	
 	private MongoGroupRepository repository;
 	
+	private HubEventPublisher<RemoveGroup> publisher;
+	
 	@Autowired
-	public GroupServiceImpl(MongoGroupRepository repository) {
+	public GroupServiceImpl(MongoGroupRepository repository,
+			HubEventPublisher<RemoveGroup> publisher) {
 		super();
 		this.repository = repository;
+		this.publisher = publisher;
 	}	
 
 	@Override

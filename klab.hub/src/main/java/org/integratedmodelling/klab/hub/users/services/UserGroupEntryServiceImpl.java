@@ -131,6 +131,16 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 	}
 
 	@Override
+	public void deleteGroupFromUsers(String groupName) {
+		Set<String> username = new HashSet<>();
+		Set<String> groupname = new HashSet<>();
+		userRepository.findAll().forEach(user -> username.add(user.getUsername()));
+		groupname.add(groupName);
+		UpdateUsersGroups updateRequest = new UpdateUsersGroups(username, groupname, null);
+		removeUsersGroupsByNames(updateRequest);
+	}
+
+	@Override
 	public void removeGroupFromUsers(MongoGroup group) {
 		
 		Set<String> groupNames = new HashSet<>();

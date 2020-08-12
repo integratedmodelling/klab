@@ -41,12 +41,12 @@ public class GroupsController {
 	@PreAuthorize("hasRole('ROLE_ENGINE') or hasRole('ROLE_USER') or hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<Object> getGroupNames() {
 		JSONObject resp = new JSONObject();
-		resp.appendField("Groups", groupService.getGroupNames());
+		resp.appendField("groups", groupService.getGroupNames());
 		return new ResponseEntity<>(resp, HttpStatus.OK);
 	}
 	
 	@PutMapping(value = API.HUB.GROUPS_BASE_ID)
-	@PreAuthorize("hasRole('ROLE_SYSTEM')")
+	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<Object> updateGroup(@PathVariable("id") String id, @RequestBody MongoGroup group) {
 		if(id.equals(group.getName())) {
 			groupService.update(group);	
@@ -67,7 +67,7 @@ public class GroupsController {
 	}
 	
 	@GetMapping(value= API.HUB.GROUPS_BASE_ID)
-	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINSTRATOR')")
+	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<Object> getGroup(@PathVariable("id") String id) {
 		JSONObject resp = new JSONObject();
 		resp.appendField("group", groupService.getByName(id));
@@ -75,7 +75,7 @@ public class GroupsController {
 	}
 	
 	@PostMapping(value=API.HUB.GROUPS_BASE)
-	@PreAuthorize("hasRole('ROLE_SYSTEM')")
+	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<Object> createGroup(@RequestBody MongoGroup group) {
 		group = groupService.create(group);
 		return new ResponseEntity<>(group, HttpStatus.CREATED);
