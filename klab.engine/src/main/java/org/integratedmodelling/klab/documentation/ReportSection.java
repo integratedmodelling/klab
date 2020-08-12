@@ -218,7 +218,11 @@ public class ReportSection extends Parameters<String> implements Section {
 
         // TODO Auto-generated method stub
         if (item instanceof Classifier) {
-            return ((Classifier)item).getSourceCode();
+        	Classifier i = (Classifier)item;
+        	if (i.isUniversal()) {
+        		return "\\*";
+        	}
+        	return i.getSourceCode();
         }
         return item.toString();
         
@@ -282,7 +286,10 @@ public class ReportSection extends Parameters<String> implements Section {
         if (artifact instanceof IObservation) {
             IObservationReference ref = report.getObservation(((IObservation) artifact).getId());
             if (ref != null) {
-                report.setReferenceType(args[1].toString(), RefType.FIG);
+            	// TODO check if we need an exception
+            	if (args.length > 1) {
+            		report.setReferenceType(args[1].toString(), RefType.FIG);
+            	}
                 // this solution work if k.EXPLORER is the hosting one
                 // and doesn't work if it run in 'no engine' URL (as in front end development)
                 body.append("\n\n![" + ref.getLabel()

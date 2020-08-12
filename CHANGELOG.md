@@ -9,6 +9,62 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Authority concepts should now be identified using the uppercase authority name as a 
+  namespace, which is now syntactically supported. The ID can be a lowercase or
+  uppercase ID, an integer, or a string. This enables a much more natural mapping
+  of identities to concepts and can be supplemented with editing tools so that
+  intermediate aliases can be reduced or eliminated. Syntax like IUPAC:water is
+  fully interoperable with IUPAC:H2O or any other definition; checking and testing
+  will be integrated with the editor and the 'identified as' syntax is now 
+  deprecated.
+- Brought back the IUPAC, GBIF and WRB authorities with modernized API and both
+  engine and node versions. WRB due for update to 2014 vocabulary with 
+  constraint validation; versions will be selectable using syntax like 
+  WRB.2014:"Thionic Vertisols", with 2014 as the default vocabulary.
+- Syntax highlighting in k.Actors now shows different classes of actions with
+  matching colors. In addition, observables are now parsed and decorated using
+  same colors as k.IM. Any k.Actors keyword in namespace IDs can be quoted using a 
+  backtick in front of it.
+- One-way aggregation working properly both by category and object, using the
+  spatial nature of the context or of the aggregating artifact to define
+  unit collapse. N-way aggregation supported only syntactically for now.
+- Blacklist (synchronized) projects by adding their (comma-separated) names to
+  property klab.project.blacklist. For ARIES users, advisable for im.data.usa 
+  until USGS gets its act together. Projects aren't removed from the deploy
+  directory, so they should be removed manually after adding to the blacklist.
+- Spatial (Areal, Lineal, Puntal, Volumetric) and commonsense temporal (Yearly, 
+  Monthly, Weekly, Daily, Hourly) identities are now core identities so they can
+  be used when assessing default units for aggregation by scaled countables (continuants
+  for space and events for time).
+- The 'by', 'without' and other value operators that take concepts as arguments can
+  now use a comma-separated list of concepts (implementation for now is only
+  syntactical).
+- The random URN adapter accessible through klab:random URNs now creates objects
+  and events, with optional attributes that can have fixed values or take them
+  from all sorts of distributions. 
+- Syntactic support for "new <behavior> [(args)]" verb in k.Actors that creates
+  new actors from a behavior. A #tag in the arguments references the new actor for
+  later use.
+- Distinction between "library" (behavior for importing of actions) and "component"
+  which produces a peer UI layout within a parent layout when loaded with "new". 
+- Groups of events can be located in time (using the at() method) so that
+  they only produce the events that are happening when iterated. The unlocated
+  group still produces all events.
+- Syntactic support for 'during each' operator, which does not affect the 
+  semantics but schedules processes so that they only happen during events.
+- In models, long URNs can be specified in multiple consecutive strings, which are 
+  merged before use.
+- Each behavior is loaded into a separate actor and external messages to affect 
+  that behavior must include the resulting appId. The main actor receives the messages
+  and dispatches them if an appId is included. Bookkeeping and logics to start/stop/pause
+  each behavior being added. Concurrent applications now fully supported.
+- UI layout communicated to view from actors with view components. Marshalling
+  mechanism for inclusion of UI-driven actions in place and working. Begin support
+  for UI in the IDE.
+- k.Actors improvements include parsing of keys (introduced by : or ! for naked
+  negative keys that encode false) for group and value metadata and addition of
+  tags (#xxx) to any statement for identification wherever needed. Some syntax 
+  highlighting and parser fixes.
 - Validate units in ratios of physical properties, skipping aggregation.
 - Units in physical properties annotating resource attributes are mandatory.
 - Using 'within' is only allowed in the first observable of a model.
@@ -97,6 +153,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   accessibility, performance or content.
 - Implement publishing of vector and raster files to node-connected Geoserver and 
   enhancement of vector/raster public resources to WFS/WCS ones.
+### Fixed
+- Several fixes in unit validation.
 
 ## [0.10.0.222] -- 2020/02/01
 ### Added

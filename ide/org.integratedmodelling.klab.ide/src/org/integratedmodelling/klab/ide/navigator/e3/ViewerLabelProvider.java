@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EActorBehavior;
 import org.integratedmodelling.klab.ide.navigator.model.EConcept;
 import org.integratedmodelling.klab.ide.navigator.model.EDefinition;
 import org.integratedmodelling.klab.ide.navigator.model.EDependency;
+import org.integratedmodelling.klab.ide.navigator.model.EFolder;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
@@ -45,6 +46,7 @@ import org.integratedmodelling.klab.ide.navigator.model.documentation.EDocumenta
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EReference;
 import org.integratedmodelling.klab.ide.navigator.model.documentation.EReferencesPage;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 
 public class ViewerLabelProvider extends LabelProvider implements IDescriptionProvider, IColorProvider, IFontProvider {
 
@@ -314,6 +316,9 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		if (element instanceof EDocumentationItem) {
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/section.gif");
 		}
+		if (element instanceof EFolder) {
+			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/folder_open.gif");
+		}
 		if (element instanceof EReference) {
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/bookmark.gif");
 		}
@@ -386,6 +391,9 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 		}
 		if (element instanceof EResourceFolder) {
 			return "Resources";
+		}
+		if (element instanceof EFolder) {
+			return MiscUtilities.getFileBaseName(((EFolder)element).getFolder());
 		}
 		if (element instanceof EDocumentationFolder) {
 			return ((EDocumentationFolder) element).getName();

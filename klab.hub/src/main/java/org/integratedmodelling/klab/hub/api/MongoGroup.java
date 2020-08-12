@@ -52,6 +52,12 @@ public class MongoGroup extends GenericModel{
      */
     private long maxUpload = 1073741824;
 
+    /* 
+     *Limit of upload, should be communicated to the node
+     *and checked on user uploads.
+     */
+    private long uploadLimit;
+    
 	public String getId() {
 		return id;
 	}

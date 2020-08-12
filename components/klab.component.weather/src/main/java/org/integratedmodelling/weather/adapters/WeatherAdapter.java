@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
@@ -81,18 +82,18 @@ public class WeatherAdapter implements IUrnAdapter {
 	}
 
 	@Override
-	public void getEncodedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
+	public IKlabData getEncodedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
 
 		switch (Services.valueOf(urn.getNamespace())) {
 		case data:
 			getInterpolatedData(urn, builder, geometry, context);
-			return;
+			return builder.build();
 		case stations:
 			getStations(urn, builder, geometry, context);
-			return;
+			return builder.build();
 		case storms:
 			getStorms(urn, builder, geometry, context);
-			return;
+			return builder.build();
 		default:
 			break;
 		}

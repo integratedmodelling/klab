@@ -54,12 +54,12 @@ public class NodeAuthResponeFactory {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
 				return local(request, groupRepo);
 			} else {
-				MongoNode node = nodeService.getNode(request.getName());
+				MongoNode node = nodeService.getByName(request.getName());
 				Set<Group> groups = new GetNodesGroups(node).execute();
 				NodeAuthenticationResponse response = process(request.getCertificate(),node, groups, config);
 				if(response.getUserData() != null) {
 		    		node.setLastConnection();
-		    		nodeService.updateNode(node);
+		    		nodeService.update(node);
 				}
 				//networkManager.notifyAuthorizedNode(node, true);
 				return response;

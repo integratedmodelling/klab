@@ -37,7 +37,7 @@ public interface IKimStatement extends IStatement, IKimScope {
 	 * 
 	 * @return the documentation
 	 */
-	IKimMetadata getDocumentationMetadata();
+	IParameters<String> getDocumentationMetadata();
 
 
 	/**

@@ -11,6 +11,8 @@ import org.integratedmodelling.klab.hub.commands.GetMongoGroupByName;
 import org.integratedmodelling.klab.hub.commands.MongoGroupExists;
 import org.integratedmodelling.klab.hub.commands.UpdateMongoGroup;
 import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
+import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
+import org.integratedmodelling.klab.hub.listeners.RemoveGroup;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,10 +22,14 @@ public class GroupServiceImpl implements GroupService {
 	
 	private MongoGroupRepository repository;
 	
+	private HubEventPublisher<RemoveGroup> publisher;
+	
 	@Autowired
-	public GroupServiceImpl(MongoGroupRepository repository) {
+	public GroupServiceImpl(MongoGroupRepository repository,
+			HubEventPublisher<RemoveGroup> publisher) {
 		super();
 		this.repository = repository;
+		this.publisher = publisher;
 	}	
 
 	@Override
@@ -56,11 +62,14 @@ public class GroupServiceImpl implements GroupService {
 	}
 
 	@Override
-	public MongoGroup delete(MongoGroup group) {
-		if(exists(group.getName())) {
-			return new DeleteMongoGroup(group, repository).execute();
+	public void delete(String name) {
+		if(exists(name)) {
+			MongoGroup group = getByName(name);
+			//this needs to get called first, safer to remove the group only after it has been cascaded
+			this.publisher.publish(new RemoveGroup(new Object(), group.getName()));
+			new DeleteMongoGroup(group, repository).execute();
 		} else {
-			throw new GroupDoesNotExistException("No group by the name: " + group.getName() + " was found.");
+			throw new GroupDoesNotExistException("No group by the name: " + name + " was found.");
 		}		
 	}
 

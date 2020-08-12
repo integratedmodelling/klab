@@ -16,13 +16,16 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getAssignment <em>Assignment</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getGroup <em>Group</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getInstantiation <em>Instantiation</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getVerb <em>Verb</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getText <em>Text</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getMetadata <em>Metadata</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getIf <em>If</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getWhile <em>While</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getDo <em>Do</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getFor <em>For</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getValue <em>Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Statement#getTag <em>Tag</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement()
@@ -76,6 +79,28 @@ public interface Statement extends EObject
   void setGroup(StatementGroup value);
 
   /**
+   * Returns the value of the '<em><b>Instantiation</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Instantiation</em>' containment reference.
+   * @see #setInstantiation(ActorInstantiation)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Instantiation()
+   * @model containment="true"
+   * @generated
+   */
+  ActorInstantiation getInstantiation();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getInstantiation <em>Instantiation</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Instantiation</em>' containment reference.
+   * @see #getInstantiation()
+   * @generated
+   */
+  void setInstantiation(ActorInstantiation value);
+
+  /**
    * Returns the value of the '<em><b>Verb</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -118,6 +143,28 @@ public interface Statement extends EObject
    * @generated
    */
   void setText(String value);
+
+  /**
+   * Returns the value of the '<em><b>Metadata</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Metadata</em>' containment reference.
+   * @see #setMetadata(Metadata)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Metadata()
+   * @model containment="true"
+   * @generated
+   */
+  Metadata getMetadata();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getMetadata <em>Metadata</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Metadata</em>' containment reference.
+   * @see #getMetadata()
+   * @generated
+   */
+  void setMetadata(Metadata value);
 
   /**
    * Returns the value of the '<em><b>If</b></em>' containment reference.
@@ -228,5 +275,27 @@ public interface Statement extends EObject
    * @generated
    */
   void setValue(Value value);
+
+  /**
+   * Returns the value of the '<em><b>Tag</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Tag</em>' attribute.
+   * @see #setTag(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getStatement_Tag()
+   * @model
+   * @generated
+   */
+  String getTag();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Statement#getTag <em>Tag</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Tag</em>' attribute.
+   * @see #getTag()
+   * @generated
+   */
+  void setTag(String value);
 
 } // Statement

@@ -1,51 +1,146 @@
 package org.integratedmodelling.kim.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
-import org.integratedmodelling.kim.api.IKimMetadata;
+import java.util.Map;
+import java.util.Set;
+
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.utils.Parameters;
 
-public class KimMetadata extends KimStatement implements IKimMetadata {
+public class KimMetadata extends KimStatement implements IParameters<String> {
 
-  private static final long serialVersionUID = 3885078963867253246L;
+	private static final long serialVersionUID = 3885078963867253246L;
 
-  /*
-   * It's a multimap: the value can be a list and if so, the API must be capable of dealing with it.
-   */
-  protected Parameters<String> data;
+	/*
+	 * It's a multimap: the value can be a list and if so, the API must be capable
+	 * of dealing with it.
+	 */
+	protected Parameters<String> data;
 
-  public KimMetadata(Metadata statement, IKimStatement parent) {
-    super(statement, parent);
-    this.data = Kim.INSTANCE.parseMetadata(statement,
-        Kim.INSTANCE.getNamespace(KimValidator.getNamespace(statement)));
-  }
+	public KimMetadata(Metadata statement, IKimStatement parent) {
+		super(statement, parent);
+		this.data = Kim.INSTANCE.parseMetadata(statement,
+				Kim.INSTANCE.getNamespace(KimValidator.getNamespace(statement)));
+	}
 
-  public IParameters<String> getData() {
-    return data;
-  }
+	public IParameters<String> getData() {
+		return data;
+	}
 
-  @SuppressWarnings("unchecked")
-  public void put(String key, Object value) {
+	@SuppressWarnings("unchecked")
+	public Object put(String key, Object value) {
 
-    if (value == null) {
-      return;
-    }
+		if (value == null) {
+			return null;
+		}
 
-    if (data.containsKey(key)) {
-      if (data.get(key) instanceof List) {
-        ((List<Object>) data.get(key)).add(value);
-      } else {
-        Object o = data.get(key);
-        data.put(key, new ArrayList<Object>());
-        ((List<Object>) data.get(key)).add(o);
-        ((List<Object>) data.get(key)).add(value);
-      }
-    }
-  }
+		if (data.containsKey(key)) {
+			if (data.get(key) instanceof List) {
+				((List<Object>) data.get(key)).add(value);
+			} else {
+				Object o = data.get(key);
+				data.put(key, new ArrayList<Object>());
+				((List<Object>) data.get(key)).add(o);
+				((List<Object>) data.get(key)).add(value);
+			}
+		}
 
+		return value;
+	}
+
+	@Override
+	public int size() {
+		return data.size();
+	}
+
+	@Override
+	public boolean isEmpty() {
+		return data.isEmpty();
+	}
+
+	@Override
+	public boolean containsKey(Object key) {
+		return data.containsKey(key);
+	}
+
+	@Override
+	public boolean containsValue(Object value) {
+		return data.containsValue(value);
+	}
+
+	@Override
+	public Object get(Object key) {
+		return data.get(key);
+	}
+
+	@Override
+	public Object remove(Object key) {
+		return data.remove(key);
+	}
+
+	@Override
+	public void putAll(Map<? extends String, ? extends Object> m) {
+		data.putAll(m);
+	}
+
+	@Override
+	public void clear() {
+		data.clear();
+	}
+
+	@Override
+	public Set<String> keySet() {
+		return data.keySet();
+	}
+
+	@Override
+	public Collection<Object> values() {
+		return data.values();
+	}
+
+	@Override
+	public Set<Entry<String, Object>> entrySet() {
+		return data.entrySet();
+	}
+
+	@Override
+	public <K> K get(String name, Class<? extends K> cls) {
+		return data.get(name, cls);
+	}
+
+	@Override
+	public <K> K getNotNull(String name, Class<? extends K> cls) {
+		return data.getNotNull(name, cls);
+	}
+
+	@Override
+	public <K> K get(String name, K defaultValue) {
+		return data.get(name, defaultValue);
+	}
+
+	@Override
+	public List<String> getUnnamedKeys() {
+		return data.getUnnamedKeys();
+	}
+
+	@Override
+	public List<String> getNamedKeys() {
+		return data.getNamedKeys();
+	}
+
+	@Override
+	public boolean contains(String key) {
+		return data.contains(key);
+	}
+
+	@Override
+	public boolean contains(String key, Class<?> cls) {
+		return data.contains(key, cls);
+	}
 
 }

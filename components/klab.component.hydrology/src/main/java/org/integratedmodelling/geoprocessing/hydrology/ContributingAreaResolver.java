@@ -49,7 +49,7 @@ public class ContributingAreaResolver implements IResolver<IState>, IExpression 
 		}
 
 		OmsTca algorithm = new OmsTca();
-		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue);
+		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false);
 		algorithm.pm = new TaskMonitor(context.getMonitor());
 		algorithm.doProcess = true;
 		algorithm.doReset = true;

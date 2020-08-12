@@ -16,6 +16,7 @@ import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.CollectionUtils;
+import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.SemanticType;
 
 /**
@@ -92,6 +93,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 	private KimConcept cooccurrent = null;
 	private KimConcept relationshipSource = null;
 	private KimConcept relationshipTarget = null;
+	private KimConcept temporalInherent = null;
 
 	private KimConcept validParent = null;
 
@@ -133,6 +135,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		// TODO Auto-generated constructor stub
 	}
 
+	public KimConcept(String name) {
+		this.name = name;
+	}
+	
 	public KimConcept(KimConcept other) {
 		super(other);
 		this.name = other.name;
@@ -160,6 +166,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		this.template = other.template;
 		this.descriptor = other.descriptor;
 		this.traitObservable = other.traitObservable;
+		this.temporalInherent = other.temporalInherent;
 		this.distributedInherent = other.distributedInherent;
 	}
 
@@ -375,17 +382,22 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			}
 		}
 		if (declaration.getDuring() != null) {
-			ret.cooccurrent = normalize(declaration.getDuring(), null, parent, false);
-			if (ret.cooccurrent == null) {
+			KimConcept cocc = normalize(declaration.getDuring(), null, parent, false);
+			if (cocc == null) {
 				return null;
 			}
-			if (ret.cooccurrent.type.isEmpty()) {
+			if (cocc.type.isEmpty()) {
 				ret.type.clear();
-			} else if (ret.cooccurrent.is(Type.SUBJECTIVE)) {
+			} else if (cocc.is(Type.SUBJECTIVE)) {
 				subjective = true;
 			}
-			if (ret.cooccurrent.isTemplate()) {
+			if (cocc.isTemplate()) {
 				ret.template = true;
+			}
+			if (declaration.isDistributedTemporalInherency()) {
+				ret.temporalInherent = cocc;
+			} else {
+				ret.cooccurrent = cocc;
 			}
 		}
 		if (declaration.getAdjacent() != null) {
@@ -495,9 +507,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 	/*
 	 * rearrange the special variant of <single concrete attribute/role> <abstract
-	 * observable> to <attribute/role> of <observable>. Use only rescaling attributes for
-	 * qualities, where realms and identities are strictly identifying, and allow
-	 * identities and realms for countables where ambiguity is unlikely.
+	 * observable> to <attribute/role> of <observable>. Use only rescaling
+	 * attributes for qualities, where realms and identities are strictly
+	 * identifying, and allow identities and realms for countables where ambiguity
+	 * is unlikely.
 	 */
 	private void rearrangeSpecialForms() {
 		if (traits.size() + roles.size() == 1 && observable != null && observable.is(Type.ABSTRACT) && authority == null
@@ -597,10 +610,29 @@ public class KimConcept extends KimStatement implements IKimConcept {
 				}
 
 			} else {
-				ret.name = concept.getName().getName();
-				if (ret.name != null && !ret.name.contains(":")) {
-					Namespace namespace = KimValidator.getNamespace(concept);
-					ret.name = (namespace == null ? "UNDEFINED" : Kim.getNamespaceId(namespace)) + ":" + ret.name;
+
+				if (Character.isUpperCase(concept.getName().getName().charAt(0))
+						&& concept.getName().getName().indexOf(':') > 0) {
+
+					/**
+					 * Namespace is an authority
+					 */
+					ret.name = concept.getName().getName();
+					ret.authority = Path.getFirst(ret.name, ":");
+					String term = Path.getLast(ret.name, ':');
+					if (term.startsWith("'") || term.startsWith("\"")) {
+						term = term.substring(1, term.length() - 1);
+					}
+					ret.authorityTerm = term;
+					ret.type.addAll(Kim.INSTANCE.getType("identity"));
+
+				} else {
+
+					ret.name = concept.getName().getName();
+					if (ret.name != null && !ret.name.contains(":")) {
+						Namespace namespace = KimValidator.getNamespace(concept);
+						ret.name = (namespace == null ? "UNDEFINED" : Kim.getNamespaceId(namespace)) + ":" + ret.name;
+					}
 				}
 			}
 			ret.negated = concept.isNegated();
@@ -764,6 +796,11 @@ public class KimConcept extends KimStatement implements IKimConcept {
 
 		if (cooccurrent != null) {
 			ret += " during " + cooccurrent;
+			complex = true;
+		}
+
+		if (temporalInherent != null) {
+			ret += " during each " + temporalInherent;
 			complex = true;
 		}
 
@@ -1053,6 +1090,18 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			compresent.visit(visitor);
 		}
 
+		if (cooccurrent != null) {
+			cooccurrent.visit(visitor);
+		}
+
+		if (adjacent != null) {
+			adjacent.visit(visitor);
+		}
+
+		if (temporalInherent != null) {
+			temporalInherent.visit(visitor);
+		}
+
 		if (motivation != null) {
 			motivation.visit(visitor);
 		}
@@ -1146,7 +1195,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		}
 		return ret;
 	}
-	
+
 	public KimConcept removeComponents(ObservableRole... roles) {
 
 		KimConcept ret = new KimConcept(this);
@@ -1184,6 +1233,8 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			case TRAIT:
 				ret.traits.clear();
 				break;
+			case TEMPORAL_INHERENT:
+				ret.temporalInherent = null;
 			default:
 				break;
 			}
@@ -1225,6 +1276,9 @@ public class KimConcept extends KimStatement implements IKimConcept {
 				break;
 			case INHERENT:
 				ret.inherent = null;
+				break;
+			case TEMPORAL_INHERENT:
+				ret.temporalInherent = null;
 				break;
 			case ROLE:
 				ret.roles = copyWithout(ret.roles, declaration);
@@ -1288,6 +1342,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			ret += "-during-" + cooccurrent.getCodeName();
 		}
 
+		if (temporalInherent != null) {
+			ret += "-during-each-" + temporalInherent.getCodeName();
+		}
+
 		if (motivation != null) {
 			ret += "-for-" + motivation.getCodeName();
 		}
@@ -1307,14 +1365,25 @@ public class KimConcept extends KimStatement implements IKimConcept {
 		return ret;
 	}
 
+	@Override
 	public KimConcept getRelationshipSource() {
 		return relationshipSource;
+	}
+
+	@Override
+	public KimConcept getTemporalInherent() {
+		return temporalInherent;
+	}
+
+	public void setTemporalInherent(KimConcept event) {
+		temporalInherent = event;
 	}
 
 	public void setRelationshipSource(KimConcept relationshipSource) {
 		this.relationshipSource = relationshipSource;
 	}
 
+	@Override
 	public KimConcept getRelationshipTarget() {
 		return relationshipTarget;
 	}

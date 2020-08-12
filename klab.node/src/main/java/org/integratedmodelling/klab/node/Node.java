@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.node.auth.NodeAuthenticationManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.core.env.ConfigurableEnvironment;
@@ -42,6 +43,7 @@ import com.google.gson.JsonObject;
  * 
  */
 public class Node {
+	
 
 	int port = IConfigurationService.DEFAULT_NODE_PORT;
 	private ConfigurableApplicationContext context;
@@ -50,7 +52,7 @@ public class Node {
 	private ICertificate certificate;
 	private Engine engine;
 	
-
+	
 	/**
 	 * 
 	 * This needs to be rearagned so that the authentication happens after the spring boot
@@ -80,7 +82,7 @@ public class Node {
 	}
 
 	public static Node start(INodeStartupOptions options) {
-		if(!cloudEnabled()) {
+		if(!options.isCloudConfig()) {
 			ICertificate certificate = null;
 	
 			if (options.getCertificateResource() != null) {
@@ -219,32 +221,6 @@ public class Node {
 		return engine;
 	}
 	
-	private static boolean cloudEnabled( ) {
-		try {
-			Yaml yaml = new Yaml();
-			Object loadedYaml = yaml.load(Node.class.getClassLoader().getResourceAsStream("bootstrap.yml"));
-			return cloundConfingEnabledd(loadedYaml);
-		} catch (YAMLException e) {
-			Logging.INSTANCE.info("Cloud configration not enabled");
-			return false;
-		}	
-	}
-	
-	private static boolean cloundConfingEnabledd(Object yml) {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		String json = gson.toJson(yml,LinkedHashMap.class);
-		JsonObject jsonObject = new Gson().fromJson(json, JsonObject.class);
-		jsonObject = new Gson().fromJson(jsonObject.get("spring"), JsonObject.class);
-		jsonObject = new Gson().fromJson(jsonObject.get("cloud"), JsonObject.class);
-		jsonObject = new Gson().fromJson(jsonObject.get("consul"), JsonObject.class);
-		jsonObject = new Gson().fromJson(jsonObject.get("config"), JsonObject.class);
-		if (jsonObject.get("enabled").getAsBoolean()) {
-			Logging.INSTANCE.info("Cloud configration enabled");
-			return true;
-		} else {
-			return false;
-		}
-	}
 	
 	private static void setPropertiesFromEnvironment(Environment environment) {
 		MutablePropertySources propSrcs =  ((ConfigurableEnvironment) environment).getPropertySources();

@@ -8,19 +8,12 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.NoSuchAlgorithmException;
-import java.security.NoSuchProviderException;
-
-import org.apache.commons.codec.DecoderException;
-import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.HubApplication;
 import org.integratedmodelling.klab.hub.exception.LoginFailedExcepetion;
-import org.integratedmodelling.klab.hub.listeners.LicenseStartupEvent;
-import org.integratedmodelling.klab.hub.listeners.LicenseStartupPublisher;
+import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
 import org.integratedmodelling.klab.hub.listeners.LicenseStartupReady;
 import org.integratedmodelling.klab.hub.users.controllers.UserAuthenticationController;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
@@ -29,7 +22,6 @@ import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.integratedmodelling.klab.utils.NameGenerator;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -57,7 +49,7 @@ public class AuthenticationTest extends ApplicationCheck {
 	TestRestTemplate restTemplate;
 	
 	@Autowired
-	public LicenseStartupPublisher publisher;
+	public HubEventPublisher<LicenseStartupReady> publisher;
 	
 	
 	

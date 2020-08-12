@@ -254,7 +254,7 @@ public class RasterEncoder implements IResourceEncoder {
 	private GridCoverage getOriginalCoverage(IResource resource) {
 
 		File mainFile = null;
-		File rootPath = Resources.INSTANCE.getProject(resource.getLocalProjectName()).getRoot().getParentFile();
+		File rootPath = Resources.INSTANCE.getFilesystemLocation(resource);
 
 		for (String path : resource.getLocalPaths()) {
 			if (RasterAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
@@ -276,7 +276,7 @@ public class RasterEncoder implements IResourceEncoder {
 
 		GridCoverage2D ret = null;
 		AbstractGridFormat format = GridFormatFinder.findFormat(mainFile);
-		// this is a bit hacky but does make more geotiffs work
+		// this is a bit hackey but does make more geotiffs work
 		Hints hints = new Hints();
 		if (format instanceof GeoTiffFormat) {
 			hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);

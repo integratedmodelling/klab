@@ -1,15 +1,16 @@
 package org.integratedmodelling.klab.components.runtime.actors.behavior;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.function.Consumer;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Platform;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsBehavior;
@@ -26,7 +27,6 @@ import org.integratedmodelling.klab.utils.Range;
 public class Behavior implements IBehavior {
 
 	static Set<String> viewAnnotations;
-
 	static {
 		viewAnnotations = new HashSet<>();
 		viewAnnotations.add("panel");
@@ -61,14 +61,14 @@ public class Behavior implements IBehavior {
 		 * @return
 		 */
 		public boolean isImplicit() {
-			return value == null;
+			return value == null || value.getValue() == null;
 		}
-		
+
 		// Call only if isIdentifier() returns true
 		public String getIdentifier() {
 			return this.value.getValue().toString();
 		}
-		
+
 		/**
 		 * If true, this matches true and contains an identifier to set into the scope
 		 * to the matched value.
@@ -87,8 +87,18 @@ public class Behavior implements IBehavior {
 			case ANYVALUE:
 				return value != null && !(value instanceof Throwable);
 			case ANYTRUE:
-				return value != null && !(value instanceof Throwable)
+				boolean ret = value != null && !(value instanceof Throwable)
 						&& !(value instanceof Boolean && !((Boolean) value));
+//				if (ret) {
+//					scope.symbolTable.put("$", value);
+//					if (value instanceof Collection) {
+//						int n = 1;
+//						for (Object v : ((Collection<?>)value)) {
+//							scope.symbolTable.put("$" + (n++), v);
+//						}
+//					}
+//				}
+				return ret;
 			case BOOLEAN:
 				return value instanceof Boolean && value.equals(this.value.getValue());
 			case CLASS:
@@ -159,9 +169,11 @@ public class Behavior implements IBehavior {
 	Map<String, BehaviorAction> actions = new LinkedHashMap<>();
 	IMetadata metadata = new Metadata();
 	List<IAnnotation> annotations = new ArrayList<>();
+	String projectId;
 
 	public Behavior(IKActorsBehavior statement) {
 		this.statement = statement;
+		this.projectId = statement.getProjectId();
 		for (IKActorsAction a : statement.getActions()) {
 			BehaviorAction action = new BehaviorAction(a, this);
 			actions.put(action.getId(), action);
@@ -222,7 +234,7 @@ public class Behavior implements IBehavior {
 	public Type getDestination() {
 		return statement.getType();
 	}
-	
+
 	@Override
 	public List<Action> getActions(String... match) {
 		List<Action> ret = new ArrayList<>();
@@ -256,6 +268,16 @@ public class Behavior implements IBehavior {
 
 	public static IBehavior empty() {
 		return new Behavior();
+	}
+
+	@Override
+	public Platform getPlatform() {
+		return getStatement().getPlatform() == null ? Platform.ANY : getStatement().getPlatform();
+	}
+
+	@Override
+	public String getProject() {
+		return projectId;
 	}
 
 }

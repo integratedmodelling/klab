@@ -18,7 +18,7 @@ import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
-import org.integratedmodelling.klab.hub.listeners.LicenseStartupPublisher;
+import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
 import org.integratedmodelling.klab.hub.listeners.LicenseStartupReady;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.utils.FileCatalog;
@@ -117,8 +117,9 @@ public class Hub {
 			app.setDefaultProperties(props);
 			this.context = app.run(options.getArguments());	
 			
-			LicenseStartupPublisher eventAPublisher = (LicenseStartupPublisher) context.getBean("licenseStartupPublisher");
-			eventAPublisher.publish(new LicenseStartupReady(new Object()));
+			LicenseStartupReady event = new LicenseStartupReady(new Object());
+			HubEventPublisher<LicenseStartupReady> eventAPublisher= (HubEventPublisher<LicenseStartupReady>) context.getBean("hubEventPublisher");
+			eventAPublisher.publish(event);
 			
 			System.out.println("\n" + Logo.HUB_BANNER);
 			System.out.println(
@@ -139,8 +140,15 @@ public class Hub {
 			this.certificate = getCertFromEnv(environment);
 			this.owner = HubAuthenticationManager.INSTANCE.authenticate(new HubStartupOptions(), certificate);
 			
-			LicenseStartupPublisher eventAPublisher = (LicenseStartupPublisher)context.getBean("licenseStartupPublisher");
-			eventAPublisher.publish(new LicenseStartupReady(new Object()));
+			/*
+			 * LicenseStartupPublisher eventAPublisher =
+			 * (LicenseStartupPublisher)context.getBean("licenseStartupPublisher");
+			 * eventAPublisher.publish(new LicenseStartupReady(new Object()));
+			 */
+			
+			LicenseStartupReady event = new LicenseStartupReady(new Object());
+			HubEventPublisher<LicenseStartupReady> eventAPublisher= (HubEventPublisher<LicenseStartupReady>) context.getBean("hubEventPublisher");
+			eventAPublisher.publish(event);
 			
 			System.out.println("\n" + Logo.HUB_BANNER);
 			System.out.println(

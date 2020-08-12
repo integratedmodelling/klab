@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.data.adapters;
 
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 
 /**
  * If the publisher implements this interface, it declares that there are
@@ -35,6 +36,6 @@ public interface IResourceEnhancer extends IResourcePublisher {
 	 * @param resource
 	 * @return
 	 */
-	IResource enhanceResource(IResource resource);
+	IResource enhanceResource(IResource resource, IResourceCatalog catalog);
 
 }

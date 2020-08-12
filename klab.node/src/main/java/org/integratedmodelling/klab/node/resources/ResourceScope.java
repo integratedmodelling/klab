@@ -41,7 +41,6 @@ import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.dataflow.Actuator;
@@ -52,8 +51,9 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
-import org.jgrapht.Graph;
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * The scope to contextualize a resource outside of a semantic environment.
@@ -61,9 +61,11 @@ import org.jgrapht.Graph;
  * @author Ferd
  *
  */
-public class ResourceScope implements IRuntimeScope {
+public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 
 	IMonitor monitor;
+	IScale scale = null;
+	IResource resource;
 
 	/**
 	 * Use when called from a JSON post request without additional inputs. May build
@@ -74,6 +76,10 @@ public class ResourceScope implements IRuntimeScope {
 	 */
 	public ResourceScope(IResource resource, IGeometry geometry, IMonitor monitor) {
 		this.monitor = monitor;
+		if (geometry != null) {
+			this.scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
+		}
+		this.resource = resource;
 	}
 
 	/**
@@ -172,14 +178,12 @@ public class ResourceScope implements IRuntimeScope {
 
 	@Override
 	public Type getArtifactType() {
-		// TODO Auto-generated method stub
-		return null;
+		return null; // resource.getType();
 	}
 
 	@Override
 	public IScale getScale() {
-		// TODO Auto-generated method stub
-		return null;
+		return scale;
 	}
 
 	@Override
@@ -252,102 +256,6 @@ public class ResourceScope implements IRuntimeScope {
 
 	@Override
 	public Context getExpressionContext() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <K> K get(String name, Class<? extends K> cls) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public <K> K get(String name, K defaultValue) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public boolean contains(String key) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean contains(String key, Class<?> cls) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public int size() {
-		// TODO Auto-generated method stub
-		return 0;
-	}
-
-	@Override
-	public boolean isEmpty() {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean containsKey(Object key) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public boolean containsValue(Object value) {
-		// TODO Auto-generated method stub
-		return false;
-	}
-
-	@Override
-	public Object get(Object key) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object put(String key, Object value) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Object remove(Object key) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void putAll(Map<? extends String, ? extends Object> m) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public void clear() {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
-	public Set<String> keySet() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<Object> values() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Set<Entry<String, Object>> entrySet() {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -431,12 +339,6 @@ public class ResourceScope implements IRuntimeScope {
 
 	}
 
-//	@Override
-//	public void processAnnotation(IAnnotation annotation) {
-//		// TODO Auto-generated method stub
-//
-//	}
-
 	@Override
 	public Provenance getProvenance() {
 		// TODO Auto-generated method stub
@@ -454,12 +356,6 @@ public class ResourceScope implements IRuntimeScope {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-//	@Override
-//	public void link(IArtifact parent, IArtifact child) {
-//		// TODO Auto-generated method stub
-//
-//	}
 
 	@Override
 	public void replaceTarget(IArtifact self) {
@@ -743,18 +639,6 @@ public class ResourceScope implements IRuntimeScope {
 	}
 
 	@Override
-	public <K> K getNotNull(String name, Class<? extends K> cls) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<String> getUnnamedKeys() {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task,
 			Mode mode) {
 		// TODO Auto-generated method stub
@@ -771,18 +655,6 @@ public class ResourceScope implements IRuntimeScope {
 	public Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings() {
 		// TODO Auto-generated method stub
 		return null;
-	}
-
-	@Override
-	public String addListener(ObservationListener listener) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void removeListener(String listenerId) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -806,13 +678,19 @@ public class ResourceScope implements IRuntimeScope {
 	@Override
 	public void swapArtifact(IArtifact ret, IArtifact result) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public Collection<IObservation> getObservations(IConcept observable) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void notifyListeners(IObservation object) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

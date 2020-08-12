@@ -2,8 +2,9 @@ package org.integratedmodelling.klab.engine.runtime.api;
 
 import java.util.Map;
 
-import org.integratedmodelling.klab.api.actors.IBehavior;
-import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
+import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.rest.ViewComponent;
 
 import akka.actor.typed.ActorRef;
 
@@ -14,7 +15,31 @@ import akka.actor.typed.ActorRef;
  * @author Ferd
  *
  */
-public interface IActorIdentity<T> extends IIdentity {
+public interface IActorIdentity<T> extends IRuntimeIdentity {
+
+	/**
+	 * An actor may have an associated view.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	interface View {
+
+		/**
+		 * The layout. Never null if there is a view.
+		 * 
+		 * @return
+		 */
+		Layout getLayout();
+
+		/**
+		 * Static layout components indexed by their action ID. Used to marshall
+		 * notifications and add components in dynamic views.
+		 * 
+		 * @return
+		 */
+		Map<String, ViewComponent> getStaticComponents();
+	}
 
 	/**
 	 * Get the actor peer for the identity. If the actor needs to be created, ask
@@ -24,13 +49,17 @@ public interface IActorIdentity<T> extends IIdentity {
 	 */
 	ActorRef<T> getActor();
 
-	/**
-	 * Load a specified behavior in a specified runtime scope
-	 * 
-	 * @param behavior
-	 * @param scope
-	 */
-	void load(IBehavior behavior, IRuntimeScope scope);
+//	/**
+//	 * When a behavior is loaded, the identity gets a "runtime" actor that is
+//	 * dedicated to performing tasks which may be triggered by the behavior itself,
+//	 * such as spawning other actors. These can be used safely while a behavior
+//	 * executes without risking a deadlock if the receiver of an action is the
+//	 * actor itself.
+//	 * 
+//	 * @return
+//	 */
+//	ActorRef<T> getRuntimeActor();
+
 
 	/**
 	 * Set the actor in the identity.
@@ -47,5 +76,18 @@ public interface IActorIdentity<T> extends IIdentity {
 	 * @return
 	 */
 	Map<String, Object> getState();
+
+	/**
+	 * If the actor has a view associated, return it. Otherwise return null.
+	 * 
+	 * @return
+	 */
+	View getView();
+
+	// must be in the API for now. Called to create the view.
+	void setLayout(Layout layout);
+
+//	// same - called by actors at behavior load to provide the runtime actor
+//	void setRuntimeActor(ActorRef<T> runtimeActor);
 
 }

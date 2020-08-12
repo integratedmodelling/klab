@@ -17,6 +17,8 @@ import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
+import org.integratedmodelling.kactors.kactors.Metadata;
+import org.integratedmodelling.kactors.kactors.Observable;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Value;
@@ -40,6 +42,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getQuantity <em>Quantity</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getMetadata <em>Metadata</em>}</li>
  * </ul>
  *
  * @generated
@@ -147,24 +150,14 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected Map map;
 
   /**
-   * The default value of the '{@link #getObservable() <em>Observable</em>}' attribute.
+   * The cached value of the '{@link #getObservable() <em>Observable</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getObservable()
    * @generated
    * @ordered
    */
-  protected static final String OBSERVABLE_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getObservable() <em>Observable</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getObservable()
-   * @generated
-   * @ordered
-   */
-  protected String observable = OBSERVABLE_EDEFAULT;
+  protected Observable observable;
 
   /**
    * The default value of the '{@link #getExpression() <em>Expression</em>}' attribute.
@@ -205,6 +198,16 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected Quantity quantity;
+
+  /**
+   * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMetadata()
+   * @generated
+   * @ordered
+   */
+  protected Metadata metadata;
 
   /**
    * <!-- begin-user-doc -->
@@ -508,7 +511,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
-  public String getObservable()
+  public Observable getObservable()
   {
     return observable;
   }
@@ -518,13 +521,38 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * <!-- end-user-doc -->
    * @generated
    */
-  @Override
-  public void setObservable(String newObservable)
+  public NotificationChain basicSetObservable(Observable newObservable, NotificationChain msgs)
   {
-    String oldObservable = observable;
+    Observable oldObservable = observable;
     observable = newObservable;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__OBSERVABLE, oldObservable, observable));
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__OBSERVABLE, oldObservable, newObservable);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setObservable(Observable newObservable)
+  {
+    if (newObservable != observable)
+    {
+      NotificationChain msgs = null;
+      if (observable != null)
+        msgs = ((InternalEObject)observable).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__OBSERVABLE, null, msgs);
+      if (newObservable != null)
+        msgs = ((InternalEObject)newObservable).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__OBSERVABLE, null, msgs);
+      msgs = basicSetObservable(newObservable, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__OBSERVABLE, newObservable, newObservable));
   }
 
   /**
@@ -658,6 +686,56 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
+  public Metadata getMetadata()
+  {
+    return metadata;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetMetadata(Metadata newMetadata, NotificationChain msgs)
+  {
+    Metadata oldMetadata = metadata;
+    metadata = newMetadata;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__METADATA, oldMetadata, newMetadata);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setMetadata(Metadata newMetadata)
+  {
+    if (newMetadata != metadata)
+    {
+      NotificationChain msgs = null;
+      if (metadata != null)
+        msgs = ((InternalEObject)metadata).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__METADATA, null, msgs);
+      if (newMetadata != null)
+        msgs = ((InternalEObject)newMetadata).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__METADATA, null, msgs);
+      msgs = basicSetMetadata(newMetadata, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__METADATA, newMetadata, newMetadata));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -670,10 +748,14 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return basicSetList(null, msgs);
       case KactorsPackage.VALUE__MAP:
         return basicSetMap(null, msgs);
+      case KactorsPackage.VALUE__OBSERVABLE:
+        return basicSetObservable(null, msgs);
       case KactorsPackage.VALUE__TABLE:
         return basicSetTable(null, msgs);
       case KactorsPackage.VALUE__QUANTITY:
         return basicSetQuantity(null, msgs);
+      case KactorsPackage.VALUE__METADATA:
+        return basicSetMetadata(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -710,6 +792,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getTable();
       case KactorsPackage.VALUE__QUANTITY:
         return getQuantity();
+      case KactorsPackage.VALUE__METADATA:
+        return getMetadata();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -746,7 +830,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         setMap((Map)newValue);
         return;
       case KactorsPackage.VALUE__OBSERVABLE:
-        setObservable((String)newValue);
+        setObservable((Observable)newValue);
         return;
       case KactorsPackage.VALUE__EXPRESSION:
         setExpression((String)newValue);
@@ -756,6 +840,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KactorsPackage.VALUE__QUANTITY:
         setQuantity((Quantity)newValue);
+        return;
+      case KactorsPackage.VALUE__METADATA:
+        setMetadata((Metadata)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -793,7 +880,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         setMap((Map)null);
         return;
       case KactorsPackage.VALUE__OBSERVABLE:
-        setObservable(OBSERVABLE_EDEFAULT);
+        setObservable((Observable)null);
         return;
       case KactorsPackage.VALUE__EXPRESSION:
         setExpression(EXPRESSION_EDEFAULT);
@@ -803,6 +890,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KactorsPackage.VALUE__QUANTITY:
         setQuantity((Quantity)null);
+        return;
+      case KactorsPackage.VALUE__METADATA:
+        setMetadata((Metadata)null);
         return;
     }
     super.eUnset(featureID);
@@ -833,13 +923,15 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__MAP:
         return map != null;
       case KactorsPackage.VALUE__OBSERVABLE:
-        return OBSERVABLE_EDEFAULT == null ? observable != null : !OBSERVABLE_EDEFAULT.equals(observable);
+        return observable != null;
       case KactorsPackage.VALUE__EXPRESSION:
         return EXPRESSION_EDEFAULT == null ? expression != null : !EXPRESSION_EDEFAULT.equals(expression);
       case KactorsPackage.VALUE__TABLE:
         return table != null;
       case KactorsPackage.VALUE__QUANTITY:
         return quantity != null;
+      case KactorsPackage.VALUE__METADATA:
+        return metadata != null;
     }
     return super.eIsSet(featureID);
   }
@@ -861,8 +953,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     result.append(urn);
     result.append(", id: ");
     result.append(id);
-    result.append(", observable: ");
-    result.append(observable);
     result.append(", expression: ");
     result.append(expression);
     result.append(')');

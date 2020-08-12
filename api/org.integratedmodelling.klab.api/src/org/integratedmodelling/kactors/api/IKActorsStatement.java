@@ -1,8 +1,7 @@
 package org.integratedmodelling.kactors.api;
 
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.utils.Pair;
@@ -18,7 +17,7 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 
 	public enum Type {
 		ACTION_CALL, IF_STATEMENT, FOR_STATEMENT, DO_STATEMENT, WHILE_STATEMENT, TEXT_BLOCK, FIRE_VALUE, ASSIGNMENT,
-		CONCURRENT_GROUP, SEQUENCE
+		CONCURRENT_GROUP, SEQUENCE, INSTANTIATION
 	}
 
 	public interface If extends IKActorsStatement {
@@ -36,6 +35,16 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 	public interface ConcurrentGroup extends IKActorsStatement {
 
 		public List<IKActorsStatement> getStatements();
+
+		Map<String, IKActorsValue> getGroupMetadata();
+		
+		/**
+		 * Actions with the corresponding pattern to match to fired values. If the value
+		 * is null, any fired values matches.
+		 * 
+		 * @return
+		 */
+		List<Pair<IKActorsValue, IKActorsStatement>> getGroupActions();
 
 	}
 
@@ -85,6 +94,25 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 	public interface TextBlock extends IKActorsStatement {
 
 		String getText();
+
+	}
+
+	public interface Instantiation extends IKActorsStatement {
+
+		/**
+		 * The behavior for the new actor
+		 * 
+		 * @return
+		 */
+		String getBehavior();
+
+		/**
+		 * Arguments, possibly empty, for the main action. Should include a tag if the
+		 * actor must be referenced.
+		 * 
+		 * @return
+		 */
+		IParameters<String> getArguments();
 
 	}
 

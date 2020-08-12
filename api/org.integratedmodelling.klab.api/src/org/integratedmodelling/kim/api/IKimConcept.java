@@ -331,7 +331,15 @@ public interface IKimConcept extends IKimStatement {
 		/**
 		 * A process that defines the change of its inherent quality.
 		 */
-		CHANGE;
+		CHANGE,
+
+		/**
+		 * Concept that have the syntax of authority references (with the uppercase
+		 * namespace) get this type even if not recognized by an online authority (in
+		 * which case they won't have the IDENTITY type but will still have this, so
+		 * that the syntactic validation won't fail).
+		 */
+		AUTHORITY_IDENTITY;
 
 		boolean isNumeric() {
 			return IKimConcept.CONTINUOUS_QUALITY_TYPES.contains(this);
@@ -344,7 +352,7 @@ public interface IKimConcept extends IKimStatement {
 	 * builders) and inspect specific clauses.
 	 */
 	public enum ObservableRole {
-		TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT
+		TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT, TEMPORAL_INHERENT
 	}
 
 	/**
@@ -542,5 +550,12 @@ public interface IKimConcept extends IKimStatement {
 	ObservableRole getDistributedInherent();
 
 	boolean isTraitObservable();
+
+	/**
+	 * Return any temporal inherency for this occurrent ('during each').
+	 * 
+	 * @return
+	 */
+	IKimConcept getTemporalInherent();
 
 }

@@ -81,7 +81,8 @@ public interface IKimProject {
 
 	/**
 	 * All the behaviors in the apps directory (which may also contain k.IM
-	 * scripts).
+	 * scripts). Includes apps and components but not other types of declared
+	 * behavior.
 	 * 
 	 * @return
 	 */

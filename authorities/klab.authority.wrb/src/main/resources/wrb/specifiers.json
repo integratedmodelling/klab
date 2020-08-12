@@ -1,0 +1,48 @@
+{
+	"names": [
+		"uri",
+		"literalForm"
+	],
+	"values": [
+		[
+			"<http://soilmaps.entecra.it/kos/c_801>",
+			"\"Bathi\"@en"
+		],
+		[
+			"<http://soilmaps.entecra.it/kos/c_802>",
+			"\"Cumuli\"@en"
+		],
+		[
+			"<http://soilmaps.entecra.it/kos/c_803>",
+			"\"Endo\"@en"
+		],
+		[
+			"<http://soilmaps.entecra.it/kos/c_804>",
+			"\"Epi\"@en"
+		],
+		[
+			"<http://soilmaps.entecra.it/kos/c_805>",
+			"\"Hyper\"@en"
+		],
+		[
+			"<http://soilmaps.entecra.it/kos/c_806>",
+			"\"Hypo\"@en"
+		],
+		[
+			"<http://soilmaps.entecra.it/kos/c_807>",
+			"\"Ortho\"@en"
+		],
+		[
+			"<http://soilmaps.entecra.it/kos/c_808>",
+			"\"Para\"@en"
+		],
+		[
+			"<http://soilmaps.entecra.it/kos/c_809>",
+			"\"Proto\"@en"
+		],
+		[
+			"<http://soilmaps.entecra.it/kos/c_810>",
+			"\"Thapto\"@en"
+		]
+	]
+}

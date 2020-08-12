@@ -13,6 +13,10 @@ public class Process extends DirectObservation implements IProcess {
         // TODO Auto-generated constructor stub
     }
     
+    protected Process(Process other) {
+    	super(other);
+    }
+    
 	@Override
 	public IArtifact.Type getType() {
 		return IArtifact.Type.PROCESS;

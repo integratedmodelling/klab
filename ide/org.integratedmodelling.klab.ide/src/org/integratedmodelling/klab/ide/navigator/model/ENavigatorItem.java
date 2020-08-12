@@ -35,7 +35,7 @@ public abstract class ENavigatorItem implements IAdaptable {
 		return parent;
 	}
 
-	public abstract ENavigatorItem[] getEChildren();
+	public abstract Object[] getEChildren();
 
 	public abstract boolean hasEChildren();
 

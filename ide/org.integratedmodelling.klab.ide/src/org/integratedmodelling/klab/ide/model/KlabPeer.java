@@ -5,9 +5,13 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import java.util.function.Consumer;
 
+import org.eclipse.swt.events.SelectionEvent;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
+import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.rest.ViewAction;
+import org.integratedmodelling.klab.rest.ViewComponent;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.FrameworkUtil;
 import org.osgi.framework.ServiceReference;
@@ -46,8 +50,8 @@ public class KlabPeer {
 	/**
 	 * Pass a handler for messages of the type requested.
 	 * 
-	 * @param type
-	 *            a type to subscribe to, or ANY for all message receivers.
+	 * @param type           a type to subscribe to, or ANY for all message
+	 *                       receivers.
 	 * @param messageHandler
 	 */
 	public KlabPeer(final Sender type, final Consumer<IMessage> messageHandler) {
@@ -67,8 +71,8 @@ public class KlabPeer {
 	}
 
 	/**
-	 * Send a message to listening peers within the Eclipse UI. To send to the engine use
-	 * {@link Activator#post(Object...)}.
+	 * Send a message to listening peers within the Eclipse UI. To send to the
+	 * engine use {@link Activator#post(Object...)}.
 	 * 
 	 * @param messages
 	 */
@@ -79,13 +83,40 @@ public class KlabPeer {
 			ServiceReference<EventAdmin> ref = ctx.getServiceReference(EventAdmin.class);
 			eventAdmin = ctx.getService(ref);
 		}
-		
-		IMessage message = (messages.length == 1 && messages[0] instanceof IMessage) 
-				? (IMessage) messages[0]
+
+		IMessage message = (messages.length == 1 && messages[0] instanceof IMessage) ? (IMessage) messages[0]
 				: Message.create(identity, messages);
-				
-		eventAdmin.sendEvent(new Event("org/integratedmodelling/klab/" + sender + "/" + message.getType(),
-				Collections.singletonMap("KlabMessage", message)));
+
+		if (!processSystemMessages(message)) {
+			eventAdmin.sendEvent(new Event("org/integratedmodelling/klab/" + sender + "/" + message.getType(),
+					Collections.singletonMap("KlabMessage", message)));
+		}
+
+	}
+
+	private boolean processSystemMessages(IMessage message) {
+
+		/*
+		 * TODO mechanism may need revision - these are intercepted and don't reach the
+		 * views.
+		 */
+		if (message.getType() == IMessage.Type.CreateViewComponent) {
+			ViewComponent component = message.getPayload(ViewComponent.class);
+			if (component.getType() == ViewComponent.Type.Alert) {
+				Eclipse.INSTANCE.alert(component.getContent());
+				return true;
+			} else if (component.getType() == ViewComponent.Type.Notification) {
+				Eclipse.INSTANCE.notification(component.getTitle(), component.getContent());
+				return true;
+			} else if (component.getType() == ViewComponent.Type.Confirm) {
+				boolean result = Eclipse.INSTANCE.confirm(component.getContent());
+				Activator.post(IMessage.MessageClass.UserInterface, IMessage.Type.ViewAction,
+						new ViewAction(component, result));
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	/**
@@ -96,7 +127,7 @@ public class KlabPeer {
 			this.registration.unregister();
 		}
 	}
-	
+
 	public String getIdentity() {
 		return identity;
 	}

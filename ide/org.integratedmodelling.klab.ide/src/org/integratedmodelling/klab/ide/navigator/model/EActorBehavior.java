@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.ide.navigator.model;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.core.resources.IContainer;
 import org.eclipse.core.resources.IFile;
@@ -94,6 +95,47 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
 	@Override
 	public String getStyle() {
 		return behavior.getStyle();
+	}
+
+	@Override
+	public String getTag() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Platform getPlatform() {
+		return behavior.getPlatform();
+	}
+
+	@Override
+	public String getLabel() {
+		return behavior.getLabel();
+	}
+
+	@Override
+	public String getDescription() {
+		return behavior.getDescription();
+	}
+
+	@Override
+	public String getLogo() {
+		return behavior.getLogo();
+	}
+
+	@Override
+	public String getProjectId() {
+		return behavior.getProjectId();
+	}
+
+	@Override
+	public Map<String, String> getStyleSpecs() {
+		return behavior.getStyleSpecs();
+	}
+
+	@Override
+	public boolean isPublic() {
+		return behavior.isPublic();
 	}
 
 }

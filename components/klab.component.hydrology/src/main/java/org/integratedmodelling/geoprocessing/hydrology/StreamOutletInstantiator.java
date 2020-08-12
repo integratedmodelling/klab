@@ -81,7 +81,7 @@ public class StreamOutletInstantiator implements IInstantiator, IExpression {
 		IState tca = context.getArtifact("upstream_cell_count", IState.class);
 
 		OmsMarkoutlets algorithm = new OmsMarkoutlets();
-		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue);
+		algorithm.inFlow = GeotoolsUtils.INSTANCE.stateToCoverage(flowDir, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false);
 		algorithm.pm = new TaskMonitor(context.getMonitor());
 		algorithm.doProcess = true;
 		algorithm.doReset = false;
@@ -99,7 +99,7 @@ public class StreamOutletInstantiator implements IInstantiator, IExpression {
 		RenderedImage image = algorithm.outFlow.getRenderedImage();
 		int npix = image.getHeight() * image.getWidth();
 		RandomIter itera = RandomIterFactory.create(image, null);
-		RenderedImage imtca = GeotoolsUtils.INSTANCE.stateToCoverage(tca, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue)
+		RenderedImage imtca = GeotoolsUtils.INSTANCE.stateToCoverage(tca, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false)
 				.getRenderedImage();
 		RandomIter itca = RandomIterFactory.create(imtca, null);
 

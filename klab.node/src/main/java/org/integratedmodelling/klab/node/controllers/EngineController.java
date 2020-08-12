@@ -1,8 +1,11 @@
 package org.integratedmodelling.klab.node.controllers;
 
+import java.security.Principal;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
@@ -12,6 +15,7 @@ import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
+import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +37,34 @@ public class EngineController {
 
 	@Autowired
 	ResourceManager resourceManager;
+	
+	@RequestMapping(value = API.NODE.WHO, method = RequestMethod.GET, produces = "application/json")
+	@ResponseBody
+	public Map<?,?> getUserDetails(Principal user) {
 
+		EngineAuthorization u = (EngineAuthorization)user;
+		Map<String, Object> ret = new HashMap<>();
+		ret.put("username", u.getName());
+		List<String> roles = new ArrayList<>();
+		List<String> groups = new ArrayList<>();
+		for (Role role : u.getRoles()) {
+			roles.add(role.name());
+		}
+		for (Group group : u.getGroups()) {
+			groups.add(group.getId());
+		}
+		
+		ret.put("roles", roles);
+		ret.put("groups", groups);
+		
+		/*
+		 * TODO access details, other users if requested and admin
+		 */
+		
+		return ret;
+	}
+
+	
 	/**
 	 * In a node, the capabilities endpoint is secured and the result depends on the
 	 * authorized privileges.
@@ -95,4 +126,5 @@ public class EngineController {
 			return perms.isAuthorized(user.getUsername(), groups);
 		}
 	}
+	
 }

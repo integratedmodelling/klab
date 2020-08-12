@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.Network;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -60,6 +61,25 @@ public class PublicResourceCatalog {
 
 	public synchronized IResource get(String urn) {
 		ResourceDescriptor descriptor = descriptors.get(urn);
+		if (descriptor == null) {
+			Urn kurn = new Urn(urn);
+			INodeIdentity node = Network.INSTANCE.getNode(kurn.getNodeName());
+			if (node != null /* && node.isOnline() */) {
+				try {
+					ResourceReference res = node.getClient().get(API.url(API.NODE.RESOURCE.RESOLVE_URN, API.P_URN, urn),
+							ResourceReference.class);
+					if (res != null) {
+						descriptor = new ResourceDescriptor();
+						descriptor.metadata = res;
+						descriptor.online = true;
+						descriptor.nodes.add(node.getName());
+						descriptors.put(urn, descriptor);
+					}
+				} catch (Exception e) {
+					// move on with descriptor = null;
+				}
+			}
+		}
 		if (descriptor == null || !descriptor.online) {
 			return null;
 		}

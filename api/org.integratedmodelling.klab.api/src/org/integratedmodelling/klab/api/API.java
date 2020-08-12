@@ -15,6 +15,7 @@ package org.integratedmodelling.klab.api;
 
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.rest.TicketRequest;
 
 /**
  * This interface and its members describe the REST API of k.LAB. The API
@@ -136,7 +137,8 @@ public interface API {
 	public static interface TICKET {
 
 		/**
-		 * Retrieve the specific ticket with the passed ID.
+		 * Retrieve the specific ticket with the passed ID. If ticket==all, get a list
+		 * of all tickets.
 		 * 
 		 * GET
 		 */
@@ -145,9 +147,14 @@ public interface API {
 		/**
 		 * Retrieve all tickets matching the field values in the query string.
 		 * 
-		 * GET
+		 * POST with {@link TicketRequest} query data
 		 */
 		public static final String QUERY = "/ticket/query";
+
+		/**
+		 * Retrieve all tickets as an array of JSON objects. Requires ADMIN role.
+		 */
+		public static final String LIST = "/ticket/list";
 
 	}
 
@@ -354,6 +361,12 @@ public interface API {
 	public static interface NODE {
 
 		/**
+		 * Returns info about self and (if admin) users served between dates, eventually
+		 * with short and verbose formats listing login data and URN access.
+		 */
+		public static final String WHO = "who";
+
+		/**
 		 * Protected admin endpoints for configuration and component setup.
 		 * 
 		 * @author Ferd
@@ -363,12 +376,13 @@ public interface API {
 
 			public static final String P_COMPONENT = "{component}";
 			public static final String P_PROPERTY = "{component}";
-						
+			public static final String P_LINES = "{lines}";
+
 			/**
 			 * 
 			 */
 			public static final String COMPONENT_SETUP = "/component/setup/" + P_COMPONENT;
-			
+
 			/**
 			 * 
 			 */
@@ -378,12 +392,17 @@ public interface API {
 			 * 
 			 */
 			public static final String SET_PROPERTY = "/properties/set/" + P_PROPERTY;
-			
+
 			/**
 			 * 
 			 */
 			public static final String GET_PROPERTY = "/properties/get/" + P_PROPERTY;
-			
+
+			/**
+			 * 
+			 */
+			public static final String GET_LOG = "logs/get/" + P_LINES;
+
 		}
 
 		public static interface RESOURCE {
@@ -462,7 +481,8 @@ public interface API {
 
 			/**
 			 * List all resources available to the requesting engine. Parameterize for
-			 * verbose or short return.
+			 * verbose or short return, or add a query parameter to search for URN and
+			 * metadata.
 			 * 
 			 * GET
 			 */
@@ -519,12 +539,18 @@ public interface API {
 		public static final String CAPABILITIES = "/public/authority/" + P_AUTHORITY + "/capabilities";
 
 		/**
-		 * The Constant RESOLVE.
-		 *
-		 * GET JSON
+         * Resolve the identity and return all related data or errors.
+         * 
+         * GET JSON
 		 */
 		public static final String RESOLVE = "/public/authority/" + P_AUTHORITY + "/resolve/" + P_IDENTIFIER;
 
+		/**
+		 * Setup and/or reset caches for an authority. This is the only non-public endpoint.
+		 */
+		public static final String SETUP = "/authority/" + P_AUTHORITY + "/setup";
+
+		
 		/**
 		 * The Constant QUERY.
 		 *
@@ -720,6 +746,27 @@ public interface API {
 		}
 
 		/**
+		 * Handle engine-local non-semantic assets - import of resources or multiple
+		 * resource sources, inquiry.
+		 * 
+		 * @author ferdinando.villa
+		 *
+		 */
+		public interface RESOURCE {
+
+			public static final String P_PROJECT = "{project}";
+			public static final String P_RESOURCEPATH = "{resourcepath}";
+
+			/**
+			 * Get a project resource as is (image, file or otherwise) by passing the path
+			 * in the form
+			 */
+			public static final String GET_PROJECT_RESOURCE = "/engine/project/resource/get/" + P_PROJECT + "/"
+					+ P_RESOURCEPATH;
+
+		}
+
+		/**
 		 * Endpoints to access contexts, using context tokens for authentication.
 		 * 
 		 * @author ferdinando.villa
@@ -806,16 +853,6 @@ public interface API {
 
 			}
 
-			/**
-			 * Handle engine-local non-semantic assets - import of resources or multiple
-			 * resource sources, inquiry.
-			 * 
-			 * @author ferdinando.villa
-			 *
-			 */
-			public interface RESOURCE {
-
-			}
 		}
 
 	}

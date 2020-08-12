@@ -31,13 +31,12 @@ import org.integratedmodelling.klab.utils.Utils;
 public class ObjectExpression {
 
 	private ILanguageProcessor.Descriptor descriptor;
-	private ThreadLocal<IParameters<String>> parameters = new ThreadLocal<>();
-	private ThreadLocal<ILanguageExpression> expression = new ThreadLocal<>();
+	private IParameters<String> parameters = Parameters.create();
+	private ILanguageExpression expression = null;
 	private boolean first = false;
-	
+
 	public ObjectExpression(IKimExpression expression, IRuntimeScope scope) {
 		this(expression, scope, false);
-		this.parameters.set(Parameters.create());
 	}
 
 	public ObjectExpression(IKimExpression expression, IRuntimeScope overallScope, boolean forceScalar) {
@@ -46,8 +45,7 @@ public class ObjectExpression {
 				.getLanguageProcessor(expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
 						: expression.getLanguage())
 				.describe(expression.getCode(), overallScope.getExpressionContext(), scalar);
-		this.expression.set(this.descriptor.compile());
-		this.parameters.set(Parameters.create());
+		this.expression = this.descriptor.compile();
 	}
 
 	public Object eval(IRuntimeScope scope, IIdentity identity) {
@@ -55,7 +53,7 @@ public class ObjectExpression {
 	}
 
 	public Object eval(IRuntimeScope scope, IIdentity identity, IParameters<String> additionalParameters) {
-		return eval(scope, identity, null, Object.class);
+		return eval(scope, identity, additionalParameters, Object.class);
 	}
 
 	public <T> T eval(IRuntimeScope scope, IIdentity identity, Class<? extends T> cls) {
@@ -65,28 +63,28 @@ public class ObjectExpression {
 	public <T> T eval(IRuntimeScope scope, IIdentity identity, IParameters<String> additionalParameters,
 			Class<? extends T> cls) {
 
-		this.parameters.get().clear();
+		this.parameters.clear();
 		if (additionalParameters != null) {
-			this.parameters.get().putAll(additionalParameters);
+			this.parameters.putAll(additionalParameters);
 		}
 
 		if (first) {
-			parameters.get().put("self", identity);
+			parameters.put("self", identity);
 			first = true;
 		} else {
-			this.expression.get().override("self", identity);
+			this.expression.override("self", identity);
 		}
-		
+
 		IScale scale = identity instanceof IObservation ? ((IObservation) identity).getScale() : null;
 
 		Map<String, IObservation> artifacts = scope.getLocalCatalog(IObservation.class);
 		for (String id : descriptor.getIdentifiersInScalarScope()) {
 			IObservation artifact = artifacts.get(id);
 			if (artifact instanceof IState && scale != null) {
-				parameters.get().put(id, ((IState) artifact).get(scale));
+				parameters.put(id, ((IState) artifact).get(scale));
 			}
 		}
 
-		return Utils.asType(this.expression.get().eval(parameters.get(), scope), cls);
+		return Utils.asType(this.expression.eval(parameters, scope), cls);
 	}
 }

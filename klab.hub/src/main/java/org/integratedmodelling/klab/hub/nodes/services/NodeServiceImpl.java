@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.hub.commands.CreateMongoNode;
 import org.integratedmodelling.klab.hub.commands.DeleteMongoNode;
 import org.integratedmodelling.klab.hub.commands.GetMongoNodeByName;
 import org.integratedmodelling.klab.hub.commands.GetMongoNodes;
+import org.integratedmodelling.klab.hub.commands.MongoNodeExists;
 import org.integratedmodelling.klab.hub.commands.UpdateMongoNode;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.repository.MongoNodeRepository;
@@ -23,7 +24,7 @@ public class NodeServiceImpl implements NodeService {
 	private MongoNodeRepository nodeRepository;
 
 	@Override
-	public MongoNode createNode(MongoNode node) {
+	public MongoNode create(MongoNode node) {
 		if (!nodeExists(node.getName())) {
 			return new CreateMongoNode(node, nodeRepository).execute();
 		} else {
@@ -32,28 +33,41 @@ public class NodeServiceImpl implements NodeService {
 	}
 
 	@Override
-	public MongoNode updateNode(MongoNode node) {
+	public MongoNode update(MongoNode node) {
 		return new UpdateMongoNode(node, nodeRepository).execute();
 	}
 
 	@Override
-	public void deleteNode(MongoNode node) {
-		new DeleteMongoNode(node, nodeRepository).execute();
+	public void delete(String name) {
+		new DeleteMongoNode(name, nodeRepository).execute();
 		return;
 	}
 
 	@Override
-	public Collection<MongoNode> getNodes() {
+	public Collection<MongoNode> getAll() {
 		return new GetMongoNodes(nodeRepository).execute();
 	}
 
 	@Override
-	public MongoNode getNode(String nodeName) {
+	public MongoNode getByName(String nodeName) {
 		return new GetMongoNodeByName(nodeName, nodeRepository).execute();
 	}
 	
 	private Boolean nodeExists(String nodeName) {
 		return nodeRepository.findByNameIgnoreCase(nodeName).isPresent();
+	}
+
+	@Override
+	public void removeGroupFromNodes(String groupName) {
+		nodeRepository.findAll().forEach(node -> {
+			node.removeGroupByName(groupName);
+			new UpdateMongoNode(node, nodeRepository).execute();
+		});
+	}
+
+	@Override
+	public boolean exists(String name) {
+		return new MongoNodeExists(name, nodeRepository).execute();
 	}
 
 }

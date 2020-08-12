@@ -27,19 +27,18 @@ public class ObjectArtifact extends Artifact implements IObjectArtifact {
 	String name;
 	IScale scale;
 	List<IArtifact> group = null;
-	List<IArtifact> children  = new ArrayList<>();
-	
+	List<IArtifact> children = new ArrayList<>();
+
 	public ObjectArtifact(String name, IScale scale) {
 		this.name = name;
 		this.scale = scale;
 	}
-	
+
 	@Override
 	public Type getType() {
 		return Type.OBJECT;
 	}
 
-	
 	@Override
 	public String getId() {
 		return id;
@@ -49,16 +48,16 @@ public class ObjectArtifact extends Artifact implements IObjectArtifact {
 	public String getName() {
 		return name;
 	}
-	
+
 	@Override
 	public IGeometry getGeometry() {
 		return scale;
 	}
-	
+
 	public void addChild(IArtifact child) {
 		this.children.add(child);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends IArtifact> Collection<T> getChildren(Class<T> cls) {
@@ -70,7 +69,7 @@ public class ObjectArtifact extends Artifact implements IObjectArtifact {
 		}
 		return ret;
 	}
-	
+
 	@Override
 	public Iterator<IArtifact> iterator() {
 		return group == null ? Lists.newArrayList(this).iterator() : group.iterator();
@@ -80,7 +79,7 @@ public class ObjectArtifact extends Artifact implements IObjectArtifact {
 	public int groupSize() {
 		return isEmpty() ? 0 : group == null ? 1 : group.size();
 	}
-	
+
 	@Override
 	public void chain(IArtifact data) {
 		if (this.group == null) {
@@ -88,6 +87,11 @@ public class ObjectArtifact extends Artifact implements IObjectArtifact {
 			this.group.add(this);
 		}
 		this.group.add(data);
+	}
+
+	@Override
+	public IArtifact getGroupMember(int n) {
+		return group == null ? null : (group.size() > n ? group.get(n) : null);
 	}
 
 }

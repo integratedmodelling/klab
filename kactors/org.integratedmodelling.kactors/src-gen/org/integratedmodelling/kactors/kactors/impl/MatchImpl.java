@@ -16,6 +16,7 @@ import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.Match;
+import org.integratedmodelling.kactors.kactors.Observable;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.StatementList;
 
@@ -138,24 +139,14 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
   protected String regexp = REGEXP_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getObservable() <em>Observable</em>}' attribute.
+   * The cached value of the '{@link #getObservable() <em>Observable</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getObservable()
    * @generated
    * @ordered
    */
-  protected static final String OBSERVABLE_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getObservable() <em>Observable</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getObservable()
-   * @generated
-   * @ordered
-   */
-  protected String observable = OBSERVABLE_EDEFAULT;
+  protected Observable observable;
 
   /**
    * The cached value of the '{@link #getLiteral() <em>Literal</em>}' containment reference.
@@ -454,7 +445,7 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
-  public String getObservable()
+  public Observable getObservable()
   {
     return observable;
   }
@@ -464,13 +455,38 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * <!-- end-user-doc -->
    * @generated
    */
-  @Override
-  public void setObservable(String newObservable)
+  public NotificationChain basicSetObservable(Observable newObservable, NotificationChain msgs)
   {
-    String oldObservable = observable;
+    Observable oldObservable = observable;
     observable = newObservable;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__OBSERVABLE, oldObservable, observable));
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__OBSERVABLE, oldObservable, newObservable);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setObservable(Observable newObservable)
+  {
+    if (newObservable != observable)
+    {
+      NotificationChain msgs = null;
+      if (observable != null)
+        msgs = ((InternalEObject)observable).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MATCH__OBSERVABLE, null, msgs);
+      if (newObservable != null)
+        msgs = ((InternalEObject)newObservable).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.MATCH__OBSERVABLE, null, msgs);
+      msgs = basicSetObservable(newObservable, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__OBSERVABLE, newObservable, newObservable));
   }
 
   /**
@@ -785,6 +801,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     {
       case KactorsPackage.MATCH__BODY:
         return basicSetBody(null, msgs);
+      case KactorsPackage.MATCH__OBSERVABLE:
+        return basicSetObservable(null, msgs);
       case KactorsPackage.MATCH__LITERAL:
         return basicSetLiteral(null, msgs);
       case KactorsPackage.MATCH__LIST:
@@ -865,7 +883,7 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         setRegexp((String)newValue);
         return;
       case KactorsPackage.MATCH__OBSERVABLE:
-        setObservable((String)newValue);
+        setObservable((Observable)newValue);
         return;
       case KactorsPackage.MATCH__LITERAL:
         setLiteral((Literal)newValue);
@@ -921,7 +939,7 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         setRegexp(REGEXP_EDEFAULT);
         return;
       case KactorsPackage.MATCH__OBSERVABLE:
-        setObservable(OBSERVABLE_EDEFAULT);
+        setObservable((Observable)null);
         return;
       case KactorsPackage.MATCH__LITERAL:
         setLiteral((Literal)null);
@@ -972,7 +990,7 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
       case KactorsPackage.MATCH__REGEXP:
         return REGEXP_EDEFAULT == null ? regexp != null : !REGEXP_EDEFAULT.equals(regexp);
       case KactorsPackage.MATCH__OBSERVABLE:
-        return OBSERVABLE_EDEFAULT == null ? observable != null : !OBSERVABLE_EDEFAULT.equals(observable);
+        return observable != null;
       case KactorsPackage.MATCH__LITERAL:
         return literal != null;
       case KactorsPackage.MATCH__LIST:
@@ -1012,8 +1030,6 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     result.append(type);
     result.append(", regexp: ");
     result.append(regexp);
-    result.append(", observable: ");
-    result.append(observable);
     result.append(", expr: ");
     result.append(expr);
     result.append(", nodata: ");

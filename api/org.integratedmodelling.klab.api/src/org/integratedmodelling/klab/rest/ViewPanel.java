@@ -15,6 +15,7 @@ public class ViewPanel extends ViewComponent {
 	
 	public ViewPanel(String name, String style) {
 		setName(name);
+		setId(name);
 		setStyle(style);
 	}
 

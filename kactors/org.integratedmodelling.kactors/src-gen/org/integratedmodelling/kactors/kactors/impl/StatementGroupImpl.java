@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.MessageBody;
+import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.StatementGroup;
 
 /**
@@ -26,6 +27,7 @@ import org.integratedmodelling.kactors.kactors.StatementGroup;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementGroupImpl#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementGroupImpl#getMetadata <em>Metadata</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementGroupImpl#getActions <em>Actions</em>}</li>
  * </ul>
  *
@@ -42,6 +44,16 @@ public class StatementGroupImpl extends MinimalEObjectImpl.Container implements 
    * @ordered
    */
   protected MessageBody body;
+
+  /**
+   * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMetadata()
+   * @generated
+   * @ordered
+   */
+  protected Metadata metadata;
 
   /**
    * The cached value of the '{@link #getActions() <em>Actions</em>}' containment reference.
@@ -130,6 +142,56 @@ public class StatementGroupImpl extends MinimalEObjectImpl.Container implements 
    * @generated
    */
   @Override
+  public Metadata getMetadata()
+  {
+    return metadata;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetMetadata(Metadata newMetadata, NotificationChain msgs)
+  {
+    Metadata oldMetadata = metadata;
+    metadata = newMetadata;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT_GROUP__METADATA, oldMetadata, newMetadata);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setMetadata(Metadata newMetadata)
+  {
+    if (newMetadata != metadata)
+    {
+      NotificationChain msgs = null;
+      if (metadata != null)
+        msgs = ((InternalEObject)metadata).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT_GROUP__METADATA, null, msgs);
+      if (newMetadata != null)
+        msgs = ((InternalEObject)newMetadata).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT_GROUP__METADATA, null, msgs);
+      msgs = basicSetMetadata(newMetadata, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT_GROUP__METADATA, newMetadata, newMetadata));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Actions getActions()
   {
     return actions;
@@ -186,6 +248,8 @@ public class StatementGroupImpl extends MinimalEObjectImpl.Container implements 
     {
       case KactorsPackage.STATEMENT_GROUP__BODY:
         return basicSetBody(null, msgs);
+      case KactorsPackage.STATEMENT_GROUP__METADATA:
+        return basicSetMetadata(null, msgs);
       case KactorsPackage.STATEMENT_GROUP__ACTIONS:
         return basicSetActions(null, msgs);
     }
@@ -204,6 +268,8 @@ public class StatementGroupImpl extends MinimalEObjectImpl.Container implements 
     {
       case KactorsPackage.STATEMENT_GROUP__BODY:
         return getBody();
+      case KactorsPackage.STATEMENT_GROUP__METADATA:
+        return getMetadata();
       case KactorsPackage.STATEMENT_GROUP__ACTIONS:
         return getActions();
     }
@@ -222,6 +288,9 @@ public class StatementGroupImpl extends MinimalEObjectImpl.Container implements 
     {
       case KactorsPackage.STATEMENT_GROUP__BODY:
         setBody((MessageBody)newValue);
+        return;
+      case KactorsPackage.STATEMENT_GROUP__METADATA:
+        setMetadata((Metadata)newValue);
         return;
       case KactorsPackage.STATEMENT_GROUP__ACTIONS:
         setActions((Actions)newValue);
@@ -243,6 +312,9 @@ public class StatementGroupImpl extends MinimalEObjectImpl.Container implements 
       case KactorsPackage.STATEMENT_GROUP__BODY:
         setBody((MessageBody)null);
         return;
+      case KactorsPackage.STATEMENT_GROUP__METADATA:
+        setMetadata((Metadata)null);
+        return;
       case KactorsPackage.STATEMENT_GROUP__ACTIONS:
         setActions((Actions)null);
         return;
@@ -262,6 +334,8 @@ public class StatementGroupImpl extends MinimalEObjectImpl.Container implements 
     {
       case KactorsPackage.STATEMENT_GROUP__BODY:
         return body != null;
+      case KactorsPackage.STATEMENT_GROUP__METADATA:
+        return metadata != null;
       case KactorsPackage.STATEMENT_GROUP__ACTIONS:
         return actions != null;
     }

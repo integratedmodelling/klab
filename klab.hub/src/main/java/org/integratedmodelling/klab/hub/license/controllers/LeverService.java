@@ -32,7 +32,7 @@ public class LeverService implements GenericHubService<MongoLever>{
 	}
 
 	@Override
-	public MongoLever delete(MongoLever model) {
+	public void delete(String name) {
 		// TODO Auto-generated method stub
 		return null;
 	}

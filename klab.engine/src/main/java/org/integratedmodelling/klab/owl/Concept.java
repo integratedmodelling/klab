@@ -127,16 +127,16 @@ public class Concept extends Knowledge implements IConcept {
 			return false;
 		}
 
-		
 		Concept cc = (Concept) concept;
+
+		/*
+		 * TODO first use "isn't" based on the enum types to quickly cut out those that
+		 * don't match. I guess they have to have the exact same types (?)
+		 */
 
 		if (this == cc || getDefinition().equals(cc.getDefinition())) {
 			return true;
 		}
-
-//		if (cc.equals(this)) {
-//			return true;
-//		}
 
 		Collection<IConcept> collection = getAllParents();
 		collection.add(this);
@@ -522,7 +522,7 @@ public class Concept extends Knowledge implements IConcept {
 			IKimObject object = Resources.INSTANCE.getModelObject(getUrn());
 			if (object instanceof IConceptDefinition
 					&& ((IConceptDefinition) object).getStatement().getMetadata() != null) {
-				this.metadata.putAll(((IConceptDefinition) object).getStatement().getMetadata().getData());
+				this.metadata.putAll(((IConceptDefinition) object).getStatement().getMetadata());
 			}
 		}
 		return this.metadata;

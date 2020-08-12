@@ -18,7 +18,8 @@ public interface IScheduler {
 
 	enum Synchronicity {
 		/**
-		 * Fully asynchronous tasks, started on time and left to complete.
+		 * Fully asynchronous tasks, started on time and left alone to complete in their
+		 * own time while the scheduler moves on.
 		 */
 		ASYNCHRONOUS,
 
@@ -45,7 +46,8 @@ public interface IScheduler {
 	void stop();
 
 	/**
-	 * Get the synchronicity mode. The default mode should be SYNCHRONOUS or TIME_SYNCHRONOUS.
+	 * Get the synchronicity mode. The default mode should be SYNCHRONOUS or
+	 * TIME_SYNCHRONOUS.
 	 * 
 	 * @return
 	 */

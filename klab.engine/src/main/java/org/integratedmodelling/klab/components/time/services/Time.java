@@ -138,7 +138,8 @@ public class Time implements IExpression {
 		}
 
 		if (resolution == null) {
-			throw new KlabValidationException("ambiguous time specification: cannot establish resolution");
+			// partial time = we need SOME time, no matter which.
+			return org.integratedmodelling.klab.components.time.extents.Time.partial();
 		}
 
 		return org.integratedmodelling.klab.components.time.extents.Time.create(type, resolution.getType(),

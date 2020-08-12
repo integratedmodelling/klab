@@ -110,8 +110,13 @@ Modes of extension:
 
 See the developer documentation to learn how to define components.
 
+include::./modeling/random.adoc[]
+
+include::./modeling/weather.adoc[]
+
 include::./modeling/gis.adoc[]
 
 include::./modeling/mca.adoc[]
 
-include::./modeling/weka.adoc[]
+include::./modeling/ml.adoc[]
+

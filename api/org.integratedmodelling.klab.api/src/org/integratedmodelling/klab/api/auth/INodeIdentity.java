@@ -15,8 +15,10 @@
  */
 package org.integratedmodelling.klab.api.auth;
 
+import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
 
 /**
@@ -69,4 +71,11 @@ public interface INodeIdentity extends IServerIdentity {
      * @return
      */
 	Set<String> getCatalogIds();
+	
+	/**
+	 * Authorities and their capabilities.
+	 * 
+	 * @return
+	 */
+	Map<String, IAuthority.Capabilities> getAuthorities();	
 }

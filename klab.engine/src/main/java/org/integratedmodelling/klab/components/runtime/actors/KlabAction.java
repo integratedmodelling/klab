@@ -7,11 +7,14 @@ import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fire;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.rest.ViewComponent;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 
 import akka.actor.typed.ActorRef;
@@ -26,57 +29,103 @@ import akka.actor.typed.ActorRef;
  */
 public abstract class KlabAction {
 
-	public static enum Synchronicity {
+	/**
+	 * An action implementing this interface will be saved in the actor where the
+	 * calling behavior is running and be enabled to receive later messages just
+	 * like an actor.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public interface Actor {
+
 		/**
-		 * Essentially a function: enters and fires, always and within a short enough time
-		 * to be waited for.
+		 * The actor name, normally established using a tag.
+		 * 
+		 * @return
 		 */
-		FIRE_IMMEDIATELY_AND_EXIT,
+		String getName();
+		
 		/**
-		 * Fire once and exit, but with no guarantee as to when.
+		 * Done by the calling actor using arguments and/or metadata
+		 * @param name
 		 */
-		FIRE_LATER_AND_EXIT,
+		void setName(String name);
+
 		/**
-		 * Fire zero or more times, keep running until the parent behavior ends.
+		 * Implement the response to a messages sent in k.Actors.
+		 * 
+		 * @param message
+		 * @param scope
 		 */
-		FIRE_AND_WAIT
+		void onMessage(KlabMessage message, Scope scope);
+
 	}
-	
+
+	/**
+	 * A component is an Actor that reacts through an MVC pattern.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public interface Component extends Actor {
+
+		/**
+		 * Return a descriptor of the view component that will provide
+		 * the view for this actor.
+		 * @return
+		 */
+		public ViewComponent getViewComponent();
+		
+	}
+
 	protected ActorRef<KlabMessage> sender;
 	protected IParameters<String> arguments;
 	protected KlabActor.Scope scope;
 	protected IActorIdentity<KlabMessage> identity;
 	protected Session session;
-
+	// the ID of the call that generated this action in the k.Actors code. May be
+	// null when the action is create by the
+	// scheduler or other API.
+	protected String callId;
 	ObjectExpression expression = null;
 
 	protected final Boolean DEFAULT_FIRE = Boolean.TRUE;
 
-	public KlabAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope, ActorRef<KlabMessage> sender) {
+	public KlabAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+			ActorRef<KlabMessage> sender, String callId) {
 		this.sender = sender;
-		this.session = identity.getParentIdentity(Session.class);
+		this.session = identity == null ? null : identity.getParentIdentity(Session.class);
 		this.arguments = arguments;
 		this.scope = scope;
 		this.identity = identity;
+		this.callId = callId;
 	}
 
+	/**
+	 * Called at actor shutdown
+	 */
+	protected void dispose() {
+		
+	}
+	
 	public void fire(Object value, boolean isFinal) {
 		if (scope.listenerId != null) {
-			this.sender.tell(new Fire(scope.listenerId, value, isFinal));
+			this.sender.tell(new Fire(scope.listenerId, value, isFinal, scope.appId));
 		}
 	}
 
 	public void fail(Object... args) {
-		if (args != null) {
+		if (args != null && scope != null) {
 			scope.runtimeScope.getMonitor().error(args);
 		}
 		fire(false, true);
 	}
 
-	protected Object evaluateArgument(String argument) {
+	protected Object evaluateArgument(String argument, Scope scope) {
 		Object arg = arguments.get(argument);
 		if (arg instanceof KActorsValue) {
-			arg = evaluateInContext((KActorsValue) arg);
+			arg = evaluateInContext((KActorsValue) arg, scope);
 		}
 		return arg;
 	}
@@ -86,15 +135,7 @@ public abstract class KlabAction {
 		scope.runtimeScope.getMonitor().error(message);
 	}
 
-	/**
-	 * TODO call this - used to remove listeners etc. when an action has finished
-	 * running and nothing should be fired.
-	 */
-	void dispose() {
-
-	}
-
-	protected Object evaluateInContext(KActorsValue arg) {
+	protected Object evaluateInContext(KActorsValue arg, Scope scope) {
 		switch (arg.getType()) {
 		case ANYTHING:
 		case ANYVALUE:
@@ -115,7 +156,7 @@ public abstract class KlabAction {
 			if (this.expression == null) {
 				this.expression = new ObjectExpression((IKimExpression) arg.getValue(), scope.runtimeScope);
 			}
-			return this.expression.eval(scope.runtimeScope, identity);
+			return this.expression.eval(scope.runtimeScope, identity, Parameters.create(scope.symbolTable));
 
 		case BOOLEAN:
 		case CLASS:
@@ -158,29 +199,34 @@ public abstract class KlabAction {
 		return null;
 	}
 
-	protected <T> T evaluateArgument(String argument, T defaultValue) {
-		Object arg = evaluateArgument(argument);
+	protected <T> T evaluateArgument(String argument, Scope scope, T defaultValue) {
+		Object arg = evaluateArgument(argument, scope);
 		return arg == null ? defaultValue
 				: Utils.asType(arg, defaultValue == null ? Object.class : defaultValue.getClass());
 	}
 
-	protected <T> T evaluateArgument(int argumentIndex, T defaultValue) {
-		Object arg = evaluateArgument(argumentIndex);
+	protected <T> T evaluateArgument(int argumentIndex, Scope scope, T defaultValue) {
+		Object arg = evaluateArgument(argumentIndex, scope);
 		return arg == null ? defaultValue
 				: Utils.asType(arg, defaultValue == null ? Object.class : defaultValue.getClass());
 	}
 
-	protected Object evaluateArgument(int argumentIndex) {
+	protected Object evaluateArgument(int argumentIndex, Scope scope) {
 		Object arg = null;
-		if (arguments.getUnnamedKeys().size() > argumentIndex) {
+		if (arguments != null && arguments.getUnnamedKeys().size() > argumentIndex) {
 			arg = arguments.get(arguments.getUnnamedKeys().get(argumentIndex));
 			if (arg instanceof KActorsValue) {
-				arg = evaluateInContext((KActorsValue) arg);
+				arg = evaluateInContext((KActorsValue) arg, scope);
 			}
 		}
 		return arg;
 	}
 
-	abstract void run();
+	/**
+	 * May be called more than once, so pass the scope again.
+	 * 
+	 * @param scope
+	 */
+	abstract void run(KlabActor.Scope scope);
 
 }

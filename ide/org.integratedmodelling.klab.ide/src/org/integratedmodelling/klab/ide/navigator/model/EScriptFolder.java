@@ -31,7 +31,7 @@ public class EScriptFolder extends ENavigatorItem {
     }
 
     @Override
-    public ENavigatorItem[] getEChildren() {
+    public Object[] getEChildren() {
         List<ENavigatorItem> ret = new ArrayList<>();
 		for (IKActorsBehavior child : project.delegate.getApps()) {
 			ret.add(new EActorBehavior(child, this));
@@ -39,13 +39,13 @@ public class EScriptFolder extends ENavigatorItem {
         if (folder.isDirectory()) {
             for (File script : folder.listFiles()) {
                 if (script.isDirectory()) {
-                    ret.add(new EScriptFolder(project, this, script));
+                    ret.add(new EFolder(project, this, script));
                 } else if (script.toString().endsWith(".kim")) {
                     ret.add(new EScript(Activator.loader().getNamespace(script), this));
                 }
             }
         }
-        return ret.toArray(new ENavigatorItem[ret.size()]);
+        return ret.toArray();
     }
 
     @Override

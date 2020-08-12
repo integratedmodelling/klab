@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.engine.resources;
 
 import java.io.File;
-import java.io.IOException;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,9 +12,13 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.owl.Concept;
@@ -156,6 +159,19 @@ public class CoreOntology extends AbstractWorkspace {
 		public static final String UNCERTAINTY_OBSERVATION = "observation:UncertaintyObservation";
 		public static final String PRESENCE_OBSERVATION = "observation:PresenceObservation";
 
+		// contextual identities
+		public static final String TEMPORAL_IDENTITY = "observation:TemporalIdentity";
+		public static final String SPATIAL_IDENTITY = "observation:SpatialIdentity";
+		public static final String PUNTAL_IDENTITY = "observation:Puntal";
+		public static final String LINEAL_IDENTITY = "observation:Lineal";
+		public static final String AREAL_IDENTITY = "observation:Areal";
+		public static final String VOLUMETRIC_IDENTITY = "observation:Volumetric";
+		public static final String YEARLY_IDENTITY = "observation:Yearly";
+		public static final String MONTHLY_IDENTITY = "observation:Monthly";
+		public static final String WEEKLY_IDENTITY = "observation:Weekly";
+		public static final String DAILY_IDENTITY = "observation:Daily";
+		public static final String HOURLY_IDENTITY = "observation:Hourly";
+
 		// annotation property that specifies the base SI unit for a physical property
 		public static final String SI_UNIT_PROPERTY = "observation:unit";
 
@@ -190,31 +206,6 @@ public class CoreOntology extends AbstractWorkspace {
 
 		// only annotation used for subjective ranking in the default behavior
 		public static final String RELIABILITY = "im:reliability";
-
-		/*
-		 * model objects for function return types and the like
-		 */
-//		public static final String INTEGER = "klab:ShortInteger";
-//		public static final String FLOAT = "klab:ShortFloat";
-//		public static final String TEXT = "klab:Text";
-//		public static final String LONG = "klab:LongInteger";
-//		public static final String DOUBLE = "klab:LongFloat";
-//		public static final String BOOLEAN = "klab:Boolean";
-//		public static final String NUMBER = "klab:Number";
-//		public static final String SHAPE = "klab:Shape";
-
-//		public static final String STATE_CONTEXTUALIZER = "klab:StateContextualizer";
-//		public static final String SUBJECT_CONTEXTUALIZER = "klab:SubjectContextualizer";
-//		public static final String PROCESS_CONTEXTUALIZER = "klab:ProcessContextualizer";
-//		public static final String EVENT_INSTANTIATOR = "klab:EventInstantiator";
-//		public static final String SUBJECT_INSTANTIATOR = "klab:SubjectInstantiator";
-//		public static final String EVENT_CONTEXTUALIZER = "klab:EventContextualizer";
-//		public static final String RELATIONSHIP_INSTANTIATOR = "klab:RelationshipInstantiator";
-//		public static final String FUNCTIONAL_RELATIONSHIP_CONTEXTUALIZER = "klab:FunctionalRelationshipContextualizer";
-//		public static final String STRUCTURAL_RELATIONSHIP_CONTEXTUALIZER = "klab:StructuralRelationshipContextualizer";
-//		public static final String DATASOURCE = "klab:DataSource";
-//		public static final String OBJECTSOURCE = "klab:ObjectSource";
-//		public static final String LOOKUP_TABLE = "klab:LookupTable";
 
 		/*
 		 * annotation properties supporting k.LAB functions
@@ -372,11 +363,7 @@ public class CoreOntology extends AbstractWorkspace {
 		IKimLoader ret = null;
 		if (!synced) {
 			synced = true;
-			try {
-				Resources.INSTANCE.extractKnowledgeFromClasspath(getRoot());
-			} catch (IOException e) {
-				throw new KlabIOException(e);
-			}
+			Resources.INSTANCE.extractKnowledgeFromClasspath(getRoot());
 		}
 		OWL.INSTANCE.initialize(getRoot(), monitor);
 
@@ -564,6 +551,61 @@ public class CoreOntology extends AbstractWorkspace {
 		// }
 		// }
 		return concept;
+	}
+
+	/**
+	 * Return the spatial nature, if any, of the passed concept, which should be a
+	 * countable, or null.
+	 * 
+	 * @param concept
+	 * @return
+	 */
+	public ExtentDimension getSpatialNature(IConcept concept) {
+		for (IConcept identity : Traits.INSTANCE.getIdentities(concept)) {
+			if (identity.is(Concepts.c(NS.SPATIAL_IDENTITY))) {
+				if (identity.is(Concepts.c(NS.AREAL_IDENTITY))) {
+					return ExtentDimension.AREAL;
+				} else if (identity.is(Concepts.c(NS.PUNTAL_IDENTITY))) {
+					return ExtentDimension.PUNTAL;
+				}
+				if (identity.is(Concepts.c(NS.LINEAL_IDENTITY))) {
+					return ExtentDimension.LINEAL;
+				}
+				if (identity.is(Concepts.c(NS.VOLUMETRIC_IDENTITY))) {
+					return ExtentDimension.VOLUMETRIC;
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Return the temporal resolution implied in the passed concept, which should be
+	 * an event, or null.
+	 * 
+	 * TODO add the multiplier from (TBI) data properties associated with the
+	 * identity.
+	 * 
+	 * @param concept
+	 * @return
+	 */
+	public ITime.Resolution getTemporalNature(IConcept concept) {
+		for (IConcept identity : Traits.INSTANCE.getIdentities(concept)) {
+			if (identity.is(Concepts.c(NS.TEMPORAL_IDENTITY))) {
+				if (identity.is(Concepts.c(NS.YEARLY_IDENTITY))) {
+					return Time.resolution(1, ITime.Resolution.Type.YEAR);
+				} else if (identity.is(Concepts.c(NS.HOURLY_IDENTITY))) {
+					return Time.resolution(1, ITime.Resolution.Type.HOUR);
+				} else if (identity.is(Concepts.c(NS.WEEKLY_IDENTITY))) {
+					return Time.resolution(1, ITime.Resolution.Type.WEEK);
+				} else if (identity.is(Concepts.c(NS.MONTHLY_IDENTITY))) {
+					return Time.resolution(1, ITime.Resolution.Type.MONTH);
+				} else if (identity.is(Concepts.c(NS.DAILY_IDENTITY))) {
+					return Time.resolution(1, ITime.Resolution.Type.DAY);
+				}
+			}
+		}
+		return null;
 	}
 
 }

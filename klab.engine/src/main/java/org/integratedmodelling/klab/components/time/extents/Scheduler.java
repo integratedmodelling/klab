@@ -159,8 +159,9 @@ public class Scheduler implements IScheduler {
 					/*
 					 * RUN THE ACTION
 					 */
-					recipient.getActor().tell(new KActorsMessage(sender, "self", scheduled.getId(), null,
-							new KlabActor.Scope(observation, scheduled, transitionContext)));
+					String appId = null /* TODO! */;
+					recipient.getActor().tell(new KActorsMessage(sender, "self", scheduled.getId(), null, null,
+							new KlabActor.Scope(observation, appId, transitionContext), appId));
 
 					recipient.finalizeTransition((IScale) transitionScale);
 
@@ -424,7 +425,6 @@ public class Scheduler implements IScheduler {
 	}
 
 	public void schedule(Action action, Observation targetObservation, Time time, RuntimeScope runtimeScope) {
-		// TODO Auto-generated method stub
 
 		/*
 		 * make a scale from the scheduling specs and merge

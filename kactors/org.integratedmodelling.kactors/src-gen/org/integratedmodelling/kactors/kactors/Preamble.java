@@ -16,21 +16,29 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isPublic <em>Public</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isMobile <em>Mobile</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isDesktop <em>Desktop</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isWeb <em>Web</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isApp <em>App</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isTask <em>Task</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isTest <em>Test</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isComponent <em>Component</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isUser <em>User</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isLibrary <em>Library</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isBehavior <em>Behavior</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getImports <em>Imports</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getWorldview <em>Worldview</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getObservables <em>Observables</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getDescription <em>Description</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getPermissions <em>Permissions</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getAuthors <em>Authors</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getStyle <em>Style</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getInlineStyle <em>Inline Style</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getLogo <em>Logo</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getVersion <em>Version</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getCreated <em>Created</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getCreatecomment <em>Createcomment</em>}</li>
@@ -44,6 +52,94 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Preamble extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Public</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Public</em>' attribute.
+   * @see #setPublic(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Public()
+   * @model
+   * @generated
+   */
+  boolean isPublic();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isPublic <em>Public</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Public</em>' attribute.
+   * @see #isPublic()
+   * @generated
+   */
+  void setPublic(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Mobile</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Mobile</em>' attribute.
+   * @see #setMobile(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Mobile()
+   * @model
+   * @generated
+   */
+  boolean isMobile();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isMobile <em>Mobile</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Mobile</em>' attribute.
+   * @see #isMobile()
+   * @generated
+   */
+  void setMobile(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Desktop</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Desktop</em>' attribute.
+   * @see #setDesktop(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Desktop()
+   * @model
+   * @generated
+   */
+  boolean isDesktop();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isDesktop <em>Desktop</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Desktop</em>' attribute.
+   * @see #isDesktop()
+   * @generated
+   */
+  void setDesktop(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Web</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Web</em>' attribute.
+   * @see #setWeb(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Web()
+   * @model
+   * @generated
+   */
+  boolean isWeb();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isWeb <em>Web</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Web</em>' attribute.
+   * @see #isWeb()
+   * @generated
+   */
+  void setWeb(boolean value);
+
   /**
    * Returns the value of the '<em><b>App</b></em>' attribute.
    * <!-- begin-user-doc -->
@@ -67,6 +163,28 @@ public interface Preamble extends EObject
   void setApp(boolean value);
 
   /**
+   * Returns the value of the '<em><b>Task</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Task</em>' attribute.
+   * @see #setTask(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Task()
+   * @model
+   * @generated
+   */
+  boolean isTask();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isTask <em>Task</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Task</em>' attribute.
+   * @see #isTask()
+   * @generated
+   */
+  void setTask(boolean value);
+
+  /**
    * Returns the value of the '<em><b>Test</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -87,6 +205,28 @@ public interface Preamble extends EObject
    * @generated
    */
   void setTest(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Component</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Component</em>' attribute.
+   * @see #setComponent(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Component()
+   * @model
+   * @generated
+   */
+  boolean isComponent();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isComponent <em>Component</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Component</em>' attribute.
+   * @see #isComponent()
+   * @generated
+   */
+  void setComponent(boolean value);
 
   /**
    * Returns the value of the '<em><b>User</b></em>' attribute.
@@ -177,6 +317,28 @@ public interface Preamble extends EObject
   void setName(String value);
 
   /**
+   * Returns the value of the '<em><b>Label</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Label</em>' attribute.
+   * @see #setLabel(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Label()
+   * @model
+   * @generated
+   */
+  String getLabel();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getLabel <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Label</em>' attribute.
+   * @see #getLabel()
+   * @generated
+   */
+  void setLabel(String value);
+
+  /**
    * Returns the value of the '<em><b>Imports</b></em>' attribute list.
    * The list contents are of type {@link java.lang.String}.
    * <!-- begin-user-doc -->
@@ -211,26 +373,26 @@ public interface Preamble extends EObject
   void setWorldview(String value);
 
   /**
-   * Returns the value of the '<em><b>Observable</b></em>' attribute.
+   * Returns the value of the '<em><b>Observable</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Observable</em>' attribute.
-   * @see #setObservable(String)
+   * @return the value of the '<em>Observable</em>' containment reference.
+   * @see #setObservable(Observable)
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Observable()
-   * @model
+   * @model containment="true"
    * @generated
    */
-  String getObservable();
+  Observable getObservable();
 
   /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getObservable <em>Observable</em>}' attribute.
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getObservable <em>Observable</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Observable</em>' attribute.
+   * @param value the new value of the '<em>Observable</em>' containment reference.
    * @see #getObservable()
    * @generated
    */
-  void setObservable(String value);
+  void setObservable(Observable value);
 
   /**
    * Returns the value of the '<em><b>Observables</b></em>' containment reference.
@@ -253,28 +415,6 @@ public interface Preamble extends EObject
    * @generated
    */
   void setObservables(List value);
-
-  /**
-   * Returns the value of the '<em><b>Label</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Label</em>' attribute.
-   * @see #setLabel(String)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Label()
-   * @model
-   * @generated
-   */
-  String getLabel();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getLabel <em>Label</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Label</em>' attribute.
-   * @see #getLabel()
-   * @generated
-   */
-  void setLabel(String value);
 
   /**
    * Returns the value of the '<em><b>Description</b></em>' attribute.
@@ -353,6 +493,50 @@ public interface Preamble extends EObject
    * @generated
    */
   void setStyle(String value);
+
+  /**
+   * Returns the value of the '<em><b>Inline Style</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Inline Style</em>' containment reference.
+   * @see #setInlineStyle(Map)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_InlineStyle()
+   * @model containment="true"
+   * @generated
+   */
+  Map getInlineStyle();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getInlineStyle <em>Inline Style</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Inline Style</em>' containment reference.
+   * @see #getInlineStyle()
+   * @generated
+   */
+  void setInlineStyle(Map value);
+
+  /**
+   * Returns the value of the '<em><b>Logo</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Logo</em>' attribute.
+   * @see #setLogo(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Logo()
+   * @model
+   * @generated
+   */
+  String getLogo();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getLogo <em>Logo</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Logo</em>' attribute.
+   * @see #getLogo()
+   * @generated
+   */
+  void setLogo(String value);
 
   /**
    * Returns the value of the '<em><b>Version</b></em>' attribute.

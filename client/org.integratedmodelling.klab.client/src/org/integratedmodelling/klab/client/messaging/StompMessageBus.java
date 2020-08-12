@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
@@ -246,8 +247,9 @@ public class StompMessageBus extends StompSessionHandlerAdapter implements IMess
 
 	@Override
 	public Future<IMessage> ask(IMessage message) {
-		// TODO Auto-generated method stub
-		return null;
+		final CompletableFuture<IMessage> ret = new CompletableFuture<>();
+		post(message, (m)-> ret.complete(m));
+		return ret;
 	}
 
 }

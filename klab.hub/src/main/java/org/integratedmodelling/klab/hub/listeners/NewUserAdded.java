@@ -20,7 +20,6 @@ public class NewUserAdded extends ApplicationEvent{
 	public NewUserAdded(Object source, User user) {
 		super(source);
 		this.user = user;
-		// TODO Auto-generated constructor stub
 	}
 
 	public User getUser() {

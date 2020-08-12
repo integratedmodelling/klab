@@ -1,4 +1,4 @@
-=== Multiple Criteria Analysis in k.LAB
+=== Multiple Criteria Analysis: the `mca` component
 :doctype: book
 
 Overview

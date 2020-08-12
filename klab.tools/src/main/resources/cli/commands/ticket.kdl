@@ -15,3 +15,12 @@ void status
 
 	class org.integratedmodelling.klab.clitool.console.commands.ticket.Status
 }
+
+void 'list'
+	"List all tickets, locally or on a node (requires admin privileges)."
+{
+	optional text node
+		"The node to interrogate."
+
+	class org.integratedmodelling.klab.clitool.console.commands.ticket.List
+}

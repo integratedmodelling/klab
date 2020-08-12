@@ -1,0 +1,33 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  annotations:
+    app.dekorate.io/commit-id: 23a9c7765684ef84de9ea93d86b2617c25656ecf
+    app.dekorate.io/vcs-url: https://bitbucket.org/integratedmodelling/klab.git
+  labels:
+    app.kubernetes.io/name: node-service
+    app.kubernetes.io/version: 0.10.0-SNAPSHOT
+  name: node-service
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: node-service
+      app.kubernetes.io/version: 0.10.0-SNAPSHOT
+  template:
+    metadata:
+      annotations:
+        app.dekorate.io/commit-id: 23a9c7765684ef84de9ea93d86b2617c25656ecf
+        app.dekorate.io/vcs-url: https://bitbucket.org/integratedmodelling/klab.git
+      labels:
+        app.kubernetes.io/name: node-service
+        app.kubernetes.io/version: 0.10.0-SNAPSHOT
+    spec:
+      serviceAccountName: node-service-account
+      imagePullSecrets:
+      - name: dpr-secret
+      containers:
+      - name: node-service
+        image: node:latest
+        imagePullPolicy: IfNotPresent

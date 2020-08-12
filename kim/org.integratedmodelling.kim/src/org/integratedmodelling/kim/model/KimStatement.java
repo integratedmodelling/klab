@@ -12,6 +12,7 @@ import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IParameters;
 
 /**
  * Captures the code aspects of a statement - define, concept, model and observation.
@@ -158,7 +159,7 @@ public class KimStatement extends KimScope implements IKimStatement {
     }
 
     @Override
-    public KimMetadata getMetadata() {
+    public IParameters<String> getMetadata() {
         return metadata;
     }
 

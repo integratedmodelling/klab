@@ -106,7 +106,7 @@ public class ObservationStrategy {
 		for (IObservable dep : model.getDependencies()) {
 			// add all the active dependencies. Only inherent learners deactivate them so far.
 			if (((Observable)dep).isActive()) {
-				ret.add(new ObservationStrategy((Observable) dep, dep.getDescription().getResolutionMode()));
+				ret.add(new ObservationStrategy((Observable) dep, dep.getDescriptionType().getResolutionMode()));
 			}
 		}
 
@@ -120,16 +120,22 @@ public class ObservationStrategy {
 				ret.add(new ObservationStrategy(Observable.promote(target), Mode.INSTANTIATION));
 			}
 		}
+		
+		if (observable.getTemporalInherent() != null) {
+			if (((Model) model).findDependency(observable.getTemporalInherent()) == null) {
+				ret.add(new ObservationStrategy(Observable.promote(observable.getTemporalInherent()), Mode.INSTANTIATION));
+			}
+		}
 
 		/*
 		 * If we're classifying a countable with a trait and we don't have the
 		 * dependency for it, add it.
 		 */
-		if (observable.getDescription() == IActivity.Description.CLASSIFICATION) {
+		if (observable.getDescriptionType() == IActivity.Description.CLASSIFICATION) {
 			IConcept dep = Observables.INSTANCE.getDescribedType(observable.getType());
 			if (((Model) model).findDependency(dep) == null) {
 				ret.add(new ObservationStrategy(Observable.promote(dep),
-						observable.getDescription().getResolutionMode()));
+						observable.getDescriptionType().getResolutionMode()));
 			}
 		}
 
@@ -159,7 +165,7 @@ public class ObservationStrategy {
 			} else if (operator.getSecond() instanceof IObservable) {
 				IObservable dep = (IObservable) operator.getSecond();
 				if (((Model) model).findDependency(dep) == null) {
-					ret.add(new ObservationStrategy((Observable) dep, dep.getDescription().getResolutionMode()));
+					ret.add(new ObservationStrategy((Observable) dep, dep.getDescriptionType().getResolutionMode()));
 				}
 			}
 		}
@@ -291,7 +297,7 @@ public class ObservationStrategy {
 						.buildObservable();
 
 				ObservationStrategy alternative = new ObservationStrategy(target,
-						observable.getDescription().getResolutionMode());
+						observable.getDescriptionType().getResolutionMode());
 
 				alternative.observables.add(filter);
 				alternative.strategy = Strategy.FILTERING;

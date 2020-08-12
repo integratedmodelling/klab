@@ -1,13 +1,50 @@
 spring:
+  application:
+    name: node-service
   cloud:
+    bus:
+      enabled: false
+    discovery:
+      enabled: false
     consul:
-      enabled: true
-      host: localhost
-      port: 8500
+      enabled: false
       config:
-        prefix: config
-        enabled: true
-        defaultContext: node-service
-        profileSeparator: '::'
-        format: yaml
-        data-key: data
+        enabled: false
+    kubernetes:
+      enabled: false
+      discovery:
+        enabled: false
+      config:
+        enabled: false
+
+# ---
+# spring:
+#   profiles: consul-development
+#   cloud:
+#     consul:
+#       enabled: true
+#       host: localhost
+#       port: 8500
+#       config:
+#         prefix: config
+#         enabled: true
+#         defaultContext: node-service
+#         profileSeparator: '::'
+#         format: yaml
+#         data-key: data
+
+
+#---
+#spring:
+#  cloud:
+#    kubernetes:
+#      reload:
+#        enabled: true
+#      config:
+#        enabled: true
+#        name: node-service
+#        namespace: default
+#    consul:
+#      enabled: false
+#      config:
+#        enabled: false

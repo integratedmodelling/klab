@@ -20,8 +20,8 @@ import org.integratedmodelling.klab.hub.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
+import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
 import org.integratedmodelling.klab.hub.listeners.NewUserAdded;
-import org.integratedmodelling.klab.hub.listeners.NewUserPublisher;
 import org.integratedmodelling.klab.hub.repository.UserRepository;
 import org.springframework.ldap.core.AttributesMapper;
 import org.springframework.ldap.core.LdapTemplate;
@@ -37,13 +37,13 @@ public class UserRegistrationServiceImpl implements UserRegistrationService{
 	private PasswordEncoder passwordEncoder;
 	private LdapTemplate ldapTemplate;
 	private LdapUserDetailsManager ldapUserDetailsManager;
-	private NewUserPublisher publisher;
+	private HubEventPublisher<NewUserAdded> publisher;
 	
 	public UserRegistrationServiceImpl(UserRepository userRepository, 
 			PasswordEncoder passwordEncoder, 
 			LdapTemplate ldapTemplate,
 			LdapUserDetailsManager ldapUserDetailsManager,
-			NewUserPublisher publisher) {
+			HubEventPublisher<NewUserAdded> publisher) {
 		super();
 		this.userRepository = userRepository;
 		this.passwordEncoder = passwordEncoder;

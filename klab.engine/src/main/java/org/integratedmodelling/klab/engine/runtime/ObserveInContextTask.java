@@ -9,6 +9,7 @@ import java.util.concurrent.TimeoutException;
 
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -16,6 +17,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
@@ -215,5 +217,6 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 	protected String getTaskDescription() {
 		return taskDescription;
 	}
+
 
 }

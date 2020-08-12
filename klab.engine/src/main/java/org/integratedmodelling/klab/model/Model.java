@@ -150,17 +150,24 @@ public class Model extends KimObject implements IModel {
 
 			Observable obs = Observables.INSTANCE.declare(observable, monitor);
 
-			if (first) {
-				context = obs.is(Type.COUNTABLE) ? obs.getType() : Observables.INSTANCE.getContextType(obs.getType());
-				explicitContext = context != null
-						&& context.equals(Observables.INSTANCE.getDirectContextType(obs.getType()));
-				first = false;
-			}
-
-			if (observable.hasAttributeIdentifier()) {
-				attributeObservables.put(observable.getValue().toString(), obs);
+			if (obs == null) {
+				monitor.error("Undefined semantics for observable '" + observable.getDefinition() + "'", observable);
+				setErrors(true);
 			} else {
-				observables.add(obs);
+
+				if (first) {
+					context = obs.is(Type.COUNTABLE) ? obs.getType()
+							: Observables.INSTANCE.getContextType(obs.getType());
+					explicitContext = context != null
+							&& context.equals(Observables.INSTANCE.getDirectContextType(obs.getType()));
+					first = false;
+				}
+
+				if (observable.hasAttributeIdentifier()) {
+					attributeObservables.put(observable.getValue().toString(), obs);
+				} else {
+					observables.add(obs);
+				}
 			}
 		}
 
@@ -393,7 +400,7 @@ public class Model extends KimObject implements IModel {
 		 */
 
 		if (model.getMetadata() != null) {
-			getMetadata().putAll(model.getMetadata().getData());
+			getMetadata().putAll(model.getMetadata());
 		}
 
 		if (model.getDocstring() != null) {
@@ -465,8 +472,8 @@ public class Model extends KimObject implements IModel {
 
 		for (IContextualizable resource : resources) {
 
-			if (this.observables.get(0).getDescription() == IActivity.Description.CHARACTERIZATION
-					|| this.observables.get(0).getDescription() == IActivity.Description.CLASSIFICATION) {
+			if (this.observables.get(0).getDescriptionType() == IActivity.Description.CHARACTERIZATION
+					|| this.observables.get(0).getDescriptionType() == IActivity.Description.CLASSIFICATION) {
 				// must be a filter
 				if (!isFilter(resource)) {
 					monitor.error("all computations in attribute contextualizers must be filters", this.getStatement());
@@ -580,15 +587,16 @@ public class Model extends KimObject implements IModel {
 				return;
 			}
 
+			Map<ExtentDimension, ExtentDistribution> constraints = getExtentConstraints(observable, monitor);
 			UnitContextualization contextualization = Units.INSTANCE.getContextualization(baseUnit, this.geometry,
-					getExtentConstraints(observable, monitor));
+					constraints);
 
 			/*
 			 * if it's the same as the expected, everything's OK; inherit any aggregation
 			 */
 			if (statedUnit.isCompatible(contextualization.getChosenUnit())) {
 				statedUnit.getAggregatedDimensions()
-						.addAll(contextualization.getChosenUnit().getAggregatedDimensions());
+						.putAll(contextualization.getChosenUnit().getAggregatedDimensions());
 				return;
 			}
 
@@ -597,10 +605,10 @@ public class Model extends KimObject implements IModel {
 			 */
 			for (IUnit unit : contextualization.getCandidateUnits()) {
 				if (statedUnit.isCompatible(unit)) {
-					statedUnit.getAggregatedDimensions().addAll(unit.getAggregatedDimensions());
+					statedUnit.getAggregatedDimensions().putAll(unit.getAggregatedDimensions());
 					monitor.warn("This observable's unit implies " + unit.getAggregatedDimensions()
 							+ " aggregation over a " + ((Geometry) this.geometry).getLabel()
-							+ " context. If this is intentional, add an @extensive annotation to the "
+							+ " context. If this is intentional, add @extensive/@intensive annotations to the "
 							+ (getObservables().get(0).equals(observable) ? "model" : "observable")
 							+ " to remove this warning.", observable);
 					return;
@@ -614,7 +622,7 @@ public class Model extends KimObject implements IModel {
 			monitor.error("Unit " + statedUnit + " is incompatible with this observable in a "
 					+ ((Geometry) this.geometry).getLabel() + " context"
 					+ (baseUnit.isCompatible(contextualization.getChosenUnit())
-							? ". You may add an @intensive annotation to the model to force its dimensionality."
+							? ". You may add @intensive/@extensive annotations to force dimensionality."
 							: ""),
 					observable);
 		}
@@ -636,54 +644,63 @@ public class Model extends KimObject implements IModel {
 		 * each observable. If so, they completely replace the annotation set (there is
 		 * no inheritance).
 		 */
-		Collection<IAnnotation> annotations = isModel ? Annotations.INSTANCE.collectAnnotations(this)
-				: Annotations.INSTANCE.collectAnnotations(observable);
+		Collection<IAnnotation> annotations = filterAnnotations(isModel ? Annotations.INSTANCE.collectAnnotations(this)
+				: Annotations.INSTANCE.collectAnnotations(observable));
 		if (!isModel && annotations.isEmpty()) {
-			annotations = Annotations.INSTANCE.collectAnnotations(this);
+			annotations = filterAnnotations(Annotations.INSTANCE.collectAnnotations(this));
 		}
 
 		for (IAnnotation annotation : annotations) {
-			if (annotation.getName().equals("extensive") || annotation.getName().equals("intensive")) {
-				for (Object o : annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, List.class)) {
-					switch (o.toString()) {
-					case "space":
-					case "area":
-						ret.put(ExtentDimension.AREAL,
-								annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-										: ExtentDistribution.INTENSIVE);
-						break;
-					case "line":
-						ret.put(ExtentDimension.LINEAL,
-								annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-										: ExtentDistribution.INTENSIVE);
-						break;
-					case "volume":
-						ret.put(ExtentDimension.VOLUMETRIC,
-								annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-										: ExtentDistribution.INTENSIVE);
-						break;
-					case "time":
-						ret.put(ExtentDimension.TEMPORAL,
-								annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-										: ExtentDistribution.INTENSIVE);
-						break;
-					case "numerosity":
-						ret.put(ExtentDimension.CONCEPTUAL,
-								annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
-										: ExtentDistribution.INTENSIVE);
-						break;
-					default:
-						if (monitor != null) {
-							monitor.error(
-									"Illegal extent in " + annotation.getName() + " annotation: " + o
-											+ ": allowed are space|area, line, volume, time and numerosity",
-									getStatement());
-						}
+
+			for (Object o : annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, List.class)) {
+				switch (o.toString()) {
+				case "space":
+				case "area":
+					ret.put(ExtentDimension.AREAL,
+							annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+									: ExtentDistribution.INTENSIVE);
+					break;
+				case "line":
+					ret.put(ExtentDimension.LINEAL,
+							annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+									: ExtentDistribution.INTENSIVE);
+					break;
+				case "volume":
+					ret.put(ExtentDimension.VOLUMETRIC,
+							annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+									: ExtentDistribution.INTENSIVE);
+					break;
+				case "time":
+					ret.put(ExtentDimension.TEMPORAL,
+							annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+									: ExtentDistribution.INTENSIVE);
+					break;
+				case "numerosity":
+					ret.put(ExtentDimension.CONCEPTUAL,
+							annotation.getName().equals("extensive") ? ExtentDistribution.EXTENSIVE
+									: ExtentDistribution.INTENSIVE);
+					break;
+				default:
+					if (monitor != null) {
+						monitor.error(
+								"Illegal extent in " + annotation.getName() + " annotation: " + o
+										+ ": allowed are space|area, line, volume, time and numerosity",
+								getStatement());
 					}
 				}
 			}
 		}
 
+		return ret;
+	}
+
+	private Collection<IAnnotation> filterAnnotations(Collection<IAnnotation> object) {
+		List<IAnnotation> ret = new ArrayList<>();
+		for (IAnnotation annotation : object) {
+			if ("intensive".equals(annotation.getName()) || "extensive".equals(annotation.getName())) {
+				ret.add(annotation);
+			}
+		}
 		return ret;
 	}
 
@@ -727,7 +744,7 @@ public class Model extends KimObject implements IModel {
 			this.resources.addAll(candidateObservable.getComputation());
 		}
 		if (mainObservable.is(Type.COUNTABLE)
-				|| mainObservable.getDescription() == IActivity.Description.CLASSIFICATION) {
+				|| mainObservable.getDescriptionType() == IActivity.Description.CLASSIFICATION) {
 			this.instantiator = true;
 		}
 	}

@@ -6,6 +6,7 @@ import javax.annotation.PreDestroy;
 import javax.inject.Singleton;
 
 import org.apache.catalina.startup.Tomcat;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.boot.web.embedded.tomcat.TomcatServletWebServerFactory;
@@ -14,17 +15,21 @@ import org.springframework.boot.web.servlet.server.ServletWebServerFactory;
 import org.springframework.cloud.client.discovery.EnableDiscoveryClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.core.env.Environment;
 import org.springframework.http.converter.protobuf.ProtobufHttpMessageConverter;
 import org.springframework.http.converter.protobuf.ProtobufJsonFormatHttpMessageConverter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
+import io.dekorate.kubernetes.annotation.KubernetesApplication;
+
 @Component
 @Singleton
 @EnableAutoConfiguration
 @ComponentScan(basePackages = { "org.integratedmodelling.klab.node.security",
 		"org.integratedmodelling.klab.node.resources", "org.integratedmodelling.klab.node.controllers" })
+@KubernetesApplication
 public class NodeApplication {
 	
 	// property specifying the resource online checking interval in seconds

@@ -75,8 +75,7 @@ public class State extends Observation implements IState, IKeyHolder {
 
 		IStorage<?> layer = layers.get(type);
 		if (layer == null) {
-			layers.put(type,
-					layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale(), getScope()));
+			layers.put(type, layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale(), getScope()));
 		}
 
 		return new StateLayer(this, (IDataStorage<?>) layer);
@@ -133,20 +132,34 @@ public class State extends Observation implements IState, IKeyHolder {
 	@Override
 	public IState at(ILocator locator) {
 
-		/*
-		 * if the locator is a scale, this should not modify it at all, otherwise locate
-		 * the scale to the passed object.
-		 */
-		Scale scale = (Scale) getScale().at(locator);
+		if (locator instanceof ITime && Observations.INSTANCE.occurs(this)) {
 
-		/*
-		 * if the located scale is conformant (i.e. points to whole dimensions or unique
-		 * points on them), return a located instance of this, otherwise create a
-		 * rescaled instance.
-		 */
-		return scale.isConformant(getScale()) 
-				? new LocatedState(this, (Scale) scale, getScope())
-				: new RescalingState(this, (Scale) scale, getScope());
+			/*
+			 * TODO accumulating/subsetting wrapper based on observable semantics if this
+			 * state "occurs", i.e. it belongs to an event or is created by a process. This
+			 * will review the input based on the difference between the passed time and
+			 * ours
+			 */
+
+		} else if (locator instanceof Scale) {
+
+			/*
+			 * if the locator is a scale, this should not modify it at all, otherwise locate
+			 * the scale to the passed object.
+			 */
+			Scale scale = (Scale) getScale().at(locator);
+
+			/*
+			 * if the located scale is conformant (i.e. points to whole dimensions or unique
+			 * points on them), return a located instance of this, otherwise create a
+			 * rescaled instance.
+			 */
+			return scale.isConformant(getScale()) ? new LocatedState(this, (Scale) scale, getScope())
+					: new RescalingState(this, (Scale) scale, getScope());
+
+		}
+
+		return this;
 	}
 
 	@Override
@@ -176,7 +189,7 @@ public class State extends Observation implements IState, IKeyHolder {
 	public IDataStorage<?> getStorage() {
 		return storage;
 	}
-	
+
 	@Override
 	public <T> T aggregate(ILocator geometry, Class<? extends T> cls) {
 		Object o = aggregate(geometry);
@@ -209,14 +222,12 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	@Override
 	public void finalizeTransition(IScale scale) {
-		// TODO store locally 
+		// TODO store locally
 		Observations.INSTANCE.getStateSummary(this, scale);
 		setContextualized(true);
 		if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
 			setDynamic(true);
 		}
 	}
-	
-	
 
 }

@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.clitool.console.commands.ticket;
 
 import java.util.ArrayList;
-import java.util.List;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Klab;
@@ -22,7 +21,7 @@ public class Status implements ICommand {
 
 		String ret = "";
 		String nodeId = call.getParameters().get("node", String.class);
-		List<String> tickets = new ArrayList<>();
+		java.util.List<String> tickets = new ArrayList<>();
 		if (call.getParameters().get("arguments", java.util.List.class).size() > 0) {
 			for (Object o : call.getParameters().get("arguments", java.util.List.class)) {
 				tickets.add(o.toString());

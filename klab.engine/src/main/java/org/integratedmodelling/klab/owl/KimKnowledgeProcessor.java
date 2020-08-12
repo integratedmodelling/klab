@@ -20,6 +20,7 @@ import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimConceptStatement;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
+import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Currencies;
 import org.integratedmodelling.klab.Observables;
@@ -40,6 +41,7 @@ import org.integratedmodelling.klab.model.Annotation;
 import org.integratedmodelling.klab.model.ConceptStatement;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Path;
 
 /**
  * A singleton that handles translation of k.IM knowledge statements to internal
@@ -376,7 +378,7 @@ public enum KimKnowledgeProcessor {
 
 				operand = declareInternal((IKimConcept) operator.getSecond(), (Ontology) declarationOntology, monitor);
 				declaration += " " + operator.getSecond();
-				ret.setReferenceName(ret.getName() + "_"
+				ret.setReferenceName(ret.getReferenceName() + "_"
 						+ ((IKimConcept) operator.getSecond()).getCodeName().replaceAll("\\-", "_"));
 
 			} else if (operator.getSecond() instanceof IKimObservable) {
@@ -434,7 +436,12 @@ public enum KimKnowledgeProcessor {
 		if (concept.getObservable() != null) {
 			main = declareInternal(concept.getObservable(), ontology, monitor);
 		} else if (concept.getName() != null) {
-			main = Concepts.INSTANCE.getConcept(concept.getName());
+			if (concept.getName().contains(":") && Character.isUpperCase(concept.getName().charAt(0))) {
+				main = Concepts.INSTANCE.getAuthorityConcept(Authorities.INSTANCE
+						.getIdentity(Path.getFirst(concept.getName(), ":"), removeTicks(Path.getLast(concept.getName(), ':'))));
+			} else {
+				main = Concepts.INSTANCE.getConcept(concept.getName());
+			}
 		}
 
 		if (main == null) {
@@ -546,7 +553,7 @@ public enum KimKnowledgeProcessor {
 
 		Concept ret = null;
 		try {
-
+			
 			ret = (Concept) builder.buildConcept();
 
 			/*
@@ -583,6 +590,16 @@ public enum KimKnowledgeProcessor {
 		}
 
 		return ret;
+	}
+
+	private String removeTicks(String id) {
+		if (id.startsWith("'") || id.startsWith("\"")) {
+			id = id.substring(1);
+		}
+		if (id.endsWith("'") || id.endsWith("\"")) {
+			id = id.substring(0, id.length() - 1);
+		}
+		return id;
 	}
 
 	private void createProperties(IConcept ret, Namespace ns) {

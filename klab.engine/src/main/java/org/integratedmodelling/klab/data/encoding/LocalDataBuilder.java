@@ -44,6 +44,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 
 	public LocalDataBuilder(IRuntimeScope context) {
 		this.context = context;
+		this.observable = context.getTargetSemantics();
 		if (context.getTargetArtifact() instanceof IState) {
 			this.state = (IState) context.getTargetArtifact();
 		}
@@ -56,9 +57,8 @@ public class LocalDataBuilder implements IKlabData.Builder {
 		this.observation = parent.observation;
 		this.state = state;
 	}
-	
-	public LocalDataBuilder(IObservable observable, String objectName, IGeometry scale,
-			LocalDataBuilder parent) {
+
+	public LocalDataBuilder(IObservable observable, String objectName, IGeometry scale, LocalDataBuilder parent) {
 		this.context = parent.context;
 		this.parent = parent;
 		this.notifications = parent.notifications;
@@ -117,7 +117,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	@Override
 	public Builder startObject(String artifactName, String objectName, IGeometry scale) {
 
-		IObservable observable = context.getSemantics(artifactName);
+//		IObservable observable = context.getSemantics(artifactName);
 		if (observable == null) {
 			throw new IllegalArgumentException(
 					"data builder: cannot find semantics for the artifact named " + artifactName);
@@ -128,8 +128,9 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	@Override
 	public Builder finishObject() {
 
-		this.observation = (IDirectObservation) context.newObservation(observable, objectName, (Scale)scale, metadata);
-		
+		this.observation = (IDirectObservation) context.newObservation(observable, objectName,
+				(scale instanceof Scale ? (Scale) scale : Scale.create((IGeometry) scale)), metadata);
+
 		// for (String key : metadata.keySet()) {
 		// this.observation.getMetadata().put(key, metadata.get(key));
 		// }

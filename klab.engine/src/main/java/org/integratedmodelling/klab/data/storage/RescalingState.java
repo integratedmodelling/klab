@@ -61,7 +61,7 @@ public class RescalingState extends Observation implements IState {
 		this.delegate = state;
 		this.newScale = newScale;
 		this.originalGeometry = ((Scale) state.getScale()).asGeometry();
-		this.observationType = state.getObservable().getDescription();
+		this.observationType = state.getObservable().getDescriptionType();
 		// TODO check if we need to sum in aggregation. Depends on the observable and on
 		// the relationship between the extents (e.g spatially distributed vs. not)
 		// this.redistribute = ...
@@ -72,7 +72,7 @@ public class RescalingState extends Observation implements IState {
 		this.delegate = state;
 		this.newScale = newScale;
 		this.originalGeometry = ((Scale) state.getScale()).asGeometry();
-		this.observationType = newObservable.getDescription();
+		this.observationType = newObservable.getDescriptionType();
 		// TODO check if we need to sum in aggregation. Depends on the observable and on
 		// the relationship between the extents (e.g spatially distributed vs. not)
 		// this.redistribute = ...

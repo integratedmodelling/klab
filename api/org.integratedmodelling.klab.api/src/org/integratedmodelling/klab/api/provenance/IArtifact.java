@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -249,6 +250,14 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 		 * @return
 		 */
 		boolean contains(IArtifact artifact);
+
+		/**
+		 * If an artifact is called into the context by a process, return the process.
+		 * 
+		 * @param artifact
+		 * @return
+		 */
+		IProcess getOwningProcess(IArtifact artifact);
 
 	}
 

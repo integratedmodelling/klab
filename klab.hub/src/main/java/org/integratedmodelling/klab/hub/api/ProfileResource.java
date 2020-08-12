@@ -175,7 +175,7 @@ public class ProfileResource implements OAuth2User{
 	public List<Group> getGroupsList() {
 		List<Group> listOfGroups = new ArrayList<>();
 		for (GroupEntry grp : this.getGroups()) {
-			if(grp != null) {
+			if(grp != null && grp.getExperation().isAfter(DateTime.now())) {
 				Group group = new Group();
 				MongoGroup mGroup = grp.getGroup();
 				group.setId(mGroup.getName());
@@ -229,5 +229,15 @@ public class ProfileResource implements OAuth2User{
 		}
 		cleanedProfile.groupEntries = safeGroups;
 		return cleanedProfile;
+	}
+
+	public ArrayList<String> checkGroupEntries() {
+		ArrayList<String> expired = new ArrayList<String>();
+		for (GroupEntry e : getGroups()) {
+			if(e.getExperation().isAfterNow()) {
+				expired.add(e.getGroupName());
+			}
+		}
+		return expired;
 	}
 }

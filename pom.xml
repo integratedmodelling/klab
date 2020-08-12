@@ -82,6 +82,7 @@
 		<module>components</module>
 		<!-- later (requires mvn 3.0.5 which can't be installed on sua) -->
 		<!--  <module>docs</module> -->
+		<module>authorities</module>
 	</modules>
 
 	<properties>
@@ -245,22 +246,23 @@
 
 	<repositories>
 		<repository>
-			<id>osgeo</id>
-			<name>Open Source Geospatial Foundation Repository</name>
-			<url>http://download.osgeo.org/webdav/geotools/</url>
-		</repository>
+	      	<id>osgeo</id>
+	     	<name>OSGeo Release Repository</name>
+	     	<url>https://repo.osgeo.org/repository/release/</url>
+	     	<snapshots><enabled>false</enabled></snapshots>
+	    	<releases><enabled>true</enabled></releases>
+	  	</repository>
 		<repository>
 			<id>im</id>
 			<name>Integrated Modelling Partnership Repository</name>
 			<url>https://integratedmodelling.org/nexus/repository/releases/</url>
 		</repository>
 		<repository>
-			<snapshots>
-				<enabled>true</enabled>
-			</snapshots>
-			<id>boundless</id>
-			<name>Boundless Maven Repository</name>
-			<url>http://repo.boundlessgeo.com/main</url>
+		  	<id>osgeo-snapshot</id>
+		  	<name>OSGeo Snapshot Repository</name>
+		  	<url>https://repo.osgeo.org/repository/snapshot/</url>
+		 	 <snapshots><enabled>true</enabled></snapshots>
+		  	<releases><enabled>false</enabled></releases>
 		</repository>
 	</repositories>
 

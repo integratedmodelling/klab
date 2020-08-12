@@ -10,6 +10,7 @@ import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -115,6 +116,13 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							 */
 							session.registerObservationContext(((Observation) ret).getScope());
 
+							/*
+							 * tell the scope to notify internal listeners (for actors and the like)
+							 */
+							((Observation) ret).getScope().notifyListeners((IObservation)ret);
+							
+
+							
 						}
 
 						notifyEnd();

@@ -1,0 +1,3997 @@
+{
+  "name": "2014",
+  "groups": {
+    "Durisols": {
+      "code": "DU",
+      "name": "Durisols",
+      "uri": "http://lod.nal.usda.gov/nalt/216347",
+      "description": "Accumulation of moderately soluble salts or non-saline substances - Accumulation of, and cementation by, secondary silica\nOther soils having a petroduric or duric horizon starting ? 100 cm from the soil surface.\nduric horizon\npetroduric horizon",
+      "principalQualifiers": [
+        "Petric",
+        [
+          "Petrogypsic",
+          "Gypsic"
+        ],
+        [
+          "Petrocalcic",
+          "Calcic"
+        ],
+        "Leptic",
+        [
+          "Acric",
+          "Lixic",
+          "Alic",
+          "Luvic"
+        ],
+        [
+          "Hyperskeletic",
+          "Skeletic"
+        ],
+        [
+          "Dystric",
+          "Eutric"
+        ]
+      ],
+      "supplementaryQualifiers": [
+        "Albic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Chromic",
+        "Fractic",
+        "Gleyic",
+        "Novic",
+        "Ochric",
+        "Raptic",
+        "Endosalic",
+        "Sodic",
+        "Stagnic",
+        [
+          "Takyric",
+          "Yermic",
+          "Aridic"
+        ],
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Vertic"
+      ]
+    },
+    "Umbrisols": {
+      "code": "UM",
+      "name": "Umbrisols",
+      "uri": "http://lod.nal.usda.gov/nalt/216368",
+      "description": "Pronounced accumulation of organic matter in the mineral topsoil - Dark topsoil, low base status\nOther soils having an umbric or mollic or hortic horizon.\numbric horizon\nmollic horizon\nhortic horizon",
+      "principalQualifiers": [
+        [
+          "Chernic",
+          "Someric"
+        ],
+        "Fragic",
+        "Leptic",
+        [
+          "Hortic",
+          "Plaggic",
+          "Pretic",
+          "Terric"
+        ],
+        "Mollic",
+        [
+          "Folic",
+          "Histic"
+        ],
+        "Gleyic",
+        "Stagnic",
+        "Fluvic",
+        "Greyzemic",
+        [
+          "Glossic",
+          "Retic"
+        ],
+        [
+          "Acric",
+          "Lixic",
+          "Alic",
+          "Luvic"
+        ],
+        [
+          "Cambic",
+          "Brunic"
+        ],
+        "Skeletic",
+        [
+          "Endodolomitic",
+          "Endocalcaric"
+        ],
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Abruptic",
+        "Albic",
+        "Andic",
+        "Anthric",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Colluvic",
+        "Densic",
+        "Drainic",
+        [
+          "Hyperdystric",
+          "Endoeutric"
+        ],
+        [
+          "Ferralic",
+          "Sideralic"
+        ],
+        "Gelic",
+        "Hyperhumic",
+        "Isolatic",
+        "Lamellic",
+        "Laxic",
+        "Nechic",
+        "Novic",
+        "Ornithic",
+        "Oxyaquic",
+        "Pachic",
+        "Placic",
+        "Raptic",
+        "Relocatic",
+        [
+          "Rhodic",
+          "Chromic"
+        ],
+        "Protospodic",
+        "Sulfidic",
+        "Technic",
+        "Thionic",
+        "Tonguic",
+        "Toxic",
+        "Transportic",
+        "Turbic",
+        "Vitric"
+      ]
+    },
+    "Stagnosols": {
+      "code": "ST",
+      "name": "Stagnosols",
+      "uri": "http://lod.nal.usda.gov/nalt/216366",
+      "description": "Soils distinguished by Fe/Al chemistry - Stagnating water, structural difference and/or moderate textural difference\nOther soils having a layer starting ? 25 cm from the mineral soil surface, that is ? 50 cm thick or ? 25 cm thick and directly overlies continuous rock or technic hard material and that has: 1. stagnic properties in which the area of reductimorphic colours plus the area of oximorphic colours is ? 50% of the layer's total area; and 2. reducing conditions for some time during the year in the major part of the layer's volume that has the reductimorphic colours.\nstagnic properties\narea of reductimorphic colours\narea of oximorphic colours\nreducing conditions",
+      "principalQualifiers": [
+        "Reductic",
+        "Thionic",
+        "Fragic",
+        "Leptic",
+        [
+          "Hydragric",
+          "Anthraquic"
+        ],
+        [
+          "Folic",
+          "Histic"
+        ],
+        [
+          "Mollic",
+          "Umbric"
+        ],
+        "Gleyic",
+        "Albic",
+        "Fluvic",
+        "Vertic",
+        [
+          "Glossic",
+          "Retic"
+        ],
+        [
+          "Acric",
+          "Lixic",
+          "Alic",
+          "Luvic"
+        ],
+        "Calcic",
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        [
+          "Dystric",
+          "Eutric"
+        ]
+      ],
+      "supplementaryQualifiers": [
+        "Alcalic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Capillaric",
+        "Colluvic",
+        "Drainic",
+        [
+          "Ferralic",
+          "Sideralic"
+        ],
+        "Ferric",
+        "Gelic",
+        "Gelistagnic",
+        "Geric",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Inclinic",
+        "Magnesic",
+        "Nechic",
+        "Nitic",
+        "Novic",
+        "Ornithic",
+        "Placic",
+        "Plinthic",
+        "Raptic",
+        [
+          "Rhodic",
+          "Chromic"
+        ],
+        "Skeletic",
+        "Sodic",
+        "Protospodic",
+        "Sulfidic",
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Turbic"
+      ]
+    },
+    "Cryosols": {
+      "code": "CR",
+      "name": "Cryosols",
+      "uri": "http://lod.nal.usda.gov/nalt/216346",
+      "description": "Soils with limitations to root growth - Permafrost-affected\nOther soils having: 1. a cryic horizon starting ? 100 cm from the soil surface; or 2. a cryic horizon starting ? 200 cm from the soil surface and evidence of cryoturbation (frost heave, cryogenic sorting, thermal cracking, ice segregation, patterned ground, etc.) in some layer within ? 100 cm of the soil surface.\ncryic horizons\ncryoturbation",
+      "principalQualifiers": [
+        "Glacic",
+        "Turbic",
+        [
+          "Subaquatic",
+          "Tidalic"
+        ],
+        [
+          "Reductaquic",
+          "Oxyaquic"
+        ],
+        "Leptic",
+        "Protic",
+        [
+          "Folic",
+          "Histic"
+        ],
+        [
+          "Mollic",
+          "Umbric"
+        ],
+        "Natric",
+        "Salic",
+        "Spodic",
+        [
+          "Alic",
+          "Luvic"
+        ],
+        "Calcic",
+        "Cambic",
+        [
+          "Hyperskeletic",
+          "Skeletic"
+        ],
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Abruptic",
+        "Albic",
+        [
+          "Alcalic",
+          "Dystric",
+          "Eutric"
+        ],
+        "Andic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        "Drainic",
+        "Fluvic",
+        "Gypsiric",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Limnic",
+        "Magnesic",
+        "Nechic",
+        "Novic",
+        "Ornithic",
+        "Raptic",
+        "Sodic",
+        "Sulfidic",
+        "Technic",
+        "Tephric",
+        "Thixotropic",
+        "Toxic",
+        "Transportic",
+        "Vitric",
+        [
+          "Yermic",
+          "Aridic"
+        ]
+      ]
+    },
+    "Nitisols": {
+      "code": "NT",
+      "name": "Nitisols",
+      "uri": "http://lod.nal.usda.gov/nalt/216357",
+      "description": "Soils distinguished by Fe/Al chemistry - Low-activity clay, P fixation, many Fe oxides, strongly structured\nOther soils having: 1. a nitic horizon starting ? 100 cm from the soil surface; and 2. no petroplinthic, pisoplinthic, plinthic or vertic horizon starting ? 100 cm from the soil surface; and 3. no layers with reducing conditions above or within the nitic horizon.\nnitic horizon\npetroplinthic horizon\npisoplinthic horizon\nplinthic horizon\nvertic horizon\nreducing conditions",
+      "principalQualifiers": [
+        [
+          "Ferralic",
+          "Sideralic"
+        ],
+        "Ferritic",
+        "Rhodic",
+        [
+          "Hydragric",
+          "Anthraquic",
+          "Pretic"
+        ],
+        [
+          "Mollic",
+          "Umbric"
+        ],
+        [
+          "Acric",
+          "Lixic",
+          "Alic",
+          "Luvic"
+        ],
+        "Geric",
+        [
+          "Dystric",
+          "Eutric"
+        ]
+      ],
+      "supplementaryQualifiers": [
+        "Andic",
+        "Aric",
+        "Colluvic",
+        "Densic",
+        "Ferric",
+        "Endogleyic",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Magnesic",
+        "Novic",
+        "Oxyaquic",
+        "Posic",
+        "Raptic",
+        "Sodic",
+        "Endostagnic",
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Vetic"
+      ]
+    },
+    "Gypsisols": {
+      "code": "GY",
+      "name": "Gypsisols",
+      "uri": "http://lod.nal.usda.gov/nalt/216350",
+      "description": "Accumulation of moderately soluble salts or non-saline substances - Accumulation of secondary gypsum\nOther soils having: 1. a petrogypsic horizon starting ? 100 cm from the soil surface; or 2. both of the following: a. a gypsic horizon starting ? 100 cm from the soil surface; and b. no argic horizon above the gypsic horizon unless the argic horizon is permeated with secondary gypsum or secondary carbonate, throughout.\ngypsic horizon\npetrogypsic horizon\ngypsum\nsecondary carbonate\nargic horizon",
+      "principalQualifiers": [
+        "Petric",
+        [
+          "Petrocalcic",
+          "Calcic"
+        ],
+        "Leptic",
+        [
+          "Lixic",
+          "Luvic"
+        ],
+        [
+          "Hyperskeletic",
+          "Skeletic"
+        ],
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Albic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Arzic",
+        "Fluvic",
+        "Fractic",
+        "Gleyic",
+        [
+          "Hypergypsic",
+          "Hypogypsic"
+        ],
+        "Novic",
+        "Ochric",
+        "Raptic",
+        "Endosalic",
+        "Sodic",
+        "Stagnic",
+        [
+          "Takyric",
+          "Yermic",
+          "Aridic"
+        ],
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Turbic",
+        "Vertic"
+      ]
+    },
+    "Solonetz": {
+      "code": "SN",
+      "name": "Solonetz",
+      "uri": "http://lod.nal.usda.gov/nalt/216365",
+      "description": "Soils with limitations to root growth - With a high content of exchangeable Na\nOther soils having a natric horizon starting ? 100 cm from the soil surface.\nnatric horizon",
+      "principalQualifiers": [
+        "Abruptic",
+        "Gleyic",
+        "Stagnic",
+        "Mollic",
+        "Salic",
+        "Gypsic",
+        [
+          "Petrocalcic",
+          "Calcic"
+        ],
+        "Fractic",
+        "Vertic",
+        "Chromic",
+        "Nudinatric",
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Albic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Neocambic",
+        "Colluvic",
+        "Columnic",
+        "Cutanic",
+        "Differentic",
+        "Duric",
+        "Ferric",
+        "Fluvic",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Magnesic",
+        "Hypernatric",
+        "Novic",
+        "Oxyaquic",
+        "Raptic",
+        "Retic",
+        "Skeletic",
+        [
+          "Takyric",
+          "Yermic",
+          "Aridic"
+        ],
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Turbic"
+      ]
+    },
+    "Planosols": {
+      "code": "PL",
+      "name": "Planosols",
+      "uri": "http://lod.nal.usda.gov/nalt/216360",
+      "description": "Soils distinguished by Fe/Al chemistry - Stagnating water, abrupt textural difference\nOther soils having an abrupt textural difference ? 100 cm from the mineral soil surface; and directly above or below, a layer ? 5 cm thick, that has: 1. stagnic properties in which the area of reductimorphic colours plus the area of oximorphic colours is ? 50% of the layer's total area; and 2. reducing conditions for some time during the year in the major part of the layer's volume that has the reductimorphic colours.\nabrupt textural difference\nstagnic properties\narea of reductimorphic colours\narea of oximorphic colours\nreducing conditions",
+      "principalQualifiers": [
+        "Reductic",
+        "Thionic",
+        "Fragic",
+        "Leptic",
+        [
+          "Hydragric",
+          "Anthraquic"
+        ],
+        [
+          "Folic",
+          "Histic"
+        ],
+        [
+          "Chernic",
+          "Mollic",
+          "Umbric"
+        ],
+        "Gleyic",
+        "Albic",
+        "Fluvic",
+        "Columnic",
+        "Vertic",
+        [
+          "Glossic",
+          "Retic"
+        ],
+        [
+          "Acric",
+          "Lixic",
+          "Alic",
+          "Luvic"
+        ],
+        [
+          "Petroduric",
+          "Duric"
+        ],
+        "Calcic",
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        [
+          "Dystric",
+          "Eutric"
+        ]
+      ],
+      "supplementaryQualifiers": [
+        "Alcalic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Capillaric",
+        "Chromic",
+        "Colluvic",
+        "Densic",
+        "Drainic",
+        [
+          "Ferralic",
+          "Sideralic"
+        ],
+        "Ferric",
+        "Gelic",
+        "Gelistagnic",
+        "Geric",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Inclinic",
+        "Magnesic",
+        "Nechic",
+        "Novic",
+        "Plinthic",
+        "Raptic",
+        "Skeletic",
+        "Sodic",
+        "Sulfidic",
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Turbic"
+      ]
+    },
+    "Phaeozems": {
+      "code": "PH",
+      "name": "Phaeozems",
+      "uri": "http://lod.nal.usda.gov/nalt/216358",
+      "description": "Pronounced accumulation of organic matter in the mineral topsoil - Dark topsoil, no secondary carbonates (unless very deep), high base status\nOther soils having: 1. a mollic horizon; and 2. a base saturation (by 1 M NH4OAc, pH 7) of ? 50% throughout to a depth of 100 cm from the soil surface or to continuous rock, technic hard material or a cemented or indurated layer, whichever is shallower.\nmollic horizon\nbase saturation",
+      "principalQualifiers": [
+        "Rendzic",
+        [
+          "Chernic",
+          "Someric"
+        ],
+        [
+          "Petroduric",
+          "Duric"
+        ],
+        "Petrogypsic",
+        [
+          "Petrocalcic",
+          "Endocalcic"
+        ],
+        "Leptic",
+        [
+          "Irragric",
+          "Hortic",
+          "Pretic",
+          "Terric"
+        ],
+        "Folic",
+        "Gleyic",
+        "Stagnic",
+        "Fluvic",
+        "Vertic",
+        "Greyzemic",
+        [
+          "Glossic",
+          "Retic"
+        ],
+        "Luvic",
+        "Cambic",
+        "Fractic",
+        "Skeletic",
+        "Vermic",
+        "Gypsiric",
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Abruptic",
+        "Albic",
+        "Andic",
+        "Anthric",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Colluvic",
+        "Columnic",
+        "Densic",
+        [
+          "Ferralic",
+          "Sideralic"
+        ],
+        "Hyperhumic",
+        "Isolatic",
+        "Nechic",
+        "Novic",
+        "Oxyaquic",
+        "Pachic",
+        "Raptic",
+        "Relocatic",
+        [
+          "Rhodic",
+          "Chromic"
+        ],
+        "Endosalic",
+        "Sodic",
+        "Technic",
+        "Tephric",
+        "Tonguic",
+        "Transportic",
+        "Turbic",
+        "Vitric"
+      ]
+    },
+    "Retisols": {
+      "code": "RT",
+      "name": "Retisols",
+      "uri": "",
+      "description": "Soils with clay-enriched subsoil - Interfingering of coarser-textured, lighter coloured material into a finer-textured, stronger coloured layer\nOther soils having an argic horizon that\r\nstarts ? 100 cm from the soil surface and has\r\nretic properties at its upper boundary.\nargic horizon\nretic properties",
+      "principalQualifiers": [
+        "Fragic",
+        "Glossic",
+        "Leptic",
+        [
+          "Plaggic",
+          "Pretic",
+          "Terric"
+        ],
+        [
+          "Folic",
+          "Histic"
+        ],
+        "Gleyic",
+        "Stagnic",
+        "Sideralic",
+        "Nudiargic",
+        "Neocambic",
+        "Albic",
+        "Skeletic",
+        [
+          "Endodolomitic",
+          "Endocalcaric"
+        ],
+        [
+          "Dystric",
+          "Eutric"
+        ]
+      ],
+      "supplementaryQualifiers": [
+        "Abruptic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Colluvic",
+        "Cutanic",
+        "Densic",
+        "Differentic",
+        "Drainic",
+        "Gelic",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Nechic",
+        "Novic",
+        "Oxyaquic",
+        "Profondic",
+        "Raptic",
+        "Protospodic",
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Turbic"
+      ]
+    },
+    "Gleysols": {
+      "code": "GL",
+      "name": "Gleysols",
+      "uri": "http://lod.nal.usda.gov/nalt/211604",
+      "description": "Soils distinguished by Fe/Al chemistry - Groundwater-affected, underwater and in tidal areas\nOther soils having one of the following: 1. a layer ? 25 cm thick, and starting ? 40 cm from the mineral soil surface, that has a. gleyic properties throughout; and b. reducing conditions in some parts of every sublayer; or 2. both of the following: a. a mollic or umbric horizon, > 40 cm thick, that has reducing conditions in some parts of every subhorizon, from 40 cm below the mineral soil surface to the lower limit of the mollic or umbric horizon; and b. directly underneath the mollic/umbric horizon, a layer ? 10 cm thick, that has its lower limit ? 65 cm below the mineral soil surface, and that has: i. gleyic properties throughout; and ii. reducing conditions in some parts of every sublayer.\ngleyic properties\nmollic horizon\numbric horizon\nreducing conditions",
+      "principalQualifiers": [
+        "Thionic",
+        "Reductic",
+        [
+          "Subaquatic",
+          "Tidalic"
+        ],
+        [
+          "Hydragric",
+          "Anthraquic"
+        ],
+        [
+          "Folic",
+          "Histic"
+        ],
+        [
+          "Chernic",
+          "Mollic",
+          "Umbric"
+        ],
+        [
+          "Pisoplinthic",
+          "Plinthic"
+        ],
+        "Stagnic",
+        [
+          "Oxygleyic",
+          "Reductigleyic"
+        ],
+        [
+          "Ferralic",
+          "Sideralic"
+        ],
+        "Gypsic",
+        "Calcic",
+        "Spodic",
+        "Fluvic",
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        [
+          "Dystric",
+          "Eutric"
+        ]
+      ],
+      "supplementaryQualifiers": [
+        "Abruptic",
+        [
+          "Acric",
+          "Lixic",
+          "Alic",
+          "Luvic"
+        ],
+        "Alcalic",
+        "Andic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Colluvic",
+        "Drainic",
+        "Fractic",
+        "Gelic",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Inclinic",
+        "Limnic",
+        "Nechic",
+        "Novic",
+        "Petrogleyic",
+        "Raptic",
+        "Relocatic",
+        "Salic",
+        "Skeletic",
+        "Sodic",
+        "Sulfidic",
+        [
+          "Takyric",
+          "Aridic"
+        ],
+        "Technic",
+        "Tephric",
+        "Toxic",
+        "Turbic",
+        "Uterquic",
+        "Vertic",
+        "Vitric"
+      ]
+    },
+    "Vertisols": {
+      "code": "VR",
+      "name": "Vertisols",
+      "uri": "http://lod.nal.usda.gov/nalt/11557",
+      "description": "Soils with limitations to root growth - Alternating wet-dry conditions, shrink-swell clays\nOther soils having: 1. a vertic horizon starting ? 100 cm from the soil surface; and 2. ? 30% clay between the soil surface and the vertic horizon throughout; and 3. shrink-swell cracks that start: a. at the soil surface; or b. at the base of a plough layer; or c. ? 5 cm from the soil surface if there is a surface layer of strong granular structural elements ? 10 mm in size (self-mulching surface); or d. ? 3 cm from the soil surface if there is a surface crust; and extend to the vertic horizon.\nvertic horizon\nclay\nshrink-swell cracks\nstructural elements\nsurface crust",
+      "principalQualifiers": [
+        "Salic",
+        "Sodic",
+        "Leptic",
+        [
+          "Petroduric",
+          "Duric"
+        ],
+        "Gypsic",
+        [
+          "Petrocalcic",
+          "Calcic"
+        ],
+        [
+          "Hydragric",
+          "Anthraquic",
+          "Irragric"
+        ],
+        "Pellic",
+        "Chromic",
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Albic",
+        "Aric",
+        [
+          "Chernic",
+          "Mollic"
+        ],
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        "Drainic",
+        "Hypereutric",
+        "Ferric",
+        "Fractic",
+        "Gilgaic",
+        "Gleyic",
+        [
+          "Grumic",
+          "Mazic"
+        ],
+        "Gypsiric",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Magnesic",
+        "Mesotrophic",
+        "Novic",
+        "Raptic",
+        "Skeletic",
+        "Stagnic",
+        "Sulfidic",
+        "Technic",
+        "Thionic",
+        "Toxic"
+      ]
+    },
+    "Luvisols": {
+      "code": "LV",
+      "name": "Luvisols",
+      "uri": "http://lod.nal.usda.gov/nalt/216356",
+      "description": "Soils with clay-enriched subsoil - High-activity clays, high base status\nOther soils having an argic horizon starting ? 100 cm from the soil surface.\nargic horizon",
+      "principalQualifiers": [
+        "Abruptic",
+        "Fragic",
+        "Leptic",
+        [
+          "Petroplinthic",
+          "Pisoplinthic",
+          "Plinthic"
+        ],
+        [
+          "Hydragric",
+          "Anthraquic",
+          "Irragric",
+          "Pretic"
+        ],
+        "Gleyic",
+        "Stagnic",
+        "Vertic",
+        "Nudiargic",
+        "Lamellic",
+        "Albic",
+        "Ferric",
+        [
+          "Rhodic",
+          "Chromic"
+        ],
+        "Gypsic",
+        "Calcic",
+        "Fractic",
+        "Skeletic",
+        [
+          "Endodolomitic",
+          "Endocalcaric"
+        ],
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Andic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Aridic",
+        "Neocambic",
+        "Colluvic",
+        "Cutanic",
+        "Densic",
+        "Differentic",
+        [
+          "Epidystric",
+          "Hypereutric"
+        ],
+        "Escalic",
+        "Fluvic",
+        "Gelic",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Magnesic",
+        "Nechic",
+        "Nitic",
+        "Novic",
+        "Oxyaquic",
+        "Profondic",
+        "Raptic",
+        "Sodic",
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Turbic",
+        "Vitric"
+      ]
+    },
+    "Regosols": {
+      "code": "RG",
+      "name": "Regosols",
+      "uri": "http://lod.nal.usda.gov/nalt/216363",
+      "description": "Soils with little or no profile differentiation - No significant profile development\nOther soils:",
+      "principalQualifiers": [
+        "Leptic",
+        "Folic",
+        "Gleyic",
+        "Stagnic",
+        "Skeletic",
+        "Brunic",
+        "Colluvic",
+        "Tephric",
+        "Endosalic",
+        "Sodic",
+        "Protic",
+        "Vermic",
+        "Gypsiric",
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        [
+          "Dystric",
+          "Eutric"
+        ]
+      ],
+      "supplementaryQualifiers": [
+        "Geoabruptic",
+        "Aeolic",
+        "Alcalic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Protocalcic",
+        "Densic",
+        "Drainic",
+        "Escalic",
+        "Fluvic",
+        "Gelic",
+        "Gelistagnic",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Isolatic",
+        "Lamellic",
+        "Magnesic",
+        "Nechic",
+        "Ornithic",
+        "Oxyaquic",
+        "Raptic",
+        "Relocatic",
+        [
+          "Takyric",
+          "Yermic",
+          "Aridic"
+        ],
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Turbic",
+        "Protovertic"
+      ]
+    },
+    "Anthrosols": {
+      "code": "AT",
+      "name": "Anthrosols",
+      "uri": "http://lod.nal.usda.gov/nalt/216341",
+      "description": "Soils with strong human influence - With long and intensive agricultural use\nOther soils having: 1. a hortic, irragric, plaggic or terric horizon ? 50 cm thick; or 2. an anthraquic horizon and an underlying hydragric horizon with a combined thickness of ? 50 cm; or 3. a pretic horizon, the layers of which have a combined thickness of ? 50 cm, within ? 100 cm of the mineral soil surface.\nhortic horizon\nirragric horizon\nplaggic horizon\nterric horizon\nanthraquic horizon\nhydragric horizon\nthickness\npretic horizon",
+      "principalQualifiers": [
+        [
+          "Hydragric",
+          "Irragric"
+        ],
+        [
+          "Hortic",
+          "Plaggic"
+        ],
+        [
+          "Pretic",
+          "Terric"
+        ]
+      ],
+      "supplementaryQualifiers": [
+        [
+          "Acric",
+          "Lixic",
+          "Alic",
+          "Luvic"
+        ],
+        [
+          "Alcalic",
+          "Dystric",
+          "Eutric"
+        ],
+        "Andic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Calcic",
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        "Escalic",
+        [
+          "Ferralic",
+          "Sideralic"
+        ],
+        "Fluvic",
+        "Gleyic",
+        "Endoleptic",
+        "Novic",
+        "Oxyaquic",
+        "Salic",
+        "Skeletic",
+        "Sodic",
+        "Spodic",
+        "Stagnic",
+        "Technic",
+        "Toxic",
+        "Vertic",
+        "Vitric"
+      ]
+    },
+    "Arenosols": {
+      "code": "AR",
+      "name": "Arenosols",
+      "uri": "http://lod.nal.usda.gov/nalt/216342",
+      "description": "Soils with little or no profile differentiation - Sandy\nOther soils having: 1. a weighted average texture class of loamy sand or coarser, if layers of finer texture have a combined thickness of < 15 cm, to a depth of 100 cm from the mineral soil surface; and 2. < 40% (by volume) of coarse fragments in all layers within ? 100 cm of the mineral soil surface.\ntexture\ncoarse fragments",
+      "principalQualifiers": [
+        [
+          "Subaquatic",
+          "Tidalic"
+        ],
+        "Folic",
+        "Gleyic",
+        "Sideralic",
+        "Protoargic",
+        "Brunic",
+        "Albic",
+        [
+          "Rhodic",
+          "Chromic",
+          "Rubic"
+        ],
+        "Lamellic",
+        "Endosalic",
+        "Sodic",
+        "Fluvic",
+        "Protic",
+        "Gypsiric",
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        [
+          "Dystric",
+          "Eutric"
+        ]
+      ],
+      "supplementaryQualifiers": [
+        "Geoabruptic",
+        "Aeolic",
+        "Alcalic",
+        "Aric",
+        "Protocalcic",
+        "Colluvic",
+        "Gelic",
+        [
+          "Humic",
+          "chric"
+        ],
+        "Hydrophobic",
+        "Nechic",
+        "Novic",
+        "Ornithic",
+        "Oxyaquic",
+        "Petrogleyic",
+        "Placic",
+        "Raptic",
+        "Relocatic",
+        "Protospodic",
+        "Stagnic",
+        "Sulfidic",
+        "Technic",
+        "Tephric",
+        "Toxic",
+        "Transportic",
+        "Turbic",
+        [
+          "Yermic",
+          "Aridic"
+        ]
+      ]
+    },
+    "Histosols": {
+      "code": "HS",
+      "name": "Histosols",
+      "uri": "http://lod.nal.usda.gov/nalt/40066",
+      "description": "Soils with thick organic layers - \nSoils having organic material: 1. starting at the soil surface and having a thickness of ? 10 cm and directly overlying: a. ice, or b. continuous rock or technic hard material, or c. coarse fragments, the interstices of which are filled with organic material; or 2. starting ? 40 cm from the soil surface and having within ? 100 cm of the soil surface a combined thickness of either: a. ? 60 cm, if ? 75% (by volume) of the material consists of moss fibres; or b. ? 40 cm in other materials.\norganic material\ncoarse fragments\nthickness\nmoss fibres",
+      "principalQualifiers": [
+        [
+          "Muusic",
+          "Rockic",
+          "Mawic"
+        ],
+        "Cryic",
+        "Thionic",
+        "Folic",
+        [
+          "Floatic",
+          "Subaquatic"
+        ],
+        "Tidalic",
+        [
+          "Fibric",
+          "Hemic",
+          "Sapric"
+        ],
+        "Leptic",
+        [
+          "Murshic",
+          "Drainic"
+        ],
+        [
+          "Ombric",
+          "Rheic"
+        ],
+        [
+          "Hyperskeletic",
+          "Skeletic"
+        ],
+        "Andic",
+        "Vitric",
+        "Calcic",
+        [
+          "Dystric",
+          "Eutric"
+        ]
+      ],
+      "supplementaryQualifiers": [
+        "Alcalic",
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        "Fluvic",
+        "Gelic",
+        "Hyperorganic",
+        "Isolatic",
+        "Lignic",
+        "Limnic",
+        "Magnesic",
+        "Mineralic",
+        "Novic",
+        "Ornithic",
+        "Petrogleyic",
+        "Placic",
+        "Relocatic",
+        "Salic",
+        "Sodic",
+        "Sulfidic",
+        "Technic",
+        "Tephric",
+        "Toxic",
+        "Transportic",
+        "Turbic"
+      ]
+    },
+    "Kastanozems": {
+      "code": "KS",
+      "name": "Kastanozems",
+      "uri": "http://lod.nal.usda.gov/nalt/216351",
+      "description": "Pronounced accumulation of organic matter in the mineral topsoil - Dark topsoil, secondary carbonates\nOther soils having: 1. a mollic horizon; and 2. a calcic horizon or a layer with protocalcic properties starting ? 50 cm below the lower limit of the mollic horizon, and if present, above a cemented or indurated layer; and 3. a base saturation (by 1 M NH4OAc, pH 7) of ? 50% from the soil surface to the calcic horizon or the layer with protocalcic properties, throughout.\nmollic horizon\nprotocalcic properties\nbase saturation\ncalcic horizon",
+      "principalQualifiers": [
+        "Someric",
+        [
+          "Petroduric",
+          "Duric"
+        ],
+        [
+          "Petrogypsic",
+          "Gypsic"
+        ],
+        [
+          "Petrocalcic",
+          "Calcic"
+        ],
+        "Leptic",
+        [
+          "Hortic",
+          "Terric"
+        ],
+        "Gleyic",
+        "Fluvic",
+        "Vertic",
+        "Greyzemic",
+        "Luvic",
+        "Fractic",
+        "Skeletic",
+        "Vermic",
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Andic",
+        "Anthric",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Cambic",
+        "Chromic",
+        "Colluvic",
+        "Densic",
+        "Hyperhumic",
+        "Novic",
+        "Oxyaquic",
+        "Pachic",
+        "Raptic",
+        "Endosalic",
+        "Sodic",
+        "Stagnic",
+        "Technic",
+        "Tephric",
+        "Tonguic",
+        "Transportic",
+        "Turbic",
+        "Vitric"
+      ]
+    },
+    "Plinthosols": {
+      "code": "PT",
+      "name": "Plinthosols",
+      "uri": "http://lod.nal.usda.gov/nalt/216361",
+      "description": "Soils distinguished by Fe/Al chemistry - Accumulation and redistribution of Fe\nOther soils having: 1. a plinthic, petroplinthic or pisoplinthic horizon starting ? 50 cm from the soil surface; or 2. a plinthic horizon starting ? 100 cm from the soil surface; and directly above or below its upper limit, a layer ? 10 cm thick, that has: a. stagnic properties in which the area of reductimorphic colours plus the area of oximorphic colours is ? 50% of the layer's total area; and b. reducing conditions for some time during the year in the major part of the layer's volume that has the reductimorphic colours.\npetroplinthic horizon\nplinthic horizon\npisoplinthic horizon\nstagnic properties\narea of reductimorphic colours\narea of oximorphic colours\nreducing conditions",
+      "principalQualifiers": [
+        "Petric",
+        "Pisoplinthic",
+        "Gibbsic",
+        "Stagnic",
+        [
+          "Folic",
+          "Histic"
+        ],
+        [
+          "Mollic",
+          "Umbric"
+        ],
+        "Albic",
+        "Geric",
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Abruptic",
+        [
+          "Acric",
+          "Lixic"
+        ],
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Colluvic",
+        "Drainic",
+        "Duric",
+        [
+          "Dystric",
+          "Eutric"
+        ],
+        "Fractic",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Magnesic",
+        "Novic",
+        "Oxyaquic",
+        "Posic",
+        "Raptic",
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Vetic"
+      ]
+    },
+    "Alisols": {
+      "code": "AL",
+      "name": "Alisols",
+      "uri": "http://lod.nal.usda.gov/nalt/216339",
+      "description": "Soils with clay-enriched subsoil - High-activity clays, low base status\nOther soils having: 1. an argic horizon starting ? 100 cm from the soil surface; and 2. an effective base saturation [exchangeable(Ca + Mg + K + Na) / exchangeable(Ca + Mg + K + Na + Al); exchangeable bases by 1 M NH4OAc (pH 7), exchangeable Al by 1 M KCl (unbuffered)] of < 50%: a. in half or more of the part between 50 and 100 cm from the mineral soil surface; or b. at least in the lower half of the mineral soil above continuous rock, technic hard material or a cemented or indurated layer starting ? 100 cm from the mineral soil surface.\nargic horizon\neffective base saturation\nexchangeable bases\nexchangeable Al",
+      "principalQualifiers": [
+        "Abruptic",
+        "Fragic",
+        "Leptic",
+        [
+          "Petroplinthic",
+          "Pisoplinthic",
+          "Plinthic"
+        ],
+        [
+          "Hydragric",
+          "Anthraquic",
+          "Plaggic",
+          "Pretic"
+        ],
+        "Gleyic",
+        "Stagnic",
+        "Vertic",
+        "Nudiargic",
+        "Lamellic",
+        "Albic",
+        "Ferric",
+        [
+          "Rhodic",
+          "Chromic"
+        ],
+        "Fractic",
+        "Skeletic",
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Andic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Neocambic",
+        "Colluvic",
+        "Cutanic",
+        "Densic",
+        "Differentic",
+        [
+          "Hyperdystric",
+          "Epieutric"
+        ],
+        "Fluvic",
+        "Gelic",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Hyperalic",
+        "Magnesic",
+        "Nechic",
+        "Nitic",
+        "Novic",
+        "Oxyaquic",
+        "Profondic",
+        "Raptic",
+        "Protospodic",
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Turbic",
+        "Vitric"
+      ]
+    },
+    "Ferralsols": {
+      "code": "FR",
+      "name": "Ferralsols",
+      "uri": "http://lod.nal.usda.gov/nalt/216348",
+      "description": "Soils distinguished by Fe/Al chemistry - Dominance of kaolinite and oxides\nOther soils having: 1. a ferralic horizon starting ? 150 cm from the soil surface; and 2. no argic horizon starting at the upper limit of the ferralic horizon or above the ferralic hroizon, unless the argic horizon has, in its upper 30 cm, one or more of the following: a. < 10% water-dispersible clay; or b. geric properties; or c. ? 1.4% soil organic carbon.\nferralic horizon\nargic horizon\nwater-dispersible clay\ngeric properties\norganic carbon",
+      "principalQualifiers": [
+        "Ferritic",
+        "Gibbsic",
+        [
+          "Petroplinthic",
+          "Pisoplinthic",
+          "Plinthic"
+        ],
+        [
+          "Rhodic",
+          "Xanthic"
+        ],
+        "Pretic",
+        "Folic",
+        [
+          "Mollic",
+          "Umbric"
+        ],
+        [
+          "Acric",
+          "Lixic"
+        ],
+        "Fractic",
+        "Skeletic",
+        "Geric",
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Andic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Colluvic",
+        "Densic",
+        [
+          "Dystric",
+          "Eutric"
+        ],
+        "Ferric",
+        "Fluvic",
+        "Gleyic",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Novic",
+        "Oxyaquic",
+        "Posic",
+        "Raptic",
+        "Sombric",
+        "Stagnic",
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Vetic"
+      ]
+    },
+    "Fluvisols": {
+      "code": "FL",
+      "name": "Fluvisols",
+      "uri": "http://lod.nal.usda.gov/nalt/216349",
+      "description": "Soils with little or no profile differentiation - Stratified fluviatile, marine and lacustrine sediments\nOther soils having fluvic material: 1. ? 25 cm thick and starting ? 25 cm from the mineral soil surface; or 2. from the lower limit of a plough layer that is ? 40 cm thick, to a depth of ? 50 cm from the mineral soil surface.\nfluvic soil material\nplough layer",
+      "principalQualifiers": [
+        [
+          "Subaquatic",
+          "Tidalic"
+        ],
+        [
+          "Pantofluvic",
+          "Anofluvic",
+          "Orthofluvic"
+        ],
+        "Leptic",
+        [
+          "Folic",
+          "Histic"
+        ],
+        "Gleyic",
+        "Stagnic",
+        "Skeletic",
+        "Sodic",
+        "Gypsiric",
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        [
+          "Dystric",
+          "Eutric"
+        ]
+      ],
+      "supplementaryQualifiers": [
+        "Geoabruptic",
+        "Alcalic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Protocalcic",
+        "Densic",
+        "Drainic",
+        "Gelic",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Limnic",
+        "Magnesic",
+        "Nechic",
+        "Oxyaquic",
+        "Petrogleyic",
+        "Sideralic",
+        "Sulfidic",
+        [
+          "Takyric",
+          "Yermic",
+          "Aridic"
+        ],
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Turbic",
+        "Protovertic"
+      ]
+    },
+    "Cambisols": {
+      "code": "CM",
+      "name": "Cambisols",
+      "uri": "http://lod.nal.usda.gov/nalt/216344",
+      "description": "Soils with little or no profile differentiation - Moderately developed: Cambisols\nOther soils having: 1. a cambic horizon a. starting ? 50 cm from the soil surface; and b. having its lower limit ? 25 cm from the soil surface; or 2. an anthraquic, hydragric, irragric, plaggic, pretic or terric horizon; or 3. a fragic, petroplinthic, pisoplinthic, plinthic, salic, thionic or vertic horizon starting ? 100 cm from the soil surface; or 4. one or more layers with andic or vitric properties with a combined thickness of ? 15 cm within ? 100 cm of the soil surface.\ncambic horizon\nfragic horizon\nsalic horizon\nplinthic horizon\npetroplinthic horizon\nsalic horizon\npisoplinthic horizon\nanthraquic horizon\nhydragric horizon\nirragric horizon\nplaggic horizon\npretic horizon\nterric horizon\nfragic horizon\nthionic horizon\nvertic horizon\nandic properties\nvitric properties\nthickness",
+      "principalQualifiers": [
+        "Fragic",
+        "Thionic",
+        "Leptic",
+        [
+          "Petroplinthic",
+          "Pisoplinthic",
+          "Plinthic"
+        ],
+        [
+          "Hydragric",
+          "Anthraquic",
+          "Irragric",
+          "Plaggic",
+          "Terric"
+        ],
+        [
+          "Folic",
+          "Histic"
+        ],
+        "Gleyic",
+        "Stagnic",
+        "Fluvic",
+        "Vertic",
+        "Andic",
+        "Vitric",
+        [
+          "Ferralic",
+          "Sideralic"
+        ],
+        [
+          "Rhodic",
+          "Chromic",
+          "Xanthic"
+        ],
+        "Fractic",
+        "Skeletic",
+        "Salic",
+        "Sodic",
+        "Gypsiric",
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        [
+          "Dystric",
+          "Eutric"
+        ]
+      ],
+      "supplementaryQualifiers": [
+        "Geoabruptic",
+        "Alcalic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Protocalcic",
+        "Colluvic",
+        "Densic",
+        "Drainic",
+        "Escalic",
+        "Ferric",
+        "Gelic",
+        "Gelistagnic",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Laxic",
+        "Magnesic",
+        "Nechic",
+        "Novic",
+        "Ornithic",
+        "Oxyaquic",
+        "Raptic",
+        "Protospodic",
+        "Sulfidic",
+        [
+          "Takyric",
+          "Yermic",
+          "Aridic"
+        ],
+        "Technic",
+        "Tephric",
+        "Toxic",
+        "Transportic",
+        "Turbic"
+      ]
+    },
+    "Technosols": {
+      "code": "TC",
+      "name": "Technosols",
+      "uri": "http://lod.nal.usda.gov/nalt/216367",
+      "description": "Soils with strong human influence - Containing significant amounts of artefacts\nOther soils: 1. with all of the following: a. having ? 20% (by volume, weighted average) artefacts in the upper 100 cm from the soil surface or to continuous rock or technic hard material or a cemented or indurated layer; and b. not having a layer containing artefacts that qualifies as an argic, chernic, duric, ferralic, ferric, fragic, hydragric, natric, nitic, petrocalcic, petroduric, petrogypsic, petroplinthic, pisoplinthic, plinthic, spodic or vertic horizon starting ? 100 cm from the soil surface, unless buried; and c. not having continuous rock or a cemented or indurated layer starting ? 10 cm from the soil surface; or 2. having a continuous, very slowly permeable to impermeable, constructed geomembrane of any thickness starting ? 100 cm from the soil surface; or 3. having technic hard material starting ? 5 cm from the soil surface.\nartefacts\ntechnic hard material\ncemented layer\nargic horizon\nchernic horizon\nduric horizon\nferralic horizon\nferric horizon\nfragic horizon\nhydragric horizon\nnatric horizon\nnitic horizon\npetrocalcic horizon\npetroduric horizon\npetrogypsic horizon\npetroplinthic horizon\npisoplinthic horizon\nplinthic horizon\nspodic horizon\nvertic horizon\nindurated layer",
+      "principalQualifiers": [
+        "Ekranic",
+        "Linic",
+        "Urbic",
+        "Spolic",
+        "Garbic",
+        "Cryic",
+        "Isolatic",
+        "Leptic",
+        [
+          "Subaquatic",
+          "Tidalic"
+        ],
+        "Reductic",
+        "Hyperskeletic"
+      ],
+      "supplementaryQualifiers": [
+        [
+          "Alcalic",
+          "Dystric",
+          "Eutric"
+        ],
+        "Andic",
+        [
+          "Anthraquic",
+          "Irragric"
+        ],
+        [
+          "Hortic",
+          "Plaggic"
+        ],
+        [
+          "Pretic",
+          "Terric"
+        ],
+        "Archaic",
+        [
+          "Arenic",
+          "Clayic"
+        ],
+        [
+          "Loamic",
+          "Siltic"
+        ],
+        "Aridic",
+        "Calcic",
+        "Cambic",
+        "Carbonic",
+        "Densic",
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        "Drainic",
+        "Fluvic",
+        [
+          "Folic",
+          "Histic"
+        ],
+        "Gleyic",
+        "Gypsic",
+        "Gypsiric",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Hyperartefactic",
+        "Immissic",
+        "Laxic",
+        "Lignic",
+        [
+          "Mollic",
+          "Umbric"
+        ],
+        "Novic",
+        "Oxyaquic",
+        "Raptic",
+        "Relocatic",
+        "Salic",
+        "Sideralic",
+        "Skeletic",
+        "Sodic",
+        "Protospodic",
+        "Stagnic",
+        "Sulfidic",
+        "Tephric",
+        "Thionic",
+        "Toxic",
+        "Transportic",
+        "Vitric"
+      ]
+    },
+    "Acrisols": {
+      "code": "AC",
+      "name": "Acrisols",
+      "uri": "http://lod.nal.usda.gov/nalt/216335",
+      "description": "Soils with clay-enriched subsoil - Low-activity clays, low base status\nOther soils having: 1. an argic horizon starting ? 100 cm from the soil surface; and 2. a CEC (by 1 M NH4OAc, pH 7) of < 24 cmolc kg-1 clay in some part of the the argic horizon within ? 50 cm below its upper limit; and 3. an effective base saturation [exchangeable(Ca + Mg + K + Na) / exchangeable(Ca + Mg + K + Na + Al); exchangeable bases by 1 M NH4OAc (pH 7), exchangeable Al by 1 M KCl (unbuffered)] of < 50%: a. in half or more of the part between 50 and 100 cm from the mineral soil surface; or b. at least in the lower half of the mineral soil above continuous rock, technic hard material or a cemented or indurated layer starting ? 100 cm from the mineral soil surface.\nargic horizon\ncation exchange capacity\neffective base saturation\nexchangeable bases\nexchangeable Al",
+      "principalQualifiers": [
+        "Abruptic",
+        "Fragic",
+        "Leptic",
+        [
+          "Petroplinthic",
+          "Pisoplinthic",
+          "Plinthic"
+        ],
+        [
+          "Hydragric",
+          "Anthraquic",
+          "Pretic",
+          "Terric"
+        ],
+        "Gleyic",
+        "Stagnic",
+        "Ferralic",
+        "Nudiargic",
+        "Lamellic",
+        "Albic",
+        "Ferric",
+        [
+          "Rhodic",
+          "Chromic",
+          "Xanthic"
+        ],
+        "Fractic",
+        "Skeletic",
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Andic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Neocambic",
+        "Colluvic",
+        "Cutanic",
+        "Densic",
+        "Differentic",
+        [
+          "Hyperdystric",
+          "Epieutric"
+        ],
+        "Gibbsic",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Magnesic",
+        "Nechic",
+        "Nitic",
+        "Novic",
+        "Oxyaquic",
+        "Profondic",
+        "Raptic",
+        "Sombric",
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Vetic",
+        "Vitric"
+      ]
+    },
+    "Chernozems": {
+      "code": "CH",
+      "name": "Chernozems",
+      "uri": "http://lod.nal.usda.gov/nalt/216345",
+      "description": "Pronounced accumulation of organic matter in the mineral topsoil - Very dark topsoil, secondary carbonates\nOther soils having: 1. a chernic horizon; and 2. a calcic horizon or a layer with protocalcic properties starting ? 50 cm below the lower limit of the mollicc horizon, and if present, above a cemented or indurated layer; and 3. a base saturation (by 1 M NH4OAc, pH 7) of ? 50% from the soil surface to the calcic horizon or the layer with protocalcic properties, throughout.\nchernic horizon\nmollic horizon\ncemented layer\nindurated layer\npetrocalcic horizon\ncalcic horizon\nprotocalcic properties\nbase saturation",
+      "principalQualifiers": [
+        [
+          "Petroduric",
+          "Duric"
+        ],
+        [
+          "Petrogypsic",
+          "Gypsic"
+        ],
+        [
+          "Petrocalcic",
+          "Calcic"
+        ],
+        "Leptic",
+        "Hortic",
+        "Gleyic",
+        "Fluvic",
+        "Vertic",
+        "Greyzemic",
+        "Luvic",
+        "Fractic",
+        "Skeletic",
+        "Vermic",
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Andic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Cambic",
+        "Colluvic",
+        "Densic",
+        "Hyperhumic",
+        "Novic",
+        "Oxyaquic",
+        "Pachic",
+        "Raptic",
+        "Endosalic",
+        "Sodic",
+        "Stagnic",
+        "Technic",
+        "Tephric",
+        "Tonguic",
+        "Transportic",
+        "Turbic",
+        "Vitric"
+      ]
+    },
+    "Andosols": {
+      "code": "AN",
+      "name": "Andosols",
+      "uri": "http://lod.nal.usda.gov/nalt/216340",
+      "description": "Soils distinguished by Fe/Al chemistry - Allophanes or Al-humus complexes\nOther soils having: 1. one or more layers with andic or vitric properties with a combined thickness of either: a. ? 30 cm, within ? 100 cm of the soil surface and starting ? 25 cm from the soil surface; or b. ? 60% of the entire thickness of the soil, if continuous rock, technic hard material or a cemented or indurated layer starts > 25 and ? 50 cm from the soil surface; and 2. no argic, ferralic, petroplinthic, pisoplinthic, plinthic or spodic horizon, unless buried deeper than 50 cm from the mineral soil surface.\nvitric properties\nandic properties\nthickness\nargic horizon\nferralic horizon\npetroplinthic horizon\npisoplinthic horizon\nplinthic horizon\nspodic horizon",
+      "principalQualifiers": [
+        [
+          "Aluandic",
+          "Silandic"
+        ],
+        "Vitric",
+        "Leptic",
+        [
+          "Hydragric",
+          "Anthraquic"
+        ],
+        "Gleyic",
+        "Hydric",
+        [
+          "Folic",
+          "Histic"
+        ],
+        [
+          "Chernic",
+          "Mollic",
+          "Umbric"
+        ],
+        [
+          "Petroduric",
+          "Duric"
+        ],
+        "Gypsic",
+        "Calcic",
+        "Tephric",
+        "Skeletic",
+        "Eutrosilic",
+        [
+          "Dystric",
+          "Eutric"
+        ]
+      ],
+      "supplementaryQualifiers": [
+        "Acroxic",
+        "Protoandic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Colluvic",
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        "Drainic",
+        "Fluvic",
+        "Fragic",
+        [
+          "Fulvic",
+          "Melanic"
+        ],
+        "Gelic",
+        "Hyperhumic",
+        "Nechic",
+        "Novic",
+        "Oxyaquic",
+        "Placic",
+        "Reductic",
+        "Sideralic",
+        "Sodic",
+        "Protospodic",
+        "Technic",
+        "Thixotropic",
+        "Toxic",
+        "Transportic",
+        "Turbic"
+      ]
+    },
+    "Leptosols": {
+      "code": "LP",
+      "name": "Leptosols",
+      "uri": "http://lod.nal.usda.gov/nalt/216352",
+      "description": "Soils with limitations to root growth - Thin or with many coarse fragments\nOther soils having: 1. one of the following: a. continuous rock or technic hard material starting ? 25 cm from the soil surface; or b. < 20% (by volume) fine earth, averaged over a depth of 75 cm from the soil surface or to continuous rock or technic hard material, whichever is shallower; and 2. no calcic, chernic, duric, gypsic, petrocalcic, petroduric, petrogypsic, petroplinthic or spodic horizon.\nfine earth\ncalcic horizon\nchernic horizon\nduric horizon\ngypsic horizon\npetrocalcic horizon\ncontinuous rock\ntechnic hard material\npetroduric horizon\npetrogypsic horizon\npetroplinthic horizon\nspodic horizon",
+      "principalQualifiers": [
+        [
+          "Nudilithic",
+          "Lithic"
+        ],
+        "Technoleptic",
+        [
+          "Hyperskeletic",
+          "Skeletic"
+        ],
+        [
+          "Subaquatic",
+          "Tidalic"
+        ],
+        [
+          "Folic",
+          "Histic"
+        ],
+        [
+          "Rendzic",
+          "Mollic",
+          "Umbric"
+        ],
+        [
+          "Cambic",
+          "Brunic"
+        ],
+        "Gypsiric",
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        [
+          "Dystric",
+          "Eutric"
+        ]
+      ],
+      "supplementaryQualifiers": [
+        "Andic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Protocalcic",
+        "Colluvic",
+        "Drainic",
+        "Fluvic",
+        "Gelic",
+        "Gleyic",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Isolatic",
+        "Lapiadic",
+        "Nechic",
+        "Novic",
+        "Ornithic",
+        "Oxyaquic",
+        "Placic",
+        "Protic",
+        "Raptic",
+        "Salic",
+        "Sodic",
+        "Protospodic",
+        "Stagnic",
+        "Sulfidic",
+        [
+          "Takyric",
+          "Yermic",
+          "Aridic"
+        ],
+        "Technic",
+        "Tephric",
+        "Toxic",
+        "Transportic",
+        "Turbic",
+        "Protovertic",
+        "Vitric"
+      ]
+    },
+    "Solonchaks": {
+      "code": "SC",
+      "name": "Solonchaks",
+      "uri": "http://lod.nal.usda.gov/nalt/216364",
+      "description": "Soils with limitations to root growth - High concentration of soluble salts\nOther soils having: 1. a salic horizon starting ? 50 cm from the soil surface; and 2. no thionic horizon starting ? 50 cm from the soil surface; and 3. not permanently submerged by water and not located below the line affected by tidal water (i.e. not located below the line of mean high water springs).\nsalic horizon\nthionic horizon\nsubmerged by water\ntidal water\nline of mean high water springs",
+      "principalQualifiers": [
+        "Petrosalic",
+        "Gleyic",
+        "Stagnic",
+        "Mollic",
+        "Sodic",
+        "Gypsic",
+        [
+          "Petrocalcic",
+          "Calcic"
+        ],
+        "Fluvic",
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Aceric",
+        "Alcalic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        [
+          "Carbonatic",
+          "Chloridic",
+          "Sulfatic"
+        ],
+        "Colluvic",
+        "Densic",
+        [
+          "Dolomitic",
+          "Calcaric"
+        ],
+        "Drainic",
+        "Duric",
+        [
+          "Evapocrustic",
+          "Puffic"
+        ],
+        [
+          "Folic",
+          "Histic"
+        ],
+        "Fractic",
+        "Gelic",
+        "Gypsiric",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Novic",
+        "Oxyaquic",
+        "Raptic",
+        "Hypersalic",
+        "Skeletic",
+        "Sulfidic",
+        [
+          "Takyric",
+          "Yermic",
+          "Aridic"
+        ],
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Turbic",
+        "Vertic"
+      ]
+    },
+    "Podzols": {
+      "code": "PZ",
+      "name": "Podzols",
+      "uri": "http://lod.nal.usda.gov/nalt/216362",
+      "description": "Soils distinguished by Fe/Al chemistry - Subsoil accumulation of humus and/or oxides\nOther soils having a spodic horizon starting ? 200 cm from the mineral soil surface.\nspodic horizon\neluvial horizon",
+      "principalQualifiers": [
+        "Ortsteinic",
+        [
+          "Carbic",
+          "Rustic"
+        ],
+        [
+          "Albic",
+          "Entic"
+        ],
+        "Leptic",
+        [
+          "Hortic",
+          "Plaggic",
+          "Pretic",
+          "Terric"
+        ],
+        [
+          "Folic",
+          "Histic"
+        ],
+        "Gleyic",
+        "Stagnic",
+        "Umbric",
+        [
+          "Glossic",
+          "Retic"
+        ],
+        "Alic",
+        [
+          "Hyperskeletic",
+          "Skeletic"
+        ],
+        "Andic",
+        "Vitric"
+      ],
+      "supplementaryQualifiers": [
+        "Abruptic",
+        [
+          "Arenic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Neocambic",
+        "Densic",
+        "Drainic",
+        "Endoeutric",
+        "Fragic",
+        "Gelic",
+        "Lamellic",
+        "Novic",
+        "Ornithic",
+        "Oxyaquic",
+        "Placic",
+        "Raptic",
+        "Hyperspodic",
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Turbic"
+      ]
+    },
+    "Lixisols": {
+      "code": "LX",
+      "name": "Lixisols",
+      "uri": "http://lod.nal.usda.gov/nalt/216355",
+      "description": "Soils with clay-enriched subsoil - Low-activity clays, high base status\nOther soils having: 1. an argic horizon starting ? 100 cm from the soil surface; and 2. a CEC (by 1 M NH4OAc, pH 7) of < 24 cmolc kg-1 clay in some part of the the argic horizon within ? 50 cm below its upper limit.\nargic horizon\ncation exchange capacity",
+      "principalQualifiers": [
+        "Abruptic",
+        "Fragic",
+        "Leptic",
+        [
+          "Petroplinthic",
+          "Pisoplinthic",
+          "Plinthic"
+        ],
+        [
+          "Hydragric",
+          "Anthraquic",
+          "Pretic",
+          "Terric"
+        ],
+        "Gleyic",
+        "Stagnic",
+        "Ferralic",
+        "Nudiargic",
+        "Lamellic",
+        "Albic",
+        "Ferric",
+        [
+          "Rhodic",
+          "Chromic",
+          "Xanthic"
+        ],
+        "Gypsic",
+        "Calcic",
+        "Fractic",
+        "Skeletic",
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Andic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        "Aridic",
+        "Neocambic",
+        "Colluvic",
+        "Cutanic",
+        "Densic",
+        "Differentic",
+        [
+          "Epidystric",
+          "Hypereutric"
+        ],
+        "Gibbsic",
+        [
+          "Humic",
+          "Ochric"
+        ],
+        "Magnesic",
+        "Nechic",
+        "Nitic",
+        "Novic",
+        "Oxyaquic",
+        "Profondic",
+        "Raptic",
+        "Sodic",
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Vetic",
+        "Vitric"
+      ]
+    },
+    "Calcisols": {
+      "code": "CL",
+      "name": "Calcisols",
+      "uri": "http://lod.nal.usda.gov/nalt/216343",
+      "description": "Accumulation of moderately soluble salts or non-saline substances - Accumulation of secondary carbonates\nOther soils having: 1. a petrocalcic horizon starting ? 100 cm from the soil surface; or 2. both of the following: a. a calcic horizon starting ? 100 cm from the soil surface; and b. no argic horizon above the calcic horizon unless the argic horizon is permeated throughout with secondary carbonate.\ncalcic horizon\npetrocalcic horizon\nargic horizon\nsecondary carbonate",
+      "principalQualifiers": [
+        "Petric",
+        "Leptic",
+        "Gypsic",
+        [
+          "Lixic",
+          "Luvic"
+        ],
+        "Cambic",
+        [
+          "Hyperskeletic",
+          "Skeletic"
+        ],
+        "Haplic"
+      ],
+      "supplementaryQualifiers": [
+        "Albic",
+        [
+          "Arenic",
+          "Clayic",
+          "Loamic",
+          "Siltic"
+        ],
+        "Aric",
+        [
+          "Hypercalcic",
+          "Hypocalcic"
+        ],
+        "Densic",
+        "Fluvic",
+        "Fractic",
+        "Gleyic",
+        "Novic",
+        "Ochric",
+        "Raptic",
+        [
+          "Rhodic",
+          "Chromic"
+        ],
+        "Endosalic",
+        "Sodic",
+        "Stagnic",
+        [
+          "Takyric",
+          "Yermic",
+          "Aridic"
+        ],
+        "Technic",
+        "Toxic",
+        "Transportic",
+        "Turbic",
+        "Vertic"
+      ]
+    }
+  },
+  "qualifiers": {
+    "Melanic": {
+      "name": "Melanic",
+      "code": "me",
+      "description": "(from Greek melas, black): having a melanic horizon starting ? 30 cm from the soil surface (in Andosols only) (2: except Endo-).",
+      "parentQualifier": null
+    },
+    "Lithic": {
+      "name": "Lithic",
+      "code": "li",
+      "description": "(from Greek lithos, stone): having continuous rock or technic hard material starting ? 10 cm from the soil surface (in Leptosols only).",
+      "parentQualifier": null
+    },
+    "Glacic": {
+      "name": "Glacic",
+      "code": "gc",
+      "description": "(from Latin glacies, ice): having a layer ? 30 cm thick, and starting ? 100 cm from the soil surface, containing ? 75% ice (by volume) (2).",
+      "parentQualifier": null
+    },
+    "Differentic": {
+      "name": "Differentic",
+      "code": "df",
+      "description": "(from Latin differentia, difference): having an argic or natric horizon that meets diagnostic criterion 2a for the respective horizon.",
+      "parentQualifier": null
+    },
+    "Densic": {
+      "name": "Densic",
+      "code": "dn",
+      "description": "(from Latin densus, dense): having natural or artificial compaction ? 100 cm from the soil surface to the extent that roots cannot penetrate, or can only penetrate it with severe difficulty (2).",
+      "parentQualifier": null
+    },
+    "Ferritic": {
+      "name": "Ferritic",
+      "code": "fe",
+      "description": "(from Latin ferrum, iron): having a layer ? 30 cm thick, and starting ? 100 cm from the soil surface, with Fedith in the fine earth fraction of ? 10% and not forming part of a petroplinthic, pisoplinthic or plinthic horizon (2).",
+      "parentQualifier": null
+    },
+    "Muusic": {
+      "name": "Muusic",
+      "code": "mu",
+      "description": "(from Sakha muus, ice): having ice that is directly overlain by organic material (in Histosols only) (1: Epi- and Endo- only).",
+      "parentQualifier": null
+    },
+    "Calcaric": {
+      "name": "Calcaric",
+      "code": "ca",
+      "description": "(from Latin calcarius, containing lime): having calcaric material throughout between 20 and 100 cm from the soil surface, or between 20 cm and continuous rock, technic hard material or a cemented or indurated layer, whichever is shallower; and not having a calcic or a petrocalcic horizon starting ? 100 cm from the soil surface (4).",
+      "parentQualifier": null
+    },
+    "Gleyic": {
+      "name": "Gleyic",
+      "code": "gl",
+      "description": "(from Russian gley, mucky soil mass): having a layer ? 25 cm thick, and starting ? 75 cm from the mineral soil surface, that has gleyic properties throughout and reducing conditions in some parts of every sublayer (2).",
+      "parentQualifier": null
+    },
+    "Technic": {
+      "name": "Technic",
+      "code": "te",
+      "description": "(from Greek technae, art): having ? 10% (by volume, weighted average) artefacts in the upper 100 cm from the soil surface or to continuous rock or a cemented or indurated layer, whichever is shallower; or having a layer ? 10 cm thick, and starting ? 90 cm from the soil surface, with ? 50% (by volume, weighted average) artefacts (5 or 2: Epi- and Endo- only).",
+      "parentQualifier": null
+    },
+    "Anthraquic": {
+      "name": "Anthraquic",
+      "code": "aq",
+      "description": "(from Greek anthropos, human being, and Latin aqua, water): having an anthraquic horizon and no hydragric horizon.",
+      "parentQualifier": null
+    },
+    "Hydrophobic": {
+      "name": "Hydrophobic",
+      "code": "hf",
+      "description": "(from Greek hydor, water, and phobos, fear): water-repellent, i.e. water stands on a dry soil surface for ? 60 seconds (in Arenosols only).",
+      "parentQualifier": null
+    },
+    "Protic": {
+      "name": "Protic",
+      "code": "pr",
+      "description": "(from Greek protou, before): showing no soil horizon development, with the exception of a cryic horizon, which may be present.",
+      "parentQualifier": null
+    },
+    "Hypertechnic": {
+      "name": "Hypertechnic",
+      "code": "jt",
+      "description": "(from Greek hyper, over): having ? 20% (by volume, weighted average) artefacts in the upper 100 cm from the soil surface or to continuous rock or a cemented or indurated layer, whichever is shallower (5).",
+      "parentQualifier": "Technic"
+    },
+    "Aridic": {
+      "name": "Aridic",
+      "code": "ad",
+      "description": "(from Latin aridus, dry): having aridic properties without takyric or yermic properties.",
+      "parentQualifier": null
+    },
+    "Infraandic": {
+      "name": "Infraandic",
+      "code": "ia",
+      "description": "(from Latin infra, below, and Japanese an, dark, and do, soil): having a layer ? 15 cm thick, that underlies a soil classified with preference according to the �Rules for classifying soils� (Chapter 2.5) and that meets diagnostic criteria 1 and 3 of the andic properties and fails diagnostic criterion 2.",
+      "parentQualifier": null
+    },
+    "Protostagnic": {
+      "name": "Protostagnic",
+      "code": "qw",
+      "description": "(from Greek protou, before): having a layer ? 25 cm thick, and starting ? 75 cm from the mineral soil surface, that does not form part of a hydragric horizon and that has: � stagnic properties in which the area of reductimorphic colours plus the area of oximorphic colours is ? 10% and < 25% of the layer's total area, and � reducing conditions for some time during the year in the major part of the layer's volume that has the reductimorphic colours (2).",
+      "parentQualifier": "Stagnic"
+    },
+    "Carbonic": {
+      "name": "Carbonic",
+      "code": "cx",
+      "description": "(from Latin carbo, coal): having a layer ? 10 cm thick, and starting ? 100 cm from the soil surface, with ? 20% (by mass) organic carbon that meets the diagnostic criteria of artefacts (2).",
+      "parentQualifier": null
+    },
+    "Hemic": {
+      "name": "Hemic",
+      "code": "hm",
+      "description": "(from Greek hemisys, half): having, after rubbing, less than twothirds and one-sixth or more (by volume) of the organic material consisting of recognizable plant tissue within 100 cm of the soil surface (in Histosols only).",
+      "parentQualifier": null
+    },
+    "Plinthofractic": {
+      "name": "Plinthofractic",
+      "code": "pf",
+      "description": "(from Greek plinthos, brick): having a layer ? 10 cm thick, and starting ? 100 cm from the soil surface, consisting of a broken petroplinthic horizon, the remnants of which: � occupy a volume of ? 40%, and � have an average horizontal length of < 10 cm and/or occupy a volume < 80% (2).",
+      "parentQualifier": "Fractic"
+    },
+    "Limnic": {
+      "name": "Limnic",
+      "code": "lm",
+      "description": "(from Greek limnae, pool): having one or more layers with limnic material with a combined thickness of ? 10 cm within ? 50 cm of the soil surface.",
+      "parentQualifier": null
+    },
+    "Arenic": {
+      "name": "Arenic",
+      "code": "ar",
+      "description": "(from Latin arena, sand): having a texture class of sand or loamy sand in a layer ? 30 cm thick, within ? 100 cm of the mineral soil surface or in the major part between the mineral soil surface and continuous rock, technic hard material or a cemented or indurated layer starting < 60 cm from the mineral soil surface starting < 60 cm from the mineral soil surface (2; no subqualifier if continuous rock or technic hard material starts < 60 cm from the mineral soil surface).",
+      "parentQualifier": null
+    },
+    "Ornithic": {
+      "name": "Ornithic",
+      "code": "oc",
+      "description": "(from Greek ornithos, bird): having a layer ? 15 cm thick, with ornithogenic material starting ? 50 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Hyperartefactic": {
+      "name": "Hyperartefactic",
+      "code": "ja",
+      "description": "(from Greek hyper, over, and Latin ars, art, and factus, made): having ? 50% (by volume, weighted average) artefacts within 100 cm of the soil surface or to continuous rock, technic hard material or a cemented or indurated layer, whichever is shallower (in Technosols only).",
+      "parentQualifier": null
+    },
+    "Relictigleyic": {
+      "name": "Relictigleyic",
+      "code": "rl",
+      "description": "(from Latin relictus, left back): having a layer ? 25 cm thick, and starting ? 75 cm from the mineral soil surface, that has gleyic properties throughout and no reducing conditions (2).",
+      "parentQualifier": "Gleyic"
+    },
+    "Nechic": {
+      "name": "Nechic",
+      "code": "ne",
+      "description": "(from Amharic nech, white): having uncoated mineral grains of silt or sand size in a darker matrix somewhere within ? 5 cm of the mineral soil surface.",
+      "parentQualifier": null
+    },
+    "Hypereutric": {
+      "name": "Hypereutric",
+      "code": "je",
+      "description": "(from Greek hyper, over): having: � in Histosols, a pHwater ? 5.5 throughout in the organic material within 100 cm of the soil surface and ? 6.5 in some layer with organic material within ? 100 cm of the soil surface, � in other soils, an effective base saturation [exchangeable(Ca + Mg + K + Na) / exchangeable(Ca + Mg + K + Na + Al); exchangeable bases by 1 M NH4OAc (pH 7), exchangeable Al by 1 M KCl (unbuffered)] of ? 50% throughout between 20 and 100 cm from the mineral soil surface, and ? 80% in some layer between 20 and 100 cm from the mineral soil surface.",
+      "parentQualifier": "Eutric"
+    },
+    "Leptic": {
+      "name": "Leptic",
+      "code": "le",
+      "description": "(from Greek leptos, thin): having continuous rock or technic hard material starting ? 100 cm from the soil surface (1: Epi- and Endo- only).",
+      "parentQualifier": null
+    },
+    "Sodic": {
+      "name": "Sodic",
+      "code": "so",
+      "description": "(from Spanish soda, gaseous water): having a layer ? 20 cm thick, and starting ? 100 cm from the soil surface, that has ? 15% Na plus Mg and ? 6% Na on the exchange complex; and not having a natric horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Acric": {
+      "name": "Acric",
+      "code": "ac",
+      "description": "(from Latin acer, sharp): having an argic horizon starting ? 100 cm from the soil surface and having a CEC (by 1 M NH4OAc, pH 7) of < 24 cmolc kg-1 clay in some part ? 50 cm below its upper limit; and having an effective base saturation [exchangeable(Ca + Mg + K + Na) / exchangeable(Ca + Mg + K + Na + Al); exchangeable bases by 1 M NH4OAc (pH 7), exchangeable Al by 1 M KCl (unbuffered)] of < 50% in half or more of the part between 50 and 100 cm from the mineral soil surface or in the lower half of the mineral soil above continuous rock, technic hard material or a cemented or indurated layer starting ? 100 cm from the mineral soil surface, whichever is shallower (2).",
+      "parentQualifier": null
+    },
+    "Somerimollic": {
+      "name": "Somerimollic",
+      "code": "sm",
+      "description": "(from Spanish somero, superficial): having a mollic horizon, < 20 cm thick.",
+      "parentQualifier": "Mollic"
+    },
+    "Gibbsic": {
+      "name": "Gibbsic",
+      "code": "gi",
+      "description": "(from the mineral gibbsite, named after the US mineralogist George Gibbs): having a layer ? 30 cm thick, and starting ? 100 cm from the soil surface, containing ? 25% gibbsite in the fine earth fraction (2).",
+      "parentQualifier": null
+    },
+    "Technoskeletic": {
+      "name": "Technoskeletic",
+      "code": "tk",
+      "description": "(from Greek technae, art): having ? 40% (by volume) coarse fragments, that meet the criteria of artefacts, averaged over a depth of 100 cm from the soil surface or to continuous rock, technic hard material or a cemented or indurated layer, whichever is shallower (5).",
+      "parentQualifier": "Skeletic"
+    },
+    "Puffic": {
+      "name": "Puffic",
+      "code": "pu",
+      "description": "(from English to puff): having a crust pushed up by salt crystals (in Solonchaks only).",
+      "parentQualifier": null
+    },
+    "Hyperthionic": {
+      "name": "Hyperthionic",
+      "code": "ji",
+      "description": "(from Greek hyper, over): having a thionic horizon starting ? 100 cm from the soil surface and having a pH (1:1 in water) < 3.5 (2).",
+      "parentQualifier": "Thionic"
+    },
+    "Stagnic": {
+      "name": "Stagnic",
+      "code": "st",
+      "description": "(from Latin stagnare, to stagnate): having a layer ? 25 cm thick, and starting ? 75 cm from the mineral soil surface, that does not form part of a hydragric horizon and that has: � stagnic properties in which the area of reductimorphic colours plus the area of oximorphic colours is ? 25% of the layer's total area, and � reducing conditions for some time during the year in the major part of the layer's volume that has the reductimorphic colours (2).",
+      "parentQualifier": null
+    },
+    "Immissic": {
+      "name": "Immissic",
+      "code": "im",
+      "description": "(from Latin immissus, sent inside): having at the soil surface a layer ? 10 cm thick, with ? 20% (by mass) recently sedimented dust, soot or ash that meets the criteria of artefacts (2: Ano- and Panto- only).",
+      "parentQualifier": null
+    },
+    "Akroskeletic": {
+      "name": "Akroskeletic",
+      "code": "kk",
+      "description": "(from Greek akra, top): having ? 40% of the soil surface covered by fragments that have a greatest dimension ? 6 cm (stones, boulders or large boulders).",
+      "parentQualifier": "Skeletic"
+    },
+    "Tephric": {
+      "name": "Tephric",
+      "code": "tf",
+      "description": "(from Greek tephra, pile ash): having tephric material, starting ? 50 cm from the soil surface, that is � ? 30 cm thick, or � ? 10 cm thick and directly overlying continuous rock, technic hard material or a cemented or indurated layer (2).",
+      "parentQualifier": null
+    },
+    "Anthroumbric": {
+      "name": "Anthroumbric",
+      "code": "aw",
+      "description": "(from Greek anthropos, human being): having an umbric horizon and anthric properties (2: Ano- and Panto- only).",
+      "parentQualifier": "Umbric"
+    },
+    "Yermic": {
+      "name": "Yermic",
+      "code": "ye",
+      "description": "(from Spanish yermo, desert): having yermic properties, including a desert pavement.",
+      "parentQualifier": null
+    },
+    "Sombric": {
+      "name": "Sombric",
+      "code": "sb",
+      "description": "(from French sombre, shade): having a sombric horizon starting ? 150 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Gypsic": {
+      "name": "Gypsic",
+      "code": "gy",
+      "description": "(from Greek gypsos, gypsum): having a gypsic horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Pellic": {
+      "name": "Pellic",
+      "code": "pe",
+      "description": "(from Greek pellos, dusty): having in the upper 30 cm of the soil a Munsell colour value of ? 3 and a chroma of ? 2, both moist (in Vertisols only).",
+      "parentQualifier": null
+    },
+    "Hyperhydragric": {
+      "name": "Hyperhydragric",
+      "code": "jy",
+      "description": "(from Greek hyper, over): having an anthraquic horizon and a directly underlying hydragric horizon with a combined thickness of ? 100 cm.",
+      "parentQualifier": "Hydragric"
+    },
+    "Hypergypsic": {
+      "name": "Hypergypsic",
+      "code": "jg",
+      "description": "(from Greek hyper, over): having a gypsic horizon with a gypsum content in the fine earth fraction of ? 50% (by mass) and starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": "Gypsic"
+    },
+    "Oligeoeutric": {
+      "name": "Oligeoeutric",
+      "code": "ol",
+      "description": "(from Greek oligos, few): having an effective base saturation [exchangeable(Ca + Mg + K + Na) / exchangeable(Ca + Mg + K + Na + Al); exchangeable bases by 1 M NH4OAc (pH 7), exchangeable Al by 1 M KCl (unbuffered)] of ? 50% and a sum of exchangeable bases of < 5 cmolc kg-1 clay: * in the major part between 20 and 100 cm from the mineral soil surface, or * in the major part between 20 cm from the mineral soil surface and continuous rock, technic hard material or a cemented or indurated layer starting > 25 cm from the mineral soil surface, or * in a layer ? 5 cm thick, directly above continuous rock, technic hard material or a cemented or indurated layer starting ? 25 cm from the mineral soil surface (3).",
+      "parentQualifier": "Eutric"
+    },
+    "Protoargic": {
+      "name": "Protoargic",
+      "code": "qg",
+      "description": "(from Greek protou, before, and Latin argilla, white clay): having an absolute clay increase of ? 4% from one layer to the directly underlying layer within ? 100 cm of the mineral soil surface (in Arenosols only) (1).",
+      "parentQualifier": null
+    },
+    "Terric": {
+      "name": "Terric",
+      "code": "tr",
+      "description": "(from Latin terra, earth): having a terric horizon, and � in Anthrosols, not having a hortic, irragric, plaggic or pretic horizon with a thickness of ? 50 cm (2: Panto- only), and � in other soils, not having a hortic, irragric, plaggic or pretic horizon.",
+      "parentQualifier": null
+    },
+    "Calcifractic": {
+      "name": "Calcifractic",
+      "code": "cf",
+      "description": "(from Latin calx, lime): having a layer ? 10 cm thick, and starting ? 100 cm from the soil surface, consisting of a broken petrocalcic horizon, the remnants of which: � occupy a volume of ? 40%, and � have an average horizontal length of < 10 cm and/or occupy a volume of < 80% (2).",
+      "parentQualifier": "Fractic"
+    },
+    "Areninovic": {
+      "name": "Areninovic",
+      "code": "aj",
+      "description": "(from Latin arena, sand): having a layer, ? 5 cm and < 50 cm thick, with a texture class of sand or loamy sand in its major part, overlying a buried soil that is classified with preference according to the �Rules for classifying soils� (Chapter 2.5).",
+      "parentQualifier": "Nitic"
+    },
+    "Argisodic": {
+      "name": "Argisodic",
+      "code": "as",
+      "description": "(from Latin argilla, white clay): having an argic horizon, starting ? 100 cm from the soil surface, that has ? 15% Na plus Mg and ? 6% Na on the exchange complex throughout the argic horizon or within its upper 40 cm, whichever is thinner (2).",
+      "parentQualifier": "Sodic"
+    },
+    "Pisoplinthic": {
+      "name": "Pisoplinthic",
+      "code": "px",
+      "description": "(from Latin pisum, pea, and Greek plinthos, brick): having a pisoplinthic horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Placic": {
+      "name": "Placic",
+      "code": "pi",
+      "description": "(from Greek plax, flat stone): having a layer, between ? 0.1 and < 2.5 cm thick, within ? 100 cm of the mineral soil surface, that is cemented or indurated by a combination of organic matter, Fe, Mn and/or Al and is continuous to the extent that vertical fractures, if present, have an average horizontal spacing of ? 10 cm and occupy < 20% (by volume) (2: Epi-, Endo- and Amphi- only).",
+      "parentQualifier": null
+    },
+    "Xanthic": {
+      "name": "Xanthic",
+      "code": "xa",
+      "description": "(from Greek xanthos, yellow): having a ferralic horizon that has in a subhorizon ? 30 cm thick, and starting ? 75 cm of the upper limit of the ferralic horizon, in ? 90% of its exposed area, a Munsell colour hue of 7.5YR or yellower, a value of ? 4 and a chroma of ? 5, all moist.",
+      "parentQualifier": null
+    },
+    "Silandic": {
+      "name": "Silandic",
+      "code": "sn",
+      "description": "(from Latin silicia, silicon-containing material, and Japanese an, dark, and do, soil): having within ? 100 cm of the soil surface one or more layers with a combined thickness of ? 15 cm with andic properties and a Siox content of ? 0.6% or an Alpy/Alox of < 0.5 (in Andosols only) (2).",
+      "parentQualifier": null
+    },
+    "Gelistagnic": {
+      "name": "Gelistagnic",
+      "code": "gt",
+      "description": "(from Latin gelare, to freeze, and stagnare, to stagnate): having temporary water saturation caused by a frozen layer.",
+      "parentQualifier": null
+    },
+    "Rustic": {
+      "name": "Rustic",
+      "code": "rs",
+      "description": "(from English rust): having a spodic horizon in which the ratio of the percentage of Feox to the percentage of soil organic carbon is ? 6 throughout (in Podzols only).",
+      "parentQualifier": null
+    },
+    "Mazic": {
+      "name": "Mazic",
+      "code": "mz",
+      "description": "(from Spanish maza, cudgel): massive and hard to very hard in the upper 20 cm of the soil (in Vertisols only).",
+      "parentQualifier": null
+    },
+    "Eutric": {
+      "name": "Eutric",
+      "code": "eu",
+      "description": "(from Greek eu, good, and trophae, food): having: � in Histosols, a pHwater ? 5.5 in the major part with organic material, within 100 cm of the soil surface, � in other soils, an effective base saturation [exchangeable(Ca + Mg + K + Na) / exchangeable(Ca + Mg + K + Na + Al); exchangeable bases by 1 M NH4OAc (pH 7), exchangeable Al by 1 M KCl (unbuffered)] of ? 50%: * in the major part between 20 and 100 cm from the mineral soil surface, or * in the major part between 20 cm from the mineral soil surface and continuous rock, technic hard material or a cemented or indurated layer starting > 25 cm from the mineral soil surface, or * in a layer ? 5 cm thick, directly above continuous rock, technic hard material or a cemented or indurated layer starting ? 25 cm from the mineral soil surface (3).",
+      "parentQualifier": null
+    },
+    "Gypsifractic": {
+      "name": "Gypsifractic",
+      "code": "gf",
+      "description": "(from Greek gypsos, gypsum): having a layer ? 10 cm thick, and starting ? 100 cm from the soil surface, consisting of a broken petrogypsic horizon, the remnants of which: � occupy a volume of ? 40%, and � have an average horizontal length of < 10 cm and/or occupy a volume of < 80% (2).",
+      "parentQualifier": "Fractic"
+    },
+    "Ombric": {
+      "name": "Ombric",
+      "code": "om",
+      "description": "(from Greek ombros, rain): having a histic horizon saturated predominantly with rainwater (in Histosols only).",
+      "parentQualifier": null
+    },
+    "Hyperduric": {
+      "name": "Hyperduric",
+      "code": "ju",
+      "description": "(from Greek hyper, over): having a duric horizon with ? 50% (by volume) durinodes or fragments of a broken-up petroduric horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": "Duric"
+    },
+    "Turbic": {
+      "name": "Turbic",
+      "code": "tu",
+      "description": "(from Latin turbare, to disturb): having cryoturbation features (mixed material, disrupted soil horizons, involutions, organic intrusions, frost heave, separation of coarse from fine materials, cracks or patterned ground) within 100 cm of the soil surface, above a cryic horizon or above a seasonally frozen layer (2: only if clearly recognizable as layer).",
+      "parentQualifier": null
+    },
+    "Hyposulfidic": {
+      "name": "Hyposulfidic",
+      "code": "ws",
+      "description": "(from Greek hypo, under): having hyposulfidic material ? 15 cm thick, and starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": "Sulfidic"
+    },
+    "Grumic": {
+      "name": "Grumic",
+      "code": "gm",
+      "description": "(from Latin grumus, soil heap): having a soil surface layer ? 1 cm thick, with a strong granular structure, coarse (10 mm) or finer, i.e. �self-mulching� (in Vertisols only).",
+      "parentQualifier": null
+    },
+    "Rheic": {
+      "name": "Rheic",
+      "code": "rh",
+      "description": "(from Greek rhen, to flow): having a histic horizon saturated predominantly with groundwater or flowing water (in Histosols only).",
+      "parentQualifier": null
+    },
+    "Someriumbric": {
+      "name": "Someriumbric",
+      "code": "sw",
+      "description": "(from Spanish somero, superficial): having an umbric horizon, < 20 cm thick.",
+      "parentQualifier": "Umbric"
+    },
+    "Prototephric": {
+      "name": "Prototephric",
+      "code": "qf",
+      "description": "(from Greek protou, before): having a layer with tephric material ? 10 and < 30 cm thick, and starting ? 50 cm from the soil surface and not reaching continuous rock, technic hard material or a cemented or indurated layer.",
+      "parentQualifier": "Tephric"
+    },
+    "Sideralic": {
+      "name": "Sideralic",
+      "code": "se",
+      "description": "(from Greek sideros, iron, and Latin alumen, alum): having within ? 100 cm of the soil surface a layer that has sideralic properties (2).",
+      "parentQualifier": null
+    },
+    "Transportic": {
+      "name": "Transportic",
+      "code": "tn",
+      "description": "(from Latin transportare, to transport): having at the soil surface a layer ? 20 cm thick, or with a thickness of ? 50% of the entire soil if continuous rock, technic hard material or a cemented or indurated layer is starting ? 40 cm from the soil surface, with soil material that does not meet the criteria of artefacts; and that has been moved from a source area outside the immediate vicinity of the soil by intentional human activity, usually with the aid of machinery, and without substantial reworking or displacement by natural forces (2: Ano- and Panto- only; no subqualifier if continuous rock or technic hard material starts ? 40 cm from the mineral soil surface).",
+      "parentQualifier": null
+    },
+    "Orthoskeletic": {
+      "name": "Orthoskeletic",
+      "code": "ok",
+      "description": "(from Greek orthos, right): having: � ? 40% of the soil surface covered by fragments that have a greatest dimension ? 6 cm (stones, boulders or large boulders), and � ? 40% (by volume) coarse fragments averaged over a depth of 100 cm from the soil surface or to continuous rock, technic hard material or a cemented or indurated layer, whichever is shallower (5).",
+      "parentQualifier": "Skeletic"
+    },
+    "Petrocalcic": {
+      "name": "Petrocalcic",
+      "code": "pc",
+      "description": "(from Greek petros, rock, and Latin calx, lime): having a petrocalcic horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Vertic": {
+      "name": "Vertic",
+      "code": "vr",
+      "description": "(from Latin vertere, to turn): having a vertic horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Carbonatic": {
+      "name": "Carbonatic",
+      "code": "cn",
+      "description": "(from Latin carbo, coal): having a salic horizon with a soil solution (1:1 in water) with a pH of ? 8.5 and [HCO3 - ] > [SO4 2-] > 2*[Cl- ] (in Solonchaks only).",
+      "parentQualifier": null
+    },
+    "Nitic": {
+      "name": "Nitic",
+      "code": "ni",
+      "description": "(from Latin nitidus, shiny): having a nitic horizon starting ? 100 cm from the soil surface. (2)",
+      "parentQualifier": null
+    },
+    "Colluvic": {
+      "name": "Colluvic",
+      "code": "co",
+      "description": "(from Latin colluvio, mixture): having colluvic material ? 20 cm thick, and starting at the mineral soil surface (2: Ano- and Panto- only).",
+      "parentQualifier": null
+    },
+    "Hypercalcic": {
+      "name": "Hypercalcic",
+      "code": "jc",
+      "description": "(from Greek hyper, over): having a calcic horizon with a calcium carbonate equivalent in the fine earth fraction of ? 50% (by mass) and starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Hyperorganic": {
+      "name": "Hyperorganic",
+      "code": "jo",
+      "description": "(from Greek hyper, over, and organon, tool): having organic material ? 200 cm thick (in Histosols only).",
+      "parentQualifier": null
+    },
+    "Petroplinthic": {
+      "name": "Petroplinthic",
+      "code": "pp",
+      "description": "(from Greek petros, rock, and plinthos, brick): having a petroplinthic horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Lixic": {
+      "name": "Lixic",
+      "code": "Ix",
+      "description": "(from Latin lixivia, washed-out substances): having an argic horizon starting ? 100 cm from the soil surface and having a CEC (by 1 M NH4OAc, pH 7) of < 24 cmolc kg-1 clay in some part ? 50 cm below its upper limit; and having an effective base saturation [exchangeable(Ca + Mg + K + Na) / exchangeable(Ca + Mg + K + Na + Al); exchangeable bases by 1 M NH4OAc (pH 7), exchangeable Al by 1 M KCl (unbuffered)] of ? 50% in the major part between 50 and 100 cm from the mineral soil surface or in the lower half of the mineral soil above continuous rock, technic hard material or a cemented or indurated layer starting ? 100 cm from the mineral soil surface, whichever is shallower (2).",
+      "parentQualifier": null
+    },
+    "Escalic": {
+      "name": "Escalic",
+      "code": "ec",
+      "description": "(from Spanish escala, terrace): occurring in human-made terraces.",
+      "parentQualifier": null
+    },
+    "Neocambic": {
+      "name": "Neocambic",
+      "code": "nc",
+      "description": "(from Greek neos, new): having a cambic horizon, not consisting of albic material, starting ? 50 cm from the soil surface and overlying: � albic material that overlies an argic, a natric or a spodic horizon, or � a layer with retic properties.",
+      "parentQualifier": "Cambic"
+    },
+    "Alic": {
+      "name": "Alic",
+      "code": "al",
+      "description": "(from Latin alumen, alum): having an argic horizon starting ? 100 cm from the soil surface and having a CEC (by 1 M NH4OAc, pH 7) of ? 24 cmolc kg-1 clay throughout or to a depth of 50 cm of its upper limit, whichever is thinner; and having an effective base saturation [exchangeable(Ca + Mg + K + Na) / exchangeable(Ca + Mg + K + Na + Al); exchangeable bases by 1 M NH4OAc (pH 7), exchangeable Al by 1 M KCl (unbuffered)] of < 50% in half or more of the part between 50 and 100 cm from the mineral soil surface or in the lower half of the mineral soil above continuous rock, technic hard material or a cemented or indurated layer starting ? 100 cm from the mineral soil surface, whichever is shallower (2).",
+      "parentQualifier": null
+    },
+    "Nudinatric": {
+      "name": "Nudinatric",
+      "code": "nn",
+      "description": "(from Latin nudus, naked): having a natric horizon starting at the mineral soil surface.",
+      "parentQualifier": "Natric"
+    },
+    "Plinthic": {
+      "name": "Plinthic",
+      "code": "pl",
+      "description": "(from Greek plinthos, brick): having a plinthic horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Capillaric": {
+      "name": "Capillaric",
+      "code": "cp",
+      "description": "(from Latin capillus, hair): having a layer ? 25 cm thick that has so few macropores that water saturation of capillary pores causes reducing conditions (2).",
+      "parentQualifier": null
+    },
+    "Fractic": {
+      "name": "Fractic",
+      "code": "fc",
+      "description": "(from Latin fractus, broken): having a layer ? 10 cm thick, and starting ? 100 cm from the soil surface, consisting of a broken cemented or indurated horizon, the remnants of which: � occupy a volume of ? 40%, and � have an average horizontal length of < 10 cm and/or occupy a volume of < 80% (2).",
+      "parentQualifier": null
+    },
+    "Hypogypsic": {
+      "name": "Hypogypsic",
+      "code": "wg",
+      "description": "(from Greek hypo, under): having a gypsic horizon with a gypsum content in the fine earth fraction of < 25% (by mass) and starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": "Gypsic"
+    },
+    "Haplic": {
+      "name": "Haplic",
+      "code": "ha",
+      "description": "(from Greek haplous, simple): having a typical expression of certain features (typical in the sense that there is no further or meaningful characterization) and only used if none of the preceding qualifiers applies.",
+      "parentQualifier": null
+    },
+    "Orthidystric": {
+      "name": "Orthidystric",
+      "code": "od",
+      "description": "(from Greek orthos, right): having: � in Histosols, a pHwater < 5.5 throughout in the organic material within 100 cm of the soil surface, � in other soils, an effective base saturation [exchangeable(Ca + Mg + K + Na) / exchangeable(Ca + Mg + K + Na + Al); exchangeable bases by 1 M NH4OAc (pH 7), exchangeable Al by 1 M KCl (unbuffered)] of < 50% throughout\r\nbetween 20 and 100 cm from the mineral soil surface.",
+      "parentQualifier": "Dystric"
+    },
+    "Natric": {
+      "name": "Natric",
+      "code": "na",
+      "description": "(from Arabic natroon, salt): having a natric horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Reductaquic": {
+      "name": "Reductaquic",
+      "code": "ra",
+      "description": "(from Latin reductus, drawn back, and aqua, water): having a layer ? 25 cm thick, and starting ? 75 cm from the mineral soil surface, that is saturated with water during the thawing period and that has at some time of the year reducing conditions above a cryic horizon and within ? 100 cm of the mineral soil surface (in Cryosols only) (2).",
+      "parentQualifier": null
+    },
+    "Hypocalcic": {
+      "name": "Hypocalcic",
+      "code": "wc",
+      "description": "(from Greek hypo, under): having a calcic horizon with a calcium carbonate equivalent in the fine earth fraction of < 25% (by mass) and starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Mineralic": {
+      "name": "Mineralic",
+      "code": "mi",
+      "description": "(from Celtic mine, mineral): having, within ? 100 cm of the soil surface, one or more layers of mineral material with a combined thickness of ? 20 cm, in between layers of organic material (in Histosols only) (2: Epi-, Endo-, Amphi- and Kato- only).",
+      "parentQualifier": null
+    },
+    "Gelic": {
+      "name": "Gelic",
+      "code": "ge",
+      "description": "(from Latin gelare, to freeze): � having a layer with a soil temperature of ? 0 �C for ? 2 consecutive years, starting ? 200 cm from the soil surface, and � not having a cryic horizon starting ? 100 cm from the soil surface, and � not having a cryic horizon starting ? 200 cm from the soil surface with evidence of cryoturbation in some layer within ? 100 cm of the soil surface (1; Epi- and Endo- only).",
+      "parentQualifier": null
+    },
+    "Technolithic": {
+      "name": "Technolithic",
+      "code": "tt",
+      "description": "(from Greek technae, art): having technic hard material starting ? 10 cm from the soil surface (in Leptosols only).",
+      "parentQualifier": "Lithic"
+    },
+    "Posic": {
+      "name": "Posic",
+      "code": "po",
+      "description": "(from Latin positivus, given): having layer ? 30 cm thick, and starting ? 100 cm from the soil surface, that has a zero or positive charge (pHKCl - pHwater ? 0, both in 1:1 solution) (2).",
+      "parentQualifier": null
+    },
+    "Andic": {
+      "name": "Andic",
+      "code": "an",
+      "description": "(from Japanese an, dark, and do, soil): having within ? 100 cm of the soil surface one or more layers with andic or vitric properties with a combined thickness of ? 30 cm (in Cambisols ? 15 cm), of which ? 15 cm (in Cambisols ? 7.5 cm) have andic properties (2).",
+      "parentQualifier": null
+    },
+    "Anthrotoxic": {
+      "name": "Anthrotoxic",
+      "code": "at",
+      "description": "(from Greek anthropos, human being): having in some layer within ? 50 cm of the soil surface, sufficiently high and persistent concentrations of organic or inorganic substances to markedly affect the health of humans who come in regular contact with the soil.",
+      "parentQualifier": null
+    },
+    "Petrogleyic": {
+      "name": "Petrogleyic",
+      "code": "pg",
+      "description": "(from Greek petros, rock, and Russian gley, mucky soil mass): having a layer ? 10 cm thick, within ? 100 cm of the mineral soil surface, that meets diagnostic criterion 2 of the gleyic properties and of which ? 15% (by volume) is cemented (bog iron) (2).",
+      "parentQualifier": null
+    },
+    "Rhodic": {
+      "name": "Rhodic",
+      "code": "ro",
+      "description": "(from Greek rhodon, rose): having between 25 and 150 cm of the soil surface, a layer ? 30 cm thick, that has, in ? 90% of its exposed area, a Munsell colour hue redder than 5YR moist, a value of < 4 moist, and a value dry, no more than one unit higher than the moist value (2: except Epi-).",
+      "parentQualifier": null
+    },
+    "Oxyaquic": {
+      "name": "Oxyaquic",
+      "code": "or",
+      "description": "(from Greek oxys, sour, and Latin aqua, water): having a layer ? 25 cm thick, and starting ? 75 cm from the mineral soil surface, that is saturated with oxygen-rich water during a period of ? 20 consecutive days; and not having gleyic or stagnic properties in any layer within ? 100 cm of the mineral soil surface (2).",
+      "parentQualifier": null
+    },
+    "Lapiadic": {
+      "name": "Lapiadic",
+      "code": "ld",
+      "description": "(from Latin lapis, stone): having at the soil surface continuous rock that has dissolution features (rills, grooves), ? 20 cm deep and covering ? 10 and < 50% of the surface of the continuous rock (in Leptosols only).",
+      "parentQualifier": null
+    },
+    "Hyperalic": {
+      "name": "Hyperalic",
+      "code": "jl",
+      "description": "(from Greek hyper, over, and Latin alumen, alum): having an argic horizon, starting ? 100 cm from the soil surface, that has a silt to clay ratio of < 0.6 and an Al saturation (effective) of ? 50%, throughout or to a depth of 50 cm below its upper limit, whichever is thinner (in Alisols only).",
+      "parentQualifier": "Alic"
+    },
+    "Petrogypsic": {
+      "name": "Petrogypsic",
+      "code": "py",
+      "description": "(from Greek petros, rock, and gypsos, gypsum): having a petrogypsic horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Mollic": {
+      "name": "Mollic",
+      "code": "mo",
+      "description": "(from Latin mollis, soft): having a mollic horizon (2: Ano- and Pantoonly).",
+      "parentQualifier": null
+    },
+    "Arzic": {
+      "name": "Arzic",
+      "code": "az",
+      "description": "(from Turkish arz, land or earth�s crust): having sulfate-rich groundwater in some layer within ? 50 cm of the soil surface during some time in most years and containing ? 15% (by volume) gypsum averaged over a depth of 100 cm from the soil surface or to continuous rock, technic hard material or a cemented or indurated layer, whichever is shallower (in Gypsisols only).",
+      "parentQualifier": null
+    },
+    "Greyzemic": {
+      "name": "Greyzemic",
+      "code": "gz",
+      "description": "(from English grey, and Russian zemlya, earth): having uncoated silt and sand grains on structural faces in the lower half of a mollic horizon.",
+      "parentQualifier": null
+    },
+    "Acroxic": {
+      "name": "Acroxic",
+      "code": "ao",
+      "description": "(from Latin acer, sharp, and Greek oxys, sour): having within ? 100 cm of the soil surface one or more layers with a combined thickness of ? 30 cm, and with < 2 cmolc kg-1 fine earth exchangeable bases (by 1 M NH4OAc, pH 7) plus exchangeable Al (by 1 M KCl, unbuffered) (in Andosols only) (2).",
+      "parentQualifier": null
+    },
+    "Folic": {
+      "name": "Folic",
+      "code": "fo",
+      "description": "having a folic horizon starting at the soil surface.",
+      "parentQualifier": null
+    },
+    "Lignic": {
+      "name": "Lignic",
+      "code": "lg",
+      "description": "(from Latin lignum, wood): having inclusions of intact wood fragments that make up ? 25% of the soil volume, within 50 cm from the soil surface.",
+      "parentQualifier": null
+    },
+    "Loaminovic": {
+      "name": "Loaminovic",
+      "code": "lj",
+      "description": "(from English loam): having a layer, ? 5 cm and < 50 cm thick, with a texture class of loam, sandy loam, sandy clay loam, clay loam or silty clay loam in its major part, overlying a buried soil that is classified with preference according to the �Rules for classifying soils� (Chapter 2.5).",
+      "parentQualifier": "Nitic"
+    },
+    "Plaggic": {
+      "name": "Plaggic",
+      "code": "pa",
+      "description": "(from Low German plaggen, sod): having a plaggic horizon (2: Pantoonly).",
+      "parentQualifier": null
+    },
+    "Glossic": {
+      "name": "Glossic",
+      "code": "gs",
+      "description": "(from Greek glossa, tongue): having albeluvic glossae starting ? 100 cm from the soil surface.",
+      "parentQualifier": null
+    },
+    "Fluvic": {
+      "name": "Fluvic",
+      "code": "fv",
+      "description": "(from Latin fluvius, river): having fluvic material ? 25 cm thick, and starting ? 75 cm from the mineral soil surface (2).",
+      "parentQualifier": null
+    },
+    "Totilamellic": {
+      "name": "Totilamellic",
+      "code": "ta",
+      "description": "(from Latin totus, complete): having an argic horizon that consists entirely of lamellae starting ? 100 cm from the soil surface.",
+      "parentQualifier": "Lamellic"
+    },
+    "Brunic": {
+      "name": "Brunic",
+      "code": "br",
+      "description": "(from Low German brun, brown): having a layer ? 15 cm thick, and starting ? 50 cm from the soil surface, that meets diagnostic criteria 2�4 of the cambic horizon but fails diagnostic criterion 1, and does not consist of albic material.",
+      "parentQualifier": null
+    },
+    "Protosalic": {
+      "name": "Protosalic",
+      "code": "qz",
+      "description": "(from Greek protou, before): having within ? 100 cm of the soil surface a layer that has an ECe of ? 4 dS m-1 at 25 �C; and not having a salic horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": "Salic"
+    },
+    "Ferralic": {
+      "name": "Ferralic",
+      "code": "fl",
+      "description": "(from Latin ferrum, iron, and alumen, alum): having a ferralic horizon starting ? 150 cm of the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Uterquic": {
+      "name": "Uterquic",
+      "code": "uq",
+      "description": "(from Latin uterque, both): having a layer with dominant gleyic properties and some parts with stagnic properties.",
+      "parentQualifier": null
+    },
+    "Rubic": {
+      "name": "Rubic",
+      "code": "ru",
+      "description": "(from Latin ruber, red): having between 25 and 100 cm of the soil surface, a layer ? 30 cm thick, that does not consist of albic material and that has, in ? 90% of its exposed area, a Munsell colour hue redder than 10YR and/or a chroma of ? 5, both moist (in Arenosols only) (2: except Epi-).",
+      "parentQualifier": null
+    },
+    "Histic": {
+      "name": "Histic",
+      "code": "hi",
+      "description": "(from Greek histos, tissue): having a histic horizon starting at the soil surface.",
+      "parentQualifier": null
+    },
+    "Protovertic": {
+      "name": "Protovertic",
+      "code": "qv",
+      "description": "(from Greek protou, before): having a protovertic horizon starting ? 100 cm from the soil surfaced; and not having a vertic horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": "Vertic"
+    },
+    "Nudiyermic": {
+      "name": "Nudiyermic",
+      "code": "ny",
+      "description": "(from Latin nudus, naked): having yermic properties without a desert pavement.",
+      "parentQualifier": "Yermic"
+    },
+    "Clayinovic": {
+      "name": "Clayinovic",
+      "code": "cj",
+      "description": "(from English clay): having a layer, ? 5 cm and < 50 cm thick, with a texture class of clay, sandy clay or silty clay in its major part, overlying a buried soil that is classified with preference according to the �Rules for classifying soils� (Chapter 2.5).",
+      "parentQualifier": "Nitic"
+    },
+    "Hypernatric": {
+      "name": "Hypernatric",
+      "code": "jn",
+      "description": "(from Greek hyper, over): having a natric horizon with an exchangeable Na percentage (ESP) of ? 15 throughout the entire natric horizon or within its upper 40 cm, whichever is thinner.",
+      "parentQualifier": "Natric"
+    },
+    "Tonguic": {
+      "name": "Tonguic",
+      "code": "to",
+      "description": "(from English tongue): showing tonguing of a chernic, mollic or umbric horizon into an underlying layer.",
+      "parentQualifier": null
+    },
+    "Petrosalic": {
+      "name": "Petrosalic",
+      "code": "ps",
+      "description": "(from Greek petros, rock, and Latin sal, salt): having a layer ? 10 cm thick, within ? 100 cm of the soil surface, which is cemented by salts more soluble than gypsum (2).",
+      "parentQualifier": null
+    },
+    "Tidalic": {
+      "name": "Tidalic",
+      "code": "td",
+      "description": "(from English tide): affected by tidal water, i.e. located between the line of mean high water springs and the line of mean low water springs.",
+      "parentQualifier": null
+    },
+    "Albic": {
+      "name": "Albic",
+      "code": "ab",
+      "description": "(from Latin albus, white): having a layer of albic material ? 1 cm thick, and starting ? 100 cm from the mineral soil surface, that does not consist of tephric material, does not contain carbonates, and does not contain gypsum; and that overlies a diagnostic horizon or forms part of a layer with stagnic properties (2).",
+      "parentQualifier": null
+    },
+    "Orthofluvic": {
+      "name": "Orthofluvic",
+      "code": "of",
+      "description": "(from Greek orthos, right): having fluvic material: � from the mineral soil surface to a depth of ? 5 cm, and * ? 25 cm thick, and starting ? 25 cm from the mineral soil surface, or * from the lower limit of a plough layer that is ? 40 cm thick, to a depth of ? 50 cm from the mineral soil surface.",
+      "parentQualifier": "Fluvic"
+    },
+    "Umbric": {
+      "name": "Umbric",
+      "code": "um",
+      "description": "(from Latin umbra, shade): having an umbric horizon (2: Ano- and Panto- only).",
+      "parentQualifier": null
+    },
+    "Infraspodic": {
+      "name": "Infraspodic",
+      "code": "is",
+      "description": "(from Latin infra, below, and Greek spodos, wood ash): having a layer that underlies a soil classified with preference according to the �Rules for classifying soils� (Chapter 2.5) and that meets diagnostic criteria 3 to 6 of the spodic horizon and fails diagnostic criterion 1 or 2 or both.",
+      "parentQualifier": null
+    },
+    "Protospodic": {
+      "name": "Protospodic",
+      "code": "qp",
+      "description": "(from Greek protou, before): having a layer ? 2.5 cm thick, and starting ? 100 cm from the mineral soil surface, that has: � ? 0.5% soil organic carbon in its uppermost 1 cm, and � a sublayer with an Alox + �Feox value of ? 0.5% that is ? 2 times higher than the lowest Alox + �Feox value of all overlying mineral layers; and not having a spodic horizon starting ? 200 cm from the mineral soil surface (2).",
+      "parentQualifier": "Spodic"
+    },
+    "Abruptic": {
+      "name": "Abruptic",
+      "code": "ap",
+      "description": "(from Latin abruptus, broken away): having an abrupt textural difference within ? 100 cm of the mineral soil surface (1).",
+      "parentQualifier": null
+    },
+    "Skeletic": {
+      "name": "Skeletic",
+      "code": "sk",
+      "description": "(from Greek skeletos, dried out): having ? 40% (by volume) coarse fragments averaged over a depth of 100 cm from the soil surface or to continuous rock, technic hard material or a cemented or indurated layer, whichever is shallower (5).",
+      "parentQualifier": null
+    },
+    "Entic": {
+      "name": "Entic",
+      "code": "et",
+      "description": "(from Latin recens, young): having a loose spodic horizon and not having a layer with albic material (in Podzols only).",
+      "parentQualifier": null
+    },
+    "Eutrisilic": {
+      "name": "Eutrisilic",
+      "code": "es",
+      "description": "(from Greek eu, good, and trophae, food, and Latin silicia, siliconcontaining material): having within ? 100 cm of the soil surface one or more layers with a combined thickness of ? 30 cm, with andic properties and a sum of exchangeable bases (by 1 M NH4OAc, pH 7) of ? 15 cmolc kg-1 fine earth (in Andosols only) (2).",
+      "parentQualifier": null
+    },
+    "Sapric": {
+      "name": "Sapric",
+      "code": "sa",
+      "description": "(from Greek sapros, rotted): having, after rubbing, less than one-sixth (by volume) of the organic material consisting of recognizable plant tissue within 100 cm of the soil surface (in Histosols only).",
+      "parentQualifier": null
+    },
+    "Carbic": {
+      "name": "Carbic",
+      "code": "cb",
+      "description": "(from Latin carbo, coal): having a spodic horizon that does not turn redder on ignition throughout (in Podzols only).",
+      "parentQualifier": null
+    },
+    "Hyperspodic": {
+      "name": "Hyperspodic",
+      "code": "jp",
+      "description": "(from Greek hyper, over): having a spodic horizon ? 100 cm thick.",
+      "parentQualifier": "Spodic"
+    },
+    "Linic": {
+      "name": "Linic",
+      "code": "lc",
+      "description": "(from Latin linea, line): having a continuous, very slowly permeable to impermeable constructed geomembrane of any thickness starting ? 100 cm from the soil surface (1).",
+      "parentQualifier": null
+    },
+    "Profundihumic": {
+      "name": "Profundihumic",
+      "code": "dh",
+      "description": "(from Latin profundus, deep): having ? 1.4% soil organic carbon in the fine earth fraction as a weighted average to a depth of 100 cm from the mineral soil surface.",
+      "parentQualifier": "Humic"
+    },
+    "Clayic": {
+      "name": "Clayic",
+      "code": "ce",
+      "description": "(from English clay): having a texture class of clay, sandy clay or silty clay, in a layer ? 30 cm thick, within ? 100 cm of the mineral soil surface or in the major part between the mineral soil surface and continuous rock, technic hard material or a cemented or indurated layer starting < 60 cm from the mineral soil surface (2; no subqualifier if continuous rock or technic hard material starts < 60 cm from the mineral soil surface).",
+      "parentQualifier": null
+    },
+    "Cambic": {
+      "name": "Cambic",
+      "code": "cm",
+      "description": "(from Late Latin cambiare, to change): having a cambic horizon not consisting of albic material and starting ? 50 cm from the soil surface.",
+      "parentQualifier": null
+    },
+    "Akromineralic": {
+      "name": "Akromineralic",
+      "code": "km",
+      "description": "(from Greek akra, top): having mineral material, ? 5 cm thick, starting at the soil surface, but the layers of mineral material above or in between layers of organic material have a combined thickness of < 20 cm (in Histosols only).",
+      "parentQualifier": "Mineralic"
+    },
+    "Aric": {
+      "name": "Aric",
+      "code": "ai",
+      "description": "(from Latin arare, to plough): being ploughed to a depth of ? 20 cm from the soil surface (2: Ano- and Panto- only).",
+      "parentQualifier": null
+    },
+    "Gilgaic": {
+      "name": "Gilgaic",
+      "code": "gg",
+      "description": "(from Aboriginal Australian gilgai, water hole): having at the soil surface, microhighs and microlows with a difference in level of ? 10 cm, i.e. gilgai microrelief (in Vertisols only).",
+      "parentQualifier": null
+    },
+    "Protoandic": {
+      "name": "Protoandic",
+      "code": "qa",
+      "description": "(from Greek protou, before): having within ? 100 cm of the soil surface one or more layers with a combined thickness of ? 15 cm, and with an Alox + �Feox value of ? 1.2%, a bulk density23 of ? 1 kg dm-3 and a phosphate retention of ? 55%; and not fulfilling the set of criteria of the Andic qualifier (2).",
+      "parentQualifier": "Andic"
+    },
+    "Zootoxic": {
+      "name": "Zootoxic",
+      "code": "zx",
+      "description": "(from Greek zoae, life): having in some layer within ? 50 cm of the soil surface, sufficiently high and persistent concentrations of organic or inorganic substances to markedly affect the health of animals, including humans, that ingest plants grown on these soils.",
+      "parentQualifier": null
+    },
+    "Organotransportic": {
+      "name": "Organotransportic",
+      "code": "ot",
+      "description": "(from Greek organon, tool): having at the soil surface a layer ? 20 cm thick, or with a thickness of ? 50% of the entire soil if continuous rock, technic hard material or a cemented or indurated layer is starting ? 40 cm from the soil surface, with organic material that does not meet the criteria of artefacts; and that has been moved from a source area outside the immediate vicinity of the soil by intentional human activity, usually with the aid of machinery, and without substantial reworking or displacement by natural forces (2: Ano- and Panto- only; no subqualifier if continuous rock or technic hard material starts ? 40 cm from the mineral soil surface).",
+      "parentQualifier": "Transportic"
+    },
+    "Aceric": {
+      "name": "Aceric",
+      "code": "ae",
+      "description": "(from Latin acer, sharp): having within ? 100 cm of the soil surface a layer with a pH (1:1 in water) between ? 3.5 and < 5 and jarosite mottles (in Solonchaks only) (2).",
+      "parentQualifier": null
+    },
+    "Siltinovic": {
+      "name": "Siltinovic",
+      "code": "sj",
+      "description": "(from English silt): having a layer, ? 5 cm and < 50 cm thick, with a texture class of silt or silt loam in its major part, overlying a buried soil that is classified with preference according to the �Rules for classifying soils� (Chapter 2.5).",
+      "parentQualifier": "Nitic"
+    },
+    "Someric": {
+      "name": "Someric",
+      "code": "si",
+      "description": "(from Spanish somero, superficial): having a mollic or umbric horizon, < 20 cm thick.",
+      "parentQualifier": null
+    },
+    "Dolomitic": {
+      "name": "Dolomitic",
+      "code": "do",
+      "description": "(from the mineral dolomite, named after the French geoscientist D�odat de Dolomieu): having dolomitic material throughout between 20 and 100 cm from the soil surface or between 20 cm and continuous rock, technic hard material or a cemented or indurated layer, whichever is shallower (4).",
+      "parentQualifier": null
+    },
+    "Fragic": {
+      "name": "Fragic",
+      "code": "fg",
+      "description": "(from Latin fragilis, fragile): having a fragic horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Duric": {
+      "name": "Duric",
+      "code": "du",
+      "description": "(from Latin durus, hard): having a duric horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Hyperferritic": {
+      "name": "Hyperferritic",
+      "code": "jf",
+      "description": "(from Greek hyper, over): having a layer ? 30 cm thick, and starting ? 100 cm from the soil surface, with Fedith in the fine earth fraction of ? 30% and not forming part of a petroplinthic, pisoplinthic or plinthic horizon (2).",
+      "parentQualifier": "Ferritic"
+    },
+    "Cutanic": {
+      "name": "Cutanic",
+      "code": "ct",
+      "description": "(from Latin cutis, skin): having an argic or natric horizon that meets diagnostic criterion 2b for the respective horizon.",
+      "parentQualifier": null
+    },
+    "Aeolic": {
+      "name": "Aeolic",
+      "code": "ay",
+      "description": "(from Greek aiolos, wind): having at the soil surface a layer, ? 10 cm thick, the material of which is deposited by wind and has < 0.6% soil organic carbon (2: Ano- and Panto- only).",
+      "parentQualifier": null
+    },
+    "Anthric": {
+      "name": "Anthric",
+      "code": "ak",
+      "description": "(from Greek anthropos, human being): having anthric properties.",
+      "parentQualifier": null
+    },
+    "Geric": {
+      "name": "Geric",
+      "code": "gr",
+      "description": "(from Greek geraios, old): having within ? 100 cm of the soil surface a layer with geric properties (2).",
+      "parentQualifier": null
+    },
+    "Tonguimollic": {
+      "name": "Tonguimollic",
+      "code": "tm",
+      "description": "(from English tongue): having a mollic horizon that tongues into an underlying layer (2: Ano- and Panto- only; referring to the mollic horizon, not to the tongues).",
+      "parentQualifier": "Mollic"
+    },
+    "Reductic": {
+      "name": "Reductic",
+      "code": "rd",
+      "description": "(from Latin reductus, drawn back): having reducing conditions in ? 25% of the volume of the fine earth within 100 cm of the soil surface, caused by gaseous emissions, e.g. methane or carbon dioxide, or caused by liquid intrusions other than water, e.g. gasoline (5).",
+      "parentQualifier": null
+    },
+    "Sulfatic": {
+      "name": "Sulfatic",
+      "code": "su",
+      "description": "(from Latin sulpur, sulfur): having a salic horizon with a soil solution (1:1 in water) with [SO4 2-] > 2*[HCO3 - ] > 2*[Cl- ] (in Solonchaks only).",
+      "parentQualifier": null
+    },
+    "Dystric": {
+      "name": "Dystric",
+      "code": "dy",
+      "description": "(from Greek dys, bad, and trophae, food): having: � in Histosols, a pHwater < 5.5 in half or more of the part with organic material, within 100 cm of the soil surface, � in other soils, an effective base saturation [exchangeable(Ca + Mg + K + Na) / exchangeable(Ca + Mg + K + Na + Al); exchangeable bases by 1 M NH4OAc (pH 7), exchangeable Al by 1 M KCl (unbuffered)] of < 50%: * in half or more of the part between 20 and 100 cm from the mineral soil surface, or * in half or more of the part between 20 cm from the mineral soil surface and continuous rock, technic hard material or a cemented or indurated layer starting > 25 cm from the mineral soil surface, or * in a layer ? 5 cm thick, directly above continuous rock, technic hard material or a cemented or indurated layer starting ? 25 cm from the mineral soil surface (3).",
+      "parentQualifier": null
+    },
+    "Inclinic": {
+      "name": "Inclinic",
+      "code": "ic",
+      "description": "(from Latin inclinare, to bow): having � a slope inclination of ? 5%, and � a layer ? 25 cm thick, and starting ? 75 cm from the mineral soil surface, with gleyic or stagnic properties and a subsurface water flow for some time during the year.",
+      "parentQualifier": null
+    },
+    "Protoaridic": {
+      "name": "Protoaridic",
+      "code": "qd",
+      "description": "(from Greek protou, before): having a mineral topsoil layer ? 5 cm thick, with a Munsell colour value, dry, of ? 5 that turns darker on moistening; < 0.4% soil organic carbon, a platy structure in ? 50% of the volume, a surface crust; and not having aridic properties.",
+      "parentQualifier": "Aridic"
+    },
+    "Hypothionic": {
+      "name": "Hypothionic",
+      "code": "wi",
+      "description": "(from Greek hypo, under): having a thionic horizon starting ? 100 cm from the soil surface and having a pH (1:1 in water) between ? 3.5 and < 4 (2).",
+      "parentQualifier": "Thionic"
+    },
+    "Takyric": {
+      "name": "Takyric",
+      "code": "ty",
+      "description": "(from Turkic languages takyr, barren land): having takyric properties",
+      "parentQualifier": null
+    },
+    "Reductigleyic": {
+      "name": "Reductigleyic",
+      "code": "ry",
+      "description": "(Latin reductus, drawn back, and Russian gley, mucky soil mass): not having, ? 40 cm from the mineral soil surface, a layer that meets diagnostic criterion 2 of the gleyic properties (in Gleysols only).",
+      "parentQualifier": null
+    },
+    "Vermic": {
+      "name": "Vermic",
+      "code": "vm",
+      "description": "(from Latin vermis, worm): having ? 50% (by volume, weighted average) of worm holes, casts, or filled animal burrows in the upper 100 cm of the soil or to continuous rock, technic hard material or a cemented or indurated layer, whichever is shallower.",
+      "parentQualifier": null
+    },
+    "Nudilithic": {
+      "name": "Nudilithic",
+      "code": "nt",
+      "description": "(from Latin nudus, naked): having continuous rock at the surface (in Leptosols only).",
+      "parentQualifier": "Lithic"
+    },
+    "Rockic": {
+      "name": "Rockic",
+      "code": "rk",
+      "description": "(from English rock): having continuous rock or technic hard material that is directly overlain by organic material (in Histosols only) (1: Epi- and Endoonly).",
+      "parentQualifier": null
+    },
+    "Ekranic": {
+      "name": "Ekranic",
+      "code": "ek",
+      "description": "(from French �cran, shield): having technic hard material starting ? 5 cm from the soil surface (in Technosols only).",
+      "parentQualifier": null
+    },
+    "Hydric": {
+      "name": "Hydric",
+      "code": "hy",
+      "description": "(from Greek hydor, water): having within ? 100 cm of the soil surface one or more layers with a combined thickness of ? 35 cm that have a water content ? 100% at 1500 kPa tension, measured without previous drying of the sample (in Andosols only) (2).",
+      "parentQualifier": null
+    },
+    "Somerirendzic": {
+      "name": "Somerirendzic",
+      "code": "sr",
+      "description": "(from Spanish somero, superficial): having a mollic horizon, < 20 cm thick, that directly overlies calcareous rock containing ? 40% calcium carbonate equivalent.",
+      "parentQualifier": "Rendzic"
+    },
+    "Tonguichernic": {
+      "name": "Tonguichernic",
+      "code": "tc",
+      "description": "(from English tongue): having a chernic horizon that tongues into an underlying layer (2: Ano- and Panto- only).",
+      "parentQualifier": "Chernic"
+    },
+    "Evapocrustic": {
+      "name": "Evapocrustic",
+      "code": "ev",
+      "description": "(from Latin e, out, and vapor, steam, and crusta, crust): having a saline crust ? 2 cm thick, on the soil surface (in Solonchaks only).",
+      "parentQualifier": null
+    },
+    "Ortsteinic": {
+      "name": "Ortsteinic",
+      "code": "os",
+      "description": "(from German Ortstein, locally occurring stone): having a spodic horizon that has a subhorizon, ? 2.5 cm thick, that is cemented ('ortstein') in ? 50% of its horizontal extension (in Podzols only).",
+      "parentQualifier": null
+    },
+    "Chloridic": {
+      "name": "Chloridic",
+      "code": "cl",
+      "description": "(from Greek chloros, yellow-green): having a salic horizon with a soil solution (1:1 in water) with [Cl- ] > 2*[SO4 2-] > 2*[HCO3 - ] (in Solonchaks only).",
+      "parentQualifier": null
+    },
+    "Petroduric": {
+      "name": "Petroduric",
+      "code": "pd",
+      "description": "(from Greek petros, rock, and Latin durus, hard): having a petroduric horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Relictistagnic": {
+      "name": "Relictistagnic",
+      "code": "rw",
+      "description": "(from Latin relictus, left back): having a layer ? 25 cm thick, and starting ? 75 cm from the mineral soil surface, that has: � stagnic properties in which the area of reductimorphic colours plus the area of oximorphic colours is ? 25% of the layer's total area, and � no reducing conditions (2).",
+      "parentQualifier": "Stagnic"
+    },
+    "Relictiturbic": {
+      "name": "Relictiturbic",
+      "code": "rb",
+      "description": "(from Latin relictus, left back): having cryoturbation features within 100 cm of the soil surface, caused by frost action in the past (2: only if clearly recognizable as layer).",
+      "parentQualifier": "Turbic"
+    },
+    "Rendzic": {
+      "name": "Rendzic",
+      "code": "rz",
+      "description": "(from Polish rzendzic, to grate in contact with a plough blade): having a mollic horizon that contains or directly overlies calcaric material containing ? 40% calcium carbonate equivalent or that directly overlies calcareous rock containing ? 40% calcium carbonate equivalent (2: Ano- and Panto- only).",
+      "parentQualifier": null
+    },
+    "Cryic": {
+      "name": "Cryic",
+      "code": "cy",
+      "description": "(from Greek kryos, cold, ice): having a cryic horizon starting ? 100 cm from the soil surface, or having a cryic horizon starting ? 200 cm from the soil surface with evidence of cryoturbation in some layer ? 100 cm from the soil surface (1; Epi- and Endo- only; referring to the upper limit of the cryic horizon).",
+      "parentQualifier": null
+    },
+    "Ferric": {
+      "name": "Ferric",
+      "code": "fr",
+      "description": "(from Latin ferrum, iron): having a ferric horizon starting ? 100 cm of the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Laxic": {
+      "name": "Laxic",
+      "code": "la",
+      "description": "(from Latin laxus, slack): having between 25 and 75 cm from the mineral soil surface a mineral soil layer ? 20 cm thick, that has a bulk density24 of ? 0.9 kg dm-3.",
+      "parentQualifier": null
+    },
+    "Siltic": {
+      "name": "Siltic",
+      "code": "sl",
+      "description": "(from English silt): having a texture class of silt or silt loam in a layer ? 30 cm thick, within ? 100 cm of the mineral soil surface or in the major part between the mineral soil surface and continuous rock, technic hard material or a cemented or indurated layer starting < 60 cm from the mineral soil surface (2; no subqualifier if continuous rock or technic hard material starts < 60 cm from the mineral soil surface).",
+      "parentQualifier": null
+    },
+    "Fulvic": {
+      "name": "Fulvic",
+      "code": "fu",
+      "description": "(from Latin fulvus, dark yellow): having a fulvic horizon starting ? 30 cm from the soil surface (2: except Endo-).",
+      "parentQualifier": null
+    },
+    "Protosodic": {
+      "name": "Protosodic",
+      "code": "qs",
+      "description": "(from Greek protou, before): having a layer ? 20 cm thick, and starting ? 100 cm from the soil surface, that has ? 6% Na on the exchange complex; and not having a natric horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": "Sodic"
+    },
+    "Calcic": {
+      "name": "Calcic",
+      "code": "cc",
+      "description": "(from Latin calx, lime): having a calcic horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Technoleptic": {
+      "name": "Technoleptic",
+      "code": "tl",
+      "description": "(from Greek technae, art): having technic hard material starting ? 100 cm from the soil surface (1: Epi- and Endo- only).",
+      "parentQualifier": "Leptic"
+    },
+    "Tonguiumbric": {
+      "name": "Tonguiumbric",
+      "code": "tw",
+      "description": "(from English tongue): having an umbric horizon that tongues into an underlying layer (2: Ano- and Panto- only; referring to the umbric horizon, not to the tongues).",
+      "parentQualifier": "Umbric"
+    },
+    "Loamic": {
+      "name": "Loamic",
+      "code": "lo",
+      "description": "(from English loam): having a texture class of loam, sandy loam, sandy clay loam, clay loam or silty clay loam in a layer ? 30 cm thick, within ? 100 cm of the mineral soil surface or in the major part between the mineral soil surface and continuous rock, technic hard material or a cemented or indurated layer starting < 60 cm from the mineral soil surface (2; no subqualifier if continuous rock or technic hard material starts < 60 cm from the mineral soil surface).",
+      "parentQualifier": null
+    },
+    "Magnesic": {
+      "name": "Magnesic",
+      "code": "mg",
+      "description": "(from the chemical element magnesium - no agreed etymology): having an exchangeable Ca to Mg ratio of < 1 in the major part within 100 cm of the soil surface or to continuous rock, technic hard material or a cemented or indurated layer, whichever is shallower (3).",
+      "parentQualifier": null
+    },
+    "Raptic": {
+      "name": "Raptic",
+      "code": "rp",
+      "description": "(from Latin raptus, broken): having a lithic discontinuity at some depth ? 100 cm from the mineral soil surface (1).",
+      "parentQualifier": null
+    },
+    "Akrofluvic": {
+      "name": "Akrofluvic",
+      "code": "kf",
+      "description": "(from Greek akra, top): having fluvic material from the mineral soil surface to a depth of ? 5 cm, but < 25 cm thick (note: in addition to the Akrofluvic subqualifier, a soil may also have the Amphifluvic, the Katofluvic or the Endofluvic subqualifier).",
+      "parentQualifier": "Fluvic"
+    },
+    "Isolatic": {
+      "name": "Isolatic",
+      "code": "il",
+      "description": "(from Italian isola, island): having, above technic hard material, above a geomembrane or above a continuous layer of artefacts starting ? 100 cm from the soil surface, soil material containing fine earth without any contact to other soil material containing fine earth (e.g. soils on roofs or in pots).",
+      "parentQualifier": null
+    },
+    "Aluandic": {
+      "name": "Aluandic",
+      "code": "aa",
+      "description": "(from Latin alumen, alum, and Japanese an, dark, and do, soil): having within ? 100 cm of the soil surface one or more layers with a combined thickness of ? 15 cm with andic properties and a Siox content of < 0.6% and an Alpy/Alox of ? 0.5 (in Andosols only) (2).",
+      "parentQualifier": null
+    },
+    "Phytotoxic": {
+      "name": "Phytotoxic",
+      "code": "yx",
+      "description": "(from Greek phyton, plant): having in some layer within ? 50 cm of the soil surface, sufficiently high concentrations of ions other than Al, Fe, Na, Ca and Mg, to markedly affect plant growth.",
+      "parentQualifier": null
+    },
+    "Alcalic": {
+      "name": "Alcalic",
+      "code": "ax",
+      "description": "(from Arabic al-qali, salt-containing ash): having: � a pH (1:1 in water) of ? 8.5 throughout within ? 50 cm of the mineral soil surface, or to continuous rock, technic hard material or a cemented or indurated layer, whichever is shallower, and � an effective base saturation [exchangeable(Ca + Mg + K + Na) / exchangeable(Ca + Mg + K + Na + Al); exchangeable bases by 1 M NH4OAc (pH 7), exchangeable Al by 1 M KCl (unbuffered)] of ? 50%: * in the major part between 20 and 100 cm from the mineral soil surface or * in the major part between 20 cm and continuous rock, technic hard material or a cemented or indurated layer starting > 25 cm from the mineral soil surface, or * in a layer ? 5 cm thick, directly above continuous rock, technic hard material or a cemented or indurated layer starting ? 25 cm from the mineral soil surface.",
+      "parentQualifier": null
+    },
+    "Hyperhumic": {
+      "name": "Hyperhumic",
+      "code": "jh",
+      "description": "(from Greek hyper, over): having ? 5% soil organic carbon in the fine earth fraction as a weighted average to a depth of 50 cm from the mineral soil surface.",
+      "parentQualifier": "Humic"
+    },
+    "Hyperdystric": {
+      "name": "Hyperdystric",
+      "code": "jd",
+      "description": "(from Greek hyper, over): having: � in Histosols, a pHwater < 5.5 throughout in the organic material within 100 cm of the soil surface and < 50% throughout between 20 and 100 cm from the mineral soil surface, and < 20% in some layer between 20 and 100 cm from the mineral soil surface.",
+      "parentQualifier": "Dystric"
+    },
+    "Columnic": {
+      "name": "Columnic",
+      "code": "cu",
+      "description": "(from Latin columna, column): having a layer ? 15 cm thick, and starting ? 100 cm from the soil surface, that has a columnar structure (2).",
+      "parentQualifier": null
+    },
+    "Oxygleyic": {
+      "name": "Oxygleyic",
+      "code": "oy",
+      "description": "(from Greek oxys, sour, and Russian gley, mucky soil mass): not having, within ? 100 cm of the mineral soil surface, a layer that meets diagnostic criterion 1 of the gleyic properties (in Gleysols only).",
+      "parentQualifier": null
+    },
+    "Luvic": {
+      "name": "Luvic",
+      "code": "Iv",
+      "description": "(from Latin eluere, to wash): having an argic horizon starting ? 100 cm from the soil surface and having a CEC (by 1 M NH4OAc, pH 7) of ? 24 cmolc kg-1 clay throughout or to a depth of 50 cm of its upper limit, whichever is thinner; and having an effective base saturation [exchangeable(Ca + Mg + K + Na) / exchangeable(Ca + Mg + K + Na + Al); exchangeable bases by 1 M NH4OAc (pH 7), exchangeable Al by 1 M KCl (unbuffered)] of ? 50% in the\r\nmajor part between 50 and 100 cm from the mineral soil surface or in the lower\r\nhalf of the mineral soil above continuous rock, technic hard material or a cemented\r\nor indurated layer starting ? 100 cm from the mineral soil surface, whichever is\r\nshallower (2).",
+      "parentQualifier": null
+    },
+    "Archaic": {
+      "name": "Archaic",
+      "code": "ah",
+      "description": "(from Greek archae, beginning): having a layer ? 20 cm thick, within ? 100 cm of the soil surface, with ? 20% (by volume, weighted average) artefacts containing ? 50% (by volume) artefacts produced by pre-industrial processes, e.g. ceramics, showing traces of production by hand, ceramics that can easily be broken or ceramics containing sand (in Technosols only) (2).",
+      "parentQualifier": null
+    },
+    "Fibric": {
+      "name": "Fibric",
+      "code": "fi",
+      "description": "(from Latin fibra, fiber): having, after rubbing, two-thirds or more (by volume) of the organic material consisting of recognizable plant tissue within 100 cm of the soil surface (in Histosols only).",
+      "parentQualifier": null
+    },
+    "Sulfidic": {
+      "name": "Sulfidic",
+      "code": "sf",
+      "description": "(from Latin sulpur, sulfur): having sulfidic material ? 15 cm thick, and starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Chernic": {
+      "name": "Chernic",
+      "code": "ch",
+      "description": "(from Russian chorniy, black): having a chernic horizon (2: Ano- and Panto- only).",
+      "parentQualifier": null
+    },
+    "Hydragric": {
+      "name": "Hydragric",
+      "code": "hg",
+      "description": "(from Greek hydor, water, and Latin ager, field): having an anthraquic horizon and a directly underlying hydragric horizon, the latter starting ? 100 cm from the soil surface.",
+      "parentQualifier": null
+    },
+    "Spodic": {
+      "name": "Spodic",
+      "code": "sd",
+      "description": "(from Greek spodos, wood ash): having a spodic horizon starting ? 200 cm from the mineral soil surface (2).",
+      "parentQualifier": null
+    },
+    "Hortic": {
+      "name": "Hortic",
+      "code": "ht",
+      "description": "(from Latin hortus, garden): having a hortic horizon (2: Panto- only).",
+      "parentQualifier": null
+    },
+    "Orthomineralic": {
+      "name": "Orthomineralic",
+      "code": "oi",
+      "description": "(from Greek orthos, right): having: � mineral material, ? 5 cm thick, starting at the soil surface, and � within ? 100 cm of the soil surface, one or more layers of mineral material with a combined thickness of ? 20 cm, above or in between layers of organic material (in Histosols only).",
+      "parentQualifier": "Mineralic"
+    },
+    "Nudiargic": {
+      "name": "Nudiargic",
+      "code": "ng",
+      "description": "(from Latin nudus, naked, and argilla, white clay): having an argic horizon starting at the mineral soil surface.",
+      "parentQualifier": null
+    },
+    "Chromic": {
+      "name": "Chromic",
+      "code": "cr",
+      "description": "(from Greek chroma, colour): having between 25 and 150 cm of the soil surface a layer, ? 30 cm thick, that has, in ? 90% of its exposed area, a Munsell colour hue redder than 7.5YR and a chroma of > 4, both moist (2: except Epi-).",
+      "parentQualifier": null
+    },
+    "Irragric": {
+      "name": "Irragric",
+      "code": "ir",
+      "description": "(from Latin irrigare, to irrigate, and ager, field): having an irragric horizon (2: Panto- only).",
+      "parentQualifier": null
+    },
+    "Spolic": {
+      "name": "Spolic",
+      "code": "sp",
+      "description": "(from Latin spoliare, to exploit): having a layer ? 20 cm thick, within ? 100 cm of the soil surface, with ? 20% (by volume, weighted average) artefacts containing ? 35% (by volume) industrial waste (mine spoil, dredgings, slag, ash,\r\nrubble, etc.) (in Technosols only) (2).",
+      "parentQualifier": null
+    },
+    "Vetic": {
+      "name": "Vetic",
+      "code": "vt",
+      "description": "(from Latin vetus, old): having between 25 and 100 cm of the soil surface a layer that has a sum of exchangeable bases (by 1 M NH4OAc, pH 7) plus exchangeable Al (by 1 M KCl, unbuffered) of < 6 cmolc kg-1 clay (2).",
+      "parentQualifier": null
+    },
+    "Murshic": {
+      "name": "Murshic",
+      "code": "mh",
+      "description": "(from Polish mursz, decay): having a drained histic horizon ? 20 cm thick, and starting ? 10 cm from the soil surface or below a folic horizon, with a bulk density25 of ? 0.2 kg dm-3 and one or both of the following: � moderate to strong granular or blocky structure, or � cracks (in Histosols only) (2).",
+      "parentQualifier": null
+    },
+    "Profondic": {
+      "name": "Profondic",
+      "code": "pf",
+      "description": "(from French profond, deep): having an argic horizon in which the clay content does not decrease by ? 20% (relative) from its maximum within 150 cm of the soil surface.",
+      "parentQualifier": null
+    },
+    "Eutrosilic": {
+      "name": "Eutrosilic",
+      "code": "es",
+      "description": " (from Greek eu, good, and trophae, food, and Latin silicia, silicon containing material): having within ≤ 100 cm of the soil surface one or more layers with a combined thickness of ≥ 30 cm, with andic properties and a sum of exchangeable bases (by 1 M NH4OAc, pH 7) of ≥ 15 cmolc kg-1 fine earth (in Andosols only)",
+      "parentQualifier": null
+    },
+    "Prototechnic": {
+      "name": "Prototechnic",
+      "code": "qt",
+      "description": "(from Greek protou, before): having ? 5% (by volume, weighted average) artefacts in the upper 100 cm from the soil surface or to continuous rock or a cemented or indurated layer, whichever is shallower; or having a layer ? 10 cm thick, and starting ? 90 cm from the soil surface, with ? 25% (by volume, weighted average) artefacts (5 or 2: Epi- and Endo- only).",
+      "parentQualifier": "Technic"
+    },
+    "Toxic": {
+      "name": "Toxic",
+      "code": "tx",
+      "description": "(from Greek toxikon, arrow poison): having in some layer within ? 50 cm of the soil surface, toxic concentrations of organic or inorganic substances other than ions of Al, Fe, Na, Ca and Mg, or having radioactivity dangerous to humans.",
+      "parentQualifier": null
+    },
+    "Geoabruptic": {
+      "name": "Geoabruptic",
+      "code": "go",
+      "description": "(from Greek gaia, earth): having an abrupt textural difference within ? 100 cm of the mineral soil surface that is not associated with the upper limit of an argic or natric horizon (1).",
+      "parentQualifier": "Abruptic"
+    },
+    "Hypersalic": {
+      "name": "Hypersalic",
+      "code": "jz",
+      "description": "(from Greek hyper, over): having within ? 100 cm of the soil surface a layer that has an ECe of ? 30 dS m-1 at 25 �C (2).",
+      "parentQualifier": "Salic"
+    },
+    "Drainic": {
+      "name": "Drainic",
+      "code": "dr",
+      "description": "(from French drainer, to drain): having artificial drainage.",
+      "parentQualifier": null
+    },
+    "Subaquatic": {
+      "name": "Subaquatic",
+      "code": "sq",
+      "description": "(from Latin sub, under, and aqua, water): being permanently submerged by water not deeper than 200 cm.",
+      "parentQualifier": null
+    },
+    "Hypersulfidic": {
+      "name": "Hypersulfidic",
+      "code": "js",
+      "description": "(from Greek hyper, over): having hypersulfidic material ? 15 cm thick, and starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": "Sulfidic"
+    },
+    "Manganiferric": {
+      "name": "Manganiferric",
+      "code": "mf",
+      "description": "(from Latin magnesia nigra, black mineral from the city of Magnesia): having a ferric horizon starting ? 100 cm from the soil surface in which ? 50% of the concretions and/or nodules and/or mottles are black (2).",
+      "parentQualifier": "Ferric"
+    },
+    "Pretic": {
+      "name": "Pretic",
+      "code": "pk",
+      "description": "(from Portuguese preto, black): having a pretic horizon (2: Panto- only).",
+      "parentQualifier": null
+    },
+    "Vitric": {
+      "name": "Vitric",
+      "code": "vi",
+      "description": "(from Latin vitrum, glass): having within ? 100 cm of the soil surface, one or more layers with andic or vitric properties with a combined thickness of ? 30 cm (in Cambisols ? 15 cm), of which ? 15 cm (in Cambisols ? 7.5 cm) have vitric properties (2).",
+      "parentQualifier": null
+    },
+    "Nudipetric": {
+      "name": "Nudipetric",
+      "code": "np",
+      "description": "(from Latin nudus, naked): having a cemented or indurated layer starting at the soil surface (refers to a diagnostic horizon of the respective RSG).",
+      "parentQualifier": "Petric"
+    },
+    "Humic": {
+      "name": "Humic",
+      "code": "hu",
+      "description": "(from Latin humus, earth): having ? 1% soil organic carbon in the fine earth fraction as a weighted average to a depth of 50 cm from the mineral soil surface (if continuous rock, technic hard material or a cemented or indurated layer starts within the specified depth, the depth range below that contributes a 0 to the\r\ncalculation).",
+      "parentQualifier": null
+    },
+    "Pachic": {
+      "name": "Pachic",
+      "code": "ph",
+      "description": "(from Greek pachys, thick): having a mollic or umbric horizon ? 50 cm thick.",
+      "parentQualifier": null
+    },
+    "Protocalcic": {
+      "name": "Protocalcic",
+      "code": "qc",
+      "description": "(from Greek protou, before): having a layer with protocalcic\r\nproperties starting ? 100 cm from the soil surface and not having a calcic or\r\npetrocalcic horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Floatic": {
+      "name": "Floatic",
+      "code": "ft",
+      "description": "(from English to float): having organic material floating on water (in Histosols only).",
+      "parentQualifier": null
+    },
+    "Lamellic": {
+      "name": "Lamellic",
+      "code": "II",
+      "description": "(from Latin lamella, metal blade): having two or more lamellae (? 0.5 and < 7.5 cm thick) that have higher clay contents than the directly overlying layers as stated in the diagnostic criteria 2.a of the argic horizon, with a combined thickness of ? 5 cm; the uppermost lamella starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Hypermagnesic": {
+      "name": "Hypermagnesic",
+      "code": "jm",
+      "description": "(from Greek hyper, over): having an exchangeable Ca to Mg ratio of < 0.1 in the major part within 100 cm of the soil surface or to continuous rock, technic hard material or a cemented or indurated layer, whichever is shallower (3).",
+      "parentQualifier": "Magnesic"
+    },
+    "Mesotrophic": {
+      "name": "Mesotrophic",
+      "code": "ms",
+      "description": "(from Greek mesos, middle, and trophae, food): having an effective base saturation [exchangeable(Ca + Mg + K + Na) / exchangeable(Ca + Mg + K + Na + Al); exchangeable bases by 1 M NH4OAc (pH 7), exchangeable Al by 1 M KCl (unbuffered)] of < 75% at a depth of 20 cm from the soil surface (in Vertisols only).",
+      "parentQualifier": null
+    },
+    "Petric": {
+      "name": "Petric",
+      "code": "pt",
+      "description": "(from Greek petros, rock): having a cemented or indurated layer starting ? 100 cm from the soil surface (refers to a diagnostic horizon of the respective RSG) (1: Epi- and Endo- only).",
+      "parentQualifier": null
+    },
+    "Radiotoxic": {
+      "name": "Radiotoxic",
+      "code": "rx",
+      "description": "(from Latin radius, ray): having radioactivity, dangerous to humans.",
+      "parentQualifier": null
+    },
+    "Anthromollic": {
+      "name": "Anthromollic",
+      "code": "am",
+      "description": "(from Greek anthropos, human being): having a mollic horizon and anthric properties (2: Ano- and Panto- only).",
+      "parentQualifier": "Mollic"
+    },
+    "Salic": {
+      "name": "Salic",
+      "code": "sz",
+      "description": "(from Latin sal, salt): having a salic horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Retic": {
+      "name": "Retic",
+      "code": "rt",
+      "description": "(from Latin rete, net): having retic properties starting ? 100 cm from the soil surface, but not having albeluvic glossae.",
+      "parentQualifier": null
+    },
+    "Orthieutric": {
+      "name": "Orthieutric",
+      "code": "oe",
+      "description": "(from Greek orthos, right): having: � in Histosols, a pHwater ? 5.5 throughout in the organic material within 100 cm of the soil surface, � in other soils, an effective base saturation [exchangeable(Ca + Mg + K + Na) / exchangeable(Ca + Mg + K + Na + Al); exchangeable bases by 1 M NH4OAc (pH 7), exchangeable Al by 1 M KCl (unbuffered)] of ? 50% throughout between 20 and 100 cm from the mineral soil surface.",
+      "parentQualifier": "Eutric"
+    },
+    "Ochric": {
+      "name": "Ochric",
+      "code": "oh",
+      "description": "(from Greek ochros, pale): having ? 0.2 % soil organic carbon (weighted average) in the layer from the mineral soil surface to a depth of 10 cm from the mineral soil surface; and not having a mollic or umbric horizon and not fulfilling the set of criteria of the Humic qualifier.",
+      "parentQualifier": null
+    },
+    "Garbic": {
+      "name": "Garbic",
+      "code": "ga",
+      "description": "(from English garbage): having a layer ? 20 cm thick, within ? 100 cm of the soil surface, with ? 20% (by volume, weighted average) artefacts containing ? 35% (by volume) organic waste (in Technosols only) (2).",
+      "parentQualifier": null
+    },
+    "Thionic": {
+      "name": "Thionic",
+      "code": "ti",
+      "description": "(from Greek theion, sulfur): having a thionic horizon starting ? 100 cm from the soil surface (2).",
+      "parentQualifier": null
+    },
+    "Gypsiric": {
+      "name": "Gypsiric",
+      "code": "gp",
+      "description": "(from Greek gypsos, gypsum): having gypsiric material throughout between 20 and 100 cm from the soil surface or between 20 cm and continuous rock, technic hard material or a cemented or indurated layer, whichever is shallower; and not having a gypsic or petrogypsic horizon starting ? 100 cm from the soil surface (4).",
+      "parentQualifier": null
+    },
+    "Relocatic": {
+      "name": "Relocatic",
+      "code": "rc",
+      "description": "(from Latin re, again, and locatus, put): being in situ remodelled by human activity to a depth of ? 100 cm (e.g. by deep ploughing, refilling soil pits or levelling land) and no horizon development after remodelling throughout, at least between 20 cm and 100 cm from the soil surface or between the lower limit of any plough layer, > 20 cm thick, and 100 cm from the soil surface (in Technosols, Relocatic is redundant, except in combination with the Ekranic or Linic qualifier); a destroyed diagnostic subsurface horizon may be added with a hyphen, e.g. Spodi-Relocatic, Spodi-Epirelocatic (4: Epi- only).",
+      "parentQualifier": null
+    },
+    "Mawic": {
+      "name": "Mawic",
+      "code": "mw",
+      "description": "(from Kiswahili mawe, stones): having a layer of coarse fragments, the interstices of which are filled with organic material, and that is directly overlain by organic material (in Histosols only) (1: Epi- and Endo- only; referring to the upper limit of the layer of coarse fragments).",
+      "parentQualifier": null
+    },
+    "Hypersideralic": {
+      "name": "Hypersideralic",
+      "code": "jr",
+      "description": "(from Greek hyper, over): having within ? 100 cm of the soil surface a layer that has sideralic properties and a CEC (by 1 M NH4OAc, pH 7) of < 16 cmolc kg-1 clay (2).",
+      "parentQualifier": "Sideralic"
+    },
+    "Thixotropic": {
+      "name": "Thixotropic",
+      "code": "tp",
+      "description": "(from Greek thixis, contact, and Greek tropae, reversion): having\r\nin some layer within ? 50 cm of the soil surface, material that changes, under\r\npressure or by rubbing, from a plastic solid into a liquefied stage and back into the\r\nsolid condition.",
+      "parentQualifier": null
+    },
+    "Hyperskeletic": {
+      "name": "Hyperskeletic",
+      "code": "jk",
+      "description": "(from Greek hyper, over, and skeletos, dried out): having < 20% (by volume) fine earth, averaged over a depth of 75 cm from the soil surface or to continuous rock, technic hard material or a cemented or indurated layer starting >25 cm from the soil surface, whichever is shallower",
+      "parentQualifier": null
+    },
+    "Urbic": {
+      "name": "Urbic",
+      "code": "ub",
+      "description": "(from Latin urbs, city): having a layer ? 20 cm thick, within ? 100 cm of the soil surface, with ? 20% (by volume, weighted average) artefacts containing ? 35% (by volume) rubble and refuse of human settlements (in Technosols only) (2).",
+      "parentQualifier": null
+    }
+  },
+  "specifiers": {
+    "Thapto": {
+      "name": "Thapto",
+      "code": "b",
+      "description": "(from Greek thaptein, to bury) specifier can be used to construct optional or additional subqualifiers. If used with a principal qualifier, the Thapto- subqualifier must shift to the supplementary qualifiers. The Thapto- subqualifiers are placed after the supplementary qualifiers that are listed for the respective RSG and after any Bathy- subqualifier."
+    },
+    "Amphi": {
+      "name": "Amphi",
+      "code": "m",
+      "description": "(from Greek amphi, around): the horizon or layer starts > 0 and < 50 cm of the (mineral) soil surface and has its lower limit > 50 and < 100 cm of the (mineral) soil surface; and no such horizon or layer occurs < 1 cm of the (mineral) soil surface; and no such horizon or layer occurs between 99 and 100 cm of the (mineral) soil surface."
+    },
+    "Kato": {
+      "name": "Kato",
+      "code": "kk",
+      "description": "(from Greek kato, downwards): the horizon or layer starts > 0 and < 50 cm of the (mineral) soil surface, and has its lower limit ? 100 cm of the (mineral) soil surface; and no such horizon or layer occurs < 1 cm of the (mineral) soil surface."
+    },
+    "Ano": {
+      "name": "Ano",
+      "code": "a",
+      "description": "(from Greek ano, upwards): the horizon or layer starts at the (mineral) soil surface, and has its lower limit > 50 and < 100 cm of the (mineral) soil surface; and no such horizon or layer occurs between 99 and 100 cm of the (mineral) soil surface."
+    },
+    "Endo": {
+      "name": "Endo",
+      "code": "n",
+      "description": "(from Greek endon, inside): the characteristic is present somewhere > 50 and ? 100 cm from the (mineral) soil surface and is absent ? 50 cm from the (mineral) soil surface."
+    },
+    "Supra": {
+      "name": "Supra",
+      "code": "s",
+      "description": "(from Latin supra, above) specifier can be constructed to describe the soil material above, if the thickness or depth requirements of a qualifier or of its respective diagnostics are not fulfilled, but all other criteria are fulfilled throughout in the soil material above (e.g. Ekranic Technosol (Suprafolic)). If the Supra- specifier is used, the Epi- specifier is not used."
+    },
+    "Bathy": {
+      "name": "Bathy",
+      "code": "d",
+      "description": "(from Greek bathys, deep) specifier\r\ncan be used to construct an additional subqualifier. The Bathy- subqualifier\r\nextends to a greater depth than specified for the qualifier. If the Endo- specifier\r\ncannot be added to a qualifier, the Bathy- specifier cannot be used either (e.g.\r\nAlcalic: neither Endo-, nor Bathy-). If used with a principal qualifier, the\r\nBathy- subqualifier must shift to the supplementary qualifiers. The Bathysubqualifiers are placed after the supplementary qualifiers that are listed for the\r\nrespective RSG. With the Bathy- specifier, qualifiers that are not even in the list\r\nfor the particular RSG (see Chapter 4) can be added, for example Albic Arenosol\r\n(Bathylixic). If it comprises buried layers, Bathy- is only allowed in combination\r\nwith the Thapto- specifier, e.g. Bathythaptovertic (see the Thapto- specifier,\r\nbelow, and �2.5 Buried soils�, below)."
+    },
+    "Panto": {
+      "name": "Panto",
+      "code": "e",
+      "description": "(from Greek pan, all): the horizon or layer starts at the (mineral) soil surface and has its lower limit ? 100 cm of the (mineral) soil surface."
+    },
+    "Epi": {
+      "name": "Epi",
+      "code": "p",
+      "description": "(from Greek epi, over): the characteristic is present somewhere ? 50 cm from the (mineral) soil surface and is absent > 50 and ? 100 cm from the (mineral) soil surface."
+    }
+  },
+  "qualifierFamilies": null
+}

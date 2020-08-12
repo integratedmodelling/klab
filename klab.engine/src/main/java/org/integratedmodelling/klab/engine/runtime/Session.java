@@ -9,6 +9,7 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,12 +26,14 @@ import java.util.logging.Level;
 import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.model.KActors;
+import org.integratedmodelling.kactors.model.KActorsBehavior;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Authentication;
+import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Currencies;
 import org.integratedmodelling.klab.Documentation;
@@ -56,6 +59,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.knowledge.IAuthority.Identity;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -67,7 +71,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
@@ -90,6 +94,7 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMess
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.resources.Resource;
@@ -108,13 +113,18 @@ import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.rest.AuthorityIdentity;
+import org.integratedmodelling.klab.rest.AuthorityResolutionRequest;
 import org.integratedmodelling.klab.rest.ContextualizationRequest;
 import org.integratedmodelling.klab.rest.DataflowDetail;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DocumentationReference;
 import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.GroupReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.InterruptTask;
+import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.NetworkReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
@@ -131,7 +141,6 @@ import org.integratedmodelling.klab.rest.ResourceOperationRequest;
 import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishRequest;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
-import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatch.TokenClass;
@@ -144,10 +153,12 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.SpatialLocation;
 import org.integratedmodelling.klab.rest.TicketRequest;
 import org.integratedmodelling.klab.rest.TicketResponse;
+import org.integratedmodelling.klab.rest.ViewAction;
+import org.integratedmodelling.klab.rest.ViewAction.Operation;
 import org.integratedmodelling.klab.rest.WatchRequest;
 import org.integratedmodelling.klab.utils.CollectionUtils;
-import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.FileUtils;
+import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
@@ -184,6 +195,15 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	SpatialExtent regionOfInterest = null;
 	ActorRef<KlabMessage> actor;
 	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
+	private View view;
+	Map<String, ISession.ObservationListener> observationListeners = Collections.synchronizedMap(new LinkedHashMap<>());
+	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
+
+	public interface ROIListener {
+
+		public void onChange(SpatialExtent extent);
+
+	}
 
 	// a simple monitor that will only compile all notifications into a list to be
 	// sent back to clients
@@ -542,6 +562,32 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		return false;
 	}
 
+	public Collection<ObservationListener> getObservationListeners() {
+		return observationListeners.values();
+	}
+
+	@Override
+	public String addObservationListener(ISession.ObservationListener listener) {
+		String ret = NameGenerator.newName();
+		observationListeners.put(ret, listener);
+		return ret;
+	}
+
+	@Override
+	public void removeObservationListener(String listenerId) {
+		observationListeners.remove(listenerId);
+	}
+
+	public String addROIListener(ROIListener listener) {
+		String ret = NameGenerator.newName();
+		roiListeners.put(ret, listener);
+		return ret;
+	}
+
+	public void removeROIListener(String listenerId) {
+		roiListeners.remove(listenerId);
+	}
+
 	/**
 	 * Register a task. It may be a ITask or a IScript, which only have the Future
 	 * identity in common.
@@ -844,6 +890,22 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	}
 
 	@MessageHandler
+	private void handleAuthorityResolutionRequest(AuthorityResolutionRequest request, IMessage message) {
+		Identity ret = Authorities.INSTANCE.getIdentity(request.getAuthority(), request.getIdentity());
+		if (ret == null) {
+			ret = new AuthorityIdentity();
+			ret.getNotifications().add(new Notification("Authority identity " + request.getAuthority() + ":"
+					+ request.getIdentity() + " could not be resolved", Level.SEVERE.getName()));
+		} else if (ret.getDescription() != null) {
+			// reformat the documentation as HTML
+			((AuthorityIdentity) ret).setDescription(MarkdownUtils.INSTANCE.format(ret.getDescription()));
+		}
+		monitor.send(Message
+				.create(this.token, IMessage.MessageClass.KimLifecycle, IMessage.Type.AuthorityDocumentation, ret)
+				.inResponseTo(message));
+	}
+
+	@MessageHandler
 	private void importResource(final ResourceImportRequest request, IMessage.Type type) {
 
 		if (type == IMessage.Type.ImportResource) {
@@ -928,6 +990,10 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		scale.setSpaceScale(scaleRank);
 
 		monitor.send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
+
+		for (ROIListener listener : roiListeners.values()) {
+			listener.onChange(extent);
+		}
 
 		this.regionOfInterest = extent;
 	}
@@ -1199,16 +1265,36 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		switch (type) {
 		case RunApp:
 		case RunUnitTest:
-			IBehavior behavior = Actors.INSTANCE.getBehavior(request.getBehavior());
-			if (behavior != null) {
-				this.load(behavior, new SimpleRuntimeScope(this));
+			if (request.isStop()) {
+				stop(request.getBehavior());
+			} else {
+				IBehavior behavior = Actors.INSTANCE.getBehavior(request.getBehavior());
+				if (behavior != null) {
+					this.load(behavior, new SimpleRuntimeScope(this));
+				}
 			}
 			break;
 		case RunTest:
 		case RunScript:
+			// these run to the end or can be stopped through their monitor (not handled for
+			// now)
 			run(request.getScriptUrl());
 		default:
 			break;
+		}
+	}
+
+	@MessageHandler
+	private void handleViewAction(ViewAction action) {
+
+		if (action.getOperation() == Operation.UserAction) {
+			@SuppressWarnings("unchecked")
+			IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE
+					.getIdentity(action.getComponent().getIdentity(), IActorIdentity.class);
+			if (receiver != null) {
+				receiver.getActor().tell(
+						new UserAction(action, action.getComponent().getApplicationId(), new SimpleRuntimeScope(this)));
+			}
 		}
 	}
 
@@ -1503,7 +1589,12 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		ret.setTimeLastJoined(lastJoin);
 		ret.setTimeRetrieved(System.currentTimeMillis());
 		ret.setTimeLastActivity(lastActivity);
-		ret.getAppUrns().addAll(Actors.INSTANCE.getBehaviorIds(IKActorsBehavior.Type.APP));
+		for (String app : Actors.INSTANCE.getPublicApps()) {
+			ret.getPublicApps().add(((KActorsBehavior) Actors.INSTANCE.getBehavior(app).getStatement()).getReference());
+		}
+		// FIXME remove
+		ret.getAppUrns().addAll(Actors.INSTANCE.getPublicApps());
+		ret.getUserAppUrns().addAll(Actors.INSTANCE.getBehaviorIds(IKActorsBehavior.Type.USER));
 
 		IUserIdentity user = getParentIdentity(IUserIdentity.class);
 		if (user != null) {
@@ -1511,7 +1602,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			uid.setEmail(user.getEmailAddress());
 			uid.setId(user.getUsername());
 			for (Group group : user.getGroups()) {
-				uid.getGroups().add(group.getId());
+				uid.getGroups().add(new GroupReference(group));
 			}
 			uid.setLastLogin(user.getLastLogin().toString());
 			ret.setOwner(uid);
@@ -1579,7 +1670,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			if (engine != null) {
 
 				ActorRef<KlabMessage> parentActor = engine.getActor();
-				parentActor.tell(new Spawn(this));
+				parentActor.tell(new Spawn(this, null));
 
 				/*
 				 * wait for instrumentation to succeed. Couldn't figure out the ask pattern.
@@ -1598,15 +1689,29 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 		if (this.actor == null) {
 			// no upstream actor (should not happen), create directly
-			this.actor = Actors.INSTANCE.createActor(SessionActor.create(this), this);
+			this.actor = Actors.INSTANCE.createActor(SessionActor.create(this, null), this);
 		}
 
 		return this.actor;
 	}
 
 	@Override
-	public void load(IBehavior behavior, IRuntimeScope scope) {
-		getActor().tell(new SystemBehavior.Load(behavior.getId(), scope));
+	public String load(IBehavior behavior, IContextualizationScope scope) {
+		String ret = "app" + NameGenerator.shortUUID();
+		getActor().tell(new SystemBehavior.Load(behavior.getId(), ret, (IRuntimeScope) scope));
+		return ret;
+	}
+
+	@Override
+	public boolean stop(String applicationId) {
+		getActor().tell(new SystemBehavior.Stop(applicationId));
+		return true;
+	}
+
+	@Override
+	public boolean stop() {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 	public void instrument(ActorRef<KlabMessage> actor) {
@@ -1616,6 +1721,16 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	public Map<String, Object> getState() {
 		return globalState;
+	}
+
+	@Override
+	public View getView() {
+		return view;
+	}
+
+	@Override
+	public void setLayout(Layout layout) {
+		this.view = new ViewImpl(layout);
 	}
 
 }

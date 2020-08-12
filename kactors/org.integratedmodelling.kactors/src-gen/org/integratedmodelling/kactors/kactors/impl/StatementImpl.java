@@ -12,12 +12,14 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.DoStatement;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.MessageCall;
+import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.Statement;
 import org.integratedmodelling.kactors.kactors.StatementGroup;
 import org.integratedmodelling.kactors.kactors.Value;
@@ -33,13 +35,16 @@ import org.integratedmodelling.kactors.kactors.WhileStatement;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getAssignment <em>Assignment</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getGroup <em>Group</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getInstantiation <em>Instantiation</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getVerb <em>Verb</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getText <em>Text</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getMetadata <em>Metadata</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getIf <em>If</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getWhile <em>While</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getDo <em>Do</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getFor <em>For</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getValue <em>Value</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.StatementImpl#getTag <em>Tag</em>}</li>
  * </ul>
  *
  * @generated
@@ -65,6 +70,16 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @ordered
    */
   protected StatementGroup group;
+
+  /**
+   * The cached value of the '{@link #getInstantiation() <em>Instantiation</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getInstantiation()
+   * @generated
+   * @ordered
+   */
+  protected ActorInstantiation instantiation;
 
   /**
    * The cached value of the '{@link #getVerb() <em>Verb</em>}' containment reference.
@@ -95,6 +110,16 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @ordered
    */
   protected String text = TEXT_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMetadata()
+   * @generated
+   * @ordered
+   */
+  protected Metadata metadata;
 
   /**
    * The cached value of the '{@link #getIf() <em>If</em>}' containment reference.
@@ -145,6 +170,26 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @ordered
    */
   protected Value value;
+
+  /**
+   * The default value of the '{@link #getTag() <em>Tag</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTag()
+   * @generated
+   * @ordered
+   */
+  protected static final String TAG_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getTag() <em>Tag</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getTag()
+   * @generated
+   * @ordered
+   */
+  protected String tag = TAG_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -273,6 +318,56 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @generated
    */
   @Override
+  public ActorInstantiation getInstantiation()
+  {
+    return instantiation;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetInstantiation(ActorInstantiation newInstantiation, NotificationChain msgs)
+  {
+    ActorInstantiation oldInstantiation = instantiation;
+    instantiation = newInstantiation;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__INSTANTIATION, oldInstantiation, newInstantiation);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setInstantiation(ActorInstantiation newInstantiation)
+  {
+    if (newInstantiation != instantiation)
+    {
+      NotificationChain msgs = null;
+      if (instantiation != null)
+        msgs = ((InternalEObject)instantiation).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__INSTANTIATION, null, msgs);
+      if (newInstantiation != null)
+        msgs = ((InternalEObject)newInstantiation).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__INSTANTIATION, null, msgs);
+      msgs = basicSetInstantiation(newInstantiation, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__INSTANTIATION, newInstantiation, newInstantiation));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public MessageCall getVerb()
   {
     return verb;
@@ -340,6 +435,56 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
     text = newText;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__TEXT, oldText, text));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Metadata getMetadata()
+  {
+    return metadata;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetMetadata(Metadata newMetadata, NotificationChain msgs)
+  {
+    Metadata oldMetadata = metadata;
+    metadata = newMetadata;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__METADATA, oldMetadata, newMetadata);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setMetadata(Metadata newMetadata)
+  {
+    if (newMetadata != metadata)
+    {
+      NotificationChain msgs = null;
+      if (metadata != null)
+        msgs = ((InternalEObject)metadata).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__METADATA, null, msgs);
+      if (newMetadata != null)
+        msgs = ((InternalEObject)newMetadata).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.STATEMENT__METADATA, null, msgs);
+      msgs = basicSetMetadata(newMetadata, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__METADATA, newMetadata, newMetadata));
   }
 
   /**
@@ -598,6 +743,31 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
    * @generated
    */
   @Override
+  public String getTag()
+  {
+    return tag;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setTag(String newTag)
+  {
+    String oldTag = tag;
+    tag = newTag;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.STATEMENT__TAG, oldTag, tag));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -606,8 +776,12 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return basicSetAssignment(null, msgs);
       case KactorsPackage.STATEMENT__GROUP:
         return basicSetGroup(null, msgs);
+      case KactorsPackage.STATEMENT__INSTANTIATION:
+        return basicSetInstantiation(null, msgs);
       case KactorsPackage.STATEMENT__VERB:
         return basicSetVerb(null, msgs);
+      case KactorsPackage.STATEMENT__METADATA:
+        return basicSetMetadata(null, msgs);
       case KactorsPackage.STATEMENT__IF:
         return basicSetIf(null, msgs);
       case KactorsPackage.STATEMENT__WHILE:
@@ -636,10 +810,14 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return getAssignment();
       case KactorsPackage.STATEMENT__GROUP:
         return getGroup();
+      case KactorsPackage.STATEMENT__INSTANTIATION:
+        return getInstantiation();
       case KactorsPackage.STATEMENT__VERB:
         return getVerb();
       case KactorsPackage.STATEMENT__TEXT:
         return getText();
+      case KactorsPackage.STATEMENT__METADATA:
+        return getMetadata();
       case KactorsPackage.STATEMENT__IF:
         return getIf();
       case KactorsPackage.STATEMENT__WHILE:
@@ -650,6 +828,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return getFor();
       case KactorsPackage.STATEMENT__VALUE:
         return getValue();
+      case KactorsPackage.STATEMENT__TAG:
+        return getTag();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -670,11 +850,17 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
       case KactorsPackage.STATEMENT__GROUP:
         setGroup((StatementGroup)newValue);
         return;
+      case KactorsPackage.STATEMENT__INSTANTIATION:
+        setInstantiation((ActorInstantiation)newValue);
+        return;
       case KactorsPackage.STATEMENT__VERB:
         setVerb((MessageCall)newValue);
         return;
       case KactorsPackage.STATEMENT__TEXT:
         setText((String)newValue);
+        return;
+      case KactorsPackage.STATEMENT__METADATA:
+        setMetadata((Metadata)newValue);
         return;
       case KactorsPackage.STATEMENT__IF:
         setIf((IfStatement)newValue);
@@ -690,6 +876,9 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return;
       case KactorsPackage.STATEMENT__VALUE:
         setValue((Value)newValue);
+        return;
+      case KactorsPackage.STATEMENT__TAG:
+        setTag((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -711,11 +900,17 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
       case KactorsPackage.STATEMENT__GROUP:
         setGroup((StatementGroup)null);
         return;
+      case KactorsPackage.STATEMENT__INSTANTIATION:
+        setInstantiation((ActorInstantiation)null);
+        return;
       case KactorsPackage.STATEMENT__VERB:
         setVerb((MessageCall)null);
         return;
       case KactorsPackage.STATEMENT__TEXT:
         setText(TEXT_EDEFAULT);
+        return;
+      case KactorsPackage.STATEMENT__METADATA:
+        setMetadata((Metadata)null);
         return;
       case KactorsPackage.STATEMENT__IF:
         setIf((IfStatement)null);
@@ -731,6 +926,9 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return;
       case KactorsPackage.STATEMENT__VALUE:
         setValue((Value)null);
+        return;
+      case KactorsPackage.STATEMENT__TAG:
+        setTag(TAG_EDEFAULT);
         return;
     }
     super.eUnset(featureID);
@@ -750,10 +948,14 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return assignment != null;
       case KactorsPackage.STATEMENT__GROUP:
         return group != null;
+      case KactorsPackage.STATEMENT__INSTANTIATION:
+        return instantiation != null;
       case KactorsPackage.STATEMENT__VERB:
         return verb != null;
       case KactorsPackage.STATEMENT__TEXT:
         return TEXT_EDEFAULT == null ? text != null : !TEXT_EDEFAULT.equals(text);
+      case KactorsPackage.STATEMENT__METADATA:
+        return metadata != null;
       case KactorsPackage.STATEMENT__IF:
         return if_ != null;
       case KactorsPackage.STATEMENT__WHILE:
@@ -764,6 +966,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
         return for_ != null;
       case KactorsPackage.STATEMENT__VALUE:
         return value != null;
+      case KactorsPackage.STATEMENT__TAG:
+        return TAG_EDEFAULT == null ? tag != null : !TAG_EDEFAULT.equals(tag);
     }
     return super.eIsSet(featureID);
   }
@@ -781,6 +985,8 @@ public class StatementImpl extends MinimalEObjectImpl.Container implements State
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (text: ");
     result.append(text);
+    result.append(", tag: ");
+    result.append(tag);
     result.append(')');
     return result.toString();
   }
