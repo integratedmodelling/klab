@@ -21,7 +21,7 @@ import com.icegreen.greenmail.util.ServerSetupTest;
 //@RunWith(SpringJUnit4ClassRunner.class)
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {HubApplication.class})
-@TestPropertySource(locations="classpath:default.properties")
+@TestPropertySource(locations="classpath:application.yml")
 @ActiveProfiles(profiles = "development")
 public abstract class ApplicationCheck {
 	

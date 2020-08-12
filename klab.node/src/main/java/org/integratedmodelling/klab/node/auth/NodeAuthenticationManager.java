@@ -104,7 +104,7 @@ public enum NodeAuthenticationManager {
 
         request.setCertificate(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE));
         request.setName(nodeName);
-        request.setKey(KlabCertificate.KEY_SIGNATURE);
+        request.setKey(certificate.getProperty(KlabCertificate.KEY_SIGNATURE));
         request.setLevel(certificate.getLevel());
         request.setEmail(certificate.getProperty(KlabCertificate.KEY_PARTNER_EMAIL));
 

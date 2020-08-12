@@ -1,6 +1,8 @@
 spring:
   application:
     name: hub-service
+  profiles:
+    default: true
   cloud:
     bus:
       enabled: false

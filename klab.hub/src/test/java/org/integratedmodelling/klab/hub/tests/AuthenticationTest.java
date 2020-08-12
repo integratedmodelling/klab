@@ -36,7 +36,7 @@ import org.springframework.test.context.TestPropertySource;
 import junit.framework.Assert;
 import net.minidev.json.JSONObject;
 
-@TestPropertySource(locations="classpath:default.properties")
+@TestPropertySource(locations="classpath:application.yml")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {HubApplication.class})
 @ActiveProfiles(profiles = "development")
 @SuppressWarnings("deprecation")
