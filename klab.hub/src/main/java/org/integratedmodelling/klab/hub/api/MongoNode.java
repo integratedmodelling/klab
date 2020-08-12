@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.hub.api;
 
-import java.util.HashSet;
 import java.util.Set;
 
 import org.springframework.data.annotation.TypeAlias;

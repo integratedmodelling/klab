@@ -59,15 +59,13 @@ public class EmailTemplateServiceImpl implements EmailTemplateService {
 	}
 
 	@Override
-	public EmailTemplate delete(EmailTemplate model) {
-		Optional<EmailTemplate> emailTemplate = emailTemplateRepository.findById(model.getId());
+	public void delete(String id) {
+		Optional<EmailTemplate> emailTemplate = emailTemplateRepository.findById(id);
 		if (emailTemplate.isPresent()) {
 			mongoTemplate.remove(emailTemplate);
 			Logging.INSTANCE.info("Deleted Mongo Email Template: " + emailTemplate.get().getName());
-			return model;
 		} else {
 			Logging.INSTANCE.warn("Email template with this id doesn't exists, no deletions");
-			return null;
 		}
 	}
 

@@ -5,6 +5,7 @@ import java.util.Collection;
 import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.integratedmodelling.klab.hub.commands.CreateMongoNode;
 import org.integratedmodelling.klab.hub.commands.DeleteMongoNode;
+import org.integratedmodelling.klab.hub.commands.GetMongoNodeById;
 import org.integratedmodelling.klab.hub.commands.GetMongoNodeByName;
 import org.integratedmodelling.klab.hub.commands.GetMongoNodes;
 import org.integratedmodelling.klab.hub.commands.MongoNodeExists;
@@ -68,6 +69,11 @@ public class NodeServiceImpl implements NodeService {
 	@Override
 	public boolean exists(String name) {
 		return new MongoNodeExists(name, nodeRepository).execute();
+	}
+
+	@Override
+	public MongoNode getById(String id) {
+		return new GetMongoNodeById(id, nodeRepository).execute();
 	}
 
 }

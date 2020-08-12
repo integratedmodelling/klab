@@ -1,7 +1,7 @@
 server:
   port: 8287
   servlet:
-    cotextPath: "/node"
+    contextPath: "/node"
     multipart:
-      maxFile: 128MB
-      maxRequest: 128MB
+      maxFile: 1280MB
+      maxRequest: 1280MB

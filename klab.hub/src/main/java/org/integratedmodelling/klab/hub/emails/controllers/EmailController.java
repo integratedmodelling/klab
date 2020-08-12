@@ -118,8 +118,7 @@ public class EmailController {
 	 */
 	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
 	public ResponseEntity<Object> delete(@PathVariable("id") String id) {
-		EmailTemplate template = emailTemplateService.getById(id);
-		emailTemplateService.delete(template);
+		emailTemplateService.delete(id);
 		return new ResponseEntity<>("The template has been deleted successfully", HttpStatus.OK);
 	}
 	

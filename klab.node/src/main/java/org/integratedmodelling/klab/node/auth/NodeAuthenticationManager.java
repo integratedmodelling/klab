@@ -116,7 +116,7 @@ public enum NodeAuthenticationManager {
          */
         PublicKey publicKey = null;
         NodeAuthenticationResponse response = client.authenticateNode(serverHub, request);
-        this.hubName = response.getAuthenticatingNodeId();
+        this.hubName = response.getAuthenticatingHub();
         
         try {
             byte publicKeyData[] = Base64.getDecoder().decode(response.getPublicKey());

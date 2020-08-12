@@ -3,8 +3,10 @@ package org.integratedmodelling.klab.node.controllers;
 import java.io.File;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
@@ -193,6 +195,17 @@ public class ResourceController {
 			}
 		}
 	}
+
+	private static boolean checkUploadLimit(EngineAuthorization user, long fileSize) {
+		long[] maxUploads = user.getGroups()
+			    	.stream()
+			    	.mapToLong(Group::getMaxUpload)
+			    	.toArray();
+		
+		Arrays.sort(maxUploads);
+		return maxUploads[maxUploads.length-1] > fileSize;
+	}
+		
 
 	/**
 	 * Take charge of a resource submission consisting only of a resource.json

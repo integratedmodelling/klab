@@ -20,6 +20,7 @@ public class MongoGroupAdapter {
 		group.setSshKey(mongoGroup.getSshKey());
 		group.setObservables(mongoGroup.getObservableReferences());
 		group.setWorldview(mongoGroup.getWorldview());
+		group.setMaxUpload(mongoGroup.getMaxUpload());
 		return group;
 	}
 

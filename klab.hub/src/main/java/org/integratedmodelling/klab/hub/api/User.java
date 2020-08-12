@@ -31,9 +31,6 @@ public class User extends IdentityModel implements UserDetails{
 
     private static final long serialVersionUID = -6213593655742083476L;
     
-    @NotNull
-    private String username;
-    
     String affiliation;
 
     String comments;
@@ -111,11 +108,10 @@ public class User extends IdentityModel implements UserDetails{
 
     @Override
     public String getUsername() {
-        return username;
+        return name;
     }
 
     public void setUsername(String username) {
-        this.username = username;
         this.name = username;
     }
 
@@ -230,7 +226,7 @@ public class User extends IdentityModel implements UserDetails{
     		  names.add(name);
     	  });
     	
-    	if(groupsToRemove.isEmpty()) {
+    	if(groupEntries.isEmpty()) {
     		return;
     	}
     	
