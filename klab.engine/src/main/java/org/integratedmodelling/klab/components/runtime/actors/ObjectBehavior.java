@@ -12,9 +12,11 @@ import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope.ObservationListener;
+import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.utils.Pair;
 
 import akka.actor.typed.ActorRef;
@@ -26,25 +28,39 @@ public class ObjectBehavior {
 	public static class Observe extends KlabAction {
 
 		public Observe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 
 			if (this.identity instanceof ISubject) {
-				Object arg = evaluateArgument(0);
+				Object arg = evaluateArgument(0, scope);
 				if (arg instanceof IObservable) {
 					try {
-						Future<IObservation> future = ((ISubject) identity).observe(((IObservable) arg).getDefinition());
+						Future<IObservation> future = ((ISubject) identity)
+								.observe(((IObservable) arg).getDefinition());
 						fire(future.get(), true);
 					} catch (Throwable e) {
 						fail(e);
 					}
 				}
+			} else if (this.identity instanceof Session) {
+
+				try {
+					Object arg = evaluateArgument(0, scope);
+					if (arg instanceof IObservable) {
+						Future<ISubject> future = ((Session) this.identity)
+								.observe(((IObservable) arg).getDefinition());
+						fire(future.get(), true);
+					}
+				} catch (Throwable e) {
+					fail(e);
+				}
+
 			} else {
-				fail(this.identity + ": observations can only be made within subjects");
+				fail(this.identity + ": observations can only be made within subjects or sessions");
 			}
 
 		}
@@ -54,12 +70,12 @@ public class ObjectBehavior {
 	public static class MoveAway extends KlabAction {
 
 		public MoveAway(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			// TODO Auto-generated method stub
 
 		}
@@ -70,12 +86,12 @@ public class ObjectBehavior {
 	public static class Bind extends KlabAction {
 
 		public Bind(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			IObservable what = Actors.INSTANCE.getArgument(arguments, IObservable.class);
 			String behavior = Actors.INSTANCE.getArgument(arguments, String.class);
 			IKimExpression filter = Actors.INSTANCE.getArgument(arguments, IKimExpression.class);
@@ -83,7 +99,7 @@ public class ObjectBehavior {
 				// TODO improve message
 				error("error in bind action: behavior or observable not specified or recognized");
 			} else {
-				this.scope.runtimeScope.getBehaviorBindings().put(what.getType(), new Pair<>(behavior, filter));
+				scope.runtimeScope.getBehaviorBindings().put(what.getType(), new Pair<>(behavior, filter));
 			}
 		}
 	}
@@ -101,25 +117,32 @@ public class ObjectBehavior {
 		String listener;
 
 		public When(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 			// TODO filters
 		}
 
 		@Override
-		void run() {
-			this.listener = scope.runtimeScope.addListener(new ObservationListener() {
-				@Override
-				public void newObservation(IObservation observation) {
-					// TODO filter if a filter was configured
-					fire(observation, false);
-				}
-			});
+		void run(KlabActor.Scope scope) {
+			this.listener = scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
+					.addObservationListener(new ISession.ObservationListener() {
+						@Override
+						public void newObservation(IObservation observation, ISubject context) {
+							// TODO filter if a filter was configured; also may need to have a "current
+							// context"
+							// in the scope and match the context to it before firing.
+							fire(observation, false);
+						}
+
+						@Override
+						public void newContext(ISubject context) {
+						}
+					});
 		}
 
 		@Override
-		void dispose() {
-			scope.runtimeScope.removeListener(this.listener);
+		public void dispose() {
+			scope.getMonitor().getIdentity().getParentIdentity(ISession.class).removeObservationListener(this.listener);
 		}
 	}
 
@@ -133,12 +156,12 @@ public class ObjectBehavior {
 	public static class Siblings extends KlabAction {
 
 		public Siblings(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			// TODO Auto-generated method stub
 
 		}
@@ -149,12 +172,12 @@ public class ObjectBehavior {
 	public static class Connect extends KlabAction {
 
 		public Connect(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender) {
-			super(identity, arguments, scope, sender);
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
 		}
 
 		@Override
-		void run() {
+		void run(KlabActor.Scope scope) {
 			// TODO Auto-generated method stub
 
 		}

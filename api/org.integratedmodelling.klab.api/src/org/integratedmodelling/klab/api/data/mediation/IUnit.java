@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -69,9 +70,8 @@ public interface IUnit extends IValueMediator {
 	/**
 	 * Return a new unit multiplied by the passed one.
 	 *
-	 * @param unit
-	 *            a {@link org.integratedmodelling.klab.api.data.mediation.IUnit}
-	 *            object.
+	 * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit}
+	 *             object.
 	 * @return a new product unit
 	 */
 	IUnit multiply(IUnit unit);
@@ -79,9 +79,8 @@ public interface IUnit extends IValueMediator {
 	/**
 	 * Return a new unit divided by the passed one.
 	 *
-	 * @param unit
-	 *            a {@link org.integratedmodelling.klab.api.data.mediation.IUnit}
-	 *            object.
+	 * @param unit a {@link org.integratedmodelling.klab.api.data.mediation.IUnit}
+	 *             object.
 	 * @return a new unit
 	 */
 	IUnit divide(IUnit unit);
@@ -89,8 +88,7 @@ public interface IUnit extends IValueMediator {
 	/**
 	 * Return a new unit scaled according to the passed double.
 	 *
-	 * @param scale
-	 *            a double.
+	 * @param scale a double.
 	 * @return a new unit
 	 */
 	IUnit scale(double scale);
@@ -102,8 +100,8 @@ public interface IUnit extends IValueMediator {
 	 * 
 	 * @return
 	 */
-	Set<ExtentDimension> getAggregatedDimensions();
-	
+	Map<ExtentDimension, ExtentDistribution> getAggregatedDimensions();
+
 	/**
 	 * Pass an observable with unit to obtain a mediator that will convert a value
 	 * to this unit crossing extentual boundaries over the passed scale, i.e.

@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.runtime;
 
 import java.util.Collection;
+import java.util.List;
 
 /**
  * Simple, persistent ticket manager. Used to coordinate multi-actor operations
@@ -29,6 +30,13 @@ public interface ITicketManager {
 	 */
 	Collection<ITicket> get(Object... selectors);
 
+	/**
+	 * Return all tickets in order of creation.
+	 * 
+	 * @return
+	 */
+	List<ITicket> getTickets();
+	
 	/**
 	 * Get a specific ticket, or null.
 	 * 

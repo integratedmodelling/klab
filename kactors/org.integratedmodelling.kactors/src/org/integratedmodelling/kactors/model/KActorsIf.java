@@ -1,7 +1,6 @@
 package org.integratedmodelling.kactors.model;
 
 import java.util.List;
-import java.util.function.Consumer;
 
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.If;

@@ -13,6 +13,7 @@ import org.integratedmodelling.kim.model.KimDate;
 import org.integratedmodelling.kim.model.KimQuantity;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -144,6 +145,13 @@ public class Time extends Extent implements ITime {
 		ret.multiplicity = 1;
 		ret.locatedOffsets = new long[] { 0 };
 		ret.locatedLinearOffset = 0;
+		return ret;
+	}
+
+	public static Time partial() {
+		Time ret = new Time();
+		ret.extentType = ITime.Type.LOGICAL;
+		ret.partial = true;
 		return ret;
 	}
 
@@ -1104,10 +1112,10 @@ public class Time extends Extent implements ITime {
 			Range orext = other.getRange();
 			Time extent = (Time) Time.this.at(other.getStart());
 			while (extent != null) {
-				
+
 				Range exext = extent.getRange();
 				Range inters = orext.intersection(exext);
-				double coverage = inters.getWidth()/extent.getRange().getWidth();
+				double coverage = inters.getWidth() / extent.getRange().getWidth();
 				covered.add(extent.withCoverage(coverage));
 				long n = extent.getLocatedOffset();
 				if (extent.getEnd().isBefore(other.getEnd()) && n < Time.this.size()) {
@@ -1132,7 +1140,16 @@ public class Time extends Extent implements ITime {
 		public Iterator<ILocator> iterator() {
 			return covered.iterator();
 		}
+	}
 
+	@Override
+	public double getLength(IUnit temporalUnit) {
+		if (this.end == null || this.start == null) {
+			return 0;
+		}
+		return temporalUnit
+				.convert(this.end.getMilliseconds() - this.start.getMilliseconds(), Units.INSTANCE.MILLISECONDS)
+				.doubleValue();
 	}
 
 }

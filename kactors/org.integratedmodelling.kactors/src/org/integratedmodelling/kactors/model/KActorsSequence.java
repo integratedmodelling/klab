@@ -2,8 +2,6 @@ package org.integratedmodelling.kactors.model;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.function.BiConsumer;
-import java.util.function.Function;
 
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Sequence;

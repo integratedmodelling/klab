@@ -200,6 +200,11 @@ public interface IMetadata extends IParameters<String> {
 	/** The Constant IM_NAME. */
 	public static final String IM_NAME = "im:name";
 
+	/**
+	 * Scores resulting from fuzzy search
+	 */
+	public static final String IM_SEARCH_SCORE = "im:score";
+	
 	/** The Constant IM_MIN_SPATIAL_SCALE. */
 	public static final String IM_MIN_SPATIAL_SCALE = "im:min-spatial-scale";
 

@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.engine.runtime;
 
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
@@ -182,4 +184,21 @@ public abstract class AbstractTask<T extends IObservation> implements ITaskTree<
 		return descriptor;
 	}
 
+	@Override
+	public String load(IBehavior behavior, IContextualizationScope scope) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean stop(String behaviorId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean stop() {
+		// TODO Auto-generated method stub
+		return false;
+	}
 }

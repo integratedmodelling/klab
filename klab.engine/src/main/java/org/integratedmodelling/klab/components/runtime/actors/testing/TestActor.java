@@ -22,7 +22,7 @@ public class TestActor extends SessionActor {
 	}
 
 	public TestActor(ActorContext<KlabMessage> context, Session session) {
-		super(context, session);
+		super(context, session, null);
 		// session actor started
 	}
 

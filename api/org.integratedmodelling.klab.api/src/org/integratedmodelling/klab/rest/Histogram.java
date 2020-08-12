@@ -59,6 +59,10 @@ public class Histogram {
 				bins[(int) ((d - min) / (max - min) * (bins.length - 1))]++;
 			}
 		}
+		
+		public void addToIndex(int d) {
+			bins[d]++;
+		}
 
 		public Histogram build() {
 

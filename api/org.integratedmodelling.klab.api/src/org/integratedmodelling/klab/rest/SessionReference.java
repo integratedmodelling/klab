@@ -15,7 +15,9 @@ public class SessionReference {
 	private String baseHelpUrl;
 	private IdentityReference owner;
 	Map<String, ObservationReference> rootObservations = new HashMap<>();
-	private List<String> appUrns = new ArrayList<>();
+	@Deprecated private List<String> appUrns = new ArrayList<>(); // remove in favor of publicApps descriptors
+	private List<String> userAppUrns = new ArrayList<>();
+	private List<BehaviorReference> publicApps = new ArrayList<>();
 
 	public long getTimeEstablished() {
 		return timeEstablished;
@@ -87,6 +89,22 @@ public class SessionReference {
 
 	public void setAppUrns(List<String> appUrns) {
 		this.appUrns = appUrns;
+	}
+
+	public List<String> getUserAppUrns() {
+		return userAppUrns;
+	}
+
+	public void setUserAppUrns(List<String> userAppUrns) {
+		this.userAppUrns = userAppUrns;
+	}
+
+	public List<BehaviorReference> getPublicApps() {
+		return publicApps;
+	}
+
+	public void setPublicApps(List<BehaviorReference> publicApps) {
+		this.publicApps = publicApps;
 	}
 
 }

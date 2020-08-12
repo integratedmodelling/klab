@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -136,23 +137,23 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 		Integer chosen = null;
 		for (String urn : getResourceUrns()) {
 
-			VisitingDataBuilder builder = new VisitingDataBuilder();
-			Resources.INSTANCE.getResourceData(urn, builder, context.getScale(), context.getMonitor());
-			context.getMonitor().debug("#" + builder.getObjectCount() + " in " + urn);
+			IKlabData data = Resources.INSTANCE.getResourceData(urn, new VisitingDataBuilder(), context.getScale(),
+					context.getMonitor());
+			context.getMonitor().debug("#" + data.getObjectCount() + " in " + urn);
 			if (np != null) {
-				if (builder.getObjectCount() > np) {
+				if (data.getObjectCount() > np) {
 					if (chosen == null) {
 						chosen = n;
 					}
 					break;
 				}
 			}
-			np = builder.getObjectCount();
+			np = data.getObjectCount();
 			n++;
 		}
 
 		context.getMonitor().debug("chosen level " + chosen);
-		
+
 		/*
 		 * adjust: we have stopped BEFORE the number went up, so as a default we go to
 		 * the next level TODO: this depends on the strategy
@@ -162,7 +163,7 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 		}
 
 		chosen += detail;
-		
+
 		context.getMonitor().debug("adjusted level " + chosen + ": " + getResourceUrns()[chosen]);
 
 		List<IObjectArtifact> ret = new ArrayList<>();
@@ -172,16 +173,15 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 		List<Triple<String, IScale, IMetadata>> keep = new ArrayList<>();
 
 		if (chosen < getResourceUrns().length) {
-			
-			VisitingDataBuilder builder = new VisitingDataBuilder();
-			Resources.INSTANCE.getResourceData(getResourceUrns()[chosen], builder, context.getScale(),
-					context.getMonitor());
-			
-			for (int i = 0; i < builder.getObjectCount(); i++) {
-				tmp.add(new Triple<>(builder.getObjectName(i), builder.getObjectScale(i),
-						builder.getObjectMetadata(i)));
+
+			IKlabData data = Resources.INSTANCE.getResourceData(getResourceUrns()[chosen], new VisitingDataBuilder(),
+					context.getScale(), context.getMonitor());
+
+			for (int i = 0; i < data.getObjectCount(); i++) {
+				tmp.add(new Triple<>(data.getObjectName(i), data.getObjectScale(i),
+						data.getObjectMetadata(i)));
 			}
-			
+
 			context.getMonitor().debug("Object pool contains " + tmp.size() + " objects");
 		} else {
 			context.getMonitor().warn("Context scale is too small to select any objects with these parameters");
@@ -198,7 +198,7 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 
 			boolean ok = whole;
 			n++;
-			
+
 			if (!ok) {
 
 				/*
@@ -229,8 +229,9 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 			// remove anything left beyond maxObjects
 		}
 
-		context.getMonitor().debug("Scale-dependent instantiator selected " + keep.size() + " objects out of a pool of " + tmp.size());
-		
+		context.getMonitor().debug(
+				"Scale-dependent instantiator selected " + keep.size() + " objects out of a pool of " + tmp.size());
+
 		// make the objects
 		for (Triple<String, IScale, IMetadata> data : keep) {
 

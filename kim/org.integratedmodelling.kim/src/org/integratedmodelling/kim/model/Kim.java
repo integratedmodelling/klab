@@ -51,6 +51,7 @@ import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimMacro;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
@@ -65,11 +66,14 @@ import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.MapEntry;
 import org.integratedmodelling.kim.kim.Metadata;
+import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Quantity;
+import org.integratedmodelling.kim.kim.Urn;
 import org.integratedmodelling.kim.kim.Value;
+import org.integratedmodelling.kim.utils.ParseHelper;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
@@ -105,6 +109,20 @@ public enum Kim {
 
 	@Inject
 	private IGrammarAccess grammarAccess;
+
+	@Inject
+	ParseHelper<Model> observableParser;
+
+	public IKimObservable declare(String declaration) {
+		try {
+			ObservableSemantics parsed = observableParser.parse(declaration).getObservable();
+			KimObservable interpreted = Kim.INSTANCE.declareObservable(parsed);
+			return interpreted;
+		} catch (Exception e) {
+			// just return null
+		}
+		return null;
+	}
 
 	/**
 	 * Call before keyword list can be obtained
@@ -196,6 +214,9 @@ public enum Kim {
 		private String documentation;
 		private IKimConceptStatement macro;
 
+		public ConceptDescriptor() {
+		}
+
 		public ConceptDescriptor(String id, Type... flags) {
 			this.name = id;
 			this.flags.addAll(Arrays.asList(flags));
@@ -243,6 +264,10 @@ public enum Kim {
 		@Override
 		public String getDocumentation() {
 			return documentation;
+		}
+
+		public void setDocumentation(String documentation) {
+			this.documentation = documentation;
 		}
 
 		@Override
@@ -363,6 +388,9 @@ public enum Kim {
 
 	public static interface Validator {
 
+		public static final String OFFLINE = "__OFFLINE__";
+		public static final String UNKNOWN_AUTHORITY = "__UNKNOWN_AUTHORITY__";
+
 		/**
 		 * Quickly check if the passed function name is known to the runtime.
 		 * 
@@ -412,6 +440,45 @@ public enum Kim {
 		 * @return prototype or null
 		 */
 		IPrototype getAnnotationPrototype(String functionId);
+
+		/**
+		 * Return readable information about an observable, optionally with <b> or
+		 * <li>tags for display.
+		 * 
+		 * @param observable
+		 * @param formatted
+		 * @return
+		 */
+		String getObservableInformation(IKimObservable observable, boolean formatted);
+
+		/**
+		 * Return readable information about an observable, optionally with <b> or
+		 * <li>tags for display.
+		 * 
+		 * @param observable
+		 * @param formatted
+		 * @return
+		 */
+		String getConceptInformation(IKimConcept observable, boolean formatted);
+
+		/**
+		 * Return readable information about an authority concept, optionally with
+		 * formatting tags, along with a boolean that specifies whether the identity
+		 * parsed correctly or not. Return the following special values if:
+		 * <ul>
+		 * <li>OFFLINE if the authority cannot be contacted (engine is off) but is
+		 * potentially there;</li>
+		 * <li>UNKNOWN_AUTHORITY if the authority is known not to exist.</li>
+		 * </ul>
+		 * If any of the above is returned, the boolean will be ignored.
+		 * <p>
+		 * 
+		 * @param authority
+		 * @param identity
+		 * @param formatted
+		 * @return
+		 */
+		Pair<String, Boolean> getIdentityInformation(String authority, String identity, boolean formatted);
 
 		/**
 		 * Return a descriptor for the passed URN. Never return null - if a URN is
@@ -777,7 +844,8 @@ public enum Kim {
 
 		UrnDescriptor ret = null;
 		if (!urn.contains(":") || urn.startsWith("klab:")) {
-			// FIXME this should validate model URNs when admissible, ensuring they are declared
+			// FIXME this should validate model URNs when admissible, ensuring they are
+			// declared
 			return validUrn(urn);
 		}
 		if (validatorCallback != null) {
@@ -789,7 +857,37 @@ public enum Kim {
 	public ConceptDescriptor getConceptDescriptor(String conceptId) {
 		SemanticType st = new SemanticType(conceptId);
 		Map<String, ConceptDescriptor> map = null;
-		if (st.isCorrect()) {
+		if (st.getNamespace() == null || st.getName() == null) {
+			return null;
+		}
+		if (Character.isUpperCase(st.getNamespace().charAt(0))) {
+
+			String term = st.getName();
+			if (term.startsWith("'") || term.startsWith("\"")) {
+				term = term.substring(1, term.length() - 1);
+			}
+			ConceptDescriptor cd = new ConceptDescriptor();
+			cd.setName(conceptId);
+			cd.getFlags().add(Type.AUTHORITY_IDENTITY);
+			if (validatorCallback != null) {
+				Pair<String, Boolean> desc = null;
+				if (term != null && !term.isEmpty() && !st.getNamespace().isEmpty()) {
+					desc = validatorCallback.getIdentityInformation(st.getNamespace(), term, true);
+				}
+				if (desc == null || Validator.OFFLINE.equals(desc.getFirst())) {
+					cd.setDocumentation("Authority identity: connect to an engine to validate");
+				} else if (!desc.getSecond() || Validator.UNKNOWN_AUTHORITY.equals(desc.getFirst())) {
+					cd.setDocumentation(Validator.UNKNOWN_AUTHORITY.equals(desc.getFirst())
+							? "The authority is unknown to the engine or the identifier is not admitted"
+							: desc.getFirst());
+					cd.getFlags().add(Type.NOTHING);
+				} else {
+					cd.setDocumentation(desc.getFirst());
+					cd.getFlags().addAll(getType("identity"));
+				}
+			}
+			return cd;
+		} else if (st.isCorrect()) {
 			map = namespaceRegister.get(st.getNamespace());
 		}
 		return map == null ? null : map.get(st.getName());
@@ -848,7 +946,7 @@ public enum Kim {
 		EnumSet<Type> ret = EnumSet.copyOf(original);
 		ret.removeAll(IKimConcept.DIRECT_OBSERVABLE_TYPES);
 		ret.removeAll(IKimConcept.ALL_TRAIT_TYPES);
-		
+
 		for (Type t : quality) {
 			ret.add(t);
 			if (t == Type.DISTANCE) {
@@ -1448,7 +1546,8 @@ public enum Kim {
 		if (model == null && StringUtil.countMatches(string, ":") >= 3) {
 			// URN - TODO support it: add a new KimModel that only observers the URN.
 		}
-		return model == null || model.getObservables().size() == 0 ? null : (KimObservable) model.getObservables().get(0);
+		return model == null || model.getObservables().size() == 0 ? null
+				: (KimObservable) model.getObservables().get(0);
 	}
 
 	public KimObservable createNonSemanticObservable(String type, String name) {
@@ -1939,7 +2038,21 @@ public enum Kim {
 	}
 
 	public boolean isKimFile(File file) {
-		return file.toString().endsWith(".kim") ||  file.toString().endsWith(".tql");
+		return file.toString().endsWith(".kim") || file.toString().endsWith(".tql");
+	}
+
+	public String getUrnValue(Urn urn) {
+		if (urn.getName() != null) {
+			return urn.getName();
+		}
+		if (urn.getStrings() != null) {
+			StringBuffer sbuf = new StringBuffer(512);
+			for (String s : urn.getStrings()) {
+				sbuf.append(s);
+			}
+			return sbuf.toString();
+		}
+		return null;
 	}
 
 }

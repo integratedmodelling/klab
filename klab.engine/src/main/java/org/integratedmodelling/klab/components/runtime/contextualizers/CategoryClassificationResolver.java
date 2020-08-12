@@ -13,7 +13,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Concepts;
-import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -33,7 +34,6 @@ public class CategoryClassificationResolver
 		implements IResolver<IState>, IProcessor, IExpression, IDocumentationProvider {
 
 	static final public String FUNCTION_ID = "klab.runtime.categorize";
-
 	public static final String TABLE_ID = "aggregated.value.table";
 
 	IArtifact classified;
@@ -67,11 +67,10 @@ public class CategoryClassificationResolver
 				parameters.get("classifier", IConcept.class), parameters.get("modifiers"));
 	}
 
+	Map<Object, Aggregator> aggregators = new HashMap<>();
+	
 	@Override
 	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
-
-		Map<Object, Double> cache = new HashMap<>();
-		Map<Object, Long> count = new HashMap<>();
 
 		IArtifact classfc = ((IRuntimeScope) context).getArtifact(classifier, IArtifact.class);
 
@@ -82,52 +81,54 @@ public class CategoryClassificationResolver
 
 		IState values = (IState) classified;
 		IState classf = (IState) classfc;
-		/*
-		 * TODO some values are extensive. Others aren't. Put this check under
-		 * Observables after it's all understood.
-		 */
-		boolean isExtensive = Units.INSTANCE.needsUnitScaling(values.getObservable());
 
 		for (ILocator locator : ret.getScale()) {
 
-			Number value = values.get(locator, Number.class);
+			Object value = values.get(locator, Number.class);
 			Object sclas = classf.get(locator);
 
-			if (value == null || (value instanceof Number && Double.isNaN(((Number) value).byteValue()))
-					|| sclas == null) {
+			if (Observations.INSTANCE.isNodata(value) || Observations.INSTANCE.isNodata(sclas)) {
 				continue;
 			}
 
-			double aggregated = cache.containsKey(sclas) ? cache.get(sclas).doubleValue() : 0;
-			aggregated += aggregateValue(value, values.getObservable(), ret.getScale());
-			cache.put(sclas, aggregated);
-			long cnt = count.containsKey(sclas) ? count.get(sclas) : 0;
-			count.put(sclas, cnt + 1);
+			Aggregator aggregator = aggregators.get(sclas);
+			if (aggregator == null) {
+				aggregator = new Aggregator(ret.getObservable(), context.getMonitor());
+				aggregators.put(sclas, aggregator);
+			}
+
+			aggregator.add(value, values.getObservable(), locator);
+
 		}
 
-		if ((!isExtensive && !modifiers.contains(ValueOperator.SUMMED)) || modifiers.contains(ValueOperator.AVERAGED)) {
-			for (Object key : cache.keySet()) {
-				cache.put(key, cache.get(key) / count.get(key));
-			}
+		Map<Object, Object> totals = new HashMap<>();
+		for (Object key : aggregators.keySet()) {
+			totals.put(key, aggregators.get(key).aggregate());
 		}
 
 		for (ILocator locator : ret.getScale()) {
 
-			Object sclas = classf.get(locator);
-			if (cache.containsKey(sclas)) {
-				ret.set(locator, cache.get(sclas));
+			Object data = classf.get(locator);
+			if (Observations.INSTANCE.isNodata(data)) {
+				continue;
+			}
+			
+			Aggregator aggregator = aggregators.get(data);
+			if (aggregator != null) {
+				ret.set(locator, aggregator.adjust(totals.get(data), locator));
 			}
 		}
 
 		/*
 		 * TODO set the table into the documentation outputs
+		 * TODO add different tables according to @summarize annotations or other options
 		 */
-		addDocumentationTags(cache, classf);
+		addDocumentationTags(totals, classf);
 
 		return ret;
 	}
 
-	private void addDocumentationTags(Map<Object, Double> cache, IState classifier) {
+	private void addDocumentationTags(Map<Object, Object> cache, IState classifier) {
 
 		final StringBuffer body = new StringBuffer(1024);
 		String separator = "";

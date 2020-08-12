@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
@@ -37,7 +38,7 @@ public class OSMUrnAdapter implements IUrnAdapter {
 	}
 
 	@Override
-	public void getEncodedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
+	public IKlabData getEncodedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
 
 		IParameters<String> data = Geocoder.INSTANCE.getData(urn.getNamespace(), urn.getResourceId());
 
@@ -74,7 +75,7 @@ public class OSMUrnAdapter implements IUrnAdapter {
 
 			builder.finishObject();
 
-			return;
+			return builder.build();
 		}
 
 		throw new KlabIOException("cannot retrieve OSM data to resolve URN " + urn);

@@ -240,4 +240,15 @@ public class Parameters<T> implements IParameters<T> {
 		return unnamedKeys;
 	}
 
+	@Override
+	public List<T> getNamedKeys() {
+		List<T> ret = new ArrayList<>();
+		for (T key : delegate.keySet()) {
+			if (!unnamedKeys.contains(key)) {
+				ret.add(key);
+			}
+		}
+		return ret;
+	}
+
 }

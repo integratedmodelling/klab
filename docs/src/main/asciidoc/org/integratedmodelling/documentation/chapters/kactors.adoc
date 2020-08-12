@@ -7,5 +7,104 @@ Ferdinando Villa
 :toc: left
 :numbered:
 
-The k.Actors language, one of the three supported in k.LAB, is used to specify reactive _behaviors_ for the different agents created during a k.LAB session, including observations of all kinds. By extending the notion of _agent_ to k.LAB users and sessions, k.Actors also enables the definition of _applications_ that implement custom user interfaces and support specialized workflows on top of the <<chapter-explorer,k.Explorer>> view component.
+The k.Actors language, one of the three languages supported in k.LAB, is used to specify reactive _behaviors_ for the different agents created during a k.LAB session, including observations of all kinds. By extending the notion of _agent_ to k.LAB users and sessions, k.Actors also enables the definition of _applications_ that implement custom user interfaces and support specialized workflows on top of the <<chapter-explorer,k.Explorer>> view component. Applications can also encode complex batch computations and test cases, intended as behaviors for the k.LAB runtime.
 
+The k.Actors language has a very simple, minimal syntax that belies a complex and powerful model of execution. Both k.IM and k.Actors draw their syntax from the English language; if the k.IM language is concerned with representing what observations _are_, k.Actors is concerned with representing how they _behave_. For this reason, the linguistic realm of k.IM is that of nouns, adjectives and adverbs, while k.Actors deals mostly with _verbs_. Each behavior file is introduced by a _preamble_ and consists of a sequence of _action declarations_; each action, in turn, consists of a series of (zero or more) _statements_ that ends when another action is defined or when the file ends. Whitespace is not significant in k.Actors, so short behaviors may be specified as single-line actions, while longer ones may be indented for readability. The most intuitive way to understand k.Actors is probably through an annotated example.
+
+## An annotated example
+
+A k.Actors behavior should read easily and may look like the following:
+
+[source, kactors]
+----
+behavior restaurant
+    "Invite a friend to dinner and if accepted, choose a restaurant in the context"
+
+// main will be triggered when the behavior is loaded
+action main: <1>
+	invite("friend@email.com"): "OK" -> choose({infrastructure:Restaurant}): reserve($)
+	
+action invite(friend): <2>
+	email("Hi, shall we go out for dinner tonight?", address=friend):
+		answer -> sentiment.classify(answer, {im:Outcome}): (
+						{im:Positive} -> email("Great", address=[answer.replyAddress]),  "OK"
+					    {im:Negative} -> email("Sorry", address=[answer.replyAddress]), "NOPE")
+					   
+----
+
+In the code above, two _actions_ are defined, each composed of one statement that calls other actions and specifies a chain of events triggered when each of them "responds" (_fires_). While k.Actors reads less like English than k.IM, it is fairly easy to get the hang of the syntax by recognizing action calls (_verbs_) and learning to interpret the symbols `:` and `->` above:
+
+In action `main` (1), the verb `invite` is called with an email address as a parameter. The call, whose internal behavior is defined below in the same behavior (2), results in an action being executed. The important thing to know is that actions may cause events (_fire_) zero or more times, and that those events can be captured by the code that called the action. Firing may not happen at all, happen once and immediately, or happen multiple times at any time. For this reason, k.LAB starts the action and immediately moves on. If the ':' operator follows the call, though, the actor running the behavior readies itself to process events fired by it, whenever they happens as long as the actor is "alive".
+
+NOTE: In k.Actors, some action names are bound by convention to specific runtime behaviors. Specifically, an action named `main` will be automatically executed when the behavior is loaded. In normal circumstances, an action is only executed when explicitly called by another actor by sending a _message_ to it. So any actor that is bound to the `restaurant` behavior will immediately invite a friend to dinner as soon as it is created.
+
+So the `main` action will invite a person, identified by an email address, to dinner and wait for a positive ("OK") or negative response. If and when the response arrives, the action `choose`  will lookup restaurants in the context of execution of the behavior, and choose one (again, there may be none). You may notice:
+
+. Fired value (explicit and implicit, types, potentially more matches)
+. Concept and potential other parameters 
+
+Using the same mechanism, we chain the action `reserve`  to the choice of a restaurant, using a short-hand notation (`reserve($)` , equivalent to `variable -> reserve(variable)`, which will pick up the object fired by `choose`), establishing in one line a chain of events that corresponds to the main action for this behavior. We can assume:
+
+1. $ is an observation of a restaurant, so a complex object. We will trust the implementation of `reserve` to use k.LAB to make the appropriate observations (such as a phone number) needed to make the reservation. Shows how fired objects may be any kind of thing. Shows using a variable to capture the match. Could be more than one and match a list, `(a b c) -> call(a), call(b)`.
+
+You can now, armed with some imagination, try to understand what the `invite`  action does (all the new syntactic elements in it will be explained later).
+
+## Concurrent execution paradigm
+
+Each action only contains one statement in the example above. If there is more than one statement, the statements belonging to each action constitute a _concurrent block_, in which statements are executed in _no particular order_ and _without waiting for each other_ when the action is invoked. Most statements represent action calls (_verbs_), which invoke an action in the same or another behavior, and they often consist of a single word. As a rule, it is not known whether an action invoked in a behavior may end immediately or trigger behaviors that include waiting and may continue indefinitely. For this reason all the actions in a block should be conceptualized as starting at the same time, and no assumption should be made as to their sequence or side effects within the block. If needed and appropriate (but see below as to appropriateness), "serial" behavior can be specified explicitly: if within a block a set of statements are separated by commas, the set of them becomes a _sequence_, which is executed serially. So the action specified as 
+[source,kactors]
+----
+action xxx: a b c, d, e f g
+----
+contains _five_ statements: `a`, `b`, the sequence `c, d, e` and again `f` and `g`. When this action is called (i.e., when its name is used as a verb in another action), the five statements will be executed together, without waiting for any of them to do anything before calling the other. Within the sequence, though, only `c` will be executed, and `d` will only follow after the execution of `c` has caused a response (`c` has _fired_). Concurrent groups within groups can be declared using parentheses, and they may contain one or more statement: so the declaration
+[source,kactors]
+----
+action xxx: a b (c, d, e) f g
+----
+is a more cumbersome, but equivalent version of the above that may be more readable. The sequence `c, d, e` is included in a concurrent group, which only contains one statement so it behaves identically.
+
+Groups may be defined within other groups or sequences by wrapping specific sets of statements in parentheses. EXPAND and show when useful. Also: WHO is the actor that runs the behavior? This must be _bound_ to some agents in order to be activated. A k.LAB session is full of agents - in fact it _is_ an agent itself.
+
+This concurrent model of execution is typical of agent programming but may be unfamiliar, and it is important to understand it well before using k.Actors.
+
+The k.Actors syntax also contains control flow statements (for, while, if, do) and, most importantly, a matching mechanism to react to the events caused by an action after it is called. We start with the most important statement, the _action call_ or _verb_.
+
+## Action call syntax
+
+As seen above, the simplest verb may consist of a single lowercase word or even a single letter, which can be read as a command, sent to an agent to perform the action it specifies. In order for the action to be performed, it must be known to k.LAB: it could be specified in the same file (so it would be directed to the same agent running the behavior) or defined in one of the system agents, which are the behavioral peers of various aspects of the k.LAB runtime. For example, the verb `context(<urn>)` will instruct k.LAB to observe a particular URN (correspondent to a k.IM `observe` statement in a project or somewhere on the network) and set the context for future observations to the result of this observation. From this simple example, we already establish two facts:
+
+1. The resolution of verbs is dynamic, i.e. if a single word verb isn't found in the current behavior, other known behaviors are scanned and if there is _one_ result (i.e., no ambiguity) the verb is assigned to trigget that action. If there is ambiguity (for example you have also defined an `action context` in your behavior) you can prefix the verb with the behavior it belongs to: `session.context` would be the fully specified, unambiguous specification.
+2. Verbs can be followed by arguments in parentheses (in the above case, the URN to observe). If no parameters are needed, the parentheses are not needed, either.
+
+The similarities between a verb and a function call end here, as the result of calling an action on 
+
+
+### Unknown verbs
+
+They go to the user actor, which exists by default in every session and has a simple behavior loaded at the start (yes, you can write your own user behavior and even give it a GUI for the modeler or the explorer). If there is no match, the user actor has a default action `undefined` that will receive this as a parameter and simply print a warning. You can redefine that message to do anything you want (except sending email to k.LAB support).
+
+
+## Metadata and tags
+
+. `#xxx` the _tag_ xxx. Tags are not names and they have a special purpose: that of identifying an _implicit_ actor generated by an action. 
+. `:xxx` and `!xxx` the positive or negative _key_ xxx
+
+Special vars
+
+. $ the only matched value (error if multiple fires)
+. $$ the list of all matched values (possibly empty or singleton)
+. $n the n-th value matched
+
+## Other control structures
+
+## Predefined actors and verb attribution
+
+### The view actor
+
+## Interaction with the k.LAB environment
+
+### Running behaviors as applications
+
+### Binding behaviors to observations
+
+### User behaviors

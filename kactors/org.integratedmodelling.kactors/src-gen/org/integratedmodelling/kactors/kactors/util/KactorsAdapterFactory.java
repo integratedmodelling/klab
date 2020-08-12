@@ -11,10 +11,13 @@ import org.eclipse.emf.common.notify.impl.AdapterFactoryImpl;
 import org.eclipse.emf.ecore.EObject;
 
 import org.integratedmodelling.kactors.kactors.Actions;
+import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.Classifier;
+import org.integratedmodelling.kactors.kactors.Concept;
+import org.integratedmodelling.kactors.kactors.ConceptDeclaration;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
@@ -32,7 +35,11 @@ import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MessageBody;
 import org.integratedmodelling.kactors.kactors.MessageCall;
+import org.integratedmodelling.kactors.kactors.Metadata;
+import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Model;
+import org.integratedmodelling.kactors.kactors.Observable;
+import org.integratedmodelling.kactors.kactors.ObservableSemantics;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.kactors.Quantity;
@@ -48,6 +55,7 @@ import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
 import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kactors.kactors.ValueOperator;
 import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
@@ -139,6 +147,11 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
         return createMessageBodyAdapter();
       }
       @Override
+      public Adapter caseActorInstantiation(ActorInstantiation object)
+      {
+        return createActorInstantiationAdapter();
+      }
+      @Override
       public Adapter caseMessageCall(MessageCall object)
       {
         return createMessageCallAdapter();
@@ -147,6 +160,16 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
       public Adapter caseStatementGroup(StatementGroup object)
       {
         return createStatementGroupAdapter();
+      }
+      @Override
+      public Adapter caseMetadata(Metadata object)
+      {
+        return createMetadataAdapter();
+      }
+      @Override
+      public Adapter caseMetadataPair(MetadataPair object)
+      {
+        return createMetadataPairAdapter();
       }
       @Override
       public Adapter caseStatementList(StatementList object)
@@ -229,6 +252,11 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
         return createClassifierAdapter();
       }
       @Override
+      public Adapter caseObservable(Observable object)
+      {
+        return createObservableAdapter();
+      }
+      @Override
       public Adapter caseLookupTable(LookupTable object)
       {
         return createLookupTableAdapter();
@@ -307,6 +335,26 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
       public Adapter caseDate(Date object)
       {
         return createDateAdapter();
+      }
+      @Override
+      public Adapter caseObservableSemantics(ObservableSemantics object)
+      {
+        return createObservableSemanticsAdapter();
+      }
+      @Override
+      public Adapter caseValueOperator(ValueOperator object)
+      {
+        return createValueOperatorAdapter();
+      }
+      @Override
+      public Adapter caseConceptDeclaration(ConceptDeclaration object)
+      {
+        return createConceptDeclarationAdapter();
+      }
+      @Override
+      public Adapter caseConcept(Concept object)
+      {
+        return createConceptAdapter();
       }
       @Override
       public Adapter defaultCase(EObject object)
@@ -406,6 +454,21 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.ActorInstantiation <em>Actor Instantiation</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.ActorInstantiation
+   * @generated
+   */
+  public Adapter createActorInstantiationAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.MessageCall <em>Message Call</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -431,6 +494,36 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createStatementGroupAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Metadata <em>Metadata</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Metadata
+   * @generated
+   */
+  public Adapter createMetadataAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.MetadataPair <em>Metadata Pair</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.MetadataPair
+   * @generated
+   */
+  public Adapter createMetadataPairAdapter()
   {
     return null;
   }
@@ -676,6 +769,21 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
   }
 
   /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Observable <em>Observable</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Observable
+   * @generated
+   */
+  public Adapter createObservableAdapter()
+  {
+    return null;
+  }
+
+  /**
    * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.LookupTable <em>Lookup Table</em>}'.
    * <!-- begin-user-doc -->
    * This default implementation returns null so that we can easily ignore cases;
@@ -911,6 +1019,66 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createDateAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.ObservableSemantics <em>Observable Semantics</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.ObservableSemantics
+   * @generated
+   */
+  public Adapter createObservableSemanticsAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.ValueOperator <em>Value Operator</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.ValueOperator
+   * @generated
+   */
+  public Adapter createValueOperatorAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.ConceptDeclaration <em>Concept Declaration</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.ConceptDeclaration
+   * @generated
+   */
+  public Adapter createConceptDeclarationAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Concept <em>Concept</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Concept
+   * @generated
+   */
+  public Adapter createConceptAdapter()
   {
     return null;
   }

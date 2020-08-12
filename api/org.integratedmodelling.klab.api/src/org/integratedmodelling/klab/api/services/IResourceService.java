@@ -154,10 +154,8 @@ public interface IResourceService {
 	 */
 	IArtifact contextualizeResource(String urn, IContextualizationScope scope);
 
-
 //	IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 //			IContextualizationScope context);
-
 
 //	IResource createLocalResource(String resourceId, File file, IParameters<String> userData, IProject project,
 //			String adapterType, boolean update, boolean asynchronous, IMonitor monitor);
@@ -270,5 +268,15 @@ public interface IResourceService {
 	 * @return
 	 */
 	boolean validateForPublication(IResource resource);
+
+	/**
+	 * Return the directory where the resource is located on the filesystem. This
+	 * will differ for local (project-based) and public resources (in nodes).
+	 * Universal resources (klab:....) have no file location and will return null.
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	File getFilesystemLocation(IResource resource);
 
 }

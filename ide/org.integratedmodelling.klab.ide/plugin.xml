@@ -195,6 +195,18 @@
             id="org.integratedmodelling.klab.ide.views.ReferencesEditor"
             name="References editor">
       </view>
+      <view
+            category="org.integratedmodelling.klab.ide.category"
+            class="org.integratedmodelling.klab.ide.views.ApplicationView"
+            icon="icons/application_double.png"
+            id="org.integratedmodelling.klab.ide.views.ApplicationView"
+            name="k.LAB Apps">
+      </view>
+      <view
+            class="org.integratedmodelling.klab.ide.views.AuthorityView"
+            id="org.integratedmodelling.klab.ide.views.AuthorityView"
+            name="Authorities">
+      </view>
    </extension>
    <extension
          point="org.eclipse.ui.commands">

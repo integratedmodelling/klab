@@ -9,6 +9,7 @@ import java.util.Set;
 import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
@@ -28,6 +29,7 @@ import org.integratedmodelling.klab.components.runtime.artifacts.ObjectArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.scale.Scale;
@@ -129,13 +131,13 @@ public class LocalData implements IKlabData {
 			}
 
 		}
-		
+
 		if (data.containsKey("notifications")) {
 			// TODO send them over to the monitor
-			for (Object state : (List<?>) data.get("notification")) {
-				
+			for (Object o : (List<?>) data.get("notification")) {
+				System.out.println("GOT NOTIFICATION " + o);
 			}
-	}
+		}
 
 	}
 
@@ -157,6 +159,12 @@ public class LocalData implements IKlabData {
 	 * @param context
 	 */
 	public LocalData(Map<?, ?> data, IRuntimeScope context) {
+
+		if (data.containsKey("error")) {
+			String errorMessage = data.get("error") + ": " + data.get("message");
+//			context.getMonitor().error(errorMessage);
+			throw new KlabResourceAccessException(errorMessage);
+		}
 
 		if (data.containsKey("states")) {
 			for (Object s : (Iterable<?>) data.get("states")) {
@@ -250,6 +258,13 @@ public class LocalData implements IKlabData {
 			}
 
 		}
+		
+		if (data.containsKey("notifications")) {
+			// TODO send them over to the monitor
+			for (Object o : (List<?>) data.get("notification")) {
+				System.out.println("GOT NOTIFICATION " + o);
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
@@ -292,6 +307,57 @@ public class LocalData implements IKlabData {
 	@Override
 	public boolean hasErrors() {
 		return error;
+	}
+
+	@Override
+	public IArtifact.Type getArtifactType() {
+		return object == null ? (state == null ? IArtifact.Type.VOID : state.getType()) : object.getType();
+	}
+
+	@Override
+	public int getObjectCount() {
+		return object == null ? 0 : object.groupSize();
+	}
+
+	@Override
+	public int getStateCount() {
+		return state == null ? 0 : 1;
+	}
+
+	@Override
+	public IScale getObjectScale(int i) {
+		if (object != null) {
+			ObjectArtifact member = (ObjectArtifact) ((Artifact) object).getGroupMember(i);
+			if (member != null) {
+				IGeometry geometry = member.getGeometry();
+				if (geometry != null) {
+					return geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public String getObjectName(int i) {
+		if (object != null) {
+			ObjectArtifact member = (ObjectArtifact) ((Artifact) object).getGroupMember(i);
+			if (member != null) {
+				return member.getName();
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public IMetadata getObjectMetadata(int i) {
+		if (object != null) {
+			ObjectArtifact member = (ObjectArtifact) ((Artifact) object).getGroupMember(i);
+			if (member != null) {
+				return member.getMetadata();
+			}
+		}
+		return null;
 	}
 
 }

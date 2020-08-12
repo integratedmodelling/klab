@@ -21,6 +21,7 @@ public class KimHighlightingConfiguration extends DefaultHighlightingConfigurati
 	public static final String VERSION_NUMBER_ID = "versionNumber";
 	public static final String DEFINITION_ID = "definition";
 	public static final String CODE_ID = "code";
+	public static final String CORE_CONCEPT_ID = "coreconcept";
 
 	public static final String QUALITY_ID = "quality";
 	public static final String SUBJECT_ID = "subject";
@@ -60,6 +61,7 @@ public class KimHighlightingConfiguration extends DefaultHighlightingConfigurati
 		acceptor.acceptDefaultHighlighting(DEFINITION_ID, "Concept definition", definitionTextStyle());
 		acceptor.acceptDefaultHighlighting(CODE_ID, "Expression code", codeTextStyle());
 		acceptor.acceptDefaultHighlighting(QUALITY_ID, "Quality", qualityTextStyle());
+		acceptor.acceptDefaultHighlighting(CORE_CONCEPT_ID, "Core ontology concept", coreConceptTextStyle());
 		acceptor.acceptDefaultHighlighting(SUBJECT_ID, "Subject", subjectTextStyle());
 		acceptor.acceptDefaultHighlighting(EVENT_ID, "Event", eventTextStyle());
 		acceptor.acceptDefaultHighlighting(PROCESS_ID, "Process", processTextStyle());
@@ -150,6 +152,7 @@ public class KimHighlightingConfiguration extends DefaultHighlightingConfigurati
 	protected TextStyle dangerTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(255, 0, 0));
+		// overstrike would be better than italic but it doesn't seem to be possible.
 		textStyle.setStyle(SWT.BOLD | SWT.ITALIC);
 		return textStyle;
 	}
@@ -203,6 +206,14 @@ public class KimHighlightingConfiguration extends DefaultHighlightingConfigurati
 		textStyle.setColor(new RGB(0, 102, 204));
 		return textStyle;
 	}
+	
+	protected TextStyle coreConceptTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(68, 68, 68));
+		textStyle.setStyle(SWT.BOLD);
+		return textStyle;
+	}
+
 
 	protected TextStyle roleTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();

@@ -1,12 +1,11 @@
 package org.integratedmodelling.klab;
 
 import java.io.PrintStream;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.List;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 
@@ -44,6 +43,7 @@ public enum Units implements IUnitService {
 	public IUnit SECONDS = getUnit("s");
 	public IUnit YEARS = getUnit("year");
 	public IUnit HOURS = getUnit("h");
+	public IUnit MILLISECONDS = getUnit("ms");
 
 	private Map<String, Unit> defaultUnitCache = Collections.synchronizedMap(new HashMap<>());
 
@@ -215,6 +215,24 @@ public enum Units implements IUnitService {
 					return new Unit(su);
 				} else if (su.getDimension().equals(Dimension.LENGTH) && power == -2) {
 					return new Unit(su.pow(2));
+				}
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public IUnit getLinealExtentUnit(IUnit unit) {
+
+		if (((Unit) unit).getUnit() instanceof ProductUnit<?>) {
+			ProductUnit<?> pu = (ProductUnit<?>) ((Unit) unit).getUnit();
+			for (int i = 0; i < pu.getUnitCount(); i++) {
+				javax.measure.unit.Unit<?> su = pu.getUnit(i);
+				int power = pu.getUnitPow(i);
+				if (su.getDimension().equals(Dimension.LENGTH.pow(1)) && power == -1) {
+					return new Unit(su);
+				} else if (su.getDimension().equals(Dimension.LENGTH) && power == -1) {
+					return new Unit(su.pow(1));
 				}
 			}
 		}
@@ -394,22 +412,34 @@ public enum Units implements IUnitService {
 		Unit unit = (Unit) refUnit;
 
 		for (ExtentDimension dim : extentDimensions) {
+
+			int spatial = getSpatialDimensionality(unit);
+			int temporal = getTemporalDimensionality(unit);
+
 			switch (dim) {
 			case AREAL:
-				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m^2")).getUnit()));
+				if (spatial >= 2) {
+					unit = new Unit(((Unit) unit).getUnit().times(((Unit) getArealExtentUnit(unit)).getUnit()));
+				}
 				break;
 			case CONCEPTUAL:
 				break;
 			case LINEAL:
-				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m")).getUnit()));
+				if (spatial >= 1) {
+					unit = new Unit(((Unit) unit).getUnit().times(((Unit) getLinealExtentUnit(unit)).getUnit()));
+				}
 				break;
 			case PUNTAL:
 				break;
 			case TEMPORAL:
-				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("s")).getUnit()));
+				if (temporal >= 1) {
+					unit = new Unit(((Unit) unit).getUnit().times(((Unit) getTimeExtentUnit(unit)).getUnit()));
+				}
 				break;
 			case VOLUMETRIC:
-				unit = new Unit(((Unit) unit).getUnit().times(((Unit) getUnit("m^3")).getUnit()));
+				if (spatial >= 3) {
+					unit = new Unit(((Unit) unit).getUnit().times(((Unit) getVolumeExtentUnit(unit)).getUnit()));
+				}
 				break;
 			default:
 				break;
@@ -519,7 +549,7 @@ public enum Units implements IUnitService {
 		if (observable.is(Type.MONEY) || observable.is(Type.MONETARY) || observable.is(Type.NUMEROSITY)) {
 			return Unit.unitless();
 		}
-		
+
 		if (observable.is(Type.RATIO)) {
 			IConcept numerator = Observables.INSTANCE.getDescribedType(observable.getType());
 			IConcept denominator = Observables.INSTANCE.getComparisonType(observable.getType());
@@ -575,7 +605,7 @@ public enum Units implements IUnitService {
 
 		return ret;
 	}
-	
+
 	public Unit getDefaultUnitFor(IConcept concept) {
 		if (concept.is(Type.RATIO)) {
 			IConcept numerator = Observables.INSTANCE.getDescribedType(concept);
@@ -666,7 +696,8 @@ public enum Units implements IUnitService {
 				Boolean rescalesInherent = observable.getType().getMetadata().get(IMetadata.IM_RESCALES_INHERENT,
 						Boolean.class);
 				if (rescalesInherent == null) {
-					if (Observables.INSTANCE.getDescribedType(observable.getType()) != null) {
+					if (Observables.INSTANCE.getDirectInherentType(observable.getType()) != null
+							|| Observables.INSTANCE.getDescribedType(observable.getType()) != null) {
 						rescalesInherent = true;
 					} else {
 						rescalesInherent = false;
@@ -725,54 +756,109 @@ public enum Units implements IUnitService {
 			}
 		}
 
-		IUnit fullyContextualized = contextualize(baseUnit, aggregatable);
+		Set<ExtentDimension> implied = new HashSet<>(aggregatable);
+		for (ExtentDimension ed : constraints.keySet()) {
+			aggregatable.add(ed);
+			if (constraints.get(ed) == ExtentDistribution.EXTENSIVE) {
+				implied.remove(ed);
+			} else {
+				implied.add(ed);
+			}
+		}
 
-		List<Unit> potentialUnits = new ArrayList<>();
+		/**
+		 * "Correct" unit given the geometry and the constraints
+		 */
+		IUnit chosen = contextualize(baseUnit, implied);
+
+		/**
+		 * all possible other transformations of the base unit vs. the stated dimensions
+		 */
+		Map<ExtentDimension, ExtentDistribution> context = new HashMap<>();
+
+		// all intensive
+		Unit fullyContextualized = (Unit) contextualize(baseUnit, aggregatable);
+		Set<IUnit> potentialUnits = new LinkedHashSet<>();
+		if (!chosen.equals(fullyContextualized)) {
+			for (ExtentDimension ed : aggregatable) {
+				context.put(ed, ExtentDistribution.INTENSIVE);
+			}
+			potentialUnits.add(fullyContextualized.withAggregatedDimensions(new HashMap<>(context)));
+		}
+		// all extensive
+		Unit fullyExtensive = Unit.create(baseUnit); // (Unit)Units.INSTANCE.removeExtents(fullyContextualized,
+														// aggregatable);
+		if (!chosen.equals(fullyExtensive)) {
+			for (ExtentDimension ed : aggregatable) {
+				context.put(ed, ExtentDistribution.EXTENSIVE);
+			}
+			potentialUnits.add(fullyExtensive.withAggregatedDimensions(new HashMap<>(context)));
+		}
+
+		// all other non-trivial variations
 		for (Set<ExtentDimension> set : Sets.powerSet(aggregatable)) {
-			Unit aggregated = (Unit) Units.INSTANCE.removeExtents(fullyContextualized, set);
-			potentialUnits.add(aggregated.withAggregatedDimensions(set));
-		}
-
-		IUnit chosen = null;
-
-		if (constraints == null || constraints.isEmpty()) {
-			chosen = fullyContextualized;
-		} else {
-			Set<ExtentDimension> whitelist = new HashSet<>();
-			Set<ExtentDimension> blacklist = new HashSet<>();
-			for (ExtentDimension d : constraints.keySet()) {
-				if (!aggregatable.contains(d)) {
-					continue;
-				}
-				if (constraints.get(d) == ExtentDistribution.EXTENSIVE) {
-					whitelist.add(d);
-				} else {
-					blacklist.add(d);
-				}
+			if (set.isEmpty()) {
+				continue;
 			}
-
-			for (Unit punit : potentialUnits) {
-				if (Sets.intersection(punit.getAggregatedDimensions(), whitelist).size() == whitelist.size()
-						&& Sets.intersection(punit.getAggregatedDimensions(), blacklist).size() == 0) {
-					chosen = punit;
-					break;
+			// reset
+			for (ExtentDimension ed : context.keySet()) {
+				context.put(ed, ExtentDistribution.EXTENSIVE);
+			}
+			Unit aggregated = (Unit) Units.INSTANCE.contextualize(baseUnit, set);
+			if (!aggregated.equals(chosen)) {
+				for (ExtentDimension ed : set) {
+					context.put(ed, ExtentDistribution.INTENSIVE);
 				}
+				potentialUnits.add(aggregated.withAggregatedDimensions(new HashMap<>(context)));
 			}
 		}
 
-		final Set<IUnit> candidates = new HashSet<IUnit>(potentialUnits);
-		final IUnit correctUnit = chosen;
+////		IUnit chosen = null;
+//
+//		if (constraints == null || constraints.isEmpty()) {
+//			chosen = fullyContextualized;
+//		} else {
+//			Set<ExtentDimension> whitelist = new HashSet<>();
+//			Set<ExtentDimension> blacklist = new HashSet<>();
+//			for (ExtentDimension d : constraints.keySet()) {
+//				
+//				if (!aggregatable.contains(d)) {
+//					continue;
+//				}
+//				
+//				/**
+//				 * FIXME something is wrong here - the "chosen" remains null
+//				 */
+//				if (constraints.get(d) == ExtentDistribution.INTENSIVE) {
+//					whitelist.add(d);
+//				} else {
+//					blacklist.add(d);
+//				}
+//			}
+//
+//			for (Unit punit : potentialUnits) {
+//				Set<ExtentDimension> udims = punit.getAggregatedDimensions();
+//				if (Sets.intersection(udims, whitelist).size() == whitelist.size()
+//						&& Sets.intersection(udims, blacklist).size() == 0) {
+//					chosen = punit;
+//					break;
+//				}
+//			}
+//		}
+//
+//		final Set<IUnit> candidates = new HashSet<IUnit>(potentialUnits);
+//		final IUnit correctUnit = chosen;
 
 		return new UnitContextualization() {
 
 			@Override
 			public IUnit getChosenUnit() {
-				return correctUnit;
+				return chosen;
 			}
 
 			@Override
 			public Collection<IUnit> getCandidateUnits() {
-				return candidates;
+				return potentialUnits;
 			}
 		};
 	}

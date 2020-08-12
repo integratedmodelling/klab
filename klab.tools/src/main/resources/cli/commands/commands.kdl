@@ -33,6 +33,25 @@ void cd
 	class org.integratedmodelling.klab.clitool.console.commands.Cd
 }
 
+void log
+	"Tail the logfile of this engine or any node. Pass the number of lines, defaults at 100."
+{
+	optional text node
+		"An online node to which we have admin access." 
+
+	class org.integratedmodelling.klab.clitool.console.commands.Log
+}
+
+void who
+	"Return details about the connected user or (if admin) others from either the engine or a
+	 remote node."
+{
+	optional text node
+		"An online node to which we have admin access." 
+
+	class org.integratedmodelling.klab.clitool.console.commands.Who
+}
+
 void version
 	"Print version and build information"
 {
@@ -56,7 +75,20 @@ void 'dependencies'
 	class org.integratedmodelling.klab.clitool.console.commands.visualization.ShowDependencies
 }
 
+void get
+	"List the value of a particular property or all known properties"
+{
+	class org.integratedmodelling.klab.clitool.console.commands.GetProperty
+}
 
+void set
+	"Set the value of a system property in klab.properties, optionally persisting it."
+{
+	optional boolean persist
+		"Persist the property change after making it."
+
+	class org.integratedmodelling.klab.clitool.console.commands.SetProperty
+}
 
 void network
 	"Turn REST network services on and off"

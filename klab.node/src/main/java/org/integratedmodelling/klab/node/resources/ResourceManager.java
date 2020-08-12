@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -12,6 +13,7 @@ import java.util.TimerTask;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.auth.KlabPermissions;
@@ -22,16 +24,18 @@ import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.data.encoding.Encoding.KlabData;
 import org.integratedmodelling.klab.data.encoding.EncodingDataBuilder;
+import org.integratedmodelling.klab.engine.indexing.ResourceIndexer;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.node.NodeApplication;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.controllers.EngineController;
 import org.integratedmodelling.klab.rest.Group;
-import org.integratedmodelling.klab.rest.ResourceReference;	
+import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -51,12 +55,15 @@ public class ResourceManager {
 	 * updated, which doesn't happen automatically at put().
 	 */
 	private ResourceCatalog catalog;
-
 	private Set<String> onlineResourceUrns = Collections.synchronizedSet(new LinkedHashSet<>());
 	private Set<String> offlineResourceUrns = Collections.synchronizedSet(new LinkedHashSet<>());
 
 	public ResourceManager() {
 		this.catalog = new ResourceCatalog();
+		for (String resource : this.catalog.keySet()) {
+			ResourceIndexer.INSTANCE.index(this.catalog.get(resource));
+		}
+		ResourceIndexer.INSTANCE.commitChanges();
 		this.resourceChecker = new Timer(true);
 		this.resourceChecker.scheduleAtFixedRate(new TimerTask() {
 
@@ -64,9 +71,9 @@ public class ResourceManager {
 			public void run() {
 				checkResources();
 			}
-		}, 0, Integer.parseInt(
+		}, 0, Long.parseLong(
 				// six minutes default
-				Configuration.INSTANCE.getProperty(NodeApplication.RESOURCE_CHECKING_INTERVAL_SECONDS, "360")));
+				Configuration.INSTANCE.getProperty(NodeApplication.RESOURCE_CHECKING_INTERVAL_SECONDS, "360")) * 1000L);
 
 	}
 
@@ -122,7 +129,7 @@ public class ResourceManager {
 
 			EncodingDataBuilder builder = new EncodingDataBuilder();
 			adapter.getEncodedData(kurn, builder, geometry,
-					new ResourceScope(adapter.getResource(urn), null, builder.getMonitor()));
+					new ResourceScope(adapter.getResource(urn), geometry, builder.getMonitor()));
 			return builder.buildEncoded();
 
 		}
@@ -140,10 +147,24 @@ public class ResourceManager {
 		}
 
 		adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), geometry, builder,
-				new ResourceScope(resource, null, builder.getMonitor()));
+				new ResourceScope(resource, geometry, builder.getMonitor()));
 
 		return builder.buildEncoded();
 
+	}
+
+	public void updateResource(String urn, ResourceReference content, EngineAuthorization user, IMonitor monitor) {
+		if (!canAccess(urn, user)) {
+			throw new SecurityException(urn);
+		}
+		catalog.update(urn, content, "Updated on " + new Date() + " by " + user.getUsername());
+	}
+
+	public boolean deleteResource(String urn, EngineAuthorization user, IMonitor monitor) {
+		if (!canAccess(urn, user)) {
+			throw new SecurityException(urn);
+		}
+		return catalog.remove(urn) != null;
 	}
 
 	public ITicket publishResource(ResourceReference resourceReference, File uploadArchive, EngineAuthorization user,
@@ -177,8 +198,14 @@ public class ResourceManager {
 					} else {
 						resource = catalog.importResource(resourceReference, user);
 					}
+					if (resource != null) {
+						ResourceIndexer.INSTANCE.index(resource);
+						ResourceIndexer.INSTANCE.commitChanges();
+					}
 					ret.resolve("urn", resource.getUrn());
 				} catch (Throwable t) {
+					Logging.INSTANCE
+							.error("exception when publishing " + resourceReference.getUrn() + ": " + t.getMessage());
 					ret.error("Publishing failed with exception: " + t.getMessage());
 				}
 			}
@@ -219,12 +246,16 @@ public class ResourceManager {
 	public String getDefaultNamespace() {
 		return catalog.getDefaultNamespace();
 	}
+	
+	public List<Match> queryResources(String query) {
+		return ResourceIndexer.INSTANCE.query(query);
+	}
 
 	public boolean canAccess(String urn, EngineAuthorization user) {
 
-		if (Urns.INSTANCE.isUniversal(urn)) {
+		Urn u = new Urn(urn);
 
-			Urn u = new Urn(urn);
+		if (Urns.INSTANCE.isUniversal(urn)) {
 
 			/*
 			 * just check if the adapter is allowed
@@ -243,7 +274,7 @@ public class ResourceManager {
 			}
 		}
 
-		IResource resource = catalog.get(urn);
+		IResource resource = catalog.get(u.getUrn());
 		if (resource != null) {
 			if (user.getRoles().contains(Role.ROLE_ADMINISTRATOR)) {
 				return true;

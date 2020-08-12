@@ -66,7 +66,14 @@ public interface IParameters<T> extends Map<T, Object> {
 	 * @return a list of unnamed argument keys, possibly empty.
 	 */
 	List<T> getUnnamedKeys();
-	
+
+	/**
+	 * Return all the keys that correspond to named parameters.
+	 * 
+	 * @return a list of unnamed argument keys, possibly empty.
+	 */
+	List<T> getNamedKeys();
+
 	/**
 	 * Like {@link #containsKey(Object)}, except it returns false also if the key is
 	 * there but the corresponding object is null.

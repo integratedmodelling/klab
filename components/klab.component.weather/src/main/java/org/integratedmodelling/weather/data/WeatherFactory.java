@@ -28,7 +28,6 @@ package org.integratedmodelling.weather.data;
 
 import java.io.File;
 import java.io.IOException;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -374,6 +373,23 @@ public enum WeatherFactory {
 	}
 
 	/**
+	 * Do everything possible to return at least one station with the required data.
+	 * First try the user-submitted stations, then the NOAA, with a reasonable
+	 * buffer range around the shape (50% in each direction). If neither gives at
+	 * least one station back, do the same with CRU stations. If the regular
+	 * strategy doesn't work with CRU, return the 4 closest CRU stations around the
+	 * shape.
+	 * 
+	 * @param context
+	 * @param variables
+	 * @return
+	 */
+	public List<WeatherStation> requireWithin(IShape context, String... variables) {
+		final List<WeatherStation> ret = new ArrayList<>();
+		return ret;
+	}
+
+	/**
 	 * Return all weather stations in the passed geometry (using the intersect
 	 * operator), optionally restricting to those providing the variables passed.
 	 * 
@@ -462,51 +478,11 @@ public enum WeatherFactory {
 	}
 
 	public void setup() {
-
-//		Properties properties = Extensions.INSTANCE.getComponentProperties(WeatherComponent.ID);
-
 		setupCRUStations();
 		setupGHCNDStations();
 		setupTRRMEvents();
 		setupContributedStations();
-
 		cruReader.finalizeRead();
-//
-//		
-//		/**
-//		 * Local data are only used at initialization
-//		 */
-//		if (properties.containsKey(GHNCD_CATALOG_LOCATION)) {
-//			WeatherStation.setLocalGHCNDLocation(new File(properties.getProperty(GHNCD_CATALOG_LOCATION)));
-//		}
-//
-//		/**
-//		 * This should be timed by a scheduler and split. Commit every 50 stations for
-//		 * speed.
-//		 */
-//		int i = 0;
-//		for (String id : stationIds) {
-//			WeatherStation ws = INSTANCE.wbox.retrieve(id);
-//			try {
-//				if (ws.cacheData(false)) {
-//					Logging.INSTANCE.info("Data for station " + ws.getId() + " updated to " + ws.getLastKnownYear());
-//				}
-//			} catch (Throwable e) {
-//				Logging.INSTANCE.error("Weather station " + id + " data read failed: " + e.getMessage());
-//			}
-//
-//			i++;
-//
-//			if ((i % 50) == 0) {
-//				db.commit();
-//			}
-//		}
-//
-//		cruReader.finalizeRead();
-//
-//		// reentrant for repeated execution
-//		WeatherStation.setLocalGHCNDLocation(null);
-//
 	}
 
 	public static void main(String[] args) throws Exception {

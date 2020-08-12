@@ -18,6 +18,10 @@ public class Configuration extends CountableObservation implements IConfiguratio
 	public Configuration(String name, Observable observable, Scale scale, RuntimeScope context) {
 		super(name, observable, scale, context);
 	}
+	
+	protected Configuration(Configuration other) {
+		super(other);
+	}
 
 	/**
 	 * Called by the runtime context just after creation, to set the targets before

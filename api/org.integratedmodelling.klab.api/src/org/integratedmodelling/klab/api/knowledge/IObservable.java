@@ -303,6 +303,15 @@ public interface IObservable extends ISemantic, IResolvable {
 		 */
 		Builder without(ObservableRole... roles);
 
+		/**
+		 * Set the temporal inherency for the occurrent observable we specify. Does not
+		 * change the semantics.
+		 * 
+		 * @param concept
+		 * @return
+		 */
+		Builder withTemporalInherent(IConcept concept);
+
 	}
 
 	/**
@@ -322,7 +331,7 @@ public interface IObservable extends ISemantic, IResolvable {
 	 *
 	 * @return the necessary observation type
 	 */
-	IActivity.Description getDescription();
+	IActivity.Description getDescriptionType();
 
 	/**
 	 * Return the type of the artifact correspondent to an observation of this
@@ -383,8 +392,8 @@ public interface IObservable extends ISemantic, IResolvable {
 	/**
 	 * The context type, direct or indirect, and revised according to the stated
 	 * inherency (will be reverted to null if the indirect context is X and the
-	 * concept is <this> of X). The inherency revision is only for observables and
-	 * does not affect the underlying semantics.
+	 * concept is <this> of X). The revision only applies to observables and does
+	 * not affect the underlying semantics.
 	 * 
 	 * @return the context type
 	 */
@@ -396,6 +405,15 @@ public interface IObservable extends ISemantic, IResolvable {
 	 * @return the inherent type
 	 */
 	IConcept getInherent();
+
+	/**
+	 * An occurrent observable may be temporally inherent to an event, i.e. it will
+	 * happen during each instance of it. Specified by 'during each' in observable
+	 * syntax.
+	 * 
+	 * @return
+	 */
+	IConcept getTemporalInherent();
 
 	/**
 	 * If the observable was defined with an inline value (e.g. '10 as Concept'),
@@ -414,7 +432,8 @@ public interface IObservable extends ISemantic, IResolvable {
 	 * subtypes, leaving the base type last if the subtypes don't provide full
 	 * coverage. This subsumes the abstract nature of the observable concept, but
 	 * may also be true in dependency observables, which may explicitly ask to be
-	 * generic even if not abstract ('any' modifier).
+	 * generic even if not abstract ('any' modifier), or result from an abstract
+	 * clause (e.g. 'during <abstract event type>').
 	 *
 	 * @return true if generic
 	 */
@@ -431,7 +450,8 @@ public interface IObservable extends ISemantic, IResolvable {
 	/**
 	 * Use the reasoner with the passed concept. If there are conceptual modifiers
 	 * and the passed semantics is another observable, apply the reasoner to them as
-	 * well.
+	 * well. This check is expensive and should not be used during
+	 * contextualization.
 	 * 
 	 * @param c
 	 * @return
@@ -472,7 +492,8 @@ public interface IObservable extends ISemantic, IResolvable {
 	boolean isAbstract();
 
 	/**
-	 * True if the main observable has the passed semantics.
+	 * True if the main observable has the passed semantic identifier. This check is
+	 * quick and painless.
 	 * 
 	 * @param type
 	 * @return
@@ -480,7 +501,7 @@ public interface IObservable extends ISemantic, IResolvable {
 	boolean is(Type type);
 
 	/**
-	 * Any value operators are returned here, paired with their legal operands.
+	 * Any value operators are returned here, paired with their operands.
 	 * 
 	 * @return
 	 */

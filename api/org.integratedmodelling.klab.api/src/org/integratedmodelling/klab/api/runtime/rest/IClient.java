@@ -45,6 +45,16 @@ public interface IClient {
 	 * @return
 	 */
 	<T> T postFile(String url, File data, Class<? extends T> cls);
+	
+	/**
+	 * DELETE request with optional return value. Can't call it delete for
+	 * implementation reasons.
+	 * 
+	 * @param url
+	 * @param query
+	 * @return
+	 */
+	Object remove(String url, Object...query);
 
 	/**
 	 * Download a file through a GET call into the file path of choice. Throw

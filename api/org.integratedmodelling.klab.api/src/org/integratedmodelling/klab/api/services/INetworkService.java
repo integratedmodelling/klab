@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.function.Function;
 
 import org.integratedmodelling.klab.Urn;
@@ -59,8 +60,8 @@ public interface INetworkService {
 	 * @param monitor
 	 * @return the result of merging through the merger
 	 */
-	<T, K, V> T broadcastPost(String endpoint, V request, Class<? extends K> individualResponseType, Function<Collection<K>, T> merger,
-			IMonitor monitor);
+	<T, K, V> T broadcastPost(String endpoint, V request, Class<? extends K> individualResponseType,
+			Function<Collection<K>, T> merger, IMonitor monitor);
 
 	/**
 	 * Get the (online) node identified by name, or null if offline or unknown.
@@ -78,9 +79,21 @@ public interface INetworkService {
 	 * should be based on the current load factors, versions (which may be added to
 	 * the URN) and mirroring options.
 	 * 
+	 * TODO substitute with a sorted list of nodes, closest/least-loaded first, so
+	 * that we can try the others if the best choice fails.
+	 * 
 	 * @param urn
 	 * @return
 	 */
 	INodeIdentity getNodeForResource(Urn urn);
+
+	/**
+	 * Get a list of nodes that provide the passed authority, closest/least-loaded
+	 * first.
+	 * 
+	 * @param authority
+	 * @return
+	 */
+	List<INodeIdentity> getNodesForAuthority(String authority);
 
 }

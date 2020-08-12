@@ -65,6 +65,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private boolean optional;
 	private String name;
 	private IConcept targetPredicate;
+	private IConcept temporalInherent;
 	private boolean mustContextualize = false;
 
 	private List<IConcept> traits = new ArrayList<>();
@@ -137,6 +138,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.compresent = Observables.INSTANCE.getDirectCompresentType(observable.getType());
 		this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
 		this.mustContextualize = observable.mustContextualizeAtResolution();
+		this.temporalInherent = observable.getTemporalInherent();
 
 		this.annotations.addAll(observable.getAnnotations());
 
@@ -179,6 +181,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.valueOperators.addAll(other.valueOperators);
 		this.mustContextualize = other.mustContextualize;
 		this.annotations.addAll(other.annotations);
+		this.temporalInherent = other.temporalInherent;
 
 		checkTrivial();
 	}
@@ -210,9 +213,16 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder within(IConcept concept) {
 		this.context = concept;
-		if (!declarationIsComplete) {
+		if (this.declaration != null) {
 			this.declaration.setContext((KimConcept) Concepts.INSTANCE.getDeclaration(concept));
 		}
+		isTrivial = false;
+		return this;
+	}
+
+	@Override
+	public Builder withTemporalInherent(IConcept concept) {
+		this.temporalInherent = concept;
 		isTrivial = false;
 		return this;
 	}
@@ -499,6 +509,11 @@ public class ObservableBuilder implements IObservable.Builder {
 				ret.removed.add(concept);
 				removedRoles.add(ObservableRole.COOCCURRENT);
 			}
+			if (ret.temporalInherent != null && ret.temporalInherent.is(concept)) {
+				ret.temporalInherent = null;
+				ret.removed.add(concept);
+				removedRoles.add(ObservableRole.TEMPORAL_INHERENT);
+			}
 		}
 		if (ret.removed.size() > 0) {
 			List<String> declarations = new ArrayList<>();
@@ -572,6 +587,11 @@ public class ObservableBuilder implements IObservable.Builder {
 				ret.removed.add(ret.cooccurrent);
 				ret.cooccurrent = null;
 				removedRoles.add(ObservableRole.COOCCURRENT);
+			}
+			if (ret.temporalInherent != null && ret.temporalInherent.is(concept)) {
+				ret.temporalInherent = null;
+				ret.removed.add(ret.temporalInherent);
+				removedRoles.add(ObservableRole.TEMPORAL_INHERENT);
 			}
 		}
 		if (ret.removed.size() > 0) {
@@ -647,6 +667,11 @@ public class ObservableBuilder implements IObservable.Builder {
 				ret.cooccurrent = null;
 				ret.removed.add(concept);
 				removedRoles.add(ObservableRole.COOCCURRENT);
+			}
+			if (ret.temporalInherent != null && ret.temporalInherent.is(concept)) {
+				ret.temporalInherent = null;
+				ret.removed.add(concept);
+				removedRoles.add(ObservableRole.TEMPORAL_INHERENT);
 			}
 		}
 		if (ret.removed.size() > 0) {
@@ -731,7 +756,8 @@ public class ObservableBuilder implements IObservable.Builder {
 
 			IConcept ret = ontology.getConcept(conceptId);
 
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.DESCRIBES_OBSERVABLE_PROPERTY), concept, ontology);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.DESCRIBES_OBSERVABLE_PROPERTY), concept,
+					ontology);
 			OWL.INSTANCE.restrictSome(ret, Concepts.p(CoreOntology.NS.CHANGES_PROPERTY), concept, ontology);
 
 			/*
@@ -1547,7 +1573,7 @@ public class ObservableBuilder implements IObservable.Builder {
 				IConcept base = Traits.INSTANCE.getBaseParentTrait(t);
 
 				if (base == null) {
-					monitor.error("base declaration for trait " + t + " cannot be found", declaration);
+					monitor.error("base declaration for trait " + t + " could not be found", declaration);
 				}
 
 				if (!baseTraits.add(base)) {
@@ -1607,7 +1633,11 @@ public class ObservableBuilder implements IObservable.Builder {
 
 		if (context != null) {
 			IConcept other = Observables.INSTANCE.getContextType(main);
-			if (other != null && !Observables.INSTANCE.isCompatible(context, other)) {
+			// use the version of isCompatible that allows for observations that are
+			// compatible with
+			// the context's context if the context is an occurrent (e.g. Precipitation of
+			// Storm)
+			if (other != null && !Observables.INSTANCE.isContextuallyCompatible(main, context, other)) {
 				monitor.error("cannot set the context type of " + Concepts.INSTANCE.getDisplayName(main) + " to "
 						+ Concepts.INSTANCE.getDisplayName(context) + " as it already has an incompatible context: "
 						+ Concepts.INSTANCE.getDisplayName(other), declaration);
@@ -1933,12 +1963,11 @@ public class ObservableBuilder implements IObservable.Builder {
 		}
 
 		ret.setTargetPredicate(targetPredicate);
-//		ret.setfilteredObservable(filteredObservable);
 		ret.setOptional(this.optional);
 		ret.setMustContextualizeAtResolution(mustContextualize);
 		ret.getAnnotations().addAll(annotations);
 		ret.setDistributedInherency(distributedInherency);
-//		ret.setDistributionContext(distributedIn);
+		ret.setTemporalInherent(temporalInherent);
 
 		return ret;
 	}

@@ -58,8 +58,10 @@ public interface IUrnAdapter {
 	 *                 the root observation.
 	 * @param context  the context of computation, if any. Null when URN specifies
 	 *                 the root observation.
+	 *                 
+	 * @return the data proxy
 	 */
-	void getEncodedData(Urn urn, IKlabData.Builder builder, IGeometry geometry, IContextualizationScope context);
+	IKlabData getEncodedData(Urn urn, IKlabData.Builder builder, IGeometry geometry, IContextualizationScope context);
 
 	/**
 	 * Get the resource type.

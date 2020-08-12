@@ -1,6 +1,5 @@
 package org.integratedmodelling.kim.model;
 
-import java.net.URI;
 import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
@@ -12,14 +11,11 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimMacro;
-import org.integratedmodelling.kim.api.IKimMetadata;
-import org.integratedmodelling.kim.api.IKimModel;
-import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObservable;
-import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.IKimRestriction;
 import org.integratedmodelling.kim.api.IKimScope;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.model.KimConceptStatement.ParentConcept;
@@ -167,7 +163,7 @@ public class KimMacro implements IKimMacro {
         return delegate.getAnnotations();
     }
 
-    public IKimMetadata getMetadata() {
+    public IParameters<String> getMetadata() {
         return delegate.getMetadata();
     }
 
@@ -175,7 +171,7 @@ public class KimMacro implements IKimMacro {
         return ((KimConceptStatement)delegate).getAppliesTo();
     }
 
-    public IKimMetadata getDocumentationMetadata() {
+    public IParameters<String> getDocumentationMetadata() {
         return delegate.getDocumentationMetadata();
     }
 

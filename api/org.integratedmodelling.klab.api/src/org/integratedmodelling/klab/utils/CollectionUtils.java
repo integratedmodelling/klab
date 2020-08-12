@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.rest.Notification;
 
 public class CollectionUtils {
 

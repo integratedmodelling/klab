@@ -15,22 +15,55 @@
  */
 package org.integratedmodelling.klab.api.auth;
 
+import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
- * The Interface IRuntimeIdentity.
+ * The Interface IRuntimeIdentity is implemented by all identities that can be
+ * interacted with during their lifetime. Interaction is driven by
+ * {@link IBehavior} objects, loaded and stopped explicitly.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public abstract interface IRuntimeIdentity extends IIdentity {
 
-    /**
-     * A runtime identity exposes a monitor to report conditions and affect
-     * contextualization.
-     *
-     * @return a {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor} object.
-     */
-    IMonitor getMonitor();
-    
+	/**
+	 * Load a specified behavior in a specified runtime scope. Returns a string
+	 * identifying the running behavior, which can be passed to
+	 * {@link #stop(String)}.
+	 * 
+	 * @param behavior
+	 * @param scope
+	 */
+	String load(IBehavior behavior, IContextualizationScope scope);
+
+	/**
+	 * Stop a behavior if needed, passing the string returned by
+	 * {@link #load(IBehavior, IContextualizationScope)}. Return true if the
+	 * behavior was indeed stopped.
+	 * 
+	 * @param behaviorId
+	 * @return
+	 */
+	boolean stop(String behaviorId);
+
+	/**
+	 * Stop all existing behaviors. Return whether at least one was stopped.
+	 * 
+	 * @return
+	 */
+	boolean stop();
+
+	/**
+	 * A runtime identity exposes a monitor to report conditions and affect
+	 * contextualization.
+	 *
+	 * @return a
+	 *         {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
+	 *         object.
+	 */
+	IMonitor getMonitor();
+
 }

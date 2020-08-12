@@ -59,6 +59,7 @@
 			<artifactId>klab.modeler</artifactId>
 			<version>0.10.0-SNAPSHOT</version>
 		</dependency>
+		
 		<!-- Command line tool dependencies -->
 		<dependency>
 			<groupId>net.sf.jopt-simple</groupId>

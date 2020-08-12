@@ -25,7 +25,6 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
-import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.rest.Capabilities;
@@ -58,6 +57,7 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 @Secured(Roles.PUBLIC)
 public class KlabController {
+	
 
     @RequestMapping(value = API.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
     @ResponseBody

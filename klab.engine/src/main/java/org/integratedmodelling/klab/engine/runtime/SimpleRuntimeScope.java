@@ -728,18 +728,6 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public String addListener(ObservationListener listener) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void removeListener(String listenerId) {
-		// TODO Auto-generated method stub
-
-	}
-
-	@Override
 	public Set<String> getWatchedObservationIds() {
 		// TODO Auto-generated method stub
 		return null;
@@ -767,5 +755,11 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	public Collection<IObservation> getObservations(IConcept observable) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void notifyListeners(IObservation object) {
+		// TODO Auto-generated method stub
+		
 	}
 }

@@ -353,14 +353,13 @@ public class KimValidator extends AbstractKimValidator {
     EList<Urn> _urns = model.getBody().getUrns();
     for (final Urn u : _urns) {
       {
-        final Kim.UrnDescriptor ud = Kim.INSTANCE.getUrnDescriptor(u.getName());
+        final String urnValue = Kim.INSTANCE.getUrnValue(u);
+        final Kim.UrnDescriptor ud = Kim.INSTANCE.getUrnDescriptor(urnValue);
         if ((((ud == null) || ud.isDead()) || (!ud.isAccessible()))) {
           if ((ud != null)) {
             boolean _isKnown = ud.isKnown();
             boolean _not = (!_isKnown);
             if (_not) {
-              String _name = u.getName();
-              String _plus = ("URN " + _name);
               String _xifexpression_1 = null;
               boolean _isDead = ud.isDead();
               if (_isDead) {
@@ -368,15 +367,15 @@ public class KimValidator extends AbstractKimValidator {
               } else {
                 _xifexpression_1 = " is not authorized for the current user";
               }
-              String _plus_1 = (_plus + _xifexpression_1);
+              String _plus = (("URN " + urnValue) + _xifexpression_1);
               String _xifexpression_2 = null;
               if ((model == null)) {
                 _xifexpression_2 = "";
               } else {
                 _xifexpression_2 = ": the containing model has been deactivated";
               }
-              String _plus_2 = (_plus_1 + _xifexpression_2);
-              this.warning(_plus_2, urn, null, KimValidator.PROBLEMATIC_URN);
+              String _plus_1 = (_plus + _xifexpression_2);
+              this.warning(_plus_1, urn, null, KimValidator.PROBLEMATIC_URN);
             }
           } else {
             String _xifexpression_3 = null;
@@ -385,8 +384,8 @@ public class KimValidator extends AbstractKimValidator {
             } else {
               _xifexpression_3 = ": the containing model has been deactivated";
             }
-            String _plus_3 = ("URN is undefined" + _xifexpression_3);
-            this.warning(_plus_3, urn, null, KimValidator.PROBLEMATIC_URN);
+            String _plus_2 = ("URN is undefined" + _xifexpression_3);
+            this.warning(_plus_2, urn, null, KimValidator.PROBLEMATIC_URN);
           }
           if ((((model != null) && (ud != null)) && ud.isKnown())) {
             model.setInactive(true);
@@ -882,7 +881,7 @@ public class KimValidator extends AbstractKimValidator {
         descriptor.setDocstring(model.getDocstring());
         EList<Urn> _urns = model.getUrns();
         for (final Urn urn : _urns) {
-          descriptor.getResourceUrns().add(urn.getName());
+          descriptor.getResourceUrns().add(Kim.INSTANCE.getUrnValue(urn));
         }
         String _boolean = model.getBoolean();
         boolean _tripleNotEquals_3 = (_boolean != null);
@@ -2517,9 +2516,7 @@ public class KimValidator extends AbstractKimValidator {
       for (final ConceptDeclaration trait : _actuallyInheritedTraits) {
         {
           EnumSet<IKimConcept.Type> ttype = this.checkDeclaration(trait);
-          boolean _contains = ttype.contains(IKimConcept.Type.TRAIT);
-          boolean _not_1 = (!_contains);
-          if (_not_1) {
+          if (((!ttype.contains(IKimConcept.Type.TRAIT)) && (!ttype.contains(IKimConcept.Type.AUTHORITY_IDENTITY)))) {
             this.error("Only traits can be inherited", concept, 
               KimPackage.Literals.CONCEPT_STATEMENT_BODY__ACTUALLY_INHERITED_TRAITS, i_1);
             ok = false;

@@ -21,10 +21,9 @@ public interface IMessage {
 	public static IMessage NO_RESPONSE = null;
 
 	enum Repeatability {
-		Repeatable,
-		Once
+		Repeatable, Once
 	}
-	
+
 	/**
 	 * Message class. Ugly type name makes life easier.
 	 * 
@@ -188,7 +187,7 @@ public interface IMessage {
 		 * display at context level or at the dataflow actuator level. Uses bean
 		 * {@link RuntimeDocumentation}.
 		 */
-		RuntimeDocumentation, DataflowDocumentation, TicketRequest, TicketResponse,
+		RuntimeDocumentation, DataflowDocumentation, TicketRequest, TicketResponse, AuthorityDocumentation,
 
 		/**
 		 * Class UserInterface: request addition of action to either context menu or
@@ -262,8 +261,8 @@ public interface IMessage {
 
 		/**
 		 * F->B: Start or stop watching an observation, i.e. receive messages about
-		 * anything that changes related to it. Linked to a {@link WatchRequest}
-		 * message payload.
+		 * anything that changes related to it. Linked to a {@link WatchRequest} message
+		 * payload.
 		 */
 		WatchObservation,
 
@@ -344,15 +343,16 @@ public interface IMessage {
 		/*
 		 * --- View actor messages
 		 */
-		CreateViewComponent, SetupInterface, 
-		
+		CreateViewComponent, SetupInterface,
+
 		/*
-		 * --- Sent F->B when a view action interacts with a component
+		 * --- Sent F->B when a view action interacts with a component and B->F to send
+		 * a response to an explicit method call on a widget.
 		 */
 		ViewAction
 
 	}
-	
+
 	Repeatability getRepeatability();
 
 	/**

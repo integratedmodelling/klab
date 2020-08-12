@@ -28,7 +28,7 @@ public interface ITicket {
 	void refresh();
 
 	/**
-	 * Delete the ticket from the manager.
+	 * Delete this ticket from the manager.
 	 * 
 	 */
 	void delete();

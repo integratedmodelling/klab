@@ -15,6 +15,7 @@ import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MessageBody;
 import org.integratedmodelling.kactors.kactors.MessageCall;
+import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.Statement;
 import org.integratedmodelling.kactors.kactors.StatementGroup;
 import org.integratedmodelling.kactors.kactors.StatementList;
@@ -69,6 +70,10 @@ public class KactorsLabelProvider extends DefaultEObjectLabelProvider {
       }
     }
     return null;
+  }
+  
+  public String text(final Metadata metadata) {
+    return "Metadata";
   }
   
   public String text(final Definition definition) {

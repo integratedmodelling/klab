@@ -172,7 +172,7 @@ public class JsonUtils {
 	}
 
 	/**
-	 * Pretty-print the passed map as a JSON object.
+	 * Serialize the passed object as JSON and pretty-print the resulting code.
 	 *
 	 * @param object
 	 *            the object

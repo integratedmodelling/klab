@@ -48,22 +48,32 @@ Before we describe how concepts and models are declared in k.IM, we must spend a
 
 Projects
 
+    TODO
+
 Namespaces
 
-Annotations (introduce briefly)
+
+
+Annotations
+
+    TODO introduce briefly
 
 === Lifecycle of a project
 
 [#section-kim-syntax]
 == k.IM syntax
 
-As introduced before, the k.IM language recognizes just two main types of statements: _concept definitions_ and _model definitions_. Concept definitions create new concepts, automatically connecting them to the k.LAB core ontology and to concepts defined in other namespaces. Model definitions specify how to produce scientific artifacts (observations) of specified concepts. Although a k.IM namespace can contain both types of statements, the two classes of statements are normally used by different kinds of contributors. Only those users that contribute to worldviews - a collaborative process that requires significant time, expertise and logical skills - normally need to use concept definition statements, which compose _worldviews_, i.e. conceptualizations that cover a broad range of disciplines and allow modelers to annotate data and computations. Because worldviews are shared automatically across k.LAB users based on the preferences stored with their certificates, the majority of k.LAB modelers can just use the worldview concepts to compose _observables_ to use in models. Still, the worldview and its definition in k.IM remains available for everyone to explore (or propose changes to), and understanding the basis of the logical part of k.IM is useful for all users. More details about the community process that can support building the most useful worldviews are given later.
+As introduced before, the k.IM language offers only two main types of statements: _concept definitions_ and _model definitions_. Concept definitions create new concepts, automatically connecting them to the k.LAB core ontology and to concepts defined in other namespaces. Once created, a concept exists in any engine that loads the project: there is no way to make a concept private to a namespace, so care is needed.
 
-Within these two categories of statements considerable syntactic variation is possible. Each statement is always introduced by a keyword, i.e. a reserved word that can only be used as such (for example, keywords cannot be used as part of a namespace identifier or a dependency name). Keywords are always lowercase and they often correspond to commonly used English words. The editor incorporated in k.Modeler highlights all keyword in a bold purple color, to make them easy to recognize as you type.
+Model definitions specify how to produce scientific artifacts (_observations_) of specified concepts. They can list other concepts that must be observed in order to make the observation (_dependencies_) and may process their values by defining equations or linking to internal algorithms. Models can use external _resources_ specified by identifiers (_URNs_) as a source of knowledge: in this case, they provide _semantics_ for their resources by defining the concept they incarnate. We sometimes refer to models that use resources as the _semantic annotations_ of those resources.
 
-The keywords that introduce _concept_ definitions represent commonly used base concepts in scientific observations. These correspond to base types in the k.LAB core observation ontology and establish the basic nature of the observable concept they introduce. Because these core types are well defined and immutable, there is no *+concept+* keyword in k.IM, and all conceptual definitions will start with a concrete type keyword such as *+agent+*, *+process+*, *+temperature+* or *+uncertainty+*. In comparison, _model_ definitions are simpler: the keyword *+model+* introduces most of them. Special categories of models include _non-semantic models_ (introduced by a data type keyword, one of *+number+*, *+boolean+* or *+text+*) and _learning models_ introduced by *+learn+*.
+Although a k.IM namespace can contain both types of statements, these two classes of statements are normally written by different classes of contributors. Only those users that contribute to worldviews - a collaborative process that requires significant time, expertise and logical skills - normally need to write concept definition statements, which compose _worldviews_, i.e. conceptualizations that cover a broad range of disciplines and allow modelers to annotate data and computations. Because worldviews are shared across all k.LAB users that subscribe to them (based on the preferences stored with their certificates), the majority of k.LAB modelers just refer to the worldview concepts to compose _observables_ to use in models. Still, the worldview and its definition in k.IM remains available for everyone to explore (or propose changes to); understanding the basis of concept definitions in k.IM is useful for all users. More details about community processes that can support building the most useful worldviews will given later.
 
-Other keywords in k.LAB are used to connect concepts (_semantic operators_) and to support the definition of models. These are chosen within the prepositions, adverbs, conjunctions and verbs in the English language, so they rarely conflict with user-defined names, which are normally English nouns. To efficiently represent observation activities in science and in order to ensure an intuitive match with the English language, k.IM has a high number of keywords: the following table lists all the keywords recognized in k.IM by their role in the language.
+Within these two categories of statements, considerable syntactic variation is possible. Each statement is always introduced by a keyword, i.e. a reserved word that can only be used with their assigned meaning (for example, you can not name a model "temperature" because that is a keyword in k.IM). Keywords are always lowercase and they often correspond to commonly used English words. The editor incorporated in k.Modeler highlights all keywords in a bold purple color (yes, you can change it), to make them easy to recognize as you type.
+
+The keywords that introduce concept definitions represent commonly used base concepts in scientific observations. These correspond to base types in the k.LAB core observation ontology and establish the basic "real world" nature of the observable concept they introduce. Because these core types are well defined and immutable, there is no *+concept+* keyword in k.IM, and all conceptual definitions will start with a concrete type keyword such as *+agent+*, *+process+*, *+temperature+* or *+uncertainty+*. In comparison, _model_ definitions are simpler: the keyword *+model+* introduces most of them. The few exceptions include _non-semantic models_ (introduced by a data type keyword, one of *+number+*, *+boolean+* or *+text+*) and _learning models_, introduced by *+learn+*.
+
+Other keywords in k.LAB are used to modify or connect concepts (_semantic operators_) and to support the definition of models. These are chosen within the prepositions, adverbs, conjunctions and verbs in the English language, so they rarely conflict with user-defined concept names, which are normally English nouns. To efficiently represent observation activities in science, and in order to ensure easy readability and an intuitive match with the English language, k.IM has a high number of keywords: the following table lists all the keywords recognized in k.IM by their role in the language.
 
 .Keywords in k.IM
 |====
@@ -270,15 +280,22 @@ Other keywords in k.LAB are used to connect concepts (_semantic operators_) and 
  worldview |
 |====
 
-In addition, _separators_ (;,) are used to terminate or join statements; parentheses and brackets ({} []) may delimit concepts in _observable expressions_, _code expressions_ and tables; some symbols (\#,&,*,+,-,.,/,:,<,!=,=,>,?,@,BC,AD,E,,^,CE,e,l,|,{{,}},${,#[,==,<=,>=,?=) are recognized as _value operators_ or as part of _unit_, _currency_ _classification_, _date_, _number_ and _lookup table_ syntax.
+To finish, _separators_ (;,) are used to terminate or join statements; parentheses and brackets ({} []) may delimit concepts in _observable expressions_, _code expressions_ and tables; some symbols (\#,&,*,+,-,.,/,:,<,!=,=,>,?,@,BC,AD,E,,^,CE,e,l,|,{{,}},${,#[,==,<=,>=,?=) are recognized as _value operators_ or as part of _unit_, _currency_ _classification_, _date_, _number_ and _lookup table_ syntax.
 
 === Namespace declarations
+
+Every k.IM file specifies a _namespace_ -- essentially a named collection of statements. The namespace must be introduced by a header that starts with the keyword **+namespace+** (an alternative is *++scenario++*, discussed later). Choosing an appropriate name for the namespace is very important: there cannot be two namespaces with the same name in the system, and because k.LAB is a distributed system, namespace names must be unique across the entire network. For this reason we use the convention of making namespace names _paths_, i.e. names made of different parts connected by dots. Only namespaces that are part of worldviews should be single identifiers: all user namespaces should normally start with the name of the institution or project they work in, followed by one or more names that define the logical scope of their content in order of increasing specificity. If you are operating within an institution that has a domain name and many department, you should name it using two or more pieces, starting with the most general (EXAMPLE). This notation, referred to as _reverse domain name convention_, is adopted widely and the multiple "layers" of increasing specificity make it very unlikely to create conflicing names.
+
+The _general form_ of a namespace declaration can be explained using <> for language elements, [] for optional code segments, and {a | b | ...} for alternative forms. The general form for a concept declaration is as follows:
+
 
 === Main statements: concepts and models
 
 ==== Concept declarations
 
-The _general form_ of a concept declaration can be explained using <> for language elements, [] for optional code segments, and {a | b | ...} for alternative forms. The general form for a concept declaration is as follows:
+When a concept is defined by writing a definition in a namespace, its final _fully qualified name_ will include the namespace name: so if we define the concept Soil in an `earth` namespace, its fully qualified name will be `earth:Soil`. This name will be recognized in all applications that use the worldview that contains it. Within the same namespace (`earth`) where `Soil` is defined, the concept can (and should) be referenced using only its name.
+
+The general form of a concept declaration is as follows:
 
 .General concept declaration syntax
 
@@ -338,8 +355,10 @@ The following sections will expand on each of the elements above, explaining the
 ==== Model declarations
 
 A _model_ in k.LAB represent a strategy to observe a concept in a context, producing an observation (a scientific artifact) of that concept in that context. As explained in the introduction, this definition of a model applies to both data and computations. Models have the role of _semantic annotations_, linking non-semantic informational resources to concepts and stating, if needed, which other concepts need to be observed in order to make the observation. The non-semantic resources may be explicitly represented by URNs or be implicitly defined as values (for example directly annotating a number), equations or external computations in the k.LAB engine, referred to using a function call with parameters. The syntax of models strives to keep these details intuitive and to provide the same kind of readability that concept declarations aim to.
-SS
-The syntax of model statements, like that of concept statements, provides various clauses whose use depends on the type of model being written. Each model makes one of several types of observations, summarized later in 
+
+The syntax of model statements, like that of concept statements, provides various clauses whose use depends on the type of model being written. Each model makes one of several types of observations, summarized later.
+
+[[ TODO ]]
 
 === Other language elements
 
@@ -347,6 +366,7 @@ The syntax of model statements, like that of concept statements, provides variou
 
 ==== Definitions
 
+[[ TODO ]]
 
 [#section-kim-concepts]
 == Concept declaration
@@ -424,6 +444,8 @@ end legend
 ----
 
 ==== Identities
+
+Inherency and identities: in observables, identity also applies to the inherent subject (the connection is made automatically) and `of`, `within` should be kept for observational inherency. In concept declarations, they both establish context and they are equivalent in role, "of" being used for further inherency when "within" is also used. Example: biomass is mass of individual but fish biomass in an observable is annotated Fish Biomass and not biomass of Fish Individual. The reattribution is automatic.
 
 ==== Attributes and Orderings
 
@@ -592,8 +614,8 @@ Binary operators do not alter the basic semantics of a concept but _restrict_ it
 |Description
 
 |within [... each]
-|Observable *+within+* Countable
-|Contextualization operator: constrains the context in which the observable can be observed. Its operand must be compatible with any context already declared in the concept's parent hierarchy.
+|Observable *+within+* Subject
+|Continuant inherency operator: constrains the _context_ in which the observable can be observed. Its operand must be compatible with any context already declared in the concept's parent hierarchy. The inherency is mandatorily _continuant_, i.e. it is not time-sensitive and exists at all times.
 |of [...each]
 |Observable *+of+* Countable
 |Inherency operator: defines a non-contextual different inherency for the observable without changing its context. For example "Height of Tree" can be observed as a quality within a Region as the height is inherent to each tree but the quality can be observed over a region that contains trees. In explicit expressions it is limited to Countables as arguments; inherency to qualities is subsumed in quality operators (e.g. uncertainty of <quality>) and not allowed as an explicit observable.
@@ -618,20 +640,15 @@ Binary operators do not alter the basic semantics of a concept but _restrict_ it
 |causing 
 |(Process, Event) causing (Process, Event)
 |Active causality operator
-|during ...
+|during [each]...
 |Events
-|Concurrency operator
+|Concurrency operator. When paired with _each_ in model observables, it specifies the _temporal inherency_ to a specific event type for the observation of an occurrent (normally a process), and does not affect semantics.
 |linking ... to ...
 |Relationships
 |Mutual interaction operator
 |===
 
 === Abstract and subjective status
-
-=== On properties, roles and attributes
-
-- OWL properties can be declared (syntax later)
-- Yet, using properties can lead to more obscure semantics where using roles and attributes keeps their meaning out in the open. Example: limiting factors as a property or as a role with implications.
 
 === The root-level concept and its role in k.LAB
 
@@ -728,13 +745,21 @@ Observable syntax is not limited to setting constraints on values of qualities; 
 im:Orientation of each earth:Site 
 ----
 
-is a logical expression that contains a keyword `each` that would not be admitted in a concept declaration, as it affects the _way_ this attribute is resolved (by resolving a _set_ of sites first, then classifying the abstract orientation to a concrete attribute in each) rather than its inherent meaning. Such forms are used to declare classifier models, which will be discussed <<section-kim-models,later>>.
-
-=== Ranges, units and currencies
-
-=== Value operators
+is a logical expression that contains a keyword `each` that would not be admitted in a concept declaration, as it affects the _way_ this attribute is resolved (by resolving a _set_ of sites first, then classifying the abstract orientation to a concrete attribute in each) rather than its inherent meaning. Such forms are used to specify _observable inherency_, one of the main sources of k.LAB's power and flexibility -- and our next topic.
 
 
+=== Understanding inherency in observables
+
+==== Context inherency (`of`/`within`)
+
+==== Temporal inherency (`during each`)
+
+==== Predicate inherency (`of each`)
+
+=== On properties, roles and attributes
+
+- OWL properties can be declared (syntax later)
+- Yet, using properties can lead to more obscure semantics where using roles and attributes keeps their meaning out in the open. Example: limiting factors as a property or as a role with implications.
 
 === Rules of composition for observables
 
@@ -843,11 +868,12 @@ Composed of a _trigger_ part (possibly implicit) and an _action_ part.
 
 ==== Triggers
 
-===== on <event>
+Triggers refer to the phases of contextualization, which may vary according to the type of model, but are fixed and known for each type. Events and other conditions during the simulation are handled using _behaviors_ rather than triggers.
 
 Event can be the keyword `definition`
 
-Absence of a trigger is equivalent to `on definition`:
+Absence of a trigger is equivalent to `on definition`
+
 
 [code,kim]
 ----
@@ -859,6 +885,8 @@ example
 ==== Actions
 
 ===== set [target] to <expression>
+
+Only admitted when the target is a quality. The target can be omitted if it is the main observable in quality models, when `set to` is used to modify the value upon initialization. Quality models with additional outputs (e.g. uncertainty associated to the output) can use additional, targeted `set to` clauses. The target is mandatory if the main observable is a process. In all cases, the name after `target` must be that of an output observable in the model.
 
 ===== integrate [target] to <expression>
 
@@ -877,6 +905,10 @@ NOTE: need specific section for the language
 === Non-semantic models
 
 === Learning models
+
+=== Configurable parameters 
+
+for models and URNs
 
 === Documenting models
 

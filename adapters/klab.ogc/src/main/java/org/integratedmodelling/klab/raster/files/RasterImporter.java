@@ -28,101 +28,106 @@ import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Triple;
 
+import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
+
 public class RasterImporter extends AbstractFilesetImporter {
 
-    RasterValidator validator = new RasterValidator();
+	RasterValidator validator = new RasterValidator();
 
-    public RasterImporter() {
-        super(RasterAdapter.fileExtensions.toArray(new String[RasterAdapter.fileExtensions.size()]));
-    }
+	public RasterImporter() {
+		super(RasterAdapter.fileExtensions.toArray(new String[RasterAdapter.fileExtensions.size()]));
+	}
 
-    @Override
-    protected Builder importFile(File file, IParameters<String> userData, IMonitor monitor) {
-        try {
+	@Override
+	protected Builder importFile(File file, IParameters<String> userData, IMonitor monitor) {
+		try {
 
-            Builder builder = validator.validate(file.toURI().toURL(), userData, monitor);
+			Builder builder = validator.validate(file.toURI().toURL(), userData, monitor);
 
-            if (builder != null) {
-                String layerId = MiscUtilities.getFileBaseName(file).toLowerCase();
-                builder.withLocalName(layerId).setResourceId(layerId);
-                for (File f : validator.getAllFilesForResource(file)) {
-                    builder.addImportedFile(f);
-                }
-            }
+			if (builder != null) {
+				String layerId = MiscUtilities.getFileBaseName(file).toLowerCase();
+				builder.withLocalName(layerId).setResourceId(layerId);
+				for (File f : validator.getAllFilesForResource(file)) {
+					builder.addImportedFile(f);
+				}
+			}
 
-            return builder;
+			return builder;
 
-        } catch (MalformedURLException e) {
-            Logging.INSTANCE.error(e);
-            return null;
-        }
-    }
+		} catch (MalformedURLException e) {
+			Logging.INSTANCE.error(e);
+			return null;
+		}
+	}
 
-    @Override
-    public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
-        List<Triple<String, String, String>> ret = new ArrayList<>();
+	@Override
+	public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+		List<Triple<String, String, String>> ret = new ArrayList<>();
 
-        if (observation instanceof IState) {
-            if (observation.getScale().getSpace() != null && observation.getScale().getSpace().isRegular()
-                    && observation.getScale().isSpatiallyDistributed()) {
-                ret.add(new Triple<>("tiff", "GeoTIFF raster", "tiff"));
-                ret.add(new Triple<>("png", "PNG image", "png"));
-            }
-        }
+		if (observation instanceof IState) {
+			if (observation.getScale().getSpace() != null && observation.getScale().getSpace().isRegular()
+					&& observation.getScale().isSpatiallyDistributed()) {
+				ret.add(new Triple<>("tiff", "GeoTIFF raster", "tiff"));
+				ret.add(new Triple<>("png", "PNG image", "png"));
+			}
+		}
 
-        return ret;
-    }
+		return ret;
+	}
 
-    @Override
-    public File exportObservation(File file, IObservation observation, ILocator locator, String format, IMonitor monitor) {
+	@Override
+	public File exportObservation(File file, IObservation observation, ILocator locator, String format,
+			IMonitor monitor) {
 
-        if (observation instanceof IState && observation.getGeometry().getDimension(Type.SPACE) != null) {
+		if (observation instanceof IState && observation.getGeometry().getDimension(Type.SPACE) != null) {
 
-            if (observation.getScale().isSpatiallyDistributed()
-                    && observation.getScale().getSpace().isRegular()) {
+			if (observation.getScale().isSpatiallyDistributed() && observation.getScale().getSpace().isRegular()) {
 
-                GridCoverage2D coverage = GeotoolsUtils.INSTANCE
-                        .stateToCoverage((IState) observation, locator, DataBuffer.TYPE_FLOAT, Float.NaN);
-                
-                if (format.equalsIgnoreCase("tiff")) {
-                    try {
-                        GeoTiffWriter writer = new GeoTiffWriter(file);
-                        writer.write(coverage, null);
-                        return file;
-                    } catch (IOException e) {
-                        return null;
-                    }
-                }
-            }
-        }
+				GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage((IState) observation, locator,
+						DataBuffer.TYPE_FLOAT, Float.NaN, true);
 
-        return null;
-    }
+				if (format.equalsIgnoreCase("tiff")) {
+					try {
+						GeoTiffWriter writer = new GeoTiffWriter(file);
+						
+						writer.setMetadataValue(Integer.toString(BaselineTIFFTagSet.TAG_SOFTWARE), "k.LAB (www.integratedmodelling.org)");
+						
+						writer.write(coverage, null);
+						return file;
+					} catch (IOException e) {
+						return null;
+					}
+				}
+			}
+		}
 
-    @Override
-    public Map<String, String> getExportCapabilities(IResource resource) {
-        Map<String, String> ret = new HashMap<>();
-        ret.put("tiff", "GeoTiff");
-        return ret;
-    }
+		return null;
+	}
 
-    @Override
-    public boolean exportResource(File file, IResource resource, String format) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public Map<String, String> getExportCapabilities(IResource resource) {
+		Map<String, String> ret = new HashMap<>();
+		ret.put("tiff", "GeoTiff");
+		return ret;
+	}
 
-    @Override
-    public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean exportResource(File file, IResource resource, String format) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
-    @Override
-    public boolean resourceCanHandle(IResource resource, String importLocation) {
-        // TODO Auto-generated method stub
-        return false;
-    }
+	@Override
+	public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean resourceCanHandle(IResource resource, String importLocation) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 	@Override
 	public boolean acceptsMultiple() {

@@ -63,6 +63,7 @@ public enum NodeAuthenticationManager {
     private Map<String, JwtConsumer> jwksVerifiers = new HashMap<>();
     private JwtConsumer preValidationExtractor;
     private String nodeName;
+	private String hubName;
 
     protected HttpsJwks buildJwksClient(String url) {
         return new HttpsJwks(url);
@@ -115,7 +116,8 @@ public enum NodeAuthenticationManager {
          */
         PublicKey publicKey = null;
         NodeAuthenticationResponse response = client.authenticateNode(serverHub, request);
-
+        this.hubName = response.getAuthenticatingNodeId();
+        
         try {
             byte publicKeyData[] = Base64.getDecoder().decode(response.getPublicKey());
             X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyData);
@@ -153,8 +155,21 @@ public enum NodeAuthenticationManager {
         return rootIdentity;
     }
 
-    public String getNodeName() {
+    /**
+     * Single node name as written in certificate, without the hub name prepended.
+     * 
+     * @return
+     */
+    public String getNodeId() {
         return nodeName;
+    }
+
+    /**
+     * Fully qualified node path with hub name prepended.
+     * @return
+     */
+    public String getNodeName() {
+        return hubName + "." + nodeName;
     }
 
     /**

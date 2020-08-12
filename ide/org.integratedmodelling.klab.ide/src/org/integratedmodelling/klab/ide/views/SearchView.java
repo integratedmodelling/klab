@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.eclipse.jface.action.Action;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.TreeColumnLayout;
@@ -40,6 +41,7 @@ import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
@@ -47,12 +49,12 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.ui.AppView;
+import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.SearchMatch;
 import org.integratedmodelling.klab.rest.SearchMatchAction;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
 import org.integratedmodelling.klab.rest.ViewComponent;
-import org.integratedmodelling.klab.rest.View;
 
 public class SearchView extends ViewPart {
 
@@ -76,6 +78,11 @@ public class SearchView extends ViewPart {
 	private boolean searchShowStatus;
 
 	private Composite parent;
+	private Action action_1;
+	private Action action_2;
+	private Action action_3;
+
+	private Object appId;
 
 	public SearchView() {
 	}
@@ -250,9 +257,10 @@ public class SearchView extends ViewPart {
 		actionArea.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
 
 		// begin comment out
-		paletteView = new AppView(true, actionArea, SWT.NONE, this);
+		paletteView = new AppView(actionArea, SWT.NONE);
+		paletteView.setLayout(new GridLayout(1, true));
 		paletteView.setVisible(true);
-		gd_paletteView = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+		gd_paletteView = new GridData(SWT.FILL, SWT.FILL, true, true);
 		gd_paletteView.exclude = false;
 		paletteView.setLayoutData(gd_paletteView);
 		// end comment out
@@ -345,8 +353,20 @@ public class SearchView extends ViewPart {
 
 		text.setEnabled(Activator.engineMonitor().isRunning());
 
-//		paletteView.draw();
+		if (Activator.session() != null) {
+			loadUser();
+		}
 
+	}
+
+	private void loadUser() {
+		String userBehavior = Activator.session().getDefaultUserBehavior();
+		if (userBehavior != null) {
+			Activator.session().launchApp(userBehavior);
+			for (String behavior : Activator.session().getUserBehaviors()) {
+				// TODO load actions
+			}
+		}
 	}
 
 	protected void closeParenthesis() {
@@ -370,7 +390,6 @@ public class SearchView extends ViewPart {
 	}
 
 	protected void observeMatching() {
-		System.out.println("OBSERVING " + getMatchedText());
 		Activator.session().observe(getMatchedText());
 	}
 
@@ -387,13 +406,21 @@ public class SearchView extends ViewPart {
 			Display.getDefault().asyncExec(() -> {
 				reset();
 				text.setEnabled(true);
+				loadUser();
 			});
 			break;
 		case SetupInterface:
-			paletteView.setup(message.getPayload(View.class));
+			Layout layout = message.getPayload(Layout.class);
+			if (layout.getDestination() == IKActorsBehavior.Type.USER) {
+				this.appId = layout.getApplicationId();
+				paletteView.setup(layout);
+			}
 			break;
 		case CreateViewComponent:
-			paletteView.addWidget(message);
+			ViewComponent component = message.getPayload(ViewComponent.class);
+			if (this.appId != null && component.getApplicationId().equals(this.appId)) {
+				paletteView.addWidget(message);
+			}
 			break;
 		default:
 			break;
@@ -528,7 +555,29 @@ public class SearchView extends ViewPart {
 	 * Create the actions.
 	 */
 	private void createActions() {
-		// Create the actions
+		{
+			action_1 = new Action("Reset to default") {
+
+			};
+			action_1.setImageDescriptor(
+					ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/behavior.png"));
+		}
+		{
+			action_2 = new Action("Edit current user behavior") {
+
+			};
+			action_2.setEnabled(false);
+			action_2.setImageDescriptor(
+					ResourceManager.getPluginImageDescriptor("org.eclipse.ui", "/icons/full/etool16/save_edit.png"));
+		}
+		{
+			action_3 = new Action("Save current behavior as...") {
+
+			};
+			action_3.setEnabled(false);
+			action_3.setImageDescriptor(
+					ResourceManager.getPluginImageDescriptor("org.eclipse.ui", "/icons/full/etool16/save_edit.png"));
+		}
 	}
 
 	/**
@@ -543,6 +592,9 @@ public class SearchView extends ViewPart {
 	 */
 	private void initializeMenu() {
 		IMenuManager manager = getViewSite().getActionBars().getMenuManager();
+		manager.add(action_1);
+		manager.add(action_2);
+		manager.add(action_3);
 	}
 
 	@Override
