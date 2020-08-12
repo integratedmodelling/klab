@@ -36,11 +36,7 @@ public class MongoNode extends IdentityModel{
 	}
 	
 	public void removeGroupByName(String groupName) {
-		this.getGroups().forEach(grp -> {
-			if(grp.getName().equalsIgnoreCase((groupName))) {
-				this.getGroups().remove(grp);
-			}
-		});
+		groups.removeIf(grp -> grp.getName().equalsIgnoreCase(groupName));
 	}
 
 	public String getUrl() {

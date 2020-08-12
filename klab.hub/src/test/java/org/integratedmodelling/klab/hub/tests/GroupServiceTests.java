@@ -96,7 +96,7 @@ public class GroupServiceTests {
 		Map<String, MongoGroup> groups = new HashMap<>();
 		groups = FileCatalog.create(DevMongoModelsConfig.class.getClassLoader().getResource("initial-groups.json"), MongoGroup.class);
 		MongoGroup group = groupService.getByName(groups.keySet().iterator().next());
-		groupService.delete(group);
+		groupService.delete(group.getName());
 	}
 
 }

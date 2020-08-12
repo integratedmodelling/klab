@@ -57,12 +57,9 @@ public class GroupsController {
 	}
 	
 	@DeleteMapping(value = API.HUB.GROUPS_BASE_ID)
-	@PreAuthorize("hasRole('ROLE_SYSTEM')")
+	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
 	public ResponseEntity<Object> delete(@PathVariable("id") String id) {
-		MongoGroup group = groupService.getByName(id);
-		groupService.delete(group);	
-		JSONObject resp = new JSONObject();
-		resp.appendField("message", id + " was deleted");
+		groupService.delete(id);	
 		return new ResponseEntity<>("The Groups has been deleted successsfully", HttpStatus.OK);
 	}
 	

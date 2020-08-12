@@ -223,20 +223,20 @@ public class User extends IdentityModel implements UserDetails{
     
 	public void removeGroupEntries(Set<GroupEntry> groupEntries) {
     	
-		Set<String> groupsToRemove = new HashSet<>();
+		Set<String> names = new HashSet<>();
     	groupEntries
-    	  .forEach(e -> groupsToRemove.add(e.getGroupName()));
+    	  .forEach(e -> {
+    		  String name = e.getGroupName();
+    		  names.add(name);
+    	  });
     	
     	if(groupsToRemove.isEmpty()) {
     		return;
     	}
     	
-		Set<GroupEntry> newEntries = getGroupEntries();
-		
-		newEntries
-			.removeIf(e -> groupsToRemove.contains(e.getGroupName()));
-		
-		setGroupEntries(newEntries);
+    	Set<GroupEntry> entries = getGroupEntries();
+		entries.removeIf(e -> names.contains(e.getGroupName()));		
+		setGroupEntries(entries);
 		
 	}
 

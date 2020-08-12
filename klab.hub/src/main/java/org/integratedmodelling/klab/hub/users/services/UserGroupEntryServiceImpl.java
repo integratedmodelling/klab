@@ -80,16 +80,12 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		Set<User> users = new HashSet<>();
 		
 		for (String username: updateRequest.getUsernames()) {
-			users.add(
-				userRepository
-					.findByNameIgnoreCase(username)
-					.map(user -> {
-						user.removeGroupEntries(groupEntries);
-						return user;
-						})
-					.orElseThrow(() ->
-					new UserDoesNotExistException(username))
-			);		
+			userRepository
+				.findByNameIgnoreCase(username)
+				.ifPresent(user -> {
+					user.removeGroupEntries(groupEntries);
+					users.add(user);
+				});		
 		}
 		
 		new UpdateUsers(users, userRepository).execute();
@@ -108,12 +104,10 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		for (String groupname : groupnames) {
 			groupRepository
 				.findByNameIgnoreCase(groupname)
-				.map(grp -> 
-					groupEntries.add(
-						new GroupEntry(grp, experiation))
-					)
-				.orElseThrow(()-> 
-					new GroupDoesNotExistException(groupname));
+				.ifPresent(grp -> {
+					GroupEntry entry = new GroupEntry(grp, experiation);
+					groupEntries.add(entry);
+				});
 		}
 		return groupEntries;
 	}
@@ -136,7 +130,8 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		Set<String> groupname = new HashSet<>();
 		userRepository.findAll().forEach(user -> username.add(user.getUsername()));
 		groupname.add(groupName);
-		UpdateUsersGroups updateRequest = new UpdateUsersGroups(username, groupname, null);
+		//on the remove function the expiration is not used, but called for create, group entry.
+		UpdateUsersGroups updateRequest = new UpdateUsersGroups(username, groupname, DateTime.now());
 		removeUsersGroupsByNames(updateRequest);
 	}
 
