@@ -1,12 +1,31 @@
 apiVersion: rbac.authorization.k8s.io/v1
-kind: ClusterRoleBinding
+kind: Role
 metadata:
-  name: rbac-default-namespace
+  namespace: default
+  name: demo-role
+rules:
+  - apiGroups: [""] # "" indicates the core API group
+    resources: ["pods","configmaps"]
+    verbs: ["get", "watch", "list"]
+
+---
+apiVersion: rbac.authorization.k8s.io/v1beta1
+kind: RoleBinding
+metadata:
+  name: demo-role-binding
+  namespace: default
 subjects:
   - kind: ServiceAccount
-    name: default
+    name: node-service-account
     namespace: default
 roleRef:
-  kind: ClusterRole
-  name: cluster-admin
+  kind: Role
+  name: demo-role
   apiGroup: rbac.authorization.k8s.io
+
+---
+apiVersion: v1
+kind: ServiceAccount
+metadata:
+  name: node-service-account
+  namespace: default
