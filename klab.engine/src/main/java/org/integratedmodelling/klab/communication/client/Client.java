@@ -45,8 +45,6 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
-import org.integratedmodelling.klab.rest.LeverAuthenticationRequest;
-import org.integratedmodelling.klab.rest.LeverAuthenticationResponse;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
 import org.integratedmodelling.klab.utils.Escape;
@@ -226,18 +224,6 @@ public class Client extends RestTemplate implements IClient {
 	}
 	
 	
-	/**
-	 * Send an authentication request to a hub for a lever.
-	 * 
-	 * @param url
-	 * @param request
-	 * @return the response. If not authenticated, throw a
-	 *         KlabAuthorizationException. If timeout, return null.
-	 */
-	public LeverAuthenticationResponse authenticateLever(String url, LeverAuthenticationRequest request) {
-		return post(url + API.HUB.AUTHENTICATE_LEVER, request, LeverAuthenticationResponse.class);
-	}
-
 	/**
 	 * Check an engine's heartbeat.
 	 * 

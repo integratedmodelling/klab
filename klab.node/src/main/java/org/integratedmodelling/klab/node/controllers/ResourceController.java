@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.node.controllers;
 import java.io.File;
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.klab.Configuration;
@@ -183,7 +184,7 @@ public class ResourceController {
 			return false;
 		} else {
 			KlabPermissions perms = KlabPermissions.create(submitting);
-			Collection<String> groups = new ArrayList<>();
+			Collection<String> groups = new ArrayList<String>();
 			user.getGroups().forEach(g -> groups.add(g.getId()));
 			if(perms.isAuthorized(user.getUsername(), groups)) {
 				return checkUploadLimit(user, fileSize);
