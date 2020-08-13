@@ -6,7 +6,6 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Tra
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 
 import akka.actor.typed.Behavior;
-import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.ReceiveBuilder;

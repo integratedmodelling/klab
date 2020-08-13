@@ -73,8 +73,7 @@ public class KdlValidator extends AbstractKdlValidator {
         }
       }
     }
-    boolean _isFilter = actor.isFilter();
-    if (_isFilter) {
+    if ((actor.isFilter() && (!Objects.equal(actor.getType(), "extent")))) {
       boolean ok = false;
       if ((((actor.getBody() != null) && (actor.getBody().getDataflows() != null)) && (actor.getBody().getDataflows().size() > 0))) {
         EList<ActorDefinition> _dataflows = actor.getBody().getDataflows();
