@@ -28,17 +28,17 @@ data:
         port: 5432
         user: postgres_user
       certificate: |
-        #Certificate Generated On Sun Aug 09 11:28:47 CEST 2020
-        #Sun Aug 09 11:28:47 CEST 2020
+        #Certificate Generated On Wed Aug 12 20:11:14 CEST 2020
+        #Wed Aug 12 20:11:14 CEST 2020
         klab.user.email=support@integratedmodelling.org
         klab.partner.email=godzilla@semanticweb.org
         klab.nodename=knot
         klab.certificate.level=INSTITUTIONAL
-        klab.partner.hub=http\://127.0.0.1\:8284/hub
-        klab.signature=9367b624-d137-40fc-a01f-cfc485a6c2d1
-        klab.validuntil=2021-02-07T11\:28\:47.168+01\:00
-        klab.certificate=-----BEGIN PGP MESSAGE-----\nVersion\: BCPG v1.64\n\nhQEMA4d/5X1qdE1/AQgAoar56Sg++dAjRXWqK0r+SsKm6TzX1F62CmODweZ3qZND\nLu7pkdgETM3MeWOBWtj6SLtOH7AA+74/IW+MlIcmdmtWmhcra6cdB/tQyStbhJ4j\nurLuFSvLxCJKmEOidCMEqTFoGj4UM2mtMh7vGLlUcbeP4dWAeE7TkVzHGUB4JAM2\n1ecX3cURT2ZfJlmRvh52KMLkstpbmfMYZXaISRWaZqG3Hxo+k7MOhAxaWV1bAmHQ\ncZ9GDAwztVJBCqJC5kQBcgNuYSKf9MpA9d7sIZ4bMXSIlEhlM0HEJYrbMz6wrgaQ\nuc7dxOFjCUR7luttfPZbFMc9/ljd/LCtllmnuccBA9LC7AHWrDhR4ZC5SiWHSWnk\n6bpjam75M3Ml4nZSKSUyepyoMdsVZNXZm7Juy1YW63f9Oahlv5u/sNZik36McasC\nz8tIqqAj6oDviRnobySGJFdXjWG04+E7sxiQZvqEPkqa0z/mCFTlA3lWYgN0fkGL\nKr9jeSNXE30g4HdxqBOu1S8q5VPvG1cMf+OGbX35G/zDBsnJEIM8oHhu6rMndyt7\nSwDkXGqi/iXLfMqvjT8/tqe6PPmHWWCKiO6rXDYSiBQtPi8Ir1sT4nZObb1mA4mt\nwBK0f5FhdTkbs8gB4sNT//QCotJjYUoVexWCc58JXqJj1AdCVNNIkE8bASHZVgP5\nD/FecdJej5SDhB45Stffo5dGO0/xn8INwbxJ/swbiFrKO1LDTdUSPG0j7eIvonRR\nyQxK1zAyhSKCR3jG0l2VI5nqV9uk+XMWNB2BxRuFUJ17Gawn4Zt8dq9UNjZAxBEs\n6X/v687PwQgmEJHr0RRrTFQOASNLEz8u3jzC+8VGbnEhBdmgpicCR2ah9NdAdHYe\nu9dIPpjv/2RKHERFmLeSaqueB+WplICYHa2+QfTRtwyxhk5jdsJ8HDb1dPQhKuz1\nE3NQVswV8z+aib+H8IP+GIa0tjF+DPWSWITjEOwdQ+32F7JrAKS9IMbOSrhwZMzn\nR/5OJj5mRIn2uCYeUlXc9KkERSlBo79KwkvHft4iwAN+cotsNXxxYGnSQce6QLeC\n4vj6nP+7sNu9F2MMPxlTpGlLsIWTZ/7RPI/phIBGtbupEG0HzJyED7crdqmpUz6l\n0E+cNAMVY/z6v2bdFtLt+pMJLSwObSdegGdmPlfTr/xFvSkK7U83bysSu15sQefE\nB8bZHGXeWrcdi9ixIzew0cQCTMtWECvY9xYm39Tcg8GpNm0mcKHuwaeqHRjcsqsj\nGri18v5GxA4fqAu3C8vn3/I06hAidE4o55zsEI/NavYCKO5b+DJrWz3JKX0hDQXJ\nCqlwzMnSetVVZ8QIL/0LECNEYlgompgcbsioazjPhcqlf7En9xp8WWwFrtNWlBn8\nQpMlGOprYu28FUHOrpFwR/6g7vzvGmRpw0nguBT/4RpGSE9Zs+DueDDjDwVF2ptY\nirs5Noy/39N//HXo8ZgeppU4yiAj703qkZeAynkPJOZ0kufAFahottzrSuEaKZYB\nyaTm9ZObbqli6mFgzPEu1TuBgTI7qgdYDKbomVREyxRkKI2nrcStbcj+GNWiWT74\nEwFbbUaiYGao7sz35i0\=\n\=V+8N\n-----END PGP MESSAGE-----\n
-        klab.url=http\://172.17.0.1\:8080/node
+        klab.partner.hub=http\://192.168.39.1\:8284/hub
+        klab.signature=a7f7dc36-2332-4ff1-858e-15bacf6185fc
+        klab.validuntil=2021-02-10T20\:11\:14.450+01\:00
+        klab.certificate=-----BEGIN PGP MESSAGE-----\nVersion\: BCPG v1.64\n\nhQEMA35Tp3Se+whvAQf/QTRGrHyRJSKa3mcPn22Zuw90cE4A13e651WguyViwjhW\nf/s3rXZpGgRi/INl+2lB3QytqxORE+mDrF7m27G0LhJVg+geB2skSCW7flmy7PrA\njDxxjV4+ex7PnsMz8R9jvlNcMK6q9v1WZn+Vcbb+H15uZy+WweEidHLW/DZ1lVSM\nuq2/EDGF2Fq5sr+xqy+uvlm77p1K8WCHjC2eifubOBJP7yWUJbvOUl7E54fN+VkE\ndKRV9i6KbOJ7GHHOKkQ382fGGGrtV7fQEgDTFgu19eBXWjPqDHUj0vphnXHdzcTP\nb58uF8to5EPxu2/qMGPIlDr+uetW/97Tv8hP+PIO9tLC6wHJDz1hpRJcE3z/lrEr\nnEKzfEi5fTWhKeAe4gNFjxmAwx8L6GJCmwl5Jiuls899JRgaOYykbXis5mihjYc1\nUabZDhOeHbSJiJrCY2fTHCSrdhAXxXQqy1WevSEBwEpmsdjKFUqmaoUBMX5LUM5f\nYGq/eit4N8jHpdSonYUQ5dSU2bF94K7bVFZJG7nVUQaACk4ZlBVEW1+r6iRoptSX\nvtVHwpIMDV8bVaRe8xKCaV2MWzgRSSyuxJ6SLMVnlW4ZO9x3VgPWUVV8X6jzmY/y\nw9KpDhyFLjXyyEFU/bxIuWD4o8OP+QCgHWJHODC6iOEsYjsp5skXt77+FV096/2S\nMdanK/LI4XhhEIxgwgNK9bQ0aNdxSu5RApKANAWUN9ranpcBVGkRXqr7pWcvIzEa\nFnhqRt0FR6kXsAKyIuBS89ouM8YhG1LkclAyO7z9+fyu3plgOrpFayEhXbvGawRJ\nc+QwNVgwwoSr5g/hlzqVn63pN6reJ8MdLr2jWdY2BwnuTnTY3a4wxoR8civuX2qk\nS/DOcj2F9Y44OeFSRECzi0VvKlHT95tgpoRETqFJEgXVI7id6HjFd1HR0F2KU/dv\nhEMxKQItzDa+Aeaaybmj9/pyEv0/UCIJk1lAq/qCVoYDBygHMbTALZyjogMOxslV\n6ZN6qEpFDK/OmYlY/rZCyg7JHCAD/6kFMhPPU0ed8QZ1gM9rExgua9A9BoQisyV4\nCQn06CRBwP545Cn1YdnPNTVuV0J+7MUGIJCY832qIk5a24RiWizu+VyTN2F0zqSI\nly5iedTXXn0flHF6pW+arPhQvMGtNCMGWSTbv1Ukv+bA3NUtUlK3KY3ikv8g//SK\nk9t++SwfhwN9ycLR8IbbJO8dEdvrem+oN5LlXF9Tn2vFE2AsCtdr/bApXcgRQhkf\nRtTZPSRJBf8LZ4BzKnQ4+PN7Xm20NW0JaPkOsQljKQen0KsV17P0Sz3NpiyOQOfM\nBKjIOUIjYkMU7zqZ8TnDMaOmwknVPJs5HHUGqPwVhToHnAccxk7tgd0syCb9B9YI\nyFaLXN6bcPYJL6TGqjj9wFA0bCxx+t5cKUKnBUqezU9ugxlmRxp2PGk0nhjdYXSm\nG/xElztVAEtHc3wsL3h4FHytSSAVBb9ltCqNJ5KkM9QBH5HEp8ARdEQsYxDwYZXR\nU2wq7GwAmrVqLRMaRP3aZ96tlGglfKrAsC0NMSAnx3uJFJIYvdYFOZDchXrHCCfh\nLz+G6ryqRE+1lI0KFg\=\=\n\=PS8L\n-----END PGP MESSAGE-----\n
+        klab.url=http\://172.17.0.1\:8287/node
         klab.wordlview=im
         klab.certificate.type=NODE
         klab.partner.name=testhub
