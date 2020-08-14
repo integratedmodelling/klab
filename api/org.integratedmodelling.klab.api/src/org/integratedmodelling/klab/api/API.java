@@ -94,7 +94,7 @@ public interface API {
 
 	/**
 	 * STOMP endpoint for client/server notifications. Handled through Websockets
-	 * protocol.Drugs and Aging
+	 * protocol.
 	 * 
 	 * <br/>
 	 * <b>Response type:</b> {@link Message}
@@ -332,9 +332,6 @@ public interface API {
 			public static final String REMOVE_GROUPS = "remove-groups";
 		}
 		
-
-		
-
 		public static interface INDEXING {
 
 			/**
@@ -531,7 +528,7 @@ public interface API {
 		 */
 		public static final String P_IDENTIFIER = "{identifier}";
 
-		/**requestNewP
+		/**
 		 * Authority capabilities.
 		 * 
 		 * GET JSON

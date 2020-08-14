@@ -223,7 +223,6 @@ public class Client extends RestTemplate implements IClient {
 		return post(url + API.HUB.AUTHENTICATE_NODE, request, NodeAuthenticationResponse.class);
 	}
 	
-	
 	/**
 	 * Check an engine's heartbeat.
 	 * 

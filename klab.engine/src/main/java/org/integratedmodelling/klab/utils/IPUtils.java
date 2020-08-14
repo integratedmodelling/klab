@@ -189,8 +189,7 @@ public class IPUtils {
 	 *
 	 * @return IP matching pattern
 	 * @throws SocketException 
-	 * @throws Exception
-	 *             the exception
+	 *             the SocketException
 	 */
 	public static String getLocalIp() throws SocketException {
 		for (int i = 1; i < localPatterns.length; i++) {
