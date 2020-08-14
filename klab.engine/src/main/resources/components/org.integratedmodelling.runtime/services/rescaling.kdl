@@ -1,0 +1,23 @@
+@klab 0.10.0
+@version 0.10.0
+@namespace klab.rescale
+ 
+filter extent space 
+	"Resolve a differently scaled observable to incarnate a role" 
+	label "Rescale spatial extent"
+{
+	value convert 
+		"Specify the conversion, using either a direct value, a URN or a map to define transformations."
+		
+	class org.integratedmodelling.klab.data.transformations.SpatialRescalingTransformation
+}
+
+filter extent time 
+	"Resolve a differently scaled observable to incarnate a role" 
+	label "Rescale the temporal extent"
+{
+	value convert 
+		"Specify the conversion, using either a direct value, a URN or a map to define transformations."
+		
+	class org.integratedmodelling.klab.data.transformations.TemporalRescalingTransformation
+}

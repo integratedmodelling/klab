@@ -474,6 +474,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		case WHILE_STATEMENT:
 			executeWhile((IKActorsStatement.While) code, scope);
 			break;
+		case INSTANTIATION:
+			// TODO spawn a child and connect its fires to us
+			break;
 		default:
 			break;
 		}
