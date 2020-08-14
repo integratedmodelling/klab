@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.hub.api.PropertiesFactory;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
+import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
@@ -42,7 +43,7 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 	
 	private UserProfileService userProfileService;
 
-	private LicenseConfigRepository licenseRepo;
+	private LicenseConfigService configService;
 
 	private MongoGroupRepository groupRepository;
 	
@@ -50,11 +51,11 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 	
 	@Autowired
 	EngineLicenseController(UserProfileService userProfileService,
-			LicenseConfigRepository licenseRepo,
+			LicenseConfigService configService,
 			MongoGroupRepository groupRepository,
 		    EmailManager emailManager) {
 		this.userProfileService = userProfileService;
-		this.licenseRepo = licenseRepo;
+		this.configService = configService;
 		this.groupRepository = groupRepository;
 		this.emailManager = emailManager;
 	}
@@ -63,7 +64,7 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 	@PreAuthorize("authentication.getPrincipal() == #id")
 	public void generateCertFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
 		ProfileResource profile = userProfileService.getCurrentUserProfile();
-		LicenseConfiguration configuration = licenseRepo.findAll().get(0);
+		LicenseConfiguration configuration = configService.getDefaultConfig();
 
 		Properties engineProperties = PropertiesFactory.fromProfile(profile, configuration).getProperties();
 
@@ -100,8 +101,7 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 			remoteAddr = "128.0.0.1";
 		}
 		
-		LicenseConfiguration config = licenseRepo.findByKeyString(request.getKey())
-				.orElseGet(() -> new LicenseConfiguration());
+		LicenseConfiguration config = configService.getConfigByKey(request.getKey());
 
 		EngineAuthenticationResponse response = null;
 		

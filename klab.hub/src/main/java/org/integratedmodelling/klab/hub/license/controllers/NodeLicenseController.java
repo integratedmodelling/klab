@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
 import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.integratedmodelling.klab.hub.api.NodeAuthResponeFactory;
 import org.integratedmodelling.klab.hub.api.PropertiesFactory;
+import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
@@ -34,15 +35,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class NodeLicenseController extends LicenseController<NodeAuthenticationRequest>{
 	
 	private NodeService nodeService;
-	private LicenseConfigRepository licenseRepo;
+	private LicenseConfigService configService;
 	private MongoGroupRepository groupRepository;
 	
 	@Autowired
 	NodeLicenseController(NodeService nodeService,
-			LicenseConfigRepository licenseRepo,
+			LicenseConfigService configService,
 			MongoGroupRepository groupRepository) {
 		this.nodeService = nodeService;
-		this.licenseRepo = licenseRepo;
+		this.configService = configService;
 		this.groupRepository = groupRepository;
 	}
 	
@@ -50,8 +51,7 @@ public class NodeLicenseController extends LicenseController<NodeAuthenticationR
 	@RolesAllowed({ "ROLE_SYSTEM" })
 	public void generateCertFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
 		MongoNode node = nodeService.getByName(id);
-		licenseRepo.findAll();
-		LicenseConfiguration configuration = licenseRepo.findAll().get(0);
+		LicenseConfiguration configuration = configService.getDefaultConfig();
 
 		Properties nodeProperties = PropertiesFactory.fromNode(node, configuration).getProperties();
 
@@ -83,8 +83,7 @@ public class NodeLicenseController extends LicenseController<NodeAuthenticationR
 			}
 		}
 
-		LicenseConfiguration config = licenseRepo.findByKeyString(request.getKey())
-				.orElseGet(() -> new LicenseConfiguration());
+		LicenseConfiguration config = configService.getConfigByKey(request.getKey());
 
 		NodeAuthenticationResponse response;
 

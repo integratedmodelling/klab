@@ -43,7 +43,7 @@ data:
         klab.certificate.type=NODE
         klab.partner.name=testhub
     server: 
-      port: ${random.int(5000,5100)}
+      port: 8287
       servlet: 
         context-path: /node
         multipart: 

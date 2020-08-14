@@ -41,10 +41,10 @@ import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
  * @author: Steve
  */
 @Component
-@Profile("production")
-public class LicenseStartupEvent {
+@Profile("development")
+public class LicenseStartupEventDev {
 	
-	public LicenseStartupEvent(LicenseConfigRepository repository, LegacyLicenseConfig legacy) {
+	public LicenseStartupEventDev(LicenseConfigRepository repository, LegacyLicenseConfig legacy) {
 		super();
 		this.repository = repository;
 		this.legacy = legacy;
@@ -77,9 +77,16 @@ public class LicenseStartupEvent {
 			config.setDigest(legacy.getPubRing().getDigest());
 			config.setPassphrase(legacy.getPassword());
 			config.setHubUrl(legacy.getHubUrl());
+
+			String pub = new String(Files.readAllBytes(
+	                Paths.get(getClass().getClassLoader()
+	                        .getResource(legacy.getPubRing().getFilename())
+	                        .toURI())));
 			
-			String pub = new String(Files.readAllBytes(Paths.get(legacy.getPubRing().getFilename())), StandardCharsets.UTF_8);
-			String sec =new String(Files.readAllBytes(Paths.get(legacy.getSecRing().getFilename())), StandardCharsets.UTF_8);
+			String sec = new String(Files.readAllBytes(
+	                Paths.get(getClass().getClassLoader()
+	                        .getResource(legacy.getSecRing().getFilename())
+	                        .toURI())));
 			
 			ArmoredKeyPair keys = ArmoredKeyPair.of(sec.getBytes(), pub.getBytes());
 			
@@ -88,7 +95,7 @@ public class LicenseStartupEvent {
 		}
 	}
 		
-	public void startup() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, PGPException, IOException, DecoderException {
+	public void startup() throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, PGPException, IOException, DecoderException, URISyntaxException {
 			
 			if(repository.findAll().isEmpty()) {
 				LicenseConfiguration config =
@@ -111,8 +118,15 @@ public class LicenseStartupEvent {
 				config.setPassphrase(legacy.getPassword());
 				config.setHubUrl(legacy.getHubUrl());
 				
-				String pub = new String(Files.readAllBytes(Paths.get(legacy.getPubRing().getFilename())), StandardCharsets.UTF_8);
-				String sec =new String(Files.readAllBytes(Paths.get(legacy.getSecRing().getFilename())), StandardCharsets.UTF_8);
+				String pub = new String(Files.readAllBytes(
+		                Paths.get(getClass().getClassLoader()
+		                        .getResource(legacy.getPubRing().getFilename())
+		                        .toURI())));
+				
+				String sec = new String(Files.readAllBytes(
+		                Paths.get(getClass().getClassLoader()
+		                        .getResource(legacy.getSecRing().getFilename())
+		                        .toURI())));
 				
 				ArmoredKeyPair keys = ArmoredKeyPair.of(sec.getBytes(), pub.getBytes());
 				

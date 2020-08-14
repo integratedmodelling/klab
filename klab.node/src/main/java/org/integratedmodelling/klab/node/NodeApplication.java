@@ -23,13 +23,18 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 import io.dekorate.kubernetes.annotation.KubernetesApplication;
+import io.dekorate.kubernetes.annotation.Port;
 
 @Component
 @Singleton
 @EnableAutoConfiguration
 @ComponentScan(basePackages = { "org.integratedmodelling.klab.node.security",
 		"org.integratedmodelling.klab.node.resources", "org.integratedmodelling.klab.node.controllers" })
-@KubernetesApplication
+@KubernetesApplication(
+		replicas = 1,
+		expose = true,
+	    ports = @Port(name = "http", containerPort = 8287)
+		)
 public class NodeApplication {
 	
 	// property specifying the resource online checking interval in seconds

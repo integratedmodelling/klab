@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.hub.api.LeverAuthResponseFactory;
 import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
+import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.integratedmodelling.klab.hub.tokens.services.LeverAuthTokenService;
 import org.integratedmodelling.klab.rest.LeverAuthenticationRequest;
@@ -24,15 +25,15 @@ import org.springframework.web.bind.annotation.RestController;
 public class LeverLicenseController extends LicenseController<LeverAuthenticationRequest>{
 	
 	private LeverService leverService;
-	private LicenseConfigRepository licenseRepo;
+	private LicenseConfigService configService;
 	private LeverAuthTokenService tokenService;
 	
 	@Autowired
 	public LeverLicenseController(LeverService leverService,
-			LicenseConfigRepository licenseRepo,
+			LicenseConfigService configService,
 			LeverAuthTokenService tokenService)  {
 		this.leverService = leverService;
-		this.licenseRepo = licenseRepo;
+		this.configService = configService;
 		this.tokenService = tokenService;
 	}
 
@@ -63,8 +64,7 @@ public class LeverLicenseController extends LicenseController<LeverAuthenticatio
 			request.setCycle("production");
 		}
 		
-		LicenseConfiguration config = licenseRepo.findByKeyString(request.getKey())
-				.orElseGet(() -> new LicenseConfiguration());
+		LicenseConfiguration config = configService.getConfigByKey(request.getKey());
 		
 		LeverAuthenticationResponse response;
 		

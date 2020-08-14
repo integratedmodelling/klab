@@ -20,6 +20,8 @@ public class LicenseConfiguration extends GenericModel{
 
 	private byte[] digest;
 	
+	private Boolean defaultConfig = false;
+	
 	public String getId() {
 		return id;
 	}
@@ -86,6 +88,11 @@ public class LicenseConfiguration extends GenericModel{
 
 	public void setHubUrl(String hubUrl) {
 		this.hubUrl = hubUrl;
+	}
+
+	public void setDefaultConfig(boolean b) {
+		this.defaultConfig = b;
+		
 	}
 	
 }
