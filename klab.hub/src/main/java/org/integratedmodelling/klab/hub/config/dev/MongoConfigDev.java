@@ -18,6 +18,7 @@ import com.mongodb.MongoClient;
 import com.mongodb.ServerAddress;
 
 import de.bwaldvogel.mongo.MongoServer;
+import de.bwaldvogel.mongo.ServerVersion;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
 @Profile("development")
@@ -51,7 +52,8 @@ public class MongoConfigDev extends AbstractMongoConfiguration {
 	
     @Bean(destroyMethod="shutdown")
     public MongoServer mongoServer() {
-        MongoServer mongoServer = new MongoServer(new MemoryBackend());
+    	MemoryBackend backend = (MemoryBackend) new MemoryBackend().version(ServerVersion.MONGO_3_6);
+        MongoServer mongoServer = new MongoServer(backend);
         mongoServer.bind("localhost", 27017);
         return mongoServer;
     }

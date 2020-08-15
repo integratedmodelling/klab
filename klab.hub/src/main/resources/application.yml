@@ -1,0 +1,94 @@
+server:
+  port: 8284
+  servlet:
+    contextPath: /hub  
+
+spring:
+  cloud:
+    bus:
+      enabled: false
+    discovery:
+      enabled: false
+    consul:
+      enabled: false
+      config:
+        enabled: false
+  data:
+    ldap:
+      repositories:
+        enabled: false
+  ldap:
+    embedded:
+      base-dn: dc=integratedmodelling,dc=org
+      ldif: classpath:initial-ldap-structure.ldif
+      credential:
+        username: cn=admin,dc=integratedmodelling,dc=org
+        password: password
+      port: 8389
+      validation:
+        enabled: true
+  profiles:
+    default: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 395263683724-koqd6u0bh04c44fal2darevl1p7717g0.apps.googleusercontent.com
+            clientSecret: M1OCx0qI_HbXmes0J26oCzXV
+            redirectUriTemplate: '{baseUrl}/oauth2/callback/{registrationId}'
+            scope:
+              - email
+              - profile
+              
+mongo:
+  hostname: localhost
+  port: 27017
+  
+logging:
+  file: hub.log
+  
+site:
+  callback: https://localhost/hub/ui/index.html#/callback
+  clickback: "/clickback/{tokenString}"
+  fullname: "Integrated Modelling Dashboard"
+  shortname: "im-dashboard"
+  url: https://localhost/hub/
+  server:
+    id: =im
+    
+engine:
+  url: https://localhost:8287
+
+email:
+   server:
+      hostname: smtp.gmail.com
+      port: 587
+      username: integrated.modelling@gmail.com
+      password: changethispassword
+   replyable:
+      general:
+         emailaddress: General <integratedmodelling@integratedmodelling.com>
+      support:
+         emailaddress: Support <support@integratedmodelling.org>
+      admin:
+         emailaddress: info@integratedmodelling.org
+   noreply:
+      emailaddress: info@integratedmodelling.org
+      
+license:
+  userId: "Klab Hub (This is the key for the Dev Hub) <info@integratedmodelling.org>"
+  password: password
+  key: "3296bf41-fc15-4d7f-8c7d-6b82a432e390"
+  email: godzilla@semanticweb.org
+  name:  testHub
+  hubId: testHub
+  hubUrl: "http://127.0.0.1:8284/hub"
+  secRing:
+    filename: "keyring/SecRing.pgp"
+    digest:
+  pubRing:
+    filename: "keyring/PubRing.pgp"
+    digest: ec3b2df03ebea2d4f79ac7cb7e0b90d56b0e0e942f8e74cedf504e1ee5c8d9ab
+
+      

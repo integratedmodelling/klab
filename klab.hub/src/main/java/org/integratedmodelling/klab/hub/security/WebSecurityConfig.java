@@ -55,7 +55,7 @@ import com.google.common.net.HttpHeaders;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	
 	@Autowired
-	UserDetailsService userDetailService;
+	UserDetailsService userDetailsService;
 
 	@Autowired
 	private JwtAuthenticationEntryPoint unauthorizedHandler;
@@ -108,7 +108,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(userDetailService).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
 	}
 
 	

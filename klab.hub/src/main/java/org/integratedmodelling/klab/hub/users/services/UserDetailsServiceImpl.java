@@ -13,13 +13,13 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.ldap.userdetails.LdapUserDetailsManager;
 import org.springframework.stereotype.Service;
 
-@Service
-@Primary
 /*
  * This is needed for login authentication.  It is used to load the user and
  * populate the password hash from the ldap.  It is than compared to password
  * in the request.
  */
+@Service
+@Primary
 public class UserDetailsServiceImpl implements UserDetailsService {
 	
 	private UserRepository userRepository;
