@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.api.BouncyLicense;
 import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
+import org.integratedmodelling.klab.hub.api.LicenseGenerator;
 import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.integratedmodelling.klab.hub.api.NodeAuthResponeFactory;
 import org.integratedmodelling.klab.hub.api.PropertiesFactory;
@@ -56,7 +57,7 @@ public class NodeLicenseController extends LicenseController<NodeAuthenticationR
 		Properties nodeProperties = PropertiesFactory.fromNode(node, configuration).getProperties();
 
 
-		byte[] certFileContent = new BouncyLicense().generate(nodeProperties, configuration);;
+		byte[] certFileContent = new LicenseGenerator(configuration, nodeProperties).generate();
 
 		String certFileString = String.format("attachment; filename=%s", KlabCertificate.DEFAULT_NODE_CERTIFICATE_FILENAME);
 

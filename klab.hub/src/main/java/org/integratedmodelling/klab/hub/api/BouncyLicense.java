@@ -67,7 +67,7 @@ public class BouncyLicense implements KlabLicense {
 	            .withConfig(keyring)
 	            .withStrongAlgorithms()
 	            .toRecipients(properties.getProperty(KlabCertificate.KEY_PARTNER_EMAIL))
-	            .andSignWith(configuration.getHubId() + " <" + properties.getProperty(KlabCertificate.KEY_PARTNER_EMAIL) + ">")
+	            .andSignWith(configuration.getHubId() + " <" + configuration.getEmail() + ">")
 	            .binaryOutput()
 	            .andWriteTo(bufferedOutputStream);
 	        final ByteArrayInputStream is = new ByteArrayInputStream(properties.toString().getBytes())

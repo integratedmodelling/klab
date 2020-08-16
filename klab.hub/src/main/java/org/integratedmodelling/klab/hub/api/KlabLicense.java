@@ -6,7 +6,7 @@ import java.util.Properties;
 
 import org.bouncycastle.openpgp.PGPException;
 
-interface KlabLicense {
+public interface KlabLicense {
 	public byte[] generate(Properties properties, LicenseConfiguration configuration);
 	public Properties getPropertiesFromCipher(String cipher, LicenseConfiguration configuration)
 			throws IOException, PGPException, NoSuchProviderException;

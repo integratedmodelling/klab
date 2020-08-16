@@ -80,15 +80,15 @@ license:
   userId: "Klab Hub (This is the key for the Dev Hub) <info@integratedmodelling.org>"
   password: password
   key: "3296bf41-fc15-4d7f-8c7d-6b82a432e390"
-  email: godzilla@semanticweb.org
+  email: info@integratedmodelling.org
   name:  testHub
-  hubId: testHub
-  hubUrl: "http://127.0.0.1:8284/hub"
+  hubId: Klab Hub (This is the key for the Dev Hub)
+  hubUrl: "http://192.168.39.1:8284/hub"
   secRing:
     filename: "keyring/SecRing.pgp"
     digest:
   pubRing:
     filename: "keyring/PubRing.pgp"
-    digest: ec3b2df03ebea2d4f79ac7cb7e0b90d56b0e0e942f8e74cedf504e1ee5c8d9ab
+    digest: "cad134cc3dfcb0e96acb90af56532a96171f858c4c30335541932c0e00a66c9deab764805d9b9f08a49619af211b96305b512d4cf256e8a9c29877d06d207c72"
 
       

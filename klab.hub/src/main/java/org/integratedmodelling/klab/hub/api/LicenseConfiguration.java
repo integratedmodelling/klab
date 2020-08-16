@@ -90,9 +90,13 @@ public class LicenseConfiguration extends GenericModel{
 		this.hubUrl = hubUrl;
 	}
 
-	public void setDefaultConfig(boolean b) {
-		this.defaultConfig = b;
-		
+
+	public Boolean getDefaultConfig() {
+		return defaultConfig;
+	}
+
+	public void setDefaultConfig(Boolean defaultConfig) {
+		this.defaultConfig = defaultConfig;
 	}
 	
 }

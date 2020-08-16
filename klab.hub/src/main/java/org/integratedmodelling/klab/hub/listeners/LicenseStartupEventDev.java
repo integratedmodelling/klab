@@ -61,7 +61,7 @@ public class LicenseStartupEventDev {
 			LicenseConfiguration config =
 					new GenerateLicenseFactory()
 						.getConfiguration(BouncyConfiguration.class);
-			config.setDefaultConfig(true);
+			config.setDefaultConfig(false);
 			repository.insert(config);
 		}
 		
@@ -91,6 +91,7 @@ public class LicenseStartupEventDev {
 			ArmoredKeyPair keys = ArmoredKeyPair.of(sec.getBytes(), pub.getBytes());
 			
 			config.setKeys(keys);
+			config.setDefaultConfig(true);
 			repository.insert(config);
 		}
 	}

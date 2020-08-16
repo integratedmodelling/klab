@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.hub.license.controllers;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.security.NoSuchProviderException;
-import java.util.Enumeration;
 import java.util.Properties;
 
 import javax.mail.MessagingException;
@@ -14,16 +13,16 @@ import org.apache.commons.io.IOUtils;
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.integratedmodelling.klab.hub.api.BouncyLicense;
 import org.integratedmodelling.klab.hub.api.EngineAuthResponeFactory;
 import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
+import org.integratedmodelling.klab.hub.api.LicenseGenerator;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.PropertiesFactory;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.BadRequestException;
+import org.integratedmodelling.klab.hub.exception.LicenseConfigDoestNotExists;
 import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
-import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
@@ -69,7 +68,7 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 		Properties engineProperties = PropertiesFactory.fromProfile(profile, configuration).getProperties();
 
 
-		byte[] certFileContent = new BouncyLicense().generate(engineProperties, configuration);;
+		byte[] certFileContent = new LicenseGenerator(configuration, engineProperties).generate();
 
 		String certFileString = String.format("attachment; filename=%s", KlabCertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);
 
@@ -101,7 +100,12 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 			remoteAddr = "128.0.0.1";
 		}
 		
-		LicenseConfiguration config = configService.getConfigByKey(request.getKey());
+		LicenseConfiguration config;
+		try {
+			config = configService.getConfigByKey(request.getKey());
+		} catch (LicenseConfigDoestNotExists e) {
+			config = null;
+		}
 
 		EngineAuthenticationResponse response = null;
 		
