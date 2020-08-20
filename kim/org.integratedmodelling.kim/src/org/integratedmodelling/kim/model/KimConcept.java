@@ -1318,6 +1318,10 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			ret = trait.getCodeName() + "-" + ret;
 		}
 
+		for (IKimConcept role : roles) {
+			ret = role.getCodeName() + "-" + ret;
+		}
+
 		if (inherent != null) {
 			ret += "-of-" + inherent.getCodeName();
 		}

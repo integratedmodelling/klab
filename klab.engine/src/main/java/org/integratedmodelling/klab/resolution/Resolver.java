@@ -60,8 +60,6 @@ import org.integratedmodelling.klab.utils.Pair;
  */
 public class Resolver {
 
-//	INSTANCE;
-
 	private Dataflow parentDataflow;
 
 	private Resolver(Dataflow parentDataflow) {
@@ -259,7 +257,7 @@ public class Resolver {
 	 *         mandatory, or the passed scope's coverage if it's optional.
 	 */
 	private ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode) {
-
+		
 		/*
 		 * Check first if we need to redistribute the observable, in which case we only
 		 * resolve the distribution context and we leave it to the runtime context to
@@ -303,6 +301,11 @@ public class Resolver {
 				deferred.setCoverage(ret.getCoverage());
 				ret.link(deferred);
 			}
+			
+			if (Observables.INSTANCE.isOccurrent(observable.getType())) {
+				parentScope.setOccurrent(true);
+			}
+
 			return ret;
 		}
 
@@ -463,6 +466,11 @@ public class Resolver {
 		}
 
 		if (coverage.isRelevant()) {
+			
+			if (Observables.INSTANCE.isOccurrent(observable)) {
+				parentScope.setOccurrent(true);
+			}
+			
 			ret.setCoverage(coverage);
 			parentScope.merge(ret);
 			if (ret.getCoverage().getCoverage() < 0.95) {

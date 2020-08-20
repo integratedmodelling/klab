@@ -484,7 +484,8 @@ public interface IContextualizationScope extends IParameters<String> {
 	Map<String, IVariable> getVariables();
 
 	/**
-	 * Create a context to compile an expression.
+	 * Create an expression context to compile an expression with all local
+	 * names matched to their observables.
 	 * 
 	 * @return
 	 */

@@ -731,53 +731,63 @@ public class ModelKbox extends ObservableKbox {
 		}
 
 		boolean first = true;
+		IObservable main = null;
+		for (IObservable oobs : model.getObservables()) {
 
-		for (IObservable obs : model.getObservables()) {
-
-			ModelReference m = new ModelReference();
-
-			m.setId(model.getId());
-			m.setName(model.getName());
-			m.setNamespaceId(model.getNamespace().getName());
-			if (model.getNamespace().getProject() != null) {
-				m.setProjectId(model.getNamespace().getProject().getName());
-				if (model.getNamespace().getProject().isRemote()) {
-					m.setServerId(model.getNamespace().getProject().getOriginatingNodeId());
-				}
+			if (first) {
+				main = oobs;
 			}
 
-			m.setTimeEnd(timeEnd);
-			m.setTimeStart(timeStart);
-			m.setTimeMultiplicity(timeMultiplicity);
-			m.setSpaceMultiplicity(spaceMultiplicity);
-			m.setScaleMultiplicity(scaleMultiplicity);
-			m.setSpatial(isSpatial);
-			m.setTemporal(isTemporal);
-			m.setShape(spaceExtent);
+			for (IObservable obs : unpackObservables(oobs, main, first)) {
 
-			m.setObservable(obs.getType().getDefinition());
-			m.setObservationType(obs.getDescriptionType().name());
-			m.setObservableConcept(obs.getType());
-			// m.setObservationConcept(obs.getObservationType());
+				ModelReference m = new ModelReference();
 
-			m.setScope(model.getScope());
-			m.setInScenario(model.getNamespace().isScenario());
-			m.setReification(model.isInstantiator());
-			m.setResolved(model.isResolved());
-			m.setHasDirectData(model.isResolved() && model.getObservables().get(0).is(Type.QUALITY));
-			m.setHasDirectObjects(model.isResolved() && model.getObservables().get(0).is(Type.DIRECT_OBSERVABLE));
+				m.setId(model.getId());
+				m.setName(model.getName());
+				m.setNamespaceId(model.getNamespace().getName());
+				if (model.getNamespace().getProject() != null) {
+					m.setProjectId(model.getNamespace().getProject().getName());
+					if (model.getNamespace().getProject().isRemote()) {
+						m.setServerId(model.getNamespace().getProject().getOriginatingNodeId());
+					}
+				}
 
-			m.setMinSpatialScaleFactor(model.getMetadata().get(IMetadata.IM_MIN_SPATIAL_SCALE, ISpace.MIN_SCALE_RANK));
-			m.setMaxSpatialScaleFactor(model.getMetadata().get(IMetadata.IM_MAX_SPATIAL_SCALE, ISpace.MAX_SCALE_RANK));
-			m.setMinTimeScaleFactor(model.getMetadata().get(IMetadata.IM_MIN_TEMPORAL_SCALE, ITime.MIN_SCALE_RANK));
-			m.setMaxTimeScaleFactor(model.getMetadata().get(IMetadata.IM_MAX_TEMPORAL_SCALE, ITime.MAX_SCALE_RANK));
+				m.setTimeEnd(timeEnd);
+				m.setTimeStart(timeStart);
+				m.setTimeMultiplicity(timeMultiplicity);
+				m.setSpaceMultiplicity(spaceMultiplicity);
+				m.setScaleMultiplicity(scaleMultiplicity);
+				m.setSpatial(isSpatial);
+				m.setTemporal(isTemporal);
+				m.setShape(spaceExtent);
 
-			m.setPrimaryObservable(first);
-			first = false;
+				m.setObservable(obs.getType().getDefinition());
+				m.setObservationType(obs.getDescriptionType().name());
+				m.setObservableConcept(obs.getType());
+				// m.setObservationConcept(obs.getObservationType());
 
-			m.setMetadata(translateMetadata(model.getMetadata()));
+				m.setScope(model.getScope());
+				m.setInScenario(model.getNamespace().isScenario());
+				m.setReification(model.isInstantiator());
+				m.setResolved(model.isResolved());
+				m.setHasDirectData(model.isResolved() && model.getObservables().get(0).is(Type.QUALITY));
+				m.setHasDirectObjects(model.isResolved() && model.getObservables().get(0).is(Type.DIRECT_OBSERVABLE));
 
-			ret.add(m);
+				m.setMinSpatialScaleFactor(
+						model.getMetadata().get(IMetadata.IM_MIN_SPATIAL_SCALE, ISpace.MIN_SCALE_RANK));
+				m.setMaxSpatialScaleFactor(
+						model.getMetadata().get(IMetadata.IM_MAX_SPATIAL_SCALE, ISpace.MAX_SCALE_RANK));
+				m.setMinTimeScaleFactor(model.getMetadata().get(IMetadata.IM_MIN_TEMPORAL_SCALE, ITime.MIN_SCALE_RANK));
+				m.setMaxTimeScaleFactor(model.getMetadata().get(IMetadata.IM_MAX_TEMPORAL_SCALE, ITime.MAX_SCALE_RANK));
+
+				m.setPrimaryObservable(first);
+				first = false;
+
+				m.setMetadata(translateMetadata(model.getMetadata()));
+
+				ret.add(m);
+
+			}
 
 			/*
 			 * For now just disable additional observables in instantiators and use their
@@ -790,6 +800,27 @@ public class ModelKbox extends ObservableKbox {
 			 */
 			if (model.isInstantiator()) {
 				break;
+			}
+
+		}
+		return ret;
+	}
+
+	private static List<IObservable> unpackObservables(IObservable oobs, IObservable main, boolean first) {
+		List<IObservable> ret = new ArrayList<>();
+		if (first || !main.is(Type.PROCESS)) {
+			ret.add(oobs);
+		} else {
+			if (main.is(Type.PROCESS) && oobs.is(Type.QUALITY)) {
+
+				/*
+				 * if the main observable is a process, any qualities CREATED should provide
+				 * only a model of their CHANGE; qualities AFFECTED that are output should
+				 * provide BOTH a change and a quality model.
+				 */
+
+			} else {
+				ret.add(oobs);
 			}
 		}
 		return ret;
