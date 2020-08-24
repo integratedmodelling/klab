@@ -14,7 +14,6 @@ import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.api.adapters.MongoGroupAdapter;
 import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
-import org.integratedmodelling.klab.hub.exception.BadRequestException;
 import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
@@ -46,7 +45,7 @@ public class EngineAuthResponeFactory {
 				break;	
 			}
 		case USER:
-			if (!IPUtils.isLocalhost(remoteAddr)) {
+			if (IPUtils.isLocalhost(remoteAddr)) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
 				return localEngine(request, userProfileService, groupRepository);
 			} else {
