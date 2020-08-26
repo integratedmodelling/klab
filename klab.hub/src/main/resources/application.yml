@@ -49,11 +49,11 @@ logging:
   file: hub.log
   
 site:
-  callback: https://localhost:8080/#/callback
+  callback: http://localhost:8080/#/callback
   clickback: "/clickback/{tokenString}"
   fullname: "Integrated Modelling Dashboard"
   shortname: "im-dashboard"
-  url: https://localhost/hub/
+  url: http://localhost/hub/
   server:
     id: =im
     

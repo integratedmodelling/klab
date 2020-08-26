@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.hub.commands;
 
 import org.integratedmodelling.klab.hub.api.MongoGroup;
+import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 
 public class GetMongoGroupByName {
@@ -16,7 +17,7 @@ public class GetMongoGroupByName {
 	
 	public MongoGroup execute() {
 		return repository.findByNameIgnoreCase(name)
-				.orElseThrow(() -> new NullPointerException(name + " was not found in the MongoGroupDatabase"));
+				.orElseThrow(() -> new GroupDoesNotExistException(name + " was not found in the MongoGroupDatabase"));
 	}
 
 }

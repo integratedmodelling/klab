@@ -21,16 +21,18 @@ import org.integratedmodelling.klab.hub.listeners.RemoveGroup;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.utils.FileCatalog;
 import org.junit.Before;
+import org.junit.FixMethodOrder;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.junit.runners.MethodSorters;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.core.annotation.Order;
 import org.springframework.dao.DuplicateKeyException;
 
 @SpringBootTest(classes = {MongoConfigDev.class, HubEventPublisher.class})
 @RunWith(SpringRunner.class)
 @ActiveProfiles(profiles = "development")
+@FixMethodOrder(MethodSorters.NAME_ASCENDING)
 public class GroupServiceTests {
 	
 	@Autowired
@@ -47,16 +49,24 @@ public class GroupServiceTests {
 	}
 
 	@Test(expected = ConstraintViolationException.class)
-	@Order(1)
-	public void fail_create_without_name() {
+	public void test_01_fail_create_without_name() {
 		MongoGroup group = new MongoGroup();
 		group.setWorldview(false);
 		groupService.create(group);
 	}
 	
+	@Test
+	public void test_02_pass_create_group() {
+		MongoGroup group = new MongoGroup();
+		group.setName("Test");
+		group.setWorldview(false);
+		MongoGroup newGroup = groupService.create(group);
+		newGroup.getName().equals("Test");
+		assertEquals(newGroup.getName().equals(group.getName()), true);
+	}
+	
 	@Test(expected = DuplicateKeyException.class)
-	@Order(2)
-	public void fail_create_group_with_same_name() {
+	public void test_03_fail_create_group_with_same_name() {
 		MongoGroup group = new MongoGroup();
 		group.setName("Test");
 		group.setWorldview(false);
@@ -64,8 +74,7 @@ public class GroupServiceTests {
 	}
 	
 	@Test
-	@Order(3)
-	public void pass_create_groups() {
+	public void test_04_pass_create_groups() {
 		groupRepo.deleteAll();
 		Map<String, MongoGroup> groups = new HashMap<>();
 		groups = FileCatalog.create(DevMongoModelsConfig.class.getClassLoader().getResource("initial-groups.json"), MongoGroup.class);
@@ -74,14 +83,12 @@ public class GroupServiceTests {
 	}
 	
 	@Test(expected = GroupDoesNotExistException.class)
-	@Order(4)
-	public void fail_getGroup_not_in_db() {
+	public void test_05_fail_getGroup_not_in_db() {
 		groupService.getByName("neverAdded");	
 	}
 	
 	@Test
-	@Order(5)
-	public void pass_updateGroup() {
+	public void test_06_pass_updateGroup() {
 		Map<String, MongoGroup> groups = new HashMap<>();
 		groups = FileCatalog.create(DevMongoModelsConfig.class.getClassLoader().getResource("initial-groups.json"), MongoGroup.class);
 		MongoGroup update = groupService.getByName(groups.keySet().iterator().next());
@@ -91,8 +98,7 @@ public class GroupServiceTests {
 	}
 	
 	@Test
-	@Order(6)
-	public void pass_deleteGroup() {
+	public void test_07_pass_deleteGroup() {
 		Map<String, MongoGroup> groups = new HashMap<>();
 		groups = FileCatalog.create(DevMongoModelsConfig.class.getClassLoader().getResource("initial-groups.json"), MongoGroup.class);
 		MongoGroup group = groupService.getByName(groups.keySet().iterator().next());
