@@ -452,7 +452,7 @@ public class ViewBehavior {
 						.getValue().toString();
 				IBehavior behavior = Actors.INSTANCE.getBehavior(behaviorId);
 				if (behavior != null) {
-					message.setLayout(Actors.INSTANCE.getView(behavior, identity, scope.appId));
+					message.setLayout(Actors.INSTANCE.getView(behavior, identity, scope.appId, null));
 				}
 			}
 			message.getAttributes().putAll(getMetadata(arguments, scope));

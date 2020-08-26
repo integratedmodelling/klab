@@ -89,7 +89,8 @@ public class ViewComponent {
 	private Map<String, String> attributes = new HashMap<>();
 	private IKActorsBehavior.Type destination;
 	private IKActorsBehavior.Platform platform;
-	
+	private String actorPath = null;
+
 	public String getId() {
 		return id;
 	}
@@ -222,6 +223,21 @@ public class ViewComponent {
 
 	public void setLayout(Layout layout) {
 		this.layout = layout;
+	}
+
+	/**
+	 * Actor path is null if the component is top-level, otherwise it will contain
+	 * the path to the actor that all view messages should be forwarded to, so that
+	 * the top-level actor can send them.
+	 * 
+	 * @return
+	 */
+	public String getActorPath() {
+		return actorPath;
+	}
+
+	public void setActorPath(String actorPath) {
+		this.actorPath = actorPath;
 	}
 
 }

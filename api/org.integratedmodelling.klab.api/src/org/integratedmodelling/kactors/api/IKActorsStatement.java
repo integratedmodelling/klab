@@ -37,7 +37,7 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 		public List<IKActorsStatement> getStatements();
 
 		Map<String, IKActorsValue> getGroupMetadata();
-		
+
 		/**
 		 * Actions with the corresponding pattern to match to fired values. If the value
 		 * is null, any fired values matches.
@@ -113,6 +113,19 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 		 * @return
 		 */
 		IParameters<String> getArguments();
+
+		/**
+		 * Each instantiation action needs a name to reference the actor, so that the
+		 * parent actors can dispatch messages to children appropriately when the actors
+		 * create external controllers such as view components. If the instantiation is
+		 * called more than once, the path will have a 1-based index appended after an
+		 * underscore, so that any actors created in a loop can be differentiated. This
+		 * gets renamed to the tag if the parameters contain one.
+		 * 
+		 * @return the base name - either the tag assigned in the parameters or an
+		 *         automatically generated one.
+		 */
+		String getActorBaseName();
 
 	}
 

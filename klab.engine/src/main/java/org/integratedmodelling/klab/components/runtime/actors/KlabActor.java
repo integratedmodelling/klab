@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assignment;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
@@ -16,6 +17,7 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.Do;
 import org.integratedmodelling.kactors.api.IKActorsStatement.FireValue;
 import org.integratedmodelling.kactors.api.IKActorsStatement.For;
 import org.integratedmodelling.kactors.api.IKActorsStatement.If;
+import org.integratedmodelling.kactors.api.IKActorsStatement.Instantiation;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Sequence;
 import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.api.IKActorsStatement.While;
@@ -35,6 +37,7 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Cle
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fire;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.SetView;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Stop;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
@@ -47,6 +50,8 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewAction;
+import org.integratedmodelling.klab.rest.ViewComponent;
+import org.integratedmodelling.klab.rest.ViewPanel;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
@@ -57,8 +62,8 @@ import akka.actor.typed.PostStop;
 import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
-import akka.actor.typed.javadsl.Receive;
 import akka.actor.typed.javadsl.Behaviors;
+import akka.actor.typed.javadsl.Receive;
 import akka.actor.typed.javadsl.ReceiveBuilder;
 
 public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
@@ -70,6 +75,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private AtomicLong nextId = new AtomicLong(0);
 	private Map<String, Long> actionBindings = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, ActorRef<KlabMessage>> receivers = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, List<ActorRef<KlabMessage>>> childInstances = Collections.synchronizedMap(new HashMap<>());
 
 	/*
 	 * if we pre-build actions or we run repeatedly we cache them here. Important
@@ -77,6 +83,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	protected Map<String, KlabAction> actionCache = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, KlabAction.Actor> localActors = Collections.synchronizedMap(new HashMap<>());
+	private ViewComponent view;
 
 	protected ActorRef<KlabMessage> getDispatcher() {
 		if (appId == null) {
@@ -272,7 +279,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		ReceiveBuilder<KlabMessage> builder = newReceiveBuilder();
 		return builder.onMessage(Load.class, this::loadBehavior).onMessage(Spawn.class, this::createChild)
 				.onMessage(Fire.class, this::reactToFire).onMessage(UserAction.class, this::reactToViewAction)
-				.onMessage(BindUserAction.class, this::bindViewAction)
+				.onMessage(BindUserAction.class, this::bindViewAction).onMessage(SetView.class, this::setView)
 				.onMessage(KActorsMessage.class, this::executeCall).onMessage(Stop.class, this::stopChild)
 				.onMessage(Cleanup.class, this::cleanup).onSignal(PostStop.class, signal -> onPostStop());
 	}
@@ -323,10 +330,38 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			}
 		} else {
 			Long notifyId = this.actionBindings.get(message.action.getComponent().getId());
-			if (notifyId != null) {
+			if (notifyId != null && message.action.getComponent().getActorPath() == null) {
 				MatchActions actions = listeners.get(notifyId);
 				if (actions != null) {
 					actions.match(getActionValue(message.action));
+				}
+			} else if (message.action.getComponent().getActorPath() != null) {
+
+				// dispatch to child actor
+				String path = message.action.getComponent().getActorPath();
+				String[] elements = path.split("\\.");
+				if (elements.length > 0) {
+
+					String actorId = elements[0];
+					int idx = 0;
+					int cut = actorId.indexOf('_');
+					if (cut > 0) {
+						idx = Integer.parseInt(actorId.substring(cut + 1));
+						actorId = actorId.substring(0, cut);
+					}
+					List<ActorRef<KlabMessage>> actors = this.childInstances.get(actorId);
+
+					if (actors != null && actors.size() > idx) {
+
+						if (elements.length == 1) {
+							message.action.getComponent().setActorPath(null);
+						} else if (elements.length > 1) {
+							message.action.getComponent().setActorPath(Path.getRemainder(path, "."));
+						}
+						actors.get(idx).tell(message);
+					} else {
+						System.out.println("HOSTIA unreferenced child actor " + elements[0]);
+					}
 				}
 			}
 		}
@@ -355,6 +390,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		} else {
 			this.actionBindings.put(message.componentId, message.notifyId);
 		}
+		return Behaviors.same();
+	}
+
+	protected Behavior<KlabMessage> setView(SetView message) {
+		// TODO Set the action bindings for a component
+		this.view = message.component;
 		return Behaviors.same();
 	}
 
@@ -402,11 +443,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.actionBindings.clear();
 			this.actionCache.clear();
 
-			Layout view = Actors.INSTANCE.getView(behavior, identity, this.appId);
-			if (!view.empty()) {
-				this.identity.setLayout(view);
-				this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
-						view);
+			if (behavior.getDestination() == Type.APP) {
+				Layout view = Actors.INSTANCE.getView(behavior, identity, this.appId, null);
+				if (!view.empty()) {
+					this.view = view;
+					this.identity.setLayout(view);
+					this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
+							view);
+				}
 			}
 
 			/*
@@ -475,11 +519,70 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			executeWhile((IKActorsStatement.While) code, scope);
 			break;
 		case INSTANTIATION:
-			// TODO spawn a child and connect its fires to us
+			executeInstantiation((IKActorsStatement.Instantiation) code, scope);
 			break;
 		default:
 			break;
 		}
+	}
+
+	private void executeInstantiation(Instantiation code, Scope scope) {
+
+		Behavior<KlabMessage> child = null;
+		if (this.identity instanceof Observation) {
+			child = ObservationActor.create((Observation) this.identity, this.appId);
+		} else if (this.identity instanceof Session) {
+			child = SessionActor.create((Session) this.identity, this.appId);
+		} else if (this.identity instanceof EngineUser) {
+			child = UserActor.create((EngineUser) this.identity);
+		}
+
+		ActorRef<KlabMessage> actor = getContext().spawn(
+				Behaviors.supervise(child).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
+				identity.getId());
+		actor.tell(new Load(code.getBehavior(), scope.appId, scope.runtimeScope));
+
+		/*
+		 * if the new actor has a component associated, set its view to the component
+		 * and prepare bindings.
+		 */
+		ViewComponent componentView = extractComponent(this.view, code.getActorBaseName());
+		if (componentView != null) {
+			actor.tell(new SetView(componentView));
+		}
+
+		List<ActorRef<KlabMessage>> actors = this.childInstances.get(code.getActorBaseName());
+		if (actors == null) {
+			actors = new ArrayList<>();
+			this.childInstances.put(code.getActorBaseName(), actors);
+		}
+
+		actors.add(actor);
+
+	}
+
+	private ViewComponent extractComponent(ViewComponent component, String actorBaseName) {
+		ViewComponent ret = null;
+		if (component != null) {
+			if (component instanceof Layout) {
+				for (ViewPanel panel : Actors.INSTANCE.getPanels((Layout)component)) {
+					if ((ret = extractComponent(panel, actorBaseName)) != null) {
+						 return ret;
+					}
+				}
+			}
+			for (ViewComponent c : component.getComponents()) {
+				if (c.getActorPath() != null && c.getActorPath().startsWith(actorBaseName)) {
+					ret = c;
+					break;
+				}
+				ret = extractComponent(c, actorBaseName);
+				if (ret != null) {
+					return ret;
+				}
+			}
+		}
+		return ret;
 	}
 
 	private void executeWhile(While code, Scope scope) {
@@ -684,7 +787,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 						if (message.arguments.containsKey("tag")) {
 							Object t = message.arguments.get("tag");
 							if (t instanceof KActorsValue) {
-								t = ((KActorsValue)t).getValue();
+								t = ((KActorsValue) t).getValue();
 							}
 							((KlabAction.Actor) a).setName(t.toString());
 							this.localActors.put(((KlabAction.Actor) a).getName(), (KlabAction.Actor) a);
@@ -729,7 +832,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				behavior = SessionActor.create((Session) message.identity, message.appId);
 			}
 			ActorRef<KlabMessage> actor = getContext().spawn(
-					Behaviors.supervise(behavior).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)), message.identity.getId());
+					Behaviors.supervise(behavior).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
+					message.identity.getId());
 			message.identity.instrument(actor);
 		}
 

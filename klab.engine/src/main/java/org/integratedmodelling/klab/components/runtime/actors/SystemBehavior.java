@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
 import org.integratedmodelling.klab.rest.ViewAction;
+import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.utils.Parameters;
 
 import akka.actor.typed.ActorRef;
@@ -45,6 +46,26 @@ public class SystemBehavior {
 		}
 	}
 
+	/**
+	 * Setup a view component with view actions
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static class SetView implements KlabMessage {
+
+		ViewComponent component;
+
+		public SetView(ViewComponent component) {
+			this.component = component;
+		}
+
+		@Override
+		public SetView direct() {
+			throw new KlabIllegalStatusException("Actors shouldn't stop themselves.");
+		}
+	}
+	
 	/**
 	 * Load a behavior
 	 * 

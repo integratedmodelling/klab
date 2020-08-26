@@ -592,9 +592,9 @@ public enum Actors implements IActorsService {
 		return null;
 	}
 
-	public Layout getView(IBehavior behavior, IIdentity identity, String applicationId) {
+	public Layout getView(IBehavior behavior, IIdentity identity, String applicationId, String actorPath) {
 
-		ViewScope scope = new ViewScope(identity, applicationId);
+		ViewScope scope = new ViewScope(identity, applicationId, actorPath);
 
 		/*
 		 * collect info about the UI in a bean. If not empty, send bean so that the UI
@@ -684,14 +684,16 @@ public enum Actors implements IActorsService {
 		String identityId;
 		IIdentity identity;
 		String applicationId;
+		String actorPath = null;
 		boolean optional = false;
 		boolean repeated = false;
 		private Integer groupCounter = new Integer(0);
 
-		public ViewScope(IIdentity identity, String applicationId) {
+		public ViewScope(IIdentity identity, String applicationId, String actorPath) {
 			this.identity = identity;
 			this.identityId = identity == null ? null : identity.getId();
 			this.applicationId = applicationId;
+			this.actorPath = actorPath;
 		}
 
 		public ViewScope(ViewScope scope) {
@@ -700,6 +702,7 @@ public enum Actors implements IActorsService {
 			this.repeated = scope.repeated;
 			this.optional = scope.optional;
 			this.groupCounter = scope.groupCounter;
+			this.actorPath = scope.actorPath;
 		}
 
 		public ViewScope repeated() {
@@ -721,6 +724,7 @@ public enum Actors implements IActorsService {
 		ViewComponent ret = new ViewComponent();
 		ret.setIdentity(scope.identityId);
 		ret.setApplicationId(scope.applicationId);
+		ret.setActorPath(scope.actorPath);
 		boolean isActive = group.getGroupMetadata().containsKey("inputgroup");
 		ret.setType(isActive ? ViewComponent.Type.InputGroup : ViewComponent.Type.Group);
 		if (group.getGroupMetadata().containsKey("name")) {
@@ -829,7 +833,9 @@ public enum Actors implements IActorsService {
 		case INSTANTIATION:
 			IBehavior behavior = getBehavior(((Instantiation) statement).getBehavior());
 			if (behavior != null && behavior.getDestination() == Type.COMPONENT) {
-				component = simplifyViewStructure(getView(behavior, scope.identity, scope.applicationId));
+				component = simplifyViewStructure(getView(behavior, scope.identity, scope.applicationId,
+						(parent.getActorPath() == null ? "" : (parent.getActorPath() + "."))
+								+ ((Instantiation) statement).getActorBaseName()));
 				if (component != null) {
 					component.setParentId(parent.getId());
 					parent.getComponents().add(component);
@@ -842,7 +848,7 @@ public enum Actors implements IActorsService {
 		}
 	}
 
-	private ViewComponent simplifyViewStructure(Layout view) {
+	public List<ViewPanel> getPanels(Layout view) {
 		List<ViewPanel> panels = new ArrayList<>();
 		panels.addAll(view.getLeftPanels());
 		panels.addAll(view.getRightPanels());
@@ -853,6 +859,11 @@ public enum Actors implements IActorsService {
 		if (view.getFooter() != null) {
 			panels.add(view.getFooter());
 		}
+		return panels;
+	}
+	
+	private ViewComponent simplifyViewStructure(Layout view) {
+		List<ViewPanel> panels = getPanels(view);
 		if (panels.size() == 1) {
 			// TODO merge style if defined in view preamble
 			return panels.get(0);
@@ -901,6 +912,7 @@ public enum Actors implements IActorsService {
 				ret.setIdentity(scope.identityId);
 				ret.setApplicationId(scope.applicationId);
 				ret.setId(((KActorsActionCall) statement).getInternalId());
+				ret.setActorPath(scope.actorPath);
 
 			}
 		}

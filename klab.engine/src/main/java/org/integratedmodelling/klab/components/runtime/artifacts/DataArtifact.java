@@ -114,8 +114,7 @@ public class DataArtifact extends Artifact implements IDataArtifact {
 
 	@Override
 	public IArtifact getGroupMember(int n) {
-		// TODO Auto-generated method stub
-		return null;
+		return group == null ? (n == 0 ? this : null) : (group.size() > (n-1) ? group.get(n-1) : null);
 	}
 
 }
