@@ -33,11 +33,19 @@ public class SystemBehavior {
 		String behavior;
 		IRuntimeScope scope;
 		String appId;
+		// if not null, this is a child behavior from a 'new' instruction and it carries
+		// a ref to the parent
+		ActorRef<KlabMessage> parent = null;
 
 		public Load(String behavior, String appId, IRuntimeScope scope) {
 			this.behavior = behavior;
 			this.appId = appId;
 			this.scope = scope;
+		}
+
+		public Load withParent(ActorRef<KlabMessage> parent) {
+			this.parent = parent;
+			return this;
 		}
 
 		@Override
@@ -65,7 +73,7 @@ public class SystemBehavior {
 			throw new KlabIllegalStatusException("Actors shouldn't stop themselves.");
 		}
 	}
-	
+
 	/**
 	 * Load a behavior
 	 * 
@@ -228,6 +236,39 @@ public class SystemBehavior {
 		@Override
 		public Fire direct() {
 			return new Fire(listenerId, value, finalize, null);
+		}
+
+	}
+
+	/**
+	 * The message sent back to a listening actor when a child component fires,
+	 * triggering pattern matching on the actions installed after the 'new' action
+	 * that created it.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static class ComponentFire implements KlabMessage {
+
+		Object value;
+		boolean finalize;
+		Long listenerId;
+		ActorRef<KlabMessage> child;
+
+		public ComponentFire(Long listenerId, Object firedValue, ActorRef<KlabMessage> child) {
+			this.value = firedValue;
+			this.listenerId = listenerId;
+			this.child = child;
+		}
+
+		@Override
+		public String toString() {
+			return "[COMPONENT FIRE" + value + " @" + listenerId + "]";
+		}
+
+		@Override
+		public ComponentFire direct() {
+			return new ComponentFire(listenerId, value, child);
 		}
 
 	}

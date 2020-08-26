@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.BindUserAction;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Cleanup;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.ComponentFire;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fire;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
@@ -72,10 +73,16 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected String appId;
 	protected IActorIdentity<KlabMessage> identity;
 	protected Map<Long, MatchActions> listeners = Collections.synchronizedMap(new HashMap<>());
+	protected Map<String, MatchActions> componentFireListeners = Collections.synchronizedMap(new HashMap<>());
 	private AtomicLong nextId = new AtomicLong(0);
 	private Map<String, Long> actionBindings = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, ActorRef<KlabMessage>> receivers = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, List<ActorRef<KlabMessage>>> childInstances = Collections.synchronizedMap(new HashMap<>());
+
+	/*
+	 * This is the parent that generated us through a 'new' instruction, if any.
+	 */
+	private ActorRef<KlabMessage> parentActor = null;
 
 	/*
 	 * if we pre-build actions or we run repeatedly we cache them here. Important
@@ -278,7 +285,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected ReceiveBuilder<KlabMessage> configure() {
 		ReceiveBuilder<KlabMessage> builder = newReceiveBuilder();
 		return builder.onMessage(Load.class, this::loadBehavior).onMessage(Spawn.class, this::createChild)
-				.onMessage(Fire.class, this::reactToFire).onMessage(UserAction.class, this::reactToViewAction)
+				.onMessage(Fire.class, this::reactToFire).onMessage(ComponentFire.class, this::reactToComponentFiring)
+				.onMessage(UserAction.class, this::reactToViewAction)
 				.onMessage(BindUserAction.class, this::bindViewAction).onMessage(SetView.class, this::setView)
 				.onMessage(KActorsMessage.class, this::executeCall).onMessage(Stop.class, this::stopChild)
 				.onMessage(Cleanup.class, this::cleanup).onSignal(PostStop.class, signal -> onPostStop());
@@ -399,6 +407,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		return Behaviors.same();
 	}
 
+	protected Behavior<KlabMessage> reactToComponentFiring(ComponentFire message) {
+		// TODO
+		return Behaviors.same();
+	}
+
 	protected Behavior<KlabMessage> reactToFire(Fire message) {
 
 		if (message.appId != null) {
@@ -426,6 +439,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	protected Behavior<KlabMessage> loadBehavior(Load message) {
+
+		this.parentActor = message.parent;
 
 		if (message.appId != null) {
 			/*
@@ -530,17 +545,28 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 		Behavior<KlabMessage> child = null;
 		if (this.identity instanceof Observation) {
-			child = ObservationActor.create((Observation) this.identity, this.appId);
+			child = ObservationActor.create((Observation) this.identity, null);
 		} else if (this.identity instanceof Session) {
-			child = SessionActor.create((Session) this.identity, this.appId);
+			child = SessionActor.create((Session) this.identity, null);
 		} else if (this.identity instanceof EngineUser) {
 			child = UserActor.create((EngineUser) this.identity);
 		}
 
+		// existing actors for this behavior
+		List<ActorRef<KlabMessage>> actors = this.childInstances.get(code.getActorBaseName());
+		String actorName = code.getActorBaseName() + (actors == null ? "" : ("_" + (actors.size() + 1)));
+
 		ActorRef<KlabMessage> actor = getContext().spawn(
-				Behaviors.supervise(child).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
-				identity.getId());
-		actor.tell(new Load(code.getBehavior(), scope.appId, scope.runtimeScope));
+				Behaviors.supervise(child).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)), actorName);
+
+		/*
+		 * TODO use the actor name to install a listener for any actions that may be
+		 * connected to this instance; it will be used as listener ID for the
+		 * ComponentFire message sent when the child fires.
+		 */
+
+		// remove the appId for the children, otherwise their messages will be rerouted
+		actor.tell(new Load(code.getBehavior(), null, scope.runtimeScope).withParent(getContext().getSelf()));
 
 		/*
 		 * if the new actor has a component associated, set its view to the component
@@ -551,7 +577,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			actor.tell(new SetView(componentView));
 		}
 
-		List<ActorRef<KlabMessage>> actors = this.childInstances.get(code.getActorBaseName());
 		if (actors == null) {
 			actors = new ArrayList<>();
 			this.childInstances.put(code.getActorBaseName(), actors);
@@ -565,9 +590,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		ViewComponent ret = null;
 		if (component != null) {
 			if (component instanceof Layout) {
-				for (ViewPanel panel : Actors.INSTANCE.getPanels((Layout)component)) {
+				for (ViewPanel panel : Actors.INSTANCE.getPanels((Layout) component)) {
 					if ((ret = extractComponent(panel, actorBaseName)) != null) {
-						 return ret;
+						return ret;
 					}
 				}
 			}
@@ -621,7 +646,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	private void executeFire(FireValue code, Scope scope) {
-		if (scope.sender != null) {
+		if (parentActor != null) {
+			// let our parent know we've fired so that the value can be matched to what
+			// is caught after the 'new' verb. Listener ID is the actor's name.
+			System.out.println("CAZZONE SPARA: " + getContext().getSelf().path().name());
+		} else if (scope.sender != null) {
 			scope.sender.tell(
 					new Fire(scope.listenerId, code.getValue().getValue(), /* TODO FIXME boh */true, scope.appId));
 		}

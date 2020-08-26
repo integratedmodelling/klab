@@ -143,7 +143,8 @@ public class ViewBehavior {
 			 * fire
 			 */
 			if (scope.listenerId != null) {
-				identity.getActor().tell(new BindUserAction(scope.listenerId, scope.appId, bindId));
+				// TODO check this was sent to identity.getActor() but wouldn't work with child actors.
+				scope.sender.tell(new BindUserAction(scope.listenerId, scope.appId, bindId));
 			}
 		}
 
