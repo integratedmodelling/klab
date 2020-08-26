@@ -56,7 +56,7 @@ public class GroupsController {
 	}
 	
 	@DeleteMapping(value = API.HUB.GROUPS_BASE_ID)
-	@PreAuthorize("hasRole('ROLE_SYSTEM') or hasRole('ROLE_ADMINISTRATOR')")
+	@PreAuthorize("hasRole('ROLE_SYSTEM')")
 	public ResponseEntity<Object> delete(@PathVariable("id") String id) {
 		groupService.delete(id);	
 		return new ResponseEntity<>("The Groups has been deleted successsfully", HttpStatus.OK);

@@ -49,7 +49,7 @@ logging:
   file: hub.log
   
 site:
-  callback: https://localhost/hub/ui/index.html#/callback
+  callback: https://localhost:8080/#/callback
   clickback: "/clickback/{tokenString}"
   fullname: "Integrated Modelling Dashboard"
   shortname: "im-dashboard"
@@ -62,10 +62,10 @@ engine:
 
 email:
    server:
-      hostname: smtp.gmail.com
-      port: 587
-      username: integrated.modelling@gmail.com
-      password: changethispassword
+      hostname: localhost
+      port: 3025
+      username: system
+      password: password
    replyable:
       general:
          emailaddress: General <integratedmodelling@integratedmodelling.com>

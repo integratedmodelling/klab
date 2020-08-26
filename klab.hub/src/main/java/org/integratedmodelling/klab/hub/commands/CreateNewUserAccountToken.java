@@ -29,7 +29,7 @@ public class CreateNewUserAccountToken extends CreateTokenCommand{
 	}
 	
 	private String getParentTokenId(String username) {
-		return tokenRepository.findByUsernameAndClass(username, TokenVerifyAccountClickback.class.getName())
+		return tokenRepository.findByUsernameAndClass(username, "VerifyUser")
 			.map(token -> token.getTokenString())
 			.orElseThrow(()-> new BadRequestException("Should have an activate Account clickback, but does not."));		
 	}

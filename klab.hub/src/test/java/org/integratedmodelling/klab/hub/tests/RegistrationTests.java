@@ -42,7 +42,7 @@ import com.icegreen.greenmail.util.Retriever;
 
 import net.minidev.json.JSONObject;
 
-@TestPropertySource(locations="classpath:default.properties")
+@TestPropertySource(locations="classpath:application.yml")
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = {HubApplication.class})
 @ActiveProfiles(profiles = "development")
 public class RegistrationTests extends ApplicationCheck {
