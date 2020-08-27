@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
 import org.integratedmodelling.klab.rest.ViewAction;
+import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.utils.Parameters;
 
 import akka.actor.typed.ActorRef;
@@ -32,6 +33,9 @@ public class SystemBehavior {
 		String behavior;
 		IRuntimeScope scope;
 		String appId;
+		// if not null, this is a child behavior from a 'new' instruction and it carries
+		// a ref to the parent
+		ActorRef<KlabMessage> parent = null;
 
 		public Load(String behavior, String appId, IRuntimeScope scope) {
 			this.behavior = behavior;
@@ -39,9 +43,34 @@ public class SystemBehavior {
 			this.scope = scope;
 		}
 
+		public Load withParent(ActorRef<KlabMessage> parent) {
+			this.parent = parent;
+			return this;
+		}
+
 		@Override
 		public Load direct() {
 			return new Load(behavior, null, scope);
+		}
+	}
+
+	/**
+	 * Setup a view component with view actions
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static class SetView implements KlabMessage {
+
+		ViewComponent component;
+
+		public SetView(ViewComponent component) {
+			this.component = component;
+		}
+
+		@Override
+		public SetView direct() {
+			throw new KlabIllegalStatusException("Actors shouldn't stop themselves.");
 		}
 	}
 
@@ -207,6 +236,39 @@ public class SystemBehavior {
 		@Override
 		public Fire direct() {
 			return new Fire(listenerId, value, finalize, null);
+		}
+
+	}
+
+	/**
+	 * The message sent back to a listening actor when a child component fires,
+	 * triggering pattern matching on the actions installed after the 'new' action
+	 * that created it.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static class ComponentFire implements KlabMessage {
+
+		Object value;
+		boolean finalize;
+		String listenerId;
+		ActorRef<KlabMessage> child;
+
+		public ComponentFire(String listenerId, Object firedValue, ActorRef<KlabMessage> child) {
+			this.value = firedValue;
+			this.listenerId = listenerId;
+			this.child = child;
+		}
+
+		@Override
+		public String toString() {
+			return "[COMPONENT FIRE" + value + " @" + listenerId + "]";
+		}
+
+		@Override
+		public ComponentFire direct() {
+			return new ComponentFire(listenerId, value, child);
 		}
 
 	}

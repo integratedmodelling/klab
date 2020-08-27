@@ -149,15 +149,13 @@ public class Observable implements IObservable {
 		this.temporalInherent = observable.temporalInherent;
 	}
 
-	
 	public Observable withoutModel() {
 		this.originatingModelId = null;
 		this.modelReference = null;
 		this.resolvedModel = null;
 		return this;
 	}
-	
-	
+
 	@Override
 	public IConcept getType() {
 		return observable;
@@ -313,11 +311,13 @@ public class Observable implements IObservable {
 			return false;
 		}
 
+		boolean conceptsAreEqual = this.observable.getDefinition().equals(obj.observable.getDefinition());
+
 		/*
 		 * TODO check: operators are only allowed at the receiving end. We should also
 		 * allow the same operators and operands as us in the provider.
 		 */
-		return this.observable.equals(obj.observable) && (obj.valueOperators.isEmpty()
+		return conceptsAreEqual && (obj.valueOperators.isEmpty()
 				|| CollectionUtils.isEqualCollection(this.valueOperators, obj.valueOperators));
 	}
 
@@ -528,8 +528,7 @@ public class Observable implements IObservable {
 	public String getNamespace() {
 		// TODO if we come from a declaration in a given namespace, use that
 		return getType().getNamespace();
-		
-		
+
 	}
 
 	@Override
@@ -647,7 +646,7 @@ public class Observable implements IObservable {
 		return resolvable == null ? null
 				: new Pair<>(resolvable, (Observable) getBuilder(monitor).without(resolvable).buildObservable());
 	}
-	
+
 	public void setReferenceName(String name) {
 		this.referenceName = name;
 	}
@@ -724,5 +723,5 @@ public class Observable implements IObservable {
 	public void setTemporalInherent(IConcept temporalInherent) {
 		this.temporalInherent = temporalInherent;
 	}
-	
+
 }

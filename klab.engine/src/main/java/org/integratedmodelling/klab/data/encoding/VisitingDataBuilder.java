@@ -44,6 +44,7 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 
 	List<Descriptor> states = new ArrayList<>();
 	List<Descriptor> objects = new ArrayList<>();
+	List<INotification> notifications = new ArrayList<>();
 	Descriptor current;
 	private int maxObjects = -1;
 	private VisitingDataBuilder parent;
@@ -130,12 +131,13 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 
 	@Override
 	public Builder addNotification(INotification notification) {
+		this.notifications.add(notification);
 		return this;
 	}
 
 	@Override
 	public IKlabData build() {
-		return null;
+		return new VisitedData(this);
 	}
 
 	@Override

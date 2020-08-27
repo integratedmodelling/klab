@@ -50,7 +50,7 @@ public class OSMUrnAdapter implements IUrnAdapter {
 				Shape shape = Shape.create(
 						data.get(Geocoder.GEOMETRY_FIELD, com.vividsolutions.jts.geom.Geometry.class),
 						Projection.getLatLon());
-				// TODO adjust
+				// TODO adjust, parameterize for power users
 				shape.simplifyIfNecessary(5000, 8000);
 				scale = Scale.create(shape);
 			} else {

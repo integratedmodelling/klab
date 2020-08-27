@@ -29,6 +29,11 @@ public class UserBehavior {
 		public KlabMessage direct() {
 			return new UnknownMessage(call, null);
 		}
+		
+		@Override
+		public String toString() {
+			return "[UNKNOWN MESSAGE " + call.message + "]";
+		}
 	}
 
 }

@@ -40,7 +40,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  * passed enough information to build a mock-scope at the query endpoint.
  * <p>
  * The official API is small and opaque, except for a small set of methods. The
- * implemented resolution scope will normally contain complex logics and many 
+ * implemented resolution scope will normally contain complex logics and many
  * more methods.
  * 
  * @author ferdinando.villa
@@ -80,10 +80,10 @@ public interface IResolutionScope {
 	public enum Scope {
 		OBSERVABLE, OBSERVER, MODEL
 	}
-	
+
 	/**
-	 * Available after resolution, this is the entire scale covered by all the actuators and
-	 * models compiled in, bounded by the context.
+	 * Available after resolution, this is the entire scale covered by all the
+	 * actuators and models compiled in, bounded by the context.
 	 * 
 	 * @return
 	 */
@@ -125,6 +125,19 @@ public interface IResolutionScope {
 	 * @return whether the resolution is interactive
 	 */
 	boolean isInteractive();
+
+	/**
+	 * True if there is occurrence, i.e. a physical view of time, in this
+	 * resolution. This is set globally across a tree of scopes, i.e. the first
+	 * occurrence makes the whole scope occur. If true, the dataflow must take
+	 * physical time into account and allow for an initialization followed by
+	 * temporal contextualization. Occurrence depends on having resolved any
+	 * occurrent (event or process) and/or having an occurrent scale (the time
+	 * extent is physical and distributed).
+	 * 
+	 * @return true if the resolution implies overall occurrence
+	 */
+	boolean isOccurrent();
 
 	/**
 	 * Resolution is controlled by a task or script monitor.

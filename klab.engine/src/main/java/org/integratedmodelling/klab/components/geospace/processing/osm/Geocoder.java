@@ -74,7 +74,6 @@ public enum Geocoder {
 			try {
 				result = universal.get(OSMNAMES_URL[i] + query + ".js?key=" + OSMNAMES_KEYS[i], OsmNamesResult.class);
 				break;
-
 			} catch (Throwable e) {
 				// continue to next URL
 			}

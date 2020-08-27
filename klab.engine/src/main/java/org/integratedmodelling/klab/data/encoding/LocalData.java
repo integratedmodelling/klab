@@ -73,6 +73,7 @@ public class LocalData implements IKlabData {
 			notifications.add(notification);
 		}
 	}
+	
 
 	/**
 	 * Dumb version that produces artifacts directly and does not use a scope to

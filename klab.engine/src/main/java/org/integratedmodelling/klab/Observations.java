@@ -623,7 +623,7 @@ public enum Observations implements IObservationService {
 
 	public Observer makeROIObserver(String name, IShape shape, ITime time, IMetadata metadata) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
-		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope()));
+		observable.setName(name);
 		observable.setOptional(true);
 		Observer ret = new Observer((Shape) shape, time, observable,
 				Namespaces.INSTANCE.getNamespace(observable.getNamespace()));
