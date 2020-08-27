@@ -409,6 +409,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	protected Behavior<KlabMessage> reactToComponentFiring(ComponentFire message) {
 		// TODO
+		if (message.listenerId != null) {
+			MatchActions actions = componentFireListeners.get(message.listenerId);
+			if (actions != null) {
+				actions.match(message.value);
+			}
+		}
 		return Behaviors.same();
 	}
 
@@ -564,6 +570,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		 * connected to this instance; it will be used as listener ID for the
 		 * ComponentFire message sent when the child fires.
 		 */
+		if (code.getActions().size() > 0) {
+
+			MatchActions actions = new MatchActions(scope);
+			for (Pair<IKActorsValue, IKActorsStatement> adesc : code.getActions()) {
+				actions.matches.add(new Pair<Match, IKActorsStatement>(new Match(adesc.getFirst()), adesc.getSecond()));
+			}
+			this.componentFireListeners.put(actorName, actions);
+		}
 
 		// remove the appId for the children, otherwise their messages will be rerouted
 		actor.tell(new Load(code.getBehavior(), null, scope.runtimeScope).withParent(getContext().getSelf()));
@@ -646,13 +660,38 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	private void executeFire(FireValue code, Scope scope) {
-		if (parentActor != null) {
-			// let our parent know we've fired so that the value can be matched to what
-			// is caught after the 'new' verb. Listener ID is the actor's name.
-			System.out.println("CAZZONE SPARA: " + getContext().getSelf().path().name());
-		} else if (scope.sender != null) {
-			scope.sender.tell(
-					new Fire(scope.listenerId, code.getValue().getValue(), /* TODO FIXME boh */true, scope.appId));
+
+		if (scope.sender != null) {
+
+			/*
+			 * this should happen when a non-main action executes the fire. Must be checked
+			 * first. Fire may happen if the action firing is called again, so don't remove
+			 * the listener.
+			 */
+			scope.sender.tell(new Fire(scope.listenerId, code.getValue().getValue(), false, scope.appId));
+
+		} else if (parentActor != null) {
+
+			/*
+			 * No sender = the fire is not coming from an internal action but goes out to
+			 * the world, which in this case is the parent actor. Let our parent know we've
+			 * fired with a message carrying the name it knows us by, so that the value can
+			 * be matched to what is caught after the 'new' verb. Listener ID is the actor's
+			 * name.
+			 */
+			parentActor.tell(new ComponentFire(getContext().getSelf().path().name(), code.getValue().getValue(),
+					getContext().getSelf()));
+
+		} else {
+
+			/*
+			 * Scureggia nello spazio: nothing is listening from the behaviors being
+			 * executed.
+			 * 
+			 * TODO - an actor firing with no action listening and no parent should just
+			 * send to either the user actor or (maybe) its parent identity?
+			 */
+
 		}
 	}
 

@@ -252,10 +252,10 @@ public class SystemBehavior {
 
 		Object value;
 		boolean finalize;
-		Long listenerId;
+		String listenerId;
 		ActorRef<KlabMessage> child;
 
-		public ComponentFire(Long listenerId, Object firedValue, ActorRef<KlabMessage> child) {
+		public ComponentFire(String listenerId, Object firedValue, ActorRef<KlabMessage> child) {
 			this.value = firedValue;
 			this.listenerId = listenerId;
 			this.child = child;

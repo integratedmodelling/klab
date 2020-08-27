@@ -115,6 +115,14 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 		IParameters<String> getArguments();
 
 		/**
+		 * Actions with the corresponding pattern to match values fired by the child
+		 * actor.
+		 * 
+		 * @return
+		 */
+		List<Pair<IKActorsValue, IKActorsStatement>> getActions();
+
+		/**
 		 * Each instantiation action needs a name to reference the actor, so that the
 		 * parent actors can dispatch messages to children appropriately when the actors
 		 * create external controllers such as view components. If the instantiation is
