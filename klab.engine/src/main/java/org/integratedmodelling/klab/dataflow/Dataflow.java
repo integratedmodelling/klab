@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 
+import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IContextualizable.InteractiveParameter;
@@ -52,6 +53,8 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.TypeUtils;
 import org.integratedmodelling.klab.utils.Utils;
+import org.jgrapht.Graph;
+import org.jgrapht.graph.DefaultDirectedGraph;
 
 /**
  * The semantically aware implementation of {@link IDataflow}, built by the
@@ -86,7 +89,6 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private String description;
 	private DirectObservation context;
 	private ResolutionScope resolutionScope;
-//	private boolean primary = true;
 	IDirectObservation relationshipSource;
 	IDirectObservation relationshipTarget;
 
@@ -110,6 +112,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private Collection<IObservation> configurationTargets;
 	private String targetName;
 
+	// dependency structure, shared along the entire hierarchy
+	Graph<ObservedConcept, DefaultEdge> dependencies;
+	
 	class AnnotationParameterValue {
 
 		String annotationId;
@@ -176,6 +181,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 		reset();
 
+		/*
+		 * TODO build the observable dependency hierarcy
+		 */
+		this.dependencies = buildDependencies();
+
+		
 		/*
 		 * we need the initialization scale for the dataflow but we must create our
 		 * targets with the overall scale. Problem is, occurrent actuators must create
@@ -417,6 +428,25 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 	}
 
+
+	private Graph<ObservedConcept, DefaultEdge> buildDependencies() {
+		Graph<ObservedConcept, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
+		for (IActuator actuator : getActuators()) {
+			buildDependencies((Actuator) actuator, ret);
+		}
+		return ret;
+	}
+
+	private ObservedConcept buildDependencies(Actuator actuator, Graph<ObservedConcept, DefaultEdge> graph) {
+
+		ObservedConcept observable = new ObservedConcept(actuator.getObservable(), actuator.getMode());
+		graph.addVertex(observable);
+		for (IActuator child : actuator.getActuators()) {
+			graph.addEdge(buildDependencies((Actuator)child, graph), observable);
+		}
+		return observable;
+	}
+	
 	/**
 	 * If the parameters in a specified annotation have been changed by the user,
 	 * return a new annotation with the new parameters.
@@ -572,15 +602,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	 * @return
 	 */
 	public boolean isPrimary() {
-//		return primary;
 		return parent == null;
 	}
-
-//	public Dataflow setPrimary(boolean b) {
-//		this.primary = b;
-//		return this;
-//	}
-
+	
 	public String getDescription() {
 		return description;
 	}
@@ -758,5 +782,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public Dataflow withNotificationMode(INotification.Mode mode) {
 		this.notificationMode = mode;
 		return this;
+	}
+	
+	public Graph<ObservedConcept, DefaultEdge> getDependencies() {
+		return this.dependencies;
 	}
 }

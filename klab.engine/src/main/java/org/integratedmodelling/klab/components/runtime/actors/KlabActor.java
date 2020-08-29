@@ -53,6 +53,7 @@ import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
+import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
@@ -89,7 +90,17 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 * that their run() method is reentrant.
 	 */
 	protected Map<String, KlabAction> actionCache = Collections.synchronizedMap(new HashMap<>());
-	private Map<String, KlabAction.Actor> localActors = Collections.synchronizedMap(new HashMap<>());
+
+	/*
+	 * actions that were created from system actions rather than actual actors, here
+	 * so we can talk to them from k.Actors
+	 */
+	private Map<String, KlabAction.Actor> localActions = Collections.synchronizedMap(new HashMap<>());
+
+	/*
+	 * if we have a view (either a layout for an app or a component for a component)
+	 * we put it here at initialization.
+	 */
 	private ViewComponent view;
 
 	protected ActorRef<KlabMessage> getDispatcher() {
@@ -553,6 +564,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		if (this.identity instanceof Observation) {
 			child = ObservationActor.create((Observation) this.identity, null);
 		} else if (this.identity instanceof Session) {
+			/**
+			 * TODO if the actor has a view, use a behavior can address
+			 * enable/disable/hide messages and the like.
+			 */
 			child = SessionActor.create((Session) this.identity, null);
 		} else if (this.identity instanceof EngineUser) {
 			child = UserActor.create((EngineUser) this.identity);
@@ -729,17 +744,47 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 			String receiver = "self";
 			String message = code.getMessage();
+			int index = 0;
 			if (message.contains(".")) {
 				receiver = Path.getLeading(message, '.');
 				message = Path.getLast(message, '.');
 			}
 
-			if (this.localActors.containsKey(receiver)) {
+			/*
+			 * if the name has _nnn appended, remove it to get the index
+			 */
+			if (receiver.contains("_")) {
+				int rn = receiver.lastIndexOf('_');
+				String num = receiver.substring(rn+1);
+				if (NumberUtils.encodesInteger(num)) {
+					index = Integer.parseInt(num);
+					receiver = receiver.substring(0, rn-1);
+				}
+			}
+
+			/*
+			 * "incarnated" local action receivers have priority
+			 */
+			if (this.localActions.containsKey(receiver)) {
 				KActorsMessage m = new KActorsMessage(getDispatcher(), receiver, message,
 						((KActorsActionCall) code).getInternalId(), code.getArguments(), scope.withNotifyId(notifyId),
 						appId);
-				this.localActors.get(receiver).onMessage(m, scope);
+				this.localActions.get(receiver).onMessage(m, scope);
 				return;
+			}
+
+			/*
+			 * handle actor (possibly a family) in childInstances
+			 */
+			if (this.childInstances.containsKey(receiver)) {
+				List<ActorRef<KlabMessage>> children = this.childInstances.get(receiver);
+				if (children.size() < index) {
+					children.get(index)
+							.tell(new KActorsMessage(getDispatcher(), receiver, message,
+									((KActorsActionCall) code).getInternalId(), code.getArguments(),
+									scope.withNotifyId(notifyId), appId));
+					return;
+				}
 			}
 
 			ActorRef<KlabMessage> recipient = null;
@@ -858,7 +903,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 								t = ((KActorsValue) t).getValue();
 							}
 							((KlabAction.Actor) a).setName(t.toString());
-							this.localActors.put(((KlabAction.Actor) a).getName(), (KlabAction.Actor) a);
+							this.localActions.put(((KlabAction.Actor) a).getName(), (KlabAction.Actor) a);
 						}
 					}
 

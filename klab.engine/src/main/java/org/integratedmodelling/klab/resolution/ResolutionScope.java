@@ -285,13 +285,13 @@ public class ResolutionScope implements IResolutionScope {
 		this.monitor = monitor;
 	}
 
-	private ResolutionScope(Subject observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
-		this.coverage = Coverage.full(observer.getScale());
-		this.context = observer;
+	private ResolutionScope(Subject contextSubject, IMonitor monitor, Collection<String> scenarios) throws KlabException {
+		this.coverage = Coverage.full(contextSubject.getScale());
+		this.context = contextSubject;
 		this.scenarios.addAll(scenarios);
-		this.resolutionNamespace = observer.getNamespace();
+		this.resolutionNamespace = contextSubject.getNamespace();
 		this.monitor = monitor;
-		this.occurrent = this.coverage.isTemporallyDistributed();
+		this.occurrent = contextSubject.getScope().isOccurrent() || this.coverage.isTemporallyDistributed();
 	}
 
 	private ResolutionScope(Observer observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {

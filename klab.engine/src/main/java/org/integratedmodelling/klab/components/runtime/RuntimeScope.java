@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.commons.collections.IteratorUtils;
+import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -71,6 +72,7 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Actuator.Computation;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
@@ -145,6 +147,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	// cache for repeated dataflow resolutions
 	Map<ResolvedObservable, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
 	private IActuator actuator;
+	private boolean occurrent;
 
 	public RuntimeScope(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
@@ -257,12 +260,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			ret.target = createTarget(indirectTarget);
 		}
 		ret.target = catalog.get(ret.targetName);
-
-		/*
-		 * this is the only one where the symbol table is kept.
-		 */
-//		ret.symbolTable.get().putAll(symbolTable);
-
 		return ret;
 	}
 
@@ -825,7 +822,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		ret.actuator = actuator;
 		ret.contextSubject = scope.getContext();
 		ret.dataflow = (Dataflow) dataflow;
-
+		
 		for (IActuator a : actuator.getActuators()) {
 			if (!((Actuator) a).isExported()) {
 				String id = a.getAlias() == null ? a.getName() : a.getAlias();
@@ -950,7 +947,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 */
 		Map<String, Triple<Observable, Mode, Boolean>> targetObservables = new HashMap<>();
 
-		Pair<String, IArtifact> existing = findArtifact(actuator.getObservable());		
+		Pair<String, IArtifact> existing = findArtifact(actuator.getObservable());
 		if (existing != null) {
 			return existing.getSecond();
 		}
@@ -1578,6 +1575,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 						root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope.getScale().getTime(),
 								monitor);
 					}
+					root.occurrent = true;
 					((Scheduler) root.scheduler).schedule(action, observation, Time.create(aa), this);
 
 				}
@@ -1635,6 +1633,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 
 			RuntimeScope root = getRootScope();
+			root.occurrent = true;
 
 			if (root.scheduler == null) {
 				root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope.getScale().getTime(), monitor);
@@ -1660,8 +1659,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		for (String key : catalog.keySet()) {
 			IArtifact artifact = catalog.get(key);
 			if (artifact instanceof ObservationGroup && artifact.getType().isOccurrent()) {
-				ret.catalog.put(key, ((IObservation)artifact).at(ret.scale.getTime()));
-			} 
+				ret.catalog.put(key, ((IObservation) artifact).at(ret.scale.getTime()));
+			}
 		}
 
 		return ret;
@@ -1705,13 +1704,13 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	@Override
-	public Collection<IObservable> getDependents(IObservable observable) {
+	public Collection<IObservable> getDependents(IObservable observable, Mode resolutionMode) {
 		List<IObservable> ret = new ArrayList<>();
 		return ret;
 	}
 
 	@Override
-	public Collection<IObservable> getPrecursors(IObservable observable) {
+	public Collection<IObservable> getPrecursors(IObservable observable, Mode resolutionMode) {
 		List<IObservable> ret = new ArrayList<>();
 		return ret;
 	}
@@ -1772,6 +1771,16 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				listener.newObservation(object, rootSubject);
 			}
 		}
+	}
+
+	@Override
+	public boolean isOccurrent() {
+		// TODO Auto-generated method stub
+		return ((RuntimeScope) getRootScope()).occurrent;
+	}
+
+	public void setOccurrent() {
+		getRootScope().occurrent = true;
 	}
 
 }

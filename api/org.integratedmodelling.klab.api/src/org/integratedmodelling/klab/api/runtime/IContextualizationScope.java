@@ -37,6 +37,8 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -101,22 +103,24 @@ public interface IContextualizationScope extends IParameters<String> {
 	IProvenance getProvenance();
 
 	/**
-	 * Return all the observable that depend directly on the passed one in this
-	 * context.
+	 * Return all the observables that depend directly on the passed one in this
+	 * context for their passed resolution.
 	 * 
 	 * @param observable
+	 * @param resolutionMode TODO
 	 * @return
 	 */
-	Collection<IObservable> getDependents(IObservable observable);
+	Collection<IObservable> getDependents(IObservable observable, IResolutionScope.Mode resolutionMode);
 
 	/**
 	 * Return all the observables that the passed one depends directly on in this
-	 * context.
+	 * context for their passed resolution.
 	 * 
 	 * @param observable
+	 * @param resolutionMode TODO
 	 * @return
 	 */
-	Collection<IObservable> getPrecursors(IObservable observable);
+	Collection<IObservable> getPrecursors(IObservable observable, Mode resolutionMode);
 
 	/**
 	 * <p>

@@ -103,6 +103,10 @@ public class ObservationStrategy {
 
 		List<ObservationStrategy> ret = new ArrayList<>();
 
+		if (scope.isOccurrent()) {
+			System.out.println("OCCURS!");
+		}
+		
 		for (IObservable dep : model.getDependencies()) {
 			// add all the active dependencies. Only inherent learners deactivate them so far.
 			if (((Observable)dep).isActive()) {

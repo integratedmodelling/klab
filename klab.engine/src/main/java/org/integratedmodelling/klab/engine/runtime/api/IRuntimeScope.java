@@ -21,7 +21,6 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IConfigurationDetector;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
-import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -158,14 +157,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	void setScale(IScale geometry);
 
-//	/**
-//	 * Called after successful computation passing each annotation that was defined
-//	 * for the model.
-//	 * 
-//	 * @param annotation
-//	 */
-//	void processAnnotation(IAnnotation annotation);
-
 	/**
 	 * Specialize the provenance so we can use setting methods on it.
 	 * 
@@ -190,19 +181,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @return the set of all children of class cls
 	 */
 	<T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls);
-
-//	/**
-//	 * Build the link between a parent and a child artifact. Should only be used in
-//	 * the few cases when observations are created by hand, using pre-built
-//	 * instances such as rescaling states, instead of through
-//	 * {@link #newObservation(org.integratedmodelling.klab.api.knowledge.IObservable, String, IScale)}
-//	 * or
-//	 * {@link #newRelationship(org.integratedmodelling.klab.api.knowledge.IObservable, String, IScale, org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact, org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact)}.
-//	 * 
-//	 * @param parent
-//	 * @param child
-//	 */
-//	void link(IArtifact parent, IArtifact child);
 
 	/**
 	 * Set the passed artifact as the current target, ensuring it is properly
@@ -391,7 +369,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings();
 
-
 	/**
 	 * Scopes must maintain a synchronized set of IDs for all observations that are
 	 * being watched by the view. This is subscribed to through messages sent to the
@@ -425,5 +402,13 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @param object
 	 */
 	void notifyListeners(IObservation object);
+
+	/**
+	 * If true, the root context has seen occurrent observations or occurrent scales
+	 * at some point, so the occurrence of anything that is resolved or computed
+	 * next will have to be consider. The occurrent status is global across a
+	 * context and cannot be revoked after setting.
+	 */
+	boolean isOccurrent();
 
 }

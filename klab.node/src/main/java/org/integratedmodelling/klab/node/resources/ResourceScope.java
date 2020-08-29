@@ -621,18 +621,6 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	@Override
-	public Collection<IObservable> getDependents(IObservable observable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<IObservable> getPrecursors(IObservable observable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public IState addState(IDirectObservation target, IObservable observable, Object data) {
 		// TODO Auto-generated method stub
 		return null;
@@ -691,6 +679,24 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 	public void notifyListeners(IObservation object) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public boolean isOccurrent() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Collection<IObservable> getDependents(IObservable observable, Mode resolutionMode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<IObservable> getPrecursors(IObservable observable, Mode resolutionMode) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }
