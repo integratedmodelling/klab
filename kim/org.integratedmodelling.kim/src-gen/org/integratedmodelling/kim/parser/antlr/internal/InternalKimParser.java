@@ -1407,7 +1407,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                     	      										if (current==null) {
                     	      											current = createModelElement(grammarAccess.getModelStatementRule());
                     	      										}
-                    	      										setWithLastConsumed(current, "inactive", lv_inactive_3_0 != null, "void");
+                    	      										setWithLastConsumed(current, "inactive", true, "void");
                     	      									
                     	    }
 
@@ -1478,7 +1478,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                     	              											if (current==null) {
                     	              												current = createModelElement(grammarAccess.getModelStatementRule());
                     	              											}
-                    	              											setWithLastConsumed(current, "projectPrivate", lv_projectPrivate_4_0 != null, "project");
+                    	              											setWithLastConsumed(current, "projectPrivate", true, "project");
                     	              										
                     	            }
 
@@ -1507,7 +1507,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                     	      											if (current==null) {
                     	      												current = createModelElement(grammarAccess.getModelStatementRule());
                     	      											}
-                    	      											setWithLastConsumed(current, "private", lv_private_5_0 != null, "private");
+                    	      											setWithLastConsumed(current, "private", true, "private");
                     	      										
                     	    }
 
@@ -2175,7 +2175,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getModelBodyStatementRule());
                       					}
-                      					setWithLastConsumed(current, "instantiator", lv_instantiator_0_0 != null, "each");
+                      					setWithLastConsumed(current, "instantiator", true, "each");
                       				
                     }
 
@@ -3007,7 +3007,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getModelBodyStatementRule());
                               							}
-                              							setWithLastConsumed(current, "discretization", lv_discretization_21_0 != null, "discretized");
+                              							setWithLastConsumed(current, "discretization", true, "discretized");
                               						
                             }
 
@@ -4028,7 +4028,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getClassifierRule());
                       						}
-                      						setWithLastConsumed(current, "otherwise", lv_otherwise_1_0 != null, "otherwise");
+                      						setWithLastConsumed(current, "otherwise", true, "otherwise");
                       					
                     }
 
@@ -4096,7 +4096,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getClassifierRule());
                               								}
-                              								setWithLastConsumed(current, "negated", lv_negated_3_0 != null, "unless");
+                              								setWithLastConsumed(current, "negated", true, "unless");
                               							
                             }
 
@@ -5004,7 +5004,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getClassifierRHSRule());
                       					}
-                      					setWithLastConsumed(current, "star", lv_star_22_0 != null, "*");
+                      					setWithLastConsumed(current, "star", true, "*");
                       				
                     }
 
@@ -5809,7 +5809,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getClassifierRHSWithIdRule());
                       					}
-                      					setWithLastConsumed(current, "star", lv_star_18_0 != null, "*");
+                      					setWithLastConsumed(current, "star", true, "*");
                       				
                     }
 
@@ -7795,7 +7795,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getTableClassifierRule());
                       					}
-                      					setWithLastConsumed(current, "star", lv_star_20_0 != null, "*");
+                      					setWithLastConsumed(current, "star", true, "*");
                       				
                     }
 
@@ -7827,7 +7827,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getTableClassifierRule());
                       					}
-                      					setWithLastConsumed(current, "anything", lv_anything_21_0 != null, "#");
+                      					setWithLastConsumed(current, "anything", true, "#");
                       				
                     }
 
@@ -7995,7 +7995,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               						if (current==null) {
                               							current = createModelElement(grammarAccess.getActionSpecificationRule());
                               						}
-                              						setWithLastConsumed(current, "integrated", lv_integrated_0_0 != null, "aggregated");
+                              						setWithLastConsumed(current, "integrated", true, "aggregated");
                               					
                             }
 
@@ -8024,7 +8024,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getActionSpecificationRule());
                       						}
-                      						setWithLastConsumed(current, "over", lv_over_1_0 != null, "over");
+                      						setWithLastConsumed(current, "over", true, "over");
                       					
                     }
 
@@ -8298,7 +8298,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getActionSpecificationRule());
                               							}
-                              							setWithLastConsumed(current, "trigger", lv_trigger_8_0 != null, "on");
+                              							setWithLastConsumed(current, "trigger", true, "on");
                               						
                             }
 
@@ -8387,7 +8387,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                       								if (current==null) {
                                       									current = createModelElement(grammarAccess.getActionSpecificationRule());
                                       								}
-                                      								setWithLastConsumed(current, "initialization", lv_initialization_9_0 != null, "definition");
+                                      								setWithLastConsumed(current, "initialization", true, "definition");
                                       							
                                     }
 
@@ -8419,7 +8419,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                       								if (current==null) {
                                       									current = createModelElement(grammarAccess.getActionSpecificationRule());
                                       								}
-                                      								setWithLastConsumed(current, "instantiation", lv_instantiation_10_0 != null, "instantiation");
+                                      								setWithLastConsumed(current, "instantiation", true, "instantiation");
                                       							
                                     }
 
@@ -8451,7 +8451,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                       								if (current==null) {
                                       									current = createModelElement(grammarAccess.getActionSpecificationRule());
                                       								}
-                                      								setWithLastConsumed(current, "termination", lv_termination_11_0 != null, "termination");
+                                      								setWithLastConsumed(current, "termination", true, "termination");
                                       							
                                     }
 
@@ -8559,7 +8559,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                                       											if (current==null) {
                                                       												current = createModelElement(grammarAccess.getActionSpecificationRule());
                                                       											}
-                                                      											setWithLastConsumed(current, "anyContextEvent", lv_anyContextEvent_14_0 != null, "context");
+                                                      											setWithLastConsumed(current, "anyContextEvent", true, "context");
                                                       										
                                                     }
 
@@ -8591,7 +8591,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                                       											if (current==null) {
                                                       												current = createModelElement(grammarAccess.getActionSpecificationRule());
                                                       											}
-                                                      											setWithLastConsumed(current, "relatedEventContext", lv_relatedEventContext_15_0 != null, "related");
+                                                      											setWithLastConsumed(current, "relatedEventContext", true, "related");
                                                       										
                                                     }
 
@@ -9290,7 +9290,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getActionRule());
                       						}
-                      						setWithLastConsumed(current, "set", lv_set_0_0 != null, "set");
+                      						setWithLastConsumed(current, "set", true, "set");
                       					
                     }
 
@@ -9469,7 +9469,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                       									if (current==null) {
                                       										current = createModelElement(grammarAccess.getActionRule());
                                       									}
-                                      									setWithLastConsumed(current, "conditionNegative", lv_conditionNegative_5_0 != null, "unless");
+                                      									setWithLastConsumed(current, "conditionNegative", true, "unless");
                                       								
                                     }
 
@@ -9557,7 +9557,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getActionRule());
                       						}
-                      						setWithLastConsumed(current, "integrate", lv_integrate_7_0 != null, "integrate");
+                      						setWithLastConsumed(current, "integrate", true, "integrate");
                       					
                     }
 
@@ -9736,7 +9736,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                       									if (current==null) {
                                       										current = createModelElement(grammarAccess.getActionRule());
                                       									}
-                                      									setWithLastConsumed(current, "conditionNegative", lv_conditionNegative_12_0 != null, "unless");
+                                      									setWithLastConsumed(current, "conditionNegative", true, "unless");
                                       								
                                     }
 
@@ -9854,7 +9854,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getActionRule());
                               							}
-                              							setWithLastConsumed(current, "do", lv_do_14_1 != null, null);
+                              							setWithLastConsumed(current, "do", true, null);
                               						
                             }
 
@@ -9874,7 +9874,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getActionRule());
                               							}
-                              							setWithLastConsumed(current, "do", lv_do_14_2 != null, null);
+                              							setWithLastConsumed(current, "do", true, null);
                               						
                             }
 
@@ -9894,7 +9894,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getActionRule());
                               							}
-                              							setWithLastConsumed(current, "do", lv_do_14_3 != null, null);
+                              							setWithLastConsumed(current, "do", true, null);
                               						
                             }
 
@@ -10079,7 +10079,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                       									if (current==null) {
                                       										current = createModelElement(grammarAccess.getActionRule());
                                       									}
-                                      									setWithLastConsumed(current, "conditionNegative", lv_conditionNegative_19_0 != null, "unless");
+                                      									setWithLastConsumed(current, "conditionNegative", true, "unless");
                                       								
                                     }
 
@@ -10167,7 +10167,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getActionRule());
                       						}
-                      						setWithLastConsumed(current, "move", lv_move_21_0 != null, "move");
+                      						setWithLastConsumed(current, "move", true, "move");
                       					
                     }
 
@@ -10255,7 +10255,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getActionRule());
                               							}
-                              							setWithLastConsumed(current, "away", lv_away_23_0 != null, "away");
+                              							setWithLastConsumed(current, "away", true, "away");
                               						
                             }
 
@@ -11046,7 +11046,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getComputableValueRule());
                       					}
-                      					setWithLastConsumed(current, "null", lv_null_7_0 != null, "unknown");
+                      					setWithLastConsumed(current, "null", true, "unknown");
                       				
                     }
 
@@ -11700,7 +11700,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getExecutableValueRule());
                               							}
-                              							setWithLastConsumed(current, "conditionNegated", lv_conditionNegated_6_0 != null, "unless");
+                              							setWithLastConsumed(current, "conditionNegated", true, "unless");
                               						
                             }
 
@@ -12639,7 +12639,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	              											if (current==null) {
             	              												current = createModelElement(grammarAccess.getNamespaceRule());
             	              											}
-            	              											setWithLastConsumed(current, "projectPrivate", lv_projectPrivate_3_0 != null, "project");
+            	              											setWithLastConsumed(current, "projectPrivate", true, "project");
             	              										
             	            }
 
@@ -12668,7 +12668,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      											if (current==null) {
             	      												current = createModelElement(grammarAccess.getNamespaceRule());
             	      											}
-            	      											setWithLastConsumed(current, "private", lv_private_4_0 != null, "private");
+            	      											setWithLastConsumed(current, "private", true, "private");
             	      										
             	    }
 
@@ -12731,7 +12731,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      										if (current==null) {
             	      											current = createModelElement(grammarAccess.getNamespaceRule());
             	      										}
-            	      										setWithLastConsumed(current, "inactive", lv_inactive_5_0 != null, "void");
+            	      										setWithLastConsumed(current, "inactive", true, "void");
             	      									
             	    }
 
@@ -12828,7 +12828,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getNamespaceRule());
                       						}
-                      						setWithLastConsumed(current, "scenario", lv_scenario_7_0 != null, "scenario");
+                      						setWithLastConsumed(current, "scenario", true, "scenario");
                       					
                     }
 
@@ -12860,7 +12860,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getNamespaceRule());
                       						}
-                      						setWithLastConsumed(current, "worldviewBound", lv_worldviewBound_8_0 != null, "worldview");
+                      						setWithLastConsumed(current, "worldviewBound", true, "worldview");
                       					
                     }
 
@@ -13573,7 +13573,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	              												if (current==null) {
             	              													current = createModelElement(grammarAccess.getNamespaceRule());
             	              												}
-            	              												setWithLastConsumed(current, "rootDomain", lv_rootDomain_29_0 != null, "root");
+            	              												setWithLastConsumed(current, "rootDomain", true, "root");
             	              											
             	            }
 
@@ -14764,7 +14764,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getImportRule());
                               							}
-                              							setWithLastConsumed(current, "star", lv_star_1_0 != null, "*");
+                              							setWithLastConsumed(current, "star", true, "*");
                               						
                             }
 
@@ -17326,7 +17326,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getObservableSemanticsRule());
                       					}
-                      					setWithLastConsumed(current, "generic", lv_generic_2_0 != null, "any");
+                      					setWithLastConsumed(current, "generic", true, "any");
                       				
                     }
 
@@ -17900,7 +17900,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	              											if (current==null) {
             	              												current = createModelElement(grammarAccess.getObservableSemanticsRule());
             	              											}
-            	              											setWithLastConsumed(current, "optional", lv_optional_15_0 != null, "optional");
+            	              											setWithLastConsumed(current, "optional", true, "optional");
             	              										
             	            }
 
@@ -19070,7 +19070,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
                       					}
-                      					setWithLastConsumed(current, "generic", lv_generic_3_0 != null, "any");
+                      					setWithLastConsumed(current, "generic", true, "any");
                       				
                     }
 
@@ -19644,7 +19644,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	              											if (current==null) {
             	              												current = createModelElement(grammarAccess.getAnnotatedObservableSemanticsRule());
             	              											}
-            	              											setWithLastConsumed(current, "optional", lv_optional_16_0 != null, "optional");
+            	              											setWithLastConsumed(current, "optional", true, "optional");
             	              										
             	            }
 
@@ -20497,7 +20497,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                     	              													if (current==null) {
                     	              														current = createModelElement(grammarAccess.getDependencyRule());
                     	              													}
-                    	              													setWithLastConsumed(current, "optional", lv_optional_9_0 != null, "optional");
+                    	              													setWithLastConsumed(current, "optional", true, "optional");
                     	              												
                     	            }
 
@@ -20968,7 +20968,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                     	              												if (current==null) {
                     	              													current = createModelElement(grammarAccess.getConceptDeclarationRule());
                     	              												}
-                    	              												setWithLastConsumed(current, "distributedOfInherency", lv_distributedOfInherency_3_0 != null, "each");
+                    	              												setWithLastConsumed(current, "distributedOfInherency", true, "each");
                     	              											
                     	            }
 
@@ -21092,7 +21092,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                     	              												if (current==null) {
                     	              													current = createModelElement(grammarAccess.getConceptDeclarationRule());
                     	              												}
-                    	              												setWithLastConsumed(current, "distributedForInherency", lv_distributedForInherency_6_0 != null, "each");
+                    	              												setWithLastConsumed(current, "distributedForInherency", true, "each");
                     	              											
                     	            }
 
@@ -21720,7 +21720,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                     	              												if (current==null) {
                     	              													current = createModelElement(grammarAccess.getConceptDeclarationRule());
                     	              												}
-                    	              												setWithLastConsumed(current, "distributedTemporalInherency", lv_distributedTemporalInherency_24_0 != null, "each");
+                    	              												setWithLastConsumed(current, "distributedTemporalInherency", true, "each");
                     	              											
                     	            }
 
@@ -21844,7 +21844,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                     	              												if (current==null) {
                     	              													current = createModelElement(grammarAccess.getConceptDeclarationRule());
                     	              												}
-                    	              												setWithLastConsumed(current, "distributedWithinInherency", lv_distributedWithinInherency_27_0 != null, "each");
+                    	              												setWithLastConsumed(current, "distributedWithinInherency", true, "each");
                     	              											
                     	            }
 
@@ -24075,7 +24075,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptReferenceRule());
                       						}
-                      						setWithLastConsumed(current, "template", lv_template_44_0 != null, "}");
+                      						setWithLastConsumed(current, "template", true, "}");
                       					
                     }
 
@@ -24425,7 +24425,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleConcept"
-    // InternalKim.g:8927:1: ruleConcept returns [EObject current=null] : ( ( ( ( (lv_negated_0_1= 'not' | lv_negated_0_2= 'no' ) ) )? ( (lv_name_1_0= ruleConceptReference ) ) ( ( (lv_authConcept_2_0= 'identified' ) ) otherlv_3= 'as' ( ( ( (lv_stringIdentifier_4_1= RULE_ID | lv_stringIdentifier_4_2= RULE_STRING | lv_stringIdentifier_4_3= RULE_UPPERCASE_ID | lv_stringIdentifier_4_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_5_0= RULE_INT ) ) ) otherlv_6= 'by' ( ( (lv_authority_7_1= RULE_UPPERCASE_ID | lv_authority_7_2= RULE_UPPERCASE_PATH ) ) ) )? ) | ( ( (lv_presence_8_0= 'presence' ) ) otherlv_9= 'of' ( (lv_concept_10_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_count_11_0= 'count' ) ) otherlv_12= 'of' ( (lv_concept_13_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_distance_14_0= 'distance' ) ) (otherlv_15= 'to' | otherlv_16= 'from' ) ( (lv_concept_17_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_probability_18_0= 'probability' ) ) otherlv_19= 'of' ( (lv_concept_20_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_assessment_21_0= 'assessment' ) ) otherlv_22= 'of' ( (lv_concept_23_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_change_28_0= 'changed' ) ) ) ( (lv_concept_29_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_uncertainty_30_0= 'uncertainty' ) ) otherlv_31= 'of' ( (lv_concept_32_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_magnitude_33_0= 'magnitude' ) ) otherlv_34= 'of' ( (lv_concept_35_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_level_36_0= 'level' ) ) otherlv_37= 'of' ( (lv_concept_38_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_type_39_0= 'type' ) ) otherlv_40= 'of' ( (lv_concept_41_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_observability_42_0= 'observability' ) ) otherlv_43= 'of' ( (lv_concept_44_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_proportion_45_0= 'proportion' ) ) otherlv_46= 'of' ( (lv_concept_47_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_48= 'in' ) ( (lv_other_49_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_percentage_50_0= 'percentage' ) ) otherlv_51= 'of' ( (lv_concept_52_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_53= 'in' ) ( (lv_other_54_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_ratio_55_0= 'ratio' ) ) otherlv_56= 'of' ( (lv_concept_57_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_58= 'to' ) ( (lv_other_59_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_monetary_60_0= 'monetary' ) )? ( (lv_value_61_0= 'value' ) ) otherlv_62= 'of' ( (lv_concept_63_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'over' )=>otherlv_64= 'over' ) ( (lv_other_65_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_occurrence_66_0= 'occurrence' ) ) otherlv_67= 'of' ( (lv_concept_68_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_authConcept_69_0= 'identity' ) ) ( ( ( (lv_stringIdentifier_70_1= RULE_ID | lv_stringIdentifier_70_2= RULE_STRING | lv_stringIdentifier_70_3= RULE_UPPERCASE_ID | lv_stringIdentifier_70_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_71_0= RULE_INT ) ) ) otherlv_72= 'by' ( ( (lv_authority_73_1= RULE_UPPERCASE_ID | lv_authority_73_2= RULE_UPPERCASE_PATH ) ) ) ) | (otherlv_74= '(' ( (lv_declaration_75_0= ruleExpression ) ) otherlv_76= ')' ) ) ;
+    // InternalKim.g:8927:1: ruleConcept returns [EObject current=null] : ( ( ( ( (lv_negated_0_1= 'not' | lv_negated_0_2= 'no' ) ) )? ( (lv_name_1_0= ruleConceptReference ) ) ( ( (lv_authConcept_2_0= 'identified' ) ) otherlv_3= 'as' ( ( ( (lv_stringIdentifier_4_1= RULE_ID | lv_stringIdentifier_4_2= RULE_STRING | lv_stringIdentifier_4_3= RULE_UPPERCASE_ID | lv_stringIdentifier_4_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_5_0= RULE_INT ) ) ) otherlv_6= 'by' ( ( (lv_authority_7_1= RULE_UPPERCASE_ID | lv_authority_7_2= RULE_UPPERCASE_PATH ) ) ) )? ) | ( ( (lv_presence_8_0= 'presence' ) ) otherlv_9= 'of' ( (lv_concept_10_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_count_11_0= 'count' ) ) otherlv_12= 'of' ( (lv_concept_13_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_distance_14_0= 'distance' ) ) (otherlv_15= 'to' | otherlv_16= 'from' ) ( (lv_concept_17_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_probability_18_0= 'probability' ) ) otherlv_19= 'of' ( (lv_concept_20_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_assessment_21_0= 'assessment' ) ) otherlv_22= 'of' ( (lv_concept_23_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_changed_28_0= 'changed' ) ) ) ( (lv_concept_29_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_uncertainty_30_0= 'uncertainty' ) ) otherlv_31= 'of' ( (lv_concept_32_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_magnitude_33_0= 'magnitude' ) ) otherlv_34= 'of' ( (lv_concept_35_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_level_36_0= 'level' ) ) otherlv_37= 'of' ( (lv_concept_38_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_type_39_0= 'type' ) ) otherlv_40= 'of' ( (lv_concept_41_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_observability_42_0= 'observability' ) ) otherlv_43= 'of' ( (lv_concept_44_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_proportion_45_0= 'proportion' ) ) otherlv_46= 'of' ( (lv_concept_47_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_48= 'in' ) ( (lv_other_49_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_percentage_50_0= 'percentage' ) ) otherlv_51= 'of' ( (lv_concept_52_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_53= 'in' ) ( (lv_other_54_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_ratio_55_0= 'ratio' ) ) otherlv_56= 'of' ( (lv_concept_57_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_58= 'to' ) ( (lv_other_59_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_monetary_60_0= 'monetary' ) )? ( (lv_value_61_0= 'value' ) ) otherlv_62= 'of' ( (lv_concept_63_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'over' )=>otherlv_64= 'over' ) ( (lv_other_65_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_occurrence_66_0= 'occurrence' ) ) otherlv_67= 'of' ( (lv_concept_68_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_authConcept_69_0= 'identity' ) ) ( ( ( (lv_stringIdentifier_70_1= RULE_ID | lv_stringIdentifier_70_2= RULE_STRING | lv_stringIdentifier_70_3= RULE_UPPERCASE_ID | lv_stringIdentifier_70_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_71_0= RULE_INT ) ) ) otherlv_72= 'by' ( ( (lv_authority_73_1= RULE_UPPERCASE_ID | lv_authority_73_2= RULE_UPPERCASE_PATH ) ) ) ) | (otherlv_74= '(' ( (lv_declaration_75_0= ruleExpression ) ) otherlv_76= ')' ) ) ;
     public final EObject ruleConcept() throws RecognitionException {
         EObject current = null;
 
@@ -24456,7 +24456,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         Token lv_change_25_0=null;
         Token lv_rate_26_0=null;
         Token otherlv_27=null;
-        Token lv_change_28_0=null;
+        Token lv_changed_28_0=null;
         Token lv_uncertainty_30_0=null;
         Token otherlv_31=null;
         Token lv_magnitude_33_0=null;
@@ -24542,10 +24542,10 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalKim.g:8933:2: ( ( ( ( ( (lv_negated_0_1= 'not' | lv_negated_0_2= 'no' ) ) )? ( (lv_name_1_0= ruleConceptReference ) ) ( ( (lv_authConcept_2_0= 'identified' ) ) otherlv_3= 'as' ( ( ( (lv_stringIdentifier_4_1= RULE_ID | lv_stringIdentifier_4_2= RULE_STRING | lv_stringIdentifier_4_3= RULE_UPPERCASE_ID | lv_stringIdentifier_4_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_5_0= RULE_INT ) ) ) otherlv_6= 'by' ( ( (lv_authority_7_1= RULE_UPPERCASE_ID | lv_authority_7_2= RULE_UPPERCASE_PATH ) ) ) )? ) | ( ( (lv_presence_8_0= 'presence' ) ) otherlv_9= 'of' ( (lv_concept_10_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_count_11_0= 'count' ) ) otherlv_12= 'of' ( (lv_concept_13_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_distance_14_0= 'distance' ) ) (otherlv_15= 'to' | otherlv_16= 'from' ) ( (lv_concept_17_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_probability_18_0= 'probability' ) ) otherlv_19= 'of' ( (lv_concept_20_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_assessment_21_0= 'assessment' ) ) otherlv_22= 'of' ( (lv_concept_23_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_change_28_0= 'changed' ) ) ) ( (lv_concept_29_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_uncertainty_30_0= 'uncertainty' ) ) otherlv_31= 'of' ( (lv_concept_32_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_magnitude_33_0= 'magnitude' ) ) otherlv_34= 'of' ( (lv_concept_35_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_level_36_0= 'level' ) ) otherlv_37= 'of' ( (lv_concept_38_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_type_39_0= 'type' ) ) otherlv_40= 'of' ( (lv_concept_41_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_observability_42_0= 'observability' ) ) otherlv_43= 'of' ( (lv_concept_44_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_proportion_45_0= 'proportion' ) ) otherlv_46= 'of' ( (lv_concept_47_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_48= 'in' ) ( (lv_other_49_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_percentage_50_0= 'percentage' ) ) otherlv_51= 'of' ( (lv_concept_52_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_53= 'in' ) ( (lv_other_54_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_ratio_55_0= 'ratio' ) ) otherlv_56= 'of' ( (lv_concept_57_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_58= 'to' ) ( (lv_other_59_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_monetary_60_0= 'monetary' ) )? ( (lv_value_61_0= 'value' ) ) otherlv_62= 'of' ( (lv_concept_63_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'over' )=>otherlv_64= 'over' ) ( (lv_other_65_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_occurrence_66_0= 'occurrence' ) ) otherlv_67= 'of' ( (lv_concept_68_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_authConcept_69_0= 'identity' ) ) ( ( ( (lv_stringIdentifier_70_1= RULE_ID | lv_stringIdentifier_70_2= RULE_STRING | lv_stringIdentifier_70_3= RULE_UPPERCASE_ID | lv_stringIdentifier_70_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_71_0= RULE_INT ) ) ) otherlv_72= 'by' ( ( (lv_authority_73_1= RULE_UPPERCASE_ID | lv_authority_73_2= RULE_UPPERCASE_PATH ) ) ) ) | (otherlv_74= '(' ( (lv_declaration_75_0= ruleExpression ) ) otherlv_76= ')' ) ) )
-            // InternalKim.g:8934:2: ( ( ( ( (lv_negated_0_1= 'not' | lv_negated_0_2= 'no' ) ) )? ( (lv_name_1_0= ruleConceptReference ) ) ( ( (lv_authConcept_2_0= 'identified' ) ) otherlv_3= 'as' ( ( ( (lv_stringIdentifier_4_1= RULE_ID | lv_stringIdentifier_4_2= RULE_STRING | lv_stringIdentifier_4_3= RULE_UPPERCASE_ID | lv_stringIdentifier_4_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_5_0= RULE_INT ) ) ) otherlv_6= 'by' ( ( (lv_authority_7_1= RULE_UPPERCASE_ID | lv_authority_7_2= RULE_UPPERCASE_PATH ) ) ) )? ) | ( ( (lv_presence_8_0= 'presence' ) ) otherlv_9= 'of' ( (lv_concept_10_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_count_11_0= 'count' ) ) otherlv_12= 'of' ( (lv_concept_13_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_distance_14_0= 'distance' ) ) (otherlv_15= 'to' | otherlv_16= 'from' ) ( (lv_concept_17_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_probability_18_0= 'probability' ) ) otherlv_19= 'of' ( (lv_concept_20_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_assessment_21_0= 'assessment' ) ) otherlv_22= 'of' ( (lv_concept_23_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_change_28_0= 'changed' ) ) ) ( (lv_concept_29_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_uncertainty_30_0= 'uncertainty' ) ) otherlv_31= 'of' ( (lv_concept_32_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_magnitude_33_0= 'magnitude' ) ) otherlv_34= 'of' ( (lv_concept_35_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_level_36_0= 'level' ) ) otherlv_37= 'of' ( (lv_concept_38_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_type_39_0= 'type' ) ) otherlv_40= 'of' ( (lv_concept_41_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_observability_42_0= 'observability' ) ) otherlv_43= 'of' ( (lv_concept_44_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_proportion_45_0= 'proportion' ) ) otherlv_46= 'of' ( (lv_concept_47_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_48= 'in' ) ( (lv_other_49_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_percentage_50_0= 'percentage' ) ) otherlv_51= 'of' ( (lv_concept_52_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_53= 'in' ) ( (lv_other_54_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_ratio_55_0= 'ratio' ) ) otherlv_56= 'of' ( (lv_concept_57_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_58= 'to' ) ( (lv_other_59_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_monetary_60_0= 'monetary' ) )? ( (lv_value_61_0= 'value' ) ) otherlv_62= 'of' ( (lv_concept_63_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'over' )=>otherlv_64= 'over' ) ( (lv_other_65_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_occurrence_66_0= 'occurrence' ) ) otherlv_67= 'of' ( (lv_concept_68_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_authConcept_69_0= 'identity' ) ) ( ( ( (lv_stringIdentifier_70_1= RULE_ID | lv_stringIdentifier_70_2= RULE_STRING | lv_stringIdentifier_70_3= RULE_UPPERCASE_ID | lv_stringIdentifier_70_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_71_0= RULE_INT ) ) ) otherlv_72= 'by' ( ( (lv_authority_73_1= RULE_UPPERCASE_ID | lv_authority_73_2= RULE_UPPERCASE_PATH ) ) ) ) | (otherlv_74= '(' ( (lv_declaration_75_0= ruleExpression ) ) otherlv_76= ')' ) )
+            // InternalKim.g:8933:2: ( ( ( ( ( (lv_negated_0_1= 'not' | lv_negated_0_2= 'no' ) ) )? ( (lv_name_1_0= ruleConceptReference ) ) ( ( (lv_authConcept_2_0= 'identified' ) ) otherlv_3= 'as' ( ( ( (lv_stringIdentifier_4_1= RULE_ID | lv_stringIdentifier_4_2= RULE_STRING | lv_stringIdentifier_4_3= RULE_UPPERCASE_ID | lv_stringIdentifier_4_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_5_0= RULE_INT ) ) ) otherlv_6= 'by' ( ( (lv_authority_7_1= RULE_UPPERCASE_ID | lv_authority_7_2= RULE_UPPERCASE_PATH ) ) ) )? ) | ( ( (lv_presence_8_0= 'presence' ) ) otherlv_9= 'of' ( (lv_concept_10_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_count_11_0= 'count' ) ) otherlv_12= 'of' ( (lv_concept_13_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_distance_14_0= 'distance' ) ) (otherlv_15= 'to' | otherlv_16= 'from' ) ( (lv_concept_17_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_probability_18_0= 'probability' ) ) otherlv_19= 'of' ( (lv_concept_20_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_assessment_21_0= 'assessment' ) ) otherlv_22= 'of' ( (lv_concept_23_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_changed_28_0= 'changed' ) ) ) ( (lv_concept_29_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_uncertainty_30_0= 'uncertainty' ) ) otherlv_31= 'of' ( (lv_concept_32_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_magnitude_33_0= 'magnitude' ) ) otherlv_34= 'of' ( (lv_concept_35_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_level_36_0= 'level' ) ) otherlv_37= 'of' ( (lv_concept_38_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_type_39_0= 'type' ) ) otherlv_40= 'of' ( (lv_concept_41_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_observability_42_0= 'observability' ) ) otherlv_43= 'of' ( (lv_concept_44_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_proportion_45_0= 'proportion' ) ) otherlv_46= 'of' ( (lv_concept_47_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_48= 'in' ) ( (lv_other_49_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_percentage_50_0= 'percentage' ) ) otherlv_51= 'of' ( (lv_concept_52_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_53= 'in' ) ( (lv_other_54_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_ratio_55_0= 'ratio' ) ) otherlv_56= 'of' ( (lv_concept_57_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_58= 'to' ) ( (lv_other_59_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_monetary_60_0= 'monetary' ) )? ( (lv_value_61_0= 'value' ) ) otherlv_62= 'of' ( (lv_concept_63_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'over' )=>otherlv_64= 'over' ) ( (lv_other_65_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_occurrence_66_0= 'occurrence' ) ) otherlv_67= 'of' ( (lv_concept_68_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_authConcept_69_0= 'identity' ) ) ( ( ( (lv_stringIdentifier_70_1= RULE_ID | lv_stringIdentifier_70_2= RULE_STRING | lv_stringIdentifier_70_3= RULE_UPPERCASE_ID | lv_stringIdentifier_70_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_71_0= RULE_INT ) ) ) otherlv_72= 'by' ( ( (lv_authority_73_1= RULE_UPPERCASE_ID | lv_authority_73_2= RULE_UPPERCASE_PATH ) ) ) ) | (otherlv_74= '(' ( (lv_declaration_75_0= ruleExpression ) ) otherlv_76= ')' ) ) )
+            // InternalKim.g:8934:2: ( ( ( ( (lv_negated_0_1= 'not' | lv_negated_0_2= 'no' ) ) )? ( (lv_name_1_0= ruleConceptReference ) ) ( ( (lv_authConcept_2_0= 'identified' ) ) otherlv_3= 'as' ( ( ( (lv_stringIdentifier_4_1= RULE_ID | lv_stringIdentifier_4_2= RULE_STRING | lv_stringIdentifier_4_3= RULE_UPPERCASE_ID | lv_stringIdentifier_4_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_5_0= RULE_INT ) ) ) otherlv_6= 'by' ( ( (lv_authority_7_1= RULE_UPPERCASE_ID | lv_authority_7_2= RULE_UPPERCASE_PATH ) ) ) )? ) | ( ( (lv_presence_8_0= 'presence' ) ) otherlv_9= 'of' ( (lv_concept_10_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_count_11_0= 'count' ) ) otherlv_12= 'of' ( (lv_concept_13_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_distance_14_0= 'distance' ) ) (otherlv_15= 'to' | otherlv_16= 'from' ) ( (lv_concept_17_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_probability_18_0= 'probability' ) ) otherlv_19= 'of' ( (lv_concept_20_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_assessment_21_0= 'assessment' ) ) otherlv_22= 'of' ( (lv_concept_23_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_changed_28_0= 'changed' ) ) ) ( (lv_concept_29_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_uncertainty_30_0= 'uncertainty' ) ) otherlv_31= 'of' ( (lv_concept_32_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_magnitude_33_0= 'magnitude' ) ) otherlv_34= 'of' ( (lv_concept_35_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_level_36_0= 'level' ) ) otherlv_37= 'of' ( (lv_concept_38_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_type_39_0= 'type' ) ) otherlv_40= 'of' ( (lv_concept_41_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_observability_42_0= 'observability' ) ) otherlv_43= 'of' ( (lv_concept_44_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_proportion_45_0= 'proportion' ) ) otherlv_46= 'of' ( (lv_concept_47_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_48= 'in' ) ( (lv_other_49_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_percentage_50_0= 'percentage' ) ) otherlv_51= 'of' ( (lv_concept_52_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_53= 'in' ) ( (lv_other_54_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_ratio_55_0= 'ratio' ) ) otherlv_56= 'of' ( (lv_concept_57_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_58= 'to' ) ( (lv_other_59_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_monetary_60_0= 'monetary' ) )? ( (lv_value_61_0= 'value' ) ) otherlv_62= 'of' ( (lv_concept_63_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'over' )=>otherlv_64= 'over' ) ( (lv_other_65_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_occurrence_66_0= 'occurrence' ) ) otherlv_67= 'of' ( (lv_concept_68_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_authConcept_69_0= 'identity' ) ) ( ( ( (lv_stringIdentifier_70_1= RULE_ID | lv_stringIdentifier_70_2= RULE_STRING | lv_stringIdentifier_70_3= RULE_UPPERCASE_ID | lv_stringIdentifier_70_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_71_0= RULE_INT ) ) ) otherlv_72= 'by' ( ( (lv_authority_73_1= RULE_UPPERCASE_ID | lv_authority_73_2= RULE_UPPERCASE_PATH ) ) ) ) | (otherlv_74= '(' ( (lv_declaration_75_0= ruleExpression ) ) otherlv_76= ')' ) )
             {
-            // InternalKim.g:8934:2: ( ( ( ( (lv_negated_0_1= 'not' | lv_negated_0_2= 'no' ) ) )? ( (lv_name_1_0= ruleConceptReference ) ) ( ( (lv_authConcept_2_0= 'identified' ) ) otherlv_3= 'as' ( ( ( (lv_stringIdentifier_4_1= RULE_ID | lv_stringIdentifier_4_2= RULE_STRING | lv_stringIdentifier_4_3= RULE_UPPERCASE_ID | lv_stringIdentifier_4_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_5_0= RULE_INT ) ) ) otherlv_6= 'by' ( ( (lv_authority_7_1= RULE_UPPERCASE_ID | lv_authority_7_2= RULE_UPPERCASE_PATH ) ) ) )? ) | ( ( (lv_presence_8_0= 'presence' ) ) otherlv_9= 'of' ( (lv_concept_10_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_count_11_0= 'count' ) ) otherlv_12= 'of' ( (lv_concept_13_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_distance_14_0= 'distance' ) ) (otherlv_15= 'to' | otherlv_16= 'from' ) ( (lv_concept_17_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_probability_18_0= 'probability' ) ) otherlv_19= 'of' ( (lv_concept_20_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_assessment_21_0= 'assessment' ) ) otherlv_22= 'of' ( (lv_concept_23_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_change_28_0= 'changed' ) ) ) ( (lv_concept_29_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_uncertainty_30_0= 'uncertainty' ) ) otherlv_31= 'of' ( (lv_concept_32_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_magnitude_33_0= 'magnitude' ) ) otherlv_34= 'of' ( (lv_concept_35_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_level_36_0= 'level' ) ) otherlv_37= 'of' ( (lv_concept_38_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_type_39_0= 'type' ) ) otherlv_40= 'of' ( (lv_concept_41_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_observability_42_0= 'observability' ) ) otherlv_43= 'of' ( (lv_concept_44_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_proportion_45_0= 'proportion' ) ) otherlv_46= 'of' ( (lv_concept_47_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_48= 'in' ) ( (lv_other_49_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_percentage_50_0= 'percentage' ) ) otherlv_51= 'of' ( (lv_concept_52_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_53= 'in' ) ( (lv_other_54_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_ratio_55_0= 'ratio' ) ) otherlv_56= 'of' ( (lv_concept_57_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_58= 'to' ) ( (lv_other_59_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_monetary_60_0= 'monetary' ) )? ( (lv_value_61_0= 'value' ) ) otherlv_62= 'of' ( (lv_concept_63_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'over' )=>otherlv_64= 'over' ) ( (lv_other_65_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_occurrence_66_0= 'occurrence' ) ) otherlv_67= 'of' ( (lv_concept_68_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_authConcept_69_0= 'identity' ) ) ( ( ( (lv_stringIdentifier_70_1= RULE_ID | lv_stringIdentifier_70_2= RULE_STRING | lv_stringIdentifier_70_3= RULE_UPPERCASE_ID | lv_stringIdentifier_70_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_71_0= RULE_INT ) ) ) otherlv_72= 'by' ( ( (lv_authority_73_1= RULE_UPPERCASE_ID | lv_authority_73_2= RULE_UPPERCASE_PATH ) ) ) ) | (otherlv_74= '(' ( (lv_declaration_75_0= ruleExpression ) ) otherlv_76= ')' ) )
+            // InternalKim.g:8934:2: ( ( ( ( (lv_negated_0_1= 'not' | lv_negated_0_2= 'no' ) ) )? ( (lv_name_1_0= ruleConceptReference ) ) ( ( (lv_authConcept_2_0= 'identified' ) ) otherlv_3= 'as' ( ( ( (lv_stringIdentifier_4_1= RULE_ID | lv_stringIdentifier_4_2= RULE_STRING | lv_stringIdentifier_4_3= RULE_UPPERCASE_ID | lv_stringIdentifier_4_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_5_0= RULE_INT ) ) ) otherlv_6= 'by' ( ( (lv_authority_7_1= RULE_UPPERCASE_ID | lv_authority_7_2= RULE_UPPERCASE_PATH ) ) ) )? ) | ( ( (lv_presence_8_0= 'presence' ) ) otherlv_9= 'of' ( (lv_concept_10_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_count_11_0= 'count' ) ) otherlv_12= 'of' ( (lv_concept_13_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_distance_14_0= 'distance' ) ) (otherlv_15= 'to' | otherlv_16= 'from' ) ( (lv_concept_17_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_probability_18_0= 'probability' ) ) otherlv_19= 'of' ( (lv_concept_20_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_assessment_21_0= 'assessment' ) ) otherlv_22= 'of' ( (lv_concept_23_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_changed_28_0= 'changed' ) ) ) ( (lv_concept_29_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_uncertainty_30_0= 'uncertainty' ) ) otherlv_31= 'of' ( (lv_concept_32_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_magnitude_33_0= 'magnitude' ) ) otherlv_34= 'of' ( (lv_concept_35_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_level_36_0= 'level' ) ) otherlv_37= 'of' ( (lv_concept_38_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_type_39_0= 'type' ) ) otherlv_40= 'of' ( (lv_concept_41_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_observability_42_0= 'observability' ) ) otherlv_43= 'of' ( (lv_concept_44_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_proportion_45_0= 'proportion' ) ) otherlv_46= 'of' ( (lv_concept_47_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_48= 'in' ) ( (lv_other_49_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_percentage_50_0= 'percentage' ) ) otherlv_51= 'of' ( (lv_concept_52_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'in' )=>otherlv_53= 'in' ) ( (lv_other_54_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_ratio_55_0= 'ratio' ) ) otherlv_56= 'of' ( (lv_concept_57_0= ruleSimpleConceptDeclaration ) ) ( ( 'to' )=>otherlv_58= 'to' ) ( (lv_other_59_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_monetary_60_0= 'monetary' ) )? ( (lv_value_61_0= 'value' ) ) otherlv_62= 'of' ( (lv_concept_63_0= ruleSimpleConceptDeclaration ) ) ( ( ( 'over' )=>otherlv_64= 'over' ) ( (lv_other_65_0= ruleSimpleConceptDeclaration ) ) )? ) | ( ( (lv_occurrence_66_0= 'occurrence' ) ) otherlv_67= 'of' ( (lv_concept_68_0= ruleSimpleConceptDeclaration ) ) ) | ( ( (lv_authConcept_69_0= 'identity' ) ) ( ( ( (lv_stringIdentifier_70_1= RULE_ID | lv_stringIdentifier_70_2= RULE_STRING | lv_stringIdentifier_70_3= RULE_UPPERCASE_ID | lv_stringIdentifier_70_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_intIdentifier_71_0= RULE_INT ) ) ) otherlv_72= 'by' ( ( (lv_authority_73_1= RULE_UPPERCASE_ID | lv_authority_73_2= RULE_UPPERCASE_PATH ) ) ) ) | (otherlv_74= '(' ( (lv_declaration_75_0= ruleExpression ) ) otherlv_76= ')' ) )
             int alt214=19;
             switch ( input.LA(1) ) {
             case RULE_UPPERCASE_ID:
@@ -24714,7 +24714,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                       							if (current==null) {
                                       								current = createModelElement(grammarAccess.getConceptRule());
                                       							}
-                                      							setWithLastConsumed(current, "negated", lv_negated_0_1 != null, null);
+                                      							setWithLastConsumed(current, "negated", true, null);
                                       						
                                     }
 
@@ -24734,7 +24734,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                       							if (current==null) {
                                       								current = createModelElement(grammarAccess.getConceptRule());
                                       							}
-                                      							setWithLastConsumed(current, "negated", lv_negated_0_2 != null, null);
+                                      							setWithLastConsumed(current, "negated", true, null);
                                       						
                                     }
 
@@ -24815,7 +24815,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getConceptRule());
                               							}
-                              							setWithLastConsumed(current, "authConcept", lv_authConcept_2_0 != null, "identified");
+                              							setWithLastConsumed(current, "authConcept", true, "identified");
                               						
                             }
 
@@ -25158,7 +25158,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "presence", lv_presence_8_0 != null, "presence");
+                      						setWithLastConsumed(current, "presence", true, "presence");
                       					
                     }
 
@@ -25237,7 +25237,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "count", lv_count_11_0 != null, "count");
+                      						setWithLastConsumed(current, "count", true, "count");
                       					
                     }
 
@@ -25316,7 +25316,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "distance", lv_distance_14_0 != null, "distance");
+                      						setWithLastConsumed(current, "distance", true, "distance");
                       					
                     }
 
@@ -25434,7 +25434,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "probability", lv_probability_18_0 != null, "probability");
+                      						setWithLastConsumed(current, "probability", true, "probability");
                       					
                     }
 
@@ -25513,7 +25513,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "assessment", lv_assessment_21_0 != null, "assessment");
+                      						setWithLastConsumed(current, "assessment", true, "assessment");
                       					
                     }
 
@@ -25570,12 +25570,12 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 7 :
-                    // InternalKim.g:9336:3: ( ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_change_28_0= 'changed' ) ) ) ( (lv_concept_29_0= ruleSimpleConceptDeclaration ) ) )
+                    // InternalKim.g:9336:3: ( ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_changed_28_0= 'changed' ) ) ) ( (lv_concept_29_0= ruleSimpleConceptDeclaration ) ) )
                     {
-                    // InternalKim.g:9336:3: ( ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_change_28_0= 'changed' ) ) ) ( (lv_concept_29_0= ruleSimpleConceptDeclaration ) ) )
-                    // InternalKim.g:9337:4: ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_change_28_0= 'changed' ) ) ) ( (lv_concept_29_0= ruleSimpleConceptDeclaration ) )
+                    // InternalKim.g:9336:3: ( ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_changed_28_0= 'changed' ) ) ) ( (lv_concept_29_0= ruleSimpleConceptDeclaration ) ) )
+                    // InternalKim.g:9337:4: ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_changed_28_0= 'changed' ) ) ) ( (lv_concept_29_0= ruleSimpleConceptDeclaration ) )
                     {
-                    // InternalKim.g:9337:4: ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_change_28_0= 'changed' ) ) )
+                    // InternalKim.g:9337:4: ( (otherlv_24= 'change' ( ( (lv_change_25_0= 'in' ) ) | ( ( (lv_rate_26_0= 'rate' ) ) otherlv_27= 'of' ) ) ) | ( (lv_changed_28_0= 'changed' ) ) )
                     int alt206=2;
                     int LA206_0 = input.LA(1);
 
@@ -25643,7 +25643,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                       									if (current==null) {
                                       										current = createModelElement(grammarAccess.getConceptRule());
                                       									}
-                                      									setWithLastConsumed(current, "change", lv_change_25_0 != null, "in");
+                                      									setWithLastConsumed(current, "change", true, "in");
                                       								
                                     }
 
@@ -25678,7 +25678,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                       										if (current==null) {
                                       											current = createModelElement(grammarAccess.getConceptRule());
                                       										}
-                                      										setWithLastConsumed(current, "rate", lv_rate_26_0 != null, "rate");
+                                      										setWithLastConsumed(current, "rate", true, "rate");
                                       									
                                     }
 
@@ -25709,18 +25709,18 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 2 :
-                            // InternalKim.g:9382:5: ( (lv_change_28_0= 'changed' ) )
+                            // InternalKim.g:9382:5: ( (lv_changed_28_0= 'changed' ) )
                             {
-                            // InternalKim.g:9382:5: ( (lv_change_28_0= 'changed' ) )
-                            // InternalKim.g:9383:6: (lv_change_28_0= 'changed' )
+                            // InternalKim.g:9382:5: ( (lv_changed_28_0= 'changed' ) )
+                            // InternalKim.g:9383:6: (lv_changed_28_0= 'changed' )
                             {
-                            // InternalKim.g:9383:6: (lv_change_28_0= 'changed' )
-                            // InternalKim.g:9384:7: lv_change_28_0= 'changed'
+                            // InternalKim.g:9383:6: (lv_changed_28_0= 'changed' )
+                            // InternalKim.g:9384:7: lv_changed_28_0= 'changed'
                             {
-                            lv_change_28_0=(Token)match(input,149,FOLLOW_8); if (state.failed) return current;
+                            lv_changed_28_0=(Token)match(input,149,FOLLOW_8); if (state.failed) return current;
                             if ( state.backtracking==0 ) {
 
-                              							newLeafNode(lv_change_28_0, grammarAccess.getConceptAccess().getChangeChangedKeyword_6_0_1_0());
+                              							newLeafNode(lv_changed_28_0, grammarAccess.getConceptAccess().getChangedChangedKeyword_6_0_1_0());
                               						
                             }
                             if ( state.backtracking==0 ) {
@@ -25728,7 +25728,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getConceptRule());
                               							}
-                              							setWithLastConsumed(current, "change", lv_change_28_0 != null, "changed");
+                              							setWithLastConsumed(current, "changed", true, "changed");
                               						
                             }
 
@@ -25807,7 +25807,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "uncertainty", lv_uncertainty_30_0 != null, "uncertainty");
+                      						setWithLastConsumed(current, "uncertainty", true, "uncertainty");
                       					
                     }
 
@@ -25886,7 +25886,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "magnitude", lv_magnitude_33_0 != null, "magnitude");
+                      						setWithLastConsumed(current, "magnitude", true, "magnitude");
                       					
                     }
 
@@ -25965,7 +25965,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "level", lv_level_36_0 != null, "level");
+                      						setWithLastConsumed(current, "level", true, "level");
                       					
                     }
 
@@ -26044,7 +26044,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "type", lv_type_39_0 != null, "type");
+                      						setWithLastConsumed(current, "type", true, "type");
                       					
                     }
 
@@ -26123,7 +26123,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "observability", lv_observability_42_0 != null, "observability");
+                      						setWithLastConsumed(current, "observability", true, "observability");
                       					
                     }
 
@@ -26202,7 +26202,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "proportion", lv_proportion_45_0 != null, "proportion");
+                      						setWithLastConsumed(current, "proportion", true, "proportion");
                       					
                     }
 
@@ -26349,7 +26349,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "percentage", lv_percentage_50_0 != null, "percentage");
+                      						setWithLastConsumed(current, "percentage", true, "percentage");
                       					
                     }
 
@@ -26496,7 +26496,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "ratio", lv_ratio_55_0 != null, "ratio");
+                      						setWithLastConsumed(current, "ratio", true, "ratio");
                       					
                     }
 
@@ -26630,7 +26630,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               						if (current==null) {
                               							current = createModelElement(grammarAccess.getConceptRule());
                               						}
-                              						setWithLastConsumed(current, "monetary", lv_monetary_60_0 != null, "monetary");
+                              						setWithLastConsumed(current, "monetary", true, "monetary");
                               					
                             }
 
@@ -26659,7 +26659,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "value", lv_value_61_0 != null, "value");
+                      						setWithLastConsumed(current, "value", true, "value");
                       					
                     }
 
@@ -26806,7 +26806,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "occurrence", lv_occurrence_66_0 != null, "occurrence");
+                      						setWithLastConsumed(current, "occurrence", true, "occurrence");
                       					
                     }
 
@@ -26885,7 +26885,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "authConcept", lv_authConcept_69_0 != null, "identity");
+                      						setWithLastConsumed(current, "authConcept", true, "identity");
                       					
                     }
 
@@ -28847,7 +28847,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      										if (current==null) {
             	      											current = createModelElement(grammarAccess.getConceptStatementRule());
             	      										}
-            	      										setWithLastConsumed(current, "abstract", lv_abstract_2_0 != null, "abstract");
+            	      										setWithLastConsumed(current, "abstract", true, "abstract");
             	      									
             	    }
 
@@ -28907,7 +28907,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      										if (current==null) {
             	      											current = createModelElement(grammarAccess.getConceptStatementRule());
             	      										}
-            	      										setWithLastConsumed(current, "deniable", lv_deniable_3_0 != null, "deniable");
+            	      										setWithLastConsumed(current, "deniable", true, "deniable");
             	      									
             	    }
 
@@ -28967,7 +28967,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      										if (current==null) {
             	      											current = createModelElement(grammarAccess.getConceptStatementRule());
             	      										}
-            	      										setWithLastConsumed(current, "subjective", lv_subjective_4_0 != null, "subjective");
+            	      										setWithLastConsumed(current, "subjective", true, "subjective");
             	      									
             	    }
 
@@ -29797,7 +29797,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getConceptStatementBodyRule());
                       					}
-                      					setWithLastConsumed(current, "abstract", lv_abstract_1_0 != null, "abstract");
+                      					setWithLastConsumed(current, "abstract", true, "abstract");
                       				
                     }
 
@@ -29847,7 +29847,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptStatementBodyRule());
                       						}
-                      						setWithLastConsumed(current, "root", lv_root_2_0 != null, "root");
+                      						setWithLastConsumed(current, "root", true, "root");
                       					
                     }
 
@@ -30321,7 +30321,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	              													if (current==null) {
             	              														current = createModelElement(grammarAccess.getConceptStatementBodyRule());
             	              													}
-            	              													setWithLastConsumed(current, "alias", lv_alias_13_0 != null, "equals");
+            	              													setWithLastConsumed(current, "alias", true, "equals");
             	              												
             	            }
 
@@ -30361,7 +30361,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	              												if (current==null) {
             	              													current = createModelElement(grammarAccess.getConceptStatementBodyRule());
             	              												}
-            	              												setWithLastConsumed(current, "coreConcept", lv_coreConcept_14_0 != null, "core");
+            	              												setWithLastConsumed(current, "coreConcept", true, "core");
             	              											
             	            }
 
@@ -30414,7 +30414,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	              												if (current==null) {
             	              													current = createModelElement(grammarAccess.getConceptStatementBodyRule());
             	              												}
-            	              												setWithLastConsumed(current, "nothing", lv_nothing_15_0 != null, "nothing");
+            	              												setWithLastConsumed(current, "nothing", true, "nothing");
             	              											
             	            }
 
@@ -30833,7 +30833,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	              												if (current==null) {
             	              													current = createModelElement(grammarAccess.getConceptStatementBodyRule());
             	              												}
-            	              												setWithLastConsumed(current, "specific", lv_specific_23_0 != null, "exposing");
+            	              												setWithLastConsumed(current, "specific", true, "exposing");
             	              											
             	            }
 
@@ -32700,7 +32700,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	              												if (current==null) {
             	              													current = createModelElement(grammarAccess.getConceptStatementBodyRule());
             	              												}
-            	              												setWithLastConsumed(current, "constituent", lv_constituent_75_0 != null, "constituent");
+            	              												setWithLastConsumed(current, "constituent", true, "constituent");
             	              											
             	            }
 
@@ -32732,7 +32732,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	              												if (current==null) {
             	              													current = createModelElement(grammarAccess.getConceptStatementBodyRule());
             	              												}
-            	              												setWithLastConsumed(current, "constitutes", lv_constitutes_76_0 != null, "consists");
+            	              												setWithLastConsumed(current, "constitutes", true, "consists");
             	              											
             	            }
 
@@ -32764,7 +32764,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	      											if (current==null) {
             	      												current = createModelElement(grammarAccess.getConceptStatementBodyRule());
             	      											}
-            	      											setWithLastConsumed(current, "partOf", lv_partOf_77_0 != null, "of");
+            	      											setWithLastConsumed(current, "partOf", true, "of");
             	      										
             	    }
 
@@ -33650,7 +33650,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	              											if (current==null) {
             	              												current = createModelElement(grammarAccess.getConceptStatementBodyRule());
             	              											}
-            	              											setWithLastConsumed(current, "disjoint", lv_disjoint_104_0 != null, "disjoint");
+            	              											setWithLastConsumed(current, "disjoint", true, "disjoint");
             	              										
             	            }
 
@@ -34609,7 +34609,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getQuantificationRule());
                       						}
-                      						setWithLastConsumed(current, "only", lv_only_1_0 != null, "only");
+                      						setWithLastConsumed(current, "only", true, "only");
                       					
                     }
 
@@ -34658,7 +34658,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getQuantificationRule());
                               								}
-                              								setWithLastConsumed(current, "exactly", lv_exactly_2_0 != null, "exactly");
+                              								setWithLastConsumed(current, "exactly", true, "exactly");
                               							
                             }
 
@@ -34720,7 +34720,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                       										if (current==null) {
                                       											current = createModelElement(grammarAccess.getQuantificationRule());
                                       										}
-                                      										setWithLastConsumed(current, "atLeast", lv_atLeast_4_0 != null, "least");
+                                      										setWithLastConsumed(current, "atLeast", true, "least");
                                       									
                                     }
 
@@ -34752,7 +34752,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                       										if (current==null) {
                                       											current = createModelElement(grammarAccess.getQuantificationRule());
                                       										}
-                                      										setWithLastConsumed(current, "atMost", lv_atMost_5_0 != null, "most");
+                                      										setWithLastConsumed(current, "atMost", true, "most");
                                       									
                                     }
 
@@ -34840,7 +34840,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getQuantificationRule());
                               								}
-                              								setWithLastConsumed(current, "orMore", lv_orMore_8_0 != null, "more");
+                              								setWithLastConsumed(current, "orMore", true, "more");
                               							
                             }
 
@@ -35107,7 +35107,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getPropertyStatementRule());
                       						}
-                      						setWithLastConsumed(current, "has", lv_has_1_0 != null, "has");
+                      						setWithLastConsumed(current, "has", true, "has");
                       					
                     }
 
@@ -35139,7 +35139,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getPropertyStatementRule());
                       						}
-                      						setWithLastConsumed(current, "contains", lv_contains_2_0 != null, "contains");
+                      						setWithLastConsumed(current, "contains", true, "contains");
                       					
                     }
 
@@ -35171,7 +35171,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getPropertyStatementRule());
                       						}
-                      						setWithLastConsumed(current, "uses", lv_uses_3_0 != null, "uses");
+                      						setWithLastConsumed(current, "uses", true, "uses");
                       					
                     }
 
@@ -35217,7 +35217,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getPropertyStatementRule());
                       						}
-                      						setWithLastConsumed(current, "only", lv_only_4_0 != null, "only");
+                      						setWithLastConsumed(current, "only", true, "only");
                       					
                     }
 
@@ -35266,7 +35266,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getPropertyStatementRule());
                               								}
-                              								setWithLastConsumed(current, "exactly", lv_exactly_5_0 != null, "exactly");
+                              								setWithLastConsumed(current, "exactly", true, "exactly");
                               							
                             }
 
@@ -35328,7 +35328,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                       										if (current==null) {
                                       											current = createModelElement(grammarAccess.getPropertyStatementRule());
                                       										}
-                                      										setWithLastConsumed(current, "atLeast", lv_atLeast_7_0 != null, "least");
+                                      										setWithLastConsumed(current, "atLeast", true, "least");
                                       									
                                     }
 
@@ -35360,7 +35360,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                                       										if (current==null) {
                                       											current = createModelElement(grammarAccess.getPropertyStatementRule());
                                       										}
-                                      										setWithLastConsumed(current, "atMost", lv_atMost_8_0 != null, "most");
+                                      										setWithLastConsumed(current, "atMost", true, "most");
                                       									
                                     }
 
@@ -35448,7 +35448,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getPropertyStatementRule());
                               								}
-                              								setWithLastConsumed(current, "orMore", lv_orMore_11_0 != null, "more");
+                              								setWithLastConsumed(current, "orMore", true, "more");
                               							
                             }
 
@@ -35861,7 +35861,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               						if (current==null) {
                               							current = createModelElement(grammarAccess.getChildConceptRule());
                               						}
-                              						setWithLastConsumed(current, "abstract", lv_abstract_0_0 != null, "abstract");
+                              						setWithLastConsumed(current, "abstract", true, "abstract");
                               					
                             }
 
@@ -37799,7 +37799,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getLiteralOrIdOrCommaRule());
                       					}
-                      					setWithLastConsumed(current, "comma", lv_comma_7_0 != null, ",");
+                      					setWithLastConsumed(current, "comma", true, ",");
                       				
                     }
 
@@ -38827,7 +38827,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getDocSelectorRule());
                               							}
-                              							setWithLastConsumed(current, "definition", lv_definition_2_0 != null, "definition");
+                              							setWithLastConsumed(current, "definition", true, "definition");
                               						
                             }
 
@@ -38859,7 +38859,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getDocSelectorRule());
                               							}
-                              							setWithLastConsumed(current, "initialization", lv_initialization_3_0 != null, "initialization");
+                              							setWithLastConsumed(current, "initialization", true, "initialization");
                               						
                             }
 
@@ -38891,7 +38891,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getDocSelectorRule());
                               							}
-                              							setWithLastConsumed(current, "termination", lv_termination_4_0 != null, "termination");
+                              							setWithLastConsumed(current, "termination", true, "termination");
                               						
                             }
 
@@ -38923,7 +38923,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getDocSelectorRule());
                               							}
-                              							setWithLastConsumed(current, "transition", lv_transition_5_0 != null, "transition");
+                              							setWithLastConsumed(current, "transition", true, "transition");
                               						
                             }
 
@@ -39200,7 +39200,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getKeyValuePairRule());
                       						}
-                      						setWithLastConsumed(current, "interactive", lv_interactive_1_0 != null, "?=");
+                      						setWithLastConsumed(current, "interactive", true, "?=");
                       					
                     }
 
@@ -40259,7 +40259,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getValueWithIdAndConceptRule());
                       					}
-                      					setWithLastConsumed(current, "null", lv_null_10_0 != null, "unknown");
+                      					setWithLastConsumed(current, "null", true, "unknown");
                       				
                     }
 
@@ -40895,7 +40895,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getValueRule());
                       					}
-                      					setWithLastConsumed(current, "null", lv_null_11_0 != null, "unknown");
+                      					setWithLastConsumed(current, "null", true, "unknown");
                       				
                     }
 
@@ -43278,7 +43278,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
                       					}
-                      					setWithLastConsumed(current, "generic", lv_generic_2_0 != null, "any");
+                      					setWithLastConsumed(current, "generic", true, "any");
                       				
                     }
 
@@ -43968,7 +43968,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             	              											if (current==null) {
             	              												current = createModelElement(grammarAccess.getDependencyObservableSemanticsRule());
             	              											}
-            	              											setWithLastConsumed(current, "optional", lv_optional_18_0 != null, "optional");
+            	              											setWithLastConsumed(current, "optional", true, "optional");
             	              										
             	            }
 
@@ -44353,7 +44353,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getAlternativeDependencyObservableSemanticsRule());
                       					}
-                      					setWithLastConsumed(current, "generic", lv_generic_2_0 != null, "any");
+                      					setWithLastConsumed(current, "generic", true, "any");
                       				
                     }
 
@@ -45753,7 +45753,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "gt", lv_gt_0_0 != null, ">");
+                      					setWithLastConsumed(current, "gt", true, ">");
                       				
                     }
 
@@ -45785,7 +45785,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "lt", lv_lt_1_0 != null, "<");
+                      					setWithLastConsumed(current, "lt", true, "<");
                       				
                     }
 
@@ -45817,7 +45817,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "eq", lv_eq_2_0 != null, "=");
+                      					setWithLastConsumed(current, "eq", true, "=");
                       				
                     }
 
@@ -45849,7 +45849,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "ne", lv_ne_3_0 != null, "!=");
+                      					setWithLastConsumed(current, "ne", true, "!=");
                       				
                     }
 
@@ -45881,7 +45881,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "le", lv_le_4_0 != null, "<=");
+                      					setWithLastConsumed(current, "le", true, "<=");
                       				
                     }
 
@@ -45913,7 +45913,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "ge", lv_ge_5_0 != null, ">=");
+                      					setWithLastConsumed(current, "ge", true, ">=");
                       				
                     }
 
@@ -46534,7 +46534,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getNumberRule());
                       						}
-                      						setWithLastConsumed(current, "negative", lv_negative_1_0 != null, "-");
+                      						setWithLastConsumed(current, "negative", true, "-");
                       					
                     }
 
@@ -46604,7 +46604,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getNumberRule());
                       					}
-                      					setWithLastConsumed(current, "long", lv_long_3_0 != null, "l");
+                      					setWithLastConsumed(current, "long", true, "l");
                       				
                     }
 
@@ -46655,7 +46655,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       							if (current==null) {
                       								current = createModelElement(grammarAccess.getNumberRule());
                       							}
-                      							setWithLastConsumed(current, "decimal", lv_decimal_4_0 != null, ".");
+                      							setWithLastConsumed(current, "decimal", true, ".");
                       						
                     }
 
@@ -46758,7 +46758,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getNumberRule());
                               								}
-                              								setWithLastConsumed(current, "exponential", lv_exponential_6_1 != null, null);
+                              								setWithLastConsumed(current, "exponential", true, null);
                               							
                             }
 
@@ -46778,7 +46778,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getNumberRule());
                               								}
-                              								setWithLastConsumed(current, "exponential", lv_exponential_6_2 != null, null);
+                              								setWithLastConsumed(current, "exponential", true, null);
                               							
                             }
 
@@ -46836,7 +46836,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getNumberRule());
                               								}
-                              								setWithLastConsumed(current, "expNegative", lv_expNegative_8_0 != null, "-");
+                              								setWithLastConsumed(current, "expNegative", true, "-");
                               							
                             }
 
@@ -47051,7 +47051,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getQuantityRule());
                       						}
-                      						setWithLastConsumed(current, "over", lv_over_1_0 != null, "/");
+                      						setWithLastConsumed(current, "over", true, "/");
                       					
                     }
 
@@ -47385,7 +47385,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getDateRule());
                       						}
-                      						setWithLastConsumed(current, "bc", lv_bc_3_0 != null, "BC");
+                      						setWithLastConsumed(current, "bc", true, "BC");
                       					
                     }
 

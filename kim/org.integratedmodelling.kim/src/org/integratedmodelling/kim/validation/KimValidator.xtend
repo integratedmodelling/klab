@@ -1612,6 +1612,18 @@ class KimValidator extends AbstractKimValidator {
 							KimPackage.CONCEPT__CONCEPT)
 					}
 					operator.add(Type.CHANGE)
+				}  else if (concept.isRate) {
+					if (!flags.contains(Type.QUALITY)) {
+						error("Change rates can only be defined for qualities", concept.concept, null,
+							KimPackage.CONCEPT__CONCEPT)
+					}
+					operator.add(Type.RATE)
+				}  else if (concept.isChanged) {
+					if (!flags.contains(Type.QUALITY)) {
+						error("Change events can only be defined for qualities", concept.concept, null,
+							KimPackage.CONCEPT__CONCEPT)
+					}
+					operator.add(Type.CHANGED)
 				} else if (concept.isMagnitude) {
 					if (Kim.intersection(flags, IKimConcept.CONTINUOUS_QUALITY_TYPES).size() == 0) {
 						error("Magnitudes can only be observed for quantifiable qualities", concept.concept, null,

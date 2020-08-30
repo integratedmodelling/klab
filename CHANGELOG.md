@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Implement syntactic typing for change rates ('change rate of') and change events 
+  ('changed <quality>'). Support in engine (unit/context validation and model inference)
+  still missing.
 - Authority concepts should now be identified using the uppercase authority name as a 
   namespace, which is now syntactically supported. The ID can be a lowercase or
   uppercase ID, an integer, or a string. This enables a much more natural mapping

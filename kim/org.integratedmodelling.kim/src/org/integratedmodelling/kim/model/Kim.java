@@ -1006,6 +1006,10 @@ public enum Kim {
 			return getType("uncertainty");
 		case VALUE:
 			return getType("value");
+		case RATE:
+			return getType("rate");
+		case CHANGED:
+			return getType("changed");
 		case NOT:
 		default:
 			break;
@@ -1075,6 +1079,8 @@ public enum Kim {
 			return EnumSet.of(Type.PERCENTAGE, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "uncertainty":
 			return EnumSet.of(Type.UNCERTAINTY, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
+		case "rate":
+			return EnumSet.of(Type.RATE, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "acceleration":
 			return EnumSet.of(Type.ACCELERATION, Type.QUALITY, Type.INTENSIVE_PROPERTY, Type.OBSERVABLE,
 					Type.QUANTIFIABLE);
@@ -1121,6 +1127,8 @@ public enum Kim {
 			return EnumSet.of(Type.PROCESS, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
 		case "change":
 			return EnumSet.of(Type.CHANGE, Type.PROCESS, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
+		case "changed":
+			return EnumSet.of(Type.CHANGED, Type.EVENT, Type.DIRECT_OBSERVABLE, Type.OBSERVABLE);
 		case "agent":
 			return EnumSet.of(Type.AGENT, Type.DIRECT_OBSERVABLE, Type.COUNTABLE, Type.OBSERVABLE);
 		case "event":
