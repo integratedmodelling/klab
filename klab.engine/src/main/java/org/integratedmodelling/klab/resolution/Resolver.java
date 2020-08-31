@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
@@ -162,6 +163,11 @@ public class Resolver {
 				 * visit the scope (building a list of ResolvedObservable for all qualities that
 				 * may change) and resolve their change in parent scope
 				 */
+				for (ObservedConcept observable : parentScope.getResolved(Type.QUALITY)) {
+					System.out.println("CHECK CHANGE FOR OBSERVABLE " + observable);
+					// create change in <quality> concept (which may already be there or not) and resolve it
+					
+				}
 
 			}
 

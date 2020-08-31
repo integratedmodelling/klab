@@ -5,10 +5,12 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Models;
@@ -20,7 +22,6 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -31,6 +32,7 @@ import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
@@ -247,7 +249,7 @@ public class ResolutionScope implements IResolutionScope {
 	public static ResolutionScope create(IMonitor monitor) {
 		return new ResolutionScope(monitor);
 	}
-	
+
 	/**
 	 * Get an empty resolution scope with a specified coverage. FOR TESTING ONLY.
 	 * 
@@ -285,7 +287,8 @@ public class ResolutionScope implements IResolutionScope {
 		this.monitor = monitor;
 	}
 
-	private ResolutionScope(Subject contextSubject, IMonitor monitor, Collection<String> scenarios) throws KlabException {
+	private ResolutionScope(Subject contextSubject, IMonitor monitor, Collection<String> scenarios)
+			throws KlabException {
 		this.coverage = Coverage.full(contextSubject.getScale());
 		this.context = contextSubject;
 		this.scenarios.addAll(scenarios);
@@ -528,7 +531,7 @@ public class ResolutionScope implements IResolutionScope {
 		ret.context = (DirectObservation) observation;
 		ret.coverage = Coverage.full(observation.getScale());
 		ret.mode = mode;
-		
+
 		return ret;
 	}
 
@@ -982,7 +985,8 @@ public class ResolutionScope implements IResolutionScope {
 		ResolutionScope scope = this.getChildScope((Observable) observable, Mode.RESOLUTION);
 		// ensure we don't try to find the cache for the cache
 		scope.caching = true;
-		resolvers.addAll(Models.INSTANCE.resolve(observable, scope.getChildScope(observable, context, context.getScale())));
+		resolvers.addAll(
+				Models.INSTANCE.resolve(observable, scope.getChildScope(observable, context, context.getScale())));
 
 		/*
 		 * TODO this may include the existing states in the context, with enough
@@ -1205,7 +1209,7 @@ public class ResolutionScope implements IResolutionScope {
 			// attribute resolvers and the like
 			return null;
 		}
-		
+
 		if (observable2.equals(this.observable)) {
 			// resolving self
 			return null;
@@ -1241,7 +1245,7 @@ public class ResolutionScope implements IResolutionScope {
 
 		return null;
 	}
-	
+
 	public ResolutionScope getRootScope() {
 		if (rootScope == null) {
 			rootScope = this;
@@ -1251,14 +1255,46 @@ public class ResolutionScope implements IResolutionScope {
 		}
 		return rootScope;
 	}
-	
+
 	public void setOccurrent(boolean b) {
-		getRootScope().occurrent  = b;
+		getRootScope().occurrent = b;
 	}
-	
+
 	@Override
 	public boolean isOccurrent() {
 		return getRootScope().occurrent;
+	}
+
+	/**
+	 * Visit the entire resolution tree and report the resolved observables in the
+	 * order they have been resolved.
+	 * 
+	 * @param types
+	 * @return
+	 */
+	public Collection<ObservedConcept> getResolved(IKimConcept.Type... types) {
+		LinkedHashSet<ObservedConcept> ret = new LinkedHashSet<>();
+		collectResolved(getRootScope(), types, ret);
+		return ret;
+	}
+
+	private void collectResolved(ResolutionScope scope, Type[] types, LinkedHashSet<ObservedConcept> ret) {
+		
+		for (Link link : scope.links) {
+			collectResolved(link.target, types, ret);
+		}
+		
+		if (this.observable != null) {
+			boolean ok = types == null;
+			if (!ok) {
+				for (Type type : types) {
+					if (this.observable.is(type)) {
+						ret.add(new ObservedConcept(this.observable, this.mode));
+					}
+				}
+			}
+		}
+		
 	}
 
 }
