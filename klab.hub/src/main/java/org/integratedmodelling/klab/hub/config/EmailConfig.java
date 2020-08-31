@@ -25,13 +25,21 @@ public class EmailConfig {
 
     @Value("${email.replyable.general.emailaddress}")
     private String EMAIL_REPLYABLE_GENERAL;
-
+    
+    @Value("${email.replyable.support.emailaddress}")
+    private String EMAIL_REPLYABLE_SUPPORT;
+        
     @Value("${email.replyable.admin.emailaddress}")
     private String EMAIL_REPLYABLE_ADMIN;
-
+    
     @Value("${email.noreply.emailaddress}")
     private String EMAIL_NOREPLY;
-
+    
+    public enum EmailType {
+    	TEXT,
+    	HTML
+    }
+    
     @Bean
     public JavaMailSender getEmailSender() {
         JavaMailSenderImpl result = new JavaMailSenderImpl();
@@ -45,17 +53,26 @@ public class EmailConfig {
         result.setJavaMailProperties(javaMailProperties);
         return result;
     }
+    
 
     public String replyableGeneralEmailAddress() {
         return EMAIL_REPLYABLE_GENERAL;
     }
 
+    public String replyableSupportEmailAddress() {
+        return EMAIL_REPLYABLE_SUPPORT;
+    }
+    
     public String replyableAdminEmailAddress() {
         return EMAIL_REPLYABLE_ADMIN;
     }
 
     public String noreplyEmailAddress() {
         return EMAIL_NOREPLY;
+    }
+    
+    public String[] getAuthorizedEmailAddresses() {
+    	return new String[] { replyableGeneralEmailAddress(), replyableSupportEmailAddress(), replyableAdminEmailAddress(), noreplyEmailAddress() };
     }
 
 }

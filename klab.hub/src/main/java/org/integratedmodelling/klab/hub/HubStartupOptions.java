@@ -42,6 +42,9 @@ public class HubStartupOptions implements IHubStartupOptions {
 
     @Option(name = "-help", usage = "print command line options and exit")
     boolean help;
+    
+    @Option(name = "-cloudConfig", usage = "allow for External Configuration of Node")
+    boolean cloudConfig;
 
     private List<String> arguments = new ArrayList<>();
 
@@ -155,6 +158,11 @@ public class HubStartupOptions implements IHubStartupOptions {
 	@Override
 	public String getHubName() {
 		return hubName;
+	}
+
+	@Override
+	public boolean isCloudConfig() {
+		return cloudConfig;
 	}
 
 }

@@ -7,54 +7,67 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
-import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
+import org.integratedmodelling.klab.auth.Hub;
+import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.HubReference;
+import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.NodeReference;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.joda.time.DateTime;
 
-@Component
-public class NetworkManager {
+public enum NetworkManager {
 
-	@Autowired
-	HubAuthenticationManager hubAuthenticationManager;
 
+	INSTANCE;
+	
 	private Set<INodeIdentity> onlineNodes = Collections.synchronizedSet(new HashSet<>());
 	private Set<INodeIdentity> offlineNodes = Collections.synchronizedSet(new HashSet<>());
 	private Map<String, NodeReference> allNodes = new HashMap<>();
 
+	
+	//this does nothing
 	public Collection<NodeReference> getNodes(Set<Group> groups) {
 		Set<NodeReference> ret = new HashSet<>();
 		for (INodeIdentity node : onlineNodes) {
-			ret.add(createNodeReference(node, hubAuthenticationManager.getHubReference(), true));
+			ret.add(createNodeReference(node, true));
 		}
 		for (INodeIdentity node : offlineNodes) {
-			ret.add(createNodeReference(node, hubAuthenticationManager.getHubReference(), false));
+			ret.add(createNodeReference(node, false));
 		}
 		return ret;
 	}
 
-	private NodeReference createNodeReference(INodeIdentity node, HubReference hub, boolean isOnline) {
+	private NodeReference createNodeReference(INodeIdentity node, boolean isOnline) {
 		
-		NodeReference ret = new NodeReference();
-
-		ret.setId(node.getName());
+		NodeReference ret = new NodeReference(node);
+		HubReference hub = new GenerateHubReference().execute();
 		ret.setOnline(isOnline);
-		ret.getUrls().addAll(node.getUrls());
-		ret.setPartner(hubAuthenticationManager.getHubReference().getPartner());
-		ret.getCatalogs().addAll(node.getCatalogIds());
-		ret.getNamespaces().addAll(node.getNamespaceIds());
+		ret.setPartner(hub.getPartner());
 
 		// TODO more
 
 		return ret;
 	}
 
-	public void notifyAuthorizedNode(INodeIdentity ret, HubReference authorizingHub, boolean online) {
-		onlineNodes.add(ret);
-		allNodes.put(ret.getName(), createNodeReference(ret, authorizingHub, online));
+	public void notifyAuthorizedNode(INodeIdentity ret, boolean online) {
+		if(allNodes.containsKey(ret.getName()) && online == true) {
+			if (offlineNodes.contains(ret)) {
+				offlineNodes.remove(ret);
+			}
+			if (!onlineNodes.contains(ret)) {
+				onlineNodes.add(ret);
+			}
+		} else {
+			if(online) {
+				allNodes.put(ret.getName(), createNodeReference(ret, online));
+				onlineNodes.add(ret);
+			} else {
+				allNodes.put(ret.getName(), createNodeReference(ret, online));
+				offlineNodes.add(ret);
+			}
+		}
 	}
 
 	public NodeReference getNode(String nodeName) {

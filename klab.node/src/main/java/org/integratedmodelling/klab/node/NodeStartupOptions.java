@@ -42,6 +42,7 @@ public class NodeStartupOptions implements INodeStartupOptions {
             name = "-hub",
             usage = "URL of authenticating hub (default set in certificate)",
             metaVar = "<URL>")
+    
     String authenticatingHub = null;
     
     @Option(name = "-port", usage = "http port for REST communication", metaVar = "<INT>")
@@ -49,8 +50,11 @@ public class NodeStartupOptions implements INodeStartupOptions {
 
     @Option(name = "-help", usage = "print command line options and exit")
     boolean help;
+    
+    @Option(name = "-cloudConfig", usage = "allow for External Configuration of Node")
+    boolean cloudConfig;
 
-    @Option(name = "-components", usage = "paths to any custom component")
+	@Option(name = "-components", usage = "paths to any custom component")
     List<File> components = new ArrayList<>();
 
     private List<String> arguments = new ArrayList<>();
@@ -182,5 +186,10 @@ public class NodeStartupOptions implements INodeStartupOptions {
 	public String getHubUrl() {
 		return authenticatingHub;
 	}
+
+	public boolean isCloudConfig() {
+		return cloudConfig;
+	}
+	
 
 }

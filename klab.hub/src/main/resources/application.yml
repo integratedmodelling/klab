@@ -1,0 +1,94 @@
+server:
+  port: 8284
+  servlet:
+    contextPath: /hub  
+
+spring:
+  cloud:
+    bus:
+      enabled: false
+    discovery:
+      enabled: false
+    consul:
+      enabled: false
+      config:
+        enabled: false
+  data:
+    ldap:
+      repositories:
+        enabled: false
+  ldap:
+    embedded:
+      base-dn: dc=integratedmodelling,dc=org
+      ldif: classpath:initial-ldap-structure.ldif
+      credential:
+        username: cn=admin,dc=integratedmodelling,dc=org
+        password: password
+      port: 8389
+      validation:
+        enabled: true
+  profiles:
+    default: true
+  security:
+    oauth2:
+      client:
+        registration:
+          google:
+            clientId: 395263683724-koqd6u0bh04c44fal2darevl1p7717g0.apps.googleusercontent.com
+            clientSecret: M1OCx0qI_HbXmes0J26oCzXV
+            redirectUriTemplate: '{baseUrl}/oauth2/callback/{registrationId}'
+            scope:
+              - email
+              - profile
+              
+mongo:
+  hostname: localhost
+  port: 27017
+  
+logging:
+  file: hub.log
+  
+site:
+  callback: http://localhost:8080/#/callback
+  clickback: "/clickback/{tokenString}"
+  fullname: "Integrated Modelling Dashboard"
+  shortname: "im-dashboard"
+  url: http://localhost/hub/
+  server:
+    id: =im
+    
+engine:
+  url: https://localhost:8287
+
+email:
+   server:
+      hostname: localhost
+      port: 3025
+      username: system
+      password: password
+   replyable:
+      general:
+         emailaddress: General <integratedmodelling@integratedmodelling.com>
+      support:
+         emailaddress: Support <support@integratedmodelling.org>
+      admin:
+         emailaddress: info@integratedmodelling.org
+   noreply:
+      emailaddress: info@integratedmodelling.org
+      
+license:
+  userId: "Klab Hub (This is the key for the Dev Hub) <info@integratedmodelling.org>"
+  password: password
+  key: "3296bf41-fc15-4d7f-8c7d-6b82a432e390"
+  email: info@integratedmodelling.org
+  name:  testHub
+  hubId: Klab Hub (This is the key for the Dev Hub)
+  hubUrl: "http://192.168.39.1:8284/hub"
+  secRing:
+    filename: "keyring/SecRing.pgp"
+    digest:
+  pubRing:
+    filename: "keyring/PubRing.pgp"
+    digest: "cad134cc3dfcb0e96acb90af56532a96171f858c4c30335541932c0e00a66c9deab764805d9b9f08a49619af211b96305b512d4cf256e8a9c29877d06d207c72"
+
+      

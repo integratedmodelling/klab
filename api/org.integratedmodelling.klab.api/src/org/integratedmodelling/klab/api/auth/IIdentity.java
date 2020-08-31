@@ -83,6 +83,11 @@ public abstract interface IIdentity {
 		 * partner.
 		 */
 		IM_PARTNER,
+		
+		/**
+		 * Identified by a lever token, authenticated by a server.
+		 */
+		LEVER,
 
 		/**
 		 * Identified by a node token, owned by a partner.

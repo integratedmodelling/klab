@@ -36,6 +36,7 @@ public interface IConfigurationService {
 	public static final int DEFAULT_ENGINE_PORT = 8283;
 	public static final int DEFAULT_HUB_PORT = 8284;
 	public static final int DEFAULT_NODE_PORT = 8287;
+	public static final int DEFAULT_LEVER_PORT = 8761;
 
 	public static final String KLAB_LOG_FILE = "klab.log.file";
 	public static final String KLAB_OFFLINE = "klab.offline";
@@ -86,6 +87,8 @@ public interface IConfigurationService {
 	 * 1 runtime providers are available.
 	 */
 	public static final String RUNTIME_PROVIDER_COMPONENT = "klab.runtime.provider.class";
+
+	
 
 	/**
 	 * The main properties, read and written by default to

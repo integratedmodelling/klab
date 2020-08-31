@@ -3,14 +3,21 @@ package org.integratedmodelling.klab.hub.security;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 
+import javax.servlet.Filter;
+import javax.servlet.FilterChain;
+import javax.servlet.FilterConfig;
 import javax.servlet.ServletException;
+import javax.servlet.ServletRequest;
+import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.config.BeanIds;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
-import org.integratedmodelling.klab.hub.manager.KlabUserManager;
 import org.integratedmodelling.klab.hub.security.oauth2.HttpCookieOAuth2AuthorizationRequestRepository;
 import org.integratedmodelling.klab.hub.security.oauth2.OAuth2AuthenticationFailureHandler;
 import org.integratedmodelling.klab.hub.security.oauth2.OAuth2AuthenticationSuccessHandler;
@@ -26,11 +33,16 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.AuthenticationException;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.DelegatingPasswordEncoder;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.channel.ChannelProcessingFilter;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
 
@@ -41,9 +53,9 @@ import com.google.common.net.HttpHeaders;
 @Configuration
 @EnableGlobalMethodSecurity(securedEnabled = true, jsr250Enabled = true, prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
-
+	
 	@Autowired
-	KlabUserManager klabUserManager;
+	UserDetailsService userDetailsService;
 
 	@Autowired
 	private JwtAuthenticationEntryPoint unauthorizedHandler;
@@ -61,7 +73,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	public TokenAuthenticationFilter tokenAuthenticationFilter() {
 		return new TokenAuthenticationFilter();
 	}
-
+    
+    
 	public static final String AUTHENTICATION_TOKEN_HEADER_NAME = "Authentication";
 
 	/**
@@ -95,13 +108,25 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
 	@Override
 	public void configure(AuthenticationManagerBuilder auth) throws Exception {
-		auth.userDetailsService(klabUserManager).passwordEncoder(passwordEncoder());
+		auth.userDetailsService(userDetailsService).passwordEncoder(passwordEncoder());
 	}
 
-	//This should be changed to something like Bcrypt, but 
+	
+	/**
+	 * The allows our password encoder to have multiple entries.  Allowing us to upgrade user
+	 * passwords without needing to do some serious migration effort.  It is possible that
+	 * we will need to have users set a new password, or force the system to rehash the password
+	 * when the user logs in.
+	 */	
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-		return new LdapShaPasswordEncoder();
+        String encodingId = "bcrypt";
+        Map<String, PasswordEncoder> encoders = new HashMap<>();
+        encoders.put(encodingId, new BCryptPasswordEncoder());
+        encoders.put("SHA512", new  LdapShaPasswordEncoder());
+        DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(encodingId, encoders);
+        delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new LdapShaPasswordEncoder());
+        return delegatingPasswordEncoder;
 	}
 
 	@Override
@@ -118,13 +143,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 			.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
 			.and()
 		.authorizeRequests()
-			.regexMatchers("/api/users/.*?(activate|lostPassword|setPassword|requestNewPassword|groups).*")
+			.antMatchers(HttpMethod.POST, HubRequestMatchers.getAuthentication())
 			.permitAll()
-			.antMatchers(HttpMethod.POST, "/api/users")
+			.regexMatchers(HttpMethod.POST, HubRequestMatchers.getUsers())
 			.permitAll()
-			.antMatchers("/api/auth-cert/engine", "/api/auth-cert/node")
-			.permitAll()
-			.anyRequest()
+		.anyRequest()
 			.authenticated()
 			.and()
 		.oauth2Login()
@@ -141,39 +164,38 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		.successHandler(oAuth2AuthenticationSuccessHandler)
 		.failureHandler(oAuth2AuthenticationFailureHandler);
 
-		http.cors().and().csrf().disable().antMatcher("/api/**").addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+		http.csrf().disable().antMatcher("/api/**")
+		.addFilterBefore(tokenAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class);
+		//.addFilterBefore(WebSecurityCorsFilter(), ChannelProcessingFilter.class);
 	}
-	/*
+
+//  Left here as a last resort
+//	public class WebSecurityCorsFilter implements Filter {
+//	    @Override
+//	    public void init(FilterConfig filterConfig) throws ServletException {
+//	    }
+//	    @Override
+//	    public void doFilter(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
+//	        HttpServletResponse res = (HttpServletResponse) response;
+//	        res.setHeader("Access-Control-Allow-Headers", "Authorization, Content-Type, Accept, x-requested-with, Cache-Control");
+//	        chain.doFilter(request, res);
+//	    }
+//	    @Override
+//	    public void destroy() {
+//	    }
+//	}
+	
 	@Bean
 	CorsConfigurationSource corsConfigurationSource() {
-		CorsConfiguration configuration = new CorsConfiguration();
-		configuration.setAllowCredentials(true);
-		configuration.setAllowedOrigins(
-				ImmutableList.of(
-						"https://integratedmodelling.org",
-						"http://localhost:8080",
-						"http://192.168.0.104:8080",
-						"https://localhost:8284",
-						"http://localhost:8284"));
-		configuration.setAllowedHeaders(Collections.singletonList("*"));
-		configuration.addExposedHeader("Content-disposition");
-		configuration.addExposedHeader(HttpHeaders.LOCATION);
-		configuration.setAllowedMethods(Arrays.asList("GET","POST","PUT","OPTIONS","DELETE","HEAD"));
-		configuration.setMaxAge(3600l);
-		UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
-		source.registerCorsConfiguration("/**", configuration);
-		return source;
-	}
-	*/
-	@Bean
-	public CorsFilter corsFilter() {
 		final UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
 		final CorsConfiguration config = new CorsConfiguration();
-		config.setAllowCredentials(true);
+		config.setAllowCredentials(false);
 		config.setAllowedOrigins(ImmutableList.of(
 				"https://integratedmodelling.org",
 				"http://localhost:8080",
 				"https://localhost:8080",
+				"http://localhost:8081",
+				"https://localhost:8081",
 				"http://localhost:8284",
 				"https://localhost:8284"));
 		config.setAllowedHeaders(Collections.singletonList("*"));
@@ -181,6 +203,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 		config.addExposedHeader(HttpHeaders.LOCATION);
 		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "OPTIONS", "DELETE", "PATCH", "HEAD"));
 		source.registerCorsConfiguration("/**", config);
-		return new CorsFilter(source);
+		return source;
 	}
+	
 }
