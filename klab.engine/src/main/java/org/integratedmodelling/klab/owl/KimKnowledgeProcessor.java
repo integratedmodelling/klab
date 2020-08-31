@@ -364,8 +364,9 @@ public enum KimKnowledgeProcessor {
 
 		ret.setOptional(concept.isOptional());
 		ret.setGeneric(concept.isAbstractObservable());
-
-		ret.setReferenceName(Concepts.INSTANCE.getCodeName(main));
+		ret.setReferenceName(concept.getMain().getCodeName().replace("-","_"));
+		
+//		ret.setReferenceName(Concepts.INSTANCE.getCodeName(main));
 
 		for (Pair<ValueOperator, Object> operator : concept.getValueOperators()) {
 

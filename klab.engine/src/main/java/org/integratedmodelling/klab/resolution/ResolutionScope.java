@@ -175,6 +175,7 @@ public class ResolutionScope implements IResolutionScope {
 
 	private IMonitor monitor;
 	private Scope originalScope;
+	private ResolutionScope rootScope;
 
 	/**
 	 * if not null, the observable has been resolved through a value specified
@@ -210,6 +211,7 @@ public class ResolutionScope implements IResolutionScope {
 	private Map<IObservable, Set<IRankedModel>> resolverCache = new HashMap<>();
 	private boolean caching;
 	private IModel contextModel;
+	private boolean occurrent = false;
 
 	/**
 	 * The context model, if there, is the instantiator that has created the
@@ -256,6 +258,9 @@ public class ResolutionScope implements IResolutionScope {
 		ResolutionScope ret = new ResolutionScope(monitor);
 		if (scale != null) {
 			ret.coverage = Coverage.full(scale);
+			if (scale.isTemporallyDistributed()) {
+				ret.occurrent = true;
+			}
 		}
 		return ret;
 	}
@@ -286,6 +291,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.scenarios.addAll(scenarios);
 		this.resolutionNamespace = observer.getNamespace();
 		this.monitor = monitor;
+		this.occurrent = this.coverage.isTemporallyDistributed();
 	}
 
 	private ResolutionScope(Observer observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
@@ -294,6 +300,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.resolutionNamespace = observer.getNamespace();
 		this.observer = observer;
 		this.monitor = monitor;
+		this.occurrent = this.coverage.isTemporallyDistributed();
 	}
 
 	/**
@@ -314,6 +321,7 @@ public class ResolutionScope implements IResolutionScope {
 	private ResolutionScope(IScale scale, double coverage, ResolutionScope other, boolean copyResolution) {
 		copy(other, copyResolution);
 		this.coverage = coverage == 1 ? Coverage.full(scale) : Coverage.empty(scale);
+		this.occurrent = scale.isTemporallyDistributed();
 	}
 
 	private ResolutionScope(Coverage coverage, ResolutionScope other, boolean copyResolution) {
@@ -340,6 +348,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.deferred = other.deferred;
 		this.observationName = other.observationName;
 		this.contextObservable = other.contextObservable;
+		this.occurrent = other.occurrent;
 		if (copyResolution) {
 			this.observable = other.observable;
 			this.model = other.model;
@@ -1231,6 +1240,25 @@ public class ResolutionScope implements IResolutionScope {
 		}
 
 		return null;
+	}
+	
+	public ResolutionScope getRootScope() {
+		if (rootScope == null) {
+			rootScope = this;
+			while (rootScope.parent != null) {
+				rootScope = rootScope.parent;
+			}
+		}
+		return rootScope;
+	}
+	
+	public void setOccurrent(boolean b) {
+		getRootScope().occurrent  = b;
+	}
+	
+	@Override
+	public boolean isOccurrent() {
+		return getRootScope().occurrent;
 	}
 
 }

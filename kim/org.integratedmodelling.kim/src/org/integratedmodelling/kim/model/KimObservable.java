@@ -344,6 +344,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		if (main == null) {
 			return "undefined";
 		}
+		
 		String ret = main.getCodeName();
 
 		for (Pair<ValueOperator, Object> operator : valueOperators) {

@@ -44,11 +44,8 @@ import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.documentation.Documentation;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.springframework.util.StringUtils;
 
@@ -56,9 +53,7 @@ import groovyjarjarantlr.Token;
 import groovyjarjarantlr.TokenStreamException;
 
 /**
- * Smarter preprocessor to produce proper Groovy from Thinklab expressions.
- * Should remove all needs to bananize code and produce error messages at
- * compilation if unknown identifiers are used.
+ * Smarter preprocessor to produce proper Groovy from k.LAB expressions.
  * 
  * Disables Groovy's slashy strings using a trick to prevent the infinitely more
  * important division operator from causing lexer errors.
@@ -682,5 +677,9 @@ public class GroovyExpressionPreprocessor {
 	 */
 	public Set<String> getContextualizers() {
 		return contextualizers;
+	}
+	
+	public static void main(String[] args) {
+		
 	}
 }

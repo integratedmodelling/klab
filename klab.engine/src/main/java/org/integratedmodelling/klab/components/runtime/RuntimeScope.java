@@ -950,8 +950,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 */
 		Map<String, Triple<Observable, Mode, Boolean>> targetObservables = new HashMap<>();
 
-		if (this.catalog.get(actuator.getName()) != null) {
-			return this.catalog.get(actuator.getName());
+		Pair<String, IArtifact> existing = findArtifact(actuator.getObservable());		
+		if (existing != null) {
+			return existing.getSecond();
 		}
 
 		if (!actuator.isPartition()) {
@@ -1468,7 +1469,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		List<IArtifact> ret = new ArrayList<>();
 		for (IArtifact artifact : catalog.values()) {
 			if (artifact instanceof IObservation
-					&& ((IObservation) artifact).getObservable().getType().is(observable)) {
+					&& ((IObservation) artifact).getObservable().getType().equals(observable)) {
 				ret.add(artifact);
 			}
 		}

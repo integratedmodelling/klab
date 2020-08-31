@@ -853,6 +853,11 @@ public class Actuator implements IActuator {
 
 		IRuntimeScope ret = runtimeContext.copy();
 
+		/*
+		 * Needed to infer formal parameters and the like when expressions are used
+		 */
+		ret.setModel(this.model);
+		
 		// compile mediators
 		List<Pair<IContextualizer, IContextualizable>> mediation = new ArrayList<>();
 		for (Pair<IServiceCall, IContextualizable> service : mediationStrategy) {

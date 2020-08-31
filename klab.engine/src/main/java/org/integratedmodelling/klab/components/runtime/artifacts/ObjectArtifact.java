@@ -7,6 +7,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.provenance.Artifact;
@@ -32,6 +33,12 @@ public class ObjectArtifact extends Artifact implements IObjectArtifact {
 	public ObjectArtifact(String name, IScale scale) {
 		this.name = name;
 		this.scale = scale;
+	}
+
+	public ObjectArtifact(String name, IScale scale, IMetadata metadata) {
+		this.name = name;
+		this.scale = scale;
+		this.metadata.putAll(metadata);
 	}
 
 	@Override
@@ -91,7 +98,7 @@ public class ObjectArtifact extends Artifact implements IObjectArtifact {
 
 	@Override
 	public IArtifact getGroupMember(int n) {
-		return group == null ? null : (group.size() > n ? group.get(n) : null);
+		return group == null ? (n == 0 ? this : null) : (group.size() > (n-1) ? group.get(n-1) : null);
 	}
 
 }

@@ -383,7 +383,7 @@ public enum Observables implements IObservableService {
 	 */
 	public boolean isContextuallyCompatible(IConcept focus, IConcept context1, IConcept context2) {
 		boolean ret = isCompatible(context1, context2, 0);
-		if (!ret && Concepts.INSTANCE.isOccurrent(context1)) {
+		if (!ret && isOccurrent(context1)) {
 			ret = isAffectedBy(focus, context1);
 			IConcept itsContext = getContext(context1);
 			if (!ret) {
@@ -1047,4 +1047,28 @@ public enum Observables implements IObservableService {
 
 	}
 
+	/**
+	 * 
+	 * @param c
+	 * @return
+	 */
+	public boolean isOccurrent(ISemantic c) {
+		
+		if (c.getType().is(Type.PROCESS) || c.getType().is(Type.EVENT)) {
+			return true;
+		}
+		
+		/*
+		 * TODO a quality occurs if it's created by a process
+		 */
+		if (c.getType().is(Type.QUALITY)) {
+			// 
+		}
+		
+		/*
+		 * TODO functional relationships should occur (?)
+		 */
+		
+		return false;
+	}
 }

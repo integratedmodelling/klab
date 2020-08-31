@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
@@ -717,6 +718,20 @@ public class Concept extends Knowledge implements IConcept {
 
 		for (IConcept t : Traits.INSTANCE.getTraits(concept)) {
 			if (!Traits.INSTANCE.hasTrait(this, t)) {
+				return -50;
+			}
+		}
+
+		// same with roles.
+		for (IConcept t : Roles.INSTANCE.getRoles(this)) {
+			boolean ok = Roles.INSTANCE.hasRole(concept, t);
+			if (!ok) {
+				return -50;
+			}
+		}
+		
+		for (IConcept t : Roles.INSTANCE.getRoles(concept)) {
+			if (!Roles.INSTANCE.hasRole(this, t)) {
 				return -50;
 			}
 		}

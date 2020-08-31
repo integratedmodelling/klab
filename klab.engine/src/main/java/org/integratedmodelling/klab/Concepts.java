@@ -601,8 +601,4 @@ public enum Concepts implements IConceptService {
 		return ret;
 	}
 
-	public boolean isOccurrent(IConcept c) {
-		return c.is(Type.PROCESS) || c.is(Type.EVENT);
-	}
-
 }

@@ -196,6 +196,8 @@ public class DataflowCompiler {
 			ret.setNamespace(actuator.getNamespace());
 		}
 
+		monitor.debug((scope.isOccurrent() ? "Occurrent" : "Continuant") + " dataflow compiled");
+
 		return ret;
 	}
 
@@ -732,7 +734,7 @@ public class DataflowCompiler {
 
 			Observable modelObservable = null;
 			boolean assigned = false;
-			
+
 			if (Units.INSTANCE.needsUnits(observable)) {
 
 				for (ModelD md : models) {
@@ -786,12 +788,12 @@ public class DataflowCompiler {
 
 			/*
 			 * Fix the units if they were assigned here and there are countable aggregators
-			 * that interfere with the spatial or temporal distribution of the original units.
+			 * that interfere with the spatial or temporal distribution of the original
+			 * units.
 			 */
 			if (assigned) {
 				Observables.INSTANCE.contextualizeUnitsForAggregation(this.observable, context.getScale());
 			}
-			
 
 			/**
 			 * Record the source in the catalog only after any fluid units have been

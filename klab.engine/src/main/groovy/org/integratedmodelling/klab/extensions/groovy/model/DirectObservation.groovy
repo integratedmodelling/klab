@@ -21,12 +21,12 @@ class DirectObservation<T extends IDirectObservation> extends Observation<IDirec
 
     DirectObservation(String id, Binding binding) {
         super(id, binding);
-        name = unwrap().name;
+        this.name = unwrap().name;
     }
 
     DirectObservation(IDirectObservation obs, Binding binding) {
         super(obs, binding);
-        name = obs.name;
+        this.name = obs.name;
     }
 
     def deactivate() {

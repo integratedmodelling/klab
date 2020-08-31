@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assignment;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
@@ -16,6 +17,7 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.Do;
 import org.integratedmodelling.kactors.api.IKActorsStatement.FireValue;
 import org.integratedmodelling.kactors.api.IKActorsStatement.For;
 import org.integratedmodelling.kactors.api.IKActorsStatement.If;
+import org.integratedmodelling.kactors.api.IKActorsStatement.Instantiation;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Sequence;
 import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.api.IKActorsStatement.While;
@@ -32,9 +34,11 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.BindUserAction;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Cleanup;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.ComponentFire;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fire;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.SetView;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Stop;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
@@ -47,6 +51,8 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewAction;
+import org.integratedmodelling.klab.rest.ViewComponent;
+import org.integratedmodelling.klab.rest.ViewPanel;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
@@ -57,8 +63,8 @@ import akka.actor.typed.PostStop;
 import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
-import akka.actor.typed.javadsl.Receive;
 import akka.actor.typed.javadsl.Behaviors;
+import akka.actor.typed.javadsl.Receive;
 import akka.actor.typed.javadsl.ReceiveBuilder;
 
 public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
@@ -67,9 +73,16 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected String appId;
 	protected IActorIdentity<KlabMessage> identity;
 	protected Map<Long, MatchActions> listeners = Collections.synchronizedMap(new HashMap<>());
+	protected Map<String, MatchActions> componentFireListeners = Collections.synchronizedMap(new HashMap<>());
 	private AtomicLong nextId = new AtomicLong(0);
 	private Map<String, Long> actionBindings = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, ActorRef<KlabMessage>> receivers = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, List<ActorRef<KlabMessage>>> childInstances = Collections.synchronizedMap(new HashMap<>());
+
+	/*
+	 * This is the parent that generated us through a 'new' instruction, if any.
+	 */
+	private ActorRef<KlabMessage> parentActor = null;
 
 	/*
 	 * if we pre-build actions or we run repeatedly we cache them here. Important
@@ -77,6 +90,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	protected Map<String, KlabAction> actionCache = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, KlabAction.Actor> localActors = Collections.synchronizedMap(new HashMap<>());
+	private ViewComponent view;
 
 	protected ActorRef<KlabMessage> getDispatcher() {
 		if (appId == null) {
@@ -271,8 +285,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected ReceiveBuilder<KlabMessage> configure() {
 		ReceiveBuilder<KlabMessage> builder = newReceiveBuilder();
 		return builder.onMessage(Load.class, this::loadBehavior).onMessage(Spawn.class, this::createChild)
-				.onMessage(Fire.class, this::reactToFire).onMessage(UserAction.class, this::reactToViewAction)
-				.onMessage(BindUserAction.class, this::bindViewAction)
+				.onMessage(Fire.class, this::reactToFire).onMessage(ComponentFire.class, this::reactToComponentFiring)
+				.onMessage(UserAction.class, this::reactToViewAction)
+				.onMessage(BindUserAction.class, this::bindViewAction).onMessage(SetView.class, this::setView)
 				.onMessage(KActorsMessage.class, this::executeCall).onMessage(Stop.class, this::stopChild)
 				.onMessage(Cleanup.class, this::cleanup).onSignal(PostStop.class, signal -> onPostStop());
 	}
@@ -323,10 +338,38 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			}
 		} else {
 			Long notifyId = this.actionBindings.get(message.action.getComponent().getId());
-			if (notifyId != null) {
+			if (notifyId != null && message.action.getComponent().getActorPath() == null) {
 				MatchActions actions = listeners.get(notifyId);
 				if (actions != null) {
 					actions.match(getActionValue(message.action));
+				}
+			} else if (message.action.getComponent().getActorPath() != null) {
+
+				// dispatch to child actor
+				String path = message.action.getComponent().getActorPath();
+				String[] elements = path.split("\\.");
+				if (elements.length > 0) {
+
+					String actorId = elements[0];
+					int idx = 0;
+					int cut = actorId.indexOf('_');
+					if (cut > 0) {
+						idx = Integer.parseInt(actorId.substring(cut + 1));
+						actorId = actorId.substring(0, cut);
+					}
+					List<ActorRef<KlabMessage>> actors = this.childInstances.get(actorId);
+
+					if (actors != null && actors.size() > idx) {
+
+						if (elements.length == 1) {
+							message.action.getComponent().setActorPath(null);
+						} else if (elements.length > 1) {
+							message.action.getComponent().setActorPath(Path.getRemainder(path, "."));
+						}
+						actors.get(idx).tell(message);
+					} else {
+						System.out.println("HOSTIA unreferenced child actor " + elements[0]);
+					}
 				}
 			}
 		}
@@ -354,6 +397,23 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			}
 		} else {
 			this.actionBindings.put(message.componentId, message.notifyId);
+		}
+		return Behaviors.same();
+	}
+
+	protected Behavior<KlabMessage> setView(SetView message) {
+		// TODO Set the action bindings for a component
+		this.view = message.component;
+		return Behaviors.same();
+	}
+
+	protected Behavior<KlabMessage> reactToComponentFiring(ComponentFire message) {
+		// TODO
+		if (message.listenerId != null) {
+			MatchActions actions = componentFireListeners.get(message.listenerId);
+			if (actions != null) {
+				actions.match(message.value);
+			}
 		}
 		return Behaviors.same();
 	}
@@ -386,6 +446,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	protected Behavior<KlabMessage> loadBehavior(Load message) {
 
+		this.parentActor = message.parent;
+
 		if (message.appId != null) {
 			/*
 			 * spawn another actor and load the behavior in it.
@@ -402,11 +464,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.actionBindings.clear();
 			this.actionCache.clear();
 
-			Layout view = Actors.INSTANCE.getView(behavior, identity, this.appId);
-			if (!view.empty()) {
-				this.identity.setLayout(view);
-				this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
-						view);
+			if (behavior.getDestination() == Type.APP) {
+				Layout view = Actors.INSTANCE.getView(behavior, identity, this.appId, null);
+				if (!view.empty()) {
+					this.view = view;
+					this.identity.setLayout(view);
+					this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
+							view);
+				}
 			}
 
 			/*
@@ -475,11 +540,88 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			executeWhile((IKActorsStatement.While) code, scope);
 			break;
 		case INSTANTIATION:
-			// TODO spawn a child and connect its fires to us
+			executeInstantiation((IKActorsStatement.Instantiation) code, scope);
 			break;
 		default:
 			break;
 		}
+	}
+
+	private void executeInstantiation(Instantiation code, Scope scope) {
+
+		Behavior<KlabMessage> child = null;
+		if (this.identity instanceof Observation) {
+			child = ObservationActor.create((Observation) this.identity, null);
+		} else if (this.identity instanceof Session) {
+			child = SessionActor.create((Session) this.identity, null);
+		} else if (this.identity instanceof EngineUser) {
+			child = UserActor.create((EngineUser) this.identity);
+		}
+
+		// existing actors for this behavior
+		List<ActorRef<KlabMessage>> actors = this.childInstances.get(code.getActorBaseName());
+		String actorName = code.getActorBaseName() + (actors == null ? "" : ("_" + (actors.size() + 1)));
+
+		ActorRef<KlabMessage> actor = getContext().spawn(
+				Behaviors.supervise(child).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)), actorName);
+
+		/*
+		 * TODO use the actor name to install a listener for any actions that may be
+		 * connected to this instance; it will be used as listener ID for the
+		 * ComponentFire message sent when the child fires.
+		 */
+		if (code.getActions().size() > 0) {
+
+			MatchActions actions = new MatchActions(scope);
+			for (Pair<IKActorsValue, IKActorsStatement> adesc : code.getActions()) {
+				actions.matches.add(new Pair<Match, IKActorsStatement>(new Match(adesc.getFirst()), adesc.getSecond()));
+			}
+			this.componentFireListeners.put(actorName, actions);
+		}
+
+		// remove the appId for the children, otherwise their messages will be rerouted
+		actor.tell(new Load(code.getBehavior(), null, scope.runtimeScope).withParent(getContext().getSelf()));
+
+		/*
+		 * if the new actor has a component associated, set its view to the component
+		 * and prepare bindings.
+		 */
+		ViewComponent componentView = extractComponent(this.view, code.getActorBaseName());
+		if (componentView != null) {
+			actor.tell(new SetView(componentView));
+		}
+
+		if (actors == null) {
+			actors = new ArrayList<>();
+			this.childInstances.put(code.getActorBaseName(), actors);
+		}
+
+		actors.add(actor);
+
+	}
+
+	private ViewComponent extractComponent(ViewComponent component, String actorBaseName) {
+		ViewComponent ret = null;
+		if (component != null) {
+			if (component instanceof Layout) {
+				for (ViewPanel panel : Actors.INSTANCE.getPanels((Layout) component)) {
+					if ((ret = extractComponent(panel, actorBaseName)) != null) {
+						return ret;
+					}
+				}
+			}
+			for (ViewComponent c : component.getComponents()) {
+				if (c.getActorPath() != null && c.getActorPath().startsWith(actorBaseName)) {
+					ret = c;
+					break;
+				}
+				ret = extractComponent(c, actorBaseName);
+				if (ret != null) {
+					return ret;
+				}
+			}
+		}
+		return ret;
 	}
 
 	private void executeWhile(While code, Scope scope) {
@@ -518,9 +660,38 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	private void executeFire(FireValue code, Scope scope) {
+
 		if (scope.sender != null) {
-			scope.sender.tell(
-					new Fire(scope.listenerId, code.getValue().getValue(), /* TODO FIXME boh */true, scope.appId));
+
+			/*
+			 * this should happen when a non-main action executes the fire. Must be checked
+			 * first. Fire may happen if the action firing is called again, so don't remove
+			 * the listener.
+			 */
+			scope.sender.tell(new Fire(scope.listenerId, code.getValue().getValue(), false, scope.appId));
+
+		} else if (parentActor != null) {
+
+			/*
+			 * No sender = the fire is not coming from an internal action but goes out to
+			 * the world, which in this case is the parent actor. Let our parent know we've
+			 * fired with a message carrying the name it knows us by, so that the value can
+			 * be matched to what is caught after the 'new' verb. Listener ID is the actor's
+			 * name.
+			 */
+			parentActor.tell(new ComponentFire(getContext().getSelf().path().name(), code.getValue().getValue(),
+					getContext().getSelf()));
+
+		} else {
+
+			/*
+			 * Scureggia nello spazio: nothing is listening from the behaviors being
+			 * executed.
+			 * 
+			 * TODO - an actor firing with no action listening and no parent should just
+			 * send to either the user actor or (maybe) its parent identity?
+			 */
+
 		}
 	}
 
@@ -684,7 +855,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 						if (message.arguments.containsKey("tag")) {
 							Object t = message.arguments.get("tag");
 							if (t instanceof KActorsValue) {
-								t = ((KActorsValue)t).getValue();
+								t = ((KActorsValue) t).getValue();
 							}
 							((KlabAction.Actor) a).setName(t.toString());
 							this.localActors.put(((KlabAction.Actor) a).getName(), (KlabAction.Actor) a);
@@ -729,7 +900,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				behavior = SessionActor.create((Session) message.identity, message.appId);
 			}
 			ActorRef<KlabMessage> actor = getContext().spawn(
-					Behaviors.supervise(behavior).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)), message.identity.getId());
+					Behaviors.supervise(behavior).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
+					message.identity.getId());
 			message.identity.instrument(actor);
 		}
 

@@ -51,7 +51,12 @@ public abstract class KActorsStatement extends KActorCodeStatement implements IK
 		} else if (statement.getValue() != null) {
 			ret =  new KActorsFire(statement.getValue(), parent);
 		} else if (statement.getVerb() != null) {
-			ret =  new KActorsActionCall(statement.getVerb(), parent);
+			if ("$".equals(statement.getVerb().getName().trim())) {
+				// special case: it's "re-fire whatever was fired"
+				ret =  new KActorsFire(parent);
+			} else {
+				ret =  new KActorsActionCall(statement.getVerb(), parent);
+			}
 		} else if (statement.getGroup() != null) {
 			ret =  new KActorsConcurrentGroup(statement.getGroup(), parent);
 		} else if (statement.getInstantiation() != null) {
