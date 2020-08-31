@@ -66,6 +66,7 @@ public class Observable implements IObservable {
 	private boolean fluidUnits;
 	private boolean distributedInherency;
 	private boolean active = true;
+	private IConcept temporalInherent;
 
 	/*
 	 * Target predicate is a concrete predicate that may be added to the observable
@@ -145,17 +146,16 @@ public class Observable implements IObservable {
 		this.mustContextualize = observable.mustContextualize;
 		this.distributedInherency = observable.distributedInherency;
 		this.active = observable.active;
+		this.temporalInherent = observable.temporalInherent;
 	}
 
-	
 	public Observable withoutModel() {
 		this.originatingModelId = null;
 		this.modelReference = null;
 		this.resolvedModel = null;
 		return this;
 	}
-	
-	
+
 	@Override
 	public IConcept getType() {
 		return observable;
@@ -247,7 +247,7 @@ public class Observable implements IObservable {
 	}
 
 	@Override
-	public IActivity.Description getDescription() {
+	public IActivity.Description getDescriptionType() {
 		if (observationType == null && observable != null) {
 			if (observable.is(Type.CLASS)) {
 				observationType = IActivity.Description.CATEGORIZATION;
@@ -311,11 +311,13 @@ public class Observable implements IObservable {
 			return false;
 		}
 
+		boolean conceptsAreEqual = this.observable.getDefinition().equals(obj.observable.getDefinition());
+
 		/*
 		 * TODO check: operators are only allowed at the receiving end. We should also
 		 * allow the same operators and operands as us in the provider.
 		 */
-		return this.observable.equals(obj.observable) && (obj.valueOperators.isEmpty()
+		return conceptsAreEqual && (obj.valueOperators.isEmpty()
 				|| CollectionUtils.isEqualCollection(this.valueOperators, obj.valueOperators));
 	}
 
@@ -392,46 +394,6 @@ public class Observable implements IObservable {
 		}
 		return this.resolvedModel;
 	}
-
-//	@Override
-//	public IConcept getContext() {
-//		return Observables.INSTANCE.getContextType(getType());
-//	}
-//
-//	@Override
-//	public IConcept getInherentType() {
-//		return Observables.INSTANCE.getInherentType(getType());
-//	}
-//
-//	@Override
-//	public IConcept getComparisonType() {
-//		return Observables.INSTANCE.getComparisonType(getType());
-//	}
-//
-//	@Override
-//	public IConcept getCaused() {
-//		return Observables.INSTANCE.getCausedType(getType());
-//	}
-//
-//	@Override
-//	public IConcept getDescribedType() {
-//		return Observables.INSTANCE.getDescribedType(getType());
-//	}
-//	
-//	@Override
-//	public IConcept getCausant() {
-//		return Observables.INSTANCE.getCausantType(getType());
-//	}
-//
-//	@Override
-//	public IConcept getCompresent() {
-//		return Observables.INSTANCE.getCompresentType(getType());
-//	}
-//
-//	@Override
-//	public IConcept getPurpose() {
-//		return Observables.INSTANCE.getGoalType(getType());
-//	}
 
 	@Override
 	public IArtifact.Type getArtifactType() {
@@ -566,8 +528,7 @@ public class Observable implements IObservable {
 	public String getNamespace() {
 		// TODO if we come from a declaration in a given namespace, use that
 		return getType().getNamespace();
-		
-		
+
 	}
 
 	@Override
@@ -685,7 +646,7 @@ public class Observable implements IObservable {
 		return resolvable == null ? null
 				: new Pair<>(resolvable, (Observable) getBuilder(monitor).without(resolvable).buildObservable());
 	}
-	
+
 	public void setReferenceName(String name) {
 		this.referenceName = name;
 	}
@@ -754,5 +715,13 @@ public class Observable implements IObservable {
 	public void setActive(boolean active) {
 		this.active = active;
 	}
-	
+
+	public IConcept getTemporalInherent() {
+		return temporalInherent;
+	}
+
+	public void setTemporalInherent(IConcept temporalInherent) {
+		this.temporalInherent = temporalInherent;
+	}
+
 }

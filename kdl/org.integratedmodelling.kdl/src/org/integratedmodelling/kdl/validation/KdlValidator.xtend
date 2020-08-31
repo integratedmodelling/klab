@@ -67,14 +67,14 @@ class KdlValidator extends AbstractKdlValidator {
 				KdlPackage.Literals.ACTOR_DEFINITION__DEFAULT);
 		}
 
-		if (actor.isFilter) {
-			// must have at least one import parameter
+		if (actor.isFilter && actor.type != 'extent') {
+			// must have at least one import parameter. Extent filters are used in resolution so no such requirement.
 			var ok = false;
 			if (actor.body !== null && actor.body.dataflows !== null && actor.body.dataflows.size() > 0) {
 				for (child : actor.body.dataflows) {
 					if (child.isImported) {
 						ok = true
-					// f'ing break is not available, let's waste cycles
+					// f'ing break is not available in this shitty language, let's waste cycles
 					}
 				}
 			}

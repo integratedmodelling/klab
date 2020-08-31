@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IEventBus;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
@@ -230,18 +231,6 @@ public abstract class Expression implements IExpression {
 		}
 
 		@Override
-		public Collection<IObservable> getDependents(IObservable observable) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
-		public Collection<IObservable> getPrecursors(IObservable observable) {
-			// TODO Auto-generated method stub
-			return null;
-		}
-
-		@Override
 		public ISubject getRootSubject() {
 			// TODO Auto-generated method stub
 			return null;
@@ -261,6 +250,18 @@ public abstract class Expression implements IExpression {
 
 		@Override
 		public Collection<IObservation> getObservations(IConcept observable) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Collection<IObservable> getDependents(IObservable observable, Mode resolutionMode) {
+			// TODO Auto-generated method stub
+			return null;
+		}
+
+		@Override
+		public Collection<IObservable> getPrecursors(IObservable observable, Mode resolutionMode) {
 			// TODO Auto-generated method stub
 			return null;
 		}

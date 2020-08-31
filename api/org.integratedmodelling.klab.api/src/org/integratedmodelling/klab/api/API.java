@@ -15,6 +15,7 @@ package org.integratedmodelling.klab.api;
 
 import org.integratedmodelling.klab.api.auth.INetworkSessionIdentity;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.rest.TicketRequest;
 
 /**
  * This interface and its members describe the REST API of k.LAB. The API
@@ -136,7 +137,8 @@ public interface API {
 	public static interface TICKET {
 
 		/**
-		 * Retrieve the specific ticket with the passed ID.
+		 * Retrieve the specific ticket with the passed ID. If ticket==all, get a list
+		 * of all tickets.
 		 * 
 		 * GET
 		 */
@@ -145,9 +147,14 @@ public interface API {
 		/**
 		 * Retrieve all tickets matching the field values in the query string.
 		 * 
-		 * GET
+		 * POST with {@link TicketRequest} query data
 		 */
 		public static final String QUERY = "/ticket/query";
+
+		/**
+		 * Retrieve all tickets as an array of JSON objects. Requires ADMIN role.
+		 */
+		public static final String LIST = "/ticket/list";
 
 	}
 
@@ -169,14 +176,174 @@ public interface API {
 		 * <br/>
 		 * <b>Authentication:</b> open
 		 */
-		public static final String AUTHENTICATE_ENGINE = "/api/auth-cert/engine";
-
+		
+		public static final String API_BASE = "/api/v2";
+		/**
+		 * Base URL path for node on the hub.
+		 */
+		public static final String NODE_BASE = API_BASE + "/nodes";
+		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String USER_BASE = API_BASE + "/users";
+		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String GROUPS_BASE = API_BASE + "/groups";
+		/**
+		 * Base URL path for lever resources on the hub.
+		 */
+		public static final String LEVER_BASE = API_BASE + "/lever";
+		/**
+		 * Base URL path for engine resources on the hub.
+		 */		
+		public static final String ENGINE_BASE = API_BASE + "/engines";
+		/**
+		 * Base URL path for tasks resources on the hub.
+		 */
+		public static final String TASK_BASE = API_BASE + "/tasks";
+		/**
+		 * Base URL path for email resources and services on the hub.
+		 */		
+		public static final String EMAIL_BASE = API_BASE + "/emails";
+		/**
+		 * Base URL path for authenticating resources.
+		 */		
+		public static final String AUTH_BASE = "/auth-cert";
+		
+		public static final String AUTHENTICATE_ENGINE = ENGINE_BASE + AUTH_BASE;
 		/**
 		 * Called by nodes on hubs when authenticating with them. Parameters like the
 		 * engine version.
 		 */
-		public static final String AUTHENTICATE_NODE = "/api/auth-cert/node";
-
+		public static final String AUTHENTICATE_NODE = NODE_BASE + AUTH_BASE;
+		/**
+		 * Called by levers on hubs when authenticating with them. Parameters like the
+		 * engine version.
+		 */
+		public static final String AUTHENTICATE_LEVER = LEVER_BASE + AUTH_BASE;
+		/**
+		 * Called by users to log into the hub and recieve an authentication token.
+		 */
+		public static final String AUTHENTICATE_USER = USER_BASE + "/log-in";
+		/**
+		 * Called by users to log into the hub and recieve an authentication token.
+		 */
+		public static final String DEAUTHENTICATE_USER = USER_BASE + "/log-out";
+		/**
+		 * Base URL path for node resources on the hub.
+		 */
+		public static final String NODE_BASE_ID = NODE_BASE + "/{id}";
+		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String USER_BASE_ID = USER_BASE+ "/{id}";
+		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String GROUPS_BASE_ID = GROUPS_BASE+ "/{id}";
+		/**
+		 * Base URL path for lever resources on the hub.
+		 */
+		public static final String LEVER_BASE_ID = LEVER_BASE + "/{id}";
+		/**
+		 * Base URL path for task resource id on the hub.
+		 */
+		public static final String TASK_BASE_ID = TASK_BASE + "/{id}";
+		/**
+		 * Base URL path for email templated by id on the hub.
+		 */
+		public static final String EMAIL_BASE_ID = EMAIL_BASE + "/{id}";
+		/**
+		 * Base URL path application logs.
+		 */	
+		public static final String LOGS = API_BASE + "/system/logs";
+		/**
+		 * Base URL path for deleted users.
+		 */			
+		public static final String DELETED_USERS = USER_BASE + "/deleted-users";
+		/**
+		 * URL path for deleted users by id.
+		 */
+		public static final String DELETED_USER_ID = DELETED_USERS + "/{id}";
+		/**
+		 * URL path for current user profile, based on Authentication Token parsing.
+		 */
+		public static final String CURRENT_PROFILE = USER_BASE + "/me";
+		
+		
+		public static interface PARAMETERS {
+			/**
+			 * URL PARAMETER for user activation tokens.
+			 */
+			public static final String USER_ACTIVATION = "activate";
+			/**
+			 * URL PARAMETER for user requesting groups.  Should be deprecated tokens.
+			 */
+			@Deprecated
+			public static final String USER_GROUPS = "groups";
+			/**
+			 * URL PARAMETER for user requesting a lost password email.
+			 */
+			public static final String USER_LOST_PASSWORD = "lost-password";
+			/**
+			 * URL PARAMETER for user setting a new password.
+			 */
+			public static final String USER_REQUEST_PASSWORD = "new-password";
+			/**
+			 * URL PARAMETER for user setting a password from set password token.
+			 */
+			public static final String USER_SET_PASSWORD = "set-password";
+			/**
+			 * URL PARAMETER for user to verify account.
+			 */
+			public static final String USER_VERIFICATION = "verify";
+			/**
+			 * URL PARAMETER for user to request a new certificate.
+			 */
+			public static final String USER_CERTIFICATE = "certificate";
+			/**
+			 * URL PARAMETER for requesting the names of groups.
+			 */
+			public static final String GROUP_NAMES = "names";
+			/**
+			 * URL PARAMETER for a user to request groups as a task.
+			 */
+			public static final String USER_REQUEST_GROUPS = "request-groups";
+			/**
+			 * URL PARAMETER for a user to remove groups as a task
+			 */
+			public static final String USER_REMOVE_GROUPS = "remove-groups";
+			/**
+			 * URL PARAMETER for a task to accepted or denied
+			 */
+			public static final String ACCEPT = "accept";
+			/**
+			 * URL PARAMETER for a create group task
+			 */			
+			public static final String CREATE_GROUP = "create-group";
+			/**
+			 * URL PARAMETER for template in the email service
+			 */			
+			public static final String TEMPLATES = "templates";
+			/**
+			 * URL PARAMETER for user group entry service, request a particular group by name
+			 */	
+			public static final String REQUEST_GROUPS = "request-groups";
+			/**
+			 * URL PARAMETER for user group entry service, set a particular group by name
+			 */	
+			public static final String SET_GROUPS = "set-groups";
+			/**
+			 * URL PARAMETER for user group entry service, remove a particular group by name
+			 */	
+			public static final String REMOVE_GROUPS = "remove-groups";
+			/**
+			 * URL PARAMETER for user group entry service, find users with a particular group
+			 */				
+			public static final String HAS_GROUP = "has-group";
+		}
+		
 		public static interface INDEXING {
 
 			/**
@@ -203,6 +370,12 @@ public interface API {
 	public static interface NODE {
 
 		/**
+		 * Returns info about self and (if admin) users served between dates, eventually
+		 * with short and verbose formats listing login data and URN access.
+		 */
+		public static final String WHO = "who";
+
+		/**
 		 * Protected admin endpoints for configuration and component setup.
 		 * 
 		 * @author Ferd
@@ -212,12 +385,13 @@ public interface API {
 
 			public static final String P_COMPONENT = "{component}";
 			public static final String P_PROPERTY = "{component}";
-						
+			public static final String P_LINES = "{lines}";
+
 			/**
 			 * 
 			 */
 			public static final String COMPONENT_SETUP = "/component/setup/" + P_COMPONENT;
-			
+
 			/**
 			 * 
 			 */
@@ -227,12 +401,17 @@ public interface API {
 			 * 
 			 */
 			public static final String SET_PROPERTY = "/properties/set/" + P_PROPERTY;
-			
+
 			/**
 			 * 
 			 */
 			public static final String GET_PROPERTY = "/properties/get/" + P_PROPERTY;
-			
+
+			/**
+			 * 
+			 */
+			public static final String GET_LOG = "logs/get/" + P_LINES;
+
 		}
 
 		public static interface RESOURCE {
@@ -311,7 +490,8 @@ public interface API {
 
 			/**
 			 * List all resources available to the requesting engine. Parameterize for
-			 * verbose or short return.
+			 * verbose or short return, or add a query parameter to search for URN and
+			 * metadata.
 			 * 
 			 * GET
 			 */
@@ -368,12 +548,18 @@ public interface API {
 		public static final String CAPABILITIES = "/public/authority/" + P_AUTHORITY + "/capabilities";
 
 		/**
-		 * The Constant RESOLVE.
-		 *
-		 * GET JSON
+         * Resolve the identity and return all related data or errors.
+         * 
+         * GET JSON
 		 */
 		public static final String RESOLVE = "/public/authority/" + P_AUTHORITY + "/resolve/" + P_IDENTIFIER;
 
+		/**
+		 * Setup and/or reset caches for an authority. This is the only non-public endpoint.
+		 */
+		public static final String SETUP = "/authority/" + P_AUTHORITY + "/setup";
+
+		
 		/**
 		 * The Constant QUERY.
 		 *
@@ -569,6 +755,27 @@ public interface API {
 		}
 
 		/**
+		 * Handle engine-local non-semantic assets - import of resources or multiple
+		 * resource sources, inquiry.
+		 * 
+		 * @author ferdinando.villa
+		 *
+		 */
+		public interface RESOURCE {
+
+			public static final String P_PROJECT = "{project}";
+			public static final String P_RESOURCEPATH = "{resourcepath}";
+
+			/**
+			 * Get a project resource as is (image, file or otherwise) by passing the path
+			 * in the form
+			 */
+			public static final String GET_PROJECT_RESOURCE = "/engine/project/resource/get/" + P_PROJECT + "/"
+					+ P_RESOURCEPATH;
+
+		}
+
+		/**
 		 * Endpoints to access contexts, using context tokens for authentication.
 		 * 
 		 * @author ferdinando.villa
@@ -655,16 +862,6 @@ public interface API {
 
 			}
 
-			/**
-			 * Handle engine-local non-semantic assets - import of resources or multiple
-			 * resource sources, inquiry.
-			 * 
-			 * @author ferdinando.villa
-			 *
-			 */
-			public interface RESOURCE {
-
-			}
 		}
 
 	}

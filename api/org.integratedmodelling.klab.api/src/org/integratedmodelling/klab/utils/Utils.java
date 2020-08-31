@@ -228,6 +228,9 @@ public class Utils {
 				if (cls.equals(Integer.class)) {
 					return (T) new Integer(((Number) ret).intValue());
 				}
+				if (cls.equals(Short.class)) {
+					return (T) new Short(((Number) ret).shortValue());
+				}
 				if (cls.equals(Float.class)) {
 					return (T) new Float(((Number) ret).floatValue());
 				}
@@ -244,6 +247,9 @@ public class Utils {
 			if (cls.equals(Long.class)) {
 				return (T) new Long(((Boolean) ret) ? 1 : 0);
 			}
+			if (cls.equals(Short.class)) {
+				return (T) new Short(((Boolean) ret) ? (short)1 : 0);
+			}
 			if (cls.equals(Integer.class)) {
 				return (T) new Integer(((Boolean) ret) ? 1 : 0);
 			}
@@ -257,6 +263,9 @@ public class Utils {
 			}
 			if (cls.equals(Long.class)) {
 				return (T) new Long(Long.parseLong((String) ret));
+			}
+			if (cls.equals(Short.class)) {
+				return (T) new Short(Short.parseShort((String) ret));
 			}
 			if (cls.equals(Integer.class)) {
 				return (T) new Integer(Integer.parseInt((String) ret));
@@ -430,6 +439,37 @@ public class Utils {
 			}
 		}
 		return null;
+	}
+
+	/**
+	 * Parse something like xxx(a, b, ... c) into an array [xxx a b c]. Accept xxx
+	 * alone and send an array of one element. Not particularly smart, so use when
+	 * the coder is.
+	 * 
+	 * @param string
+	 * @return
+	 */
+	public static String[] parseAsFunctionCall(String string) {
+
+		String id = string;
+		String[] parms = null;
+		if (string.contains("(") && string.endsWith(")")) {
+			int n = string.indexOf('(');
+			id = string.substring(0, n);
+			String parmstr = string.substring(n + 1, string.length() - 1);
+			parms = parmstr.split(",");
+		}
+
+		String[] ret = new String[1 + (parms == null ? 0 : parms.length)];
+		ret[0] = id.trim();
+		if (parms != null) {
+			int n = 1;
+			for (String p : parms) {
+				ret[n++] = p.trim();
+			}
+		}
+
+		return ret;
 	}
 
 }

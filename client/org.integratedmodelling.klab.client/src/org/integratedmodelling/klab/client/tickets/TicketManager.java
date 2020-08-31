@@ -13,6 +13,7 @@ import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.ITicket.Status;
 import org.integratedmodelling.klab.api.runtime.ITicketManager;
 import org.integratedmodelling.klab.client.utils.FileCatalog;
+import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.utils.NameGenerator;
 
 public class TicketManager implements ITicketManager {
@@ -54,9 +55,25 @@ public class TicketManager implements ITicketManager {
 
 	@Override
 	public void remove(Object... selectors) {
-		Set<String> ids = findIds(selectors);
-		for (String id : ids) {
-			catalog.remove(id);
+		if (selectors == null) {
+			catalog.clear();
+			return;
+		}
+
+		List<Object> nontickets = new ArrayList<>();
+		for (Object o : selectors) {
+			if (o instanceof ITicket) {
+				catalog.remove(((ITicket)o).getId());
+			} else {
+				nontickets.add(o);
+			}
+		}
+
+		if (nontickets.size() > 0) {
+			Set<String> ids = findIds(nontickets.toArray());
+			for (String id : ids) {
+				catalog.remove(id);
+			}
 		}
 	}
 
@@ -83,6 +100,27 @@ public class TicketManager implements ITicketManager {
 			}
 		}
 		return ret;
+	}
+
+	/**
+	 * Update the contents based on the passed message: add if not there, update status otherwise
+	 * 
+	 * @param ticket
+	 */
+	public void update(TicketResponse.Ticket ticket) {
+		
+		if (catalog.containsKey(ticket.getId())) {
+			Ticket t = catalog.get(ticket.getId());
+			t.update(ticket);
+			catalog.put(ticket.getId(), t);
+		} else {
+			catalog.put(ticket.getId(), Ticket.create(ticket.getId(), ticket));
+		}
+	}
+
+	@Override
+	public List<ITicket> getTickets() {
+		return new ArrayList<>(catalog.values());
 	}
 
 }

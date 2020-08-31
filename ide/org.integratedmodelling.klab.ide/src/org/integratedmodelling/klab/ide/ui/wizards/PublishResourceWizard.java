@@ -28,9 +28,11 @@ package org.integratedmodelling.klab.ide.ui.wizards;
 
 import java.util.List;
 
+import org.eclipse.core.runtime.IProgressMonitor;
+import org.eclipse.core.runtime.IStatus;
+import org.eclipse.core.runtime.Status;
+import org.eclipse.core.runtime.jobs.Job;
 import org.eclipse.jface.wizard.Wizard;
-import org.eclipse.ui.PartInitException;
-import org.eclipse.ui.PlatformUI;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.ide.Activator;
@@ -62,7 +64,7 @@ public class PublishResourceWizard extends Wizard {
 
 		if (validate(target)) {
 
-			ResourcePublishRequest request = new ResourcePublishRequest();
+			final ResourcePublishRequest request = new ResourcePublishRequest();
 
 			request.setUrn(target.getUrn());
 			request.setNode(page.getTargetNode());
@@ -71,21 +73,26 @@ public class PublishResourceWizard extends Wizard {
 			request.setSuggestedNamespace(page.getSuggestedNamespace());
 			request.setPermissions(page.getPermissions());
 
-			/*
-			 * open a ticket
-			 */
-			Activator.session().getTicketManager().open(ITicket.Type.ResourceSubmission, "resource", target.getUrn());
+			Job job = new Job("Submitting publish request") {
 
-			ResourcesView view = null;
-			try {
-				view = (ResourcesView) PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().showView(ResourcesView.ID);
-			} catch (PartInitException e) {
-				Eclipse.INSTANCE.handleException(e);
-			}
-			//this also needs to do something more
-			view.showPending();
-			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.PublishLocalResource, request);
-			
+				@Override
+				protected IStatus run(IProgressMonitor monitor) {
+					
+					/*
+					 * open a ticket
+					 */
+					ITicket ticket = Activator.session().getTicketManager().open(ITicket.Type.ResourceSubmission, "resource",
+							target.getUrn());
+					Eclipse.INSTANCE.openView(ResourcesView.ID, (view) -> ((ResourcesView)view).switchTo(1));
+					Activator.session().notifyTicket(ticket);
+					Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.PublishLocalResource, request);
+					return Status.OK_STATUS;
+				}
+				
+			};
+
+			job.schedule();
+
 			return true;
 		}
 
@@ -100,5 +107,3 @@ public class PublishResourceWizard extends Wizard {
 	}
 
 }
-
-

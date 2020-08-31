@@ -251,4 +251,6 @@ public interface IUnitService {
 
 	boolean needsUnitScaling(IObservable observable);
 
+	IUnit getLinealExtentUnit(IUnit unit);
+
 }

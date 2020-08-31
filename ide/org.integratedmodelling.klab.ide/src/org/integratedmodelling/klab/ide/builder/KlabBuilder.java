@@ -13,6 +13,7 @@ import org.eclipse.core.resources.IncrementalProjectBuilder;
 import org.eclipse.core.runtime.CoreException;
 import org.eclipse.core.runtime.IProgressMonitor;
 import org.integratedmodelling.kactors.model.KActors;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigator;
@@ -41,7 +42,9 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 
 			switch (delta.getKind()) {
 			case IResourceDelta.ADDED:
-				System.out.println("ADDED: " + delta);
+				if (resource instanceof IProject && Kim.INSTANCE.isKimProject(((IProject)resource).getLocation().toFile())) {
+					System.out.println("ADDED PROJECT: " + delta);
+				}
 				// if (resource instanceof IFile && isRelevant((IFile) resource)) {
 				// Activator.loader().add(((IFile) resource).getLocation().toFile());
 				// Activator.post(IMessage.MessageClass.ProjectLifecycle,
@@ -70,6 +73,14 @@ public class KlabBuilder extends IncrementalProjectBuilder {
 							new ProjectModificationNotification(ProjectModificationNotification.Type.CHANGE, file));
 				}
 				break;
+			case IResourceDelta.OPEN:
+				if (resource instanceof IProject && Kim.INSTANCE.isKimProject(((IProject)resource).getLocation().toFile())) {
+					/**
+					 * 
+					 */
+					System.out.println("OPEN/CLOSE/ADD k.IM PROJECT: " + delta);
+					KlabNavigator.refresh();
+				}
 			}
 			// return true to continue visiting children.
 			return true;

@@ -199,12 +199,12 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 				 */
 				binding.setVariable("_c", context);
 				binding.setVariable("_monitor", context.getMonitor());
-				
-				IRuntimeScope scope = (IRuntimeScope)context;
-				if (scope.getScale().getTime() != null) {
+
+				IRuntimeScope scope = (IRuntimeScope) context;
+				if (scope.getScale() != null && scope.getScale().getTime() != null) {
 					binding.setVariable("_jtime", scope.getScale().getTime());
 				}
-				
+
 				for (String v : defineIfAbsent) {
 					if (!binding.hasVariable(v)) {
 						binding.setVariable(v, Double.NaN);
@@ -277,14 +277,16 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 			throw new KlabInternalErrorException(e);
 		}
 
-		bindings.setVariable(eid2j("scale"), context.getScale());
-		overridingIds.add("scale");
-
-		if (context.getScale().getSpace() != null) {
+		if (context.getScale() != null) {
+			bindings.setVariable(eid2j("scale"), context.getScale());
+			overridingIds.add("scale");
+		}
+		
+		if (context.getScale() != null && context.getScale().getSpace() != null) {
 			Wrapper.wrap(context.getScale().getSpace(), "space", bindings);
 			overridingIds.add("space");
 		}
-		if (context.getScale().getTime() != null) {
+		if (context.getScale() != null && context.getScale().getTime() != null) {
 			Wrapper.wrap(context.getScale().getTime(), "time", bindings);
 			overridingIds.add("time");
 		}

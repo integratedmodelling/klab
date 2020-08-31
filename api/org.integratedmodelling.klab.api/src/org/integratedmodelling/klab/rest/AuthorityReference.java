@@ -1,9 +1,18 @@
 package org.integratedmodelling.klab.rest;
 
-public class AuthorityReference {
+import java.util.ArrayList;
+import java.util.List;
+
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
+
+public class AuthorityReference implements IAuthority.Capabilities {
 
 	private String name;
+	private String worldview;
 	private boolean searchable;
+	private boolean fuzzy;
+	private List<String> documentationFormats = new ArrayList<>();
+	private String description;
 
 	public String getName() {
 		return name;
@@ -58,4 +67,39 @@ public class AuthorityReference {
 	public void setSearchable(boolean searchable) {
 		this.searchable = searchable;
 	}
+
+	@Override
+	public List<String> getDocumentationFormats() {
+		return documentationFormats;
+	}
+
+	public void setDocumentationFormats(List<String> documentationFormats) {
+		this.documentationFormats = documentationFormats;
+	}
+
+	@Override
+	public boolean isFuzzy() {
+		return fuzzy;
+	}
+
+	public void setFuzzy(boolean fuzzy) {
+		this.fuzzy = fuzzy;
+	}
+
+	public String getWorldview() {
+		return worldview;
+	}
+
+	public void setWorldview(String worldview) {
+		this.worldview = worldview;
+	}
+
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	
 }

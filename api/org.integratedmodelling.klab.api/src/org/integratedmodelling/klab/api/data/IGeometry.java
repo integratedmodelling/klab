@@ -9,22 +9,27 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 
 /**
- * A IGeometry is the declaration of the topological dimensions for an observed
- * resource or computation (for example a resource identified by a URN) or by a
+ * A IGeometry is the declaration of the topological dimensions for the
+ * artifacts specified by (or allowed for) a resource or computation (for
+ * example a resource identified by a URN) or by a
  * {@link IPrototype#getGeometry() service prototype} declared in KDL). When
  * used in such a declarative fashion it may have a granularity > 1, meaning
  * that it describes a multiplicity of resources, and one child geometry
  * describing the geometry of each resource.
  * <p>
- * Geometries do not contain any semantic information, and in k.LAB are used
- * after conversion into a worldview-aware {@code IScale scale}
- * ({@code IWorldview#getScale(IGeometry)}) which extends the {@code IGeometry}
- * API. The scale also precisely locates the geometry and guarantees valid
- * values of the corresponding <strong>shape</strong>, consisting of long sizes
- * and extents, which the geometry can describe using {@link #size()} and its
- * {@link Dimension#shape() dimensions} but in the simplest instance returns
- * undefined values for. When used as a {@code IScale} the geometry is always
- * associated to an observation, so it never has granularity != 1.
+ * Geometries apply to artifacts, so they do not contain any semantic
+ * information. In k.LAB, observations (the semantic peer of artifact) expose
+ * into a worldview-aware {@code IScale scale}
+ * ({@code IWorldview#getScale(IGeometry)}) instead, whose API extends
+ * {@code IGeometry}. The scale also precisely locates the geometry and
+ * guarantees valid values of the corresponding <strong>shape</strong>,
+ * consisting of long sizes and extents, which the geometry can describe using
+ * {@link #size()} and its {@link Dimension#shape() dimensions} but is allowed
+ * to leave them unspecified. When used as a {@code IScale} the geometry is
+ * currently always associated to an observation, not to a computation or
+ * resource, so it never has granularity != 1. Currently a non-API observation
+ * group (corresponding to the object artifact) exposes the overall S/T scale
+ * but does not specify granularity.
  * <p>
  * <strong>Declaring geometries</strong>
  * <p>
@@ -51,14 +56,14 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
  * assigned parameters, nor, obviously, a shape. An empty geometry (which is
  * useless except to report errors) is specified by an uppercase <code>X</code>.
  * Scalar geometries are useful: for example, a resolver for any countable will
- * have scalar geometry.
+ * have scalar geometry and void type.
  * <p>
- * If the shape is only letters with optional numbers, the topology is for a
+ * If the shape is only letters with optional numbers, the topology applies to a
  * single object ({@link #getGranularity()} == {@link Granularity#SINGLE}).
- * Otherwise, it can be prefixed by #, which distributes the geometry across
- * multiple objects ({@link #getGranularity()} == {@link Granularity#MULTIPLE}).
- * Objects that are children of another or others are defined after a comma. So
- * for example
+ * Otherwise, it can be prefixed by <code>#</code>, which distributes the
+ * geometry across multiple objects ({@link #getGranularity()} ==
+ * {@link Granularity#MULTIPLE}). Objects that are children of another or others
+ * are defined after a comma. So for example
  * <p>
  * 
  * <code>

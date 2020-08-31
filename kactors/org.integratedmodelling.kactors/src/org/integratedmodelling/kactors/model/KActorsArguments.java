@@ -12,10 +12,16 @@ import org.integratedmodelling.klab.utils.Parameters;
  *
  */
 public class KActorsArguments extends Parameters<String> {
+	
+	protected KActorsArguments() {}
 
 	public KActorsArguments(ParameterList parameters) {
 		for (KeyValuePair pair : parameters.getPairs()) {
-			if (pair.getName() == null) {
+			if (pair.getKey() != null) {
+				put(pair.getKey().substring(1), new KActorsValue(!pair.getKey().startsWith("!"), null));
+			} else if (pair.getTag() != null) {
+				put("tag", pair.getTag().substring(1));
+			} else if (pair.getName() == null) {
 				putUnnamed(new KActorsValue(pair.getValue(), null));
 			} else {
 				put(pair.getName(), new KActorsValue(pair.getValue(), null));

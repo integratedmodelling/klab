@@ -130,7 +130,7 @@ public class MergingState extends State {
 			}
 		}
 
-		return aggregator.getAndReset(index);
+		return aggregator.aggregate();
 	}
 
 	public long set(ILocator index, Object value) {

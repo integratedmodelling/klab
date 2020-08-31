@@ -5,13 +5,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.commons.collections.IteratorUtils;
+import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -72,10 +72,12 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Actuator.Computation;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.ConfigurationDetector;
 import org.integratedmodelling.klab.engine.runtime.EventBus;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
@@ -92,7 +94,6 @@ import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
@@ -138,7 +139,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	Map<String, IVariable> symbolTable = new HashMap<>();
 	Dataflow dataflow;
 	IntelligentMap<Pair<String, IKimExpression>> behaviorBindings;
-	Map<String, ObservationListener> listeners = Collections.synchronizedMap(new LinkedHashMap<>());
 	Set<String> watchedObservations = null;
 
 	// root scope of the entire dataflow, unchanging, for downstream resolutions
@@ -147,6 +147,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	// cache for repeated dataflow resolutions
 	Map<ResolvedObservable, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
 	private IActuator actuator;
+	private boolean occurrent;
 
 	public RuntimeScope(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
@@ -229,7 +230,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.notifiedObservations = context.notifiedObservations;
 		this.dataflow = context.dataflow;
 		this.behaviorBindings = context.behaviorBindings;
-		this.listeners = context.listeners;
 		this.watchedObservations = context.watchedObservations;
 	}
 
@@ -260,12 +260,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			ret.target = createTarget(indirectTarget);
 		}
 		ret.target = catalog.get(ret.targetName);
-
-		/*
-		 * this is the only one where the symbol table is kept.
-		 */
-//		ret.symbolTable.get().putAll(symbolTable);
-
 		return ret;
 	}
 
@@ -456,7 +450,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			if (observable.isOptional()) {
 				monitor.warn("cannot resolve optional observable " + observable.getDefinition() + " in " + observation);
 			} else {
-				monitor.error("cannot resolve mandatory observable " + observable.getDefinition() + " in " + observation);
+				monitor.error(
+						"cannot resolve mandatory observable " + observable.getDefinition() + " in " + observation);
 				// don't stop so we know which objects don't resolve, although >1 may be
 				// annoying.
 			}
@@ -584,9 +579,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		if (observation instanceof IDirectObservation) {
 			ret = (IDirectObservation) observation;
 			((DirectObservation) ret).setName(name);
-			for (ObservationListener listener : listeners.values()) {
-				listener.newObservation(ret);
-			}
+//			for (ObservationListener listener : listeners.values()) {
+//				listener.newObservation(ret, getRootSubject());
+//			}
 		}
 
 		return ret;
@@ -699,9 +694,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		if (ret != null) {
 			((DirectObservation) ret).setName(name);
-			for (ObservationListener listener : listeners.values()) {
-				listener.newObservation(ret);
-			}
+//			for (ObservationListener listener : listeners.values()) {
+//				listener.newObservation(ret, getRootSubject());
+//			}
 		}
 
 		return ret;
@@ -827,7 +822,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		ret.actuator = actuator;
 		ret.contextSubject = scope.getContext();
 		ret.dataflow = (Dataflow) dataflow;
-
+		
 		for (IActuator a : actuator.getActuators()) {
 			if (!((Actuator) a).isExported()) {
 				String id = a.getAlias() == null ? a.getName() : a.getAlias();
@@ -952,8 +947,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 */
 		Map<String, Triple<Observable, Mode, Boolean>> targetObservables = new HashMap<>();
 
-		if (this.catalog.get(actuator.getName()) != null) {
-			return this.catalog.get(actuator.getName());
+		Pair<String, IArtifact> existing = findArtifact(actuator.getObservable());
+		if (existing != null) {
+			return existing.getSecond();
 		}
 
 		if (!actuator.isPartition()) {
@@ -1470,7 +1466,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		List<IArtifact> ret = new ArrayList<>();
 		for (IArtifact artifact : catalog.values()) {
 			if (artifact instanceof IObservation
-					&& ((IObservation) artifact).getObservable().getType().is(observable)) {
+					&& ((IObservation) artifact).getObservable().getType().equals(observable)) {
 				ret.add(artifact);
 			}
 		}
@@ -1579,6 +1575,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 						root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope.getScale().getTime(),
 								monitor);
 					}
+					root.occurrent = true;
 					((Scheduler) root.scheduler).schedule(action, observation, Time.create(aa), this);
 
 				}
@@ -1636,6 +1633,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 
 			RuntimeScope root = getRootScope();
+			root.occurrent = true;
 
 			if (root.scheduler == null) {
 				root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope.getScale().getTime(), monitor);
@@ -1658,6 +1656,12 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 * subset and to aggregate. This must apply also to event folders, which must
 		 * only show the current events.
 		 */
+		for (String key : catalog.keySet()) {
+			IArtifact artifact = catalog.get(key);
+			if (artifact instanceof ObservationGroup && artifact.getType().isOccurrent()) {
+				ret.catalog.put(key, ((IObservation) artifact).at(ret.scale.getTime()));
+			}
+		}
 
 		return ret;
 	}
@@ -1700,13 +1704,13 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	@Override
-	public Collection<IObservable> getDependents(IObservable observable) {
+	public Collection<IObservable> getDependents(IObservable observable, Mode resolutionMode) {
 		List<IObservable> ret = new ArrayList<>();
 		return ret;
 	}
 
 	@Override
-	public Collection<IObservable> getPrecursors(IObservable observable) {
+	public Collection<IObservable> getPrecursors(IObservable observable, Mode resolutionMode) {
 		List<IObservable> ret = new ArrayList<>();
 		return ret;
 	}
@@ -1718,18 +1722,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings() {
 		return behaviorBindings;
-	}
-
-	@Override
-	public String addListener(ObservationListener listener) {
-		String ret = NameGenerator.newName();
-		listeners.put(ret, listener);
-		return ret;
-	}
-
-	@Override
-	public void removeListener(String listenerId) {
-		listeners.remove(listenerId);
 	}
 
 	public String toString() {
@@ -1759,14 +1751,36 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		IObservation artifact = getArtifact(artifactType, IObservation.class);
 		if (artifact instanceof ObservationGroup) {
 			for (IArtifact grouped : artifact) {
-				if (((IObservation)grouped).getObservable().getType().resolves(observable, null)) {
-					ret.add((IObservation)grouped);
+				if (((IObservation) grouped).getObservable().getType().resolves(observable, null)) {
+					ret.add((IObservation) grouped);
 				}
 			}
 		} else {
 			ret.add(artifact);
 		}
 		return ret;
+	}
+
+	@Override
+	public void notifyListeners(IObservation object) {
+		for (ISession.ObservationListener listener : monitor.getIdentity().getParentIdentity(Session.class)
+				.getObservationListeners()) {
+			if (object.equals(rootSubject)) {
+				listener.newContext((ISubject) object);
+			} else {
+				listener.newObservation(object, rootSubject);
+			}
+		}
+	}
+
+	@Override
+	public boolean isOccurrent() {
+		// TODO Auto-generated method stub
+		return ((RuntimeScope) getRootScope()).occurrent;
+	}
+
+	public void setOccurrent() {
+		getRootScope().occurrent = true;
 	}
 
 }

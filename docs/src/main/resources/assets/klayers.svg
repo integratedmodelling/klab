@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   sodipodi:docname="klayers.svg"
+   inkscape:version="1.0 (4035a4fb49, 2020-05-01)"
+   width="420.0mm"
+   height="297.0mm"
+   viewBox="0 0 420.0 297.0"
+   version="1.1"
+   id="SVGRoot">
+  <defs
+     id="defs10" />
+  <sodipodi:namedview
+     inkscape:window-maximized="0"
+     inkscape:window-y="56"
+     inkscape:window-x="27"
+     inkscape:window-height="1040"
+     inkscape:window-width="1666"
+     showgrid="false"
+     inkscape:document-rotation="0"
+     inkscape:current-layer="layer1"
+     inkscape:document-units="mm"
+     inkscape:cy="-11.428571"
+     inkscape:cx="400"
+     inkscape:zoom="0.35"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     borderopacity="0"
+     bordercolor="#ffffff"
+     pagecolor="#ffffff"
+     id="base" />
+  <metadata
+     id="metadata13">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="layer1"
+     inkscape:groupmode="layer"
+     inkscape:label="Layer 1">
+    <path
+       transform="scale(0.26458333)"
+       d="M -754.28516,217.14258 V 665.71484 H 1545.7148 V 217.14258 H 1422.8574 V 354.28516 H -625.71484 V 217.14258 Z"
+       style="fill:#000000;fill-opacity:0.160643;fill-rule:evenodd;stroke-width:0.999999"
+       id="rect23" />
+    <path
+       transform="scale(0.26458333)"
+       d="M -1215.1211,-882.85742 V 665.71484 h 460.83594 V -882.85742 Z"
+       style="fill:#000000;fill-opacity:0.160643;stroke:none;stroke-width:3.30833;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1;image-rendering:auto"
+       id="rect857" />
+    <path
+       transform="scale(0.26458333)"
+       d="M -737.14258,-322.85742 V 200 H 1545.7148 V -322.85742 H 1400 v 148.57226 H -597.14258 v -148.57226 z"
+       style="fill:#000000;fill-opacity:0.160643;stroke:none;stroke-width:1.94277;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect859" />
+    <rect
+       y="53.092567"
+       x="-160.33755"
+       height="36.487793"
+       width="531.43451"
+       id="rect861"
+       style="fill:#000000;fill-opacity:0.160643;stroke:none;stroke-width:0.460905;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <path
+       transform="scale(0.26458333)"
+       d="m -735.07617,-882.85742 v 545.71484 h 153.93359 v 144.85742 H 1381.7148 V -337.14258 H 1540 v -545.71484 z"
+       style="fill:#000000;fill-opacity:0.160643;stroke:none;stroke-width:2.04216;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1"
+       id="rect878" />
+    <rect
+       y="176.13705"
+       x="-321.50095"
+       height="61.987942"
+       width="730.47119"
+       id="rect887"
+       style="fill:#000000;fill-opacity:0.160643;stroke:none;stroke-width:0.492001;stroke-linejoin:round;stroke-miterlimit:4;stroke-dasharray:none;stroke-opacity:1" />
+    <text
+       id="text891"
+       y="154.21428"
+       x="419.55359"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       xml:space="preserve"><tspan
+         style="font-size:19.7556px;stroke-width:0.264583"
+         y="154.21428"
+         x="419.55359"
+         id="tspan889"
+         sodipodi:role="line">RESOURCE</tspan><tspan
+         id="tspan893"
+         style="font-size:19.7556px;stroke-width:0.264583"
+         y="178.90878"
+         x="419.55359"
+         sodipodi:role="line">layer</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="422.50797"
+       y="-17.58654"
+       id="text891-1"><tspan
+         sodipodi:role="line"
+         id="tspan889-9"
+         x="422.50797"
+         y="-17.58654"
+         style="font-size:19.7556px;stroke-width:0.264583">SEMANTIC</tspan><tspan
+         sodipodi:role="line"
+         x="422.50797"
+         y="7.1079597"
+         style="font-size:19.7556px;stroke-width:0.264583"
+         id="tspan893-4">layer</tspan></text>
+    <text
+       xml:space="preserve"
+       style="font-style:normal;font-weight:normal;font-size:10.5833px;line-height:1.25;font-family:sans-serif;fill:#000000;fill-opacity:1;stroke:none;stroke-width:0.264583"
+       x="417.97223"
+       y="-165.7532"
+       id="text891-4"><tspan
+         sodipodi:role="line"
+         id="tspan889-3"
+         x="417.97223"
+         y="-165.7532"
+         style="font-size:19.7556px;stroke-width:0.264583">REACTIVITY</tspan><tspan
+         sodipodi:role="line"
+         x="417.97223"
+         y="-141.0587"
+         style="font-size:19.7556px;stroke-width:0.264583"
+         id="tspan893-6">layer</tspan></text>
+  </g>
+</svg>

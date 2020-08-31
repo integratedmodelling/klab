@@ -18,6 +18,7 @@ package org.integratedmodelling.klab.api.data;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.knowledge.IProject;
+import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 
 /**
  * The Interface IResourceCatalog.
@@ -30,23 +31,21 @@ public interface IResourceCatalog extends Map<String, IResource> {
 	/**
 	 * Selectively clear resources linked to the passed objects.
 	 * 
-	 * @param objects
-	 *            resources, projects, IDs or anything that can be linked to a
-	 *            specific resource or set thereof.
-	 * @throws IllegalArgumentException
-	 *             if the input cannot be linked to a (set of) resource(s).
+	 * @param objects resources, projects, IDs or anything that can be linked to a
+	 *                specific resource or set thereof.
+	 * @throws IllegalArgumentException if the input cannot be linked to a (set of)
+	 *                                  resource(s).
 	 */
-    void clearOnly(Object... objects);
+	void clearOnly(Object... objects);
 
-    /**
-     * Remove only the definition from the catalog, not touching the 
-     * resource files.
-     * 
-     * @param urn
-     * @return
-     */
-    IResource removeDefinition(String urn);
-    
+	/**
+	 * Remove only the definition from the catalog, not touching the resource files.
+	 * 
+	 * @param urn
+	 * @return
+	 */
+	IResource removeDefinition(String urn);
+
 	/**
 	 * Move resource to a different project. Return new resource.
 	 * 
@@ -54,24 +53,39 @@ public interface IResourceCatalog extends Map<String, IResource> {
 	 * @param destinationProject
 	 * @return
 	 */
-    IResource move(IResource resource, IProject destinationProject);
+	IResource move(IResource resource, IProject destinationProject);
 
-    /**
-     * Copy resource to a different project. Return new resource.
-     * 
-     * @param resource
-     * @param destinationProject
-     * @return
-     */
-    IResource copy(IResource resource, IProject destinationProject);
+	/**
+	 * Copy resource to a different project. Return new resource.
+	 * 
+	 * @param resource
+	 * @param destinationProject
+	 * @return
+	 */
+	IResource copy(IResource resource, IProject destinationProject);
 
-    /**
-     * Rename a local resource's URN.
-     * 
-     * @param resource
-     * @param newUrn
-     * @return
-     */
-    IResource rename(IResource resource, String newUrn);
+	/**
+	 * Update the currently stored resource with the version passed (using the
+	 * resource's URN to locate the previous version). No versioning is handled here
+	 * - simply substitute the metadata. Any versioning must be done upstream and
+	 * incorporated in the passed resource.
+	 * 
+	 * @param resource
+	 * @param a string describing the update
+	 * @return the updated resource
+	 * @throws KlabResourceNotFoundException if a resource with the same URN is not
+	 *                                       in the catalog.
+	 */
+	IResource update(IResource resource, String updateMessage);
+
+	/**
+	 * Rename a local resource's URN.
+	 * 
+	 * @param resource
+	 * @param newUrn
+	 * @param updateMessage message describing who renamed and why
+	 * @return
+	 */
+	IResource rename(IResource resource, String newUrn, String updateMessage);
 
 }

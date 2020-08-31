@@ -1,8 +1,13 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.klab.rest.ObservationReference.ValueType;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * The message used by the view actor to request view components. Any number of
@@ -13,13 +18,64 @@ import org.integratedmodelling.klab.rest.ObservationReference.ValueType;
  */
 public class ViewComponent {
 
+	/**
+	 * If type == Container, this will be filled later as the component it's
+	 * supposed to host can only be computed at runtime. It may be a group container
+	 * (if the components are created in a loop) or another; the containedType
+	 * specifies what.
+	 * 
+	 * @author Ferd
+	 *
+	 */
 	public static enum Type {
-		Panel, Header, Footer, Alert, PushButton, CheckButton, RadioButton, TextInput, Combo, Group, Map, Tree,
-		TreeItem, Confirm,
+		Panel, Alert, PushButton, CheckButton, RadioButton, TextInput, Combo, Group, Map, Tree, TreeItem, Confirm, View,
+		Container, MultiContainer, Label, Text, Table, Notification, InputGroup
 		// etc
 	}
 
+	/**
+	 * A tree is a list of nodes (each a String->String map) and a list of
+	 * child->parent links, expressed using the index of the values in the list. For
+	 * convenience, the index of the root node is also provided.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static class Tree {
+
+		private List<Map<String, String>> values = new ArrayList<>();
+		private int rootId;
+		private List<Pair<Integer, Integer>> links = new ArrayList<>();
+
+		public List<Map<String, String>> getValues() {
+			return values;
+		}
+
+		public void setValues(List<Map<String, String>> values) {
+			this.values = values;
+		}
+
+		public int getRootId() {
+			return rootId;
+		}
+
+		public void setRootId(int rootId) {
+			this.rootId = rootId;
+		}
+
+		public List<Pair<Integer, Integer>> getLinks() {
+			return links;
+		}
+
+		public void setLinks(List<Pair<Integer, Integer>> links) {
+			this.links = links;
+		}
+
+	}
+
 	private String id;
+	private String identity;
+	private String applicationId;
 	private String parentId;
 	private Type type;
 	private String name;
@@ -27,8 +83,14 @@ public class ViewComponent {
 	private String title;
 	private ValueType contentType;
 	private String content;
-	private List<String> possibleContent;
-	
+	private Tree tree;
+	private Layout layout;
+	private List<ViewComponent> components = new ArrayList<>();
+	private Map<String, String> attributes = new HashMap<>();
+	private IKActorsBehavior.Type destination;
+	private IKActorsBehavior.Platform platform;
+	private String actorPath = null;
+
 	public String getId() {
 		return id;
 	}
@@ -48,7 +110,7 @@ public class ViewComponent {
 	public String getName() {
 		return name;
 	}
-	
+
 	public String getStyle() {
 		return style;
 	}
@@ -89,17 +151,93 @@ public class ViewComponent {
 		this.content = content;
 	}
 
-	public List<String> getPossibleContent() {
-		return possibleContent;
-	}
-
-	public void setPossibleContent(List<String> possibleContent) {
-		this.possibleContent = possibleContent;
-	}
-
 	public void setName(String name) {
 		this.name = name;
 	}
-	
-	
+
+	public List<ViewComponent> getComponents() {
+		return components;
+	}
+
+	public void setComponents(List<ViewComponent> components) {
+		this.components = components;
+	}
+
+	public Map<String, String> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Map<String, String> data) {
+		this.attributes = data;
+	}
+
+	@Override
+	public String toString() {
+		return "ViewComponent [parentId=" + parentId + ", type=" + type + ", name=" + name + ", title=" + title
+				+ ", content=" + content + ", attributes=" + attributes + "]";
+	}
+
+	public String getApplicationId() {
+		return applicationId;
+	}
+
+	public void setApplicationId(String identity) {
+		this.applicationId = identity;
+	}
+
+	public String getIdentity() {
+		return identity;
+	}
+
+	public void setIdentity(String identity) {
+		this.identity = identity;
+	}
+
+	public Tree getTree() {
+		return tree;
+	}
+
+	public void setTree(Tree tree) {
+		this.tree = tree;
+	}
+
+	public IKActorsBehavior.Type getDestination() {
+		return destination;
+	}
+
+	public void setDestination(IKActorsBehavior.Type destination) {
+		this.destination = destination;
+	}
+
+	public IKActorsBehavior.Platform getPlatform() {
+		return platform;
+	}
+
+	public void setPlatform(IKActorsBehavior.Platform platform) {
+		this.platform = platform;
+	}
+
+	public Layout getLayout() {
+		return layout;
+	}
+
+	public void setLayout(Layout layout) {
+		this.layout = layout;
+	}
+
+	/**
+	 * Actor path is null if the component is top-level, otherwise it will contain
+	 * the path to the actor that all view messages should be forwarded to, so that
+	 * the top-level actor can send them.
+	 * 
+	 * @return
+	 */
+	public String getActorPath() {
+		return actorPath;
+	}
+
+	public void setActorPath(String actorPath) {
+		this.actorPath = actorPath;
+	}
+
 }

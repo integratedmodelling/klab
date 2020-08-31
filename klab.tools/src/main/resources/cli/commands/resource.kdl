@@ -40,13 +40,20 @@ void 'list'
 	optional boolean force
 		"Force immediate re-check of all resources. Default false."
 		default false
-
+		
+	optional text node
+		"A node name when a listing of its public resources is wanted. Only resources visible to the current user will be retrieved."
+		
+		
 	class org.integratedmodelling.klab.clitool.console.commands.resources.List
 }
 
-void clear
-	"Remove all resources in the local workspace."
+void delete
+	"Individual or bulk removal of resources, in the local workspace or remotely on nodes. No node clear is possible."
 {
+	optional text node
+		"A node name to delete resources."
+
 	class org.integratedmodelling.klab.clitool.console.commands.resources.Clear
 }
 

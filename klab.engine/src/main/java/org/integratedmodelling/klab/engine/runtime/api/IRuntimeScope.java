@@ -10,7 +10,6 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -25,7 +24,6 @@ import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
@@ -33,7 +31,6 @@ import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.utils.Pair;
-import org.jgrapht.Graph;
 
 /**
  * This API extends {@link IContextualizationScope} to add setters and other
@@ -45,16 +42,6 @@ import org.jgrapht.Graph;
  *
  */
 public interface IRuntimeScope extends IContextualizationScope {
-
-	/**
-	 * These can be installed to be notified of each new observation.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	interface ObservationListener {
-		void newObservation(IObservation observation);
-	}
 
 	/**
 	 * Return any of the observations created within the context of the root
@@ -170,14 +157,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	void setScale(IScale geometry);
 
-//	/**
-//	 * Called after successful computation passing each annotation that was defined
-//	 * for the model.
-//	 * 
-//	 * @param annotation
-//	 */
-//	void processAnnotation(IAnnotation annotation);
-
 	/**
 	 * Specialize the provenance so we can use setting methods on it.
 	 * 
@@ -202,19 +181,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @return the set of all children of class cls
 	 */
 	<T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls);
-
-//	/**
-//	 * Build the link between a parent and a child artifact. Should only be used in
-//	 * the few cases when observations are created by hand, using pre-built
-//	 * instances such as rescaling states, instead of through
-//	 * {@link #newObservation(org.integratedmodelling.klab.api.knowledge.IObservable, String, IScale)}
-//	 * or
-//	 * {@link #newRelationship(org.integratedmodelling.klab.api.knowledge.IObservable, String, IScale, org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact, org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact)}.
-//	 * 
-//	 * @param parent
-//	 * @param child
-//	 */
-//	void link(IArtifact parent, IArtifact child);
 
 	/**
 	 * Set the passed artifact as the current target, ensuring it is properly
@@ -404,22 +370,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 	Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings();
 
 	/**
-	 * Add a listener, return an ID that can be passed later to
-	 * {@link #removeListener(String)} to remove it.
-	 * 
-	 * @param listener
-	 * @return
-	 */
-	public String addListener(ObservationListener listener);
-
-	/**
-	 * Remove a previously installed #{@link ObservationListener}.
-	 * 
-	 * @param listenerId
-	 */
-	public void removeListener(String listenerId);
-
-	/**
 	 * Scopes must maintain a synchronized set of IDs for all observations that are
 	 * being watched by the view. This is subscribed to through messages sent to the
 	 * session that owns the observations.
@@ -445,5 +395,20 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @param result
 	 */
 	void swapArtifact(IArtifact ret, IArtifact result);
+
+	/**
+	 * Called by actuators after contextualization is complete for any observation.
+	 * 
+	 * @param object
+	 */
+	void notifyListeners(IObservation object);
+
+	/**
+	 * If true, the root context has seen occurrent observations or occurrent scales
+	 * at some point, so the occurrence of anything that is resolved or computed
+	 * next will have to be consider. The occurrent status is global across a
+	 * context and cannot be revoked after setting.
+	 */
+	boolean isOccurrent();
 
 }

@@ -1,24 +1,37 @@
 = Getting started with k.LAB
 :doctype: book
 
+poh
+
 [#setup-users]
 == As a k.LAB user
 
 [#setup-modelers]
 == As a k.LAB modeler
 
-If you wish to explore semantic modeling with k.LAB, you will need a locally running modeling engine and a running instance of k.Modeler, the k.LAB integrated development environment. Both are installed using the Control Center described above.
+If you wish to explore semantic modeling with k.LAB, you will need a locally running
+modeling engine and a running instance of k.Modeler, the k.LAB integrated development
+environment. Both are installed using the Control Center described above.
 
-It is also advisable to run the k.LAB engine with the "command line interface" option switched on, so that you can use the command line for inspection and have better feedback on what the engine is doing when you test and run models. The option, like all others, is available in the Control Center settings.
+It is also advisable to run the k.LAB engine with the "command line interface" option
+switched on, so that you can use the command line for inspection and have better 
+feedback on what the engine is doing when you test and run models. In local configuration
+this option is on by default so you won't need to do anything. In all case the option, 
+like all others, is available in the Control Center settings.
 
-Once you are able to run both components on your development machine, refer to the modeler instructions to get started with k.LAB development.
+Once you are able to run both components on your development machine, refer to 
+the modeler instructions to get started with k.LAB development.
 
 == As a k.LAB content contributor
 
-=== Contributing data
+=== Contributing to the resource layer
 
-=== Contributing models
+=== Contributing to the semantic layer
 
-=== Contributing core knowledge
+==== Contributing core knowledge
+
+==== Contributing data annotations and models
+
+=== Contributing to the reactivity layer
 
 == As a k.LAB developer

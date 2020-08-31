@@ -17,6 +17,9 @@ import org.eclipse.core.runtime.IProgressMonitor;
 import org.eclipse.core.runtime.IStatus;
 import org.eclipse.core.runtime.Status;
 import org.eclipse.core.runtime.jobs.Job;
+import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Platform;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessage.Type;
@@ -24,6 +27,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.runtime.ITicket;
 import org.integratedmodelling.klab.api.runtime.rest.ITaskReference;
+import org.integratedmodelling.klab.client.messaging.ResourceMonitor;
 import org.integratedmodelling.klab.client.messaging.SessionMonitor;
 import org.integratedmodelling.klab.client.messaging.SessionMonitor.ContextDescriptor;
 import org.integratedmodelling.klab.client.messaging.SessionMonitor.Listener;
@@ -34,8 +38,13 @@ import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
 import org.integratedmodelling.klab.ide.navigator.model.EResource;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.ide.views.ApplicationView;
+import org.integratedmodelling.klab.ide.views.ResourcesView;
+import org.integratedmodelling.klab.ide.views.SearchView;
 import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.EngineEvent;
+import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NetworkReference;
 import org.integratedmodelling.klab.rest.Notification;
@@ -48,14 +57,16 @@ import org.integratedmodelling.klab.rest.ResourceImportRequest;
 import org.integratedmodelling.klab.rest.ResourceOperationResponse;
 import org.integratedmodelling.klab.rest.ResourcePublishResponse;
 import org.integratedmodelling.klab.rest.ResourceReference;
-import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.RuntimeEvent;
 import org.integratedmodelling.klab.rest.SearchRequest;
 import org.integratedmodelling.klab.rest.SearchResponse;
+import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
+import org.integratedmodelling.klab.rest.ViewAction;
+import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.WatchRequest;
-import org.integratedmodelling.klab.utils.DebugFile;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Front-end session proxy and receiver for session messages. Maintains and
@@ -70,8 +81,12 @@ public class KlabSession extends KlabPeer {
 	private int NETWORK_CHECK_INTERVAL_SECONDS = 60;
 	private int TICKET_CHECK_INTERVAL_SECONDS = 6;
 
+	// six hours
+	private static final long MAX_TICKET_AGE = 1000l * 60l * 60l * 6l;
+
 	private AtomicLong queryCounter = new AtomicLong();
 	private Map<EngineEvent.Type, Set<Long>> engineEvents = Collections.synchronizedMap(new HashMap<>());
+	private SessionReference sessionReference;
 
 	SessionMonitor sessionMonitor = new SessionMonitor() {
 
@@ -108,6 +123,8 @@ public class KlabSession extends KlabPeer {
 	 * Tickets to track engine tickets that track node tickets
 	 */
 	private TicketManager ticketManager;
+	private ResourceMonitor resourceMonitor = new ResourceMonitor();
+	private Map<String, ITicket.Status> ticketStatus = Collections.synchronizedMap(new HashMap<>());
 
 	/*
 	 * Current root context and task in UI or null
@@ -151,6 +168,15 @@ public class KlabSession extends KlabPeer {
 		this.ticketManager = new TicketManager(
 				new File(Configuration.INSTANCE.getDataPath() + File.separator + "tickets.modeler.json"));
 
+		/*
+		 * initialize resource status
+		 */
+		for (ITicket ticket : ticketManager.get()) {
+			if (!isStale(ticket)) {
+				resourceMonitor.add(ticket);
+			}
+		}
+
 		// run the first network check in 10 seconds
 		new CheckNetworkTask().schedule(10000);
 		// start checking tickets in 5
@@ -189,12 +215,43 @@ public class KlabSession extends KlabPeer {
 		}
 
 		protected IStatus run(IProgressMonitor monitor) {
+
 			schedule(TICKET_CHECK_INTERVAL_SECONDS * 1000);
+
+			List<ITicket> toRemove = new ArrayList<>();
 			for (ITicket ticket : ticketManager.get()) {
-				System.out.println("AAAH! TICKET! " + ticket);
+				if (isStale(ticket)) {
+					// TODO use logging!
+					System.out.println("Removing stale ticket " + ticket);
+					toRemove.add(ticket);
+				} else {
+					/*
+					 * notify if status changed or ticket is new
+					 */
+					if (ticketStatus.containsKey(ticket.getId())) {
+						if (ticket.getStatus() != ticketStatus.get(ticket.getId())) {
+							ticketStatus.put(ticket.getId(), ticket.getStatus());
+							processTicketEvent(ticket, false);
+						}
+					} else {
+						ticketStatus.put(ticket.getId(), ticket.getStatus());
+						processTicketEvent(ticket, true);
+					}
+				}
 			}
+
+			for (ITicket ticket : toRemove) {
+				ticketManager.remove(ticket);
+			}
+
 			return Status.OK_STATUS;
 		}
+
+	}
+
+	private boolean isStale(ITicket ticket) {
+		return ticket.getStatus() == ITicket.Status.OPEN
+				&& (System.currentTimeMillis() - ticket.getPostDate().getTime()) > MAX_TICKET_AGE;
 	}
 
 	/*
@@ -208,6 +265,15 @@ public class KlabSession extends KlabPeer {
 	/*
 	 * --- State and history management
 	 */
+
+	public void processTicketEvent(ITicket ticket, boolean isNew) {
+		resourceMonitor.add(ticket);
+		// expose the resources view, which will set itself to public and refresh when
+		// it gets the message
+		Eclipse.INSTANCE.openView(ResourcesView.ID, null);
+		send(IMessage.MessageClass.UserInterface,
+				isNew ? IMessage.Type.TicketCreated : IMessage.Type.TicketStatusChanged, ticket);
+	}
 
 	void recordNotification(String notification, String identity, Type type, String messageId) {
 
@@ -273,11 +339,13 @@ public class KlabSession extends KlabPeer {
 	}
 
 	public void launchApp(String behavior) {
-		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunApp, new LoadApplicationRequest(behavior, false));
+		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunApp,
+				new LoadApplicationRequest(behavior, false, false));
 	}
 
 	public void launchTest(String behavior) {
-		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunUnitTest, new LoadApplicationRequest(behavior, true));
+		Activator.post(IMessage.MessageClass.Run, IMessage.Type.RunUnitTest,
+				new LoadApplicationRequest(behavior, true, false));
 	}
 
 	public void observe(EKimObject dropped) {
@@ -349,7 +417,8 @@ public class KlabSession extends KlabPeer {
 		Activator.klab().updateNetwork(network);
 		send(IMessage.MessageClass.UserInterface, IMessage.Type.NetworkStatus, network);
 		for (TicketResponse.Ticket ticket : network.getResolvedTickets()) {
-			send(IMessage.MessageClass.UserInterface, IMessage.Type.TicketResolved, ticket);
+			ticketManager.update(ticket);
+			// scheduled job will pick this up
 		}
 	}
 
@@ -412,32 +481,26 @@ public class KlabSession extends KlabPeer {
 		bus.unsubscribe(task.getId());
 	}
 
-//	@MessageHandler(type = Type.CreateViewComponent)
-//	public void handleTaskAborted(IMessage message, ViewComponent component) {
-//		switch (component.getType()) {
-//		case Alert:
-//			Eclipse.INSTANCE.alert(component.getContent());
-//			break;
-//		case Confirm:
-//			boolean choice = Eclipse.INSTANCE.confirm(component.getContent());
-//			Activator.reply(message, IMessage.MessageClass.Run, IMessage.Type.RunScript, new ViewAction(choice));
-//			break;
-//		case TextInput:
-//			break;
-//		case CheckButton:
-//		case Combo:
-//		case Footer:
-//		case Group:
-//		case Header:
-//		case Map:
-//		case Panel:
-//		case PushButton:
-//		case RadioButton:
-//		case Tree:
-//		case TreeItem:
-//			break;
-//		}
-//	}
+	@MessageHandler
+	public void handleCreateView(IMessage message, Layout component) {
+		if (component.getDestination() == IKActorsBehavior.Type.USER) {
+			Eclipse.INSTANCE.openView(SearchView.ID, null);
+		} else if (component.getPlatform() == null || component.getPlatform() == Platform.DESKTOP
+				|| component.getPlatform() == Platform.ANY) {
+			Eclipse.INSTANCE.openView(ApplicationView.ID, null);
+		}
+		send(message);
+	}
+
+	@MessageHandler(type = Type.CreateViewComponent)
+	public void handleCreateComponent(IMessage message, ViewComponent component) {
+		send(message);
+	}
+
+	@MessageHandler(type = Type.ViewAction)
+	public void handleViewAction(IMessage message, ViewAction component) {
+		send(message);
+	}
 
 	@MessageHandler
 	public void handleObservation(ObservationReference observation) {
@@ -487,6 +550,24 @@ public class KlabSession extends KlabPeer {
 
 	public TicketManager getTicketManager() {
 		return this.ticketManager;
+	}
+
+	public List<Pair<String, IParameters<String>>> getPublishedResources() {
+		return resourceMonitor.getPublished();
+	}
+
+	public void notifyTicket(ITicket ticket) {
+		this.resourceMonitor.add(ticket);
+		send(IMessage.MessageClass.UserInterface, IMessage.Type.TicketCreated, ticket);
+	}
+
+	public String getDefaultUserBehavior() {
+		// TODO
+		return "default";
+	}
+
+	public List<String> getUserBehaviors() {
+		return this.sessionReference == null ? new ArrayList<>() : this.sessionReference.getUserAppUrns();
 	}
 
 }

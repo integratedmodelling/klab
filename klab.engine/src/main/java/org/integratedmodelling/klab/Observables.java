@@ -21,10 +21,12 @@ import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement.DescriptionType;
 import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimObservable;
+import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
@@ -39,6 +41,9 @@ import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
@@ -46,6 +51,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
@@ -356,6 +362,36 @@ public enum Observables implements IObservableService {
 			break;
 		}
 
+		return ret;
+	}
+
+	/**
+	 * Check for compatibility of context1 and context2 as the context for an
+	 * observation of focus (i.e., focus can be observed by an observation process
+	 * that happens in context1). Works like isCompatible, but if context1 is an
+	 * occurrent, it will let through situations where it affects focus in whatever
+	 * context it is, or where the its own context is the same as context2, thereby
+	 * there is a common context to refer to.
+	 * 
+	 * @param focus    the focal observable whose context we are checking
+	 * @param context1 the specific context of the observation (model) that will
+	 *                 observe focus
+	 * @param context2 the mandated context of focus
+	 * 
+	 * @return true if focus can be observed by an observation process that happens
+	 *         in context1.
+	 */
+	public boolean isContextuallyCompatible(IConcept focus, IConcept context1, IConcept context2) {
+		boolean ret = isCompatible(context1, context2, 0);
+		if (!ret && isOccurrent(context1)) {
+			ret = isAffectedBy(focus, context1);
+			IConcept itsContext = getContext(context1);
+			if (!ret) {
+				if (itsContext != null) {
+					ret = isCompatible(itsContext, context2);
+				}
+			}
+		}
 		return ret;
 	}
 
@@ -905,4 +941,134 @@ public enum Observables implements IObservableService {
 		return concept == null ? "NONE" : concept.getDefinition();
 	}
 
+	/**
+	 * Take an observable whose units were assigned by default and check if it is
+	 * being aggregated by a countable observable whose spatial and/or temporal
+	 * nature imply a unit distribution change; if so, modify it to have the
+	 * appropriate units.
+	 * 
+	 * @param observable
+	 * @param scale      scale of contextualization
+	 */
+	public void contextualizeUnitsForAggregation(Observable observable, IScale scale) {
+
+		if (observable.getUnit() == null) {
+			return;
+		}
+
+		List<IConcept> ops = new ArrayList<>();
+		for (Pair<ValueOperator, Object> operator : observable.getValueOperators()) {
+
+			if (operator.getFirst() == ValueOperator.BY) {
+				Object operand = operator.getSecond();
+				if (operand instanceof IConcept) {
+					ops.add((IConcept) operand);
+				} else if (operand instanceof List) {
+					for (Object o : ((List<?>) operand)) {
+						if (o instanceof IConcept) {
+							ops.add((IConcept) o);
+						}
+					}
+				}
+			}
+
+		}
+
+		CoreOntology coreOntology = Resources.INSTANCE.getUpperOntology();
+
+		if (coreOntology == null) {
+			return;
+		}
+
+		IUnit originalUnit = observable.getUnit();
+		boolean changed = false;
+
+		ExtentDimension dspatial = null;
+		ITime.Resolution dtemporal = null;
+
+		for (IConcept dop : ops) {
+
+			ExtentDimension spatial = null;
+			ITime.Resolution temporal = null;
+
+			if (dop.is(Type.COUNTABLE)) {
+				if (dop.is(Type.EVENT)) {
+					temporal = coreOntology.getTemporalNature(dop);
+				}
+				spatial = coreOntology.getSpatialNature(dop);
+			} else if (dop.is(Type.QUALITY)) {
+				spatial = scale.getSpace() == null ? null
+						: (scale.isSpatiallyDistributed()
+								? ExtentDimension.spatial(scale.getSpace().getDimensionality())
+								: null);
+				temporal = scale.getTime() == null ? null
+						: (scale.isTemporallyDistributed() ? scale.getTime().getResolution() : null);
+			}
+
+			if (spatial != null || temporal != null) {
+
+				if (changed) {
+
+					/*
+					 * verify that we are not mixing classifiers with different dimensionalities.
+					 */
+					if ((dspatial != null && !dspatial.equals(spatial))
+							|| (dtemporal != null && !dtemporal.equals(temporal))) {
+						throw new KlabContextualizationException(
+								"aggregation: cannot combine classifiers that imply incompatible dimensionalities");
+					}
+
+				} else {
+
+					dspatial = spatial;
+					dtemporal = temporal;
+
+					int originalSpatialDimension = Units.INSTANCE.getSpatialDimensionality(originalUnit);
+					int originalTemporalDimension = Units.INSTANCE.getTemporalDimensionality(originalUnit);
+
+					if (spatial != null && originalSpatialDimension == spatial.dimensionality) {
+						originalUnit = Units.INSTANCE.removeExtents(originalUnit, Collections.singleton(spatial));
+						changed = true;
+					}
+
+					if (temporal != null && originalTemporalDimension == 1) {
+						originalUnit = Units.INSTANCE.removeExtents(originalUnit,
+								Collections.singleton(ExtentDimension.TEMPORAL));
+						changed = true;
+					}
+
+				}
+			}
+		}
+
+		if (changed) {
+			observable.withUnit(originalUnit);
+		}
+
+	}
+
+	/**
+	 * 
+	 * @param c
+	 * @return
+	 */
+	public boolean isOccurrent(ISemantic c) {
+		
+		if (c.getType().is(Type.PROCESS) || c.getType().is(Type.EVENT)) {
+			return true;
+		}
+		
+		/*
+		 * TODO a quality occurs if it's created by a process
+		 */
+		if (c.getType().is(Type.QUALITY)) {
+			// 
+		}
+		
+		/*
+		 * TODO functional relationships should occur (?)
+		 */
+		
+		return false;
+	}
 }

@@ -60,7 +60,7 @@ public class GeomorphonResolver implements IResolver<IState>, IExpression {
 			geomorphon.pThreshold = pThreshold * cMeters;
 		}
 		
-		geomorphon.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue);
+		geomorphon.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false);
 		geomorphon.pm = new TaskMonitor(context.getMonitor());
 		geomorphon.doProcess = true;
 		geomorphon.doReset = false;

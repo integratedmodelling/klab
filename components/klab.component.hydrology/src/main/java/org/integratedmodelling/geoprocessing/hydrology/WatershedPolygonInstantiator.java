@@ -9,15 +9,16 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 public class WatershedPolygonInstantiator extends ScaleChooserInstantiator implements IExpression {
 
 	static String[] resourceUrns = { 
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev04_v1c#intersect=false",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev05_v1c#intersect=false",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev06_v1c#intersect=false",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev07_v1c#intersect=false",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev08_v1c#intersect=false",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev09_v1c#intersect=false",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev10_v1c#intersect=false",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev11_v1c#intersect=false",
-			"local:ferdinando.villa:im.watersheds:hybas_eu_lev12_v1c#intersect=false" };
+			"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev04#intersect=false",
+			"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev05#intersect=false",
+			"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev06#intersect=false",
+			"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev07#intersect=false",
+			"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev08#intersect=false",
+			"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev09#intersect=false",
+			"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev10#intersect=false",
+			"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev11#intersect=false",
+			"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev12#intersect=false"
+	};
 
 	public WatershedPolygonInstantiator() {
 	}

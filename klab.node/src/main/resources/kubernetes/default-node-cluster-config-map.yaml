@@ -1,0 +1,51 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: node-service
+  namespace: default
+data:
+  application.yml: |-
+    klab: 
+      adapter: 
+        raster: 
+          auth: "*"
+        vector: 
+          auth: "*"
+        wcs: 
+          auth: "*"
+        weather: 
+          auth: "*"
+      geoserver: 
+        password: geoserver_password
+        url: "geoserver_node:8080"
+        user: geoserver_user
+      node: 
+        searching: "*"
+        submitting: "*"
+      postgres: 
+        host: postgres_node
+        password: postgres_password
+        port: 5432
+        user: postgres_user
+      certificate: |
+        #Certificate Generated On Wed Aug 12 20:11:14 CEST 2020
+        #Wed Aug 12 20:11:14 CEST 2020
+        klab.user.email=support@integratedmodelling.org
+        klab.partner.email=godzilla@semanticweb.org
+        klab.nodename=knot
+        klab.certificate.level=INSTITUTIONAL
+        klab.partner.hub=http\://192.168.39.1\:8284/hub
+        klab.signature=a7f7dc36-2332-4ff1-858e-15bacf6185fc
+        klab.validuntil=2021-02-10T20\:11\:14.450+01\:00
+        klab.certificate=-----BEGIN PGP MESSAGE-----\nVersion\: BCPG v1.64\n\nhQEMA35Tp3Se+whvAQf/QTRGrHyRJSKa3mcPn22Zuw90cE4A13e651WguyViwjhW\nf/s3rXZpGgRi/INl+2lB3QytqxORE+mDrF7m27G0LhJVg+geB2skSCW7flmy7PrA\njDxxjV4+ex7PnsMz8R9jvlNcMK6q9v1WZn+Vcbb+H15uZy+WweEidHLW/DZ1lVSM\nuq2/EDGF2Fq5sr+xqy+uvlm77p1K8WCHjC2eifubOBJP7yWUJbvOUl7E54fN+VkE\ndKRV9i6KbOJ7GHHOKkQ382fGGGrtV7fQEgDTFgu19eBXWjPqDHUj0vphnXHdzcTP\nb58uF8to5EPxu2/qMGPIlDr+uetW/97Tv8hP+PIO9tLC6wHJDz1hpRJcE3z/lrEr\nnEKzfEi5fTWhKeAe4gNFjxmAwx8L6GJCmwl5Jiuls899JRgaOYykbXis5mihjYc1\nUabZDhOeHbSJiJrCY2fTHCSrdhAXxXQqy1WevSEBwEpmsdjKFUqmaoUBMX5LUM5f\nYGq/eit4N8jHpdSonYUQ5dSU2bF94K7bVFZJG7nVUQaACk4ZlBVEW1+r6iRoptSX\nvtVHwpIMDV8bVaRe8xKCaV2MWzgRSSyuxJ6SLMVnlW4ZO9x3VgPWUVV8X6jzmY/y\nw9KpDhyFLjXyyEFU/bxIuWD4o8OP+QCgHWJHODC6iOEsYjsp5skXt77+FV096/2S\nMdanK/LI4XhhEIxgwgNK9bQ0aNdxSu5RApKANAWUN9ranpcBVGkRXqr7pWcvIzEa\nFnhqRt0FR6kXsAKyIuBS89ouM8YhG1LkclAyO7z9+fyu3plgOrpFayEhXbvGawRJ\nc+QwNVgwwoSr5g/hlzqVn63pN6reJ8MdLr2jWdY2BwnuTnTY3a4wxoR8civuX2qk\nS/DOcj2F9Y44OeFSRECzi0VvKlHT95tgpoRETqFJEgXVI7id6HjFd1HR0F2KU/dv\nhEMxKQItzDa+Aeaaybmj9/pyEv0/UCIJk1lAq/qCVoYDBygHMbTALZyjogMOxslV\n6ZN6qEpFDK/OmYlY/rZCyg7JHCAD/6kFMhPPU0ed8QZ1gM9rExgua9A9BoQisyV4\nCQn06CRBwP545Cn1YdnPNTVuV0J+7MUGIJCY832qIk5a24RiWizu+VyTN2F0zqSI\nly5iedTXXn0flHF6pW+arPhQvMGtNCMGWSTbv1Ukv+bA3NUtUlK3KY3ikv8g//SK\nk9t++SwfhwN9ycLR8IbbJO8dEdvrem+oN5LlXF9Tn2vFE2AsCtdr/bApXcgRQhkf\nRtTZPSRJBf8LZ4BzKnQ4+PN7Xm20NW0JaPkOsQljKQen0KsV17P0Sz3NpiyOQOfM\nBKjIOUIjYkMU7zqZ8TnDMaOmwknVPJs5HHUGqPwVhToHnAccxk7tgd0syCb9B9YI\nyFaLXN6bcPYJL6TGqjj9wFA0bCxx+t5cKUKnBUqezU9ugxlmRxp2PGk0nhjdYXSm\nG/xElztVAEtHc3wsL3h4FHytSSAVBb9ltCqNJ5KkM9QBH5HEp8ARdEQsYxDwYZXR\nU2wq7GwAmrVqLRMaRP3aZ96tlGglfKrAsC0NMSAnx3uJFJIYvdYFOZDchXrHCCfh\nLz+G6ryqRE+1lI0KFg\=\=\n\=PS8L\n-----END PGP MESSAGE-----\n
+        klab.url=http\://172.17.0.1\:8287/node
+        klab.wordlview=im
+        klab.certificate.type=NODE
+        klab.partner.name=testhub
+    server: 
+      port: 8287
+      servlet: 
+        context-path: /node
+        multipart: 
+          max-file-size: 100MB
+          max-request-size: 100MB

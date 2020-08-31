@@ -20,6 +20,12 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
  * optimization of storage and scales from scalars to huge datasets as long as
  * the backend can provide slices.
  * 
+ * TODO check if this all works if assuming millisecond offset to handle
+ * pseudo-continuous change recording in states whose temporal resolution is
+ * unspecified, but are affected by temporally heterogeneous processes. It 
+ * probably should, although the start time should be recorded and all 
+ * offsets should be made relative to it.
+ * 
  * @author Ferd
  *
  * @param <T>
@@ -38,7 +44,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	// if one value only, just store it here and forget about everything.
 	private boolean isScalar = false;
 	private Object scalarValue = null;
-	
+
 	/*
 	 * If trivial, we have no time or just one time state, and can contain at most
 	 * one slice.
@@ -63,9 +69,11 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 			return getValueFromBackend(sliceOffset, this.sliceOffsetInBackend);
 		}
-		
-		// TODO synchronization here voids the parallelism in most functions. The newSlice thing should be
-		// put in the implementation and synchronized there, so that multiple put() may happen.
+
+		// TODO synchronization here voids the parallelism in most functions. The
+		// newSlice thing should be
+		// put in the implementation and synchronized there, so that multiple put() may
+		// happen.
 		public void setAt(long sliceOffset, T value) {
 
 			if (isEmpty()) {
@@ -74,7 +82,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
 			setValueIntoBackend(value, sliceOffset, this.sliceOffsetInBackend);
 		}
-		
+
 		public boolean isEmpty() {
 			return sliceOffsetInBackend < 0;
 		}
@@ -84,7 +92,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			slicesInBackend++;
 			createBackendStorage(this.sliceOffsetInBackend, null);
 		}
-		
+
 		Slice(long timestep, Slice closest) {
 			this.timestep = timestep;
 			if (closest != null) {
@@ -109,11 +117,10 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		return highTimeOffset;
 	}
 
-
 	@Override
 	public void touch(ITime time) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	protected abstract void duplicateBackendSlice(long sliceToCopy, long newSliceIndex);
@@ -198,9 +205,9 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	public synchronized T get(ILocator locator) {
 
 		if (isScalar) {
-			return (T)scalarValue;
+			return (T) scalarValue;
 		}
-		
+
 		if (slices.isEmpty()) {
 			return null;
 		}
@@ -226,7 +233,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			scalarValue = value;
 			return 0;
 		}
-		
+
 		Offset offsets = locator.as(Offset.class);
 
 		if (offsets.length != geometry.getDimensions().size()) {
@@ -238,12 +245,11 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		long timeOffset = trivial ? 0 : offsets.pos[0];
 		boolean noData = Observations.INSTANCE.isNodata(value);
 
-		synchronized(this) {
+		synchronized (this) {
 			if (noData && slices.isEmpty()) {
 				// everything's nodata so far, no need to store.
 				return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
 			}
-		
 
 			/*
 			 * record high offset for posterity
@@ -251,16 +257,17 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			if (highTimeOffset < timeOffset) {
 				highTimeOffset = timeOffset;
 			}
-	
+
 			/*
 			 * find the closest slice for the time
 			 */
 			Slice slice = getClosest(timeOffset);
-			if (slice != null/* && slice.timestep != timeOffset */ && !slice.isEmpty() && equals(slice.getAt(sliceOffset), value)) {
+			if (slice != null/* && slice.timestep != timeOffset */ && !slice.isEmpty()
+					&& equals(slice.getAt(sliceOffset), value)) {
 				// don't store anything until it's different from the previous slice.
 				return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
 			}
-	
+
 			/*
 			 * if we get here, we need to store in a slice of our own unless we found the
 			 * exact timestep.
@@ -268,7 +275,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			if (slice == null || slice.timestep != timeOffset) {
 				slice = addSlice(timeOffset, slice);
 			}
-	
+
 			slice.setAt(sliceOffset, value);
 		}
 

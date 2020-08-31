@@ -692,18 +692,6 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	}
 
 	@Override
-	public Collection<IObservable> getDependents(IObservable observable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Collection<IObservable> getPrecursors(IObservable observable) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
 	public IState addState(IDirectObservation target, IObservable observable, Object data) {
 		// TODO Auto-generated method stub
 		return null;
@@ -725,18 +713,6 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	@Override
 	public Map<IConcept, Pair<String, IKimExpression>> getBehaviorBindings() {
 		return null;
-	}
-
-	@Override
-	public String addListener(ObservationListener listener) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public void removeListener(String listenerId) {
-		// TODO Auto-generated method stub
-
 	}
 
 	@Override
@@ -765,6 +741,30 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
 	@Override
 	public Collection<IObservation> getObservations(IConcept observable) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void notifyListeners(IObservation object) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public boolean isOccurrent() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Collection<IObservable> getDependents(IObservable observable, Mode resolutionMode) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Collection<IObservable> getPrecursors(IObservable observable, Mode resolutionMode) {
 		// TODO Auto-generated method stub
 		return null;
 	}

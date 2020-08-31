@@ -1,0 +1,15 @@
+spring:
+  application:
+    name: node-service
+  cloud:
+    kubernetes:
+      reload:
+        enabled: false
+      config:
+        enabled: true
+        name: node-service
+        namespace: default
+    consul:
+      enabled: false
+      config:
+        enabled: false

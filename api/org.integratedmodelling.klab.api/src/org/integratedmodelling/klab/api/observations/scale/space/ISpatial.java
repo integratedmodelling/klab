@@ -8,6 +8,8 @@ package org.integratedmodelling.klab.api.observations.scale.space;
  */
 public interface ISpatial {
 
+	
+	
 	/**
 	 * Get the shape.
 	 * 

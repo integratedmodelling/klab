@@ -4,6 +4,15 @@ import javax.validation.constraints.NotBlank;
 
 public class SignupRequest {
 	
+	public SignupRequest(){
+	}
+	
+	public SignupRequest(@NotBlank String username, @NotBlank String email) {
+		super();
+		this.username = username;
+		this.email = email;
+	}
+
 	@NotBlank
 	private String username;
 

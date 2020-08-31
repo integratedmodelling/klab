@@ -112,4 +112,9 @@ public class DataArtifact extends Artifact implements IDataArtifact {
 		this.group.add(data);
 	}
 
+	@Override
+	public IArtifact getGroupMember(int n) {
+		return group == null ? (n == 0 ? this : null) : (group.size() > (n-1) ? group.get(n-1) : null);
+	}
+
 }

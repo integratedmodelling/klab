@@ -12,10 +12,13 @@ import org.eclipse.emf.ecore.EReference;
 import org.eclipse.emf.ecore.impl.EPackageImpl;
 
 import org.integratedmodelling.kactors.kactors.Actions;
+import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.Classifier;
+import org.integratedmodelling.kactors.kactors.Concept;
+import org.integratedmodelling.kactors.kactors.ConceptDeclaration;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
@@ -34,7 +37,11 @@ import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.kactors.MessageBody;
 import org.integratedmodelling.kactors.kactors.MessageCall;
+import org.integratedmodelling.kactors.kactors.Metadata;
+import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Model;
+import org.integratedmodelling.kactors.kactors.Observable;
+import org.integratedmodelling.kactors.kactors.ObservableSemantics;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Preamble;
 import org.integratedmodelling.kactors.kactors.Quantity;
@@ -50,6 +57,7 @@ import org.integratedmodelling.kactors.kactors.Unit;
 import org.integratedmodelling.kactors.kactors.UnitElement;
 import org.integratedmodelling.kactors.kactors.UnitOp;
 import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kactors.kactors.ValueOperator;
 import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 /**
@@ -100,6 +108,13 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  private EClass actorInstantiationEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EClass messageCallEClass = null;
 
   /**
@@ -108,6 +123,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   private EClass statementGroupEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass metadataEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass metadataPairEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -226,6 +255,13 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * <!-- end-user-doc -->
    * @generated
    */
+  private EClass observableEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
   private EClass lookupTableEClass = null;
 
   /**
@@ -332,6 +368,34 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   private EClass dateEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass observableSemanticsEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass valueOperatorEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass conceptDeclarationEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass conceptEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -453,7 +517,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_App()
+  public EAttribute getPreamble_Public()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(0);
   }
@@ -464,7 +528,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Test()
+  public EAttribute getPreamble_Mobile()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(1);
   }
@@ -475,7 +539,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_User()
+  public EAttribute getPreamble_Desktop()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(2);
   }
@@ -486,7 +550,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Library()
+  public EAttribute getPreamble_Web()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(3);
   }
@@ -497,7 +561,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Behavior()
+  public EAttribute getPreamble_App()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(4);
   }
@@ -508,7 +572,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Name()
+  public EAttribute getPreamble_Task()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(5);
   }
@@ -519,7 +583,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Imports()
+  public EAttribute getPreamble_Test()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(6);
   }
@@ -530,7 +594,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Worldview()
+  public EAttribute getPreamble_Component()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(7);
   }
@@ -541,7 +605,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Observable()
+  public EAttribute getPreamble_User()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(8);
   }
@@ -552,9 +616,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getPreamble_Observables()
+  public EAttribute getPreamble_Library()
   {
-    return (EReference)preambleEClass.getEStructuralFeatures().get(9);
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -563,7 +627,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Label()
+  public EAttribute getPreamble_Behavior()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(10);
   }
@@ -574,7 +638,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Description()
+  public EAttribute getPreamble_Name()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(11);
   }
@@ -585,7 +649,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Permissions()
+  public EAttribute getPreamble_Label()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(12);
   }
@@ -596,7 +660,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Authors()
+  public EAttribute getPreamble_Imports()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(13);
   }
@@ -607,7 +671,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Style()
+  public EAttribute getPreamble_Worldview()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(14);
   }
@@ -618,9 +682,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Version()
+  public EReference getPreamble_Observable()
   {
-    return (EAttribute)preambleEClass.getEStructuralFeatures().get(15);
+    return (EReference)preambleEClass.getEStructuralFeatures().get(15);
   }
 
   /**
@@ -629,7 +693,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getPreamble_Created()
+  public EReference getPreamble_Observables()
   {
     return (EReference)preambleEClass.getEStructuralFeatures().get(16);
   }
@@ -640,7 +704,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getPreamble_Createcomment()
+  public EAttribute getPreamble_Description()
   {
     return (EAttribute)preambleEClass.getEStructuralFeatures().get(17);
   }
@@ -651,9 +715,97 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EAttribute getPreamble_Permissions()
+  {
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(18);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPreamble_Authors()
+  {
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(19);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPreamble_Style()
+  {
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(20);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getPreamble_InlineStyle()
+  {
+    return (EReference)preambleEClass.getEStructuralFeatures().get(21);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPreamble_Logo()
+  {
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(22);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPreamble_Version()
+  {
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(23);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getPreamble_Created()
+  {
+    return (EReference)preambleEClass.getEStructuralFeatures().get(24);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getPreamble_Createcomment()
+  {
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(25);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getPreamble_Modified()
   {
-    return (EReference)preambleEClass.getEStructuralFeatures().get(18);
+    return (EReference)preambleEClass.getEStructuralFeatures().get(26);
   }
 
   /**
@@ -664,7 +816,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getPreamble_Modcomment()
   {
-    return (EAttribute)preambleEClass.getEStructuralFeatures().get(19);
+    return (EAttribute)preambleEClass.getEStructuralFeatures().get(27);
   }
 
   /**
@@ -772,6 +924,50 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EClass getActorInstantiation()
+  {
+    return actorInstantiationEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getActorInstantiation_Behavior()
+  {
+    return (EAttribute)actorInstantiationEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getActorInstantiation_Parameters()
+  {
+    return (EReference)actorInstantiationEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getActorInstantiation_Actions()
+  {
+    return (EReference)actorInstantiationEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EClass getMessageCall()
   {
     return messageCallEClass;
@@ -849,9 +1045,75 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatementGroup_Actions()
+  public EReference getStatementGroup_Metadata()
   {
     return (EReference)statementGroupEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getStatementGroup_Actions()
+  {
+    return (EReference)statementGroupEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getMetadata()
+  {
+    return metadataEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getMetadata_Pairs()
+  {
+    return (EReference)metadataEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getMetadataPair()
+  {
+    return metadataPairEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getMetadataPair_Key()
+  {
+    return (EAttribute)metadataPairEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getMetadataPair_Value()
+  {
+    return (EReference)metadataPairEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -926,7 +1188,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_Verb()
+  public EReference getStatement_Instantiation()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(2);
   }
@@ -937,9 +1199,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EReference getStatement_Verb()
+  {
+    return (EReference)statementEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getStatement_Text()
   {
-    return (EAttribute)statementEClass.getEStructuralFeatures().get(3);
+    return (EAttribute)statementEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -948,18 +1221,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_If()
-  {
-    return (EReference)statementEClass.getEStructuralFeatures().get(4);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EReference getStatement_While()
+  public EReference getStatement_Metadata()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(5);
   }
@@ -970,7 +1232,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_Do()
+  public EReference getStatement_If()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(6);
   }
@@ -981,7 +1243,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_For()
+  public EReference getStatement_While()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(7);
   }
@@ -992,9 +1254,42 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getStatement_Value()
+  public EReference getStatement_Do()
   {
     return (EReference)statementEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getStatement_For()
+  {
+    return (EReference)statementEClass.getEStructuralFeatures().get(9);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getStatement_Value()
+  {
+    return (EReference)statementEClass.getEStructuralFeatures().get(10);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getStatement_Tag()
+  {
+    return (EAttribute)statementEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -1355,7 +1650,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getValue_Id()
+  public EAttribute getValue_Urn()
   {
     return (EAttribute)valueEClass.getEStructuralFeatures().get(3);
   }
@@ -1366,7 +1661,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getValue_Urn()
+  public EAttribute getValue_Id()
   {
     return (EAttribute)valueEClass.getEStructuralFeatures().get(4);
   }
@@ -1399,9 +1694,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getValue_Observable()
+  public EReference getValue_Observable()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(7);
+    return (EReference)valueEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -1435,6 +1730,17 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   public EReference getValue_Quantity()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(10);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getValue_Metadata()
+  {
+    return (EReference)valueEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -1509,9 +1815,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getMatch_Observable()
+  public EReference getMatch_Observable()
   {
-    return (EAttribute)matchEClass.getEStructuralFeatures().get(5);
+    return (EReference)matchEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -1817,9 +2123,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getClassifier_Observable()
+  public EReference getClassifier_Observable()
   {
-    return (EAttribute)classifierEClass.getEStructuralFeatures().get(8);
+    return (EReference)classifierEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -1872,9 +2178,42 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EReference getClassifier_Map()
+  {
+    return (EReference)classifierEClass.getEStructuralFeatures().get(13);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getClassifier_Star()
   {
-    return (EAttribute)classifierEClass.getEStructuralFeatures().get(13);
+    return (EAttribute)classifierEClass.getEStructuralFeatures().get(14);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getObservable()
+  {
+    return observableEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getObservable_Observable()
+  {
+    return (EReference)observableEClass.getEStructuralFeatures().get(0);
   }
 
   /**
@@ -2026,9 +2365,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getTableClassifier_Observable()
+  public EReference getTableClassifier_Observable()
   {
-    return (EAttribute)tableClassifierEClass.getEStructuralFeatures().get(3);
+    return (EReference)tableClassifierEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -2378,7 +2717,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getKeyValuePair_Name()
+  public EAttribute getKeyValuePair_Tag()
   {
     return (EAttribute)keyValuePairEClass.getEStructuralFeatures().get(0);
   }
@@ -2389,7 +2728,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getKeyValuePair_Interactive()
+  public EAttribute getKeyValuePair_Name()
   {
     return (EAttribute)keyValuePairEClass.getEStructuralFeatures().get(1);
   }
@@ -2400,9 +2739,31 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EAttribute getKeyValuePair_Interactive()
+  {
+    return (EAttribute)keyValuePairEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getKeyValuePair_Value()
   {
-    return (EReference)keyValuePairEClass.getEStructuralFeatures().get(2);
+    return (EReference)keyValuePairEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getKeyValuePair_Key()
+  {
+    return (EAttribute)keyValuePairEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -2807,6 +3168,754 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EClass getObservableSemantics()
+  {
+    return observableSemanticsEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getObservableSemantics_Declaration()
+  {
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getObservableSemantics_Unit()
+  {
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getObservableSemantics_Currency()
+  {
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getObservableSemantics_ValueOperators()
+  {
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getObservableSemantics_Optional()
+  {
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getObservableSemantics_From()
+  {
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getObservableSemantics_To()
+  {
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getObservableSemantics_Name()
+  {
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getValueOperator()
+  {
+    return valueOperatorEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getValueOperator_Modifier()
+  {
+    return (EAttribute)valueOperatorEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getValueOperator_DownTo()
+  {
+    return (EAttribute)valueOperatorEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getValueOperator_ComparisonValue()
+  {
+    return (EReference)valueOperatorEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getValueOperator_ComparisonQuantity()
+  {
+    return (EReference)valueOperatorEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getValueOperator_ComparisonConcept()
+  {
+    return (EReference)valueOperatorEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getValueOperator_ComparisonObservable()
+  {
+    return (EReference)valueOperatorEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getValueOperator_Total()
+  {
+    return (EAttribute)valueOperatorEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getValueOperator_Averaged()
+  {
+    return (EAttribute)valueOperatorEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getValueOperator_Summed()
+  {
+    return (EAttribute)valueOperatorEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getConceptDeclaration()
+  {
+    return conceptDeclarationEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_Main()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConceptDeclaration_DistributedOfInherency()
+  {
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_Inherency()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConceptDeclaration_DistributedForInherency()
+  {
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_Motivation()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_Compresent()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_Causant()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_Adjacent()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_Container()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_Contained()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(9);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_Caused()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(10);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConceptDeclaration_DistributedTemporalInherency()
+  {
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(11);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_During()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(12);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConceptDeclaration_DistributedWithinInherency()
+  {
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(13);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_Context()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(14);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_RelationshipSource()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(15);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_RelationshipTarget()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(16);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConceptDeclaration_Operators()
+  {
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(17);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConceptDeclaration_Operands()
+  {
+    return (EReference)conceptDeclarationEClass.getEStructuralFeatures().get(18);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConceptDeclaration_Name()
+  {
+    return (EAttribute)conceptDeclarationEClass.getEStructuralFeatures().get(19);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getConcept()
+  {
+    return conceptEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Negated()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Name()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_AuthConcept()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_StringIdentifier()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(3);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_IntIdentifier()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(4);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Authority()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Presence()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(6);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConcept_Concept()
+  {
+    return (EReference)conceptEClass.getEStructuralFeatures().get(7);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Count()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(8);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Distance()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(9);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Probability()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(10);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Assessment()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(11);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Change()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(12);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Rate()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(13);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Uncertainty()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(14);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Magnitude()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(15);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Level()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(16);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Type()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(17);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Observability()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(18);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Proportion()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(19);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConcept_Other()
+  {
+    return (EReference)conceptEClass.getEStructuralFeatures().get(20);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Percentage()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(21);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Ratio()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(22);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Monetary()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(23);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Value()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(24);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getConcept_Occurrence()
+  {
+    return (EAttribute)conceptEClass.getEStructuralFeatures().get(25);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getConcept_Declaration()
+  {
+    return (EReference)conceptEClass.getEStructuralFeatures().get(26);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EEnum getUnitOp()
   {
     return unitOpEEnum;
@@ -2848,21 +3957,29 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(modelEClass, MODEL__DEFINITIONS);
 
     preambleEClass = createEClass(PREAMBLE);
+    createEAttribute(preambleEClass, PREAMBLE__PUBLIC);
+    createEAttribute(preambleEClass, PREAMBLE__MOBILE);
+    createEAttribute(preambleEClass, PREAMBLE__DESKTOP);
+    createEAttribute(preambleEClass, PREAMBLE__WEB);
     createEAttribute(preambleEClass, PREAMBLE__APP);
+    createEAttribute(preambleEClass, PREAMBLE__TASK);
     createEAttribute(preambleEClass, PREAMBLE__TEST);
+    createEAttribute(preambleEClass, PREAMBLE__COMPONENT);
     createEAttribute(preambleEClass, PREAMBLE__USER);
     createEAttribute(preambleEClass, PREAMBLE__LIBRARY);
     createEAttribute(preambleEClass, PREAMBLE__BEHAVIOR);
     createEAttribute(preambleEClass, PREAMBLE__NAME);
+    createEAttribute(preambleEClass, PREAMBLE__LABEL);
     createEAttribute(preambleEClass, PREAMBLE__IMPORTS);
     createEAttribute(preambleEClass, PREAMBLE__WORLDVIEW);
-    createEAttribute(preambleEClass, PREAMBLE__OBSERVABLE);
+    createEReference(preambleEClass, PREAMBLE__OBSERVABLE);
     createEReference(preambleEClass, PREAMBLE__OBSERVABLES);
-    createEAttribute(preambleEClass, PREAMBLE__LABEL);
     createEAttribute(preambleEClass, PREAMBLE__DESCRIPTION);
     createEAttribute(preambleEClass, PREAMBLE__PERMISSIONS);
     createEAttribute(preambleEClass, PREAMBLE__AUTHORS);
     createEAttribute(preambleEClass, PREAMBLE__STYLE);
+    createEReference(preambleEClass, PREAMBLE__INLINE_STYLE);
+    createEAttribute(preambleEClass, PREAMBLE__LOGO);
     createEAttribute(preambleEClass, PREAMBLE__VERSION);
     createEReference(preambleEClass, PREAMBLE__CREATED);
     createEAttribute(preambleEClass, PREAMBLE__CREATECOMMENT);
@@ -2881,6 +3998,11 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     messageBodyEClass = createEClass(MESSAGE_BODY);
     createEReference(messageBodyEClass, MESSAGE_BODY__LISTS);
 
+    actorInstantiationEClass = createEClass(ACTOR_INSTANTIATION);
+    createEAttribute(actorInstantiationEClass, ACTOR_INSTANTIATION__BEHAVIOR);
+    createEReference(actorInstantiationEClass, ACTOR_INSTANTIATION__PARAMETERS);
+    createEReference(actorInstantiationEClass, ACTOR_INSTANTIATION__ACTIONS);
+
     messageCallEClass = createEClass(MESSAGE_CALL);
     createEAttribute(messageCallEClass, MESSAGE_CALL__NAME);
     createEReference(messageCallEClass, MESSAGE_CALL__PARAMETERS);
@@ -2889,7 +4011,15 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     statementGroupEClass = createEClass(STATEMENT_GROUP);
     createEReference(statementGroupEClass, STATEMENT_GROUP__BODY);
+    createEReference(statementGroupEClass, STATEMENT_GROUP__METADATA);
     createEReference(statementGroupEClass, STATEMENT_GROUP__ACTIONS);
+
+    metadataEClass = createEClass(METADATA);
+    createEReference(metadataEClass, METADATA__PAIRS);
+
+    metadataPairEClass = createEClass(METADATA_PAIR);
+    createEAttribute(metadataPairEClass, METADATA_PAIR__KEY);
+    createEReference(metadataPairEClass, METADATA_PAIR__VALUE);
 
     statementListEClass = createEClass(STATEMENT_LIST);
     createEReference(statementListEClass, STATEMENT_LIST__FIRST);
@@ -2898,13 +4028,16 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     statementEClass = createEClass(STATEMENT);
     createEReference(statementEClass, STATEMENT__ASSIGNMENT);
     createEReference(statementEClass, STATEMENT__GROUP);
+    createEReference(statementEClass, STATEMENT__INSTANTIATION);
     createEReference(statementEClass, STATEMENT__VERB);
     createEAttribute(statementEClass, STATEMENT__TEXT);
+    createEReference(statementEClass, STATEMENT__METADATA);
     createEReference(statementEClass, STATEMENT__IF);
     createEReference(statementEClass, STATEMENT__WHILE);
     createEReference(statementEClass, STATEMENT__DO);
     createEReference(statementEClass, STATEMENT__FOR);
     createEReference(statementEClass, STATEMENT__VALUE);
+    createEAttribute(statementEClass, STATEMENT__TAG);
 
     assignmentEClass = createEClass(ASSIGNMENT);
     createEAttribute(assignmentEClass, ASSIGNMENT__VARIABLE);
@@ -2945,14 +4078,15 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(valueEClass, VALUE__TREE);
     createEAttribute(valueEClass, VALUE__ARGVALUE);
     createEReference(valueEClass, VALUE__LITERAL);
-    createEAttribute(valueEClass, VALUE__ID);
     createEAttribute(valueEClass, VALUE__URN);
+    createEAttribute(valueEClass, VALUE__ID);
     createEReference(valueEClass, VALUE__LIST);
     createEReference(valueEClass, VALUE__MAP);
-    createEAttribute(valueEClass, VALUE__OBSERVABLE);
+    createEReference(valueEClass, VALUE__OBSERVABLE);
     createEAttribute(valueEClass, VALUE__EXPRESSION);
     createEReference(valueEClass, VALUE__TABLE);
     createEReference(valueEClass, VALUE__QUANTITY);
+    createEReference(valueEClass, VALUE__METADATA);
 
     matchEClass = createEClass(MATCH);
     createEAttribute(matchEClass, MATCH__ID);
@@ -2960,7 +4094,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(matchEClass, MATCH__BOOLEAN);
     createEAttribute(matchEClass, MATCH__TYPE);
     createEAttribute(matchEClass, MATCH__REGEXP);
-    createEAttribute(matchEClass, MATCH__OBSERVABLE);
+    createEReference(matchEClass, MATCH__OBSERVABLE);
     createEReference(matchEClass, MATCH__LITERAL);
     createEReference(matchEClass, MATCH__LIST);
     createEReference(matchEClass, MATCH__SET);
@@ -2993,12 +4127,16 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(classifierEClass, CLASSIFIER__NUM);
     createEReference(classifierEClass, CLASSIFIER__SET);
     createEAttribute(classifierEClass, CLASSIFIER__STRING);
-    createEAttribute(classifierEClass, CLASSIFIER__OBSERVABLE);
+    createEReference(classifierEClass, CLASSIFIER__OBSERVABLE);
     createEAttribute(classifierEClass, CLASSIFIER__ID);
     createEReference(classifierEClass, CLASSIFIER__OP);
     createEReference(classifierEClass, CLASSIFIER__EXPRESSION);
     createEAttribute(classifierEClass, CLASSIFIER__NODATA);
+    createEReference(classifierEClass, CLASSIFIER__MAP);
     createEAttribute(classifierEClass, CLASSIFIER__STAR);
+
+    observableEClass = createEClass(OBSERVABLE);
+    createEReference(observableEClass, OBSERVABLE__OBSERVABLE);
 
     lookupTableEClass = createEClass(LOOKUP_TABLE);
     createEReference(lookupTableEClass, LOOKUP_TABLE__TABLE);
@@ -3017,7 +4155,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(tableClassifierEClass, TABLE_CLASSIFIER__BOOLEAN);
     createEReference(tableClassifierEClass, TABLE_CLASSIFIER__NUM);
     createEAttribute(tableClassifierEClass, TABLE_CLASSIFIER__STRING);
-    createEAttribute(tableClassifierEClass, TABLE_CLASSIFIER__OBSERVABLE);
+    createEReference(tableClassifierEClass, TABLE_CLASSIFIER__OBSERVABLE);
     createEReference(tableClassifierEClass, TABLE_CLASSIFIER__OP);
     createEReference(tableClassifierEClass, TABLE_CLASSIFIER__EXPRESSION);
     createEReference(tableClassifierEClass, TABLE_CLASSIFIER__INT0);
@@ -3054,9 +4192,11 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(parameterListEClass, PARAMETER_LIST__PAIRS);
 
     keyValuePairEClass = createEClass(KEY_VALUE_PAIR);
+    createEAttribute(keyValuePairEClass, KEY_VALUE_PAIR__TAG);
     createEAttribute(keyValuePairEClass, KEY_VALUE_PAIR__NAME);
     createEAttribute(keyValuePairEClass, KEY_VALUE_PAIR__INTERACTIVE);
     createEReference(keyValuePairEClass, KEY_VALUE_PAIR__VALUE);
+    createEAttribute(keyValuePairEClass, KEY_VALUE_PAIR__KEY);
 
     unitElementEClass = createEClass(UNIT_ELEMENT);
     createEAttribute(unitElementEClass, UNIT_ELEMENT__ID);
@@ -3100,6 +4240,78 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(dateEClass, DATE__SEC);
     createEAttribute(dateEClass, DATE__MS);
 
+    observableSemanticsEClass = createEClass(OBSERVABLE_SEMANTICS);
+    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__DECLARATION);
+    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__UNIT);
+    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__CURRENCY);
+    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__VALUE_OPERATORS);
+    createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__OPTIONAL);
+    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__FROM);
+    createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__TO);
+    createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__NAME);
+
+    valueOperatorEClass = createEClass(VALUE_OPERATOR);
+    createEAttribute(valueOperatorEClass, VALUE_OPERATOR__MODIFIER);
+    createEAttribute(valueOperatorEClass, VALUE_OPERATOR__DOWN_TO);
+    createEReference(valueOperatorEClass, VALUE_OPERATOR__COMPARISON_VALUE);
+    createEReference(valueOperatorEClass, VALUE_OPERATOR__COMPARISON_QUANTITY);
+    createEReference(valueOperatorEClass, VALUE_OPERATOR__COMPARISON_CONCEPT);
+    createEReference(valueOperatorEClass, VALUE_OPERATOR__COMPARISON_OBSERVABLE);
+    createEAttribute(valueOperatorEClass, VALUE_OPERATOR__TOTAL);
+    createEAttribute(valueOperatorEClass, VALUE_OPERATOR__AVERAGED);
+    createEAttribute(valueOperatorEClass, VALUE_OPERATOR__SUMMED);
+
+    conceptDeclarationEClass = createEClass(CONCEPT_DECLARATION);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__MAIN);
+    createEAttribute(conceptDeclarationEClass, CONCEPT_DECLARATION__DISTRIBUTED_OF_INHERENCY);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__INHERENCY);
+    createEAttribute(conceptDeclarationEClass, CONCEPT_DECLARATION__DISTRIBUTED_FOR_INHERENCY);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__MOTIVATION);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__COMPRESENT);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__CAUSANT);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__ADJACENT);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__CONTAINER);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__CONTAINED);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__CAUSED);
+    createEAttribute(conceptDeclarationEClass, CONCEPT_DECLARATION__DISTRIBUTED_TEMPORAL_INHERENCY);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__DURING);
+    createEAttribute(conceptDeclarationEClass, CONCEPT_DECLARATION__DISTRIBUTED_WITHIN_INHERENCY);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__CONTEXT);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__RELATIONSHIP_SOURCE);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__RELATIONSHIP_TARGET);
+    createEAttribute(conceptDeclarationEClass, CONCEPT_DECLARATION__OPERATORS);
+    createEReference(conceptDeclarationEClass, CONCEPT_DECLARATION__OPERANDS);
+    createEAttribute(conceptDeclarationEClass, CONCEPT_DECLARATION__NAME);
+
+    conceptEClass = createEClass(CONCEPT);
+    createEAttribute(conceptEClass, CONCEPT__NEGATED);
+    createEAttribute(conceptEClass, CONCEPT__NAME);
+    createEAttribute(conceptEClass, CONCEPT__AUTH_CONCEPT);
+    createEAttribute(conceptEClass, CONCEPT__STRING_IDENTIFIER);
+    createEAttribute(conceptEClass, CONCEPT__INT_IDENTIFIER);
+    createEAttribute(conceptEClass, CONCEPT__AUTHORITY);
+    createEAttribute(conceptEClass, CONCEPT__PRESENCE);
+    createEReference(conceptEClass, CONCEPT__CONCEPT);
+    createEAttribute(conceptEClass, CONCEPT__COUNT);
+    createEAttribute(conceptEClass, CONCEPT__DISTANCE);
+    createEAttribute(conceptEClass, CONCEPT__PROBABILITY);
+    createEAttribute(conceptEClass, CONCEPT__ASSESSMENT);
+    createEAttribute(conceptEClass, CONCEPT__CHANGE);
+    createEAttribute(conceptEClass, CONCEPT__RATE);
+    createEAttribute(conceptEClass, CONCEPT__UNCERTAINTY);
+    createEAttribute(conceptEClass, CONCEPT__MAGNITUDE);
+    createEAttribute(conceptEClass, CONCEPT__LEVEL);
+    createEAttribute(conceptEClass, CONCEPT__TYPE);
+    createEAttribute(conceptEClass, CONCEPT__OBSERVABILITY);
+    createEAttribute(conceptEClass, CONCEPT__PROPORTION);
+    createEReference(conceptEClass, CONCEPT__OTHER);
+    createEAttribute(conceptEClass, CONCEPT__PERCENTAGE);
+    createEAttribute(conceptEClass, CONCEPT__RATIO);
+    createEAttribute(conceptEClass, CONCEPT__MONETARY);
+    createEAttribute(conceptEClass, CONCEPT__VALUE);
+    createEAttribute(conceptEClass, CONCEPT__OCCURRENCE);
+    createEReference(conceptEClass, CONCEPT__DECLARATION);
+
     // Create enums
     unitOpEEnum = createEEnum(UNIT_OP);
   }
@@ -3140,21 +4352,29 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getModel_Definitions(), this.getDefinition(), null, "definitions", null, 0, -1, Model.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(preambleEClass, Preamble.class, "Preamble", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getPreamble_Public(), ecorePackage.getEBoolean(), "public", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPreamble_Mobile(), ecorePackage.getEBoolean(), "mobile", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPreamble_Desktop(), ecorePackage.getEBoolean(), "desktop", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPreamble_Web(), ecorePackage.getEBoolean(), "web", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_App(), ecorePackage.getEBoolean(), "app", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPreamble_Task(), ecorePackage.getEBoolean(), "task", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Test(), ecorePackage.getEBoolean(), "test", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPreamble_Component(), ecorePackage.getEBoolean(), "component", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_User(), ecorePackage.getEBoolean(), "user", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Library(), ecorePackage.getEBoolean(), "library", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Behavior(), ecorePackage.getEBoolean(), "behavior", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Name(), ecorePackage.getEString(), "name", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPreamble_Label(), ecorePackage.getEString(), "label", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Imports(), ecorePackage.getEString(), "imports", null, 0, -1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Worldview(), ecorePackage.getEString(), "worldview", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getPreamble_Observable(), ecorePackage.getEString(), "observable", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getPreamble_Observable(), this.getObservable(), null, "observable", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getPreamble_Observables(), this.getList(), null, "observables", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getPreamble_Label(), ecorePackage.getEString(), "label", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Description(), ecorePackage.getEString(), "description", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Permissions(), ecorePackage.getEString(), "permissions", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Authors(), ecorePackage.getEString(), "authors", null, 0, -1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Style(), ecorePackage.getEString(), "style", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getPreamble_InlineStyle(), this.getMap(), null, "inlineStyle", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getPreamble_Logo(), ecorePackage.getEString(), "logo", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Version(), ecorePackage.getEString(), "version", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getPreamble_Created(), this.getDate(), null, "created", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getPreamble_Createcomment(), ecorePackage.getEString(), "createcomment", null, 0, 1, Preamble.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3173,6 +4393,11 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEClass(messageBodyEClass, MessageBody.class, "MessageBody", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getMessageBody_Lists(), this.getStatementList(), null, "lists", null, 0, -1, MessageBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
+    initEClass(actorInstantiationEClass, ActorInstantiation.class, "ActorInstantiation", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getActorInstantiation_Behavior(), ecorePackage.getEString(), "behavior", null, 0, 1, ActorInstantiation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActorInstantiation_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, ActorInstantiation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getActorInstantiation_Actions(), this.getActions(), null, "actions", null, 0, 1, ActorInstantiation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
     initEClass(messageCallEClass, MessageCall.class, "MessageCall", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getMessageCall_Name(), ecorePackage.getEString(), "name", null, 0, 1, MessageCall.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMessageCall_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, MessageCall.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3181,7 +4406,15 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     initEClass(statementGroupEClass, StatementGroup.class, "StatementGroup", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatementGroup_Body(), this.getMessageBody(), null, "body", null, 0, 1, StatementGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatementGroup_Metadata(), this.getMetadata(), null, "metadata", null, 0, 1, StatementGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatementGroup_Actions(), this.getActions(), null, "actions", null, 0, 1, StatementGroup.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(metadataEClass, Metadata.class, "Metadata", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getMetadata_Pairs(), this.getMetadataPair(), null, "pairs", null, 0, -1, Metadata.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(metadataPairEClass, MetadataPair.class, "MetadataPair", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getMetadataPair_Key(), ecorePackage.getEString(), "key", null, 0, 1, MetadataPair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMetadataPair_Value(), this.getValue(), null, "value", null, 0, 1, MetadataPair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(statementListEClass, StatementList.class, "StatementList", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatementList_First(), this.getStatement(), null, "first", null, 0, 1, StatementList.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3190,13 +4423,16 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEClass(statementEClass, Statement.class, "Statement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatement_Assignment(), this.getAssignment(), null, "assignment", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Group(), this.getStatementGroup(), null, "group", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatement_Instantiation(), this.getActorInstantiation(), null, "instantiation", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Verb(), this.getMessageCall(), null, "verb", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getStatement_Text(), ecorePackage.getEString(), "text", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getStatement_Metadata(), this.getMetadata(), null, "metadata", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_If(), this.getIfStatement(), null, "if", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_While(), this.getWhileStatement(), null, "while", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Do(), this.getDoStatement(), null, "do", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_For(), this.getForStatement(), null, "for", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getStatement_Value(), this.getValue(), null, "value", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getStatement_Tag(), ecorePackage.getEString(), "tag", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(assignmentEClass, Assignment.class, "Assignment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAssignment_Variable(), ecorePackage.getEString(), "variable", null, 0, 1, Assignment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3237,14 +4473,15 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getValue_Tree(), this.getTree(), null, "tree", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Argvalue(), ecorePackage.getEString(), "argvalue", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Literal(), this.getLiteral(), null, "literal", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getValue_Id(), ecorePackage.getEString(), "id", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Urn(), ecorePackage.getEString(), "urn", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getValue_Id(), ecorePackage.getEString(), "id", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_List(), this.getList(), null, "list", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Map(), this.getMap(), null, "map", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getValue_Observable(), ecorePackage.getEString(), "observable", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValue_Observable(), this.getObservable(), null, "observable", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Expression(), ecorePackage.getEString(), "expression", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Table(), this.getLookupTable(), null, "table", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Quantity(), this.getQuantity(), null, "quantity", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValue_Metadata(), this.getMetadata(), null, "metadata", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(matchEClass, Match.class, "Match", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getMatch_Id(), ecorePackage.getEString(), "id", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3252,7 +4489,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getMatch_Boolean(), ecorePackage.getEString(), "boolean", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMatch_Type(), ecorePackage.getEString(), "type", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMatch_Regexp(), ecorePackage.getEString(), "regexp", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getMatch_Observable(), ecorePackage.getEString(), "observable", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getMatch_Observable(), this.getObservable(), null, "observable", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMatch_Literal(), this.getLiteral(), null, "literal", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMatch_List(), this.getList(), null, "list", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMatch_Set(), this.getList(), null, "set", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3285,12 +4522,16 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getClassifier_Num(), this.getNumber(), null, "num", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getClassifier_Set(), this.getList(), null, "set", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifier_String(), ecorePackage.getEString(), "string", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getClassifier_Observable(), ecorePackage.getEString(), "observable", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getClassifier_Observable(), this.getObservable(), null, "observable", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifier_Id(), ecorePackage.getEString(), "id", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getClassifier_Op(), this.getREL_OPERATOR(), null, "op", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getClassifier_Expression(), this.getNumber(), null, "expression", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifier_Nodata(), ecorePackage.getEString(), "nodata", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getClassifier_Map(), this.getMap(), null, "map", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getClassifier_Star(), ecorePackage.getEBoolean(), "star", null, 0, 1, Classifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(observableEClass, Observable.class, "Observable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getObservable_Observable(), this.getObservableSemantics(), null, "observable", null, 0, 1, Observable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(lookupTableEClass, LookupTable.class, "LookupTable", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getLookupTable_Table(), this.getTable(), null, "table", null, 0, 1, LookupTable.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3309,7 +4550,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getTableClassifier_Boolean(), ecorePackage.getEString(), "boolean", null, 0, 1, TableClassifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getTableClassifier_Num(), this.getNumber(), null, "num", null, 0, 1, TableClassifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getTableClassifier_String(), ecorePackage.getEString(), "string", null, 0, 1, TableClassifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getTableClassifier_Observable(), ecorePackage.getEString(), "observable", null, 0, 1, TableClassifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getTableClassifier_Observable(), this.getObservable(), null, "observable", null, 0, 1, TableClassifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getTableClassifier_Op(), this.getREL_OPERATOR(), null, "op", null, 0, 1, TableClassifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getTableClassifier_Expression(), this.getNumber(), null, "expression", null, 0, 1, TableClassifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getTableClassifier_Int0(), this.getNumber(), null, "int0", null, 0, 1, TableClassifier.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3346,9 +4587,11 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getParameterList_Pairs(), this.getKeyValuePair(), null, "pairs", null, 0, -1, ParameterList.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(keyValuePairEClass, KeyValuePair.class, "KeyValuePair", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getKeyValuePair_Tag(), ecorePackage.getEString(), "tag", null, 0, 1, KeyValuePair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getKeyValuePair_Name(), ecorePackage.getEString(), "name", null, 0, 1, KeyValuePair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getKeyValuePair_Interactive(), ecorePackage.getEBoolean(), "interactive", null, 0, 1, KeyValuePair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getKeyValuePair_Value(), this.getValue(), null, "value", null, 0, 1, KeyValuePair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getKeyValuePair_Key(), ecorePackage.getEString(), "key", null, 0, 1, KeyValuePair.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(unitElementEClass, UnitElement.class, "UnitElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getUnitElement_Id(), ecorePackage.getEString(), "id", null, 0, 1, UnitElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -3391,6 +4634,78 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getDate_Min(), ecorePackage.getEInt(), "min", null, 0, 1, Date.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDate_Sec(), ecorePackage.getEInt(), "sec", null, 0, 1, Date.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDate_Ms(), ecorePackage.getEInt(), "ms", null, 0, 1, Date.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(observableSemanticsEClass, ObservableSemantics.class, "ObservableSemantics", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getObservableSemantics_Declaration(), this.getConceptDeclaration(), null, "declaration", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getObservableSemantics_Unit(), this.getUnit(), null, "unit", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getObservableSemantics_Currency(), this.getCurrency(), null, "currency", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getObservableSemantics_ValueOperators(), this.getValueOperator(), null, "valueOperators", null, 0, -1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getObservableSemantics_Optional(), ecorePackage.getEBoolean(), "optional", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getObservableSemantics_From(), this.getNumber(), null, "from", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getObservableSemantics_To(), this.getNumber(), null, "to", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getObservableSemantics_Name(), ecorePackage.getEString(), "name", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(valueOperatorEClass, ValueOperator.class, "ValueOperator", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getValueOperator_Modifier(), ecorePackage.getEString(), "modifier", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getValueOperator_DownTo(), ecorePackage.getEString(), "downTo", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValueOperator_ComparisonValue(), this.getNumber(), null, "comparisonValue", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValueOperator_ComparisonQuantity(), this.getQuantity(), null, "comparisonQuantity", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValueOperator_ComparisonConcept(), this.getConceptDeclaration(), null, "comparisonConcept", null, 0, -1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValueOperator_ComparisonObservable(), this.getObservableSemantics(), null, "comparisonObservable", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getValueOperator_Total(), ecorePackage.getEString(), "total", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getValueOperator_Averaged(), ecorePackage.getEString(), "averaged", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getValueOperator_Summed(), ecorePackage.getEString(), "summed", null, 0, 1, ValueOperator.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(conceptDeclarationEClass, ConceptDeclaration.class, "ConceptDeclaration", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getConceptDeclaration_Main(), this.getConcept(), null, "main", null, 0, -1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConceptDeclaration_DistributedOfInherency(), ecorePackage.getEBoolean(), "distributedOfInherency", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_Inherency(), this.getConceptDeclaration(), null, "inherency", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConceptDeclaration_DistributedForInherency(), ecorePackage.getEBoolean(), "distributedForInherency", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_Motivation(), this.getConceptDeclaration(), null, "motivation", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_Compresent(), this.getConceptDeclaration(), null, "compresent", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_Causant(), this.getConceptDeclaration(), null, "causant", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_Adjacent(), this.getConceptDeclaration(), null, "adjacent", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_Container(), this.getConceptDeclaration(), null, "container", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_Contained(), this.getConceptDeclaration(), null, "contained", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_Caused(), this.getConceptDeclaration(), null, "caused", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConceptDeclaration_DistributedTemporalInherency(), ecorePackage.getEBoolean(), "distributedTemporalInherency", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_During(), this.getConceptDeclaration(), null, "during", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConceptDeclaration_DistributedWithinInherency(), ecorePackage.getEBoolean(), "distributedWithinInherency", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_Context(), this.getConceptDeclaration(), null, "context", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_RelationshipSource(), this.getConceptDeclaration(), null, "relationshipSource", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_RelationshipTarget(), this.getConceptDeclaration(), null, "relationshipTarget", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConceptDeclaration_Operators(), ecorePackage.getEString(), "operators", null, 0, -1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConceptDeclaration_Operands(), this.getConceptDeclaration(), null, "operands", null, 0, -1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConceptDeclaration_Name(), ecorePackage.getEString(), "name", null, 0, 1, ConceptDeclaration.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(conceptEClass, Concept.class, "Concept", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getConcept_Negated(), ecorePackage.getEBoolean(), "negated", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Name(), ecorePackage.getEString(), "name", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_AuthConcept(), ecorePackage.getEBoolean(), "authConcept", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_StringIdentifier(), ecorePackage.getEString(), "stringIdentifier", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_IntIdentifier(), ecorePackage.getEInt(), "intIdentifier", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Authority(), ecorePackage.getEString(), "authority", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Presence(), ecorePackage.getEBoolean(), "presence", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConcept_Concept(), this.getConceptDeclaration(), null, "concept", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Count(), ecorePackage.getEBoolean(), "count", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Distance(), ecorePackage.getEBoolean(), "distance", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Probability(), ecorePackage.getEBoolean(), "probability", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Assessment(), ecorePackage.getEBoolean(), "assessment", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Change(), ecorePackage.getEBoolean(), "change", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Rate(), ecorePackage.getEBoolean(), "rate", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Uncertainty(), ecorePackage.getEBoolean(), "uncertainty", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Magnitude(), ecorePackage.getEBoolean(), "magnitude", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Level(), ecorePackage.getEBoolean(), "level", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Type(), ecorePackage.getEBoolean(), "type", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Observability(), ecorePackage.getEBoolean(), "observability", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Proportion(), ecorePackage.getEBoolean(), "proportion", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConcept_Other(), this.getConceptDeclaration(), null, "other", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Percentage(), ecorePackage.getEBoolean(), "percentage", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Ratio(), ecorePackage.getEBoolean(), "ratio", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Monetary(), ecorePackage.getEBoolean(), "monetary", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Value(), ecorePackage.getEBoolean(), "value", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getConcept_Occurrence(), ecorePackage.getEBoolean(), "occurrence", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getConcept_Declaration(), this.getConceptDeclaration(), null, "declaration", null, 0, 1, Concept.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     // Initialize enums and add enum literals
     initEEnum(unitOpEEnum, UnitOp.class, "UnitOp");

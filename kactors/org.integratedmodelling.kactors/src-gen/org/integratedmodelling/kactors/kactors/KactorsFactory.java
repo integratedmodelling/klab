@@ -69,6 +69,15 @@ public interface KactorsFactory extends EFactory
   MessageBody createMessageBody();
 
   /**
+   * Returns a new object of class '<em>Actor Instantiation</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Actor Instantiation</em>'.
+   * @generated
+   */
+  ActorInstantiation createActorInstantiation();
+
+  /**
    * Returns a new object of class '<em>Message Call</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -85,6 +94,24 @@ public interface KactorsFactory extends EFactory
    * @generated
    */
   StatementGroup createStatementGroup();
+
+  /**
+   * Returns a new object of class '<em>Metadata</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Metadata</em>'.
+   * @generated
+   */
+  Metadata createMetadata();
+
+  /**
+   * Returns a new object of class '<em>Metadata Pair</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Metadata Pair</em>'.
+   * @generated
+   */
+  MetadataPair createMetadataPair();
 
   /**
    * Returns a new object of class '<em>Statement List</em>'.
@@ -231,6 +258,15 @@ public interface KactorsFactory extends EFactory
   Classifier createClassifier();
 
   /**
+   * Returns a new object of class '<em>Observable</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Observable</em>'.
+   * @generated
+   */
+  Observable createObservable();
+
+  /**
    * Returns a new object of class '<em>Lookup Table</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -373,6 +409,42 @@ public interface KactorsFactory extends EFactory
    * @generated
    */
   Date createDate();
+
+  /**
+   * Returns a new object of class '<em>Observable Semantics</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Observable Semantics</em>'.
+   * @generated
+   */
+  ObservableSemantics createObservableSemantics();
+
+  /**
+   * Returns a new object of class '<em>Value Operator</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Value Operator</em>'.
+   * @generated
+   */
+  ValueOperator createValueOperator();
+
+  /**
+   * Returns a new object of class '<em>Concept Declaration</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Concept Declaration</em>'.
+   * @generated
+   */
+  ConceptDeclaration createConceptDeclaration();
+
+  /**
+   * Returns a new object of class '<em>Concept</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Concept</em>'.
+   * @generated
+   */
+  Concept createConcept();
 
   /**
    * Returns the package supported by this factory.

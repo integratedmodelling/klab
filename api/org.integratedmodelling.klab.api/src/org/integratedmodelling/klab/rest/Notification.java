@@ -14,6 +14,12 @@ public class Notification implements INotification {
 	public Notification() {
 	}
 
+	public Notification(String message, String level) {
+		this.message = message;
+		this.level = level;
+		this.timestamp = System.currentTimeMillis();
+	}
+	
 	public Notification(String message2, String level2, long timestamp2) {
 		this.message = message2;
 		this.level = level2;

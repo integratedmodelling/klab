@@ -36,11 +36,6 @@
 			<organization>CronWorks Software, LLC</organization>
 			<organizationUrl>http://cronworks.net</organizationUrl>
 		</developer>
-		<developer>
-			<name>Tarik Fissaa</name>
-			<email>tarik.fissaa@bc3research.org</email>
-			<organization>Basque Centre for Climate Change (BC3)</organization>
-		</developer>
 	</developers>
 
 	<scm>
@@ -82,6 +77,7 @@
 		<module>components</module>
 		<!-- later (requires mvn 3.0.5 which can't be installed on sua) -->
 		<!--  <module>docs</module> -->
+		<module>authorities</module>
 	</modules>
 
 	<properties>

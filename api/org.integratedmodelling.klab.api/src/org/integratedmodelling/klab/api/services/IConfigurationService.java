@@ -36,7 +36,9 @@ public interface IConfigurationService {
 	public static final int DEFAULT_ENGINE_PORT = 8283;
 	public static final int DEFAULT_HUB_PORT = 8284;
 	public static final int DEFAULT_NODE_PORT = 8287;
+	public static final int DEFAULT_LEVER_PORT = 8761;
 
+	public static final String KLAB_LOG_FILE = "klab.log.file";
 	public static final String KLAB_OFFLINE = "klab.offline";
 	public static final String KLAB_EXPORT_PATH = "klab.export.path";
 	public static final String KLAB_DEBUG_RESOLUTION_RANKS = "klab.debugging.resolution.ranks";
@@ -47,6 +49,7 @@ public interface IConfigurationService {
 	public static final String KLAB_USE_IN_MEMORY_STORAGE = "klab.storage.inmemory";
 	public static final String CERTFILE_PROPERTY = "klab.certificate";
 	public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
+	public static final String KLAB_PROJECT_BLACKLIST_PROPERTY = "klab.project.blacklist";
 
 	/**
 	 * Minutes after which a session times out. Default 60.
@@ -84,6 +87,8 @@ public interface IConfigurationService {
 	 * 1 runtime providers are available.
 	 */
 	public static final String RUNTIME_PROVIDER_COMPONENT = "klab.runtime.provider.class";
+
+	
 
 	/**
 	 * The main properties, read and written by default to

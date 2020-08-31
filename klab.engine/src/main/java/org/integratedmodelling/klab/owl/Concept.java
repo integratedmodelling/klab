@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
@@ -127,16 +128,16 @@ public class Concept extends Knowledge implements IConcept {
 			return false;
 		}
 
-		
 		Concept cc = (Concept) concept;
+
+		/*
+		 * TODO first use "isn't" based on the enum types to quickly cut out those that
+		 * don't match. I guess they have to have the exact same types (?)
+		 */
 
 		if (this == cc || getDefinition().equals(cc.getDefinition())) {
 			return true;
 		}
-
-//		if (cc.equals(this)) {
-//			return true;
-//		}
 
 		Collection<IConcept> collection = getAllParents();
 		collection.add(this);
@@ -522,7 +523,7 @@ public class Concept extends Knowledge implements IConcept {
 			IKimObject object = Resources.INSTANCE.getModelObject(getUrn());
 			if (object instanceof IConceptDefinition
 					&& ((IConceptDefinition) object).getStatement().getMetadata() != null) {
-				this.metadata.putAll(((IConceptDefinition) object).getStatement().getMetadata().getData());
+				this.metadata.putAll(((IConceptDefinition) object).getStatement().getMetadata());
 			}
 		}
 		return this.metadata;
@@ -717,6 +718,20 @@ public class Concept extends Knowledge implements IConcept {
 
 		for (IConcept t : Traits.INSTANCE.getTraits(concept)) {
 			if (!Traits.INSTANCE.hasTrait(this, t)) {
+				return -50;
+			}
+		}
+
+		// same with roles.
+		for (IConcept t : Roles.INSTANCE.getRoles(this)) {
+			boolean ok = Roles.INSTANCE.hasRole(concept, t);
+			if (!ok) {
+				return -50;
+			}
+		}
+		
+		for (IConcept t : Roles.INSTANCE.getRoles(concept)) {
+			if (!Roles.INSTANCE.hasRole(this, t)) {
 				return -50;
 			}
 		}

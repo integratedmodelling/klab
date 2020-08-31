@@ -23,9 +23,9 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
-import org.integratedmodelling.klab.dataflow.Actuator.Computation;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IModificationListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -33,9 +33,10 @@ import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.DebugFile;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Path;
 
 import akka.actor.typed.ActorRef;
@@ -51,8 +52,6 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	private Observable observable;
 	private ObservationGroup group = null;
-	// last modification. Must be correct for any cache to work.
-	private long timestamp = System.currentTimeMillis();
 	// used to store the "main" status from annotations or because of directly
 	// observed. Should eventually
 	// come from provenance.
@@ -66,7 +65,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	private String observationContextId;
 	// just for clients
 	private boolean contextualized;
-	
+	private View view;
+
 	/*
 	 * Any modification that needs to be reported to clients is recorded here
 	 */
@@ -80,6 +80,25 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	// tracks the setting of the actor so we can avoid the ask pattern
 	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
 
+	protected Observation(Observation other) {
+		super(other);
+		this.observable = other.observable;
+		this.group = other.group;
+		this.main = other.main;
+		this.lastUpdate = other.lastUpdate;
+		this.creationTime = other.creationTime;
+		this.exitTime = other.exitTime;
+		this.dynamic = other.dynamic;
+		this.observationContextId = other.observationContextId;
+		this.contextualized = other.contextualized;
+		this.view = other.view;
+		this.changeset.addAll(other.changeset);
+		this.modificationListeners.addAll(other.modificationListeners);
+		this.actor = other.actor;
+		this.globalState.putAll(other.globalState);
+		this.actorSet = other.actorSet;
+	}
+	
 	public String getUrn() {
 		return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
 	}
@@ -221,6 +240,11 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	public int groupSize() {
 		return group == null ? 1 : group.groupSize();
 	}
+	
+	@Override
+	public IArtifact getGroupMember(int n) {
+		return group == null ? null : (group.groupSize() > n ? group.getGroupMember(n) : null);
+	}
 
 	public boolean isMain() {
 		return main;
@@ -294,9 +318,10 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 				parent = (Observation) getScope().getRootSubject();
 			}
 
+			// use the runtime actor, which is not running any actor code
 			final ActorRef<KlabMessage> parentActor = parent.getActor();
 
-			parentActor.tell(new Spawn(this));
+			parentActor.tell(new Spawn(this, null));
 
 			/*
 			 * wait for instrumentation to succeed. Couldn't figure out the ask pattern.
@@ -321,8 +346,20 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	}
 
 	@Override
-	public void load(IBehavior behavior, IRuntimeScope scope) {
-		getActor().tell(new Load(behavior.getId(), scope));
+	public String load(IBehavior behavior, IContextualizationScope scope) {
+		String behaviorId = "obh" + NameGenerator.shortUUID();
+		getActor().tell(new Load(behavior.getId(), behaviorId, (IRuntimeScope)scope));
+		return behaviorId;
+	}
+
+	@Override
+	public boolean stop() {
+		return true;
+	}
+
+	@Override
+	public boolean stop(String appId) {
+		return true;
 	}
 
 	@Override
@@ -386,6 +423,16 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	public void finalizeTransition(IScale scale) {
 		// do nothing here
+	}
+	
+	@Override
+	public View getView() {
+		return view;
+	}
+
+	@Override
+	public void setLayout(Layout layout) {
+		this.view = new ViewImpl(layout);
 	}
 
 }

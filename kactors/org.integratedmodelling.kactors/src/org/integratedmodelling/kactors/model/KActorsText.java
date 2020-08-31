@@ -5,14 +5,16 @@ import org.integratedmodelling.kactors.kactors.Statement;
 
 public class KActorsText extends KActorsStatement implements TextBlock {
 	
+	String text;
+	
 	public KActorsText(Statement statement, KActorCodeStatement parent) {
 		super(statement, parent, Type.TEXT_BLOCK);
+		this.text = statement.getText().substring(3, statement.getText().length() - 4);
 	}
 
 	@Override
 	public String getText() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.text;
 	}
 
 }

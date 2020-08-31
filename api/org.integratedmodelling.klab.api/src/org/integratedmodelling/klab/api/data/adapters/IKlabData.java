@@ -19,6 +19,8 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 
@@ -155,12 +157,35 @@ public interface IKlabData {
 	IArtifact getArtifact();
 
 	/**
+	 * The artifact type of the primary artifact.
+	 * 
+	 * @return
+	 */
+	IArtifact.Type getArtifactType();
+
+	/**
 	 * Return any notifications passed through a builder. Notifications are a global
 	 * list that refers to all artifacts.
 	 * 
 	 * @return all notifications
 	 */
 	List<INotification> getNotifications();
+
+	/**
+	 * Return the number of objects at the level of this data response, 0 if
+	 * !type.isCountable(), 0 or more if object or event.
+	 *
+	 * @return
+	 */
+	int getObjectCount();
+
+	/**
+	 * The number of states in the primary artifact, normally 1 if type == quality
+	 * or 0 if not.
+	 * 
+	 * @return
+	 */
+	int getStateCount();
 
 	/**
 	 * True if errors happened and results should not be used. Normally linked to
@@ -170,5 +195,26 @@ public interface IKlabData {
 	 * @return true if errors
 	 */
 	boolean hasErrors();
+
+	/**
+	 * 
+	 * @param i
+	 * @return
+	 */
+	IScale getObjectScale(int i);
+
+	/**
+	 * 
+	 * @param i
+	 * @return
+	 */
+	String getObjectName(int i);
+
+	/**
+	 * 
+	 * @param i
+	 * @return
+	 */
+	IMetadata getObjectMetadata(int i);
 
 }

@@ -633,7 +633,10 @@ public class Actuator implements IActuator {
 
 			if (this.model != null && ret instanceof Observation) {
 				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, ctx);
-			}
+				/*
+				 * tell the scope to notify internal listeners (for actors and the like)
+				 */
+				ctx.notifyListeners((IObservation)ret);			}
 
 		} else if (contextualizer instanceof IResolver) {
 
@@ -708,12 +711,18 @@ public class Actuator implements IActuator {
 
 							ObservationChange change = ((Observation) object)
 									.createChangeEvent(ObservationChange.Type.StructureChange);
+							change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation) object));
 							change.setNewSize(ctx.getChildArtifactsOf(object).size());
 							session.getMonitor()
 									.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 											IMessage.Type.ModifiedObservation, change));
 						}
 					}
+					
+					/*
+					 * tell the scope to notify internal listeners (for actors and the like)
+					 */
+					ctx.notifyListeners((IObservation)object);
 
 					/*
 					 * notify end of contextualization if we're subscribed to the parent
@@ -844,6 +853,11 @@ public class Actuator implements IActuator {
 
 		IRuntimeScope ret = runtimeContext.copy();
 
+		/*
+		 * Needed to infer formal parameters and the like when expressions are used
+		 */
+		ret.setModel(this.model);
+		
 		// compile mediators
 		List<Pair<IContextualizer, IContextualizable>> mediation = new ArrayList<>();
 		for (Pair<IServiceCall, IContextualizable> service : mediationStrategy) {
@@ -1418,8 +1432,8 @@ public class Actuator implements IActuator {
 	}
 
 	public boolean isFilter() {
-		return observable.getDescription() == IActivity.Description.CHARACTERIZATION
-				|| observable.getDescription() == IActivity.Description.CLASSIFICATION;
+		return observable.getDescriptionType() == IActivity.Description.CHARACTERIZATION
+				|| observable.getDescriptionType() == IActivity.Description.CLASSIFICATION;
 	}
 
 	boolean hasDependency(IActuator dependency) {

@@ -80,6 +80,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
@@ -862,38 +863,74 @@ public enum Resources implements IResourceService {
 	 * @param destinationDirectory
 	 * @throws IOException
 	 */
-	public void extractKnowledgeFromClasspath(File destinationDirectory) throws IOException {
+	public void extractKnowledgeFromClasspath(File destinationDirectory) {
+		try {
+			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+			org.springframework.core.io.Resource[] resources = resolver.getResources("/knowledge/**");
+			for (org.springframework.core.io.Resource resource : resources) {
 
-		PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
-		org.springframework.core.io.Resource[] resources = resolver.getResources("/knowledge/**");
-		for (org.springframework.core.io.Resource resource : resources) {
+				String path = null;
+				if (resource instanceof FileSystemResource) {
+					path = ((FileSystemResource) resource).getPath();
+				} else if (resource instanceof ClassPathResource) {
+					path = ((ClassPathResource) resource).getPath();
+				}
+				if (path == null) {
+					throw new KlabIOException("internal: cannot establish path for resource " + resource);
+				}
 
-			String path = null;
-			if (resource instanceof FileSystemResource) {
-				path = ((FileSystemResource) resource).getPath();
-			} else if (resource instanceof ClassPathResource) {
-				path = ((ClassPathResource) resource).getPath();
+				if (!path.endsWith("owl")) {
+					continue;
+				}
+
+				String filePath = path.substring(path.indexOf("knowledge/") + "knowledge/".length());
+
+				int pind = filePath.lastIndexOf('/');
+				if (pind >= 0) {
+					String fileDir = filePath.substring(0, pind);
+					File destDir = new File(destinationDirectory + File.separator + fileDir);
+					destDir.mkdirs();
+				}
+				File dest = new File(destinationDirectory + File.separator + filePath);
+				InputStream is = resource.getInputStream();
+				FileUtils.copyInputStreamToFile(is, dest);
+				is.close();
 			}
-			if (path == null) {
-				throw new IOException("internal: cannot establish path for resource " + resource);
-			}
+		} catch (IOException ex) {
+			throw new KlabIOException(ex);
+		}
+	}
 
-			if (!path.endsWith("owl")) {
-				continue;
-			}
 
-			String filePath = path.substring(path.indexOf("knowledge/") + "knowledge/".length());
+	/**
+	 * Only works for a flat hierarchy!
+	 * @param resourcePattern
+	 * @param destinationDirectory
+	 */
+	public void extractResourcesFromClasspath(String resourcePattern, File destinationDirectory) {
 
-			int pind = filePath.lastIndexOf('/');
-			if (pind >= 0) {
-				String fileDir = filePath.substring(0, pind);
-				File destDir = new File(destinationDirectory + File.separator + fileDir);
-				destDir.mkdirs();
+		try {
+			PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+			org.springframework.core.io.Resource[] resources = resolver.getResources(resourcePattern);
+			for (org.springframework.core.io.Resource resource : resources) {
+
+				String path = null;
+				if (resource instanceof FileSystemResource) {
+					path = ((FileSystemResource) resource).getPath();
+				} else if (resource instanceof ClassPathResource) {
+					path = ((ClassPathResource) resource).getPath();
+				}
+				if (path == null) {
+					throw new KlabIOException("internal: cannot establish path for resource " + resource);
+				}
+				String fileName = MiscUtilities.getFileName(path);
+				File dest = new File(destinationDirectory + File.separator + fileName);
+				InputStream is = resource.getInputStream();
+				FileUtils.copyInputStreamToFile(is, dest);
+				is.close();
 			}
-			File dest = new File(destinationDirectory + File.separator + filePath);
-			InputStream is = resource.getInputStream();
-			FileUtils.copyInputStreamToFile(is, dest);
-			is.close();
+		} catch (IOException ex) {
+			throw new KlabIOException(ex);
 		}
 	}
 
@@ -962,15 +999,20 @@ public enum Resources implements IResourceService {
 	 * @return
 	 */
 	public IKlabData getResourceData(String urn, IKlabData.Builder builder, IMonitor monitor) {
-		Pair<String, Map<String, String>> split = Urns.INSTANCE.resolveParameters(urn);
-		IResource resource = resolveResource(urn);
-		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
-		if (adapter == null) {
-			throw new KlabUnsupportedFeatureException(
-					"adapter for resource of type " + resource.getAdapterType() + " not available");
+		Urn kurn = new Urn(urn);
+		if (kurn.isLocal()) {
+			IResource resource = resolveResource(urn);
+			IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+			if (adapter == null) {
+				throw new KlabUnsupportedFeatureException(
+						"adapter for resource of type " + resource.getAdapterType() + " not available");
+			}
+			adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), resource.getGeometry(), builder,
+					Expression.emptyContext(monitor));
+		} else {
+			throw new KlabInternalErrorException(
+					"getResourceData(): this call can only be used to access local resources");
 		}
-		adapter.getEncoder().getEncodedData(resource, split.getSecond(), resource.getGeometry(), builder,
-				Expression.emptyContext(monitor));
 		return builder.build();
 	}
 
@@ -984,18 +1026,48 @@ public enum Resources implements IResourceService {
 	 * @return
 	 */
 	public IKlabData getResourceData(String urn, IKlabData.Builder builder, IGeometry geometry, IMonitor monitor) {
-		Pair<String, Map<String, String>> split = Urns.INSTANCE.resolveParameters(urn);
-		IResource resource = resolveResource(urn);
-		if (resource == null) {
-			throw new KlabResourceAccessException("Access to resource data failed for resource " + urn);
+
+		Urn kurn = new Urn(urn);
+		if (kurn.isLocal()) {
+			IResource resource = resolveResource(urn);
+			if (resource == null) {
+				throw new KlabResourceAccessException("Access to resource data failed for resource " + urn);
+			}
+			IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+			if (adapter == null) {
+				throw new KlabUnsupportedFeatureException(
+						"adapter for resource of type " + resource.getAdapterType() + " not available");
+			}
+			adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), geometry, builder,
+					Expression.emptyContext(geometry, monitor));
+
+		} else if (kurn.isUniversal() && getUrnAdapter(kurn.getCatalog()) != null) {
+
+			IUrnAdapter adapter = getUrnAdapter(kurn.getCatalog());
+			if (adapter == null) {
+				throw new KlabUnsupportedFeatureException(
+						"adapter for resource of type " + kurn.getCatalog() + " not available");
+			}
+
+			IContextualizationScope context = Expression.emptyContext(geometry, monitor);
+			try {
+				adapter.getEncodedData(kurn, builder, geometry, context);
+			} catch (Throwable e) {
+				// just return null later
+				context.getMonitor().error("could not extract data from " + urn + ": " + e.getMessage());
+			}
+
+		} else {
+			INodeIdentity node = Network.INSTANCE.getNodeForResource(kurn);
+			if (node != null) {
+				ResourceDataRequest request = new ResourceDataRequest();
+				request.setUrn(urn.toString());
+				request.setGeometry(geometry.encode());
+				builder = new DecodingDataBuilder(
+						node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request, Map.class),
+						Expression.emptyContext(geometry, monitor));
+			}
 		}
-		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
-		if (adapter == null) {
-			throw new KlabUnsupportedFeatureException(
-					"adapter for resource of type " + resource.getAdapterType() + " not available");
-		}
-		adapter.getEncoder().getEncodedData(resource, split.getSecond(), geometry, builder,
-				Expression.emptyContext(geometry, monitor));
 		return builder.build();
 	}
 
@@ -1016,7 +1088,6 @@ public enum Resources implements IResourceService {
 	 * @param context
 	 * @return KlabException if anything goes wrong
 	 */
-//	@Override
 	public IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			IContextualizationScope context) {
 
@@ -1024,7 +1095,7 @@ public enum Resources implements IResourceService {
 		Urn urn = new Urn(resource.getUrn(), urnParameters);
 		if (urn.isUniversal()) {
 			// use it locally only if we have the adapter.
-			local = getResourceAdapter(urn.getCatalog()) != null;
+			local = getUrnAdapter(urn.getCatalog()) != null;
 		}
 
 		if (local) {
@@ -1043,6 +1114,8 @@ public enum Resources implements IResourceService {
 					return builder.build();
 				} catch (Throwable e) {
 					// just return null later
+					context.getMonitor()
+							.error("could not extract data from " + resource.getUrn() + ": " + e.getMessage());
 				}
 
 			} else {
@@ -1107,20 +1180,19 @@ public enum Resources implements IResourceService {
 				}
 
 				VisitingDataBuilder builder = new VisitingDataBuilder();
-				adapter.getEncodedData(kurn, builder, null, null);
+				IKlabData data = adapter.getEncodedData(kurn, builder, null, null);
 
 				// resource specifies one object
-				if (builder.getObjectCount() == 1) {
+				if (data.getObjectCount() == 1) {
 
-					if (builder.getObjectScale(0).getSpace() != null) {
+					if (data.getObjectScale(0).getSpace() != null) {
 						/*
 						 * build an observer from the data and return it
 						 */
-						return Observations.INSTANCE.makeROIObserver(builder.getObjectName(0),
-								builder.getObjectScale(0).getSpace().getShape(),
-								org.integratedmodelling.klab.Time.INSTANCE
+						return Observations.INSTANCE.makeROIObserver(data.getObjectName(0),
+								data.getObjectScale(0).getSpace().getShape(), org.integratedmodelling.klab.Time.INSTANCE
 										.getGenericCurrentExtent(Resolution.Type.YEAR),
-								builder.getObjectMetadata(0));
+								data.getObjectMetadata(0));
 					}
 				}
 			}
@@ -1702,6 +1774,19 @@ public enum Resources implements IResourceService {
 		// TODO Auto-generated method stub
 		IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
 
+	}
+
+	@Override
+	public File getFilesystemLocation(IResource resource) {
+		File rootPath = null;
+		Urn urn = new Urn(resource.getUrn());
+		if (urn.isLocal()) {
+			IProject project = Resources.INSTANCE.getProject(((Resource) resource).getLocalProjectName());
+			rootPath = project.getRoot().getParentFile();
+		} else if (!urn.isUniversal()) {
+			rootPath = new File(resource.getLocalPath());
+		}
+		return rootPath;
 	}
 
 }

@@ -1942,7 +1942,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getActorDefinitionRule());
                       					}
-                      					setWithLastConsumed(current, "abstract", true, "abstract");
+                      					setWithLastConsumed(current, "abstract", lv_abstract_1_0 != null, "abstract");
                       				
                     }
 
@@ -1979,7 +1979,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getActorDefinitionRule());
                       					}
-                      					setWithLastConsumed(current, "final", true, "final");
+                      					setWithLastConsumed(current, "final", lv_final_2_0 != null, "final");
                       				
                     }
 
@@ -2016,7 +2016,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getActorDefinitionRule());
                       					}
-                      					setWithLastConsumed(current, "optional", true, "optional");
+                      					setWithLastConsumed(current, "optional", lv_optional_3_0 != null, "optional");
                       				
                     }
 
@@ -2069,7 +2069,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getActorDefinitionRule());
                       						}
-                      						setWithLastConsumed(current, "exported", true, "export");
+                      						setWithLastConsumed(current, "exported", lv_exported_4_0 != null, "export");
                       					
                     }
 
@@ -2101,7 +2101,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getActorDefinitionRule());
                       						}
-                      						setWithLastConsumed(current, "filter", true, "filter");
+                      						setWithLastConsumed(current, "filter", lv_filter_5_0 != null, "filter");
                       					
                     }
 
@@ -2136,7 +2136,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       							if (current==null) {
                       								current = createModelElement(grammarAccess.getActorDefinitionRule());
                       							}
-                      							setWithLastConsumed(current, "imported", true, "import");
+                      							setWithLastConsumed(current, "imported", lv_imported_6_0 != null, "import");
                       						
                     }
 
@@ -2176,7 +2176,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getActorDefinitionRule());
                               								}
-                              								setWithLastConsumed(current, "multiple", true, "multiple");
+                              								setWithLastConsumed(current, "multiple", lv_multiple_7_0 != null, "multiple");
                               							
                             }
 
@@ -2249,7 +2249,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                                       									if (current==null) {
                                       										current = createModelElement(grammarAccess.getActorDefinitionRule());
                                       									}
-                                      									setWithLastConsumed(current, "minimum", true, "+");
+                                      									setWithLastConsumed(current, "minimum", lv_minimum_9_0 != null, "+");
                                       								
                                     }
 
@@ -2304,7 +2304,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getActorDefinitionRule());
                       					}
-                      					setWithLastConsumed(current, "parameter", true, "parameter");
+                      					setWithLastConsumed(current, "parameter", lv_parameter_10_0 != null, "parameter");
                       				
                     }
 
@@ -2376,7 +2376,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getActorDefinitionRule());
                       					}
-                      					setWithLastConsumed(current, "expression", true, "expression");
+                      					setWithLastConsumed(current, "expression", lv_expression_12_0 != null, "expression");
                       				
                     }
 
@@ -6328,7 +6328,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getClassifierRHSRule());
                       					}
-                      					setWithLastConsumed(current, "star", true, "*");
+                      					setWithLastConsumed(current, "star", lv_star_22_0 != null, "*");
                       				
                     }
 
@@ -7327,7 +7327,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getLiteralOrIdOrCommaRule());
                       					}
-                      					setWithLastConsumed(current, "comma", true, ",");
+                      					setWithLastConsumed(current, "comma", lv_comma_7_0 != null, ",");
                       				
                     }
 
@@ -11082,7 +11082,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getTableClassifierRule());
                       					}
-                      					setWithLastConsumed(current, "star", true, "*");
+                      					setWithLastConsumed(current, "star", lv_star_17_0 != null, "*");
                       				
                     }
 
@@ -11114,7 +11114,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getTableClassifierRule());
                       					}
-                      					setWithLastConsumed(current, "anything", true, "#");
+                      					setWithLastConsumed(current, "anything", lv_anything_18_0 != null, "#");
                       				
                     }
 
@@ -11683,7 +11683,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getKeyValuePairRule());
                       						}
-                      						setWithLastConsumed(current, "interactive", true, "=?");
+                      						setWithLastConsumed(current, "interactive", lv_interactive_1_0 != null, "=?");
                       					
                     }
 
@@ -12553,7 +12553,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "gt", true, ">");
+                      					setWithLastConsumed(current, "gt", lv_gt_0_0 != null, ">");
                       				
                     }
 
@@ -12585,7 +12585,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "lt", true, "<");
+                      					setWithLastConsumed(current, "lt", lv_lt_1_0 != null, "<");
                       				
                     }
 
@@ -12617,7 +12617,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "eq", true, "=");
+                      					setWithLastConsumed(current, "eq", lv_eq_2_0 != null, "=");
                       				
                     }
 
@@ -12649,7 +12649,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "ne", true, "!=");
+                      					setWithLastConsumed(current, "ne", lv_ne_3_0 != null, "!=");
                       				
                     }
 
@@ -12681,7 +12681,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "le", true, "<=");
+                      					setWithLastConsumed(current, "le", lv_le_4_0 != null, "<=");
                       				
                     }
 
@@ -12713,7 +12713,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "ge", true, ">=");
+                      					setWithLastConsumed(current, "ge", lv_ge_5_0 != null, ">=");
                       				
                     }
 
@@ -12858,7 +12858,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getNumberRule());
                       						}
-                      						setWithLastConsumed(current, "negative", true, "-");
+                      						setWithLastConsumed(current, "negative", lv_negative_1_0 != null, "-");
                       					
                     }
 
@@ -12934,7 +12934,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                       							if (current==null) {
                       								current = createModelElement(grammarAccess.getNumberRule());
                       							}
-                      							setWithLastConsumed(current, "decimal", true, ".");
+                      							setWithLastConsumed(current, "decimal", lv_decimal_3_0 != null, ".");
                       						
                     }
 
@@ -13037,7 +13037,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getNumberRule());
                               								}
-                              								setWithLastConsumed(current, "exponential", true, null);
+                              								setWithLastConsumed(current, "exponential", lv_exponential_5_1 != null, null);
                               							
                             }
 
@@ -13057,7 +13057,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getNumberRule());
                               								}
-                              								setWithLastConsumed(current, "exponential", true, null);
+                              								setWithLastConsumed(current, "exponential", lv_exponential_5_2 != null, null);
                               							
                             }
 
@@ -13115,7 +13115,7 @@ public class InternalKdlParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getNumberRule());
                               								}
-                              								setWithLastConsumed(current, "expNegative", true, "-");
+                              								setWithLastConsumed(current, "expNegative", lv_expNegative_7_0 != null, "-");
                               							
                             }
 

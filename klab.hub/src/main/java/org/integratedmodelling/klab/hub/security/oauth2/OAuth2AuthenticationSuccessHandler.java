@@ -6,10 +6,11 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.integratedmodelling.klab.hub.config.TokenClickbackConfig;
-import org.integratedmodelling.klab.hub.manager.TokenManager;
-import org.integratedmodelling.klab.hub.models.ProfileResource;
-import org.integratedmodelling.klab.hub.models.tokens.AuthenticationToken;
+import org.integratedmodelling.klab.hub.api.TokenAuthentication;
+import org.integratedmodelling.klab.hub.api.TokenType;
+import org.integratedmodelling.klab.hub.api.ProfileResource;
+import org.integratedmodelling.klab.hub.config.LinkConfig;
+import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.security.core.Authentication;
@@ -25,10 +26,10 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
     private ObjectMapper objectMapper;
     
     @Autowired
-    TokenManager tokenManager;
+    UserAuthTokenService userAuthTokenService;
     
     @Autowired
-    TokenClickbackConfig tokenClickbackConfig;
+    LinkConfig tokenClickbackConfig;
 	
     @Autowired
     OAuth2AuthenticationSuccessHandler(MappingJackson2HttpMessageConverter messageConverter) {
@@ -42,7 +43,7 @@ public class OAuth2AuthenticationSuccessHandler implements AuthenticationSuccess
         response.setStatus(HttpServletResponse.SC_OK);
         response.setContentType("application/json");
         ProfileResource profile = (ProfileResource) authentication.getPrincipal();
-        AuthenticationToken token = tokenManager.createAuthTokenForOAuth(authentication);
+        TokenAuthentication token = userAuthTokenService.createToken(profile.getUsername(), TokenType.auth);
         String profileString = objectMapper.writeValueAsString(profile);
         response.setHeader("Authorization", token.getTokenString());
         String redirect = String.format(

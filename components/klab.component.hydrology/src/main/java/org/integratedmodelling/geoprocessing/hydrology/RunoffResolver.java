@@ -79,7 +79,6 @@ public class RunoffResolver implements IResolver<IProcess>, IExpression {
 		
 		int nouts = 0, nuouts = 0;
 		
-		// TODO this should be in the watershed but it's in the region.
 		for (IArtifact artifact : context.getArtifact("stream_outlet")) {
 
 			nouts++;

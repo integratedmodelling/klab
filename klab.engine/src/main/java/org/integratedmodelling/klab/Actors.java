@@ -10,17 +10,26 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.io.IOUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
+import org.integratedmodelling.kactors.api.IKActorsStatement;
+import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
+import org.integratedmodelling.kactors.api.IKActorsStatement.Instantiation;
+import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
+import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
 import org.integratedmodelling.kactors.model.KActors.ValueTranslator;
+import org.integratedmodelling.kactors.model.KActorsActionCall;
 import org.integratedmodelling.kactors.model.KActorsQuantity;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
@@ -40,6 +49,9 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabAction;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior;
+import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetAction;
+import org.integratedmodelling.klab.components.runtime.actors.behavior.BehaviorAction;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -48,7 +60,13 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.BehaviorReference;
+import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.rest.ViewComponent;
+import org.integratedmodelling.klab.rest.ViewPanel;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.StringUtil;
+import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.klab.utils.xtext.KactorsInjectorProvider;
 
 import com.fasterxml.jackson.annotation.JsonInclude.Include;
@@ -62,6 +80,7 @@ import akka.actor.typed.ActorRef;
 import akka.actor.typed.ActorSystem;
 import akka.actor.typed.Behavior;
 import akka.actor.typed.PostStop;
+import akka.actor.typed.SupervisorStrategy;
 import akka.actor.typed.javadsl.AbstractBehavior;
 import akka.actor.typed.javadsl.ActorContext;
 import akka.actor.typed.javadsl.Behaviors;
@@ -79,6 +98,74 @@ public enum Actors implements IActorsService {
 	private Map<String, BehaviorReference> behaviorDescriptors = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, Pair<String, Class<? extends KlabAction>>> actionClasses = Collections
 			.synchronizedMap(new HashMap<>());
+
+	static Set<String> layoutMetadata = null;
+
+	/**
+	 * Metadata for layout control
+	 * <p>
+	 * No argument:
+	 * <ul>
+	 * <li>:right, :left, :top, :bottom</li>
+	 * <li>:hfill, :vfill, :fill</li>
+	 * <li>:disabled {!disabled for completeness}</li>
+	 * <li>:hidden {!hidden}</li>
+	 * <li>:hbox :vbox :pager :shelf :tabs [:table is the default] to specify the
+	 * type of arrangement in a group</li>
+	 * </ul>
+	 * <p>
+	 * With argument:
+	 * <ul>
+	 * <li>:cspan, :rspan (columns and rows spanned in grid)</li>
+	 * <li>:fg, :bg (color name for now?)</li>
+	 * <li>:bstyle {?HTML solid dotted}</li>
+	 * <li>:bwidth <n> border width (always solid for now)</li>
+	 * <li>:fstyle {bold|italic|strike|normal}</li>
+	 * <li>:fsize <n></li>
+	 * <li>:symbol {font awesome char code}</li>
+	 * <li>:class (CSS class)</li>
+	 * <li>:wmin, :hmin (minimum height and width)</li>
+	 * <li>:cols, :equal for panel grids</li>
+	 * </ul>
+	 */
+	static {
+		layoutMetadata = new HashSet<>();
+		layoutMetadata.add("right");
+		layoutMetadata.add("left");
+		layoutMetadata.add("top");
+		layoutMetadata.add("bottom");
+		layoutMetadata.add("hfill");
+		layoutMetadata.add("vfill");
+		layoutMetadata.add("fill");
+		layoutMetadata.add("disabled");
+		layoutMetadata.add("hidden");
+		layoutMetadata.add("hbox");
+		layoutMetadata.add("vbox");
+		layoutMetadata.add("inputgroup");
+		layoutMetadata.add("pager");
+		layoutMetadata.add("shelf");
+		layoutMetadata.add("tabs");
+		layoutMetadata.add("cspan");
+		layoutMetadata.add("rspan");
+		layoutMetadata.add("fg");
+		layoutMetadata.add("bg");
+		layoutMetadata.add("bwidth");
+		layoutMetadata.add("bstyle");
+		layoutMetadata.add("fstyle");
+		layoutMetadata.add("fsize");
+		layoutMetadata.add("symbol");
+		layoutMetadata.add("class");
+		layoutMetadata.add("wmin");
+		layoutMetadata.add("wmax");
+		layoutMetadata.add("hmin");
+		layoutMetadata.add("hmax");
+		layoutMetadata.add("height");
+		layoutMetadata.add("width");
+		layoutMetadata.add("cols");
+		layoutMetadata.add("equal");
+		layoutMetadata.add("collapse");
+		layoutMetadata.add("remove");
+	}
 
 	public IBehavior getBehavior(String behaviorId) {
 		return behaviors.get(behaviorId);
@@ -150,6 +237,10 @@ public enum Actors implements IActorsService {
 					break;
 				case IDENTIFIER:
 					break;
+				case SET:
+					break;
+				case TREE:
+					break;
 				case LIST:
 					break;
 				case MAP:
@@ -185,6 +276,8 @@ public enum Actors implements IActorsService {
 				case TYPE:
 					break;
 				case URN:
+					break;
+				case OBSERVATION:
 					break;
 				}
 
@@ -258,7 +351,8 @@ public enum Actors implements IActorsService {
 	 * @return
 	 */
 	public <T> ActorRef<T> createActor(Behavior<T> create, IIdentity identity) {
-		return ActorSystem.create(create,
+		return ActorSystem.create(
+				Behaviors.supervise(create).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)),
 				identity instanceof IUserIdentity ? sanitize(((IUserIdentity) identity).getUsername())
 						: identity.getId());
 	}
@@ -365,19 +459,24 @@ public enum Actors implements IActorsService {
 	 * @return
 	 */
 	public KlabAction getSystemAction(String id, IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
-			KlabActor.Scope scope, ActorRef<KlabMessage> sender) {
+			KlabActor.Scope scope, ActorRef<KlabMessage> sender, String callId) {
 
 		Pair<String, Class<? extends KlabAction>> cls = actionClasses.get(id);
 		if (cls != null) {
 			try {
 				Constructor<? extends KlabAction> constructor = cls.getSecond().getConstructor(IActorIdentity.class,
-						IParameters.class, KlabActor.Scope.class, ActorRef.class);
-				return constructor.newInstance(identity, arguments, scope, sender);
+						IParameters.class, KlabActor.Scope.class, ActorRef.class, String.class);
+				return constructor.newInstance(identity, arguments, scope, sender, callId);
 			} catch (Throwable e) {
 				scope.getMonitor().error("Error while creating action " + id + ": " + e.getMessage());
 			}
 		}
 		return null;
+	}
+
+	public Class<? extends KlabAction> getActionClass(String id) {
+		Pair<String, Class<? extends KlabAction>> ret = actionClasses.get(id);
+		return ret == null ? null : ret.getSecond();
 	}
 
 	public Collection<String> getBehaviorIds() {
@@ -388,6 +487,16 @@ public enum Actors implements IActorsService {
 		List<String> ret = new ArrayList<>();
 		for (String key : behaviors.keySet()) {
 			if (behaviors.get(key).getDestination() == type) {
+				ret.add(key);
+			}
+		}
+		return ret;
+	}
+
+	public Collection<String> getPublicApps() {
+		List<String> ret = new ArrayList<>();
+		for (String key : behaviors.keySet()) {
+			if (behaviors.get(key).getDestination() == Type.APP && behaviors.get(key).getStatement().isPublic()) {
 				ret.add(key);
 			}
 		}
@@ -483,4 +592,404 @@ public enum Actors implements IActorsService {
 		return null;
 	}
 
+	public Layout getView(IBehavior behavior, IIdentity identity, String applicationId, String actorPath) {
+
+		ViewScope scope = new ViewScope(identity, applicationId, actorPath);
+
+		/*
+		 * collect info about the UI in a bean. If not empty, send bean so that the UI
+		 * can prepare.
+		 */
+		Layout view = new Layout(behavior.getName(), applicationId);
+		view.setStyle(behavior.getStatement().getStyle());
+		view.setDestination(behavior.getDestination());
+		view.setLabel(behavior.getStatement().getLabel());
+		view.setDescription(StringUtils.pack(behavior.getStatement().getDescription()));
+		view.setPlatform(behavior.getPlatform());
+		view.setLogo(behavior.getStatement().getLogo());
+		view.setProjectId(behavior.getProject());
+
+		if (behavior.getStatement().getStyleSpecs() != null) {
+			view.setStyleSpecs(JsonUtils.printAsJson(behavior.getStatement().getStyleSpecs()));
+		}
+
+		for (IBehavior.Action action : behavior.getActions()) {
+
+			ViewPanel panel = null;
+
+			for (IAnnotation annotation : action.getAnnotations()) {
+				if ("panel".equals(annotation.getName())) {
+					view.getPanels()
+							.add(panel = new ViewPanel(
+									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
+									annotation.get("style", String.class)));
+					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
+				}
+				if ("left".equals(annotation.getName())) {
+					view.getLeftPanels()
+							.add(panel = new ViewPanel(
+									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
+									annotation.get("style", String.class)));
+					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
+				}
+				if ("right".equals(annotation.getName())) {
+					view.getRightPanels()
+							.add(panel = new ViewPanel(
+									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
+									annotation.get("style", String.class)));
+					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
+				}
+				if ("header".equals(annotation.getName()) || "header".equals(action.getId())
+						|| "top".equals(annotation.getName())) {
+					view.setHeader(panel = new ViewPanel(
+							annotation.containsKey("id") ? annotation.get("id", String.class) : "header",
+							annotation.get("style", String.class)));
+					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
+				}
+				if ("footer".equals(annotation.getName()) || "footer".equals(action.getId())
+						|| "bottom".equals(annotation.getName())) {
+					view.setFooter(panel = new ViewPanel(
+							annotation.containsKey("id") ? annotation.get("id", String.class) : "footer",
+							annotation.get("style", String.class)));
+					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
+				}
+
+			}
+
+			/*
+			 * Components make their own view from the main method without annotations
+			 */
+			if (panel == null && behavior.getDestination() == Type.COMPONENT && action.getId().equals("main")) {
+				view.getPanels().add(panel = new ViewPanel(behavior.getId(), behavior.getStatement().getStyle()));
+				for (IAnnotation annotation : action.getAnnotations()) {
+					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
+				}
+			}
+
+			if (panel != null) {
+				/*
+				 * visit action for view calls: if there is any call to the view actor, add the
+				 * "default" panel unless already added
+				 */
+				panel.setApplicationId(applicationId);
+				visitViewActions(action, panel, scope);
+			}
+		}
+
+		return view;
+	}
+
+	private class ViewScope {
+
+		String identityId;
+		IIdentity identity;
+		String applicationId;
+		String actorPath = null;
+		boolean optional = false;
+		boolean repeated = false;
+		private Integer groupCounter = new Integer(0);
+
+		public ViewScope(IIdentity identity, String applicationId, String actorPath) {
+			this.identity = identity;
+			this.identityId = identity == null ? null : identity.getId();
+			this.applicationId = applicationId;
+			this.actorPath = actorPath;
+		}
+
+		public ViewScope(ViewScope scope) {
+			this.applicationId = scope.applicationId;
+			this.identityId = scope.identityId;
+			this.repeated = scope.repeated;
+			this.optional = scope.optional;
+			this.groupCounter = scope.groupCounter;
+			this.actorPath = scope.actorPath;
+		}
+
+		public ViewScope repeated() {
+			ViewScope ret = new ViewScope(this);
+			ret.repeated = true;
+			return ret;
+		}
+
+		public ViewScope optional() {
+			ViewScope ret = new ViewScope(this);
+			ret.optional = true;
+			return ret;
+		}
+	}
+
+	public ViewComponent getChildComponent(IKActorsStatement.ConcurrentGroup group, ViewComponent parent,
+			ViewScope scope) {
+
+		ViewComponent ret = new ViewComponent();
+		ret.setIdentity(scope.identityId);
+		ret.setApplicationId(scope.applicationId);
+		ret.setActorPath(scope.actorPath);
+		boolean isActive = group.getGroupMetadata().containsKey("inputgroup");
+		ret.setType(isActive ? ViewComponent.Type.InputGroup : ViewComponent.Type.Group);
+		if (group.getGroupMetadata().containsKey("name")) {
+			ret.setName(group.getGroupMetadata().get("name").getValue().toString());
+		}
+		String id = null;
+		if (group.getGroupMetadata().containsKey("id")) {
+			id = group.getGroupMetadata().get("id").getValue().toString();
+		} else {
+			id = "g" + (scope.groupCounter++);
+		}
+		setViewMetadata(ret, group.getGroupMetadata());
+		ret.setId(parent.getId() + "/" + id);
+		parent.getComponents().add(ret);
+		return ret;
+	}
+
+	private void setViewMetadata(ViewComponent component, Map<String, ?> parameters) {
+		if (parameters != null) {
+			for (String key : parameters.keySet()) {
+				if (layoutMetadata.contains(key)) {
+					Object param = parameters.get(key);
+					component.getAttributes().put(key,
+							param instanceof KActorsValue ? ((KActorsValue) param).getValue().toString()
+									: param.toString());
+				}
+			}
+		}
+	}
+
+	private void visitViewActions(IBehavior.Action action, ViewPanel panel, ViewScope scope) {
+		IKActorsStatement code = ((BehaviorAction) action).getStatement().getCode();
+		visitViewActions(code, panel, 0, scope);
+	}
+
+	private void visitViewActions(IKActorsStatement statement, ViewComponent parent, int level, ViewScope scope) {
+		switch (statement.getType()) {
+		case ACTION_CALL:
+			ViewComponent component = getViewComponent((IKActorsStatement.Call) statement, scope);
+			if (component != null) {
+				parent.getComponents().add(component);
+			}
+			break;
+		case ASSIGNMENT:
+			// see if this is a masked action call
+			break;
+		case CONCURRENT_GROUP:
+			parent = level == 0 ? parent
+					: getChildComponent((IKActorsStatement.ConcurrentGroup) statement, parent, scope);
+			for (IKActorsStatement sequence : ((IKActorsStatement.ConcurrentGroup) statement).getStatements()) {
+				visitViewActions(sequence, parent, level + 1, scope);
+			}
+
+			if (parent.getType() != ViewComponent.Type.InputGroup && parent.getComponents().size() > 0) {
+				// check if all children are radiobuttons or there are group actions, and force
+				// the type to inputgroup if so.
+				boolean activeGroup = ((IKActorsStatement.ConcurrentGroup) statement).getGroupActions().size() > 0;
+				if (!activeGroup) {
+					for (ViewComponent child : parent.getComponents()) {
+						if (child.getType() != ViewComponent.Type.RadioButton) {
+							activeGroup = false;
+							break;
+						}
+					}
+				}
+				if (activeGroup) {
+					parent.setType(ViewComponent.Type.InputGroup);
+				}
+			}
+
+			break;
+		case DO_STATEMENT:
+			// visit code with scope.optional().repeated()
+			visitViewActions(((IKActorsStatement.Do) statement).getBody(), parent, level, scope.optional().repeated());
+			break;
+		case FOR_STATEMENT:
+			// visit code with scope.optional().repeated()
+			visitViewActions(((IKActorsStatement.For) statement).getBody(), parent, level, scope.optional().repeated());
+			break;
+		case IF_STATEMENT:
+			visitViewActions(((IKActorsStatement.If) statement).getThen(), parent, level, scope.optional());
+			for (Pair<IKActorsValue, IKActorsStatement> elseif : ((IKActorsStatement.If) statement).getElseIfs()) {
+				visitViewActions(elseif.getSecond(), parent, level, scope.optional());
+			}
+			if (((IKActorsStatement.If) statement).getElse() != null) {
+				visitViewActions(((IKActorsStatement.If) statement).getElse(), parent, level, scope.optional());
+
+			}
+			break;
+		case SEQUENCE:
+			// dig in in same scope
+			for (IKActorsStatement sequence : ((IKActorsStatement.Sequence) statement).getStatements()) {
+				visitViewActions(sequence, parent, level, scope);
+			}
+			break;
+		case TEXT_BLOCK:
+			component = getViewComponent(new KActorsActionCall((TextBlock) statement), scope);
+			if (component != null) {
+				parent.getComponents().add(component);
+			}
+			break;
+		case WHILE_STATEMENT:
+			visitViewActions(((IKActorsStatement.While) statement).getBody(), parent, level,
+					scope.optional().repeated());
+			break;
+		case INSTANTIATION:
+			IBehavior behavior = getBehavior(((Instantiation) statement).getBehavior());
+			if (behavior != null && behavior.getDestination() == Type.COMPONENT) {
+				component = simplifyViewStructure(getView(behavior, scope.identity, scope.applicationId,
+						(parent.getActorPath() == null ? "" : (parent.getActorPath() + "."))
+								+ ((Instantiation) statement).getActorBaseName()));
+				if (component != null) {
+					component.setParentId(parent.getId());
+					parent.getComponents().add(component);
+				}
+			}
+			break;
+		default:
+			// nothing to do for fire and instantiation
+			break;
+		}
+	}
+
+	public List<ViewPanel> getPanels(Layout view) {
+		List<ViewPanel> panels = new ArrayList<>();
+		panels.addAll(view.getLeftPanels());
+		panels.addAll(view.getRightPanels());
+		panels.addAll(view.getPanels());
+		if (view.getHeader() != null) {
+			panels.add(view.getHeader());
+		}
+		if (view.getFooter() != null) {
+			panels.add(view.getFooter());
+		}
+		return panels;
+	}
+	
+	private ViewComponent simplifyViewStructure(Layout view) {
+		List<ViewPanel> panels = getPanels(view);
+		if (panels.size() == 1) {
+			// TODO merge style if defined in view preamble
+			return panels.get(0);
+		}
+		return view;
+	}
+
+	private ViewComponent getViewComponent(Call statement, ViewScope scope) {
+
+		Class<? extends KlabAction> cls = Actors.INSTANCE.getActionClass(statement.getMessage());
+		ViewComponent ret = null;
+		if (cls != null) {
+			if (KlabAction.Component.class.isAssignableFrom(cls)) {
+
+				/*
+				 * check if the arguments are variable
+				 */
+				boolean dynamic = scope.optional || scope.repeated;
+				if (!dynamic && statement.getArguments() != null) {
+					for (Object arg : statement.getArguments().values()) {
+						if (arg instanceof KActorsValue && ((KActorsValue) arg).isVariable()) {
+							dynamic = true;
+							break;
+						}
+					}
+				}
+
+				if (!dynamic) {
+					// just a prototype
+					KlabWidgetAction action = (KlabWidgetAction) getSystemAction(statement.getMessage(), null,
+							statement.getArguments(), null, null, ((KActorsActionCall) statement).getInternalId());
+					if (action != null) {
+						ret = action.getViewComponent();
+					}
+				}
+
+				/*
+				 * if we got here, we should return a placeholder
+				 */
+				if (ret == null) {
+					ret = new ViewComponent();
+					ret.setType(scope.repeated ? ViewComponent.Type.MultiContainer : ViewComponent.Type.Container);
+				}
+
+				setViewMetadata(ret, statement.getArguments());
+				ret.setIdentity(scope.identityId);
+				ret.setApplicationId(scope.applicationId);
+				ret.setId(((KActorsActionCall) statement).getInternalId());
+				ret.setActorPath(scope.actorPath);
+
+			}
+		}
+		return ret;
+	}
+
+	public String dumpView(Layout view) {
+		StringBuffer ret = new StringBuffer(2048);
+		dumpView(view, ret, 0);
+		return ret.toString();
+	}
+
+	public void dumpView(Layout view, StringBuffer ret, int offset) {
+
+		String spacer = StringUtil.spaces(offset);
+
+		ret.append(spacer + "View " + view.getName() + "\n");
+
+		if (view.getHeader() != null) {
+			dumpPanel(view.getHeader(), "Header", ret, offset + 3);
+		}
+
+		for (ViewPanel panel : view.getLeftPanels()) {
+			dumpPanel(panel, "Left", ret, offset + 3);
+		}
+
+		for (ViewPanel panel : view.getPanels()) {
+			dumpPanel(panel, "Center", ret, offset + 3);
+		}
+
+		for (ViewPanel panel : view.getRightPanels()) {
+			dumpPanel(panel, "Right", ret, offset + 3);
+		}
+
+		if (view.getFooter() != null) {
+			dumpPanel(view.getHeader(), "Footer", ret, offset + 3);
+		}
+
+	}
+
+	private void dumpPanel(ViewPanel panel, String title, StringBuffer ret, int offset) {
+
+		String spacer = StringUtil.spaces(offset);
+
+		ret.append(spacer + title + ": " + panel.getName() + " [" + panel.getId() + "]\n");
+
+		for (ViewComponent component : panel.getComponents()) {
+			dumpComponent(component, ret, offset + 3);
+		}
+
+	}
+
+	private void dumpComponent(ViewComponent component, StringBuffer ret, int offset) {
+		if (component instanceof Layout) {
+			dumpView((Layout) component, ret, offset);
+		}
+		if (component instanceof ViewPanel) {
+			dumpPanel((ViewPanel) component, "Panel", ret, offset);
+		} else {
+			String spacer = StringUtil.spaces(offset);
+			ret.append(spacer + component.getType() + " " + component.getName() + " [" + component.getId() + "]\n");
+			for (ViewComponent c : component.getComponents()) {
+				dumpComponent(c, ret, offset + 3);
+			}
+		}
+	}
+
+	/**
+	 * Load all the behaviors in <klab>/user. These should be managed through the
+	 * IDE and there should always be a default one.
+	 */
+	public void loadUserBehaviors() {
+		File bspace = Configuration.INSTANCE.getDataPath("user");
+		for (File bfile : bspace.listFiles()) {
+			if (bfile.toString().endsWith(".kactor")) {
+				KActors.INSTANCE.add(bfile);
+			}
+		}
+	}
 }

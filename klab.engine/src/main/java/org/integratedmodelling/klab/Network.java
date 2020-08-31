@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.INetworkService;
 import org.integratedmodelling.klab.auth.Node;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.rest.AuthorityReference;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.NodeCapabilities;
@@ -118,6 +119,9 @@ public enum Network implements INetworkService {
 		}
 		for (ResourceAdapterReference adapter : capabilities.getResourceAdapters()) {
 			node.getAdapters().add(adapter.getName());
+		}
+		for (AuthorityReference authority : capabilities.getAuthorities()) {
+			node.getAuthorities().put(authority.getName(), authority);
 		}
 		node.getCatalogIds().addAll(capabilities.getResourceCatalogs());
 		node.getNamespaceIds().addAll(capabilities.getResourceNamespaces());
@@ -253,14 +257,14 @@ public enum Network implements INetworkService {
 		}
 
 		for (INodeIdentity node : moveOnline) {
-			offlineNodes.remove(node.getId());
-			onlineNodes.put(node.getId(), node);
-			((Node)node).setOnline(true);
+			offlineNodes.remove(node.getName());
+			onlineNodes.put(node.getName(), node);
+			((Node) node).setOnline(true);
 		}
 		for (INodeIdentity node : moveOffline) {
-			onlineNodes.remove(node.getId());
-			offlineNodes.put(node.getId(), node);
-			((Node)node).setOnline(false);
+			onlineNodes.remove(node.getName());
+			offlineNodes.put(node.getName(), node);
+			((Node) node).setOnline(false);
 		}
 	}
 
@@ -270,6 +274,11 @@ public enum Network implements INetworkService {
 			return chooseNode(getNodesWithAdapter(urn.getCatalog()));
 		}
 		return chooseNode(getOnlineNodes(Resources.INSTANCE.getPublicResourceCatalog().getNodes(urn.getUrn())));
+	}
+
+	@Override
+	public List<INodeIdentity> getNodesForAuthority(String authority) {
+		return chooseNodes(getNodesWithAuthority(authority));
 	}
 
 	private Collection<INodeIdentity> getOnlineNodes(Collection<String> nodes) {
@@ -283,6 +292,17 @@ public enum Network implements INetworkService {
 		return ret;
 	}
 
+	/**
+	 * Sort the passed nodes by increasing load factor or decreasing capacity. TBD.
+	 * 
+	 * @param nodes
+	 * @return
+	 */
+	private List<INodeIdentity> chooseNodes(Collection<INodeIdentity> nodes) {
+		// TODO sort by increasing load factor
+		return new ArrayList<>(nodes);
+	}
+
 	private INodeIdentity chooseNode(Collection<INodeIdentity> nodesWithAdapter) {
 		// TODO use load factor and/or some intelligent criterion
 		return nodesWithAdapter.isEmpty() ? null : nodesWithAdapter.iterator().next();
@@ -292,6 +312,16 @@ public enum Network implements INetworkService {
 		List<INodeIdentity> ret = new ArrayList<>();
 		for (INodeIdentity node : onlineNodes.values()) {
 			if (node.getAdapters().contains(adapter)) {
+				ret.add(node);
+			}
+		}
+		return ret;
+	}
+	
+	private Collection<INodeIdentity> getNodesWithAuthority(String authority) {
+		List<INodeIdentity> ret = new ArrayList<>();
+		for (INodeIdentity node : onlineNodes.values()) {
+			if (node.getAuthorities().containsKey(authority)) {
 				ret.add(node);
 			}
 		}

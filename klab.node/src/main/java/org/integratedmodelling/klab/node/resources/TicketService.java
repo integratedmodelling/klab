@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.node.resources;
 
 import java.io.File;
 import java.util.Collection;
+import java.util.List;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.runtime.ITicket;
@@ -28,6 +29,10 @@ public class TicketService implements ITicketManager {
 	@Override
 	public ITicket getTicket(String id) {
 		return delegate.getTicket(id);
+	}
+	
+	public List<ITicket> getTickets() {
+		return delegate.getTickets();
 	}
 
 	@Override

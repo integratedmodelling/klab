@@ -781,13 +781,22 @@ public interface KimPackage extends EPackage
   int URN__NAME = 0;
 
   /**
+   * The feature id for the '<em><b>Strings</b></em>' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int URN__STRINGS = 1;
+
+  /**
    * The number of structural features of the '<em>Urn</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int URN_FEATURE_COUNT = 1;
+  int URN_FEATURE_COUNT = 2;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.LookupTableImpl <em>Lookup Table</em>}' class.
@@ -1958,7 +1967,7 @@ public interface KimPackage extends EPackage
   int VALUE_OPERATOR__COMPARISON_QUANTITY = 3;
 
   /**
-   * The feature id for the '<em><b>Comparison Concept</b></em>' containment reference.
+   * The feature id for the '<em><b>Comparison Concept</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
@@ -2194,13 +2203,22 @@ public interface KimPackage extends EPackage
   int CONCEPT_DECLARATION__CAUSED = 10;
 
   /**
+   * The feature id for the '<em><b>Distributed Temporal Inherency</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT_DECLARATION__DISTRIBUTED_TEMPORAL_INHERENCY = 11;
+
+  /**
    * The feature id for the '<em><b>During</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__DURING = 11;
+  int CONCEPT_DECLARATION__DURING = 12;
 
   /**
    * The feature id for the '<em><b>Distributed Within Inherency</b></em>' attribute.
@@ -2209,7 +2227,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__DISTRIBUTED_WITHIN_INHERENCY = 12;
+  int CONCEPT_DECLARATION__DISTRIBUTED_WITHIN_INHERENCY = 13;
 
   /**
    * The feature id for the '<em><b>Context</b></em>' containment reference.
@@ -2218,7 +2236,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__CONTEXT = 13;
+  int CONCEPT_DECLARATION__CONTEXT = 14;
 
   /**
    * The feature id for the '<em><b>Relationship Source</b></em>' containment reference.
@@ -2227,7 +2245,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__RELATIONSHIP_SOURCE = 14;
+  int CONCEPT_DECLARATION__RELATIONSHIP_SOURCE = 15;
 
   /**
    * The feature id for the '<em><b>Relationship Target</b></em>' containment reference.
@@ -2236,7 +2254,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__RELATIONSHIP_TARGET = 15;
+  int CONCEPT_DECLARATION__RELATIONSHIP_TARGET = 16;
 
   /**
    * The feature id for the '<em><b>Operators</b></em>' attribute list.
@@ -2245,7 +2263,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__OPERATORS = 16;
+  int CONCEPT_DECLARATION__OPERATORS = 17;
 
   /**
    * The feature id for the '<em><b>Operands</b></em>' containment reference list.
@@ -2254,7 +2272,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__OPERANDS = 17;
+  int CONCEPT_DECLARATION__OPERANDS = 18;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2263,7 +2281,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION__NAME = 18;
+  int CONCEPT_DECLARATION__NAME = 19;
 
   /**
    * The number of structural features of the '<em>Concept Declaration</em>' class.
@@ -2272,7 +2290,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_DECLARATION_FEATURE_COUNT = 19;
+  int CONCEPT_DECLARATION_FEATURE_COUNT = 20;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ConceptReferenceImpl <em>Concept Reference</em>}' class.
@@ -2475,13 +2493,22 @@ public interface KimPackage extends EPackage
   int CONCEPT__RATE = 13;
 
   /**
+   * The feature id for the '<em><b>Changed</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CONCEPT__CHANGED = 14;
+
+  /**
    * The feature id for the '<em><b>Uncertainty</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CONCEPT__UNCERTAINTY = 14;
+  int CONCEPT__UNCERTAINTY = 15;
 
   /**
    * The feature id for the '<em><b>Magnitude</b></em>' attribute.
@@ -2490,7 +2517,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__MAGNITUDE = 15;
+  int CONCEPT__MAGNITUDE = 16;
 
   /**
    * The feature id for the '<em><b>Level</b></em>' attribute.
@@ -2499,7 +2526,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__LEVEL = 16;
+  int CONCEPT__LEVEL = 17;
 
   /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -2508,7 +2535,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__TYPE = 17;
+  int CONCEPT__TYPE = 18;
 
   /**
    * The feature id for the '<em><b>Observability</b></em>' attribute.
@@ -2517,7 +2544,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OBSERVABILITY = 18;
+  int CONCEPT__OBSERVABILITY = 19;
 
   /**
    * The feature id for the '<em><b>Proportion</b></em>' attribute.
@@ -2526,7 +2553,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__PROPORTION = 19;
+  int CONCEPT__PROPORTION = 20;
 
   /**
    * The feature id for the '<em><b>Other</b></em>' containment reference.
@@ -2535,7 +2562,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OTHER = 20;
+  int CONCEPT__OTHER = 21;
 
   /**
    * The feature id for the '<em><b>Percentage</b></em>' attribute.
@@ -2544,7 +2571,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__PERCENTAGE = 21;
+  int CONCEPT__PERCENTAGE = 22;
 
   /**
    * The feature id for the '<em><b>Ratio</b></em>' attribute.
@@ -2553,7 +2580,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__RATIO = 22;
+  int CONCEPT__RATIO = 23;
 
   /**
    * The feature id for the '<em><b>Monetary</b></em>' attribute.
@@ -2562,7 +2589,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__MONETARY = 23;
+  int CONCEPT__MONETARY = 24;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' attribute.
@@ -2571,7 +2598,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__VALUE = 24;
+  int CONCEPT__VALUE = 25;
 
   /**
    * The feature id for the '<em><b>Occurrence</b></em>' attribute.
@@ -2580,7 +2607,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__OCCURRENCE = 25;
+  int CONCEPT__OCCURRENCE = 26;
 
   /**
    * The feature id for the '<em><b>Declaration</b></em>' containment reference.
@@ -2589,7 +2616,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT__DECLARATION = 26;
+  int CONCEPT__DECLARATION = 27;
 
   /**
    * The number of structural features of the '<em>Concept</em>' class.
@@ -2598,7 +2625,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CONCEPT_FEATURE_COUNT = 27;
+  int CONCEPT_FEATURE_COUNT = 28;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UpperOntologyDefinitionImpl <em>Upper Ontology Definition</em>}' class.
@@ -5353,6 +5380,17 @@ public interface KimPackage extends EPackage
   EAttribute getUrn_Name();
 
   /**
+   * Returns the meta object for the attribute list '{@link org.integratedmodelling.kim.kim.Urn#getStrings <em>Strings</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute list '<em>Strings</em>'.
+   * @see org.integratedmodelling.kim.kim.Urn#getStrings()
+   * @see #getUrn()
+   * @generated
+   */
+  EAttribute getUrn_Strings();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.LookupTable <em>Lookup Table</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -6580,10 +6618,10 @@ public interface KimPackage extends EPackage
   EReference getValueOperator_ComparisonQuantity();
 
   /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonConcept <em>Comparison Concept</em>}'.
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ValueOperator#getComparisonConcept <em>Comparison Concept</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Comparison Concept</em>'.
+   * @return the meta object for the containment reference list '<em>Comparison Concept</em>'.
    * @see org.integratedmodelling.kim.kim.ValueOperator#getComparisonConcept()
    * @see #getValueOperator()
    * @generated
@@ -6840,6 +6878,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getConceptDeclaration_Caused();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isDistributedTemporalInherency <em>Distributed Temporal Inherency</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Distributed Temporal Inherency</em>'.
+   * @see org.integratedmodelling.kim.kim.ConceptDeclaration#isDistributedTemporalInherency()
+   * @see #getConceptDeclaration()
+   * @generated
+   */
+  EAttribute getConceptDeclaration_DistributedTemporalInherency();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDuring <em>During</em>}'.
@@ -7157,6 +7206,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getConcept_Rate();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isChanged <em>Changed</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Changed</em>'.
+   * @see org.integratedmodelling.kim.kim.Concept#isChanged()
+   * @see #getConcept()
+   * @generated
+   */
+  EAttribute getConcept_Changed();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Concept#isUncertainty <em>Uncertainty</em>}'.
@@ -9977,6 +10037,14 @@ public interface KimPackage extends EPackage
     EAttribute URN__NAME = eINSTANCE.getUrn_Name();
 
     /**
+     * The meta object literal for the '<em><b>Strings</b></em>' attribute list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute URN__STRINGS = eINSTANCE.getUrn_Strings();
+
+    /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.LookupTableImpl <em>Lookup Table</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -10913,7 +10981,7 @@ public interface KimPackage extends EPackage
     EReference VALUE_OPERATOR__COMPARISON_QUANTITY = eINSTANCE.getValueOperator_ComparisonQuantity();
 
     /**
-     * The meta object literal for the '<em><b>Comparison Concept</b></em>' containment reference feature.
+     * The meta object literal for the '<em><b>Comparison Concept</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
@@ -11107,6 +11175,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference CONCEPT_DECLARATION__CAUSED = eINSTANCE.getConceptDeclaration_Caused();
+
+    /**
+     * The meta object literal for the '<em><b>Distributed Temporal Inherency</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT_DECLARATION__DISTRIBUTED_TEMPORAL_INHERENCY = eINSTANCE.getConceptDeclaration_DistributedTemporalInherency();
 
     /**
      * The meta object literal for the '<em><b>During</b></em>' containment reference feature.
@@ -11343,6 +11419,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute CONCEPT__RATE = eINSTANCE.getConcept_Rate();
+
+    /**
+     * The meta object literal for the '<em><b>Changed</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute CONCEPT__CHANGED = eINSTANCE.getConcept_Changed();
 
     /**
      * The meta object literal for the '<em><b>Uncertainty</b></em>' attribute feature.

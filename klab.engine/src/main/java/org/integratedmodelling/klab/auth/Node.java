@@ -3,15 +3,20 @@ package org.integratedmodelling.klab.auth;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.Authentication;
+import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.communication.client.Client.NodeClient;
@@ -35,6 +40,7 @@ public class Node implements INodeIdentity {
 	private boolean online;
 	private int retryPeriod = 15;
 	private long lastCheck = System.currentTimeMillis();
+	private Map<String, IAuthority.Capabilities> authorities = new HashMap<>();
 
 	private Client client;
 
@@ -220,6 +226,33 @@ public class Node implements INodeIdentity {
 		this.namespaceIds.addAll(nodeCapabilities.getResourceNamespaces());
 		this.resourceUrls.clear();
 		this.resourceUrls.addAll(nodeCapabilities.getResourceUrns());
+	}
+
+	@Override
+	public String load(IBehavior behavior, IContextualizationScope scope) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean stop(String behaviorId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean stop() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public Map<String, IAuthority.Capabilities> getAuthorities() {
+		return authorities;
+	}
+
+	public void setAuthorities(Map<String, IAuthority.Capabilities> authorities) {
+		this.authorities = authorities;
 	}
 
 }

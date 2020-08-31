@@ -44,6 +44,7 @@ import org.integratedmodelling.kim.kim.KimPackage;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getContainer <em>Container</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getContained <em>Contained</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getCaused <em>Caused</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#isDistributedTemporalInherency <em>Distributed Temporal Inherency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getDuring <em>During</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#isDistributedWithinInherency <em>Distributed Within Inherency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ConceptDeclarationImpl#getContext <em>Context</em>}</li>
@@ -187,6 +188,26 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
    * @ordered
    */
   protected ConceptDeclaration caused;
+
+  /**
+   * The default value of the '{@link #isDistributedTemporalInherency() <em>Distributed Temporal Inherency</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDistributedTemporalInherency()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean DISTRIBUTED_TEMPORAL_INHERENCY_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isDistributedTemporalInherency() <em>Distributed Temporal Inherency</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDistributedTemporalInherency()
+   * @generated
+   * @ordered
+   */
+  protected boolean distributedTemporalInherency = DISTRIBUTED_TEMPORAL_INHERENCY_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getDuring() <em>During</em>}' containment reference.
@@ -780,6 +801,31 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
    * @generated
    */
   @Override
+  public boolean isDistributedTemporalInherency()
+  {
+    return distributedTemporalInherency;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setDistributedTemporalInherency(boolean newDistributedTemporalInherency)
+  {
+    boolean oldDistributedTemporalInherency = distributedTemporalInherency;
+    distributedTemporalInherency = newDistributedTemporalInherency;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TEMPORAL_INHERENCY, oldDistributedTemporalInherency, distributedTemporalInherency));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public ConceptDeclaration getDuring()
   {
     return during;
@@ -1128,6 +1174,8 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return getContained();
       case KimPackage.CONCEPT_DECLARATION__CAUSED:
         return getCaused();
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TEMPORAL_INHERENCY:
+        return isDistributedTemporalInherency();
       case KimPackage.CONCEPT_DECLARATION__DURING:
         return getDuring();
       case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_WITHIN_INHERENCY:
@@ -1192,6 +1240,9 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return;
       case KimPackage.CONCEPT_DECLARATION__CAUSED:
         setCaused((ConceptDeclaration)newValue);
+        return;
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TEMPORAL_INHERENCY:
+        setDistributedTemporalInherency((Boolean)newValue);
         return;
       case KimPackage.CONCEPT_DECLARATION__DURING:
         setDuring((ConceptDeclaration)newValue);
@@ -1266,6 +1317,9 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.CONCEPT_DECLARATION__CAUSED:
         setCaused((ConceptDeclaration)null);
         return;
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TEMPORAL_INHERENCY:
+        setDistributedTemporalInherency(DISTRIBUTED_TEMPORAL_INHERENCY_EDEFAULT);
+        return;
       case KimPackage.CONCEPT_DECLARATION__DURING:
         setDuring((ConceptDeclaration)null);
         return;
@@ -1326,6 +1380,8 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
         return contained != null;
       case KimPackage.CONCEPT_DECLARATION__CAUSED:
         return caused != null;
+      case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_TEMPORAL_INHERENCY:
+        return distributedTemporalInherency != DISTRIBUTED_TEMPORAL_INHERENCY_EDEFAULT;
       case KimPackage.CONCEPT_DECLARATION__DURING:
         return during != null;
       case KimPackage.CONCEPT_DECLARATION__DISTRIBUTED_WITHIN_INHERENCY:
@@ -1361,6 +1417,8 @@ public class ConceptDeclarationImpl extends MinimalEObjectImpl.Container impleme
     result.append(distributedOfInherency);
     result.append(", distributedForInherency: ");
     result.append(distributedForInherency);
+    result.append(", distributedTemporalInherency: ");
+    result.append(distributedTemporalInherency);
     result.append(", distributedWithinInherency: ");
     result.append(distributedWithinInherency);
     result.append(", operators: ");

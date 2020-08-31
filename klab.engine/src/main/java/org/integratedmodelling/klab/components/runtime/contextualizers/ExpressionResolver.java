@@ -78,9 +78,9 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 	public static IServiceCall getServiceCall(IContextualizable resource, IObservable observable) {
 
 		String functionId = FUNCTION_ID;
-		if (observable.getDescription() == IActivity.Description.CLASSIFICATION) {
+		if (observable.getDescriptionType() == IActivity.Description.CLASSIFICATION) {
 			functionId = ExpressionClassifier.ID;
-		} else if (observable.getDescription() == IActivity.Description.CHARACTERIZATION) {
+		} else if (observable.getDescriptionType() == IActivity.Description.CHARACTERIZATION) {
 			functionId = ExpressionCharacterizer.ID;
 		}
 

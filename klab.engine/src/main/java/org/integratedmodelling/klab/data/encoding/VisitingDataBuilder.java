@@ -8,7 +8,6 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.data.Metadata;
 
@@ -45,6 +44,7 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 
 	List<Descriptor> states = new ArrayList<>();
 	List<Descriptor> objects = new ArrayList<>();
+	List<INotification> notifications = new ArrayList<>();
 	Descriptor current;
 	private int maxObjects = -1;
 	private VisitingDataBuilder parent;
@@ -69,29 +69,35 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 	 * 
 	 * @return
 	 */
-	public int getObjectCount() {
-		return objects.size();
-	}
-
-	public IScale getObjectScale(int n) {
-		return (IScale)objects.get(n).scale;
-	}
-
-	public IMetadata getObjectMetadata(int n) {
-		return objects.get(n).metadata;
-	}
-
-	public String getObjectName(int n) {
-		return objects.get(n).name;
-	}
-
-	public int getStateCount() {
-		return states.size();
-	}
-
-	public IMetadata getStateMetadata(int n) {
-		return states.get(n).metadata;
-	}
+//	@Deprecated // use the method in IKlabData, not the builder
+//	public int getObjectCount() {
+//		return objects.size();
+//	}
+//
+//	@Deprecated // use the method in IKlabData, not the builder
+//	public IScale getObjectScale(int n) {
+//		return (IScale)objects.get(n).scale;
+//	}
+//
+//	@Deprecated // use the method in IKlabData, not the builder
+//	public IMetadata getObjectMetadata(int n) {
+//		return objects.get(n).metadata;
+//	}
+//
+//	@Deprecated // use the method in IKlabData, not the builder
+//	public String getObjectName(int n) {
+//		return objects.get(n).name;
+//	}
+//
+//	@Deprecated // use the method in IKlabData, not the builder
+//	public int getStateCount() {
+//		return states.size();
+//	}
+//
+//	@Deprecated // use the method in IKlabData, not the builder
+//	public IMetadata getStateMetadata(int n) {
+//		return states.get(n).metadata;
+//	}
 
 	@Override
 	public Builder startState(String name) {
@@ -125,12 +131,13 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 
 	@Override
 	public Builder addNotification(INotification notification) {
+		this.notifications.add(notification);
 		return this;
 	}
 
 	@Override
 	public IKlabData build() {
-		return null;
+		return new VisitedData(this);
 	}
 
 	@Override

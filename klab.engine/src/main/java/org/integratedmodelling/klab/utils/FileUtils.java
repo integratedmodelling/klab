@@ -24,6 +24,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.io.input.ReversedLinesFileReader;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 
@@ -109,6 +110,28 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 			if (sidecar.exists() && sidecar.isFile()) {
 				ret.add(sidecar);
 			}
+		}
+		return ret;
+	}
+
+	public static void main(String[] args) {
+		for (String dio : tailFile(new File("C:\\setup.log"), 5)) {
+			System.out.println(dio);
+		}
+	}
+
+	public static final List<String> tailFile(File file, final int noOfLines) {
+		List<String> ret = new ArrayList<>(noOfLines);
+		try (ReversedLinesFileReader reader = new ReversedLinesFileReader(file)) {
+			for (int i = 0; i < noOfLines; i++) {
+				String line = reader.readLine();
+				if (line == null) {
+					break;
+				}
+				ret.add(0, line);
+			}
+		} catch (IOException e) {
+			throw new KlabIOException(e);
 		}
 		return ret;
 	}

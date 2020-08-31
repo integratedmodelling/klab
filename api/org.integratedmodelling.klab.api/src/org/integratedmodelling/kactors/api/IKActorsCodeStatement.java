@@ -11,4 +11,6 @@ import org.integratedmodelling.klab.api.IStatement;
  */
 public interface IKActorsCodeStatement extends IStatement {
 
+	String getTag();
+
 }

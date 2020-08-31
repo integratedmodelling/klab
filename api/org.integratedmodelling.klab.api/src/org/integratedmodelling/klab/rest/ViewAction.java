@@ -1,25 +1,70 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+/**
+ * Used bidirectionally: from the view to communicate user actions on components
+ * to an application, and from the application to send changes and settings to
+ * components previously created.
+ * 
+ * @author Ferd
+ *
+ */
 public class ViewAction {
 
-	private boolean booleanValue;
-	private double doubleValue;
-	private int intValue;
-	private String stringValue;
-	private List<String> listValue;
-	private Map<String, String> mapValue;
+	public enum Operation {
+		UserAction,
+		Enable, // true/false
+		Hide, // true/false
+		Update  // according to type; data may also contain new attribute values
+	}
+
+	/**
+	 * When it comes from the view, should include the component
+	 */
+	private ViewComponent component = null;
+
+	/**
+	 * When coming from the controller, must include the component ID (the #tag in
+	 * the k.Actors source, equivalent to {@link ViewComponent#getName()}.and an
+	 * operation
+	 */
+	private String componentTag;
+	private String applicationId;
+	private Boolean booleanValue = null;
+	private Double doubleValue = null;
+	private Integer intValue = null;
+	private String stringValue = null;
+	private Date dateValue = null;
+	private List<String> listValue = null;
+	private Map<String, String> data = null;
+	private Operation operation = Operation.UserAction;
 
 	public ViewAction() {
 	}
 
-	public ViewAction(boolean response) {
-		this.booleanValue = response;
+	public ViewAction(ViewComponent component) {
+		this.component = component;
 	}
 
-	public boolean isBooleanValue() {
+	public ViewAction(ViewComponent component, String stringValue) {
+		this.component = component;
+		this.stringValue = stringValue;
+	}
+
+	public ViewAction(ViewComponent component, boolean value) {
+		this.component = component;
+		this.booleanValue = value;
+	}
+
+	public ViewAction(Operation operation, boolean b) {
+		this.operation = operation;
+		this.booleanValue = b;
+	}
+
+	public Boolean isBooleanValue() {
 		return booleanValue;
 	}
 
@@ -27,7 +72,7 @@ public class ViewAction {
 		this.booleanValue = booleanValue;
 	}
 
-	public double getDoubleValue() {
+	public Double getDoubleValue() {
 		return doubleValue;
 	}
 
@@ -35,7 +80,7 @@ public class ViewAction {
 		this.doubleValue = doubleValue;
 	}
 
-	public int getIntValue() {
+	public Integer getIntValue() {
 		return intValue;
 	}
 
@@ -51,20 +96,69 @@ public class ViewAction {
 		this.stringValue = stringValue;
 	}
 
-	public List getListValue() {
+	public Map<String, String> getData() {
+		return data;
+	}
+
+	public void setData(Map<String, String> data) {
+		this.data = data;
+	}
+
+	public ViewComponent getComponent() {
+		return component;
+	}
+
+	public void setComponent(ViewComponent component) {
+		this.component = component;
+	}
+
+	public Date getDateValue() {
+		return dateValue;
+	}
+
+	public void setDateValue(Date dateValue) {
+		this.dateValue = dateValue;
+	}
+
+	public String getComponentTag() {
+		return componentTag;
+	}
+
+	public void setComponentTag(String componentTag) {
+		this.componentTag = componentTag;
+	}
+
+	public Operation getOperation() {
+		return operation;
+	}
+
+	public void setOperation(Operation operation) {
+		this.operation = operation;
+	}
+
+	public String getApplicationId() {
+		return applicationId;
+	}
+
+	public void setApplicationId(String applicationId) {
+		this.applicationId = applicationId;
+	}
+
+	@Override
+	public String toString() {
+		return "ViewAction [componentTag=" + componentTag + ", booleanValue=" + booleanValue + ", doubleValue="
+				+ doubleValue + ", intValue=" + intValue + ", stringValue=" + stringValue + ", dateValue=" + dateValue
+				+ ", data=" + data + ", operation=" + operation + "]";
+	}
+
+	public List<String> getListValue() {
 		return listValue;
 	}
 
-	public void setListValue(List listValue) {
+	public void setListValue(List<String> listValue) {
 		this.listValue = listValue;
 	}
-
-	public Map<String, String> getMapValue() {
-		return mapValue;
-	}
-
-	public void setMapValue(Map<String, String> mapValue) {
-		this.mapValue = mapValue;
-	}
+	
+	
 
 }

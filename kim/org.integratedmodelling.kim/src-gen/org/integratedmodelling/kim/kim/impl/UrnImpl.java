@@ -4,12 +4,18 @@
  */
 package org.integratedmodelling.kim.kim.impl;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.eclipse.emf.ecore.util.EDataTypeEList;
 
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.Urn;
@@ -23,6 +29,7 @@ import org.integratedmodelling.kim.kim.Urn;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.UrnImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.UrnImpl#getStrings <em>Strings</em>}</li>
  * </ul>
  *
  * @generated
@@ -48,6 +55,16 @@ public class UrnImpl extends MinimalEObjectImpl.Container implements Urn
    * @ordered
    */
   protected String name = NAME_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getStrings() <em>Strings</em>}' attribute list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getStrings()
+   * @generated
+   * @ordered
+   */
+  protected EList<String> strings;
 
   /**
    * <!-- begin-user-doc -->
@@ -101,12 +118,29 @@ public class UrnImpl extends MinimalEObjectImpl.Container implements Urn
    * @generated
    */
   @Override
+  public EList<String> getStrings()
+  {
+    if (strings == null)
+    {
+      strings = new EDataTypeEList<String>(String.class, this, KimPackage.URN__STRINGS);
+    }
+    return strings;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Object eGet(int featureID, boolean resolve, boolean coreType)
   {
     switch (featureID)
     {
       case KimPackage.URN__NAME:
         return getName();
+      case KimPackage.URN__STRINGS:
+        return getStrings();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -116,6 +150,7 @@ public class UrnImpl extends MinimalEObjectImpl.Container implements Urn
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
@@ -123,6 +158,10 @@ public class UrnImpl extends MinimalEObjectImpl.Container implements Urn
     {
       case KimPackage.URN__NAME:
         setName((String)newValue);
+        return;
+      case KimPackage.URN__STRINGS:
+        getStrings().clear();
+        getStrings().addAll((Collection<? extends String>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -141,6 +180,9 @@ public class UrnImpl extends MinimalEObjectImpl.Container implements Urn
       case KimPackage.URN__NAME:
         setName(NAME_EDEFAULT);
         return;
+      case KimPackage.URN__STRINGS:
+        getStrings().clear();
+        return;
     }
     super.eUnset(featureID);
   }
@@ -157,6 +199,8 @@ public class UrnImpl extends MinimalEObjectImpl.Container implements Urn
     {
       case KimPackage.URN__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+      case KimPackage.URN__STRINGS:
+        return strings != null && !strings.isEmpty();
     }
     return super.eIsSet(featureID);
   }
@@ -174,6 +218,8 @@ public class UrnImpl extends MinimalEObjectImpl.Container implements Urn
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (name: ");
     result.append(name);
+    result.append(", strings: ");
+    result.append(strings);
     result.append(')');
     return result.toString();
   }

@@ -74,7 +74,8 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 		}
 
 		IKlabData data = Resources.INSTANCE.getResourceData(res, urnParameters, context.getScale(), context);
-		if (data.getArtifact() != null) {
+		
+		if (data != null && data.getArtifact() != null) {
 			for (IArtifact artifact : data.getArtifact()) {
 				if (artifact instanceof IObjectArtifact) {
 					ret.add((IObjectArtifact) artifact);

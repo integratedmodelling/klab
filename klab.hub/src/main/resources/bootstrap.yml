@@ -1,0 +1,33 @@
+spring:
+  application:
+    name: hub-service
+  profiles:
+    default: true
+  cloud:
+    bus:
+      enabled: false
+    discovery:
+      enabled: false
+    consul:
+      enabled: false
+      config:
+        enabled: false
+    kubernetes:
+      discovery:
+        enabled: false
+ 
+---
+spring:
+  profiles: consul-development
+  cloud:
+    consul:
+      enabled: true
+      host: consul-1
+      port: 8500
+      config:
+        prefix: config
+        enabled: true
+        defaultContext: hub-service
+        profileSeparator: '::'
+        format: YAML
+        data-key: data

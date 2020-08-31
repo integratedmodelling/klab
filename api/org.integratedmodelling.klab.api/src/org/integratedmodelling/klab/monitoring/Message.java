@@ -49,6 +49,7 @@ public class Message implements IMessage, Serializable {
 	private String inResponseTo;
 	private INotification.Type notificationType;
 	private long timestamp = System.currentTimeMillis();
+	private Repeatability repeatability = Repeatability.Once;
 
 	private static BiFunction<Map<?, ?>, Class<?>, Object> translator;
 
@@ -77,6 +78,8 @@ public class Message implements IMessage, Serializable {
 				ret.messageClass = (MessageClass) ob;
 			} else if (ob instanceof INotification.Type) {
 				notype = (INotification.Type) ob;
+			} else if (ob instanceof Repeatability) {
+				ret.repeatability = (Repeatability)ob;
 			} else if (ob != null) {
 				if (ret.payload == null) {
 					ret.payload = ob;
@@ -271,5 +274,14 @@ public class Message implements IMessage, Serializable {
 
 	public void setNotificationType(INotification.Type notificationType) {
 		this.notificationType = notificationType;
+	}
+
+	@Override
+	public Repeatability getRepeatability() {
+		return repeatability;
+	}
+
+	public void setRepeatability(Repeatability repeatability) {
+		this.repeatability = repeatability;
 	}
 }

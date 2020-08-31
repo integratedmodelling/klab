@@ -582,6 +582,14 @@ Main author</dc:contributor>
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#Areal -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Areal">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#SpatialIdentity"/>
+    </owl:Class>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#Asimmetry -->
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Asimmetry">
@@ -726,6 +734,14 @@ Main author</dc:contributor>
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#CountableThing">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#DirectObservable"/>
         <rdfs:comment>An entity that can be counted at the scale of observation. This includes processes when they happen fast enough to be perceived as events.</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Daily -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Daily">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#TemporalIdentity"/>
     </owl:Class>
     
 
@@ -915,6 +931,14 @@ Importantly, a deliberative agent can access history, although the full meaning 
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#Hourly -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Hourly">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#TemporalIdentity"/>
+    </owl:Class>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#Identity -->
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Identity">
@@ -985,6 +1009,14 @@ Importantly, a deliberative agent can access history, although the full meaning 
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#Lineal -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Lineal">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#SpatialIdentity"/>
+    </owl:Class>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#Magnitude -->
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Magnitude">
@@ -1032,6 +1064,14 @@ Importantly, a deliberative agent can access history, although the full meaning 
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Value"/>
         <owl:disjointWith rdf:resource="http://integratedmodelling.org/ks/observation.owl#PreferenceValue"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Monthly -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Monthly">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#TemporalIdentity"/>
     </owl:Class>
     
 
@@ -1290,6 +1330,14 @@ Importantly, a deliberative agent can access history, although the full meaning 
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#Puntal -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Puntal">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#SpatialIdentity"/>
+    </owl:Class>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#Quality -->
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Quality">
@@ -1455,6 +1503,15 @@ Importantly, a deliberative agent can access history, although the full meaning 
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#SpatialIdentity -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#SpatialIdentity">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Identity"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+    </owl:Class>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#Speed -->
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Speed">
@@ -1515,6 +1572,15 @@ Importantly, a deliberative agent can access history, although the full meaning 
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
         <unit>K</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#TemporalIdentity -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#TemporalIdentity">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Identity"/>
+        <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
     </owl:Class>
     
 
@@ -1628,12 +1694,36 @@ Importantly, a deliberative agent can access history, although the full meaning 
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#Volumetric -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Volumetric">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#SpatialIdentity"/>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Weekly -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Weekly">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#TemporalIdentity"/>
+    </owl:Class>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#Weight -->
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Weight">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
         <unit>kg</unit>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Yearly -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Yearly">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#TemporalIdentity"/>
     </owl:Class>
     
 

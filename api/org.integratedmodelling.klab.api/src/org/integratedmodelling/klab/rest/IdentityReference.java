@@ -8,7 +8,7 @@ public class IdentityReference {
 	private String id;
 	private String email;
 	private String lastLogin;
-	private List<String> groups = new ArrayList<>();
+	private List<GroupReference> groups = new ArrayList<>();
 
 	public IdentityReference() {
 	}
@@ -86,11 +86,11 @@ public class IdentityReference {
 		return "IdentityReference [id=" + id + ", email=" + email + ", lastLogin=" + lastLogin + "]";
 	}
 
-	public List<String> getGroups() {
+	public List<GroupReference> getGroups() {
 		return groups;
 	}
 
-	public void setGroups(List<String> groups) {
+	public void setGroups(List<GroupReference> groups) {
 		this.groups = groups;
 	}
 

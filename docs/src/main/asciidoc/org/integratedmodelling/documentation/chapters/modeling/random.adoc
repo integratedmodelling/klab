@@ -1,0 +1,4 @@
+=== The `random` adapter
+:doctype: book
+
+Overview

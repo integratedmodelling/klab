@@ -57,6 +57,9 @@ public class EngineStartupOptions implements IEngineStartupOptions {
     
     @Option(name = "-help", usage = "print command line options and exit")
     boolean help;
+    
+    @Option(name = "-cloudConfig", usage = "allow for External Configuration of Node")
+    boolean cloudConfig;
 
     @Option(name = "-exit", usage = "exit after completing startup and running any scripts from command line")
     boolean exit;
@@ -228,6 +231,11 @@ public class EngineStartupOptions implements IEngineStartupOptions {
 	@Override
 	public String getHubUrl() {
 		return authenticatingHub;
+	}
+
+	@Override
+	public boolean isCloudConfig() {
+		return cloudConfig;
 	}
 
 }

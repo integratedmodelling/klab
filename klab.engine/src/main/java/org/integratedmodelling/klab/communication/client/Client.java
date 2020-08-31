@@ -23,6 +23,7 @@ package org.integratedmodelling.klab.communication.client;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Array;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.util.ArrayList;
@@ -221,7 +222,7 @@ public class Client extends RestTemplate implements IClient {
 	public NodeAuthenticationResponse authenticateNode(String url, NodeAuthenticationRequest request) {
 		return post(url + API.HUB.AUTHENTICATE_NODE, request, NodeAuthenticationResponse.class);
 	}
-
+	
 	/**
 	 * Check an engine's heartbeat.
 	 * 
@@ -329,7 +330,6 @@ public class Client extends RestTemplate implements IClient {
 	}
 
 	@Override
-//	@SuppressWarnings({ "rawtypes" })
 	public <T extends Object> T post(String url, Object data, Class<? extends T> cls) {
 
 		url = checkEndpoint(url);
@@ -455,15 +455,13 @@ public class Client extends RestTemplate implements IClient {
 	}
 
 	/**
-	 * Instrumented for header communication and error parsing
+	 * Issue a DELETE request. Called remove to avoid conflict with super.
 	 * 
 	 * @param url
-	 * @param cls
-	 * @return the deserialized result
+	 * @param parameters
+	 * @return
 	 */
-	@Override
-	@SuppressWarnings({ "rawtypes" })
-	public <T> T get(String url, Class<? extends T> cls, Object... parameters) {
+	public Object remove(String url, Object... parameters) {
 
 		url = checkEndpoint(url);
 
@@ -497,28 +495,116 @@ public class Client extends RestTemplate implements IClient {
 			}
 		}
 
-		ResponseEntity<Map> response = exchange(url, HttpMethod.GET, entity, Map.class);
+		ResponseEntity<?> response = exchange(url, HttpMethod.DELETE, entity, Object.class);
 
 		switch (response.getStatusCodeValue()) {
 		case 302:
 		case 403:
 			throw new KlabAuthorizationException("unauthorized request " + url);
 		case 404:
-			throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
+			throw new KlabInternalErrorException("internal: request " + url + " was not recognized");
+		case 503:
+			throw new KlabInternalErrorException("internal: request " + url + " caused a server error");
 		}
 
-		if (response.getBody() == null) {
-			return null;
+		return response.getBody();
+	}
+
+	/**
+	 * Instrumented for header communication and error parsing
+	 * 
+	 * @param url
+	 * @param cls
+	 * @return the deserialized result
+	 */
+	@Override
+	@SuppressWarnings({ "unchecked" })
+	public <T> T get(String url, Class<? extends T> cls, Object... parameters) {
+
+		url = checkEndpoint(url);
+
+		HttpHeaders headers = new HttpHeaders();
+		headers.set("Accept", cls.equals(String.class) ? "text/plain" : "application/json");
+		headers.set(KLAB_VERSION_HEADER, Version.CURRENT);
+		if (authToken != null) {
+			headers.set(HttpHeaders.AUTHORIZATION, authToken);
 		}
-		if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
-			Object exception = response.getBody().get("exception");
-			// Object path = response.getBody().get("path");
-			Object message = response.getBody().get("message");
-			// Object error = response.getBody().get("error");
-			throw new KlabIOException("remote exception: " + (message == null ? exception : message));
+		HttpEntity<String> entity = new HttpEntity<>(headers);
+
+		if (parameters != null) {
+			String params = "";
+			for (int i = 0; i < parameters.length; i++) {
+				String key = parameters[i].toString();
+				String nakedKey = key;
+				String val = parameters[++i].toString();
+				if (!(key.startsWith("{") && key.endsWith("}"))) {
+					key = "{" + key + "}";
+				} else {
+					nakedKey = key.substring(1, key.length() - 1);
+				}
+				if (url.contains(key)) {
+					url = url.replace(key, val);
+				} else {
+					params += (params.isEmpty() ? "" : "&") + nakedKey + "=" + Escape.forURL(val);
+				}
+			}
+			if (!params.isEmpty()) {
+				url += "?" + params;
+			}
 		}
 
-		return objectMapper.convertValue(response.getBody(), cls);
+		ResponseEntity<?> response = null;
+		if (cls.isArray()) {
+			response = exchange(url, HttpMethod.GET, entity, Object.class);
+		} else if (String.class.equals(cls)) {
+			response = basicTemplate.exchange(url, HttpMethod.GET, entity, String.class);
+		} else /* if (Map.class.isAssignableFrom(cls)) */ {
+			response = exchange(url, HttpMethod.GET, entity, Map.class);
+		} 
+
+		switch (response.getStatusCodeValue()) {
+		case 302:
+		case 403:
+			throw new KlabAuthorizationException("unauthorized request " + url);
+		case 404:
+			throw new KlabInternalErrorException("internal: request " + url + " was not recognized");
+		case 406:
+		case 503:
+			throw new KlabInternalErrorException("internal: request " + url + " caused a server error");
+		}
+
+		if (response.getBody() instanceof Map) {
+
+			Object exception = ((Map<?, ?>) response.getBody()).get("exception");
+			Object error = ((Map<?, ?>) response.getBody()).get("error");
+
+			if (exception != null || error != null) {
+				Object message = ((Map<?, ?>) response.getBody()).get("message");
+				// Object error = response.getBody().get("error");
+				throw new KlabIOException("remote exception: " + (message == null ? (exception == null ? error : exception) : message));
+			}
+
+			return objectMapper.convertValue(response.getBody(), cls);
+
+		} else if (response.getBody() instanceof List && cls.isArray()) {
+
+			List<?> list = (List<?>) response.getBody();
+			Object ret = Array.newInstance(cls.getComponentType(), (((List<?>) response.getBody()).size()));
+			for (int i = 0; i < list.size(); i++) {
+				Object object = list.get(i);
+				if (object instanceof Map) {
+					object = objectMapper.convertValue(object, cls.getComponentType());
+				}
+				Array.set(ret, i, object);
+			}
+
+			return (T) ret;
+
+		} else if (response.getBody() != null && cls.isAssignableFrom(response.getBody().getClass())) {
+			return (T) response.getBody();
+		}
+
+		return null;
 	}
 
 	@Override
@@ -554,9 +640,6 @@ public class Client extends RestTemplate implements IClient {
 				throw new KlabInternalErrorException("internal: request " + url + " was not accepted");
 			}
 
-			if (response.getBody() == null) {
-				return null;
-			}
 			if (response.getBody().containsKey("exception") && response.getBody().get("exception") != null) {
 				Object exception = response.getBody().get("exception");
 				// Object path = response.getBody().get("path");

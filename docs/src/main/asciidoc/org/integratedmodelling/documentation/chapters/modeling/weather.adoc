@@ -1,0 +1,4 @@
+=== The `weather` adapter
+:doctype: book
+
+Overview

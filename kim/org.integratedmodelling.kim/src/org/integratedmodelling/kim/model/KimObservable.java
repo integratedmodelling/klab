@@ -11,6 +11,7 @@ import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.kim.Annotation;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.model.Kim.ConceptDescriptor;
 import org.integratedmodelling.kim.validation.KimValidator;
@@ -74,6 +75,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static KimObservable normalize(ObservableSemantics declaration, IKimStatement parent) {
 
 		KimConcept concept = Kim.INSTANCE.declareConcept(declaration.getDeclaration());
@@ -116,20 +118,25 @@ public class KimObservable extends KimStatement implements IKimObservable {
 			}
 
 			ValueOperator operator = ValueOperator.getOperator(op);
-			Object operand = null;
-
-			if (modifier.getComparisonConcept() != null) {
-				operand = Kim.INSTANCE.declareConcept(modifier.getComparisonConcept());
+			Object operand = new ArrayList<>();
+			if (modifier.getComparisonConcept() != null && modifier.getComparisonConcept().size() > 0) {
+				if (modifier.getComparisonConcept().size() == 1) {
+					operand = Kim.INSTANCE.declareConcept(modifier.getComparisonConcept().get(0));
+				} else {
+					operand = new ArrayList<Object>();
+					for (ConceptDeclaration cc : modifier.getComparisonConcept()) {
+						((List<Object>) operand).add(Kim.INSTANCE.declareConcept(cc));
+					}
+				}
 			} else if (modifier.getComparisonObservable() != null) {
-				operand = Kim.INSTANCE.declareObservable(modifier.getComparisonObservable());
+				operand = (Kim.INSTANCE.declareObservable(modifier.getComparisonObservable()));
 			} else if (modifier.getComparisonValue() != null) {
-				operand = Kim.INSTANCE.parseNumber(modifier.getComparisonValue());
+				operand = (Kim.INSTANCE.parseNumber(modifier.getComparisonValue()));
 			}
 
 			ret.valueOperators.add(new Pair<>(operator, operand));
 		}
 
-		// TODO save units and ranges
 		if (declaration.getUnit() != null) {
 			ICompositeNode node = NodeModelUtils.getNode(declaration.getUnit());
 			ret.unit = node.getText().trim();
@@ -194,7 +201,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 			}
 		}
 
-		if (formalName != null) {
+		if (formalName != null && !formalName.isEmpty()) {
 			ret += " named " + formalName;
 		}
 
@@ -337,6 +344,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		if (main == null) {
 			return "undefined";
 		}
+		
 		String ret = main.getCodeName();
 
 		for (Pair<ValueOperator, Object> operator : valueOperators) {

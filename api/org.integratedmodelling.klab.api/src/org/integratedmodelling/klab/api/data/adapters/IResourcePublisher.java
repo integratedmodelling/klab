@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.data.adapters;
 
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
@@ -34,16 +35,17 @@ public interface IResourcePublisher {
 	public static String RESOURCE_PERMISSIONS_PROPERTY = "im:permissions";
 
 	/**
-	 * Publish a local resource, which must have no errors. If no errors happen
-	 * during publishing, produce a new public IResource with a valid URN, ready for
-	 * storage in the public resource catalog.
+	 * Publish a local resource, which must have no errors, to a specified resource
+	 * catalog. If no errors happen during publishing, produce a new public
+	 * IResource with a valid URN, ready for storage in the public resource catalog.
 	 *
 	 * @param localResource the local resource
+	 * @param catalog the resource catalog
 	 * @param monitor       for notifications and identity retrieval
 	 * @return a new resource. If errors happen, throw an exception; if the function
 	 *         returns, the resource must be valid.
 	 * @throws KlabException the klab exception
 	 */
-	public IResource publish(IResource localResource, IMonitor monitor);
+	public IResource publish(IResource localResource, IResourceCatalog catalog, IMonitor monitor);
 
 }

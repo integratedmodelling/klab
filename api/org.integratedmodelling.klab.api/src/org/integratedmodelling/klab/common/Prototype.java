@@ -143,28 +143,28 @@ public class Prototype implements IPrototype {
 		public String getLabel() {
 			return label == null ? name : label;
 		}
-		
+
 		public void setLabel(String label) {
 			this.label = label;
 		}
 
 		@Override
-        public boolean isParameter() {
-            return parameter;
-        }
+		public boolean isParameter() {
+			return parameter;
+		}
 
-        public void setParameter(boolean parameter) {
-            this.parameter = parameter;
-        }
+		public void setParameter(boolean parameter) {
+			this.parameter = parameter;
+		}
 
-        @Override
-        public boolean isExpression() {
-            return expression;
-        }
+		@Override
+		public boolean isExpression() {
+			return expression;
+		}
 
-        public void setExpression(boolean expression) {
-            this.expression = expression;
-        }
+		public void setExpression(boolean expression) {
+			this.expression = expression;
+		}
 
 	}
 
@@ -180,7 +180,7 @@ public class Prototype implements IPrototype {
 	protected boolean filter;
 	protected String label = null;
 	protected List<ArgumentImpl> exports = new ArrayList<>();
-    protected List<ArgumentImpl> imports = new ArrayList<>();
+	protected List<ArgumentImpl> imports = new ArrayList<>();
 	protected Set<String> inputTags = new HashSet<>();
 
 	public String getLabel() {
@@ -265,14 +265,15 @@ public class Prototype implements IPrototype {
 				ret.add(new Pair<>(name + ": mandatory argument " + arg.name + " was not passed", Level.SEVERE));
 			}
 		}
-		// TODO does not check that invalid parameters are NOT passed. At the moment it would break a lot of code so
+		// TODO does not check that invalid parameters are NOT passed. At the moment it
+		// would break a lot of code so
 		// do it when things are calm.
 		return ret;
 	}
-	
+
 	/*
-	 * Validate the passed object as the type requested and return it (or its transformation if
-	 * allowed) if valid; return null otherwise.
+	 * Validate the passed object as the type requested and return it (or its
+	 * transformation if allowed) if valid; return null otherwise.
 	 */
 	private Object classify(Object val, ArgumentImpl argument) {
 		if (val == null) {
@@ -375,6 +376,48 @@ public class Prototype implements IPrototype {
 				ret += "</dl>";
 			}
 
+			if (imports.size() > 0) {
+				ret += "\n\n" + (tags ? "<p>" : "");
+				ret += "Imports (match dependency names):" + (tags ? "</p>" : "")+ "\n\n";
+				if (tags) {
+					ret += "<dl>";
+				}
+				for (Argument arg : imports) {
+					ret += "  " + (tags ? "<dt>" : "") + (arg.isOptional() ? "" : "* ") + arg.getName()
+							+ (tags ? "</dt>" : "") + (tags ? "" : ":\n");
+					String description = StringUtil.pack(
+							arg.getDescription() == null || arg.getDescription().isEmpty() ? "No description provided."
+									: arg.getDescription());
+					ret += tags ? ("<dd>" + description + "</dd>")
+							: StringUtil.indent(StringUtil.justifyLeft(description, 50), 5);
+					ret += (tags ? "" : "\n");
+				}
+				if (tags) {
+					ret += "</dl>";
+				}
+			}
+
+			if (exports.size() > 0) {
+				ret += "\n\n" + (tags ? "<p>" : "");
+				ret += "Exports (match output names):" + (tags ? "</p>" : "")+ "\n\n";
+				if (tags) {
+					ret += "<dl>";
+				}
+				for (Argument arg : exports) {
+					ret += "  " + (tags ? "<dt>" : "") + (arg.isOptional() ? "" : "* ") + arg.getName()
+							+ (tags ? "</dt>" : "") + (tags ? "" : ":\n");
+					String description = StringUtil.pack(
+							arg.getDescription() == null || arg.getDescription().isEmpty() ? "No description provided."
+									: arg.getDescription());
+					ret += tags ? ("<dd>" + description + "</dd>")
+							: StringUtil.indent(StringUtil.justifyLeft(description, 50), 5);
+					ret += (tags ? "" : "\n");
+				}
+				if (tags) {
+					ret += "</dl>";
+				}
+			}
+
 			return ret;
 
 		}
@@ -438,24 +481,40 @@ public class Prototype implements IPrototype {
 		return contextualizer;
 	}
 
-    @Override
-    public List<Argument> listImports() {
-        return new CastUtils<ArgumentImpl, Argument>().cast(imports);
-    }
+	@Override
+	public List<Argument> listImports() {
+		return new CastUtils<ArgumentImpl, Argument>().cast(imports);
+	}
 
-    @Override
-    public List<Argument> listExports() {
-        return new CastUtils<ArgumentImpl, Argument>().cast(exports);
-    }
+	@Override
+	public List<Argument> listExports() {
+		return new CastUtils<ArgumentImpl, Argument>().cast(exports);
+	}
+	
+	public List<Argument> getImports() {
+		return new CastUtils<ArgumentImpl, Argument>().cast(imports);
+	}
+
+	public List<Argument> getExports() {
+		return new CastUtils<ArgumentImpl, Argument>().cast(exports);
+	}
+	
+	public void setImports(List<ArgumentImpl> arguments) {
+		this.imports = arguments;
+	}
+
+	public void setExports(List<ArgumentImpl> arguments) {
+		this.exports =  arguments;
+	}
 
 	@Override
 	public Collection<String> listInputTags() {
 		return inputTags;
 	}
 
-    @Override
-    public boolean isFilter() {
-        return filter;
-    }
+	@Override
+	public boolean isFilter() {
+		return filter;
+	}
 
 }

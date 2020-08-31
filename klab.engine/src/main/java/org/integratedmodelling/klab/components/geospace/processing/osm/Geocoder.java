@@ -74,7 +74,6 @@ public enum Geocoder {
 			try {
 				result = universal.get(OSMNAMES_URL[i] + query + ".js?key=" + OSMNAMES_KEYS[i], OsmNamesResult.class);
 				break;
-
 			} catch (Throwable e) {
 				// continue to next URL
 			}
@@ -183,8 +182,10 @@ public enum Geocoder {
 	public String geocode(IEnvelope envelope) {
 		IEnvelope env = envelope.transform(Projection.getLatLon(), true);
 		String url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat=" + env.getCenterCoordinates()[1]
-				+ "&lon=" + env.getCenterCoordinates()[0] + "&zoom=" + env.getScaleRank();
+				+ "&lon=" + env.getCenterCoordinates()[0] + "&zoom=" + closest(env.getScaleRank());
 
+		System.out.println(url);
+		
 		String ret = null;
 		try {
 			Map<?, ?> res = fastClient.get(url, Map.class);
@@ -198,6 +199,22 @@ public enum Geocoder {
 		}
 
 		return ret == null ? "Region of interest" : ret;
+	}
+
+	private static int[] levels = new int[] {3, 5, 8, 10, 14, 16, 17, 18};
+
+	private int closest(int scaleRank) {
+
+		int n = 0;
+		for (int i : levels) {
+			if (scaleRank == i) {
+				return i;
+			} else if (i > scaleRank) {
+				return n > 0 ? levels[n-1] : 3;
+			}
+			n++;
+		}
+		return 18;
 	}
 
 	public String geocode(SpatialExtent region) {

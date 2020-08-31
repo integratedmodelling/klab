@@ -18,12 +18,12 @@ import akka.actor.typed.javadsl.ReceiveBuilder;
  */
 public class RuntimeActor extends KlabActor {
 
-	public static Behavior<KlabMessage> create(Session session) {
-		return Behaviors.setup(ctx -> new RuntimeActor(ctx, session));
+	public static Behavior<KlabMessage> create(Session session, String appId) {
+		return Behaviors.setup(ctx -> new RuntimeActor(ctx, session, appId));
 	}
 
-	public RuntimeActor(ActorContext<KlabMessage> context, Session identity) {
-		super(context, identity);
+	public RuntimeActor(ActorContext<KlabMessage> context, Session identity, String appId) {
+		super(context, identity, appId);
 	}
 
 	@Override

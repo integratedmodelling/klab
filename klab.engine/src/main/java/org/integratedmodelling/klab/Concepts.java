@@ -15,35 +15,48 @@ package org.integratedmodelling.klab;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
+import org.integratedmodelling.klab.api.knowledge.IAuthority.Identity;
+import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
+import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IConceptService;
+import org.integratedmodelling.klab.common.SemanticType;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.owl.Axiom;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.owl.Ontology;
 import org.integratedmodelling.klab.owl.Property;
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Path;
 import org.springframework.util.StringUtils;
 
 /**
@@ -53,6 +66,8 @@ public enum Concepts implements IConceptService {
 
 	INSTANCE;
 
+	private Set<String> authorityOntologyIds = Collections.synchronizedSet(new HashSet<>());
+	
 	private Concepts() {
 		Services.INSTANCE.registerService(this, IConceptService.class);
 	}
@@ -69,11 +84,29 @@ public enum Concepts implements IConceptService {
 
 	@Override
 	public KimConcept getDeclaration(IConcept concept) {
-		return declare(concept.getDefinition());
+		Ontology ontology = OWL.INSTANCE.getOntology(concept.getNamespace());
+		String definition = concept.getDefinition();
+		if (ontology == null || definition == null) {
+			IKimObservable obs = Kim.INSTANCE.declare(concept.getName());
+			return obs == null ? null : (KimConcept)obs.getMain();
+		}
+		return declare(definition);
 	}
 
 	@Override
 	public KimConcept declare(String declaration) {
+		/*
+		 * declarations that are pure semantic types for internal ontologies are possible
+		 * with authority and core concepts. Check first if it's a semantic type with a 
+		 * namespace that matches either of these; if so, override the parser as the 
+		 * concepts are not k.IM-specified.
+		 */
+		if (SemanticType.validate(declaration)) {
+			SemanticType st = SemanticType.create(declaration);
+			if (CoreOntology.CORE_ONTOLOGY_NAME.equals(st.getNamespace()) || authorityOntologyIds.contains(st.getNamespace())) {
+				return new KimConcept(declaration);
+			}
+		}
 		return (KimConcept) Observables.INSTANCE.parseDeclaration(declaration).getMain();
 	}
 
@@ -140,13 +173,15 @@ public enum Concepts implements IConceptService {
 
 	}
 
-	/**
-	 * Get the best display name for a concept.
-	 *
-	 * @param t the t
-	 * @return a name for display
-	 */
-	public String getDisplayName(IConcept t) {
+	@Override
+	public String getDisplayName(ISemantic k) {
+		if (k instanceof IObservable) {
+			return getDisplayName((IObservable) k);
+		}
+		return getDisplayName(k.getType());
+	}
+
+	private String getDisplayName(IConcept t) {
 
 		String ret = t.getMetadata().get(NS.DISPLAY_LABEL_PROPERTY, String.class);
 
@@ -162,13 +197,7 @@ public enum Concepts implements IConceptService {
 		return ret;
 	}
 
-	/**
-	 * Get the best display name for a concept.
-	 *
-	 * @param t the t
-	 * @return a name for display
-	 */
-	public String getDisplayName(IObservable o) {
+	private String getDisplayName(IObservable o) {
 
 		String ret = getDisplayName(o.getType());
 
@@ -187,14 +216,15 @@ public enum Concepts implements IConceptService {
 		return ret;
 	}
 
-	/**
-	 * Get the best display name and turn any camel case into something more
-	 * text-like if it does not contain spaces.
-	 *
-	 * @param t the t
-	 * @return a name for display
-	 */
-	public String getDisplayLabel(IConcept t) {
+	@Override
+	public String getDisplayLabel(ISemantic k) {
+		if (k instanceof IObservable) {
+			return getDisplayLabel((IObservable) k);
+		}
+		return getDisplayLabel(k.getType());
+	}
+
+	private String getDisplayLabel(IConcept t) {
 		String ret = getDisplayName(t);
 		if (!ret.contains(" ")) {
 			ret = StringUtils.capitalize(CamelCase.toLowerCase(ret, ' '));
@@ -202,7 +232,7 @@ public enum Concepts implements IConceptService {
 		return ret;
 	}
 
-	public String getDisplayLabel(IObservable t) {
+	private String getDisplayLabel(IObservable t) {
 		String ret = getDisplayName(t);
 		if (!ret.contains(" ")) {
 			ret = StringUtils.capitalize(CamelCase.toLowerCase(ret, ' '));
@@ -499,6 +529,76 @@ public enum Concepts implements IConceptService {
 
 	public boolean isInternal(IConcept c) {
 		return CoreOntology.CORE_ONTOLOGY_NAME.equals(c.getNamespace());
+	}
+
+	public Concept getAuthorityConcept(Identity identity) {
+		
+		if (identity == null) {
+			return null;
+		}
+
+		for (Notification notification : identity.getNotifications()) {
+			if (Level.SEVERE.getName().equals(notification.getLevel())) {
+				return null;
+			}
+		}
+		
+		String oid = Path.getFirst(identity.getAuthorityName(), ".").toLowerCase();
+		boolean isNew = OWL.INSTANCE.getOntology(oid) == null;
+		Ontology ontology = OWL.INSTANCE.requireOntology(oid, OWL.INTERNAL_ONTOLOGY_PREFIX);
+		
+		if (isNew) {
+			ontology.setInternal(true);
+			Reasoner.INSTANCE.addOntology(ontology);
+			authorityOntologyIds.add(oid);
+		}
+		
+		Concept ret = ontology.getConcept(identity.getConceptName());
+		if (ret == null) {
+
+			List<IAxiom> axioms = new ArrayList<>();
+			EnumSet<Type> type = Kim.INSTANCE.getType("identity");
+			type.add(Type.AUTHORITY_IDENTITY);
+
+			// lookup parent if any; otherwise ensure we have a suitable parent
+			String baseIdentity = identity.getBaseIdentity();
+			if (baseIdentity == null) {
+				baseIdentity = StringUtils.capitalize(oid.toLowerCase()) + "Identity";
+			} else {
+				// TODO recursively resolve the base identity
+				throw new KlabUnimplementedException(
+						"explicit base identities for authority concepts are still unimplemented");
+			}
+
+			String pName = "is" + baseIdentity;
+			Concept base = ontology.getConcept(baseIdentity);
+			if (base == null) {
+				axioms.add(Axiom.ClassAssertion(baseIdentity, type));
+				// TODO check - there should be a base identity per leaf vocabulary
+				axioms.add(Axiom.AnnotationAssertion(baseIdentity, NS.BASE_DECLARATION, "true"));
+				axioms.add(Axiom.ObjectPropertyAssertion(pName));
+				axioms.add(Axiom.ObjectPropertyRange(pName, baseIdentity));
+				axioms.add(Axiom.SubObjectProperty(NS.HAS_IDENTITY_PROPERTY, pName));
+				axioms.add(Axiom.AnnotationAssertion(baseIdentity, NS.TRAIT_RESTRICTING_PROPERTY, oid + ":" + pName));
+			}
+
+			// if we created the parent, add the restricting property and prepare to
+			// give it to the new identity
+
+			axioms.add(Axiom.ClassAssertion(identity.getConceptName(), type));
+			axioms.add(Axiom.SubClass(baseIdentity, identity.getConceptName()));
+			axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), IMetadata.DC_LABEL, identity.getLabel()));
+			axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), IMetadata.DC_COMMENT,
+					identity.getDescription()));
+			axioms.add(Axiom.AnnotationAssertion(identity.getConceptName(), NS.CONCEPT_DEFINITION_PROPERTY,
+					identity.getLocator()));
+
+			ontology.define(axioms);
+
+			ret = ontology.getConcept(identity.getConceptName());
+		}
+
+		return ret;
 	}
 
 }

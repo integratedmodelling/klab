@@ -46,7 +46,7 @@ public class Compute implements ICommand {
 			scope = scope.getContextualizedScope(Observable.promote(context));
 		}
 		return dumpStrategy(ObservationStrategy.computeStrategies(observable, scope,
-				observable.getDescription().getResolutionMode()), scope, 0, "");
+				observable.getDescriptionType().getResolutionMode()), scope, 0, "");
 	}
 
 	
@@ -62,7 +62,7 @@ public class Compute implements ICommand {
 					ret += (strategy.isResolve() ? "Resolve " : "Observe ") + observable + "\n";
 					if (!strategy.isTrivial()) {
 						ret = dumpStrategy(ObservationStrategy.computeStrategies(observable, scope,
-								observable.getDescription().getResolutionMode()), scope, level + 1, ret);
+								observable.getDescriptionType().getResolutionMode()), scope, level + 1, ret);
 					}
 				}
 //			}

@@ -28,7 +28,7 @@ public class HydrologicallyCorrectedElevationResolver implements IResolver<IStat
 		IState dem = context.getArtifact("elevation", IState.class);
 
 		OmsPitfiller pitfiller = new OmsPitfiller();
-		pitfiller.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue);
+		pitfiller.inElev = GeotoolsUtils.INSTANCE.stateToCoverage(dem, context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false);
 		pitfiller.pm = new TaskMonitor(context.getMonitor());
 		pitfiller.doProcess = true;
 		pitfiller.doReset = false;

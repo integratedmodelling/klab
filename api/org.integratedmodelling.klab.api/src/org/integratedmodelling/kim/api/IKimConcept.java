@@ -331,7 +331,22 @@ public interface IKimConcept extends IKimStatement {
 		/**
 		 * A process that defines the change of its inherent quality.
 		 */
-		CHANGE;
+		CHANGE,
+		/**
+		 * A quality that describes the speed of change of its inherent quality.
+		 */
+		RATE,
+		/**
+		 * An event that results from a change of value in the inherent quality.
+		 */
+		CHANGED,
+		/**
+		 * Concept that have the syntax of authority references (with the uppercase
+		 * namespace) get this type even if not recognized by an online authority (in
+		 * which case they won't have the IDENTITY type but will still have this, so
+		 * that the syntactic validation won't fail).
+		 */
+		AUTHORITY_IDENTITY;
 
 		boolean isNumeric() {
 			return IKimConcept.CONTINUOUS_QUALITY_TYPES.contains(this);
@@ -344,7 +359,7 @@ public interface IKimConcept extends IKimStatement {
 	 * builders) and inspect specific clauses.
 	 */
 	public enum ObservableRole {
-		TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT
+		TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT, TEMPORAL_INHERENT
 	}
 
 	/**
@@ -360,7 +375,7 @@ public interface IKimConcept extends IKimStatement {
 	 * explicit inherency but just context.
 	 */
 	public static final EnumSet<Type> INHERENT_QUALITIES = EnumSet.of(Type.PROPORTION, Type.PROBABILITY, Type.DISTANCE,
-			Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.UNCERTAINTY, Type.NUMEROSITY, Type.OBSERVABILITY);
+			Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.UNCERTAINTY, Type.NUMEROSITY, Type.OBSERVABILITY, Type.RATE);
 
 	/**
 	 * All quality type bits sets (not QUALITY itself). Each quality AND this must
@@ -370,7 +385,8 @@ public interface IKimConcept extends IKimStatement {
 			Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION,
 			Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE,
 			Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION,
-			Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT);
+			Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT,
+			Type.RATE);
 
 	/**
 	 * All quality type bits sets including QUALITY itself. Each quality AND this
@@ -381,7 +397,7 @@ public interface IKimConcept extends IKimStatement {
 			Type.AREA, Type.ACCELERATION, Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE,
 			Type.RESISTIVITY, Type.PRESSURE, Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY,
 			Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION, Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE,
-			Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT);
+			Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT, Type.RATE);
 
 	/**
 	 * All qualities that are expressed through a continuous numeric state.
@@ -391,7 +407,7 @@ public interface IKimConcept extends IKimStatement {
 			Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE,
 			Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION,
 			Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT,
-			Type.MAGNITUDE);
+			Type.MAGNITUDE, Type.RATE);
 
 	/**
 	 * All direct observables
@@ -542,5 +558,12 @@ public interface IKimConcept extends IKimStatement {
 	ObservableRole getDistributedInherent();
 
 	boolean isTraitObservable();
+
+	/**
+	 * Return any temporal inherency for this occurrent ('during each').
+	 * 
+	 * @return
+	 */
+	IKimConcept getTemporalInherent();
 
 }

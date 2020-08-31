@@ -34,7 +34,11 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Namespaces;
+import org.integratedmodelling.klab.Network;
+import org.integratedmodelling.klab.api.auth.INodeIdentity;
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -115,17 +119,7 @@ public class Ontology implements IOntology {
         if (this.prefix.equals("http://purl.obolibrary.org/obo/bfo.owl")) {
             this.prefix = "http://purl.obolibrary.org/obo";
         }
-        // this.namespace = ontology.getOntologyID().getOntologyIRI().getNamespace();
-
-        /*
-         * get the prefix for itself
-         */
-        // PrefixOWLOntologyFormat pm = (PrefixOWLOntologyFormat)
-        // manager.manager.getOntologyFormat(ontology);
-        // Map<String, String> prefixMap = pm.getPrefixName2PrefixMap();
-        // if (prefixMap.containsKey(":")) {
-        // this.prefix = prefixMap.get(":");
-        // }
+        
         scan();
     }
 
@@ -957,6 +951,12 @@ public class Ontology implements IOntology {
             return false;
         return true;
     }
+
+	@Override
+	public IConcept getIdentity(String authority, String authorityIdentity) {
+		IAuthority.Identity identity = Authorities.INSTANCE.getIdentity(authority, authorityIdentity);
+		return null;
+	}
 
     // public IIndividual getSingletonIndividual(IConcept concept) {
     // String iName = "the" + concept.getLocalName();

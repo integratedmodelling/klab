@@ -24,7 +24,10 @@ package org.integratedmodelling.klab.api.observations.scale;
  * @version $Id: $Id
  */
 public abstract interface IDimensional {
-    /**
+
+	
+	
+	/**
      * <p>getDimensionCount.</p>
      *
      * @return a int.

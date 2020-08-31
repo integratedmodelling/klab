@@ -4,14 +4,21 @@
  */
 package org.integratedmodelling.kim.kim.impl;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.KimPackage;
@@ -103,14 +110,14 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
   protected Quantity comparisonQuantity;
 
   /**
-   * The cached value of the '{@link #getComparisonConcept() <em>Comparison Concept</em>}' containment reference.
+   * The cached value of the '{@link #getComparisonConcept() <em>Comparison Concept</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getComparisonConcept()
    * @generated
    * @ordered
    */
-  protected ConceptDeclaration comparisonConcept;
+  protected EList<ConceptDeclaration> comparisonConcept;
 
   /**
    * The cached value of the '{@link #getComparisonObservable() <em>Comparison Observable</em>}' containment reference.
@@ -359,48 +366,13 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
    * @generated
    */
   @Override
-  public ConceptDeclaration getComparisonConcept()
+  public EList<ConceptDeclaration> getComparisonConcept()
   {
+    if (comparisonConcept == null)
+    {
+      comparisonConcept = new EObjectContainmentEList<ConceptDeclaration>(ConceptDeclaration.class, this, KimPackage.VALUE_OPERATOR__COMPARISON_CONCEPT);
+    }
     return comparisonConcept;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetComparisonConcept(ConceptDeclaration newComparisonConcept, NotificationChain msgs)
-  {
-    ConceptDeclaration oldComparisonConcept = comparisonConcept;
-    comparisonConcept = newComparisonConcept;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.VALUE_OPERATOR__COMPARISON_CONCEPT, oldComparisonConcept, newComparisonConcept);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setComparisonConcept(ConceptDeclaration newComparisonConcept)
-  {
-    if (newComparisonConcept != comparisonConcept)
-    {
-      NotificationChain msgs = null;
-      if (comparisonConcept != null)
-        msgs = ((InternalEObject)comparisonConcept).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE_OPERATOR__COMPARISON_CONCEPT, null, msgs);
-      if (newComparisonConcept != null)
-        msgs = ((InternalEObject)newComparisonConcept).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE_OPERATOR__COMPARISON_CONCEPT, null, msgs);
-      msgs = basicSetComparisonConcept(newComparisonConcept, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE_OPERATOR__COMPARISON_CONCEPT, newComparisonConcept, newComparisonConcept));
   }
 
   /**
@@ -543,7 +515,7 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
       case KimPackage.VALUE_OPERATOR__COMPARISON_QUANTITY:
         return basicSetComparisonQuantity(null, msgs);
       case KimPackage.VALUE_OPERATOR__COMPARISON_CONCEPT:
-        return basicSetComparisonConcept(null, msgs);
+        return ((InternalEList<?>)getComparisonConcept()).basicRemove(otherEnd, msgs);
       case KimPackage.VALUE_OPERATOR__COMPARISON_OBSERVABLE:
         return basicSetComparisonObservable(null, msgs);
     }
@@ -587,6 +559,7 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
@@ -605,7 +578,8 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
         setComparisonQuantity((Quantity)newValue);
         return;
       case KimPackage.VALUE_OPERATOR__COMPARISON_CONCEPT:
-        setComparisonConcept((ConceptDeclaration)newValue);
+        getComparisonConcept().clear();
+        getComparisonConcept().addAll((Collection<? extends ConceptDeclaration>)newValue);
         return;
       case KimPackage.VALUE_OPERATOR__COMPARISON_OBSERVABLE:
         setComparisonObservable((ObservableSemantics)newValue);
@@ -646,7 +620,7 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
         setComparisonQuantity((Quantity)null);
         return;
       case KimPackage.VALUE_OPERATOR__COMPARISON_CONCEPT:
-        setComparisonConcept((ConceptDeclaration)null);
+        getComparisonConcept().clear();
         return;
       case KimPackage.VALUE_OPERATOR__COMPARISON_OBSERVABLE:
         setComparisonObservable((ObservableSemantics)null);
@@ -683,7 +657,7 @@ public class ValueOperatorImpl extends MinimalEObjectImpl.Container implements V
       case KimPackage.VALUE_OPERATOR__COMPARISON_QUANTITY:
         return comparisonQuantity != null;
       case KimPackage.VALUE_OPERATOR__COMPARISON_CONCEPT:
-        return comparisonConcept != null;
+        return comparisonConcept != null && !comparisonConcept.isEmpty();
       case KimPackage.VALUE_OPERATOR__COMPARISON_OBSERVABLE:
         return comparisonObservable != null;
       case KimPackage.VALUE_OPERATOR__TOTAL:

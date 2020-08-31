@@ -28,6 +28,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getContainer <em>Container</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getContained <em>Contained</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getCaused <em>Caused</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isDistributedTemporalInherency <em>Distributed Temporal Inherency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getDuring <em>During</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isDistributedWithinInherency <em>Distributed Within Inherency</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ConceptDeclaration#getContext <em>Context</em>}</li>
@@ -275,6 +276,28 @@ public interface ConceptDeclaration extends EObject
    * @generated
    */
   void setCaused(ConceptDeclaration value);
+
+  /**
+   * Returns the value of the '<em><b>Distributed Temporal Inherency</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Distributed Temporal Inherency</em>' attribute.
+   * @see #setDistributedTemporalInherency(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getConceptDeclaration_DistributedTemporalInherency()
+   * @model
+   * @generated
+   */
+  boolean isDistributedTemporalInherency();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptDeclaration#isDistributedTemporalInherency <em>Distributed Temporal Inherency</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Distributed Temporal Inherency</em>' attribute.
+   * @see #isDistributedTemporalInherency()
+   * @generated
+   */
+  void setDistributedTemporalInherency(boolean value);
 
   /**
    * Returns the value of the '<em><b>During</b></em>' containment reference.

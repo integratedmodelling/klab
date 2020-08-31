@@ -17,8 +17,8 @@ package org.integratedmodelling.kactors.api;
 public interface IKActorsValue extends IKActorsCodeStatement {
 
 	public enum Type {
-		REGEXP, NUMBER, BOOLEAN, STRING, OBSERVABLE, IDENTIFIER, EXPRESSION, LIST, CLASS, ANYVALUE, ANYTHING, NODATA,
-		RANGE, MAP, TABLE, QUANTITY, DATE, TYPE, NUMBERED_PATTERN, URN, ERROR,
+		REGEXP, NUMBER, BOOLEAN, STRING, OBSERVABLE, IDENTIFIER, EXPRESSION, LIST, SET, CLASS, ANYVALUE, ANYTHING, NODATA,
+		RANGE, MAP, TABLE, TREE, QUANTITY, DATE, TYPE, NUMBERED_PATTERN, URN, ERROR,
 		/**
 		 * Matcher for anything that isn't null, false or error
 		 */
@@ -53,5 +53,13 @@ public interface IKActorsValue extends IKActorsCodeStatement {
 	 * @return
 	 */
 	<T> T as(Class<? extends T> cls);
+
+	/**
+	 * If true, the value specifies a constraint that excludes its own value when used in 
+	 * matching.
+	 *
+	 * @return
+	 */
+	boolean isExclusive();
 
 }

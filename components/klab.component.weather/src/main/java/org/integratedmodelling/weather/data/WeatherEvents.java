@@ -9,11 +9,17 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.TreeMap;
 
+import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.DataType;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -21,11 +27,15 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.table.persistent.PersistentTable;
 import org.integratedmodelling.klab.data.table.persistent.PersistentTable.PersistentTableBuilder;
+import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.URLUtils;
 import org.integratedmodelling.weather.WeatherComponent;
 import org.joda.time.DateTime;
+import org.joda.time.Period;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -57,17 +67,16 @@ public enum WeatherEvents {
 
 	private WeatherEvents() {
 		ebox = new PersistentTableBuilder<Long, WeatherEvent>("weatherevents", Long.class, WeatherEvent.class)
-				.column("precipitation_mm", DataType.DOUBLE, true)
-				.column("id", DataType.LONG, true)
-				.column("area_m2", DataType.DOUBLE)
-				.column("start_long", DataType.LONG, true)
-				.column("end_long", DataType.LONG, true)
-				.column("duration_hours", DataType.INT)
-				.column("bounding_box", DataType.SHAPE, true)
-				.build(
-						(event) -> { return event.asData(); }, 
-						(data)  -> { return new WeatherEvent(data);}, 
-						(event) -> { return event.getId(); });
+				.column("precipitation_mm", DataType.DOUBLE, true).column("id", DataType.LONG, true)
+				.column("area_m2", DataType.DOUBLE).column("start_long", DataType.LONG, true)
+				.column("end_long", DataType.LONG, true).column("duration_hours", DataType.INT)
+				.column("bounding_box", DataType.SHAPE, true).build((event) -> {
+					return event.asData();
+				}, (data) -> {
+					return new WeatherEvent(data);
+				}, (event) -> {
+					return event.getId();
+				});
 	}
 
 	public void setup() {
@@ -285,7 +294,23 @@ public enum WeatherEvents {
 	}
 
 	public static void main(String[] args) {
+
+		Engine.start();
+
+		String tzShape = "EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))";
+		IServiceCall tzcall = KimServiceCall.create("space", "shape", tzShape);
+		Scale tzScale = Scale
+				.create((IExtent) Extensions.INSTANCE.callFunction(tzcall, Klab.INSTANCE.getRootMonitor()));
+
 		INSTANCE.setup();
+
+		Map<Integer, Pair<Integer, Double>> distribution = INSTANCE.getYearlyEventDistribution(tzScale.getSpace(), 1.1,
+				Klab.INSTANCE.getRootMonitor());
+
+		for (Integer year : distribution.keySet()) {
+			System.out.println(year + ": " + distribution.get(year));
+		}
+
 	}
 
 	/**
@@ -313,6 +338,98 @@ public enum WeatherEvents {
 			this.eventRange = new Range((double) start, (double) end, false, false);
 		}
 		return this.eventRange;
+	}
+
+	/**
+	 * Return the yearly distribution of storm events across the database for a
+	 * given bounding box and minumum precipitation level. For each year report the
+	 * number of events in the space and the total precipitation in m^3 adjusted by
+	 * intersected area and temporal span. Years without any event do not appear in
+	 * the map.
+	 * 
+	 * @param space
+	 * @param minPrecipitation
+	 * @return
+	 */
+	public Map<Integer, Pair<Integer, Double>> getYearlyEventDistribution(ISpace space, double minPrecipitation,
+			IMonitor monitor) {
+		Map<Integer, Pair<Integer, Double>> ret = new TreeMap<>();
+		for (WeatherEvent event : getEvents(space, minPrecipitation, -1, -1, monitor)) {
+
+			DateTime start = new DateTime(event.startMs);
+			DateTime end = new DateTime(event.endMs);
+			Period p = new Period(start, end);
+			double hours = p.getHours() + p.getMinutes()/60.0;
+			
+			Pair<Integer, Double> sp = ret.get(start.getYear());
+			if (sp == null) {
+				sp = new Pair<>(1, 0.0);
+				ret.put(start.getYear(), sp);
+			} else {
+				sp.setFirst(sp.getFirst() + 1);
+			}
+			
+			/*
+			 * determine total precipitation based on overlap of area and time
+			 */
+			double timeFactor = 1.0;
+			long yearStart = new DateTime(start.getYear(), 1, 1, 0, 0).getMillis();
+			long yearEnd = new DateTime(start.getYear() + 1, 1, 1, 0, 0).getMillis();
+			
+			double precm3 = event.precMmHour * hours * event.areaMd * .001;
+			Geometry common = event.boundingBox.intersection(((Envelope)space.getEnvelope()).asJTSGeometry());
+			double areaFactor = common.getArea()/event.boundingBox.getArea();
+			sp.setSecond(sp.getSecond() + (precm3 * areaFactor * timeFactor));
+			
+			if (end.getYear() > start.getYear()) {
+				Pair<Integer, Double> ep = ret.get(end.getYear());
+				if (ep == null) {
+					ep = new Pair<>(1, 0.0);
+					ret.put(end.getYear(), ep);
+				} else {
+					ep.setFirst(ep.getFirst() + 1);
+				}
+				
+				/*
+				 * recompute timefactor
+				 */
+				
+				/*
+				 * accumulate precipitation
+				 */
+			}
+
+		}
+		return ret;
+	}
+
+	/**
+	 * Get all weather events for a particular space and specified intervals of
+	 * time, including all times if either start or end are -1.
+	 * 
+	 * @param scale
+	 * @param minPrecipitation pass the minimum precipitation in mm per event, or
+	 *                         NaN for any accepted.
+	 * @return
+	 */
+	public Iterable<WeatherEvent> getEvents(ISpace space, double minPrecipitation, long startTime, long endTime,
+			IMonitor monitor) {
+
+		Geometry shape = ((Shape) space.getShape()).getStandardizedGeometry();
+
+		String precQuery = "";
+		if (!Double.isNaN(minPrecipitation)) {
+			precQuery = " AND precipitation_mm >= " + minPrecipitation;
+		}
+
+		String query = "SELECT * from " + ebox.getName() + " WHERE " + "bounding_box && '" + shape + "'" + precQuery;
+
+		if (startTime > 0 && endTime > 0) {
+			query += " AND ((" + (long) startTime + " BETWEEN start_long AND end_long) OR (" + (long) endTime
+					+ "  BETWEEN start_long AND end_long));";
+		}
+
+		return ebox.query(query + ";");
 	}
 
 	/**

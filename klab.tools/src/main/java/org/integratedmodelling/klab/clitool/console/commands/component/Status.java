@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.extensions.Component;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MapUtils;
 
 public class Status implements ICommand {
@@ -47,14 +48,14 @@ public class Status implements ICommand {
 
 				IMetadata data = c.getStatus();
 
-				ret += MapUtils.dump(((Metadata)data).getData());
+				ret += JsonUtils.printAsJson(((Metadata)data).getData());
 
 			} else {
 
 				Map<?, ?> data = node.getClient().get(API.NODE.ADMIN.COMPONENT_GET_STATUS, Map.class,
 						API.NODE.ADMIN.P_COMPONENT, component);
 				
-				ret += MapUtils.dump(data);
+				ret += JsonUtils.printAsJson(data);
 				
 			}
 		}

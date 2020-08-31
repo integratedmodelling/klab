@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -52,7 +53,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
-import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
@@ -88,6 +88,9 @@ import org.integratedmodelling.klab.utils.Utils;
 public enum Observations implements IObservationService {
 
 	INSTANCE;
+	
+	public static final String PRESENT_LABEL = "Present";
+	public static final String NOT_PRESENT_LABEL = "Not present";
 
 	Map<ILocator, Map<String, StateSummary>> summaryCache = new HashMap<>();
 
@@ -165,36 +168,64 @@ public enum Observations implements IObservationService {
 		long tdata = 0;
 
 		ret.setStateTimestamp(((Observation) state).getTimestamp());
+		double min, max;
+		
+		List<Integer> dataKey = state.getDataKey() != null
+				? state.getDataKey().getAllValues().stream().map(dk -> dk.getFirst()).collect(Collectors.toList())
+				: null;
+		boolean isBoolean = state.getType() == IArtifact.Type.BOOLEAN;
+		
+		if (dataKey != null || isBoolean) {
+			min = Double.MIN_VALUE;
+			max = Double.MAX_VALUE;
+			ret.setDegenerate(false);
+			ret.setNodataPercentage(0);
+			ret.setValueCount(isBoolean ? 2 : dataKey.size());
+			ret.setMean(Double.NaN);
+			ret.setVariance(Double.NaN);
+			ret.setStandardDeviation(Double.NaN);
+			ret.setSingleValued(false);
+		} else {
+			SummaryStatistics statistics = new SummaryStatistics();
 
-		SummaryStatistics statistics = new SummaryStatistics();
-
-		for (Iterator<Number> it = state.iterator(locator, Number.class); it.hasNext();) {
-			tdata++;
-			Number d = it.next();
-			if (d != null) {
-				ndata++;
-				statistics.addValue(d.doubleValue());
-			} else {
-				nndat++;
+			for (Iterator<Number> it = state.iterator(locator, Number.class); it.hasNext();) {
+				tdata++;
+				Number d = it.next();
+				if (d != null) {
+					ndata++;
+					statistics.addValue(d.doubleValue());
+				} else {
+					nndat++;
+				}
 			}
-		}
-
-		ret.setDegenerate(ndata == 0 || !Double.isFinite(statistics.getMax()) || !Double.isFinite(statistics.getMax()));
-		ret.setNodataPercentage((double) nndat / (double) tdata);
-		ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
-		ret.setValueCount(ndata + nndat);
-		ret.setMean(statistics.getMean());
-		ret.setVariance(statistics.getVariance());
-		ret.setStandardDeviation(statistics.getStandardDeviation());
-		ret.setSingleValued(statistics.getMax() == statistics.getMin());
+			min = statistics.getMin();
+			max = statistics.getMax();
+			ret.setDegenerate(ndata == 0 || !Double.isFinite(statistics.getMax()) || !Double.isFinite(statistics.getMax()));
+			ret.setNodataPercentage((double) nndat / (double) tdata);
+			ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
+			ret.setValueCount(ndata + nndat);
+			ret.setMean(statistics.getMean());
+			ret.setVariance(statistics.getVariance());
+			ret.setStandardDeviation(statistics.getStandardDeviation());
+			ret.setSingleValued(statistics.getMax() == statistics.getMin());
+		} 
+		ret.setRange(Arrays.asList(min, max));
 
 		if (ret.getNodataPercentage() < 1) {
-			Builder histogram = Histogram.builder(statistics.getMin(), statistics.getMax(),
-					state.getDataKey() == null ? 10 : state.getDataKey().size());
+			Builder histogram = Histogram.builder(min, max,
+					isBoolean ? 2 : (dataKey == null ? 10 : dataKey.size()));
+			
 			for (Iterator<Number> it = state.iterator(locator, Number.class); it.hasNext();) {
 				Number d = it.next();
 				if (d != null) {
-					histogram.add(d.doubleValue());
+					if (isBoolean) {
+						histogram.addToIndex(d.intValue());
+					}
+					if (dataKey != null) {
+						histogram.addToIndex(dataKey.indexOf(d));
+					} else {
+						histogram.add(d.doubleValue());
+					}
 				}
 			}
 			ret.setHistogram(histogram.build());
@@ -219,7 +250,7 @@ public enum Observations implements IObservationService {
 			ILocator locator, int childLevel, String viewId) {
 
 		ObservationReference ret = new ObservationReference();
-		
+
 		ret.setEmpty(observation.isEmpty());
 
 		// for now
@@ -256,7 +287,7 @@ public enum Observations implements IObservationService {
 
 		IArtifact parent = observation.getScope().getParentOf(observation);
 		IArtifact parentArtifact = observation.getScope().getParentArtifactOf(observation);
-		
+
 		ret.setId(observation.getId());
 		ret.setContextId(((Observation) observation).getObservationContextId());
 		ret.setUrn(observation.getUrn());
@@ -374,8 +405,8 @@ public enum Observations implements IObservationService {
 			}
 
 			/*
-			 * compute available export formats. This may change after an update so it's done also in
-			 * ObservationChange.
+			 * compute available export formats. This may change after an update so it's
+			 * done also in ObservationChange.
 			 */
 			ret.getExportFormats().addAll(getExportFormats(observation));
 
@@ -448,15 +479,26 @@ public enum Observations implements IObservationService {
 					ds.getHistogram().add(bin);
 				}
 			}
-			double step = (summary.getRange().get(1) - summary.getRange().get(0)) / (double) ds.getHistogram().size();
+			IDataKey dataKey = ((IState) observation).getDataKey();
+			if (observation.getType() == IArtifact.Type.BOOLEAN) {
+				ds.setCategorized(true);
+				ds.getCategories().add(0, NOT_PRESENT_LABEL);
+				ds.getCategories().add(1, PRESENT_LABEL);
+			} else if (dataKey != null) {
+				ds.setCategorized(true);
+				ds.getCategories().addAll(dataKey.getAllValues().stream().map(key -> key.getSecond()).collect(Collectors.toList()));
+			} else {
+				ds.setCategorized(false);
+				double step = (summary.getRange().get(1) - summary.getRange().get(0)) / (double) ds.getHistogram().size();
 
-			for (int i = 0; i < ds.getHistogram().size(); i++) {
-				// TODO use labels for categories
-				String lower = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * i));
-				String upper = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * (i + 1)));
-				ds.getCategories().add(lower + " to " + upper);
+				for (int i = 0; i < ds.getHistogram().size(); i++) {
+					// TODO use labels for categories
+					String lower = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * i));
+					String upper = NumberFormat.getInstance().format(summary.getRange().get(0) + (step * (i + 1)));
+					ds.getCategories().add(lower + " to " + upper);
+				}
+
 			}
-
 			ret.setDataSummary(ds);
 		}
 
@@ -493,7 +535,7 @@ public enum Observations implements IObservationService {
 						org.integratedmodelling.klab.components.network.model.Network.ADAPTER_ID));
 			}
 		}
-		
+
 		/*
 		 * For now only one adapter is kept per format. Later we may offer the option by
 		 * using a set instead of a map and implementing equals() for ExportFormat to
@@ -558,7 +600,8 @@ public enum Observations implements IObservationService {
 		return ret;
 	}
 
-	public Observer makeROIObserver(final SpatialExtent regionOfInterest, ITime time, Namespace namespace, IMonitor monitor) {
+	public Observer makeROIObserver(final SpatialExtent regionOfInterest, ITime time, Namespace namespace,
+			IMonitor monitor) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
 		observable.setName(Geocoder.INSTANCE.geocode(regionOfInterest));
 		observable.setOptional(true);
@@ -580,7 +623,7 @@ public enum Observations implements IObservationService {
 
 	public Observer makeROIObserver(String name, IShape shape, ITime time, IMetadata metadata) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
-		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope()));
+		observable.setName(name);
 		observable.setOptional(true);
 		Observer ret = new Observer((Shape) shape, time, observable,
 				Namespaces.INSTANCE.getNamespace(observable.getNamespace()));
@@ -683,6 +726,22 @@ public enum Observations implements IObservationService {
 			return (ITime) locator;
 		}
 		return null;
+	}
+
+	/**
+	 * Return whether the passed observation has a temporal identity. This applies
+	 * to events, processes, groups of events, and states that either belong to
+	 * events or are affected by processes.
+	 * 
+	 * @param observation
+	 * @return
+	 */
+	public boolean occurs(IObservation observation) {
+		return 
+				observation instanceof IProcess || 
+				observation instanceof IEvent ||
+				observation.getScope().getParentOf(observation) instanceof IEvent ||
+				((IRuntimeScope)observation.getScope()).getStructure().getOwningProcess(observation) != null;
 	}
 
 }

@@ -198,11 +198,8 @@ public interface IAxiom extends Iterable<Object> {
     /** The Constant DATATYPE_DEFINITION. */
     public static final String DATATYPE_DEFINITION                = "DatatypeDefinition";
 
-    /*
-     * just check if we're this type
-     */
     /**
-     * Checks if is.
+     * Just check if we're this type
      *
      * @param classAssertion the class assertion
      * @return true if the assertion is this type of axiom

@@ -2,8 +2,10 @@ package org.integratedmodelling.klab.components.runtime.actors.behavior;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.kactors.api.IKActorsAction;
+import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -19,7 +21,6 @@ public class BehaviorAction implements IBehavior.Action {
 	 */
 	private IKActorsAction statement;
 	private Behavior behavior;
-	private CallSequence calls;
 	private List<IAnnotation> annotations = new ArrayList<>();
 	private String viewId;
 

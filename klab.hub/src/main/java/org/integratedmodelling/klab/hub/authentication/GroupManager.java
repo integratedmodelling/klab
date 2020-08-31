@@ -24,7 +24,7 @@ public class GroupManager {
 	public GroupManager() {
 		// TODO read this from the file only if not stored, then manage using a
 		// persistent DB
-		groups = FileCatalog.create(getClass().getClassLoader().getResource("auth/groups.json"), Group.class);
+		groups = FileCatalog.create(getClass().getClassLoader().getResource("initial-groups.json"), Group.class);
 	}
 
 	/**

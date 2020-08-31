@@ -16,9 +16,23 @@ public class UserBehavior {
 	 *
 	 */
 	public static class UnknownMessage implements KlabMessage {
+		
 		KActorsMessage call;
-		public UnknownMessage(KActorsMessage message) {
+		String appId;
+		
+		public UnknownMessage(KActorsMessage message, String appId) {
 			this.call = message;
+			this.appId = appId;
+		}
+		
+		@Override
+		public KlabMessage direct() {
+			return new UnknownMessage(call, null);
+		}
+		
+		@Override
+		public String toString() {
+			return "[UNKNOWN MESSAGE " + call.message + "]";
 		}
 	}
 

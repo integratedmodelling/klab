@@ -63,6 +63,7 @@ public enum NodeAuthenticationManager {
     private Map<String, JwtConsumer> jwksVerifiers = new HashMap<>();
     private JwtConsumer preValidationExtractor;
     private String nodeName;
+	private String hubName;
 
     protected HttpsJwks buildJwksClient(String url) {
         return new HttpsJwks(url);
@@ -102,9 +103,10 @@ public enum NodeAuthenticationManager {
         NodeAuthenticationRequest request = new NodeAuthenticationRequest();
 
         request.setCertificate(certificate.getProperty(KlabCertificate.KEY_CERTIFICATE));
-        request.setNodeName(nodeName);
-        request.setNodeKey(KlabCertificate.KEY_SIGNATURE);
+        request.setName(nodeName);
+        request.setKey(certificate.getProperty(KlabCertificate.KEY_SIGNATURE));
         request.setLevel(certificate.getLevel());
+        request.setEmail(certificate.getProperty(KlabCertificate.KEY_PARTNER_EMAIL));
 
         /*
          * response contains the groupset for validation and the Base64-encoded public
@@ -114,7 +116,8 @@ public enum NodeAuthenticationManager {
          */
         PublicKey publicKey = null;
         NodeAuthenticationResponse response = client.authenticateNode(serverHub, request);
-
+        this.hubName = response.getAuthenticatingHub();
+        
         try {
             byte publicKeyData[] = Base64.getDecoder().decode(response.getPublicKey());
             X509EncodedKeySpec spec = new X509EncodedKeySpec(publicKeyData);
@@ -138,7 +141,7 @@ public enum NodeAuthenticationManager {
         JwtConsumer jwtVerifier = new JwtConsumerBuilder().setSkipDefaultAudienceValidation()
                 .setAllowedClockSkewInSeconds(ALLOWED_CLOCK_SKEW_MS / 1000).setVerificationKey(publicKey).build();
 
-        jwksVerifiers.put(response.getAuthenticatingNodeId(), jwtVerifier);
+        jwksVerifiers.put(response.getAuthenticatingHub(), jwtVerifier);
         
         /*
          * setup the various identities: partner->node, we add the engine later.
@@ -152,8 +155,21 @@ public enum NodeAuthenticationManager {
         return rootIdentity;
     }
 
-    public String getNodeName() {
+    /**
+     * Single node name as written in certificate, without the hub name prepended.
+     * 
+     * @return
+     */
+    public String getNodeId() {
         return nodeName;
+    }
+
+    /**
+     * Fully qualified node path with hub name prepended.
+     * @return
+     */
+    public String getNodeName() {
+        return hubName + "." + nodeName;
     }
 
     /**

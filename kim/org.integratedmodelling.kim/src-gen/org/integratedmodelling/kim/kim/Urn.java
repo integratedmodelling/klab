@@ -4,6 +4,8 @@
  */
 package org.integratedmodelling.kim.kim;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -16,6 +18,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.Urn#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Urn#getStrings <em>Strings</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getUrn()
@@ -45,5 +48,17 @@ public interface Urn extends EObject
    * @generated
    */
   void setName(String value);
+
+  /**
+   * Returns the value of the '<em><b>Strings</b></em>' attribute list.
+   * The list contents are of type {@link java.lang.String}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Strings</em>' attribute list.
+   * @see org.integratedmodelling.kim.kim.KimPackage#getUrn_Strings()
+   * @model unique="false"
+   * @generated
+   */
+  EList<String> getStrings();
 
 } // Urn

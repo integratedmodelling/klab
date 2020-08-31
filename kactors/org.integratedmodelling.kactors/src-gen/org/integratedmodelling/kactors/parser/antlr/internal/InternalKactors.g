@@ -138,7 +138,7 @@ ruleModel returns [EObject current=null]
 // Entry rule entryRulePreamble
 entryRulePreamble returns [EObject current=null]@init {
 	UnorderedGroupState myUnorderedGroupState = getUnorderedGroupHelper().snapShot(
-	grammarAccess.getPreambleAccess().getUnorderedGroup_2()
+	grammarAccess.getPreambleAccess().getUnorderedGroup_3()
 	);
 }:
 	{ newCompositeNode(grammarAccess.getPreambleRule()); }
@@ -154,7 +154,7 @@ rulePreamble returns [EObject current=null]
 @init {
 	enterRule();
 	UnorderedGroupState myUnorderedGroupState = getUnorderedGroupHelper().snapShot(
-	grammarAccess.getPreambleAccess().getUnorderedGroup_2()
+	grammarAccess.getPreambleAccess().getUnorderedGroup_3()
 	);
 }
 @after {
@@ -176,26 +176,75 @@ rulePreamble returns [EObject current=null]
 				(
 					(
 						(
-							lv_app_1_1='app'
+							lv_public_1_0='public'
 							{
-								newLeafNode(lv_app_1_1, grammarAccess.getPreambleAccess().getAppAppKeyword_1_0_0_0_0());
+								newLeafNode(lv_public_1_0, grammarAccess.getPreambleAccess().getPublicPublicKeyword_1_0_0_0_0());
 							}
 							{
 								if ($current==null) {
 									$current = createModelElement(grammarAccess.getPreambleRule());
 								}
-								setWithLastConsumed($current, "app", true, null);
+								setWithLastConsumed($current, "public", true, "public");
 							}
-							    |
-							lv_app_1_2='job'
+						)
+					)?
+					(
+						(
+							(
+								lv_mobile_2_0='mobile'
+								{
+									newLeafNode(lv_mobile_2_0, grammarAccess.getPreambleAccess().getMobileMobileKeyword_1_0_0_1_0_0());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getPreambleRule());
+									}
+									setWithLastConsumed($current, "mobile", true, "mobile");
+								}
+							)
+						)
+						    |
+						(
+							(
+								lv_desktop_3_0='desktop'
+								{
+									newLeafNode(lv_desktop_3_0, grammarAccess.getPreambleAccess().getDesktopDesktopKeyword_1_0_0_1_1_0());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getPreambleRule());
+									}
+									setWithLastConsumed($current, "desktop", true, "desktop");
+								}
+							)
+						)
+						    |
+						(
+							(
+								lv_web_4_0='web'
+								{
+									newLeafNode(lv_web_4_0, grammarAccess.getPreambleAccess().getWebWebKeyword_1_0_0_1_2_0());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getPreambleRule());
+									}
+									setWithLastConsumed($current, "web", true, "web");
+								}
+							)
+						)
+					)?
+					(
+						(
+							lv_app_5_0='app'
 							{
-								newLeafNode(lv_app_1_2, grammarAccess.getPreambleAccess().getAppJobKeyword_1_0_0_0_1());
+								newLeafNode(lv_app_5_0, grammarAccess.getPreambleAccess().getAppAppKeyword_1_0_0_2_0());
 							}
 							{
 								if ($current==null) {
 									$current = createModelElement(grammarAccess.getPreambleRule());
 								}
-								setWithLastConsumed($current, "app", true, null);
+								setWithLastConsumed($current, "app", true, "app");
 							}
 						)
 					)
@@ -203,9 +252,24 @@ rulePreamble returns [EObject current=null]
 				    |
 				(
 					(
-						lv_test_2_0='testcase'
+						lv_task_6_0='task'
 						{
-							newLeafNode(lv_test_2_0, grammarAccess.getPreambleAccess().getTestTestcaseKeyword_1_0_1_0());
+							newLeafNode(lv_task_6_0, grammarAccess.getPreambleAccess().getTaskTaskKeyword_1_0_1_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getPreambleRule());
+							}
+							setWithLastConsumed($current, "task", true, "task");
+						}
+					)
+				)
+				    |
+				(
+					(
+						lv_test_7_0='testcase'
+						{
+							newLeafNode(lv_test_7_0, grammarAccess.getPreambleAccess().getTestTestcaseKeyword_1_0_2_0());
 						}
 						{
 							if ($current==null) {
@@ -218,9 +282,24 @@ rulePreamble returns [EObject current=null]
 				    |
 				(
 					(
-						lv_user_3_0='user'
+						lv_component_8_0='component'
 						{
-							newLeafNode(lv_user_3_0, grammarAccess.getPreambleAccess().getUserUserKeyword_1_0_2_0());
+							newLeafNode(lv_component_8_0, grammarAccess.getPreambleAccess().getComponentComponentKeyword_1_0_3_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getPreambleRule());
+							}
+							setWithLastConsumed($current, "component", true, "component");
+						}
+					)
+				)
+				    |
+				(
+					(
+						lv_user_9_0='user'
+						{
+							newLeafNode(lv_user_9_0, grammarAccess.getPreambleAccess().getUserUserKeyword_1_0_4_0());
 						}
 						{
 							if ($current==null) {
@@ -234,9 +313,9 @@ rulePreamble returns [EObject current=null]
 				(
 					(
 						(
-							lv_library_4_1='trait'
+							lv_library_10_1='trait'
 							{
-								newLeafNode(lv_library_4_1, grammarAccess.getPreambleAccess().getLibraryTraitKeyword_1_0_3_0_0());
+								newLeafNode(lv_library_10_1, grammarAccess.getPreambleAccess().getLibraryTraitKeyword_1_0_5_0_0());
 							}
 							{
 								if ($current==null) {
@@ -245,9 +324,9 @@ rulePreamble returns [EObject current=null]
 								setWithLastConsumed($current, "library", true, null);
 							}
 							    |
-							lv_library_4_2='library'
+							lv_library_10_2='library'
 							{
-								newLeafNode(lv_library_4_2, grammarAccess.getPreambleAccess().getLibraryLibraryKeyword_1_0_3_0_1());
+								newLeafNode(lv_library_10_2, grammarAccess.getPreambleAccess().getLibraryLibraryKeyword_1_0_5_0_1());
 							}
 							{
 								if ($current==null) {
@@ -262,9 +341,9 @@ rulePreamble returns [EObject current=null]
 				(
 					(
 						(
-							lv_behavior_5_1='behavior'
+							lv_behavior_11_1='behavior'
 							{
-								newLeafNode(lv_behavior_5_1, grammarAccess.getPreambleAccess().getBehaviorBehaviorKeyword_1_0_4_0_0());
+								newLeafNode(lv_behavior_11_1, grammarAccess.getPreambleAccess().getBehaviorBehaviorKeyword_1_0_6_0_0());
 							}
 							{
 								if ($current==null) {
@@ -273,9 +352,9 @@ rulePreamble returns [EObject current=null]
 								setWithLastConsumed($current, "behavior", true, null);
 							}
 							    |
-							lv_behavior_5_2='behaviour'
+							lv_behavior_11_2='behaviour'
 							{
-								newLeafNode(lv_behavior_5_2, grammarAccess.getPreambleAccess().getBehaviorBehaviourKeyword_1_0_4_0_1());
+								newLeafNode(lv_behavior_11_2, grammarAccess.getPreambleAccess().getBehaviorBehaviourKeyword_1_0_6_0_1());
 							}
 							{
 								if ($current==null) {
@@ -292,7 +371,7 @@ rulePreamble returns [EObject current=null]
 					{
 						newCompositeNode(grammarAccess.getPreambleAccess().getNamePathNameParserRuleCall_1_1_0());
 					}
-					lv_name_6_0=rulePathName
+					lv_name_12_0=rulePathName
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getPreambleRule());
@@ -300,7 +379,7 @@ rulePreamble returns [EObject current=null]
 						set(
 							$current,
 							"name",
-							lv_name_6_0,
+							lv_name_12_0,
 							"org.integratedmodelling.kactors.Kactors.PathName");
 						afterParserOrEnumRuleCall();
 					}
@@ -309,26 +388,44 @@ rulePreamble returns [EObject current=null]
 		)?
 		(
 			(
+				lv_label_13_0=RULE_STRING
+				{
+					newLeafNode(lv_label_13_0, grammarAccess.getPreambleAccess().getLabelSTRINGTerminalRuleCall_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getPreambleRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"label",
+						lv_label_13_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)?
+		(
+			(
 				{ 
-				  getUnorderedGroupHelper().enter(grammarAccess.getPreambleAccess().getUnorderedGroup_2());
+				  getUnorderedGroupHelper().enter(grammarAccess.getPreambleAccess().getUnorderedGroup_3());
 				}
 				(
 					(
 			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 0)}?=>(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 0)}?=>(
 					{
-						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 0);
+						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 0);
 					}
-								({true}?=>(otherlv_8='import'
+								({true}?=>(otherlv_15='import'
 								{
-									newLeafNode(otherlv_8, grammarAccess.getPreambleAccess().getImportKeyword_2_0_0());
+									newLeafNode(otherlv_15, grammarAccess.getPreambleAccess().getImportKeyword_3_0_0());
 								}
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getPreambleAccess().getImportsPathNameParserRuleCall_2_0_1_0());
+											newCompositeNode(grammarAccess.getPreambleAccess().getImportsPathNameParserRuleCall_3_0_1_0());
 										}
-										lv_imports_9_0=rulePathName
+										lv_imports_16_0=rulePathName
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getPreambleRule());
@@ -336,23 +433,23 @@ rulePreamble returns [EObject current=null]
 											add(
 												$current,
 												"imports",
-												lv_imports_9_0,
+												lv_imports_16_0,
 												"org.integratedmodelling.kactors.Kactors.PathName");
 											afterParserOrEnumRuleCall();
 										}
 									)
 								)
 								(
-									otherlv_10=','
+									otherlv_17=','
 									{
-										newLeafNode(otherlv_10, grammarAccess.getPreambleAccess().getCommaKeyword_2_0_2_0());
+										newLeafNode(otherlv_17, grammarAccess.getPreambleAccess().getCommaKeyword_3_0_2_0());
 									}
 									(
 										(
 											{
-												newCompositeNode(grammarAccess.getPreambleAccess().getImportsPathNameParserRuleCall_2_0_2_1_0());
+												newCompositeNode(grammarAccess.getPreambleAccess().getImportsPathNameParserRuleCall_3_0_2_1_0());
 											}
-											lv_imports_11_0=rulePathName
+											lv_imports_18_0=rulePathName
 											{
 												if ($current==null) {
 													$current = createModelElementForParent(grammarAccess.getPreambleRule());
@@ -360,7 +457,7 @@ rulePreamble returns [EObject current=null]
 												add(
 													$current,
 													"imports",
-													lv_imports_11_0,
+													lv_imports_18_0,
 													"org.integratedmodelling.kactors.Kactors.PathName");
 												afterParserOrEnumRuleCall();
 											}
@@ -369,25 +466,25 @@ rulePreamble returns [EObject current=null]
 								)*
 								))
 					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_2());
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_3());
 					}
 				)
 			)|
 			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 1)}?=>(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 1)}?=>(
 					{
-						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 1);
+						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 1);
 					}
-								({true}?=>(otherlv_12='worldview'
+								({true}?=>(otherlv_19='worldview'
 								{
-									newLeafNode(otherlv_12, grammarAccess.getPreambleAccess().getWorldviewKeyword_2_1_0());
+									newLeafNode(otherlv_19, grammarAccess.getPreambleAccess().getWorldviewKeyword_3_1_0());
 								}
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getPreambleAccess().getWorldviewPathNameParserRuleCall_2_1_1_0());
+											newCompositeNode(grammarAccess.getPreambleAccess().getWorldviewPathNameParserRuleCall_3_1_1_0());
 										}
-										lv_worldview_13_0=rulePathName
+										lv_worldview_20_0=rulePathName
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getPreambleRule());
@@ -395,7 +492,7 @@ rulePreamble returns [EObject current=null]
 											set(
 												$current,
 												"worldview",
-												lv_worldview_13_0,
+												lv_worldview_20_0,
 												"org.integratedmodelling.kactors.Kactors.PathName");
 											afterParserOrEnumRuleCall();
 										}
@@ -403,35 +500,36 @@ rulePreamble returns [EObject current=null]
 								)
 								))
 					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_2());
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_3());
 					}
 				)
 			)|
 			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 2)}?=>(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 2)}?=>(
 					{
-						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 2);
+						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 2);
 					}
-								({true}?=>(otherlv_14='observable'
+								({true}?=>(otherlv_21='observable'
 								{
-									newLeafNode(otherlv_14, grammarAccess.getPreambleAccess().getObservableKeyword_2_2_0());
+									newLeafNode(otherlv_21, grammarAccess.getPreambleAccess().getObservableKeyword_3_2_0());
 								}
 								(
 									(
 										(
-											lv_observable_15_0=RULE_OBSERVABLE
 											{
-												newLeafNode(lv_observable_15_0, grammarAccess.getPreambleAccess().getObservableOBSERVABLETerminalRuleCall_2_2_1_0_0());
+												newCompositeNode(grammarAccess.getPreambleAccess().getObservableObservableParserRuleCall_3_2_1_0_0());
 											}
+											lv_observable_22_0=ruleObservable
 											{
 												if ($current==null) {
-													$current = createModelElement(grammarAccess.getPreambleRule());
+													$current = createModelElementForParent(grammarAccess.getPreambleRule());
 												}
-												setWithLastConsumed(
+												set(
 													$current,
 													"observable",
-													lv_observable_15_0,
-													"org.integratedmodelling.kactors.Kactors.OBSERVABLE");
+													lv_observable_22_0,
+													"org.integratedmodelling.kactors.Kactors.Observable");
+												afterParserOrEnumRuleCall();
 											}
 										)
 									)
@@ -439,9 +537,9 @@ rulePreamble returns [EObject current=null]
 									(
 										(
 											{
-												newCompositeNode(grammarAccess.getPreambleAccess().getObservablesListParserRuleCall_2_2_1_1_0());
+												newCompositeNode(grammarAccess.getPreambleAccess().getObservablesListParserRuleCall_3_2_1_1_0());
 											}
-											lv_observables_16_0=ruleList
+											lv_observables_23_0=ruleList
 											{
 												if ($current==null) {
 													$current = createModelElementForParent(grammarAccess.getPreambleRule());
@@ -449,7 +547,7 @@ rulePreamble returns [EObject current=null]
 												set(
 													$current,
 													"observables",
-													lv_observables_16_0,
+													lv_observables_23_0,
 													"org.integratedmodelling.kactors.Kactors.List");
 												afterParserOrEnumRuleCall();
 											}
@@ -458,89 +556,24 @@ rulePreamble returns [EObject current=null]
 								)
 								))
 					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_2());
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_3());
 					}
 				)
 			)|
 			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 3)}?=>(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 3)}?=>(
 					{
-						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 3);
+						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 3);
 					}
-								({true}?=>(otherlv_17='label'
+								({true}?=>(otherlv_24='description'
 								{
-									newLeafNode(otherlv_17, grammarAccess.getPreambleAccess().getLabelKeyword_2_3_0());
+									newLeafNode(otherlv_24, grammarAccess.getPreambleAccess().getDescriptionKeyword_3_3_0());
 								}
 								(
 									(
-										(
-											lv_label_18_1=RULE_LOWERCASE_ID
-											{
-												newLeafNode(lv_label_18_1, grammarAccess.getPreambleAccess().getLabelLOWERCASE_IDTerminalRuleCall_2_3_1_0_0());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getPreambleRule());
-												}
-												setWithLastConsumed(
-													$current,
-													"label",
-													lv_label_18_1,
-													"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
-											}
-											    |
-											lv_label_18_2=RULE_ID
-											{
-												newLeafNode(lv_label_18_2, grammarAccess.getPreambleAccess().getLabelIDTerminalRuleCall_2_3_1_0_1());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getPreambleRule());
-												}
-												setWithLastConsumed(
-													$current,
-													"label",
-													lv_label_18_2,
-													"org.eclipse.xtext.common.Terminals.ID");
-											}
-											    |
-											lv_label_18_3=RULE_STRING
-											{
-												newLeafNode(lv_label_18_3, grammarAccess.getPreambleAccess().getLabelSTRINGTerminalRuleCall_2_3_1_0_2());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getPreambleRule());
-												}
-												setWithLastConsumed(
-													$current,
-													"label",
-													lv_label_18_3,
-													"org.eclipse.xtext.common.Terminals.STRING");
-											}
-										)
-									)
-								)
-								))
-					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_2());
-					}
-				)
-			)|
-			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 4)}?=>(
-					{
-						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 4);
-					}
-								({true}?=>(otherlv_19='description'
-								{
-									newLeafNode(otherlv_19, grammarAccess.getPreambleAccess().getDescriptionKeyword_2_4_0());
-								}
-								(
-									(
-										lv_description_20_0=RULE_STRING
+										lv_description_25_0=RULE_STRING
 										{
-											newLeafNode(lv_description_20_0, grammarAccess.getPreambleAccess().getDescriptionSTRINGTerminalRuleCall_2_4_1_0());
+											newLeafNode(lv_description_25_0, grammarAccess.getPreambleAccess().getDescriptionSTRINGTerminalRuleCall_3_3_1_0());
 										}
 										{
 											if ($current==null) {
@@ -549,31 +582,31 @@ rulePreamble returns [EObject current=null]
 											setWithLastConsumed(
 												$current,
 												"description",
-												lv_description_20_0,
+												lv_description_25_0,
 												"org.eclipse.xtext.common.Terminals.STRING");
 										}
 									)
 								)
 								))
 					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_2());
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_3());
 					}
 				)
 			)|
 			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 5)}?=>(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 4)}?=>(
 					{
-						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 5);
+						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 4);
 					}
-								({true}?=>(otherlv_21='permissions'
+								({true}?=>(otherlv_26='permissions'
 								{
-									newLeafNode(otherlv_21, grammarAccess.getPreambleAccess().getPermissionsKeyword_2_5_0());
+									newLeafNode(otherlv_26, grammarAccess.getPreambleAccess().getPermissionsKeyword_3_4_0());
 								}
 								(
 									(
-										lv_permissions_22_0=RULE_STRING
+										lv_permissions_27_0=RULE_STRING
 										{
-											newLeafNode(lv_permissions_22_0, grammarAccess.getPreambleAccess().getPermissionsSTRINGTerminalRuleCall_2_5_1_0());
+											newLeafNode(lv_permissions_27_0, grammarAccess.getPreambleAccess().getPermissionsSTRINGTerminalRuleCall_3_4_1_0());
 										}
 										{
 											if ($current==null) {
@@ -582,31 +615,31 @@ rulePreamble returns [EObject current=null]
 											setWithLastConsumed(
 												$current,
 												"permissions",
-												lv_permissions_22_0,
+												lv_permissions_27_0,
 												"org.eclipse.xtext.common.Terminals.STRING");
 										}
 									)
 								)
 								))
 					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_2());
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_3());
 					}
 				)
 			)|
 			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 6)}?=>(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 5)}?=>(
 					{
-						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 6);
+						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 5);
 					}
-								({true}?=>(otherlv_23='author'
+								({true}?=>(otherlv_28='author'
 								{
-									newLeafNode(otherlv_23, grammarAccess.getPreambleAccess().getAuthorKeyword_2_6_0());
+									newLeafNode(otherlv_28, grammarAccess.getPreambleAccess().getAuthorKeyword_3_5_0());
 								}
 								(
 									(
-										lv_authors_24_0=RULE_STRING
+										lv_authors_29_0=RULE_STRING
 										{
-											newLeafNode(lv_authors_24_0, grammarAccess.getPreambleAccess().getAuthorsSTRINGTerminalRuleCall_2_6_1_0());
+											newLeafNode(lv_authors_29_0, grammarAccess.getPreambleAccess().getAuthorsSTRINGTerminalRuleCall_3_5_1_0());
 										}
 										{
 											if ($current==null) {
@@ -615,66 +648,166 @@ rulePreamble returns [EObject current=null]
 											addWithLastConsumed(
 												$current,
 												"authors",
-												lv_authors_24_0,
+												lv_authors_29_0,
 												"org.eclipse.xtext.common.Terminals.STRING");
 										}
 									)
 								)
 								))+
 					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_2());
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_3());
 					}
 				)
 			)|
 			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 7)}?=>(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 6)}?=>(
 					{
-						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 7);
+						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 6);
 					}
-								({true}?=>(otherlv_25='style'
+								({true}?=>(otherlv_30='style'
 								{
-									newLeafNode(otherlv_25, grammarAccess.getPreambleAccess().getStyleKeyword_2_7_0());
+									newLeafNode(otherlv_30, grammarAccess.getPreambleAccess().getStyleKeyword_3_6_0());
 								}
 								(
 									(
-										{
-											newCompositeNode(grammarAccess.getPreambleAccess().getStylePathNameParserRuleCall_2_7_1_0());
-										}
-										lv_style_26_0=rulePathName
-										{
-											if ($current==null) {
-												$current = createModelElementForParent(grammarAccess.getPreambleRule());
+										(
+											(
+												{
+													newCompositeNode(grammarAccess.getPreambleAccess().getStylePathNameParserRuleCall_3_6_1_0_0_0());
+												}
+												lv_style_31_0=rulePathName
+												{
+													if ($current==null) {
+														$current = createModelElementForParent(grammarAccess.getPreambleRule());
+													}
+													set(
+														$current,
+														"style",
+														lv_style_31_0,
+														"org.integratedmodelling.kactors.Kactors.PathName");
+													afterParserOrEnumRuleCall();
+												}
+											)
+										)
+										(
+											otherlv_32='with'
+											{
+												newLeafNode(otherlv_32, grammarAccess.getPreambleAccess().getWithKeyword_3_6_1_0_1_0());
 											}
-											set(
-												$current,
-												"style",
-												lv_style_26_0,
-												"org.integratedmodelling.kactors.Kactors.PathName");
-											afterParserOrEnumRuleCall();
-										}
+											(
+												(
+													{
+														newCompositeNode(grammarAccess.getPreambleAccess().getInlineStyleMapParserRuleCall_3_6_1_0_1_1_0());
+													}
+													lv_inlineStyle_33_0=ruleMap
+													{
+														if ($current==null) {
+															$current = createModelElementForParent(grammarAccess.getPreambleRule());
+														}
+														set(
+															$current,
+															"inlineStyle",
+															lv_inlineStyle_33_0,
+															"org.integratedmodelling.kactors.Kactors.Map");
+														afterParserOrEnumRuleCall();
+													}
+												)
+											)
+										)?
+									)
+									    |
+									(
+										(
+											{
+												newCompositeNode(grammarAccess.getPreambleAccess().getInlineStyleMapParserRuleCall_3_6_1_1_0());
+											}
+											lv_inlineStyle_34_0=ruleMap
+											{
+												if ($current==null) {
+													$current = createModelElementForParent(grammarAccess.getPreambleRule());
+												}
+												set(
+													$current,
+													"inlineStyle",
+													lv_inlineStyle_34_0,
+													"org.integratedmodelling.kactors.Kactors.Map");
+												afterParserOrEnumRuleCall();
+											}
+										)
+									)
+								)?
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_3());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 7)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 7);
+					}
+								({true}?=>(otherlv_35='logo'
+								{
+									newLeafNode(otherlv_35, grammarAccess.getPreambleAccess().getLogoKeyword_3_7_0());
+								}
+								(
+									(
+										(
+											{
+												newCompositeNode(grammarAccess.getPreambleAccess().getLogoPathParserRuleCall_3_7_1_0_0());
+											}
+											lv_logo_36_1=rulePath
+											{
+												if ($current==null) {
+													$current = createModelElementForParent(grammarAccess.getPreambleRule());
+												}
+												set(
+													$current,
+													"logo",
+													lv_logo_36_1,
+													"org.integratedmodelling.kactors.Kactors.Path");
+												afterParserOrEnumRuleCall();
+											}
+											    |
+											lv_logo_36_2=RULE_STRING
+											{
+												newLeafNode(lv_logo_36_2, grammarAccess.getPreambleAccess().getLogoSTRINGTerminalRuleCall_3_7_1_0_1());
+											}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getPreambleRule());
+												}
+												setWithLastConsumed(
+													$current,
+													"logo",
+													lv_logo_36_2,
+													"org.eclipse.xtext.common.Terminals.STRING");
+											}
+										)
 									)
 								)
 								))
 					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_2());
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_3());
 					}
 				)
 			)|
 			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 8)}?=>(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 8)}?=>(
 					{
-						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 8);
+						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 8);
 					}
-								({true}?=>(otherlv_27='version'
+								({true}?=>(otherlv_37='version'
 								{
-									newLeafNode(otherlv_27, grammarAccess.getPreambleAccess().getVersionKeyword_2_8_0());
+									newLeafNode(otherlv_37, grammarAccess.getPreambleAccess().getVersionKeyword_3_8_0());
 								}
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getPreambleAccess().getVersionVersionNumberParserRuleCall_2_8_1_0());
+											newCompositeNode(grammarAccess.getPreambleAccess().getVersionVersionNumberParserRuleCall_3_8_1_0());
 										}
-										lv_version_28_0=ruleVersionNumber
+										lv_version_38_0=ruleVersionNumber
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getPreambleRule());
@@ -682,7 +815,7 @@ rulePreamble returns [EObject current=null]
 											set(
 												$current,
 												"version",
-												lv_version_28_0,
+												lv_version_38_0,
 												"org.integratedmodelling.kactors.Kactors.VersionNumber");
 											afterParserOrEnumRuleCall();
 										}
@@ -690,25 +823,25 @@ rulePreamble returns [EObject current=null]
 								)
 								))
 					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_2());
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_3());
 					}
 				)
 			)|
 			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 9)}?=>(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 9)}?=>(
 					{
-						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 9);
+						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 9);
 					}
-								({true}?=>(otherlv_29='created'
+								({true}?=>(otherlv_39='created'
 								{
-									newLeafNode(otherlv_29, grammarAccess.getPreambleAccess().getCreatedKeyword_2_9_0());
+									newLeafNode(otherlv_39, grammarAccess.getPreambleAccess().getCreatedKeyword_3_9_0());
 								}
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getPreambleAccess().getCreatedDateParserRuleCall_2_9_1_0());
+											newCompositeNode(grammarAccess.getPreambleAccess().getCreatedDateParserRuleCall_3_9_1_0());
 										}
-										lv_created_30_0=ruleDate
+										lv_created_40_0=ruleDate
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getPreambleRule());
@@ -716,7 +849,7 @@ rulePreamble returns [EObject current=null]
 											set(
 												$current,
 												"created",
-												lv_created_30_0,
+												lv_created_40_0,
 												"org.integratedmodelling.kactors.Kactors.Date");
 											afterParserOrEnumRuleCall();
 										}
@@ -724,9 +857,9 @@ rulePreamble returns [EObject current=null]
 								)
 								(
 									(
-										lv_createcomment_31_0=RULE_STRING
+										lv_createcomment_41_0=RULE_STRING
 										{
-											newLeafNode(lv_createcomment_31_0, grammarAccess.getPreambleAccess().getCreatecommentSTRINGTerminalRuleCall_2_9_2_0());
+											newLeafNode(lv_createcomment_41_0, grammarAccess.getPreambleAccess().getCreatecommentSTRINGTerminalRuleCall_3_9_2_0());
 										}
 										{
 											if ($current==null) {
@@ -735,32 +868,32 @@ rulePreamble returns [EObject current=null]
 											setWithLastConsumed(
 												$current,
 												"createcomment",
-												lv_createcomment_31_0,
+												lv_createcomment_41_0,
 												"org.eclipse.xtext.common.Terminals.STRING");
 										}
 									)
 								)?
 								))
 					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_2());
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_3());
 					}
 				)
 			)|
 			(
-				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 10)}?=>(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 10)}?=>(
 					{
-						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_2(), 10);
+						getUnorderedGroupHelper().select(grammarAccess.getPreambleAccess().getUnorderedGroup_3(), 10);
 					}
-								({true}?=>(otherlv_32='modified'
+								({true}?=>(otherlv_42='modified'
 								{
-									newLeafNode(otherlv_32, grammarAccess.getPreambleAccess().getModifiedKeyword_2_10_0());
+									newLeafNode(otherlv_42, grammarAccess.getPreambleAccess().getModifiedKeyword_3_10_0());
 								}
 								(
 									(
 										{
-											newCompositeNode(grammarAccess.getPreambleAccess().getModifiedDateParserRuleCall_2_10_1_0());
+											newCompositeNode(grammarAccess.getPreambleAccess().getModifiedDateParserRuleCall_3_10_1_0());
 										}
-										lv_modified_33_0=ruleDate
+										lv_modified_43_0=ruleDate
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getPreambleRule());
@@ -768,7 +901,7 @@ rulePreamble returns [EObject current=null]
 											set(
 												$current,
 												"modified",
-												lv_modified_33_0,
+												lv_modified_43_0,
 												"org.integratedmodelling.kactors.Kactors.Date");
 											afterParserOrEnumRuleCall();
 										}
@@ -776,9 +909,9 @@ rulePreamble returns [EObject current=null]
 								)
 								(
 									(
-										lv_modcomment_34_0=RULE_STRING
+										lv_modcomment_44_0=RULE_STRING
 										{
-											newLeafNode(lv_modcomment_34_0, grammarAccess.getPreambleAccess().getModcommentSTRINGTerminalRuleCall_2_10_2_0());
+											newLeafNode(lv_modcomment_44_0, grammarAccess.getPreambleAccess().getModcommentSTRINGTerminalRuleCall_3_10_2_0());
 										}
 										{
 											if ($current==null) {
@@ -787,14 +920,14 @@ rulePreamble returns [EObject current=null]
 											setWithLastConsumed(
 												$current,
 												"modcomment",
-												lv_modcomment_34_0,
+												lv_modcomment_44_0,
 												"org.eclipse.xtext.common.Terminals.STRING");
 										}
 									)
 								)?
 								))
 					{ 
-						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_2());
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getPreambleAccess().getUnorderedGroup_3());
 					}
 				)
 			)
@@ -802,7 +935,7 @@ rulePreamble returns [EObject current=null]
 				)
 			)
 				{ 
-				  getUnorderedGroupHelper().leave(grammarAccess.getPreambleAccess().getUnorderedGroup_2());
+				  getUnorderedGroupHelper().leave(grammarAccess.getPreambleAccess().getUnorderedGroup_3());
 				}
 		)
 	)
@@ -1042,6 +1175,102 @@ ruleMessageBody returns [EObject current=null]
 	)
 ;
 
+// Entry rule entryRuleActorInstantiation
+entryRuleActorInstantiation returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getActorInstantiationRule()); }
+	iv_ruleActorInstantiation=ruleActorInstantiation
+	{ $current=$iv_ruleActorInstantiation.current; }
+	EOF;
+
+// Rule ActorInstantiation
+ruleActorInstantiation returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='new'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getActorInstantiationAccess().getNewKeyword_0());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getActorInstantiationAccess().getBehaviorPathNameParserRuleCall_1_0());
+				}
+				lv_behavior_1_0=rulePathName
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getActorInstantiationRule());
+					}
+					set(
+						$current,
+						"behavior",
+						lv_behavior_1_0,
+						"org.integratedmodelling.kactors.Kactors.PathName");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			otherlv_2='('
+			{
+				newLeafNode(otherlv_2, grammarAccess.getActorInstantiationAccess().getLeftParenthesisKeyword_2_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getActorInstantiationAccess().getParametersParameterListParserRuleCall_2_1_0());
+					}
+					lv_parameters_3_0=ruleParameterList
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getActorInstantiationRule());
+						}
+						set(
+							$current,
+							"parameters",
+							lv_parameters_3_0,
+							"org.integratedmodelling.kactors.Kactors.ParameterList");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)?
+			otherlv_4=')'
+			{
+				newLeafNode(otherlv_4, grammarAccess.getActorInstantiationAccess().getRightParenthesisKeyword_2_2());
+			}
+		)?
+		(
+			otherlv_5=':'
+			{
+				newLeafNode(otherlv_5, grammarAccess.getActorInstantiationAccess().getColonKeyword_3_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getActorInstantiationAccess().getActionsActionsParserRuleCall_3_1_0());
+					}
+					lv_actions_6_0=ruleActions
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getActorInstantiationRule());
+						}
+						set(
+							$current,
+							"actions",
+							lv_actions_6_0,
+							"org.integratedmodelling.kactors.Kactors.Actions");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+	)
+;
+
 // Entry rule entryRuleMessageCall
 entryRuleMessageCall returns [EObject current=null]:
 	{ newCompositeNode(grammarAccess.getMessageCallRule()); }
@@ -1212,16 +1441,35 @@ ruleStatementGroup returns [EObject current=null]
 			newLeafNode(otherlv_3, grammarAccess.getStatementGroupAccess().getRightParenthesisKeyword_3());
 		}
 		(
-			otherlv_4=':'
+			(
+				{
+					newCompositeNode(grammarAccess.getStatementGroupAccess().getMetadataMetadataParserRuleCall_4_0());
+				}
+				lv_metadata_4_0=ruleMetadata
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getStatementGroupRule());
+					}
+					set(
+						$current,
+						"metadata",
+						lv_metadata_4_0,
+						"org.integratedmodelling.kactors.Kactors.Metadata");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
+		(
+			otherlv_5=':'
 			{
-				newLeafNode(otherlv_4, grammarAccess.getStatementGroupAccess().getColonKeyword_4_0());
+				newLeafNode(otherlv_5, grammarAccess.getStatementGroupAccess().getColonKeyword_5_0());
 			}
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getStatementGroupAccess().getActionsActionsParserRuleCall_4_1_0());
+						newCompositeNode(grammarAccess.getStatementGroupAccess().getActionsActionsParserRuleCall_5_1_0());
 					}
-					lv_actions_5_0=ruleActions
+					lv_actions_6_0=ruleActions
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getStatementGroupRule());
@@ -1229,11 +1477,103 @@ ruleStatementGroup returns [EObject current=null]
 						set(
 							$current,
 							"actions",
-							lv_actions_5_0,
+							lv_actions_6_0,
 							"org.integratedmodelling.kactors.Kactors.Actions");
 						afterParserOrEnumRuleCall();
 					}
 				)
+			)
+		)?
+	)
+;
+
+// Entry rule entryRuleMetadata
+entryRuleMetadata returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getMetadataRule()); }
+	iv_ruleMetadata=ruleMetadata
+	{ $current=$iv_ruleMetadata.current; }
+	EOF;
+
+// Rule Metadata
+ruleMetadata returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			{
+				newCompositeNode(grammarAccess.getMetadataAccess().getPairsMetadataPairParserRuleCall_0());
+			}
+			lv_pairs_0_0=ruleMetadataPair
+			{
+				if ($current==null) {
+					$current = createModelElementForParent(grammarAccess.getMetadataRule());
+				}
+				add(
+					$current,
+					"pairs",
+					lv_pairs_0_0,
+					"org.integratedmodelling.kactors.Kactors.MetadataPair");
+				afterParserOrEnumRuleCall();
+			}
+		)
+	)+
+;
+
+// Entry rule entryRuleMetadataPair
+entryRuleMetadataPair returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getMetadataPairRule()); }
+	iv_ruleMetadataPair=ruleMetadataPair
+	{ $current=$iv_ruleMetadataPair.current; }
+	EOF;
+
+// Rule MetadataPair
+ruleMetadataPair returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				lv_key_0_0=RULE_KEY
+				{
+					newLeafNode(lv_key_0_0, grammarAccess.getMetadataPairAccess().getKeyKEYTerminalRuleCall_0_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getMetadataPairRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"key",
+						lv_key_0_0,
+						"org.integratedmodelling.kactors.Kactors.KEY");
+				}
+			)
+		)
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getMetadataPairAccess().getValueValueParserRuleCall_1_0());
+				}
+				lv_value_1_0=ruleValue
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getMetadataPairRule());
+					}
+					set(
+						$current,
+						"value",
+						lv_value_1_0,
+						"org.integratedmodelling.kactors.Kactors.Value");
+					afterParserOrEnumRuleCall();
+				}
 			)
 		)?
 	)
@@ -1314,69 +1654,230 @@ ruleStatement returns [EObject current=null]
 	(
 		(
 			(
-				{
-					newCompositeNode(grammarAccess.getStatementAccess().getAssignmentAssignmentParserRuleCall_0_0());
-				}
-				lv_assignment_0_0=ruleAssignment
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getStatementRule());
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getAssignmentAssignmentParserRuleCall_0_0_0());
 					}
-					set(
-						$current,
-						"assignment",
-						lv_assignment_0_0,
-						"org.integratedmodelling.kactors.Kactors.Assignment");
-					afterParserOrEnumRuleCall();
-				}
+					lv_assignment_0_0=ruleAssignment
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"assignment",
+							lv_assignment_0_0,
+							"org.integratedmodelling.kactors.Kactors.Assignment");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getGroupStatementGroupParserRuleCall_0_1_0());
+					}
+					lv_group_1_0=ruleStatementGroup
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"group",
+							lv_group_1_0,
+							"org.integratedmodelling.kactors.Kactors.StatementGroup");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getInstantiationActorInstantiationParserRuleCall_0_2_0());
+					}
+					lv_instantiation_2_0=ruleActorInstantiation
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"instantiation",
+							lv_instantiation_2_0,
+							"org.integratedmodelling.kactors.Kactors.ActorInstantiation");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getVerbMessageCallParserRuleCall_0_3_0());
+					}
+					lv_verb_3_0=ruleMessageCall
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"verb",
+							lv_verb_3_0,
+							"org.integratedmodelling.kactors.Kactors.MessageCall");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					(
+						lv_text_4_0=RULE_EMBEDDEDTEXT
+						{
+							newLeafNode(lv_text_4_0, grammarAccess.getStatementAccess().getTextEMBEDDEDTEXTTerminalRuleCall_0_4_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getStatementRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"text",
+								lv_text_4_0,
+								"org.integratedmodelling.kactors.Kactors.EMBEDDEDTEXT");
+						}
+					)
+				)
+				(
+					(
+						{
+							newCompositeNode(grammarAccess.getStatementAccess().getMetadataMetadataParserRuleCall_0_4_1_0());
+						}
+						lv_metadata_5_0=ruleMetadata
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getStatementRule());
+							}
+							set(
+								$current,
+								"metadata",
+								lv_metadata_5_0,
+								"org.integratedmodelling.kactors.Kactors.Metadata");
+							afterParserOrEnumRuleCall();
+						}
+					)
+				)?
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getIfIfStatementParserRuleCall_0_5_0());
+					}
+					lv_if_6_0=ruleIfStatement
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"if",
+							lv_if_6_0,
+							"org.integratedmodelling.kactors.Kactors.IfStatement");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getWhileWhileStatementParserRuleCall_0_6_0());
+					}
+					lv_while_7_0=ruleWhileStatement
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"while",
+							lv_while_7_0,
+							"org.integratedmodelling.kactors.Kactors.WhileStatement");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getDoDoStatementParserRuleCall_0_7_0());
+					}
+					lv_do_8_0=ruleDoStatement
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"do",
+							lv_do_8_0,
+							"org.integratedmodelling.kactors.Kactors.DoStatement");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getForForStatementParserRuleCall_0_8_0());
+					}
+					lv_for_9_0=ruleForStatement
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"for",
+							lv_for_9_0,
+							"org.integratedmodelling.kactors.Kactors.ForStatement");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getStatementAccess().getValueValueWithMetadataParserRuleCall_0_9_0());
+					}
+					lv_value_10_0=ruleValueWithMetadata
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getStatementRule());
+						}
+						set(
+							$current,
+							"value",
+							lv_value_10_0,
+							"org.integratedmodelling.kactors.Kactors.ValueWithMetadata");
+						afterParserOrEnumRuleCall();
+					}
+				)
 			)
 		)
-		    |
 		(
 			(
+				lv_tag_11_0=RULE_TAG
 				{
-					newCompositeNode(grammarAccess.getStatementAccess().getGroupStatementGroupParserRuleCall_1_0());
-				}
-				lv_group_1_0=ruleStatementGroup
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getStatementRule());
-					}
-					set(
-						$current,
-						"group",
-						lv_group_1_0,
-						"org.integratedmodelling.kactors.Kactors.StatementGroup");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getStatementAccess().getVerbMessageCallParserRuleCall_2_0());
-				}
-				lv_verb_2_0=ruleMessageCall
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getStatementRule());
-					}
-					set(
-						$current,
-						"verb",
-						lv_verb_2_0,
-						"org.integratedmodelling.kactors.Kactors.MessageCall");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			(
-				lv_text_3_0=RULE_EMBEDDEDTEXT
-				{
-					newLeafNode(lv_text_3_0, grammarAccess.getStatementAccess().getTextEMBEDDEDTEXTTerminalRuleCall_3_0());
+					newLeafNode(lv_tag_11_0, grammarAccess.getStatementAccess().getTagTAGTerminalRuleCall_1_0());
 				}
 				{
 					if ($current==null) {
@@ -1384,112 +1885,12 @@ ruleStatement returns [EObject current=null]
 					}
 					setWithLastConsumed(
 						$current,
-						"text",
-						lv_text_3_0,
-						"org.integratedmodelling.kactors.Kactors.EMBEDDEDTEXT");
+						"tag",
+						lv_tag_11_0,
+						"org.integratedmodelling.kactors.Kactors.TAG");
 				}
 			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getStatementAccess().getIfIfStatementParserRuleCall_4_0());
-				}
-				lv_if_4_0=ruleIfStatement
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getStatementRule());
-					}
-					set(
-						$current,
-						"if",
-						lv_if_4_0,
-						"org.integratedmodelling.kactors.Kactors.IfStatement");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getStatementAccess().getWhileWhileStatementParserRuleCall_5_0());
-				}
-				lv_while_5_0=ruleWhileStatement
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getStatementRule());
-					}
-					set(
-						$current,
-						"while",
-						lv_while_5_0,
-						"org.integratedmodelling.kactors.Kactors.WhileStatement");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getStatementAccess().getDoDoStatementParserRuleCall_6_0());
-				}
-				lv_do_6_0=ruleDoStatement
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getStatementRule());
-					}
-					set(
-						$current,
-						"do",
-						lv_do_6_0,
-						"org.integratedmodelling.kactors.Kactors.DoStatement");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getStatementAccess().getForForStatementParserRuleCall_7_0());
-				}
-				lv_for_7_0=ruleForStatement
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getStatementRule());
-					}
-					set(
-						$current,
-						"for",
-						lv_for_7_0,
-						"org.integratedmodelling.kactors.Kactors.ForStatement");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getStatementAccess().getValueValueParserRuleCall_8_0());
-				}
-				lv_value_8_0=ruleValue
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getStatementRule());
-					}
-					set(
-						$current,
-						"value",
-						lv_value_8_0,
-						"org.integratedmodelling.kactors.Kactors.Value");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
+		)?
 	)
 ;
 
@@ -1676,9 +2077,9 @@ ruleNextStatement returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getNextStatementAccess().getValueValueParserRuleCall_1_8_0());
+						newCompositeNode(grammarAccess.getNextStatementAccess().getValueValueWithMetadataParserRuleCall_1_8_0());
 					}
-					lv_value_9_0=ruleValue
+					lv_value_9_0=ruleValueWithMetadata
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getNextStatementRule());
@@ -1687,12 +2088,30 @@ ruleNextStatement returns [EObject current=null]
 							$current,
 							"value",
 							lv_value_9_0,
-							"org.integratedmodelling.kactors.Kactors.Value");
+							"org.integratedmodelling.kactors.Kactors.ValueWithMetadata");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 		)
+		(
+			(
+				lv_tag_10_0=RULE_TAG
+				{
+					newLeafNode(lv_tag_10_0, grammarAccess.getNextStatementAccess().getTagTAGTerminalRuleCall_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getNextStatementRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"tag",
+						lv_tag_10_0,
+						"org.integratedmodelling.kactors.Kactors.TAG");
+				}
+			)
+		)?
 	)
 ;
 
@@ -2390,18 +2809,18 @@ ruleValue returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_3_0());
+					newCompositeNode(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_3_0());
 				}
-				lv_id_3_0=rulePathName
+				lv_urn_3_0=ruleUrnId
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueRule());
 					}
 					set(
 						$current,
-						"id",
-						lv_id_3_0,
-						"org.integratedmodelling.kactors.Kactors.PathName");
+						"urn",
+						lv_urn_3_0,
+						"org.integratedmodelling.kactors.Kactors.UrnId");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -2410,18 +2829,18 @@ ruleValue returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueAccess().getUrnUrnIdParserRuleCall_4_0());
+					newCompositeNode(grammarAccess.getValueAccess().getIdPathNameParserRuleCall_4_0());
 				}
-				lv_urn_4_0=ruleUrnId
+				lv_id_4_0=rulePathName
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueRule());
 					}
 					set(
 						$current,
-						"urn",
-						lv_urn_4_0,
-						"org.integratedmodelling.kactors.Kactors.UrnId");
+						"id",
+						lv_id_4_0,
+						"org.integratedmodelling.kactors.Kactors.PathName");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -2469,19 +2888,20 @@ ruleValue returns [EObject current=null]
 		    |
 		(
 			(
-				lv_observable_7_0=RULE_OBSERVABLE
 				{
-					newLeafNode(lv_observable_7_0, grammarAccess.getValueAccess().getObservableOBSERVABLETerminalRuleCall_7_0());
+					newCompositeNode(grammarAccess.getValueAccess().getObservableObservableParserRuleCall_7_0());
 				}
+				lv_observable_7_0=ruleObservable
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getValueRule());
+						$current = createModelElementForParent(grammarAccess.getValueRule());
 					}
-					setWithLastConsumed(
+					set(
 						$current,
 						"observable",
 						lv_observable_7_0,
-						"org.integratedmodelling.kactors.Kactors.OBSERVABLE");
+						"org.integratedmodelling.kactors.Kactors.Observable");
+					afterParserOrEnumRuleCall();
 				}
 			)
 		)
@@ -2547,15 +2967,15 @@ ruleValue returns [EObject current=null]
 	)
 ;
 
-// Entry rule entryRuleValueWithoutTree
-entryRuleValueWithoutTree returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getValueWithoutTreeRule()); }
-	iv_ruleValueWithoutTree=ruleValueWithoutTree
-	{ $current=$iv_ruleValueWithoutTree.current; }
+// Entry rule entryRuleValueWithMetadata
+entryRuleValueWithMetadata returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getValueWithMetadataRule()); }
+	iv_ruleValueWithMetadata=ruleValueWithMetadata
+	{ $current=$iv_ruleValueWithMetadata.current; }
 	EOF;
 
-// Rule ValueWithoutTree
-ruleValueWithoutTree returns [EObject current=null]
+// Rule ValueWithMetadata
+ruleValueWithMetadata returns [EObject current=null]
 @init {
 	enterRule();
 }
@@ -2565,200 +2985,479 @@ ruleValueWithoutTree returns [EObject current=null]
 	(
 		(
 			(
-				lv_argvalue_0_0=RULE_ARGVALUE
-				{
-					newLeafNode(lv_argvalue_0_0, grammarAccess.getValueWithoutTreeAccess().getArgvalueARGVALUETerminalRuleCall_0_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getValueWithoutTreeRule());
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getTreeTreeParserRuleCall_0_0_0());
 					}
-					setWithLastConsumed(
-						$current,
-						"argvalue",
-						lv_argvalue_0_0,
-						"org.integratedmodelling.kactors.Kactors.ARGVALUE");
-				}
+					lv_tree_0_0=ruleTree
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
+						}
+						set(
+							$current,
+							"tree",
+							lv_tree_0_0,
+							"org.integratedmodelling.kactors.Kactors.Tree");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					lv_argvalue_1_0=RULE_ARGVALUE
+					{
+						newLeafNode(lv_argvalue_1_0, grammarAccess.getValueWithMetadataAccess().getArgvalueARGVALUETerminalRuleCall_0_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getValueWithMetadataRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"argvalue",
+							lv_argvalue_1_0,
+							"org.integratedmodelling.kactors.Kactors.ARGVALUE");
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getLiteralLiteralParserRuleCall_0_2_0());
+					}
+					lv_literal_2_0=ruleLiteral
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
+						}
+						set(
+							$current,
+							"literal",
+							lv_literal_2_0,
+							"org.integratedmodelling.kactors.Kactors.Literal");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getUrnUrnIdParserRuleCall_0_3_0());
+					}
+					lv_urn_3_0=ruleUrnId
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
+						}
+						set(
+							$current,
+							"urn",
+							lv_urn_3_0,
+							"org.integratedmodelling.kactors.Kactors.UrnId");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getIdPathNameParserRuleCall_0_4_0());
+					}
+					lv_id_4_0=rulePathName
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
+						}
+						set(
+							$current,
+							"id",
+							lv_id_4_0,
+							"org.integratedmodelling.kactors.Kactors.PathName");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getListListParserRuleCall_0_5_0());
+					}
+					lv_list_5_0=ruleList
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
+						}
+						set(
+							$current,
+							"list",
+							lv_list_5_0,
+							"org.integratedmodelling.kactors.Kactors.List");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getMapMapParserRuleCall_0_6_0());
+					}
+					lv_map_6_0=ruleMap
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
+						}
+						set(
+							$current,
+							"map",
+							lv_map_6_0,
+							"org.integratedmodelling.kactors.Kactors.Map");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getObservableObservableParserRuleCall_0_7_0());
+					}
+					lv_observable_7_0=ruleObservable
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
+						}
+						set(
+							$current,
+							"observable",
+							lv_observable_7_0,
+							"org.integratedmodelling.kactors.Kactors.Observable");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					lv_expression_8_0=RULE_EXPR
+					{
+						newLeafNode(lv_expression_8_0, grammarAccess.getValueWithMetadataAccess().getExpressionEXPRTerminalRuleCall_0_8_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getValueWithMetadataRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"expression",
+							lv_expression_8_0,
+							"org.integratedmodelling.kactors.Kactors.EXPR");
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getTableLookupTableParserRuleCall_0_9_0());
+					}
+					lv_table_9_0=ruleLookupTable
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
+						}
+						set(
+							$current,
+							"table",
+							lv_table_9_0,
+							"org.integratedmodelling.kactors.Kactors.LookupTable");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataAccess().getQuantityQuantityParserRuleCall_0_10_0());
+					}
+					lv_quantity_10_0=ruleQuantity
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
+						}
+						set(
+							$current,
+							"quantity",
+							lv_quantity_10_0,
+							"org.integratedmodelling.kactors.Kactors.Quantity");
+						afterParserOrEnumRuleCall();
+					}
+				)
 			)
 		)
-		    |
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueWithoutTreeAccess().getLiteralLiteralParserRuleCall_1_0());
+					newCompositeNode(grammarAccess.getValueWithMetadataAccess().getMetadataMetadataParserRuleCall_1_0());
 				}
-				lv_literal_1_0=ruleLiteral
+				lv_metadata_11_0=ruleMetadata
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getValueWithoutTreeRule());
+						$current = createModelElementForParent(grammarAccess.getValueWithMetadataRule());
 					}
 					set(
 						$current,
-						"literal",
-						lv_literal_1_0,
-						"org.integratedmodelling.kactors.Kactors.Literal");
+						"metadata",
+						lv_metadata_11_0,
+						"org.integratedmodelling.kactors.Kactors.Metadata");
 					afterParserOrEnumRuleCall();
 				}
 			)
+		)?
+	)
+;
+
+// Entry rule entryRuleValueWithMetadataWithoutTree
+entryRuleValueWithMetadataWithoutTree returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeRule()); }
+	iv_ruleValueWithMetadataWithoutTree=ruleValueWithMetadataWithoutTree
+	{ $current=$iv_ruleValueWithMetadataWithoutTree.current; }
+	EOF;
+
+// Rule ValueWithMetadataWithoutTree
+ruleValueWithMetadataWithoutTree returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				(
+					lv_argvalue_0_0=RULE_ARGVALUE
+					{
+						newLeafNode(lv_argvalue_0_0, grammarAccess.getValueWithMetadataWithoutTreeAccess().getArgvalueARGVALUETerminalRuleCall_0_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getValueWithMetadataWithoutTreeRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"argvalue",
+							lv_argvalue_0_0,
+							"org.integratedmodelling.kactors.Kactors.ARGVALUE");
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getLiteralLiteralParserRuleCall_0_1_0());
+					}
+					lv_literal_1_0=ruleLiteral
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+						}
+						set(
+							$current,
+							"literal",
+							lv_literal_1_0,
+							"org.integratedmodelling.kactors.Kactors.Literal");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getIdPathNameParserRuleCall_0_2_0());
+					}
+					lv_id_2_0=rulePathName
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+						}
+						set(
+							$current,
+							"id",
+							lv_id_2_0,
+							"org.integratedmodelling.kactors.Kactors.PathName");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getUrnUrnIdParserRuleCall_0_3_0());
+					}
+					lv_urn_3_0=ruleUrnId
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+						}
+						set(
+							$current,
+							"urn",
+							lv_urn_3_0,
+							"org.integratedmodelling.kactors.Kactors.UrnId");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getListListParserRuleCall_0_4_0());
+					}
+					lv_list_4_0=ruleList
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+						}
+						set(
+							$current,
+							"list",
+							lv_list_4_0,
+							"org.integratedmodelling.kactors.Kactors.List");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getMapMapParserRuleCall_0_5_0());
+					}
+					lv_map_5_0=ruleMap
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+						}
+						set(
+							$current,
+							"map",
+							lv_map_5_0,
+							"org.integratedmodelling.kactors.Kactors.Map");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getObservableObservableParserRuleCall_0_6_0());
+					}
+					lv_observable_6_0=ruleObservable
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+						}
+						set(
+							$current,
+							"observable",
+							lv_observable_6_0,
+							"org.integratedmodelling.kactors.Kactors.Observable");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					lv_expression_7_0=RULE_EXPR
+					{
+						newLeafNode(lv_expression_7_0, grammarAccess.getValueWithMetadataWithoutTreeAccess().getExpressionEXPRTerminalRuleCall_0_7_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getValueWithMetadataWithoutTreeRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"expression",
+							lv_expression_7_0,
+							"org.integratedmodelling.kactors.Kactors.EXPR");
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getTableLookupTableParserRuleCall_0_8_0());
+					}
+					lv_table_8_0=ruleLookupTable
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+						}
+						set(
+							$current,
+							"table",
+							lv_table_8_0,
+							"org.integratedmodelling.kactors.Kactors.LookupTable");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getQuantityQuantityParserRuleCall_0_9_0());
+					}
+					lv_quantity_9_0=ruleQuantity
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+						}
+						set(
+							$current,
+							"quantity",
+							lv_quantity_9_0,
+							"org.integratedmodelling.kactors.Kactors.Quantity");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
 		)
-		    |
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueWithoutTreeAccess().getIdPathNameParserRuleCall_2_0());
+					newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getMetadataMetadataParserRuleCall_1_0());
 				}
-				lv_id_2_0=rulePathName
+				lv_metadata_10_0=ruleMetadata
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getValueWithoutTreeRule());
+						$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
 					}
 					set(
 						$current,
-						"id",
-						lv_id_2_0,
-						"org.integratedmodelling.kactors.Kactors.PathName");
+						"metadata",
+						lv_metadata_10_0,
+						"org.integratedmodelling.kactors.Kactors.Metadata");
 					afterParserOrEnumRuleCall();
 				}
 			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getValueWithoutTreeAccess().getUrnUrnIdParserRuleCall_3_0());
-				}
-				lv_urn_3_0=ruleUrnId
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getValueWithoutTreeRule());
-					}
-					set(
-						$current,
-						"urn",
-						lv_urn_3_0,
-						"org.integratedmodelling.kactors.Kactors.UrnId");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getValueWithoutTreeAccess().getListListParserRuleCall_4_0());
-				}
-				lv_list_4_0=ruleList
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getValueWithoutTreeRule());
-					}
-					set(
-						$current,
-						"list",
-						lv_list_4_0,
-						"org.integratedmodelling.kactors.Kactors.List");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getValueWithoutTreeAccess().getMapMapParserRuleCall_5_0());
-				}
-				lv_map_5_0=ruleMap
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getValueWithoutTreeRule());
-					}
-					set(
-						$current,
-						"map",
-						lv_map_5_0,
-						"org.integratedmodelling.kactors.Kactors.Map");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			(
-				lv_observable_6_0=RULE_OBSERVABLE
-				{
-					newLeafNode(lv_observable_6_0, grammarAccess.getValueWithoutTreeAccess().getObservableOBSERVABLETerminalRuleCall_6_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getValueWithoutTreeRule());
-					}
-					setWithLastConsumed(
-						$current,
-						"observable",
-						lv_observable_6_0,
-						"org.integratedmodelling.kactors.Kactors.OBSERVABLE");
-				}
-			)
-		)
-		    |
-		(
-			(
-				lv_expression_7_0=RULE_EXPR
-				{
-					newLeafNode(lv_expression_7_0, grammarAccess.getValueWithoutTreeAccess().getExpressionEXPRTerminalRuleCall_7_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getValueWithoutTreeRule());
-					}
-					setWithLastConsumed(
-						$current,
-						"expression",
-						lv_expression_7_0,
-						"org.integratedmodelling.kactors.Kactors.EXPR");
-				}
-			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getValueWithoutTreeAccess().getTableLookupTableParserRuleCall_8_0());
-				}
-				lv_table_8_0=ruleLookupTable
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getValueWithoutTreeRule());
-					}
-					set(
-						$current,
-						"table",
-						lv_table_8_0,
-						"org.integratedmodelling.kactors.Kactors.LookupTable");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getValueWithoutTreeAccess().getQuantityQuantityParserRuleCall_9_0());
-				}
-				lv_quantity_9_0=ruleQuantity
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getValueWithoutTreeRule());
-					}
-					set(
-						$current,
-						"quantity",
-						lv_quantity_9_0,
-						"org.integratedmodelling.kactors.Kactors.Quantity");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
+		)?
 	)
 ;
 
@@ -2966,19 +3665,20 @@ ruleMatch returns [EObject current=null]
 		(
 			(
 				(
-					lv_observable_12_0=RULE_OBSERVABLE
 					{
-						newLeafNode(lv_observable_12_0, grammarAccess.getMatchAccess().getObservableOBSERVABLETerminalRuleCall_4_0_0());
+						newCompositeNode(grammarAccess.getMatchAccess().getObservableObservableParserRuleCall_4_0_0());
 					}
+					lv_observable_12_0=ruleObservable
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getMatchRule());
+							$current = createModelElementForParent(grammarAccess.getMatchRule());
 						}
-						setWithLastConsumed(
+						set(
 							$current,
 							"observable",
 							lv_observable_12_0,
-							"org.integratedmodelling.kactors.Kactors.OBSERVABLE");
+							"org.integratedmodelling.kactors.Kactors.Observable");
+						afterParserOrEnumRuleCall();
 					}
 				)
 			)
@@ -3612,9 +4312,9 @@ ruleList returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getListAccess().getContentsValueParserRuleCall_2_0());
+					newCompositeNode(grammarAccess.getListAccess().getContentsValueWithMetadataParserRuleCall_2_0());
 				}
-				lv_contents_2_0=ruleValue
+				lv_contents_2_0=ruleValueWithMetadata
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getListRule());
@@ -3623,7 +4323,7 @@ ruleList returns [EObject current=null]
 						$current,
 						"contents",
 						lv_contents_2_0,
-						"org.integratedmodelling.kactors.Kactors.Value");
+						"org.integratedmodelling.kactors.Kactors.ValueWithMetadata");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -3741,9 +4441,9 @@ ruleTree returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getTreeAccess().getRootValueWithoutTreeParserRuleCall_0_0());
+					newCompositeNode(grammarAccess.getTreeAccess().getRootValueWithMetadataWithoutTreeParserRuleCall_0_0());
 				}
-				lv_root_0_0=ruleValueWithoutTree
+				lv_root_0_0=ruleValueWithMetadataWithoutTree
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getTreeRule());
@@ -3752,7 +4452,7 @@ ruleTree returns [EObject current=null]
 						$current,
 						"root",
 						lv_root_0_0,
-						"org.integratedmodelling.kactors.Kactors.ValueWithoutTree");
+						"org.integratedmodelling.kactors.Kactors.ValueWithMetadataWithoutTree");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -3769,9 +4469,9 @@ ruleTree returns [EObject current=null]
 				(
 					(
 						{
-							newCompositeNode(grammarAccess.getTreeAccess().getValueValueWithoutTreeParserRuleCall_1_1_0_0());
+							newCompositeNode(grammarAccess.getTreeAccess().getValueValueWithMetadataWithoutTreeParserRuleCall_1_1_0_0());
 						}
-						lv_value_2_0=ruleValueWithoutTree
+						lv_value_2_0=ruleValueWithMetadataWithoutTree
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getTreeRule());
@@ -3780,40 +4480,52 @@ ruleTree returns [EObject current=null]
 								$current,
 								"value",
 								lv_value_2_0,
-								"org.integratedmodelling.kactors.Kactors.ValueWithoutTree");
+								"org.integratedmodelling.kactors.Kactors.ValueWithMetadataWithoutTree");
 							afterParserOrEnumRuleCall();
 						}
 					)
 				)
 				    |
 				(
-					otherlv_3='('
-					{
-						newLeafNode(otherlv_3, grammarAccess.getTreeAccess().getLeftParenthesisKeyword_1_1_1_0());
-					}
-					(
+					((
+						'('
 						(
-							{
-								newCompositeNode(grammarAccess.getTreeAccess().getValueTreeParserRuleCall_1_1_1_1_0());
-							}
-							lv_value_4_0=ruleTree
-							{
-								if ($current==null) {
-									$current = createModelElementForParent(grammarAccess.getTreeRule());
-								}
-								add(
-									$current,
-									"value",
-									lv_value_4_0,
-									"org.integratedmodelling.kactors.Kactors.Tree");
-								afterParserOrEnumRuleCall();
-							}
+							(
+								ruleTree
+							)
 						)
+						')'
 					)
-					otherlv_5=')'
-					{
-						newLeafNode(otherlv_5, grammarAccess.getTreeAccess().getRightParenthesisKeyword_1_1_1_2());
-					}
+					)=>
+					(
+						otherlv_3='('
+						{
+							newLeafNode(otherlv_3, grammarAccess.getTreeAccess().getLeftParenthesisKeyword_1_1_1_0_0());
+						}
+						(
+							(
+								{
+									newCompositeNode(grammarAccess.getTreeAccess().getValueTreeParserRuleCall_1_1_1_0_1_0());
+								}
+								lv_value_4_0=ruleTree
+								{
+									if ($current==null) {
+										$current = createModelElementForParent(grammarAccess.getTreeRule());
+									}
+									add(
+										$current,
+										"value",
+										lv_value_4_0,
+										"org.integratedmodelling.kactors.Kactors.Tree");
+									afterParserOrEnumRuleCall();
+								}
+							)
+						)
+						otherlv_5=')'
+						{
+							newLeafNode(otherlv_5, grammarAccess.getTreeAccess().getRightParenthesisKeyword_1_1_1_0_2());
+						}
+					)
 				)
 			)
 		)+
@@ -3862,9 +4574,9 @@ ruleMapEntry returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getMapEntryAccess().getValueValueParserRuleCall_2_0());
+					newCompositeNode(grammarAccess.getMapEntryAccess().getValueValueWithMetadataParserRuleCall_2_0());
 				}
-				lv_value_2_0=ruleValue
+				lv_value_2_0=ruleValueWithMetadata
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getMapEntryRule());
@@ -3873,7 +4585,7 @@ ruleMapEntry returns [EObject current=null]
 						$current,
 						"value",
 						lv_value_2_0,
-						"org.integratedmodelling.kactors.Kactors.Value");
+						"org.integratedmodelling.kactors.Kactors.ValueWithMetadata");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -4090,39 +4802,57 @@ ruleClassifier returns [EObject current=null]
 		    |
 		(
 			(
-				lv_observable_13_0=RULE_OBSERVABLE
 				{
-					newLeafNode(lv_observable_13_0, grammarAccess.getClassifierAccess().getObservableOBSERVABLETerminalRuleCall_5_0());
+					newCompositeNode(grammarAccess.getClassifierAccess().getObservableObservableParserRuleCall_5_0());
 				}
+				lv_observable_13_0=ruleObservable
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getClassifierRule());
+						$current = createModelElementForParent(grammarAccess.getClassifierRule());
 					}
-					setWithLastConsumed(
+					set(
 						$current,
 						"observable",
 						lv_observable_13_0,
-						"org.integratedmodelling.kactors.Kactors.OBSERVABLE");
+						"org.integratedmodelling.kactors.Kactors.Observable");
+					afterParserOrEnumRuleCall();
 				}
 			)
 		)
 		    |
 		(
 			(
-				lv_id_14_0=RULE_LOWERCASE_ID
-				{
-					newLeafNode(lv_id_14_0, grammarAccess.getClassifierAccess().getIdLOWERCASE_IDTerminalRuleCall_6_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getClassifierRule());
+				(
+					lv_id_14_1=RULE_LOWERCASE_ID
+					{
+						newLeafNode(lv_id_14_1, grammarAccess.getClassifierAccess().getIdLOWERCASE_IDTerminalRuleCall_6_0_0());
 					}
-					setWithLastConsumed(
-						$current,
-						"id",
-						lv_id_14_0,
-						"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
-				}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getClassifierRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"id",
+							lv_id_14_1,
+							"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
+					}
+					    |
+					lv_id_14_2=RULE_LOWERCASE_ID_DASH
+					{
+						newLeafNode(lv_id_14_2, grammarAccess.getClassifierAccess().getIdLOWERCASE_ID_DASHTerminalRuleCall_6_0_1());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getClassifierRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"id",
+							lv_id_14_2,
+							"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID_DASH");
+					}
+				)
 			)
 		)
 		    |
@@ -4184,9 +4914,29 @@ ruleClassifier returns [EObject current=null]
 		    |
 		(
 			(
-				lv_star_18_0='*'
 				{
-					newLeafNode(lv_star_18_0, grammarAccess.getClassifierAccess().getStarAsteriskKeyword_9_0());
+					newCompositeNode(grammarAccess.getClassifierAccess().getMapMapParserRuleCall_9_0());
+				}
+				lv_map_18_0=ruleMap
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getClassifierRule());
+					}
+					set(
+						$current,
+						"map",
+						lv_map_18_0,
+						"org.integratedmodelling.kactors.Kactors.Map");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_star_19_0='*'
+				{
+					newLeafNode(lv_star_19_0, grammarAccess.getClassifierAccess().getStarAsteriskKeyword_10_0());
 				}
 				{
 					if ($current==null) {
@@ -4196,6 +4946,52 @@ ruleClassifier returns [EObject current=null]
 				}
 			)
 		)
+	)
+;
+
+// Entry rule entryRuleObservable
+entryRuleObservable returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getObservableRule()); }
+	iv_ruleObservable=ruleObservable
+	{ $current=$iv_ruleObservable.current; }
+	EOF;
+
+// Rule Observable
+ruleObservable returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		otherlv_0='{'
+		{
+			newLeafNode(otherlv_0, grammarAccess.getObservableAccess().getLeftCurlyBracketKeyword_0());
+		}
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getObservableAccess().getObservableObservableSemanticsParserRuleCall_1_0());
+				}
+				lv_observable_1_0=ruleObservableSemantics
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getObservableRule());
+					}
+					set(
+						$current,
+						"observable",
+						lv_observable_1_0,
+						"org.integratedmodelling.kactors.Kactors.ObservableSemantics");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		otherlv_2='}'
+		{
+			newLeafNode(otherlv_2, grammarAccess.getObservableAccess().getRightCurlyBracketKeyword_2());
+		}
 	)
 ;
 
@@ -4590,19 +5386,20 @@ ruleTableClassifier returns [EObject current=null]
 		    |
 		(
 			(
-				lv_observable_4_0=RULE_OBSERVABLE
 				{
-					newLeafNode(lv_observable_4_0, grammarAccess.getTableClassifierAccess().getObservableOBSERVABLETerminalRuleCall_3_0());
+					newCompositeNode(grammarAccess.getTableClassifierAccess().getObservableObservableParserRuleCall_3_0());
 				}
+				lv_observable_4_0=ruleObservable
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getTableClassifierRule());
+						$current = createModelElementForParent(grammarAccess.getTableClassifierRule());
 					}
-					setWithLastConsumed(
+					set(
 						$current,
 						"observable",
 						lv_observable_4_0,
-						"org.integratedmodelling.kactors.Kactors.OBSERVABLE");
+						"org.integratedmodelling.kactors.Kactors.Observable");
+					afterParserOrEnumRuleCall();
 				}
 			)
 		)
@@ -5227,12 +6024,13 @@ ruleParameterList returns [EObject current=null]
 		)
 		(
 			(
-				(',')=>
+				(','
+				)=>
 				otherlv_1=','
 				{
-					newLeafNode(otherlv_1, grammarAccess.getParameterListAccess().getCommaKeyword_1_0());
+					newLeafNode(otherlv_1, grammarAccess.getParameterListAccess().getCommaKeyword_1_0_0());
 				}
-			)
+			)?
 			(
 				(
 					{
@@ -5274,61 +6072,101 @@ ruleKeyValuePair returns [EObject current=null]
 	(
 		(
 			(
-				(
-					lv_name_0_0=RULE_LOWERCASE_ID
-					{
-						newLeafNode(lv_name_0_0, grammarAccess.getKeyValuePairAccess().getNameLOWERCASE_IDTerminalRuleCall_0_0_0());
+				lv_tag_0_0=RULE_TAG
+				{
+					newLeafNode(lv_tag_0_0, grammarAccess.getKeyValuePairAccess().getTagTAGTerminalRuleCall_0_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getKeyValuePairRule());
 					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getKeyValuePairRule());
-						}
-						setWithLastConsumed(
-							$current,
-							"name",
-							lv_name_0_0,
-							"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
-					}
-				)
+					setWithLastConsumed(
+						$current,
+						"tag",
+						lv_tag_0_0,
+						"org.integratedmodelling.kactors.Kactors.TAG");
+				}
 			)
+		)
+		    |
+		(
 			(
 				(
 					(
-						lv_interactive_1_0='=?'
+						lv_name_1_0=RULE_LOWERCASE_ID
 						{
-							newLeafNode(lv_interactive_1_0, grammarAccess.getKeyValuePairAccess().getInteractiveEqualsSignQuestionMarkKeyword_0_1_0_0());
+							newLeafNode(lv_name_1_0, grammarAccess.getKeyValuePairAccess().getNameLOWERCASE_IDTerminalRuleCall_1_0_0_0());
 						}
 						{
 							if ($current==null) {
 								$current = createModelElement(grammarAccess.getKeyValuePairRule());
 							}
-							setWithLastConsumed($current, "interactive", true, "=?");
+							setWithLastConsumed(
+								$current,
+								"name",
+								lv_name_1_0,
+								"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
 						}
 					)
 				)
-				    |
-				otherlv_2='='
-				{
-					newLeafNode(otherlv_2, grammarAccess.getKeyValuePairAccess().getEqualsSignKeyword_0_1_1());
-				}
+				(
+					(
+						(
+							lv_interactive_2_0='?='
+							{
+								newLeafNode(lv_interactive_2_0, grammarAccess.getKeyValuePairAccess().getInteractiveQuestionMarkEqualsSignKeyword_1_0_1_0_0());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getKeyValuePairRule());
+								}
+								setWithLastConsumed($current, "interactive", true, "?=");
+							}
+						)
+					)
+					    |
+					otherlv_3='='
+					{
+						newLeafNode(otherlv_3, grammarAccess.getKeyValuePairAccess().getEqualsSignKeyword_1_0_1_1());
+					}
+				)
+			)?
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getKeyValuePairAccess().getValueValueParserRuleCall_1_1_0());
+					}
+					lv_value_4_0=ruleValue
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getKeyValuePairRule());
+						}
+						set(
+							$current,
+							"value",
+							lv_value_4_0,
+							"org.integratedmodelling.kactors.Kactors.Value");
+						afterParserOrEnumRuleCall();
+					}
+				)
 			)
-		)?
+		)
+		    |
 		(
 			(
+				lv_key_5_0=RULE_KEY
 				{
-					newCompositeNode(grammarAccess.getKeyValuePairAccess().getValueValueParserRuleCall_1_0());
+					newLeafNode(lv_key_5_0, grammarAccess.getKeyValuePairAccess().getKeyKEYTerminalRuleCall_2_0());
 				}
-				lv_value_3_0=ruleValue
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getKeyValuePairRule());
+						$current = createModelElement(grammarAccess.getKeyValuePairRule());
 					}
-					set(
+					setWithLastConsumed(
 						$current,
-						"value",
-						lv_value_3_0,
-						"org.integratedmodelling.kactors.Kactors.Value");
-					afterParserOrEnumRuleCall();
+						"key",
+						lv_key_5_0,
+						"org.integratedmodelling.kactors.Kactors.KEY");
 				}
 			)
 		)
@@ -6189,6 +7027,66 @@ rulePathName returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken(
 	)
 ;
 
+// Entry rule entryRuleQuotablePathName
+entryRuleQuotablePathName returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getQuotablePathNameRule()); }
+	iv_ruleQuotablePathName=ruleQuotablePathName
+	{ $current=$iv_ruleQuotablePathName.current.getText(); }
+	EOF;
+
+// Rule QuotablePathName
+ruleQuotablePathName returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			this_LOWERCASE_ID_0=RULE_LOWERCASE_ID
+			{
+				$current.merge(this_LOWERCASE_ID_0);
+			}
+			{
+				newLeafNode(this_LOWERCASE_ID_0, grammarAccess.getQuotablePathNameAccess().getLOWERCASE_IDTerminalRuleCall_0_0());
+			}
+			    |
+			this_QUOTED_LOWERCASE_ID_1=RULE_QUOTED_LOWERCASE_ID
+			{
+				$current.merge(this_QUOTED_LOWERCASE_ID_1);
+			}
+			{
+				newLeafNode(this_QUOTED_LOWERCASE_ID_1, grammarAccess.getQuotablePathNameAccess().getQUOTED_LOWERCASE_IDTerminalRuleCall_0_1());
+			}
+		)
+		(
+			kw='.'
+			{
+				$current.merge(kw);
+				newLeafNode(kw, grammarAccess.getQuotablePathNameAccess().getFullStopKeyword_1_0());
+			}
+			(
+				this_LOWERCASE_ID_3=RULE_LOWERCASE_ID
+				{
+					$current.merge(this_LOWERCASE_ID_3);
+				}
+				{
+					newLeafNode(this_LOWERCASE_ID_3, grammarAccess.getQuotablePathNameAccess().getLOWERCASE_IDTerminalRuleCall_1_1_0());
+				}
+				    |
+				this_QUOTED_LOWERCASE_ID_4=RULE_QUOTED_LOWERCASE_ID
+				{
+					$current.merge(this_QUOTED_LOWERCASE_ID_4);
+				}
+				{
+					newLeafNode(this_QUOTED_LOWERCASE_ID_4, grammarAccess.getQuotablePathNameAccess().getQUOTED_LOWERCASE_IDTerminalRuleCall_1_1_1());
+				}
+			)
+		)*
+	)
+;
+
 // Entry rule entryRuleArgPathName
 entryRuleArgPathName returns [String current=null]:
 	{ newCompositeNode(grammarAccess.getArgPathNameRule()); }
@@ -6307,6 +7205,2668 @@ rulePath returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
 	)
 ;
 
+// Entry rule entryRuleObservableSemantics
+entryRuleObservableSemantics returns [EObject current=null]@init {
+	UnorderedGroupState myUnorderedGroupState = getUnorderedGroupHelper().snapShot(
+	grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1()
+	);
+}:
+	{ newCompositeNode(grammarAccess.getObservableSemanticsRule()); }
+	iv_ruleObservableSemantics=ruleObservableSemantics
+	{ $current=$iv_ruleObservableSemantics.current; }
+	EOF;
+finally {
+	myUnorderedGroupState.restore();
+}
+
+// Rule ObservableSemantics
+ruleObservableSemantics returns [EObject current=null]
+@init {
+	enterRule();
+	UnorderedGroupState myUnorderedGroupState = getUnorderedGroupHelper().snapShot(
+	grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1()
+	);
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getObservableSemanticsAccess().getDeclarationConceptDeclarationParserRuleCall_0_0());
+				}
+				lv_declaration_0_0=ruleConceptDeclaration
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
+					}
+					set(
+						$current,
+						"declaration",
+						lv_declaration_0_0,
+						"org.integratedmodelling.kactors.Kactors.ConceptDeclaration");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		(
+			(
+				{ 
+				  getUnorderedGroupHelper().enter(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1());
+				}
+				(
+					(
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1(), 0)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1(), 0);
+					}
+								({true}?=>((
+									otherlv_2='in'
+									{
+										newLeafNode(otherlv_2, grammarAccess.getObservableSemanticsAccess().getInKeyword_1_0_0_0());
+									}
+									(
+										(
+											(
+												{
+													newCompositeNode(grammarAccess.getObservableSemanticsAccess().getUnitUnitParserRuleCall_1_0_0_1_0_0());
+												}
+												lv_unit_3_0=ruleUnit
+												{
+													if ($current==null) {
+														$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
+													}
+													set(
+														$current,
+														"unit",
+														lv_unit_3_0,
+														"org.integratedmodelling.kactors.Kactors.Unit");
+													afterParserOrEnumRuleCall();
+												}
+											)
+										)
+										    |
+										(
+											(
+												{
+													newCompositeNode(grammarAccess.getObservableSemanticsAccess().getCurrencyCurrencyParserRuleCall_1_0_0_1_1_0());
+												}
+												lv_currency_4_0=ruleCurrency
+												{
+													if ($current==null) {
+														$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
+													}
+													set(
+														$current,
+														"currency",
+														lv_currency_4_0,
+														"org.integratedmodelling.kactors.Kactors.Currency");
+													afterParserOrEnumRuleCall();
+												}
+											)
+										)
+									)
+								)
+								    |
+								(
+									otherlv_5='per'
+									{
+										newLeafNode(otherlv_5, grammarAccess.getObservableSemanticsAccess().getPerKeyword_1_0_1_0());
+									}
+									(
+										(
+											{
+												newCompositeNode(grammarAccess.getObservableSemanticsAccess().getUnitUnitParserRuleCall_1_0_1_1_0());
+											}
+											lv_unit_6_0=ruleUnit
+											{
+												if ($current==null) {
+													$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
+												}
+												set(
+													$current,
+													"unit",
+													lv_unit_6_0,
+													"org.integratedmodelling.kactors.Kactors.Unit");
+												afterParserOrEnumRuleCall();
+											}
+										)
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1(), 1)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1(), 1);
+					}
+								({true}?=>((
+									(
+										{
+											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getValueOperatorsValueOperatorParserRuleCall_1_1_0_0());
+										}
+										lv_valueOperators_7_0=ruleValueOperator
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
+											}
+											add(
+												$current,
+												"valueOperators",
+												lv_valueOperators_7_0,
+												"org.integratedmodelling.kactors.Kactors.ValueOperator");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getValueOperatorsValueOperatorParserRuleCall_1_1_1_0());
+										}
+										lv_valueOperators_8_0=ruleValueOperator
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
+											}
+											add(
+												$current,
+												"valueOperators",
+												lv_valueOperators_8_0,
+												"org.integratedmodelling.kactors.Kactors.ValueOperator");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)*
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1(), 2)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1(), 2);
+					}
+								({true}?=>((
+									(
+										lv_optional_9_0='optional'
+										{
+											newLeafNode(lv_optional_9_0, grammarAccess.getObservableSemanticsAccess().getOptionalOptionalKeyword_1_2_0_0());
+										}
+										{
+											if ($current==null) {
+												$current = createModelElement(grammarAccess.getObservableSemanticsRule());
+											}
+											setWithLastConsumed($current, "optional", true, "optional");
+										}
+									)
+								)
+								    |
+								otherlv_10='required'
+								{
+									newLeafNode(otherlv_10, grammarAccess.getObservableSemanticsAccess().getRequiredKeyword_1_2_1());
+								}
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1(), 3)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1(), 3);
+					}
+								({true}?=>((
+									(
+										{
+											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getFromNumberParserRuleCall_1_3_0_0());
+										}
+										lv_from_11_0=ruleNumber
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
+											}
+											set(
+												$current,
+												"from",
+												lv_from_11_0,
+												"org.integratedmodelling.kactors.Kactors.Number");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								otherlv_12='to'
+								{
+									newLeafNode(otherlv_12, grammarAccess.getObservableSemanticsAccess().getToKeyword_1_3_1());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getObservableSemanticsAccess().getToNumberParserRuleCall_1_3_2_0());
+										}
+										lv_to_13_0=ruleNumber
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getObservableSemanticsRule());
+											}
+											set(
+												$current,
+												"to",
+												lv_to_13_0,
+												"org.integratedmodelling.kactors.Kactors.Number");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1(), 4)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1(), 4);
+					}
+								({true}?=>(otherlv_14='named'
+								{
+									newLeafNode(otherlv_14, grammarAccess.getObservableSemanticsAccess().getNamedKeyword_1_4_0());
+								}
+								(
+									(
+										(
+											lv_name_15_1=RULE_LOWERCASE_ID
+											{
+												newLeafNode(lv_name_15_1, grammarAccess.getObservableSemanticsAccess().getNameLOWERCASE_IDTerminalRuleCall_1_4_1_0_0());
+											}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
+												}
+												setWithLastConsumed(
+													$current,
+													"name",
+													lv_name_15_1,
+													"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
+											}
+											    |
+											lv_name_15_2=RULE_STRING
+											{
+												newLeafNode(lv_name_15_2, grammarAccess.getObservableSemanticsAccess().getNameSTRINGTerminalRuleCall_1_4_1_0_1());
+											}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getObservableSemanticsRule());
+												}
+												setWithLastConsumed(
+													$current,
+													"name",
+													lv_name_15_2,
+													"org.eclipse.xtext.common.Terminals.STRING");
+											}
+										)
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1());
+					}
+				)
+			)
+					)*
+				)
+			)
+				{ 
+				  getUnorderedGroupHelper().leave(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_1());
+				}
+		)
+	)
+;
+finally {
+	myUnorderedGroupState.restore();
+}
+
+// Entry rule entryRuleValueOperator
+entryRuleValueOperator returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getValueOperatorRule()); }
+	iv_ruleValueOperator=ruleValueOperator
+	{ $current=$iv_ruleValueOperator.current; }
+	EOF;
+
+// Rule ValueOperator
+ruleValueOperator returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				(
+					(
+						{
+							newCompositeNode(grammarAccess.getValueOperatorAccess().getModifierVALUE_OPERATORParserRuleCall_0_0_0_0());
+						}
+						lv_modifier_0_0=ruleVALUE_OPERATOR
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getValueOperatorRule());
+							}
+							set(
+								$current,
+								"modifier",
+								lv_modifier_0_0,
+								"org.integratedmodelling.kactors.Kactors.VALUE_OPERATOR");
+							afterParserOrEnumRuleCall();
+						}
+					)
+				)
+				    |
+				(
+					(
+						(
+							lv_downTo_1_0='down'
+							{
+								newLeafNode(lv_downTo_1_0, grammarAccess.getValueOperatorAccess().getDownToDownKeyword_0_0_1_0_0());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getValueOperatorRule());
+								}
+								setWithLastConsumed($current, "downTo", lv_downTo_1_0, "down");
+							}
+						)
+					)
+					otherlv_2='to'
+					{
+						newLeafNode(otherlv_2, grammarAccess.getValueOperatorAccess().getToKeyword_0_0_1_1());
+					}
+				)
+			)
+			(
+				(
+					(
+						{
+							newCompositeNode(grammarAccess.getValueOperatorAccess().getComparisonValueNumberParserRuleCall_0_1_0_0());
+						}
+						lv_comparisonValue_3_0=ruleNumber
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getValueOperatorRule());
+							}
+							set(
+								$current,
+								"comparisonValue",
+								lv_comparisonValue_3_0,
+								"org.integratedmodelling.kactors.Kactors.Number");
+							afterParserOrEnumRuleCall();
+						}
+					)
+				)
+				    |
+				(
+					(
+						{
+							newCompositeNode(grammarAccess.getValueOperatorAccess().getComparisonQuantityQuantityParserRuleCall_0_1_1_0());
+						}
+						lv_comparisonQuantity_4_0=ruleQuantity
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getValueOperatorRule());
+							}
+							set(
+								$current,
+								"comparisonQuantity",
+								lv_comparisonQuantity_4_0,
+								"org.integratedmodelling.kactors.Kactors.Quantity");
+							afterParserOrEnumRuleCall();
+						}
+					)
+				)
+				    |
+				(
+					(
+						(
+							{
+								newCompositeNode(grammarAccess.getValueOperatorAccess().getComparisonConceptConceptDeclarationParserRuleCall_0_1_2_0_0());
+							}
+							lv_comparisonConcept_5_0=ruleConceptDeclaration
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getValueOperatorRule());
+								}
+								add(
+									$current,
+									"comparisonConcept",
+									lv_comparisonConcept_5_0,
+									"org.integratedmodelling.kactors.Kactors.ConceptDeclaration");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+					(
+						otherlv_6=','
+						{
+							newLeafNode(otherlv_6, grammarAccess.getValueOperatorAccess().getCommaKeyword_0_1_2_1_0());
+						}
+						(
+							(
+								{
+									newCompositeNode(grammarAccess.getValueOperatorAccess().getComparisonConceptConceptDeclarationParserRuleCall_0_1_2_1_1_0());
+								}
+								lv_comparisonConcept_7_0=ruleConceptDeclaration
+								{
+									if ($current==null) {
+										$current = createModelElementForParent(grammarAccess.getValueOperatorRule());
+									}
+									add(
+										$current,
+										"comparisonConcept",
+										lv_comparisonConcept_7_0,
+										"org.integratedmodelling.kactors.Kactors.ConceptDeclaration");
+									afterParserOrEnumRuleCall();
+								}
+							)
+						)
+					)*
+				)
+				    |
+				(
+					otherlv_8='('
+					{
+						newLeafNode(otherlv_8, grammarAccess.getValueOperatorAccess().getLeftParenthesisKeyword_0_1_3_0());
+					}
+					(
+						(
+							{
+								newCompositeNode(grammarAccess.getValueOperatorAccess().getComparisonObservableObservableSemanticsParserRuleCall_0_1_3_1_0());
+							}
+							lv_comparisonObservable_9_0=ruleObservableSemantics
+							{
+								if ($current==null) {
+									$current = createModelElementForParent(grammarAccess.getValueOperatorRule());
+								}
+								set(
+									$current,
+									"comparisonObservable",
+									lv_comparisonObservable_9_0,
+									"org.integratedmodelling.kactors.Kactors.ObservableSemantics");
+								afterParserOrEnumRuleCall();
+							}
+						)
+					)
+					otherlv_10=')'
+					{
+						newLeafNode(otherlv_10, grammarAccess.getValueOperatorAccess().getRightParenthesisKeyword_0_1_3_2());
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				lv_total_11_0='total'
+				{
+					newLeafNode(lv_total_11_0, grammarAccess.getValueOperatorAccess().getTotalTotalKeyword_1_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getValueOperatorRule());
+					}
+					setWithLastConsumed($current, "total", lv_total_11_0, "total");
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_averaged_12_0='averaged'
+				{
+					newLeafNode(lv_averaged_12_0, grammarAccess.getValueOperatorAccess().getAveragedAveragedKeyword_2_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getValueOperatorRule());
+					}
+					setWithLastConsumed($current, "averaged", lv_averaged_12_0, "averaged");
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_summed_13_0='summed'
+				{
+					newLeafNode(lv_summed_13_0, grammarAccess.getValueOperatorAccess().getSummedSummedKeyword_3_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getValueOperatorRule());
+					}
+					setWithLastConsumed($current, "summed", lv_summed_13_0, "summed");
+				}
+			)
+		)
+	)
+;
+
+// Entry rule entryRuleConceptDeclaration
+entryRuleConceptDeclaration returns [EObject current=null]@init {
+	UnorderedGroupState myUnorderedGroupState = getUnorderedGroupHelper().snapShot(
+	grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1()
+	);
+}:
+	{ newCompositeNode(grammarAccess.getConceptDeclarationRule()); }
+	iv_ruleConceptDeclaration=ruleConceptDeclaration
+	{ $current=$iv_ruleConceptDeclaration.current; }
+	EOF;
+finally {
+	myUnorderedGroupState.restore();
+}
+
+// Rule ConceptDeclaration
+ruleConceptDeclaration returns [EObject current=null]
+@init {
+	enterRule();
+	UnorderedGroupState myUnorderedGroupState = getUnorderedGroupHelper().snapShot(
+	grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1()
+	);
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getConceptDeclarationAccess().getMainConceptParserRuleCall_0_0());
+				}
+				lv_main_0_0=ruleConcept
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+					}
+					add(
+						$current,
+						"main",
+						lv_main_0_0,
+						"org.integratedmodelling.kactors.Kactors.Concept");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)+
+		(
+			(
+				{ 
+				  getUnorderedGroupHelper().enter(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
+				}
+				(
+					(
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 0)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 0);
+					}
+								({true}?=>(otherlv_2='of'
+								{
+									newLeafNode(otherlv_2, grammarAccess.getConceptDeclarationAccess().getOfKeyword_1_0_0());
+								}
+								(
+									(
+										(
+											lv_distributedOfInherency_3_0='each'
+											{
+												newLeafNode(lv_distributedOfInherency_3_0, grammarAccess.getConceptDeclarationAccess().getDistributedOfInherencyEachKeyword_1_0_1_0_0());
+											}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getConceptDeclarationRule());
+												}
+												setWithLastConsumed($current, "distributedOfInherency", true, "each");
+											}
+										)
+									)?
+									(
+										(
+											{
+												newCompositeNode(grammarAccess.getConceptDeclarationAccess().getInherencySimpleConceptDeclarationParserRuleCall_1_0_1_1_0());
+											}
+											lv_inherency_4_0=ruleSimpleConceptDeclaration
+											{
+												if ($current==null) {
+													$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+												}
+												set(
+													$current,
+													"inherency",
+													lv_inherency_4_0,
+													"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+												afterParserOrEnumRuleCall();
+											}
+										)
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 1)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 1);
+					}
+								({true}?=>(otherlv_5='for'
+								{
+									newLeafNode(otherlv_5, grammarAccess.getConceptDeclarationAccess().getForKeyword_1_1_0());
+								}
+								(
+									(
+										(
+											lv_distributedForInherency_6_0='each'
+											{
+												newLeafNode(lv_distributedForInherency_6_0, grammarAccess.getConceptDeclarationAccess().getDistributedForInherencyEachKeyword_1_1_1_0_0());
+											}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getConceptDeclarationRule());
+												}
+												setWithLastConsumed($current, "distributedForInherency", true, "each");
+											}
+										)
+									)?
+									(
+										(
+											{
+												newCompositeNode(grammarAccess.getConceptDeclarationAccess().getMotivationSimpleConceptDeclarationParserRuleCall_1_1_1_1_0());
+											}
+											lv_motivation_7_0=ruleSimpleConceptDeclaration
+											{
+												if ($current==null) {
+													$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+												}
+												set(
+													$current,
+													"motivation",
+													lv_motivation_7_0,
+													"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+												afterParserOrEnumRuleCall();
+											}
+										)
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 2)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 2);
+					}
+								({true}?=>(otherlv_8='with'
+								{
+									newLeafNode(otherlv_8, grammarAccess.getConceptDeclarationAccess().getWithKeyword_1_2_0());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getCompresentSimpleConceptDeclarationParserRuleCall_1_2_1_0());
+										}
+										lv_compresent_9_0=ruleSimpleConceptDeclaration
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+											}
+											set(
+												$current,
+												"compresent",
+												lv_compresent_9_0,
+												"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 3)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 3);
+					}
+								({true}?=>(otherlv_10='caused'
+								{
+									newLeafNode(otherlv_10, grammarAccess.getConceptDeclarationAccess().getCausedKeyword_1_3_0());
+								}
+								otherlv_11='by'
+								{
+									newLeafNode(otherlv_11, grammarAccess.getConceptDeclarationAccess().getByKeyword_1_3_1());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getCausantSimpleConceptDeclarationParserRuleCall_1_3_2_0());
+										}
+										lv_causant_12_0=ruleSimpleConceptDeclaration
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+											}
+											set(
+												$current,
+												"causant",
+												lv_causant_12_0,
+												"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 4)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 4);
+					}
+								({true}?=>(otherlv_13='adjacent'
+								{
+									newLeafNode(otherlv_13, grammarAccess.getConceptDeclarationAccess().getAdjacentKeyword_1_4_0());
+								}
+								otherlv_14='to'
+								{
+									newLeafNode(otherlv_14, grammarAccess.getConceptDeclarationAccess().getToKeyword_1_4_1());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getAdjacentSimpleConceptDeclarationParserRuleCall_1_4_2_0());
+										}
+										lv_adjacent_15_0=ruleSimpleConceptDeclaration
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+											}
+											set(
+												$current,
+												"adjacent",
+												lv_adjacent_15_0,
+												"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 5)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 5);
+					}
+								({true}?=>(otherlv_16='contained'
+								{
+									newLeafNode(otherlv_16, grammarAccess.getConceptDeclarationAccess().getContainedKeyword_1_5_0());
+								}
+								otherlv_17='in'
+								{
+									newLeafNode(otherlv_17, grammarAccess.getConceptDeclarationAccess().getInKeyword_1_5_1());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getContainerSimpleConceptDeclarationParserRuleCall_1_5_2_0());
+										}
+										lv_container_18_0=ruleSimpleConceptDeclaration
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+											}
+											set(
+												$current,
+												"container",
+												lv_container_18_0,
+												"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 6)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 6);
+					}
+								({true}?=>(otherlv_19='containing'
+								{
+									newLeafNode(otherlv_19, grammarAccess.getConceptDeclarationAccess().getContainingKeyword_1_6_0());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getContainedSimpleConceptDeclarationParserRuleCall_1_6_1_0());
+										}
+										lv_contained_20_0=ruleSimpleConceptDeclaration
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+											}
+											set(
+												$current,
+												"contained",
+												lv_contained_20_0,
+												"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 7)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 7);
+					}
+								({true}?=>(otherlv_21='causing'
+								{
+									newLeafNode(otherlv_21, grammarAccess.getConceptDeclarationAccess().getCausingKeyword_1_7_0());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getCausedSimpleConceptDeclarationParserRuleCall_1_7_1_0());
+										}
+										lv_caused_22_0=ruleSimpleConceptDeclaration
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+											}
+											set(
+												$current,
+												"caused",
+												lv_caused_22_0,
+												"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 8)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 8);
+					}
+								({true}?=>(otherlv_23='during'
+								{
+									newLeafNode(otherlv_23, grammarAccess.getConceptDeclarationAccess().getDuringKeyword_1_8_0());
+								}
+								(
+									(
+										(
+											lv_distributedTemporalInherency_24_0='each'
+											{
+												newLeafNode(lv_distributedTemporalInherency_24_0, grammarAccess.getConceptDeclarationAccess().getDistributedTemporalInherencyEachKeyword_1_8_1_0_0());
+											}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getConceptDeclarationRule());
+												}
+												setWithLastConsumed($current, "distributedTemporalInherency", true, "each");
+											}
+										)
+									)?
+									(
+										(
+											{
+												newCompositeNode(grammarAccess.getConceptDeclarationAccess().getDuringSimpleConceptDeclarationParserRuleCall_1_8_1_1_0());
+											}
+											lv_during_25_0=ruleSimpleConceptDeclaration
+											{
+												if ($current==null) {
+													$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+												}
+												set(
+													$current,
+													"during",
+													lv_during_25_0,
+													"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+												afterParserOrEnumRuleCall();
+											}
+										)
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 9)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 9);
+					}
+								({true}?=>(otherlv_26='within'
+								{
+									newLeafNode(otherlv_26, grammarAccess.getConceptDeclarationAccess().getWithinKeyword_1_9_0());
+								}
+								(
+									(
+										(
+											lv_distributedWithinInherency_27_0='each'
+											{
+												newLeafNode(lv_distributedWithinInherency_27_0, grammarAccess.getConceptDeclarationAccess().getDistributedWithinInherencyEachKeyword_1_9_1_0_0());
+											}
+											{
+												if ($current==null) {
+													$current = createModelElement(grammarAccess.getConceptDeclarationRule());
+												}
+												setWithLastConsumed($current, "distributedWithinInherency", true, "each");
+											}
+										)
+									)?
+									(
+										(
+											{
+												newCompositeNode(grammarAccess.getConceptDeclarationAccess().getContextSimpleConceptDeclarationParserRuleCall_1_9_1_1_0());
+											}
+											lv_context_28_0=ruleSimpleConceptDeclaration
+											{
+												if ($current==null) {
+													$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+												}
+												set(
+													$current,
+													"context",
+													lv_context_28_0,
+													"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+												afterParserOrEnumRuleCall();
+											}
+										)
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
+					}
+				)
+			)|
+			(
+				{getUnorderedGroupHelper().canSelect(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 10)}?=>(
+					{
+						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 10);
+					}
+								({true}?=>(otherlv_29='linking'
+								{
+									newLeafNode(otherlv_29, grammarAccess.getConceptDeclarationAccess().getLinkingKeyword_1_10_0());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getRelationshipSourceSimpleConceptDeclarationParserRuleCall_1_10_1_0());
+										}
+										lv_relationshipSource_30_0=ruleSimpleConceptDeclaration
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+											}
+											set(
+												$current,
+												"relationshipSource",
+												lv_relationshipSource_30_0,
+												"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								otherlv_31='to'
+								{
+									newLeafNode(otherlv_31, grammarAccess.getConceptDeclarationAccess().getToKeyword_1_10_2());
+								}
+								(
+									(
+										{
+											newCompositeNode(grammarAccess.getConceptDeclarationAccess().getRelationshipTargetSimpleConceptDeclarationParserRuleCall_1_10_3_0());
+										}
+										lv_relationshipTarget_32_0=ruleSimpleConceptDeclaration
+										{
+											if ($current==null) {
+												$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+											}
+											set(
+												$current,
+												"relationshipTarget",
+												lv_relationshipTarget_32_0,
+												"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+											afterParserOrEnumRuleCall();
+										}
+									)
+								)
+								))
+					{ 
+						getUnorderedGroupHelper().returnFromSelection(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
+					}
+				)
+			)
+					)*
+				)
+			)
+				{ 
+				  getUnorderedGroupHelper().leave(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1());
+				}
+		)?
+	)
+;
+finally {
+	myUnorderedGroupState.restore();
+}
+
+// Entry rule entryRuleVALUE_OPERATOR
+entryRuleVALUE_OPERATOR returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getVALUE_OPERATORRule()); }
+	iv_ruleVALUE_OPERATOR=ruleVALUE_OPERATOR
+	{ $current=$iv_ruleVALUE_OPERATOR.current.getText(); }
+	EOF;
+
+// Rule VALUE_OPERATOR
+ruleVALUE_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		kw='>'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getGreaterThanSignKeyword_0());
+		}
+		    |
+		kw='>='
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getGreaterThanSignEqualsSignKeyword_1());
+		}
+		    |
+		kw='<='
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getLessThanSignEqualsSignKeyword_2());
+		}
+		    |
+		kw='<'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getLessThanSignKeyword_3());
+		}
+		    |
+		kw='where'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getWhereKeyword_4());
+		}
+		    |
+		kw='=='
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getEqualsSignEqualsSignKeyword_5());
+		}
+		    |
+		kw='='
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getEqualsSignKeyword_6());
+		}
+		    |
+		kw='without'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getWithoutKeyword_7());
+		}
+		    |
+		kw='!='
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getExclamationMarkEqualsSignKeyword_8());
+		}
+		    |
+		kw='plus'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getPlusKeyword_9());
+		}
+		    |
+		kw='minus'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getMinusKeyword_10());
+		}
+		    |
+		kw='times'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getTimesKeyword_11());
+		}
+		    |
+		kw='over'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getOverKeyword_12());
+		}
+		    |
+		kw='by'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getByKeyword_13());
+		}
+	)
+;
+
+// Entry rule entryRuleConcept
+entryRuleConcept returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getConceptRule()); }
+	iv_ruleConcept=ruleConcept
+	{ $current=$iv_ruleConcept.current; }
+	EOF;
+
+// Rule Concept
+ruleConcept returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				(
+					(
+						lv_negated_0_1='not'
+						{
+							newLeafNode(lv_negated_0_1, grammarAccess.getConceptAccess().getNegatedNotKeyword_0_0_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getConceptRule());
+							}
+							setWithLastConsumed($current, "negated", true, null);
+						}
+						    |
+						lv_negated_0_2='no'
+						{
+							newLeafNode(lv_negated_0_2, grammarAccess.getConceptAccess().getNegatedNoKeyword_0_0_0_1());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getConceptRule());
+							}
+							setWithLastConsumed($current, "negated", true, null);
+						}
+					)
+				)
+			)?
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getNameNamespaceIdParserRuleCall_0_1_0());
+					}
+					lv_name_1_0=ruleNamespaceId
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"name",
+							lv_name_1_0,
+							"org.integratedmodelling.kactors.Kactors.NamespaceId");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			(
+				(
+					(
+						lv_authConcept_2_0='identified'
+						{
+							newLeafNode(lv_authConcept_2_0, grammarAccess.getConceptAccess().getAuthConceptIdentifiedKeyword_0_2_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getConceptRule());
+							}
+							setWithLastConsumed($current, "authConcept", true, "identified");
+						}
+					)
+				)
+				otherlv_3='as'
+				{
+					newLeafNode(otherlv_3, grammarAccess.getConceptAccess().getAsKeyword_0_2_1());
+				}
+				(
+					(
+						(
+							(
+								lv_stringIdentifier_4_1=RULE_ID
+								{
+									newLeafNode(lv_stringIdentifier_4_1, grammarAccess.getConceptAccess().getStringIdentifierIDTerminalRuleCall_0_2_2_0_0_0());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getConceptRule());
+									}
+									setWithLastConsumed(
+										$current,
+										"stringIdentifier",
+										lv_stringIdentifier_4_1,
+										"org.eclipse.xtext.common.Terminals.ID");
+								}
+								    |
+								lv_stringIdentifier_4_2=RULE_STRING
+								{
+									newLeafNode(lv_stringIdentifier_4_2, grammarAccess.getConceptAccess().getStringIdentifierSTRINGTerminalRuleCall_0_2_2_0_0_1());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getConceptRule());
+									}
+									setWithLastConsumed(
+										$current,
+										"stringIdentifier",
+										lv_stringIdentifier_4_2,
+										"org.eclipse.xtext.common.Terminals.STRING");
+								}
+								    |
+								lv_stringIdentifier_4_3=RULE_UPPERCASE_ID
+								{
+									newLeafNode(lv_stringIdentifier_4_3, grammarAccess.getConceptAccess().getStringIdentifierUPPERCASE_IDTerminalRuleCall_0_2_2_0_0_2());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getConceptRule());
+									}
+									setWithLastConsumed(
+										$current,
+										"stringIdentifier",
+										lv_stringIdentifier_4_3,
+										"org.integratedmodelling.kactors.Kactors.UPPERCASE_ID");
+								}
+								    |
+								lv_stringIdentifier_4_4=RULE_CAMELCASE_ID
+								{
+									newLeafNode(lv_stringIdentifier_4_4, grammarAccess.getConceptAccess().getStringIdentifierCAMELCASE_IDTerminalRuleCall_0_2_2_0_0_3());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getConceptRule());
+									}
+									setWithLastConsumed(
+										$current,
+										"stringIdentifier",
+										lv_stringIdentifier_4_4,
+										"org.integratedmodelling.kactors.Kactors.CAMELCASE_ID");
+								}
+							)
+						)
+					)
+					    |
+					(
+						(
+							lv_intIdentifier_5_0=RULE_INT
+							{
+								newLeafNode(lv_intIdentifier_5_0, grammarAccess.getConceptAccess().getIntIdentifierINTTerminalRuleCall_0_2_2_1_0());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getConceptRule());
+								}
+								setWithLastConsumed(
+									$current,
+									"intIdentifier",
+									lv_intIdentifier_5_0,
+									"org.eclipse.xtext.common.Terminals.INT");
+							}
+						)
+					)
+				)
+				otherlv_6='by'
+				{
+					newLeafNode(otherlv_6, grammarAccess.getConceptAccess().getByKeyword_0_2_3());
+				}
+				(
+					(
+						(
+							lv_authority_7_1=RULE_UPPERCASE_ID
+							{
+								newLeafNode(lv_authority_7_1, grammarAccess.getConceptAccess().getAuthorityUPPERCASE_IDTerminalRuleCall_0_2_4_0_0());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getConceptRule());
+								}
+								setWithLastConsumed(
+									$current,
+									"authority",
+									lv_authority_7_1,
+									"org.integratedmodelling.kactors.Kactors.UPPERCASE_ID");
+							}
+							    |
+							lv_authority_7_2=RULE_UPPERCASE_PATH
+							{
+								newLeafNode(lv_authority_7_2, grammarAccess.getConceptAccess().getAuthorityUPPERCASE_PATHTerminalRuleCall_0_2_4_0_1());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getConceptRule());
+								}
+								setWithLastConsumed(
+									$current,
+									"authority",
+									lv_authority_7_2,
+									"org.integratedmodelling.kactors.Kactors.UPPERCASE_PATH");
+							}
+						)
+					)
+				)
+			)?
+		)
+		    |
+		(
+			(
+				(
+					lv_presence_8_0='presence'
+					{
+						newLeafNode(lv_presence_8_0, grammarAccess.getConceptAccess().getPresencePresenceKeyword_1_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "presence", true, "presence");
+					}
+				)
+			)
+			otherlv_9='of'
+			{
+				newLeafNode(otherlv_9, grammarAccess.getConceptAccess().getOfKeyword_1_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_1_2_0());
+					}
+					lv_concept_10_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_10_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					lv_count_11_0='count'
+					{
+						newLeafNode(lv_count_11_0, grammarAccess.getConceptAccess().getCountCountKeyword_2_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "count", true, "count");
+					}
+				)
+			)
+			otherlv_12='of'
+			{
+				newLeafNode(otherlv_12, grammarAccess.getConceptAccess().getOfKeyword_2_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_2_2_0());
+					}
+					lv_concept_13_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_13_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					lv_distance_14_0='distance'
+					{
+						newLeafNode(lv_distance_14_0, grammarAccess.getConceptAccess().getDistanceDistanceKeyword_3_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "distance", true, "distance");
+					}
+				)
+			)
+			(
+				otherlv_15='to'
+				{
+					newLeafNode(otherlv_15, grammarAccess.getConceptAccess().getToKeyword_3_1_0());
+				}
+				    |
+				otherlv_16='from'
+				{
+					newLeafNode(otherlv_16, grammarAccess.getConceptAccess().getFromKeyword_3_1_1());
+				}
+			)
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_3_2_0());
+					}
+					lv_concept_17_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_17_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					lv_probability_18_0='probability'
+					{
+						newLeafNode(lv_probability_18_0, grammarAccess.getConceptAccess().getProbabilityProbabilityKeyword_4_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "probability", true, "probability");
+					}
+				)
+			)
+			otherlv_19='of'
+			{
+				newLeafNode(otherlv_19, grammarAccess.getConceptAccess().getOfKeyword_4_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_4_2_0());
+					}
+					lv_concept_20_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_20_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					lv_assessment_21_0='assessment'
+					{
+						newLeafNode(lv_assessment_21_0, grammarAccess.getConceptAccess().getAssessmentAssessmentKeyword_5_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "assessment", true, "assessment");
+					}
+				)
+			)
+			otherlv_22='of'
+			{
+				newLeafNode(otherlv_22, grammarAccess.getConceptAccess().getOfKeyword_5_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_5_2_0());
+					}
+					lv_concept_23_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_23_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					otherlv_24='change'
+					{
+						newLeafNode(otherlv_24, grammarAccess.getConceptAccess().getChangeKeyword_6_0_0_0());
+					}
+					(
+						(
+							(
+								lv_change_25_0='in'
+								{
+									newLeafNode(lv_change_25_0, grammarAccess.getConceptAccess().getChangeInKeyword_6_0_0_1_0_0());
+								}
+								{
+									if ($current==null) {
+										$current = createModelElement(grammarAccess.getConceptRule());
+									}
+									setWithLastConsumed($current, "change", true, "in");
+								}
+							)
+						)
+						    |
+						(
+							(
+								(
+									lv_rate_26_0='rate'
+									{
+										newLeafNode(lv_rate_26_0, grammarAccess.getConceptAccess().getRateRateKeyword_6_0_0_1_1_0_0());
+									}
+									{
+										if ($current==null) {
+											$current = createModelElement(grammarAccess.getConceptRule());
+										}
+										setWithLastConsumed($current, "rate", true, "rate");
+									}
+								)
+							)
+							otherlv_27='of'
+							{
+								newLeafNode(otherlv_27, grammarAccess.getConceptAccess().getOfKeyword_6_0_0_1_1_1());
+							}
+						)
+					)
+				)
+				    |
+				(
+					(
+						lv_change_28_0='changed'
+						{
+							newLeafNode(lv_change_28_0, grammarAccess.getConceptAccess().getChangeChangedKeyword_6_0_1_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getConceptRule());
+							}
+							setWithLastConsumed($current, "change", true, "changed");
+						}
+					)
+				)
+			)
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_6_1_0());
+					}
+					lv_concept_29_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_29_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					lv_uncertainty_30_0='uncertainty'
+					{
+						newLeafNode(lv_uncertainty_30_0, grammarAccess.getConceptAccess().getUncertaintyUncertaintyKeyword_7_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "uncertainty", true, "uncertainty");
+					}
+				)
+			)
+			otherlv_31='of'
+			{
+				newLeafNode(otherlv_31, grammarAccess.getConceptAccess().getOfKeyword_7_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_7_2_0());
+					}
+					lv_concept_32_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_32_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					lv_magnitude_33_0='magnitude'
+					{
+						newLeafNode(lv_magnitude_33_0, grammarAccess.getConceptAccess().getMagnitudeMagnitudeKeyword_8_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "magnitude", true, "magnitude");
+					}
+				)
+			)
+			otherlv_34='of'
+			{
+				newLeafNode(otherlv_34, grammarAccess.getConceptAccess().getOfKeyword_8_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_8_2_0());
+					}
+					lv_concept_35_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_35_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					lv_level_36_0='level'
+					{
+						newLeafNode(lv_level_36_0, grammarAccess.getConceptAccess().getLevelLevelKeyword_9_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "level", true, "level");
+					}
+				)
+			)
+			otherlv_37='of'
+			{
+				newLeafNode(otherlv_37, grammarAccess.getConceptAccess().getOfKeyword_9_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_9_2_0());
+					}
+					lv_concept_38_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_38_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					lv_type_39_0='type'
+					{
+						newLeafNode(lv_type_39_0, grammarAccess.getConceptAccess().getTypeTypeKeyword_10_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "type", true, "type");
+					}
+				)
+			)
+			otherlv_40='of'
+			{
+				newLeafNode(otherlv_40, grammarAccess.getConceptAccess().getOfKeyword_10_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_10_2_0());
+					}
+					lv_concept_41_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_41_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					lv_observability_42_0='observability'
+					{
+						newLeafNode(lv_observability_42_0, grammarAccess.getConceptAccess().getObservabilityObservabilityKeyword_11_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "observability", true, "observability");
+					}
+				)
+			)
+			otherlv_43='of'
+			{
+				newLeafNode(otherlv_43, grammarAccess.getConceptAccess().getOfKeyword_11_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_11_2_0());
+					}
+					lv_concept_44_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_44_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					lv_proportion_45_0='proportion'
+					{
+						newLeafNode(lv_proportion_45_0, grammarAccess.getConceptAccess().getProportionProportionKeyword_12_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "proportion", true, "proportion");
+					}
+				)
+			)
+			otherlv_46='of'
+			{
+				newLeafNode(otherlv_46, grammarAccess.getConceptAccess().getOfKeyword_12_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_12_2_0());
+					}
+					lv_concept_47_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_47_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			(
+				(
+					('in')=>
+					otherlv_48='in'
+					{
+						newLeafNode(otherlv_48, grammarAccess.getConceptAccess().getInKeyword_12_3_0());
+					}
+				)
+				(
+					(
+						{
+							newCompositeNode(grammarAccess.getConceptAccess().getOtherSimpleConceptDeclarationParserRuleCall_12_3_1_0());
+						}
+						lv_other_49_0=ruleSimpleConceptDeclaration
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getConceptRule());
+							}
+							set(
+								$current,
+								"other",
+								lv_other_49_0,
+								"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+							afterParserOrEnumRuleCall();
+						}
+					)
+				)
+			)?
+		)
+		    |
+		(
+			(
+				(
+					lv_percentage_50_0='percentage'
+					{
+						newLeafNode(lv_percentage_50_0, grammarAccess.getConceptAccess().getPercentagePercentageKeyword_13_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "percentage", true, "percentage");
+					}
+				)
+			)
+			otherlv_51='of'
+			{
+				newLeafNode(otherlv_51, grammarAccess.getConceptAccess().getOfKeyword_13_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_13_2_0());
+					}
+					lv_concept_52_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_52_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			(
+				(
+					('in')=>
+					otherlv_53='in'
+					{
+						newLeafNode(otherlv_53, grammarAccess.getConceptAccess().getInKeyword_13_3_0());
+					}
+				)
+				(
+					(
+						{
+							newCompositeNode(grammarAccess.getConceptAccess().getOtherSimpleConceptDeclarationParserRuleCall_13_3_1_0());
+						}
+						lv_other_54_0=ruleSimpleConceptDeclaration
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getConceptRule());
+							}
+							set(
+								$current,
+								"other",
+								lv_other_54_0,
+								"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+							afterParserOrEnumRuleCall();
+						}
+					)
+				)
+			)?
+		)
+		    |
+		(
+			(
+				(
+					lv_ratio_55_0='ratio'
+					{
+						newLeafNode(lv_ratio_55_0, grammarAccess.getConceptAccess().getRatioRatioKeyword_14_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "ratio", true, "ratio");
+					}
+				)
+			)
+			otherlv_56='of'
+			{
+				newLeafNode(otherlv_56, grammarAccess.getConceptAccess().getOfKeyword_14_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_14_2_0());
+					}
+					lv_concept_57_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_57_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			(
+				('to')=>
+				otherlv_58='to'
+				{
+					newLeafNode(otherlv_58, grammarAccess.getConceptAccess().getToKeyword_14_3());
+				}
+			)
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getOtherSimpleConceptDeclarationParserRuleCall_14_4_0());
+					}
+					lv_other_59_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"other",
+							lv_other_59_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					lv_monetary_60_0='monetary'
+					{
+						newLeafNode(lv_monetary_60_0, grammarAccess.getConceptAccess().getMonetaryMonetaryKeyword_15_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "monetary", true, "monetary");
+					}
+				)
+			)?
+			(
+				(
+					lv_value_61_0='value'
+					{
+						newLeafNode(lv_value_61_0, grammarAccess.getConceptAccess().getValueValueKeyword_15_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "value", true, "value");
+					}
+				)
+			)
+			otherlv_62='of'
+			{
+				newLeafNode(otherlv_62, grammarAccess.getConceptAccess().getOfKeyword_15_2());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_15_3_0());
+					}
+					lv_concept_63_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_63_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			(
+				(
+					('over')=>
+					otherlv_64='over'
+					{
+						newLeafNode(otherlv_64, grammarAccess.getConceptAccess().getOverKeyword_15_4_0());
+					}
+				)
+				(
+					(
+						{
+							newCompositeNode(grammarAccess.getConceptAccess().getOtherSimpleConceptDeclarationParserRuleCall_15_4_1_0());
+						}
+						lv_other_65_0=ruleSimpleConceptDeclaration
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getConceptRule());
+							}
+							set(
+								$current,
+								"other",
+								lv_other_65_0,
+								"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+							afterParserOrEnumRuleCall();
+						}
+					)
+				)
+			)?
+		)
+		    |
+		(
+			(
+				(
+					lv_occurrence_66_0='occurrence'
+					{
+						newLeafNode(lv_occurrence_66_0, grammarAccess.getConceptAccess().getOccurrenceOccurrenceKeyword_16_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "occurrence", true, "occurrence");
+					}
+				)
+			)
+			otherlv_67='of'
+			{
+				newLeafNode(otherlv_67, grammarAccess.getConceptAccess().getOfKeyword_16_1());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getConceptSimpleConceptDeclarationParserRuleCall_16_2_0());
+					}
+					lv_concept_68_0=ruleSimpleConceptDeclaration
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"concept",
+							lv_concept_68_0,
+							"org.integratedmodelling.kactors.Kactors.SimpleConceptDeclaration");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					lv_authConcept_69_0='identity'
+					{
+						newLeafNode(lv_authConcept_69_0, grammarAccess.getConceptAccess().getAuthConceptIdentityKeyword_17_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getConceptRule());
+						}
+						setWithLastConsumed($current, "authConcept", true, "identity");
+					}
+				)
+			)
+			(
+				(
+					(
+						(
+							lv_stringIdentifier_70_1=RULE_ID
+							{
+								newLeafNode(lv_stringIdentifier_70_1, grammarAccess.getConceptAccess().getStringIdentifierIDTerminalRuleCall_17_1_0_0_0());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getConceptRule());
+								}
+								setWithLastConsumed(
+									$current,
+									"stringIdentifier",
+									lv_stringIdentifier_70_1,
+									"org.eclipse.xtext.common.Terminals.ID");
+							}
+							    |
+							lv_stringIdentifier_70_2=RULE_STRING
+							{
+								newLeafNode(lv_stringIdentifier_70_2, grammarAccess.getConceptAccess().getStringIdentifierSTRINGTerminalRuleCall_17_1_0_0_1());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getConceptRule());
+								}
+								setWithLastConsumed(
+									$current,
+									"stringIdentifier",
+									lv_stringIdentifier_70_2,
+									"org.eclipse.xtext.common.Terminals.STRING");
+							}
+							    |
+							lv_stringIdentifier_70_3=RULE_UPPERCASE_ID
+							{
+								newLeafNode(lv_stringIdentifier_70_3, grammarAccess.getConceptAccess().getStringIdentifierUPPERCASE_IDTerminalRuleCall_17_1_0_0_2());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getConceptRule());
+								}
+								setWithLastConsumed(
+									$current,
+									"stringIdentifier",
+									lv_stringIdentifier_70_3,
+									"org.integratedmodelling.kactors.Kactors.UPPERCASE_ID");
+							}
+							    |
+							lv_stringIdentifier_70_4=RULE_CAMELCASE_ID
+							{
+								newLeafNode(lv_stringIdentifier_70_4, grammarAccess.getConceptAccess().getStringIdentifierCAMELCASE_IDTerminalRuleCall_17_1_0_0_3());
+							}
+							{
+								if ($current==null) {
+									$current = createModelElement(grammarAccess.getConceptRule());
+								}
+								setWithLastConsumed(
+									$current,
+									"stringIdentifier",
+									lv_stringIdentifier_70_4,
+									"org.integratedmodelling.kactors.Kactors.CAMELCASE_ID");
+							}
+						)
+					)
+				)
+				    |
+				(
+					(
+						lv_intIdentifier_71_0=RULE_INT
+						{
+							newLeafNode(lv_intIdentifier_71_0, grammarAccess.getConceptAccess().getIntIdentifierINTTerminalRuleCall_17_1_1_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getConceptRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"intIdentifier",
+								lv_intIdentifier_71_0,
+								"org.eclipse.xtext.common.Terminals.INT");
+						}
+					)
+				)
+			)
+			otherlv_72='by'
+			{
+				newLeafNode(otherlv_72, grammarAccess.getConceptAccess().getByKeyword_17_2());
+			}
+			(
+				(
+					(
+						lv_authority_73_1=RULE_UPPERCASE_ID
+						{
+							newLeafNode(lv_authority_73_1, grammarAccess.getConceptAccess().getAuthorityUPPERCASE_IDTerminalRuleCall_17_3_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getConceptRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"authority",
+								lv_authority_73_1,
+								"org.integratedmodelling.kactors.Kactors.UPPERCASE_ID");
+						}
+						    |
+						lv_authority_73_2=RULE_UPPERCASE_PATH
+						{
+							newLeafNode(lv_authority_73_2, grammarAccess.getConceptAccess().getAuthorityUPPERCASE_PATHTerminalRuleCall_17_3_0_1());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getConceptRule());
+							}
+							setWithLastConsumed(
+								$current,
+								"authority",
+								lv_authority_73_2,
+								"org.integratedmodelling.kactors.Kactors.UPPERCASE_PATH");
+						}
+					)
+				)
+			)
+		)
+		    |
+		(
+			otherlv_74='('
+			{
+				newLeafNode(otherlv_74, grammarAccess.getConceptAccess().getLeftParenthesisKeyword_18_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getConceptAccess().getDeclarationExpressionParserRuleCall_18_1_0());
+					}
+					lv_declaration_75_0=ruleExpression
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getConceptRule());
+						}
+						set(
+							$current,
+							"declaration",
+							lv_declaration_75_0,
+							"org.integratedmodelling.kactors.Kactors.Expression");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			otherlv_76=')'
+			{
+				newLeafNode(otherlv_76, grammarAccess.getConceptAccess().getRightParenthesisKeyword_18_2());
+			}
+		)
+	)
+;
+
+// Entry rule entryRuleNamespaceId
+entryRuleNamespaceId returns [String current=null]:
+	{ newCompositeNode(grammarAccess.getNamespaceIdRule()); }
+	iv_ruleNamespaceId=ruleNamespaceId
+	{ $current=$iv_ruleNamespaceId.current.getText(); }
+	EOF;
+
+// Rule NamespaceId
+ruleNamespaceId returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		{
+			newCompositeNode(grammarAccess.getNamespaceIdAccess().getQuotablePathNameParserRuleCall_0());
+		}
+		this_QuotablePathName_0=ruleQuotablePathName
+		{
+			$current.merge(this_QuotablePathName_0);
+		}
+		{
+			afterParserOrEnumRuleCall();
+		}
+		kw=':'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getNamespaceIdAccess().getColonKeyword_1());
+		}
+		this_CAMELCASE_ID_2=RULE_CAMELCASE_ID
+		{
+			$current.merge(this_CAMELCASE_ID_2);
+		}
+		{
+			newLeafNode(this_CAMELCASE_ID_2, grammarAccess.getNamespaceIdAccess().getCAMELCASE_IDTerminalRuleCall_2());
+		}
+	)
+;
+
+// Entry rule entryRuleExpression
+entryRuleExpression returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getExpressionRule()); }
+	iv_ruleExpression=ruleExpression
+	{ $current=$iv_ruleExpression.current; }
+	EOF;
+
+// Rule Expression
+ruleExpression returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	{
+		/* */
+	}
+	{
+		newCompositeNode(grammarAccess.getExpressionAccess().getTermParserRuleCall());
+	}
+	this_Term_0=ruleTerm
+	{
+		$current = $this_Term_0.current;
+		afterParserOrEnumRuleCall();
+	}
+;
+
+// Entry rule entryRuleTerm
+entryRuleTerm returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getTermRule()); }
+	iv_ruleTerm=ruleTerm
+	{ $current=$iv_ruleTerm.current; }
+	EOF;
+
+// Rule Term
+ruleTerm returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		{
+			/* */
+		}
+		{
+			newCompositeNode(grammarAccess.getTermAccess().getFactorParserRuleCall_0());
+		}
+		this_Factor_0=ruleFactor
+		{
+			$current = $this_Factor_0.current;
+			afterParserOrEnumRuleCall();
+		}
+		(
+			(
+				(
+					lv_operators_1_0='or'
+					{
+						newLeafNode(lv_operators_1_0, grammarAccess.getTermAccess().getOperatorsOrKeyword_1_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getTermRule());
+						}
+						addWithLastConsumed($current, "operators", lv_operators_1_0, "or");
+					}
+				)
+			)
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getTermAccess().getOperandsFactorParserRuleCall_1_1_0());
+					}
+					lv_operands_2_0=ruleFactor
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getTermRule());
+						}
+						add(
+							$current,
+							"operands",
+							lv_operands_2_0,
+							"org.integratedmodelling.kactors.Kactors.Factor");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)*
+	)
+;
+
+// Entry rule entryRuleFactor
+entryRuleFactor returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getFactorRule()); }
+	iv_ruleFactor=ruleFactor
+	{ $current=$iv_ruleFactor.current; }
+	EOF;
+
+// Rule Factor
+ruleFactor returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		{
+			/* */
+		}
+		{
+			newCompositeNode(grammarAccess.getFactorAccess().getConceptDeclarationParserRuleCall_0());
+		}
+		this_ConceptDeclaration_0=ruleConceptDeclaration
+		{
+			$current = $this_ConceptDeclaration_0.current;
+			afterParserOrEnumRuleCall();
+		}
+		(
+			(
+				(
+					(
+						lv_operators_1_1='and'
+						{
+							newLeafNode(lv_operators_1_1, grammarAccess.getFactorAccess().getOperatorsAndKeyword_1_0_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getFactorRule());
+							}
+							addWithLastConsumed($current, "operators", lv_operators_1_1, null);
+						}
+						    |
+						lv_operators_1_2='follows'
+						{
+							newLeafNode(lv_operators_1_2, grammarAccess.getFactorAccess().getOperatorsFollowsKeyword_1_0_0_1());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getFactorRule());
+							}
+							addWithLastConsumed($current, "operators", lv_operators_1_2, null);
+						}
+					)
+				)
+			)
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getFactorAccess().getOperandsTermParserRuleCall_1_1_0());
+					}
+					lv_operands_2_0=ruleTerm
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getFactorRule());
+						}
+						add(
+							$current,
+							"operands",
+							lv_operands_2_0,
+							"org.integratedmodelling.kactors.Kactors.Term");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)*
+	)
+;
+
+// Entry rule entryRuleSimpleConceptDeclaration
+entryRuleSimpleConceptDeclaration returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getSimpleConceptDeclarationRule()); }
+	iv_ruleSimpleConceptDeclaration=ruleSimpleConceptDeclaration
+	{ $current=$iv_ruleSimpleConceptDeclaration.current; }
+	EOF;
+
+// Rule SimpleConceptDeclaration
+ruleSimpleConceptDeclaration returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				lv_name_0_0=RULE_STRING
+				{
+					newLeafNode(lv_name_0_0, grammarAccess.getSimpleConceptDeclarationAccess().getNameSTRINGTerminalRuleCall_0_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getSimpleConceptDeclarationRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"name",
+						lv_name_0_0,
+						"org.eclipse.xtext.common.Terminals.STRING");
+				}
+			)
+		)?
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getSimpleConceptDeclarationAccess().getMainConceptParserRuleCall_1_0());
+				}
+				lv_main_1_0=ruleConcept
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getSimpleConceptDeclarationRule());
+					}
+					add(
+						$current,
+						"main",
+						lv_main_1_0,
+						"org.integratedmodelling.kactors.Kactors.Concept");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)+
+	)
+;
+
 // Entry rule entryRuleVersionNumber
 entryRuleVersionNumber returns [String current=null]:
 	{ newCompositeNode(grammarAccess.getVersionNumberRule()); }
@@ -6420,6 +9980,10 @@ ruleUnitOp returns [Enumerator current=null]
 	)
 ;
 
+RULE_KEY : (':'|'!') 'a'..'z' ('a'..'z'|'0'..'9'|'_')*;
+
+RULE_TAG : '#' 'a'..'z' ('a'..'z'|'0'..'9'|'_')*;
+
 RULE_UPPERCASE_ID : 'A'..'Z' ('A'..'Z'|'_')*;
 
 RULE_UPPERCASE_PATH : RULE_UPPERCASE_ID ('.' RULE_UPPERCASE_ID)*;
@@ -6428,6 +9992,10 @@ RULE_CAMELCASE_ID : 'A'..'Z' ('A'..'z'|'0'..'9')*;
 
 RULE_LOWERCASE_ID : 'a'..'z' ('a'..'z'|'0'..'9'|'_')*;
 
+RULE_QUOTED_LOWERCASE_ID : '`' 'a'..'z' ('a'..'z'|'0'..'9'|'_')*;
+
+RULE_LOWERCASE_ID_DASH : 'a'..'z' ('a'..'z'|'0'..'9'|'_'|'-')*;
+
 RULE_ARGVALUE : '$' ('$'|('0'..'9')*);
 
 RULE_EXPR : '[' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|']'|'\\')|~(('\\'|']')))* ']';
@@ -6435,8 +10003,6 @@ RULE_EXPR : '[' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|']'|'\\')|~(('\\'|']')))* ']';
 RULE_EMBEDDEDTEXT : '%%%' ' '? '-'* ('\r'|'\n') ( options {greedy=false;} : . )*'%%%' ' '? '-'*;
 
 RULE_REGEXP : '%' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|'%'|'\\')|~(('\\'|'%')))* '%';
-
-RULE_OBSERVABLE : '{' ('\\' ('b'|'t'|'n'|'f'|'r'|'u'|'\\')|~(('\\'|'}')))* '}';
 
 RULE_SEPARATOR : '---' '-'*;
 

@@ -8,90 +8,95 @@ import java.util.Map;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.IdentityReference;
+import org.integratedmodelling.klab.rest.Layout;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import akka.actor.typed.ActorRef;
 
 public class Partner extends UserIdentity implements IPartnerIdentity, UserDetails {
 
-    private static final long serialVersionUID = -129699145554376751L;
-    
+	private static final long serialVersionUID = -129699145554376751L;
+
 	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
+	private View view;
+	private ActorRef<KlabMessage> actor;
 
-	
-    public Partner(String partnerName) {
-        super(partnerName);
-    }
+	public Partner(String partnerName) {
+		super(partnerName);
+	}
 
-    public Partner(IdentityReference owningPartner) {
-        super(owningPartner);
-    }
+	public Partner(IdentityReference owningPartner) {
+		super(owningPartner);
+	}
 
-    @Override
-    public IIdentity getParentIdentity() {
-        // the only legitimate null.
-        return null;
-    }
+	@Override
+	public IIdentity getParentIdentity() {
+		// the only legitimate null.
+		return null;
+	}
 
-    @Override
-    public String getServerURL() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getServerURL() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public String getFirstName() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getFirstName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public String getLastName() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getLastName() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public String getInitials() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getInitials() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public String getAffiliation() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getAffiliation() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public String getComment() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public String getComment() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-    @Override
-    public Date getLastLogin() {
-        return lastLogin.toDate();
-    }
+	@Override
+	public Date getLastLogin() {
+		return lastLogin.toDate();
+	}
 
-    @Override
-    public boolean is(Type type) {
-        return type == IPartnerIdentity.TYPE;
-    }
+	@Override
+	public boolean is(Type type) {
+		return type == IPartnerIdentity.TYPE;
+	}
 
-    @Override
-    public boolean isOnline() {
-        // partners are an offline entity.
-        return false;
-    }
+	@Override
+	public boolean isOnline() {
+		// partners are an offline entity.
+		return false;
+	}
 
-    @Override
-    public String getName() {
-        return getUsername();
-    }
+	@Override
+	public String getName() {
+		return getUsername();
+	}
 
 	@Override
 	public ActorRef<KlabMessage> getActor() {
@@ -99,19 +104,49 @@ public class Partner extends UserIdentity implements IPartnerIdentity, UserDetai
 		return null;
 	}
 
-	@Override
-	public void load(IBehavior behavior, IRuntimeScope scope) {
-		// TODO Auto-generated method stub
-		
-	}
 
 	@Override
 	public void instrument(ActorRef<KlabMessage> actor) {
 		// TODO Auto-generated method stub
-		
+
 	}
-	
+
 	public Map<String, Object> getState() {
 		return globalState;
 	}
+
+	@Override
+	public View getView() {
+		return view;
+	}
+
+	@Override
+	public void setLayout(Layout layout) {
+		this.view = new ViewImpl(layout);
+	}
+
+	@Override
+	public String load(IBehavior behavior, IContextualizationScope scope) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public boolean stop(String behaviorId) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public boolean stop() {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
+	@Override
+	public IMonitor getMonitor() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

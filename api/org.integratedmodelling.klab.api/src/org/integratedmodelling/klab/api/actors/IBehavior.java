@@ -22,7 +22,7 @@ public interface IBehavior extends IKimObject {
 		IKActorsAction getStatement();
 
 	}
-	
+
 	@Override
 	IKActorsBehavior getStatement();
 
@@ -40,6 +40,13 @@ public interface IBehavior extends IKimObject {
 	 * @return
 	 */
 	IKActorsBehavior.Type getDestination();
+	
+	/**
+	 * What this is for.
+	 * 
+	 * @return
+	 */
+	IKActorsBehavior.Platform getPlatform();
 
 	/**
 	 * Get all the actions in order of declaration. If a string is passed, match it
@@ -58,5 +65,12 @@ public interface IBehavior extends IKimObject {
 	 * @return the action or null
 	 */
 	Action getAction(String actionId);
-	
+
+	/**
+	 * The name of the project this behavior is declared in. May be null only in user behaviors.
+	 * 
+	 * @return
+	 */
+	String getProject();
+
 }

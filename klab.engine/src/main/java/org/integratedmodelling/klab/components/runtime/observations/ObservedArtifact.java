@@ -29,6 +29,14 @@ public abstract class ObservedArtifact extends Artifact implements IArtifact {
 		this.runtimeScope = scope;
 	}
 
+	protected ObservedArtifact(ObservedArtifact artifact) {
+		super(artifact);
+		this.geometry = artifact.geometry;
+		this.runtimeScope = artifact.runtimeScope;
+		this.token = artifact.token;
+		this.markedForDeletion = artifact.markedForDeletion;
+	}
+	
 	public String getId() {
 		return token;
 	}

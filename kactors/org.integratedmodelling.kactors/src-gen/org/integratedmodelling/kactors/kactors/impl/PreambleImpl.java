@@ -21,6 +21,8 @@ import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.List;
+import org.integratedmodelling.kactors.kactors.Map;
+import org.integratedmodelling.kactors.kactors.Observable;
 import org.integratedmodelling.kactors.kactors.Preamble;
 
 /**
@@ -31,21 +33,29 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isPublic <em>Public</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isMobile <em>Mobile</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isDesktop <em>Desktop</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isWeb <em>Web</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isApp <em>App</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isTask <em>Task</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isTest <em>Test</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isComponent <em>Component</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isUser <em>User</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isLibrary <em>Library</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isBehavior <em>Behavior</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getImports <em>Imports</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getWorldview <em>Worldview</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getObservables <em>Observables</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getLabel <em>Label</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getDescription <em>Description</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getPermissions <em>Permissions</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getAuthors <em>Authors</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getStyle <em>Style</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getInlineStyle <em>Inline Style</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getLogo <em>Logo</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getVersion <em>Version</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getCreated <em>Created</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getCreatecomment <em>Createcomment</em>}</li>
@@ -57,6 +67,86 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  */
 public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamble
 {
+  /**
+   * The default value of the '{@link #isPublic() <em>Public</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isPublic()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean PUBLIC_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isPublic() <em>Public</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isPublic()
+   * @generated
+   * @ordered
+   */
+  protected boolean public_ = PUBLIC_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isMobile() <em>Mobile</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isMobile()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean MOBILE_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isMobile() <em>Mobile</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isMobile()
+   * @generated
+   * @ordered
+   */
+  protected boolean mobile = MOBILE_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isDesktop() <em>Desktop</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDesktop()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean DESKTOP_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isDesktop() <em>Desktop</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDesktop()
+   * @generated
+   * @ordered
+   */
+  protected boolean desktop = DESKTOP_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isWeb() <em>Web</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isWeb()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean WEB_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isWeb() <em>Web</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isWeb()
+   * @generated
+   * @ordered
+   */
+  protected boolean web = WEB_EDEFAULT;
+
   /**
    * The default value of the '{@link #isApp() <em>App</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -78,6 +168,26 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   protected boolean app = APP_EDEFAULT;
 
   /**
+   * The default value of the '{@link #isTask() <em>Task</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isTask()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean TASK_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isTask() <em>Task</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isTask()
+   * @generated
+   * @ordered
+   */
+  protected boolean task = TASK_EDEFAULT;
+
+  /**
    * The default value of the '{@link #isTest() <em>Test</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -96,6 +206,26 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @ordered
    */
   protected boolean test = TEST_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isComponent() <em>Component</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isComponent()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean COMPONENT_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isComponent() <em>Component</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isComponent()
+   * @generated
+   * @ordered
+   */
+  protected boolean component = COMPONENT_EDEFAULT;
 
   /**
    * The default value of the '{@link #isUser() <em>User</em>}' attribute.
@@ -178,6 +308,26 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   protected String name = NAME_EDEFAULT;
 
   /**
+   * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLabel()
+   * @generated
+   * @ordered
+   */
+  protected static final String LABEL_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLabel()
+   * @generated
+   * @ordered
+   */
+  protected String label = LABEL_EDEFAULT;
+
+  /**
    * The cached value of the '{@link #getImports() <em>Imports</em>}' attribute list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -208,24 +358,14 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   protected String worldview = WORLDVIEW_EDEFAULT;
 
   /**
-   * The default value of the '{@link #getObservable() <em>Observable</em>}' attribute.
+   * The cached value of the '{@link #getObservable() <em>Observable</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getObservable()
    * @generated
    * @ordered
    */
-  protected static final String OBSERVABLE_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getObservable() <em>Observable</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getObservable()
-   * @generated
-   * @ordered
-   */
-  protected String observable = OBSERVABLE_EDEFAULT;
+  protected Observable observable;
 
   /**
    * The cached value of the '{@link #getObservables() <em>Observables</em>}' containment reference.
@@ -236,26 +376,6 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @ordered
    */
   protected List observables;
-
-  /**
-   * The default value of the '{@link #getLabel() <em>Label</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getLabel()
-   * @generated
-   * @ordered
-   */
-  protected static final String LABEL_EDEFAULT = null;
-
-  /**
-   * The cached value of the '{@link #getLabel() <em>Label</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getLabel()
-   * @generated
-   * @ordered
-   */
-  protected String label = LABEL_EDEFAULT;
 
   /**
    * The default value of the '{@link #getDescription() <em>Description</em>}' attribute.
@@ -326,6 +446,36 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @ordered
    */
   protected String style = STYLE_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getInlineStyle() <em>Inline Style</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getInlineStyle()
+   * @generated
+   * @ordered
+   */
+  protected Map inlineStyle;
+
+  /**
+   * The default value of the '{@link #getLogo() <em>Logo</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLogo()
+   * @generated
+   * @ordered
+   */
+  protected static final String LOGO_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getLogo() <em>Logo</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLogo()
+   * @generated
+   * @ordered
+   */
+  protected String logo = LOGO_EDEFAULT;
 
   /**
    * The default value of the '{@link #getVersion() <em>Version</em>}' attribute.
@@ -434,6 +584,106 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
+  public boolean isPublic()
+  {
+    return public_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setPublic(boolean newPublic)
+  {
+    boolean oldPublic = public_;
+    public_ = newPublic;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__PUBLIC, oldPublic, public_));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isMobile()
+  {
+    return mobile;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setMobile(boolean newMobile)
+  {
+    boolean oldMobile = mobile;
+    mobile = newMobile;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__MOBILE, oldMobile, mobile));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isDesktop()
+  {
+    return desktop;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setDesktop(boolean newDesktop)
+  {
+    boolean oldDesktop = desktop;
+    desktop = newDesktop;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__DESKTOP, oldDesktop, desktop));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isWeb()
+  {
+    return web;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setWeb(boolean newWeb)
+  {
+    boolean oldWeb = web;
+    web = newWeb;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__WEB, oldWeb, web));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public boolean isApp()
   {
     return app;
@@ -459,6 +709,31 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
+  public boolean isTask()
+  {
+    return task;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setTask(boolean newTask)
+  {
+    boolean oldTask = task;
+    task = newTask;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__TASK, oldTask, task));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public boolean isTest()
   {
     return test;
@@ -476,6 +751,31 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     test = newTest;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__TEST, oldTest, test));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isComponent()
+  {
+    return component;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setComponent(boolean newComponent)
+  {
+    boolean oldComponent = component;
+    component = newComponent;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__COMPONENT, oldComponent, component));
   }
 
   /**
@@ -584,6 +884,31 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
+  public String getLabel()
+  {
+    return label;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setLabel(String newLabel)
+  {
+    String oldLabel = label;
+    label = newLabel;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__LABEL, oldLabel, label));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EList<String> getImports()
   {
     if (imports == null)
@@ -624,7 +949,7 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
-  public String getObservable()
+  public Observable getObservable()
   {
     return observable;
   }
@@ -634,13 +959,38 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * <!-- end-user-doc -->
    * @generated
    */
-  @Override
-  public void setObservable(String newObservable)
+  public NotificationChain basicSetObservable(Observable newObservable, NotificationChain msgs)
   {
-    String oldObservable = observable;
+    Observable oldObservable = observable;
     observable = newObservable;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__OBSERVABLE, oldObservable, observable));
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__OBSERVABLE, oldObservable, newObservable);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setObservable(Observable newObservable)
+  {
+    if (newObservable != observable)
+    {
+      NotificationChain msgs = null;
+      if (observable != null)
+        msgs = ((InternalEObject)observable).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.PREAMBLE__OBSERVABLE, null, msgs);
+      if (newObservable != null)
+        msgs = ((InternalEObject)newObservable).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.PREAMBLE__OBSERVABLE, null, msgs);
+      msgs = basicSetObservable(newObservable, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__OBSERVABLE, newObservable, newObservable));
   }
 
   /**
@@ -691,31 +1041,6 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__OBSERVABLES, newObservables, newObservables));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String getLabel()
-  {
-    return label;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setLabel(String newLabel)
-  {
-    String oldLabel = label;
-    label = newLabel;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__LABEL, oldLabel, label));
   }
 
   /**
@@ -806,6 +1131,81 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     style = newStyle;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__STYLE, oldStyle, style));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Map getInlineStyle()
+  {
+    return inlineStyle;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetInlineStyle(Map newInlineStyle, NotificationChain msgs)
+  {
+    Map oldInlineStyle = inlineStyle;
+    inlineStyle = newInlineStyle;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__INLINE_STYLE, oldInlineStyle, newInlineStyle);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setInlineStyle(Map newInlineStyle)
+  {
+    if (newInlineStyle != inlineStyle)
+    {
+      NotificationChain msgs = null;
+      if (inlineStyle != null)
+        msgs = ((InternalEObject)inlineStyle).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.PREAMBLE__INLINE_STYLE, null, msgs);
+      if (newInlineStyle != null)
+        msgs = ((InternalEObject)newInlineStyle).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.PREAMBLE__INLINE_STYLE, null, msgs);
+      msgs = basicSetInlineStyle(newInlineStyle, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__INLINE_STYLE, newInlineStyle, newInlineStyle));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getLogo()
+  {
+    return logo;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setLogo(String newLogo)
+  {
+    String oldLogo = logo;
+    logo = newLogo;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__LOGO, oldLogo, logo));
   }
 
   /**
@@ -993,8 +1393,12 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__OBSERVABLE:
+        return basicSetObservable(null, msgs);
       case KactorsPackage.PREAMBLE__OBSERVABLES:
         return basicSetObservables(null, msgs);
+      case KactorsPackage.PREAMBLE__INLINE_STYLE:
+        return basicSetInlineStyle(null, msgs);
       case KactorsPackage.PREAMBLE__CREATED:
         return basicSetCreated(null, msgs);
       case KactorsPackage.PREAMBLE__MODIFIED:
@@ -1013,10 +1417,22 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__PUBLIC:
+        return isPublic();
+      case KactorsPackage.PREAMBLE__MOBILE:
+        return isMobile();
+      case KactorsPackage.PREAMBLE__DESKTOP:
+        return isDesktop();
+      case KactorsPackage.PREAMBLE__WEB:
+        return isWeb();
       case KactorsPackage.PREAMBLE__APP:
         return isApp();
+      case KactorsPackage.PREAMBLE__TASK:
+        return isTask();
       case KactorsPackage.PREAMBLE__TEST:
         return isTest();
+      case KactorsPackage.PREAMBLE__COMPONENT:
+        return isComponent();
       case KactorsPackage.PREAMBLE__USER:
         return isUser();
       case KactorsPackage.PREAMBLE__LIBRARY:
@@ -1025,6 +1441,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return isBehavior();
       case KactorsPackage.PREAMBLE__NAME:
         return getName();
+      case KactorsPackage.PREAMBLE__LABEL:
+        return getLabel();
       case KactorsPackage.PREAMBLE__IMPORTS:
         return getImports();
       case KactorsPackage.PREAMBLE__WORLDVIEW:
@@ -1033,8 +1451,6 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return getObservable();
       case KactorsPackage.PREAMBLE__OBSERVABLES:
         return getObservables();
-      case KactorsPackage.PREAMBLE__LABEL:
-        return getLabel();
       case KactorsPackage.PREAMBLE__DESCRIPTION:
         return getDescription();
       case KactorsPackage.PREAMBLE__PERMISSIONS:
@@ -1043,6 +1459,10 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return getAuthors();
       case KactorsPackage.PREAMBLE__STYLE:
         return getStyle();
+      case KactorsPackage.PREAMBLE__INLINE_STYLE:
+        return getInlineStyle();
+      case KactorsPackage.PREAMBLE__LOGO:
+        return getLogo();
       case KactorsPackage.PREAMBLE__VERSION:
         return getVersion();
       case KactorsPackage.PREAMBLE__CREATED:
@@ -1068,11 +1488,29 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__PUBLIC:
+        setPublic((Boolean)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__MOBILE:
+        setMobile((Boolean)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__DESKTOP:
+        setDesktop((Boolean)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__WEB:
+        setWeb((Boolean)newValue);
+        return;
       case KactorsPackage.PREAMBLE__APP:
         setApp((Boolean)newValue);
         return;
+      case KactorsPackage.PREAMBLE__TASK:
+        setTask((Boolean)newValue);
+        return;
       case KactorsPackage.PREAMBLE__TEST:
         setTest((Boolean)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__COMPONENT:
+        setComponent((Boolean)newValue);
         return;
       case KactorsPackage.PREAMBLE__USER:
         setUser((Boolean)newValue);
@@ -1086,6 +1524,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__NAME:
         setName((String)newValue);
         return;
+      case KactorsPackage.PREAMBLE__LABEL:
+        setLabel((String)newValue);
+        return;
       case KactorsPackage.PREAMBLE__IMPORTS:
         getImports().clear();
         getImports().addAll((Collection<? extends String>)newValue);
@@ -1094,13 +1535,10 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         setWorldview((String)newValue);
         return;
       case KactorsPackage.PREAMBLE__OBSERVABLE:
-        setObservable((String)newValue);
+        setObservable((Observable)newValue);
         return;
       case KactorsPackage.PREAMBLE__OBSERVABLES:
         setObservables((List)newValue);
-        return;
-      case KactorsPackage.PREAMBLE__LABEL:
-        setLabel((String)newValue);
         return;
       case KactorsPackage.PREAMBLE__DESCRIPTION:
         setDescription((String)newValue);
@@ -1114,6 +1552,12 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return;
       case KactorsPackage.PREAMBLE__STYLE:
         setStyle((String)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__INLINE_STYLE:
+        setInlineStyle((Map)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__LOGO:
+        setLogo((String)newValue);
         return;
       case KactorsPackage.PREAMBLE__VERSION:
         setVersion((String)newValue);
@@ -1144,11 +1588,29 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__PUBLIC:
+        setPublic(PUBLIC_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__MOBILE:
+        setMobile(MOBILE_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__DESKTOP:
+        setDesktop(DESKTOP_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__WEB:
+        setWeb(WEB_EDEFAULT);
+        return;
       case KactorsPackage.PREAMBLE__APP:
         setApp(APP_EDEFAULT);
         return;
+      case KactorsPackage.PREAMBLE__TASK:
+        setTask(TASK_EDEFAULT);
+        return;
       case KactorsPackage.PREAMBLE__TEST:
         setTest(TEST_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__COMPONENT:
+        setComponent(COMPONENT_EDEFAULT);
         return;
       case KactorsPackage.PREAMBLE__USER:
         setUser(USER_EDEFAULT);
@@ -1162,6 +1624,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__NAME:
         setName(NAME_EDEFAULT);
         return;
+      case KactorsPackage.PREAMBLE__LABEL:
+        setLabel(LABEL_EDEFAULT);
+        return;
       case KactorsPackage.PREAMBLE__IMPORTS:
         getImports().clear();
         return;
@@ -1169,13 +1634,10 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         setWorldview(WORLDVIEW_EDEFAULT);
         return;
       case KactorsPackage.PREAMBLE__OBSERVABLE:
-        setObservable(OBSERVABLE_EDEFAULT);
+        setObservable((Observable)null);
         return;
       case KactorsPackage.PREAMBLE__OBSERVABLES:
         setObservables((List)null);
-        return;
-      case KactorsPackage.PREAMBLE__LABEL:
-        setLabel(LABEL_EDEFAULT);
         return;
       case KactorsPackage.PREAMBLE__DESCRIPTION:
         setDescription(DESCRIPTION_EDEFAULT);
@@ -1188,6 +1650,12 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return;
       case KactorsPackage.PREAMBLE__STYLE:
         setStyle(STYLE_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__INLINE_STYLE:
+        setInlineStyle((Map)null);
+        return;
+      case KactorsPackage.PREAMBLE__LOGO:
+        setLogo(LOGO_EDEFAULT);
         return;
       case KactorsPackage.PREAMBLE__VERSION:
         setVersion(VERSION_EDEFAULT);
@@ -1218,10 +1686,22 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   {
     switch (featureID)
     {
+      case KactorsPackage.PREAMBLE__PUBLIC:
+        return public_ != PUBLIC_EDEFAULT;
+      case KactorsPackage.PREAMBLE__MOBILE:
+        return mobile != MOBILE_EDEFAULT;
+      case KactorsPackage.PREAMBLE__DESKTOP:
+        return desktop != DESKTOP_EDEFAULT;
+      case KactorsPackage.PREAMBLE__WEB:
+        return web != WEB_EDEFAULT;
       case KactorsPackage.PREAMBLE__APP:
         return app != APP_EDEFAULT;
+      case KactorsPackage.PREAMBLE__TASK:
+        return task != TASK_EDEFAULT;
       case KactorsPackage.PREAMBLE__TEST:
         return test != TEST_EDEFAULT;
+      case KactorsPackage.PREAMBLE__COMPONENT:
+        return component != COMPONENT_EDEFAULT;
       case KactorsPackage.PREAMBLE__USER:
         return user != USER_EDEFAULT;
       case KactorsPackage.PREAMBLE__LIBRARY:
@@ -1230,16 +1710,16 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return behavior != BEHAVIOR_EDEFAULT;
       case KactorsPackage.PREAMBLE__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+      case KactorsPackage.PREAMBLE__LABEL:
+        return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
       case KactorsPackage.PREAMBLE__IMPORTS:
         return imports != null && !imports.isEmpty();
       case KactorsPackage.PREAMBLE__WORLDVIEW:
         return WORLDVIEW_EDEFAULT == null ? worldview != null : !WORLDVIEW_EDEFAULT.equals(worldview);
       case KactorsPackage.PREAMBLE__OBSERVABLE:
-        return OBSERVABLE_EDEFAULT == null ? observable != null : !OBSERVABLE_EDEFAULT.equals(observable);
+        return observable != null;
       case KactorsPackage.PREAMBLE__OBSERVABLES:
         return observables != null;
-      case KactorsPackage.PREAMBLE__LABEL:
-        return LABEL_EDEFAULT == null ? label != null : !LABEL_EDEFAULT.equals(label);
       case KactorsPackage.PREAMBLE__DESCRIPTION:
         return DESCRIPTION_EDEFAULT == null ? description != null : !DESCRIPTION_EDEFAULT.equals(description);
       case KactorsPackage.PREAMBLE__PERMISSIONS:
@@ -1248,6 +1728,10 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return authors != null && !authors.isEmpty();
       case KactorsPackage.PREAMBLE__STYLE:
         return STYLE_EDEFAULT == null ? style != null : !STYLE_EDEFAULT.equals(style);
+      case KactorsPackage.PREAMBLE__INLINE_STYLE:
+        return inlineStyle != null;
+      case KactorsPackage.PREAMBLE__LOGO:
+        return LOGO_EDEFAULT == null ? logo != null : !LOGO_EDEFAULT.equals(logo);
       case KactorsPackage.PREAMBLE__VERSION:
         return VERSION_EDEFAULT == null ? version != null : !VERSION_EDEFAULT.equals(version);
       case KactorsPackage.PREAMBLE__CREATED:
@@ -1273,10 +1757,22 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (app: ");
+    result.append(" (public: ");
+    result.append(public_);
+    result.append(", mobile: ");
+    result.append(mobile);
+    result.append(", desktop: ");
+    result.append(desktop);
+    result.append(", web: ");
+    result.append(web);
+    result.append(", app: ");
     result.append(app);
+    result.append(", task: ");
+    result.append(task);
     result.append(", test: ");
     result.append(test);
+    result.append(", component: ");
+    result.append(component);
     result.append(", user: ");
     result.append(user);
     result.append(", library: ");
@@ -1285,14 +1781,12 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     result.append(behavior);
     result.append(", name: ");
     result.append(name);
+    result.append(", label: ");
+    result.append(label);
     result.append(", imports: ");
     result.append(imports);
     result.append(", worldview: ");
     result.append(worldview);
-    result.append(", observable: ");
-    result.append(observable);
-    result.append(", label: ");
-    result.append(label);
     result.append(", description: ");
     result.append(description);
     result.append(", permissions: ");
@@ -1301,6 +1795,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     result.append(authors);
     result.append(", style: ");
     result.append(style);
+    result.append(", logo: ");
+    result.append(logo);
     result.append(", version: ");
     result.append(version);
     result.append(", createcomment: ");

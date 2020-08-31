@@ -2,8 +2,8 @@ package org.integratedmodelling.kactors.model;
 
 import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
+import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Statement;
-import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 
 public abstract class KActorsStatement extends KActorCodeStatement implements IKActorsStatement {
 	
@@ -20,28 +20,58 @@ public abstract class KActorsStatement extends KActorCodeStatement implements IK
 	}
 
 	public static KActorsStatement create(Statement statement, KActorCodeStatement parent) {
-	
+		
+		KActorsStatement ret = null;
+		
 		if (statement.getAssignment() != null) {
-			return new KActorsAssignment(statement.getAssignment(), parent);
+			ret = new KActorsAssignment(statement.getAssignment(), parent);
 		} else if (statement.getDo() != null) {
-			return new KActorsDo(statement.getDo(), parent);
+			ret =  new KActorsDo(statement.getDo(), parent);
 		} else if (statement.getFor() != null) {
-			return new KActorsFor(statement.getFor(), parent);
+			ret =  new KActorsFor(statement.getFor(), parent);
 		} else if (statement.getIf() != null) {
-			return new KActorsIf(statement.getIf(), parent);
+			ret =  new KActorsIf(statement.getIf(), parent);
 		} else if (statement.getWhile() != null) {
-			return new KActorsWhile(statement.getWhile(), parent);
+			ret =  new KActorsWhile(statement.getWhile(), parent);
 		} else if (statement.getText() != null) {
-			return new KActorsText(statement, parent);
+			ret =  new KActorsText(statement, parent);
+			if (statement.getMetadata() != null) {
+				for (MetadataPair pair : statement.getMetadata().getPairs()) {
+					String key = pair.getKey().substring(1);
+					boolean negative = pair.getKey().startsWith("!");
+					KActorsValue v = null;
+					if (pair.getValue() != null) {
+						v = new KActorsValue(pair.getValue(), ret);
+					} else {
+						v = new KActorsValue(!negative, ret);
+					}
+					ret.metadata.put(key, v);
+				}
+			}
 		} else if (statement.getValue() != null) {
-			return new KActorsFire(statement.getValue(), parent);
+			ret =  new KActorsFire(statement.getValue(), parent);
 		} else if (statement.getVerb() != null) {
-			return new KActorsActionCall(statement.getVerb(), parent);
+			if ("$".equals(statement.getVerb().getName().trim())) {
+				// special case: it's "re-fire whatever was fired"
+				ret =  new KActorsFire(parent);
+			} else {
+				ret =  new KActorsActionCall(statement.getVerb(), parent);
+			}
 		} else if (statement.getGroup() != null) {
-			return new KActorsConcurrentGroup(statement.getGroup().getBody().getLists(), parent);
+			ret =  new KActorsConcurrentGroup(statement.getGroup(), parent);
+		} else if (statement.getInstantiation() != null) {
+			ret = new KActorsInstantiation(statement.getInstantiation(), parent);
+		}
+		
+		if (ret != null) {
+
+			if (statement.getTag() != null) {
+				ret.tag = statement.getTag().substring(1);
+			}
+			
 		}
 
-		throw new KlabInternalErrorException("unexpected k.Actors statement type");
+		return ret;
 	}
 
 	@Override

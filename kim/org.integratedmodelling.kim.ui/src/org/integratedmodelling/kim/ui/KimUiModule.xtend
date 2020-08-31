@@ -6,7 +6,6 @@ package org.integratedmodelling.kim.ui
 import com.google.inject.Binder
 import com.google.inject.Provider
 import org.eclipse.jface.text.hyperlink.IHyperlinkDetector
-import org.eclipse.jface.viewers.ILabelProvider
 import org.eclipse.xtend.lib.annotations.FinalFieldsConstructor
 import org.eclipse.xtext.documentation.IEObjectDocumentationProvider
 import org.eclipse.xtext.ide.editor.syntaxcoloring.ISemanticHighlightingCalculator
@@ -31,7 +30,6 @@ import org.integratedmodelling.kim.ui.elink.KimHyperlinkHelper
 import org.integratedmodelling.kim.ui.elink.KimJavaClassPathResourceForIEditorInputFactory
 import org.integratedmodelling.kim.ui.elink.KimLinkDetector
 import org.integratedmodelling.kim.ui.elink.KimSyntaxHighlighter
-import org.integratedmodelling.kim.ui.navigator.KimLabelProvider
 
 /**
  * Use this class to register components to be used within the Eclipse IDE.

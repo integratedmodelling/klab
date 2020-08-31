@@ -1,6 +1,11 @@
 package org.integratedmodelling.klab.ide.kim;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 import org.eclipse.core.resources.IFile;
 import org.integratedmodelling.kactors.model.KActors;
@@ -17,6 +22,8 @@ import org.integratedmodelling.klab.ide.navigator.model.ENavigatorItem;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.organizer.Organizer;
 import org.integratedmodelling.klab.rest.BehaviorReference;
+import org.integratedmodelling.klab.rest.BehaviorReference.Action;
+import org.integratedmodelling.klab.utils.Path;
 
 /**
  * A singleton holding all synchronized k.IM-relevant data that come from the
@@ -37,7 +44,7 @@ public enum KimData {
 	private File bookmarkFile;
 
 	KimData() {
-		
+
 		File protoFile = new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator
 				+ "language" + File.separator + "prototypes.json");
 		File annotFile = new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator
@@ -47,12 +54,12 @@ public enum KimData {
 		prototypes = new FileCatalog<IPrototype>(protoFile, IPrototype.class, Prototype.class);
 		annotations = new FileCatalog<IPrototype>(annotFile, IPrototype.class, Prototype.class);
 		behaviors = new FileCatalog<BehaviorReference>(behaviorFile, BehaviorReference.class, BehaviorReference.class);
-		
+
 		/*
 		 * fill in the catalog in the parser helper
 		 */
 		KActors.INSTANCE.getBehaviorManifest().putAll(behaviors);
-		
+
 		this.bookmarkFile = new File(
 				System.getProperty("user.home") + File.separator + ".klab" + File.separator + "bookmarks.json");
 		if (this.bookmarkFile.exists()) {
@@ -77,7 +84,7 @@ public enum KimData {
 	public BehaviorReference getBehavior(String name) {
 		return behaviors.get(name);
 	}
-	
+
 	public IKimNamespace getNamespace(IFile file) {
 		String nsId = Eclipse.INSTANCE.getNamespaceIdFromIFile(file);
 		return nsId == null ? null : Kim.INSTANCE.getNamespace(nsId);
@@ -123,6 +130,32 @@ public enum KimData {
 
 	public Organizer getBookmarks() {
 		return bookmarks;
+	}
+
+	Map<String, Set<BehaviorReference>> actionCatalog = null;
+
+	public Set<BehaviorReference> getBehaviorFor(String call) {
+		
+		if (call.contains(".")) {
+			BehaviorReference ref = behaviors.get(Path.getFirst(call, "."));
+			if (ref != null) {
+				return Collections.singleton(ref);
+			}
+		}
+
+		if (actionCatalog == null) {
+			actionCatalog = Collections.synchronizedMap(new HashMap<>());
+			for (BehaviorReference behavior : behaviors.values()) {
+				for (Action action : behavior.getActions()) {
+					if (!actionCatalog.containsKey(action.getName())) {
+						actionCatalog.put(action.getName(), new HashSet<>());
+					}
+					actionCatalog.get(action.getName()).add(behavior);
+				}
+			}
+		}
+
+		return actionCatalog.get(call);
 	}
 
 }

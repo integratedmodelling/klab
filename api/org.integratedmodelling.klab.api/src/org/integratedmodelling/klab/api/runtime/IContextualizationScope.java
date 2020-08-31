@@ -37,21 +37,25 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
- * The contextualization scope holds all information about the computation being
- * run and the artifacts computed this far. It is passed to dataflows and down
- * to actuators and contextualizers, customized to reflect names, states and
- * locators as each actuator expects them.
- *
- * The {@link org.integratedmodelling.kim.api.IParameters} methods access
- * user-defined parameters, including any passed to the calling functions or
- * URNs and, if appropriate, context-localized POD values for states (e.g. the
- * specific values at the point of computation). The actual input and output
+ * The contextualization scope holds all information about the contextualization
+ * being run and all the identities computed this far. It is passed to dataflows
+ * and down to actuators and contextualizers, customized to reflect names,
+ * states and locators as each actuator expects them. Each identity may have a
+ * different scope according to its view of the context, but some aspects of the
+ * scope never change and are identical across them.
+ * <p>
+ * The {@link org.integratedmodelling.kim.api.IParameters} methods are used to
+ * access user-defined parameters, including any passed to the calling functions
+ * or URNs and, if appropriate, context-localized POD values for states (e.g.
+ * the specific values at the point of computation). The actual input and output
  * artifacts are always available through {@link #getArtifact(String)}.
  *
  * @author Ferd
@@ -60,7 +64,7 @@ public interface IContextualizationScope extends IParameters<String> {
 
 	/**
 	 * A context is created for the root observation, and this information never
-	 * changes.
+	 * changes within a scope.
 	 * 
 	 * @return the root observation. Can only be null at the beginning of the
 	 *         lifecycle of this context, when the root obs has not been created
@@ -81,7 +85,7 @@ public interface IContextualizationScope extends IParameters<String> {
 	IDirectObservation getContextSubject();
 
 	/**
-	 * The namespace of reference in this context. Usually that of the running model
+	 * The namespace of reference in this scope. Usually that of the running model
 	 * or observer.
 	 *
 	 * @return the namespace of reference. Null in empty contexts or during
@@ -99,22 +103,24 @@ public interface IContextualizationScope extends IParameters<String> {
 	IProvenance getProvenance();
 
 	/**
-	 * Return all the observable that depend directly on the passed one in this
-	 * context.
+	 * Return all the observables that depend directly on the passed one in this
+	 * context for their passed resolution.
 	 * 
 	 * @param observable
+	 * @param resolutionMode TODO
 	 * @return
 	 */
-	Collection<IObservable> getDependents(IObservable observable);
+	Collection<IObservable> getDependents(IObservable observable, IResolutionScope.Mode resolutionMode);
 
 	/**
 	 * Return all the observables that the passed one depends directly on in this
-	 * context.
+	 * context for their passed resolution.
 	 * 
 	 * @param observable
+	 * @param resolutionMode TODO
 	 * @return
 	 */
-	Collection<IObservable> getPrecursors(IObservable observable);
+	Collection<IObservable> getPrecursors(IObservable observable, Mode resolutionMode);
 
 	/**
 	 * <p>
@@ -292,21 +298,23 @@ public interface IContextualizationScope extends IParameters<String> {
 	Collection<IObservation> getObservations(IConcept observable);
 
 	/**
-	 * Return the model being computed, if any.
+	 * Return the model being computed, if any. It may be a "derived" model built
+	 * through inference, therefore not corresponding to a k.IM-specified object.
 	 * 
 	 * @return a model or null.
 	 */
 	IModel getModel();
 
 	/**
-	 * Return a valid monitor for any communication.
+	 * Return a valid monitor for communicating with clients or to control
+	 * contextualization.
 	 *
 	 * @return the monitor for this computation. Never null.
 	 */
 	IMonitor getMonitor();
 
 	/**
-	 * Return the concept type describing the artifact being computed.
+	 * Return the core type describing the artifact being computed.
 	 *
 	 * @return the type of the observation
 	 */
@@ -354,17 +362,14 @@ public interface IContextualizationScope extends IParameters<String> {
 	 * features of any new object created.
 	 * <p>
 	 *
-	 * @param observable a
-	 *                   {@link org.integratedmodelling.klab.api.knowledge.IObservable}
-	 *                   object.
-	 * @param name       a {@link java.lang.String} object.
-	 * @param scale      a
-	 *                   {@link org.integratedmodelling.klab.api.observations.scale.IScale}
-	 *                   object.
+	 * @param observable observable of the new direct observation. OK to pass any
+	 *                   direct observable except a relationship.
+	 * @param name       the name for the new direct observation.
+	 * @param scale      scale of the new object.
 	 * @param metadata   metadata for the new observation, which may be used during
 	 *                   resolution if specified by a model with attribute-driven
 	 *                   observations. May be null.
-	 * @return a new observation for the observable and geometry
+	 * @return a new resolved observation for the observable and scale
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException from the
 	 *                                                               resolution
 	 * @throw IllegalArgumentException if the observable describes a non-countable
@@ -483,7 +488,8 @@ public interface IContextualizationScope extends IParameters<String> {
 	Map<String, IVariable> getVariables();
 
 	/**
-	 * Create a context to compile an expression.
+	 * Create an expression context to compile an expression with all local
+	 * names matched to their observables.
 	 * 
 	 * @return
 	 */

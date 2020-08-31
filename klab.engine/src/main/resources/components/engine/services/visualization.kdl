@@ -110,3 +110,10 @@ annotation verbose
 	"Add to an instantiator to send notifications of each artifact produced to clients 
 	 instead of just one at the end." 
 {}
+
+annotation summarize 
+	"Specify documentation objects that summarize results as tables, graphs or other elements. The objects
+	 can be added to documentation using @insert(id)."
+{
+	// TODO
+}

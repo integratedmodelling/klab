@@ -7,6 +7,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.Future;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -16,8 +17,12 @@ import org.eclipse.core.resources.ResourcesPlugin;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.ui.plugin.AbstractUIPlugin;
 import org.eclipse.wb.swt.ResourceManager;
+import org.integratedmodelling.kactors.model.KActors;
+import org.integratedmodelling.kactors.model.KActors.CodeAssistant;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimLoader;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -46,7 +51,10 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.AttributeReference;
+import org.integratedmodelling.klab.rest.AuthorityIdentity;
+import org.integratedmodelling.klab.rest.BehaviorReference;
 import org.integratedmodelling.klab.rest.EngineEvent;
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ProjectLoadRequest;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.WatchRequest;
@@ -89,6 +97,53 @@ public class Activator extends AbstractUIPlugin {
 		 * TODO retrieve from preferences if so configured.
 		 */
 		String initialSessionId = null;
+
+		/**
+		 * Install k.Actors code assistant
+		 */
+		KActors.INSTANCE.setCodeAssistant(new CodeAssistant() {
+
+			@Override
+			public BehaviorId classifyVerb(String call) {
+				Set<BehaviorReference> behavior = KimData.INSTANCE.getBehaviorFor(call);
+				return behavior == null ? BehaviorId.LOCAL
+						: (behavior.size() > 1 ? BehaviorId.AMBIGUOUS : getBehaviorId(behavior.iterator().next()));
+			}
+
+			private BehaviorId getBehaviorId(BehaviorReference behavior) {
+				switch (behavior.getName()) {
+				case "view":
+					return BehaviorId.VIEW;
+				case "user":
+					return BehaviorId.USER;
+				case "object":
+					return BehaviorId.OBJECT;
+				case "state":
+					return BehaviorId.STATE;
+				case "session":
+					return BehaviorId.SESSION;
+				}
+				return BehaviorId.IMPORTED;
+			}
+
+			@Override
+			public String getLabel(String call) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public String getDescription(String call) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+
+			@Override
+			public Collection<org.integratedmodelling.kactors.api.IKActorsValue.Type> getFiredType(String call) {
+				// TODO Auto-generated method stub
+				return null;
+			}
+		});
 
 		/*
 		 * install k.IM validator at client side, talking to engine
@@ -170,6 +225,47 @@ public class Activator extends AbstractUIPlugin {
 			public void createWorldviewPeerConcept(String coreConcept, String worldviewConcept) {
 				// this is a pure syntactic validator, no action due and no harm done as long
 				// as the engine doesn't use the same.
+			}
+
+			@Override
+			public String getObservableInformation(IKimObservable observable, boolean formatted) {
+				// TODO Auto-generated method stub
+				return "";
+			}
+
+			@Override
+			public String getConceptInformation(IKimConcept observable, boolean formatted) {
+				// TODO Auto-generated method stub
+				return "";
+			}
+
+			@Override
+			public Pair<String, Boolean> getIdentityInformation(String authority, String identity, boolean formatted) {
+
+				if (!engineMonitor().isRunning()) {
+					return Pair.create(OFFLINE, true);
+				}
+				AuthorityIdentity id = klab().getIdentityInformation(authority, identity, formatted);
+				if (id == null) {
+					return Pair.create(UNKNOWN_AUTHORITY, true);
+				}
+
+				String notifications = "";
+				String errors = "";
+				boolean error = false;
+
+				for (Notification notification : id.getNotifications()) {
+					if (Level.SEVERE.getName().equals(notification.getLevel())) {
+						errors += (errors.isEmpty() ? "ERROR: " : "\n\nERROR: ") + notification.getMessage();
+						error = true;
+					} else {
+						notifications += (errors.isEmpty() ? "" : "\n\n ") + notification.getLevel() + ": "
+								+ notification.getMessage();
+					}
+				}
+
+				return Pair.create(errors + (error ? "\n\n" : "") + id.getDescription()
+						+ (notifications.isEmpty() ? "" : "\n\n") + notifications, true);
 			}
 
 		});
@@ -334,7 +430,7 @@ public class Activator extends AbstractUIPlugin {
 		request.setActive(true);
 		this.engineStatusMonitor.getBus().post(Message.create(this.engineStatusMonitor.getSessionId(),
 				IMessage.MessageClass.Notification, IMessage.Type.EngineEvent, request));
-		
+
 		/*
 		 * offer to import any k.LAB local projects that are not in the workspace and
 		 * have the engine load those projects it does not have. TODO may also offer to
@@ -435,7 +531,6 @@ public class Activator extends AbstractUIPlugin {
 		if (get().engineStatusMonitor.isRunning()) {
 			client().with(session().getIdentity()).download(url, file);
 		}
-
 	}
 
 	public static void post(Object... object) {
@@ -444,10 +539,25 @@ public class Activator extends AbstractUIPlugin {
 		}
 	}
 
+	public static Future<IMessage> ask(Object... object) {
+		if (get().engineStatusMonitor.isRunning()) {
+			return get().engineStatusMonitor.getBus()
+					.ask(Message.create(get().engineStatusMonitor.getSessionId(), object));
+		}
+		return null;
+	}
+
 	public static void reply(IMessage original, Object... object) {
 		if (get().engineStatusMonitor.isRunning()) {
 			get().engineStatusMonitor.getBus().post(
 					Message.create(get().engineStatusMonitor.getSessionId(), object).inResponseTo(original.getId()));
+		}
+	}
+
+	public static void reply(String originalMessageId, Object... object) {
+		if (get().engineStatusMonitor.isRunning()) {
+			get().engineStatusMonitor.getBus().post(
+					Message.create(get().engineStatusMonitor.getSessionId(), object).inResponseTo(originalMessageId));
 		}
 	}
 

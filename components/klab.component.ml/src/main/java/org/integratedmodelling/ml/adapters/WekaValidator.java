@@ -117,6 +117,7 @@ public class WekaValidator implements IResourceValidator {
                         .get("classifier", String.class), resource.getParameters()
                                 .get("classifier.probabilistic", "false").equals("true"));
             } catch (Throwable e) {
+            	monitor.error(e);
                 return false;
             }
         } else {

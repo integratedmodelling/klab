@@ -141,7 +141,7 @@ public class ConcaveHullInstantiator implements IExpression, IInstantiator {
 		Range limits = null;
 		if (sourceStates.size() == 1 && !Double.isNaN(selectFraction)) {
 			fractionState = sourceStates.get(0);
-			if (!(fractionState.getObservable().getDescription() == IActivity.Description.QUANTIFICATION)) {
+			if (!(fractionState.getObservable().getDescriptionType() == IActivity.Description.QUANTIFICATION)) {
 				throw new KlabValidationException(
 						"feature extractor: state for fraction extraction " + fractionState + " must be numeric");
 			}
