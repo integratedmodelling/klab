@@ -266,7 +266,9 @@ public interface API {
 		 * URL path for deleted users by id.
 		 */
 		public static final String DELETED_USER_ID = DELETED_USERS + "/{id}";
-		
+		/**
+		 * URL path for current user profile, based on Authentication Token parsing.
+		 */
 		public static final String CURRENT_PROFILE = USER_BASE + "/me";
 		
 		
@@ -324,13 +326,21 @@ public interface API {
 			 * URL PARAMETER for template in the email service
 			 */			
 			public static final String TEMPLATES = "templates";
-			
+			/**
+			 * URL PARAMETER for user group entry service, request a particular group by name
+			 */	
 			public static final String REQUEST_GROUPS = "request-groups";
-			
+			/**
+			 * URL PARAMETER for user group entry service, set a particular group by name
+			 */	
 			public static final String SET_GROUPS = "set-groups";
-			
+			/**
+			 * URL PARAMETER for user group entry service, remove a particular group by name
+			 */	
 			public static final String REMOVE_GROUPS = "remove-groups";
-			
+			/**
+			 * URL PARAMETER for user group entry service, find users with a particular group
+			 */				
 			public static final String HAS_GROUP = "has-group";
 		}
 		
