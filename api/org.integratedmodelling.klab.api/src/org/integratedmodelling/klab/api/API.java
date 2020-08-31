@@ -330,6 +330,8 @@ public interface API {
 			public static final String SET_GROUPS = "set-groups";
 			
 			public static final String REMOVE_GROUPS = "remove-groups";
+			
+			public static final String HAS_GROUP = "has-group";
 		}
 		
 		public static interface INDEXING {

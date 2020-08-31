@@ -1,16 +1,17 @@
 package org.integratedmodelling.klab.hub.users.services;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
+import org.bson.types.ObjectId;
 import org.integratedmodelling.klab.hub.api.GroupEntry;
 import org.integratedmodelling.klab.hub.api.MongoGroup;
 import org.integratedmodelling.klab.hub.api.User;
+import org.integratedmodelling.klab.hub.commands.GetMongoGroupByName;
 import org.integratedmodelling.klab.hub.commands.UpdateUser;
 import org.integratedmodelling.klab.hub.commands.UpdateUsers;
-import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.payload.UpdateUsersGroups;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
@@ -146,5 +147,14 @@ public class UserGroupEntryServiceImpl implements UserGroupEntryService {
 		
 		UpdateUsersGroups request = new UpdateUsersGroups(usernames, groupNames, DateTime.now());		
 		removeUsersGroupsByNames(request);
+	}
+	
+	@Override
+	public List<String> getUsersWithGroup(String group) {
+		MongoGroup lookup = new GetMongoGroupByName(group, groupRepository).execute();
+		ObjectId id = new ObjectId(lookup.getId());
+		return userRepository.getUsersByGroupEntriesWithGroupId(id).stream()
+			.map(User::getName)
+			.collect(Collectors.toList());
 	}
 }
