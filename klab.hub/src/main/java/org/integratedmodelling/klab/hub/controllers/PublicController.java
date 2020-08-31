@@ -5,9 +5,7 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.hub.authentication.GroupManager;
-import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.rest.PingResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -17,12 +15,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 public class PublicController {
-
-	@Autowired
-	HubAuthenticationManager hubAuthenticationManager;
-
-	@Autowired
-	NetworkManager networkManager;
 
 	@Autowired
 	GroupManager groupManager;

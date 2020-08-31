@@ -9,6 +9,7 @@ public class EngineAuthenticationResponse {
 	private AuthenticatedIdentity userData;
 	private HubReference hub;
 	private List<NodeReference> nodes = new ArrayList<>();
+	private ArrayList<String> warnings;
 
 	public AuthenticatedIdentity getUserData() {
 		return userData;
@@ -44,6 +45,14 @@ public class EngineAuthenticationResponse {
 		this.hub = hub;
 		this.nodes.addAll(nodes);
 	}
+	
+	public ArrayList<String> getWarnings() {
+		return warnings;
+	}
+
+	public void setWarnings(ArrayList<String> warnings) {
+		this.warnings = warnings;
+	}
 
 	@Override
 	public boolean equals(Object obj) {
@@ -66,6 +75,8 @@ public class EngineAuthenticationResponse {
 			return false;
 		return true;
 	}
+	
+	
 
 	@Override
 	public String toString() {

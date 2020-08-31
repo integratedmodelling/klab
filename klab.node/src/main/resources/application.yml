@@ -1,0 +1,7 @@
+server:
+  port: 8287
+  servlet:
+    contextPath: "/node"
+    multipart:
+      maxFile: 1280MB
+      maxRequest: 1280MB

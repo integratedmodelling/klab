@@ -1,10 +1,6 @@
 package org.integratedmodelling.klab.hub.exception;
 
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.integratedmodelling.klab.exceptions.KlabException;
-
-@ResponseStatus(value = org.springframework.http.HttpStatus.BAD_REQUEST)
-public class UserExistsException extends KlabException {
+public class UserExistsException extends RuntimeException{
 
     private static final long serialVersionUID = -1332212722467230931L;
 

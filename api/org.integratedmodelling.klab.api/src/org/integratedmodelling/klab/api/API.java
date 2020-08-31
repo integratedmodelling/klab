@@ -176,14 +176,174 @@ public interface API {
 		 * <br/>
 		 * <b>Authentication:</b> open
 		 */
-		public static final String AUTHENTICATE_ENGINE = "/api/auth-cert/engine";
-
+		
+		public static final String API_BASE = "/api/v2";
+		/**
+		 * Base URL path for node on the hub.
+		 */
+		public static final String NODE_BASE = API_BASE + "/nodes";
+		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String USER_BASE = API_BASE + "/users";
+		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String GROUPS_BASE = API_BASE + "/groups";
+		/**
+		 * Base URL path for lever resources on the hub.
+		 */
+		public static final String LEVER_BASE = API_BASE + "/lever";
+		/**
+		 * Base URL path for engine resources on the hub.
+		 */		
+		public static final String ENGINE_BASE = API_BASE + "/engines";
+		/**
+		 * Base URL path for tasks resources on the hub.
+		 */
+		public static final String TASK_BASE = API_BASE + "/tasks";
+		/**
+		 * Base URL path for email resources and services on the hub.
+		 */		
+		public static final String EMAIL_BASE = API_BASE + "/emails";
+		/**
+		 * Base URL path for authenticating resources.
+		 */		
+		public static final String AUTH_BASE = "/auth-cert";
+		
+		public static final String AUTHENTICATE_ENGINE = ENGINE_BASE + AUTH_BASE;
 		/**
 		 * Called by nodes on hubs when authenticating with them. Parameters like the
 		 * engine version.
 		 */
-		public static final String AUTHENTICATE_NODE = "/api/auth-cert/node";
-
+		public static final String AUTHENTICATE_NODE = NODE_BASE + AUTH_BASE;
+		/**
+		 * Called by levers on hubs when authenticating with them. Parameters like the
+		 * engine version.
+		 */
+		public static final String AUTHENTICATE_LEVER = LEVER_BASE + AUTH_BASE;
+		/**
+		 * Called by users to log into the hub and recieve an authentication token.
+		 */
+		public static final String AUTHENTICATE_USER = USER_BASE + "/log-in";
+		/**
+		 * Called by users to log into the hub and recieve an authentication token.
+		 */
+		public static final String DEAUTHENTICATE_USER = USER_BASE + "/log-out";
+		/**
+		 * Base URL path for node resources on the hub.
+		 */
+		public static final String NODE_BASE_ID = NODE_BASE + "/{id}";
+		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String USER_BASE_ID = USER_BASE+ "/{id}";
+		/**
+		 * Base URL path for user resources on the hub.
+		 */
+		public static final String GROUPS_BASE_ID = GROUPS_BASE+ "/{id}";
+		/**
+		 * Base URL path for lever resources on the hub.
+		 */
+		public static final String LEVER_BASE_ID = LEVER_BASE + "/{id}";
+		/**
+		 * Base URL path for task resource id on the hub.
+		 */
+		public static final String TASK_BASE_ID = TASK_BASE + "/{id}";
+		/**
+		 * Base URL path for email templated by id on the hub.
+		 */
+		public static final String EMAIL_BASE_ID = EMAIL_BASE + "/{id}";
+		/**
+		 * Base URL path application logs.
+		 */	
+		public static final String LOGS = API_BASE + "/system/logs";
+		/**
+		 * Base URL path for deleted users.
+		 */			
+		public static final String DELETED_USERS = USER_BASE + "/deleted-users";
+		/**
+		 * URL path for deleted users by id.
+		 */
+		public static final String DELETED_USER_ID = DELETED_USERS + "/{id}";
+		/**
+		 * URL path for current user profile, based on Authentication Token parsing.
+		 */
+		public static final String CURRENT_PROFILE = USER_BASE + "/me";
+		
+		
+		public static interface PARAMETERS {
+			/**
+			 * URL PARAMETER for user activation tokens.
+			 */
+			public static final String USER_ACTIVATION = "activate";
+			/**
+			 * URL PARAMETER for user requesting groups.  Should be deprecated tokens.
+			 */
+			@Deprecated
+			public static final String USER_GROUPS = "groups";
+			/**
+			 * URL PARAMETER for user requesting a lost password email.
+			 */
+			public static final String USER_LOST_PASSWORD = "lost-password";
+			/**
+			 * URL PARAMETER for user setting a new password.
+			 */
+			public static final String USER_REQUEST_PASSWORD = "new-password";
+			/**
+			 * URL PARAMETER for user setting a password from set password token.
+			 */
+			public static final String USER_SET_PASSWORD = "set-password";
+			/**
+			 * URL PARAMETER for user to verify account.
+			 */
+			public static final String USER_VERIFICATION = "verify";
+			/**
+			 * URL PARAMETER for user to request a new certificate.
+			 */
+			public static final String USER_CERTIFICATE = "certificate";
+			/**
+			 * URL PARAMETER for requesting the names of groups.
+			 */
+			public static final String GROUP_NAMES = "names";
+			/**
+			 * URL PARAMETER for a user to request groups as a task.
+			 */
+			public static final String USER_REQUEST_GROUPS = "request-groups";
+			/**
+			 * URL PARAMETER for a user to remove groups as a task
+			 */
+			public static final String USER_REMOVE_GROUPS = "remove-groups";
+			/**
+			 * URL PARAMETER for a task to accepted or denied
+			 */
+			public static final String ACCEPT = "accept";
+			/**
+			 * URL PARAMETER for a create group task
+			 */			
+			public static final String CREATE_GROUP = "create-group";
+			/**
+			 * URL PARAMETER for template in the email service
+			 */			
+			public static final String TEMPLATES = "templates";
+			/**
+			 * URL PARAMETER for user group entry service, request a particular group by name
+			 */	
+			public static final String REQUEST_GROUPS = "request-groups";
+			/**
+			 * URL PARAMETER for user group entry service, set a particular group by name
+			 */	
+			public static final String SET_GROUPS = "set-groups";
+			/**
+			 * URL PARAMETER for user group entry service, remove a particular group by name
+			 */	
+			public static final String REMOVE_GROUPS = "remove-groups";
+			/**
+			 * URL PARAMETER for user group entry service, find users with a particular group
+			 */				
+			public static final String HAS_GROUP = "has-group";
+		}
+		
 		public static interface INDEXING {
 
 			/**

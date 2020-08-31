@@ -222,7 +222,7 @@ public class Client extends RestTemplate implements IClient {
 	public NodeAuthenticationResponse authenticateNode(String url, NodeAuthenticationRequest request) {
 		return post(url + API.HUB.AUTHENTICATE_NODE, request, NodeAuthenticationResponse.class);
 	}
-
+	
 	/**
 	 * Check an engine's heartbeat.
 	 * 

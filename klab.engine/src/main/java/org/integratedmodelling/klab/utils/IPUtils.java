@@ -188,10 +188,10 @@ public class IPUtils {
 	 * prefer 192.168.** IPs to 10.** or 172.** based ones.
 	 *
 	 * @return IP matching pattern
-	 * @throws Exception
-	 *             the exception
+	 * @throws SocketException 
+	 *             the SocketException
 	 */
-	public static String getLocalIp() throws Exception {
+	public static String getLocalIp() throws SocketException {
 		for (int i = 1; i < localPatterns.length; i++) {
 			Enumeration<NetworkInterface> n = NetworkInterface.getNetworkInterfaces();
 			for (; n.hasMoreElements();) {

@@ -60,6 +60,13 @@ public interface IStartupOptions {
      * @return a boolean.
      */
     boolean isHelp();
+    
+    /**
+     * Tied to <pre>-cloudConfig</pre> option. Configure product as spring configuration server application.
+     *
+     * @return a boolean.
+     */
+    boolean isCloudConfig();
 
     /**
      * Return all arguments that weren't parsed as predefined options.
