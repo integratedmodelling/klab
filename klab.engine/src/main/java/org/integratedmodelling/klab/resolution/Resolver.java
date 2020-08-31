@@ -139,17 +139,33 @@ public class Resolver {
 	 */
 	public ResolutionScope resolve(IResolvable resolvable, ResolutionScope parentScope) throws KlabException {
 
+		ResolutionScope ret = null;
+
 		if (resolvable instanceof Observable) {
 			parentScope.setOriginalScope(
 					((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
-			return resolve((Observable) resolvable, parentScope,
+			ret = resolve((Observable) resolvable, parentScope,
 					((Observable) resolvable).getDescriptionType().getResolutionMode());
 		} else if (resolvable instanceof Model) {
 			parentScope.setOriginalScope(Scope.MODEL);
-			return resolve((Model) resolvable, parentScope);
+			ret = resolve((Model) resolvable, parentScope);
 		} else if (resolvable instanceof Observer) {
 			parentScope.setOriginalScope(Scope.OBSERVER);
-			return resolve((Observer) resolvable, parentScope);
+			ret = resolve((Observer) resolvable, parentScope);
+		}
+
+		if (ret != null) {
+
+			if (ret.isOccurrent()) {
+
+				/*
+				 * visit the scope (building a list of ResolvedObservable for all qualities that
+				 * may change) and resolve their change in parent scope
+				 */
+
+			}
+
+			return ret;
 		}
 
 		return parentScope.empty();
@@ -257,7 +273,7 @@ public class Resolver {
 	 *         mandatory, or the passed scope's coverage if it's optional.
 	 */
 	private ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode) {
-		
+
 		/*
 		 * Check first if we need to redistribute the observable, in which case we only
 		 * resolve the distribution context and we leave it to the runtime context to
@@ -301,7 +317,7 @@ public class Resolver {
 				deferred.setCoverage(ret.getCoverage());
 				ret.link(deferred);
 			}
-			
+
 			if (Observables.INSTANCE.isOccurrent(observable.getType())) {
 				parentScope.setOccurrent(true);
 			}
@@ -332,7 +348,7 @@ public class Resolver {
 		 * resolution.
 		 */
 		Coverage coverage = new Coverage(ret.getCoverage());
-		
+
 		/**
 		 * If we're resolving something that has been resolved before (i.e. not
 		 * resolving a countable, which only happens before it is created), get the
@@ -344,8 +360,8 @@ public class Resolver {
 				&& (!observable.is(Type.COUNTABLE) || mode == Mode.INSTANTIATION);
 		if (tryPrevious) {
 			/*
-			 * look in the catalog. This will have accurate coverage but not necessarily every
-			 * observation (those coming from attributes will be missing).
+			 * look in the catalog. This will have accurate coverage but not necessarily
+			 * every observation (those coming from attributes will be missing).
 			 */
 			previousArtifact = ((DirectObservation) ret.getContext()).getScope().findArtifact(observable);
 			if (previousArtifact == null) {
@@ -466,11 +482,11 @@ public class Resolver {
 		}
 
 		if (coverage.isRelevant()) {
-			
+
 			if (Observables.INSTANCE.isOccurrent(observable)) {
 				parentScope.setOccurrent(true);
 			}
-			
+
 			ret.setCoverage(coverage);
 			parentScope.merge(ret);
 			if (ret.getCoverage().getCoverage() < 0.95) {

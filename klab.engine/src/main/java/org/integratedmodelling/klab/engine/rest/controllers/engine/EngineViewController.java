@@ -202,9 +202,6 @@ public class EngineViewController {
 
 		ILocator loc = obs.getScale().initialization();
 		if (locator != null) {
-			/*
-			 * NB: TEMPORARY! must send the T dimension locator if the context is temporal.
-			 */
 			if (obs.getScale().getTime() != null && !locator.toLowerCase().startsWith("t")) {
 				locator = "T1(1){time=INITIALIZATION}" + locator;
 			}
