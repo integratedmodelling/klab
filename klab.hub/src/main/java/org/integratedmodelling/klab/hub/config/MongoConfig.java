@@ -1,6 +1,9 @@
 package org.integratedmodelling.klab.hub.config;
 
 
+import java.util.Arrays;
+import java.util.Collection;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -53,9 +56,10 @@ public class MongoConfig extends AbstractMongoConfiguration {
     public LocalValidatorFactoryBean validator() {
         return new LocalValidatorFactoryBean();
     }
+    
     @Override
-    protected String getMappingBasePackage() {
-        return "org.integratedmodelling.klab.hub";
+    protected Collection<String> getMappingBasePackages(){
+        return Arrays.asList("org.integratedmodelling.klab.hub.api");
     }
     
 	@Override
