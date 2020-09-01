@@ -67,14 +67,15 @@ email:
       username: system
       password: password
    replyable:
+      replyable:
       general:
-         emailaddress: General <integratedmodelling@integratedmodelling.com>
+         emailaddress: General <info@integratedmodelling.org>
       support:
          emailaddress: Support <support@integratedmodelling.org>
       admin:
-         emailaddress: info@integratedmodelling.org
-   noreply:
-      emailaddress: info@integratedmodelling.org
+         emailaddress: Admin <admin@integratedmodelling.org>
+      noreply:
+         emailaddress: No reply <noreply@integratedmodelling.org>
       
 license:
   userId: "Klab Hub (This is the key for the Dev Hub) <info@integratedmodelling.org>"
