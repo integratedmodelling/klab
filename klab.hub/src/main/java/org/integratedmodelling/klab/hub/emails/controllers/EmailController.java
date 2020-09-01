@@ -116,7 +116,7 @@ public class EmailController {
 	 * @param id the id of template
 	 * @return confirmation message
 	 */
-	@RequestMapping(value = "/{id}", method = RequestMethod.DELETE)
+	@RequestMapping(value = API.HUB.EMAIL_BASE_ID, method = RequestMethod.DELETE)
 	public ResponseEntity<Object> delete(@PathVariable("id") String id) {
 		emailTemplateService.delete(id);
 		return new ResponseEntity<>("The template has been deleted successfully", HttpStatus.OK);
@@ -128,7 +128,7 @@ public class EmailController {
 	 * @param id the email template id
 	 * @return the email template
 	 */
-	@RequestMapping(value = "/{id}", method = RequestMethod.GET)
+	@RequestMapping(value = API.HUB.EMAIL_BASE_ID, method = RequestMethod.GET)
 	public ResponseEntity<Object> getEmailTemplate(@PathVariable("id") String id) {
 		EmailTemplate emailTemplate = emailTemplateService.getById((id));
 		return new ResponseEntity<>(emailTemplate, HttpStatus.OK);		
@@ -151,7 +151,7 @@ public class EmailController {
 	 * @return confirmation or error
 	 */
 	@RolesAllowed({ "ROLE_ADMINISTRATOR", "ROLE_SYSTEM" })
-	@PostMapping(value = "", produces = "application/json", params="sendEmail")
+	@PostMapping(value = API.HUB.EMAIL_BASE, produces = "application/json", params="sendEmail")
 	public ResponseEntity<?> sendEmail(@RequestBody KlabEmail email) {
 		ResponseEntity<String> response = null;
 		// checks
