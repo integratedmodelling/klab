@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.hub.license.controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.security.NoSuchProviderException;
 import java.util.Properties;
 
@@ -12,6 +13,7 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.bouncycastle.openpgp.PGPException;
 import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.api.EngineAuthResponeFactory;
 import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
@@ -36,6 +38,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 
 @RestController
 public class EngineLicenseController extends LicenseController<EngineAuthenticationRequest>{
@@ -119,6 +124,19 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 		}
 		
 		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+	
+	@PostMapping(value= API.HUB.LEGACY_AUTHENTICATE_ENGINE)
+	public ResponseEntity<EngineAuthenticationResponse> processLegacyEndpoint(HttpServletRequest request) throws IOException, MessagingException {
+	    final String str = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
+	    JsonObject translate = new Gson().fromJson(str, JsonObject.class);
+	    EngineAuthenticationRequest newRequest = new EngineAuthenticationRequest();
+	    newRequest.setCertificate(translate.get("certificate").getAsString());
+	    newRequest.setName(translate.get("username").getAsString());
+	    newRequest.setKey(translate.get("userKey").getAsString());
+	    newRequest.setUserType(translate.get("userType").getAsString());
+	    newRequest.setLevel(ICertificate.Level.USER);
+	    return processCertificate(newRequest, request);
 	}
 
 }
