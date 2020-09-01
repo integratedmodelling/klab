@@ -32,7 +32,7 @@ public class EmailConfig {
     @Value("${email.replyable.admin.emailaddress}")
     private String EMAIL_REPLYABLE_ADMIN;
     
-    @Value("${email.noreply.emailaddress}")
+    @Value("${email.replyable.noreply.emailaddress}")
     private String EMAIL_NOREPLY;
     
     public enum EmailType {
