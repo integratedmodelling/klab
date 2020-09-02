@@ -94,6 +94,12 @@ public enum Dataflows implements IDataflowService {
 		for (Link link : ((ResolutionScope) scope).getLinks()) {
 			compiler = compiler.withResolution(link);
 		}
+		
+		for (ResolutionScope occurrent : ((ResolutionScope)scope).getOccurrentResolutions()) {
+			for (Link link : occurrent.getLinks()) {
+				compiler = compiler.withResolution(link);
+			}
+		}
 
 		return compiler.compile(scope.getMonitor());
 	}

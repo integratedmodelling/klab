@@ -808,21 +808,21 @@ public class ModelKbox extends ObservableKbox {
 
 	private static List<IObservable> unpackObservables(IObservable oobs, IObservable main, boolean first) {
 		List<IObservable> ret = new ArrayList<>();
-		if (first || !main.is(Type.PROCESS)) {
+//		if (first || !main.is(Type.PROCESS)) {
 			ret.add(oobs);
-		} else {
-			if (main.is(Type.PROCESS) && oobs.is(Type.QUALITY)) {
-
-				/*
-				 * if the main observable is a process, any qualities CREATED should provide
-				 * only a model of their CHANGE; qualities AFFECTED that are output should
-				 * provide BOTH a change and a quality model.
-				 */
-
-			} else {
-				ret.add(oobs);
-			}
-		}
+//		} else {
+//			if (main.is(Type.PROCESS) && oobs.is(Type.QUALITY)) {
+//
+//				/*
+//				 * if the main observable is a process, any qualities CREATED should provide
+//				 * only a model of their CHANGE; qualities AFFECTED that are output should
+//				 * provide BOTH a change and a quality model.
+//				 */
+//
+//			} else {
+//				ret.add(oobs);
+//			}
+//		}
 		return ret;
 	}
 

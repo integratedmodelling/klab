@@ -315,7 +315,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			this.declaration.setObservationType(type);
 		}
 
-		if (participants != null) {
+		if (participants != null && participants.length > 0) {
 			this.comparison = participants[0];
 			if (!declarationIsComplete) {
 				this.declaration.setOtherConcept(Concepts.INSTANCE.getDeclaration(participants[0]));

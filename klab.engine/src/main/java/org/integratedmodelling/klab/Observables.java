@@ -829,7 +829,7 @@ public enum Observables implements IObservableService {
 	}
 
 	/**
-	 * True if affecting affects affecting.
+	 * True if affecting affects affected. Uses inference when checking.
 	 * 
 	 * @param affected
 	 * @param affecting
@@ -1053,22 +1053,22 @@ public enum Observables implements IObservableService {
 	 * @return
 	 */
 	public boolean isOccurrent(ISemantic c) {
-		
+
 		if (c.getType().is(Type.PROCESS) || c.getType().is(Type.EVENT)) {
 			return true;
 		}
-		
+
 		/*
 		 * TODO a quality occurs if it's created by a process
 		 */
 		if (c.getType().is(Type.QUALITY)) {
-			// 
+			//
 		}
-		
+
 		/*
 		 * TODO functional relationships should occur (?)
 		 */
-		
+
 		return false;
 	}
 }

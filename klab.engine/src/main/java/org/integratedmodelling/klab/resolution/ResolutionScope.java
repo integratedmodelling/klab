@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.resolution;
 
+import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -137,6 +138,7 @@ public class ResolutionScope implements IResolutionScope {
 	 */
 	Set<Link> links = new HashSet<>();
 	Set<ResolutionScope> resolvedObservables = new HashSet<>();
+	private List<ResolutionScope> occurrentResolutions = new ArrayList<>();
 
 	/**
 	 * If not null, this is a scope for a logical combination of resolutions.
@@ -1279,22 +1281,47 @@ public class ResolutionScope implements IResolutionScope {
 	}
 
 	private void collectResolved(ResolutionScope scope, Type[] types, LinkedHashSet<ObservedConcept> ret) {
-		
+
 		for (Link link : scope.links) {
-			collectResolved(link.target, types, ret);
+			collectResolved(link.getTarget(), types, ret);
 		}
-		
-		if (this.observable != null) {
+
+		if (scope.observable != null) {
 			boolean ok = types == null;
 			if (!ok) {
 				for (Type type : types) {
-					if (this.observable.is(type)) {
-						ret.add(new ObservedConcept(this.observable, this.mode));
+					if (scope.observable.is(type)) {
+						ret.add(new ObservedConcept(scope.observable, scope.mode));
+						break;
 					}
 				}
 			}
 		}
+
+	}
+
+	public void dump(PrintStream out) {
+
+		for (Link link : links) {
+			out.println(link);
+		}
 		
+		for (ResolutionScope occurrent : occurrentResolutions) {
+			out.println("----");
+			occurrent.dump(out);
+		}
+
+	}
+
+	/**
+	 * Change models resolved after the initialization resolution to address change
+	 * after defining the resolution as occurrent. Must be compiled in the dataflow
+	 * after the initialization sequence and in the same order as given here.
+	 * 
+	 * @return
+	 */
+	public List<ResolutionScope> getOccurrentResolutions() {
+		return occurrentResolutions;
 	}
 
 }

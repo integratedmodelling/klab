@@ -9,6 +9,13 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Change models are automatically resolved for all qualities that may be affected by
+  processes or events whenever the context is temporal and there is a condition for
+  occurrence (either occurrents are resolved or the context has temporal distribution). 
+  If there is no explicit change statement in the network scope, the scheduler will
+  insert a check at each effective timestep for change of any observations from which 
+  others depend, and re-run the actuator for those where the check is positive. This 
+  essentially makes any model track change even if it's not made explicitly dynamic.
 - Implement syntactic typing for change rates ('change rate of') and change events 
   ('changed <quality>'). Support in engine (unit/context validation and model inference)
   still missing.

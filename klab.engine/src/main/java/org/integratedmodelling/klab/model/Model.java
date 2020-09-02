@@ -19,6 +19,7 @@ import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
@@ -293,6 +294,36 @@ public class Model extends KimObject implements IModel {
 					}
 				}
 			}
+		}
+		
+		if (getMainObservable() != null && getMainObservable().is(Type.PROCESS)) {
+			
+			Set<IConcept> changed = new HashSet<>();
+			
+			/*
+			 * Any change that isn't explicitly output should be added
+			 */
+			for (int oo = 0; i < observables.size(); i++) {
+				IObservable obs = observables.get(oo);
+				if (obs != null && obs.is(Type.CHANGE)) {
+					changed.add(Observables.INSTANCE.getDescribedType(obs.getType()));
+				}
+			}
+			
+			/*
+			 * Add change in any secondary qualities that are affected by the process. 
+			 */
+			List<IObservable> toAdd = new ArrayList<>();
+			for (int oo = 1; i < observables.size(); i++) {
+				IObservable obs = observables.get(oo);
+				if (obs != null && obs.is(Type.QUALITY) && !changed.contains(obs.getType())) {
+					if (Observables.INSTANCE.isAffectedBy(obs, getMainObservable())) {
+						toAdd.add(obs.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable());
+					}
+				}
+			}
+			
+			this.observables.addAll(toAdd);
 		}
 
 		/*

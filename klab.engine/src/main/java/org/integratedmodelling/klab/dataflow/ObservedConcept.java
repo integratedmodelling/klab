@@ -19,19 +19,23 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
  */
 public class ObservedConcept {
 
-	private IConcept concept = null;
+	private IObservable observable = null;
 	private IResolutionScope.Mode mode;
 	private Map<String, Object> data = new HashMap<>();
 	String conceptDeclaration = null;
 
 	public ObservedConcept(IObservable observable, IResolutionScope.Mode mode) {
-		this.concept = observable.getType();
+		this.observable = observable;
 		this.mode = mode;
-		this.conceptDeclaration = observable.getDefinition();
+		this.conceptDeclaration = observable.getType().getDefinition();
+	}
+
+	public IObservable getObservable() {
+		return observable;
 	}
 
 	public IConcept getConcept() {
-		return concept;
+		return observable.getType();
 	}
 
 	public IResolutionScope.Mode getMode() {
@@ -74,6 +78,11 @@ public class ObservedConcept {
 	 */
 	public Map<String, Object> getData() {
 		return data;
+	}
+	
+	@Override
+	public String toString() {
+		return observable + " " + mode.name().toLowerCase();
 	}
 
 }

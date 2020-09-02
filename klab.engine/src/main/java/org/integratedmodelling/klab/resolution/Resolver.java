@@ -8,12 +8,15 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.UnarySemanticOperator;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -164,9 +167,51 @@ public class Resolver {
 				 * may change) and resolve their change in parent scope
 				 */
 				for (ObservedConcept observable : parentScope.getResolved(Type.QUALITY)) {
-					System.out.println("CHECK CHANGE FOR OBSERVABLE " + observable);
-					// create change in <quality> concept (which may already be there or not) and resolve it
-					
+
+					IObservable toResolve = observable.getObservable().getBuilder(parentScope.getMonitor())
+							.as(UnarySemanticOperator.CHANGE).buildObservable();
+
+					if (parentScope.getResolvedObservable(toResolve, Mode.RESOLUTION) != null) {
+						continue;
+					}
+
+					ret.getMonitor().info("Resolution scope is occurrent: resolving additional observable "
+							+ Concepts.INSTANCE.getDisplayName(toResolve.getType()));
+
+					ResolutionScope cscope = resolve((Observable) toResolve, parentScope, Mode.RESOLUTION);
+
+					if (cscope.getCoverage().isRelevant()) {
+
+						ret.getMonitor().info("Resolution of change in "
+								+ Concepts.INSTANCE.getDisplayName(observable.getConcept()) + " was successful with "
+								+ NumberFormat.getPercentInstance().format(ret.getCoverage().getCoverage() * 100)
+								+ " coverage");
+						
+						ret.getOccurrentResolutions().add(cscope);
+
+					} else {
+
+						Model depmodel = (Model) Models.INSTANCE.createChangeTrackingModel(observable.getObservable(),
+								ret);
+
+						if (depmodel != null) {
+
+							// TODO this won't be found - resolver must look it up in the resolution scope.
+							((Observable) toResolve).setModelReference(depmodel.getName());
+
+							cscope = resolve(depmodel, parentScope.getChildScope(depmodel));
+							ret.getOccurrentResolutions().add(cscope);
+							parentScope.getMonitor()
+									.info("No explicit change model for "
+											+ Concepts.INSTANCE.getDisplayName(observable.getConcept())
+											+ ": observable will change with dependencies");
+						} else {
+							parentScope.getMonitor()
+									.info("No change model needed for "
+											+ Concepts.INSTANCE.getDisplayName(observable.getConcept())
+											+ ": observation has no dependencies");
+						}
+					}
 				}
 
 			}

@@ -49,11 +49,10 @@ public interface IRuntimeProvider {
 
 	/**
 	 * The main executor for a k.LAB dataflow. Each call returns a new Future
-	 * artifact.
+	 * artifact. The scheduler should be created and run automatically in here if
+	 * needed.
 	 *
-	 * @param actuator a top-level actuator that has no dependencies on external
-	 *                 ones.
-	 * @param dataflow the dataflow to which the actuator belongs
+	 * @param dataflow the dataflow to run
 	 * @param scale    the scale in which to compute
 	 * @param scope    the resolution scope for the computation
 	 * @param context  the context observation for the computation. Can be null.
@@ -61,8 +60,8 @@ public interface IRuntimeProvider {
 	 * @return a future that is computing the final artifact for the actuator.
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	Future<IArtifact> compute(IActuator actuator, IDataflow<? extends IArtifact> dataflow, IScale scale,
-			IResolutionScope scope/* , IDirectObservation context */, IMonitor monitor) throws KlabException;
+	Future<IArtifact> compute(IDataflow<? extends IArtifact> dataflow, IScale scale, IResolutionScope scope,
+			IMonitor monitor) throws KlabException;
 
 	/**
 	 * Create an empty runtime context for the dataflow that will build the context

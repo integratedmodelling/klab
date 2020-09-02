@@ -71,7 +71,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Relationship
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
-import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -110,8 +110,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	private ExecutorService executor = Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
 
 	@Override
-	public Future<IArtifact> compute(IActuator actuator, IDataflow<? extends IArtifact> dataflow, IScale scale,
-			IResolutionScope scope, IMonitor monitor) throws KlabException {
+	public Future<IArtifact> compute(IDataflow<? extends IArtifact> dataflow, IScale scale, IResolutionScope scope,
+			IMonitor monitor) throws KlabException {
 
 		Callable<IArtifact> task = new Callable<IArtifact>() {
 
@@ -119,68 +119,72 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			public IArtifact call() throws Exception {
 
 				IDirectObservation context = scope.getContext();
-
-				boolean switchContext = context != null
-						&& ((Actuator) actuator).getObservable().getType().is(Type.COUNTABLE)
+				IRuntimeScope runtimeContext = null;
+				Actuator initializer = (Actuator) dataflow.getActuators().get(0);
+				boolean switchContext = context != null && initializer.getObservable().getType().is(Type.COUNTABLE)
 						&& scope.getMode() == Mode.RESOLUTION;
 
 				/*
 				 * We get the overall scale, which we merge with the actuator's. This ensures
 				 * that scale constraints at the model level are dealt with before own artifacts
 				 * are created.
+				 * 
+				 * TODO/CHECK should use all the top-level actuators and merge from the dataflow
 				 */
-				IScale actuatorScale = actuator.mergeScale(scale, monitor);
+				IScale actuatorScale = initializer.mergeScale(scale, monitor);
 
-				IRuntimeScope runtimeContext = null;
 				if (switchContext) {
 					// new catalog, new scale, context subject is in the scope, network remains
-					runtimeContext = ((Observation) context).getScope().createContext(actuatorScale, actuator,
+					runtimeContext = ((Observation) context).getScope().createContext(actuatorScale, initializer,
 							dataflow, scope, monitor);
 				} else if (context == null) {
 					// new context
-					runtimeContext = createRuntimeContext(actuator, scope, actuatorScale, monitor);
+					runtimeContext = createRuntimeContext(initializer, scope, actuatorScale, monitor);
 				} else {
 					// instantiating or resolving states: stay in context
-					runtimeContext = ((Subject) context).getScope().createChild(actuatorScale, actuator, scope,
+					runtimeContext = ((Subject) context).getScope().createChild(actuatorScale, initializer, scope,
 							monitor);
 				}
 
-				List<Actuator> order = ((Actuator) actuator).dependencyOrder();
+				for (IActuator actuator : dataflow.getActuators()) {
 
-				// must merge in any constraints from the model before calling this.
-				IScale initializationScale = ((Scale) actuatorScale).copy().initialization();
+					List<Actuator> order = ((Actuator) actuator).dependencyOrder();
 
-				int i = 0;
-				for (Actuator active : order) {
+					// must merge in any constraints from the model before calling this.
+					IScale initializationScale = ((Scale) actuatorScale).copy().initialization();
 
-					IRuntimeScope ctx = runtimeContext;
-					if (active != actuator) {
-						ctx = runtimeContext.createChild(actuatorScale, active, scope, monitor)
-								.locate(initializationScale, monitor);
+					int i = 0;
+					for (Actuator active : order) {
+
+						IRuntimeScope ctx = runtimeContext;
+						if (active != actuator) {
+							ctx = runtimeContext.createChild(actuatorScale, active, scope, monitor)
+									.locate(initializationScale, monitor);
+						}
+
+						/*
+						 * this won't actually run the contextualizers unless the observation is a
+						 * continuant.
+						 */
+						if (active.isComputed() || ((Actuator) active).isMerging()) {
+							active.compute(ctx.getTargetArtifact(), ctx);
+						}
+						if (!((Actuator) active).getDataflow().isSecondary()
+								&& !(monitor.getIdentity().is(IIdentity.Type.TASK)
+										&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
+							((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
+						}
+
+						ctx.scheduleActions(active);
+
+						i++;
 					}
-
-					/*
-					 * this won't actually run the contextualizers unless the observation is a
-					 * continuant.
-					 */
-					if (active.isComputed() || ((Actuator) active).isMerging()) {
-						active.compute(ctx.getTargetArtifact(), ctx);
-					}
-					if (!((Actuator) active).getDataflow().isSecondary()
-							&& !(monitor.getIdentity().is(IIdentity.Type.TASK)
-									&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
-						((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
-					}
-
-					ctx.scheduleActions(active);
-
-					i++;
 				}
 
 				/*
 				 * auto-start the scheduler if transitions have been registered.
 				 */
-				if (((Actuator) actuator).getDataflow().isPrimary() && runtimeContext.getScheduler() != null
+				if (((Dataflow) dataflow).isPrimary() && runtimeContext.getScheduler() != null
 						&& !runtimeContext.getScheduler().isEmpty()) {
 					ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity())
 							.createChild("Temporal contextualization");
