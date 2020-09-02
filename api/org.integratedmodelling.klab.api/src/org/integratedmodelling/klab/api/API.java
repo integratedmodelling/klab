@@ -212,6 +212,8 @@ public interface API {
 		public static final String AUTH_BASE = "/auth-cert";
 		
 		public static final String AUTHENTICATE_ENGINE = ENGINE_BASE + AUTH_BASE;
+		
+		public static final String LEGACY_AUTHENTICATE_ENGINE = "/api/auth-cert/engine";
 		/**
 		 * Called by nodes on hubs when authenticating with them. Parameters like the
 		 * engine version.
