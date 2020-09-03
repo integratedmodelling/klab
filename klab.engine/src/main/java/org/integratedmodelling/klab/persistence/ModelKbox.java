@@ -93,7 +93,8 @@ public class ModelKbox extends ObservableKbox {
 							+ "minspatialscale INTEGER, " + "maxspatialscale INTEGER, " + "mintimescale INTEGER, "
 							+ "maxtimescale INTEGER, " + "space GEOMETRY, " + "observationtype VARCHAR(256), " + "); "
 							+ "CREATE INDEX model_oid_index ON model(oid); "
-							+ "CREATE SPATIAL INDEX model_space ON model(space);";
+//							+ "CREATE SPATIAL INDEX model_space ON model(space);"
+							;
 
 					return ret;
 
