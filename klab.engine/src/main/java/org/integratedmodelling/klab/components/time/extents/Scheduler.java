@@ -153,8 +153,7 @@ public class Scheduler implements IScheduler {
 //					// ensure we have the names we expect
 //					transitionContext = actuator.localizeNames(transitionContext);
 //
-					ActorRef<KlabMessage> sender = ((Observation) observation.getScope().getRootSubject())
-							.getActor();
+					ActorRef<KlabMessage> sender = ((Observation) observation.getScope().getRootSubject()).getActor();
 
 					/*
 					 * RUN THE ACTION
@@ -597,6 +596,12 @@ public class Scheduler implements IScheduler {
 		notification.setType(SchedulerNotification.Type.STARTED);
 		notification.setResolution(resolution);
 
+		/*
+		 * TODO build a list of observations that will need to be recomputed if their
+		 * precursors change (because they may change but there is no explicit change
+		 * process) and their actuators for quick scanning.
+		 */
+
 		monitor.info("Temporal transitions starting");
 
 		monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
@@ -641,6 +646,11 @@ public class Scheduler implements IScheduler {
 						this.wheel[cursor].add(registration);
 					}
 				}
+
+				/*
+				 * TODO scan the list of qualities that should be recomputed when their
+				 * dependents
+				 */
 
 				SchedulerNotification passed = new SchedulerNotification();
 				passed.setType(SchedulerNotification.Type.TIME_ADVANCED);
