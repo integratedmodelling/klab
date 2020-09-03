@@ -347,6 +347,7 @@ public class H2Database {
 		try {
 			connection = getConnection();
 			connection.createStatement().execute(sql);
+			connection.commit();
 			// connection.close();
 		} catch (SQLException e) {
 			throw new KlabStorageException(e);

@@ -143,11 +143,11 @@ public enum Models implements IModelService {
 	}
 
 	// @Override
-	public void index(IModel model, IMonitor monitor) throws KlabException {
+	public synchronized boolean index(IModel model, IMonitor monitor) throws KlabException {
 
 		// wrong models don't get indexed; non-semantic models do (as private)
 		if (model.getStatement().isErrors() || model.getObservables().size() == 0) {
-			return;
+			return true;
 		}
 
 		try {
@@ -155,11 +155,15 @@ public enum Models implements IModelService {
 			if (model.getScope() != Scope.NAMESPACE) {
 				Indexer.INSTANCE.index(model.getStatement(), model.getNamespace().getName());
 			}
+			monitor.info("model " + model.getName() + " was successfully indexed");
 		} catch (Throwable e) {
 			// happens with URN resources in space specs
-			monitor.error("error indexing model " + model.getName() + ": " + e.getMessage());
+			monitor.error("error indexing model " + model.getName() + ": model will be inactive"/* + e.getMessage() */);
 			((org.integratedmodelling.klab.model.Model) model).setInactive(true);
+			return false;
 		}
+		
+		return true;
 	}
 
 	@Override

@@ -197,7 +197,7 @@ public class KimNotifier implements Kim.Notifier {
 				corePrefixTranslation.put(imp.getSecond(), prefix);
 			}
 		}
-
+		
 		/*
 		 * these should never throw exceptions; instead they should notify any errors,
 		 * no matter how internal, through the monitor.
@@ -267,9 +267,10 @@ public class KimNotifier implements Kim.Notifier {
 			}
 		}
 
+
 		Observations.INSTANCE.registerNamespace(ns, (Monitor) monitor);
 		Reasoner.INSTANCE.addOntology(ns.getOntology());
-
+		
 		/*
 		 * store and report errors or lack thereof (so that previous errors can be removed)
 		 */

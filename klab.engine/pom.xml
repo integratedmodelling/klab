@@ -190,6 +190,10 @@
 					<groupId>com.google.guava</groupId>
 					<artifactId>guava</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>com.vividsolutions</groupId>
+					<artifactId>jts</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -204,6 +208,10 @@
 				<exclusion>
 					<groupId>com.google.guava</groupId>
 					<artifactId>guava</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>com.vividsolutions</groupId>
+					<artifactId>jts</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -489,6 +497,12 @@
 			<groupId>org.orbisgis</groupId>
 			<artifactId>h2spatial</artifactId>
 			<version>1.2.4</version>
+			<exclusions>
+				<exclusion>
+					<groupId>com.vividsolutions</groupId>
+					<artifactId>jts</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/args4j/args4j startup options parser -->
