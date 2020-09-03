@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.time.extents;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -10,7 +11,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
+import java.util.function.BiFunction;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Observables;
@@ -28,6 +29,8 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -38,15 +41,19 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KAc
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.dataflow.Actuator;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.rest.SchedulerNotification;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.joda.time.DateTime;
+
+import com.google.common.collect.Sets;
 
 import akka.actor.typed.ActorRef;
 
@@ -70,6 +77,15 @@ public class Scheduler implements IScheduler {
 	private AtomicLong regId = new AtomicLong(0);
 
 	/*
+	 * used to track change in states that don't have processes connected
+	 */
+	class Dependencies {
+		public ObservedConcept observable;
+		public Set<ObservedConcept> precursors;
+		public Actuator actuator;
+	}
+
+	/*
 	 * Period of all subscribed actuators, to compute resolution.
 	 */
 	Set<Long> periods = new HashSet<>();
@@ -82,7 +98,7 @@ public class Scheduler implements IScheduler {
 		List<Actuator.Computation> computations;
 		IDirectObservation target;
 		IScale scale;
-		BiConsumer<Long, IMonitor> action;
+		BiFunction<Long, IMonitor, Collection<ObservedConcept>> action;
 		long tIndex = 0;
 		long endTime;
 		IRuntimeScope scope;
@@ -123,20 +139,22 @@ public class Scheduler implements IScheduler {
 			this.recipient = observation;
 			this.scheduledAction = scheduled;
 
-			action = new BiConsumer<Long, IMonitor>() {
+			action = new BiFunction<Long, IMonitor, Collection<ObservedConcept>>() {
 
 				@Override
-				public void accept(Long t, IMonitor monitor) {
+				public Collection<ObservedConcept> apply(Long t, IMonitor monitor) {
+
+					Set<ObservedConcept> ret = new HashSet<>();
 
 					if (endTime > 0 && t > endTime) {
-						return;
+						return ret;
 					}
 
 					/*
 					 * If target is dead, return
 					 */
 					if (recipient instanceof IDirectObservation && !((IDirectObservation) recipient).isActive()) {
-						return;
+						return ret;
 					}
 
 					/*
@@ -173,6 +191,9 @@ public class Scheduler implements IScheduler {
 
 						for (IObservation observation : changed) {
 
+							ret.add(new ObservedConcept(observation.getObservable(),
+									observation instanceof ObservationGroup ? Mode.INSTANTIATION : Mode.RESOLUTION));
+
 							IObservation parent = scope.getParentArtifactOf(observation);
 							if (parent != null && scope.getWatchedObservationIds().contains(parent.getId())) {
 
@@ -198,6 +219,9 @@ public class Scheduler implements IScheduler {
 							}
 						}
 					}
+
+					// TODO determine what has changed
+					return ret;
 				}
 			};
 		}
@@ -222,20 +246,23 @@ public class Scheduler implements IScheduler {
 			this.scope = scope;
 			this.computations = computation;
 
-			action = new BiConsumer<Long, IMonitor>() {
+			action = new BiFunction<Long, IMonitor, Collection<ObservedConcept>>() {
 
 				@Override
-				public void accept(Long t, IMonitor monitor) {
+				public Collection<ObservedConcept> apply(Long t, IMonitor monitor) {
+
+					Set<ObservedConcept> ret = new HashSet<>();
+					List<IObservation> changed = new ArrayList<>();
 
 					if (endTime > 0 && t > endTime) {
-						return;
+						return ret;
 					}
 
 					/*
 					 * If target is dead, return
 					 */
 					if (!target.isActive()) {
-						return;
+						return ret;
 					}
 
 					/*
@@ -246,8 +273,6 @@ public class Scheduler implements IScheduler {
 					 */
 					ILocator transitionScale = scale.at(transition);
 					IRuntimeScope transitionContext = scope.locate(transitionScale, monitor);
-
-					Set<IObservation> changed = new HashSet<>();
 
 					/*
 					 * TODO if the target is a group of events, it has been filtered to only contain
@@ -279,7 +304,10 @@ public class Scheduler implements IScheduler {
 
 						if (computation.target instanceof IDirectObservation
 								&& !((IDirectObservation) computation.target).isActive()) {
-							changed.add((IObservation) computation.target);
+							changed.add((IObservation)computation.target);
+							ret.add(new ObservedConcept(((IObservation) computation.target).getObservable(),
+									((IObservation) computation.target) instanceof ObservationGroup ? Mode.INSTANTIATION
+											: Mode.RESOLUTION));
 							// TODO if in group, group has changed too
 							break;
 						}
@@ -292,6 +320,7 @@ public class Scheduler implements IScheduler {
 								if (state != null) {
 									// TODO only if changed!
 									changed.add(state);
+									ret.add(new ObservedConcept(state.getObservable(), Mode.RESOLUTION));
 								}
 							}
 						}
@@ -309,7 +338,10 @@ public class Scheduler implements IScheduler {
 																	 * TODO check if changes happened independent of
 																	 * type
 																	 */) {
-							changed.add((IObservation) computation.target);
+							changed.add((IObservation)computation.target);
+							ret.add(new ObservedConcept(((IObservation) computation.target).getObservable(),
+									((IObservation) computation.target) instanceof ObservationGroup ? Mode.INSTANTIATION
+											: Mode.RESOLUTION));
 						}
 					}
 
@@ -350,11 +382,12 @@ public class Scheduler implements IScheduler {
 						}
 					}
 
+					return ret;
 				}
 			};
 		}
 
-		public void run(long time, IMonitor monitor) {
+		public Collection<ObservedConcept> run(long time, IMonitor monitor) {
 
 //			System.out.println("Running at " + new Date(time));
 
@@ -362,12 +395,14 @@ public class Scheduler implements IScheduler {
 			// finished
 			if (synchronicity == Synchronicity.SYNCHRONOUS) {
 //				System.out.println("   " + transition + " FOR " + actuator);
-				action.accept(time, monitor);
+				return action.apply(time, monitor);
 			} else if (synchronicity == Synchronicity.ASYNCHRONOUS) {
 				throw new KlabUnimplementedException("asynchronous scheduling not implemented");
 			} else if (synchronicity == Synchronicity.TIME_SYNCHRONOUS) {
 				throw new KlabUnimplementedException("time-synchronous scheduling not implemented");
 			}
+			
+			return null;
 
 		}
 
@@ -399,12 +434,33 @@ public class Scheduler implements IScheduler {
 	private long resolution;
 	private String contextId;
 	private ISession session;
+	private IResolutionScope scope;
 
 	public Scheduler(String contextId, ITime time, IMonitor monitor) {
 		this.contextId = contextId;
 		this.session = monitor.getIdentity().getParentIdentity(ISession.class);
 		Date now = new Date();
 		this.monitor = monitor;
+		this.type = time.is(ITime.Type.REAL) ? Type.REAL_TIME : Type.MOCK_TIME;
+		this.startTime = time.getStart() == null ? 0 : time.getStart().getMilliseconds();
+		if (time.getEnd() != null) {
+			this.endTime = time.getEnd().getMilliseconds();
+		}
+		if (this.type == Type.REAL_TIME) {
+			this.waitStrategy = new WaitStrategy.YieldingWait();
+			if (this.startTime > 0 && now.getTime() > this.startTime) {
+				this.startTime = 0;
+			}
+		}
+	}
+
+	public Scheduler(String contextId, IResolutionScope scope, IMonitor monitor) {
+		this.contextId = contextId;
+		this.scope = scope;
+		this.session = monitor.getIdentity().getParentIdentity(ISession.class);
+		Date now = new Date();
+		this.monitor = monitor;
+		ITime time = scope.getScale().getTime();
 		this.type = time.is(ITime.Type.REAL) ? Type.REAL_TIME : Type.MOCK_TIME;
 		this.startTime = time.getStart() == null ? 0 : time.getStart().getMilliseconds();
 		if (time.getEnd() != null) {
@@ -597,10 +653,28 @@ public class Scheduler implements IScheduler {
 		notification.setResolution(resolution);
 
 		/*
-		 * TODO build a list of observations that will need to be recomputed if their
+		 * build a list of observations that will need to be recomputed if their
 		 * precursors change (because they may change but there is no explicit change
 		 * process) and their actuators for quick scanning.
 		 */
+		List<Dependencies> trackedStates = new ArrayList<>();
+		if (this.scope != null) {
+			for (ObservedConcept tracked : ((ResolutionScope) scope).getImplicitlyChangingObservables()) {
+
+				Dependencies tracker = new Dependencies();
+
+				/*
+				 * Recover all DIRECT precursors and check if they can change
+				 */
+
+				/*
+				 * if 1+ precursors, complete and add the descriptor
+				 */
+				if (tracker.precursors.size() > 0) {
+					trackedStates.add(tracker);
+				}
+			}
+		}
 
 		monitor.info("Temporal transitions starting");
 
@@ -622,6 +696,8 @@ public class Scheduler implements IScheduler {
 				List<Registration> regs = new ArrayList<>(this.wheel[cursor]);
 				this.wheel[cursor].clear();
 
+				Set<ObservedConcept> changed = new HashSet<>();
+
 				long delay = 0;
 				for (Registration registration : regs) {
 
@@ -638,7 +714,7 @@ public class Scheduler implements IScheduler {
 						}
 
 //						System.out.println(new Date(time) + ": RUN THIS FUCKA: " + registration.target);
-						registration.run(time + registration.delayInSlot, monitor);
+						changed.addAll(registration.run(time + registration.delayInSlot, monitor));
 						reschedule(registration, time, false);
 
 					} else {
@@ -649,8 +725,13 @@ public class Scheduler implements IScheduler {
 
 				/*
 				 * TODO scan the list of qualities that should be recomputed when their
-				 * dependents
+				 * precursors do.
 				 */
+				for (Dependencies tracked : trackedStates) {
+					if (Sets.intersection(tracked.precursors, changed).size() > 0) {
+						// TODO recompute actuator - run() may have to return an equipped object to avoid another setup mess
+					}
+				}
 
 				SchedulerNotification passed = new SchedulerNotification();
 				passed.setType(SchedulerNotification.Type.TIME_ADVANCED);

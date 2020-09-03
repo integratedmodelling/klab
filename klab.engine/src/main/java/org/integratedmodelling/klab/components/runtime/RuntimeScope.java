@@ -822,7 +822,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		ret.actuator = actuator;
 		ret.contextSubject = scope.getContext();
 		ret.dataflow = (Dataflow) dataflow;
-		
+
 		for (IActuator a : actuator.getActuators()) {
 			if (!((Actuator) a).isExported()) {
 				String id = a.getAlias() == null ? a.getName() : a.getAlias();
@@ -1572,8 +1572,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 					RuntimeScope root = getRootScope();
 					if (root.scheduler == null) {
-						root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope.getScale().getTime(),
-								monitor);
+						root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope, monitor);
 					}
 					root.occurrent = true;
 					((Scheduler) root.scheduler).schedule(action, observation, Time.create(aa), this);
@@ -1636,7 +1635,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			root.occurrent = true;
 
 			if (root.scheduler == null) {
-				root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope.getScale().getTime(), monitor);
+				root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope, monitor);
 			}
 
 			((Scheduler) root.scheduler).schedule(actuator, schedule, this);

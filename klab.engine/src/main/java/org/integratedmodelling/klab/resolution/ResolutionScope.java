@@ -138,8 +138,15 @@ public class ResolutionScope implements IResolutionScope {
 	 */
 	Set<Link> links = new HashSet<>();
 	Set<ResolutionScope> resolvedObservables = new HashSet<>();
+	
+	// additional resolutions for change in states that explicitly 
+	// include transition contextualizers in the initialization run.
 	private List<ResolutionScope> occurrentResolutions = new ArrayList<>();
 
+	// observables for which change is not specified but may change if they 
+	// depend on changed observations
+	private List<ObservedConcept> implicitlyChangingObservables = new ArrayList<>();
+	
 	/**
 	 * If not null, this is a scope for a logical combination of resolutions.
 	 */
@@ -1322,6 +1329,16 @@ public class ResolutionScope implements IResolutionScope {
 	 */
 	public List<ResolutionScope> getOccurrentResolutions() {
 		return occurrentResolutions;
+	}
+
+	/**
+	 * Observables that may change if they depend on changing values but 
+	 * have no explicit change model associated.
+	 * 
+	 * @return
+	 */
+	public List<ObservedConcept> getImplicitlyChangingObservables() {
+		return implicitlyChangingObservables;
 	}
 
 }

@@ -19,7 +19,6 @@ import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimNamespace;
-import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.model.Kim;
@@ -264,35 +263,5 @@ public enum Models implements IModelService {
 		return Collections.singletonList(outer);
 	}
 
-	/**
-	 * Create a model that observes the change in an observable by tracking which
-	 * dependencies of the observable. It should include all the dependencies
-	 * implied by the links in the passed scope (but not the original observable)
-	 * and call a process contextualizer that uses the actuator at runtime to
-	 * recompute the observable if/when any of the dependencies have changed after
-	 * the beginning of the current timestep.
-	 * <p>
-	 * If the observable depends on nothing, return null.
-	 * 
-	 * @param changeObservable the observable whose change we should observe
-	 * @param scope
-	 * @return
-	 */
-	public IModel createChangeTrackingModel(IObservable changingObservable, IResolutionScope scope) {
-
-		IObservable toResolve = changingObservable.getBuilder(scope.getMonitor()).as(UnarySemanticOperator.CHANGE)
-				.optional(true).buildObservable();
-
-		/*
-		 * Model must have the deps implied by the links in the observable
-		 */
-
-		/*
-		 * Add the runtime contextualizer that will recompute the actuator for the
-		 * quality if any of the dependencies have changed since the last state update.
-		 */
-
-		return null;
-	}
 
 }

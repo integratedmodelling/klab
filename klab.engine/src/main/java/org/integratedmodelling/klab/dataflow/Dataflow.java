@@ -90,8 +90,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	private String description;
 	private DirectObservation context;
 	private ResolutionScope resolutionScope;
-	IDirectObservation relationshipSource;
-	IDirectObservation relationshipTarget;
+	private IDirectObservation relationshipSource;
+	private IDirectObservation relationshipTarget;
 
 	// this could simply be the "dataflow" in the parent actuator but it's clearer
 	// this way.
@@ -790,4 +790,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public Graph<ObservedConcept, DefaultEdge> getDependencies() {
 		return this.dependencies;
 	}
+
+	public List<ObservedConcept> getImplicitlyChangingObservables() {
+		return resolutionScope.getImplicitlyChangingObservables();
+	}
+
 }

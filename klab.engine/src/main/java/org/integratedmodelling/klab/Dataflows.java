@@ -100,7 +100,7 @@ public enum Dataflows implements IDataflowService {
 				compiler = compiler.withResolution(link);
 			}
 		}
-
+		
 		return compiler.compile(scope.getMonitor());
 	}
 
