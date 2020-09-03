@@ -473,7 +473,7 @@ public class Time extends Extent implements ITime {
 		}
 
 		if (size() == 1) {
-			return this;
+			return extentType == ITime.Type.LOGICAL ? initialization(this) : this;
 		}
 
 		return makeExtent(stateIndex);
