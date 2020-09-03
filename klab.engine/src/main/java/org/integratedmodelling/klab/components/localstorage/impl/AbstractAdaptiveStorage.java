@@ -246,9 +246,11 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			throw new KlabUnimplementedException("unexpected locator in mapped storage!");
 		}
 
+		boolean initialization = true;
 		if (time != null && time.getStart() != null && time.getEnd() != null) {
 			timeStart = time.getStart().getMilliseconds();
 			timeEnd = time.getEnd().getMilliseconds();
+			initialization = time.getTimeType() == ITime.Type.INITIALIZATION;
 		}
 
 		long sliceOffset = product(offsets.pos, trivial ? 0 : 1);
@@ -262,7 +264,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		 * there have been in-between timestep changes in the state due to processes or
 		 * events operating at different scales.
 		 */
-		if (slice != null && slice.timestart != timeStart || slice.timeend != timeEnd) {
+		if (!initialization && slice != null && (slice.timestart != timeStart || slice.timeend != timeEnd)) {
 			/*
 			 * TODO if needed, aggregate within the boundary of the requesting scale,
 			 * otherwise keep the latest value
