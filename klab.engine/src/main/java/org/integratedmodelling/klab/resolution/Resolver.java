@@ -186,12 +186,12 @@ public class Resolver {
 								+ Concepts.INSTANCE.getDisplayName(observable.getConcept()) + " was successful with "
 								+ NumberFormat.getPercentInstance().format(ret.getCoverage().getCoverage())
 								+ " coverage");
-						
+
 						ret.getOccurrentResolutions().add(cscope);
 
 					} else {
 						/*
-						 * These are accessible in the dataflow 
+						 * These are accessible in the dataflow
 						 */
 						ret.getImplicitlyChangingObservables().add(observable);
 					}
@@ -241,12 +241,7 @@ public class Resolver {
 	public ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode, IScale scale,
 			IModel model) throws KlabException {
 		// TODO support model
-		ResolutionScope ret = resolve(observable, parentScope.getChildScope(observable, mode, (Scale) scale, model),
-				mode);
-//		if (ret.getCoverage().isRelevant()) {
-//			parentScope.merge(ret);
-//		}
-		return ret;
+		return resolve(observable, parentScope.getChildScope(observable, mode, (Scale) scale, model), mode);
 	}
 
 	/**
@@ -262,13 +257,8 @@ public class Resolver {
 	 */
 	public ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Subject source, Subject target,
 			IScale scale, IModel upstreamModel) throws KlabException {
-
-		ResolutionScope ret = resolve(observable,
-				parentScope.getChildScope(observable, (Scale) scale, source, target, upstreamModel), Mode.RESOLUTION);
-//		if (ret.getCoverage().isRelevant()) {
-//			parentScope.merge(ret);
-//		}
-		return ret;
+		return resolve(observable, parentScope.getChildScope(observable, (Scale) scale, source, target, upstreamModel),
+				Mode.RESOLUTION);
 	}
 
 	/**
@@ -392,6 +382,7 @@ public class Resolver {
 		Pair<String, IArtifact> previousArtifact = null;
 		boolean tryPrevious = ret.getContext() != null
 				&& (!observable.is(Type.COUNTABLE) || mode == Mode.INSTANTIATION);
+
 		if (tryPrevious) {
 			/*
 			 * look in the catalog. This will have accurate coverage but not necessarily
