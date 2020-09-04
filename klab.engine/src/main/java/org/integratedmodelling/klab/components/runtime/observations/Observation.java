@@ -38,6 +38,7 @@ import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.utils.Utils;
 
 import akka.actor.typed.ActorRef;
 
@@ -75,7 +76,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	private ActorRef<KlabMessage> actor;
 	// actor-scoped state, manipulated using "set" statements.
 	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
-
+	protected List<Long> updateTimestamps = new ArrayList<>();
 	
 	// tracks the setting of the actor so we can avoid the ask pattern
 	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
@@ -435,4 +436,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		this.view = new ViewImpl(layout);
 	}
 
+	@Override
+	public long[] getUpdateTimestamps() {
+		return Utils.toLongArray(updateTimestamps);
+	}
 }

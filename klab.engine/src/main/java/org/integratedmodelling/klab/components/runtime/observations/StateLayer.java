@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;

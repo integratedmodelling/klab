@@ -256,7 +256,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		long sliceOffset = product(offsets.pos, trivial ? 0 : 1);
 
 		// can only be the closest at this point, unless there was no slice at all
-		Slice slice = getClosest(/* timeOffset */timeEnd);
+		Slice slice = getClosest(/* timeOffset */initialization ? 0 : timeEnd);
 
 		/*
 		 * check for non-conformant time extent (!= to the extent of the slice): this
