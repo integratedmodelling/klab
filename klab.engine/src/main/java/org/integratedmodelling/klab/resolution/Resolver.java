@@ -184,7 +184,7 @@ public class Resolver {
 
 						ret.getMonitor().info("Resolution of change in "
 								+ Concepts.INSTANCE.getDisplayName(observable.getConcept()) + " was successful with "
-								+ NumberFormat.getPercentInstance().format(ret.getCoverage().getCoverage() * 100)
+								+ NumberFormat.getPercentInstance().format(ret.getCoverage().getCoverage())
 								+ " coverage");
 						
 						ret.getOccurrentResolutions().add(cscope);

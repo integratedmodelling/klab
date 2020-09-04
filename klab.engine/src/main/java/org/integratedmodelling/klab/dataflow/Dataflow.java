@@ -294,28 +294,17 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 
 		/*
-		 * Initialization run, which will also schedule any further temporal actions.
-		 * This is normally one initialization actuator plus any additional process
-		 * scheduling enqueued by resolving inferred change in occurrent contexts.
+		 * Initialization run, which will also schedule and run any further temporal
+		 * actions. This is normally one initialization actuator plus any additional
+		 * process scheduling enqueued by resolving inferred change in occurrent
+		 * contexts.
 		 */
 		IArtifact ret = null;
-		for (IActuator actuator : actuators) {
-			try {
-
-				IArtifact data = Klab.INSTANCE.getRuntimeProvider()
-						.compute(this, scale, resolutionScope/* , context */, monitor).get();
-				if (ret == null) {
-					/*
-					 * the first actuator (initializer) determines the return value. Any others
-					 * after that are accessories to model change after initialization.
-					 */
-					ret = data;
-				}
-
-			} catch (Throwable e) {
-				if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
-					throw ((AbstractTask<?>) monitor.getIdentity()).notifyAbort(e);
-				}
+		try {
+			ret = Klab.INSTANCE.getRuntimeProvider().compute(this, scale, resolutionScope, monitor).get();
+		} catch (Throwable e) {
+			if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
+				throw ((AbstractTask<?>) monitor.getIdentity()).notifyAbort(e);
 			}
 		}
 

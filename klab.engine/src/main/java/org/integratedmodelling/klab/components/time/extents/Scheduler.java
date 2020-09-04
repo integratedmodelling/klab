@@ -678,6 +678,8 @@ public class Scheduler implements IScheduler {
 
 		monitor.info("Temporal transitions starting");
 
+		System.out.println("RUNNING SCHEDULER ");
+		
 		monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 				IMessage.Type.SchedulingStarted, notification));
 
@@ -713,10 +715,12 @@ public class Scheduler implements IScheduler {
 							delay += registration.delayInSlot;
 						}
 
-//						System.out.println(new Date(time) + ": RUN THIS FUCKA: " + registration.target);
 						changed.addAll(registration.run(time + registration.delayInSlot, monitor));
 						reschedule(registration, time, false);
 
+						System.out.println("   >>> " + new Date(time) + ": RAN THIS FUCKA: " + registration.target + " WHICH CHANGED " + changed);
+
+						
 					} else {
 						registration.rounds--;
 						this.wheel[cursor].add(registration);

@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
@@ -16,6 +18,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.scale.Extent;
+import org.integratedmodelling.klab.utils.Pair;
 
 /**
  * Smart storage using a configurable backend to store slices that are only
@@ -280,8 +283,22 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		return slice == null ? null : slice.getAt(sliceOffset);
 	}
 
+	@SuppressWarnings("unchecked")
 	private T aggregate(NavigableMap<Long, Slice> map, long sliceOffset) {
-		System.out.println("AGGREGATE " + map.size() + " SLICES");
+
+		List<Pair<Object, Long>> values = new ArrayList<>();
+		for (Slice slice : map.values()) {
+			values.add(new Pair<>(slice.getAt(sliceOffset), slice.timeend));
+		}
+		
+		if (values.size() == 1) {
+			return (T)values.get(0).getFirst();
+		} else if (values.size() == 0) {
+			return null;
+		}
+		
+		System.out.println("AGGREGATE " + map.size() + " VALUES");
+		
 		return null;
 	}
 

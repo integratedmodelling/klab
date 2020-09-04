@@ -82,7 +82,7 @@ public class ObservedConcept {
 	
 	@Override
 	public String toString() {
-		return observable + " " + mode.name().toLowerCase();
+		return "<" + observable + " " + mode.name().toLowerCase() + ">";
 	}
 
 }
