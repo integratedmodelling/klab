@@ -133,8 +133,10 @@ public class Resolver {
 	}
 
 	/**
-	 * Resolve the passed object in the passed parent scope, using the resolution
-	 * strategy appropriate for the type.
+	 * Root-level resolver: resolve the passed object in the passed parent scope,
+	 * using the resolution strategy appropriate for the type. If the first
+	 * resolution determines that the context occurs, determine which observables
+	 * may change and make further passes to resolve their change as well.
 	 * 
 	 * @param resolvable
 	 * @param parentScope
@@ -178,7 +180,7 @@ public class Resolver {
 					ret.getMonitor().info("Resolution scope is occurrent: resolving additional observable "
 							+ Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
-					ResolutionScope cscope = resolve((Observable) toResolve, parentScope, Mode.RESOLUTION);
+					ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(), Mode.RESOLUTION);
 
 					if (cscope.getCoverage().isRelevant()) {
 
@@ -349,6 +351,10 @@ public class Resolver {
 			return ret;
 		}
 
+		/**
+		 * The result scope will have non-empty coverage if we have resolved this
+		 * observable upstream.
+		 */
 		ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
 		/*

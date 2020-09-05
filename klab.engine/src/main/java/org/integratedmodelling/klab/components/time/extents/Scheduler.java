@@ -304,7 +304,7 @@ public class Scheduler implements IScheduler {
 
 						if (computation.target instanceof IDirectObservation
 								&& !((IDirectObservation) computation.target).isActive()) {
-							changed.add((IObservation)computation.target);
+							changed.add((IObservation) computation.target);
 							ret.add(new ObservedConcept(((IObservation) computation.target).getObservable(),
 									((IObservation) computation.target) instanceof ObservationGroup ? Mode.INSTANTIATION
 											: Mode.RESOLUTION));
@@ -338,7 +338,7 @@ public class Scheduler implements IScheduler {
 																	 * TODO check if changes happened independent of
 																	 * type
 																	 */) {
-							changed.add((IObservation)computation.target);
+							changed.add((IObservation) computation.target);
 							ret.add(new ObservedConcept(((IObservation) computation.target).getObservable(),
 									((IObservation) computation.target) instanceof ObservationGroup ? Mode.INSTANTIATION
 											: Mode.RESOLUTION));
@@ -401,7 +401,7 @@ public class Scheduler implements IScheduler {
 			} else if (synchronicity == Synchronicity.TIME_SYNCHRONOUS) {
 				throw new KlabUnimplementedException("time-synchronous scheduling not implemented");
 			}
-			
+
 			return null;
 
 		}
@@ -582,7 +582,7 @@ public class Scheduler implements IScheduler {
 
 		registrations.add(new Registration(actuator, computations, target, scale, scope, endTime));
 
-//		System.out.println("SCHEDULED " + actuator + " to run every " + step.getMilliseconds());
+		System.out.println("SCHEDULED " + actuator + " to run every " + step.getMilliseconds());
 
 	}
 
@@ -596,8 +596,16 @@ public class Scheduler implements IScheduler {
 		List<Number> periods = new ArrayList<>();
 
 		/*
+		 * TODO all registrations should be scheduled in order of dependency. As long as there is only one
+		 * resolution this is also the order of registration, but if there are successive resolutions for change
+		 * this no longer holds.
+		 */
+		
+		/*
 		 * figure out the MCD resolution. TODO this must change to reflect irregular
 		 * intervals
+		 * 
+		 * FIXME throw away the MCD and just use a fixed-size wheel.
 		 */
 		for (Registration registration : registrations) {
 			long interval = registration.scale.getTime().getStep() == null
@@ -679,7 +687,7 @@ public class Scheduler implements IScheduler {
 		monitor.info("Temporal transitions starting");
 
 		System.out.println("RUNNING SCHEDULER ");
-		
+
 		monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 				IMessage.Type.SchedulingStarted, notification));
 
@@ -718,9 +726,9 @@ public class Scheduler implements IScheduler {
 						changed.addAll(registration.run(time + registration.delayInSlot, monitor));
 						reschedule(registration, time, false);
 
-						System.out.println("   >>> " + new Date(time) + ": RAN THIS FUCKA: " + registration.target + " WHICH CHANGED " + changed);
+						System.out.println("   >>> " + new Date(time) + ": RAN THIS FUCKA: " + registration.actuator
+								+ " WHICH CHANGED " + changed);
 
-						
 					} else {
 						registration.rounds--;
 						this.wheel[cursor].add(registration);
@@ -732,8 +740,10 @@ public class Scheduler implements IScheduler {
 				 * precursors do.
 				 */
 				for (Dependencies tracked : trackedStates) {
-					if (Sets.intersection(tracked.precursors, changed).size() > 0) {
-						// TODO recompute actuator - run() may have to return an equipped object to avoid another setup mess
+					Set<ObservedConcept> toUpdate = Sets.intersection(tracked.precursors, changed);
+					if (toUpdate.size() > 0) {
+						// TODO recompute actuator - run() may have to return an equipped object to
+						// avoid another setup mess
 					}
 				}
 

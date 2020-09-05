@@ -138,15 +138,24 @@ public class ResolutionScope implements IResolutionScope {
 	 */
 	Set<Link> links = new HashSet<>();
 	Set<ResolutionScope> resolvedObservables = new HashSet<>();
-	
-	// additional resolutions for change in states that explicitly 
+
+	/*
+	 * We chain resolutions when we resolve change after the initialization
+	 * resolution. In this case we use all the previous resolutions to locate any
+	 * resolved observables before we look for a model. The logic is implemented in
+	 * getObservable() which is called when creating a scope to resolve an
+	 * observable.
+	 */
+	Set<ResolutionScope> previousResolution = new HashSet<>();;
+
+	// additional resolutions for change in states that explicitly
 	// include transition contextualizers in the initialization run.
 	private List<ResolutionScope> occurrentResolutions = new ArrayList<>();
 
-	// observables for which change is not specified but may change if they 
+	// observables for which change is not specified but may change if they
 	// depend on changed observations
 	private List<ObservedConcept> implicitlyChangingObservables = new ArrayList<>();
-	
+
 	/**
 	 * If not null, this is a scope for a logical combination of resolutions.
 	 */
@@ -336,10 +345,10 @@ public class ResolutionScope implements IResolutionScope {
 		this.occurrent = scale.isTemporallyDistributed();
 	}
 
-	private ResolutionScope(Coverage coverage, ResolutionScope other, boolean copyResolution) {
-		copy(other, copyResolution);
-		this.coverage = coverage;
-	}
+//	private ResolutionScope(Coverage coverage, ResolutionScope other, boolean copyResolution) {
+//		copy(other, copyResolution);
+//		this.coverage = coverage;
+//	}
 
 	private ResolutionScope(ResolutionScope other, boolean copyResolution) {
 		copy(other, copyResolution);
@@ -361,6 +370,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.observationName = other.observationName;
 		this.contextObservable = other.contextObservable;
 		this.occurrent = other.occurrent;
+		this.previousResolution.addAll(other.previousResolution);
 		if (copyResolution) {
 			this.observable = other.observable;
 			this.model = other.model;
@@ -851,7 +861,8 @@ public class ResolutionScope implements IResolutionScope {
 
 	/**
 	 * Get the existing dependency for a passed observable and mode, or null if none
-	 * exists.
+	 * exists. Observable is looked for in this first, then in any previously
+	 * resolved scopes.
 	 * 
 	 * @param observable
 	 * @param mode
@@ -859,12 +870,28 @@ public class ResolutionScope implements IResolutionScope {
 	 * @return the existing scope for the passed parameters or null
 	 */
 	public ResolutionScope getObservable(Observable observable, Mode mode) {
+
+		/*
+		 * these are the currently resolved observables, which are not passed to
+		 * children and may not be accepted if the current resolution branch fails.
+		 */
 		for (ResolutionScope o : resolvedObservables) {
 			if (o.observable.canResolve(observable) && o.mode == mode) {
 				return o;
 			}
 		}
+		/*
+		 * this is only filled in with previously resolved observables for the same
+		 * context, which are passed to children and don't change during this
+		 * resolution.
+		 */
+		for (ResolutionScope o : previousResolution) {
+			if (o.observable.canResolve(observable) && o.mode == mode) {
+				return o;
+			}
+		}
 		return null;
+
 	}
 
 	@Override
@@ -1312,7 +1339,7 @@ public class ResolutionScope implements IResolutionScope {
 		for (Link link : links) {
 			out.println(link);
 		}
-		
+
 		for (ResolutionScope occurrent : occurrentResolutions) {
 			out.println("----");
 			occurrent.dump(out);
@@ -1332,13 +1359,31 @@ public class ResolutionScope implements IResolutionScope {
 	}
 
 	/**
-	 * Observables that may change if they depend on changing values but 
-	 * have no explicit change model associated.
+	 * Observables that may change if they depend on changing values but have no
+	 * explicit change model associated.
 	 * 
 	 * @return
 	 */
 	public List<ObservedConcept> getImplicitlyChangingObservables() {
 		return implicitlyChangingObservables;
+	}
+
+	/**
+	 * Publish the resolutions in the links into a storage that is passed to
+	 * children and consulted to ensure that previously resolved observables are not
+	 * resolved again. This is used when resolving change or any observable that is
+	 * evaluated after a full resolution has been done.
+	 * 
+	 * @return
+	 */
+	public ResolutionScope acceptResolutions() {
+		ResolutionScope ret = new ResolutionScope(this);
+		for (Link link : links) {
+			if (link.getSource().getObservable() != null) {
+				ret.previousResolution.add(link.getSource());
+			}
+		}
+		return ret;
 	}
 
 }
