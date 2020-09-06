@@ -3,8 +3,10 @@ package org.integratedmodelling.klab.components.time.extents;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
@@ -14,6 +16,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.BiFunction;
 
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
@@ -41,16 +44,24 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KAc
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.dataflow.Actuator;
+import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.rest.SchedulerNotification;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.klab.utils.graph.Graphs;
+import org.jgrapht.Graph;
+import org.jgrapht.alg.CycleDetector;
+import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
+import org.jgrapht.traverse.TopologicalOrderIterator;
 import org.joda.time.DateTime;
 
 import com.google.common.collect.Sets;
@@ -75,6 +86,7 @@ public class Scheduler implements IScheduler {
 	private ExecutorService executor;
 	private WaitStrategy waitStrategy;
 	private AtomicLong regId = new AtomicLong(0);
+	private Dataflow dataflow;
 
 	/*
 	 * used to track change in states that don't have processes connected
@@ -91,8 +103,6 @@ public class Scheduler implements IScheduler {
 	Set<Long> periods = new HashSet<>();
 
 	class Registration implements Comparable<Registration> {
-
-		long id = regId.incrementAndGet();
 
 		Actuator actuator;
 		List<Actuator.Computation> computations;
@@ -118,6 +128,8 @@ public class Scheduler implements IScheduler {
 		private Observation recipient;
 
 		private Action scheduledAction;
+
+		private int dependencyOrder;
 
 		/**
 		 * Register a behavioral action
@@ -408,17 +420,20 @@ public class Scheduler implements IScheduler {
 
 		@Override
 		public int compareTo(Registration o) {
-			if (o.id == id) {
+			
+			if (o == this) {
 				return 0;
 			}
+			
 			if (delayInSlot == o.delayInSlot) {
-				/*
-				 * order of registration if running at same time. Without this, the concurrent
-				 * set won't include the registration.
-				 */
-				return Long.compare(id, o.id);
+				return Integer.compare(dependencyOrder, o.dependencyOrder);
 			}
 			return Long.compare(delayInSlot, o.delayInSlot);
+		}
+
+		public Registration withDependencyOrder(int i) {
+			this.dependencyOrder = i;
+			return this;
 		}
 	}
 
@@ -520,6 +535,10 @@ public class Scheduler implements IScheduler {
 	public void schedule(final Actuator actuator, final List<Actuator.Computation> computations,
 			final IRuntimeScope scope) {
 
+		if (this.dataflow == null) {
+			this.dataflow = actuator.getDataflow();
+		}
+
 		/*
 		 * overall scale fills in any missing info.
 		 */
@@ -595,19 +614,21 @@ public class Scheduler implements IScheduler {
 		long longest = 0;
 		List<Number> periods = new ArrayList<>();
 
+		List<Registration> regs = registrations;
+
 		/*
-		 * TODO all registrations should be scheduled in order of dependency. As long as there is only one
-		 * resolution this is also the order of registration, but if there are successive resolutions for change
-		 * this no longer holds.
+		 * all registrations should be scheduled in order of dependency. As long as
+		 * there is only one resolution this is also the order of registration, but if
+		 * there are successive resolutions for change this no longer holds.
 		 */
-		
+		if (this.dataflow != null) {
+			regs = computeDynamicDependencyOrder(regs, dataflow.getDependencies());
+		}
+
 		/*
-		 * figure out the MCD resolution. TODO this must change to reflect irregular
-		 * intervals
-		 * 
-		 * FIXME throw away the MCD and just use a fixed-size wheel.
+		 * Size the
 		 */
-		for (Registration registration : registrations) {
+		for (Registration registration : regs) {
 			long interval = registration.scale.getTime().getStep() == null
 					? (registration.scale.getTime().getEnd().getMilliseconds()
 							- registration.scale.getTime().getStart().getMilliseconds())
@@ -631,12 +652,112 @@ public class Scheduler implements IScheduler {
 		this.wheel = new Set[this.wheelSize];
 
 		/*
-		 * now for the actual scheduling of the first step
+		 * now for the actual scheduling of the first step of each registration
 		 */
-		for (Registration registration : this.registrations) {
-			reschedule(registration, startTime, true);
+		int i = 0;
+		for (Registration registration : regs) {
+			reschedule(registration.withDependencyOrder(i++), startTime, true);
 		}
 
+	}
+
+	private List<Registration> computeDynamicDependencyOrder(List<Registration> registrations,
+			Graph<ObservedConcept, DefaultEdge> dependencies) {
+
+		/*
+		 * Create a new dependency graph taking the dependency relationships from the
+		 * original dataflow, considering only the actuators involved in the schedule.
+		 */
+		Graph<ObservedConcept, DefaultEdge> dynamicDependencies = new DefaultDirectedGraph<>(DefaultEdge.class);
+		for (Registration r : registrations) {
+			if (r.actuator != null) {
+				dynamicDependencies.addVertex(new ObservedConcept(r.actuator.getObservable(), r.actuator.getMode()));
+			}
+		}
+
+		for (ObservedConcept oc : dynamicDependencies.vertexSet()) {
+			for (DefaultEdge dc : dependencies.incomingEdgesOf(oc)) {
+				if (dynamicDependencies.containsVertex(dependencies.getEdgeSource(dc))) {
+					dynamicDependencies.addEdge(dependencies.getEdgeSource(dc), oc);
+				}
+			}
+		}
+
+		/*
+		 * For any observable coming from a secondary dataflow, add any dependency
+		 * coming from the rule: if change in X depends on Y and we have change in Y,
+		 * then change in X depends on change in Y. If the dependency creates a cycle,
+		 * don't add it and cross fingers.
+		 */
+		List<ObservedConcept> ccs = new ArrayList<>(dynamicDependencies.vertexSet());
+		for (ObservedConcept oc : dynamicDependencies.vertexSet()) {
+//			if (oc.getData().containsKey(Dataflow.SECONDARY_ACTUATOR)) {
+			/*
+			 * may not have all the dependencies. Check if: 1) it's change in y; 2) we have
+			 * y in the original dependencies; and 3) we have any scheduled observable X
+			 * that depend on y. If so, try adding the dependency between change in X and
+			 * change in Y. If the dependency screws things up, warn and don't add it.
+			 */
+			if (oc.getObservable().is(IKimConcept.Type.CHANGE)) {
+
+				/*
+				 * the concept another scheduled observable may depend on.
+				 */
+				ObservedConcept changing = new ObservedConcept(
+						Observable.promote(Observables.INSTANCE.getDescribedType(oc.getObservable().getType())),
+						Mode.RESOLUTION);
+
+				for (ObservedConcept dc : ccs) {
+
+					if (dc.equals(oc)) {
+						continue;
+					}
+
+					if (dependencies.containsVertex(changing) && Graphs.dependsOn(dc, changing, dependencies)) {
+
+						/*
+						 * try adding the dependency on a clone. If that creates cycles, warn and move
+						 * on.
+						 */
+						Graph<ObservedConcept, DefaultEdge> clone = Graphs.copy(dynamicDependencies,
+								new DefaultDirectedGraph<>(DefaultEdge.class));
+						clone.addEdge(oc, dc);
+						CycleDetector<ObservedConcept, DefaultEdge> cycles = new CycleDetector<>(clone);
+						if (cycles.detectCycles()) {
+							monitor.warn("Implicit temporal dependency of "
+									+ Concepts.INSTANCE.getDisplayLabel(oc.getObservable().getType()) + " on "
+									+ Concepts.INSTANCE.getDisplayLabel(dc.getObservable().getType())
+									+ " ignored because of circular dependencies: consider review of model logics");
+							continue;
+						}
+						dynamicDependencies = clone;
+					}
+				}
+//				}
+			}
+		}
+
+		Map<ObservedConcept, Registration> index = new HashMap<>();
+
+		for (Registration r : registrations) {
+			if (r.actuator != null) {
+				index.put(new ObservedConcept(r.actuator.getObservable(), r.actuator.getMode()), r);
+			}
+		}
+
+		List<Registration> ret = new ArrayList<>();
+		TopologicalOrderIterator<ObservedConcept, DefaultEdge> order = new TopologicalOrderIterator<ObservedConcept, DefaultEdge>(
+				dynamicDependencies);
+
+		for (; order.hasNext();) {
+//			ObservedConcept observable = ;
+			ret.add(index.get(order.next()));
+//			if (r != null) {
+//				ret.add(r);
+//			}
+		}
+
+		return ret;
 	}
 
 	@Override

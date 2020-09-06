@@ -5,12 +5,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
-import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.api.IContextualizable;
-import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IContextualizable.InteractiveParameter;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Interaction;
 import org.integratedmodelling.klab.Klab;
@@ -37,7 +35,6 @@ import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
-import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
@@ -53,9 +50,9 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.TypeUtils;
 import org.integratedmodelling.klab.utils.Utils;
-import org.integratedmodelling.klab.utils.graph.Graphs;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
 
 /**
  * The semantically aware implementation of {@link IDataflow}, built by the
@@ -86,6 +83,8 @@ import org.jgrapht.graph.DefaultDirectedGraph;
  *
  */
 public class Dataflow extends Actuator implements IDataflow<IArtifact> {
+
+	public static final String SECONDARY_ACTUATOR = "SECONDARY_ACTUATOR";
 
 	private String description;
 	private DirectObservation context;
@@ -423,18 +422,27 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	private Graph<ObservedConcept, DefaultEdge> buildDependencies() {
 		Graph<ObservedConcept, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
+		boolean primary = true;
 		for (IActuator actuator : getActuators()) {
-			buildDependencies((Actuator) actuator, ret);
+			buildDependencies((Actuator) actuator, ret, primary);
+			primary = false;
 		}
 		return ret;
 	}
 
-	private ObservedConcept buildDependencies(Actuator actuator, Graph<ObservedConcept, DefaultEdge> graph) {
+	private ObservedConcept buildDependencies(Actuator actuator, Graph<ObservedConcept, DefaultEdge> graph,
+			boolean primary) {
 
 		ObservedConcept observable = new ObservedConcept(actuator.getObservable(), actuator.getMode());
+		if (!primary) {
+			// record the secondary status so that the scheduler can insert change
+			// dependencies as needed
+			observable.getData().put(SECONDARY_ACTUATOR, Boolean.TRUE);
+		}
+
 		graph.addVertex(observable);
 		for (IActuator child : actuator.getActuators()) {
-			graph.addEdge(buildDependencies((Actuator) child, graph), observable);
+			graph.addEdge(buildDependencies((Actuator) child, graph, primary), observable);
 		}
 		return observable;
 	}
