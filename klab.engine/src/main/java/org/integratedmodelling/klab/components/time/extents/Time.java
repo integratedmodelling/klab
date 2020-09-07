@@ -60,6 +60,7 @@ public class Time extends Extent implements ITime {
 	// flag that irregular intervals must be computed to obtain size
 	boolean irregintervals = false;
 	long __id = nextId.incrementAndGet();
+	Time parentExtent = null;
 
 	private static AtomicLong nextId = new AtomicLong(Long.MIN_VALUE);
 
@@ -145,6 +146,7 @@ public class Time extends Extent implements ITime {
 		ret.multiplicity = 1;
 		ret.locatedOffsets = new long[] { 0 };
 		ret.locatedLinearOffset = 0;
+		ret.parentExtent = (Time) time;
 		return ret;
 	}
 
@@ -388,6 +390,9 @@ public class Time extends Extent implements ITime {
 
 	@Override
 	public long size() {
+		if (end == null || start == null) {
+			return this.getTimeType() == ITime.Type.GRID ? Geometry.INFINITE_SIZE : 1;
+		}
 		if (irregintervals) {
 			// do it the hard way. One day we'll improve.
 			multiplicity = 0;
@@ -513,163 +518,165 @@ public class Time extends Extent implements ITime {
 				leftover = bigDecimal.subtract(new BigDecimal(bigDecimal.longValue())).doubleValue();
 			}
 
-			DateTime start = ((TimeInstant) this.start).asDate();
+			DateTime start = null;
 			DateTime end = null;
 
-			switch (resolution.getType()) {
-			case CENTURY:
-				start = start.plusYears((int) (100 * intStep));
-				if (leftover > 0) {
-					long millis = (long) ((100 * DateTimeConstants.MILLIS_PER_DAY * 365) * leftover);
-					start = new DateTime(start.getMillis() + millis);
+			if (this.start != null) {
+
+				start = ((TimeInstant) this.start).asDate();
+
+				switch (resolution.getType()) {
+				case CENTURY:
+					start = start.plusYears((int) (100 * intStep));
+					if (leftover > 0) {
+						long millis = (long) ((100 * DateTimeConstants.MILLIS_PER_DAY * 365) * leftover);
+						start = new DateTime(start.getMillis() + millis);
+					}
+					end = start.plusYears(100 * (int) resolution.getMultiplier());
+					if (stepDecimal > 0) {
+						long millis = (long) ((100 * DateTimeConstants.MILLIS_PER_DAY * 365) * stepDecimal);
+						end = new DateTime(end.getMillis() + millis);
+					}
+					break;
+				case DAY:
+					start = start.plusDays((int) intStep);
+					if (leftover > 0) {
+						long millis = (long) (DateTimeConstants.MILLIS_PER_DAY * leftover);
+						start = new DateTime(start.getMillis() + millis);
+					}
+					end = start.plusDays((int) resolution.getMultiplier());
+					if (stepDecimal > 0) {
+						long millis = (long) (DateTimeConstants.MILLIS_PER_DAY * stepDecimal);
+						end = new DateTime(end.getMillis() + millis);
+					}
+					break;
+				case DECADE:
+					start = start.plusYears((int) (10 * intStep));
+					if (leftover > 0) {
+						long millis = (long) ((10 * DateTimeConstants.MILLIS_PER_DAY * 365) * leftover);
+						start = new DateTime(start.getMillis() + millis);
+					}
+					end = start.plusYears(10 * (int) resolution.getMultiplier());
+					if (stepDecimal > 0) {
+						long millis = (long) ((10 * DateTimeConstants.MILLIS_PER_DAY * 365) * stepDecimal);
+						end = new DateTime(end.getMillis() + millis);
+					}
+					break;
+				case HOUR:
+					start = start.plusHours((int) (100 * intStep));
+					if (leftover > 0) {
+						long millis = (long) (DateTimeConstants.MILLIS_PER_HOUR * leftover);
+						start = new DateTime(start.getMillis() + millis);
+					}
+					end = start.plusHours((int) resolution.getMultiplier());
+					if (stepDecimal > 0) {
+						long millis = (long) (DateTimeConstants.MILLIS_PER_HOUR * stepDecimal);
+						end = new DateTime(end.getMillis() + millis);
+					}
+					break;
+				case MILLENNIUM:
+					start = start.plusYears((int) (1000 * intStep));
+					if (leftover > 0) {
+						long millis = (long) ((1000 * DateTimeConstants.MILLIS_PER_DAY * 365) * stepDecimal);
+						start = new DateTime(start.getMillis() + millis);
+					}
+					end = start.plusYears(1000 * (int) resolution.getMultiplier());
+					if (stepDecimal > 0) {
+						long millis = (long) ((1000 * DateTimeConstants.MILLIS_PER_DAY * 365) * stepDecimal);
+						end = new DateTime(end.getMillis() + millis);
+					}
+					break;
+				case MILLISECOND:
+					start = start.plusMillis((int) intStep);
+					end = start.plusMillis((int) resolution.getMultiplier());
+					if (stepDecimal > 0.5) {
+						end = new DateTime(end.getMillis() + 1);
+					}
+					break;
+				case MINUTE:
+					start = start.plusMinutes((int) intStep);
+					if (leftover > 0) {
+						long millis = (long) ((DateTimeConstants.MILLIS_PER_MINUTE * 365) * leftover);
+						start = new DateTime(start.getMillis() + millis);
+					}
+					end = start.plusMinutes((int) resolution.getMultiplier());
+					if (stepDecimal > 0) {
+						long millis = (long) ((DateTimeConstants.MILLIS_PER_MINUTE * 365) * stepDecimal);
+						end = new DateTime(end.getMillis() + millis);
+					}
+					break;
+				case MONTH:
+					start = start.plusMonths((int) intStep);
+					if (leftover > 0) {
+						long millis = (long) ((DateTimeConstants.MILLIS_PER_DAY * 30) * leftover);
+						start = new DateTime(start.getMillis() + millis);
+					}
+					end = start.plusMonths((int) resolution.getMultiplier());
+					if (stepDecimal > 0) {
+						long millis = (long) ((DateTimeConstants.MILLIS_PER_DAY * 30) * stepDecimal);
+						end = new DateTime(end.getMillis() + millis);
+					}
+					break;
+				case SECOND:
+					start = start.plusSeconds((int) intStep);
+					if (leftover > 0) {
+						long millis = (long) (1000 * leftover);
+						start = new DateTime(start.getMillis() + millis);
+					}
+					end = start.plusSeconds((int) resolution.getMultiplier());
+					if (stepDecimal > 0) {
+						long millis = (long) (1000 * stepDecimal);
+						end = new DateTime(end.getMillis() + millis);
+					}
+					break;
+				case WEEK:
+					start = start.plusWeeks((int) intStep);
+					if (leftover > 0) {
+						long millis = (long) (DateTimeConstants.MILLIS_PER_WEEK * leftover);
+						start = new DateTime(start.getMillis() + millis);
+					}
+					end = start.plusWeeks((int) resolution.getMultiplier());
+					if (stepDecimal > 0) {
+						long millis = (long) (DateTimeConstants.MILLIS_PER_WEEK * stepDecimal);
+						end = new DateTime(end.getMillis() + millis);
+					}
+					break;
+				case YEAR:
+					start = start.plusYears((int) intStep);
+					if (leftover > 0) {
+						long millis = (long) ((DateTimeConstants.MILLIS_PER_DAY * 365) * leftover);
+						start = new DateTime(start.getMillis() + millis);
+					}
+					end = start.plusYears((int) resolution.getMultiplier());
+					if (stepDecimal > 0) {
+						long millis = (long) ((DateTimeConstants.MILLIS_PER_DAY * 365) * stepDecimal);
+						end = new DateTime(end.getMillis() + millis);
+					}
+					break;
+				default:
+					break;
 				}
-				end = start.plusYears(100 * (int) resolution.getMultiplier());
-				if (stepDecimal > 0) {
-					long millis = (long) ((100 * DateTimeConstants.MILLIS_PER_DAY * 365) * stepDecimal);
-					end = new DateTime(end.getMillis() + millis);
-				}
-				break;
-			case DAY:
-				start = start.plusDays((int) intStep);
-				if (leftover > 0) {
-					long millis = (long) (DateTimeConstants.MILLIS_PER_DAY * leftover);
-					start = new DateTime(start.getMillis() + millis);
-				}
-				end = start.plusDays((int) resolution.getMultiplier());
-				if (stepDecimal > 0) {
-					long millis = (long) (DateTimeConstants.MILLIS_PER_DAY * stepDecimal);
-					end = new DateTime(end.getMillis() + millis);
-				}
-				break;
-			case DECADE:
-				start = start.plusYears((int) (10 * intStep));
-				if (leftover > 0) {
-					long millis = (long) ((10 * DateTimeConstants.MILLIS_PER_DAY * 365) * leftover);
-					start = new DateTime(start.getMillis() + millis);
-				}
-				end = start.plusYears(10 * (int) resolution.getMultiplier());
-				if (stepDecimal > 0) {
-					long millis = (long) ((10 * DateTimeConstants.MILLIS_PER_DAY * 365) * stepDecimal);
-					end = new DateTime(end.getMillis() + millis);
-				}
-				break;
-			case HOUR:
-				start = start.plusHours((int) (100 * intStep));
-				if (leftover > 0) {
-					long millis = (long) (DateTimeConstants.MILLIS_PER_HOUR * leftover);
-					start = new DateTime(start.getMillis() + millis);
-				}
-				end = start.plusHours((int) resolution.getMultiplier());
-				if (stepDecimal > 0) {
-					long millis = (long) (DateTimeConstants.MILLIS_PER_HOUR * stepDecimal);
-					end = new DateTime(end.getMillis() + millis);
-				}
-				break;
-			case MILLENNIUM:
-				start = start.plusYears((int) (1000 * intStep));
-				if (leftover > 0) {
-					long millis = (long) ((1000 * DateTimeConstants.MILLIS_PER_DAY * 365) * stepDecimal);
-					start = new DateTime(start.getMillis() + millis);
-				}
-				end = start.plusYears(1000 * (int) resolution.getMultiplier());
-				if (stepDecimal > 0) {
-					long millis = (long) ((1000 * DateTimeConstants.MILLIS_PER_DAY * 365) * stepDecimal);
-					end = new DateTime(end.getMillis() + millis);
-				}
-				break;
-			case MILLISECOND:
-				start = start.plusMillis((int) intStep);
-				end = start.plusMillis((int) resolution.getMultiplier());
-				if (stepDecimal > 0.5) {
-					end = new DateTime(end.getMillis() + 1);
-				}
-				break;
-			case MINUTE:
-				start = start.plusMinutes((int) intStep);
-				if (leftover > 0) {
-					long millis = (long) ((DateTimeConstants.MILLIS_PER_MINUTE * 365) * leftover);
-					start = new DateTime(start.getMillis() + millis);
-				}
-				end = start.plusMinutes((int) resolution.getMultiplier());
-				if (stepDecimal > 0) {
-					long millis = (long) ((DateTimeConstants.MILLIS_PER_MINUTE * 365) * stepDecimal);
-					end = new DateTime(end.getMillis() + millis);
-				}
-				break;
-			case MONTH:
-				start = start.plusMonths((int) intStep);
-				if (leftover > 0) {
-					long millis = (long) ((DateTimeConstants.MILLIS_PER_DAY * 30) * leftover);
-					start = new DateTime(start.getMillis() + millis);
-				}
-				end = start.plusMonths((int) resolution.getMultiplier());
-				if (stepDecimal > 0) {
-					long millis = (long) ((DateTimeConstants.MILLIS_PER_DAY * 30) * stepDecimal);
-					end = new DateTime(end.getMillis() + millis);
-				}
-				break;
-			case SECOND:
-				start = start.plusSeconds((int) intStep);
-				if (leftover > 0) {
-					long millis = (long) (1000 * leftover);
-					start = new DateTime(start.getMillis() + millis);
-				}
-				end = start.plusSeconds((int) resolution.getMultiplier());
-				if (stepDecimal > 0) {
-					long millis = (long) (1000 * stepDecimal);
-					end = new DateTime(end.getMillis() + millis);
-				}
-				break;
-			case WEEK:
-				start = start.plusWeeks((int) intStep);
-				if (leftover > 0) {
-					long millis = (long) (DateTimeConstants.MILLIS_PER_WEEK * leftover);
-					start = new DateTime(start.getMillis() + millis);
-				}
-				end = start.plusWeeks((int) resolution.getMultiplier());
-				if (stepDecimal > 0) {
-					long millis = (long) (DateTimeConstants.MILLIS_PER_WEEK * stepDecimal);
-					end = new DateTime(end.getMillis() + millis);
-				}
-				break;
-			case YEAR:
-				start = start.plusYears((int) intStep);
-				if (leftover > 0) {
-					long millis = (long) ((DateTimeConstants.MILLIS_PER_DAY * 365) * leftover);
-					start = new DateTime(start.getMillis() + millis);
-				}
-				end = start.plusYears((int) resolution.getMultiplier());
-				if (stepDecimal > 0) {
-					long millis = (long) ((DateTimeConstants.MILLIS_PER_DAY * 365) * stepDecimal);
-					end = new DateTime(end.getMillis() + millis);
-				}
-				break;
-			default:
-				break;
 			}
 
 			// we're a grid, the state we use is
 			stateIndex--;
 
-//			// should also work for infinite time
-//			long newStart = this.start.getMilliseconds() + (this.step.getMilliseconds() * stateIndex);
-//			long newEnd = newStart + this.step.getMilliseconds();
-//
-//			// TODO if realtime, we should align with the clock as all these ops cannot
-//			// guarantee synchronicity
-
 			ret = copy();
 
+			if (start == null) {
+				ret.partial = true;
+			}
+
 			ret.step = null;
-			ret.start = new TimeInstant(start);
-			ret.end = new TimeInstant(end);
+			ret.start = start == null ? null : new TimeInstant(start);
+			ret.end = end == null ? null : new TimeInstant(end);
 			ret.extentType = ITime.Type.PHYSICAL;
 			ret.multiplicity = 1;
-			// can use resolution(ret.start, ret.end) if we want it "correct" for the span
 			ret.resolution = resolution(this.resolution.getMultiplier(), this.resolution.getType());
 			ret.locatedExtent = this;
 			ret.locatedOffsets = new long[] { stateIndex + 1 };
 			ret.locatedLinearOffset = stateIndex + 1;
+			ret.parentExtent = this;
 		}
 
 		// remember lineage to speed up location of conformant extents
@@ -1073,23 +1080,24 @@ public class Time extends Extent implements ITime {
 	}
 
 	public static void main(String[] zoz) {
+
 		TimeInstant now = new TimeInstant(2000);
 		TimeInstant then = new TimeInstant(2003);
-		Time time = create(now, then, resolution(1, Resolution.Type.WEEK));
+		Time time = create(now, then, resolution(1, Resolution.Type.MONTH));
 		for (int i = 0; i < time.size(); i++) {
 			System.out.println(time.getExtent(i));
 		}
 
-		/*
-		 * Cover a span with the original resolution, produce variable coverages in the
-		 * resulting grid
-		 */
-		Time other = create(ITime.Type.PHYSICAL, Resolution.Type.WEEK, 2,
-				new TimeInstant(new DateTime(2000, 2, 10, 0, 0, 0)),
-				new TimeInstant(new DateTime(2000, 5, 11, 0, 0, 0)), null);
-		for (ILocator segment : time.at(other)) {
-			System.out.println("   > " + segment);
-		}
+//		/*
+//		 * Cover a span with the original resolution, produce variable coverages in the
+//		 * resulting grid
+//		 */
+//		Time other = create(ITime.Type.PHYSICAL, Resolution.Type.WEEK, 2,
+//				new TimeInstant(new DateTime(2000, 2, 10, 0, 0, 0)),
+//				new TimeInstant(new DateTime(2000, 5, 11, 0, 0, 0)), null);
+//		for (ILocator segment : time.at(other)) {
+//			System.out.println("   > " + segment);
+//		}
 	}
 
 	@Override
@@ -1150,6 +1158,16 @@ public class Time extends Extent implements ITime {
 		return temporalUnit
 				.convert(this.end.getMilliseconds() - this.start.getMilliseconds(), Units.INSTANCE.MILLISECONDS)
 				.doubleValue();
+	}
+
+	@Override
+	public ITime getNext() {
+		if (parentExtent != null && this.locatedLinearOffset > 0) {
+			return this.locatedLinearOffset < (parentExtent.size() - 1)
+					? (ITime) parentExtent.getExtent(this.locatedLinearOffset + 1)
+					: null;
+		}
+		return null;
 	}
 
 }

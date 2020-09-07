@@ -300,7 +300,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		 */
 		IArtifact ret = null;
 		try {
-			ret = Klab.INSTANCE.getRuntimeProvider().compute(this, scale, resolutionScope, monitor).get();
+			ret = Klab.INSTANCE.getRuntimeProvider().compute(this, scale.initialization(), resolutionScope, monitor).get();
 		} catch (Throwable e) {
 			if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
 				throw ((AbstractTask<?>) monitor.getIdentity()).notifyAbort(e);

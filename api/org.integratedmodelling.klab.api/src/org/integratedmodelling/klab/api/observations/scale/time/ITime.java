@@ -341,4 +341,12 @@ public interface ITime extends IExtent {
 	 */
 	double getLength(IUnit temporalUnit);
 
+	/**
+	 * If this extent is a subdivision of a distributed extent, return the next in
+	 * line after it, or null if it's the last subdivision. Otherwise return null.
+	 * 
+	 * @return
+	 */
+	ITime getNext();
+
 }

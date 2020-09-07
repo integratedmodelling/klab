@@ -12,8 +12,7 @@ import java.util.concurrent.ConcurrentSkipListSet;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiFunction;
+import java.util.function.Function;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Concepts;
@@ -53,7 +52,7 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.rest.SchedulerNotification;
-import org.integratedmodelling.klab.scale.Extent;
+import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.graph.Graphs;
@@ -85,7 +84,7 @@ public class Scheduler implements IScheduler {
 	private int cursor = 0;
 	private ExecutorService executor;
 	private WaitStrategy waitStrategy;
-	private AtomicLong regId = new AtomicLong(0);
+//	private AtomicLong regId = new AtomicLong(0);
 	private Dataflow dataflow;
 
 	/*
@@ -108,35 +107,27 @@ public class Scheduler implements IScheduler {
 		List<Actuator.Computation> computations;
 		IDirectObservation target;
 		IScale scale;
-		BiFunction<Long, IMonitor, Collection<ObservedConcept>> action;
+		Function<IMonitor, Collection<ObservedConcept>> action;
 		long tIndex = 0;
 		long endTime;
 		IRuntimeScope scope;
 		// rounds around the wheel; ready to fire when rounds == 0
 		int rounds;
 
-		// if time is irregular, we compute this in advance and store here to avoid
-		// wasting time
-		// doing it again later.
-		ITime transition;
 		/*
 		 * Used to sort by milliseconds from beginning of slot time so that temporal
 		 * sequence is respected.
 		 */
 		long delayInSlot;
-
 		private Observation recipient;
-
-		private Action scheduledAction;
-
 		private int dependencyOrder;
+		public ITime time;
 
 		/**
-		 * Register a behavioral action
+		 * Register a scheduled action from a behavior.
 		 * 
-		 * @param actuator
-		 * @param computation
-		 * @param target
+		 * @param observation
+		 * @param scheduled
 		 * @param scale
 		 * @param scope
 		 * @param endtime
@@ -145,22 +136,16 @@ public class Scheduler implements IScheduler {
 				long endtime) {
 
 			this.scale = scale;
-//			this.target = target;
 			this.endTime = endtime;
 			this.scope = scope;
 			this.recipient = observation;
-			this.scheduledAction = scheduled;
 
-			action = new BiFunction<Long, IMonitor, Collection<ObservedConcept>>() {
+			action = new Function<IMonitor, Collection<ObservedConcept>>() {
 
 				@Override
-				public Collection<ObservedConcept> apply(Long t, IMonitor monitor) {
+				public Collection<ObservedConcept> apply(IMonitor monitor) {
 
 					Set<ObservedConcept> ret = new HashSet<>();
-
-					if (endTime > 0 && t > endTime) {
-						return ret;
-					}
 
 					/*
 					 * If target is dead, return
@@ -175,14 +160,9 @@ public class Scheduler implements IScheduler {
 					 * wrapper. Done within the context, which uses its current target to establish
 					 * the specific view of the context.
 					 */
-					ILocator transitionScale = scale.at(transition);
+					ILocator transitionScale = scale.at(time);
 					IRuntimeScope transitionContext = scope.locate(transitionScale, monitor);
-
 					Set<IObservation> changed = new HashSet<>();
-
-//					// ensure we have the names we expect
-//					transitionContext = actuator.localizeNames(transitionContext);
-//
 					ActorRef<KlabMessage> sender = ((Observation) observation.getScope().getRootSubject()).getActor();
 
 					/*
@@ -212,7 +192,7 @@ public class Scheduler implements IScheduler {
 								ObservationChange change = new ObservationChange();
 								change.setContextId(scope.getRootSubject().getId());
 								change.setId(observation.getId());
-								change.setTimestamp(t);
+								change.setTimestamp(time.getEnd().getMilliseconds());
 
 								if (observation instanceof IState) {
 									change.setType(ObservationChange.Type.ValueChange);
@@ -233,6 +213,7 @@ public class Scheduler implements IScheduler {
 					}
 
 					// TODO determine what has changed
+
 					return ret;
 				}
 			};
@@ -258,17 +239,13 @@ public class Scheduler implements IScheduler {
 			this.scope = scope;
 			this.computations = computation;
 
-			action = new BiFunction<Long, IMonitor, Collection<ObservedConcept>>() {
+			action = new Function<IMonitor, Collection<ObservedConcept>>() {
 
 				@Override
-				public Collection<ObservedConcept> apply(Long t, IMonitor monitor) {
+				public Collection<ObservedConcept> apply(IMonitor monitor) {
 
 					Set<ObservedConcept> ret = new HashSet<>();
 					List<IObservation> changed = new ArrayList<>();
-
-					if (endTime > 0 && t > endTime) {
-						return ret;
-					}
 
 					/*
 					 * If target is dead, return
@@ -283,7 +260,7 @@ public class Scheduler implements IScheduler {
 					 * wrapper. Done within the context, which uses its current target to establish
 					 * the specific view of the context.
 					 */
-					ILocator transitionScale = scale.at(transition);
+					ILocator transitionScale = scale.at(time);
 					IRuntimeScope transitionContext = scope.locate(transitionScale, monitor);
 
 					/*
@@ -293,11 +270,14 @@ public class Scheduler implements IScheduler {
 					 * notified as they appear.
 					 */
 					if (target instanceof ObservationGroup && target.getObservable().is(IKimConcept.Type.EVENT)) {
-						System.out.println("SOCCMEL resolve the events");
+						// TODO
 					}
 
 					// ensure we have the names we expect
 					transitionContext = actuator.localizeNames(transitionContext);
+
+					System.out.println("RUNNING + " + actuator + " AT " + new Date(time.getStart().getMilliseconds())
+							+ " to " + new Date(time.getEnd().getMilliseconds()));
 
 					/*
 					 * 3. Run all contextualizers in the context that react to transitions; check
@@ -374,7 +354,7 @@ public class Scheduler implements IScheduler {
 								ObservationChange change = new ObservationChange();
 								change.setContextId(scope.getRootSubject().getId());
 								change.setId(observation.getId());
-								change.setTimestamp(t);
+								change.setTimestamp(time.getEnd().getMilliseconds());
 
 								if (observation instanceof IState) {
 									change.setType(ObservationChange.Type.ValueChange);
@@ -401,13 +381,11 @@ public class Scheduler implements IScheduler {
 
 		public Collection<ObservedConcept> run(long time, IMonitor monitor) {
 
-//			System.out.println("Running at " + new Date(time));
-
-			// run the action; if synchronous, run in current thread and return when
-			// finished
 			if (synchronicity == Synchronicity.SYNCHRONOUS) {
-//				System.out.println("   " + transition + " FOR " + actuator);
-				return action.apply(time, monitor);
+				/*
+				 * run in current thread, return when finished
+				 */
+				return action.apply(monitor);
 			} else if (synchronicity == Synchronicity.ASYNCHRONOUS) {
 				throw new KlabUnimplementedException("asynchronous scheduling not implemented");
 			} else if (synchronicity == Synchronicity.TIME_SYNCHRONOUS) {
@@ -420,20 +398,23 @@ public class Scheduler implements IScheduler {
 
 		@Override
 		public int compareTo(Registration o) {
-			
+
 			if (o == this) {
 				return 0;
 			}
-			
+
+			/*
+			 * Simultaneous actions happen in order of dependency
+			 */
 			if (delayInSlot == o.delayInSlot) {
 				return Integer.compare(dependencyOrder, o.dependencyOrder);
 			}
+
 			return Long.compare(delayInSlot, o.delayInSlot);
 		}
 
-		public Registration withDependencyOrder(int i) {
+		public void setDependencyOrder(int i) {
 			this.dependencyOrder = i;
-			return this;
 		}
 	}
 
@@ -450,6 +431,7 @@ public class Scheduler implements IScheduler {
 	private String contextId;
 	private ISession session;
 	private IResolutionScope scope;
+	private int activeRegistrations;
 
 	public Scheduler(String contextId, ITime time, IMonitor monitor) {
 		this.contextId = contextId;
@@ -570,23 +552,12 @@ public class Scheduler implements IScheduler {
 
 		ITimeInstant start = scale.getTime().getStart();
 		ITimeInstant end = scale.getTime().getStart();
-		ITimeDuration step = scale.getTime().getStep();
 
 		if (start == null || (overall.getTime().getStart() != null && start.isBefore(overall.getTime().getStart()))) {
 			start = overall.getTime().getStart();
 		}
 		if (end == null || (overall.getTime().getEnd() != null && start.isAfter(overall.getTime().getEnd()))) {
 			end = overall.getTime().getEnd();
-		}
-		if (step == null) {
-			step = overall.getTime().getStep();
-		}
-
-		if (step /* still */ == null) {
-			/*
-			 * nothing can occur, nothing to do (TODO: except maybe finalization)
-			 */
-			return;
 		}
 
 		IObservation targetObservation = (IObservation) scope.getTargetArtifact();
@@ -600,9 +571,6 @@ public class Scheduler implements IScheduler {
 		final long endTime = overall.getTime().getEnd() == null ? -1 : overall.getTime().getEnd().getMilliseconds();
 
 		registrations.add(new Registration(actuator, computations, target, scale, scope, endTime));
-
-		System.out.println("SCHEDULED " + actuator + " to run every " + step.getMilliseconds());
-
 	}
 
 	/*
@@ -612,6 +580,7 @@ public class Scheduler implements IScheduler {
 	public void schedule() {
 
 		long longest = 0;
+
 		List<Number> periods = new ArrayList<>();
 
 		List<Registration> regs = registrations;
@@ -629,10 +598,10 @@ public class Scheduler implements IScheduler {
 		 * Size the
 		 */
 		for (Registration registration : regs) {
-			long interval = registration.scale.getTime().getStep() == null
+			long interval = registration.scale.getTime().getResolution() == null
 					? (registration.scale.getTime().getEnd().getMilliseconds()
 							- registration.scale.getTime().getStart().getMilliseconds())
-					: registration.scale.getTime().getStep().getCommonDivisorMilliseconds();
+					: registration.scale.getTime().getResolution().getSpan();
 			periods.add(interval);
 			if (longest < interval) {
 				longest = interval;
@@ -645,8 +614,12 @@ public class Scheduler implements IScheduler {
 		 * wheel size should accommodate the longest interval @the chosen resolution,
 		 * but we cap it at MAX_HASH_WHEEL_SIZE. Keep it in powers of 2 for predictable
 		 * performance and geek factor.
+		 * 
+		 * TODO review to choose a power of two between 2^(4-15) based on how small the
+		 * resolution is compared to the scale
 		 */
-		this.wheelSize = Math.min(NumberUtils.nextPowerOf2((int) (longest / resolution)), MAX_HASH_WHEEL_SIZE);
+		this.wheelSize = DEFAULT_WHEEL_SIZE; // Math.min(NumberUtils.nextPowerOf2((int) (longest / resolution)),
+												// MAX_HASH_WHEEL_SIZE);
 		monitor.debug(
 				"created scheduler hash wheel of size " + this.wheelSize + " for resolution = " + this.resolution);
 		this.wheel = new Set[this.wheelSize];
@@ -656,7 +629,9 @@ public class Scheduler implements IScheduler {
 		 */
 		int i = 0;
 		for (Registration registration : regs) {
-			reschedule(registration.withDependencyOrder(i++), startTime, true);
+			registration.setDependencyOrder(i++);
+			this.activeRegistrations++;
+			reschedule(registration, true);
 		}
 
 	}
@@ -691,7 +666,7 @@ public class Scheduler implements IScheduler {
 		 */
 		List<ObservedConcept> ccs = new ArrayList<>(dynamicDependencies.vertexSet());
 		for (ObservedConcept oc : dynamicDependencies.vertexSet()) {
-//			if (oc.getData().containsKey(Dataflow.SECONDARY_ACTUATOR)) {
+
 			/*
 			 * may not have all the dependencies. Check if: 1) it's change in y; 2) we have
 			 * y in the original dependencies; and 3) we have any scheduled observable X
@@ -733,7 +708,6 @@ public class Scheduler implements IScheduler {
 						dynamicDependencies = clone;
 					}
 				}
-//				}
 			}
 		}
 
@@ -749,12 +723,8 @@ public class Scheduler implements IScheduler {
 		TopologicalOrderIterator<ObservedConcept, DefaultEdge> order = new TopologicalOrderIterator<ObservedConcept, DefaultEdge>(
 				dynamicDependencies);
 
-		for (; order.hasNext();) {
-//			ObservedConcept observable = ;
+		while (order.hasNext()) {
 			ret.add(index.get(order.next()));
-//			if (r != null) {
-//				ret.add(r);
-//			}
 		}
 
 		return ret;
@@ -788,6 +758,7 @@ public class Scheduler implements IScheduler {
 		 */
 		List<Dependencies> trackedStates = new ArrayList<>();
 		if (this.scope != null) {
+
 			for (ObservedConcept tracked : ((ResolutionScope) scope).getImplicitlyChangingObservables()) {
 
 				Dependencies tracker = new Dependencies();
@@ -807,22 +778,13 @@ public class Scheduler implements IScheduler {
 
 		monitor.info("Temporal transitions starting");
 
-		System.out.println("RUNNING SCHEDULER ");
-
 		monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 				IMessage.Type.SchedulingStarted, notification));
 
 		long time = startTime;
-		while (true) {
-
-			// fence with checks
-			if (stopped.get() || (time + resolution) > endTime || monitor.isInterrupted()) {
-				break;
-			}
+		while (this.activeRegistrations > 0) {
 
 			if (this.wheel[cursor] != null && !this.wheel[cursor].isEmpty()) {
-
-//				System.out.println("---- Running slot " + cursor + " -------------------");
 
 				List<Registration> regs = new ArrayList<>(this.wheel[cursor]);
 				this.wheel[cursor].clear();
@@ -845,10 +807,10 @@ public class Scheduler implements IScheduler {
 						}
 
 						changed.addAll(registration.run(time + registration.delayInSlot, monitor));
-						reschedule(registration, time, false);
-
-						System.out.println("   >>> " + new Date(time) + ": RAN THIS FUCKA: " + registration.actuator
-								+ " WHICH CHANGED " + changed);
+						if (time < registration.time.getEnd().getMilliseconds()) {
+							time = registration.time.getEnd().getMilliseconds();
+						}
+						reschedule(registration, false);
 
 					} else {
 						registration.rounds--;
@@ -877,18 +839,11 @@ public class Scheduler implements IScheduler {
 
 			}
 
-//			System.out.println("RAN ALL THE FUCKERS");
-
 			cursor = (cursor + 1) % wheelSize;
 			time += resolution;
 
 			if (waitStrategy != null) {
 				waitStrategy.waitUntil(time);
-			}
-
-			// check again
-			if (stopped.get() || (time + resolution) > endTime || monitor.isInterrupted()) {
-				break;
 			}
 		}
 
@@ -901,52 +856,42 @@ public class Scheduler implements IScheduler {
 				IMessage.Type.SchedulingFinished, notification));
 	}
 
-	private void reschedule(Registration registration, long startTime, boolean first) {
+	private void reschedule(Registration registration, boolean first) {
 
-		/*
-		 * FIXME this must become the next() time, adjusted to fit the resolution if
-		 * necessary (should not be necessary).
-		 */
-		startTime = startTime + resolution;
+		this.activeRegistrations--;
 
 		if (stopped.get()) {
 			return;
 		}
 
-		if (registration.scale.getTime().size() != IGeometry.INFINITE_SIZE
-				&& (registration.tIndex + 1) >= (registration.scale.getTime().size())) {
+		/*
+		 * first time interval in registration, skip initialization
+		 */
+		if (first) {
+			registration.time = (ITime) ((AbstractExtent) registration.scale.getTime()).getExtent(1);
+		} else {
+			registration.time = registration.time.getNext();
+		}
+
+		if (registration.time == null || registration.time.getEnd() == null) {
 			return;
 		}
 
-		/*
-		 * schedule only the first shot, will reschedule itself at execution. Choose the
-		 * slot and set the offset from the beginning.
-		 */
-//		long start = startTime;
-//		if (registration.scale.getTime().getStart() != null) {
-//			start = registration.scale.getTime().getStart().getMilliseconds();
-//			if (start < startTime) {
-//				start = startTime;
-//			}
-//		}
+		long executionTime = registration.time.getEnd().getMilliseconds();
 
-		long stepSize = registration.scale.getTime().getStep().getMilliseconds();
-		ITime step = ((ITime) ((Extent) registration.scale.getTime()).getExtent(++registration.tIndex));
-		if (!registration.scale.getTime().isRegular()) {
-			stepSize = step.getEnd().getMilliseconds() - step.getStart().getMilliseconds();
+		if (registration.scale.getTime().size() != IGeometry.INFINITE_SIZE
+				&& executionTime > registration.scale.getTime().getEnd().getMilliseconds()) {
+			return;
 		}
-		// store for efficiency when running
-		registration.transition = step;
 
-		// remove a millisecond to stay to the right edge of our slot
-		stepSize--;
+		long stepSize = executionTime - registration.time.getStart().getMilliseconds();
 
 		// how many slots we span in the wheel
 		int span = (int) (stepSize / resolution);
-		// how many rounds we need to take before it's our turn
+		// how many spins of the wheel we need to take before it's our turn
 		registration.rounds = span / wheelSize;
-		// milliseconds left to wait once in our own slot
-		registration.delayInSlot = (startTime + stepSize) % resolution;
+		// milliseconds left to wait once our slot is being computed
+		registration.delayInSlot = executionTime % resolution;
 
 		int slot = (cursor + span + (first ? 0 : 1)) % wheelSize;
 
@@ -956,7 +901,7 @@ public class Scheduler implements IScheduler {
 
 		this.wheel[slot].add(registration);
 
-//		System.out.println("   Rescheduled " + registration.actuator + " in slot " + slot + " after " + registration.rounds + " rounds");
+		this.activeRegistrations++;
 
 	}
 
