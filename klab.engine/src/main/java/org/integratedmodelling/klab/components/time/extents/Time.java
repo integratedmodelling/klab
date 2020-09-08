@@ -62,6 +62,13 @@ public class Time extends Extent implements ITime {
 	long __id = nextId.incrementAndGet();
 	Time parentExtent = null;
 
+	/**
+	 * Observations distributed over irregular time extents can't use offsets to
+	 * locate a particular state, so we add a "focus" time instant to enable them to
+	 * focus on a given timepoint.
+	 */
+	private ITimeInstant focus;
+
 	private static AtomicLong nextId = new AtomicLong(Long.MIN_VALUE);
 
 	private static class ResolutionImpl implements Resolution {
@@ -819,6 +826,12 @@ public class Time extends Extent implements ITime {
 		return new Time(this);
 	}
 
+	public Time focus(ITimeInstant focal) {
+		Time ret = copy();
+		ret.focus = focal;
+		return ret;
+	}
+
 	@Override
 	public IServiceCall getKimSpecification() {
 
@@ -975,20 +988,28 @@ public class Time extends Extent implements ITime {
 			} else if (locators[0] instanceof ITimeInstant) {
 
 				/*
-				 * Pick the sub-extent containing the instant
+				 * Pick the sub-extent containing the instant or return the entire scale if 
+				 * we have none. In all cases focalize on the specific instant requested.
 				 */
 				if (!(start == null || start.isAfter((ITimeInstant) locators[0])
 						|| (end != null && end.isBefore((ITimeInstant) locators[0])))) {
 
 					if (size() <= 1) {
-						return this;
+						return this.focus((ITimeInstant)locators[0]);
 					}
 
 					if (size() > 1) {
 						long target = ((ITimeInstant) locators[0]).getMilliseconds();
 						long tleft = target - start.getMilliseconds();
-						long n = tleft / resolution.getSpan();
-						if (n >= 0 && n < size()) {
+						long n = tleft / resolution.getSpan() + 1;
+						if (target == end.getMilliseconds()) {
+							/*
+							 * last extent, located to get the point before the beginning of the next period
+							 */
+							Time ret = (Time)getExtent(size() - 1);
+							return ret.focus((ITimeInstant)locators[0]);
+							
+						} else if (n >= 0 && n < size()) {
 							Time ret = (Time) getExtent(n);
 							long nn = n;
 							// previous was approximate due to potential irregularity; correct as needed
@@ -999,7 +1020,7 @@ public class Time extends Extent implements ITime {
 							while (nn < size() && ret.getStart().isAfter(((ITimeInstant) locators[0]))) {
 								ret = (Time) getExtent(--nn);
 							}
-							return ret;
+							return ret.focus((ITimeInstant)locators[0]);
 						}
 					}
 				}
@@ -1168,6 +1189,11 @@ public class Time extends Extent implements ITime {
 					: null;
 		}
 		return null;
+	}
+
+	@Override
+	public ITimeInstant getFocus() {
+		return focus;
 	}
 
 }

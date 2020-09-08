@@ -766,7 +766,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							"internal: cannot find merging actuator named " + actuator.getPartitionedTarget());
 				}
 
-				IArtifact merging = createTarget(mergingActuator, scale, scope, rootSubject);
+				IArtifact merging = createTarget(mergingActuator, actuator.getDataflow().getResolutionScale(), scope, rootSubject);
 
 				/*
 				 * partition sub-state does not go in the catalog
@@ -787,7 +787,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		} else if (!actuator.isInput()) {
 
 			// save existing target
-			ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
+			ret.target = ret.createTarget((Actuator) actuator, actuator.getDataflow().getResolutionScale(), scope, rootSubject);
 			if (ret.target != null && this.target != null) {
 				ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
 				// ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator)
@@ -836,7 +836,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 
 		// save existing target
-		ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
+		ret.target = ret.createTarget((Actuator) actuator, ((Actuator)actuator).getDataflow().getResolutionScale(), scope, rootSubject);
 		if (ret.target != null && this.target != null) {
 			ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
 			ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);

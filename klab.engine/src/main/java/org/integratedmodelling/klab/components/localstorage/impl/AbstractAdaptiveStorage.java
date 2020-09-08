@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -72,6 +73,12 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		long timestep;
 		long timestart;
 		long timeend;
+
+		@Override
+		public String toString() {
+			return (timestart == 0 || timeend == 0) ? "Initialization slice"
+					: ("Slice " + new Date(timestart) + " to " + new Date(timeend));
+		}
 
 		public T getAt(long sliceOffset) {
 
@@ -250,16 +257,43 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		}
 
 		boolean initialization = true;
-		if (time != null && time.getStart() != null && time.getEnd() != null) {
+		long timepoint = -1;
+		if (time != null && time.getFocus() != null) {
+			timepoint = time.getFocus().getMilliseconds();
+		} else if (time != null && time.getStart() != null && time.getEnd() != null) {
 			timeStart = time.getStart().getMilliseconds();
 			timeEnd = time.getEnd().getMilliseconds();
 			initialization = time.getTimeType() == ITime.Type.INITIALIZATION;
 		}
 
+		Slice slice = null;
 		long sliceOffset = product(offsets.pos, trivial ? 0 : 1);
-
-		// can only be the closest at this point, unless there was no slice at all
-		Slice slice = getClosest(/* timeOffset */initialization ? 0 : timeEnd);
+		if (timepoint >= 0) {
+			/*
+			 * find the slice that describes the timepoint. By convention slice coverage end
+			 * a unit before the stated time end, but if we ask for the end point we get the
+			 * slice that touches it from the left, so we use <= for the end timepoint
+			 * instead of <. Basically if we ask for the state at Feb 1st we are asking for
+			 * the state before Feb 1st happens.
+			 */
+			Slice lastSlice = null;
+			for (Slice s : slices.values()) {
+				if (timepoint >= s.timestart  && timepoint <= s.timeend) {
+					slice = s;
+					break;
+				}
+				lastSlice = s;
+			}
+			
+			if (slice == null) {
+				// no changes relevant to that timepoint, get the latest or stay null
+				slice = lastSlice;
+			}
+			
+		} else {
+			// can only be the closest at this point, unless there was no slice at all
+			slice = getClosest(initialization ? 0 : timeEnd);
+		}
 
 		/*
 		 * check for non-conformant time extent (!= to the extent of the slice): this
@@ -267,7 +301,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		 * there have been in-between timestep changes in the state due to processes or
 		 * events operating at different scales.
 		 */
-		if (!initialization && slice != null && (slice.timestart != timeStart || slice.timeend != timeEnd)) {
+		if (!initialization && sliceOffset >= 0 && slice != null
+				&& (slice.timestart != timeStart || slice.timeend != timeEnd)) {
 			/*
 			 * TODO if needed, aggregate within the boundary of the requesting scale,
 			 * otherwise keep the latest value
@@ -290,15 +325,15 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		for (Slice slice : map.values()) {
 			values.add(new Pair<>(slice.getAt(sliceOffset), slice.timeend));
 		}
-		
+
 		if (values.size() == 1) {
-			return (T)values.get(0).getFirst();
+			return (T) values.get(0).getFirst();
 		} else if (values.size() == 0) {
 			return null;
 		}
-		
+
 		System.out.println("AGGREGATE " + map.size() + " VALUES");
-		
+
 		return null;
 	}
 

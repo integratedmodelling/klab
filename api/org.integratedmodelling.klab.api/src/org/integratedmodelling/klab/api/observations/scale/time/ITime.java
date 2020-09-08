@@ -317,7 +317,7 @@ public interface ITime extends IExtent {
 	boolean is(Type type);
 
 	/**
-	 * Get the time type.
+	 * Get the time type. Turns out there may be many, many ways to interpret time.
 	 * 
 	 * @return
 	 */
@@ -348,5 +348,15 @@ public interface ITime extends IExtent {
 	 * @return
 	 */
 	ITime getNext();
+
+	/**
+	 * A temporal extent always represents a period, but when created from a query
+	 * may be simply focused on a particular timepoint, used to locate the correct
+	 * period in a scale that has (regular or irregular) timeslices. These are not
+	 * produced during contextualization but can be used as locators.
+	 * 
+	 * @return
+	 */
+	ITimeInstant getFocus();
 
 }

@@ -10,6 +10,7 @@ import java.security.Principal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -20,6 +21,8 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
@@ -209,9 +212,6 @@ public class EngineViewController {
 			loc = Geometry.create(locator);
 			loc = obs.getScale().at(loc);
 		}
-
-		System.out.println(
-				"REQUESTED " + loc + ": " + obs.getTimestamp() + "\n   " + Arrays.toString(obs.getUpdateTimestamps()));
 
 		boolean done = false;
 

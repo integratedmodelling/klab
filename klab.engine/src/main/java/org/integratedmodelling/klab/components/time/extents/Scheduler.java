@@ -84,7 +84,6 @@ public class Scheduler implements IScheduler {
 	private int cursor = 0;
 	private ExecutorService executor;
 	private WaitStrategy waitStrategy;
-//	private AtomicLong regId = new AtomicLong(0);
 	private Dataflow dataflow;
 
 	/*
@@ -276,8 +275,8 @@ public class Scheduler implements IScheduler {
 					// ensure we have the names we expect
 					transitionContext = actuator.localizeNames(transitionContext);
 
-					System.out.println("RUNNING + " + actuator + " AT " + new Date(time.getStart().getMilliseconds())
-							+ " to " + new Date(time.getEnd().getMilliseconds()));
+					monitor.debug("running " + actuator + " at [" + new Date(time.getStart().getMilliseconds())
+							+ " - " + new Date(time.getEnd().getMilliseconds()) + "]");
 
 					/*
 					 * 3. Run all contextualizers in the context that react to transitions; check
@@ -379,7 +378,7 @@ public class Scheduler implements IScheduler {
 			};
 		}
 
-		public Collection<ObservedConcept> run(long time, IMonitor monitor) {
+		public Collection<ObservedConcept> run(IMonitor monitor) {
 
 			if (synchronicity == Synchronicity.SYNCHRONOUS) {
 				/*
@@ -782,6 +781,8 @@ public class Scheduler implements IScheduler {
 				IMessage.Type.SchedulingStarted, notification));
 
 		long time = startTime;
+		long lastAdvanced = startTime;
+
 		while (this.activeRegistrations > 0) {
 
 			if (this.wheel[cursor] != null && !this.wheel[cursor].isEmpty()) {
@@ -806,9 +807,9 @@ public class Scheduler implements IScheduler {
 							delay += registration.delayInSlot;
 						}
 
-						changed.addAll(registration.run(time + registration.delayInSlot, monitor));
-						if (time < registration.time.getEnd().getMilliseconds()) {
-							time = registration.time.getEnd().getMilliseconds();
+						changed.addAll(registration.run(monitor));
+						if (lastAdvanced < registration.time.getEnd().getMilliseconds()) {
+							lastAdvanced = registration.time.getEnd().getMilliseconds();
 						}
 						reschedule(registration, false);
 
@@ -833,7 +834,7 @@ public class Scheduler implements IScheduler {
 				SchedulerNotification passed = new SchedulerNotification();
 				passed.setType(SchedulerNotification.Type.TIME_ADVANCED);
 				passed.setContextId(contextId);
-				passed.setCurrentTime(time);
+				passed.setCurrentTime(lastAdvanced);
 				monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
 						IMessage.Type.ScheduleAdvanced, passed));
 
@@ -842,6 +843,10 @@ public class Scheduler implements IScheduler {
 			cursor = (cursor + 1) % wheelSize;
 			time += resolution;
 
+			if (endTime > 0 && lastAdvanced >= endTime) {
+				break;
+			}
+			
 			if (waitStrategy != null) {
 				waitStrategy.waitUntil(time);
 			}
