@@ -120,6 +120,10 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			}
 		}
 
+		public boolean isInitialization() {
+			return timestart == 0 && timeend == 0;
+		}
+
 	}
 
 	/**
@@ -302,6 +306,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		 * events operating at different scales.
 		 */
 		if (!initialization && sliceOffset >= 0 && slice != null
+				&& !slice.isInitialization()
 				&& (slice.timestart != timeStart || slice.timeend != timeEnd)) {
 			/*
 			 * TODO if needed, aggregate within the boundary of the requesting scale,

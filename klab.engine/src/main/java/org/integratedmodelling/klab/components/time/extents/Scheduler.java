@@ -91,7 +91,7 @@ public class Scheduler implements IScheduler {
 	 */
 	class Dependencies {
 		public ObservedConcept observable;
-		public Set<ObservedConcept> precursors;
+		public Set<ObservedConcept> precursors = new HashSet<>();
 		public Actuator actuator;
 	}
 

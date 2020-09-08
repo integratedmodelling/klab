@@ -303,7 +303,7 @@ public enum KimKnowledgeProcessor {
 		return main;
 	}
 
-	public @Nullable Observable declare(final IKimObservable concept, IOntology declarationOntology,
+	public synchronized @Nullable Observable declare(final IKimObservable concept, IOntology declarationOntology,
 			final IMonitor monitor) {
 
 		if (concept.getNonSemanticType() != null) {
@@ -430,7 +430,7 @@ public enum KimKnowledgeProcessor {
 		return declareInternal(concept, (Ontology) declarationOntology, monitor);
 	}
 
-	private @Nullable Concept declareInternal(final IKimConcept concept, Ontology ontology, final IMonitor monitor) {
+	private synchronized @Nullable Concept declareInternal(final IKimConcept concept, Ontology ontology, final IMonitor monitor) {
 
 		Concept main = null;
 
