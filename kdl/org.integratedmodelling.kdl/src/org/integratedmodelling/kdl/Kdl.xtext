@@ -15,7 +15,7 @@ Model:
 	 ('@worldview' worldview=LOWERCASE_ID)? &
 	 ('@geometry' geometry=Geometry)? &
 	 ('@endpoint' endpoint=STRING)? &
-	 ('@namespace' package=PathName)? &
+	 ('@namespace' package=(PathName|STRING))? &
 	 ('@coverage' scale+=Function (',' scale+=Function)*)? &
 	 ('@context' contextUrn=Urn)?) 
 	actors+=ActorDefinition*;

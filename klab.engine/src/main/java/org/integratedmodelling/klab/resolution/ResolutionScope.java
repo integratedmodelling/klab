@@ -12,10 +12,12 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -760,6 +762,15 @@ public class ResolutionScope implements IResolutionScope {
 					ret.add(obs);
 				}
 				i++;
+			}
+			if (this.model.hasDistributedResources(Dimension.Type.TIME)) {
+				IObservable main = this.model.getObservables().get(0);
+				if (!main.is(Type.CHANGE)) {
+					/*
+					 * models with temporally merged resources also handle change
+					 */
+					ret.add(main.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable());
+				}
 			}
 			return ret;
 		} else if (this.observable != null && !this.observable.equals(toSkip)) {

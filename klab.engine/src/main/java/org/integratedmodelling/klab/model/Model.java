@@ -295,11 +295,11 @@ public class Model extends KimObject implements IModel {
 				}
 			}
 		}
-		
+
 		if (getMainObservable() != null && getMainObservable().is(Type.PROCESS)) {
-			
+
 			Set<IConcept> changed = new HashSet<>();
-			
+
 			/*
 			 * Any change that isn't explicitly output should be added
 			 */
@@ -309,9 +309,9 @@ public class Model extends KimObject implements IModel {
 					changed.add(Observables.INSTANCE.getDescribedType(obs.getType()));
 				}
 			}
-			
+
 			/*
-			 * Add change in any secondary qualities that are affected by the process. 
+			 * Add change in any secondary qualities that are affected by the process.
 			 */
 			List<IObservable> toAdd = new ArrayList<>();
 			for (int oo = 1; i < observables.size(); i++) {
@@ -322,7 +322,7 @@ public class Model extends KimObject implements IModel {
 					}
 				}
 			}
-			
+
 			this.observables.addAll(toAdd);
 		}
 
@@ -1383,5 +1383,10 @@ public class Model extends KimObject implements IModel {
 	 */
 	public boolean distributesLearning() {
 		return this.distributesLearning;
+	}
+
+	@Override
+	public boolean hasDistributedResources(Dimension.Type dimension) {
+		return false;
 	}
 }

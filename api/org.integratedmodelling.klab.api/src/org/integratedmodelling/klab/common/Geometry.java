@@ -902,6 +902,9 @@ public class Geometry implements IGeometry {
 //		Geometry g5 = create("S2(200,100){srid=EPSG:3040,bounds=[23.3 221.0 25.2 444.4]}T1(12)");
 
 //		System.out.println(separateTargets(ITime.class, 1, Dimension.Type.SPACE, 2, 3));
+		
+		Geometry gg = create("τ1{tend=725846400000,tscope=1.0,tstart=694224000000,ttype=logical,tunit=year}S2(129599,64799){bbox=[-180.0 180.00000000002876 -90.00000000001438 90.0],proj=EPSG:4326}");
+		System.out.println(gg.toString());
 //		System.out.println(separateTargets(ITime.class, Dimension.Type.SPACE, 2, 3));
 	}
 

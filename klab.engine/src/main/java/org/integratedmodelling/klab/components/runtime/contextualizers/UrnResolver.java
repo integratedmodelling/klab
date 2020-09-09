@@ -73,7 +73,8 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 				return observation;
 			}
 
-			// TODO must contextualize the LIST, not just the first resource
+			// TODO must contextualize the LIST, not just the first resource. For now it can only happen with
+			// multiple spatial extents, but it could happen also with multiple temporal slices.
 			if (resources.size() > 1) {
 				context.getMonitor().warn(
 						"Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");

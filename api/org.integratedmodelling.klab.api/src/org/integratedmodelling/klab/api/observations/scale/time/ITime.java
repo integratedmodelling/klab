@@ -200,8 +200,9 @@ public interface ITime extends IExtent {
 
 		/**
 		 * Get the <em>indicative</em> span of one step in milliseconds. Spans may be
-		 * under- or over-estimates if the resolution is in irregular steps, such as
-		 * months, years and multiple thereof.
+		 * under-estimates if the resolution is in irregular steps, such as months,
+		 * years and multiple thereof. In such cases, the smallest interval will be
+		 * reported and isRegular() will return false.
 		 * 
 		 * @return
 		 */
