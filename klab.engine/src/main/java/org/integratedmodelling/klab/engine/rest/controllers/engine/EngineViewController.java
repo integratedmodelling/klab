@@ -213,6 +213,9 @@ public class EngineViewController {
 			loc = obs.getScale().at(loc);
 		}
 
+//		System.out.println(
+//				"REQUESTED " + loc + ": " + obs.getTimestamp() + "\n   " + Arrays.toString(obs.getUpdateTimestamps()));
+		
 		boolean done = false;
 
 		// special handling for some types: with time, these may be integrated in the

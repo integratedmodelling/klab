@@ -71,8 +71,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		long sliceOffsetInBackend = -1l;
 
 		// the timestep this slice refers to (shouldn't be used)
-//		@Deprecated
-//		private long timestep;
+		private long timestep;
 		long timestart;
 		long timeend;
 		SummaryStatistics statistics = new SummaryStatistics();
@@ -118,8 +117,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			createBackendStorage(this.sliceOffsetInBackend, null);
 		}
 
-		Slice(/* long timestep, */long timeStart, long timeEnd, Slice closest) {
-//			this.timestep = timestep;
+		Slice(long timestep, long timeStart, long timeEnd, Slice closest) {
+			this.timestep = timestep;
 			this.timestart = timeStart;
 			this.timeend = timeEnd;
 			if (closest != null) {
@@ -414,7 +413,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			 * if we get here, we need to store in a slice of our own unless we found the
 			 * exact timestep.
 			 */
-			if (slice == null /* || slice.timestep != timeOffset */) {
+			if (slice == null || slice.timestep != timeOffset) {
 				slice = addSlice(timeOffset, timeStart, timeEnd, slice);
 			}
 
@@ -433,7 +432,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	}
 
 	private Slice addSlice(long timeOffset, long timeStart, long timeEnd, Slice closest) {
-		Slice slice = new Slice(/* timeOffset, */timeStart, timeEnd, closest);
+		Slice slice = new Slice(timeOffset, timeStart, timeEnd, closest);
 		slices.put(timeEnd, slice);
 		return slice;
 	}

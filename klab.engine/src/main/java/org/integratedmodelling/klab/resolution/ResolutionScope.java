@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.resolution;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -12,8 +11,8 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observables;
@@ -139,7 +138,7 @@ public class ResolutionScope implements IResolutionScope {
 	 * These two are built at merge() and thrown away if a resolution ends up empty.
 	 */
 	Set<Link> links = new HashSet<>();
-	Set<ResolutionScope> resolvedObservables = new HashSet<>();
+	Map<ObservedConcept, List<ResolutionScope>> resolvedObservables = new HashMap<>();
 
 	/*
 	 * We chain resolutions when we resolve change after the initialization
@@ -234,6 +233,58 @@ public class ResolutionScope implements IResolutionScope {
 	private boolean caching;
 	private IModel contextModel;
 	private boolean occurrent = false;
+
+	private void addResolvedScope(ObservedConcept concept, ResolutionScope scope) {
+		List<ResolutionScope> slist = resolvedObservables.get(concept);
+		if (slist == null) {
+			slist = new ArrayList<>();
+			concept.getData().put("resolved.observable.scope", concept.getObservable().equals(this.observable) ? this
+					: this.getAdditionalScope(concept.getObservable()));
+			resolvedObservables.put(concept, slist);
+		}
+		slist.add(scope);
+	}
+
+	/**
+	 * Accept a model for resolution, populating the resolution map for all its
+	 * observables with the scopes resolved by it.
+	 * 
+	 * @param model
+	 */
+	private void recordResolution(IObservable observable, Mode mode, ResolutionScope modelScope) {
+
+		/*
+		 * main observable
+		 */
+		addResolvedScope(new ObservedConcept(observable, mode), modelScope);
+
+		/*
+		 * change observable
+		 */
+		if (modelScope.model.hasDistributedResources(Dimension.Type.TIME)) {
+			IObservable main = this.model.getObservables().get(0);
+			if (!main.is(Type.CHANGE)) {
+				/*
+				 * models with temporally merged resources also handle change
+				 */
+				IObservable change = main.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable();
+				addResolvedScope(new ObservedConcept(change, Mode.RESOLUTION), modelScope);
+			}
+		}
+
+		if (!modelScope.model.isInstantiator()) {
+
+			/*
+			 * additional observables
+			 */
+			for (int i = 1; i < modelScope.model.getObservables().size(); i++) {
+				addResolvedScope(new ObservedConcept(modelScope.model.getObservables().get(i),
+						modelScope.model.getObservables().get(i).is(Type.COUNTABLE) ? Mode.INSTANTIATION
+								: Mode.RESOLUTION),
+						modelScope);
+			}
+		}
+	}
 
 	/**
 	 * The context model, if there, is the instantiator that has created the
@@ -347,11 +398,6 @@ public class ResolutionScope implements IResolutionScope {
 		this.occurrent = scale.isTemporallyDistributed();
 	}
 
-//	private ResolutionScope(Coverage coverage, ResolutionScope other, boolean copyResolution) {
-//		copy(other, copyResolution);
-//		this.coverage = coverage;
-//	}
-
 	private ResolutionScope(ResolutionScope other, boolean copyResolution) {
 		copy(other, copyResolution);
 	}
@@ -378,7 +424,7 @@ public class ResolutionScope implements IResolutionScope {
 			this.model = other.model;
 			this.observer = other.observer;
 			this.links.addAll(other.links);
-			this.resolvedObservables.addAll(other.resolvedObservables);
+			this.resolvedObservables.putAll(other.resolvedObservables);
 		}
 	}
 
@@ -674,6 +720,9 @@ public class ResolutionScope implements IResolutionScope {
 		Link ret = null;
 		links.addAll(childScope.links);
 		links.add(ret = new Link(childScope));
+
+//	HERE add the model's other observables (including change if capable) using a ObservedConcept with all the scopes	if ()
+
 		return ret;
 	}
 
@@ -704,19 +753,18 @@ public class ResolutionScope implements IResolutionScope {
 			// when I am OBS and the child is MOD, make links
 			if (this.observable != null && childScope.getModel() != null) {
 
-				// TODO merge in new scopes for the other observables provided and link them to
-				// the child
-				// scope
-				for (IObservable o : childScope.getResolvedObservables(this.observable)) {
-					resolvedObservables.add(childScope.getAdditionalScope(o));
-				}
+				recordResolution(this.observable, this.mode, childScope);
+//				
+//				for (IObservable o : childScope.getResolvedObservables(this.observable)) {
+//					resolvedObservables.add(childScope.getAdditionalScope(o));
+//				}
 			}
 
-			// when the child is OBS, update all resolution records with the new observable
-			if (childScope.getObservable() != null) {
-				// usage count goes up every time an observable is explicitly merged.
-				resolvedObservables.add(childScope);
-			}
+//			// when the child is OBS, update all resolution records with the new observable
+//			if (childScope.getObservable() != null) {
+//				// usage count goes up every time an observable is explicitly merged.
+//				resolvedObservables.add(childScope);
+//			}
 
 			links.addAll(childScope.links);
 			links.add(new Link(childScope));
@@ -725,7 +773,7 @@ public class ResolutionScope implements IResolutionScope {
 			 * Record any observables already resolved in the dependency graph so far. Must
 			 * have the model's scale if not existing already.
 			 */
-			resolvedObservables.addAll(childScope.resolvedObservables);
+			resolvedObservables.putAll(childScope.resolvedObservables);
 		}
 
 		return successful;
@@ -746,38 +794,38 @@ public class ResolutionScope implements IResolutionScope {
 		return ret;
 	}
 
-	/*
-	 * observables are actually resolved only if this is used within merge()
-	 */
-	private Collection<IObservable> getResolvedObservables(IObservable toSkip) {
-		if (this.model != null) {
-			List<IObservable> ret = new ArrayList<>();
-			int i = 0;
-			for (IObservable obs : this.model.getObservables()) {
-				/*
-				 * TODO/FIXME: observables beyond the first, if used, must be contextualized to
-				 * the observable in instantiators
-				 */
-				if (!obs.equals(toSkip) && i == 0) {
-					ret.add(obs);
-				}
-				i++;
-			}
-			if (this.model.hasDistributedResources(Dimension.Type.TIME)) {
-				IObservable main = this.model.getObservables().get(0);
-				if (!main.is(Type.CHANGE)) {
-					/*
-					 * models with temporally merged resources also handle change
-					 */
-					ret.add(main.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable());
-				}
-			}
-			return ret;
-		} else if (this.observable != null && !this.observable.equals(toSkip)) {
-			return Collections.singleton(this.observable);
-		}
-		return Collections.emptyList();
-	}
+//	/*
+//	 * observables are actually resolved only if this is used within merge()
+//	 */
+//	private Collection<IObservable> getResolvedObservables(IObservable toSkip) {
+//		if (this.model != null) {
+//			List<IObservable> ret = new ArrayList<>();
+//			int i = 0;
+//			for (IObservable obs : this.model.getObservables()) {
+//				/*
+//				 * TODO/FIXME: observables beyond the first, if used, must be contextualized to
+//				 * the observable in instantiators
+//				 */
+//				if (!obs.equals(toSkip) && i == 0) {
+//					ret.add(obs);
+//				}
+//				i++;
+//			}
+//			if (this.model.hasDistributedResources(Dimension.Type.TIME)) {
+//				IObservable main = this.model.getObservables().get(0);
+//				if (!main.is(Type.CHANGE)) {
+//					/*
+//					 * models with temporally merged resources also handle change
+//					 */
+//					ret.add(main.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable());
+//				}
+//			}
+//			return ret;
+//		} else if (this.observable != null && !this.observable.equals(toSkip)) {
+//			return Collections.singleton(this.observable);
+//		}
+//		return Collections.emptyList();
+//	}
 
 	public Observer getObserver() {
 		return observer;
@@ -886,9 +934,9 @@ public class ResolutionScope implements IResolutionScope {
 		 * these are the currently resolved observables, which are not passed to
 		 * children and may not be accepted if the current resolution branch fails.
 		 */
-		for (ResolutionScope o : resolvedObservables) {
-			if (o.observable.canResolve(observable) && o.mode == mode) {
-				return o;
+		for (ObservedConcept o : resolvedObservables.keySet()) {
+			if (((Observable) o.getObservable()).canResolve(observable) && o.getMode() == mode) {
+				return (ResolutionScope) o.getData().get("resolved.observable.scope");
 			}
 		}
 		/*
@@ -907,9 +955,9 @@ public class ResolutionScope implements IResolutionScope {
 
 	@Override
 	public Observable getResolvedObservable(IObservable observable, Mode mode) {
-		for (ResolutionScope o : resolvedObservables) {
-			if (o.observable.canResolve((Observable) observable) && o.mode == mode) {
-				return o.observable;
+		for (ObservedConcept o : resolvedObservables.keySet()) {
+			if (((Observable) o.getObservable()).canResolve((Observable) observable) && o.getMode() == mode) {
+				return (Observable) o.getObservable();
 			}
 		}
 		return null;
@@ -1156,8 +1204,9 @@ public class ResolutionScope implements IResolutionScope {
 				}
 			}
 		}
-		for (ResolutionScope o : resolvedObservables) {
-			knownObservables.put(o.observable.getReferenceName(), o.observable);
+		for (ObservedConcept o : resolvedObservables.keySet()) {
+			ResolutionScope scope = (ResolutionScope) o.getData().get("resolved.observable.scope");
+			knownObservables.put(scope.observable.getReferenceName(), scope.observable);
 		}
 
 		if (knownObservables.containsKey(resolvable.getReferenceName())
