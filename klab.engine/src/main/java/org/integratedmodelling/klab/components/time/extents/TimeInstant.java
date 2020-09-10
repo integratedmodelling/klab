@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.time.extents;
 
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 
 /**
  * TODO switch to Java8 dates
@@ -14,11 +15,11 @@ public class TimeInstant implements ITimeInstant {
 	DateTime time;
 
 	public TimeInstant(int year) {
-		time = new DateTime(year, 1, 1, 0, 0);
+		time = new DateTime(year, 1, 1, 0, 0, DateTimeZone.UTC);
 	}
 
 	public TimeInstant(long milliseconds) {
-		time = new DateTime(milliseconds);
+		time = new DateTime(milliseconds, DateTimeZone.UTC);
 	}
 
 	public TimeInstant(DateTime time) {

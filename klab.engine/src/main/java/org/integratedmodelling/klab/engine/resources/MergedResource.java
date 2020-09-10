@@ -437,7 +437,7 @@ public class MergedResource implements IResource {
 
 		if (logicalTime && resolutionTime != null) {
 
-			// anchor the locator to the resolution time
+			// TODO anchor the locator to the resolution time
 			switch (this.resolution.getType()) {
 			case CENTURY:
 				break;

@@ -636,7 +636,8 @@ public class Actuator implements IActuator {
 				/*
 				 * tell the scope to notify internal listeners (for actors and the like)
 				 */
-				ctx.notifyListeners((IObservation)ret);			}
+				ctx.notifyListeners((IObservation) ret);
+			}
 
 		} else if (contextualizer instanceof IResolver) {
 
@@ -718,11 +719,11 @@ public class Actuator implements IActuator {
 											IMessage.Type.ModifiedObservation, change));
 						}
 					}
-					
+
 					/*
 					 * tell the scope to notify internal listeners (for actors and the like)
 					 */
-					ctx.notifyListeners((IObservation)object);
+					ctx.notifyListeners((IObservation) object);
 
 					/*
 					 * notify end of contextualization if we're subscribed to the parent
@@ -857,7 +858,7 @@ public class Actuator implements IActuator {
 		 * Needed to infer formal parameters and the like when expressions are used
 		 */
 		ret.setModel(this.model);
-		
+
 		// compile mediators
 		List<Pair<IContextualizer, IContextualizable>> mediation = new ArrayList<>();
 		for (Pair<IServiceCall, IContextualizable> service : mediationStrategy) {

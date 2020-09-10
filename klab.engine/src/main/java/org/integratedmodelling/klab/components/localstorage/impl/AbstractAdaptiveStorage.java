@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 
+import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
@@ -69,10 +70,13 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		// if not using backend, < 0; otherwise the slice offset in it, 0 or <= time
 		long sliceOffsetInBackend = -1l;
 
-		// the timestep this slice refers to
-		long timestep;
+		// the timestep this slice refers to (shouldn't be used)
+//		@Deprecated
+//		private long timestep;
 		long timestart;
 		long timeend;
+		SummaryStatistics statistics = new SummaryStatistics();
+		long nodata = 0;
 
 		@Override
 		public String toString() {
@@ -94,6 +98,12 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			if (isEmpty()) {
 				newSlice();
 			}
+			if (value instanceof Number) {
+				if (Double.isNaN(((Number) value).doubleValue())) {
+					nodata++;
+				}
+				statistics.addValue(((Number) value).doubleValue());
+			}
 
 			setValueIntoBackend(value, sliceOffset, this.sliceOffsetInBackend);
 		}
@@ -108,8 +118,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			createBackendStorage(this.sliceOffsetInBackend, null);
 		}
 
-		Slice(long timestep, long timeStart, long timeEnd, Slice closest) {
-			this.timestep = timestep;
+		Slice(/* long timestep, */long timeStart, long timeEnd, Slice closest) {
+//			this.timestep = timestep;
 			this.timestart = timeStart;
 			this.timeend = timeEnd;
 			if (closest != null) {
@@ -282,18 +292,18 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			 */
 			Slice lastSlice = null;
 			for (Slice s : slices.values()) {
-				if (timepoint >= s.timestart  && timepoint <= s.timeend) {
+				if (timepoint >= s.timestart && timepoint <= s.timeend) {
 					slice = s;
 					break;
 				}
 				lastSlice = s;
 			}
-			
+
 			if (slice == null) {
 				// no changes relevant to that timepoint, get the latest or stay null
 				slice = lastSlice;
 			}
-			
+
 		} else {
 			// can only be the closest at this point, unless there was no slice at all
 			slice = getClosest(initialization ? 0 : timeEnd);
@@ -305,8 +315,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		 * there have been in-between timestep changes in the state due to processes or
 		 * events operating at different scales.
 		 */
-		if (!initialization && sliceOffset >= 0 && slice != null
-				&& !slice.isInitialization()
+		if (!initialization && sliceOffset >= 0 && slice != null && !slice.isInitialization()
 				&& (slice.timestart != timeStart || slice.timeend != timeEnd)) {
 			/*
 			 * TODO if needed, aggregate within the boundary of the requesting scale,
@@ -378,6 +387,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		boolean noData = Observations.INSTANCE.isNodata(value);
 
 		synchronized (this) {
+
 			if (noData && slices.isEmpty()) {
 				// everything's nodata so far, no need to store.
 				return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
@@ -404,7 +414,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			 * if we get here, we need to store in a slice of our own unless we found the
 			 * exact timestep.
 			 */
-			if (slice == null || slice.timestep != timeOffset) {
+			if (slice == null /* || slice.timestep != timeOffset */) {
 				slice = addSlice(timeOffset, timeStart, timeEnd, slice);
 			}
 
@@ -423,7 +433,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	}
 
 	private Slice addSlice(long timeOffset, long timeStart, long timeEnd, Slice closest) {
-		Slice slice = new Slice(timeOffset, timeStart, timeEnd, closest);
+		Slice slice = new Slice(/* timeOffset, */timeStart, timeEnd, closest);
 		slices.put(timeEnd, slice);
 		return slice;
 	}
