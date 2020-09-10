@@ -379,7 +379,7 @@ public class MergedResource implements IResource {
 
 	@Override
 	public boolean isGranular() {
-		return false;
+		return resources.size() > 1;
 	}
 
 	@Override

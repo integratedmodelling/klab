@@ -720,9 +720,9 @@ public class ResolutionScope implements IResolutionScope {
 		Link ret = null;
 		links.addAll(childScope.links);
 		links.add(ret = new Link(childScope));
-
-//	HERE add the model's other observables (including change if capable) using a ObservedConcept with all the scopes	if ()
-
+		if (childScope.model != null && this.observable != null) {
+			this.recordResolution(this.observable, this.mode, childScope);
+		}
 		return ret;
 	}
 

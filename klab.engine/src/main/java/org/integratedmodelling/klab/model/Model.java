@@ -112,6 +112,7 @@ public class Model extends KimObject implements IModel {
 	private Strategy observationStrategy = Strategy.DIRECT;
 	private boolean learnsWithinArchetype;
 	private boolean distributesLearning;
+	private boolean multipleTimes = false;
 
 	// only for the delegate RankedModel
 	protected Model() {
@@ -340,19 +341,22 @@ public class Model extends KimObject implements IModel {
 						monitor);
 				this.resources.add(urnResource);
 
-				if (merged != null && merged.getType() == IArtifact.Type.PROCESS) {
-
-					/**
-					 * the resolved model of a process that changes a quality will normally also
-					 * have the quality itself as output, so we add it unless it's already there
-					 * either as an input or as an output.
-					 */
-					if (this.observables.get(0) != null && this.observables.get(0).is(Type.CHANGE)) {
-						IConcept inherent = Observables.INSTANCE.getDescribedType(this.observables.get(0).getType());
-						if (inherent != null && findOutput(inherent) == null && findOutput(inherent) == null) {
-							observables.add(Observable.promote(inherent));
-						}
-					}
+				if (merged != null) {
+					
+					this.multipleTimes  = merged.isGranular();
+					
+// NOT - only depends on semantics. Merged qualities remain qualities.
+//					/**
+//					 * the resolved model of a process that changes a quality will normally also
+//					 * have the quality itself as output, so we add it unless it's already there
+//					 * either as an input or as an output.
+//					 */
+//					if (this.observables.get(0) != null && this.observables.get(0).is(Type.CHANGE)) {
+//						IConcept inherent = Observables.INSTANCE.getDescribedType(this.observables.get(0).getType());
+//						if (inherent != null && findOutput(inherent) == null && findOutput(inherent) == null) {
+//							observables.add(Observable.promote(inherent));
+//						}
+//					}
 
 				}
 
@@ -1387,6 +1391,9 @@ public class Model extends KimObject implements IModel {
 
 	@Override
 	public boolean hasDistributedResources(Dimension.Type dimension) {
+		if (dimension == Dimension.Type.TIME) {
+			return multipleTimes;
+		}
 		return false;
 	}
 }
