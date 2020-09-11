@@ -60,8 +60,8 @@ public class Urn {
 
 	public Urn(String urn, Map<String, String> urnParameters) {
 		this(urn);
-		this.parameters.putAll(urnParameters);
 		if (urnParameters != null && !urnParameters.isEmpty()) {
+			this.parameters.putAll(urnParameters);
 			String s = "";
 			for (String key : urnParameters.keySet()) {
 				s += (s.isEmpty() ? "" : "&") + ("value".equals(key) ? "" : (key + "="));

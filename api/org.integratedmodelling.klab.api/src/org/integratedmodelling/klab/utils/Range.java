@@ -512,6 +512,11 @@ public class Range implements IValueMediator {
 	}
 
 	public boolean contains(Range other) {
+		
+		if (this.equals(other)) {
+			return true;
+		}
+		
 		if (!lowerInfinite && !other.lowerInfinite
 				&& (lowerExclusive ? lowerBound >= other.lowerBound : lowerBound > other.lowerBound)) {
 			return false;

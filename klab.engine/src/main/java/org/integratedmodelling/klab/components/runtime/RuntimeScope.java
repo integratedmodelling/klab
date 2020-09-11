@@ -1620,7 +1620,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 						|| (isOccurrent
 								&& Observables.INSTANCE.isAffectedBy(computation.observable, actuator.getObservable()))
 						|| (computation.target != null
-								&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null);
+								&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null)
+						// if model is derived, it was put here on purpose to represent change so we schedule it.
+						|| (actuator.getModel() != null && actuator.getModel().isDerived());
 
 				if (isTransition || targetOccurs) {
 					schedule.add(computation);

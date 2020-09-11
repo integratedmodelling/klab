@@ -179,8 +179,8 @@ public class ModelKbox extends ObservableKbox {
 		if (preResolved != null && preResolved.getFirst().contains(context.getCoverage())) {
 
 			for (IRankedModel model : preResolved.getSecond()) {
-				// rank them again in our scale.
-				ret.addCachedModel(((RankedModel) model).getModelData());
+				// rank them again in our scale
+				ret.addCachedModel(model);
 			}
 
 			if (!Configuration.INSTANCE.resolveAllInstances()) {

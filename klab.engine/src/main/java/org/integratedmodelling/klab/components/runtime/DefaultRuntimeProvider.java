@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
@@ -50,6 +51,7 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.contextualizers.CastingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.CategoryClassificationResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.ChangingResourceResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.DereifyingStateResolver;
@@ -72,11 +74,13 @@ import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -530,5 +534,15 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		return new ComputableResource(
 				DereifyingStateResolver.getServiceCall(distributingType, inherentType, targetType), Mode.RESOLUTION);
 
+	}
+
+	@Override
+	public IContextualizable getChangeResolver(IObservable changeObservable, IResource mergedResource) {
+		if (!(mergedResource instanceof MergedResource)) {
+			throw new KlabIllegalStateException("change resolver can only be used with a merged resource");
+		}
+		return new ComputableResource(
+				ChangingResourceResolver.getServiceCall(changeObservable.getType(), (MergedResource) mergedResource),
+				Mode.RESOLUTION);
 	}
 }

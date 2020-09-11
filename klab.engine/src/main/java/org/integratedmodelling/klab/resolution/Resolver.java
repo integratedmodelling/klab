@@ -180,7 +180,7 @@ public class Resolver {
 					ret.getMonitor().info("Resolution scope is occurrent: resolving additional observable "
 							+ Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
-					ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(), Mode.RESOLUTION);
+					ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(ret), Mode.RESOLUTION);
 
 					if (cscope.getCoverage().isRelevant()) {
 

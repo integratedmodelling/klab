@@ -24,6 +24,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -221,6 +222,17 @@ public interface IRuntimeProvider {
 	 */
 	IContextualizable getOperatorResolver(IObservable classifiedObservable, ValueOperator operator, Object operand,
 			Set<ValueOperator> modifiers);
+
+	/**
+	 * Return a computation that will pick the appropriate temporal slice from a
+	 * resource to resolve the passed change process by contextualizing the
+	 * appropriate values in the changing observable.
+	 * 
+	 * @param changeObservable
+	 * @param mergedResource
+	 * @return
+	 */
+	IContextualizable getChangeResolver(IObservable changeObservable, IResource mergedResource);
 
 	/*
 	 * Called on a computation returned by getComputation() to change the target ID

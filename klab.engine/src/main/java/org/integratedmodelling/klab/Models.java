@@ -33,8 +33,10 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
+import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.KimNotifier;
 import org.integratedmodelling.klab.model.Namespace;
@@ -161,7 +163,7 @@ public enum Models implements IModelService {
 			((org.integratedmodelling.klab.model.Model) model).setInactive(true);
 			return false;
 		}
-		
+
 		return true;
 	}
 
@@ -263,5 +265,25 @@ public enum Models implements IModelService {
 		return Collections.singletonList(outer);
 	}
 
+	/**
+	 * Create a new model for the change in the passed observable, based on the
+	 * changing data resolved by the passed merged resource. Used to pre-fill the
+	 * kbox catalog when a merged resource covering the period of occurrence has
+	 * resolved the unchanging observable.
+	 * 
+	 * @param unchangedObservable
+	 * @param resource
+	 * @return
+	 */
+	public IRankedModel createChangeModel(IObservable unchangedObservable, IModel model, ResolutionScope scope) {
+		MergedResource resource = ((org.integratedmodelling.klab.model.Model) model).getMergedResource();
+		if (resource == null) {
+			throw new KlabIllegalArgumentException(
+					"Cannot create a merged resource change model from a model that does not contain merged resources");
+		}
+		org.integratedmodelling.klab.model.Model inner = new org.integratedmodelling.klab.model.Model(
+				unchangedObservable, resource, model, scope);
+		return new RankedModel(inner);
+	}
 
 }

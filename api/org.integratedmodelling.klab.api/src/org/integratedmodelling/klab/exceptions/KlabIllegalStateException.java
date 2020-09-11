@@ -1,5 +1,5 @@
 /*
- * This file is part of k.LAB.
+R * This file is part of k.LAB.
  * 
  * k.LAB is free software: you can redistribute it and/or modify
  * it under the terms of the Affero GNU General Public License as published
@@ -18,40 +18,41 @@ package org.integratedmodelling.klab.exceptions;
 // TODO: Auto-generated Javadoc
 /**
  * An unchecked exception reserved for situations that should never happen in a
- * production environment.
+ * production environment. To be used in k.LAB code instead of Java's
+ * IllegalStateException for ease of debugging.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public class KlabIllegalStatusException extends KlabException {
+public class KlabIllegalStateException extends KlabException {
 
-    private static final long serialVersionUID = 461213337593957416L;
+	private static final long serialVersionUID = 461213337593957416L;
 
-    /**
-     * Instantiates a new klab illegal status exception.
-     */
-    public KlabIllegalStatusException() {
-        super();
-        // TODO Auto-generated constructor stub
-    }
+	/**
+	 * Instantiates a new klab illegal status exception.
+	 */
+	public KlabIllegalStateException() {
+		super();
+		// TODO Auto-generated constructor stub
+	}
 
-    /**
-     * Instantiates a new klab illegal status exception.
-     *
-     * @param arg0 the arg 0
-     */
-    public KlabIllegalStatusException(String arg0) {
-        super(arg0);
-        // TODO Auto-generated constructor stub
-    }
+	/**
+	 * Instantiates a new klab illegal status exception.
+	 *
+	 * @param arg0 the arg 0
+	 */
+	public KlabIllegalStateException(String arg0) {
+		super(arg0);
+		// TODO Auto-generated constructor stub
+	}
 
-    /**
-     * Instantiates a new klab illegal status exception.
-     *
-     * @param e the e
-     */
-    public KlabIllegalStatusException(Throwable e) {
-        super(e);
-    }
+	/**
+	 * Instantiates a new klab illegal status exception.
+	 *
+	 * @param e the e
+	 */
+	public KlabIllegalStateException(Throwable e) {
+		super(e);
+	}
 
 }

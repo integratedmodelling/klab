@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.resolution;
 import java.io.PrintStream;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -259,16 +260,18 @@ public class ResolutionScope implements IResolutionScope {
 		addResolvedScope(new ObservedConcept(observable, mode), modelScope);
 
 		/*
-		 * change observable
+		 * change observable - NO must add a preresolved model for this same coverage.
 		 */
-		if (modelScope.model.hasDistributedResources(Dimension.Type.TIME)) {
-			IObservable main = this.model.getObservables().get(0);
+		if (modelScope.model.hasDistributedResources(Dimension.Type.TIME, coverage.asScale())) {
+			IObservable main = modelScope.model.getObservables().get(0);
 			if (!main.is(Type.CHANGE)) {
 				/*
 				 * models with temporally merged resources also handle change
 				 */
 				IObservable change = main.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable();
-				addResolvedScope(new ObservedConcept(change, Mode.RESOLUTION), modelScope);
+				resolverCache.put(change,
+						Collections.singleton(Models.INSTANCE.createChangeModel(main, modelScope.model, this)));
+
 			}
 		}
 
@@ -450,7 +453,8 @@ public class ResolutionScope implements IResolutionScope {
 
 	/**
 	 * Create a child coverage for a passed observable with the same scale but
-	 * initial coverage set at 0.
+	 * initial coverage set at 0. Pass around any models that were cached explicitly
+	 * to resolve specific observables.
 	 * 
 	 * @param observable
 	 * @param mode
@@ -461,6 +465,7 @@ public class ResolutionScope implements IResolutionScope {
 		ResolutionScope ret = new ResolutionScope(this);
 		ret.observable = observable;
 		ret.mode = mode;
+		ret.resolverCache.putAll(this.resolverCache);
 
 		/*
 		 * check if we already can resolve this (directly or indirectly), and if so, set
@@ -1434,10 +1439,13 @@ public class ResolutionScope implements IResolutionScope {
 	 * resolved again. This is used when resolving change or any observable that is
 	 * evaluated after a full resolution has been done.
 	 * 
+	 * @param scope
+	 * 
 	 * @return
 	 */
-	public ResolutionScope acceptResolutions() {
+	public ResolutionScope acceptResolutions(ResolutionScope scope) {
 		ResolutionScope ret = new ResolutionScope(this);
+		ret.resolverCache.putAll(scope.resolverCache);
 		for (Link link : links) {
 			if (link.getSource().getObservable() != null) {
 				ret.previousResolution.add(link.getSource());

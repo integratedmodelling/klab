@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IComputationProvider;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 
@@ -250,6 +251,6 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * @return true if there is more than one resource and the annotated resources
 	 *         represent several extents in the passed dimension.
 	 */
-	boolean hasDistributedResources(Type dimension);
+	boolean hasDistributedResources(Type dimension, IScale scale);
 
 }

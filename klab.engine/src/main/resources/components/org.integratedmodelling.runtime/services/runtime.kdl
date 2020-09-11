@@ -42,6 +42,21 @@ export value literal
 	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver
 }
 
+export value resourcechange
+	"Return a process resolver that will set values of the changing observable to the appropriate
+	 temporal state of a temporally distributed multi-resource"
+	 label 'Extract time'
+{				
+
+	text change 
+		"The definition of the change concept that this is resolving"
+
+	list resources
+		"A list of URNs to be merged and used to resolve the changing observable"
+
+	class org.integratedmodelling.klab.components.runtime.contextualizers.ChangingResourceResolver
+}
+
 filter number convert
 	"Convert a numeric state from a unit, range or currency to a compatible other."
 	label '$original to $target'

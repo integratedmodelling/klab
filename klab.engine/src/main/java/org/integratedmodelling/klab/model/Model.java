@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Documentation;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Types;
@@ -47,6 +48,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
@@ -113,6 +115,7 @@ public class Model extends KimObject implements IModel {
 	private boolean learnsWithinArchetype;
 	private boolean distributesLearning;
 	private boolean multipleTimes = false;
+	private MergedResource mergedResource;
 
 	// only for the delegate RankedModel
 	protected Model() {
@@ -334,30 +337,14 @@ public class Model extends KimObject implements IModel {
 
 			try {
 
-				MergedResource merged = model.getResourceUrns().size() > 1 ? new MergedResource(model, monitor) : null;
-				ComputableResource urnResource = validate(
-						new ComputableResource(merged == null ? model.getResourceUrns().get(0) : merged.getUrn(),
-								this.isInstantiator() ? Mode.INSTANTIATION : Mode.RESOLUTION),
-						monitor);
+				this.mergedResource = model.getResourceUrns().size() > 1 ? new MergedResource(model, monitor) : null;
+				ComputableResource urnResource = validate(new ComputableResource(
+						this.mergedResource == null ? model.getResourceUrns().get(0) : this.mergedResource.getUrn(),
+						this.isInstantiator() ? Mode.INSTANTIATION : Mode.RESOLUTION), monitor);
 				this.resources.add(urnResource);
 
-				if (merged != null) {
-					
-					this.multipleTimes  = merged.isGranular();
-					
-// NOT - only depends on semantics. Merged qualities remain qualities.
-//					/**
-//					 * the resolved model of a process that changes a quality will normally also
-//					 * have the quality itself as output, so we add it unless it's already there
-//					 * either as an input or as an output.
-//					 */
-//					if (this.observables.get(0) != null && this.observables.get(0).is(Type.CHANGE)) {
-//						IConcept inherent = Observables.INSTANCE.getDescribedType(this.observables.get(0).getType());
-//						if (inherent != null && findOutput(inherent) == null && findOutput(inherent) == null) {
-//							observables.add(Observable.promote(inherent));
-//						}
-//					}
-
+				if (this.mergedResource != null) {
+					this.multipleTimes = this.mergedResource.isGranular();
 				}
 
 			} catch (Throwable t) {
@@ -781,6 +768,32 @@ public class Model extends KimObject implements IModel {
 		if (mainObservable.is(Type.COUNTABLE)
 				|| mainObservable.getDescriptionType() == IActivity.Description.CLASSIFICATION) {
 			this.instantiator = true;
+		}
+	}
+
+	/**
+	 * Create a model for the changed values from a resolver or instantiator of the
+	 * passed observable, resolved by the merged resource that has been already
+	 * checked for coverage of the temporal scope. The resulting model will have the
+	 * resource and all the computations from the original one.
+	 * 
+	 * @param mainObservable
+	 * @param resource
+	 * @param scope
+	 */
+	public Model(IObservable mainObservable, MergedResource resource, IModel originalModel, ResolutionScope scope) {
+		super(null);
+		this.derived = true;
+		this.id = mainObservable.getName() + "_resolved_change";
+		IObservable changeObservable = mainObservable.getBuilder(scope.getMonitor()).as(UnarySemanticOperator.CHANGE)
+				.buildObservable();
+		this.namespace = scope.getResolutionNamespace();
+		this.contextualization = new Contextualization(null, this);
+		this.observables.add(changeObservable);
+		this.coverage = scope.getScale();
+		this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(changeObservable, resource));
+		for (int i = 1; i < ((Model)originalModel).getComputation().size(); i++) {
+			this.resources.add(((Model)originalModel).getComputation().get(i));
 		}
 	}
 
@@ -1390,10 +1403,17 @@ public class Model extends KimObject implements IModel {
 	}
 
 	@Override
-	public boolean hasDistributedResources(Dimension.Type dimension) {
+	public boolean hasDistributedResources(Dimension.Type dimension, IScale scale) {
 		if (dimension == Dimension.Type.TIME) {
+			// TODO handle scale
 			return multipleTimes;
 		}
+		// TODO handle space when we need it
 		return false;
 	}
+
+	public MergedResource getMergedResource() {
+		return this.mergedResource;
+	}
+
 }

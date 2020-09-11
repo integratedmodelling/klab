@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.storage.ResourceCatalog;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
@@ -63,6 +64,7 @@ public class MergedResource implements IResource {
 	private long timeEnd = -1;
 	private boolean logicalTime;
 	private ITime.Resolution resolution;
+	private List<String> urns = new ArrayList<>();
 
 	class ResourceSet {
 		long start = -1;
@@ -114,10 +116,12 @@ public class MergedResource implements IResource {
 	 * @param statement
 	 */
 	public MergedResource(IKimModel statement, IMonitor monitor) {
+		
 		this.urn = "local:merged:" + statement.getNamespace() + ":" + statement.getName();
 
 		for (String urn : statement.getResourceUrns()) {
 
+			this.urns.add(urn);
 			IResource resource = null;
 			IScale scale = null;
 
@@ -145,6 +149,46 @@ public class MergedResource implements IResource {
 
 		((ResourceCatalog) Resources.INSTANCE.getLocalResourceCatalog()).addInlineResource(this);
 	}
+	
+	public MergedResource(List<String> urns, IRuntimeScope scope) {
+		
+		this.urn = "local:merged:" + scope.getNamespace() + ":" + scope.getTargetName();
+
+		for (String urn : urns) {
+
+			this.urns.add(urn);
+			IResource resource = null;
+			IScale scale = null;
+
+			resource = Resources.INSTANCE.resolveResource(urn);
+			if (resource == null) {
+				throw new KlabValidationException("URN " + urn + " does not specify a resource");
+			}
+			if (this.type != null && this.type != resource.getType()) {
+				throw new KlabValidationException(
+						"Cannot mix type " + this.type + " with " + resource.getType() + " from " + urn);
+			}
+			scale = Scale.create(resource.getGeometry());
+			this.type = resource.getType();
+
+			this.logicalTime = scale.getTime() != null && scale.getTime().isGeneric();
+			if (this.logicalTime) {
+				this.resolution = scale.getTime().getCoverageResolution();
+			}
+
+			getResourceSet(scale).resources.add(resource);
+
+		}
+
+		validate();
+
+//		((ResourceCatalog) Resources.INSTANCE.getLocalResourceCatalog()).addInlineResource(this);
+	}
+	
+	public List<String> getUrns() {
+		return urns;
+	}
+	
 
 	private ResourceSet getResourceSet(IScale scale) {
 
@@ -209,7 +253,7 @@ public class MergedResource implements IResource {
 				throw new KlabValidationException("Resources that are merged must have temporal boundaries");
 			}
 			
-			resources.put(ret.end, ret);
+			resources.put(ret.start, ret);
 			
 			if (timeStart < 0 || timeStart > ret.start) {
 				timeStart = ret.start;
