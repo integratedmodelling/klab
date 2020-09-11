@@ -182,7 +182,7 @@ public class ProfileResource implements OAuth2User{
 				group.setProjectUrls(mGroup.getProjectUrls());
 				group.setSshKey(mGroup.getSshKey());
 				group.setObservables(mGroup.getObservableReferences());
-				group.setWorldview(mGroup.getWorldview());
+				group.setWorldview(mGroup.isWorldview());
 				group.setIconUrl(mGroup.getIconUrl());
 				listOfGroups.add(group);
 			}
@@ -223,6 +223,7 @@ public class ProfileResource implements OAuth2User{
 				cleanGroup.setIconUrl(unsafeGroup.getIconUrl());
 				cleanGroup.setName(unsafeGroup.getName());
 				cleanGroup.setDependsOn(unsafeGroup.getDependsOn());
+				cleanGroup.setWorldview(unsafeGroup.isWorldview());
 				entry.setGroup(cleanGroup);
 				safeGroups.add(entry);
 			}

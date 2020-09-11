@@ -19,7 +19,7 @@ public class MongoGroupAdapter {
 		group.setProjectUrls(mongoGroup.getProjectUrls());
 		group.setSshKey(mongoGroup.getSshKey());
 		group.setObservables(mongoGroup.getObservableReferences());
-		group.setWorldview(mongoGroup.getWorldview());
+		group.setWorldview(mongoGroup.isWorldview());
 		group.setMaxUpload(mongoGroup.getMaxUpload());
 		return group;
 	}
