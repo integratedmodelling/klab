@@ -69,6 +69,7 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.ObservationStrategy;
 import org.integratedmodelling.klab.resolution.ObservationStrategy.Strategy;
+import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
@@ -783,6 +784,11 @@ public class Model extends KimObject implements IModel {
 	 */
 	public Model(IObservable mainObservable, MergedResource resource, IModel originalModel, ResolutionScope scope) {
 		super(null);
+		if (originalModel instanceof RankedModel) {
+			// computables must be validated by the original model. This is pretty ugly of
+			// course.
+			originalModel = ((RankedModel) originalModel).getDelegate();
+		}
 		this.derived = true;
 		this.id = mainObservable.getName() + "_resolved_change";
 		IObservable changeObservable = mainObservable.getBuilder(scope.getMonitor()).as(UnarySemanticOperator.CHANGE)
@@ -792,8 +798,9 @@ public class Model extends KimObject implements IModel {
 		this.observables.add(changeObservable);
 		this.coverage = scope.getScale();
 		this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(changeObservable, resource));
-		for (int i = 1; i < ((Model)originalModel).getComputation().size(); i++) {
-			this.resources.add(((Model)originalModel).getComputation().get(i));
+		for (int i = 1; i < ((Model) originalModel).getComputation().size(); i++) {
+			ComputableResource computation = (ComputableResource) ((Model) originalModel).getComputation().get(i);
+			this.resources.add(((Model) originalModel).validate(computation.copy(), scope.getMonitor()));
 		}
 	}
 
@@ -835,7 +842,7 @@ public class Model extends KimObject implements IModel {
 		} else if (resource.getAccordingTo() != null) {
 
 			IClassification classification = Types.INSTANCE
-					.createClassificationFromMetadata(observables.get(0).getType(), resource.getAccordingTo());
+					.createClassificationFromMetadata(getObservables().get(0).getType(), resource.getAccordingTo());
 			resource.setValidatedResource(classification);
 
 		} else if (resource.getUrn() != null) {

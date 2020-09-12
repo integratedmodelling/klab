@@ -36,6 +36,14 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.StringUtils;
 
+/**
+ * TODO consider removing and letting a copy of Model be ranked - using the
+ * delegate has side effects and requires ugly code when derived models are
+ * created.
+ * 
+ * @author Ferd
+ *
+ */
 public class RankedModel extends Model implements IRankedModel {
 
 	String modelUrn;
@@ -46,9 +54,9 @@ public class RankedModel extends Model implements IRankedModel {
 	private transient ModelReference modelData;
 
 	public RankedModel(Model model) {
-	    this.delegate = model;
-	    this.modelUrn = model.getName();
-	    this.ranks = new HashMap<>();
+		this.delegate = model;
+		this.modelUrn = model.getName();
+		this.ranks = new HashMap<>();
 	}
 
 	public RankedModel(ModelReference model, Map<String, Double> ranks, int priority) {
@@ -58,7 +66,7 @@ public class RankedModel extends Model implements IRankedModel {
 		this.priority = priority;
 	}
 
-	private Model getDelegate() {
+	public Model getDelegate() {
 
 		if (delegate == null) {
 

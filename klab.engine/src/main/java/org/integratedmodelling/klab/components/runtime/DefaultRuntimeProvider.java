@@ -20,6 +20,7 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -265,7 +266,16 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					((ComputableResource) resource).getValidatedResource(IClassification.class),
 					resource.getCondition(), resource.isNegated());
 		} else if (resource.getAccordingTo() != null) {
-			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(observable.getType(),
+			IConcept classifiable = observable.getType();
+			if (classifiable.is(Type.CHANGE)) {
+				/*
+				 * This happens when we use a derived model to describe the change in a resolved
+				 * quality. I'd like this to not be necessary, but I'm not ready to trace the
+				 * consequence of this done "right".
+				 */
+				classifiable = Observables.INSTANCE.getDescribedType(classifiable);
+			}
+			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(classifiable,
 					resource.getAccordingTo());
 			ret = ClassifyingStateResolver.getServiceCall(classification, resource.getCondition(),
 					resource.isNegated());
@@ -303,7 +313,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			ILocator scale) throws KlabException {
 
 		boolean reentrant = !resolver.getClass().isAnnotationPresent(NonReentrant.class);
-		if (context.getModel() != null && Annotations.INSTANCE.hasAnnotation(context.getModel(), "serial")) {
+		if (System.getProperty("synchronous") != null
+				|| (context.getModel() != null && Annotations.INSTANCE.hasAnnotation(context.getModel(), "serial"))) {
 			reentrant = false;
 		}
 		IArtifact self = context.get("self", IArtifact.class);

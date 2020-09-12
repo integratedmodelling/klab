@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeDuration;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
@@ -275,8 +276,10 @@ public class Scheduler implements IScheduler {
 					// ensure we have the names we expect
 					transitionContext = actuator.localizeNames(transitionContext);
 
-					monitor.debug("running " + actuator + " at [" + new Date(time.getStart().getMilliseconds())
-							+ " - " + new Date(time.getEnd().getMilliseconds()) + "]");
+					monitor.debug("running " + actuator + " at [" + new Date(time.getStart().getMilliseconds()) + " - "
+							+ new Date(time.getEnd().getMilliseconds()) + "]");
+
+					IArtifact artifact = null;
 
 					/*
 					 * 3. Run all contextualizers in the context that react to transitions; check
@@ -290,8 +293,15 @@ public class Scheduler implements IScheduler {
 							continue;
 						}
 
-						actuator.runContextualizer(computation.contextualizer, computation.observable,
-								computation.resource, computation.target, transitionContext, (IScale) transitionScale);
+						if (artifact == null) {
+							artifact = computation.target;
+						}
+
+						/*
+						 * substitute the target for the next computation if we're using layers
+						 */
+						artifact = actuator.runContextualizer(computation.contextualizer, computation.observable,
+								computation.resource, artifact, transitionContext, (IScale) transitionScale);
 
 						if (computation.target instanceof IDirectObservation
 								&& !((IDirectObservation) computation.target).isActive()) {
@@ -316,24 +326,24 @@ public class Scheduler implements IScheduler {
 							}
 						}
 
-						if (computation.target instanceof Observation) {
-							((Observation) computation.target).finalizeTransition((IScale) transitionScale);
+						if (artifact instanceof Observation) {
+							((Observation) artifact).finalizeTransition((IScale) transitionScale);
 						}
 
-						/*
-						 * report only states for now - must become discriminating and intelligent. If
-						 * in folder...
-						 *
-						 */
-						if (computation.target instanceof IState /*
-																	 * TODO check if changes happened independent of
-																	 * type
-																	 */) {
-							changed.add((IObservation) computation.target);
-							ret.add(new ObservedConcept(((IObservation) computation.target).getObservable(),
-									((IObservation) computation.target) instanceof ObservationGroup ? Mode.INSTANTIATION
-											: Mode.RESOLUTION));
-						}
+					}
+
+					/*
+					 * report only states for now - must become discriminating and intelligent. If
+					 * in folder...
+					 *
+					 */
+					if (artifact instanceof IState /*
+													 * TODO check if changes happened independent of type
+													 */) {
+						changed.add((IObservation) artifact);
+						ret.add(new ObservedConcept(((IObservation) artifact).getObservable(),
+								((IObservation) artifact) instanceof ObservationGroup ? Mode.INSTANTIATION
+										: Mode.RESOLUTION));
 					}
 
 					/*
@@ -846,7 +856,7 @@ public class Scheduler implements IScheduler {
 			if (endTime > 0 && lastAdvanced >= endTime) {
 				break;
 			}
-			
+
 			if (waitStrategy != null) {
 				waitStrategy.waitUntil(time);
 			}
