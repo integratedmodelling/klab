@@ -82,7 +82,7 @@ public class CategoryClassificationResolver
 		IState values = (IState) classified;
 		IState classf = (IState) classfc;
 
-		for (ILocator locator : ret.getScale()) {
+		for (ILocator locator : context.getScale()) {
 
 			Object value = values.get(locator, Number.class);
 			Object sclas = classf.get(locator);

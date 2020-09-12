@@ -259,6 +259,8 @@ public class ResolutionScope implements IResolutionScope {
 		 */
 		addResolvedScope(new ObservedConcept(observable, mode), modelScope);
 
+		resolverCache.putAll(modelScope.resolverCache);
+		
 		/*
 		 * change observable - NO must add a preresolved model for this same coverage.
 		 */
@@ -779,6 +781,12 @@ public class ResolutionScope implements IResolutionScope {
 			 * have the model's scale if not existing already.
 			 */
 			resolvedObservables.putAll(childScope.resolvedObservables);
+
+			/*
+			 * add any unused additional resolvers implied by other models in case they're
+			 * needed for later resolutions.
+			 */
+			resolverCache.putAll(childScope.resolverCache);
 		}
 
 		return successful;

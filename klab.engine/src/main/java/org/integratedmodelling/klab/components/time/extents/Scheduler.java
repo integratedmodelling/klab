@@ -280,7 +280,8 @@ public class Scheduler implements IScheduler {
 							+ new Date(time.getEnd().getMilliseconds()) + "]");
 
 					IArtifact artifact = null;
-
+					IArtifact ctarget = null;
+					
 					/*
 					 * 3. Run all contextualizers in the context that react to transitions; check
 					 * for signs of life at each step. Anything enqueued here is active so no
@@ -295,6 +296,7 @@ public class Scheduler implements IScheduler {
 
 						if (artifact == null) {
 							artifact = computation.target;
+							ctarget = computation.target;
 						}
 
 						/*
@@ -340,9 +342,9 @@ public class Scheduler implements IScheduler {
 					if (artifact instanceof IState /*
 													 * TODO check if changes happened independent of type
 													 */) {
-						changed.add((IObservation) artifact);
-						ret.add(new ObservedConcept(((IObservation) artifact).getObservable(),
-								((IObservation) artifact) instanceof ObservationGroup ? Mode.INSTANTIATION
+						changed.add((IObservation) ctarget);
+						ret.add(new ObservedConcept(((IObservation) ctarget).getObservable(),
+								((IObservation) ctarget) instanceof ObservationGroup ? Mode.INSTANTIATION
 										: Mode.RESOLUTION));
 					}
 

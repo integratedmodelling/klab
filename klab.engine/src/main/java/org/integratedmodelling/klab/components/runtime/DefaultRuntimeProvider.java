@@ -151,8 +151,14 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 							monitor);
 				}
 
+				IActuator firstActuator = null;
+				
 				for (IActuator actuator : dataflow.getActuators()) {
 
+					if (firstActuator == null) {
+						firstActuator = actuator;
+					}
+					
 					List<Actuator> order = ((Actuator) actuator).dependencyOrder();
 
 					// must merge in any constraints from the model before calling this.
@@ -162,7 +168,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					for (Actuator active : order) {
 
 						IRuntimeScope ctx = runtimeContext;
-						if (active != actuator) {
+						if (active != firstActuator) {
 							ctx = runtimeContext.createChild(actuatorScale, active, scope, monitor)
 									.locate(initializationScale, monitor);
 						}

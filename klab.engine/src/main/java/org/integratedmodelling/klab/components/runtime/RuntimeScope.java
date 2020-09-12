@@ -766,7 +766,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							"internal: cannot find merging actuator named " + actuator.getPartitionedTarget());
 				}
 
-				IArtifact merging = createTarget(mergingActuator, actuator.getDataflow().getResolutionScale(), scope, rootSubject);
+				IArtifact merging = createTarget(mergingActuator, actuator.getDataflow().getResolutionScale(), scope,
+						rootSubject);
 
 				/*
 				 * partition sub-state does not go in the catalog
@@ -786,8 +787,34 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		} else if (!actuator.isInput()) {
 
+			if (actuator.getObservable().is(Type.CHANGE) && actuator.getModel() != null
+					&& actuator.getModel().isDerived()) {
+				/*
+				 * Find the changing target and set that as the target. This is confusing but
+				 * the derived model copies any computation that affects the original quality,
+				 * so the alternative would be to keep it a process and duplicate all the
+				 * computation in the process contextualizer, which is way messier.
+				 */
+				IConcept changing = Observables.INSTANCE.getDescribedType(actuator.getObservable().getType());
+				for (IArtifact artifact : catalog.values()) {
+					if (artifact instanceof IObservation
+							&& ((IObservation) artifact).getObservable().getType().equals(changing)) {
+						ret.target = artifact;
+						break;
+					}
+				}
+
+				// TODO see if we need to change anything else. At this point the semantics and
+				// the type are out of sync
+				// with the target, which could be OK - we compute a change process by passing
+				// the changing target to
+				// known computations that require it.
+
+			} else {
+				ret.target = ret.createTarget((Actuator) actuator, actuator.getDataflow().getResolutionScale(), scope,
+						rootSubject);
+			}
 			// save existing target
-			ret.target = ret.createTarget((Actuator) actuator, actuator.getDataflow().getResolutionScale(), scope, rootSubject);
 			if (ret.target != null && this.target != null) {
 				ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
 				// ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator)
@@ -836,7 +863,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 
 		// save existing target
-		ret.target = ret.createTarget((Actuator) actuator, ((Actuator)actuator).getDataflow().getResolutionScale(), scope, rootSubject);
+		ret.target = ret.createTarget((Actuator) actuator, ((Actuator) actuator).getDataflow().getResolutionScale(),
+				scope, rootSubject);
 		if (ret.target != null && this.target != null) {
 			ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
 			ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);
@@ -1621,7 +1649,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 								&& Observables.INSTANCE.isAffectedBy(computation.observable, actuator.getObservable()))
 						|| (computation.target != null
 								&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null)
-						// if model is derived, it was put here on purpose to represent change so we schedule it.
+						// if model is derived, it was put here on purpose to represent change so we
+						// schedule it.
 						|| (actuator.getModel() != null && actuator.getModel().isDerived());
 
 				if (isTransition || targetOccurs) {

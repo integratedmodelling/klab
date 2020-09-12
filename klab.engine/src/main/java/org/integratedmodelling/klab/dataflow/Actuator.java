@@ -448,7 +448,7 @@ public class Actuator implements IActuator {
 				Computation step = new Computation();
 				step.contextualizer = contextualizer.getFirst();
 				step.observable = indirectTarget == null ? this.observable : indirectTarget;
-				step.target = artifactTable.get(targetId);
+				step.target = target;
 				step.targetId = targetId;
 				step.resource = contextualizer.getSecond();
 				this.computation.add(step);

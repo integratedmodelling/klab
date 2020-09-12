@@ -203,16 +203,16 @@ export value contextualize
 	class org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver
 }
 
-export value timeseries
-	"Return a resolver for multiple time-sensitive URN-specified resources or models"
-	label 'Extract data from URNs'
-{
-	
-	list urns
-		"URNs of the models and resources to merge temporally"
-				
-	class org.integratedmodelling.klab.components.runtime.contextualizers.mergers.MergedUrnResolver
-}
+//export value timeseries
+//	"Return a resolver for multiple time-sensitive URN-specified resources or models"
+//	label 'Extract data from URNs'
+//{
+//	
+//	list urns
+//		"URNs of the models and resources to merge temporally"
+//				
+//	class org.integratedmodelling.klab.components.runtime.contextualizers.mergers.MergedUrnResolver
+//}
 
 export object instantiate
 	"Return an instantiator for a URN-specified resource"
@@ -226,17 +226,17 @@ export object instantiate
 
 }
 
-export object timechooser
-	"Return a time-sensitive instantiator for urns or models"
-	label 'Extract objects from URN'
-{
-	
-	list urns
-		"URNs of the models and resources to merge temporally"
-				
-	class org.integratedmodelling.klab.components.runtime.contextualizers.mergers.MergedUrnInstantiator
-
-}
+//export object timechooser
+//	"Return a time-sensitive instantiator for urns or models"
+//	label 'Extract objects from URN'
+//{
+//	
+//	list urns
+//		"URNs of the models and resources to merge temporally"
+//				
+//	class org.integratedmodelling.klab.components.runtime.contextualizers.mergers.MergedUrnInstantiator
+//
+//}
 
 filter value cast
 	"Return a state resolver that will convert a value from a type to another"
