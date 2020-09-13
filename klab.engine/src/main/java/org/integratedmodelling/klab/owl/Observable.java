@@ -374,7 +374,7 @@ public class Observable implements IObservable {
 		if (valueOperators == null) {
 			if (other.valueOperators != null)
 				return false;
-		} else if (!valueOperators.equals(other.valueOperators))
+		} else if (!Observables.INSTANCE.compareOperators(valueOperators, other.valueOperators))
 			return false;
 		return true;
 	}

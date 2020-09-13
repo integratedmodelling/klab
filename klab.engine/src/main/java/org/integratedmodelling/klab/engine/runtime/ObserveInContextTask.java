@@ -91,8 +91,6 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 					
 					if (scope.getCoverage().isRelevant()) {
 						
-						scope.dump(System.out);
-
 						Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
 								scope, null);
 

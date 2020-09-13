@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -56,6 +57,7 @@ import org.integratedmodelling.klab.rest.SchedulerNotification;
 import org.integratedmodelling.klab.scale.AbstractExtent;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.graph.Graphs;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.CycleDetector;
@@ -63,8 +65,6 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 import org.jgrapht.graph.DefaultEdge;
 import org.jgrapht.traverse.TopologicalOrderIterator;
 import org.joda.time.DateTime;
-
-import com.google.common.collect.Sets;
 
 import akka.actor.typed.ActorRef;
 
@@ -94,6 +94,12 @@ public class Scheduler implements IScheduler {
 		public ObservedConcept observable;
 		public Set<ObservedConcept> precursors = new HashSet<>();
 		public Actuator actuator;
+
+		@Override
+		public String toString() {
+			return "[D " + observable + " (" + precursors + ")]";
+		}
+
 	}
 
 	/*
@@ -110,6 +116,14 @@ public class Scheduler implements IScheduler {
 		Function<IMonitor, Collection<ObservedConcept>> action;
 		long tIndex = 0;
 		long endTime;
+
+		/*
+		 * this is set by tagExpirations() just before running each set of registrations
+		 * in a slot. True means that this is the last active (rounds == 0) registration
+		 * for its specified time in the slot.
+		 */
+		boolean endsPeriod = false;
+
 		IRuntimeScope scope;
 		// rounds around the wheel; ready to fire when rounds == 0
 		int rounds;
@@ -281,7 +295,7 @@ public class Scheduler implements IScheduler {
 
 					IArtifact artifact = null;
 					IArtifact ctarget = null;
-					
+
 					/*
 					 * 3. Run all contextualizers in the context that react to transitions; check
 					 * for signs of life at each step. Anything enqueued here is active so no
@@ -441,7 +455,7 @@ public class Scheduler implements IScheduler {
 	private long resolution;
 	private String contextId;
 	private ISession session;
-	private IResolutionScope scope;
+	private IResolutionScope resolutionScope;
 	private int activeRegistrations;
 
 	public Scheduler(String contextId, ITime time, IMonitor monitor) {
@@ -464,7 +478,7 @@ public class Scheduler implements IScheduler {
 
 	public Scheduler(String contextId, IResolutionScope scope, IMonitor monitor) {
 		this.contextId = contextId;
-		this.scope = scope;
+		this.resolutionScope = scope;
 		this.session = monitor.getIdentity().getParentIdentity(ISession.class);
 		Date now = new Date();
 		this.monitor = monitor;
@@ -762,31 +776,6 @@ public class Scheduler implements IScheduler {
 		notification.setType(SchedulerNotification.Type.STARTED);
 		notification.setResolution(resolution);
 
-		/*
-		 * build a list of observations that will need to be recomputed if their
-		 * precursors change (because they may change but there is no explicit change
-		 * process) and their actuators for quick scanning.
-		 */
-		List<Dependencies> trackedStates = new ArrayList<>();
-		if (this.scope != null) {
-
-			for (ObservedConcept tracked : ((ResolutionScope) scope).getImplicitlyChangingObservables()) {
-
-				Dependencies tracker = new Dependencies();
-
-				/*
-				 * Recover all DIRECT precursors and check if they can change
-				 */
-
-				/*
-				 * if 1+ precursors, complete and add the descriptor
-				 */
-				if (tracker.precursors.size() > 0) {
-					trackedStates.add(tracker);
-				}
-			}
-		}
-
 		monitor.info("Temporal transitions starting");
 
 		monitor.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
@@ -799,12 +788,14 @@ public class Scheduler implements IScheduler {
 
 			if (this.wheel[cursor] != null && !this.wheel[cursor].isEmpty()) {
 
-				List<Registration> regs = new ArrayList<>(this.wheel[cursor]);
+				List<Registration> regs = tagExpirations(this.wheel[cursor]);
+
 				this.wheel[cursor].clear();
 
 				Set<ObservedConcept> changed = new HashSet<>();
 
 				long delay = 0;
+
 				for (Registration registration : regs) {
 
 					if (monitor.isInterrupted()) {
@@ -823,23 +814,29 @@ public class Scheduler implements IScheduler {
 						if (lastAdvanced < registration.time.getEnd().getMilliseconds()) {
 							lastAdvanced = registration.time.getEnd().getMilliseconds();
 						}
-						reschedule(registration, false);
+
+						ITime previousTime = reschedule(registration, false);
+
+						// check for implicitly affected actuators. This must be done when the last
+						// registration with each particular delay has finished.
+						if (previousTime != null && registration.endsPeriod && changed.size() > 0
+								&& this.resolutionScope != null) {
+
+//							Graphs.show(registration.actuator.getDataflow().getDependencies(), "Dio cane");
+
+							Set<ObservedConcept> computed = new HashSet<>();
+							for (ObservedConcept tracked : ((ResolutionScope) resolutionScope)
+									.getImplicitlyChangingObservables()) {
+								computeImplicitDependents(tracked, changed, computed, previousTime, registration.scope,
+										registration.actuator.getDataflow().getDependencies());
+							}
+
+							changed.clear();
+						}
 
 					} else {
 						registration.rounds--;
 						this.wheel[cursor].add(registration);
-					}
-				}
-
-				/*
-				 * TODO scan the list of qualities that should be recomputed when their
-				 * precursors do.
-				 */
-				for (Dependencies tracked : trackedStates) {
-					Set<ObservedConcept> toUpdate = Sets.intersection(tracked.precursors, changed);
-					if (toUpdate.size() > 0) {
-						// TODO recompute actuator - run() may have to return an equipped object to
-						// avoid another setup mess
 					}
 				}
 
@@ -873,13 +870,168 @@ public class Scheduler implements IScheduler {
 				IMessage.Type.SchedulingFinished, notification));
 	}
 
-	private void reschedule(Registration registration, boolean first) {
+	private List<Registration> tagExpirations(Set<Registration> set) {
+		List<Registration> ret = new ArrayList<>(set);
+		Registration lastActive = null;
+		for (int i = 0; i < ret.size(); i++) {
+			Registration registration = ret.get(i);
+			registration.endsPeriod = false;
+			if (registration.rounds == 0) {
+				if (lastActive != null && registration.delayInSlot > lastActive.delayInSlot) {
+					lastActive.endsPeriod = true;
+				}
+				lastActive = registration;
+			}
+		}
+		if (lastActive != null) {
+			lastActive.endsPeriod = true;
+		}
+		return ret;
+	}
+
+	/**
+	 * Analyze the precursors of the tracked observable and recursively recompute
+	 * (depth-first) it or any precursors that is in the tracked list and depends on
+	 * any of the changed observations, unless it's in computed. Add any newly
+	 * recomputed to the computed set for reentrancy.
+	 * 
+	 * @param tracked
+	 * @param changed
+	 * @param computed
+	 */
+	private void computeImplicitDependents(ObservedConcept observable, Set<ObservedConcept> changed,
+			Set<ObservedConcept> computed, ITime time, IRuntimeScope runtimeScope,
+			Graph<ObservedConcept, DefaultEdge> dependencies) {
+		if (!computed.contains(observable)) {
+			boolean recompute = false;
+			for (ObservedConcept precursor : getPrecursors(dependencies, observable)) {
+				computeImplicitDependents(precursor, changed, computed, time, runtimeScope, dependencies);
+				if (changed.contains(precursor) && !changed.contains(observable)) {
+					recompute = true;
+				}
+			}
+			if (recompute) {
+				reinitializeObservation(observable.getObservable(), getActuator(observable, dependencies), time,
+						runtimeScope);
+				computed.add(observable);
+				changed.add(observable);
+			}
+		}
+	}
+
+	private void reinitializeObservation(IObservable observable, Actuator actuator, ITime time,
+			IRuntimeScope runtimeScope) {
+
+		Pair<String, IArtifact> targetd = runtimeScope.findArtifact(observable);
+		if (targetd != null) {
+
+			IObservation target = (IObservation) targetd.getSecond();
+			ILocator transitionScale = resolutionScope.getScale().at(time);
+			IRuntimeScope transitionContext = runtimeScope.locate(transitionScale, monitor);
+
+			/*
+			 * TODO if the target is a group of events, it has been filtered to only contain
+			 * those that occur in this transition. They must now be resolved in the
+			 * localized scope (either using a cached dataset or from scratch) and be
+			 * notified as they appear.
+			 */
+			if (target instanceof ObservationGroup && target.getObservable().is(IKimConcept.Type.EVENT)) {
+				// TODO
+			}
+
+			transitionContext = actuator.localizeNames(transitionContext);
+			IArtifact artifact = null;
+
+			// we re-run the entire initialization sequence.
+			for (Actuator.Computation computation : actuator.getContextualizers()) {
+
+				if (computation.variable != null) {
+					transitionContext.getVariables().put(computation.targetId, computation.variable);
+					continue;
+				}
+
+				if (artifact == null) {
+					artifact = computation.target;
+				}
+
+				/*
+				 * substitute the target for the next computation if we're using layers
+				 */
+				artifact = actuator.runContextualizer(computation.contextualizer, computation.observable,
+						computation.resource, artifact, transitionContext, (IScale) transitionScale);
+
+				((Observation) artifact).finalizeTransition((IScale) transitionScale);
+
+			}
+
+			if (true /* TODO: call if it actually changed */) {
+
+				((Observation) target).finalizeTransition((IScale) transitionScale);
+
+				IObservation parent = runtimeScope.getParentArtifactOf(target);
+				if (parent != null && runtimeScope.getWatchedObservationIds().contains(parent.getId())) {
+
+					ObservationChange change = new ObservationChange();
+					change.setContextId(runtimeScope.getRootSubject().getId());
+					change.setId(target.getId());
+					change.setTimestamp(time.getEnd().getMilliseconds());
+
+					if (target instanceof IState) {
+						change.setType(ObservationChange.Type.ValueChange);
+					} else if (target instanceof IDirectObservation && !((IDirectObservation) target).isActive()) {
+						change.setType(ObservationChange.Type.Termination);
+					}
+
+					ISession session = resolutionScope.getMonitor().getIdentity().getParentIdentity(ISession.class);
+					session.getMonitor().send(Message.create(session.getId(),
+							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.ModifiedObservation, change));
+				} else {
+					((Observation) target).setDynamic(true);
+				}
+			}
+
+		}
+	}
+
+	/*
+	 * crazy, but because observable is guaranteed to have at least one precursor
+	 * when this is called, we can retrieve the linked data this way.
+	 */
+	private Actuator getActuator(ObservedConcept observable, Graph<ObservedConcept, DefaultEdge> dependencies) {
+		for (DefaultEdge edge : dependencies.incomingEdgesOf(observable)) {
+			return (Actuator) dependencies.getEdgeTarget(edge).getData().get(Dataflow.ACTUATOR);
+		}
+		return null;
+	}
+
+	private Set<ObservedConcept> getPrecursors(Graph<ObservedConcept, DefaultEdge> dependencies,
+			ObservedConcept observable) {
+		Set<ObservedConcept> ret = new HashSet<>();
+		if (dependencies.containsVertex(observable)) {
+			for (DefaultEdge edge : dependencies.incomingEdgesOf(observable)) {
+				ret.add(dependencies.getEdgeSource(edge));
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Reschedule returns the time of the <b>previous</b> run so that we can reuse
+	 * it to run dependencies that were not scheduled after it.
+	 * 
+	 * @param registration
+	 * @param first
+	 * @return
+	 */
+	private ITime reschedule(Registration registration, boolean first) {
 
 		this.activeRegistrations--;
 
 		if (stopped.get()) {
-			return;
+			return null;
 		}
+
+		ITime ret = registration.time;
 
 		/*
 		 * first time interval in registration, skip initialization
@@ -891,14 +1043,14 @@ public class Scheduler implements IScheduler {
 		}
 
 		if (registration.time == null || registration.time.getEnd() == null) {
-			return;
+			return null;
 		}
 
 		long executionTime = registration.time.getEnd().getMilliseconds();
 
 		if (registration.scale.getTime().size() != IGeometry.INFINITE_SIZE
 				&& executionTime > registration.scale.getTime().getEnd().getMilliseconds()) {
-			return;
+			return ret;
 		}
 
 		long stepSize = executionTime - registration.time.getStart().getMilliseconds();
@@ -919,6 +1071,8 @@ public class Scheduler implements IScheduler {
 		this.wheel[slot].add(registration);
 
 		this.activeRegistrations++;
+
+		return ret;
 
 	}
 

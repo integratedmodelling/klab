@@ -170,13 +170,18 @@ public class Resolver {
 				 */
 				for (ObservedConcept observable : parentScope.getResolved(Type.QUALITY)) {
 
+					if (observable.getObservable().getValueOperators().size() > 0) {
+						// these are mere transformations and we don't need their change.
+						continue;
+					}
+					
 					IObservable toResolve = observable.getObservable().getBuilder(parentScope.getMonitor())
 							.as(UnarySemanticOperator.CHANGE).buildObservable();
 
 					if (parentScope.getResolvedObservable(toResolve, Mode.RESOLUTION) != null) {
 						continue;
 					}
-
+					
 					ret.getMonitor().info("Resolution scope is occurrent: resolving additional observable "
 							+ Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 

@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -44,11 +45,13 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
@@ -1070,5 +1073,77 @@ public enum Observables implements IObservableService {
 		 */
 
 		return false;
+	}
+
+	public boolean compareOperators(List<Pair<ValueOperator, Object>> ops1, List<Pair<ValueOperator, Object>> ops2) {
+		if (ops1 == null && ops2 == null) {
+			return true;
+		}
+		if ((ops1 == null && ops2 != null) || (ops1 != null && ops2 == null)) {
+			return false;
+		}
+
+		if (ops1.size() != ops2.size()) {
+			return false;
+		}
+		for (int i = 0; i < ops1.size(); i++) {
+			Pair<ValueOperator, Object> op1 = ops1.get(i);
+			Pair<ValueOperator, Object> op2 = ops2.get(i);
+			if (!op1.getFirst().equals(op2.getFirst())) {
+				return false;
+			}
+			if (!compareOperands(op1.getSecond(), op2.getSecond())) {
+				return false;
+			}
+		}
+		return true;
+	}
+
+	/**
+	 * AARGH all to compare concepts by definition and not by identity
+	 * 
+	 * @param o1
+	 * @param o2
+	 * @return
+	 */
+	private boolean compareOperands(Object o1, Object o2) {
+		if (o1 == null && o2 == null) {
+			return true;
+		}
+		if ((o1 == null && o2 != null) || (o1 != null && o2 == null)) {
+			return false;
+		}
+
+		if (!o1.getClass().equals(o2.getClass())) {
+			return false;
+		}
+
+		if (o1 instanceof Collection) {
+			if (((Collection<?>) o1).size() != (((Collection<?>) o2).size())) {
+				return false;
+			}
+			Iterator<?> i1 = ((Collection<?>) o1).iterator();
+			Iterator<?> i2 = ((Collection<?>) o1).iterator();
+			while (i1.hasNext()) {
+				if (!compareOperands(i1.next(), i2.next())) {
+					return false;
+				}
+			}
+		}
+
+		if (o1 instanceof IConcept) {
+			if (!((IConcept) o1).getDefinition().equals(((IConcept) o2).getDefinition())) {
+				return false;
+			}
+		}
+
+		if (o1 instanceof IObservable) {
+			if (!(new ObservedConcept((IObservable) o1, Mode.RESOLUTION)
+					.equals(new ObservedConcept((IObservable) o2, Mode.RESOLUTION)))) {
+				return false;
+			}
+		}
+
+		return true;
 	}
 }

@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
@@ -200,7 +201,7 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @return
 	 */
 	Pair<String, IArtifact> findArtifact(IObservable observable);
-
+	
 	/**
 	 * The contextualization strategy is a singleton within the context and is never
 	 * null.
@@ -410,5 +411,6 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * context and cannot be revoked after setting.
 	 */
 	boolean isOccurrent();
+
 
 }

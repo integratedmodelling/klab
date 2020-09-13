@@ -156,7 +156,7 @@ public class ResolutionScope implements IResolutionScope {
 
 	// observables for which change is not specified but may change if they
 	// depend on changed observations
-	private List<ObservedConcept> implicitlyChangingObservables = new ArrayList<>();
+	private Set<ObservedConcept> implicitlyChangingObservables = new HashSet<>();
 
 	/**
 	 * If not null, this is a scope for a logical combination of resolutions.
@@ -1437,7 +1437,7 @@ public class ResolutionScope implements IResolutionScope {
 	 * 
 	 * @return
 	 */
-	public List<ObservedConcept> getImplicitlyChangingObservables() {
+	public Set<ObservedConcept> getImplicitlyChangingObservables() {
 		return implicitlyChangingObservables;
 	}
 

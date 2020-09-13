@@ -84,7 +84,7 @@ import org.jgrapht.graph.DefaultEdge;
  */
 public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
-	public static final String SECONDARY_ACTUATOR = "SECONDARY_ACTUATOR";
+	public static final String ACTUATOR = "ACTUATOR";
 
 	private String description;
 	private DirectObservation context;
@@ -434,11 +434,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 			boolean primary) {
 
 		ObservedConcept observable = new ObservedConcept(actuator.getObservable(), actuator.getMode());
-		if (!primary) {
-			// record the secondary status so that the scheduler can insert change
-			// dependencies as needed
-			observable.getData().put(SECONDARY_ACTUATOR, Boolean.TRUE);
-		}
+		observable.getData().put(ACTUATOR, actuator);
 
 		graph.addVertex(observable);
 		for (IActuator child : actuator.getActuators()) {
@@ -788,7 +784,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		return this.dependencies;
 	}
 
-	public List<ObservedConcept> getImplicitlyChangingObservables() {
+	public Set<ObservedConcept> getImplicitlyChangingObservables() {
 		return resolutionScope.getImplicitlyChangingObservables();
 	}
 

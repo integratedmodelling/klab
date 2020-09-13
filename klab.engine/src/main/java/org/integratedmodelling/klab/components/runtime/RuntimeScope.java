@@ -11,7 +11,7 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.commons.collections.IteratorUtils;
-import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
+import org.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -1744,7 +1744,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		List<IObservable> ret = new ArrayList<>();
 		return ret;
 	}
-
+	
 	public void setDataflow(Dataflow dataflow) {
 		this.dataflow = dataflow;
 	}
