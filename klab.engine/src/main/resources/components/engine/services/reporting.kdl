@@ -1,0 +1,35 @@
+/**
+ * This file defines the contract for all core annotations recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.10.0
+@version 0.10.0
+
+annotation table 
+	"Specify documentation objects that summarize results as tables, graphs or other elements. The objects
+	 can be added to documentation using @insert(id)."
+{
+	text id
+		"The identifier of the table produced. A subsequent @documentation item can then @insert(<id>) to add it."
+		
+	optional enum when
+		"The moment when the table should be computed. By default is ondemand, which computes the
+		 table every time the report is generated."
+		values  initialization, ondemand, termination
+		default ondemand
+}
+
+annotation graph 
+	"Specify documentation objects that summarize results as tables, graphs or other elements. The objects
+	 can be added to documentation using @insert(id)."
+{
+	text id
+		"The identifier of the graph produced. A subsequent @documentation item can then @insert(<id>) to add it."
+		
+	optional enum when
+		"The moment when the graph should be computed. By default is ondemand, which computes the
+		 graph every time the report is generated."
+		values  initialization, ondemand, termination
+		default ondemand
+}

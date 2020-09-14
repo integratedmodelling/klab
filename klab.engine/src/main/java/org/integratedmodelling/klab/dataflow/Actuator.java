@@ -65,6 +65,8 @@ import org.integratedmodelling.klab.components.runtime.observations.StateLayer;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.data.table.LookupTable;
+import org.integratedmodelling.klab.documentation.DocumentationExtensions;
+import org.integratedmodelling.klab.documentation.DocumentationItem;
 import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
@@ -80,7 +82,6 @@ import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -520,6 +521,17 @@ public class Actuator implements IActuator {
 		// needs to store the full causal chain and any indirect observations.
 		ctx.getProvenance().addArtifact(ret);
 
+		if (model != null) {
+			/*
+			 * notify to the report all model annotations that will create documentation items.
+			 */
+			for (IAnnotation annotation : model.getAnnotations()) {
+				if (DocumentationExtensions.INSTANCE.validate(annotation, runtimeContext) != null) {
+					((Report)runtimeContext.getReport()).addTaggedText(new DocumentationItem(annotation, runtimeContext, this.observable));
+				}
+			}
+		}
+		
 		/*
 		 * If we're not importing a previously computed result, put outputs in product
 		 * list and create configurations if any.
@@ -581,6 +593,18 @@ public class Actuator implements IActuator {
 		return target instanceof RescalingState || target instanceof StateLayer;
 	}
 
+	/**
+	 * This is called by compute() at initialization and whenever needed by the
+	 * scheduler, after that.
+	 * 
+	 * @param contextualizer
+	 * @param observable
+	 * @param resource
+	 * @param ret
+	 * @param ctx
+	 * @param scale
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable,
 			IContextualizable resource, IArtifact ret, IRuntimeScope ctx, IScale scale) {

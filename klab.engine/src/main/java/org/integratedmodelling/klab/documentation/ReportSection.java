@@ -6,6 +6,7 @@ import java.util.List;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.documentation.IDocumentationProvider.Item;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
@@ -310,8 +311,13 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param context
      */
     public void insert(Object[] processArguments, IDocumentation documentation, IContextualizationScope context) {
-        // TODO Auto-generated method stub
-        System.out.println("FOC");
+    	if (processArguments.length > 0) {
+    		Item item = report.taggedText.get(processArguments[0].toString());
+    		if (item != null) {
+    			body.append(item.getMarkdownContents());
+    			report.usedTags.add(processArguments[0].toString());
+    		}
+    	}
     }
 
     @Override

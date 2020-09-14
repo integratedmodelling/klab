@@ -64,4 +64,12 @@ public interface IScheduler {
 	 * @return
 	 */
 	boolean isEmpty();
+
+	/**
+	 * True if the scheduler has run to the end and an end time is specified, or was
+	 * interrupted.
+	 * 
+	 * @return
+	 */
+	boolean isFinished();
 }

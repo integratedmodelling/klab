@@ -86,6 +86,7 @@ public class Scheduler implements IScheduler {
 	private ExecutorService executor;
 	private WaitStrategy waitStrategy;
 	private Dataflow dataflow;
+	private boolean finished = false;
 
 	/*
 	 * used to track change in states that don't have processes connected
@@ -861,6 +862,8 @@ public class Scheduler implements IScheduler {
 			}
 		}
 
+		this.finished = true;
+		
 		/*
 		 * notify end
 		 */
@@ -1097,6 +1100,11 @@ public class Scheduler implements IScheduler {
 	@Override
 	public boolean isEmpty() {
 		return registrations.size() < 1;
+	}
+
+	@Override
+	public boolean isFinished() {
+		return this.finished;
 	}
 
 }

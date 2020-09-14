@@ -114,7 +114,7 @@ public interface IDocumentation {
      * &#64;footnote(id, text..)        -> creates footnote and assigns id for future reference
      * &#64;figure(variable, id, ...)   -> formats object as figure, assigns id for referencing to it
      * &#64;insert(refId)               -> literally inserts content of named refId or tagged section, no effect
-     *                                     if tag does not resolve
+     *                                     nor error if tag does not resolve
      * &#64;require(refId, sectionpath) -> ensure content of named refId is in named section, no effect
      *                                     if tag does not resolve but only include once if not there.
      * </pre>
