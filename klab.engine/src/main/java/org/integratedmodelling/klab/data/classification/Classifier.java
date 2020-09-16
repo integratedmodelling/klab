@@ -113,6 +113,8 @@ public class Classifier implements IClassifier {
 		} else if (o == null) {
 			nullMatch = true;
 			sourceCode = "#";
+		} else if (o instanceof IKimConcept) {
+			
 		} else {
 			throw new KlabValidationException("cannot create classifier to match unsupported object type: " + o);
 		}

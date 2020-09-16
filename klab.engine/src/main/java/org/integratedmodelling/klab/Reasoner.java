@@ -3,6 +3,7 @@ package org.integratedmodelling.klab;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.services.IReasonerService;
 import org.integratedmodelling.klab.owl.KlabReasoner;
 import org.integratedmodelling.klab.owl.Ontology;
@@ -43,5 +44,17 @@ public enum Reasoner implements IReasonerService {
     public Set<IConcept> getSemanticClosure(IConcept main) {
         return reasoner.getSemanticClosure(main);
     }
+    
+    @Override
+    public boolean implies(IConcept target, IConcept implied) {
+    	// TODO - and CACHED
+    	return false;
+    }
+
+	@Override
+	public boolean implies(IConcept target, IConcept role, IObservation context) {
+		// TODO Auto-generated method stub
+		return false;
+	}
     
 }

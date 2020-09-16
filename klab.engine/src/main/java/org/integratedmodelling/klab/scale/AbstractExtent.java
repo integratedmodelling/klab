@@ -143,12 +143,7 @@ public abstract class AbstractExtent implements IExtent {
 
 	public abstract boolean isEmpty();
 
-	/**
-	 * Return the n-th state of the ordered topology as a new extent with one state.
-	 * 
-	 * @param stateIndex
-	 * @return a new extent with getValueCount() == 1.
-	 */
+	@Override
 	public abstract IExtent getExtent(long stateIndex);
 
 	/**

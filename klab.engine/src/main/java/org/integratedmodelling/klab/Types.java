@@ -182,6 +182,28 @@ public enum Types implements ITypeService {
 	}
 
 	/**
+	 * Get all concrete children for a type as a flat hierarchy. 
+	 * 
+	 * @param baseType
+	 * @return
+	 */
+	public List<IConcept> getConcreteChildren(IConcept baseType) {
+
+		List<IConcept> ret = new ArrayList<>();
+		getConcreteChildren(baseType, ret);
+		return ret;
+	}
+	
+	private void getConcreteChildren(IConcept baseType, List<IConcept> ret) {
+		if (!baseType.isAbstract()) {
+			ret.add(baseType);
+		}
+		for (IConcept child : baseType.getChildren()) {
+			getConcreteChildren(child, ret);
+		}
+	}
+
+	/**
 	 * Get the level of detail of current in the DECLARED hierarchy of base - i.e.
 	 * using the model objects declared in k.IM. Only works with trait and class
 	 * types, as this is only relevant to classifications.

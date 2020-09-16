@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.documentation.extensions;
 
-import java.util.Arrays;
-
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -31,7 +29,7 @@ public enum DocumentationExtensions {
 	 *
 	 */
 	public enum Trigger {
-		initialization, ondemand, termination
+		start, ondemand, end
 	}
 
 	/**

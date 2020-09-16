@@ -46,7 +46,7 @@ public class DocumentationItem implements IDocumentationProvider.Item {
 			 * if termination, we produce the text only if scheduler is null or we have finished computing a cycle.
 			 */
 			boolean finished = scope.getScheduler() == null || scope.getScheduler().isFinished();
-			if (this.trigger == Trigger.termination && !finished) {
+			if (this.trigger == Trigger.end && !finished) {
 				return "";
 			}
 		
