@@ -29,7 +29,7 @@ import org.integratedmodelling.kim.kim.ConceptStatementBody;
 import org.integratedmodelling.kim.kim.IdentityRequirement;
 import org.integratedmodelling.kim.kim.Implication;
 import org.integratedmodelling.kim.kim.KimPackage;
-import org.integratedmodelling.kim.kim.Metadata;
+import org.integratedmodelling.kim.kim.Map;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.PropertyStatement;
 
@@ -712,7 +712,7 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @generated
    * @ordered
    */
-  protected Metadata metadata;
+  protected Map metadata;
 
   /**
    * The cached value of the '{@link #getProperties() <em>Properties</em>}' containment reference list.
@@ -1901,7 +1901,7 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @generated
    */
   @Override
-  public Metadata getMetadata()
+  public Map getMetadata()
   {
     return metadata;
   }
@@ -1911,9 +1911,9 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetMetadata(Metadata newMetadata, NotificationChain msgs)
+  public NotificationChain basicSetMetadata(Map newMetadata, NotificationChain msgs)
   {
-    Metadata oldMetadata = metadata;
+    Map oldMetadata = metadata;
     metadata = newMetadata;
     if (eNotificationRequired())
     {
@@ -1929,7 +1929,7 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @generated
    */
   @Override
-  public void setMetadata(Metadata newMetadata)
+  public void setMetadata(Map newMetadata)
   {
     if (newMetadata != metadata)
     {
@@ -2307,7 +2307,7 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         getAuthorities().addAll((Collection<? extends String>)newValue);
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__METADATA:
-        setMetadata((Metadata)newValue);
+        setMetadata((Map)newValue);
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__PROPERTIES:
         getProperties().clear();
@@ -2463,7 +2463,7 @@ public class ConceptStatementBodyImpl extends MinimalEObjectImpl.Container imple
         getAuthorities().clear();
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__METADATA:
-        setMetadata((Metadata)null);
+        setMetadata((Map)null);
         return;
       case KimPackage.CONCEPT_STATEMENT_BODY__PROPERTIES:
         getProperties().clear();

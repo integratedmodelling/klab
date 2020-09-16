@@ -26,7 +26,7 @@ import org.integratedmodelling.kim.kim.Concept;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.Import;
 import org.integratedmodelling.kim.kim.KimPackage;
-import org.integratedmodelling.kim.kim.Metadata;
+import org.integratedmodelling.kim.kim.Map;
 import org.integratedmodelling.kim.kim.Namespace;
 import org.integratedmodelling.kim.kim.OwlImport;
 
@@ -353,7 +353,7 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * @generated
    * @ordered
    */
-  protected Metadata weights;
+  protected Map weights;
 
   /**
    * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference.
@@ -363,7 +363,7 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * @generated
    * @ordered
    */
-  protected Metadata parameters;
+  protected Map parameters;
 
   /**
    * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
@@ -373,7 +373,7 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * @generated
    * @ordered
    */
-  protected Metadata metadata;
+  protected Map metadata;
 
   /**
    * <!-- begin-user-doc -->
@@ -807,7 +807,7 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * @generated
    */
   @Override
-  public Metadata getWeights()
+  public Map getWeights()
   {
     return weights;
   }
@@ -817,9 +817,9 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetWeights(Metadata newWeights, NotificationChain msgs)
+  public NotificationChain basicSetWeights(Map newWeights, NotificationChain msgs)
   {
-    Metadata oldWeights = weights;
+    Map oldWeights = weights;
     weights = newWeights;
     if (eNotificationRequired())
     {
@@ -835,7 +835,7 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * @generated
    */
   @Override
-  public void setWeights(Metadata newWeights)
+  public void setWeights(Map newWeights)
   {
     if (newWeights != weights)
     {
@@ -857,7 +857,7 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * @generated
    */
   @Override
-  public Metadata getParameters()
+  public Map getParameters()
   {
     return parameters;
   }
@@ -867,9 +867,9 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetParameters(Metadata newParameters, NotificationChain msgs)
+  public NotificationChain basicSetParameters(Map newParameters, NotificationChain msgs)
   {
-    Metadata oldParameters = parameters;
+    Map oldParameters = parameters;
     parameters = newParameters;
     if (eNotificationRequired())
     {
@@ -885,7 +885,7 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * @generated
    */
   @Override
-  public void setParameters(Metadata newParameters)
+  public void setParameters(Map newParameters)
   {
     if (newParameters != parameters)
     {
@@ -907,7 +907,7 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * @generated
    */
   @Override
-  public Metadata getMetadata()
+  public Map getMetadata()
   {
     return metadata;
   }
@@ -917,9 +917,9 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetMetadata(Metadata newMetadata, NotificationChain msgs)
+  public NotificationChain basicSetMetadata(Map newMetadata, NotificationChain msgs)
   {
-    Metadata oldMetadata = metadata;
+    Map oldMetadata = metadata;
     metadata = newMetadata;
     if (eNotificationRequired())
     {
@@ -935,7 +935,7 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
    * @generated
    */
   @Override
-  public void setMetadata(Metadata newMetadata)
+  public void setMetadata(Map newMetadata)
   {
     if (newMetadata != metadata)
     {
@@ -1110,13 +1110,13 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
         getBlacklistNamespace().addAll((Collection<? extends String>)newValue);
         return;
       case KimPackage.NAMESPACE__WEIGHTS:
-        setWeights((Metadata)newValue);
+        setWeights((Map)newValue);
         return;
       case KimPackage.NAMESPACE__PARAMETERS:
-        setParameters((Metadata)newValue);
+        setParameters((Map)newValue);
         return;
       case KimPackage.NAMESPACE__METADATA:
-        setMetadata((Metadata)newValue);
+        setMetadata((Map)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -1187,13 +1187,13 @@ public class NamespaceImpl extends MinimalEObjectImpl.Container implements Names
         getBlacklistNamespace().clear();
         return;
       case KimPackage.NAMESPACE__WEIGHTS:
-        setWeights((Metadata)null);
+        setWeights((Map)null);
         return;
       case KimPackage.NAMESPACE__PARAMETERS:
-        setParameters((Metadata)null);
+        setParameters((Map)null);
         return;
       case KimPackage.NAMESPACE__METADATA:
-        setMetadata((Metadata)null);
+        setMetadata((Map)null);
         return;
     }
     super.eUnset(featureID);

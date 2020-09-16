@@ -34,6 +34,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	protected AbstractElementAlias match_DependencyObservableSemantics_RequiredKeyword_3_4_1_a;
 	protected AbstractElementAlias match_Dependency_RequiredKeyword_1_1_0_4_1_q;
 	protected AbstractElementAlias match_IdentityRequirement_AttributeKeyword_0_0_1_or_ExtentKeyword_0_0_3_or_IdentityKeyword_0_0_0_or_RealmKeyword_0_0_2;
+	protected AbstractElementAlias match_Map_CommaKeyword_2_1_0_0_q;
 	protected AbstractElementAlias match_Namespace___OutsideKeyword_5_7_1_0___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__a__a;
 	protected AbstractElementAlias match_Namespace___OutsideKeyword_5_7_1_0___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__a__p;
 	protected AbstractElementAlias match_Namespace___OutsideKeyword_5_7_1_0_q___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__q__p;
@@ -62,6 +63,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		match_DependencyObservableSemantics_RequiredKeyword_3_4_1_a = new TokenAlias(true, true, grammarAccess.getDependencyObservableSemanticsAccess().getRequiredKeyword_3_4_1());
 		match_Dependency_RequiredKeyword_1_1_0_4_1_q = new TokenAlias(false, true, grammarAccess.getDependencyAccess().getRequiredKeyword_1_1_0_4_1());
 		match_IdentityRequirement_AttributeKeyword_0_0_1_or_ExtentKeyword_0_0_3_or_IdentityKeyword_0_0_0_or_RealmKeyword_0_0_2 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getIdentityRequirementAccess().getAttributeKeyword_0_0_1()), new TokenAlias(false, false, grammarAccess.getIdentityRequirementAccess().getExtentKeyword_0_0_3()), new TokenAlias(false, false, grammarAccess.getIdentityRequirementAccess().getIdentityKeyword_0_0_0()), new TokenAlias(false, false, grammarAccess.getIdentityRequirementAccess().getRealmKeyword_0_0_2()));
+		match_Map_CommaKeyword_2_1_0_0_q = new TokenAlias(false, true, grammarAccess.getMapAccess().getCommaKeyword_2_1_0_0());
 		match_Namespace___OutsideKeyword_5_7_1_0___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__a__a = new GroupAlias(true, true, new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getOutsideKeyword_5_7_1_0()), new GroupAlias(true, true, new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getResolveKeyword_5_7_0_0()), new TokenAlias(false, true, grammarAccess.getNamespaceAccess().getFromKeyword_5_7_0_1_0())));
 		match_Namespace___OutsideKeyword_5_7_1_0___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__a__p = new GroupAlias(true, false, new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getOutsideKeyword_5_7_1_0()), new GroupAlias(true, true, new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getResolveKeyword_5_7_0_0()), new TokenAlias(false, true, grammarAccess.getNamespaceAccess().getFromKeyword_5_7_0_1_0())));
 		match_Namespace___OutsideKeyword_5_7_1_0_q___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__q__p = new GroupAlias(true, false, new TokenAlias(false, true, grammarAccess.getNamespaceAccess().getOutsideKeyword_5_7_1_0()), new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getResolveKeyword_5_7_0_0()), new TokenAlias(false, true, grammarAccess.getNamespaceAccess().getFromKeyword_5_7_0_1_0())));
@@ -123,6 +125,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 				emit_Dependency_RequiredKeyword_1_1_0_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_IdentityRequirement_AttributeKeyword_0_0_1_or_ExtentKeyword_0_0_3_or_IdentityKeyword_0_0_0_or_RealmKeyword_0_0_2.equals(syntax))
 				emit_IdentityRequirement_AttributeKeyword_0_0_1_or_ExtentKeyword_0_0_3_or_IdentityKeyword_0_0_0_or_RealmKeyword_0_0_2(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_Map_CommaKeyword_2_1_0_0_q.equals(syntax))
+				emit_Map_CommaKeyword_2_1_0_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Namespace___OutsideKeyword_5_7_1_0___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__a__a.equals(syntax))
 				emit_Namespace___OutsideKeyword_5_7_1_0___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__a__a(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Namespace___OutsideKeyword_5_7_1_0___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__a__p.equals(syntax))
@@ -457,6 +461,17 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	
 	/**
 	 * Ambiguous syntax:
+	 *     ','?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     entries+=MapEntry (ambiguity) entries+=MapEntry
+	 */
+	protected void emit_Map_CommaKeyword_2_1_0_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
 	 *     ('outside' ('resolve' 'from'?)*)*
 	 *
 	 * This ambiguous syntax occurs at:
@@ -483,7 +498,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     owlImports+=OwlImport (ambiguity) blacklistNamespace+=PathName
 	 *     rootDomain?='root' (ambiguity) blacklistNamespace+=PathName
 	 *     version=VersionNumber (ambiguity) blacklistNamespace+=PathName
-	 *     weights=Metadata (ambiguity) blacklistNamespace+=PathName
+	 *     weights=Map (ambiguity) blacklistNamespace+=PathName
 	 */
 	protected void emit_Namespace___OutsideKeyword_5_7_1_0___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__a__p(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
@@ -500,11 +515,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     blacklistNamespace+=PathName (ambiguity) 'imports' owlImports+=OwlImport
 	 *     blacklistNamespace+=PathName (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     blacklistNamespace+=PathName (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     blacklistNamespace+=PathName (ambiguity) 'metadata' metadata=Metadata
-	 *     blacklistNamespace+=PathName (ambiguity) 'parameters' parameters=Metadata
+	 *     blacklistNamespace+=PathName (ambiguity) 'metadata' metadata=Map
+	 *     blacklistNamespace+=PathName (ambiguity) 'parameters' parameters=Map
 	 *     blacklistNamespace+=PathName (ambiguity) 'using' 'language' language=UPPERCASE_ID
 	 *     blacklistNamespace+=PathName (ambiguity) 'using' imported+=Import
-	 *     blacklistNamespace+=PathName (ambiguity) 'using' weights=Metadata
+	 *     blacklistNamespace+=PathName (ambiguity) 'using' weights=Map
 	 *     blacklistNamespace+=PathName (ambiguity) 'version' version=VersionNumber
 	 *     coverage+=Function (ambiguity) ';' (rule end)
 	 *     coverage+=Function (ambiguity) 'covering' coverage+=Function
@@ -512,11 +527,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     coverage+=Function (ambiguity) 'imports' owlImports+=OwlImport
 	 *     coverage+=Function (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     coverage+=Function (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     coverage+=Function (ambiguity) 'metadata' metadata=Metadata
-	 *     coverage+=Function (ambiguity) 'parameters' parameters=Metadata
+	 *     coverage+=Function (ambiguity) 'metadata' metadata=Map
+	 *     coverage+=Function (ambiguity) 'parameters' parameters=Map
 	 *     coverage+=Function (ambiguity) 'using' 'language' language=UPPERCASE_ID
 	 *     coverage+=Function (ambiguity) 'using' imported+=Import
-	 *     coverage+=Function (ambiguity) 'using' weights=Metadata
+	 *     coverage+=Function (ambiguity) 'using' weights=Map
 	 *     coverage+=Function (ambiguity) 'version' version=VersionNumber
 	 *     disjointNamespaces+=PathName ',' (ambiguity) ';' (rule end)
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'covering' coverage+=Function
@@ -524,11 +539,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'imports' owlImports+=OwlImport
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'metadata' metadata=Metadata
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'parameters' parameters=Metadata
+	 *     disjointNamespaces+=PathName ',' (ambiguity) 'metadata' metadata=Map
+	 *     disjointNamespaces+=PathName ',' (ambiguity) 'parameters' parameters=Map
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'using' 'language' language=UPPERCASE_ID
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'using' imported+=Import
-	 *     disjointNamespaces+=PathName ',' (ambiguity) 'using' weights=Metadata
+	 *     disjointNamespaces+=PathName ',' (ambiguity) 'using' weights=Map
 	 *     disjointNamespaces+=PathName ',' (ambiguity) 'version' version=VersionNumber
 	 *     disjointNamespaces+=PathName (ambiguity) ';' (rule end)
 	 *     disjointNamespaces+=PathName (ambiguity) 'covering' coverage+=Function
@@ -536,11 +551,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     disjointNamespaces+=PathName (ambiguity) 'imports' owlImports+=OwlImport
 	 *     disjointNamespaces+=PathName (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     disjointNamespaces+=PathName (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     disjointNamespaces+=PathName (ambiguity) 'metadata' metadata=Metadata
-	 *     disjointNamespaces+=PathName (ambiguity) 'parameters' parameters=Metadata
+	 *     disjointNamespaces+=PathName (ambiguity) 'metadata' metadata=Map
+	 *     disjointNamespaces+=PathName (ambiguity) 'parameters' parameters=Map
 	 *     disjointNamespaces+=PathName (ambiguity) 'using' 'language' language=UPPERCASE_ID
 	 *     disjointNamespaces+=PathName (ambiguity) 'using' imported+=Import
-	 *     disjointNamespaces+=PathName (ambiguity) 'using' weights=Metadata
+	 *     disjointNamespaces+=PathName (ambiguity) 'using' weights=Map
 	 *     disjointNamespaces+=PathName (ambiguity) 'version' version=VersionNumber
 	 *     docstring=STRING (ambiguity) ';' (rule end)
 	 *     docstring=STRING (ambiguity) 'covering' coverage+=Function
@@ -548,11 +563,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     docstring=STRING (ambiguity) 'imports' owlImports+=OwlImport
 	 *     docstring=STRING (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     docstring=STRING (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     docstring=STRING (ambiguity) 'metadata' metadata=Metadata
-	 *     docstring=STRING (ambiguity) 'parameters' parameters=Metadata
+	 *     docstring=STRING (ambiguity) 'metadata' metadata=Map
+	 *     docstring=STRING (ambiguity) 'parameters' parameters=Map
 	 *     docstring=STRING (ambiguity) 'using' 'language' language=UPPERCASE_ID
 	 *     docstring=STRING (ambiguity) 'using' imported+=Import
-	 *     docstring=STRING (ambiguity) 'using' weights=Metadata
+	 *     docstring=STRING (ambiguity) 'using' weights=Map
 	 *     docstring=STRING (ambiguity) 'version' version=VersionNumber
 	 *     domainConcept=Concept (ambiguity) ';' (rule end)
 	 *     domainConcept=Concept (ambiguity) 'covering' coverage+=Function
@@ -560,11 +575,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     domainConcept=Concept (ambiguity) 'imports' owlImports+=OwlImport
 	 *     domainConcept=Concept (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     domainConcept=Concept (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     domainConcept=Concept (ambiguity) 'metadata' metadata=Metadata
-	 *     domainConcept=Concept (ambiguity) 'parameters' parameters=Metadata
+	 *     domainConcept=Concept (ambiguity) 'metadata' metadata=Map
+	 *     domainConcept=Concept (ambiguity) 'parameters' parameters=Map
 	 *     domainConcept=Concept (ambiguity) 'using' 'language' language=UPPERCASE_ID
 	 *     domainConcept=Concept (ambiguity) 'using' imported+=Import
-	 *     domainConcept=Concept (ambiguity) 'using' weights=Metadata
+	 *     domainConcept=Concept (ambiguity) 'using' weights=Map
 	 *     domainConcept=Concept (ambiguity) 'version' version=VersionNumber
 	 *     imported+=Import (ambiguity) ';' (rule end)
 	 *     imported+=Import (ambiguity) 'covering' coverage+=Function
@@ -572,11 +587,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     imported+=Import (ambiguity) 'imports' owlImports+=OwlImport
 	 *     imported+=Import (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     imported+=Import (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     imported+=Import (ambiguity) 'metadata' metadata=Metadata
-	 *     imported+=Import (ambiguity) 'parameters' parameters=Metadata
+	 *     imported+=Import (ambiguity) 'metadata' metadata=Map
+	 *     imported+=Import (ambiguity) 'parameters' parameters=Map
 	 *     imported+=Import (ambiguity) 'using' 'language' language=UPPERCASE_ID
 	 *     imported+=Import (ambiguity) 'using' imported+=Import
-	 *     imported+=Import (ambiguity) 'using' weights=Metadata
+	 *     imported+=Import (ambiguity) 'using' weights=Map
 	 *     imported+=Import (ambiguity) 'version' version=VersionNumber
 	 *     language=UPPERCASE_ID (ambiguity) ';' (rule end)
 	 *     language=UPPERCASE_ID (ambiguity) 'covering' coverage+=Function
@@ -584,11 +599,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     language=UPPERCASE_ID (ambiguity) 'imports' owlImports+=OwlImport
 	 *     language=UPPERCASE_ID (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     language=UPPERCASE_ID (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     language=UPPERCASE_ID (ambiguity) 'metadata' metadata=Metadata
-	 *     language=UPPERCASE_ID (ambiguity) 'parameters' parameters=Metadata
+	 *     language=UPPERCASE_ID (ambiguity) 'metadata' metadata=Map
+	 *     language=UPPERCASE_ID (ambiguity) 'parameters' parameters=Map
 	 *     language=UPPERCASE_ID (ambiguity) 'using' 'language' language=UPPERCASE_ID
 	 *     language=UPPERCASE_ID (ambiguity) 'using' imported+=Import
-	 *     language=UPPERCASE_ID (ambiguity) 'using' weights=Metadata
+	 *     language=UPPERCASE_ID (ambiguity) 'using' weights=Map
 	 *     language=UPPERCASE_ID (ambiguity) 'version' version=VersionNumber
 	 *     lookupNamespace+=PathName (ambiguity) ';' (rule end)
 	 *     lookupNamespace+=PathName (ambiguity) 'covering' coverage+=Function
@@ -596,11 +611,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     lookupNamespace+=PathName (ambiguity) 'imports' owlImports+=OwlImport
 	 *     lookupNamespace+=PathName (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     lookupNamespace+=PathName (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     lookupNamespace+=PathName (ambiguity) 'metadata' metadata=Metadata
-	 *     lookupNamespace+=PathName (ambiguity) 'parameters' parameters=Metadata
+	 *     lookupNamespace+=PathName (ambiguity) 'metadata' metadata=Map
+	 *     lookupNamespace+=PathName (ambiguity) 'parameters' parameters=Map
 	 *     lookupNamespace+=PathName (ambiguity) 'using' 'language' language=UPPERCASE_ID
 	 *     lookupNamespace+=PathName (ambiguity) 'using' imported+=Import
-	 *     lookupNamespace+=PathName (ambiguity) 'using' weights=Metadata
+	 *     lookupNamespace+=PathName (ambiguity) 'using' weights=Map
 	 *     lookupNamespace+=PathName (ambiguity) 'version' version=VersionNumber
 	 *     name=PathName (ambiguity) ';' (rule end)
 	 *     name=PathName (ambiguity) 'covering' coverage+=Function
@@ -608,11 +623,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=PathName (ambiguity) 'imports' owlImports+=OwlImport
 	 *     name=PathName (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     name=PathName (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     name=PathName (ambiguity) 'metadata' metadata=Metadata
-	 *     name=PathName (ambiguity) 'parameters' parameters=Metadata
+	 *     name=PathName (ambiguity) 'metadata' metadata=Map
+	 *     name=PathName (ambiguity) 'parameters' parameters=Map
 	 *     name=PathName (ambiguity) 'using' 'language' language=UPPERCASE_ID
 	 *     name=PathName (ambiguity) 'using' imported+=Import
-	 *     name=PathName (ambiguity) 'using' weights=Metadata
+	 *     name=PathName (ambiguity) 'using' weights=Map
 	 *     name=PathName (ambiguity) 'version' version=VersionNumber
 	 *     owlImports+=OwlImport (ambiguity) ';' (rule end)
 	 *     owlImports+=OwlImport (ambiguity) 'covering' coverage+=Function
@@ -620,11 +635,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     owlImports+=OwlImport (ambiguity) 'imports' owlImports+=OwlImport
 	 *     owlImports+=OwlImport (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     owlImports+=OwlImport (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     owlImports+=OwlImport (ambiguity) 'metadata' metadata=Metadata
-	 *     owlImports+=OwlImport (ambiguity) 'parameters' parameters=Metadata
+	 *     owlImports+=OwlImport (ambiguity) 'metadata' metadata=Map
+	 *     owlImports+=OwlImport (ambiguity) 'parameters' parameters=Map
 	 *     owlImports+=OwlImport (ambiguity) 'using' 'language' language=UPPERCASE_ID
 	 *     owlImports+=OwlImport (ambiguity) 'using' imported+=Import
-	 *     owlImports+=OwlImport (ambiguity) 'using' weights=Metadata
+	 *     owlImports+=OwlImport (ambiguity) 'using' weights=Map
 	 *     owlImports+=OwlImport (ambiguity) 'version' version=VersionNumber
 	 *     rootDomain?='root' (ambiguity) ';' (rule end)
 	 *     rootDomain?='root' (ambiguity) 'covering' coverage+=Function
@@ -632,11 +647,11 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     rootDomain?='root' (ambiguity) 'imports' owlImports+=OwlImport
 	 *     rootDomain?='root' (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     rootDomain?='root' (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     rootDomain?='root' (ambiguity) 'metadata' metadata=Metadata
-	 *     rootDomain?='root' (ambiguity) 'parameters' parameters=Metadata
+	 *     rootDomain?='root' (ambiguity) 'metadata' metadata=Map
+	 *     rootDomain?='root' (ambiguity) 'parameters' parameters=Map
 	 *     rootDomain?='root' (ambiguity) 'using' 'language' language=UPPERCASE_ID
 	 *     rootDomain?='root' (ambiguity) 'using' imported+=Import
-	 *     rootDomain?='root' (ambiguity) 'using' weights=Metadata
+	 *     rootDomain?='root' (ambiguity) 'using' weights=Map
 	 *     rootDomain?='root' (ambiguity) 'version' version=VersionNumber
 	 *     version=VersionNumber (ambiguity) ';' (rule end)
 	 *     version=VersionNumber (ambiguity) 'covering' coverage+=Function
@@ -644,24 +659,24 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     version=VersionNumber (ambiguity) 'imports' owlImports+=OwlImport
 	 *     version=VersionNumber (ambiguity) 'in' 'domain' domainConcept=Concept
 	 *     version=VersionNumber (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     version=VersionNumber (ambiguity) 'metadata' metadata=Metadata
-	 *     version=VersionNumber (ambiguity) 'parameters' parameters=Metadata
+	 *     version=VersionNumber (ambiguity) 'metadata' metadata=Map
+	 *     version=VersionNumber (ambiguity) 'parameters' parameters=Map
 	 *     version=VersionNumber (ambiguity) 'using' 'language' language=UPPERCASE_ID
 	 *     version=VersionNumber (ambiguity) 'using' imported+=Import
-	 *     version=VersionNumber (ambiguity) 'using' weights=Metadata
+	 *     version=VersionNumber (ambiguity) 'using' weights=Map
 	 *     version=VersionNumber (ambiguity) 'version' version=VersionNumber
-	 *     weights=Metadata (ambiguity) ';' (rule end)
-	 *     weights=Metadata (ambiguity) 'covering' coverage+=Function
-	 *     weights=Metadata (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
-	 *     weights=Metadata (ambiguity) 'imports' owlImports+=OwlImport
-	 *     weights=Metadata (ambiguity) 'in' 'domain' domainConcept=Concept
-	 *     weights=Metadata (ambiguity) 'in' 'domain' rootDomain?='root'
-	 *     weights=Metadata (ambiguity) 'metadata' metadata=Metadata
-	 *     weights=Metadata (ambiguity) 'parameters' parameters=Metadata
-	 *     weights=Metadata (ambiguity) 'using' 'language' language=UPPERCASE_ID
-	 *     weights=Metadata (ambiguity) 'using' imported+=Import
-	 *     weights=Metadata (ambiguity) 'using' weights=Metadata
-	 *     weights=Metadata (ambiguity) 'version' version=VersionNumber
+	 *     weights=Map (ambiguity) ';' (rule end)
+	 *     weights=Map (ambiguity) 'covering' coverage+=Function
+	 *     weights=Map (ambiguity) 'disjoint' 'with' disjointNamespaces+=PathName
+	 *     weights=Map (ambiguity) 'imports' owlImports+=OwlImport
+	 *     weights=Map (ambiguity) 'in' 'domain' domainConcept=Concept
+	 *     weights=Map (ambiguity) 'in' 'domain' rootDomain?='root'
+	 *     weights=Map (ambiguity) 'metadata' metadata=Map
+	 *     weights=Map (ambiguity) 'parameters' parameters=Map
+	 *     weights=Map (ambiguity) 'using' 'language' language=UPPERCASE_ID
+	 *     weights=Map (ambiguity) 'using' imported+=Import
+	 *     weights=Map (ambiguity) 'using' weights=Map
+	 *     weights=Map (ambiguity) 'version' version=VersionNumber
 	 */
 	protected void emit_Namespace___OutsideKeyword_5_7_1_0_q___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__q__p(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
@@ -695,7 +710,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     owlImports+=OwlImport (ambiguity) lookupNamespace+=PathName
 	 *     rootDomain?='root' (ambiguity) lookupNamespace+=PathName
 	 *     version=VersionNumber (ambiguity) lookupNamespace+=PathName
-	 *     weights=Metadata (ambiguity) lookupNamespace+=PathName
+	 *     weights=Map (ambiguity) lookupNamespace+=PathName
 	 */
 	protected void emit_Namespace_____OutsideKeyword_5_7_1_0_a_ResolveKeyword_5_7_0_0__p_FromKeyword_5_7_0_1_0__p(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
@@ -829,39 +844,39 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     'using'*
 	 *
 	 * This ambiguous syntax occurs at:
-	 *     (rule start) (ambiguity) 'metadata' metadata=Metadata
+	 *     (rule start) (ambiguity) 'metadata' metadata=Map
 	 *     (rule start) (ambiguity) (rule start)
 	 *     (rule start) (ambiguity) concept=NamedObservableSemantics
 	 *     (rule start) (ambiguity) urn=Urn
-	 *     accessor=Function (ambiguity) 'metadata' metadata=Metadata
+	 *     accessor=Function (ambiguity) 'metadata' metadata=Map
 	 *     accessor=Function (ambiguity) (rule end)
 	 *     accessor=Function (ambiguity) concept=NamedObservableSemantics
 	 *     accessor=Function (ambiguity) urn=Urn
-	 *     actions+=ActionSpecification (ambiguity) 'metadata' metadata=Metadata
+	 *     actions+=ActionSpecification (ambiguity) 'metadata' metadata=Map
 	 *     actions+=ActionSpecification (ambiguity) (rule end)
 	 *     actions+=ActionSpecification (ambiguity) concept=NamedObservableSemantics
 	 *     actions+=ActionSpecification (ambiguity) urn=Urn
-	 *     concept=NamedObservableSemantics (ambiguity) 'metadata' metadata=Metadata
+	 *     concept=NamedObservableSemantics (ambiguity) 'metadata' metadata=Map
 	 *     concept=NamedObservableSemantics (ambiguity) (rule end)
 	 *     concept=NamedObservableSemantics (ambiguity) concept=NamedObservableSemantics
 	 *     concept=NamedObservableSemantics (ambiguity) urn=Urn
-	 *     docstring=STRING (ambiguity) 'metadata' metadata=Metadata
+	 *     docstring=STRING (ambiguity) 'metadata' metadata=Map
 	 *     docstring=STRING (ambiguity) (rule end)
 	 *     docstring=STRING (ambiguity) concept=NamedObservableSemantics
 	 *     docstring=STRING (ambiguity) urn=Urn
-	 *     metadata=Metadata (ambiguity) 'metadata' metadata=Metadata
-	 *     metadata=Metadata (ambiguity) (rule end)
-	 *     metadata=Metadata (ambiguity) concept=NamedObservableSemantics
-	 *     metadata=Metadata (ambiguity) urn=Urn
-	 *     observations+=ObserveStatementBody ')' (ambiguity) 'metadata' metadata=Metadata
+	 *     metadata=Map (ambiguity) 'metadata' metadata=Map
+	 *     metadata=Map (ambiguity) (rule end)
+	 *     metadata=Map (ambiguity) concept=NamedObservableSemantics
+	 *     metadata=Map (ambiguity) urn=Urn
+	 *     observations+=ObserveStatementBody ')' (ambiguity) 'metadata' metadata=Map
 	 *     observations+=ObserveStatementBody ')' (ambiguity) (rule end)
 	 *     observations+=ObserveStatementBody ')' (ambiguity) concept=NamedObservableSemantics
 	 *     observations+=ObserveStatementBody ')' (ambiguity) urn=Urn
-	 *     parents+=PathName (ambiguity) 'metadata' metadata=Metadata
+	 *     parents+=PathName (ambiguity) 'metadata' metadata=Map
 	 *     parents+=PathName (ambiguity) (rule end)
 	 *     parents+=PathName (ambiguity) concept=NamedObservableSemantics
 	 *     parents+=PathName (ambiguity) urn=Urn
-	 *     states+=ObservableSemantics (ambiguity) 'metadata' metadata=Metadata
+	 *     states+=ObservableSemantics (ambiguity) 'metadata' metadata=Map
 	 *     states+=ObservableSemantics (ambiguity) (rule end)
 	 *     states+=ObservableSemantics (ambiguity) concept=NamedObservableSemantics
 	 *     states+=ObservableSemantics (ambiguity) urn=Urn
@@ -881,7 +896,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     actions+=ActionSpecification (ambiguity) accessor=Function
 	 *     concept=NamedObservableSemantics (ambiguity) accessor=Function
 	 *     docstring=STRING (ambiguity) accessor=Function
-	 *     metadata=Metadata (ambiguity) accessor=Function
+	 *     metadata=Map (ambiguity) accessor=Function
 	 *     observations+=ObserveStatementBody ')' (ambiguity) accessor=Function
 	 *     parents+=PathName (ambiguity) accessor=Function
 	 *     states+=ObservableSemantics (ambiguity) accessor=Function

@@ -8,7 +8,6 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.validation.KimValidator;
 import org.integratedmodelling.klab.utils.Parameters;
 
@@ -22,10 +21,11 @@ public class KimMetadata extends KimStatement implements IParameters<String> {
 	 */
 	protected Parameters<String> data;
 
-	public KimMetadata(Metadata statement, IKimStatement parent) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public KimMetadata(org.integratedmodelling.kim.kim.Map statement, IKimStatement parent) {
 		super(statement, parent);
-		this.data = Kim.INSTANCE.parseMetadata(statement,
-				Kim.INSTANCE.getNamespace(KimValidator.getNamespace(statement)));
+		this.data = new Parameters(Kim.INSTANCE.parseMap(statement,
+				Kim.INSTANCE.getNamespace(KimValidator.getNamespace(statement))));
 	}
 
 	public IParameters<String> getData() {

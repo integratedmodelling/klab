@@ -3,7 +3,8 @@ package org.integratedmodelling.klab.documentation;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
-import org.integratedmodelling.klab.documentation.DocumentationExtensions.Trigger;
+import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions;
+import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions.Trigger;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 
 public class DocumentationItem implements IDocumentationProvider.Item {

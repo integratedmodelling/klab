@@ -6,18 +6,46 @@
 @klab 0.10.0
 @version 0.10.0
 
-annotation table 
+annotation table for models
 	"Specify documentation objects that summarize results as tables, graphs or other elements. The objects
 	 can be added to documentation using @insert(id)."
 {
 	text id
 		"The identifier of the table produced. A subsequent @documentation item can then @insert(<id>) to add it."
 		
+	optional text title
+		"Title of the table. Use ${v} for template substitution from an application state or 
+		 optional parameters."
+		
 	optional enum when
 		"The moment when the table should be computed. By default is ondemand, which computes the
 		 table every time the report is generated."
-		values  initialization, ondemand, termination
+		values  start, ondemand, end
 		default ondemand
+		
+	optional value compare
+		"If true, tabulated values will be comparisons of the first and last timestep in the source data,
+		 according to row/column settings. If a list of values, the values are used as filters to decide
+		 what to compare (see documentation for splits)."	
+		
+	optional concept target
+		"The target concept whose values to tabulate. If it's an area or a duration, it will be matched
+		 to the context, otherwise to the observations made. The default is the main observable of the
+		 target model."
+		
+	optional value rows 
+		"A single map or a list of maps, each representing the definition of one or more rows in the table."
+
+	optional value columns 
+		"A single map or a list of maps, each representing the definition of one or more column in the table."
+		
+	optional value splits 
+		"A single value or a list of values representing filters to create different tables for
+		 subsets of the data. If values are interpretable as dates or time units, the splits will be 
+		 temporal. Otherwise they may be ranges or concept lists to filter the data. A special split 
+		 is the word 'other' to tabulate whatever wasn't filtered by the previous filters and 'total' to
+		 add the unfiltered table. The default value of splits is 'total'."
+		 
 }
 
 annotation graph 

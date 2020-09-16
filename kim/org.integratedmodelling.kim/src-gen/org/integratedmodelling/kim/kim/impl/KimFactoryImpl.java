@@ -33,7 +33,6 @@ import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.DefinitionBody;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.DocSelector;
-import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.FunctionOrID;
 import org.integratedmodelling.kim.kim.HeaderRow;
@@ -48,7 +47,6 @@ import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.LookupTable;
 import org.integratedmodelling.kim.kim.Map;
 import org.integratedmodelling.kim.kim.MapEntry;
-import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.ModelStatement;
@@ -167,8 +165,6 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
       case KimPackage.ANNOTATION: return createAnnotation();
       case KimPackage.LIST: return createList();
       case KimPackage.LITERAL: return createLiteral();
-      case KimPackage.METADATA: return createMetadata();
-      case KimPackage.DOCUMENTATION: return createDocumentation();
       case KimPackage.MAP: return createMap();
       case KimPackage.MAP_ENTRY: return createMapEntry();
       case KimPackage.DOC_SELECTOR: return createDocSelector();
@@ -716,30 +712,6 @@ public class KimFactoryImpl extends EFactoryImpl implements KimFactory
   {
     LiteralImpl literal = new LiteralImpl();
     return literal;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Metadata createMetadata()
-  {
-    MetadataImpl metadata = new MetadataImpl();
-    return metadata;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Documentation createDocumentation()
-  {
-    DocumentationImpl documentation = new DocumentationImpl();
-    return documentation;
   }
 
   /**
