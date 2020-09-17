@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.k;
+package org.integratedmodelling.klab.engine;
 
 import java.util.Arrays;
 import java.util.stream.StreamSupport;
@@ -22,12 +22,7 @@ import org.springframework.stereotype.Component;
 import org.springframework.web.client.RestTemplate;
 
 @Component
-@ComponentScan(basePackages = { "org.integratedmodelling.klab.engine.rest.security",
-		"org.integratedmodelling.klab.engine.rest.controllers.base",
-		"org.integratedmodelling.klab.engine.rest.controllers.engine",
-		"org.integratedmodelling.klab.engine.rest.controllers.network",
-		"org.integratedmodelling.klab.engine.rest.messaging",
-		"org.integratedmodelling.klab.engine.rest.controllers.resources" })
+@ComponentScan(basePackages = { "org.integratedmodelling.klab.engine.services",  "org.integratedmodelling.klab.engine.controllers"})
 public class EngineRunner implements ApplicationListener<ApplicationPreparedEvent>{
 
 
