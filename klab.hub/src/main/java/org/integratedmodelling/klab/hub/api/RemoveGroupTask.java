@@ -94,10 +94,4 @@ public class RemoveGroupTask extends ModifyGroupsTask{
 	protected TaskCommand getCommand() {
 		return command;
 	}
-	
-	@Override
-	public String getDescritpion() {
-		return "User "+ this.getUser() + " want to remove groups "+this.getRequestGroups();
-	}
-
 }

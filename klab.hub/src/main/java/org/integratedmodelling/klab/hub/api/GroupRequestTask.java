@@ -92,9 +92,4 @@ public class GroupRequestTask extends ModifyGroupsTask{
 	protected TaskCommand getCommand() {
 		return command;
 	}
-
-	@Override
-	public String toString() {
-		return "User "+ this.getUser() + " request groups "+this.getRequestGroups();
-	}
 }

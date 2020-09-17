@@ -134,10 +134,4 @@ public class CreateGroupTask extends Task{
 	public void setType() {
 		this.setType(TaskType.createGroup);
 	}
-	
-	@Override
-	public String getDescritpion() {
-		return "User "+ this.getUser() + " want to create group "+ this.getGroupName();
-	}
-
 }

@@ -56,10 +56,6 @@ public abstract class Task {
     @Transient
     private TaskType type;
     
-    @JsonInclude()
-    @Transient
-    private String descritpion;
-    
     protected Task() {
     	this(null, null);
     }
@@ -227,18 +223,4 @@ public abstract class Task {
 	 */
 	public abstract void setType();
 
-	/**
-	 * @return the descritpion
-	 */
-	public String getDescritpion() {
-		return this.getType().name();
-	}
-
-	/**
-	 * @param descritpion the descritpion to set
-	 */
-	public void setDescritpion(String descritpion) {
-		this.descritpion = descritpion;
-	}
-	
 }
