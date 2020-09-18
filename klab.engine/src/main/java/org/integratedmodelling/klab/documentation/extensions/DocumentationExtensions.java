@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.documentation.extensions;
 
+import java.util.Map;
+
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -42,22 +44,23 @@ public enum DocumentationExtensions {
 	 * @param definition
 	 * @param scope
 	 */
-	public Trigger validate(IAnnotation definition, IRuntimeScope scope) {
+	public Annotation validate(IAnnotation definition, IRuntimeScope scope) {
 
 		boolean ok = false;
+		Annotation ret = null;
 		for (Annotation a : Annotation.values()) {
 			if (a.name().equals(definition.getName())) {
-				ok = true;
+				ret = a;
 				break;
 			}
 		}
 
-		if (ok) {
-			Trigger ret = Trigger.ondemand;
+		if (ret != null) {
+			Trigger trigger = Trigger.ondemand;
 			String when = definition.get("when", String.class);
 			if (when != null) {
 				try {
-					ret = Trigger.valueOf(when);
+					trigger = Trigger.valueOf(when);
 				} catch (IllegalArgumentException e) {
 					throw new KlabValidationException(e);
 				}
@@ -66,20 +69,19 @@ public enum DocumentationExtensions {
 			/*
 			 * TODO more validation vs. context
 			 */
-
 			return ret;
 		}
 		return null;
 	}
 
-	public String compute(IAnnotation definition, IRuntimeScope scope, IObservable target) {
-		switch (definition.getName()) {
-		case "table":
+	public String compute(Annotation type, Map<?,?> definition, IRuntimeScope scope, IObservable target) {
+		switch (type) {
+		case table:
 			return new TableDocumentationExtension(definition, target, scope).compile();
-		case "graph":
+		case graph:
 			return new GraphDocumentationExtension(definition, target, scope).compile();
 		}
-		return "**UNIMPLEMENTED DOCUMENTATION EXTENSION " + definition.getName() + "**";
+		return "**UNIMPLEMENTED DOCUMENTATION EXTENSION " + type + "**";
 	}
 
 }

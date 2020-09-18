@@ -6,9 +6,32 @@
 @klab 0.10.0
 @version 0.10.0
 
+annotation documented for models, definitions
+	"Documentation for each model is tied to phases of execution and is written as a template, which is 
+     computed at run time and used to assemble the final contextualization report using the provenance
+     diagram as a guide. It is kept in a separate, hidden file; the ID specified here ties a model to
+     its documentation in the corresponding file. The k.LAB IDE automatically manages the editing and 
+     maintenance of documentation."
+{
+	text 'value' 
+		"An identifier that specifies the documentation for this model. It is needed to avoid confusion
+         if model names change due to changing observables."
+         
+    optional value tables 
+    	"Pass one or a list of table definitions previously created using a 'define' statement. The tables
+    	 can then be inserted in the documentation with the ID specified in the definition. This is alternative
+    	 to using the @table annotation when tables must be reused or clutter the model statements."
+
+    optional value graphs 
+    	"Pass one or a list of graph definitions previously created using a 'define' statement. The graphs
+    	 can then be inserted in the documentation with the ID specified in the definition. This is alternative
+    	 to using the @graph annotation when graphs must be reused or clutter the model statements."
+}
+
 annotation table for models
 	"Specify documentation objects that summarize results as tables, graphs or other elements. The objects
-	 can be added to documentation using @insert(id)."
+	 can be added to documentation using @insert(id). See the k.LAB documentation for the definition of rows and
+	 columns."
 {
 	text id
 		"The identifier of the table produced. A subsequent @documentation item can then @insert(<id>) to add it."
@@ -28,16 +51,15 @@ annotation table for models
 		 according to row/column settings. If a list of values, the values are used as filters to decide
 		 what to compare (see documentation for splits)."	
 		
-	optional concept target
-		"The target concept whose values to tabulate. If it's an area or a duration, it will be matched
-		 to the context, otherwise to the observations made. The default is the main observable of the
-		 target model."
-		
 	optional value rows 
 		"A single map or a list of maps, each representing the definition of one or more rows in the table."
 
 	optional value columns 
 		"A single map or a list of maps, each representing the definition of one or more column in the table."
+		
+	optional text sheet
+		"If provided, defines the name of the Excel sheet where this table or set of tables will be 
+		 saved when exported to Excel."	
 		
 	optional value splits 
 		"A single value or a list of values representing filters to create different tables for
@@ -48,7 +70,7 @@ annotation table for models
 		 
 }
 
-annotation graph 
+annotation graph for models
 	"Specify documentation objects that summarize results as tables, graphs or other elements. The objects
 	 can be added to documentation using @insert(id)."
 {
@@ -61,3 +83,4 @@ annotation graph
 		values  initialization, ondemand, termination
 		default ondemand
 }
+

@@ -7,10 +7,8 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
@@ -28,6 +26,7 @@ import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.IObserver;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IAnnotationService;

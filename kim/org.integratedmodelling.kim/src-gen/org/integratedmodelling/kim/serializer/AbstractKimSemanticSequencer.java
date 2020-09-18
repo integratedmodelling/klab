@@ -498,14 +498,14 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         metadata=Map | 
 	 *                         properties+=PropertyStatement
 	 *                     )? 
-	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
-	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
 	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
+	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
 	 *                     (implications+=Implication implications+=Implication*)? 
 	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
-	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
-	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
@@ -673,10 +673,10 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -704,10 +704,10 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
@@ -1399,7 +1399,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     ParameterList returns ParameterList
 	 *
 	 * Constraint:
-	 *     ((pairs+=KeyValuePair pairs+=KeyValuePair*) | (singleValue+=ValueWithIdAndConcept singleValue+=ValueWithIdAndConcept*))
+	 *     ((pairs+=KeyValuePair pairs+=KeyValuePair*) | (singleValue+=ValueWithIdAndConcept (singleValue+=ValueWithIdAndConcept | pairs+=KeyValuePair)*))
 	 */
 	protected void sequence_ParameterList(ISerializationContext context, ParameterList semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

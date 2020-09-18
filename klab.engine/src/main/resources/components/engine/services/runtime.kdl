@@ -67,18 +67,6 @@ annotation 'parameter' for models
     	 false."
 }
 
-annotation documented for models, definitions
-	"Documentation for each model is tied to phases of execution and is written as a template, which is 
-     computed at run time and used to assemble the final contextualization report using the provenance
-     diagram as a guide. It is kept in a separate, hidden file; the ID specified here ties a model to
-     its documentation in the corresponding file. The k.LAB IDE automatically manages the editing and 
-     maintenance of documentation."
-{
-	text 'value' 
-		"An identifier that specifies the documentation for this model. It is needed to avoid confusion
-         if model names change due to changing observables."
-}
-
 /**
  * Deprecation
  */

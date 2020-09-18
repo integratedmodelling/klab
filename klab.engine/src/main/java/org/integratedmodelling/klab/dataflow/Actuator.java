@@ -68,6 +68,7 @@ import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.documentation.DocumentationItem;
 import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions;
+import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions.Annotation;
 import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -523,15 +524,18 @@ public class Actuator implements IActuator {
 
 		if (model != null) {
 			/*
-			 * notify to the report all model annotations that will create documentation items.
+			 * notify to the report all model annotations that will create documentation
+			 * items.
 			 */
 			for (IAnnotation annotation : model.getAnnotations()) {
-				if (DocumentationExtensions.INSTANCE.validate(annotation, runtimeContext) != null) {
-					((Report)runtimeContext.getReport()).addTaggedText(new DocumentationItem(annotation, runtimeContext, this.observable));
+				Annotation ctype = DocumentationExtensions.INSTANCE.validate(annotation, runtimeContext);
+				if (ctype != null) {
+					((Report) runtimeContext.getReport())
+							.addTaggedText(new DocumentationItem(ctype, annotation, runtimeContext, this.observable));
 				}
 			}
 		}
-		
+
 		/*
 		 * If we're not importing a previously computed result, put outputs in product
 		 * list and create configurations if any.
@@ -1441,6 +1445,7 @@ public class Actuator implements IActuator {
 		 * templates.
 		 */
 		for (IDocumentation doc : documentation) {
+			doc.instrumentReport(context.getReport(), observable, context);
 			for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
 				((Report) context.getReport()).include(template, context);
 			}

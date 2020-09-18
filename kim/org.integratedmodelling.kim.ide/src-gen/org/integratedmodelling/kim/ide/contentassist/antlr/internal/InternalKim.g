@@ -5959,6 +5959,27 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+rule__ParameterList__Alternatives_1_1_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getParameterListAccess().getSingleValueAssignment_1_1_1_0()); }
+		(rule__ParameterList__SingleValueAssignment_1_1_1_0)
+		{ after(grammarAccess.getParameterListAccess().getSingleValueAssignment_1_1_1_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getParameterListAccess().getPairsAssignment_1_1_1_1()); }
+		(rule__ParameterList__PairsAssignment_1_1_1_1)
+		{ after(grammarAccess.getParameterListAccess().getPairsAssignment_1_1_1_1()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 rule__ValueWithIdAndConcept__Alternatives
 	@init {
 		int stackSize = keepStackSize();
@@ -29030,9 +29051,9 @@ rule__ParameterList__Group_1_1__1__Impl
 	}
 :
 (
-	{ before(grammarAccess.getParameterListAccess().getSingleValueAssignment_1_1_1()); }
-	(rule__ParameterList__SingleValueAssignment_1_1_1)
-	{ after(grammarAccess.getParameterListAccess().getSingleValueAssignment_1_1_1()); }
+	{ before(grammarAccess.getParameterListAccess().getAlternatives_1_1_1()); }
+	(rule__ParameterList__Alternatives_1_1_1)
+	{ after(grammarAccess.getParameterListAccess().getAlternatives_1_1_1()); }
 )
 ;
 finally {
@@ -43048,15 +43069,30 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__ParameterList__SingleValueAssignment_1_1_1
+rule__ParameterList__SingleValueAssignment_1_1_1_0
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getParameterListAccess().getSingleValueValueWithIdAndConceptParserRuleCall_1_1_1_0()); }
+		{ before(grammarAccess.getParameterListAccess().getSingleValueValueWithIdAndConceptParserRuleCall_1_1_1_0_0()); }
 		ruleValueWithIdAndConcept
-		{ after(grammarAccess.getParameterListAccess().getSingleValueValueWithIdAndConceptParserRuleCall_1_1_1_0()); }
+		{ after(grammarAccess.getParameterListAccess().getSingleValueValueWithIdAndConceptParserRuleCall_1_1_1_0_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ParameterList__PairsAssignment_1_1_1_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getParameterListAccess().getPairsKeyValuePairParserRuleCall_1_1_1_1_0()); }
+		ruleKeyValuePair
+		{ after(grammarAccess.getParameterListAccess().getPairsKeyValuePairParserRuleCall_1_1_1_1_0()); }
 	)
 ;
 finally {

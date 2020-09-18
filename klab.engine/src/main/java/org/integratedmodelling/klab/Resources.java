@@ -105,6 +105,7 @@ import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.ZipUtils;
 import org.springframework.core.io.ClassPathResource;
@@ -901,9 +902,9 @@ public enum Resources implements IResourceService {
 		}
 	}
 
-
 	/**
 	 * Only works for a flat hierarchy!
+	 * 
 	 * @param resourcePattern
 	 * @param destinationDirectory
 	 */
@@ -1201,16 +1202,19 @@ public enum Resources implements IResourceService {
 
 		if (serverId == null) {
 
-			String ns = Path.getLeading(urn, '.');
-			String ob = Path.getLast(urn, '.');
-			if (ns == null && SemanticType.validate(urn)) {
+			String ob = null;
+			INamespace namespace = null;
+			if (StringUtil.countMatches(urn, ":") == 1 && SemanticType.validate(urn)) {
 				SemanticType st = new SemanticType(urn);
-				ns = st.getNamespace();
 				ob = st.getName();
+				namespace = Namespaces.INSTANCE.getNamespace(st.getNamespace());
+			} else {
+				ob = Path.getLast(urn, '.');
+				String ns = Path.getLeading(urn, '.');
+				namespace = Namespaces.INSTANCE.getNamespace(ns);
 			}
 
-			INamespace namespace = Namespaces.INSTANCE.getNamespace(ns);
-			if (namespace == null) {
+			if (namespace == null || ob == null) {
 				return null;
 			}
 

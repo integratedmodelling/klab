@@ -4,6 +4,7 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Version;
@@ -13,9 +14,12 @@ import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions;
 import org.integratedmodelling.klab.engine.resources.Project;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -28,12 +32,15 @@ import org.integratedmodelling.klab.utils.Utils;
  */
 public class Documentation implements IDocumentation {
 
-	// this goes in each template expression as a comment so it can be recognized at compilation and the
+	// this goes in each template expression as a comment so it can be recognized at
+	// compilation and the
 	// recontextualization features turned off, to avoid conflicts in the use of @
 	public static final String COMMENT_TEXT = "k.LAB template v" + Version.CURRENT;
-	
+
 	List<TemplateImpl> templates = new ArrayList<>();
 	List<ProjectReferences> referencesAvailable = new ArrayList<>();
+	List<Map<?, ?>> tables = new ArrayList<>();
+	List<Map<?, ?>> graphs = new ArrayList<>();
 
 	// managed externally, needed to communicate changes
 	private File docfile;
@@ -48,8 +55,40 @@ public class Documentation implements IDocumentation {
 		return new Documentation();
 	}
 
-	private Documentation() {}
-	
+	private Documentation() {
+	}
+
+	/**
+	 * Create a shallow copy of this documentation with any table, graph or other
+	 * components added as per the passed annotation.
+	 * 
+	 * @param original
+	 * @param configuration
+	 * @return
+	 */
+	public Documentation configure(Map<?,?> configuration) {
+		Documentation ret = new Documentation(this);
+		if (configuration.containsKey("tables")) {
+			if (configuration.get("tables") instanceof List) {
+				for (Object o : ((List<?>)configuration.get("tables"))) {
+					ret.tables.add((Map<?,?>)o);
+				}
+			} else if (configuration.get("tables") instanceof Map) {
+				ret.tables.add((Map<?,?>)configuration.get("tables"));
+			}
+		}
+		if (configuration.containsKey("graphs")) {
+			if (configuration.get("graphs") instanceof List) {
+				for (Object o : ((List<?>)configuration.get("graphs"))) {
+					ret.tables.add((Map<?,?>)o);
+				}
+			} else if (configuration.get("graphs") instanceof Map) {
+				ret.tables.add((Map<?,?>)configuration.get("graphs"));
+			}
+		}
+		return ret;
+	}
+
 	/**
 	 * Read and compile all the templates corresponding to the passed docId.
 	 * 
@@ -68,7 +107,13 @@ public class Documentation implements IDocumentation {
 				this.templates.add(template);
 			}
 		}
-		this.referencesAvailable.addAll(((Project)project).collectReferences());
+		this.referencesAvailable.addAll(((Project) project).collectReferences());
+	}
+
+	public Documentation(Documentation documentation) {
+		templates.addAll(documentation.templates);
+		docfile = documentation.docfile;
+		referencesAvailable.addAll(documentation.referencesAvailable);
 	}
 
 	public List<String> getErrors() {
@@ -127,8 +172,8 @@ public class Documentation implements IDocumentation {
 			 * pretty complex but the alternative is to write docs in horrible formatting
 			 * throughout the k.IM code.
 			 * 
-			 * CHECK should be unnecessary now that docs are edited separately, but keep this
-			 * for some time just in case.
+			 * CHECK should be unnecessary now that docs are edited separately, but keep
+			 * this for some time just in case.
 			 */
 //			String lead = StringUtils.getLeadingWhitespace(text);
 //			int lnlns = StringUtils.countMatches(lead, "\n");
@@ -174,24 +219,24 @@ public class Documentation implements IDocumentation {
 		@Override
 		public void compile(IReport.Section sect, IContextualizationScope context) {
 
-			ReportSection current = (ReportSection)sect;
+			ReportSection current = (ReportSection) sect;
 
 			for (SectionImpl section : sections) {
 
-			    // TODO switch to matching the enum
+				// TODO switch to matching the enum
 				if (section.getType() == SectionImpl.Type.REPORT_CALL) {
 					switch (section.method) {
 					case "section":
-						current = ((ReportSection)sect).getChild(current, section.body);
+						current = ((ReportSection) sect).getChild(current, section.body);
 						break;
 					case "tag":
 						current.tag(processArguments(section.body, 1), Documentation.this, context);
 						break;
-                    case "describe":
-                        current.describe(processArguments(section.body, 1), Documentation.this, context);
-                        break;
+					case "describe":
+						current.describe(processArguments(section.body, 1), Documentation.this, context);
+						break;
 					case "link":
-                    case "reference":
+					case "reference":
 						current.link(processArguments(section.body, 1), Documentation.this, context);
 						break;
 					case "table":
@@ -209,53 +254,53 @@ public class Documentation implements IDocumentation {
 					case "insert":
 						current.insert(processArguments(section.body, 1), Documentation.this, context);
 						break;
-                    case "require":
-                        current.getReport().require(processArguments(section.body, 2), Documentation.this, context);
-                        break;	
-                    case "import":
-                        String id = processArguments(section.body, 1).toString();
-                        IDocumentationProvider.Item arg = current.getReport().getTaggedText(id);
-                        if (arg != null) {
-                            current.getReport().notifyUsedTag(id);
-                            current.body.append(arg.getMarkdownContents());
-                        }
-                        break;  
-                    // next for later, allow unsupported use. Need scopes for these to work.
-                    case "if":
-                    	// open conditional scope, set active to result of expression
-                        break;
-                    case "elseif":
-                        break;
-                    case "endif":
-                    	// close conditional scope
-                        break;
-                    case "else":
-                        break;
-                    case "for":
-                    	// open iterator scope
-                        break;
-                    case "while":
-                    	// open iterator scope
-                        break;
-                    case "endfor":
-                    	// exit innermost iterator scope
-                        break;
-                    case "endwhile":
-                    	// exit innermost iterator scope
-                        break;
-                    case "break":
-                    	// exit innermost iterator scope
-                    	break;
-                    case "define":
-                        break;
-                    case "undefine":
-                        break;
-                    case "ifdef":
-                        break;
-                    case "ifndef":
-                        break;
-                    default:
-                         throw new KlabValidationException("unknown documentation directive @" + section.method);
+					case "require":
+						current.getReport().require(processArguments(section.body, 2), Documentation.this, context);
+						break;
+					case "import":
+						String id = processArguments(section.body, 1).toString();
+						IDocumentationProvider.Item arg = current.getReport().getTaggedText(id);
+						if (arg != null) {
+							current.getReport().notifyUsedTag(id);
+							current.body.append(arg.getMarkdownContents());
+						}
+						break;
+					// next for later, allow unsupported use. Need scopes for these to work.
+					case "if":
+						// open conditional scope, set active to result of expression
+						break;
+					case "elseif":
+						break;
+					case "endif":
+						// close conditional scope
+						break;
+					case "else":
+						break;
+					case "for":
+						// open iterator scope
+						break;
+					case "while":
+						// open iterator scope
+						break;
+					case "endfor":
+						// exit innermost iterator scope
+						break;
+					case "endwhile":
+						// exit innermost iterator scope
+						break;
+					case "break":
+						// exit innermost iterator scope
+						break;
+					case "define":
+						break;
+					case "undefine":
+						break;
+					case "ifdef":
+						break;
+					case "ifndef":
+						break;
+					default:
+						throw new KlabValidationException("unknown documentation directive @" + section.method);
 					}
 
 				} else if (section.getType() == SectionImpl.Type.TEMPLATE_STRING
@@ -285,23 +330,23 @@ public class Documentation implements IDocumentation {
 		 * @return
 		 */
 		public Object[] processArguments(String body, int argCount) {
-		    
-		    List<Object> arguments = new ArrayList<>();
-		    int offset = 0;
-		    while (arguments.size() < argCount) {
-		        int nextComma = body.indexOf(',', offset + 1);
-		        if (nextComma < 0) {
-		            break;
-		        }
-		        String arg = body.substring(offset, nextComma);
-		        arguments.add(Utils.asPOD(arg.trim()));
-		        offset = nextComma + 1;
-		    }
-		    
-		    if (offset < body.length()) {
-		        arguments.add(body.substring(offset).trim());
-		    }
-		    
+
+			List<Object> arguments = new ArrayList<>();
+			int offset = 0;
+			while (arguments.size() < argCount) {
+				int nextComma = body.indexOf(',', offset + 1);
+				if (nextComma < 0) {
+					break;
+				}
+				String arg = body.substring(offset, nextComma);
+				arguments.add(Utils.asPOD(arg.trim()));
+				offset = nextComma + 1;
+			}
+
+			if (offset < body.length()) {
+				arguments.add(body.substring(offset).trim());
+			}
+
 			return arguments.toArray();
 		}
 	}
@@ -401,25 +446,35 @@ public class Documentation implements IDocumentation {
 		return docfile;
 	}
 
-    public static String stringify(String body) {
-        if ((body.startsWith("\"") && body.endsWith("\"")) || ((body.startsWith("'") && body.endsWith("'")))) {
-            return body;
-        }
-        return "\"" + Escape.forDoubleQuotedString(body, false) + "\"";
-    }
+	public static String stringify(String body) {
+		if ((body.startsWith("\"") && body.endsWith("\"")) || ((body.startsWith("'") && body.endsWith("'")))) {
+			return body;
+		}
+		return "\"" + Escape.forDoubleQuotedString(body, false) + "\"";
+	}
 
-    public void setDocfile(File docfile) {
+	public void setDocfile(File docfile) {
 		this.docfile = docfile;
 	}
 
-    public Reference getReference(String id) {
-        for (ProjectReferences refs : this.referencesAvailable) {
-            Reference ref = refs.get(id);
-            if (ref != null) {
-                return ref;
-            }
-        }
-        return null;
-    }
+	public Reference getReference(String id) {
+		for (ProjectReferences refs : this.referencesAvailable) {
+			Reference ref = refs.get(id);
+			if (ref != null) {
+				return ref;
+			}
+		}
+		return null;
+	}
+
+	@Override
+	public void instrumentReport(IReport report, IObservable target, IContextualizationScope scope) {
+		for (Map<?,?> table : this.tables) {
+			((Report)report).addTaggedText(new DocumentationItem(DocumentationExtensions.Annotation.table, table, (IRuntimeScope)scope, target));
+		}
+		for (Map<?,?> graph : this.graphs) {
+			((Report)report).addTaggedText(new DocumentationItem(DocumentationExtensions.Annotation.graph, graph, (IRuntimeScope)scope, target));
+		}
+	}
 
 }

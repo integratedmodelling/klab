@@ -11,24 +11,58 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.data.classification.Classifier;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
+/**
+ * A table has a set of column and row specs, specified either individually or by expanding 
+ * one or more specs based on the classifiers adopted. It has a target observation that selects
+ * the artifact whose computation triggers the table generation, and an optional trigger that
+ * defines when the table can be generated (after initialization of the target, after scheduling of
+ * all temporal transitions, or every time the report is generated, which is the default).
+ * 
+ * Once expanded, a set of row and column descriptors is built. Each descriptor has:
+ * 
+ * Columns contain:
+ * 
+ * 0. A target observable that selects the observation to be summarized in the column. If not given, 
+ *    the target is the target observation for the table. The observable can be given as a concept
+ *    or as a string if units, ranges or currencies must be specified.
+ *    
+ * 1. An optional classifier to select a subset of the observation. If the classifier is an 
+ *    abstract concept, it is expanded into as many columns as there are concrete values for it, 
+ *    optionally at specified levels (by default the "leaf" values are considered).
+ * 
+ * Rows have:
+ * 
+ * 0. A target, which selects an observation to use as classifier;
+ * 1. a FILTER, which may be a concept (to match a category observation), a range or other
+ *    numeric classifier (to match quantities), a subject or event (to match their area, time
+ *    or duration in the column observations), nothing (to match everything), or ....
+ * 2. An optional expression, to modify the value once a match is positive;
+ * 3. An aggregator, to collect all the values that match the filter. If unspecified, the
+ *    aggregation will be defined by the target observable in the column and its units.
+ *   
+ *    
+ * 
+ * @author Ferd
+ *
+ */
 public class TableDocumentationExtension {
 
-	private IAnnotation definition;
+	private Map<?, ?> definition;
 	private IRuntimeScope scope;
 	private IObservable target;
 	/*
@@ -67,6 +101,30 @@ public class TableDocumentationExtension {
 	};
 
 	/**
+	 * Views are for comparison - there is either one view or two (maybe more); a
+	 * column or row can be specific of a given view or dedicated to collecting and
+	 * comparing all of them, but never both at the same time. Views may be defined
+	 * in terms of time points, space coverages or (later) predicates or
+	 * interpretations.
+	 * 
+	 * The view should expose the iterator for the aggregatable values represented
+	 * by it.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	class View {
+		IScale scale;
+
+		public Iterable<ILocator> states() {
+			if (scale != null) {
+				return scale;
+			}
+			return null;
+		}
+	}
+
+	/**
 	 * Descriptor for one (or more if distributed) column
 	 * 
 	 * @author Ferd
@@ -74,8 +132,6 @@ public class TableDocumentationExtension {
 	 */
 	class Column {
 
-		// TODO the target
-		boolean repeats = false;
 		List<String> dependencies = new ArrayList<>();
 		// not null if the column describes a specific observation or aggregates by it.
 		IObservation observation;
@@ -85,11 +141,15 @@ public class TableDocumentationExtension {
 		public String label;
 		public Classifier classifier;
 		public Object group;
+		public TargetType targetType = TargetType.QUALITY;
 
 	}
 
 	/**
-	 * Descriptor for one (or more if distributed) row
+	 * Descriptor for one (or more if distributed) row. TODO lots of info are in
+	 * common with column, and in fact the two are basically interchangeable, except
+	 * the aggregators for the cells are only attributed to rows (but they don't
+	 * have to). So maybe we should improve the data model and use a common class.
 	 * 
 	 * @author Ferd
 	 *
@@ -100,7 +160,6 @@ public class TableDocumentationExtension {
 		IExpression expression;
 		// not null if the row describes a specific observation or aggregates by it.
 		IObservation observation;
-		boolean repeats = false;
 		// there may be several titles, potentially nulls. The index in the array is the
 		// level of
 		// indentation.
@@ -110,6 +169,9 @@ public class TableDocumentationExtension {
 		// if this is null, the row is a separator, potentially with titles and
 		// formatting
 		Aggregator[] aggregators;
+		public Object group;
+		public Object classifier;
+		public Object filter;
 	}
 
 	/**
@@ -125,7 +187,7 @@ public class TableDocumentationExtension {
 
 	}
 
-	public TableDocumentationExtension(IAnnotation definition, IObservable target, IRuntimeScope scope) {
+	public TableDocumentationExtension(Map<?, ?> definition, IObservable target, IRuntimeScope scope) {
 
 		this.definition = definition;
 		this.scope = scope;
@@ -134,9 +196,17 @@ public class TableDocumentationExtension {
 		parseRows(definition.get("rows"));
 		this.splits = parseSplits(definition.get("splits"));
 
+		buildDependencies();
+
 		// TODO check out locators. We may be splitting by temporal extent with no
 		// comparison, splitting with
 		// comparison, not splitting with comparison, not splitting with no comparison.
+	}
+
+	private void buildDependencies() {
+		// TODO create dependency structure between rows and between columns. We don't
+		// support cell definitions so no cell-scoped dependencies.
+
 	}
 
 	private void parseRows(Object object) {
@@ -198,12 +268,13 @@ public class TableDocumentationExtension {
 				if (classifier.is(Type.COUNTABLE)) {
 					// TODO build columns based on the contextualized artifacts for the concept
 				} else {
+					Object group = map.get("group") instanceof IKimConcept
+							? Concepts.INSTANCE.declare((IKimConcept) map.get("group"))
+							: null;
 					for (IConcept concept : expandClassifier(classifier, map.get("downto"))) {
 						// add as many newColumns as needed
 						Column column = newColumn(concept, map);
-						column.group = map.get("group") instanceof IKimConcept
-								? Concepts.INSTANCE.declare((IKimConcept) map.get("group"))
-								: null;
+						column.group = group;
 						this.columns.put(column.id, column);
 					}
 				}
@@ -212,6 +283,7 @@ public class TableDocumentationExtension {
 				column.group = map.get("group");
 				this.columns.put(column.id, column);
 			}
+
 		}
 	}
 
@@ -228,6 +300,23 @@ public class TableDocumentationExtension {
 			ret.id = theRest.get("name").toString();
 		} else {
 			ret.id = "c" + (this.columns.size() + 1);
+		}
+
+		if (theRest.get("target") instanceof IKimConcept) {
+			IConcept trg = Concepts.INSTANCE.declare((IKimConcept) theRest.get("target"));
+			if (trg != null && trg.is(Concepts.c(NS.CORE_AREA))) {
+				ret.targetType = TargetType.AREA;
+			} else if (trg != null && trg.is(Concepts.c(NS.CORE_DURATION))) {
+				ret.targetType = TargetType.DURATION;
+			} else if (trg != null && trg.is(Concepts.c(NS.CORE_COUNT))) {
+				ret.targetType = TargetType.NUMEROSITY;
+			}
+		} else if (theRest.containsKey("target")) {
+			throw new KlabValidationException("Table definition: unknown target: " + definition.get("target"));
+		}
+
+		if (theRest.get("compute") instanceof IKimExpression) {
+			parseExpression((IKimExpression) theRest.get("compute"), ret);
 		}
 
 		this.nonEmptyColumns++;
@@ -255,6 +344,9 @@ public class TableDocumentationExtension {
 
 		Row ret = new Row();
 
+		ret.classifier = classifier;
+		ret.filter = theRest.get("filter");
+
 		if (theRest.containsKey("title")) {
 			List<String> titles = new ArrayList<>();
 			if (theRest.get("title") instanceof Collection) {
@@ -281,24 +373,49 @@ public class TableDocumentationExtension {
 			ret.id = "r" + (this.rows.size() + 1);
 		}
 
+		if (theRest.get("compute") instanceof IKimExpression) {
+			parseExpression((IKimExpression) theRest.get("compute"), ret);
+		}
+
 		// add enough aggregators to match the number of non-empty columns.
 		ret.aggregators = new Aggregator[this.nonEmptyColumns];
 		return ret;
+	}
+
+	private void parseExpression(IKimExpression iKimExpression, Object ret) {
+		// TODO compile expression; set dependencies
+
 	}
 
 	/*
 	 * A row spec may turn into >1 rows
 	 */
 	private void parseRow(Map<?, ?> map) {
-		// TODO Auto-generated method stub
-		if (map.get("classifier") instanceof IKimConcept) {
-			IConcept classifier = Concepts.INSTANCE.declare((IKimConcept) map.get("classifier"));
-			if (classifier.is(Type.COUNTABLE)) {
-				// TODO build columns based on the contextualized artifacts for the concept
+
+		if (map.containsKey("classifier")) {
+			if (map.get("classifier") instanceof IKimConcept) {
+				IConcept classifier = Concepts.INSTANCE.declare((IKimConcept) map.get("classifier"));
+				if (classifier.is(Type.COUNTABLE)) {
+					// TODO build columns based on the contextualized artifacts for the concept
+				} else {
+					for (IConcept concept : expandClassifier(classifier, map.get("downto"))) {
+						// add as many newColumns as needed
+						Row row = newRow(concept, map);
+						row.group = map.get("group") instanceof IKimConcept
+								? Concepts.INSTANCE.declare((IKimConcept) map.get("group"))
+								: null;
+						this.rows.put(row.id, row);
+					}
+				}
 			} else {
-				// TODO row cells will summarize the classified values that match a classifier
-				// works just like columns
+				Row row = newRow(map.get("classifier"), map);
+				row.group = map.get("group");
+				this.rows.put(row.id, row);
 			}
+		} else {
+			Row row = newRow(null, map);
+			row.group = map.get("group");
+			this.rows.put(row.id, row);
 		}
 	}
 
@@ -354,7 +471,11 @@ public class TableDocumentationExtension {
 			// target = {count of} {Income of} CommercialRelationship between countries on
 			// both dimensions - semantics can be used effectively here.
 		} else {
-			for (IScale scale : getScales()) {
+
+			/*
+			 * these should be Phases, which may imply a scale
+			 */
+			for (View view : getViews()) {
 
 				/**
 				 * If !aggregate, we're at the first pass and accumulating values for comparison
@@ -364,15 +485,31 @@ public class TableDocumentationExtension {
 				/*
 				 * foreach value in state being valued
 				 */
-				for (ILocator locator : scale) {
+				for (ILocator locator : view.states()) {
 
-					Object value = null; // TODO either the target observable or whatever other concept we are
-					// looking at, area, duration of the timestep, attribute, whatever.
-
+					/*
+					 * If the target observable is not the target observation, check for area or
+					 * duration
+					 */
 					/*
 					 * foreach column in dependency order
 					 */
 					for (Column column : sortColumns()) {
+
+						Object value = null; // TODO either the target observable or whatever other concept we are
+						// looking at, area, duration of the timestep, attribute, whatever.
+						switch (column.targetType) {
+						case AREA:
+							break;
+						case DURATION:
+							break;
+						case NUMEROSITY:
+							break;
+						case QUALITY:
+							break;
+						default:
+							break;
+						}
 
 						/*
 						 * check if value applies. Columns w/o classifier that are not separators match
@@ -412,14 +549,21 @@ public class TableDocumentationExtension {
 		return "<b>UNIMPLEMENTED TABLE EXTENSION</b>";
 	}
 
-	private Iterable<IScale> getScales() {
+	/**
+	 * TODO make this getViews() instead. Each view
+	 * 
+	 * @return
+	 */
+	private Iterable<View> getViews() {
 
 		IScale refScale = scope.getScale();
 
 		if (locators.isEmpty()) {
-			return Collections.singletonList((IScale) (refScale.isTemporallyDistributed()
+			View ret = new View();
+			ret.scale = (IScale) (refScale.isTemporallyDistributed()
 					? refScale.at(refScale.getTime().getExtent(refScale.getTime().size() - 1))
-					: refScale));
+					: refScale);
+			return Collections.singletonList(ret);
 		}
 		return null;
 	}

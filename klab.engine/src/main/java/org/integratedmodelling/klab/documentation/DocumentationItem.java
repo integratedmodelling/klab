@@ -1,8 +1,9 @@
 package org.integratedmodelling.klab.documentation;
 
+import java.util.Map;
+
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions;
 import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions.Trigger;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -14,13 +15,15 @@ public class DocumentationItem implements IDocumentationProvider.Item {
 	private String compiled = null;
 	private String id;
 	private String title;
+	private DocumentationExtensions.Annotation type;
 	IRuntimeScope scope;
 	IObservable target;
-	IAnnotation definition;
+	Map<?,?> definition;
 	
-	public DocumentationItem(IAnnotation definition, IRuntimeScope context, IObservable target) {
-		this.id = definition.get("id", String.class);
-		this.title = definition.get("title", "");
+	public DocumentationItem(DocumentationExtensions.Annotation type, Map<?,?> definition, IRuntimeScope context, IObservable target) {
+		this.id = definition.containsKey("id") ? definition.get("id").toString() : null;
+		this.title = definition.containsKey("title") ? definition.get("title").toString() : null;
+		this.type = type;
 		this.scope = context;
 		this.target = target;
 		this.definition = definition;
@@ -50,7 +53,7 @@ public class DocumentationItem implements IDocumentationProvider.Item {
 				return "";
 			}
 		
-			ret = DocumentationExtensions.INSTANCE.compute(definition, scope, target);
+			ret = DocumentationExtensions.INSTANCE.compute(type, definition, scope, target);
 			
 			/*
 			 * save for later only if not on demand
@@ -61,6 +64,10 @@ public class DocumentationItem implements IDocumentationProvider.Item {
 			
 		}
 		return ret;
+	}
+
+	public DocumentationExtensions.Annotation getType() {
+		return type;
 	}
 
 }

@@ -8368,16 +8368,19 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cSingleValueValueWithIdAndConceptParserRuleCall_1_0_0 = (RuleCall)cSingleValueAssignment_1_0.eContents().get(0);
 		private final Group cGroup_1_1 = (Group)cGroup_1.eContents().get(1);
 		private final Keyword cCommaKeyword_1_1_0 = (Keyword)cGroup_1_1.eContents().get(0);
-		private final Assignment cSingleValueAssignment_1_1_1 = (Assignment)cGroup_1_1.eContents().get(1);
-		private final RuleCall cSingleValueValueWithIdAndConceptParserRuleCall_1_1_1_0 = (RuleCall)cSingleValueAssignment_1_1_1.eContents().get(0);
+		private final Alternatives cAlternatives_1_1_1 = (Alternatives)cGroup_1_1.eContents().get(1);
+		private final Assignment cSingleValueAssignment_1_1_1_0 = (Assignment)cAlternatives_1_1_1.eContents().get(0);
+		private final RuleCall cSingleValueValueWithIdAndConceptParserRuleCall_1_1_1_0_0 = (RuleCall)cSingleValueAssignment_1_1_1_0.eContents().get(0);
+		private final Assignment cPairsAssignment_1_1_1_1 = (Assignment)cAlternatives_1_1_1.eContents().get(1);
+		private final RuleCall cPairsKeyValuePairParserRuleCall_1_1_1_1_0 = (RuleCall)cPairsAssignment_1_1_1_1.eContents().get(0);
 		
 		//ParameterList:
 		//	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* | singleValue+=ValueWithIdAndConcept (=> ','
-		//	singleValue+=ValueWithIdAndConcept)*;
+		//	(singleValue+=ValueWithIdAndConcept | pairs+=KeyValuePair))*;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* | singleValue+=ValueWithIdAndConcept (=> ','
-		//singleValue+=ValueWithIdAndConcept)*
+		//(singleValue+=ValueWithIdAndConcept | pairs+=KeyValuePair))*
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)*
@@ -8401,7 +8404,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//KeyValuePair
 		public RuleCall getPairsKeyValuePairParserRuleCall_0_1_1_0() { return cPairsKeyValuePairParserRuleCall_0_1_1_0; }
 		
-		//singleValue+=ValueWithIdAndConcept (=> ',' singleValue+=ValueWithIdAndConcept)*
+		//singleValue+=ValueWithIdAndConcept (=> ',' (singleValue+=ValueWithIdAndConcept | pairs+=KeyValuePair))*
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//singleValue+=ValueWithIdAndConcept
@@ -8410,17 +8413,26 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ValueWithIdAndConcept
 		public RuleCall getSingleValueValueWithIdAndConceptParserRuleCall_1_0_0() { return cSingleValueValueWithIdAndConceptParserRuleCall_1_0_0; }
 		
-		//(=> ',' singleValue+=ValueWithIdAndConcept)*
+		//(=> ',' (singleValue+=ValueWithIdAndConcept | pairs+=KeyValuePair))*
 		public Group getGroup_1_1() { return cGroup_1_1; }
 		
 		//=> ','
 		public Keyword getCommaKeyword_1_1_0() { return cCommaKeyword_1_1_0; }
 		
+		//(singleValue+=ValueWithIdAndConcept | pairs+=KeyValuePair)
+		public Alternatives getAlternatives_1_1_1() { return cAlternatives_1_1_1; }
+		
 		//singleValue+=ValueWithIdAndConcept
-		public Assignment getSingleValueAssignment_1_1_1() { return cSingleValueAssignment_1_1_1; }
+		public Assignment getSingleValueAssignment_1_1_1_0() { return cSingleValueAssignment_1_1_1_0; }
 		
 		//ValueWithIdAndConcept
-		public RuleCall getSingleValueValueWithIdAndConceptParserRuleCall_1_1_1_0() { return cSingleValueValueWithIdAndConceptParserRuleCall_1_1_1_0; }
+		public RuleCall getSingleValueValueWithIdAndConceptParserRuleCall_1_1_1_0_0() { return cSingleValueValueWithIdAndConceptParserRuleCall_1_1_1_0_0; }
+		
+		//pairs+=KeyValuePair
+		public Assignment getPairsAssignment_1_1_1_1() { return cPairsAssignment_1_1_1_1; }
+		
+		//KeyValuePair
+		public RuleCall getPairsKeyValuePairParserRuleCall_1_1_1_1_0() { return cPairsKeyValuePairParserRuleCall_1_1_1_1_0; }
 	}
 	public class ValueWithIdAndConceptElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.ValueWithIdAndConcept");
@@ -11537,7 +11549,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//ParameterList:
 	//	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* | singleValue+=ValueWithIdAndConcept (=> ','
-	//	singleValue+=ValueWithIdAndConcept)*;
+	//	(singleValue+=ValueWithIdAndConcept | pairs+=KeyValuePair))*;
 	public ParameterListElements getParameterListAccess() {
 		return pParameterList;
 	}

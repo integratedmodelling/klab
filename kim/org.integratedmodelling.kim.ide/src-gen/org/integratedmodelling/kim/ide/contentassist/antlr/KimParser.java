@@ -174,6 +174,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getKeyValuePairAccess().getNameAlternatives_0_0(), "rule__KeyValuePair__NameAlternatives_0_0");
 			builder.put(grammarAccess.getKeyValuePairAccess().getAlternatives_1(), "rule__KeyValuePair__Alternatives_1");
 			builder.put(grammarAccess.getParameterListAccess().getAlternatives(), "rule__ParameterList__Alternatives");
+			builder.put(grammarAccess.getParameterListAccess().getAlternatives_1_1_1(), "rule__ParameterList__Alternatives_1_1_1");
 			builder.put(grammarAccess.getValueWithIdAndConceptAccess().getAlternatives(), "rule__ValueWithIdAndConcept__Alternatives");
 			builder.put(grammarAccess.getValueWithIdAndConceptAccess().getIdAlternatives_4_0(), "rule__ValueWithIdAndConcept__IdAlternatives_4_0");
 			builder.put(grammarAccess.getValueAccess().getAlternatives(), "rule__Value__Alternatives");
@@ -1079,7 +1080,8 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getParameterListAccess().getPairsAssignment_0_0(), "rule__ParameterList__PairsAssignment_0_0");
 			builder.put(grammarAccess.getParameterListAccess().getPairsAssignment_0_1_1(), "rule__ParameterList__PairsAssignment_0_1_1");
 			builder.put(grammarAccess.getParameterListAccess().getSingleValueAssignment_1_0(), "rule__ParameterList__SingleValueAssignment_1_0");
-			builder.put(grammarAccess.getParameterListAccess().getSingleValueAssignment_1_1_1(), "rule__ParameterList__SingleValueAssignment_1_1_1");
+			builder.put(grammarAccess.getParameterListAccess().getSingleValueAssignment_1_1_1_0(), "rule__ParameterList__SingleValueAssignment_1_1_1_0");
+			builder.put(grammarAccess.getParameterListAccess().getPairsAssignment_1_1_1_1(), "rule__ParameterList__PairsAssignment_1_1_1_1");
 			builder.put(grammarAccess.getValueWithIdAndConceptAccess().getConceptAssignment_0(), "rule__ValueWithIdAndConcept__ConceptAssignment_0");
 			builder.put(grammarAccess.getValueWithIdAndConceptAccess().getFunctionAssignment_1(), "rule__ValueWithIdAndConcept__FunctionAssignment_1");
 			builder.put(grammarAccess.getValueWithIdAndConceptAccess().getLiteralAssignment_2(), "rule__ValueWithIdAndConcept__LiteralAssignment_2");
