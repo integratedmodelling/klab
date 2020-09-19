@@ -590,11 +590,40 @@ public enum Kim {
 			// this intercepts any camelcase, so ensure that only fully qualified concepts
 			// are parsed
 			if (value.toString().contains(":")) {
-				return declareConcept(value.getConcept());
+
+				if (value.getConcept() instanceof ObservableSemantics) {
+					ObservableSemantics observable = (ObservableSemantics) value.getConcept();
+					if (observable.getUnit() == null && observable.getCurrency() == null
+							&& observable.getValueOperators().isEmpty() && !observable.isGeneric()
+							&& !observable.isGlobal()) {
+						return declareConcept(observable.getDeclaration());
+					} else {
+						return declareObservable(observable);
+					}
+				}
+
 			} else
 				return value.toString();
 		} else if (value.getExpr() != null) {
 			return new KimExpression(value.getExpr(), null);
+		} else if (value.getOp() != null) {
+			
+			Number op = parseNumber(value.getExpression());
+
+			if (value.getOp().isGe()) {
+				return new Range(op.doubleValue(), null, false, true);
+			} else if (value.getOp().isGt()) {
+				return new Range(op.doubleValue(), null, true, true);
+			} else if (value.getOp().isLe()) {
+				return new Range(null, op.doubleValue(), true, false);
+			} else if (value.getOp().isLt()) {
+				return new Range(null, op.doubleValue(), true, true);
+			} else if (value.getOp().isEq()) {
+				return op.doubleValue();
+			} else if (value.getOp().isNe()) {
+				// exclusive x-x range means != x
+				return new Range(op.doubleValue(), op.doubleValue(), true, true);
+			}
 		}
 
 		return null;
@@ -655,7 +684,8 @@ public enum Kim {
 			} else if (statement.getOp().isEq()) {
 				return op.doubleValue();
 			} else if (statement.getOp().isNe()) {
-				// shouldn't happen, shouldn't throw
+				// exclusive x-x range means != x
+				return new Range(op.doubleValue(), op.doubleValue(), true, true);
 			}
 		}
 		if (statement.getConcept() != null) {

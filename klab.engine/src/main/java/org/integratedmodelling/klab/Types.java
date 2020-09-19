@@ -182,7 +182,7 @@ public enum Types implements ITypeService {
 	}
 
 	/**
-	 * Get all concrete children for a type as a flat hierarchy. 
+	 * Get all concrete children for a type as a flat list.
 	 * 
 	 * @param baseType
 	 * @return
@@ -190,16 +190,33 @@ public enum Types implements ITypeService {
 	public List<IConcept> getConcreteChildren(IConcept baseType) {
 
 		List<IConcept> ret = new ArrayList<>();
-		getConcreteChildren(baseType, ret);
+		getConcreteChildren(baseType, ret, false);
 		return ret;
 	}
-	
-	private void getConcreteChildren(IConcept baseType, List<IConcept> ret) {
-		if (!baseType.isAbstract()) {
+
+	/**
+	 * Get all concrete children for a type that have no further children as a flat
+	 * list.
+	 * 
+	 * @param baseType
+	 * @return
+	 */
+	public List<IConcept> getConcreteLeaves(IConcept baseType) {
+
+		List<IConcept> ret = new ArrayList<>();
+		getConcreteChildren(baseType, ret, true);
+		return ret;
+	}
+
+	private void getConcreteChildren(IConcept baseType, List<IConcept> ret, boolean mustBeLeaf) {
+
+		Collection<IConcept> children = baseType.getChildren();
+
+		if (!baseType.isAbstract() && (!mustBeLeaf || children.isEmpty())) {
 			ret.add(baseType);
 		}
-		for (IConcept child : baseType.getChildren()) {
-			getConcreteChildren(child, ret);
+		for (IConcept child : children) {
+			getConcreteChildren(child, ret, mustBeLeaf);
 		}
 	}
 
@@ -293,11 +310,11 @@ public enum Types implements ITypeService {
 
 			if (o != null && !(o instanceof Double && Double.isNaN((Double) o))) {
 				if (o instanceof List) {
-					
-					for (Object oo : ((List<?>)o)) {
+
+					for (Object oo : ((List<?>) o)) {
 						ret.addClassifier(Classifier.create(oo), (IConcept) c);
 					}
-					
+
 				} else {
 					ret.addClassifier(Classifier.create(o), (IConcept) c);
 				}

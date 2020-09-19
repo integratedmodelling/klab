@@ -69,6 +69,9 @@ public class ResourceSorter {
 			if (resource.getContents() != null && resource.getContents().size() > 0) {
 				Model model = (Model) resource.getContents().get(0);
 				Namespace ns = model.getNamespace();
+				if (ns == null) {
+					return;
+				}
 				String nsName = Kim.getNamespaceId(ns);
 				graph.addNode(nsName);
 				resources.put(nsName, resource);

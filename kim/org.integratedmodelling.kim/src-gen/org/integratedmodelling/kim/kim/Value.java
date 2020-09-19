@@ -25,6 +25,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getDate <em>Date</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getMap <em>Map</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getQuantity <em>Quantity</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Value#getOp <em>Op</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Value#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#isNull <em>Null</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getLanguage <em>Language</em>}</li>
  * </ul>
@@ -40,12 +42,12 @@ public interface Value extends EObject
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Concept</em>' containment reference.
-   * @see #setConcept(ConceptDeclaration)
+   * @see #setConcept(EObject)
    * @see org.integratedmodelling.kim.kim.KimPackage#getValue_Concept()
    * @model containment="true"
    * @generated
    */
-  ConceptDeclaration getConcept();
+  EObject getConcept();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kim.kim.Value#getConcept <em>Concept</em>}' containment reference.
@@ -55,7 +57,7 @@ public interface Value extends EObject
    * @see #getConcept()
    * @generated
    */
-  void setConcept(ConceptDeclaration value);
+  void setConcept(EObject value);
 
   /**
    * Returns the value of the '<em><b>Function</b></em>' containment reference.
@@ -254,6 +256,50 @@ public interface Value extends EObject
    * @generated
    */
   void setQuantity(Quantity value);
+
+  /**
+   * Returns the value of the '<em><b>Op</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Op</em>' containment reference.
+   * @see #setOp(REL_OPERATOR)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getValue_Op()
+   * @model containment="true"
+   * @generated
+   */
+  REL_OPERATOR getOp();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Value#getOp <em>Op</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Op</em>' containment reference.
+   * @see #getOp()
+   * @generated
+   */
+  void setOp(REL_OPERATOR value);
+
+  /**
+   * Returns the value of the '<em><b>Expression</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Expression</em>' containment reference.
+   * @see #setExpression(org.integratedmodelling.kim.kim.Number)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getValue_Expression()
+   * @model containment="true"
+   * @generated
+   */
+  org.integratedmodelling.kim.kim.Number getExpression();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Value#getExpression <em>Expression</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Expression</em>' containment reference.
+   * @see #getExpression()
+   * @generated
+   */
+  void setExpression(org.integratedmodelling.kim.kim.Number value);
 
   /**
    * Returns the value of the '<em><b>Null</b></em>' attribute.

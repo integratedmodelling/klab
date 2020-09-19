@@ -290,13 +290,22 @@ public interface KimPackage extends EPackage
   int DEFINITION_BODY = 4;
 
   /**
+   * The feature id for the '<em><b>Define Class</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DEFINITION_BODY__DEFINE_CLASS = 0;
+
+  /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DEFINITION_BODY__NAME = 0;
+  int DEFINITION_BODY__NAME = 1;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -305,7 +314,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEFINITION_BODY__VALUE = 1;
+  int DEFINITION_BODY__VALUE = 2;
 
   /**
    * The number of structural features of the '<em>Definition Body</em>' class.
@@ -314,7 +323,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEFINITION_BODY_FEATURE_COUNT = 2;
+  int DEFINITION_BODY_FEATURE_COUNT = 3;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl <em>Model Body Statement</em>}' class.
@@ -1894,13 +1903,22 @@ public interface KimPackage extends EPackage
   int OBSERVABLE_SEMANTICS__NAME = 10;
 
   /**
+   * The feature id for the '<em><b>Global</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE_SEMANTICS__GLOBAL = 11;
+
+  /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__ANNOTATIONS = 11;
+  int OBSERVABLE_SEMANTICS__ANNOTATIONS = 12;
 
   /**
    * The feature id for the '<em><b>Condition</b></em>' attribute.
@@ -1909,7 +1927,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__CONDITION = 12;
+  int OBSERVABLE_SEMANTICS__CONDITION = 13;
 
   /**
    * The number of structural features of the '<em>Observable Semantics</em>' class.
@@ -1918,7 +1936,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 13;
+  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 14;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl <em>Value Operator</em>}' class.
@@ -4031,13 +4049,31 @@ public interface KimPackage extends EPackage
   int VALUE__QUANTITY = 9;
 
   /**
+   * The feature id for the '<em><b>Op</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__OP = 10;
+
+  /**
+   * The feature id for the '<em><b>Expression</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__EXPRESSION = 11;
+
+  /**
    * The feature id for the '<em><b>Null</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__NULL = 10;
+  int VALUE__NULL = 12;
 
   /**
    * The feature id for the '<em><b>Language</b></em>' attribute.
@@ -4046,7 +4082,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LANGUAGE = 11;
+  int VALUE__LANGUAGE = 13;
 
   /**
    * The number of structural features of the '<em>Value</em>' class.
@@ -4055,7 +4091,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 12;
+  int VALUE_FEATURE_COUNT = 14;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.FunctionImpl <em>Function</em>}' class.
@@ -4779,6 +4815,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EClass getDefinitionBody();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.DefinitionBody#getDefineClass <em>Define Class</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Define Class</em>'.
+   * @see org.integratedmodelling.kim.kim.DefinitionBody#getDefineClass()
+   * @see #getDefinitionBody()
+   * @generated
+   */
+  EAttribute getDefinitionBody_DefineClass();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.DefinitionBody#getName <em>Name</em>}'.
@@ -6475,6 +6522,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getObservableSemantics_Name();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ObservableSemantics#isGlobal <em>Global</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Global</em>'.
+   * @see org.integratedmodelling.kim.kim.ObservableSemantics#isGlobal()
+   * @see #getObservableSemantics()
+   * @generated
+   */
+  EAttribute getObservableSemantics_Global();
 
   /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getAnnotations <em>Annotations</em>}'.
@@ -8798,6 +8856,28 @@ public interface KimPackage extends EPackage
   EReference getValue_Quantity();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getOp <em>Op</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Op</em>'.
+   * @see org.integratedmodelling.kim.kim.Value#getOp()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Op();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getExpression <em>Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Expression</em>'.
+   * @see org.integratedmodelling.kim.kim.Value#getExpression()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Expression();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.Value#isNull <em>Null</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -9515,6 +9595,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EClass DEFINITION_BODY = eINSTANCE.getDefinitionBody();
+
+    /**
+     * The meta object literal for the '<em><b>Define Class</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DEFINITION_BODY__DEFINE_CLASS = eINSTANCE.getDefinitionBody_DefineClass();
 
     /**
      * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
@@ -10803,6 +10891,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute OBSERVABLE_SEMANTICS__NAME = eINSTANCE.getObservableSemantics_Name();
+
+    /**
+     * The meta object literal for the '<em><b>Global</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute OBSERVABLE_SEMANTICS__GLOBAL = eINSTANCE.getObservableSemantics_Global();
 
     /**
      * The meta object literal for the '<em><b>Annotations</b></em>' containment reference list feature.
@@ -12551,6 +12647,22 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference VALUE__QUANTITY = eINSTANCE.getValue_Quantity();
+
+    /**
+     * The meta object literal for the '<em><b>Op</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__OP = eINSTANCE.getValue_Op();
+
+    /**
+     * The meta object literal for the '<em><b>Expression</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__EXPRESSION = eINSTANCE.getValue_Expression();
 
     /**
      * The meta object literal for the '<em><b>Null</b></em>' attribute feature.

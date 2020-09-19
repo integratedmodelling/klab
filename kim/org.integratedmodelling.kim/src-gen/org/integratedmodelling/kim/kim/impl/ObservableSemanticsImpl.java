@@ -48,6 +48,7 @@ import org.integratedmodelling.kim.kim.ValueOperator;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getFrom <em>From</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getTo <em>To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#isGlobal <em>Global</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getCondition <em>Condition</em>}</li>
  * </ul>
@@ -205,6 +206,26 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * @ordered
    */
   protected String name = NAME_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isGlobal() <em>Global</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isGlobal()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean GLOBAL_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isGlobal() <em>Global</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isGlobal()
+   * @generated
+   * @ordered
+   */
+  protected boolean global = GLOBAL_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
@@ -678,6 +699,31 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * @generated
    */
   @Override
+  public boolean isGlobal()
+  {
+    return global;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setGlobal(boolean newGlobal)
+  {
+    boolean oldGlobal = global;
+    global = newGlobal;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__GLOBAL, oldGlobal, global));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EList<Annotation> getAnnotations()
   {
     if (annotations == null)
@@ -774,6 +820,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return getTo();
       case KimPackage.OBSERVABLE_SEMANTICS__NAME:
         return getName();
+      case KimPackage.OBSERVABLE_SEMANTICS__GLOBAL:
+        return isGlobal();
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         return getAnnotations();
       case KimPackage.OBSERVABLE_SEMANTICS__CONDITION:
@@ -826,6 +874,9 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__NAME:
         setName((String)newValue);
+        return;
+      case KimPackage.OBSERVABLE_SEMANTICS__GLOBAL:
+        setGlobal((Boolean)newValue);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         getAnnotations().clear();
@@ -881,6 +932,9 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__NAME:
         setName(NAME_EDEFAULT);
         return;
+      case KimPackage.OBSERVABLE_SEMANTICS__GLOBAL:
+        setGlobal(GLOBAL_EDEFAULT);
+        return;
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         getAnnotations().clear();
         return;
@@ -923,6 +977,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return to != null;
       case KimPackage.OBSERVABLE_SEMANTICS__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
+      case KimPackage.OBSERVABLE_SEMANTICS__GLOBAL:
+        return global != GLOBAL_EDEFAULT;
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         return annotations != null && !annotations.isEmpty();
       case KimPackage.OBSERVABLE_SEMANTICS__CONDITION:
@@ -950,6 +1006,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
     result.append(optional);
     result.append(", name: ");
     result.append(name);
+    result.append(", global: ");
+    result.append(global);
     result.append(", condition: ");
     result.append(condition);
     result.append(')');

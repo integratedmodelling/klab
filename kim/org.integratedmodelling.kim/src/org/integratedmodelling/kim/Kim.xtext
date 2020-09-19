@@ -32,7 +32,7 @@ DefineStatement:
 ;
 
 DefinitionBody:
-	name=UPPERCASE_ID 'as' value=Value
+	(defineClass=LOWERCASE_ID)? name=UPPERCASE_ID 'as' value=Value
 ;
 
 ModelBodyStatement:
@@ -325,6 +325,22 @@ ObservableSemantics:
 		(optional?='optional' | 'required')? &
 		(from=Number 'to' to=Number)? &
 		('named' name=(LOWERCASE_ID|STRING))?
+	);
+
+/*
+ * Used for constraints and values: has no value and admits the additional "all" qualifier; removes 'according to' but
+ * leaves value operators
+ */
+SimpleObservableSemantics returns ObservableSemantics:
+	(generic?='any' | global?='all')?
+	declaration=ConceptDeclaration
+	(
+		(
+			('in' (unit=Unit | currency=Currency)) |
+			('per' unit=Unit)
+		)? &
+		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+		(from=Number 'to' to=Number)? 
 	);
 
 ValueOperator:
@@ -775,7 +791,7 @@ ParameterList:
 ;
 
 ValueWithIdAndConcept returns Value:
-	concept=ConceptDeclaration |
+	concept=SimpleObservableSemantics |
 	function=Function |
 	literal=Literal |
 	expr=EXPR |
@@ -785,6 +801,7 @@ ValueWithIdAndConcept returns Value:
 	date=Date |
 	map=Map |
 	quantity=Quantity |
+	op=REL_OPERATOR expression=Number | 
 	null?='unknown';
 
 Value:

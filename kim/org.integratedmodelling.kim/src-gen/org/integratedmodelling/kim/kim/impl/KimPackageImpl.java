@@ -777,7 +777,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getDefinitionBody_Name()
+  public EAttribute getDefinitionBody_DefineClass()
   {
     return (EAttribute)definitionBodyEClass.getEStructuralFeatures().get(0);
   }
@@ -788,9 +788,20 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EAttribute getDefinitionBody_Name()
+  {
+    return (EAttribute)definitionBodyEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getDefinitionBody_Value()
   {
-    return (EReference)definitionBodyEClass.getEStructuralFeatures().get(1);
+    return (EReference)definitionBodyEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -2493,9 +2504,20 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EAttribute getObservableSemantics_Global()
+  {
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(11);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getObservableSemantics_Annotations()
   {
-    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(11);
+    return (EReference)observableSemanticsEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -2506,7 +2528,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getObservableSemantics_Condition()
   {
-    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)observableSemanticsEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -4836,9 +4858,31 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EReference getValue_Op()
+  {
+    return (EReference)valueEClass.getEStructuralFeatures().get(10);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getValue_Expression()
+  {
+    return (EReference)valueEClass.getEStructuralFeatures().get(11);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getValue_Null()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(10);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -4849,7 +4893,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getValue_Language()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(11);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -5414,6 +5458,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(defineStatementEClass, DEFINE_STATEMENT__DEFINE_BODY);
 
     definitionBodyEClass = createEClass(DEFINITION_BODY);
+    createEAttribute(definitionBodyEClass, DEFINITION_BODY__DEFINE_CLASS);
     createEAttribute(definitionBodyEClass, DEFINITION_BODY__NAME);
     createEReference(definitionBodyEClass, DEFINITION_BODY__VALUE);
 
@@ -5590,6 +5635,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__FROM);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__TO);
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__NAME);
+    createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__GLOBAL);
     createEReference(observableSemanticsEClass, OBSERVABLE_SEMANTICS__ANNOTATIONS);
     createEAttribute(observableSemanticsEClass, OBSERVABLE_SEMANTICS__CONDITION);
 
@@ -5825,6 +5871,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(valueEClass, VALUE__DATE);
     createEReference(valueEClass, VALUE__MAP);
     createEReference(valueEClass, VALUE__QUANTITY);
+    createEReference(valueEClass, VALUE__OP);
+    createEReference(valueEClass, VALUE__EXPRESSION);
     createEAttribute(valueEClass, VALUE__NULL);
     createEAttribute(valueEClass, VALUE__LANGUAGE);
 
@@ -5941,6 +5989,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getDefineStatement_DefineBody(), this.getDefinitionBody(), null, "defineBody", null, 0, 1, DefineStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(definitionBodyEClass, DefinitionBody.class, "DefinitionBody", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getDefinitionBody_DefineClass(), ecorePackage.getEString(), "defineClass", null, 0, 1, DefinitionBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDefinitionBody_Name(), ecorePackage.getEString(), "name", null, 0, 1, DefinitionBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getDefinitionBody_Value(), this.getValue(), null, "value", null, 0, 1, DefinitionBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -6117,6 +6166,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getObservableSemantics_From(), this.getNumber(), null, "from", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_To(), this.getNumber(), null, "to", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObservableSemantics_Name(), ecorePackage.getEString(), "name", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getObservableSemantics_Global(), ecorePackage.getEBoolean(), "global", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getObservableSemantics_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getObservableSemantics_Condition(), ecorePackage.getEString(), "condition", null, 0, 1, ObservableSemantics.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
@@ -6342,7 +6392,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getParameterList_SingleValue(), this.getValue(), null, "singleValue", null, 0, -1, ParameterList.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(valueEClass, Value.class, "Value", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getValue_Concept(), this.getConceptDeclaration(), null, "concept", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValue_Concept(), ecorePackage.getEObject(), null, "concept", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Function(), this.getFunction(), null, "function", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Literal(), this.getLiteral(), null, "literal", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Expr(), ecorePackage.getEString(), "expr", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -6352,6 +6402,8 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getValue_Date(), this.getDate(), null, "date", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Map(), this.getMap(), null, "map", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Quantity(), this.getQuantity(), null, "quantity", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValue_Op(), this.getREL_OPERATOR(), null, "op", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValue_Expression(), this.getNumber(), null, "expression", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Null(), ecorePackage.getEBoolean(), "null", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Language(), ecorePackage.getEString(), "language", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

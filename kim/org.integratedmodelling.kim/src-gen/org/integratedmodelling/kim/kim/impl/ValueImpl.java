@@ -8,12 +8,12 @@ import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
 
 import org.eclipse.emf.ecore.EClass;
+import org.eclipse.emf.ecore.EObject;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Date;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.KimPackage;
@@ -22,6 +22,7 @@ import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.LookupTable;
 import org.integratedmodelling.kim.kim.Map;
 import org.integratedmodelling.kim.kim.Quantity;
+import org.integratedmodelling.kim.kim.REL_OPERATOR;
 import org.integratedmodelling.kim.kim.Value;
 
 /**
@@ -42,6 +43,8 @@ import org.integratedmodelling.kim.kim.Value;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getDate <em>Date</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getMap <em>Map</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getQuantity <em>Quantity</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getOp <em>Op</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#isNull <em>Null</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getLanguage <em>Language</em>}</li>
  * </ul>
@@ -58,7 +61,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    * @ordered
    */
-  protected ConceptDeclaration concept;
+  protected EObject concept;
 
   /**
    * The cached value of the '{@link #getFunction() <em>Function</em>}' containment reference.
@@ -171,6 +174,26 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected Quantity quantity;
 
   /**
+   * The cached value of the '{@link #getOp() <em>Op</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getOp()
+   * @generated
+   * @ordered
+   */
+  protected REL_OPERATOR op;
+
+  /**
+   * The cached value of the '{@link #getExpression() <em>Expression</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getExpression()
+   * @generated
+   * @ordered
+   */
+  protected org.integratedmodelling.kim.kim.Number expression;
+
+  /**
    * The default value of the '{@link #isNull() <em>Null</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -237,7 +260,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
-  public ConceptDeclaration getConcept()
+  public EObject getConcept()
   {
     return concept;
   }
@@ -247,9 +270,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetConcept(ConceptDeclaration newConcept, NotificationChain msgs)
+  public NotificationChain basicSetConcept(EObject newConcept, NotificationChain msgs)
   {
-    ConceptDeclaration oldConcept = concept;
+    EObject oldConcept = concept;
     concept = newConcept;
     if (eNotificationRequired())
     {
@@ -265,7 +288,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
-  public void setConcept(ConceptDeclaration newConcept)
+  public void setConcept(EObject newConcept)
   {
     if (newConcept != concept)
     {
@@ -687,6 +710,106 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
+  public REL_OPERATOR getOp()
+  {
+    return op;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetOp(REL_OPERATOR newOp, NotificationChain msgs)
+  {
+    REL_OPERATOR oldOp = op;
+    op = newOp;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__OP, oldOp, newOp);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setOp(REL_OPERATOR newOp)
+  {
+    if (newOp != op)
+    {
+      NotificationChain msgs = null;
+      if (op != null)
+        msgs = ((InternalEObject)op).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__OP, null, msgs);
+      if (newOp != null)
+        msgs = ((InternalEObject)newOp).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__OP, null, msgs);
+      msgs = basicSetOp(newOp, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__OP, newOp, newOp));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public org.integratedmodelling.kim.kim.Number getExpression()
+  {
+    return expression;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetExpression(org.integratedmodelling.kim.kim.Number newExpression, NotificationChain msgs)
+  {
+    org.integratedmodelling.kim.kim.Number oldExpression = expression;
+    expression = newExpression;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__EXPRESSION, oldExpression, newExpression);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setExpression(org.integratedmodelling.kim.kim.Number newExpression)
+  {
+    if (newExpression != expression)
+    {
+      NotificationChain msgs = null;
+      if (expression != null)
+        msgs = ((InternalEObject)expression).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__EXPRESSION, null, msgs);
+      if (newExpression != null)
+        msgs = ((InternalEObject)newExpression).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__EXPRESSION, null, msgs);
+      msgs = basicSetExpression(newExpression, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__EXPRESSION, newExpression, newExpression));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public boolean isNull()
   {
     return null_;
@@ -757,6 +880,10 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return basicSetMap(null, msgs);
       case KimPackage.VALUE__QUANTITY:
         return basicSetQuantity(null, msgs);
+      case KimPackage.VALUE__OP:
+        return basicSetOp(null, msgs);
+      case KimPackage.VALUE__EXPRESSION:
+        return basicSetExpression(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -791,6 +918,10 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getMap();
       case KimPackage.VALUE__QUANTITY:
         return getQuantity();
+      case KimPackage.VALUE__OP:
+        return getOp();
+      case KimPackage.VALUE__EXPRESSION:
+        return getExpression();
       case KimPackage.VALUE__NULL:
         return isNull();
       case KimPackage.VALUE__LANGUAGE:
@@ -810,7 +941,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     switch (featureID)
     {
       case KimPackage.VALUE__CONCEPT:
-        setConcept((ConceptDeclaration)newValue);
+        setConcept((EObject)newValue);
         return;
       case KimPackage.VALUE__FUNCTION:
         setFunction((Function)newValue);
@@ -839,6 +970,12 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KimPackage.VALUE__QUANTITY:
         setQuantity((Quantity)newValue);
         return;
+      case KimPackage.VALUE__OP:
+        setOp((REL_OPERATOR)newValue);
+        return;
+      case KimPackage.VALUE__EXPRESSION:
+        setExpression((org.integratedmodelling.kim.kim.Number)newValue);
+        return;
       case KimPackage.VALUE__NULL:
         setNull((Boolean)newValue);
         return;
@@ -860,7 +997,7 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     switch (featureID)
     {
       case KimPackage.VALUE__CONCEPT:
-        setConcept((ConceptDeclaration)null);
+        setConcept((EObject)null);
         return;
       case KimPackage.VALUE__FUNCTION:
         setFunction((Function)null);
@@ -888,6 +1025,12 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KimPackage.VALUE__QUANTITY:
         setQuantity((Quantity)null);
+        return;
+      case KimPackage.VALUE__OP:
+        setOp((REL_OPERATOR)null);
+        return;
+      case KimPackage.VALUE__EXPRESSION:
+        setExpression((org.integratedmodelling.kim.kim.Number)null);
         return;
       case KimPackage.VALUE__NULL:
         setNull(NULL_EDEFAULT);
@@ -929,6 +1072,10 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return map != null;
       case KimPackage.VALUE__QUANTITY:
         return quantity != null;
+      case KimPackage.VALUE__OP:
+        return op != null;
+      case KimPackage.VALUE__EXPRESSION:
+        return expression != null;
       case KimPackage.VALUE__NULL:
         return null_ != NULL_EDEFAULT;
       case KimPackage.VALUE__LANGUAGE:

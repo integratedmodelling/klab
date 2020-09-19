@@ -15,6 +15,7 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -77,7 +78,7 @@ public class TableDocumentationExtension {
 	boolean purgeZeroColumns = true;
 	private int nonEmptyColumns;
 	private int nScales = 1;
-
+	
 	/**
 	 * Locators to describe the state (linked to 'at' or to 'compare'). If no
 	 * locators, we describe the latest state ('at: end'). If two, we compare two
@@ -85,13 +86,7 @@ public class TableDocumentationExtension {
 	 * comparisons.
 	 */
 	private List<ILocator> locators = new ArrayList<>();
-
-	/**
-	 * Locators if aggregation "by feature" has been requested. These should be
-	 * observation groups and their iteration will provide columns, rows or both.
-	 */
-	private List<IObservation> aggregators = new ArrayList<>();
-
+	
 	enum TargetType {
 		AREA, DURATION, QUALITY, NUMEROSITY
 	}
@@ -124,6 +119,24 @@ public class TableDocumentationExtension {
 		}
 	}
 
+	/**
+	 * Each row and column has a filter to select the subset of the data space they apply to. The simplest
+	 * filter is the all-pass or empty filter. Others may match values (through a classifier) or direct
+	 * observations (through their ID).
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	class Filter {
+		
+		boolean allPass;
+		IClassifier classifier;
+		
+		
+	}
+
+
+	
 	/**
 	 * Descriptor for one (or more if distributed) column
 	 * 
@@ -335,7 +348,7 @@ public class TableDocumentationExtension {
 							Types.INSTANCE.getDetailLevel(declared, downto.toString()));
 				}
 			}
-			return Types.INSTANCE.getConcreteChildren(declared);
+			return Types.INSTANCE.getConcreteLeaves(declared);
 		}
 		return Collections.singletonList(declared);
 	}

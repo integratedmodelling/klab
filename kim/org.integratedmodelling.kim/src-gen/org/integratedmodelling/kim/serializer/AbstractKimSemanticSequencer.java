@@ -266,6 +266,10 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 					sequence_ObservableSemantics(context, (ObservableSemantics) semanticObject); 
 					return; 
 				}
+				else if (rule == grammarAccess.getSimpleObservableSemanticsRule()) {
+					sequence_SimpleObservableSemantics(context, (ObservableSemantics) semanticObject); 
+					return; 
+				}
 				else break;
 			case KimPackage.OBSERVE_STATEMENT:
 				sequence_ObserveStatement(context, (ObserveStatement) semanticObject); 
@@ -498,29 +502,29 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                         metadata=Map | 
 	 *                         properties+=PropertyStatement
 	 *                     )? 
-	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
-	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (actuallyInheritedTraits+=ConceptDeclaration actuallyInheritedTraits+=ConceptDeclaration*)? 
+	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
+	 *                     (implications+=Implication implications+=Implication*)? 
 	 *                     (conferredTraits+=ConceptDeclaration conferredTraits+=ConceptDeclaration*)? 
 	 *                     (creates+=ConceptDeclaration creates+=ConceptDeclaration*)? 
+	 *                     (requirements+=IdentityRequirement requirements+=IdentityRequirement*)? 
 	 *                     (qualitiesAffected+=ConceptDeclaration qualitiesAffected+=ConceptDeclaration*)? 
-	 *                     (implications+=Implication implications+=Implication*)? 
-	 *                     (contextualizedTraits+=ObservableSemantics contextualizedTraits+=ObservableSemantics*)? 
+	 *                     (traitTargets+=ApplicableTarget traitTargets+=ApplicableTarget*)? 
 	 *                     (domains+=SimpleConceptDeclaration ranges+=SimpleConceptDeclaration)? 
 	 *                     (disjoint?='disjoint'? children+=ChildConcept children+=ChildConcept*)? 
 	 *                     (specific?='exposing' contextualizesTraits+=ConceptDeclaration contextualizesTraits+=ConceptDeclaration*)? 
 	 *                     ((constituent?='constituent' | constitutes?='consists')? partOf?='of' whole=ConceptDeclaration)? 
-	 *                     (
-	 *                         alias?='equals'? 
-	 *                         coreConcept?='core'? 
-	 *                         (nothing?='nothing' | (parents+=ConceptDeclaration ((connectors+=',' | connectors+='or' | connectors+='and') parents+=ConceptDeclaration)*))
-	 *                     )? 
 	 *                     (
 	 *                         roles+=ConceptDeclaration 
 	 *                         roles+=ConceptDeclaration* 
 	 *                         (targetObservables+=ConceptDeclaration targetObservables+=ConceptDeclaration*)? 
 	 *                         restrictedObservables+=ConceptDeclaration 
 	 *                         restrictedObservables+=ConceptDeclaration*
+	 *                     )? 
+	 *                     (
+	 *                         alias?='equals'? 
+	 *                         coreConcept?='core'? 
+	 *                         (nothing?='nothing' | (parents+=ConceptDeclaration ((connectors+=',' | connectors+='or' | connectors+='and') parents+=ConceptDeclaration)*))
 	 *                     )?
 	 *                 )+
 	 *             ) | 
@@ -672,11 +676,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -703,11 +707,11 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
@@ -884,19 +888,10 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *     DefinitionBody returns DefinitionBody
 	 *
 	 * Constraint:
-	 *     (name=UPPERCASE_ID value=Value)
+	 *     (defineClass=LOWERCASE_ID? name=UPPERCASE_ID value=Value)
 	 */
 	protected void sequence_DefinitionBody(ISerializationContext context, DefinitionBody semanticObject) {
-		if (errorAcceptor != null) {
-			if (transientValues.isValueTransient(semanticObject, KimPackage.Literals.DEFINITION_BODY__NAME) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KimPackage.Literals.DEFINITION_BODY__NAME));
-			if (transientValues.isValueTransient(semanticObject, KimPackage.Literals.DEFINITION_BODY__VALUE) == ValueTransient.YES)
-				errorAcceptor.accept(diagnosticProvider.createFeatureValueMissing(semanticObject, KimPackage.Literals.DEFINITION_BODY__VALUE));
-		}
-		SequenceFeeder feeder = createSequencerFeeder(context, semanticObject);
-		feeder.accept(grammarAccess.getDefinitionBodyAccess().getNameUPPERCASE_IDTerminalRuleCall_0_0(), semanticObject.getName());
-		feeder.accept(grammarAccess.getDefinitionBodyAccess().getValueValueParserRuleCall_2_0(), semanticObject.getValue());
-		feeder.finish();
+		genericSequencer.createSequence(context, semanticObject);
 	}
 	
 	
@@ -1479,6 +1474,22 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	
 	/**
 	 * Contexts:
+	 *     SimpleObservableSemantics returns ObservableSemantics
+	 *
+	 * Constraint:
+	 *     (
+	 *         (generic?='any' | global?='all')? 
+	 *         declaration=ConceptDeclaration 
+	 *         ((unit=Unit | currency=Currency | unit=Unit)? (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? (from=Number to=Number)?)+
+	 *     )
+	 */
+	protected void sequence_SimpleObservableSemantics(ISerializationContext context, ObservableSemantics semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     Statement returns Statement
 	 *
 	 * Constraint:
@@ -1658,7 +1669,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *
 	 * Constraint:
 	 *     (
-	 *         concept=ConceptDeclaration | 
+	 *         concept=SimpleObservableSemantics | 
 	 *         function=Function | 
 	 *         literal=Literal | 
 	 *         expr=EXPR | 
@@ -1671,6 +1682,7 @@ public abstract class AbstractKimSemanticSequencer extends AbstractDelegatingSem
 	 *         date=Date | 
 	 *         map=Map | 
 	 *         quantity=Quantity | 
+	 *         (op=REL_OPERATOR expression=Number) | 
 	 *         null?='unknown'
 	 *     )
 	 */
