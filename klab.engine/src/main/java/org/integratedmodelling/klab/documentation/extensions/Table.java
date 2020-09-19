@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.documentation.extensions;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -11,25 +10,17 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
-import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimExpression;
-import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.klab.Concepts;
-import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.data.Aggregator;
-import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.extensions.TableDocumentationExtension.Column;
-import org.integratedmodelling.klab.documentation.extensions.TableDocumentationExtension.TargetType;
-import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -132,7 +123,19 @@ public class Table {
 	 * Filter to select which dimensions are added to when scanning the target
 	 * observations. One or more of the selectors can be non-null.
 	 */
-	class Filter {
+	static class Filter {
+
+		static Filter universal() {
+			Filter ret = new Filter();
+			ret.universal = true;
+			return ret;
+		}
+
+		/*
+		 * Universal filter matches everything except nodata. Specified by no spec,
+		 * cleaner with an actual object.
+		 */
+		boolean universal = false;
 
 		/**
 		 * Time selector if we only accumulate values in specified times.
@@ -159,6 +162,10 @@ public class Table {
 		IExpression expression;
 
 		boolean matches(Object value, ILocator locator) {
+			if (universal) {
+				return true;
+			}
+			// TODO
 			return false;
 		}
 	}
@@ -170,7 +177,7 @@ public class Table {
 	 * @author Ferd
 	 *
 	 */
-	class Dimension {
+	static class Dimension {
 
 		/**
 		 * Mandatory id, either assigned in configuration or attributed using the scheme
@@ -215,6 +222,8 @@ public class Table {
 		 * Any symbols used in computations, to compute dependencies.
 		 */
 		Set<String> symbols = new HashSet<>();
+
+		boolean separator = false;
 	}
 
 	/**
@@ -270,19 +279,19 @@ public class Table {
 	public Table(Map<?, ?> definition, IObservable target, IRuntimeScope scope) {
 		this.scope = scope;
 		this.target = target;
-		this.activeColumns = parseDimension(definition.get("columns"), this.columns);
-		this.activeRows = parseDimension(definition.get("rows"), this.rows);
+		this.activeColumns = parseDimension(definition.get("columns"), this.columns, "c");
+		this.activeRows = parseDimension(definition.get("rows"), this.rows, "r");
 		this.cells = new Cell[activeColumns][activeRows];
 	}
 
-	private int parseDimension(Object object, Map<String, Dimension> dimensions) {
+	private int parseDimension(Object object, Map<String, Dimension> dimensions, String namePrefix) {
 
 		int ret = 0;
 
 		if (object instanceof Collection) {
 			for (Object o : ((Collection<?>) object)) {
 				if (o instanceof Map) {
-					ret += parseDimension((Map<?, ?>) o, dimensions);
+					ret += parseDimension((Map<?, ?>) o, dimensions, namePrefix);
 				} else if (o instanceof String) {
 					switch (o.toString()) {
 					case "empty":
@@ -295,12 +304,12 @@ public class Table {
 				}
 			}
 		} else if (object instanceof Map) {
-			parseDimension((Map<?, ?>) object, dimensions);
+			ret = parseDimension((Map<?, ?>) object, dimensions, namePrefix);
 		} else {
 			throw new KlabValidationException(
 					"table dimensions (rows and columns) must be specified as maps or lists of maps");
 		}
-		
+
 		return ret;
 	}
 
@@ -308,37 +317,45 @@ public class Table {
 	 * A classifier spec may turn into >1 classifiers. Return the number of ACTIVE
 	 * dimensions built from the classifier list.
 	 */
-	private int parseDimension(Map<?, ?> map, Map<String, Dimension> dimensions) {
+	private int parseDimension(Map<?, ?> map, Map<String, Dimension> dimensions, String namePrefix) {
 
 		int ret = 0;
-		
-		if (map.containsKey("classifier")) {
-			if (map.get("classifier") instanceof IKimConcept) {
-				IConcept classifier = Concepts.INSTANCE.declare((IKimConcept) map.get("classifier"));
-				if (classifier.is(Type.COUNTABLE)) {
-					// TODO build columns based on the contextualized artifacts for the concept
-				} else {
-					Object group = map.get("group") instanceof IKimConcept
-							? Concepts.INSTANCE.declare((IKimConcept) map.get("group"))
-							: null;
-					for (IConcept concept : expandClassifier(classifier, map.get("downto"))) {
-						// add as many newColumns as needed
-						Dimension column = newDimension(concept, map);
-//						column.group = group;
-						dimensions.put(column.id, column);
-					}
-				}
-			} else {
-				Dimension column = newDimension(map.get("classifier"), map);
-//				column.group = map.get("group");
-				dimensions.put(column.id, column);
+
+		for (Filter filter : expandClassifier(map.get("classifier"))) {
+			Dimension dimension = newDimension(filter, map, namePrefix);
+			dimensions.put(dimension.id, dimension);
+			if (!dimension.separator) {
+				ret++;
 			}
 		}
-		
+//		
+//		if (map.containsKey("classifier")) {
+//			if (map.get("classifier") instanceof IKimConcept) {
+//				IConcept classifier = Concepts.INSTANCE.declare((IKimConcept) map.get("classifier"));
+//				if (classifier.is(Type.COUNTABLE)) {
+//					// TODO build columns based on the contextualized artifacts for the concept
+//				} else {
+//					Object group = map.get("group") instanceof IKimConcept
+//							? Concepts.INSTANCE.declare((IKimConcept) map.get("group"))
+//							: null;
+//					for (IConcept concept : expandClassifier(classifier, map.get("downto"))) {
+//						// add as many newColumns as needed
+//						Dimension column = newDimension(concept, map);
+////						column.group = group;
+//						dimensions.put(column.id, column);
+//					}
+//				}
+//			} else {
+//				Dimension column = newDimension(map.get("classifier"), map);
+////				column.group = map.get("group");
+//				dimensions.put(column.id, column);
+//			}
+//		}
+
 		return ret;
 	}
 
-	private Dimension newDimension(Object classifier, Map<?, ?> theRest) {
+	private Dimension newDimension(Object classifier, Map<?, ?> theRest, String namePrefix) {
 
 		Dimension ret = new Dimension();
 //		ret.classifier = Classifier.create(classifier);
@@ -378,20 +395,35 @@ public class Table {
 
 	}
 
-	private Collection<IConcept> expandClassifier(IConcept declared, Object downto) {
+	private Collection<Filter> expandClassifier(Object declaration) {
 
-		if (declared.isAbstract() || downto != null) {
-			if (downto != null) {
-				if (downto instanceof Number) {
-					return Types.INSTANCE.getConcreteChildrenAtLevel(declared, ((Number) downto).intValue());
-				} else {
-					return Types.INSTANCE.getConcreteChildrenAtLevel(declared,
-							Types.INSTANCE.getDetailLevel(declared, downto.toString()));
-				}
-			}
-			return Types.INSTANCE.getConcreteLeaves(declared);
+		List<Filter> ret = new ArrayList<>();
+
+		if (declaration == null) {
+			ret.add(Filter.universal());
+			return ret;
 		}
-		return Collections.singletonList(declared);
+
+		/*
+		 * 1. classify the fükers into classes, a list per class. 2. Expand any concepts
+		 * according to specs (any, all, down to etc) to obtain fully expanded
+		 * classified lists. 3. Use Sets.cartesianProduct to obtain all combinations,
+		 * respecting order of declaration. 4. Make a filter from each combination.
+		 */
+//		if (declared.isAbstract() || downto != null) {
+//			if (downto != null) {
+//				if (downto instanceof Number) {
+//					return Types.INSTANCE.getConcreteChildrenAtLevel(declared, ((Number) downto).intValue());
+//				} else {
+//					return Types.INSTANCE.getConcreteChildrenAtLevel(declared,
+//							Types.INSTANCE.getDetailLevel(declared, downto.toString()));
+//				}
+//			}
+//			return Types.INSTANCE.getConcreteLeaves(declared);
+//		}
+//		return Collections.singletonList(declared);
+
+		return ret;
 	}
 
 	/**
