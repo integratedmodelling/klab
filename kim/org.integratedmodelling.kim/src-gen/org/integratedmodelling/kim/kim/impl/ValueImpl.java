@@ -33,12 +33,12 @@ import org.integratedmodelling.kim.kim.Value;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getFunction <em>Function</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getExpr <em>Expr</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getId <em>Id</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getDate <em>Date</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getMap <em>Map</em>}</li>
@@ -53,6 +53,16 @@ import org.integratedmodelling.kim.kim.Value;
  */
 public class ValueImpl extends MinimalEObjectImpl.Container implements Value
 {
+  /**
+   * The cached value of the '{@link #getList() <em>List</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getList()
+   * @generated
+   * @ordered
+   */
+  protected List list;
+
   /**
    * The cached value of the '{@link #getConcept() <em>Concept</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -122,16 +132,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected String id = ID_EDEFAULT;
-
-  /**
-   * The cached value of the '{@link #getList() <em>List</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getList()
-   * @generated
-   * @ordered
-   */
-  protected List list;
 
   /**
    * The cached value of the '{@link #getTable() <em>Table</em>}' containment reference.
@@ -252,6 +252,56 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected EClass eStaticClass()
   {
     return KimPackage.Literals.VALUE;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public List getList()
+  {
+    return list;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetList(List newList, NotificationChain msgs)
+  {
+    List oldList = list;
+    list = newList;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__LIST, oldList, newList);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setList(List newList)
+  {
+    if (newList != list)
+    {
+      NotificationChain msgs = null;
+      if (list != null)
+        msgs = ((InternalEObject)list).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__LIST, null, msgs);
+      if (newList != null)
+        msgs = ((InternalEObject)newList).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__LIST, null, msgs);
+      msgs = basicSetList(newList, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__LIST, newList, newList));
   }
 
   /**
@@ -452,56 +502,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     id = newId;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__ID, oldId, id));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public List getList()
-  {
-    return list;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetList(List newList, NotificationChain msgs)
-  {
-    List oldList = list;
-    list = newList;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__LIST, oldList, newList);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setList(List newList)
-  {
-    if (newList != list)
-    {
-      NotificationChain msgs = null;
-      if (list != null)
-        msgs = ((InternalEObject)list).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__LIST, null, msgs);
-      if (newList != null)
-        msgs = ((InternalEObject)newList).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__LIST, null, msgs);
-      msgs = basicSetList(newList, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__LIST, newList, newList));
   }
 
   /**
@@ -864,14 +864,14 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KimPackage.VALUE__LIST:
+        return basicSetList(null, msgs);
       case KimPackage.VALUE__CONCEPT:
         return basicSetConcept(null, msgs);
       case KimPackage.VALUE__FUNCTION:
         return basicSetFunction(null, msgs);
       case KimPackage.VALUE__LITERAL:
         return basicSetLiteral(null, msgs);
-      case KimPackage.VALUE__LIST:
-        return basicSetList(null, msgs);
       case KimPackage.VALUE__TABLE:
         return basicSetTable(null, msgs);
       case KimPackage.VALUE__DATE:
@@ -898,6 +898,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KimPackage.VALUE__LIST:
+        return getList();
       case KimPackage.VALUE__CONCEPT:
         return getConcept();
       case KimPackage.VALUE__FUNCTION:
@@ -908,8 +910,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getExpr();
       case KimPackage.VALUE__ID:
         return getId();
-      case KimPackage.VALUE__LIST:
-        return getList();
       case KimPackage.VALUE__TABLE:
         return getTable();
       case KimPackage.VALUE__DATE:
@@ -940,6 +940,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KimPackage.VALUE__LIST:
+        setList((List)newValue);
+        return;
       case KimPackage.VALUE__CONCEPT:
         setConcept((EObject)newValue);
         return;
@@ -954,9 +957,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KimPackage.VALUE__ID:
         setId((String)newValue);
-        return;
-      case KimPackage.VALUE__LIST:
-        setList((List)newValue);
         return;
       case KimPackage.VALUE__TABLE:
         setTable((LookupTable)newValue);
@@ -996,6 +996,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KimPackage.VALUE__LIST:
+        setList((List)null);
+        return;
       case KimPackage.VALUE__CONCEPT:
         setConcept((EObject)null);
         return;
@@ -1010,9 +1013,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KimPackage.VALUE__ID:
         setId(ID_EDEFAULT);
-        return;
-      case KimPackage.VALUE__LIST:
-        setList((List)null);
         return;
       case KimPackage.VALUE__TABLE:
         setTable((LookupTable)null);
@@ -1052,6 +1052,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KimPackage.VALUE__LIST:
+        return list != null;
       case KimPackage.VALUE__CONCEPT:
         return concept != null;
       case KimPackage.VALUE__FUNCTION:
@@ -1062,8 +1064,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return EXPR_EDEFAULT == null ? expr != null : !EXPR_EDEFAULT.equals(expr);
       case KimPackage.VALUE__ID:
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
-      case KimPackage.VALUE__LIST:
-        return list != null;
       case KimPackage.VALUE__TABLE:
         return table != null;
       case KimPackage.VALUE__DATE:

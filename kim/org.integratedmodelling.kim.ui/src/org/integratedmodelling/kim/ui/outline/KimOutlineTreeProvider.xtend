@@ -24,69 +24,69 @@ import org.integratedmodelling.kim.model.KimProject
  */
 class KimOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
-	def _isLeaf(ObservableSemantics obs) {
-		true
-	}
-
-	def _isLeaf(ConceptDeclaration obs) {
-		true
-	}
-
-	def _isLeaf(Classification obs) {
-		true
-	}
-
-	def _isLeaf(LookupTable obs) {
-		true
-	}
-
-	def _createChildren(DocumentRootNode parent, Model model) {
-
-		val project = Kim.INSTANCE.getProjectForResource(model.eResource)
-		var AbstractOutlineNode pnode = parent
-		if (project !== null) {
-			pnode = getProjectNode(pnode, project)
-			if (model.namespace !== null) {
-				pnode = getNamespaceNode(pnode, project.getNamespace(Kim.getNamespaceId(model.namespace)))
-			}
-		}
-
-		/*
-		 * TODO find or create the node for the project; use that as a base for the 
-		 * namespace node; add all the statements
-		 */
-		for (child : model.eContents) {
-			if (child instanceof Statement) {
-				val statement = child as Statement
-				if (statement.modelStatement !== null && statement.modelStatement.body !== null) {
-					// TODO make node out of modelStatement (make it a leaf) then add deps etc from body
-					createNode(pnode, statement.modelStatement.body)
-					// put action under header
-				} else if (statement.conceptStatement !== null && statement.conceptStatement.body !== null) {
-					createNode(pnode, statement.conceptStatement.body)
-					// add derivation, children
-				} else if (statement.observeStatement !== null && statement.observeStatement.body !== null) {
-					createNode(pnode, statement.observeStatement.body)
-					// add children, contextualizers, actions
-				}
-			} else if (child instanceof Namespace) {
-				// TODO add namespace headers, imports etc
-			}
-		}
-	}
-
-	def getProjectNode(AbstractOutlineNode node, KimProject project) {
-
-		// TODO find or make node
-		// TODO check that all other projects in namespace have a node
-		// TODO add all other elements we need
-		return node
-
-	}
-
-	def getNamespaceNode(AbstractOutlineNode node, KimNamespace namespace) {
-
-		return node
-	}
+//	def _isLeaf(ObservableSemantics obs) {
+//		true
+//	}
+//
+//	def _isLeaf(ConceptDeclaration obs) {
+//		true
+//	}
+//
+//	def _isLeaf(Classification obs) {
+//		true
+//	}
+//
+//	def _isLeaf(LookupTable obs) {
+//		true
+//	}
+//
+//	def _createChildren(DocumentRootNode parent, Model model) {
+//
+//		val project = Kim.INSTANCE.getProjectForResource(model.eResource)
+//		var AbstractOutlineNode pnode = parent
+//		if (project !== null) {
+//			pnode = getProjectNode(pnode, project)
+//			if (model.namespace !== null) {
+//				pnode = getNamespaceNode(pnode, project.getNamespace(Kim.getNamespaceId(model.namespace)))
+//			}
+//		}
+//
+//		/*
+//		 * TODO find or create the node for the project; use that as a base for the 
+//		 * namespace node; add all the statements
+//		 */
+//		for (child : model.eContents) {
+//			if (child instanceof Statement) {
+//				val statement = child as Statement
+//				if (statement.modelStatement !== null && statement.modelStatement.body !== null) {
+//					// TODO make node out of modelStatement (make it a leaf) then add deps etc from body
+//					createNode(pnode, statement.modelStatement.body)
+//					// put action under header
+//				} else if (statement.conceptStatement !== null && statement.conceptStatement.body !== null) {
+//					createNode(pnode, statement.conceptStatement.body)
+//					// add derivation, children
+//				} else if (statement.observeStatement !== null && statement.observeStatement.body !== null) {
+//					createNode(pnode, statement.observeStatement.body)
+//					// add children, contextualizers, actions
+//				}
+//			} else if (child instanceof Namespace) {
+//				// TODO add namespace headers, imports etc
+//			}
+//		}
+//	}
+//
+//	def getProjectNode(AbstractOutlineNode node, KimProject project) {
+//
+//		// TODO find or make node
+//		// TODO check that all other projects in namespace have a node
+//		// TODO add all other elements we need
+//		return node
+//
+//	}
+//
+//	def getNamespaceNode(AbstractOutlineNode node, KimNamespace namespace) {
+//
+//		return node
+//	}
 
 }

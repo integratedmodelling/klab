@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
@@ -254,14 +255,29 @@ public class Table extends ViewArtifact {
 		AggregationType aggregation = null;
 
 		/**
-		 * 
+		 * Expression is assigned on parsing, the actual compilation is done before
+		 * calculating when we have a scope.
 		 */
+		IKimExpression expression;
 		IExpression computation;
 
 		/**
 		 * Any symbols used in computations, to compute dependencies.
 		 */
 		Set<String> symbols = new HashSet<>();
+
+		public IExpression getExpression(IRuntimeScope scope) {
+			if (expression != null && computation == null) {
+				ILanguageProcessor processor = Extensions.INSTANCE
+						.getLanguageProcessor(expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
+								: expression.getLanguage());
+				Descriptor descriptor = processor.describe(expression.getCode(), scope.getExpressionContext(), false);
+				this.symbols.addAll(descriptor.getIdentifiersInScalarScope());
+				this.computation = descriptor.compile();
+			}
+			return computation;
+
+		}
 
 		boolean separator = false;
 
@@ -294,10 +310,11 @@ public class Table extends ViewArtifact {
 	 * during filter parsing. Keys are the same used in the filters.
 	 */
 	private Map<ObservedConcept, IObservation> observations = new HashMap<>();
-	private IRuntimeScope scope;
+//	private IRuntimeScope scope;
 	private IObservable target;
 	private int activeColumns;
 	private int activeRows;
+	private IMonitor monitor;
 
 	/**
 	 * Return the passed dimensions in order of dependency. If circular dependencies
@@ -317,8 +334,8 @@ public class Table extends ViewArtifact {
 	 * ------- Definition and validation --------------------------
 	 */
 
-	public Table(Map<?, ?> definition, IObservable target, IRuntimeScope scope) {
-		this.scope = scope;
+	public Table(Map<?, ?> definition, IObservable target, IMonitor monitor) {
+		this.monitor = monitor;
 		this.target = target;
 		this.activeColumns = parseDimension(definition.get("columns"), this.columns, "c");
 		this.activeRows = parseDimension(definition.get("rows"), this.rows, "r");
@@ -410,7 +427,7 @@ public class Table extends ViewArtifact {
 		if (theRest.get("target") instanceof IKimConcept || theRest.get("target") instanceof IKimObservable) {
 			IKimStatement tdef = (IKimStatement) theRest.get("target");
 			IObservable trg = tdef instanceof IKimObservable
-					? Observables.INSTANCE.declare((IKimObservable) tdef, scope.getMonitor())
+					? Observables.INSTANCE.declare((IKimObservable) tdef, monitor)
 					: Observable.promote(Concepts.INSTANCE.declare((IKimConcept) tdef));
 			if (trg != null) {
 
@@ -457,13 +474,7 @@ public class Table extends ViewArtifact {
 		}
 
 		if (theRest.get("compute") instanceof IKimExpression) {
-			IKimExpression expression = (IKimExpression) theRest.get("compute");
-			ILanguageProcessor processor = Extensions.INSTANCE
-					.getLanguageProcessor(expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
-							: expression.getLanguage());
-			Descriptor descriptor = processor.describe(expression.getCode(), scope.getExpressionContext(), false);
-			ret.symbols.addAll(descriptor.getIdentifiersInScalarScope());
-			ret.computation = descriptor.compile();
+			ret.expression = (IKimExpression) theRest.get("compute");
 		}
 
 		return ret;
@@ -495,7 +506,7 @@ public class Table extends ViewArtifact {
 			if (o instanceof IKimConcept || o instanceof IKimObservable) {
 
 				IObservable observable = o instanceof IKimObservable
-						? Observables.INSTANCE.declare((IKimObservable) o, scope.getMonitor())
+						? Observables.INSTANCE.declare((IKimObservable) o, monitor)
 						: Observable.promote(Concepts.INSTANCE.declare((IKimConcept) o));
 				if (observable == null) {
 					throw new KlabValidationException(
@@ -576,7 +587,7 @@ public class Table extends ViewArtifact {
 			// add the reified base observable to those we need to have
 			IConcept base = Observables.INSTANCE.getBaseObservable(category);
 			if (base != null) {
-				this.observables.add(new ObservedConcept(Observable.promote(base).getBuilder(scope.getMonitor())
+				this.observables.add(new ObservedConcept(Observable.promote(base).getBuilder(monitor)
 						.as(UnarySemanticOperator.TYPE).buildObservable(), Mode.RESOLUTION));
 			}
 		} else {
@@ -595,6 +606,10 @@ public class Table extends ViewArtifact {
 	@Override
 	public void compute(IRuntimeScope scope) {
 
+		/*
+		 * Reset expressions and recompile them in all dimensions using the scope
+		 */
+		
 		/*
 		 * Find all observations in scope and fill in the observation map
 		 */

@@ -747,7 +747,7 @@ Annotation:
 	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
 
 List:
-	{List} '(' contents+=ValueWithIdAndConcept ((',')? contents+=ValueWithIdAndConcept)* ')';
+	{List} '(' contents+=ValueWithIdAndConcept? ((',')? contents+=ValueWithIdAndConcept)* ')';
 
 Literal:
 	 from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false');
@@ -791,12 +791,12 @@ ParameterList:
 ;
 
 ValueWithIdAndConcept returns Value:
+	list=List |
 	concept=SimpleObservableSemantics |
 	function=Function |
 	literal=Literal |
 	expr=EXPR |
 	id=(PathName|LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
-	list=List |
 	table=LookupTable |
 	date=Date |
 	map=Map |

@@ -3959,13 +3959,22 @@ public interface KimPackage extends EPackage
   int VALUE = 46;
 
   /**
+   * The feature id for the '<em><b>List</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__LIST = 0;
+
+  /**
    * The feature id for the '<em><b>Concept</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__CONCEPT = 0;
+  int VALUE__CONCEPT = 1;
 
   /**
    * The feature id for the '<em><b>Function</b></em>' containment reference.
@@ -3974,7 +3983,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__FUNCTION = 1;
+  int VALUE__FUNCTION = 2;
 
   /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
@@ -3983,7 +3992,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LITERAL = 2;
+  int VALUE__LITERAL = 3;
 
   /**
    * The feature id for the '<em><b>Expr</b></em>' attribute.
@@ -3992,7 +4001,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__EXPR = 3;
+  int VALUE__EXPR = 4;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4001,16 +4010,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__ID = 4;
-
-  /**
-   * The feature id for the '<em><b>List</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int VALUE__LIST = 5;
+  int VALUE__ID = 5;
 
   /**
    * The feature id for the '<em><b>Table</b></em>' containment reference.
@@ -8746,6 +8746,17 @@ public interface KimPackage extends EPackage
   EClass getValue();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getList <em>List</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>List</em>'.
+   * @see org.integratedmodelling.kim.kim.Value#getList()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_List();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getConcept <em>Concept</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -8799,17 +8810,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EAttribute getValue_Id();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getList <em>List</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>List</em>'.
-   * @see org.integratedmodelling.kim.kim.Value#getList()
-   * @see #getValue()
-   * @generated
-   */
-  EReference getValue_List();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getTable <em>Table</em>}'.
@@ -12569,6 +12569,14 @@ public interface KimPackage extends EPackage
     EClass VALUE = eINSTANCE.getValue();
 
     /**
+     * The meta object literal for the '<em><b>List</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__LIST = eINSTANCE.getValue_List();
+
+    /**
      * The meta object literal for the '<em><b>Concept</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -12607,14 +12615,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute VALUE__ID = eINSTANCE.getValue_Id();
-
-    /**
-     * The meta object literal for the '<em><b>List</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference VALUE__LIST = eINSTANCE.getValue_List();
 
     /**
      * The meta object literal for the '<em><b>Table</b></em>' containment reference feature.

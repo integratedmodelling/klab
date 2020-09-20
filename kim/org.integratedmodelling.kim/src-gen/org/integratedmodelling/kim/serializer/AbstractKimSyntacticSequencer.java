@@ -468,6 +468,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     ','?
 	 *
 	 * This ambiguous syntax occurs at:
+	 *     (rule start) '(' (ambiguity) contents+=ValueWithIdAndConcept
 	 *     contents+=ValueWithIdAndConcept (ambiguity) contents+=ValueWithIdAndConcept
 	 */
 	protected void emit_List_CommaKeyword_3_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
