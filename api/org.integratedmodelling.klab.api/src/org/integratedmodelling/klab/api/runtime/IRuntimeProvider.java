@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -41,7 +42,12 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * The Interface IRuntimeProvider.
+ * The Interface IRuntimeProvider. Responsible for most runtime tasks like
+ * creating observations, computing dataflows and defining any contextualizers
+ * used internally to access resources or mediate values. Instead of returning
+ * the actual contextualizers, returns function calls that can be encoded in
+ * k.DL to be executed by dataflows, so that dataflows can be serialized, loaded
+ * and run when needed.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
@@ -244,5 +250,14 @@ public interface IRuntimeProvider {
 	 * @param targetId
 	 */
 	void setComputationTargetId(IContextualizable resource, String targetId);
+
+	/**
+	 * Return a void contextualizer that will resolve a view and send the compiled
+	 * results to the monitor.
+	 * 
+	 * @param view
+	 * @return
+	 */
+	IContextualizable getViewResolver(IKnowledgeView view);
 
 }

@@ -113,7 +113,7 @@ public enum Extensions implements IExtensionService {
 		switch (statement.getDefineClass()) {
 		case "table":
 			return new TableView(definition, statement, namespace);
-		case "graph":
+		case "chart":
 			return new GraphView(definition, statement, namespace);
 		}
 		

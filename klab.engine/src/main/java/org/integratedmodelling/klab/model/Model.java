@@ -39,6 +39,7 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.data.mediation.IUnit.UnitContextualization;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
@@ -802,6 +803,17 @@ public class Model extends KimObject implements IModel {
 			ComputableResource computation = (ComputableResource) ((Model) originalModel).getComputation().get(i);
 			this.resources.add(((Model) originalModel).validate(computation.copy(), scope.getMonitor()));
 		}
+	}
+
+	public Model(IKnowledgeView view) {
+		super(null);
+		// no observables, all the independent observables in the view as dependencies, the view compilation as code
+		this.derived = true;
+		this.namespace = (Namespace)view.getNamespace();
+		this.id = view.getId() + "_resolver";
+		this.contextualization = new Contextualization(null, this);
+		this.dependencies.addAll(view.getObservables());
+		this.resources.add(Klab.INSTANCE.getRuntimeProvider().getViewResolver(view));
 	}
 
 	/**

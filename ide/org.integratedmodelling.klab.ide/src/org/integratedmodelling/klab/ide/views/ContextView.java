@@ -518,7 +518,7 @@ public class ContextView extends ViewPart {
 						} else if (dropped instanceof EResourceReference) {
 							Activator.session().previewResource((EResourceReference) dropped);
 						} else if (dropped instanceof EDefinition && ((EDefinition)dropped).getDefineClass() != null) {
-							Activator.session().observe((EDefinition) dropped);
+							Activator.session().observe(((EDefinition) dropped).getName());
 						}
 					}
 				}

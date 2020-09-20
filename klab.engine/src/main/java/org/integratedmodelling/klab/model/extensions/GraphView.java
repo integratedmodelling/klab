@@ -21,7 +21,7 @@ public class GraphView extends KimObject implements IKnowledgeView {
 	public GraphView(Object definition, IKimSymbolDefinition statement, INamespace namespace) {
 		super(statement);
 		this.viewClass = statement.getDefineClass();
-		this.name = statement.getDefineClass();
+		this.name = statement.getName();
 		this.namespace = namespace;
 
 		if (!(definition instanceof Map)) {

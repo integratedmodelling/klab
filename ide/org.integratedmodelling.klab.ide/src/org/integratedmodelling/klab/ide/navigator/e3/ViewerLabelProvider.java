@@ -353,7 +353,7 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 				switch (((EDefinition)element).getDefineClass()) {
 				case "table":
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/table.gif");
-				case "graph":
+				case "chart":
 					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/chart_bar.png");
 				}
 			}

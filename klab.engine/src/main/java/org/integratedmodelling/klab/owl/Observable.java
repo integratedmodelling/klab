@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -37,6 +38,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Annotation;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
@@ -112,6 +114,14 @@ public class Observable implements IObservable {
 		ret.resolvedModel = model;
 		return ret;
 	}
+	
+	public static Observable promote(IKnowledgeView view) {
+		// void model
+		Observable ret = new Observable(Concepts.c("owl:Nothing"));
+		ret.resolvedModel = new Model(view);
+		return ret;
+	}
+
 
 	public static Observable promote(IConcept concept) {
 

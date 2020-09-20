@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.api.knowledge;
 import java.util.List;
 
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
@@ -50,5 +51,12 @@ public interface IKnowledgeView extends IResolvable, IKimObject {
 	 * @param scope
 	 */
 	void compileView(IContextualizationScope scope);
+
+	/**
+	 * The namespace
+	 * 
+	 * @return
+	 */
+	INamespace getNamespace();
 
 }
