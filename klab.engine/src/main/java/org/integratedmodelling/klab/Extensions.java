@@ -16,6 +16,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimSymbolDefinition;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -28,6 +29,7 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -48,6 +50,8 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
+import org.integratedmodelling.klab.model.extensions.GraphView;
+import org.integratedmodelling.klab.model.extensions.TableView;
 import org.integratedmodelling.klab.rest.ServicePrototype;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -99,6 +103,23 @@ public enum Extensions implements IExtensionService {
 		return prototypes.get(service);
 	}
 
+	@Override
+	public Object processDefinition(IKimSymbolDefinition statement, Object definition, INamespace namespace) {
+
+		/*
+		 * For now no plugin-based mechanism. Maybe later. Not hard - just annotate a provider and give it a 
+		 * process method.
+		 */
+		switch (statement.getDefineClass()) {
+		case "table":
+			return new TableView(definition, statement, namespace);
+		case "graph":
+			return new GraphView(definition, statement, namespace);
+		}
+		
+		return definition;
+	}
+	
 	public org.integratedmodelling.klab.engine.extensions.Component registerComponent(Component annotation,
 			Class<?> cls) {
 
@@ -263,7 +284,7 @@ public enum Extensions implements IExtensionService {
 					annotation.type() + ": resource adapter annotations must be used on IResourceAdapter classes");
 		}
 	}
-
+	
 	public void validateArguments(IPrototype prototype, Map<String, Object> arguments) {
 		// TODO
 	}

@@ -507,4 +507,13 @@ public interface IObservable extends ISemantic, IResolvable {
 	 */
 	List<Pair<ValueOperator, Object>> getValueOperators();
 
+	/**
+	 * Globalized observables have "all" prepended and are used in classifiers and
+	 * other situations (but never in models) to indicate that all levels of the
+	 * subsumed asserted hierarchy should be considered, including abstract ones.
+	 * 
+	 * @return
+	 */
+	boolean isGlobal();
+
 }

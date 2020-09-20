@@ -17,6 +17,7 @@ import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observations;
@@ -24,6 +25,7 @@ import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -97,20 +99,20 @@ public class KimNotifier implements Kim.Notifier {
 					message = (String) o;
 					savedArgs.add(o);
 				} else if (o instanceof Observable) {
-				    observableUrn = ((Observable)o).getUrl();
+					observableUrn = ((Observable) o).getUrl();
 				} else {
 					savedArgs.add(o);
 				}
 			}
 
 			if (statement != null || observableUrn != null) {
-                CompileNotification notification = CompileNotification.create(level, message, namespace.getName(),
-                        statement);
-                notification.setMainScope(mainScope);
-                notifications.add(notification);
-                notification.setObservableUrn(observableUrn);
-            }
-			
+				CompileNotification notification = CompileNotification.create(level, message, namespace.getName(),
+						statement);
+				notification.setMainScope(mainScope);
+				notifications.add(notification);
+				notification.setObservableUrn(observableUrn);
+			}
+
 			return statement == null ? args : savedArgs.toArray();
 		}
 
@@ -183,7 +185,7 @@ public class KimNotifier implements Kim.Notifier {
 
 	@Override
 	public INamespace synchronizeNamespaceWithRuntime(IKimNamespace namespace) {
-		
+
 		Namespaces.INSTANCE.release(namespace.getName(), monitor);
 		Namespace ns = new Namespace(namespace);
 		Namespaces.INSTANCE.registerNamespace(ns, monitor);
@@ -197,7 +199,7 @@ public class KimNotifier implements Kim.Notifier {
 				corePrefixTranslation.put(imp.getSecond(), prefix);
 			}
 		}
-		
+
 		/*
 		 * these should never throw exceptions; instead they should notify any errors,
 		 * no matter how internal, through the monitor.
@@ -218,7 +220,13 @@ public class KimNotifier implements Kim.Notifier {
 				Object value = ((IKimSymbolDefinition) statement).getValue();
 				String name = ((IKimSymbolDefinition) statement).getName();
 
-				if (value instanceof IKimTable) {
+				if (((IKimSymbolDefinition) statement).getDefineClass() != null) {
+					value = Extensions.INSTANCE.processDefinition(((IKimSymbolDefinition) statement), value, ns);
+					if (value instanceof IKnowledgeView) {
+						ns.getKnowledgeViews().put(name, (IKnowledgeView) value);
+						ns.addObject((IKnowledgeView)value);
+					}
+				} else if (value instanceof IKimTable) {
 					value = Table.create((IKimTable) value);
 				}
 
@@ -241,7 +249,8 @@ public class KimNotifier implements Kim.Notifier {
 						 * validate units vs. coverage and ensure that they're coherent with the
 						 * geometry. Learning models don't get to play.
 						 */
-						if (!((Model) object).isErrors() && !((Model)object).isLearning() && !((Model)object).isInactive()) {
+						if (!((Model) object).isErrors() && !((Model) object).isLearning()
+								&& !((Model) object).isInactive()) {
 							Models.INSTANCE.index((IModel) object, monitor);
 						}
 					} catch (KlabException e) {
@@ -267,12 +276,12 @@ public class KimNotifier implements Kim.Notifier {
 			}
 		}
 
-
 		Observations.INSTANCE.registerNamespace(ns, (Monitor) monitor);
 		Reasoner.INSTANCE.addOntology(ns.getOntology());
-		
+
 		/*
-		 * store and report errors or lack thereof (so that previous errors can be removed)
+		 * store and report errors or lack thereof (so that previous errors can be
+		 * removed)
 		 */
 		monitor.sendReport();
 

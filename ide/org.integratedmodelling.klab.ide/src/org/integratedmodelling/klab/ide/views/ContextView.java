@@ -59,6 +59,7 @@ import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.model.EActorBehavior;
 import org.integratedmodelling.klab.ide.navigator.model.EConcept;
+import org.integratedmodelling.klab.ide.navigator.model.EDefinition;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
@@ -516,6 +517,8 @@ public class ContextView extends ViewPart {
 							}
 						} else if (dropped instanceof EResourceReference) {
 							Activator.session().previewResource((EResourceReference) dropped);
+						} else if (dropped instanceof EDefinition && ((EDefinition)dropped).getDefineClass() != null) {
+							Activator.session().observe((EDefinition) dropped);
 						}
 					}
 				}

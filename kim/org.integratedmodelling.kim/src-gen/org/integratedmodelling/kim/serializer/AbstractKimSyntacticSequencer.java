@@ -34,6 +34,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	protected AbstractElementAlias match_DependencyObservableSemantics_RequiredKeyword_3_4_1_a;
 	protected AbstractElementAlias match_Dependency_RequiredKeyword_1_1_0_4_1_q;
 	protected AbstractElementAlias match_IdentityRequirement_AttributeKeyword_0_0_1_or_ExtentKeyword_0_0_3_or_IdentityKeyword_0_0_0_or_RealmKeyword_0_0_2;
+	protected AbstractElementAlias match_List_CommaKeyword_3_0_q;
 	protected AbstractElementAlias match_Map_CommaKeyword_2_1_0_0_q;
 	protected AbstractElementAlias match_Namespace___OutsideKeyword_5_7_1_0___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__a__a;
 	protected AbstractElementAlias match_Namespace___OutsideKeyword_5_7_1_0___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__a__p;
@@ -63,6 +64,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		match_DependencyObservableSemantics_RequiredKeyword_3_4_1_a = new TokenAlias(true, true, grammarAccess.getDependencyObservableSemanticsAccess().getRequiredKeyword_3_4_1());
 		match_Dependency_RequiredKeyword_1_1_0_4_1_q = new TokenAlias(false, true, grammarAccess.getDependencyAccess().getRequiredKeyword_1_1_0_4_1());
 		match_IdentityRequirement_AttributeKeyword_0_0_1_or_ExtentKeyword_0_0_3_or_IdentityKeyword_0_0_0_or_RealmKeyword_0_0_2 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getIdentityRequirementAccess().getAttributeKeyword_0_0_1()), new TokenAlias(false, false, grammarAccess.getIdentityRequirementAccess().getExtentKeyword_0_0_3()), new TokenAlias(false, false, grammarAccess.getIdentityRequirementAccess().getIdentityKeyword_0_0_0()), new TokenAlias(false, false, grammarAccess.getIdentityRequirementAccess().getRealmKeyword_0_0_2()));
+		match_List_CommaKeyword_3_0_q = new TokenAlias(false, true, grammarAccess.getListAccess().getCommaKeyword_3_0());
 		match_Map_CommaKeyword_2_1_0_0_q = new TokenAlias(false, true, grammarAccess.getMapAccess().getCommaKeyword_2_1_0_0());
 		match_Namespace___OutsideKeyword_5_7_1_0___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__a__a = new GroupAlias(true, true, new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getOutsideKeyword_5_7_1_0()), new GroupAlias(true, true, new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getResolveKeyword_5_7_0_0()), new TokenAlias(false, true, grammarAccess.getNamespaceAccess().getFromKeyword_5_7_0_1_0())));
 		match_Namespace___OutsideKeyword_5_7_1_0___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__a__p = new GroupAlias(true, false, new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getOutsideKeyword_5_7_1_0()), new GroupAlias(true, true, new TokenAlias(false, false, grammarAccess.getNamespaceAccess().getResolveKeyword_5_7_0_0()), new TokenAlias(false, true, grammarAccess.getNamespaceAccess().getFromKeyword_5_7_0_1_0())));
@@ -125,6 +127,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 				emit_Dependency_RequiredKeyword_1_1_0_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_IdentityRequirement_AttributeKeyword_0_0_1_or_ExtentKeyword_0_0_3_or_IdentityKeyword_0_0_0_or_RealmKeyword_0_0_2.equals(syntax))
 				emit_IdentityRequirement_AttributeKeyword_0_0_1_or_ExtentKeyword_0_0_3_or_IdentityKeyword_0_0_0_or_RealmKeyword_0_0_2(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_List_CommaKeyword_3_0_q.equals(syntax))
+				emit_List_CommaKeyword_3_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Map_CommaKeyword_2_1_0_0_q.equals(syntax))
 				emit_Map_CommaKeyword_2_1_0_0_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Namespace___OutsideKeyword_5_7_1_0___ResolveKeyword_5_7_0_0_FromKeyword_5_7_0_1_0_q__a__a.equals(syntax))
@@ -456,6 +460,17 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     (rule start) (ambiguity) identities+=ConceptDeclaration
 	 */
 	protected void emit_IdentityRequirement_AttributeKeyword_0_0_1_or_ExtentKeyword_0_0_3_or_IdentityKeyword_0_0_0_or_RealmKeyword_0_0_2(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
+	 *     ','?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     contents+=ValueWithIdAndConcept (ambiguity) contents+=ValueWithIdAndConcept
+	 */
+	protected void emit_List_CommaKeyword_3_0_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

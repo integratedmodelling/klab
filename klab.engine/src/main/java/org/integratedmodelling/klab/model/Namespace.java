@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.model;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +22,7 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -43,10 +45,11 @@ public class Namespace extends KimObject implements INamespace {
 	private long timestamp = 0l;
 	private IConcept domain;
 
-	List<IKimObject> objects = new ArrayList<>();
-	Map<String, IKimObject> objectsByName = new HashMap<>();
-	Map<String, Object> symbolTable = new HashMap<>();
+	List<IKimObject> objects = Collections.synchronizedList(new ArrayList<>());
+	Map<String, IKimObject> objectsByName = Collections.synchronizedMap(new HashMap<>());
+	Map<String, Object> symbolTable = Collections.synchronizedMap(new HashMap<>());
 	List<IServiceCall> coveredExtents = new ArrayList<>();
+	Map<String, IKnowledgeView> knowledgeViews = Collections.synchronizedMap(new HashMap<>());
 
 	/*
 	 * for incremental building of the knowledge
@@ -212,7 +215,7 @@ public class Namespace extends KimObject implements INamespace {
 
 	@Override
 	public Scope getScope() {
-		return this.scope ;
+		return this.scope;
 	}
 
 	@Override
@@ -321,6 +324,11 @@ public class Namespace extends KimObject implements INamespace {
 
 	public void setPublishable(boolean b) {
 		this.publishable = b;
+	}
+
+	@Override
+	public Map<String, IKnowledgeView> getKnowledgeViews() {
+		return knowledgeViews;
 	}
 
 }

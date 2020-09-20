@@ -13,7 +13,7 @@ public interface IKimObservable extends IKimStatement {
 	 * @return the main concept
 	 */
 	IKimConcept getMain();
-	
+
 	/**
 	 * 
 	 * @return the range
@@ -50,7 +50,7 @@ public interface IKimObservable extends IKimStatement {
 	 * @return
 	 */
 	List<Pair<ValueOperator, Object>> getValueOperators();
-	
+
 	/**
 	 * 
 	 * @return true if abstract
@@ -109,6 +109,23 @@ public interface IKimObservable extends IKimStatement {
 	 * 
 	 * @return the name for k.IM code
 	 */
-	String getCodeName();	
-	
+	String getCodeName();
+
+	/**
+	 * Generic observables have "any" prepended and specify the class including
+	 * their children even if the observable is concrete.
+	 * 
+	 * @return
+	 */
+	boolean isGeneric();
+
+	/**
+	 * Globalized observables have "all" prepended and are used in classifiers and
+	 * special classification or expansion situations (not in actual semantics) to
+	 * indicate that all levels of the hierarchy should be considered.
+	 * 
+	 * @return
+	 */
+	boolean isGlobal();
+
 }

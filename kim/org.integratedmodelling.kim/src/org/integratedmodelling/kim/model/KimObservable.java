@@ -45,6 +45,8 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	private List<Pair<ValueOperator, Object>> valueOperators = new ArrayList<>();
 	private String modelReference;
 	private IArtifact.Type nonSemanticType = null;
+	private boolean generic = false;
+	private boolean global = false;
 
 	@Override
 	public IArtifact.Type getNonSemanticType() {
@@ -90,6 +92,8 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		}
 
 		ret.main = concept;
+		ret.global = declaration.isGlobal();
+		ret.generic = declaration.isGeneric();
 		ret.formalName = declaration.getName();
 		ret.optional = declaration.isOptional();
 		ret.abstractObservable = concept.is(Type.ABSTRACT) || declaration.isGeneric();
@@ -344,7 +348,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		if (main == null) {
 			return "undefined";
 		}
-		
+
 		String ret = main.getCodeName();
 
 		for (Pair<ValueOperator, Object> operator : valueOperators) {
@@ -423,5 +427,21 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	@Override
 	public List<Pair<ValueOperator, Object>> getValueOperators() {
 		return valueOperators;
+	}
+
+	public boolean isGeneric() {
+		return generic;
+	}
+
+	public void setGeneric(boolean generic) {
+		this.generic = generic;
+	}
+
+	public boolean isGlobal() {
+		return global;
+	}
+
+	public void setGlobal(boolean global) {
+		this.global = global;
 	}
 }

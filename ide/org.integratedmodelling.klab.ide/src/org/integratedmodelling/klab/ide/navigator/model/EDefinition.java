@@ -9,6 +9,7 @@ public class EDefinition extends EKimObject implements IKimSymbolDefinition, EDo
 	private static final long serialVersionUID = -8065004326025509869L;
 
 	private String name;
+	private String defineClass;
 	private String namespace;
 	private Object value;
 
@@ -17,6 +18,7 @@ public class EDefinition extends EKimObject implements IKimSymbolDefinition, EDo
 		this.name = definition.getName();
 		this.namespace = definition.getNamespace();
 		this.value = definition.getValue();
+		this.defineClass = definition.getDefineClass();
 	}
 
 	@Override
@@ -26,7 +28,7 @@ public class EDefinition extends EKimObject implements IKimSymbolDefinition, EDo
 
 	@Override
 	public String getName() {
-		return name;
+		return namespace + "." + name;
 	}
 
 	@Override
@@ -70,6 +72,11 @@ public class EDefinition extends EKimObject implements IKimSymbolDefinition, EDo
 	@Override
 	public String getNamespace() {
 		return namespace;
+	}
+
+	@Override
+	public String getDefineClass() {
+		return this.defineClass;
 	}
 
 }

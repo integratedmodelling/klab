@@ -600,20 +600,37 @@ ruleDefinitionBody returns [EObject current=null]
 		)?
 		(
 			(
-				lv_name_1_0=RULE_UPPERCASE_ID
-				{
-					newLeafNode(lv_name_1_0, grammarAccess.getDefinitionBodyAccess().getNameUPPERCASE_IDTerminalRuleCall_1_0());
-				}
-				{
-					if ($current==null) {
-						$current = createModelElement(grammarAccess.getDefinitionBodyRule());
+				(
+					lv_name_1_1=RULE_UPPERCASE_ID
+					{
+						newLeafNode(lv_name_1_1, grammarAccess.getDefinitionBodyAccess().getNameUPPERCASE_IDTerminalRuleCall_1_0_0());
 					}
-					setWithLastConsumed(
-						$current,
-						"name",
-						lv_name_1_0,
-						"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
-				}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getDefinitionBodyRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"name",
+							lv_name_1_1,
+							"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
+					}
+					    |
+					lv_name_1_2=RULE_LOWERCASE_ID
+					{
+						newLeafNode(lv_name_1_2, grammarAccess.getDefinitionBodyAccess().getNameLOWERCASE_IDTerminalRuleCall_1_0_1());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getDefinitionBodyRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"name",
+							lv_name_1_2,
+							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
+					}
+				)
 			)
 		)
 		otherlv_2='as'
@@ -13883,9 +13900,9 @@ ruleList returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getListAccess().getContentsValueParserRuleCall_2_0());
+					newCompositeNode(grammarAccess.getListAccess().getContentsValueWithIdAndConceptParserRuleCall_2_0());
 				}
-				lv_contents_2_0=ruleValue
+				lv_contents_2_0=ruleValueWithIdAndConcept
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getListRule());
@@ -13894,14 +13911,41 @@ ruleList returns [EObject current=null]
 						$current,
 						"contents",
 						lv_contents_2_0,
-						"org.integratedmodelling.kim.Kim.Value");
+						"org.integratedmodelling.kim.Kim.ValueWithIdAndConcept");
 					afterParserOrEnumRuleCall();
 				}
 			)
+		)
+		(
+			(
+				otherlv_3=','
+				{
+					newLeafNode(otherlv_3, grammarAccess.getListAccess().getCommaKeyword_3_0());
+				}
+			)?
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getListAccess().getContentsValueWithIdAndConceptParserRuleCall_3_1_0());
+					}
+					lv_contents_4_0=ruleValueWithIdAndConcept
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getListRule());
+						}
+						add(
+							$current,
+							"contents",
+							lv_contents_4_0,
+							"org.integratedmodelling.kim.Kim.ValueWithIdAndConcept");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
 		)*
-		otherlv_3=')'
+		otherlv_5=')'
 		{
-			newLeafNode(otherlv_3, grammarAccess.getListAccess().getRightParenthesisKeyword_3());
+			newLeafNode(otherlv_5, grammarAccess.getListAccess().getRightParenthesisKeyword_4());
 		}
 	)
 ;

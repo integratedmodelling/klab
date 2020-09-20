@@ -34,6 +34,7 @@ public class KimParser extends AbstractContentAssistParser {
 		private static void init(ImmutableMap.Builder<AbstractElement, String> builder, KimGrammarAccess grammarAccess) {
 			builder.put(grammarAccess.getModelAccess().getAlternatives(), "rule__Model__Alternatives");
 			builder.put(grammarAccess.getStatementAccess().getAlternatives(), "rule__Statement__Alternatives");
+			builder.put(grammarAccess.getDefinitionBodyAccess().getNameAlternatives_1_0(), "rule__DefinitionBody__NameAlternatives_1_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_1_0(), "rule__ModelBodyStatement__Alternatives_1_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getBooleanAlternatives_1_0_2_0(), "rule__ModelBodyStatement__BooleanAlternatives_1_0_2_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_2(), "rule__ModelBodyStatement__Alternatives_2");
@@ -523,6 +524,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getAnnotationAccess().getGroup(), "rule__Annotation__Group__0");
 			builder.put(grammarAccess.getAnnotationAccess().getGroup_1(), "rule__Annotation__Group_1__0");
 			builder.put(grammarAccess.getListAccess().getGroup(), "rule__List__Group__0");
+			builder.put(grammarAccess.getListAccess().getGroup_3(), "rule__List__Group_3__0");
 			builder.put(grammarAccess.getLiteralAccess().getGroup_0(), "rule__Literal__Group_0__0");
 			builder.put(grammarAccess.getLiteralOrIdOrCommaAccess().getGroup_0(), "rule__LiteralOrIdOrComma__Group_0__0");
 			builder.put(grammarAccess.getMapAccess().getGroup(), "rule__Map__Group__0");
@@ -1069,6 +1071,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getAnnotationAccess().getNameAssignment_0(), "rule__Annotation__NameAssignment_0");
 			builder.put(grammarAccess.getAnnotationAccess().getParametersAssignment_1_1(), "rule__Annotation__ParametersAssignment_1_1");
 			builder.put(grammarAccess.getListAccess().getContentsAssignment_2(), "rule__List__ContentsAssignment_2");
+			builder.put(grammarAccess.getListAccess().getContentsAssignment_3_1(), "rule__List__ContentsAssignment_3_1");
 			builder.put(grammarAccess.getLiteralAccess().getFromAssignment_0_0(), "rule__Literal__FromAssignment_0_0");
 			builder.put(grammarAccess.getLiteralAccess().getToAssignment_0_2(), "rule__Literal__ToAssignment_0_2");
 			builder.put(grammarAccess.getLiteralAccess().getNumberAssignment_1(), "rule__Literal__NumberAssignment_1");

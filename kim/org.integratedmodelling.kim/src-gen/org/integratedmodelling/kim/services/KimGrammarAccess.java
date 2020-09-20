@@ -296,16 +296,18 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cDefineClassAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cDefineClassLOWERCASE_IDTerminalRuleCall_0_0 = (RuleCall)cDefineClassAssignment_0.eContents().get(0);
 		private final Assignment cNameAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cNameUPPERCASE_IDTerminalRuleCall_1_0 = (RuleCall)cNameAssignment_1.eContents().get(0);
+		private final Alternatives cNameAlternatives_1_0 = (Alternatives)cNameAssignment_1.eContents().get(0);
+		private final RuleCall cNameUPPERCASE_IDTerminalRuleCall_1_0_0 = (RuleCall)cNameAlternatives_1_0.eContents().get(0);
+		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_1_0_1 = (RuleCall)cNameAlternatives_1_0.eContents().get(1);
 		private final Keyword cAsKeyword_2 = (Keyword)cGroup.eContents().get(2);
 		private final Assignment cValueAssignment_3 = (Assignment)cGroup.eContents().get(3);
 		private final RuleCall cValueValueParserRuleCall_3_0 = (RuleCall)cValueAssignment_3.eContents().get(0);
 		
 		//DefinitionBody:
-		//	defineClass=LOWERCASE_ID? name=UPPERCASE_ID 'as' value=Value;
+		//	defineClass=LOWERCASE_ID? name=(UPPERCASE_ID | LOWERCASE_ID) 'as' value=Value;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//defineClass=LOWERCASE_ID? name=UPPERCASE_ID 'as' value=Value
+		//defineClass=LOWERCASE_ID? name=(UPPERCASE_ID | LOWERCASE_ID) 'as' value=Value
 		public Group getGroup() { return cGroup; }
 		
 		//defineClass=LOWERCASE_ID?
@@ -314,11 +316,17 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//LOWERCASE_ID
 		public RuleCall getDefineClassLOWERCASE_IDTerminalRuleCall_0_0() { return cDefineClassLOWERCASE_IDTerminalRuleCall_0_0; }
 		
-		//name=UPPERCASE_ID
+		//name=(UPPERCASE_ID | LOWERCASE_ID)
 		public Assignment getNameAssignment_1() { return cNameAssignment_1; }
 		
+		//(UPPERCASE_ID | LOWERCASE_ID)
+		public Alternatives getNameAlternatives_1_0() { return cNameAlternatives_1_0; }
+		
 		//UPPERCASE_ID
-		public RuleCall getNameUPPERCASE_IDTerminalRuleCall_1_0() { return cNameUPPERCASE_IDTerminalRuleCall_1_0; }
+		public RuleCall getNameUPPERCASE_IDTerminalRuleCall_1_0_0() { return cNameUPPERCASE_IDTerminalRuleCall_1_0_0; }
+		
+		//LOWERCASE_ID
+		public RuleCall getNameLOWERCASE_IDTerminalRuleCall_1_0_1() { return cNameLOWERCASE_IDTerminalRuleCall_1_0_1; }
 		
 		//'as'
 		public Keyword getAsKeyword_2() { return cAsKeyword_2; }
@@ -8065,14 +8073,18 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Action cListAction_0 = (Action)cGroup.eContents().get(0);
 		private final Keyword cLeftParenthesisKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		private final Assignment cContentsAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cContentsValueParserRuleCall_2_0 = (RuleCall)cContentsAssignment_2.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_3 = (Keyword)cGroup.eContents().get(3);
+		private final RuleCall cContentsValueWithIdAndConceptParserRuleCall_2_0 = (RuleCall)cContentsAssignment_2.eContents().get(0);
+		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
+		private final Keyword cCommaKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
+		private final Assignment cContentsAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
+		private final RuleCall cContentsValueWithIdAndConceptParserRuleCall_3_1_0 = (RuleCall)cContentsAssignment_3_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_4 = (Keyword)cGroup.eContents().get(4);
 		
 		//List:
-		//	{List} '(' contents+=Value* ')';
+		//	{List} '(' contents+=ValueWithIdAndConcept (','? contents+=ValueWithIdAndConcept)* ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{List} '(' contents+=Value* ')'
+		//{List} '(' contents+=ValueWithIdAndConcept (','? contents+=ValueWithIdAndConcept)* ')'
 		public Group getGroup() { return cGroup; }
 		
 		//{List}
@@ -8081,14 +8093,26 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'('
 		public Keyword getLeftParenthesisKeyword_1() { return cLeftParenthesisKeyword_1; }
 		
-		//contents+=Value*
+		//contents+=ValueWithIdAndConcept
 		public Assignment getContentsAssignment_2() { return cContentsAssignment_2; }
 		
-		//Value
-		public RuleCall getContentsValueParserRuleCall_2_0() { return cContentsValueParserRuleCall_2_0; }
+		//ValueWithIdAndConcept
+		public RuleCall getContentsValueWithIdAndConceptParserRuleCall_2_0() { return cContentsValueWithIdAndConceptParserRuleCall_2_0; }
+		
+		//(','? contents+=ValueWithIdAndConcept)*
+		public Group getGroup_3() { return cGroup_3; }
+		
+		//','?
+		public Keyword getCommaKeyword_3_0() { return cCommaKeyword_3_0; }
+		
+		//contents+=ValueWithIdAndConcept
+		public Assignment getContentsAssignment_3_1() { return cContentsAssignment_3_1; }
+		
+		//ValueWithIdAndConcept
+		public RuleCall getContentsValueWithIdAndConceptParserRuleCall_3_1_0() { return cContentsValueWithIdAndConceptParserRuleCall_3_1_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_3() { return cRightParenthesisKeyword_3; }
+		public Keyword getRightParenthesisKeyword_4() { return cRightParenthesisKeyword_4; }
 	}
 	public class LiteralElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Literal");
@@ -10898,7 +10922,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//DefinitionBody:
-	//	defineClass=LOWERCASE_ID? name=UPPERCASE_ID 'as' value=Value;
+	//	defineClass=LOWERCASE_ID? name=(UPPERCASE_ID | LOWERCASE_ID) 'as' value=Value;
 	public DefinitionBodyElements getDefinitionBodyAccess() {
 		return pDefinitionBody;
 	}
@@ -11649,7 +11673,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//List:
-	//	{List} '(' contents+=Value* ')';
+	//	{List} '(' contents+=ValueWithIdAndConcept (','? contents+=ValueWithIdAndConcept)* ')';
 	public ListElements getListAccess() {
 		return pList;
 	}

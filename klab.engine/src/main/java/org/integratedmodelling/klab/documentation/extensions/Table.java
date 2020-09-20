@@ -1,38 +1,60 @@
 package org.integratedmodelling.klab.documentation.extensions;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.UnarySemanticOperator;
+import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
+import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
-import org.integratedmodelling.klab.documentation.extensions.TableDocumentationExtension.Column;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
-public class Table {
+import com.google.common.collect.Sets;
+
+public class Table extends ViewArtifact {
 
 	enum AggregationType {
 		Aggregator, Differentiator, Comparator, Counter
 	};
+
+	enum TargetType {
+		AREA, DURATION, QUALITY, NUMEROSITY
+	}
 
 	/**
 	 * A cell may contain a standard aggregator, a comparator, a differentiator or
@@ -53,6 +75,11 @@ public class Table {
 		 * @param view
 		 */
 		void accumulate(Object value, ILocator locator, Phase view) {
+
+		}
+
+		public void reset() {
+			// TODO Auto-generated method stub
 
 		}
 	}
@@ -125,10 +152,12 @@ public class Table {
 	 */
 	static class Filter {
 
-		static Filter universal() {
-			Filter ret = new Filter();
-			ret.universal = true;
-			return ret;
+		public Filter(List<Object> classifiers) {
+			// TODO
+		}
+
+		public Filter() {
+			this.universal = true;
 		}
 
 		/*
@@ -202,6 +231,12 @@ public class Table {
 		ObservedConcept target;
 
 		/**
+		 * This tells us if we're scanning the actual values of the target or only the
+		 * associated context metrics such as area occupied per category or counts.
+		 */
+		public TargetType targetType;
+
+		/**
 		 * Hierarchically arranged titles at the levels we need them. Nulls for
 		 * intermediate levels that aren't specified.
 		 */
@@ -214,6 +249,11 @@ public class Table {
 		Filter filter;
 
 		/**
+		 * Aggregation type, if any.
+		 */
+		AggregationType aggregation = null;
+
+		/**
 		 * 
 		 */
 		IExpression computation;
@@ -224,6 +264,7 @@ public class Table {
 		Set<String> symbols = new HashSet<>();
 
 		boolean separator = false;
+
 	}
 
 	/**
@@ -355,44 +396,77 @@ public class Table {
 		return ret;
 	}
 
-	private Dimension newDimension(Object classifier, Map<?, ?> theRest, String namePrefix) {
+	private Dimension newDimension(Filter filter, Map<?, ?> theRest, String namePrefix) {
 
 		Dimension ret = new Dimension();
-//		ret.classifier = Classifier.create(classifier);
-//
-//		if (classifier instanceof IConcept && theRest.containsKey("qualifier")) {
-//			Object label = ((IConcept) classifier).getMetadata().get(theRest.get("qualifier"));
-//			ret.label = label == null ? null : label.toString();
-//		}
-//		if (theRest.containsKey("name")) {
-//			ret.id = theRest.get("name").toString();
-//		} else {
-//			ret.id = "c" + (this.columns.size() + 1);
-//		}
-//
-//		if (theRest.get("target") instanceof IKimConcept) {
-//			IConcept trg = Concepts.INSTANCE.declare((IKimConcept) theRest.get("target"));
-//			if (trg != null && trg.is(Concepts.c(NS.CORE_AREA))) {
-//				ret.targetType = TargetType.AREA;
-//			} else if (trg != null && trg.is(Concepts.c(NS.CORE_DURATION))) {
-//				ret.targetType = TargetType.DURATION;
-//			} else if (trg != null && trg.is(Concepts.c(NS.CORE_COUNT))) {
-//				ret.targetType = TargetType.NUMEROSITY;
-//			}
-//		} else if (theRest.containsKey("target")) {
-//			throw new KlabValidationException("Table definition: unknown target: " + definition.get("target"));
-//		}
-//
-//		if (theRest.get("compute") instanceof IKimExpression) {
-//			parseExpression((IKimExpression) theRest.get("compute"), ret);
-//		}
+
+		ret.filter = filter;
+		if (theRest.containsKey("name")) {
+			ret.id = theRest.get("name").toString();
+		} else {
+			ret.id = namePrefix + (this.columns.size() + 1);
+		}
+
+		if (theRest.get("target") instanceof IKimConcept || theRest.get("target") instanceof IKimObservable) {
+			IKimStatement tdef = (IKimStatement) theRest.get("target");
+			IObservable trg = tdef instanceof IKimObservable
+					? Observables.INSTANCE.declare((IKimObservable) tdef, scope.getMonitor())
+					: Observable.promote(Concepts.INSTANCE.declare((IKimConcept) tdef));
+			if (trg != null) {
+
+				ret.target = new ObservedConcept(trg,
+						trg.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+				this.observables.add(ret.target);
+
+				if (trg.is(Concepts.c(NS.CORE_AREA))) {
+					ret.targetType = TargetType.AREA;
+				} else if (trg.is(Concepts.c(NS.CORE_DURATION))) {
+					ret.targetType = TargetType.DURATION;
+				} else if (trg.is(Concepts.c(NS.CORE_COUNT))) {
+					ret.targetType = TargetType.NUMEROSITY;
+				}
+			} else {
+				throw new KlabValidationException(
+						"Table definition: target: " + theRest.get("target") + " does not specify a known observable");
+			}
+		} else if (theRest.containsKey("target")) {
+			throw new KlabValidationException("Table definition: unknown target: " + theRest.get("target"));
+		}
+
+		if (theRest.containsKey("title")) {
+			List<String> titles = new ArrayList<>();
+			if (theRest.get("title") instanceof Collection) {
+				for (Object o : ((Collection<?>) theRest.get("title"))) {
+					titles.add(o == null ? "" : o.toString());
+				}
+			} else {
+				String theTitle = theRest.get("title").toString();
+				// count the spaces in front to establish level
+				for (; theTitle.startsWith(" ");) {
+					titles.add("");
+					theTitle = theTitle.substring(1);
+				}
+				titles.add(theTitle);
+			}
+			ret.titles = titles.toArray(new String[titles.size()]);
+		}
+
+		if (theRest.containsKey("separator")) {
+			// TODO separator types for display
+			ret.separator = true;
+		}
+
+		if (theRest.get("compute") instanceof IKimExpression) {
+			IKimExpression expression = (IKimExpression) theRest.get("compute");
+			ILanguageProcessor processor = Extensions.INSTANCE
+					.getLanguageProcessor(expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
+							: expression.getLanguage());
+			Descriptor descriptor = processor.describe(expression.getCode(), scope.getExpressionContext(), false);
+			ret.symbols.addAll(descriptor.getIdentifiersInScalarScope());
+			ret.computation = descriptor.compile();
+		}
 
 		return ret;
-	}
-
-	private void parseExpression(IKimExpression iKimExpression, Column ret) {
-		// TODO Auto-generated method stub
-
 	}
 
 	private Collection<Filter> expandClassifier(Object declaration) {
@@ -400,40 +474,139 @@ public class Table {
 		List<Filter> ret = new ArrayList<>();
 
 		if (declaration == null) {
-			ret.add(Filter.universal());
+			ret.add(new Filter());
 			return ret;
 		}
 
 		/*
-		 * 1. classify the fükers into classes, a list per class. 2. Expand any concepts
-		 * according to specs (any, all, down to etc) to obtain fully expanded
-		 * classified lists. 3. Use Sets.cartesianProduct to obtain all combinations,
-		 * respecting order of declaration. 4. Make a filter from each combination.
+		 * categories
 		 */
-//		if (declared.isAbstract() || downto != null) {
-//			if (downto != null) {
-//				if (downto instanceof Number) {
-//					return Types.INSTANCE.getConcreteChildrenAtLevel(declared, ((Number) downto).intValue());
-//				} else {
-//					return Types.INSTANCE.getConcreteChildrenAtLevel(declared,
-//							Types.INSTANCE.getDetailLevel(declared, downto.toString()));
-//				}
-//			}
-//			return Types.INSTANCE.getConcreteLeaves(declared);
-//		}
-//		return Collections.singletonList(declared);
+		final int CATEGORY = 0;
+		final int OBJECT = 1;
+		final int EXPRESSION = 2;
+		final int NUMERIC = 3;
+		final int TIME = 4;
+		final int SPACE = 5;
 
+		Map<Integer, List<Object>> sorted = new HashMap<>();
+
+		for (Object o : (declaration instanceof Collection ? (Collection<?>) declaration
+				: Collections.singleton(declaration))) {
+			if (o instanceof IKimConcept || o instanceof IKimObservable) {
+
+				IObservable observable = o instanceof IKimObservable
+						? Observables.INSTANCE.declare((IKimObservable) o, scope.getMonitor())
+						: Observable.promote(Concepts.INSTANCE.declare((IKimConcept) o));
+				if (observable == null) {
+					throw new KlabValidationException(
+							"Table definition: classifier: " + o + " does not specify a known observable");
+				}
+
+				if (observable.is(IKimConcept.Type.COUNTABLE)) {
+					categorize(OBJECT, new ObservedConcept(observable, Mode.INSTANTIATION), sorted);
+				} else if (observable.is(IKimConcept.Type.CLASS)) {
+					for (ObservedConcept category : expandCategory(observable)) {
+						categorize(CATEGORY, category, sorted);
+					}
+				} else if (observable.is(IKimConcept.Type.PREDICATE)) {
+					for (ObservedConcept category : expandConcept(observable.getType(), observable)) {
+						categorize(CATEGORY, category, sorted);
+					}
+				} else {
+					throw new KlabValidationException("table: cannot classify on " + observable.getType()
+							+ ": only categories (type of) and countables are valid classifiers");
+				}
+
+			} else if (o instanceof Range) {
+				categorize(NUMERIC, o, sorted);
+			} else if (o instanceof IKimExpression) {
+				categorize(EXPRESSION, o, sorted);
+			} else if (o instanceof Map) {
+				// TODO space and time constraints: e.g (inside conservation:ProtectedArea)
+			} else if (o instanceof List) {
+				// TODO space and time constraints
+			} else {
+				switch (o.toString()) {
+				case "start":
+				case "end":
+					categorize(TIME, o.toString(), sorted);
+					break;
+				}
+			}
+		}
+
+		List<Set<Object>> joinable = new ArrayList<>();
+		for (List<Object> list : sorted.values()) {
+			joinable.add(new LinkedHashSet<>(list));
+		}
+
+		for (List<Object> combination : Sets.cartesianProduct(joinable)) {
+			ret.add(new Filter(combination));
+		}
+
+		return ret;
+	}
+
+	private void categorize(int key, Object value, Map<Integer, List<Object>> sorted) {
+		List<Object> list = sorted.get(key);
+		if (list == null) {
+			list = new ArrayList<>();
+			sorted.put(key, list);
+		}
+		list.add(value);
+	}
+
+	public List<ObservedConcept> expandCategory(IObservable observable) {
+
+		IConcept category = Observables.INSTANCE.getDescribedType(observable.getType());
+		this.observables.add(new ObservedConcept(observable, Mode.RESOLUTION));
+		return expandConcept(category, observable);
+	}
+
+	private List<ObservedConcept> expandConcept(IConcept category, IObservable observable) {
+
+		List<ObservedConcept> ret = new ArrayList<>();
+
+		/*
+		 * TODO support down to, all and any in the observable, which may be null
+		 */
+		if (!category.isAbstract() && (observable == null || !(observable.isGeneric() || observable.isGlobal()))) {
+			// just add the concept
+			ret.add((new ObservedConcept(Observable.promote(category), Mode.RESOLUTION)));
+			// add the reified base observable to those we need to have
+			IConcept base = Observables.INSTANCE.getBaseObservable(category);
+			if (base != null) {
+				this.observables.add(new ObservedConcept(Observable.promote(base).getBuilder(scope.getMonitor())
+						.as(UnarySemanticOperator.TYPE).buildObservable(), Mode.RESOLUTION));
+			}
+		} else {
+			for (IConcept child : (observable != null && observable.isGlobal())
+					? Types.INSTANCE.getConcreteChildren(category)
+					: Types.INSTANCE.getConcreteLeaves(category)) {
+				ret.add(new ObservedConcept(Observable.promote(child), Mode.RESOLUTION));
+			}
+		}
 		return ret;
 	}
 
 	/**
 	 * Compute all cells that want to be computed.
 	 */
+	@Override
 	public void compute(IRuntimeScope scope) {
 
 		/*
-		 * Prime all cells by resetting their aggregators
+		 * Find all observations in scope and fill in the observation map
 		 */
+
+		// reset every active cell
+		for (int col = 0; col < cells.length; col++) {
+			for (int row = 0; row < cells[col].length; row++) {
+				if (cells[col][row] != null) {
+					cells[col][row].reset();
+				}
+			}
+		}
 
 		for (Phase phase : phases) {
 			for (Pair<Object, ILocator> value : phase.states()) {
@@ -453,6 +626,7 @@ public class Table {
 	 * 
 	 * @return
 	 */
+	@Override
 	public String compile() {
 
 		StringBuffer ret = new StringBuffer(128 * rows.size() * columns.size());
@@ -466,6 +640,12 @@ public class Table {
 		 */
 
 		return ret.toString();
+	}
+
+	@Override
+	public void export(File file) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

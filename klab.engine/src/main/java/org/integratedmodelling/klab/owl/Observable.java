@@ -97,6 +97,7 @@ public class Observable implements IObservable {
 	 */
 	transient String originatingModelId;
 	private boolean mustContextualize;
+	private boolean global;
 
 	Observable(Concept concept) {
 		this.observable = concept;
@@ -119,7 +120,7 @@ public class Observable implements IObservable {
 		ret.observable = (Concept) concept;
 		ret.declaration = concept.getDefinition().trim();
 		ret.isAbstract = concept.isAbstract();
-		ret.generic = concept.isAbstract();
+		ret.generic = false;
 		ret.referenceName = ret.name = Concepts.INSTANCE.getCodeName(ret.observable);
 
 		return ret;
@@ -722,6 +723,15 @@ public class Observable implements IObservable {
 
 	public void setTemporalInherent(IConcept temporalInherent) {
 		this.temporalInherent = temporalInherent;
+	}
+
+	@Override
+	public boolean isGlobal() {
+		return this.global;
+	}
+
+	public void setGlobal(boolean global) {
+		this.global = global;
 	}
 
 }

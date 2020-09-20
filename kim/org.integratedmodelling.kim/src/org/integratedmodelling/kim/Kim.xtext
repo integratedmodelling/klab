@@ -32,7 +32,7 @@ DefineStatement:
 ;
 
 DefinitionBody:
-	(defineClass=LOWERCASE_ID)? name=UPPERCASE_ID 'as' value=Value
+	(defineClass=LOWERCASE_ID)? name=(UPPERCASE_ID|LOWERCASE_ID) 'as' value=Value
 ;
 
 ModelBodyStatement:
@@ -747,7 +747,7 @@ Annotation:
 	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
 
 List:
-	{List} '(' contents+=Value* ')';
+	{List} '(' contents+=ValueWithIdAndConcept ((',')? contents+=ValueWithIdAndConcept)* ')';
 
 Literal:
 	 from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false');
