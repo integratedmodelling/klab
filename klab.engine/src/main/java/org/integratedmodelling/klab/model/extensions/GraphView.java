@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.KimObject;
 
@@ -18,7 +19,7 @@ public class GraphView extends KimObject implements IKnowledgeView {
 	private String name;
 	private INamespace namespace;
 
-	public GraphView(Object definition, IKimSymbolDefinition statement, INamespace namespace) {
+	public GraphView(Object definition, IKimSymbolDefinition statement, INamespace namespace, IMonitor monitor) {
 		super(statement);
 		this.viewClass = statement.getDefineClass();
 		this.name = statement.getName();

@@ -69,19 +69,21 @@ public enum Extensions implements IExtensionService {
 	INSTANCE;
 
 	/**
-	 * Each known function parsed from k.IM gets its prototype as a hidden parameter.
+	 * Each known function parsed from k.IM gets its prototype as a hidden
+	 * parameter.
 	 */
 	public static final String PROTOTYPE_PARAMETER = "__prototype";
 
 	/**
-	 * Passed to contextualizer-creating functions so that they know if the contextualizer is
-	 * being targeted to an observable other than the main one.
+	 * Passed to contextualizer-creating functions so that they know if the
+	 * contextualizer is being targeted to an observable other than the main one.
 	 */
 	public static final String TARGET_OBSERVABLE_PARAMETER = "__targetObservable";
 
 	Map<String, IComponent> components = Collections.synchronizedMap(new HashMap<>());
 	Map<String, Prototype> prototypes = Collections.synchronizedMap(new HashMap<>());
-	// keep the component properties separately from the components themselves to allow 
+	// keep the component properties separately from the components themselves to
+	// allow
 	// usage during testing
 	Map<String, Properties> componentProperties = Collections.synchronizedMap(new HashMap<>());
 
@@ -104,22 +106,23 @@ public enum Extensions implements IExtensionService {
 	}
 
 	@Override
-	public Object processDefinition(IKimSymbolDefinition statement, Object definition, INamespace namespace) {
+	public Object processDefinition(IKimSymbolDefinition statement, Object definition, INamespace namespace,
+			IMonitor monitor) {
 
 		/*
-		 * For now no plugin-based mechanism. Maybe later. Not hard - just annotate a provider and give it a 
-		 * process method.
+		 * For now no plugin-based mechanism. Maybe later. Not hard - just annotate a
+		 * provider and give it a process method.
 		 */
 		switch (statement.getDefineClass()) {
 		case "table":
-			return new TableView(definition, statement, namespace);
+			return new TableView(definition, statement, namespace, monitor);
 		case "chart":
-			return new GraphView(definition, statement, namespace);
+			return new GraphView(definition, statement, namespace, monitor);
 		}
-		
+
 		return definition;
 	}
-	
+
 	public org.integratedmodelling.klab.engine.extensions.Component registerComponent(Component annotation,
 			Class<?> cls) {
 
@@ -284,7 +287,7 @@ public enum Extensions implements IExtensionService {
 					annotation.type() + ": resource adapter annotations must be used on IResourceAdapter classes");
 		}
 	}
-	
+
 	public void validateArguments(IPrototype prototype, Map<String, Object> arguments) {
 		// TODO
 	}
@@ -461,7 +464,6 @@ public enum Extensions implements IExtensionService {
 		org.integratedmodelling.klab.engine.extensions.Component component = getComponent(componentId);
 		return component == null ? null : component.getImplementation(requestedClass);
 	}
-	
 
 	public Properties getComponentProperties(String componentId) {
 		if (!componentProperties.containsKey(componentId)) {
@@ -474,7 +476,7 @@ public enum Extensions implements IExtensionService {
 					throw new KlabIOException(e);
 				}
 			} else {
-				try { 
+				try {
 					FileUtils.touch(pfile);
 				} catch (IOException e) {
 					// screw it
@@ -486,7 +488,7 @@ public enum Extensions implements IExtensionService {
 	}
 
 	public void saveComponentProperties(String componentId) {
-		
+
 		Properties cp = getComponentProperties(componentId);
 		File pfile = new File(Configuration.INSTANCE.getDataPath() + File.separator + componentId + ".properties");
 		try (OutputStream out = new FileOutputStream(pfile)) {

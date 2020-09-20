@@ -221,10 +221,11 @@ public class KimNotifier implements Kim.Notifier {
 				String name = ((IKimSymbolDefinition) statement).getName();
 
 				if (((IKimSymbolDefinition) statement).getDefineClass() != null) {
-					value = Extensions.INSTANCE.processDefinition(((IKimSymbolDefinition) statement), value, ns);
+					value = Extensions.INSTANCE.processDefinition(((IKimSymbolDefinition) statement), value, ns,
+							monitor);
 					if (value instanceof IKnowledgeView) {
 						ns.getKnowledgeViews().put(name, (IKnowledgeView) value);
-						ns.addObject((IKnowledgeView)value);
+						ns.addObject((IKnowledgeView) value);
 					}
 				} else if (value instanceof IKimTable) {
 					value = Table.create((IKimTable) value);

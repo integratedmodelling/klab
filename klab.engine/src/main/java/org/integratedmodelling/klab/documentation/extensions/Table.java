@@ -12,6 +12,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.annotation.Nullable;
+
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimExpression;
@@ -334,12 +336,26 @@ public class Table extends ViewArtifact {
 	 * ------- Definition and validation --------------------------
 	 */
 
-	public Table(Map<?, ?> definition, IObservable target, IMonitor monitor) {
+	public Table(Map<?, ?> definition, @Nullable IObservable target, IMonitor monitor) {
 		this.monitor = monitor;
+		if (target == null && definition.containsKey("target")) {
+			IKimStatement tdef = (IKimStatement) definition.get("target");
+			target = tdef instanceof IKimObservable ? Observables.INSTANCE.declare((IKimObservable) tdef, monitor)
+					: Observable.promote(Concepts.INSTANCE.declare((IKimConcept) tdef));
+			if (target == null) {
+				throw new KlabValidationException("table: target observable contains undeclared semantics: " + tdef);
+			}
+			observables.add(new ObservedConcept(target,
+					target.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+		}
 		this.target = target;
 		this.activeColumns = parseDimension(definition.get("columns"), this.columns, "c");
 		this.activeRows = parseDimension(definition.get("rows"), this.rows, "r");
 		this.cells = new Cell[activeColumns][activeRows];
+	}
+
+	public Collection<ObservedConcept> getObservables() {
+		return observables;
 	}
 
 	private int parseDimension(Object object, Map<String, Dimension> dimensions, String namePrefix) {
@@ -587,8 +603,9 @@ public class Table extends ViewArtifact {
 			// add the reified base observable to those we need to have
 			IConcept base = Observables.INSTANCE.getBaseObservable(category);
 			if (base != null) {
-				this.observables.add(new ObservedConcept(Observable.promote(base).getBuilder(monitor)
-						.as(UnarySemanticOperator.TYPE).buildObservable(), Mode.RESOLUTION));
+				this.observables.add(new ObservedConcept(
+						Observable.promote(base).getBuilder(monitor).as(UnarySemanticOperator.TYPE).buildObservable(),
+						Mode.RESOLUTION));
 			}
 		} else {
 			for (IConcept child : (observable != null && observable.isGlobal())
@@ -609,7 +626,7 @@ public class Table extends ViewArtifact {
 		/*
 		 * Reset expressions and recompile them in all dimensions using the scope
 		 */
-		
+
 		/*
 		 * Find all observations in scope and fill in the observation map
 		 */

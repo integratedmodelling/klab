@@ -104,6 +104,6 @@ public interface IExtensionService {
 	 * @param definition
 	 * @return
 	 */
-	Object processDefinition(IKimSymbolDefinition statement, Object definition, INamespace namespace);
+	Object processDefinition(IKimSymbolDefinition statement, Object definition, INamespace namespace, IMonitor monitor);
 
 }
