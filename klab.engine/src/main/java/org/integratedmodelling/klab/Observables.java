@@ -45,6 +45,7 @@ import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -536,6 +537,9 @@ public enum Observables implements IObservableService {
 
 	@Override
 	public Type getObservableType(IObservable observable, boolean acceptTraits) {
+		if (observable.getArtifactType().equals(IArtifact.Type.VOID)) {
+			return Type.NOTHING;
+		}
 		EnumSet<Type> type = EnumSet.copyOf(((Concept) observable.getType()).getTypeSet());
 		type.retainAll(IKimConcept.BASE_MODELABLE_TYPES);
 		if (type.size() != 1) {

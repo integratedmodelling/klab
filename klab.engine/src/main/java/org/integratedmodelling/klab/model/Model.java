@@ -64,6 +64,7 @@ import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
@@ -807,9 +808,11 @@ public class Model extends KimObject implements IModel {
 
 	public Model(IKnowledgeView view) {
 		super(null);
-		// no observables, all the independent observables in the view as dependencies, the view compilation as code
+		// Observable is the void concept (non-semantic artifact); all the independent
+		// observables in the view as dependencies, the view compilation as code
 		this.derived = true;
-		this.namespace = (Namespace)view.getNamespace();
+		this.namespace = (Namespace) view.getNamespace();
+		this.observables.add(Observable.promote(Concepts.c(NS.CORE_VOID)));
 		this.id = view.getId() + "_resolver";
 		this.contextualization = new Contextualization(null, this);
 		this.dependencies.addAll(view.getObservables());

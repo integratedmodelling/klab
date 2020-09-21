@@ -23,6 +23,7 @@ import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -312,7 +313,6 @@ public class Table extends ViewArtifact {
 	 * during filter parsing. Keys are the same used in the filters.
 	 */
 	private Map<ObservedConcept, IObservation> observations = new HashMap<>();
-//	private IRuntimeScope scope;
 	private IObservable target;
 	private int activeColumns;
 	private int activeRows;
@@ -345,8 +345,16 @@ public class Table extends ViewArtifact {
 			if (target == null) {
 				throw new KlabValidationException("table: target observable contains undeclared semantics: " + tdef);
 			}
-			observables.add(new ObservedConcept(target,
-					target.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+			/*
+			 * add to observables unless it's a core concept. These are 'equals' by
+			 * mandatory root convention, so fine to use equals().
+			 */
+			if (!(target.getType().equals(Concepts.c(NS.CORE_AREA))
+					|| target.getType().equals(Concepts.c(NS.CORE_DURATION))
+					|| target.getType().equals(Concepts.c(NS.CORE_COUNT)))) {
+				observables.add(new ObservedConcept(target,
+						target.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
+			}
 		}
 		this.target = target;
 		this.activeColumns = parseDimension(definition.get("columns"), this.columns, "c");
@@ -449,14 +457,15 @@ public class Table extends ViewArtifact {
 
 				ret.target = new ObservedConcept(trg,
 						trg.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
-				this.observables.add(ret.target);
 
-				if (trg.is(Concepts.c(NS.CORE_AREA))) {
+				if (trg.getType().equals(Concepts.c(NS.CORE_AREA))) {
 					ret.targetType = TargetType.AREA;
-				} else if (trg.is(Concepts.c(NS.CORE_DURATION))) {
+				} else if (trg.getType().equals(Concepts.c(NS.CORE_DURATION))) {
 					ret.targetType = TargetType.DURATION;
-				} else if (trg.is(Concepts.c(NS.CORE_COUNT))) {
+				} else if (trg.getType().equals(Concepts.c(NS.CORE_COUNT))) {
 					ret.targetType = TargetType.NUMEROSITY;
+				} else {
+					this.observables.add(ret.target);
 				}
 			} else {
 				throw new KlabValidationException(

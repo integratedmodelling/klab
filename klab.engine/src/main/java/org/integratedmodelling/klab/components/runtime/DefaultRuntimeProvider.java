@@ -58,6 +58,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.Classifyi
 import org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.DereifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.KnowledgeViewResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LookupStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ObjectClassificationResolver;
@@ -153,13 +154,13 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				}
 
 				IActuator firstActuator = null;
-				
+
 				for (IActuator actuator : dataflow.getActuators()) {
 
 					if (firstActuator == null) {
 						firstActuator = actuator;
 					}
-					
+
 					List<Actuator> order = ((Actuator) actuator).dependencyOrder();
 
 					// must merge in any constraints from the model before calling this.
@@ -566,7 +567,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 	@Override
 	public IContextualizable getViewResolver(IKnowledgeView view) {
-		// TODO Auto-generated method stub
-		return null;
+		return new ComputableResource(KnowledgeViewResolver.getServiceCall(view), Mode.RESOLUTION);
 	}
 }

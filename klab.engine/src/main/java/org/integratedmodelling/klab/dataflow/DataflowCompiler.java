@@ -562,6 +562,7 @@ public class DataflowCompiler {
 				ret.setType(Type.VOID);
 				break;
 			default:
+				ret.setType(Type.VOID);
 				break;
 			}
 		}

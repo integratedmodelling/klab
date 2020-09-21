@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -114,14 +115,22 @@ public class Observable implements IObservable {
 		ret.resolvedModel = model;
 		return ret;
 	}
-	
+
+	/**
+	 * The observable for a view is for now the only instance of a void observable
+	 * as the view is a non-semantic artifact.
+	 * 
+	 * @param view
+	 * @return
+	 */
 	public static Observable promote(IKnowledgeView view) {
-		// void model
-		Observable ret = new Observable(Concepts.c("owl:Nothing"));
+		Observable ret = new Observable(Concepts.c(NS.CORE_VOID));
+		ret.generic = false;
+		ret.declaration = NS.CORE_VOID;
+		ret.referenceName = ret.name = "void";
 		ret.resolvedModel = new Model(view);
 		return ret;
 	}
-
 
 	public static Observable promote(IConcept concept) {
 
@@ -132,6 +141,10 @@ public class Observable implements IObservable {
 		ret.isAbstract = concept.isAbstract();
 		ret.generic = false;
 		ret.referenceName = ret.name = Concepts.INSTANCE.getCodeName(ret.observable);
+		if (ret.referenceName == null) {
+			// happens with non-standard observables like observation:Void.
+			ret.referenceName = ret.name = concept.getName().toLowerCase();
+		}
 
 		return ret;
 	}
@@ -276,6 +289,9 @@ public class Observable implements IObservable {
 				boolean distributed = Observables.INSTANCE.hasDistributedInherency(observable);
 				observationType = distributed ? IActivity.Description.CLASSIFICATION
 						: IActivity.Description.CHARACTERIZATION;
+			} else {
+				// void observable: just do it, no semantics.
+				observationType = IActivity.Description.COMPILATION;
 			}
 		}
 		return observationType;

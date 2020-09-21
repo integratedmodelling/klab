@@ -466,7 +466,7 @@ public class Actuator implements IActuator {
 				context.setData(indirectTarget.getName(), artifactTable.get(targetId));
 			}
 
-			if (model != null && !input && !artifacts.contains(ret) && !ret.isArchetype()) {
+			if (ret != null && model != null && !input && !artifacts.contains(ret) && !ret.isArchetype()) {
 				artifacts.add(ret);
 				if (ret instanceof IObservation && !(ret instanceof StateLayer)) {
 					// ACH creates problems later
@@ -501,27 +501,29 @@ public class Actuator implements IActuator {
 			return ret;
 		}
 
-		if (!runtimeContext.getTargetArtifact().equals(ret)) {
+		if (ret != null) {
+			if (!runtimeContext.getTargetArtifact().equals(ret)) {
 
-			/*
-			 * Computation has changed the artifact: reset into catalog unless it's a proxy
-			 * artifact.
-			 */
-			if (!isProxy(target)) {
-				runtimeContext.setData(((IObservation) target).getObservable().getName(), ret);
+				/*
+				 * Computation has changed the artifact: reset into catalog unless it's a proxy
+				 * artifact.
+				 */
+				if (!isProxy(target)) {
+					runtimeContext.setData(((IObservation) target).getObservable().getName(), ret);
+				}
 			}
+
+			// FIXME the original context does not get the indirect artifacts
+			if (runtimeContext.getTargetArtifact() == null || !runtimeContext.getTargetArtifact().equals(ret)) {
+				((IRuntimeScope) runtimeContext).setTarget(ret);
+			}
+
+			// add any artifact, including the empty artifact, to the provenance. FIXME the
+			// provenance doesn't get the indirect artifacts. This
+			// needs to store the full causal chain and any indirect observations.
+			ctx.getProvenance().addArtifact(ret);
 		}
-
-		// FIXME the original context does not get the indirect artifacts
-		if (runtimeContext.getTargetArtifact() == null || !runtimeContext.getTargetArtifact().equals(ret)) {
-			((IRuntimeScope) runtimeContext).setTarget(ret);
-		}
-
-		// add any artifact, including the empty artifact, to the provenance. FIXME the
-		// provenance doesn't get the indirect artifacts. This
-		// needs to store the full causal chain and any indirect observations.
-		ctx.getProvenance().addArtifact(ret);
-
+		
 		if (model != null) {
 			/*
 			 * notify to the report all model annotations that will create documentation
@@ -563,7 +565,7 @@ public class Actuator implements IActuator {
 			}
 
 			IConfiguration configuration = null;
-			if (!ret.isEmpty() && (mode == Mode.INSTANTIATION || ret instanceof IState)) {
+			if (ret != null && !ret.isEmpty() && (mode == Mode.INSTANTIATION || ret instanceof IState)) {
 				/*
 				 * check for configuration triggered, only if we just resolved a state or
 				 * instantiated 1+ objects
@@ -843,9 +845,13 @@ public class Actuator implements IActuator {
 		// pre-compute before notification to speed up visualization
 		// TODO change to a state callback to finalize a transition after all values are
 		// in
-		((Observation) ret).finalizeTransition(ctx.getScale().initialization());
-
-		((Observation) ret).setContextualized(true);
+		if (ret instanceof Observation) {
+			/*
+			 * May be null for void contextualizers
+			 */
+			((Observation) ret).finalizeTransition(ctx.getScale().initialization());
+			((Observation) ret).setContextualized(true);
+		}
 
 		state.setStatus(Status.FINISHED);
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,

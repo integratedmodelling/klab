@@ -684,6 +684,15 @@ Main author</dc:contributor>
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#Compilation -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Compilation">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observation"/>
+        <rdfs:comment>Compilation is the observation of a Void observable, producing a non-semantic artifact</rdfs:comment>
+    </owl:Class>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#Configuration -->
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Configuration">
@@ -1126,7 +1135,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
             <owl:Restriction>
                 <owl:onProperty rdf:resource="http://integratedmodelling.org/ks/observation.owl#contextualizes"/>
                 <owl:qualifiedCardinality rdf:datatype="http://www.w3.org/2001/XMLSchema#nonNegativeInteger">1</owl:qualifiedCardinality>
-                <owl:onClass rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+                <owl:onClass rdf:resource="http://integratedmodelling.org/ks/observation.owl#Void"/>
             </owl:Restriction>
         </rdfs:subClassOf>
         <rdfs:subClassOf>
@@ -1680,6 +1689,15 @@ Importantly, a deliberative agent can access history, although the full meaning 
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
         <unit>100 Pa*s</unit>
         <rdfs:comment>Unit is Poise (P) which is not available in JScience, and corresponds to 100 mPa.s</rdfs:comment>
+    </owl:Class>
+    
+
+
+    <!-- http://integratedmodelling.org/ks/observation.owl#Void -->
+
+    <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Void">
+        <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Observable"/>
+        <rdfs:comment>Void is a &quot;semantic zero&quot;, used to make those observations that produce only side effects and non-semantic artifacts such as tables, reports, scenario visualizations and the like.</rdfs:comment>
     </owl:Class>
     
 

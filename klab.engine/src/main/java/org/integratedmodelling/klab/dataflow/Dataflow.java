@@ -312,7 +312,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		if (parentComputation == null) {
 			rootDataflow = this;
 			((RuntimeScope) ((Observation) ret).getScope()).setDataflow(this);
-		} else {
+		} else if (ret != null) {
 
 			rootDataflow = (Dataflow) ((Observation) ret).getScope().getDataflow();
 

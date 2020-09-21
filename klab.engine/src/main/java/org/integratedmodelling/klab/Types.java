@@ -16,9 +16,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.services.ITypeService;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.classification.Classifier;
-import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.owl.OWL;
 
 /**
  * Methods to deal with classified types.
@@ -298,7 +296,7 @@ public enum Types implements ITypeService {
 			throws KlabValidationException {
 
 		if (rootClass.is(Type.CLASS)) {
-			rootClass = getCategorizingType(rootClass);
+			rootClass = Observables.INSTANCE.getDescribedType(rootClass);
 		}
 
 		Classification ret = Classification.create(rootClass);
@@ -326,10 +324,10 @@ public enum Types implements ITypeService {
 		return ret;
 	}
 
-	public IConcept getCategorizingType(IConcept concept) {
-		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-				Concepts.p(NS.INCARNATES_TRAIT_PROPERTY));
-		return cls.isEmpty() ? null : cls.iterator().next();
-	}
+//	public IConcept getCategorizingType(IConcept concept) {
+//		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
+//				Concepts.p(NS.INCARNATES_TRAIT_PROPERTY));
+//		return cls.isEmpty() ? null : cls.iterator().next();
+//	}
 
 }

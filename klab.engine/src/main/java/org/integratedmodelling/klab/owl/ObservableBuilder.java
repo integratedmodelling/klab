@@ -1430,7 +1430,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			ontology.define(axioms);
 			IConcept ret = ontology.getConcept(conceptId);
 
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.INCARNATES_TRAIT_PROPERTY), classified, ontology);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), classified, ontology);
 
 			/*
 			 * types inherit the context from their trait
