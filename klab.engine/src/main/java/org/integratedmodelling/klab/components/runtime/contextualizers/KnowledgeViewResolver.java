@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -42,7 +43,8 @@ public class KnowledgeViewResolver implements IResolver<IArtifact>, IExpression 
 
 	@Override
 	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
-		this.view.compileView(context);
+		// artifact will normally be null
+		this.view.compileView((IObservation)ret, context);
 		return null;
 	}
 }

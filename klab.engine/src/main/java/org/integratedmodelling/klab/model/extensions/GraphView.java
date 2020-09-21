@@ -7,6 +7,7 @@ import org.integratedmodelling.kim.api.IKimSymbolDefinition;
 import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -43,7 +44,7 @@ public class GraphView extends KimObject implements IKnowledgeView {
 	}
 
 	@Override
-	public void compileView(IContextualizationScope scope) {
+	public void compileView(IObservation target, IContextualizationScope scope) {
 		// TODO Auto-generated method stub
 
 	}

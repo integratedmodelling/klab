@@ -29,7 +29,7 @@ public abstract class View<T, E> {
 		return id;
 	}
 
-	public abstract E compute(IRuntimeScope scope);
+	public abstract E compute(IObservation target, IRuntimeScope scope);
 
 	public abstract T compile(E result);
 

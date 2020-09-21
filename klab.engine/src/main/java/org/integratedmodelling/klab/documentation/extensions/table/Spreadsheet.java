@@ -52,7 +52,9 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.jgrapht.Graph;
+import org.jgrapht.alg.CycleDetector;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import com.google.common.collect.Sets;
 
@@ -359,10 +361,32 @@ public class Spreadsheet extends View<String, Table> {
 	 * @param dimensions
 	 * @return
 	 */
-	private Iterable<Dimension> getSortedDimension(Map<String, Dimension> dimensions) {
+	private Iterable<Dimension> getSortedDimension(Map<String, Dimension> dimensions, IRuntimeScope scope) {
 		List<Dimension> ret = new ArrayList<>();
 		Graph<String, DefaultEdge> graph = new DefaultDirectedGraph<>(DefaultEdge.class);
+		for (Dimension dimension : dimensions.values()) {
+			graph.addVertex(dimension.id);
+			if (dimension.getExpression(scope) != null) {
+				for (String s : dimension.symbols) {
+					if (dimensions.containsKey(s)) {
+						graph.addVertex(s);
+						graph.addEdge(s, dimension.id);
+					}
+				}
+			}
+		}
 
+		CycleDetector<String, DefaultEdge> cycles = new CycleDetector<>(graph);
+		if (cycles.detectCycles()) {
+			throw new KlabValidationException(
+					"table: expressions in rows or columns contain circular dependencies between "
+							+ cycles.findCycles());
+		}
+		TopologicalOrderIterator<String, DefaultEdge> sort = new TopologicalOrderIterator<>(graph);
+		while (sort.hasNext()) {
+			ret.add(dimensions.get(sort.next()));
+		}
+		
 		return ret;
 	}
 
@@ -443,30 +467,6 @@ public class Spreadsheet extends View<String, Table> {
 				ret++;
 			}
 		}
-//		
-//		if (map.containsKey("classifier")) {
-//			if (map.get("classifier") instanceof IKimConcept) {
-//				IConcept classifier = Concepts.INSTANCE.declare((IKimConcept) map.get("classifier"));
-//				if (classifier.is(Type.COUNTABLE)) {
-//					// TODO build columns based on the contextualized artifacts for the concept
-//				} else {
-//					Object group = map.get("group") instanceof IKimConcept
-//							? Concepts.INSTANCE.declare((IKimConcept) map.get("group"))
-//							: null;
-//					for (IConcept concept : expandClassifier(classifier, map.get("downto"))) {
-//						// add as many newColumns as needed
-//						Dimension column = newDimension(concept, map);
-////						column.group = group;
-//						dimensions.put(column.id, column);
-//					}
-//				}
-//			} else {
-//				Dimension column = newDimension(map.get("classifier"), map);
-////				column.group = map.get("group");
-//				dimensions.put(column.id, column);
-//			}
-//		}
-
 		return ret;
 	}
 
@@ -663,25 +663,20 @@ public class Spreadsheet extends View<String, Table> {
 	}
 
 	/**
-	 * Compute all cells that want to be computed. Target comes from caller, if null we must have 
-	 * an observable and find it in the catalog.
+	 * Compute all cells that want to be computed. Target comes from caller, if null
+	 * we must have an observable and find it in the catalog.
 	 */
 	@Override
 	public Table compute(IObservation targetObservation, IRuntimeScope scope) {
 
 		Table ret = new Table(this);
 		Map<ObservedConcept, IObservation> catalog = scope.getCatalog();
-
-		 = null;
-		ObservedConcept targetConcept = null;
-		if (this.target != null) {
+		ObservedConcept targetConcept = targetObservation == null ? null
+				: new ObservedConcept(targetObservation.getObservable());
+		if (targetObservation == null && this.target != null) {
 			targetConcept = new ObservedConcept(target);
 			targetObservation = catalog.get(targetConcept);
 		}
-
-		/*
-		 * Reset expressions and recompile them in all dimensions using the scope
-		 */
 
 		/*
 		 * Find all observations in scope and fill in the observation map
@@ -689,18 +684,18 @@ public class Spreadsheet extends View<String, Table> {
 
 		for (Phase phase : getPhases(scope, catalog)) {
 			for (Pair<Object, ILocator> value : phase.states()) {
-				for (Dimension column : getSortedDimension(columns)) {
+				for (Dimension column : getSortedDimension(columns, scope)) {
 
 					if (!column.filter.matches(catalog, value.getSecond())) {
 						continue;
 					}
 
 					// may switch target to column's
-					
-					for (Dimension row : getSortedDimension(rows)) {
+
+					for (Dimension row : getSortedDimension(rows, scope)) {
 
 						// NO target in rows is for classification only!
-						
+
 						if (!row.filter.matches(catalog, value.getSecond())) {
 							continue;
 						}
