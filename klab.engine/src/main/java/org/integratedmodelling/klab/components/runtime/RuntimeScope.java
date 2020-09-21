@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.commons.collections.IteratorUtils;
-import org.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -1744,7 +1743,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		List<IObservable> ret = new ArrayList<>();
 		return ret;
 	}
-	
+
 	public void setDataflow(Dataflow dataflow) {
 		this.dataflow = dataflow;
 	}
@@ -1811,6 +1810,19 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	public void setOccurrent() {
 		getRootScope().occurrent = true;
+	}
+
+	@Override
+	public Map<ObservedConcept, IObservation> getCatalog() {
+		Map<ObservedConcept, IObservation> ret = new HashMap<>();
+		for (IArtifact artifact : catalog.values()) {
+			if (artifact instanceof IObservation) {
+				ret.put(new ObservedConcept(((IObservation) artifact).getObservable(),
+						artifact instanceof ObservationGroup ? Mode.INSTANTIATION : Mode.RESOLUTION),
+						(IObservation) artifact);
+			}
+		}
+		return ret;
 	}
 
 }

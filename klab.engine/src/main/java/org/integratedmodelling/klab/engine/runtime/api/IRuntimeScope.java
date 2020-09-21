@@ -201,7 +201,7 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @return
 	 */
 	Pair<String, IArtifact> findArtifact(IObservable observable);
-	
+
 	/**
 	 * The contextualization strategy is a singleton within the context and is never
 	 * null.
@@ -412,5 +412,12 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	boolean isOccurrent();
 
+	/**
+	 * Create and return a shallow copy of the observation catalog optimized for
+	 * quick search with ObservedConcept.
+	 * 
+	 * @return
+	 */
+	Map<ObservedConcept, IObservation> getCatalog();
 
 }

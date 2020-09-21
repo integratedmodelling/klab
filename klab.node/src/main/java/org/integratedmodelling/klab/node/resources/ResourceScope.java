@@ -700,4 +700,10 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 		return null;
 	}
 
+	@Override
+	public Map<ObservedConcept, IObservation> getCatalog() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

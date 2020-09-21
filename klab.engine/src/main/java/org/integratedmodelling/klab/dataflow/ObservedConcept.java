@@ -5,10 +5,12 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.ValueOperator;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -32,6 +34,10 @@ public class ObservedConcept {
 	String conceptDeclaration = null;
 	private List<Pair<ValueOperator, Object>> valueOperators;
 
+	public ObservedConcept(IObservable observable) {
+		this(observable, observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+	}
+
 	public ObservedConcept(IObservable observable, IResolutionScope.Mode mode) {
 		this.observable = observable;
 		if (!observable.getValueOperators().isEmpty()) {
@@ -52,8 +58,6 @@ public class ObservedConcept {
 	public IResolutionScope.Mode getMode() {
 		return mode;
 	}
-
-
 
 	@Override
 	public int hashCode() {

@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.documentation.extensions;
+package org.integratedmodelling.klab.documentation.extensions.table;
 
 import java.io.File;
 import java.util.ArrayList;
@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -16,15 +17,17 @@ import javax.annotation.Nullable;
 
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
-import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Types;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
@@ -32,13 +35,16 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.data.Aggregator;
+import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
+import org.integratedmodelling.klab.documentation.extensions.View;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -50,7 +56,7 @@ import org.jgrapht.graph.DefaultDirectedGraph;
 
 import com.google.common.collect.Sets;
 
-public class Table extends ViewArtifact {
+public class Spreadsheet extends View<String, Table> {
 
 	enum AggregationType {
 		Aggregator, Differentiator, Comparator, Counter
@@ -58,34 +64,6 @@ public class Table extends ViewArtifact {
 
 	enum TargetType {
 		AREA, DURATION, QUALITY, NUMEROSITY
-	}
-
-	/**
-	 * A cell may contain a standard aggregator, a comparator, a differentiator or
-	 * other accumulator of values.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	class Cell {
-
-		Aggregator aggregator;
-
-		/**
-		 * Accumulate the passed value corresponding to the passed locator and view.
-		 * 
-		 * @param value
-		 * @param locator
-		 * @param view
-		 */
-		void accumulate(Object value, ILocator locator, Phase view) {
-
-		}
-
-		public void reset() {
-			// TODO Auto-generated method stub
-
-		}
 	}
 
 	/**
@@ -100,11 +78,28 @@ public class Table extends ViewArtifact {
 	 */
 	class Phase {
 
-		IScale scale;
-		SpaceSelector space;
-		TimeSelector time;
-		int index;
-		int total;
+		private IScale scale;
+		private SpaceSelector space;
+		private Set<Object> classifiers = new HashSet<>();
+//		private TimeSelector time;
+		private int index;
+		private int total;
+		private IArtifact observation;
+
+		public Phase(IScale scale, int states, Object... classifiers) {
+			this.scale = scale;
+			this.total = states;
+			if (classifiers != null) {
+				for (Object c : classifiers) {
+					this.classifiers.add(c);
+				}
+			}
+		}
+
+		public Phase(IArtifact group) {
+			this.observation = group;
+			this.total = group.groupSize();
+		}
 
 		boolean isLast() {
 			return index == (total - 1);
@@ -119,26 +114,70 @@ public class Table extends ViewArtifact {
 		 */
 		Iterable<Pair<Object, ILocator>> states() {
 			if (scale != null) {
-//				return scale;
+				return new Iterable<Pair<Object, ILocator>>() {
+
+					Iterator<ILocator> it = scale.iterator();
+
+					@Override
+					public Iterator<Pair<Object, ILocator>> iterator() {
+						return new Iterator<Pair<Object, ILocator>>() {
+
+							@Override
+							public boolean hasNext() {
+								return it.hasNext();
+							}
+
+							@Override
+							public Pair<Object, ILocator> next() {
+								return new Pair<>(null, it.next());
+							}
+
+						};
+					}
+				};
+
+			} else if (observation != null) {
+				return new Iterable<Pair<Object, ILocator>>() {
+
+					@Override
+					public Iterator<Pair<Object, ILocator>> iterator() {
+						return new Iterator<Pair<Object, ILocator>>() {
+
+							Iterator<IArtifact> it = observation.iterator();
+
+							@Override
+							public Pair<Object, ILocator> next() {
+								IArtifact o = it.next();
+								return new Pair<>(o, ((IObservation) o).getScale());
+							}
+
+							@Override
+							public boolean hasNext() {
+								return it.hasNext();
+							}
+						};
+					}
+
+				};
 			}
 			return null;
 		}
 	}
 
-	/**
-	 * Selector of time points to use with spatially varying targets. If resolution
-	 * != null, selects all timepoints at the resolution within the target range.
-	 * Start and end select the first or last slice at the native resolution of the
-	 * target.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	class TimeSelector {
-		boolean start;
-		boolean end;
-		Resolution resolution;
-	}
+//	/**
+//	 * Selector of time points to use with spatially varying targets. If resolution
+//	 * != null, selects all timepoints at the resolution within the target range.
+//	 * Start and end select the first or last slice at the native resolution of the
+//	 * target.
+//	 * 
+//	 * @author Ferd
+//	 *
+//	 */
+//	class TimeSelector {
+//		boolean start;
+//		boolean end;
+//		Resolution resolution;
+//	}
 
 	/**
 	 * Not used for the time being.
@@ -170,10 +209,10 @@ public class Table extends ViewArtifact {
 		 */
 		boolean universal = false;
 
-		/**
-		 * Time selector if we only accumulate values in specified times.
-		 */
-		TimeSelector timeSelector;
+//		/**
+//		 * Time selector if we only accumulate values in specified times.
+//		 */
+//		TimeSelector timeSelector;
 
 		/**
 		 * If specified, the concept we use to filter and the key observable to find the
@@ -194,12 +233,12 @@ public class Table extends ViewArtifact {
 		 */
 		IExpression expression;
 
-		boolean matches(Object value, ILocator locator) {
+		boolean matches(Map<ObservedConcept, IObservation> catalog, ILocator locator) {
 			if (universal) {
 				return true;
 			}
 			// TODO
-			return false;
+			return true;
 		}
 	}
 
@@ -302,13 +341,6 @@ public class Table extends ViewArtifact {
 	private List<Phase> phases = new ArrayList<>();
 
 	/**
-	 * The computed part of the table where things happen. Created after reading
-	 * rows and columns. Contains a cell per active column/row combination, null if
-	 * nothing has gotten in.
-	 */
-	private Cell[][] cells;
-
-	/**
 	 * All observations used in compiling the table. Harvested from the context
 	 * during filter parsing. Keys are the same used in the filters.
 	 */
@@ -317,6 +349,8 @@ public class Table extends ViewArtifact {
 	private int activeColumns;
 	private int activeRows;
 	private IMonitor monitor;
+
+	private Set<Object> phaseItems = new HashSet<>();
 
 	/**
 	 * Return the passed dimensions in order of dependency. If circular dependencies
@@ -336,7 +370,7 @@ public class Table extends ViewArtifact {
 	 * ------- Definition and validation --------------------------
 	 */
 
-	public Table(Map<?, ?> definition, @Nullable IObservable target, IMonitor monitor) {
+	public Spreadsheet(Map<?, ?> definition, @Nullable IObservable target, IMonitor monitor) {
 		this.monitor = monitor;
 		if (target == null && definition.containsKey("target")) {
 			IKimStatement tdef = (IKimStatement) definition.get("target");
@@ -359,7 +393,6 @@ public class Table extends ViewArtifact {
 		this.target = target;
 		this.activeColumns = parseDimension(definition.get("columns"), this.columns, "c");
 		this.activeRows = parseDimension(definition.get("rows"), this.rows, "r");
-		this.cells = new Cell[activeColumns][activeRows];
 	}
 
 	public Collection<ObservedConcept> getObservables() {
@@ -561,10 +594,13 @@ public class Table extends ViewArtifact {
 				// TODO space and time constraints: e.g (inside conservation:ProtectedArea)
 			} else if (o instanceof List) {
 				// TODO space and time constraints
+			} else if (o instanceof IKimQuantity) {
+				// TODO time or space resolutions; add to phase items
 			} else {
 				switch (o.toString()) {
 				case "start":
 				case "end":
+					phaseItems.add(o.toString());
 					categorize(TIME, o.toString(), sorted);
 					break;
 				}
@@ -627,10 +663,21 @@ public class Table extends ViewArtifact {
 	}
 
 	/**
-	 * Compute all cells that want to be computed.
+	 * Compute all cells that want to be computed. Target comes from caller, if null we must have 
+	 * an observable and find it in the catalog.
 	 */
 	@Override
-	public void compute(IRuntimeScope scope) {
+	public Table compute(IObservation targetObservation, IRuntimeScope scope) {
+
+		Table ret = new Table(this);
+		Map<ObservedConcept, IObservation> catalog = scope.getCatalog();
+
+		 = null;
+		ObservedConcept targetConcept = null;
+		if (this.target != null) {
+			targetConcept = new ObservedConcept(target);
+			targetObservation = catalog.get(targetConcept);
+		}
 
 		/*
 		 * Reset expressions and recompile them in all dimensions using the scope
@@ -640,26 +687,95 @@ public class Table extends ViewArtifact {
 		 * Find all observations in scope and fill in the observation map
 		 */
 
-		// reset every active cell
-		for (int col = 0; col < cells.length; col++) {
-			for (int row = 0; row < cells[col].length; row++) {
-				if (cells[col][row] != null) {
-					cells[col][row].reset();
-				}
-			}
-		}
-
-		for (Phase phase : phases) {
+		for (Phase phase : getPhases(scope, catalog)) {
 			for (Pair<Object, ILocator> value : phase.states()) {
 				for (Dimension column : getSortedDimension(columns)) {
+
+					if (!column.filter.matches(catalog, value.getSecond())) {
+						continue;
+					}
+
+					// may switch target to column's
+					
 					for (Dimension row : getSortedDimension(rows)) {
-						if (cells[column.index][row.index] != null) {
-							cells[column.index][row.index].accumulate(value.getFirst(), value.getSecond(), phase);
+
+						// NO target in rows is for classification only!
+						
+						if (!row.filter.matches(catalog, value.getSecond())) {
+							continue;
+						}
+
+						if (ret.isActive(column.index, row.index)) {
+
+							Object val = value.getFirst();
+							if (row.target != null && row.target.getObservable().is(Type.QUALITY)) {
+								switch (row.targetType) {
+								case AREA:
+									val = row.target.getObservable().getUnit().convert(
+											((IScale) value.getSecond()).getSpace().getStandardizedArea(),
+											Units.INSTANCE.SQUARE_METERS);
+									break;
+								case DURATION:
+									val = ((IScale) value.getSecond()).getTime()
+											.getLength(row.target.getObservable().getUnit());
+									break;
+								case NUMEROSITY:
+									// boh
+									break;
+								case QUALITY:
+									val = ((IState) catalog.get(row.target)).get(value.getSecond());
+									break;
+								default:
+									break;
+								}
+							} else if (row.target == null && this.target != null && this.target.is(Type.QUALITY)) {
+								val = ((IState) targetObservation).get(value.getSecond());
+							}
+
+							ret.accumulate(val, value.getSecond(), phase, column.index, row.index);
 						}
 					}
 				}
 			}
 		}
+
+		return ret;
+	}
+
+	private List<Phase> getPhases(IRuntimeScope scope, Map<ObservedConcept, IObservation> catalog) {
+		List<Phase> ret = new ArrayList<>();
+
+		IObservation trg = null;
+		if (target != null) {
+			trg = catalog.get(new ObservedConcept(this.target));
+		}
+
+		if (trg instanceof ObservationGroup) {
+
+			ret.add(new Phase(trg));
+
+		} else if (trg != null) {
+
+			if (phaseItems.isEmpty()) {
+				ret.add(new Phase(scope.getScale(), 1));
+			} else {
+				if (trg.getScale().isTemporallyDistributed()) {
+					ITime time = trg.getScale().getTime();
+					if (phaseItems.contains("start")) {
+						ret.add(new Phase((IScale) scope.getScale().at(time.getExtent(time.size() < 3 ? 0 : 1)),
+								phaseItems.contains("end") ? 2 : 1, "start"));
+					}
+					if (phaseItems.contains("end")) {
+						ret.add(new Phase((IScale) scope.getScale().at(time.getExtent(time.size() - 1)),
+								phaseItems.contains("start") ? 2 : 1, "end"));
+					}
+				} else {
+					ret.add(new Phase(scope.getScale(), 1));
+				}
+			}
+		}
+
+		return ret;
 	}
 
 	/**
@@ -668,7 +784,7 @@ public class Table extends ViewArtifact {
 	 * @return
 	 */
 	@Override
-	public String compile() {
+	public String compile(Table computed) {
 
 		StringBuffer ret = new StringBuffer(128 * rows.size() * columns.size());
 
@@ -684,9 +800,17 @@ public class Table extends ViewArtifact {
 	}
 
 	@Override
-	public void export(File file) {
+	public void export(File file, Table computed) {
 		// TODO Auto-generated method stub
 
+	}
+
+	public int getActiveRows() {
+		return this.activeRows;
+	}
+
+	public int getActiveColumns() {
+		return this.activeColumns;
 	}
 
 }

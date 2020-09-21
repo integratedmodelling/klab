@@ -11,7 +11,8 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
-import org.integratedmodelling.klab.documentation.extensions.Table;
+import org.integratedmodelling.klab.documentation.extensions.table.Spreadsheet;
+import org.integratedmodelling.klab.documentation.extensions.table.Table;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.KimObject;
@@ -22,7 +23,7 @@ public class TableView extends KimObject implements IKnowledgeView {
 	private String viewClass;
 	private String name;
 	private INamespace namespace;
-	Table table;
+	Spreadsheet spreadsheet;
 
 	public TableView(Object definition, IKimSymbolDefinition statement, INamespace namespace, IMonitor monitor) {
 		super(statement);
@@ -34,7 +35,7 @@ public class TableView extends KimObject implements IKnowledgeView {
 			throw new KlabValidationException("definition is not compatible with a table view");
 		}
 		this.definition = (Map<?, ?>) definition;
-		this.table = new Table(this.definition, null, monitor);
+		this.spreadsheet = new Spreadsheet(this.definition, null, monitor);
 	}
 
 	@Override
@@ -45,7 +46,7 @@ public class TableView extends KimObject implements IKnowledgeView {
 	@Override
 	public List<IObservable> getObservables() {
 		List<IObservable> ret = new ArrayList<>();
-		for (ObservedConcept obs : table.getObservables()) {
+		for (ObservedConcept obs : spreadsheet.getObservables()) {
 			ret.add(obs.getObservable());
 		}
 		return ret;
@@ -53,7 +54,7 @@ public class TableView extends KimObject implements IKnowledgeView {
 
 	@Override
 	public void compileView(IContextualizationScope scope) {
-		table.compute((IRuntimeScope)scope);
+		Table table = spreadsheet.compute((IRuntimeScope)scope);
 		// TODO set in the context
 		// TODO compile and send through the monitor in the scope
 	}

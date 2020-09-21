@@ -42,7 +42,7 @@ public class KnowledgeViewResolver implements IResolver<IArtifact>, IExpression 
 
 	@Override
 	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
-		System.out.println("So' qua co' sta view der kazzo");
+		this.view.compileView(context);
 		return null;
 	}
 }
