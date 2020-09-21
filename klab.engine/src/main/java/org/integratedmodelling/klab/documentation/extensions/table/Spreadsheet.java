@@ -386,7 +386,7 @@ public class Spreadsheet extends View<String, Table> {
 		while (sort.hasNext()) {
 			ret.add(dimensions.get(sort.next()));
 		}
-		
+
 		return ret;
 	}
 
@@ -417,6 +417,10 @@ public class Spreadsheet extends View<String, Table> {
 		this.target = target;
 		this.activeColumns = parseDimension(definition.get("columns"), this.columns, "c");
 		this.activeRows = parseDimension(definition.get("rows"), this.rows, "r");
+
+		/*
+		 * TODO validate that only rows OR columns have an additional target but not both.
+		 */
 	}
 
 	public Collection<ObservedConcept> getObservables() {
@@ -677,6 +681,10 @@ public class Spreadsheet extends View<String, Table> {
 			targetConcept = new ObservedConcept(target);
 			targetObservation = catalog.get(targetConcept);
 		}
+
+		/*
+		 * TODO if there is no target, we should probably scream
+		 */
 
 		/*
 		 * Find all observations in scope and fill in the observation map
