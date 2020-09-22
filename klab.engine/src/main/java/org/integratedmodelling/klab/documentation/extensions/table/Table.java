@@ -1,8 +1,12 @@
 package org.integratedmodelling.klab.documentation.extensions.table;
 
+import java.util.List;
+import java.util.Map;
+
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.data.Aggregator;
+import org.integratedmodelling.klab.documentation.extensions.table.Spreadsheet.Dimension;
 import org.integratedmodelling.klab.documentation.extensions.table.Spreadsheet.Phase;
 
 /**
@@ -45,18 +49,31 @@ public class Table {
 	 */
 	private Cell[][] cells;
 	private Spreadsheet table;
+	private List<Dimension> rows;
+	private List<Dimension> columns;
 
-	public Table(Spreadsheet table) {
+	/**
+	 * When we get here, the catalogs of rows and columns may not be finalized!
+	 * 
+	 * @param table
+	 * @param rowCatalog
+	 * @param colCatalog
+	 */
+	public Table(Spreadsheet table, List<Dimension> rowCatalog, List<Dimension> colCatalog) {
 		this.table = table;
-		this.cells = new Cell[table.getActiveColumns()][table.getActiveRows()];
-	}
-
-	public boolean isActive(int column, int row) {
-		return cells[column][row] != null;
+		this.rows = rowCatalog;
+		this.columns = colCatalog;
 	}
 
 	public void accumulate(Object value, ILocator locator, Phase phase, int column, int row) {
 
+		/*
+		 * at this point the catalogs are stable
+		 */
+		if (this.cells == null) {
+			this.cells = new Cell[columns.size()][rows.size()];
+		}
+		
 		// TODO Auto-generated method stub
 		if (!Observations.INSTANCE.isNodata(value)) {
 			Cell cell = cells[column][row];

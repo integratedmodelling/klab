@@ -11,6 +11,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 
 import javax.annotation.Nullable;
@@ -29,6 +30,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
@@ -39,10 +41,14 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
+import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.extensions.View;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
@@ -83,7 +89,11 @@ public class Spreadsheet extends View<String, Table> {
 		private IScale scale;
 		private SpaceSelector space;
 		private Set<Object> classifiers = new HashSet<>();
-//		private TimeSelector time;
+		/**
+		 * If null, we don't have a temporal slice dimension. Otherwise it may match
+		 * another in the filters.
+		 */
+		private TimeSelector time;
 		private int index;
 		private int total;
 		private IArtifact observation;
@@ -114,8 +124,8 @@ public class Spreadsheet extends View<String, Table> {
 		 * 
 		 * @return
 		 */
-		Iterable<Pair<Object, ILocator>> states() {
-			if (scale != null) {
+		Iterable<Pair<Object, ILocator>> states(final IObservation target) {
+			if (target instanceof IState && scale != null) {
 				return new Iterable<Pair<Object, ILocator>>() {
 
 					Iterator<ILocator> it = scale.iterator();
@@ -131,7 +141,8 @@ public class Spreadsheet extends View<String, Table> {
 
 							@Override
 							public Pair<Object, ILocator> next() {
-								return new Pair<>(null, it.next());
+								ILocator locator = it.next();
+								return new Pair<>(((IState) target).get(locator), locator);
 							}
 
 						};
@@ -166,20 +177,30 @@ public class Spreadsheet extends View<String, Table> {
 		}
 	}
 
-//	/**
-//	 * Selector of time points to use with spatially varying targets. If resolution
-//	 * != null, selects all timepoints at the resolution within the target range.
-//	 * Start and end select the first or last slice at the native resolution of the
-//	 * target.
-//	 * 
-//	 * @author Ferd
-//	 *
-//	 */
-//	class TimeSelector {
-//		boolean start;
-//		boolean end;
-//		Resolution resolution;
-//	}
+	/**
+	 * Selector of time points to use with spatially varying targets. If resolution
+	 * != null, selects all timepoints at the resolution within the target range.
+	 * Start and end select the first or last slice at the native resolution of the
+	 * target.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	class TimeSelector {
+
+		boolean start;
+		boolean end;
+		Resolution resolution;
+
+		TimeSelector(Object o) {
+			if (o instanceof IKimQuantity) {
+				this.resolution = Time.resolution((IKimQuantity) o);
+			} else {
+				this.start = "start".equals(o);
+				this.end = "end".equals(o);
+			}
+		}
+	}
 
 	/**
 	 * Not used for the time being.
@@ -195,15 +216,7 @@ public class Spreadsheet extends View<String, Table> {
 	 * Filter to select which dimensions are added to when scanning the target
 	 * observations. One or more of the selectors can be non-null.
 	 */
-	static class Filter {
-
-		public Filter(List<Object> classifiers) {
-			// TODO
-		}
-
-		public Filter() {
-			this.universal = true;
-		}
+	class Filter {
 
 		/*
 		 * Universal filter matches everything except nodata. Specified by no spec,
@@ -211,35 +224,60 @@ public class Spreadsheet extends View<String, Table> {
 		 */
 		boolean universal = false;
 
-//		/**
-//		 * Time selector if we only accumulate values in specified times.
-//		 */
-//		TimeSelector timeSelector;
+		/**
+		 * The observation we're filtering when using . For expression filters, we may
+		 * be filtering more than one, using the localized names in the context at the
+		 * current locator.
+		 */
+		ObservedConcept target = null;
 
 		/**
-		 * If specified, the concept we use to filter and the key observable to find the
-		 * correspondent observation in {@link #observations}. The key observable may be
-		 * null if we take the values from the context, as when aggregating area or
-		 * durations.
+		 * Time selector if we only accumulate values in specified times, matching the
+		 * classifier in the phase.
 		 */
-		Pair<ObservedConcept, ObservedConcept> observable;
+		TimeSelector timeSelector;
 
 		/**
-		 * Range, which may also specify a relational constraint on any numeric target,
-		 * including inequality.
+		 * Classifier to match any located value of our target.
 		 */
-		Range range;
+		IClassifier classifier;
 
 		/**
 		 * Complex filtering can be done with expressions.
 		 */
 		IExpression expression;
 
-		boolean matches(Map<ObservedConcept, IObservation> catalog, ILocator locator) {
+		private Object targetType;
+
+		// match an exact observation to the dimension we belong to. Only set before
+		// computation.
+		private String objectId;
+
+		// if this is not null, the filter signals that the dimension it belongs to must
+		// be
+		// be multiplied by the objects in the target and the filter must be turned into
+		// a
+		// object match. Not used for filtering.
+		public ObservedConcept objectFilter;
+
+		public Filter() {
+			this.universal = true;
+		}
+
+		public Filter(String artifactId) {
+			this.objectId = artifactId;
+		}
+
+		boolean matches(Map<ObservedConcept, IObservation> catalog, ILocator locator, Phase phase, Object currentState,
+				IContextualizationScope scope) {
 			if (universal) {
 				return true;
 			}
-			// TODO
+			if (classifier != null) {
+				if (!classifier.classify(currentState, scope)) {
+					return false;
+				}
+			}
 			return true;
 		}
 	}
@@ -251,7 +289,7 @@ public class Spreadsheet extends View<String, Table> {
 	 * @author Ferd
 	 *
 	 */
-	static class Dimension {
+	class Dimension {
 
 		/**
 		 * Mandatory id, either assigned in configuration or attributed using the scheme
@@ -288,10 +326,10 @@ public class Spreadsheet extends View<String, Table> {
 		String[] titles;
 
 		/**
-		 * Filter that will define whether the value correspondent to dimension's
-		 * aggregator is added to the cell or not.
+		 * Filters that will define whether the value correspondent to dimension's
+		 * aggregator is added to the cell or not. May be empty, never null.
 		 */
-		Filter filter;
+		List<Filter> filters;
 
 		/**
 		 * Aggregation type, if any.
@@ -310,6 +348,25 @@ public class Spreadsheet extends View<String, Table> {
 		 */
 		Set<String> symbols = new HashSet<>();
 
+		public Dimension(Dimension dim) {
+			this.aggregation = dim.aggregation;
+			this.computation = dim.computation;
+			this.expression = dim.expression;
+			for (Filter filter : dim.filters) {
+				if (this.filters == null) {
+					this.filters = new ArrayList<>();
+				}
+				this.filters.add(filter);
+			}
+			this.hidden = dim.hidden;
+			this.id = dim.id;
+			this.titles = dim.titles;
+		}
+
+		public Dimension() {
+			// TODO Auto-generated constructor stub
+		}
+
 		public IExpression getExpression(IRuntimeScope scope) {
 			if (expression != null && computation == null) {
 				ILanguageProcessor processor = Extensions.INSTANCE
@@ -324,6 +381,62 @@ public class Spreadsheet extends View<String, Table> {
 		}
 
 		boolean separator = false;
+
+		/**
+		 * True if all filters match, or there are no filters. This should compute as
+		 * quickly as possible.
+		 * 
+		 * @param catalog
+		 * @param second
+		 * @param phase
+		 * @param currentState the primary target's value - may be a value or a direct
+		 *                     observation according to what we're computing against.
+		 * @return
+		 */
+		public boolean isActive(Map<ObservedConcept, IObservation> catalog, ILocator locator, Phase phase,
+				Object currentState, IContextualizationScope scope) {
+			for (Filter filter : this.filters) {
+				if (!filter.matches(catalog, locator, phase, currentState, scope)) {
+					return false;
+				}
+			}
+			return true;
+		}
+
+		/**
+		 * For each one of the observations in this group, make a copy of this with the
+		 * filter that has the objectFilter matching that specific observation.
+		 * 
+		 * @param group
+		 * @return
+		 */
+		public Collection<Dimension> propagateFilteredObservable(ObservationGroup group) {
+			List<Dimension> ret = new ArrayList<>();
+			int i = 0;
+			for (IArtifact artifact : group) {
+				Dimension newDim = this.copy(artifact.getId(), i++);
+				ret.add(newDim);
+			}
+			return ret;
+		}
+
+		private Dimension copy(String artifactId, int index) {
+			Dimension ret = new Dimension();
+			ret.aggregation = this.aggregation;
+			ret.computation = this.computation;
+			ret.expression = this.expression;
+			for (Filter filter : this.filters) {
+				if (filter.objectFilter == null) {
+					ret.filters.add(filter);
+				} else {
+					ret.filters.add(new Filter(artifactId));
+				}
+			}
+			ret.hidden = this.hidden;
+			ret.id = this.id + "_" + index;
+			ret.titles = this.titles;
+			return ret;
+		}
 
 	}
 
@@ -361,10 +474,55 @@ public class Spreadsheet extends View<String, Table> {
 	 * @param dimensions
 	 * @return
 	 */
-	private Iterable<Dimension> getSortedDimension(Map<String, Dimension> dimensions, IRuntimeScope scope) {
+	private List<Dimension> getSortedDimension(Map<String, Dimension> dimensions,
+			Map<ObservedConcept, IObservation> catalog, IRuntimeScope scope) {
 		List<Dimension> ret = new ArrayList<>();
+
+		List<Dimension> originalDims = new ArrayList<>();
+		for (Dimension dim : dimensions.values()) {
+
+			IObservation group = null;
+			ObservedConcept countable = null;
+			for (Filter filter : dim.filters) {
+				if (filter.objectFilter != null) {
+					/*
+					 * expand any dimension that contains an object filter into a dimension per
+					 * filtered object, which we can only know in the scope.
+					 */
+					if (countable == null) {
+						countable = filter.objectFilter;
+						group = catalog.get(countable);
+					} else if (!countable.equals(filter.objectFilter)) {
+						throw new KlabValidationException(
+								"cannot aggregate by more than one object type in the same dimension");
+					}
+
+					if (group == null) {
+						continue;
+					}
+					if (!(group instanceof ObservationGroup)) {
+						throw new KlabValidationException(
+								"cannot aggregate by a direct artifact that does not resolve to an observation group");
+					}
+
+					originalDims.addAll(dim.propagateFilteredObservable((ObservationGroup) group));
+
+					// continue to catch error
+				}
+			}
+
+			if (countable == null) {
+				originalDims.add(new Dimension(dim));
+			}
+		}
+		
+		Map<String, Dimension> dictionary = new HashMap<>();
 		Graph<String, DefaultEdge> graph = new DefaultDirectedGraph<>(DefaultEdge.class);
-		for (Dimension dimension : dimensions.values()) {
+		int i = 0;
+		for (Dimension dimension : originalDims) {
+			// reindex before sorting
+			dimension.index = i++;
+			dictionary.put(dimension.id, dimension);
 			graph.addVertex(dimension.id);
 			if (dimension.getExpression(scope) != null) {
 				for (String s : dimension.symbols) {
@@ -384,7 +542,7 @@ public class Spreadsheet extends View<String, Table> {
 		}
 		TopologicalOrderIterator<String, DefaultEdge> sort = new TopologicalOrderIterator<>(graph);
 		while (sort.hasNext()) {
-			ret.add(dimensions.get(sort.next()));
+			ret.add(dictionary.get(sort.next()));
 		}
 
 		return ret;
@@ -419,8 +577,26 @@ public class Spreadsheet extends View<String, Table> {
 		this.activeRows = parseDimension(definition.get("rows"), this.rows, "r");
 
 		/*
-		 * TODO validate that only rows OR columns have an additional target but not both.
+		 * validate that only rows OR columns have an additional target but not both.
+		 * Cells must aggregate a single observable.
 		 */
+		int targeted = 0;
+		for (Dimension dim : columns.values()) {
+			if (dim.target != null) {
+				targeted++;
+				break;
+			}
+		}
+		for (Dimension dim : rows.values()) {
+			if (dim.target != null) {
+				targeted++;
+				break;
+			}
+		}
+		if (targeted > 1) {
+			throw new KlabValidationException(
+					"table: only rows or columns may define a target observable, but not both");
+		}
 	}
 
 	public Collection<ObservedConcept> getObservables() {
@@ -464,8 +640,11 @@ public class Spreadsheet extends View<String, Table> {
 
 		int ret = 0;
 
-		for (Filter filter : expandClassifier(map.get("classifier"))) {
-			Dimension dimension = newDimension(filter, map, namePrefix);
+		Pair<ObservedConcept, TargetType> target = parseTarget(map.get("target"));
+
+		for (List<Filter> filters : expandClassifier(target.getFirst(), target.getSecond(), map.get("classifier"))) {
+			Dimension dimension = newDimension(target.getFirst(), target.getSecond(), filters, map, namePrefix,
+					dimensions.size());
 			dimensions.put(dimension.id, dimension);
 			if (!dimension.separator) {
 				ret++;
@@ -474,42 +653,55 @@ public class Spreadsheet extends View<String, Table> {
 		return ret;
 	}
 
-	private Dimension newDimension(Filter filter, Map<?, ?> theRest, String namePrefix) {
+	private Pair<ObservedConcept, TargetType> parseTarget(Object object) {
 
-		Dimension ret = new Dimension();
+		ObservedConcept target = null;
+		TargetType targetType = null;
 
-		ret.filter = filter;
-		if (theRest.containsKey("name")) {
-			ret.id = theRest.get("name").toString();
-		} else {
-			ret.id = namePrefix + (this.columns.size() + 1);
-		}
-
-		if (theRest.get("target") instanceof IKimConcept || theRest.get("target") instanceof IKimObservable) {
-			IKimStatement tdef = (IKimStatement) theRest.get("target");
+		if (object instanceof IKimConcept || object instanceof IKimObservable) {
+			IKimStatement tdef = (IKimStatement) object;
 			IObservable trg = tdef instanceof IKimObservable
 					? Observables.INSTANCE.declare((IKimObservable) tdef, monitor)
 					: Observable.promote(Concepts.INSTANCE.declare((IKimConcept) tdef));
 			if (trg != null) {
 
-				ret.target = new ObservedConcept(trg,
+				target = new ObservedConcept(trg,
 						trg.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
 
 				if (trg.getType().equals(Concepts.c(NS.CORE_AREA))) {
-					ret.targetType = TargetType.AREA;
+					targetType = TargetType.AREA;
 				} else if (trg.getType().equals(Concepts.c(NS.CORE_DURATION))) {
-					ret.targetType = TargetType.DURATION;
+					targetType = TargetType.DURATION;
 				} else if (trg.getType().equals(Concepts.c(NS.CORE_COUNT))) {
-					ret.targetType = TargetType.NUMEROSITY;
+					targetType = TargetType.NUMEROSITY;
 				} else {
-					this.observables.add(ret.target);
+					this.observables.add(target);
 				}
 			} else {
 				throw new KlabValidationException(
-						"Table definition: target: " + theRest.get("target") + " does not specify a known observable");
+						"Table definition: target: " + object + " does not specify a known observable");
 			}
-		} else if (theRest.containsKey("target")) {
-			throw new KlabValidationException("Table definition: unknown target: " + theRest.get("target"));
+		} else if (object != null) {
+			throw new KlabValidationException("Table definition: unknown target: " + object);
+		}
+
+		return new Pair<>(target, targetType);
+
+	}
+
+	private Dimension newDimension(ObservedConcept target, TargetType targetType, List<Filter> filters,
+			Map<?, ?> theRest, String namePrefix, int lastIndex) {
+
+		Dimension ret = new Dimension();
+
+		ret.target = target;
+		ret.targetType = targetType;
+		ret.filters = filters;
+
+		if (theRest.containsKey("name")) {
+			ret.id = theRest.get("name").toString();
+		} else {
+			ret.id = namePrefix + (lastIndex + 1);
 		}
 
 		if (theRest.containsKey("title")) {
@@ -542,14 +734,35 @@ public class Spreadsheet extends View<String, Table> {
 		return ret;
 	}
 
-	private Collection<Filter> expandClassifier(Object declaration) {
+	private Collection<List<Filter>> expandClassifier(ObservedConcept target, TargetType targetType,
+			Object declaration) {
 
-		List<Filter> ret = new ArrayList<>();
+		List<List<Filter>> ret = new ArrayList<>();
 
 		if (declaration == null) {
-			ret.add(new Filter());
+			ret.add(new ArrayList<>());
 			return ret;
 		}
+
+		if (declaration instanceof Map) {
+			for (Entry<?, ?> entry : ((Map<?, ?>) declaration).entrySet()) {
+				if ("default".equals(entry.getKey())) {
+					expandClassifiers(target, targetType, declaration, ret);
+				} else {
+					Pair<ObservedConcept, TargetType> classifierTarget = parseTarget(entry.getKey());
+					expandClassifiers(classifierTarget.getFirst(), classifierTarget.getSecond(), declaration, ret);
+				}
+			}
+		} else {
+			expandClassifiers(target, targetType, declaration, ret);
+		}
+
+		return ret;
+	}
+
+	private void expandClassifiers(ObservedConcept target, TargetType targetType, Object declaration,
+			List<List<Filter>> ret) {
+		Map<Integer, List<Object>> sorted = new HashMap<>();
 
 		/*
 		 * categories
@@ -561,7 +774,7 @@ public class Spreadsheet extends View<String, Table> {
 		final int TIME = 4;
 		final int SPACE = 5;
 
-		Map<Integer, List<Object>> sorted = new HashMap<>();
+		// TODO must track the target and categorize pairs with target, object
 
 		for (Object o : (declaration instanceof Collection ? (Collection<?>) declaration
 				: Collections.singleton(declaration))) {
@@ -576,14 +789,14 @@ public class Spreadsheet extends View<String, Table> {
 				}
 
 				if (observable.is(IKimConcept.Type.COUNTABLE)) {
-					categorize(OBJECT, new ObservedConcept(observable, Mode.INSTANTIATION), sorted);
+					categorize(OBJECT, new ObservedConcept(observable, Mode.INSTANTIATION), sorted, null);
 				} else if (observable.is(IKimConcept.Type.CLASS)) {
 					for (ObservedConcept category : expandCategory(observable)) {
-						categorize(CATEGORY, category, sorted);
+						categorize(CATEGORY, category, sorted, observable);
 					}
 				} else if (observable.is(IKimConcept.Type.PREDICATE)) {
 					for (ObservedConcept category : expandConcept(observable.getType(), observable)) {
-						categorize(CATEGORY, category, sorted);
+						categorize(CATEGORY, category, sorted, observable);
 					}
 				} else {
 					throw new KlabValidationException("table: cannot classify on " + observable.getType()
@@ -591,9 +804,9 @@ public class Spreadsheet extends View<String, Table> {
 				}
 
 			} else if (o instanceof Range) {
-				categorize(NUMERIC, o, sorted);
+				categorize(NUMERIC, o, sorted, null);
 			} else if (o instanceof IKimExpression) {
-				categorize(EXPRESSION, o, sorted);
+				categorize(EXPRESSION, o, sorted, null);
 			} else if (o instanceof Map) {
 				// TODO space and time constraints: e.g (inside conservation:ProtectedArea)
 			} else if (o instanceof List) {
@@ -605,7 +818,7 @@ public class Spreadsheet extends View<String, Table> {
 				case "start":
 				case "end":
 					phaseItems.add(o.toString());
-					categorize(TIME, o.toString(), sorted);
+					categorize(TIME, o.toString(), sorted, null);
 					break;
 				}
 			}
@@ -617,19 +830,17 @@ public class Spreadsheet extends View<String, Table> {
 		}
 
 		for (List<Object> combination : Sets.cartesianProduct(joinable)) {
-			ret.add(new Filter(combination));
+			ret.add(compileFilters(target, targetType, combination));
 		}
-
-		return ret;
 	}
 
-	private void categorize(int key, Object value, Map<Integer, List<Object>> sorted) {
+	private void categorize(int key, Object value, Map<Integer, List<Object>> sorted, IObservable target) {
 		List<Object> list = sorted.get(key);
 		if (list == null) {
 			list = new ArrayList<>();
 			sorted.put(key, list);
 		}
-		list.add(value);
+		list.add(target == null ? value : new Pair<Object, ObservedConcept>(value, new ObservedConcept(target)));
 	}
 
 	public List<ObservedConcept> expandCategory(IObservable observable) {
@@ -673,7 +884,6 @@ public class Spreadsheet extends View<String, Table> {
 	@Override
 	public Table compute(IObservation targetObservation, IRuntimeScope scope) {
 
-		Table ret = new Table(this);
 		Map<ObservedConcept, IObservation> catalog = scope.getCatalog();
 		ObservedConcept targetConcept = targetObservation == null ? null
 				: new ObservedConcept(targetObservation.getObservable());
@@ -683,60 +893,66 @@ public class Spreadsheet extends View<String, Table> {
 		}
 
 		/*
-		 * TODO if there is no target, we should probably scream
+		 * use sorted, normalized copies of all rows and columns. From this point on,
+		 * the matches of IDs in the row/column catalog fields is no longer valid but
+		 * each row/column in the lists contains the index of definition, which isn't
+		 * the same as that of computation.
 		 */
+		List<Dimension> sortedColumns = getSortedDimension(columns, catalog, scope);
+		List<Dimension> sortedRows = getSortedDimension(rows, catalog, scope);
 
 		/*
 		 * Find all observations in scope and fill in the observation map
 		 */
+		Table ret = new Table(this, sortedColumns, sortedRows);
 
 		for (Phase phase : getPhases(scope, catalog)) {
-			for (Pair<Object, ILocator> value : phase.states()) {
-				for (Dimension column : getSortedDimension(columns, scope)) {
 
-					if (!column.filter.matches(catalog, value.getSecond())) {
+			for (Pair<Object, ILocator> value : phase.states(targetObservation)) {
+
+				for (Dimension column : sortedColumns) {
+
+					if (!column.isActive(catalog, value.getSecond(), phase, value.getFirst(), scope)) {
 						continue;
 					}
 
-					// may switch target to column's
+					// switch target to column's if any
 
-					for (Dimension row : getSortedDimension(rows, scope)) {
+					for (Dimension row : sortedRows) {
 
-						// NO target in rows is for classification only!
+						// switch target to row's if any - if we have one there wasn't one in the
+						// column.
 
-						if (!row.filter.matches(catalog, value.getSecond())) {
+						if (!row.isActive(catalog, value.getSecond(), phase, value.getFirst(), scope)) {
 							continue;
 						}
 
-						if (ret.isActive(column.index, row.index)) {
-
-							Object val = value.getFirst();
-							if (row.target != null && row.target.getObservable().is(Type.QUALITY)) {
-								switch (row.targetType) {
-								case AREA:
-									val = row.target.getObservable().getUnit().convert(
-											((IScale) value.getSecond()).getSpace().getStandardizedArea(),
-											Units.INSTANCE.SQUARE_METERS);
-									break;
-								case DURATION:
-									val = ((IScale) value.getSecond()).getTime()
-											.getLength(row.target.getObservable().getUnit());
-									break;
-								case NUMEROSITY:
-									// boh
-									break;
-								case QUALITY:
-									val = ((IState) catalog.get(row.target)).get(value.getSecond());
-									break;
-								default:
-									break;
-								}
-							} else if (row.target == null && this.target != null && this.target.is(Type.QUALITY)) {
-								val = ((IState) targetObservation).get(value.getSecond());
+						Object val = value.getFirst();
+						if (row.target != null && row.target.getObservable().is(Type.QUALITY)) {
+							switch (row.targetType) {
+							case AREA:
+								val = row.target.getObservable().getUnit().convert(
+										((IScale) value.getSecond()).getSpace().getStandardizedArea(),
+										Units.INSTANCE.SQUARE_METERS);
+								break;
+							case DURATION:
+								val = ((IScale) value.getSecond()).getTime()
+										.getLength(row.target.getObservable().getUnit());
+								break;
+							case NUMEROSITY:
+								// boh
+								break;
+							case QUALITY:
+								val = ((IState) catalog.get(row.target)).get(value.getSecond());
+								break;
+							default:
+								break;
 							}
-
-							ret.accumulate(val, value.getSecond(), phase, column.index, row.index);
+						} else if (row.target == null && this.target != null && this.target.is(Type.QUALITY)) {
+							val = ((IState) targetObservation).get(value.getSecond());
 						}
+
+						ret.accumulate(val, value.getSecond(), phase, column.index, row.index);
 					}
 				}
 			}
@@ -778,6 +994,61 @@ public class Spreadsheet extends View<String, Table> {
 			}
 		}
 
+		return ret;
+	}
+
+	public List<Filter> compileFilters(ObservedConcept target, TargetType targetType, List<Object> classifiers) {
+		List<Filter> ret = new ArrayList<>();
+
+		for (Object o : classifiers) {
+
+			Filter filter = new Filter();
+			filter.universal = false;
+
+			if (o instanceof Pair) {
+				// it's an observable with its own abstract target
+				if (((Pair<?, ?>) o).getFirst() instanceof ObservedConcept) {
+
+					ObservedConcept observable = (ObservedConcept) ((Pair<?, ?>) o).getFirst();
+					if (observable.getObservable().is(Type.COUNTABLE)) {
+						// filter placeholder which will be removed at resolution
+						filter.objectFilter = observable;
+					} else {
+						filter.classifier = Classifier.create(observable.getObservable().getType());
+						filter.target = ((Pair<?, ?>) o).getSecond() == null ? target
+								: (ObservedConcept) ((Pair<?, ?>) o).getSecond();
+						filter.targetType = ((Pair<?, ?>) o).getSecond() == null ? targetType : null;
+					}
+				}
+			} else if (o instanceof ObservedConcept) {
+				if (((ObservedConcept) o).getObservable().is(Type.COUNTABLE)) {
+					// filter placeholder which will be removed at resolution
+					filter.objectFilter = ((ObservedConcept) o);
+				} else {
+					throw new KlabValidationException("unexpected non-countable classifier without a target: "
+							+ ((ObservedConcept) o).getObservable());
+				}
+			} else {
+
+				filter.target = target;
+				filter.targetType = targetType;
+
+				if (o instanceof String) {
+					switch (o.toString()) {
+					case "start":
+					case "end":
+						filter.timeSelector = new TimeSelector(o);
+					}
+				} else {
+					filter.classifier = Classifier.create(o);
+				}
+
+			}
+
+			if (filter != null) {
+				ret.add(filter);
+			}
+		}
 		return ret;
 	}
 
