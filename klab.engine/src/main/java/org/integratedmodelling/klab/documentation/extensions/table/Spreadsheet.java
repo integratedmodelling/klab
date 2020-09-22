@@ -274,6 +274,12 @@ public class Spreadsheet extends View<String, Table> {
 				return true;
 			}
 			if (classifier != null) {
+				if (target != null) {
+					IObservation observation = catalog.get(target);
+					if (observation instanceof IState) {
+						currentState = ((IState) observation).get(locator);
+					}
+				}
 				if (!classifier.classify(currentState, scope)) {
 					return false;
 				}
@@ -361,6 +367,10 @@ public class Spreadsheet extends View<String, Table> {
 			this.hidden = dim.hidden;
 			this.id = dim.id;
 			this.titles = dim.titles;
+			this.target = dim.target;
+			this.targetType = dim.targetType;
+			this.separator = dim.separator;
+			this.symbols.addAll(dim.symbols);
 		}
 
 		public Dimension() {
@@ -435,6 +445,10 @@ public class Spreadsheet extends View<String, Table> {
 			ret.hidden = this.hidden;
 			ret.id = this.id + "_" + index;
 			ret.titles = this.titles;
+			ret.target = this.target;
+			ret.targetType = this.targetType;
+			ret.separator = this.separator;
+			ret.symbols.addAll(this.symbols);
 			return ret;
 		}
 
@@ -460,12 +474,14 @@ public class Spreadsheet extends View<String, Table> {
 	 * during filter parsing. Keys are the same used in the filters.
 	 */
 	private Map<ObservedConcept, IObservation> observations = new HashMap<>();
-	private IObservable target;
+	private ObservedConcept target;
 	private int activeColumns;
 	private int activeRows;
 	private IMonitor monitor;
 
 	private Set<Object> phaseItems = new HashSet<>();
+
+	private TargetType targetType;
 
 	/**
 	 * Return the passed dimensions in order of dependency. If circular dependencies
@@ -515,7 +531,7 @@ public class Spreadsheet extends View<String, Table> {
 				originalDims.add(new Dimension(dim));
 			}
 		}
-		
+
 		Map<String, Dimension> dictionary = new HashMap<>();
 		Graph<String, DefaultEdge> graph = new DefaultDirectedGraph<>(DefaultEdge.class);
 		int i = 0;
@@ -554,25 +570,9 @@ public class Spreadsheet extends View<String, Table> {
 
 	public Spreadsheet(Map<?, ?> definition, @Nullable IObservable target, IMonitor monitor) {
 		this.monitor = monitor;
-		if (target == null && definition.containsKey("target")) {
-			IKimStatement tdef = (IKimStatement) definition.get("target");
-			target = tdef instanceof IKimObservable ? Observables.INSTANCE.declare((IKimObservable) tdef, monitor)
-					: Observable.promote(Concepts.INSTANCE.declare((IKimConcept) tdef));
-			if (target == null) {
-				throw new KlabValidationException("table: target observable contains undeclared semantics: " + tdef);
-			}
-			/*
-			 * add to observables unless it's a core concept. These are 'equals' by
-			 * mandatory root convention, so fine to use equals().
-			 */
-			if (!(target.getType().equals(Concepts.c(NS.CORE_AREA))
-					|| target.getType().equals(Concepts.c(NS.CORE_DURATION))
-					|| target.getType().equals(Concepts.c(NS.CORE_COUNT)))) {
-				observables.add(new ObservedConcept(target,
-						target.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
-			}
-		}
-		this.target = target;
+		Pair<ObservedConcept, TargetType> tdesc = parseTarget(definition.get("target"));
+		this.target = tdesc.getFirst();
+		this.targetType = tdesc.getSecond();
 		this.activeColumns = parseDimension(definition.get("columns"), this.columns, "c");
 		this.activeRows = parseDimension(definition.get("rows"), this.rows, "r");
 
@@ -676,6 +676,7 @@ public class Spreadsheet extends View<String, Table> {
 					targetType = TargetType.NUMEROSITY;
 				} else {
 					this.observables.add(target);
+					targetType = trg.is(Type.QUALITY) ? TargetType.QUALITY : null;
 				}
 			} else {
 				throw new KlabValidationException(
@@ -885,11 +886,8 @@ public class Spreadsheet extends View<String, Table> {
 	public Table compute(IObservation targetObservation, IRuntimeScope scope) {
 
 		Map<ObservedConcept, IObservation> catalog = scope.getCatalog();
-		ObservedConcept targetConcept = targetObservation == null ? null
-				: new ObservedConcept(targetObservation.getObservable());
-		if (targetObservation == null && this.target != null) {
-			targetConcept = new ObservedConcept(target);
-			targetObservation = catalog.get(targetConcept);
+		if (this.target != null) {
+			targetObservation = catalog.get(this.target);
 		}
 
 		/*
@@ -904,7 +902,7 @@ public class Spreadsheet extends View<String, Table> {
 		/*
 		 * Find all observations in scope and fill in the observation map
 		 */
-		Table ret = new Table(this, sortedColumns, sortedRows);
+		Table ret = new Table(this, sortedRows, sortedColumns);
 
 		for (Phase phase : getPhases(scope, catalog)) {
 
@@ -915,41 +913,40 @@ public class Spreadsheet extends View<String, Table> {
 					if (!column.isActive(catalog, value.getSecond(), phase, value.getFirst(), scope)) {
 						continue;
 					}
-
-					// switch target to column's if any
+					
+					ObservedConcept columnTarget = column.target == null ? this.target : column.target;
+					TargetType columnTargetType = column.targetType == null ? this.targetType : column.targetType;
 
 					for (Dimension row : sortedRows) {
-
-						// switch target to row's if any - if we have one there wasn't one in the
-						// column.
 
 						if (!row.isActive(catalog, value.getSecond(), phase, value.getFirst(), scope)) {
 							continue;
 						}
 
+						ObservedConcept rowTarget = row.target == null ? columnTarget : row.target;
+						TargetType rowTargetType = row.targetType == null ? columnTargetType : row.targetType;
+						
 						Object val = value.getFirst();
-						if (row.target != null && row.target.getObservable().is(Type.QUALITY)) {
-							switch (row.targetType) {
+						if (rowTargetType != null && rowTarget != null) {
+							switch (rowTargetType) {
 							case AREA:
-								val = row.target.getObservable().getUnit().convert(
+								val = rowTarget.getObservable().getUnit().convert(
 										((IScale) value.getSecond()).getSpace().getStandardizedArea(),
 										Units.INSTANCE.SQUARE_METERS);
 								break;
 							case DURATION:
 								val = ((IScale) value.getSecond()).getTime()
-										.getLength(row.target.getObservable().getUnit());
+										.getLength(rowTarget.getObservable().getUnit());
 								break;
 							case NUMEROSITY:
-								// boh
+								// count some fucking object
 								break;
 							case QUALITY:
-								val = ((IState) catalog.get(row.target)).get(value.getSecond());
+								val = ((IState) catalog.get(rowTarget)).get(value.getSecond());
 								break;
 							default:
 								break;
 							}
-						} else if (row.target == null && this.target != null && this.target.is(Type.QUALITY)) {
-							val = ((IState) targetObservation).get(value.getSecond());
 						}
 
 						ret.accumulate(val, value.getSecond(), phase, column.index, row.index);
@@ -966,7 +963,7 @@ public class Spreadsheet extends View<String, Table> {
 
 		IObservation trg = null;
 		if (target != null) {
-			trg = catalog.get(new ObservedConcept(this.target));
+			trg = catalog.get(this.target);
 		}
 
 		if (trg instanceof ObservationGroup) {
