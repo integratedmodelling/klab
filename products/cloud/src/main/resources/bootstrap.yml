@@ -1,15 +1,19 @@
 spring:
   application:
-    name: cloud-service
+    name: engine-service
   cloud:
     consul:
       enabled: true
+      discovery:
+        port: ${server.port}
+        health-check-path: ${server.servlet.context-path}/actuator/health
+        health-check-interval: 15s
       host: localhost
       port: 8500
       config:
         prefix: config
         enabled: true
-        defaultContext: cloud-service
+        defaultContext: engine-service
         profileSeparator: '::'
         format: yaml
         data-key: data
