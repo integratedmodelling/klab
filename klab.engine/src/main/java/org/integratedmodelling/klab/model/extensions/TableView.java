@@ -36,7 +36,7 @@ public class TableView extends KimObject implements IKnowledgeView {
 			throw new KlabValidationException("definition is not compatible with a table view");
 		}
 		this.definition = (Map<?, ?>) definition;
-		this.spreadsheet = new Spreadsheet(this.definition, null, monitor);
+		this.spreadsheet = new Spreadsheet(this.name, this.definition, null, monitor);
 	}
 
 	@Override
@@ -56,6 +56,7 @@ public class TableView extends KimObject implements IKnowledgeView {
 	@Override
 	public void compileView(IObservation target, IContextualizationScope scope) {
 		Table table = spreadsheet.compute(target, (IRuntimeScope)scope);
+		table.compile();
 		// TODO set in the context
 		// TODO compile and send through the monitor in the scope
 	}

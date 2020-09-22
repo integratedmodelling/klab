@@ -175,6 +175,10 @@ public class Spreadsheet extends View<String, Table> {
 			}
 			return null;
 		}
+
+		public int getIndex() {
+			return index;
+		}
 	}
 
 	/**
@@ -483,6 +487,8 @@ public class Spreadsheet extends View<String, Table> {
 
 	private TargetType targetType;
 
+	private String name;
+
 	/**
 	 * Return the passed dimensions in order of dependency. If circular dependencies
 	 * are detected throw a validation exception as the definition is misconfigured.
@@ -568,7 +574,9 @@ public class Spreadsheet extends View<String, Table> {
 	 * ------- Definition and validation --------------------------
 	 */
 
-	public Spreadsheet(Map<?, ?> definition, @Nullable IObservable target, IMonitor monitor) {
+	public Spreadsheet(String name, Map<?, ?> definition, @Nullable IObservable target, IMonitor monitor) {
+		
+		this.name = name;
 		this.monitor = monitor;
 		Pair<ObservedConcept, TargetType> tdesc = parseTarget(definition.get("target"));
 		this.target = tdesc.getFirst();
@@ -885,6 +893,8 @@ public class Spreadsheet extends View<String, Table> {
 	@Override
 	public Table compute(IObservation targetObservation, IRuntimeScope scope) {
 
+		scope.getMonitor().info("start computing table " + name);
+		
 		Map<ObservedConcept, IObservation> catalog = scope.getCatalog();
 		if (this.target != null) {
 			targetObservation = catalog.get(this.target);
@@ -902,7 +912,7 @@ public class Spreadsheet extends View<String, Table> {
 		/*
 		 * Find all observations in scope and fill in the observation map
 		 */
-		Table ret = new Table(this, sortedRows, sortedColumns);
+		Table ret = new Table(this, sortedRows, sortedColumns, scope);
 
 		for (Phase phase : getPhases(scope, catalog)) {
 
@@ -913,7 +923,7 @@ public class Spreadsheet extends View<String, Table> {
 					if (!column.isActive(catalog, value.getSecond(), phase, value.getFirst(), scope)) {
 						continue;
 					}
-					
+
 					ObservedConcept columnTarget = column.target == null ? this.target : column.target;
 					TargetType columnTargetType = column.targetType == null ? this.targetType : column.targetType;
 
@@ -925,7 +935,7 @@ public class Spreadsheet extends View<String, Table> {
 
 						ObservedConcept rowTarget = row.target == null ? columnTarget : row.target;
 						TargetType rowTargetType = row.targetType == null ? columnTargetType : row.targetType;
-						
+
 						Object val = value.getFirst();
 						if (rowTargetType != null && rowTarget != null) {
 							switch (rowTargetType) {
@@ -949,7 +959,8 @@ public class Spreadsheet extends View<String, Table> {
 							}
 						}
 
-						ret.accumulate(val, value.getSecond(), phase, column.index, row.index);
+						ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(),
+								phase, column.index, row.index);
 					}
 				}
 			}
@@ -1056,18 +1067,7 @@ public class Spreadsheet extends View<String, Table> {
 	 */
 	@Override
 	public String compile(Table computed) {
-
-		StringBuffer ret = new StringBuffer(128 * rows.size() * columns.size());
-
-		/*
-		 * compute and render column headers in order of definition
-		 */
-
-		/*
-		 * for each row, finalize the aggregator and render the cell
-		 */
-
-		return ret.toString();
+		return computed.compile();
 	}
 
 	@Override
