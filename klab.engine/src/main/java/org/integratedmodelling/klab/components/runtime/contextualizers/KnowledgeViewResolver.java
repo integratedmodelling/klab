@@ -5,29 +5,31 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class KnowledgeViewResolver implements IResolver<IArtifact>, IExpression {
 
 	static final public String FUNCTION_ID = "klab.runtime.compileview";
 
-	private IKnowledgeView view;
+	private IViewModel view;
 
 	// don't remove - only used as expression
 	public KnowledgeViewResolver() {
 	}
 
 	public KnowledgeViewResolver(String viewName) {
-		this.view = (IKnowledgeView)Resources.INSTANCE.getModelObject(viewName);
+		this.view = (IViewModel)Resources.INSTANCE.getModelObject(viewName);
 	}
 
-	public static IServiceCall getServiceCall(IKnowledgeView view) {
+	public static IServiceCall getServiceCall(IViewModel view) {
 		return KimServiceCall.create(FUNCTION_ID, "view", view.getName());
 	}
 
@@ -42,9 +44,10 @@ public class KnowledgeViewResolver implements IResolver<IArtifact>, IExpression 
 	}
 
 	@Override
-	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
+	public IArtifact resolve(IArtifact ret, IContextualizationScope scope) throws KlabException {
 		// artifact will normally be null
-		this.view.compileView((IObservation)ret, context);
-		return null;
+		IKnowledgeView result = this.view.compileView((IObservation)ret, scope);
+		((IRuntimeScope)scope).addView(result);
+		return ret;
 	}
 }

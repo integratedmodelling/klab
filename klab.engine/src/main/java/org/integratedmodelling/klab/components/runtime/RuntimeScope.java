@@ -32,7 +32,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -1828,28 +1829,25 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	}
 
 	@Override
-	public void addView(IKnowledgeView view, String title, Object result) {
+	public void addView(IKnowledgeView view) {
 
-		if (result instanceof String) {
-			/*
-			 * send directly to clients. If view can export, keep view and send URL to
-			 * export service.
-			 */
+		/*
+		 * send directly to clients. If view can export, keep view and send URL to
+		 * export service.
+		 */
+		KnowledgeViewReference descriptor = new KnowledgeViewReference();
+		descriptor.setContextId(monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
+		descriptor.setBody(view.getCompiledView("text/html"));
+		// TODO!
+		descriptor.setExportUrl("http://www.integratedmodelling.org/downloads/ARIES_2012.pptx");
+		descriptor.setViewClass(view.getViewClass());
+		descriptor.setTitle(view.getTitle());
+		descriptor.setViewId(view.getId());
 
-			KnowledgeViewReference descriptor = new KnowledgeViewReference();
-			descriptor.setContextId(monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
-			descriptor.setBody(result.toString());
-			// TODO!
-			descriptor.setExportUrl("http://www.integratedmodelling.org/downloads/ARIES_2012.pptx");
-			descriptor.setViewClass(view.getViewClass());
-			descriptor.setTitle(title);
-			descriptor.setViewId(view.getName());
-			
-			ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
-			session.getMonitor().send(Message.create(session.getId(),
-					IMessage.MessageClass.UserInterface, IMessage.Type.ViewAvailable, descriptor));
+		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
+		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.UserInterface,
+				IMessage.Type.ViewAvailable, descriptor));
 
-		}
 	}
 
 }

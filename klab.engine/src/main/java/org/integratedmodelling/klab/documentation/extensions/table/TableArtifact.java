@@ -1,26 +1,32 @@
 package org.integratedmodelling.klab.documentation.extensions.table;
 
+import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.Aggregator;
-import org.integratedmodelling.klab.documentation.extensions.table.Spreadsheet.Dimension;
-import org.integratedmodelling.klab.documentation.extensions.table.Spreadsheet.Phase;
+import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Dimension;
+import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Phase;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.utils.Escape;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.TemplateUtils;
 
 /**
- * The container of the computed cells of a table.
+ * A computed table based on a table view model.
  */
-public class Table {
+public class TableArtifact extends Artifact implements IKnowledgeView {
 
 	/**
 	 * A cell may contain a standard aggregator, a comparator, a differentiator or
@@ -53,12 +59,14 @@ public class Table {
 	 * nothing has gotten in.
 	 */
 	private Cell[][] cells;
-	private Spreadsheet table;
+	private TableCompiler table;
 	private List<Dimension> rows;
 	private List<Dimension> columns;
 	private IRuntimeScope scope;
 	Set<Integer> activeColumns = new TreeSet<>();
 	Set<Integer> activeRows = new TreeSet<>();
+	private String compiledView;
+	private String id = "v" + NameGenerator.shortUUID();
 
 	/**
 	 * When we get here, the catalogs of rows and columns may not be finalized!
@@ -67,7 +75,7 @@ public class Table {
 	 * @param rowCatalog
 	 * @param colCatalog
 	 */
-	public Table(Spreadsheet table, List<Dimension> rowCatalog, List<Dimension> colCatalog, IRuntimeScope scope) {
+	public TableArtifact(TableCompiler table, List<Dimension> rowCatalog, List<Dimension> colCatalog, IRuntimeScope scope) {
 		this.table = table;
 		this.rows = rowCatalog;
 		this.columns = colCatalog;
@@ -106,85 +114,95 @@ public class Table {
 		}
 	}
 
-	public String compile() {
+	@Override
+	public String getCompiledView(String mediaType) {
 
-		StringBuffer ret = new StringBuffer(columns.size() * rows.size() + 256);
+		if (this.compiledView == null) {
 
-		ret.append("<table>\n");
+			StringBuffer ret = new StringBuffer(columns.size() * rows.size() + 256);
 
-		if (this.table.getTitle() != null) {
-			ret.append("  <caption>" + Escape.forHTML(this.table.getTitle()) + "</caption>\n");
-		}
-		/*
-		 * add separator indices for both rows and columns
-		 */
-		int rTitles = 0;
-		for (Dimension row : rows) {
-			if (row.titles != null && row.titles.length > rTitles) {
-				rTitles = row.titles.length;
-			}
-			if (row.separator) {
-				activeRows.add(row.index);
-			}
-		}
-		int cTitles = 0;
-		for (Dimension column : columns) {
-			if (column.titles != null && column.titles.length > cTitles) {
-				cTitles = column.titles.length;
-			}
-			if (column.separator) {
-				activeColumns.add(column.index);
-			}
-		}
+			ret.append("<table>\n");
 
-		/*
-		 * headers
-		 */
-		if (rTitles + cTitles > 0) {
-			ret.append("  <thead>\n");
+			if (this.table.getTitle() != null) {
+				ret.append("  <caption>" + Escape.forHTML(this.table.getTitle()) + "</caption>\n");
+			}
 			/*
-			 * TODO GROUPS!
+			 * add separator indices for both rows and columns
 			 */
-			for (int ct = 0; ct < cTitles; ct++) {
+			int rTitles = 0;
+			for (Dimension row : rows) {
+				if (row.titles != null && row.titles.length > rTitles) {
+					rTitles = row.titles.length;
+				}
+				if (row.separator) {
+					activeRows.add(row.index);
+				}
+			}
+			int cTitles = 0;
+			for (Dimension column : columns) {
+				if (column.titles != null && column.titles.length > cTitles) {
+					cTitles = column.titles.length;
+				}
+				if (column.separator) {
+					activeColumns.add(column.index);
+				}
+			}
+
+			/*
+			 * headers
+			 */
+			if (rTitles + cTitles > 0) {
+				ret.append("  <thead>\n");
+				/*
+				 * TODO GROUPS!
+				 */
+				for (int ct = 0; ct < cTitles; ct++) {
+					ret.append("    <tr>\n");
+					for (int rt = 0; rt < rTitles; rt++) {
+						// empty cells to leave space for row headers later
+						ret.append("      <th></th>\n");
+					}
+					for (Integer col : activeColumns) {
+						Dimension cDesc = columns.get(col);
+						/*
+						 * write the ct-th title, using the array starting counting from the bottom
+						 */
+						ret.append("      <th>" + Escape.forHTML(getHeader(cDesc, ct, cTitles)) + "</th>\n");
+					}
+					ret.append("    </tr>\n");
+				}
+				ret.append("  </thead>\n");
+			}
+
+			/*
+			 * data and row titles
+			 */
+			ret.append("  <tbody>\n");
+			for (Integer row : activeRows) {
+				Dimension rDesc = rows.get(row);
 				ret.append("    <tr>\n");
-				for (int rt = 0; rt < rTitles; rt++) {
-					// empty cells to leave space for row headers later
-					ret.append("      <th></th>\n");
+				for (int i = 0; i < rTitles; i++) {
+					ret.append("      <th scope=\"row\">" + Escape.forHTML(getHeader(rDesc, i, rTitles)) + "</th>\n");
 				}
 				for (Integer col : activeColumns) {
 					Dimension cDesc = columns.get(col);
-					/*
-					 * write the ct-th title, using the array starting counting from the bottom
-					 */
-					ret.append("      <th>" + Escape.forHTML(getHeader(cDesc, ct, cTitles)) + "</th>\n");
+					Cell cell = cells[col][row];
+					ret.append("      <td>" + getData(cell, rDesc, cDesc) + "</td>\n");
 				}
 				ret.append("    </tr>\n");
 			}
-			ret.append("  </thead>\n");
+			ret.append("  <tbody>\n");
+
+			ret.append("</table>");
+
+			this.compiledView = ret.toString();
 		}
+		return this.compiledView;
+	}
 
-		/*
-		 * data and row titles
-		 */
-		ret.append("  <tbody>\n");
-		for (Integer row : activeRows) {
-			Dimension rDesc = rows.get(row);
-			ret.append("    <tr>\n");
-			for (int i = 0; i < rTitles; i++) {
-				ret.append("      <th scope=\"row\">" + Escape.forHTML(getHeader(rDesc, i, rTitles)) + "</th>\n");
-			}
-			for (Integer col : activeColumns) {
-				Dimension cDesc = columns.get(col);
-				Cell cell = cells[col][row];
-				ret.append("      <td>" + getData(cell, rDesc, cDesc) + "</td>\n");
-			}
-			ret.append("    </tr>\n");
-		}
-		ret.append("  <tbody>\n");
-
-		ret.append("</table>");
-
-		return ret.toString();
+	@Override
+	public boolean export(File file, String mediaType) {
+		return false;
 	}
 
 	private String getData(Cell cell, Dimension rowDesc, Dimension colDesc) {
@@ -212,6 +230,41 @@ public class Table {
 			title = dimension.titles[currentLevelIndex];
 		}
 		return TemplateUtils.expandMatches(title, this.table.getTemplateVars(dimension)).get(0);
+	}
+
+	@Override
+	public String getViewClass() {
+		return "table";
+	}
+
+	@Override
+	public String getName() {
+		return this.table.getName();
+	}
+
+	@Override
+	public String getTitle() {
+		return this.table.getTitle();
+	}
+
+	@Override
+	public IGeometry getGeometry() {
+		return Geometry.scalar();
+	}
+
+	@Override
+	public Type getType() {
+		return Type.VOID;
+	}
+
+	@Override
+	public String getId() {
+		return this.id;
+	}
+
+	@Override
+	public IArtifact getGroupMember(int n) {
+		return n == 0 ? this : null;
 	}
 
 }

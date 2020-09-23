@@ -22,7 +22,7 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
-import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -97,7 +97,7 @@ public interface IExtensionService {
 	/**
 	 * Define statements that use a specific class will have their argument filtered
 	 * by this method, so that the object can be processed appropriately. If the
-	 * resulting object is a {@link IKnowledgeView} it will be resolvable by the
+	 * resulting object is a {@link IViewModel} it will be resolvable by the
 	 * engine.
 	 * 
 	 * @param viewClass

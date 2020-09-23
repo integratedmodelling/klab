@@ -10,7 +10,7 @@ import java.util.concurrent.TimeoutException;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -76,8 +76,8 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 					if (resolvable instanceof IModel) {
 						resolvable = Observable.promote((IModel) resolvable);
-					} else if (resolvable instanceof IKnowledgeView) {
-						resolvable = Observable.promote((IKnowledgeView) resolvable);
+					} else if (resolvable instanceof IViewModel) {
+						resolvable = Observable.promote((IViewModel) resolvable);
 					}
 
 					if (resolvable == null) {

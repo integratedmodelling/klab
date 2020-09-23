@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -123,7 +123,7 @@ public class Observable implements IObservable {
 	 * @param view
 	 * @return
 	 */
-	public static Observable promote(IKnowledgeView view) {
+	public static Observable promote(IViewModel view) {
 		Observable ret = new Observable(Concepts.c(NS.CORE_VOID));
 		ret.generic = false;
 		ret.declaration = NS.CORE_VOID;

@@ -39,7 +39,7 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.data.mediation.IUnit.UnitContextualization;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
@@ -806,7 +806,7 @@ public class Model extends KimObject implements IModel {
 		}
 	}
 
-	public Model(IKnowledgeView view) {
+	public Model(IViewModel view) {
 		super(null);
 		// Observable is the void concept (non-semantic artifact); all the independent
 		// observables in the view as dependencies, the view compilation as code

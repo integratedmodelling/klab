@@ -28,7 +28,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -258,6 +258,6 @@ public interface IRuntimeProvider {
 	 * @param view
 	 * @return
 	 */
-	IContextualizable getViewResolver(IKnowledgeView view);
+	IContextualizable getViewResolver(IViewModel view);
 
 }

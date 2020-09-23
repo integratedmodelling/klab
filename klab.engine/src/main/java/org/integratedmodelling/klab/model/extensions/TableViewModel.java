@@ -5,28 +5,28 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimSymbolDefinition;
-import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
-import org.integratedmodelling.klab.documentation.extensions.table.Spreadsheet;
-import org.integratedmodelling.klab.documentation.extensions.table.Table;
+import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.KimObject;
 
-public class TableView extends KimObject implements IKnowledgeView {
+public class TableViewModel extends KimObject implements IViewModel {
 
 	Map<?, ?> definition;
 	private String viewClass;
 	private String name;
 	private INamespace namespace;
-	Spreadsheet spreadsheet;
+	private TableCompiler spreadsheet;
 
-	public TableView(Object definition, IKimSymbolDefinition statement, INamespace namespace, IMonitor monitor) {
+	public TableViewModel(Object definition, IKimSymbolDefinition statement, INamespace namespace, IMonitor monitor) {
 		super(statement);
 		this.viewClass = statement.getDefineClass();
 		this.name = statement.getName();
@@ -36,7 +36,7 @@ public class TableView extends KimObject implements IKnowledgeView {
 			throw new KlabValidationException("definition is not compatible with a table view");
 		}
 		this.definition = (Map<?, ?>) definition;
-		this.spreadsheet = new Spreadsheet(this.name, this.definition, null, monitor);
+		this.spreadsheet = new TableCompiler(this.name, this.definition, null, monitor);
 	}
 
 	@Override
@@ -54,9 +54,8 @@ public class TableView extends KimObject implements IKnowledgeView {
 	}
 
 	@Override
-	public void compileView(IObservation target, IContextualizationScope scope) {
-		Table table = spreadsheet.compute(target, (IRuntimeScope)scope);
-		((IRuntimeScope)scope).addView(this, this.spreadsheet.getTitle(), table.compile());
+	public IKnowledgeView compileView(IObservation target, IContextualizationScope scope) {
+		return spreadsheet.compute(target, (IRuntimeScope)scope);
 	}
 
 	@Override

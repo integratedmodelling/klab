@@ -61,6 +61,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
  * @author Ferd
  *
  */
+@Deprecated
 public class TableDocumentationExtension {
 
 	private Map<?, ?> definition;

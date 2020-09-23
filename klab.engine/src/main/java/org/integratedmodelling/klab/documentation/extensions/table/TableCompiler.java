@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.documentation.extensions.table;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -50,7 +49,6 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
-import org.integratedmodelling.klab.documentation.extensions.View;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -64,7 +62,14 @@ import org.jgrapht.traverse.TopologicalOrderIterator;
 
 import com.google.common.collect.Sets;
 
-public class Spreadsheet extends View<String, Table> {
+/**
+ * A class that interprets a table view definition and produces a table artifact
+ * when requested.
+ * 
+ * @author Ferd
+ *
+ */
+public class TableCompiler {
 
 	enum AggregationType {
 		Aggregator, Differentiator, Comparator, Counter
@@ -564,7 +569,7 @@ public class Spreadsheet extends View<String, Table> {
 	 * ------- Definition and validation --------------------------
 	 */
 
-	public Spreadsheet(String name, Map<?, ?> definition, @Nullable IObservable target, IMonitor monitor) {
+	public TableCompiler(String name, Map<?, ?> definition, @Nullable IObservable target, IMonitor monitor) {
 
 		this.name = name;
 		this.monitor = monitor;
@@ -880,8 +885,8 @@ public class Spreadsheet extends View<String, Table> {
 	 * Compute all cells that want to be computed. Target comes from caller, if null
 	 * we must have an observable and find it in the catalog.
 	 */
-	@Override
-	public Table compute(IObservation targetObservation, IRuntimeScope scope) {
+//	@Override
+	public TableArtifact compute(IObservation targetObservation, IRuntimeScope scope) {
 
 		scope.getMonitor().info("start computing table " + name);
 
@@ -902,7 +907,7 @@ public class Spreadsheet extends View<String, Table> {
 		/*
 		 * Find all observations in scope and fill in the observation map
 		 */
-		Table ret = new Table(this, sortedRows, sortedColumns, scope);
+		TableArtifact ret = new TableArtifact(this, sortedRows, sortedColumns, scope);
 
 		for (Phase phase : getPhases(scope, catalog)) {
 
@@ -1067,22 +1072,6 @@ public class Spreadsheet extends View<String, Table> {
 		return ret;
 	}
 
-	/**
-	 * Finalize all cells and render the result to HTML.
-	 * 
-	 * @return
-	 */
-	@Override
-	public String compile(Table computed) {
-		return computed.compile();
-	}
-
-	@Override
-	public void export(File file, Table computed) {
-		// TODO Auto-generated method stub
-
-	}
-
 	public int getActiveRows() {
 		return this.activeRows;
 	}
@@ -1093,6 +1082,10 @@ public class Spreadsheet extends View<String, Table> {
 
 	public String getTitle() {
 		return this.title;
+	}
+
+	public String getName() {
+		return this.name;
 	}
 
 }

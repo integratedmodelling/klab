@@ -8,11 +8,11 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -429,9 +429,8 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * reports and/or to send to clients for quick display. More complex
 	 * functionalities may use the view to handle actions such as exporting.
 	 * 
-	 * @param tableView
 	 * @param view
 	 */
-	void addView(IKnowledgeView view, String title, Object result);
+	void addView(IKnowledgeView view);
 
 }

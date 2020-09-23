@@ -25,7 +25,7 @@ import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -62,7 +62,7 @@ public interface INamespace extends IKimObject {
 	 * 
 	 * @return
 	 */
-	Map<String, IKnowledgeView> getKnowledgeViews();
+	Map<String, IViewModel> getKnowledgeViews();
 	
 	/**
 	 * <p>

@@ -22,7 +22,7 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IAxiom;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -49,7 +49,7 @@ public class Namespace extends KimObject implements INamespace {
 	Map<String, IKimObject> objectsByName = Collections.synchronizedMap(new HashMap<>());
 	Map<String, Object> symbolTable = Collections.synchronizedMap(new HashMap<>());
 	List<IServiceCall> coveredExtents = new ArrayList<>();
-	Map<String, IKnowledgeView> knowledgeViews = Collections.synchronizedMap(new HashMap<>());
+	Map<String, IViewModel> knowledgeViews = Collections.synchronizedMap(new HashMap<>());
 
 	/*
 	 * for incremental building of the knowledge
@@ -327,7 +327,7 @@ public class Namespace extends KimObject implements INamespace {
 	}
 
 	@Override
-	public Map<String, IKnowledgeView> getKnowledgeViews() {
+	public Map<String, IViewModel> getKnowledgeViews() {
 		return knowledgeViews;
 	}
 

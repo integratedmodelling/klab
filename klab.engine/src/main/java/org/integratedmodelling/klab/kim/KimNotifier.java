@@ -25,7 +25,7 @@ import org.integratedmodelling.klab.Reasoner;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -223,9 +223,9 @@ public class KimNotifier implements Kim.Notifier {
 				if (((IKimSymbolDefinition) statement).getDefineClass() != null) {
 					value = Extensions.INSTANCE.processDefinition(((IKimSymbolDefinition) statement), value, ns,
 							monitor);
-					if (value instanceof IKnowledgeView) {
-						ns.getKnowledgeViews().put(name, (IKnowledgeView) value);
-						ns.addObject((IKnowledgeView) value);
+					if (value instanceof IViewModel) {
+						ns.getKnowledgeViews().put(name, (IViewModel) value);
+						ns.addObject((IViewModel) value);
 					}
 				} else if (value instanceof IKimTable) {
 					value = Table.create((IKimTable) value);

@@ -50,8 +50,8 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.Prototype;
-import org.integratedmodelling.klab.model.extensions.GraphView;
-import org.integratedmodelling.klab.model.extensions.TableView;
+import org.integratedmodelling.klab.model.extensions.GraphViewModel;
+import org.integratedmodelling.klab.model.extensions.TableViewModel;
 import org.integratedmodelling.klab.rest.ServicePrototype;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -115,9 +115,9 @@ public enum Extensions implements IExtensionService {
 		 */
 		switch (statement.getDefineClass()) {
 		case "table":
-			return new TableView(definition, statement, namespace, monitor);
+			return new TableViewModel(definition, statement, namespace, monitor);
 		case "chart":
-			return new GraphView(definition, statement, namespace, monitor);
+			return new GraphViewModel(definition, statement, namespace, monitor);
 		}
 
 		return definition;

@@ -5,6 +5,7 @@ import java.util.Map;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 
+@Deprecated
 public class GraphDocumentationExtension {
 	
 	private Map<?,?> definition;

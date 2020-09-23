@@ -32,7 +32,7 @@ import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
@@ -566,7 +566,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IContextualizable getViewResolver(IKnowledgeView view) {
+	public IContextualizable getViewResolver(IViewModel view) {
 		return new ComputableResource(KnowledgeViewResolver.getServiceCall(view), Mode.RESOLUTION);
 	}
 }
