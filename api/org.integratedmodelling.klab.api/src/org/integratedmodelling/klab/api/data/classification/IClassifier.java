@@ -90,4 +90,10 @@ public interface IClassifier {
 	 */
 	Type getType();
 
+	/**
+	 * True if this classifies a concept
+	 * @return
+	 */
+	public boolean isConcept();
+
 }

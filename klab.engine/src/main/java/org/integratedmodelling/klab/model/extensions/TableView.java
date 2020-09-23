@@ -56,9 +56,7 @@ public class TableView extends KimObject implements IKnowledgeView {
 	@Override
 	public void compileView(IObservation target, IContextualizationScope scope) {
 		Table table = spreadsheet.compute(target, (IRuntimeScope)scope);
-		table.compile();
-		// TODO set in the context
-		// TODO compile and send through the monitor in the scope
+		((IRuntimeScope)scope).addView(this, this.spreadsheet.getTitle(), table.compile());
 	}
 
 	@Override

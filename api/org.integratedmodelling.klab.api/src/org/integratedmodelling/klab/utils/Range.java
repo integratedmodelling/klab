@@ -429,11 +429,10 @@ public class Range implements IValueMediator {
 			return create(newLower, newUpper);
 		}
 	}
-	
+
 	public boolean overlaps(Range other) {
 		return this.lowerBound <= other.upperBound && other.lowerBound <= this.upperBound;
 	}
-	
 
 	/**
 	 * Returns the minimal range that {@linkplain #encloses encloses} both this
@@ -512,11 +511,11 @@ public class Range implements IValueMediator {
 	}
 
 	public boolean contains(Range other) {
-		
+
 		if (this.equals(other)) {
 			return true;
 		}
-		
+
 		if (!lowerInfinite && !other.lowerInfinite
 				&& (lowerExclusive ? lowerBound >= other.lowerBound : lowerBound > other.lowerBound)) {
 			return false;
@@ -583,10 +582,10 @@ public class Range implements IValueMediator {
 		if (!this.overlaps(original)) {
 			return null;
 		}
-		
+
 		double olower = original.getLowerBound() < getLowerBound() ? getLowerBound() : original.getLowerBound();
 		double oupper = original.getUpperBound() > getUpperBound() ? getUpperBound() : original.getUpperBound();
-		
+
 		double cellWidth = getWidth() / nCells;
 		double leftGap = olower - getLowerBound();
 		double leftCells = (long) Math.floor(leftGap / cellWidth);
@@ -617,7 +616,7 @@ public class Range implements IValueMediator {
 
 		System.out.println("OVERLAP TRUE: " + cock.overlaps(create(1.7, 1.9)));
 		System.out.println("OVERLAP FALSE: " + cock.overlaps(create(11, 19)));
-		
+
 //		System.out.println(Range.create("[1100000.0,7.148E7]").toString());
 //		System.out.println(Range.create("[0,1]"));
 //		System.out.println(Range.create("[12.33, 3222]"));
@@ -649,6 +648,23 @@ public class Range implements IValueMediator {
 		return isBounded() ? getMidpoint()
 				: lowerBound != Double.NEGATIVE_INFINITY ? lowerBound
 						: (upperBound == Double.POSITIVE_INFINITY ? Double.NaN : upperBound);
+	}
+
+	public String getDisplayLabel() {
+		if (!isBounded()) {
+			if (lowerInfinite) {
+				return "< " + upperBound;
+			} else if (upperInfinite) {
+				return "> " + lowerBound;
+			}
+		} else if (lowerBound == upperBound) {
+			if (upperExclusive && lowerExclusive) {
+				return "!= " + lowerBound;
+			} else if (!upperExclusive && !lowerExclusive) {
+				return "= " + lowerBound;
+			}
+		}
+		return lowerBound + " - " + upperBound;
 	}
 
 }

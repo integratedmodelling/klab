@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -91,6 +92,7 @@ import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
+import org.integratedmodelling.klab.rest.KnowledgeViewReference;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
@@ -1823,6 +1825,31 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public void addView(IKnowledgeView view, String title, Object result) {
+
+		if (result instanceof String) {
+			/*
+			 * send directly to clients. If view can export, keep view and send URL to
+			 * export service.
+			 */
+
+			KnowledgeViewReference descriptor = new KnowledgeViewReference();
+			descriptor.setContextId(monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
+			descriptor.setBody(result.toString());
+			// TODO!
+			descriptor.setExportUrl("http://www.integratedmodelling.org/downloads/ARIES_2012.pptx");
+			descriptor.setViewClass(view.getViewClass());
+			descriptor.setTitle(title);
+			descriptor.setViewId(view.getName());
+			
+			ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
+			session.getMonitor().send(Message.create(session.getId(),
+					IMessage.MessageClass.UserInterface, IMessage.Type.ViewAvailable, descriptor));
+
+		}
 	}
 
 }

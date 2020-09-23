@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IKnowledgeView;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -774,6 +775,12 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	public Map<ObservedConcept, IObservation> getCatalog() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void addView(IKnowledgeView view, String title, Object result) {
+		// TODO Auto-generated method stub
+		
 	}
 
 }

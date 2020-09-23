@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.documentation.extensions.table;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -12,6 +14,8 @@ import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.documentation.extensions.table.Spreadsheet.Dimension;
 import org.integratedmodelling.klab.documentation.extensions.table.Spreadsheet.Phase;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.utils.Escape;
+import org.integratedmodelling.klab.utils.TemplateUtils;
 
 /**
  * The container of the computed cells of a table.
@@ -29,19 +33,16 @@ public class Table {
 
 		List<Aggregator> aggregator = new ArrayList<>();
 
-		/**
-		 * Accumulate the passed value corresponding to the passed locator and view.
-		 * 
-		 * @param value
-		 * @param locator
-		 * @param view
-		 */
-		void accumulate(Object value, ILocator locator, Phase view) {
-
-		}
-
 		public Object get() {
-			// TODO Auto-generated method stub
+
+			if (aggregator.size() > 1) {
+				// boh needs more work - a strategy to aggregate the aggregated. Can this happen
+				// given
+				// that we have a cartesian product of filters?
+			} else if (aggregator.size() == 1) {
+				return aggregator.get(0).aggregate();
+			}
+
 			return null;
 		}
 	}
@@ -107,6 +108,13 @@ public class Table {
 
 	public String compile() {
 
+		StringBuffer ret = new StringBuffer(columns.size() * rows.size() + 256);
+
+		ret.append("<table>\n");
+
+		if (this.table.getTitle() != null) {
+			ret.append("  <caption>" + Escape.forHTML(this.table.getTitle()) + "</caption>\n");
+		}
 		/*
 		 * add separator indices for both rows and columns
 		 */
@@ -132,26 +140,78 @@ public class Table {
 		/*
 		 * headers
 		 */
-		for (Integer row : activeRows) {
-			Dimension rDesc = rows.get(row);
-			for (Integer col : activeColumns) {
+		if (rTitles + cTitles > 0) {
+			ret.append("  <thead>\n");
+			/*
+			 * TODO GROUPS!
+			 */
+			for (int ct = 0; ct < cTitles; ct++) {
+				ret.append("    <tr>\n");
+				for (int rt = 0; rt < rTitles; rt++) {
+					// empty cells to leave space for row headers later
+					ret.append("      <th></th>\n");
+				}
+				for (Integer col : activeColumns) {
+					Dimension cDesc = columns.get(col);
+					/*
+					 * write the ct-th title, using the array starting counting from the bottom
+					 */
+					ret.append("      <th>" + Escape.forHTML(getHeader(cDesc, ct, cTitles)) + "</th>\n");
+				}
+				ret.append("    </tr>\n");
 			}
+			ret.append("  </thead>\n");
 		}
-		
+
 		/*
-		 * data
+		 * data and row titles
 		 */
+		ret.append("  <tbody>\n");
 		for (Integer row : activeRows) {
 			Dimension rDesc = rows.get(row);
-			for (Integer col : activeColumns) {
-				Cell cell = cells[col][row];
-				
+			ret.append("    <tr>\n");
+			for (int i = 0; i < rTitles; i++) {
+				ret.append("      <th scope=\"row\">" + Escape.forHTML(getHeader(rDesc, i, rTitles)) + "</th>\n");
 			}
+			for (Integer col : activeColumns) {
+				Dimension cDesc = columns.get(col);
+				Cell cell = cells[col][row];
+				ret.append("      <td>" + getData(cell, rDesc, cDesc) + "</td>\n");
+			}
+			ret.append("    </tr>\n");
 		}
-		
-		StringBuffer ret = new StringBuffer(columns.size() * rows.size() + 256);
+		ret.append("  <tbody>\n");
+
+		ret.append("</table>");
 
 		return ret.toString();
+	}
+
+	private String getData(Cell cell, Dimension rowDesc, Dimension colDesc) {
+		if (cell == null) {
+			return "";
+		}
+		Object ret = cell.get();
+		if (Observations.INSTANCE.isNodata(ret)) {
+			return "";
+		}
+		if (ret instanceof Number) {
+			// TODO harvest format specs from row, then col
+			ret = NumberFormat.getNumberInstance().format((Number) ret);
+		}
+		return ret.toString();
+	}
+
+	private String getHeader(Dimension dimension, int currentLevelIndex, int totalLevels) {
+		// choose the title according to the level based on what was defined in the
+		// dimension. It will be
+		// one of the titles but we may have less than the max as other dims. Titles are
+		// more to less specific.
+		String title = "";
+		if (dimension.titles != null && dimension.titles.length > currentLevelIndex) {
+			title = dimension.titles[currentLevelIndex];
+		}
+		return TemplateUtils.expandMatches(title, this.table.getTemplateVars(dimension)).get(0);
 	}
 
 }

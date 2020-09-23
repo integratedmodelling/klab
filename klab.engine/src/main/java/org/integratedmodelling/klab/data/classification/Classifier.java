@@ -292,6 +292,15 @@ public class Classifier implements IClassifier {
 		numberMatch = asNumber(classifier);
 	}
 
+	public String getDisplayLabel() {
+		if (conceptMatch != null) {
+			return Concepts.INSTANCE.getDisplayLabel(conceptMatch);
+		} else if (intervalMatch != null) {
+			return intervalMatch.getDisplayLabel();
+		} 
+		return dumpCode();
+	}
+	
 	@Override
 	public String toString() {
 		String ret = null;
@@ -470,5 +479,10 @@ public class Classifier implements IClassifier {
 	@Override
 	public boolean isComputed() {
 		return expressionMatch != null;
+	}
+
+	@Override
+	public boolean isConcept() {
+		return conceptMatch != null;
 	}
 }

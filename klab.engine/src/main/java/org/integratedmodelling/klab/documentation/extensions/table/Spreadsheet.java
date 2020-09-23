@@ -470,24 +470,14 @@ public class Spreadsheet extends View<String, Table> {
 	private Map<String, Dimension> columns = new LinkedHashMap<>();
 	// rows in order of definition and expansion
 	private Map<String, Dimension> rows = new LinkedHashMap<>();
-
-	private List<Phase> phases = new ArrayList<>();
-
-	/**
-	 * All observations used in compiling the table. Harvested from the context
-	 * during filter parsing. Keys are the same used in the filters.
-	 */
-	private Map<ObservedConcept, IObservation> observations = new HashMap<>();
 	private ObservedConcept target;
 	private int activeColumns;
 	private int activeRows;
 	private IMonitor monitor;
-
 	private Set<Object> phaseItems = new HashSet<>();
-
 	private TargetType targetType;
-
 	private String name;
+	private String title;
 
 	/**
 	 * Return the passed dimensions in order of dependency. If circular dependencies
@@ -575,7 +565,7 @@ public class Spreadsheet extends View<String, Table> {
 	 */
 
 	public Spreadsheet(String name, Map<?, ?> definition, @Nullable IObservable target, IMonitor monitor) {
-		
+
 		this.name = name;
 		this.monitor = monitor;
 		Pair<ObservedConcept, TargetType> tdesc = parseTarget(definition.get("target"));
@@ -583,7 +573,7 @@ public class Spreadsheet extends View<String, Table> {
 		this.targetType = tdesc.getSecond();
 		this.activeColumns = parseDimension(definition.get("columns"), this.columns, "c");
 		this.activeRows = parseDimension(definition.get("rows"), this.rows, "r");
-
+		this.title = definition.containsKey("title") ? definition.get("title").toString() : null;
 		/*
 		 * validate that only rows OR columns have an additional target but not both.
 		 * Cells must aggregate a single observable.
@@ -894,7 +884,7 @@ public class Spreadsheet extends View<String, Table> {
 	public Table compute(IObservation targetObservation, IRuntimeScope scope) {
 
 		scope.getMonitor().info("start computing table " + name);
-		
+
 		Map<ObservedConcept, IObservation> catalog = scope.getCatalog();
 		if (this.target != null) {
 			targetObservation = catalog.get(this.target);
@@ -966,6 +956,8 @@ public class Spreadsheet extends View<String, Table> {
 			}
 		}
 
+		scope.getMonitor().info("table " + name + " computed successfully");
+
 		return ret;
 	}
 
@@ -1002,6 +994,21 @@ public class Spreadsheet extends View<String, Table> {
 			}
 		}
 
+		return ret;
+	}
+
+	public Map<String, Object> getTemplateVars(Dimension dimension) {
+		Map<String, Object> ret = new HashMap<>();
+		for (Filter filter : dimension.filters) {
+			if (filter.classifier != null) {
+				ret.put("classifier", ((Classifier) filter.classifier).getDisplayLabel());
+				if (filter.classifier.isInterval()) {
+					ret.put("range", ((Classifier) filter.classifier).getDisplayLabel());
+				} else if (filter.classifier.isConcept()) {
+					ret.put("concept", ((Classifier) filter.classifier).getDisplayLabel());
+				}
+			}
+		}
 		return ret;
 	}
 
@@ -1082,6 +1089,10 @@ public class Spreadsheet extends View<String, Table> {
 
 	public int getActiveColumns() {
 		return this.activeColumns;
+	}
+
+	public String getTitle() {
+		return this.title;
 	}
 
 }
