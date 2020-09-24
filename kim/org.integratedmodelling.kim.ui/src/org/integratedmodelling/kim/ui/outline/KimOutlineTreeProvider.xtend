@@ -16,6 +16,7 @@ import org.integratedmodelling.kim.kim.Statement
 import org.integratedmodelling.kim.model.Kim
 import org.integratedmodelling.kim.model.KimNamespace
 import org.integratedmodelling.kim.model.KimProject
+import org.eclipse.jface.viewers.DelegatingStyledCellLabelProvider.IStyledLabelProvider
 
 /**
  * Customization of the default outline structure.
@@ -24,13 +25,21 @@ import org.integratedmodelling.kim.model.KimProject
  */
 class KimOutlineTreeProvider extends DefaultOutlineTreeProvider {
 
-//	def _isLeaf(ObservableSemantics obs) {
-//		true
-//	}
+	def _isLeaf(ObservableSemantics obs) {
+		true
+	}
 //
-//	def _isLeaf(ConceptDeclaration obs) {
-//		true
-//	}
+	def _isLeaf(ConceptDeclaration obs) {
+		true
+	}
+	
+	override _text(Object modelElement) {
+		modelElement.getClass().getCanonicalName();
+	}
+	
+
+	
+	
 //
 //	def _isLeaf(Classification obs) {
 //		true

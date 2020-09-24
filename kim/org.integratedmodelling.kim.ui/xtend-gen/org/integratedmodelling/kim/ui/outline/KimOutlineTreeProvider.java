@@ -4,6 +4,8 @@
 package org.integratedmodelling.kim.ui.outline;
 
 import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
+import org.integratedmodelling.kim.kim.ObservableSemantics;
 
 /**
  * Customization of the default outline structure.
@@ -12,4 +14,16 @@ import org.eclipse.xtext.ui.editor.outline.impl.DefaultOutlineTreeProvider;
  */
 @SuppressWarnings("all")
 public class KimOutlineTreeProvider extends DefaultOutlineTreeProvider {
+  public boolean _isLeaf(final ObservableSemantics obs) {
+    return true;
+  }
+  
+  public boolean _isLeaf(final ConceptDeclaration obs) {
+    return true;
+  }
+  
+  @Override
+  public Object _text(final Object modelElement) {
+    return modelElement.getClass().getCanonicalName();
+  }
 }

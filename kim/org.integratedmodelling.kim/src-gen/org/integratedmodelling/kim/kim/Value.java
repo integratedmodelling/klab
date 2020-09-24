@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getList <em>List</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Value#getMap <em>Map</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getFunction <em>Function</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getLiteral <em>Literal</em>}</li>
@@ -23,7 +24,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getDate <em>Date</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.Value#getMap <em>Map</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getQuantity <em>Quantity</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getOp <em>Op</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getExpression <em>Expression</em>}</li>
@@ -58,6 +58,28 @@ public interface Value extends EObject
    * @generated
    */
   void setList(List value);
+
+  /**
+   * Returns the value of the '<em><b>Map</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Map</em>' containment reference.
+   * @see #setMap(Map)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getValue_Map()
+   * @model containment="true"
+   * @generated
+   */
+  Map getMap();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Value#getMap <em>Map</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Map</em>' containment reference.
+   * @see #getMap()
+   * @generated
+   */
+  void setMap(Map value);
 
   /**
    * Returns the value of the '<em><b>Concept</b></em>' containment reference.
@@ -212,28 +234,6 @@ public interface Value extends EObject
    * @generated
    */
   void setDate(Date value);
-
-  /**
-   * Returns the value of the '<em><b>Map</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Map</em>' containment reference.
-   * @see #setMap(Map)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getValue_Map()
-   * @model containment="true"
-   * @generated
-   */
-  Map getMap();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Value#getMap <em>Map</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Map</em>' containment reference.
-   * @see #getMap()
-   * @generated
-   */
-  void setMap(Map value);
 
   /**
    * Returns the value of the '<em><b>Quantity</b></em>' containment reference.

@@ -25,6 +25,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	protected KimGrammarAccess grammarAccess;
 	protected AbstractElementAlias match_AnnotatedObservableSemantics_RequiredKeyword_4_3_1_a;
 	protected AbstractElementAlias match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q;
+	protected AbstractElementAlias match_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_1_1_q;
+	protected AbstractElementAlias match_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_4_1_q;
 	protected AbstractElementAlias match_ClassifierRHSWithId_ExclusiveKeyword_1_1_1_q;
 	protected AbstractElementAlias match_ClassifierRHSWithId_ExclusiveKeyword_1_4_1_q;
 	protected AbstractElementAlias match_ClassifierRHS_ExclusiveKeyword_1_1_1_q;
@@ -55,6 +57,8 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 		grammarAccess = (KimGrammarAccess) access;
 		match_AnnotatedObservableSemantics_RequiredKeyword_4_3_1_a = new TokenAlias(true, true, grammarAccess.getAnnotatedObservableSemanticsAccess().getRequiredKeyword_4_3_1());
 		match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getAnnotationAccess().getLeftParenthesisKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getAnnotationAccess().getRightParenthesisKeyword_1_2()));
+		match_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSWithIdNoSetAccess().getExclusiveKeyword_1_1_1());
+		match_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSWithIdNoSetAccess().getExclusiveKeyword_1_4_1());
 		match_ClassifierRHSWithId_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSWithIdAccess().getExclusiveKeyword_1_1_1());
 		match_ClassifierRHSWithId_ExclusiveKeyword_1_4_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSWithIdAccess().getExclusiveKeyword_1_4_1());
 		match_ClassifierRHS_ExclusiveKeyword_1_1_1_q = new TokenAlias(false, true, grammarAccess.getClassifierRHSAccess().getExclusiveKeyword_1_1_1());
@@ -109,6 +113,10 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 				emit_AnnotatedObservableSemantics_RequiredKeyword_4_3_1_a(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q.equals(syntax))
 				emit_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_1_1_q.equals(syntax))
+				emit_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_4_1_q.equals(syntax))
+				emit_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ClassifierRHSWithId_ExclusiveKeyword_1_1_1_q.equals(syntax))
 				emit_ClassifierRHSWithId_ExclusiveKeyword_1_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_ClassifierRHSWithId_ExclusiveKeyword_1_4_1_q.equals(syntax))
@@ -269,6 +277,28 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     name=ANNOTATION_ID (ambiguity) (rule end)
 	 */
 	protected void emit_Annotation___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
+	 *     'exclusive'?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     int0=Number (ambiguity) 'to' int1=Number
+	 */
+	protected void emit_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_1_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
+	 *     'exclusive'?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     int1=Number (ambiguity) (rule end)
+	 */
+	protected void emit_ClassifierRHSWithIdNoSet_ExclusiveKeyword_1_4_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

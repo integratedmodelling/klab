@@ -4759,7 +4759,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getValue_Concept()
+  public EReference getValue_Map()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(1);
   }
@@ -4770,7 +4770,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getValue_Function()
+  public EReference getValue_Concept()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(2);
   }
@@ -4781,7 +4781,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getValue_Literal()
+  public EReference getValue_Function()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(3);
   }
@@ -4792,9 +4792,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getValue_Expr()
+  public EReference getValue_Literal()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(4);
+    return (EReference)valueEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -4803,7 +4803,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getValue_Id()
+  public EAttribute getValue_Expr()
   {
     return (EAttribute)valueEClass.getEStructuralFeatures().get(5);
   }
@@ -4814,9 +4814,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getValue_Table()
+  public EAttribute getValue_Id()
   {
-    return (EReference)valueEClass.getEStructuralFeatures().get(6);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -4825,7 +4825,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getValue_Date()
+  public EReference getValue_Table()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(7);
   }
@@ -4836,7 +4836,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EReference getValue_Map()
+  public EReference getValue_Date()
   {
     return (EReference)valueEClass.getEStructuralFeatures().get(8);
   }
@@ -5862,6 +5862,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     valueEClass = createEClass(VALUE);
     createEReference(valueEClass, VALUE__LIST);
+    createEReference(valueEClass, VALUE__MAP);
     createEReference(valueEClass, VALUE__CONCEPT);
     createEReference(valueEClass, VALUE__FUNCTION);
     createEReference(valueEClass, VALUE__LITERAL);
@@ -5869,7 +5870,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(valueEClass, VALUE__ID);
     createEReference(valueEClass, VALUE__TABLE);
     createEReference(valueEClass, VALUE__DATE);
-    createEReference(valueEClass, VALUE__MAP);
     createEReference(valueEClass, VALUE__QUANTITY);
     createEReference(valueEClass, VALUE__OP);
     createEReference(valueEClass, VALUE__EXPRESSION);
@@ -6393,6 +6393,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
 
     initEClass(valueEClass, Value.class, "Value", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getValue_List(), this.getList(), null, "list", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValue_Map(), this.getMap(), null, "map", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Concept(), ecorePackage.getEObject(), null, "concept", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Function(), this.getFunction(), null, "function", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Literal(), this.getLiteral(), null, "literal", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -6400,7 +6401,6 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getValue_Id(), ecorePackage.getEString(), "id", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Table(), this.getLookupTable(), null, "table", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Date(), this.getDate(), null, "date", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getValue_Map(), this.getMap(), null, "map", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Quantity(), this.getQuantity(), null, "quantity", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Op(), this.getREL_OPERATOR(), null, "op", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Expression(), this.getNumber(), null, "expression", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

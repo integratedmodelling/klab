@@ -94,6 +94,18 @@ ClassifierRHSWithId returns ClassifierRHS:
 	nodata='unknown' |
 	star?='*';	
 	
+ClassifierRHSWithIdNoSet returns ClassifierRHS:
+	(boolean='true' | boolean='false') | 
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
+	num=Number | 
+//	'in' set=List | 
+	string=STRING | 
+	concept=ConceptDeclaration | 
+	id = (LOWERCASE_ID | PropertyId) |
+	op=REL_OPERATOR expression=Number | 
+	nodata='unknown' |
+	star?='*';		
+	
 Urn:
 	// String used when there are strange chars or keywords in the URN. Consecutive strings will be merged.
 	name=(PathName|UrnId|LocalFilePath) | strings+=STRING+
@@ -318,8 +330,8 @@ ObservableSemantics:
 	(
 		('according' 'to' accordingTo=PropertyId)? &
 		(
-			('in' (unit=Unit | currency=Currency)) |
-			('per' unit=Unit)
+			(=> 'in' (unit=Unit | currency=Currency)) |
+			(=> 'per' unit=Unit)
 		)? &
 		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
 		(optional?='optional' | 'required')? &
@@ -334,10 +346,10 @@ ObservableSemantics:
 SimpleObservableSemantics returns ObservableSemantics:
 	(generic?='any' | global?='all')?
 	declaration=ConceptDeclaration
-	(
-		(
-			('in' (unit=Unit | currency=Currency)) |
-			('per' unit=Unit)
+	( =>
+		( =>
+			(=> 'in' (unit=Unit | currency=Currency)) |
+			(=> 'per' unit=Unit)
 		)? &
 		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
 		(from=Number 'to' to=Number)? 
@@ -769,7 +781,8 @@ Map:
 ;
 
 MapEntry:
-	classifier=ClassifierRHSWithId ':' value=ValueWithIdAndConcept
+	// must remove 'in (...)' from classifiers to avoid conflict with observable units, which are more needed.
+	classifier=ClassifierRHSWithIdNoSet ':' value=ValueWithIdAndConcept
 ;
 
 DocSelector:
@@ -792,6 +805,7 @@ ParameterList:
 
 ValueWithIdAndConcept returns Value:
 	list=List |
+	map=Map |
 	concept=SimpleObservableSemantics |
 	function=Function |
 	literal=Literal |
@@ -799,7 +813,6 @@ ValueWithIdAndConcept returns Value:
 	id=(PathName|LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
 	table=LookupTable |
 	date=Date |
-	map=Map |
 	quantity=Quantity |
 	op=REL_OPERATOR expression=Number | 
 	null?='unknown';

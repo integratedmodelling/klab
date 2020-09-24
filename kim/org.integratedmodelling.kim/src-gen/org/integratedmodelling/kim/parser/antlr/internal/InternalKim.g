@@ -1774,15 +1774,15 @@ ruleClassifierRHS returns [EObject current=null]
 	)
 ;
 
-// Entry rule entryRuleClassifierRHSWithId
-entryRuleClassifierRHSWithId returns [EObject current=null]:
-	{ newCompositeNode(grammarAccess.getClassifierRHSWithIdRule()); }
-	iv_ruleClassifierRHSWithId=ruleClassifierRHSWithId
-	{ $current=$iv_ruleClassifierRHSWithId.current; }
+// Entry rule entryRuleClassifierRHSWithIdNoSet
+entryRuleClassifierRHSWithIdNoSet returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getClassifierRHSWithIdNoSetRule()); }
+	iv_ruleClassifierRHSWithIdNoSet=ruleClassifierRHSWithIdNoSet
+	{ $current=$iv_ruleClassifierRHSWithIdNoSet.current; }
 	EOF;
 
-// Rule ClassifierRHSWithId
-ruleClassifierRHSWithId returns [EObject current=null]
+// Rule ClassifierRHSWithIdNoSet
+ruleClassifierRHSWithIdNoSet returns [EObject current=null]
 @init {
 	enterRule();
 }
@@ -1795,11 +1795,11 @@ ruleClassifierRHSWithId returns [EObject current=null]
 				(
 					lv_boolean_0_0='true'
 					{
-						newLeafNode(lv_boolean_0_0, grammarAccess.getClassifierRHSWithIdAccess().getBooleanTrueKeyword_0_0_0());
+						newLeafNode(lv_boolean_0_0, grammarAccess.getClassifierRHSWithIdNoSetAccess().getBooleanTrueKeyword_0_0_0());
 					}
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getClassifierRHSWithIdRule());
+							$current = createModelElement(grammarAccess.getClassifierRHSWithIdNoSetRule());
 						}
 						setWithLastConsumed($current, "boolean", lv_boolean_0_0, "true");
 					}
@@ -1810,11 +1810,11 @@ ruleClassifierRHSWithId returns [EObject current=null]
 				(
 					lv_boolean_1_0='false'
 					{
-						newLeafNode(lv_boolean_1_0, grammarAccess.getClassifierRHSWithIdAccess().getBooleanFalseKeyword_0_1_0());
+						newLeafNode(lv_boolean_1_0, grammarAccess.getClassifierRHSWithIdNoSetAccess().getBooleanFalseKeyword_0_1_0());
 					}
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getClassifierRHSWithIdRule());
+							$current = createModelElement(grammarAccess.getClassifierRHSWithIdNoSetRule());
 						}
 						setWithLastConsumed($current, "boolean", lv_boolean_1_0, "false");
 					}
@@ -1826,12 +1826,12 @@ ruleClassifierRHSWithId returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getClassifierRHSWithIdAccess().getInt0NumberParserRuleCall_1_0_0());
+						newCompositeNode(grammarAccess.getClassifierRHSWithIdNoSetAccess().getInt0NumberParserRuleCall_1_0_0());
 					}
 					lv_int0_2_0=ruleNumber
 					{
 						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdRule());
+							$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdNoSetRule());
 						}
 						set(
 							$current,
@@ -1847,11 +1847,11 @@ ruleClassifierRHSWithId returns [EObject current=null]
 					(
 						lv_leftLimit_3_0='inclusive'
 						{
-							newLeafNode(lv_leftLimit_3_0, grammarAccess.getClassifierRHSWithIdAccess().getLeftLimitInclusiveKeyword_1_1_0_0());
+							newLeafNode(lv_leftLimit_3_0, grammarAccess.getClassifierRHSWithIdNoSetAccess().getLeftLimitInclusiveKeyword_1_1_0_0());
 						}
 						{
 							if ($current==null) {
-								$current = createModelElement(grammarAccess.getClassifierRHSWithIdRule());
+								$current = createModelElement(grammarAccess.getClassifierRHSWithIdNoSetRule());
 							}
 							setWithLastConsumed($current, "leftLimit", lv_leftLimit_3_0, "inclusive");
 						}
@@ -1860,14 +1860,14 @@ ruleClassifierRHSWithId returns [EObject current=null]
 				    |
 				otherlv_4='exclusive'
 				{
-					newLeafNode(otherlv_4, grammarAccess.getClassifierRHSWithIdAccess().getExclusiveKeyword_1_1_1());
+					newLeafNode(otherlv_4, grammarAccess.getClassifierRHSWithIdNoSetAccess().getExclusiveKeyword_1_1_1());
 				}
 			)?
 			(
 				('to')=>
 				otherlv_5='to'
 				{
-					newLeafNode(otherlv_5, grammarAccess.getClassifierRHSWithIdAccess().getToKeyword_1_2());
+					newLeafNode(otherlv_5, grammarAccess.getClassifierRHSWithIdNoSetAccess().getToKeyword_1_2());
 				}
 			)
 			(
@@ -1877,12 +1877,12 @@ ruleClassifierRHSWithId returns [EObject current=null]
 				)=>
 				(
 					{
-						newCompositeNode(grammarAccess.getClassifierRHSWithIdAccess().getInt1NumberParserRuleCall_1_3_0());
+						newCompositeNode(grammarAccess.getClassifierRHSWithIdNoSetAccess().getInt1NumberParserRuleCall_1_3_0());
 					}
 					lv_int1_6_0=ruleNumber
 					{
 						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdRule());
+							$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdNoSetRule());
 						}
 						set(
 							$current,
@@ -1898,11 +1898,11 @@ ruleClassifierRHSWithId returns [EObject current=null]
 					(
 						lv_rightLimit_7_0='inclusive'
 						{
-							newLeafNode(lv_rightLimit_7_0, grammarAccess.getClassifierRHSWithIdAccess().getRightLimitInclusiveKeyword_1_4_0_0());
+							newLeafNode(lv_rightLimit_7_0, grammarAccess.getClassifierRHSWithIdNoSetAccess().getRightLimitInclusiveKeyword_1_4_0_0());
 						}
 						{
 							if ($current==null) {
-								$current = createModelElement(grammarAccess.getClassifierRHSWithIdRule());
+								$current = createModelElement(grammarAccess.getClassifierRHSWithIdNoSetRule());
 							}
 							setWithLastConsumed($current, "rightLimit", lv_rightLimit_7_0, "inclusive");
 						}
@@ -1911,7 +1911,7 @@ ruleClassifierRHSWithId returns [EObject current=null]
 				    |
 				otherlv_8='exclusive'
 				{
-					newLeafNode(otherlv_8, grammarAccess.getClassifierRHSWithIdAccess().getExclusiveKeyword_1_4_1());
+					newLeafNode(otherlv_8, grammarAccess.getClassifierRHSWithIdNoSetAccess().getExclusiveKeyword_1_4_1());
 				}
 			)?
 		)
@@ -1919,12 +1919,12 @@ ruleClassifierRHSWithId returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getClassifierRHSWithIdAccess().getNumNumberParserRuleCall_2_0());
+					newCompositeNode(grammarAccess.getClassifierRHSWithIdNoSetAccess().getNumNumberParserRuleCall_2_0());
 				}
 				lv_num_9_0=ruleNumber
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdRule());
+						$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdNoSetRule());
 					}
 					set(
 						$current,
@@ -1937,45 +1937,19 @@ ruleClassifierRHSWithId returns [EObject current=null]
 		)
 		    |
 		(
-			otherlv_10='in'
-			{
-				newLeafNode(otherlv_10, grammarAccess.getClassifierRHSWithIdAccess().getInKeyword_3_0());
-			}
 			(
-				(
-					{
-						newCompositeNode(grammarAccess.getClassifierRHSWithIdAccess().getSetListParserRuleCall_3_1_0());
-					}
-					lv_set_11_0=ruleList
-					{
-						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdRule());
-						}
-						set(
-							$current,
-							"set",
-							lv_set_11_0,
-							"org.integratedmodelling.kim.Kim.List");
-						afterParserOrEnumRuleCall();
-					}
-				)
-			)
-		)
-		    |
-		(
-			(
-				lv_string_12_0=RULE_STRING
+				lv_string_10_0=RULE_STRING
 				{
-					newLeafNode(lv_string_12_0, grammarAccess.getClassifierRHSWithIdAccess().getStringSTRINGTerminalRuleCall_4_0());
+					newLeafNode(lv_string_10_0, grammarAccess.getClassifierRHSWithIdNoSetAccess().getStringSTRINGTerminalRuleCall_3_0());
 				}
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getClassifierRHSWithIdRule());
+						$current = createModelElement(grammarAccess.getClassifierRHSWithIdNoSetRule());
 					}
 					setWithLastConsumed(
 						$current,
 						"string",
-						lv_string_12_0,
+						lv_string_10_0,
 						"org.eclipse.xtext.common.Terminals.STRING");
 				}
 			)
@@ -1984,17 +1958,17 @@ ruleClassifierRHSWithId returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getClassifierRHSWithIdAccess().getConceptConceptDeclarationParserRuleCall_5_0());
+					newCompositeNode(grammarAccess.getClassifierRHSWithIdNoSetAccess().getConceptConceptDeclarationParserRuleCall_4_0());
 				}
-				lv_concept_13_0=ruleConceptDeclaration
+				lv_concept_11_0=ruleConceptDeclaration
 				{
 					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdRule());
+						$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdNoSetRule());
 					}
 					set(
 						$current,
 						"concept",
-						lv_concept_13_0,
+						lv_concept_11_0,
 						"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 					afterParserOrEnumRuleCall();
 				}
@@ -2004,33 +1978,33 @@ ruleClassifierRHSWithId returns [EObject current=null]
 		(
 			(
 				(
-					lv_id_14_1=RULE_LOWERCASE_ID
+					lv_id_12_1=RULE_LOWERCASE_ID
 					{
-						newLeafNode(lv_id_14_1, grammarAccess.getClassifierRHSWithIdAccess().getIdLOWERCASE_IDTerminalRuleCall_6_0_0());
+						newLeafNode(lv_id_12_1, grammarAccess.getClassifierRHSWithIdNoSetAccess().getIdLOWERCASE_IDTerminalRuleCall_5_0_0());
 					}
 					{
 						if ($current==null) {
-							$current = createModelElement(grammarAccess.getClassifierRHSWithIdRule());
+							$current = createModelElement(grammarAccess.getClassifierRHSWithIdNoSetRule());
 						}
 						setWithLastConsumed(
 							$current,
 							"id",
-							lv_id_14_1,
+							lv_id_12_1,
 							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 					    |
 					{
-						newCompositeNode(grammarAccess.getClassifierRHSWithIdAccess().getIdPropertyIdParserRuleCall_6_0_1());
+						newCompositeNode(grammarAccess.getClassifierRHSWithIdNoSetAccess().getIdPropertyIdParserRuleCall_5_0_1());
 					}
-					lv_id_14_2=rulePropertyId
+					lv_id_12_2=rulePropertyId
 					{
 						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdRule());
+							$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdNoSetRule());
 						}
 						set(
 							$current,
 							"id",
-							lv_id_14_2,
+							lv_id_12_2,
 							"org.integratedmodelling.kim.Kim.PropertyId");
 						afterParserOrEnumRuleCall();
 					}
@@ -2042,17 +2016,17 @@ ruleClassifierRHSWithId returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getClassifierRHSWithIdAccess().getOpREL_OPERATORParserRuleCall_7_0_0());
+						newCompositeNode(grammarAccess.getClassifierRHSWithIdNoSetAccess().getOpREL_OPERATORParserRuleCall_6_0_0());
 					}
-					lv_op_15_0=ruleREL_OPERATOR
+					lv_op_13_0=ruleREL_OPERATOR
 					{
 						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdRule());
+							$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdNoSetRule());
 						}
 						set(
 							$current,
 							"op",
-							lv_op_15_0,
+							lv_op_13_0,
 							"org.integratedmodelling.kim.Kim.REL_OPERATOR");
 						afterParserOrEnumRuleCall();
 					}
@@ -2061,17 +2035,17 @@ ruleClassifierRHSWithId returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getClassifierRHSWithIdAccess().getExpressionNumberParserRuleCall_7_1_0());
+						newCompositeNode(grammarAccess.getClassifierRHSWithIdNoSetAccess().getExpressionNumberParserRuleCall_6_1_0());
 					}
-					lv_expression_16_0=ruleNumber
+					lv_expression_14_0=ruleNumber
 					{
 						if ($current==null) {
-							$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdRule());
+							$current = createModelElementForParent(grammarAccess.getClassifierRHSWithIdNoSetRule());
 						}
 						set(
 							$current,
 							"expression",
-							lv_expression_16_0,
+							lv_expression_14_0,
 							"org.integratedmodelling.kim.Kim.Number");
 						afterParserOrEnumRuleCall();
 					}
@@ -2081,28 +2055,28 @@ ruleClassifierRHSWithId returns [EObject current=null]
 		    |
 		(
 			(
-				lv_nodata_17_0='unknown'
+				lv_nodata_15_0='unknown'
 				{
-					newLeafNode(lv_nodata_17_0, grammarAccess.getClassifierRHSWithIdAccess().getNodataUnknownKeyword_8_0());
+					newLeafNode(lv_nodata_15_0, grammarAccess.getClassifierRHSWithIdNoSetAccess().getNodataUnknownKeyword_7_0());
 				}
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getClassifierRHSWithIdRule());
+						$current = createModelElement(grammarAccess.getClassifierRHSWithIdNoSetRule());
 					}
-					setWithLastConsumed($current, "nodata", lv_nodata_17_0, "unknown");
+					setWithLastConsumed($current, "nodata", lv_nodata_15_0, "unknown");
 				}
 			)
 		)
 		    |
 		(
 			(
-				lv_star_18_0='*'
+				lv_star_16_0='*'
 				{
-					newLeafNode(lv_star_18_0, grammarAccess.getClassifierRHSWithIdAccess().getStarAsteriskKeyword_9_0());
+					newLeafNode(lv_star_16_0, grammarAccess.getClassifierRHSWithIdNoSetAccess().getStarAsteriskKeyword_8_0());
 				}
 				{
 					if ($current==null) {
-						$current = createModelElement(grammarAccess.getClassifierRHSWithIdRule());
+						$current = createModelElement(grammarAccess.getClassifierRHSWithIdNoSetRule());
 					}
 					setWithLastConsumed($current, "star", true, "*");
 				}
@@ -6355,10 +6329,13 @@ ruleObservableSemantics returns [EObject current=null]
 						getUnorderedGroupHelper().select(grammarAccess.getObservableSemanticsAccess().getUnorderedGroup_3(), 1);
 					}
 								({true}?=>((
-									otherlv_8='in'
-									{
-										newLeafNode(otherlv_8, grammarAccess.getObservableSemanticsAccess().getInKeyword_3_1_0_0());
-									}
+									(
+										('in')=>
+										otherlv_8='in'
+										{
+											newLeafNode(otherlv_8, grammarAccess.getObservableSemanticsAccess().getInKeyword_3_1_0_0());
+										}
+									)
 									(
 										(
 											(
@@ -6403,10 +6380,13 @@ ruleObservableSemantics returns [EObject current=null]
 								)
 								    |
 								(
-									otherlv_11='per'
-									{
-										newLeafNode(otherlv_11, grammarAccess.getObservableSemanticsAccess().getPerKeyword_3_1_1_0());
-									}
+									(
+										('per')=>
+										otherlv_11='per'
+										{
+											newLeafNode(otherlv_11, grammarAccess.getObservableSemanticsAccess().getPerKeyword_3_1_1_0());
+										}
+									)
 									(
 										(
 											{
@@ -6717,17 +6697,93 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 						getUnorderedGroupHelper().select(grammarAccess.getSimpleObservableSemanticsAccess().getUnorderedGroup_2(), 0);
 					}
 								({true}?=>((
-									otherlv_4='in'
-									{
-										newLeafNode(otherlv_4, grammarAccess.getSimpleObservableSemanticsAccess().getInKeyword_2_0_0_0());
-									}
 									(
+										((
+											(
+												('in')=>
+												'in'
+											)
+											(
+												(
+													(
+														ruleUnit
+													)
+												)
+												    |
+												(
+													(
+														ruleCurrency
+													)
+												)
+											)
+										)
+										)=>
+										(
+											(
+												('in')=>
+												otherlv_4='in'
+												{
+													newLeafNode(otherlv_4, grammarAccess.getSimpleObservableSemanticsAccess().getInKeyword_2_0_0_0_0_0());
+												}
+											)
+											(
+												(
+													(
+														{
+															newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getUnitUnitParserRuleCall_2_0_0_0_0_1_0_0());
+														}
+														lv_unit_5_0=ruleUnit
+														{
+															if ($current==null) {
+																$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
+															}
+															set(
+																$current,
+																"unit",
+																lv_unit_5_0,
+																"org.integratedmodelling.kim.Kim.Unit");
+															afterParserOrEnumRuleCall();
+														}
+													)
+												)
+												    |
+												(
+													(
+														{
+															newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getCurrencyCurrencyParserRuleCall_2_0_0_0_0_1_1_0());
+														}
+														lv_currency_6_0=ruleCurrency
+														{
+															if ($current==null) {
+																$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
+															}
+															set(
+																$current,
+																"currency",
+																lv_currency_6_0,
+																"org.integratedmodelling.kim.Kim.Currency");
+															afterParserOrEnumRuleCall();
+														}
+													)
+												)
+											)
+										)
+									)
+									    |
+									(
+										(
+											('per')=>
+											otherlv_7='per'
+											{
+												newLeafNode(otherlv_7, grammarAccess.getSimpleObservableSemanticsAccess().getPerKeyword_2_0_0_1_0());
+											}
+										)
 										(
 											(
 												{
-													newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getUnitUnitParserRuleCall_2_0_0_1_0_0());
+													newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getUnitUnitParserRuleCall_2_0_0_1_1_0());
 												}
-												lv_unit_5_0=ruleUnit
+												lv_unit_8_0=ruleUnit
 												{
 													if ($current==null) {
 														$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
@@ -6735,57 +6791,11 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 													set(
 														$current,
 														"unit",
-														lv_unit_5_0,
+														lv_unit_8_0,
 														"org.integratedmodelling.kim.Kim.Unit");
 													afterParserOrEnumRuleCall();
 												}
 											)
-										)
-										    |
-										(
-											(
-												{
-													newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getCurrencyCurrencyParserRuleCall_2_0_0_1_1_0());
-												}
-												lv_currency_6_0=ruleCurrency
-												{
-													if ($current==null) {
-														$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
-													}
-													set(
-														$current,
-														"currency",
-														lv_currency_6_0,
-														"org.integratedmodelling.kim.Kim.Currency");
-													afterParserOrEnumRuleCall();
-												}
-											)
-										)
-									)
-								)
-								    |
-								(
-									otherlv_7='per'
-									{
-										newLeafNode(otherlv_7, grammarAccess.getSimpleObservableSemanticsAccess().getPerKeyword_2_0_1_0());
-									}
-									(
-										(
-											{
-												newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getUnitUnitParserRuleCall_2_0_1_1_0());
-											}
-											lv_unit_8_0=ruleUnit
-											{
-												if ($current==null) {
-													$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
-												}
-												set(
-													$current,
-													"unit",
-													lv_unit_8_0,
-													"org.integratedmodelling.kim.Kim.Unit");
-												afterParserOrEnumRuleCall();
-											}
 										)
 									)
 								)
@@ -14364,9 +14374,9 @@ ruleMapEntry returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getMapEntryAccess().getClassifierClassifierRHSWithIdParserRuleCall_0_0());
+					newCompositeNode(grammarAccess.getMapEntryAccess().getClassifierClassifierRHSWithIdNoSetParserRuleCall_0_0());
 				}
-				lv_classifier_0_0=ruleClassifierRHSWithId
+				lv_classifier_0_0=ruleClassifierRHSWithIdNoSet
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getMapEntryRule());
@@ -14375,7 +14385,7 @@ ruleMapEntry returns [EObject current=null]
 						$current,
 						"classifier",
 						lv_classifier_0_0,
-						"org.integratedmodelling.kim.Kim.ClassifierRHSWithId");
+						"org.integratedmodelling.kim.Kim.ClassifierRHSWithIdNoSet");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -14691,9 +14701,29 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getConceptSimpleObservableSemanticsParserRuleCall_1_0());
+					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getMapMapParserRuleCall_1_0());
 				}
-				lv_concept_1_0=ruleSimpleObservableSemantics
+				lv_map_1_0=ruleMap
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
+					}
+					set(
+						$current,
+						"map",
+						lv_map_1_0,
+						"org.integratedmodelling.kim.Kim.Map");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		    |
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getConceptSimpleObservableSemanticsParserRuleCall_2_0());
+				}
+				lv_concept_2_0=ruleSimpleObservableSemantics
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
@@ -14701,7 +14731,7 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 					set(
 						$current,
 						"concept",
-						lv_concept_1_0,
+						lv_concept_2_0,
 						"org.integratedmodelling.kim.Kim.SimpleObservableSemantics");
 					afterParserOrEnumRuleCall();
 				}
@@ -14711,9 +14741,9 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getFunctionFunctionParserRuleCall_2_0());
+					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getFunctionFunctionParserRuleCall_3_0());
 				}
-				lv_function_2_0=ruleFunction
+				lv_function_3_0=ruleFunction
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
@@ -14721,7 +14751,7 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 					set(
 						$current,
 						"function",
-						lv_function_2_0,
+						lv_function_3_0,
 						"org.integratedmodelling.kim.Kim.Function");
 					afterParserOrEnumRuleCall();
 				}
@@ -14731,9 +14761,9 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getLiteralLiteralParserRuleCall_3_0());
+					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getLiteralLiteralParserRuleCall_4_0());
 				}
-				lv_literal_3_0=ruleLiteral
+				lv_literal_4_0=ruleLiteral
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
@@ -14741,7 +14771,7 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 					set(
 						$current,
 						"literal",
-						lv_literal_3_0,
+						lv_literal_4_0,
 						"org.integratedmodelling.kim.Kim.Literal");
 					afterParserOrEnumRuleCall();
 				}
@@ -14750,9 +14780,9 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 		    |
 		(
 			(
-				lv_expr_4_0=RULE_EXPR
+				lv_expr_5_0=RULE_EXPR
 				{
-					newLeafNode(lv_expr_4_0, grammarAccess.getValueWithIdAndConceptAccess().getExprEXPRTerminalRuleCall_4_0());
+					newLeafNode(lv_expr_5_0, grammarAccess.getValueWithIdAndConceptAccess().getExprEXPRTerminalRuleCall_5_0());
 				}
 				{
 					if ($current==null) {
@@ -14761,7 +14791,7 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 					setWithLastConsumed(
 						$current,
 						"expr",
-						lv_expr_4_0,
+						lv_expr_5_0,
 						"org.integratedmodelling.kim.Kim.EXPR");
 				}
 			)
@@ -14771,9 +14801,9 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getIdPathNameParserRuleCall_5_0_0());
+						newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getIdPathNameParserRuleCall_6_0_0());
 					}
-					lv_id_5_1=rulePathName
+					lv_id_6_1=rulePathName
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
@@ -14781,14 +14811,14 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 						set(
 							$current,
 							"id",
-							lv_id_5_1,
+							lv_id_6_1,
 							"org.integratedmodelling.kim.Kim.PathName");
 						afterParserOrEnumRuleCall();
 					}
 					    |
-					lv_id_5_2=RULE_LOWERCASE_ID
+					lv_id_6_2=RULE_LOWERCASE_ID
 					{
-						newLeafNode(lv_id_5_2, grammarAccess.getValueWithIdAndConceptAccess().getIdLOWERCASE_IDTerminalRuleCall_5_0_1());
+						newLeafNode(lv_id_6_2, grammarAccess.getValueWithIdAndConceptAccess().getIdLOWERCASE_IDTerminalRuleCall_6_0_1());
 					}
 					{
 						if ($current==null) {
@@ -14797,13 +14827,13 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"id",
-							lv_id_5_2,
+							lv_id_6_2,
 							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
 					}
 					    |
-					lv_id_5_3=RULE_UPPERCASE_ID
+					lv_id_6_3=RULE_UPPERCASE_ID
 					{
-						newLeafNode(lv_id_5_3, grammarAccess.getValueWithIdAndConceptAccess().getIdUPPERCASE_IDTerminalRuleCall_5_0_2());
+						newLeafNode(lv_id_6_3, grammarAccess.getValueWithIdAndConceptAccess().getIdUPPERCASE_IDTerminalRuleCall_6_0_2());
 					}
 					{
 						if ($current==null) {
@@ -14812,13 +14842,13 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"id",
-							lv_id_5_3,
+							lv_id_6_3,
 							"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 					}
 					    |
-					lv_id_5_4=RULE_CAMELCASE_ID
+					lv_id_6_4=RULE_CAMELCASE_ID
 					{
-						newLeafNode(lv_id_5_4, grammarAccess.getValueWithIdAndConceptAccess().getIdCAMELCASE_IDTerminalRuleCall_5_0_3());
+						newLeafNode(lv_id_6_4, grammarAccess.getValueWithIdAndConceptAccess().getIdCAMELCASE_IDTerminalRuleCall_6_0_3());
 					}
 					{
 						if ($current==null) {
@@ -14827,7 +14857,7 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 						setWithLastConsumed(
 							$current,
 							"id",
-							lv_id_5_4,
+							lv_id_6_4,
 							"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
 					}
 				)
@@ -14837,9 +14867,9 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getTableLookupTableParserRuleCall_6_0());
+					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getTableLookupTableParserRuleCall_7_0());
 				}
-				lv_table_6_0=ruleLookupTable
+				lv_table_7_0=ruleLookupTable
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
@@ -14847,7 +14877,7 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 					set(
 						$current,
 						"table",
-						lv_table_6_0,
+						lv_table_7_0,
 						"org.integratedmodelling.kim.Kim.LookupTable");
 					afterParserOrEnumRuleCall();
 				}
@@ -14857,9 +14887,9 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getDateDateParserRuleCall_7_0());
+					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getDateDateParserRuleCall_8_0());
 				}
-				lv_date_7_0=ruleDate
+				lv_date_8_0=ruleDate
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
@@ -14867,28 +14897,8 @@ ruleValueWithIdAndConcept returns [EObject current=null]
 					set(
 						$current,
 						"date",
-						lv_date_7_0,
+						lv_date_8_0,
 						"org.integratedmodelling.kim.Kim.Date");
-					afterParserOrEnumRuleCall();
-				}
-			)
-		)
-		    |
-		(
-			(
-				{
-					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getMapMapParserRuleCall_8_0());
-				}
-				lv_map_8_0=ruleMap
-				{
-					if ($current==null) {
-						$current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
-					}
-					set(
-						$current,
-						"map",
-						lv_map_8_0,
-						"org.integratedmodelling.kim.Kim.Map");
 					afterParserOrEnumRuleCall();
 				}
 			)
