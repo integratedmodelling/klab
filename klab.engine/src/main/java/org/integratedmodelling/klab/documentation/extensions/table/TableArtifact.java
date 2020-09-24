@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.documentation.extensions.table;
 import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Phase;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.provenance.Artifact;
+import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.TemplateUtils;
@@ -75,7 +77,8 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 	 * @param rowCatalog
 	 * @param colCatalog
 	 */
-	public TableArtifact(TableCompiler table, List<Dimension> rowCatalog, List<Dimension> colCatalog, IRuntimeScope scope) {
+	public TableArtifact(TableCompiler table, List<Dimension> rowCatalog, List<Dimension> colCatalog,
+			IRuntimeScope scope) {
 		this.table = table;
 		this.rows = rowCatalog;
 		this.columns = colCatalog;
@@ -270,6 +273,14 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 	@Override
 	public String getLabel() {
 		return this.table.getLabel();
+	}
+
+	@Override
+	public Collection<ExportFormat> getExportFormats() {
+		List<ExportFormat> ret = new ArrayList<>();
+		ret.add(new ExportFormat("Excel worksheet", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+				"xlsx", "xlsx"));
+		return ret;
 	}
 
 }

@@ -1846,6 +1846,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		descriptor.setViewClass(view.getViewClass());
 		descriptor.setTitle(view.getTitle());
 		descriptor.setViewId(view.getId());
+		descriptor.getExportFormats().addAll(view.getExportFormats());
 		descriptor.setLabel(
 				view.getLabel() == null ? (StringUtil.capitalize(view.getViewClass()) + " " + (views.size() + 1))
 						: view.getLabel());

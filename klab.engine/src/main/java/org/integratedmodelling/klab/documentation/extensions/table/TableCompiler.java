@@ -92,6 +92,10 @@ public class TableCompiler {
 		/**
 		 * Sum
 		 */
+		Average,
+		/**
+		 * Sum
+		 */
 		Std,
 		/**
 		 * Sum
@@ -791,9 +795,26 @@ public class TableCompiler {
 
 		if (theRest.get("compute") instanceof IKimExpression) {
 			ret.expression = (IKimExpression) theRest.get("compute");
+			ret.computationType = ComputationType.Expression;
 		} else if (theRest.containsKey("compute")) {
 			switch (theRest.get("compute").toString()) {
-			case "totals":
+			case "sum":
+				ret.computationType = ComputationType.Sum;
+				break;
+			case "average":
+				ret.computationType = ComputationType.Average;
+				break;
+			case "variance":
+				ret.computationType = ComputationType.Variance;
+				break;
+			case "std":
+				ret.computationType = ComputationType.Std;
+				break;
+			case "min":
+				ret.computationType = ComputationType.Min;
+				break;
+			case "max":
+				ret.computationType = ComputationType.Max;
 				break;
 			default:
 				throw new KlabValidationException("unrecognized symbol in computation: " + theRest.get("compute"));

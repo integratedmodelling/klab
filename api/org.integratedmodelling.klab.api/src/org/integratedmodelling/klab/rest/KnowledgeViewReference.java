@@ -1,5 +1,10 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
+
 public class KnowledgeViewReference {
 
 	private String title;
@@ -9,6 +14,7 @@ public class KnowledgeViewReference {
 	private String contextId;
 	private String viewId;
 	private String label;
+	private List<ExportFormat> exportFormats = new ArrayList<>();
 
 	public String getTitle() {
 		return title;
@@ -65,5 +71,13 @@ public class KnowledgeViewReference {
 	public void setLabel(String label) {
 		this.label = label;
 	}
-	
+
+	public List<ExportFormat> getExportFormats() {
+		return exportFormats;
+	}
+
+	public void setExportFormats(List<ExportFormat> exportFormats) {
+		this.exportFormats = exportFormats;
+	}
+
 }
