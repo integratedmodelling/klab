@@ -8,6 +8,7 @@ public class KnowledgeViewReference {
 	private String exportUrl;
 	private String contextId;
 	private String viewId;
+	private String label;
 
 	public String getTitle() {
 		return title;
@@ -55,6 +56,14 @@ public class KnowledgeViewReference {
 
 	public String getViewId() {
 		return this.viewId;
+	}
+
+	public String getLabel() {
+		return label;
+	}
+
+	public void setLabel(String label) {
+		this.label = label;
 	}
 	
 }

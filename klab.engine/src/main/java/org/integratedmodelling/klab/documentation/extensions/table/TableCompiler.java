@@ -79,6 +79,38 @@ public class TableCompiler {
 		AREA, DURATION, QUALITY, NUMEROSITY
 	}
 
+	enum ComputationType {
+		/**
+		 * Aggregation means NO COMPUTATION - just aggregate the states, as per default
+		 * behavior.
+		 */
+		Aggregation,
+		/**
+		 * Sum
+		 */
+		Sum,
+		/**
+		 * Sum
+		 */
+		Std,
+		/**
+		 * Sum
+		 */
+		Variance,
+		/**
+		 * Sum
+		 */
+		Min,
+		/**
+		 * Sum
+		 */
+		Max,
+		/**
+		 * Compute a specific expression in the expression field
+		 */
+		Expression
+	}
+
 	/**
 	 * Each phase is a scan of the target observation. There is always at least one
 	 * phase. If more than one, it's for comparison or selection of specific
@@ -352,6 +384,14 @@ public class TableCompiler {
 		AggregationType aggregation = null;
 
 		/**
+		 * Computation type may require the use of specific formulas or defer
+		 * calculation to a second pass for row/column totals or other statistics. Rows
+		 * with expressions are computed in order of dependency; rows of sums or other
+		 * aggregation must always be computed after all others.
+		 */
+		ComputationType computationType = ComputationType.Aggregation;
+
+		/**
 		 * Expression is assigned on parsing, the actual compilation is done before
 		 * calculating when we have a scope.
 		 */
@@ -367,11 +407,13 @@ public class TableCompiler {
 			this.aggregation = dim.aggregation;
 			this.computation = dim.computation;
 			this.expression = dim.expression;
-			for (Filter filter : dim.filters) {
-				if (this.filters == null) {
-					this.filters = new ArrayList<>();
+			if (dim.filters != null) {
+				for (Filter filter : dim.filters) {
+					if (this.filters == null) {
+						this.filters = new ArrayList<>();
+					}
+					this.filters.add(filter);
 				}
-				this.filters.add(filter);
 			}
 			this.hidden = dim.hidden;
 			this.id = dim.id;
@@ -402,8 +444,8 @@ public class TableCompiler {
 		boolean separator = false;
 
 		/**
-		 * True if all filters match, or there are no filters. This should compute as
-		 * quickly as possible.
+		 * True if all filters match, or there are no filters (unless it's a separator).
+		 * This should compute as quickly as possible.
 		 * 
 		 * @param catalog
 		 * @param second
@@ -414,11 +456,18 @@ public class TableCompiler {
 		 */
 		public boolean isActive(Map<ObservedConcept, IObservation> catalog, ILocator locator, Phase phase,
 				Object currentState, IContextualizationScope scope) {
-			for (Filter filter : this.filters) {
-				if (!filter.matches(catalog, locator, phase, currentState, scope)) {
-					return false;
+
+			if (this.separator) {
+				return false;
+			}
+			if (this.filters != null) {
+				for (Filter filter : this.filters) {
+					if (!filter.matches(catalog, locator, phase, currentState, scope)) {
+						return false;
+					}
 				}
 			}
+
 			return true;
 		}
 
@@ -483,6 +532,7 @@ public class TableCompiler {
 	private TargetType targetType;
 	private String name;
 	private String title;
+	private String label;
 
 	/**
 	 * Return the passed dimensions in order of dependency. If circular dependencies
@@ -500,31 +550,33 @@ public class TableCompiler {
 
 			IObservation group = null;
 			ObservedConcept countable = null;
-			for (Filter filter : dim.filters) {
-				if (filter.objectFilter != null) {
-					/*
-					 * expand any dimension that contains an object filter into a dimension per
-					 * filtered object, which we can only know in the scope.
-					 */
-					if (countable == null) {
-						countable = filter.objectFilter;
-						group = catalog.get(countable);
-					} else if (!countable.equals(filter.objectFilter)) {
-						throw new KlabValidationException(
-								"cannot aggregate by more than one object type in the same dimension");
-					}
+			if (dim.filters != null) {
+				for (Filter filter : dim.filters) {
+					if (filter.objectFilter != null) {
+						/*
+						 * expand any dimension that contains an object filter into a dimension per
+						 * filtered object, which we can only know in the scope.
+						 */
+						if (countable == null) {
+							countable = filter.objectFilter;
+							group = catalog.get(countable);
+						} else if (!countable.equals(filter.objectFilter)) {
+							throw new KlabValidationException(
+									"cannot aggregate by more than one object type in the same dimension");
+						}
 
-					if (group == null) {
-						continue;
-					}
-					if (!(group instanceof ObservationGroup)) {
-						throw new KlabValidationException(
-								"cannot aggregate by a direct artifact that does not resolve to an observation group");
-					}
+						if (group == null) {
+							continue;
+						}
+						if (!(group instanceof ObservationGroup)) {
+							throw new KlabValidationException(
+									"cannot aggregate by a direct artifact that does not resolve to an observation group");
+						}
 
-					originalDims.addAll(dim.propagateFilteredObservable((ObservationGroup) group));
+						originalDims.addAll(dim.propagateFilteredObservable((ObservationGroup) group));
 
-					// continue to catch error
+						// continue to catch error
+					}
 				}
 			}
 
@@ -579,6 +631,8 @@ public class TableCompiler {
 		this.activeColumns = parseDimension(definition.get("columns"), this.columns, "c");
 		this.activeRows = parseDimension(definition.get("rows"), this.rows, "r");
 		this.title = definition.containsKey("title") ? definition.get("title").toString() : null;
+		this.label = definition.containsKey("label") ? definition.get("label").toString() : null;
+
 		/*
 		 * validate that only rows OR columns have an additional target but not both.
 		 * Cells must aggregate a single observable.
@@ -617,6 +671,10 @@ public class TableCompiler {
 				} else if (o instanceof String) {
 					switch (o.toString()) {
 					case "empty":
+						Dimension empty = new Dimension();
+						empty.separator = true;
+						empty.id = "s" + dimensions.size();
+						dimensions.put(empty.id, empty);
 						break;
 					// TODO others?
 					}
@@ -733,6 +791,13 @@ public class TableCompiler {
 
 		if (theRest.get("compute") instanceof IKimExpression) {
 			ret.expression = (IKimExpression) theRest.get("compute");
+		} else if (theRest.containsKey("compute")) {
+			switch (theRest.get("compute").toString()) {
+			case "totals":
+				break;
+			default:
+				throw new KlabValidationException("unrecognized symbol in computation: " + theRest.get("compute"));
+			}
 		}
 
 		return ret;
@@ -954,6 +1019,15 @@ public class TableCompiler {
 							}
 						}
 
+						// TODO only do this if we have no computation, otherwise run the computation,
+						// which we
+						// can inherit/switch from row to column.
+						// TODO if we have an inherited transformation, run that before aggregating.
+						// TODO understand if these two are the same thing or not. I guess they are - if
+						// we compute
+						// based on individual cells, we are not likely to be aggregating, and the
+						// modeler can
+						// handle the consequences.
 						ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(),
 								phase, column.index, row.index);
 					}
@@ -1004,13 +1078,15 @@ public class TableCompiler {
 
 	public Map<String, Object> getTemplateVars(Dimension dimension) {
 		Map<String, Object> ret = new HashMap<>();
-		for (Filter filter : dimension.filters) {
-			if (filter.classifier != null) {
-				ret.put("classifier", ((Classifier) filter.classifier).getDisplayLabel());
-				if (filter.classifier.isInterval()) {
-					ret.put("range", ((Classifier) filter.classifier).getDisplayLabel());
-				} else if (filter.classifier.isConcept()) {
-					ret.put("concept", ((Classifier) filter.classifier).getDisplayLabel());
+		if (dimension.filters != null) {
+			for (Filter filter : dimension.filters) {
+				if (filter.classifier != null) {
+					ret.put("classifier", ((Classifier) filter.classifier).getDisplayLabel());
+					if (filter.classifier.isInterval()) {
+						ret.put("range", ((Classifier) filter.classifier).getDisplayLabel());
+					} else if (filter.classifier.isConcept()) {
+						ret.put("concept", ((Classifier) filter.classifier).getDisplayLabel());
+					}
 				}
 			}
 		}
@@ -1086,6 +1162,10 @@ public class TableCompiler {
 
 	public String getName() {
 		return this.name;
+	}
+
+	public String getLabel() {
+		return this.label;
 	}
 
 }

@@ -267,4 +267,9 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		return n == 0 ? this : null;
 	}
 
+	@Override
+	public String getLabel() {
+		return this.table.getLabel();
+	}
+
 }

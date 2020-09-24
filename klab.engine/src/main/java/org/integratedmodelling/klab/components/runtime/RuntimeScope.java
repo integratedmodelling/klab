@@ -32,7 +32,6 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -98,6 +97,7 @@ import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -150,6 +150,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	Map<ResolvedObservable, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
 	private IActuator actuator;
 	private boolean occurrent;
+	private List<IKnowledgeView> views = new ArrayList<>();
 
 	public RuntimeScope(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
@@ -1831,6 +1832,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public void addView(IKnowledgeView view) {
 
+		this.views.add(view);
+
 		/*
 		 * send directly to clients. If view can export, keep view and send URL to
 		 * export service.
@@ -1843,6 +1846,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		descriptor.setViewClass(view.getViewClass());
 		descriptor.setTitle(view.getTitle());
 		descriptor.setViewId(view.getId());
+		descriptor.setLabel(
+				view.getLabel() == null ? (StringUtil.capitalize(view.getViewClass()) + " " + (views.size() + 1))
+						: view.getLabel());
 
 		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.UserInterface,
