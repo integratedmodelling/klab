@@ -3957,6 +3957,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cGenericAnyKeyword_0_0_0 = (Keyword)cGenericAssignment_0_0.eContents().get(0);
 		private final Assignment cGlobalAssignment_0_1 = (Assignment)cAlternatives_0.eContents().get(1);
 		private final Keyword cGlobalAllKeyword_0_1_0 = (Keyword)cGlobalAssignment_0_1.eContents().get(0);
+		private final Assignment cExclusiveAssignment_0_2 = (Assignment)cAlternatives_0.eContents().get(2);
+		private final Keyword cExclusiveOnlyKeyword_0_2_0 = (Keyword)cExclusiveAssignment_0_2.eContents().get(0);
 		private final Assignment cDeclarationAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cDeclarationConceptDeclarationParserRuleCall_1_0 = (RuleCall)cDeclarationAssignment_1.eContents().get(0);
 		private final UnorderedGroup cUnorderedGroup_2 = (UnorderedGroup)cGroup.eContents().get(2);
@@ -3987,21 +3989,22 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cToNumberParserRuleCall_2_2_2_0 = (RuleCall)cToAssignment_2_2_2.eContents().get(0);
 		
 		///*
-		// * Used for constraints and values: has no value and admits the additional "all" qualifier; removes 'according to' but
-		// * leaves value operators
+		// * Used for constraints and values: has no value and admits the additional qualifiers to specify 
+		// * the level of generality w.r.t. subclasses. Removes 'according to' but leaves value operators
 		// */ SimpleObservableSemantics ObservableSemantics:
-		//	(generic?='any' | global?='all')?
+		//	(generic?='any' | global?='all' | exclusive?='only')?
 		//	declaration=ConceptDeclaration (=>
 		//	(=>
 		//	(=> 'in' (unit=Unit | currency=Currency)) | => 'per' unit=Unit)? & (valueOperators+=ValueOperator
 		//	valueOperators+=ValueOperator*)? & (from=Number 'to' to=Number)?);
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(generic?='any' | global?='all')? declaration=ConceptDeclaration (=> (=> (=> 'in' (unit=Unit | currency=Currency)) | =>
-		//'per' unit=Unit)? & (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? & (from=Number 'to' to=Number)?)
+		//(generic?='any' | global?='all' | exclusive?='only')? declaration=ConceptDeclaration (=> (=> (=> 'in' (unit=Unit |
+		//currency=Currency)) | => 'per' unit=Unit)? & (valueOperators+=ValueOperator valueOperators+=ValueOperator*)? &
+		//(from=Number 'to' to=Number)?)
 		public Group getGroup() { return cGroup; }
 		
-		//(generic?='any' | global?='all')?
+		//(generic?='any' | global?='all' | exclusive?='only')?
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
 		//generic?='any'
@@ -4015,6 +4018,12 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//'all'
 		public Keyword getGlobalAllKeyword_0_1_0() { return cGlobalAllKeyword_0_1_0; }
+		
+		//exclusive?='only'
+		public Assignment getExclusiveAssignment_0_2() { return cExclusiveAssignment_0_2; }
+		
+		//'only'
+		public Keyword getExclusiveOnlyKeyword_0_2_0() { return cExclusiveOnlyKeyword_0_2_0; }
 		
 		//declaration=ConceptDeclaration
 		public Assignment getDeclarationAssignment_1() { return cDeclarationAssignment_1; }
@@ -9524,24 +9533,6 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_3_5_1_0_0 = (RuleCall)cNameAlternatives_3_5_1_0.eContents().get(0);
 		private final RuleCall cNameSTRINGTerminalRuleCall_3_5_1_0_1 = (RuleCall)cNameAlternatives_3_5_1_0.eContents().get(1);
 		
-		/////*
-		//// * Observable without the 'as' to use in model declarations and without the 'optional' that
-		//// * is only for dependencies.
-		//// */
-		////SimpleObservableSemantics returns ObservableSemantics:
-		////	
-		////	declaration=ConceptDeclaration
-		////	(
-		////		('according' 'to' accordingTo=PropertyId)? &
-		////		(
-		////			('in' (unit=Unit | currency=Currency)) |
-		////			('per' unit=Unit)
-		////		)? &
-		////		(from=Number 'to' to=Number)? &
-		////		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-		////		(optional?='optional' | 'required')? &
-		////		('named' name=(LOWERCASE_ID|STRING))?
-		////	);
 		///*
 		// * Full observable without the 'as <role>' but with 'optional'
 		// */ DependencyObservableSemantics ObservableSemantics:
@@ -11507,10 +11498,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	///*
-	// * Used for constraints and values: has no value and admits the additional "all" qualifier; removes 'according to' but
-	// * leaves value operators
+	// * Used for constraints and values: has no value and admits the additional qualifiers to specify 
+	// * the level of generality w.r.t. subclasses. Removes 'according to' but leaves value operators
 	// */ SimpleObservableSemantics ObservableSemantics:
-	//	(generic?='any' | global?='all')?
+	//	(generic?='any' | global?='all' | exclusive?='only')?
 	//	declaration=ConceptDeclaration (=>
 	//	(=>
 	//	(=> 'in' (unit=Unit | currency=Currency)) | => 'per' unit=Unit)? & (valueOperators+=ValueOperator
@@ -12150,24 +12141,6 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		return tANNOTATION_ID;
 	}
 	
-	/////*
-	//// * Observable without the 'as' to use in model declarations and without the 'optional' that
-	//// * is only for dependencies.
-	//// */
-	////SimpleObservableSemantics returns ObservableSemantics:
-	////	
-	////	declaration=ConceptDeclaration
-	////	(
-	////		('according' 'to' accordingTo=PropertyId)? &
-	////		(
-	////			('in' (unit=Unit | currency=Currency)) |
-	////			('per' unit=Unit)
-	////		)? &
-	////		(from=Number 'to' to=Number)? &
-	////		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-	////		(optional?='optional' | 'required')? &
-	////		('named' name=(LOWERCASE_ID|STRING))?
-	////	);
 	///*
 	// * Full observable without the 'as <role>' but with 'optional'
 	// */ DependencyObservableSemantics ObservableSemantics:

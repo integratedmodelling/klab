@@ -70,6 +70,7 @@ public class Observable implements IObservable {
 	private boolean distributedInherency;
 	private boolean active = true;
 	private IConcept temporalInherent;
+	private Resolution resolution;
 
 	/*
 	 * Target predicate is a concrete predicate that may be added to the observable
@@ -171,6 +172,7 @@ public class Observable implements IObservable {
 		this.distributedInherency = observable.distributedInherency;
 		this.active = observable.active;
 		this.temporalInherent = observable.temporalInherent;
+		this.resolution = observable.resolution;
 	}
 
 	public Observable withoutModel() {
@@ -758,6 +760,15 @@ public class Observable implements IObservable {
 
 	public void setGlobal(boolean global) {
 		this.global = global;
+	}
+
+	@Override
+	public Resolution getResolution() {
+		return this.resolution;
+	}
+
+	public void setResolution(Resolution resolution) {
+		this.resolution = resolution;
 	}
 
 }

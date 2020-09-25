@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Dimension;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.DimensionType;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Phase;
+import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Style;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
@@ -248,7 +249,8 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 						/*
 						 * write the ct-th title, using the array starting counting from the bottom
 						 */
-						ret.append("      <th>" + Escape.forHTML(getHeader(cDesc, ct, cTitles)) + "</th>\n");
+						ret.append("      <th" + getStyle(cDesc.style) + ">"
+								+ Escape.forHTML(getHeader(cDesc, ct, cTitles)) + "</th>\n");
 					}
 					ret.append("    </tr>\n");
 				}
@@ -263,11 +265,12 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 				Dimension rDesc = rows.get(row);
 				ret.append("    <tr>\n");
 				for (int i = 0; i < rTitles; i++) {
-					ret.append("      <th scope=\"row\">" + Escape.forHTML(getHeader(rDesc, i, rTitles)) + "</th>\n");
+					ret.append("      <th scope=\"row\"" + getStyle(rDesc.style) + ">"
+							+ Escape.forHTML(getHeader(rDesc, i, rTitles)) + "</th>\n");
 				}
 				for (Integer col : activeColumns) {
 					Cell cell = cells[col][row];
-					ret.append("      <td>" + getData(cell) + "</td>\n");
+					ret.append("      <td" + getStyle(cell) + ">" + getData(cell) + "</td>\n");
 				}
 				ret.append("    </tr>\n");
 			}
@@ -278,6 +281,53 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			this.compiledView = ret.toString();
 		}
 		return this.compiledView;
+	}
+
+	private String getStyle(Cell cell) {
+		if (cell == null) {
+			return "";
+		}
+		Set<Style> style = cell.column.style;
+		style.addAll(cell.row.style);
+		return getStyle(style);
+	}
+
+	private String getStyle(Set<Style> style) {
+
+		if (!style.isEmpty()) {
+			String ret = "\"";
+			for (Style s : style) {
+				switch (s) {
+				case BOLD:
+					ret += (ret.length() == 1 ? "" : " ") + "kv-bold";
+					break;
+				case CENTER:
+					ret += (ret.length() == 1 ? "" : " ") + "kv-align-center";
+					break;
+				case ITALIC:
+					ret += (ret.length() == 1 ? "" : " ") + "kv-italic";
+					break;
+				case LEFT:
+					ret += (ret.length() == 1 ? "" : " ") + "kv-align-left";
+					break;
+				case RIGHT:
+					ret += (ret.length() == 1 ? "" : " ") + "kv-align-right";
+					break;
+				case BG_HIGHLIGHT:
+					ret += (ret.length() == 1 ? "" : " ") + "kv-bg-highlight";
+					break;
+				case FG_HIGHLIGHT:
+					ret += (ret.length() == 1 ? "" : " ") + "kv-fg-highlight";
+					break;
+				default:
+					break;
+
+				}
+			}
+
+			return " style=" + ret + "\"";
+		}
+		return "";
 	}
 
 	private Object aggregateData(Cell cell) {
@@ -330,7 +380,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		if (cell == null) {
 			return "";
 		}
-		
+
 		Object ret = cell.computedValue;
 		if (Observations.INSTANCE.isNodata(ret)) {
 			return "";

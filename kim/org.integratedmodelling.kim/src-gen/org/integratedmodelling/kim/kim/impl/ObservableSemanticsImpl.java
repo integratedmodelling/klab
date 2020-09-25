@@ -49,6 +49,7 @@ import org.integratedmodelling.kim.kim.ValueOperator;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getTo <em>To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#isGlobal <em>Global</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#isExclusive <em>Exclusive</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ObservableSemanticsImpl#getCondition <em>Condition</em>}</li>
  * </ul>
@@ -226,6 +227,26 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * @ordered
    */
   protected boolean global = GLOBAL_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isExclusive() <em>Exclusive</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isExclusive()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean EXCLUSIVE_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isExclusive() <em>Exclusive</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isExclusive()
+   * @generated
+   * @ordered
+   */
+  protected boolean exclusive = EXCLUSIVE_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getAnnotations() <em>Annotations</em>}' containment reference list.
@@ -724,6 +745,31 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
    * @generated
    */
   @Override
+  public boolean isExclusive()
+  {
+    return exclusive;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setExclusive(boolean newExclusive)
+  {
+    boolean oldExclusive = exclusive;
+    exclusive = newExclusive;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.OBSERVABLE_SEMANTICS__EXCLUSIVE, oldExclusive, exclusive));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EList<Annotation> getAnnotations()
   {
     if (annotations == null)
@@ -822,6 +868,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return getName();
       case KimPackage.OBSERVABLE_SEMANTICS__GLOBAL:
         return isGlobal();
+      case KimPackage.OBSERVABLE_SEMANTICS__EXCLUSIVE:
+        return isExclusive();
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         return getAnnotations();
       case KimPackage.OBSERVABLE_SEMANTICS__CONDITION:
@@ -877,6 +925,9 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__GLOBAL:
         setGlobal((Boolean)newValue);
+        return;
+      case KimPackage.OBSERVABLE_SEMANTICS__EXCLUSIVE:
+        setExclusive((Boolean)newValue);
         return;
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         getAnnotations().clear();
@@ -935,6 +986,9 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.OBSERVABLE_SEMANTICS__GLOBAL:
         setGlobal(GLOBAL_EDEFAULT);
         return;
+      case KimPackage.OBSERVABLE_SEMANTICS__EXCLUSIVE:
+        setExclusive(EXCLUSIVE_EDEFAULT);
+        return;
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         getAnnotations().clear();
         return;
@@ -979,6 +1033,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KimPackage.OBSERVABLE_SEMANTICS__GLOBAL:
         return global != GLOBAL_EDEFAULT;
+      case KimPackage.OBSERVABLE_SEMANTICS__EXCLUSIVE:
+        return exclusive != EXCLUSIVE_EDEFAULT;
       case KimPackage.OBSERVABLE_SEMANTICS__ANNOTATIONS:
         return annotations != null && !annotations.isEmpty();
       case KimPackage.OBSERVABLE_SEMANTICS__CONDITION:
@@ -1008,6 +1064,8 @@ public class ObservableSemanticsImpl extends MinimalEObjectImpl.Container implem
     result.append(name);
     result.append(", global: ");
     result.append(global);
+    result.append(", exclusive: ");
+    result.append(exclusive);
     result.append(", condition: ");
     result.append(condition);
     result.append(')');

@@ -6664,13 +6664,28 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 					}
 				)
 			)
+			    |
+			(
+				(
+					lv_exclusive_2_0='only'
+					{
+						newLeafNode(lv_exclusive_2_0, grammarAccess.getSimpleObservableSemanticsAccess().getExclusiveOnlyKeyword_0_2_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getSimpleObservableSemanticsRule());
+						}
+						setWithLastConsumed($current, "exclusive", true, "only");
+					}
+				)
+			)
 		)?
 		(
 			(
 				{
 					newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getDeclarationConceptDeclarationParserRuleCall_1_0());
 				}
-				lv_declaration_2_0=ruleConceptDeclaration
+				lv_declaration_3_0=ruleConceptDeclaration
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
@@ -6678,7 +6693,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 					set(
 						$current,
 						"declaration",
-						lv_declaration_2_0,
+						lv_declaration_3_0,
 						"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 					afterParserOrEnumRuleCall();
 				}
@@ -6721,9 +6736,9 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 										(
 											(
 												('in')=>
-												otherlv_4='in'
+												otherlv_5='in'
 												{
-													newLeafNode(otherlv_4, grammarAccess.getSimpleObservableSemanticsAccess().getInKeyword_2_0_0_0_0_0());
+													newLeafNode(otherlv_5, grammarAccess.getSimpleObservableSemanticsAccess().getInKeyword_2_0_0_0_0_0());
 												}
 											)
 											(
@@ -6732,7 +6747,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 														{
 															newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getUnitUnitParserRuleCall_2_0_0_0_0_1_0_0());
 														}
-														lv_unit_5_0=ruleUnit
+														lv_unit_6_0=ruleUnit
 														{
 															if ($current==null) {
 																$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
@@ -6740,7 +6755,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 															set(
 																$current,
 																"unit",
-																lv_unit_5_0,
+																lv_unit_6_0,
 																"org.integratedmodelling.kim.Kim.Unit");
 															afterParserOrEnumRuleCall();
 														}
@@ -6752,7 +6767,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 														{
 															newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getCurrencyCurrencyParserRuleCall_2_0_0_0_0_1_1_0());
 														}
-														lv_currency_6_0=ruleCurrency
+														lv_currency_7_0=ruleCurrency
 														{
 															if ($current==null) {
 																$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
@@ -6760,7 +6775,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 															set(
 																$current,
 																"currency",
-																lv_currency_6_0,
+																lv_currency_7_0,
 																"org.integratedmodelling.kim.Kim.Currency");
 															afterParserOrEnumRuleCall();
 														}
@@ -6773,9 +6788,9 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 									(
 										(
 											('per')=>
-											otherlv_7='per'
+											otherlv_8='per'
 											{
-												newLeafNode(otherlv_7, grammarAccess.getSimpleObservableSemanticsAccess().getPerKeyword_2_0_0_1_0());
+												newLeafNode(otherlv_8, grammarAccess.getSimpleObservableSemanticsAccess().getPerKeyword_2_0_0_1_0());
 											}
 										)
 										(
@@ -6783,7 +6798,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 												{
 													newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getUnitUnitParserRuleCall_2_0_0_1_1_0());
 												}
-												lv_unit_8_0=ruleUnit
+												lv_unit_9_0=ruleUnit
 												{
 													if ($current==null) {
 														$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
@@ -6791,7 +6806,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 													set(
 														$current,
 														"unit",
-														lv_unit_8_0,
+														lv_unit_9_0,
 														"org.integratedmodelling.kim.Kim.Unit");
 													afterParserOrEnumRuleCall();
 												}
@@ -6815,7 +6830,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 										{
 											newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getValueOperatorsValueOperatorParserRuleCall_2_1_0_0());
 										}
-										lv_valueOperators_9_0=ruleValueOperator
+										lv_valueOperators_10_0=ruleValueOperator
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
@@ -6823,7 +6838,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 											add(
 												$current,
 												"valueOperators",
-												lv_valueOperators_9_0,
+												lv_valueOperators_10_0,
 												"org.integratedmodelling.kim.Kim.ValueOperator");
 											afterParserOrEnumRuleCall();
 										}
@@ -6834,7 +6849,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 										{
 											newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getValueOperatorsValueOperatorParserRuleCall_2_1_1_0());
 										}
-										lv_valueOperators_10_0=ruleValueOperator
+										lv_valueOperators_11_0=ruleValueOperator
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
@@ -6842,7 +6857,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 											add(
 												$current,
 												"valueOperators",
-												lv_valueOperators_10_0,
+												lv_valueOperators_11_0,
 												"org.integratedmodelling.kim.Kim.ValueOperator");
 											afterParserOrEnumRuleCall();
 										}
@@ -6864,7 +6879,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 										{
 											newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getFromNumberParserRuleCall_2_2_0_0());
 										}
-										lv_from_11_0=ruleNumber
+										lv_from_12_0=ruleNumber
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
@@ -6872,22 +6887,22 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 											set(
 												$current,
 												"from",
-												lv_from_11_0,
+												lv_from_12_0,
 												"org.integratedmodelling.kim.Kim.Number");
 											afterParserOrEnumRuleCall();
 										}
 									)
 								)
-								otherlv_12='to'
+								otherlv_13='to'
 								{
-									newLeafNode(otherlv_12, grammarAccess.getSimpleObservableSemanticsAccess().getToKeyword_2_2_1());
+									newLeafNode(otherlv_13, grammarAccess.getSimpleObservableSemanticsAccess().getToKeyword_2_2_1());
 								}
 								(
 									(
 										{
 											newCompositeNode(grammarAccess.getSimpleObservableSemanticsAccess().getToNumberParserRuleCall_2_2_2_0());
 										}
-										lv_to_13_0=ruleNumber
+										lv_to_14_0=ruleNumber
 										{
 											if ($current==null) {
 												$current = createModelElementForParent(grammarAccess.getSimpleObservableSemanticsRule());
@@ -6895,7 +6910,7 @@ ruleSimpleObservableSemantics returns [EObject current=null]
 											set(
 												$current,
 												"to",
-												lv_to_13_0,
+												lv_to_14_0,
 												"org.integratedmodelling.kim.Kim.Number");
 											afterParserOrEnumRuleCall();
 										}

@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Resolution;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -367,8 +368,14 @@ public enum KimKnowledgeProcessor {
 		ret.setGlobal(concept.isGlobal());
 		ret.setReferenceName(concept.getMain().getCodeName().replace("-","_"));
 		
-//		ret.setReferenceName(Concepts.INSTANCE.getCodeName(main));
-
+		if (concept.isExclusive()) {
+			ret.setResolution(Resolution.Only);
+		} else if (concept.isGlobal()) {
+			ret.setResolution(Resolution.All);
+		} else if (concept.isGeneric()) {
+			ret.setResolution(Resolution.Any);
+		}
+		
 		for (Pair<ValueOperator, Object> operator : concept.getValueOperators()) {
 
 			Object operand = null;

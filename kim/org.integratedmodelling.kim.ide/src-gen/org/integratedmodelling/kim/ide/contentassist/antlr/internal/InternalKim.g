@@ -4053,6 +4053,12 @@ rule__SimpleObservableSemantics__Alternatives_0
 		(rule__SimpleObservableSemantics__GlobalAssignment_0_1)
 		{ after(grammarAccess.getSimpleObservableSemanticsAccess().getGlobalAssignment_0_1()); }
 	)
+	|
+	(
+		{ before(grammarAccess.getSimpleObservableSemanticsAccess().getExclusiveAssignment_0_2()); }
+		(rule__SimpleObservableSemantics__ExclusiveAssignment_0_2)
+		{ after(grammarAccess.getSimpleObservableSemanticsAccess().getExclusiveAssignment_0_2()); }
+	)
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -39377,6 +39383,25 @@ rule__SimpleObservableSemantics__GlobalAssignment_0_1
 			{ after(grammarAccess.getSimpleObservableSemanticsAccess().getGlobalAllKeyword_0_1_0()); }
 		)
 		{ after(grammarAccess.getSimpleObservableSemanticsAccess().getGlobalAllKeyword_0_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__SimpleObservableSemantics__ExclusiveAssignment_0_2
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getSimpleObservableSemanticsAccess().getExclusiveOnlyKeyword_0_2_0()); }
+		(
+			{ before(grammarAccess.getSimpleObservableSemanticsAccess().getExclusiveOnlyKeyword_0_2_0()); }
+			'only'
+			{ after(grammarAccess.getSimpleObservableSemanticsAccess().getExclusiveOnlyKeyword_0_2_0()); }
+		)
+		{ after(grammarAccess.getSimpleObservableSemanticsAccess().getExclusiveOnlyKeyword_0_2_0()); }
 	)
 ;
 finally {

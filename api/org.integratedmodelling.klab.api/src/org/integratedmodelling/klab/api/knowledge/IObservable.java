@@ -49,6 +49,34 @@ import org.integratedmodelling.klab.utils.Range;
 public interface IObservable extends ISemantic, IResolvable {
 
 	/**
+	 * Observables used as queries for categories can specify a conceptual
+	 * resolution. This is not used when the observable is used to annotate
+	 * semantics, although Any could be used in dependencies to request multiple
+	 * model resolution for non-abstract generic countables. If value operators are
+	 * specified, "down to" may override the resolution or be incompatible with it.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	enum Resolution {
+		/**
+		 * Makes the observable specify "any" child or itself, normally excluding the
+		 * abstract ones or those with children.
+		 */
+		Any,
+		/**
+		 * Makes the observable specify all children and itself, normally excluding the
+		 * abstract ones.
+		 */
+		All,
+		/**
+		 * Ensures the observable specifies only itself in contexts where it would
+		 * normally specify subclasses too.
+		 */
+		Only
+	}
+
+	/**
 	 * The observable builder provides a uniform interface to create and declare
 	 * concepts that incarnate all the possible features for an observable. The
 	 * builder is smart and fast when concepts that already exist due to previous
@@ -515,5 +543,14 @@ public interface IObservable extends ISemantic, IResolvable {
 	 * @return
 	 */
 	boolean isGlobal();
+
+	/**
+	 * If a resolution was specified, return it. If not, return null - the default
+	 * resolution will depend on the context of use, and will be ignored in most
+	 * models.
+	 * 
+	 * @return
+	 */
+	Resolution getResolution();
 
 }

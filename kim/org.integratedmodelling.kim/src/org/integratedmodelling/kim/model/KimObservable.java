@@ -47,6 +47,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 	private IArtifact.Type nonSemanticType = null;
 	private boolean generic = false;
 	private boolean global = false;
+	private boolean exclusive = false;
 
 	@Override
 	public IArtifact.Type getNonSemanticType() {
@@ -96,6 +97,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		ret.generic = declaration.isGeneric();
 		ret.formalName = declaration.getName();
 		ret.optional = declaration.isOptional();
+		ret.exclusive = declaration.isExclusive();
 		ret.abstractObservable = concept.is(Type.ABSTRACT) || declaration.isGeneric();
 		if (declaration.getValue() != null) {
 			String id = declaration.getValue().getId();
@@ -443,5 +445,13 @@ public class KimObservable extends KimStatement implements IKimObservable {
 
 	public void setGlobal(boolean global) {
 		this.global = global;
+	}
+
+	public boolean isExclusive() {
+		return exclusive;
+	}
+
+	public void setExclusive(boolean exclusive) {
+		this.exclusive = exclusive;
 	}
 }

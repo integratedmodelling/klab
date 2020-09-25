@@ -10,10 +10,11 @@ import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Resolution;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -73,6 +74,7 @@ public class Classifier implements IClassifier {
 	private IExpression expressionMatch = null;
 	private boolean anythingMatch = false;
 	private String sourceCode;
+	private IObservable.Resolution conceptResolution = IObservable.Resolution.All;
 
 	// each sublist is in AND, each concept in each list is in OR
 	protected List<List<IConcept>> conceptMatches = null;
@@ -176,6 +178,9 @@ public class Classifier implements IClassifier {
 
 		} else if (conceptMatch != null) {
 			IConcept c = asConcept(o);
+			if (this.conceptResolution == IObservable.Resolution.Only) {
+				return conceptMatch.getDefinition().equals(c.getDefinition());
+			}
 			return negated ? !is(c, conceptMatch) : is(c, conceptMatch);
 
 		} else if (stringMatch != null) {
@@ -484,5 +489,11 @@ public class Classifier implements IClassifier {
 	@Override
 	public boolean isConcept() {
 		return conceptMatch != null;
+	}
+
+	public static IClassifier forConcept(IConcept concept, Resolution resolution) {
+		Classifier ret = create(concept);
+		ret.conceptResolution = resolution;
+		return ret;
 	}
 }

@@ -833,6 +833,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getObservableSemanticsAccess().getNameAssignment_3_5_1(), "rule__ObservableSemantics__NameAssignment_3_5_1");
 			builder.put(grammarAccess.getSimpleObservableSemanticsAccess().getGenericAssignment_0_0(), "rule__SimpleObservableSemantics__GenericAssignment_0_0");
 			builder.put(grammarAccess.getSimpleObservableSemanticsAccess().getGlobalAssignment_0_1(), "rule__SimpleObservableSemantics__GlobalAssignment_0_1");
+			builder.put(grammarAccess.getSimpleObservableSemanticsAccess().getExclusiveAssignment_0_2(), "rule__SimpleObservableSemantics__ExclusiveAssignment_0_2");
 			builder.put(grammarAccess.getSimpleObservableSemanticsAccess().getDeclarationAssignment_1(), "rule__SimpleObservableSemantics__DeclarationAssignment_1");
 			builder.put(grammarAccess.getSimpleObservableSemanticsAccess().getUnitAssignment_2_0_0_0_0_1_0(), "rule__SimpleObservableSemantics__UnitAssignment_2_0_0_0_0_1_0");
 			builder.put(grammarAccess.getSimpleObservableSemanticsAccess().getCurrencyAssignment_2_0_0_0_0_1_1(), "rule__SimpleObservableSemantics__CurrencyAssignment_2_0_0_0_0_1_1");

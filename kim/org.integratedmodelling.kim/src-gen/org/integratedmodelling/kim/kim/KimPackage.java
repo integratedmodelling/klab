@@ -1912,13 +1912,22 @@ public interface KimPackage extends EPackage
   int OBSERVABLE_SEMANTICS__GLOBAL = 11;
 
   /**
+   * The feature id for the '<em><b>Exclusive</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int OBSERVABLE_SEMANTICS__EXCLUSIVE = 12;
+
+  /**
    * The feature id for the '<em><b>Annotations</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__ANNOTATIONS = 12;
+  int OBSERVABLE_SEMANTICS__ANNOTATIONS = 13;
 
   /**
    * The feature id for the '<em><b>Condition</b></em>' attribute.
@@ -1927,7 +1936,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS__CONDITION = 13;
+  int OBSERVABLE_SEMANTICS__CONDITION = 14;
 
   /**
    * The number of structural features of the '<em>Observable Semantics</em>' class.
@@ -1936,7 +1945,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 14;
+  int OBSERVABLE_SEMANTICS_FEATURE_COUNT = 15;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ValueOperatorImpl <em>Value Operator</em>}' class.
@@ -6535,6 +6544,17 @@ public interface KimPackage extends EPackage
   EAttribute getObservableSemantics_Global();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ObservableSemantics#isExclusive <em>Exclusive</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Exclusive</em>'.
+   * @see org.integratedmodelling.kim.kim.ObservableSemantics#isExclusive()
+   * @see #getObservableSemantics()
+   * @generated
+   */
+  EAttribute getObservableSemantics_Exclusive();
+
+  /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ObservableSemantics#getAnnotations <em>Annotations</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -10899,6 +10919,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EAttribute OBSERVABLE_SEMANTICS__GLOBAL = eINSTANCE.getObservableSemantics_Global();
+
+    /**
+     * The meta object literal for the '<em><b>Exclusive</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute OBSERVABLE_SEMANTICS__EXCLUSIVE = eINSTANCE.getObservableSemantics_Exclusive();
 
     /**
      * The meta object literal for the '<em><b>Annotations</b></em>' containment reference list feature.

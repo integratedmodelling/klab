@@ -128,4 +128,12 @@ public interface IKimObservable extends IKimStatement {
 	 */
 	boolean isGlobal();
 
+	/**
+	 * Exclusive observables have 'only' prepended and only match themselves, never
+	 * a subclass, when used for queries.
+	 * 
+	 * @return
+	 */
+	boolean isExclusive();
+
 }

@@ -82,6 +82,10 @@ public class TableCompiler {
 		AREA, DURATION, QUALITY, NUMEROSITY
 	}
 
+	enum Style {
+		RIGHT, LEFT, CENTER, BOLD, ITALIC, BG_HIGHLIGHT, FG_HIGHLIGHT
+	}
+
 	enum ComputationType {
 
 		/**
@@ -431,6 +435,11 @@ public class TableCompiler {
 		 */
 		Set<String> symbols = new HashSet<>();
 
+		/**
+		 * Styles if any were specified
+		 */
+		Set<Style> style = new HashSet<>();
+
 		public Dimension(Dimension dim) {
 			this.aggregation = dim.aggregation;
 			this.computation = dim.computation;
@@ -451,6 +460,7 @@ public class TableCompiler {
 			this.target = dim.target;
 			this.targetType = dim.targetType;
 			this.separator = dim.separator;
+			this.style.addAll(dim.style);
 			this.symbols.addAll(dim.symbols);
 		}
 
@@ -551,6 +561,7 @@ public class TableCompiler {
 			ret.targetType = this.targetType;
 			ret.separator = this.separator;
 			ret.symbols.addAll(this.symbols);
+			ret.style.addAll(this.style);
 			return ret;
 		}
 
@@ -834,6 +845,37 @@ public class TableCompiler {
 			ret.separator = true;
 		}
 
+		if (theRest.containsKey("style")) {
+			for (Object style : (theRest.get("style") instanceof Collection ? ((Collection<?>) theRest.get("style"))
+					: Collections.singleton(theRest.get("style")))) {
+				switch (style.toString()) {
+				case "bold":
+					ret.style.add(Style.BOLD);
+					break;
+				case "italic":
+					ret.style.add(Style.ITALIC);
+					break;
+				case "right":
+					ret.style.add(Style.RIGHT);
+					break;
+				case "left":
+					ret.style.add(Style.LEFT);
+					break;
+				case "center":
+					ret.style.add(Style.CENTER);
+					break;
+				case "bg_highlight":
+					ret.style.add(Style.BG_HIGHLIGHT);
+					break;
+				case "fg_highlight":
+					ret.style.add(Style.FG_HIGHLIGHT);
+					break;
+				default:
+					throw new KlabValidationException("table: unrecognized style " + style);
+				}
+			}
+		}
+
 		if (theRest.get("compute") instanceof IKimExpression) {
 			ret.expression = (IKimExpression) theRest.get("compute");
 			ret.computationType = ComputationType.Expression;
@@ -1049,8 +1091,6 @@ public class TableCompiler {
 					ObservedConcept columnTarget = column.target == null ? this.target : column.target;
 					TargetType columnTargetType = column.targetType == null ? this.targetType : column.targetType;
 					ComputationType columnComputationType = column.computationType;
-					IExpression columnExpression = column.getExpression(scope);
-					Set<String> columnSymbols = column.symbols;
 					int aggregationLevel = (column.computationType != null && column.computationType.isAggregation())
 							? 1
 							: 0;
@@ -1219,7 +1259,14 @@ public class TableCompiler {
 						// filter placeholder which will be removed at resolution
 						filter.objectFilter = observable;
 					} else {
-						filter.classifier = Classifier.create(observable.getObservable().getType());
+						/*
+						 * by default concept matches on expanded concepts are exact
+						 */
+						IObservable.Resolution resolution = IObservable.Resolution.Only;
+						if (observable.getObservable().getResolution() != null) {
+							resolution = observable.getObservable().getResolution();
+						}
+						filter.classifier = Classifier.forConcept(observable.getObservable().getType(), resolution);
 						filter.target = ((Pair<?, ?>) o).getSecond() == null ? target
 								: (ObservedConcept) ((Pair<?, ?>) o).getSecond();
 						filter.targetType = ((Pair<?, ?>) o).getSecond() == null ? targetType : null;

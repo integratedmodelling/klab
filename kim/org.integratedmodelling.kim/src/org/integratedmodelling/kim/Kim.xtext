@@ -344,7 +344,7 @@ ObservableSemantics:
  * the level of generality w.r.t. subclasses. Removes 'according to' but leaves value operators
  */
 SimpleObservableSemantics returns ObservableSemantics:
-	(generic?='any' | global?='all' | exclusive='only')?
+	(generic?='any' | global?='all' | exclusive?='only')?
 	declaration=ConceptDeclaration
 	( =>
 		( =>
@@ -924,25 +924,6 @@ PROPERTY_TYPE:
 	
 terminal ANNOTATION_ID:
 	'@' LOWERCASE_ID;
-
-///*
-// * Observable without the 'as' to use in model declarations and without the 'optional' that
-// * is only for dependencies.
-// */
-//SimpleObservableSemantics returns ObservableSemantics:
-//	
-//	declaration=ConceptDeclaration
-//	(
-//		('according' 'to' accordingTo=PropertyId)? &
-//		(
-//			('in' (unit=Unit | currency=Currency)) |
-//			('per' unit=Unit)
-//		)? &
-//		(from=Number 'to' to=Number)? &
-//		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-//		(optional?='optional' | 'required')? &
-//		('named' name=(LOWERCASE_ID|STRING))?
-//	);
 
 /*
  * Full observable without the 'as <role>' but with 'optional'
