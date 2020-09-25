@@ -221,17 +221,24 @@ public class KimNotifier implements Kim.Notifier {
 				String name = ((IKimSymbolDefinition) statement).getName();
 
 				if (((IKimSymbolDefinition) statement).getDefineClass() != null) {
-					value = Extensions.INSTANCE.processDefinition(((IKimSymbolDefinition) statement), value, ns,
-							monitor);
-					if (value instanceof IViewModel) {
-						ns.getKnowledgeViews().put(name, (IViewModel) value);
-						ns.addObject((IViewModel) value);
+					try {
+						value = Extensions.INSTANCE.processDefinition(((IKimSymbolDefinition) statement), value, ns,
+								monitor);
+						if (value instanceof IViewModel) {
+							ns.getKnowledgeViews().put(name, (IViewModel) value);
+							ns.addObject((IViewModel) value);
+						}
+					} catch (Throwable t) {
+						monitor.error("error processing " + ((IKimSymbolDefinition) statement).getDefineClass()
+								+ "  definition: " + t.getMessage(), statement);
 					}
+				
+					ns.getSymbolTable().put(name, value);
+
 				} else if (value instanceof IKimTable) {
 					value = Table.create((IKimTable) value);
 				}
 
-				ns.getSymbolTable().put(name, value);
 
 			} else if (statement instanceof IKimConceptStatement) {
 				object = new ConceptStatement((IKimConceptStatement) statement);

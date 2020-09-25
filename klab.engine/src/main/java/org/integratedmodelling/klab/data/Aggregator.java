@@ -51,7 +51,19 @@ public class Aggregator {
 			this.temporalDimensionality = Units.INSTANCE.getTemporalDimensionality(this.unit);
 			this.spatialDimensionality = Units.INSTANCE.getSpatialDimensionality(this.unit);
 		}
+	}
 
+	/**
+	 * Use this constructor when the semantics is no concern.
+	 * 
+	 * @param aggregation
+	 */
+	public Aggregator(Aggregation aggregation) {
+		this.aggregation = aggregation;
+	}
+	
+	public void add(Object value) {
+		addenda.add(new Triple<>(value, null, null));
 	}
 
 	public void add(Object value, IObservable observable, ILocator locator) {

@@ -10,7 +10,6 @@ public class KnowledgeViewReference {
 	private String title;
 	private String body;
 	private String viewClass;
-	private String exportUrl;
 	private String contextId;
 	private String viewId;
 	private String label;
@@ -39,15 +38,7 @@ public class KnowledgeViewReference {
 	public void setViewClass(String viewClass) {
 		this.viewClass = viewClass;
 	}
-
-	public String getExportUrl() {
-		return exportUrl;
-	}
-
-	public void setExportUrl(String exportUrl) {
-		this.exportUrl = exportUrl;
-	}
-
+	
 	public String getContextId() {
 		return contextId;
 	}

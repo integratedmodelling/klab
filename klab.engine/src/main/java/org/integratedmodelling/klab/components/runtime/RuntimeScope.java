@@ -1841,8 +1841,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		KnowledgeViewReference descriptor = new KnowledgeViewReference();
 		descriptor.setContextId(monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
 		descriptor.setBody(view.getCompiledView("text/html"));
-		// TODO!
-		descriptor.setExportUrl("http://www.integratedmodelling.org/downloads/ARIES_2012.pptx");
 		descriptor.setViewClass(view.getViewClass());
 		descriptor.setTitle(view.getTitle());
 		descriptor.setViewId(view.getId());

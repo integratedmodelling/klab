@@ -340,11 +340,11 @@ ObservableSemantics:
 	);
 
 /*
- * Used for constraints and values: has no value and admits the additional "all" qualifier; removes 'according to' but
- * leaves value operators
+ * Used for constraints and values: has no value and admits the additional qualifiers to specify 
+ * the level of generality w.r.t. subclasses. Removes 'according to' but leaves value operators
  */
 SimpleObservableSemantics returns ObservableSemantics:
-	(generic?='any' | global?='all')?
+	(generic?='any' | global?='all' | exclusive='only')?
 	declaration=ConceptDeclaration
 	( =>
 		( =>

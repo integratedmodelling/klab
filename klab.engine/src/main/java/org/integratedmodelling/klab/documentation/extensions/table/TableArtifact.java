@@ -4,6 +4,8 @@ import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 import java.util.TreeSet;
@@ -16,7 +18,9 @@ import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.Aggregator;
+import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.ComputationType;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Dimension;
+import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.DimensionType;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Phase;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.provenance.Artifact;
@@ -40,6 +44,31 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 	public static class Cell {
 
 		List<Aggregator> aggregator = new ArrayList<>();
+
+		/*
+		 * the last value added to the aggregator.
+		 */
+		public Object currentValue;
+
+		/**
+		 * The final value after aggregation. Precomputed so we can do further in-table
+		 * aggregations within a single loop.
+		 */
+		public Object computedValue;
+
+		public ComputationType computationType;
+
+		// cells that aggregate other aggregated cells must be computed last, so we add
+		// 1 every time
+		// the cell collects an aggregation. If aggregationLevel > 1, the
+		// computationType is guaranteed to be the same in row and column, so
+		// aggregating
+		// is safe.
+		public int aggregationLevel = 0;
+
+		public Dimension column;
+
+		public Dimension row;
 
 		public Object get() {
 
@@ -107,6 +136,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			}
 
 			/*
+			 * this is held to feed references in computations that happen at each cycle
+			 */
+			cells[column][row].currentValue = value;
+
+			/*
 			 * create aggregator if not there
 			 */
 			if (cell.aggregator.size() <= phase.getIndex()) {
@@ -114,6 +148,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			}
 
 			cell.aggregator.get(phase.getIndex()).add(value, observable, locator);
+		} else if (cells[column][row] != null) {
+
+			// just set the nodata value as the latest if we have previous ones
+			cells[column][row].currentValue = value;
+
 		}
 	}
 
@@ -121,6 +160,45 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 	public String getCompiledView(String mediaType) {
 
 		if (this.compiledView == null) {
+
+			List<Cell> aggregatedCells = new ArrayList<>();
+
+			/*
+			 * precompute all cells with aggregators and not those that aggregate them; the
+			 * latter are put away and deferred for computing in order of level, so that
+			 * aggregations of aggregations are computed last. Put row and column in the
+			 * cell in this pass.
+			 */
+			for (int c = 0; c < columns.size(); c++) {
+				Dimension column = columns.get(c);
+				for (int r = 0; r < rows.size(); r++) {
+					Dimension row = rows.get(r);
+					Cell cell = cells[c][r];
+					if (cell != null) {
+						cell.row = row;
+						cell.column = column;
+						if (cell.computationType == null && !cell.aggregator.isEmpty()) {
+							cell.computedValue = cell.get();
+						} else if (cell.computationType != null) {
+							aggregatedCells.add(cell);
+						}
+					}
+				}
+			}
+
+			/*
+			 * compute all aggregating cells in order of level
+			 */
+			Collections.sort(aggregatedCells, new Comparator<Cell>() {
+				@Override
+				public int compare(Cell o1, Cell o2) {
+					return Integer.compare(o1.aggregationLevel, o2.aggregationLevel);
+				}
+			});
+
+			for (Cell cell : aggregatedCells) {
+				cell.computedValue = aggregateData(cell);
+			}
 
 			StringBuffer ret = new StringBuffer(columns.size() * rows.size() + 256);
 
@@ -188,9 +266,8 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 					ret.append("      <th scope=\"row\">" + Escape.forHTML(getHeader(rDesc, i, rTitles)) + "</th>\n");
 				}
 				for (Integer col : activeColumns) {
-					Dimension cDesc = columns.get(col);
 					Cell cell = cells[col][row];
-					ret.append("      <td>" + getData(cell, rDesc, cDesc) + "</td>\n");
+					ret.append("      <td>" + getData(cell) + "</td>\n");
 				}
 				ret.append("    </tr>\n");
 			}
@@ -203,16 +280,58 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		return this.compiledView;
 	}
 
+	private Object aggregateData(Cell cell) {
+
+		/*
+		 * find out who is asking me to aggregate, the row or the column; if both,
+		 * choose the row, scanned in the inner loop.
+		 */
+		DimensionType aggregatingDimension = (cell.row.computationType != null
+				&& cell.row.computationType.isAggregation()) ? DimensionType.ROW : DimensionType.COLUMN;
+
+		/*
+		 * Create an aggregator w/o semantics according to the computation type, which
+		 * is guaranteed consistent.
+		 */
+		Aggregator aggregator = new Aggregator(cell.computationType.getAggregation());
+
+		/*
+		 * scan the OTHER dimension and add the computedValue of all cells that have
+		 * aggregators
+		 */
+		if (aggregatingDimension == DimensionType.COLUMN) {
+			for (int i = 0; i < columns.size(); i++) {
+				Cell target = cells[i][cell.row.index];
+				if (target != null
+						&& (cell.computationType == null || cell.computationType == cell.column.computationType)) {
+					aggregator.add(target.computedValue == null ? 0 : target.computedValue);
+				}
+			}
+		} else {
+			for (int i = 0; i < rows.size(); i++) {
+				Cell target = cells[cell.column.index][i];
+				if (target != null
+						&& (cell.computationType == null || cell.computationType == cell.row.computationType)) {
+					aggregator.add(target.computedValue == null ? 0 : target.computedValue);
+				}
+			}
+		}
+
+		return aggregator.aggregate();
+	}
+
 	@Override
 	public boolean export(File file, String mediaType) {
 		return false;
 	}
 
-	private String getData(Cell cell, Dimension rowDesc, Dimension colDesc) {
+	private String getData(Cell cell) {
+
 		if (cell == null) {
 			return "";
 		}
-		Object ret = cell.get();
+		
+		Object ret = cell.computedValue;
 		if (Observations.INSTANCE.isNodata(ret)) {
 			return "";
 		}
@@ -281,6 +400,45 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		ret.add(new ExportFormat("Excel worksheet", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
 				"xlsx", "xlsx"));
 		return ret;
+	}
+
+	/**
+	 * Tags the cell as an aggregator to be matched to cells in the correspondent
+	 * dimension that have aggregators and computed at the second pass.
+	 * 
+	 * @param val
+	 * @param rowComputationType
+	 * @param phase
+	 * @param index
+	 * @param index2
+	 */
+	public void aggregate(ComputationType rowComputationType, Phase phase, int column, int row, int aggregationLevel) {
+
+		/*
+		 * at this point the catalogs are stable
+		 */
+		if (this.cells == null) {
+			this.cells = new Cell[columns.size()][rows.size()];
+		}
+
+		// when this get called, all filters have matched so we have a value to report
+		activeColumns.add(column);
+		activeRows.add(row);
+
+		Cell cell = cells[column][row];
+		if (cell == null) {
+			cell = new Cell();
+			cells[column][row] = cell;
+		}
+
+		cell.computationType = rowComputationType;
+		cell.aggregationLevel = aggregationLevel;
+
+	}
+
+	public Object getCurrentValue(Object columnRef, Object rowRef) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

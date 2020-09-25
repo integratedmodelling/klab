@@ -22,12 +22,14 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IKimStatement;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -54,6 +56,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
 import org.jgrapht.Graph;
 import org.jgrapht.alg.CycleDetector;
@@ -80,39 +83,49 @@ public class TableCompiler {
 	}
 
 	enum ComputationType {
-		/**
-		 * Aggregation means NO COMPUTATION - just aggregate the states, as per default
-		 * behavior.
-		 */
-		Aggregation,
+
 		/**
 		 * Sum
 		 */
-		Sum,
+		Sum(Aggregation.SUM),
 		/**
 		 * Sum
 		 */
-		Average,
+		Average(Aggregation.MEAN),
 		/**
 		 * Sum
 		 */
-		Std,
+		Std(Aggregation.STD),
 		/**
 		 * Sum
 		 */
-		Variance,
+		Variance(Aggregation.VARIANCE),
 		/**
 		 * Sum
 		 */
-		Min,
+		Min(Aggregation.MIN),
 		/**
 		 * Sum
 		 */
-		Max,
+		Max(Aggregation.MAX),
 		/**
 		 * Compute a specific expression in the expression field
 		 */
-		Expression
+		Expression(null);
+
+		Aggregation aggregation;
+
+		ComputationType(Aggregation aggregation) {
+			this.aggregation = aggregation;
+		}
+
+		public Aggregation getAggregation() {
+			return this.aggregation;
+		}
+
+		public boolean isAggregation() {
+			return this.aggregation != null;
+		}
 	}
 
 	/**
@@ -333,6 +346,10 @@ public class TableCompiler {
 		}
 	}
 
+	enum DimensionType {
+		ROW, COLUMN
+	}
+
 	/**
 	 * Represents both rows and columns. The index is the position of the cell
 	 * (which is not necessarily computed in order).
@@ -347,6 +364,13 @@ public class TableCompiler {
 		 * c<n> for columns and r<n> for rows.
 		 */
 		String id;
+
+		/**
+		 * Only used to validate use of cross-references, as rows can only refer to
+		 * cells in the same row (i.e. use column references) and the other way around.
+		 * 
+		 */
+		DimensionType dimensionType;
 
 		/**
 		 * If hidden, used for intermediate computations but not rendered.
@@ -393,7 +417,7 @@ public class TableCompiler {
 		 * with expressions are computed in order of dependency; rows of sums or other
 		 * aggregation must always be computed after all others.
 		 */
-		ComputationType computationType = ComputationType.Aggregation;
+		ComputationType computationType = null;
 
 		/**
 		 * Expression is assigned on parsing, the actual compilation is done before
@@ -411,6 +435,8 @@ public class TableCompiler {
 			this.aggregation = dim.aggregation;
 			this.computation = dim.computation;
 			this.expression = dim.expression;
+			this.dimensionType = dim.dimensionType;
+			this.computationType = dim.computationType;
 			if (dim.filters != null) {
 				for (Filter filter : dim.filters) {
 					if (this.filters == null) {
@@ -438,7 +464,17 @@ public class TableCompiler {
 						.getLanguageProcessor(expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
 								: expression.getLanguage());
 				Descriptor descriptor = processor.describe(expression.getCode(), scope.getExpressionContext(), false);
-				this.symbols.addAll(descriptor.getIdentifiersInScalarScope());
+				for (String symbol : descriptor.getIdentifiersInScalarScope()) {
+					if (this.dimensionType == DimensionType.ROW && rows.containsKey(symbol)) {
+						throw new KlabValidationException(
+								"row formulas cannot access other row values: only column values in the same row can be referenced");
+					}
+					if (this.dimensionType == DimensionType.COLUMN && columns.containsKey(symbol)) {
+						throw new KlabValidationException(
+								"column formulas cannot access other column values: only row values in the same column can be referenced");
+					}
+					this.symbols.add(symbol);
+				}
 				this.computation = descriptor.compile();
 			}
 			return computation;
@@ -496,12 +532,16 @@ public class TableCompiler {
 			Dimension ret = new Dimension();
 			ret.aggregation = this.aggregation;
 			ret.computation = this.computation;
+			ret.computationType = this.computationType;
 			ret.expression = this.expression;
-			for (Filter filter : this.filters) {
-				if (filter.objectFilter == null) {
-					ret.filters.add(filter);
-				} else {
-					ret.filters.add(new Filter(artifactId));
+			ret.dimensionType = this.dimensionType;
+			if (this.filters != null) {
+				for (Filter filter : this.filters) {
+					if (filter.objectFilter == null) {
+						ret.filters.add(filter);
+					} else {
+						ret.filters.add(new Filter(artifactId));
+					}
 				}
 			}
 			ret.hidden = this.hidden;
@@ -632,8 +672,8 @@ public class TableCompiler {
 		Pair<ObservedConcept, TargetType> tdesc = parseTarget(definition.get("target"));
 		this.target = tdesc.getFirst();
 		this.targetType = tdesc.getSecond();
-		this.activeColumns = parseDimension(definition.get("columns"), this.columns, "c");
-		this.activeRows = parseDimension(definition.get("rows"), this.rows, "r");
+		this.activeColumns = parseDimension(definition.get("columns"), this.columns, DimensionType.COLUMN);
+		this.activeRows = parseDimension(definition.get("rows"), this.rows, DimensionType.ROW);
 		this.title = definition.containsKey("title") ? definition.get("title").toString() : null;
 		this.label = definition.containsKey("label") ? definition.get("label").toString() : null;
 
@@ -664,14 +704,14 @@ public class TableCompiler {
 		return observables;
 	}
 
-	private int parseDimension(Object object, Map<String, Dimension> dimensions, String namePrefix) {
+	private int parseDimension(Object object, Map<String, Dimension> dimensions, DimensionType type) {
 
 		int ret = 0;
 
 		if (object instanceof Collection) {
 			for (Object o : ((Collection<?>) object)) {
 				if (o instanceof Map) {
-					ret += parseDimension((Map<?, ?>) o, dimensions, namePrefix);
+					ret += parseDimension((Map<?, ?>) o, dimensions, type);
 				} else if (o instanceof String) {
 					switch (o.toString()) {
 					case "empty":
@@ -688,7 +728,7 @@ public class TableCompiler {
 				}
 			}
 		} else if (object instanceof Map) {
-			ret = parseDimension((Map<?, ?>) object, dimensions, namePrefix);
+			ret = parseDimension((Map<?, ?>) object, dimensions, type);
 		} else {
 			throw new KlabValidationException(
 					"table dimensions (rows and columns) must be specified as maps or lists of maps");
@@ -701,14 +741,14 @@ public class TableCompiler {
 	 * A classifier spec may turn into >1 classifiers. Return the number of ACTIVE
 	 * dimensions built from the classifier list.
 	 */
-	private int parseDimension(Map<?, ?> map, Map<String, Dimension> dimensions, String namePrefix) {
+	private int parseDimension(Map<?, ?> map, Map<String, Dimension> dimensions, DimensionType type) {
 
 		int ret = 0;
 
 		Pair<ObservedConcept, TargetType> target = parseTarget(map.get("target"));
 
 		for (List<Filter> filters : expandClassifier(target.getFirst(), target.getSecond(), map.get("classifier"))) {
-			Dimension dimension = newDimension(target.getFirst(), target.getSecond(), filters, map, namePrefix,
+			Dimension dimension = newDimension(target.getFirst(), target.getSecond(), filters, map, type,
 					dimensions.size());
 			dimensions.put(dimension.id, dimension);
 			if (!dimension.separator) {
@@ -756,18 +796,19 @@ public class TableCompiler {
 	}
 
 	private Dimension newDimension(ObservedConcept target, TargetType targetType, List<Filter> filters,
-			Map<?, ?> theRest, String namePrefix, int lastIndex) {
+			Map<?, ?> theRest, DimensionType type, int lastIndex) {
 
 		Dimension ret = new Dimension();
 
 		ret.target = target;
 		ret.targetType = targetType;
 		ret.filters = filters;
+		ret.dimensionType = type;
 
 		if (theRest.containsKey("name")) {
 			ret.id = theRest.get("name").toString();
 		} else {
-			ret.id = namePrefix + (lastIndex + 1);
+			ret.id = (type == DimensionType.ROW ? "r" : "c") + (lastIndex + 1);
 		}
 
 		if (theRest.containsKey("title")) {
@@ -1007,6 +1048,12 @@ public class TableCompiler {
 
 					ObservedConcept columnTarget = column.target == null ? this.target : column.target;
 					TargetType columnTargetType = column.targetType == null ? this.targetType : column.targetType;
+					ComputationType columnComputationType = column.computationType;
+					IExpression columnExpression = column.getExpression(scope);
+					Set<String> columnSymbols = column.symbols;
+					int aggregationLevel = (column.computationType != null && column.computationType.isAggregation())
+							? 1
+							: 0;
 
 					for (Dimension row : sortedRows) {
 
@@ -1016,6 +1063,19 @@ public class TableCompiler {
 
 						ObservedConcept rowTarget = row.target == null ? columnTarget : row.target;
 						TargetType rowTargetType = row.targetType == null ? columnTargetType : row.targetType;
+						ComputationType rowComputationType = row.computationType == null ? column.computationType
+								: row.computationType;
+						IExpression rowExpression = row.getExpression(scope) == null ? column.getExpression(scope)
+								: row.getExpression(scope);
+						Set<String> rowSymbols = row.symbols == null ? column.symbols : row.symbols;
+						if (row.computationType != null && row.computationType.isAggregation()) {
+							aggregationLevel++;
+						}
+
+						// ugh
+						boolean inconsistentAggregation = columnComputationType != null && row.computationType != null
+								&& rowComputationType.isAggregation() && column.computationType.isAggregation()
+								&& row.computationType != column.computationType;
 
 						Object val = value.getFirst();
 						if (rowTargetType != null && rowTarget != null) {
@@ -1040,17 +1100,21 @@ public class TableCompiler {
 							}
 						}
 
-						// TODO only do this if we have no computation, otherwise run the computation,
-						// which we
-						// can inherit/switch from row to column.
-						// TODO if we have an inherited transformation, run that before aggregating.
-						// TODO understand if these two are the same thing or not. I guess they are - if
-						// we compute
-						// based on individual cells, we are not likely to be aggregating, and the
-						// modeler can
-						// handle the consequences.
-						ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(),
-								phase, column.index, row.index);
+						if (rowComputationType == null) {
+							ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(),
+									phase, column.index, row.index);
+						} else if (rowComputationType == ComputationType.Expression) {
+							val = evaluate(rowExpression, rowSymbols, value.getSecond(), ret, column.index, row.index,
+									scope);
+							// TODO: the observable may be different from the target if the f-user returns
+							// something from
+							// the context, which they certainly will.
+							ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(),
+									phase, column.index, row.index);
+						} else if (!inconsistentAggregation) {
+							// schedule for aggregation after all other cells are computed
+							ret.aggregate(rowComputationType, phase, column.index, row.index, aggregationLevel);
+						}
 					}
 				}
 			}
@@ -1059,6 +1123,30 @@ public class TableCompiler {
 		scope.getMonitor().info("table " + name + " computed successfully");
 
 		return ret;
+	}
+
+	private Object evaluate(IExpression rowExpression, Set<String> rowSymbols, ILocator locator, TableArtifact ret,
+			int column, int row, IRuntimeScope scope) {
+		IExpression.Context ectx = scope.getExpressionContext();
+		// TODO this does not localize the context
+		IParameters<String> parameters = Parameters.create(scope);
+		for (String symbol : rowSymbols) {
+			// match to current row/column if column/row name. TODO use ranges and
+			if (rows.containsKey(symbol)) {
+				parameters.put(symbol, ret.getCurrentValue(column, symbol));
+			} else if (columns.containsKey(symbol)) {
+				parameters.put(symbol, ret.getCurrentValue(symbol, row));
+			} else {
+				IArtifact artifact = scope.getArtifact(symbol);
+				if (artifact instanceof IState) {
+					parameters.put(symbol, ((IState) artifact).get(locator));
+				} else if (artifact != null) {
+					parameters.put(symbol, artifact);
+				}
+			}
+			// intersections, for now fuck.
+		}
+		return rowExpression.eval(parameters, scope);
 	}
 
 	private List<Phase> getPhases(IRuntimeScope scope, Map<ObservedConcept, IObservation> catalog) {
