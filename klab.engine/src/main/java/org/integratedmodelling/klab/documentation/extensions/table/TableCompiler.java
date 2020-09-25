@@ -1041,9 +1041,12 @@ public class TableCompiler {
 						Mode.RESOLUTION));
 			}
 		} else {
-			for (IConcept child : (observable != null && observable.isGlobal())
-					? Types.INSTANCE.getConcreteChildren(category)
-					: Types.INSTANCE.getConcreteLeaves(category)) {
+			for (IConcept child : /*
+									 * (observable != null && observable.isGlobal()) ?
+									 */Types.INSTANCE
+					.getConcreteChildren(category)/*
+													 * : Types.INSTANCE.getConcreteLeaves(category)
+													 */) {
 				ret.add(new ObservedConcept(Observable.promote(child), Mode.RESOLUTION));
 			}
 		}
