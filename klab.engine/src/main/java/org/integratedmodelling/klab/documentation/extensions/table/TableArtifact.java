@@ -325,7 +325,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 				}
 			}
 
-			return " style=" + ret + "\"";
+			return " class=" + ret + "\"";
 		}
 		return "";
 	}
