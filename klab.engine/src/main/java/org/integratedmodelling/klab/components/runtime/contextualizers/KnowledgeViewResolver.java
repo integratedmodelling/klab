@@ -54,11 +54,13 @@ public class KnowledgeViewResolver implements IResolver<IArtifact>, IExpression 
 
 			/*
 			 * run only when we have no schedule or we are scheduled to run at
-			 * initialization. All other cases are dealt with by the scheduler and if we get
-			 * here we have to run.
+			 * initialization (i.e. init is set but we are not comparing the init state with
+			 * others). All other cases are dealt with by the scheduler, and if we get here
+			 * at any time besides initialization it was the scheduler who sent us, so just
+			 * run.
 			 */
 			IViewModel.Schedule schedule = this.view.getSchedule();
-			boolean run = schedule == null || schedule.isInit();
+			boolean run = schedule == null || (schedule.isInit() && !(schedule.isEnd() || schedule.isStart()));
 			if (!run) {
 				return ret;
 			}

@@ -161,9 +161,8 @@ public class TableCompiler {
 		private int total;
 		private IArtifact observation;
 
-		public Phase(IScale scale, int states, Object... classifiers) {
+		public Phase(IScale scale, Object... classifiers) {
 			this.scale = scale;
-			this.total = states;
 			if (classifiers != null) {
 				for (Object c : classifiers) {
 					this.classifiers.add(c);
@@ -257,6 +256,7 @@ public class TableCompiler {
 
 		boolean start;
 		boolean end;
+		boolean init;
 		Resolution resolution;
 
 		TimeSelector(Object o) {
@@ -264,6 +264,7 @@ public class TableCompiler {
 				this.resolution = Time.resolution((IKimQuantity) o);
 			} else {
 				this.start = "start".equals(o);
+				this.init = "init".equals(o);
 				this.end = "end".equals(o);
 			}
 		}
@@ -1053,6 +1054,7 @@ public class TableCompiler {
 				switch (o.toString()) {
 				case "start":
 				case "end":
+				case "init":
 					phaseItems.add(o.toString());
 					categorize(TIME, o.toString(), sorted, null);
 					break;
@@ -1274,20 +1276,27 @@ public class TableCompiler {
 			} else {
 				if (trg.getScale().isTemporallyDistributed()) {
 					ITime time = trg.getScale().getTime();
+					if (phaseItems.contains("init")) {
+						ret.add(new Phase((IScale) trg.getScale().initialization(), "init"));
+					}
 					if (phaseItems.contains("start")) {
-						ret.add(new Phase((IScale) scope.getScale().at(time.getExtent(time.size() < 3 ? 0 : 1)),
-								phaseItems.contains("end") ? 2 : 1, "start"));
+						ret.add(new Phase((IScale) trg.getScale().at(time.getExtent(time.size() < 3 ? 0 : 1)),
+								"start"));
 					}
 					if (phaseItems.contains("end")) {
-						ret.add(new Phase((IScale) scope.getScale().at(time.getExtent(time.size() - 1)),
-								phaseItems.contains("start") ? 2 : 1, "end"));
+						ret.add(new Phase((IScale) trg.getScale().at(time.getExtent(time.size() - 1)), "end"));
 					}
 				} else {
-					ret.add(new Phase(scope.getScale(), 1));
+					ret.add(new Phase(trg.getScale(), 1));
 				}
 			}
 		}
 
+		for (int i = 0; i < ret.size(); i++) {
+			ret.get(i).index = i;
+			ret.get(i).total = ret.size();
+		}
+		
 		return ret;
 	}
 
@@ -1355,6 +1364,7 @@ public class TableCompiler {
 					switch (o.toString()) {
 					case "start":
 					case "end":
+					case "init":
 						filter.timeSelector = new TimeSelector(o);
 						// fall through
 					case "time":

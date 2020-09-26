@@ -146,10 +146,35 @@ public class Time extends Extent implements ITime {
 		}
 		return ret;
 	}
+	
+	private static Time termination(Scale scale) {
+		Time ret = new Time((Time)scale.getTime());
+		ret.extentType = ITime.Type.TERMINATION;
+		ret.start = new TimeInstant(0);
+		ret.end = new TimeInstant(0);
+		ret.multiplicity = 1;
+		ret.locatedLinearOffset = 0;
+		ret.locatedOffsets = new long[] { 0 };
+		ret.resolution = new ResolutionImpl(Resolution.Type.YEAR, 0.0);
+		if (scale != null) {
+			ret.setScaleId(scale.getScaleId());
+		}
+		return ret;
+	}
 
 	public static Time initialization(ITime time) {
 		Time ret = new Time((Time) time);
 		ret.extentType = ITime.Type.INITIALIZATION;
+		ret.multiplicity = 1;
+		ret.locatedOffsets = new long[] { 0 };
+		ret.locatedLinearOffset = 0;
+		ret.parentExtent = (Time) time;
+		return ret;
+	}
+	
+	public static Time termination(ITime time) {
+		Time ret = new Time((Time) time);
+		ret.extentType = ITime.Type.TERMINATION;
 		ret.multiplicity = 1;
 		ret.locatedOffsets = new long[] { 0 };
 		ret.locatedLinearOffset = 0;
@@ -909,6 +934,10 @@ public class Time extends Extent implements ITime {
 		if (type == ITime.Type.INITIALIZATION) {
 			return initialization((Scale) null);
 		}
+		
+		if (type == ITime.Type.TERMINATION) {
+			return termination((Scale)null);
+		}
 
 		if (dimension.isGeneric()) {
 			type = ITime.Type.LOGICAL;
@@ -956,6 +985,8 @@ public class Time extends Extent implements ITime {
 		if (locators != null && locators.length == 1) {
 			if (locators[0] instanceof String && "INITIALIZATION".equals(locators[0])) {
 				return initialization(this);
+			} else if (locators[0] instanceof String && "TERMINATION".equals(locators[0])) {
+				return termination(this);
 			} else if (locators[0] instanceof Number) {
 				long ofs = ((Number) locators[0]).longValue();
 				if (this.size() == 1 && ofs == 0) {

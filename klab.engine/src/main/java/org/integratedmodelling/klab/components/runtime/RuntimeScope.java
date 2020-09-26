@@ -1640,8 +1640,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			if (schedule == null || schedule.isTemporal()) {
 				isOccurrent = true;
 			} else {
-				if (!schedule.isEnd() || schedule.isStart()) {
+				if (schedule.isEnd() || schedule.isStart()) {
 					// pass the schedule on to the scheduler in each computation.
+					isOccurrent = true;
 					viewSchedule = schedule;
 				}
 			}

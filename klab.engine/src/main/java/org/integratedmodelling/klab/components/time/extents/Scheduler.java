@@ -274,9 +274,12 @@ public class Scheduler implements IScheduler {
 					 * affected outputs that move at a different (context) speed through a rescaling
 					 * wrapper. Done within the context, which uses its current target to establish
 					 * the specific view of the context.
+					 * 
+					 * Time is null when the registration is scheduled at termination
 					 */
-					ILocator transitionScale = scale.at(time);
-					IRuntimeScope transitionContext = scope.locate(transitionScale, monitor);
+					ILocator transitionScale = time == null ? scale.termination() : scale.at(time);
+					IRuntimeScope transitionContext = scope;
+					transitionContext = scope.locate(transitionScale, monitor);
 
 					/*
 					 * TODO if the target is a group of events, it has been filtered to only contain
@@ -291,8 +294,10 @@ public class Scheduler implements IScheduler {
 					// ensure we have the names we expect
 					transitionContext = actuator.localizeNames(transitionContext);
 
-					monitor.debug("running " + actuator + " at [" + new Date(time.getStart().getMilliseconds()) + " - "
-							+ new Date(time.getEnd().getMilliseconds()) + "]");
+					monitor.debug("running " + actuator
+							+ (time == null ? " at termination"
+									: (" at [" + new Date(time.getStart().getMilliseconds()) + " - "
+											+ new Date(time.getEnd().getMilliseconds()) + "]")));
 
 					IArtifact artifact = null;
 					IArtifact ctarget = null;
@@ -442,6 +447,15 @@ public class Scheduler implements IScheduler {
 		public void setDependencyOrder(int i) {
 			this.dependencyOrder = i;
 		}
+
+		public boolean runsAtTermination() {
+			for (Actuator.Computation computation : this.computations) {
+				if (computation.schedule != null && computation.schedule.isEnd()) {
+					return true;
+				}
+			}
+			return false;
+		}
 	}
 
 	private List<Registration> registrations = new ArrayList<>();
@@ -458,6 +472,9 @@ public class Scheduler implements IScheduler {
 	private ISession session;
 	private IResolutionScope resolutionScope;
 	private int activeRegistrations;
+	// registrations scheduled to be run after the last transition. So far only
+	// views can do this.
+	private List<Registration> terminationRegistrations = new ArrayList<>();
 
 	public Scheduler(String contextId, ITime time, IMonitor monitor) {
 		this.contextId = contextId;
@@ -613,8 +630,7 @@ public class Scheduler implements IScheduler {
 		long longest = 0;
 
 		List<Number> periods = new ArrayList<>();
-
-		List<Registration> regs = registrations;
+		List<Registration> regs = separateTerminationRegistrations();
 
 		/*
 		 * all registrations should be scheduled in order of dependency. As long as
@@ -665,6 +681,22 @@ public class Scheduler implements IScheduler {
 			reschedule(registration, true);
 		}
 
+	}
+
+	private List<Registration> separateTerminationRegistrations() {
+
+		List<Registration> ret = new ArrayList<>();
+		this.terminationRegistrations.clear();
+
+		for (Registration registration : registrations) {
+			if (registration.runsAtTermination()) {
+				this.terminationRegistrations.add(registration);
+			} else {
+				ret.add(registration);
+			}
+		}
+
+		return ret;
 	}
 
 	private List<Registration> computeDynamicDependencyOrder(List<Registration> registrations,
@@ -865,6 +897,14 @@ public class Scheduler implements IScheduler {
 			if (waitStrategy != null) {
 				waitStrategy.waitUntil(time);
 			}
+		}
+
+		/*
+		 * run anything registered after termination. We don't do anything else as these
+		 * have access to the entire context.
+		 */
+		for (Registration registration : terminationRegistrations) {
+			registration.run(monitor);
 		}
 
 		this.finished = true;

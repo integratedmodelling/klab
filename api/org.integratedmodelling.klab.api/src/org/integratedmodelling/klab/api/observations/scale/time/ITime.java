@@ -218,6 +218,12 @@ public interface ITime extends IExtent {
 		INITIALIZATION,
 
 		/**
+		 * Time after all transitions have happened. Also used to contexualize views and
+		 * non-semantic artifacts that must see the entire context.
+		 */
+		TERMINATION,
+
+		/**
 		 * Generic focus on a period without temporally locating it but specifying the
 		 * length of the period of interest.
 		 */
