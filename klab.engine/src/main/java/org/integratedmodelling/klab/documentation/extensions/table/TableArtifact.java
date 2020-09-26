@@ -44,7 +44,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 	 */
 	public static class Cell {
 
-		List<Aggregator> aggregator = new ArrayList<>();
+		Aggregator aggregator = null;
 
 		/*
 		 * the last value added to the aggregator.
@@ -73,12 +73,8 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 
 		public Object get() {
 
-			if (aggregator.size() > 1) {
-				// boh needs more work - a strategy to aggregate the aggregated. Can this happen
-				// given
-				// that we have a cartesian product of filters?
-			} else if (aggregator.size() == 1) {
-				return aggregator.get(0).aggregate();
+			if (aggregator != null) {
+				return aggregator.aggregate();
 			}
 
 			return null;
@@ -144,11 +140,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			/*
 			 * create aggregator if not there
 			 */
-			if (cell.aggregator.size() <= phase.getIndex()) {
-				cell.aggregator.add(new Aggregator(observable, scope.getMonitor()));
+			if (cell.aggregator == null) {
+				cell.aggregator = new Aggregator(observable, scope.getMonitor());
 			}
+			cell.aggregator.add(value, observable, locator);
 
-			cell.aggregator.get(phase.getIndex()).add(value, observable, locator);
 		} else if (cells[column][row] != null) {
 
 			// just set the nodata value as the latest if we have previous ones
@@ -178,7 +174,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 					if (cell != null) {
 						cell.row = row;
 						cell.column = column;
-						if (cell.computationType == null && !cell.aggregator.isEmpty()) {
+						if (cell.computationType == null && cell.aggregator != null) {
 							cell.computedValue = cell.get();
 						} else if (cell.computationType != null) {
 							aggregatedCells.add(cell);
@@ -250,7 +246,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 						 * write the ct-th title, using the array starting counting from the bottom
 						 */
 						ret.append("      <th" + getStyle(cDesc.style) + ">"
-								+ Escape.forHTML(getHeader(cDesc, ct, cTitles)) + "</th>\n");
+								+ Escape.forHTML(getHeader(cDesc, ct, cTitles, scope)) + "</th>\n");
 					}
 					ret.append("    </tr>\n");
 				}
@@ -266,7 +262,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 				ret.append("    <tr>\n");
 				for (int i = 0; i < rTitles; i++) {
 					ret.append("      <th scope=\"row\"" + getStyle(rDesc.style) + ">"
-							+ Escape.forHTML(getHeader(rDesc, i, rTitles)) + "</th>\n");
+							+ Escape.forHTML(getHeader(rDesc, i, rTitles, scope)) + "</th>\n");
 				}
 				for (Integer col : activeColumns) {
 					Cell cell = cells[col][row];
@@ -392,7 +388,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		return ret.toString();
 	}
 
-	private String getHeader(Dimension dimension, int currentLevelIndex, int totalLevels) {
+	private String getHeader(Dimension dimension, int currentLevelIndex, int totalLevels, IRuntimeScope scope) {
 		// choose the title according to the level based on what was defined in the
 		// dimension. It will be
 		// one of the titles but we may have less than the max as other dims. Titles are
@@ -401,7 +397,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		if (dimension.titles != null && dimension.titles.length > currentLevelIndex) {
 			title = dimension.titles[currentLevelIndex];
 		}
-		return TemplateUtils.expandMatches(title, this.table.getTemplateVars(dimension)).get(0);
+		return TemplateUtils.expandMatches(title, this.table.getTemplateVars(dimension, scope)).get(0);
 	}
 
 	@Override

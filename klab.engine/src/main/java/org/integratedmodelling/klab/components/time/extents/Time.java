@@ -42,6 +42,8 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.Months;
+import org.joda.time.YearMonth;
 
 public class Time extends Extent implements ITime {
 
@@ -146,9 +148,9 @@ public class Time extends Extent implements ITime {
 		}
 		return ret;
 	}
-	
+
 	private static Time termination(Scale scale) {
-		Time ret = new Time((Time)scale.getTime());
+		Time ret = new Time((Time) scale.getTime());
 		ret.extentType = ITime.Type.TERMINATION;
 		ret.start = new TimeInstant(0);
 		ret.end = new TimeInstant(0);
@@ -171,7 +173,7 @@ public class Time extends Extent implements ITime {
 		ret.parentExtent = (Time) time;
 		return ret;
 	}
-	
+
 	public static Time termination(ITime time) {
 		Time ret = new Time((Time) time);
 		ret.extentType = ITime.Type.TERMINATION;
@@ -934,9 +936,9 @@ public class Time extends Extent implements ITime {
 		if (type == ITime.Type.INITIALIZATION) {
 			return initialization((Scale) null);
 		}
-		
+
 		if (type == ITime.Type.TERMINATION) {
-			return termination((Scale)null);
+			return termination((Scale) null);
 		}
 
 		if (dimension.isGeneric()) {
@@ -1019,14 +1021,14 @@ public class Time extends Extent implements ITime {
 			} else if (locators[0] instanceof ITimeInstant) {
 
 				/*
-				 * Pick the sub-extent containing the instant or return the entire scale if 
-				 * we have none. In all cases focalize on the specific instant requested.
+				 * Pick the sub-extent containing the instant or return the entire scale if we
+				 * have none. In all cases focalize on the specific instant requested.
 				 */
 				if (!(start == null || start.isAfter((ITimeInstant) locators[0])
 						|| (end != null && end.isBefore((ITimeInstant) locators[0])))) {
 
 					if (size() <= 1) {
-						return this.focus((ITimeInstant)locators[0]);
+						return this.focus((ITimeInstant) locators[0]);
 					}
 
 					if (size() > 1) {
@@ -1037,9 +1039,9 @@ public class Time extends Extent implements ITime {
 							/*
 							 * last extent, located to get the point before the beginning of the next period
 							 */
-							Time ret = (Time)getExtent(size() - 1);
-							return ret.focus((ITimeInstant)locators[0]);
-							
+							Time ret = (Time) getExtent(size() - 1);
+							return ret.focus((ITimeInstant) locators[0]);
+
 						} else if (n >= 0 && n < size()) {
 							Time ret = (Time) getExtent(n);
 							long nn = n;
@@ -1051,7 +1053,7 @@ public class Time extends Extent implements ITime {
 							while (nn < size() && ret.getStart().isAfter(((ITimeInstant) locators[0]))) {
 								ret = (Time) getExtent(--nn);
 							}
-							return ret.focus((ITimeInstant)locators[0]);
+							return ret.focus((ITimeInstant) locators[0]);
 						}
 					}
 				}
@@ -1061,7 +1063,7 @@ public class Time extends Extent implements ITime {
 		throw new KlabException("HOSTIA unhandled time subsetting operation. Call the exorcist.");
 
 	}
-	
+
 	public String describe() {
 		return "[" + this.start + " - " + this.end + "]";
 	}
@@ -1225,6 +1227,31 @@ public class Time extends Extent implements ITime {
 	@Override
 	public ITimeInstant getFocus() {
 		return focus;
+	}
+
+	/**
+	 * Return a decent display format for the passed time at the passed resolution
+	 * 
+	 * TODO needs completion
+	 * 
+	 * @param start2
+	 * @param resolution2
+	 * @return
+	 */
+	public static String getDisplayLabel(ITimeInstant time, Resolution resolution) {
+		if (resolution.getType() == Resolution.Type.YEAR) {
+			return "" + ((TimeInstant) time).time.getYear();
+		} else if (resolution.getType() == Resolution.Type.MONTH) {
+			YearMonth md = new YearMonth(((TimeInstant) time).time.getYear(),
+					((TimeInstant) time).time.getMonthOfYear());
+			return "" + md.monthOfYear().getAsShortText() + " " + ((TimeInstant) time).time.getYear();
+		} else if (resolution.getType() == Resolution.Type.MONTH) {
+			YearMonth md = new YearMonth(((TimeInstant) time).time.getYear(),
+					((TimeInstant) time).time.getMonthOfYear());
+			return "" + md.monthOfYear().getAsShortText() + ((TimeInstant) time).time.getDayOfMonth() + ", "
+					+ ((TimeInstant) time).time.getYear();
+		}
+		return time.toString();
 	}
 
 }

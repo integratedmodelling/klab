@@ -150,13 +150,7 @@ public class TableCompiler {
 	class Phase {
 
 		private IScale scale;
-		private SpaceSelector space;
 		private Set<Object> classifiers = new HashSet<>();
-		/**
-		 * If null, we don't have a temporal slice dimension. Otherwise it may match
-		 * another in the filters.
-		 */
-		private TimeSelector time;
 		private int index;
 		private int total;
 		private IArtifact observation;
@@ -241,6 +235,24 @@ public class TableCompiler {
 		public int getIndex() {
 			return index;
 		}
+
+		public boolean matches(TimeSelector timeSelector) {
+			for (Object c : this.classifiers) {
+				if (c instanceof String) {
+					switch (c.toString()) {
+					case "init":
+						return timeSelector.init;
+					case "start":
+						return timeSelector.start;
+					case "end":
+						return timeSelector.end;
+					case "time":
+						return true;
+					}
+				}
+			}
+			return false;
+		}
 	}
 
 	/**
@@ -258,6 +270,7 @@ public class TableCompiler {
 		boolean end;
 		boolean init;
 		Resolution resolution;
+		private String displayLabel;
 
 		TimeSelector(Object o) {
 			if (o instanceof IKimQuantity) {
@@ -267,6 +280,24 @@ public class TableCompiler {
 				this.init = "init".equals(o);
 				this.end = "end".equals(o);
 			}
+		}
+
+		public String getDisplayLabel(IRuntimeScope scope) {
+			if (this.displayLabel == null) {
+				if (this.init) {
+					// TODO check use of root subject. Should use target artifact but it's hard from
+					// this call chain.
+					this.displayLabel = "before " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
+							scope.getRootSubject().getScale().getTime().getResolution());
+				} else if (this.start) {
+					this.displayLabel = Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
+							scope.getRootSubject().getScale().getTime().getResolution());
+				} else if (this.end) {
+					this.displayLabel = "after " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(),
+							scope.getRootSubject().getScale().getTime().getResolution());
+				}
+			}
+			return this.displayLabel;
 		}
 	}
 
@@ -341,6 +372,11 @@ public class TableCompiler {
 			if (universal) {
 				return true;
 			}
+			if (this.timeSelector != null) {
+				if (phase == null || !phase.matches(this.timeSelector)) {
+					return false;
+				}
+			}
 			if (classifier != null) {
 				if (target != null) {
 					IObservation observation = catalog.get(target);
@@ -352,6 +388,7 @@ public class TableCompiler {
 					return false;
 				}
 			}
+
 			return true;
 		}
 	}
@@ -1296,11 +1333,11 @@ public class TableCompiler {
 			ret.get(i).index = i;
 			ret.get(i).total = ret.size();
 		}
-		
+
 		return ret;
 	}
 
-	public Map<String, Object> getTemplateVars(Dimension dimension) {
+	public Map<String, Object> getTemplateVars(Dimension dimension, IRuntimeScope scope) {
 		Map<String, Object> ret = new HashMap<>();
 		if (dimension.filters != null) {
 			for (Filter filter : dimension.filters) {
@@ -1311,6 +1348,8 @@ public class TableCompiler {
 					} else if (filter.classifier.isConcept()) {
 						ret.put("concept", ((Classifier) filter.classifier).getDisplayLabel());
 					}
+				} else if (filter.timeSelector != null) {
+					ret.put("time", filter.timeSelector.getDisplayLabel(scope));
 				}
 			}
 		}
