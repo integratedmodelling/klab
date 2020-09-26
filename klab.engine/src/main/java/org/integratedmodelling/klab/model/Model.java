@@ -39,13 +39,14 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.data.mediation.IUnit.UnitContextualization;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -63,8 +64,8 @@ import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
-import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
+import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
@@ -119,6 +120,7 @@ public class Model extends KimObject implements IModel {
 	private boolean distributesLearning;
 	private boolean multipleTimes = false;
 	private MergedResource mergedResource;
+	private IViewModel viewModel = null;
 
 	// only for the delegate RankedModel
 	protected Model() {
@@ -811,6 +813,7 @@ public class Model extends KimObject implements IModel {
 		// Observable is the void concept (non-semantic artifact); all the independent
 		// observables in the view as dependencies, the view compilation as code
 		this.derived = true;
+		this.viewModel = view;
 		this.namespace = (Namespace) view.getNamespace();
 		this.observables.add(Observable.promote(Concepts.c(NS.CORE_VOID)));
 		this.id = view.getId() + "_resolver";
@@ -1436,6 +1439,16 @@ public class Model extends KimObject implements IModel {
 
 	public MergedResource getMergedResource() {
 		return this.mergedResource;
+	}
+
+	/**
+	 * View models are only created on observation with the specific constructor and
+	 * this method is non-API.
+	 * 
+	 * @return
+	 */
+	public IViewModel getViewModel() {
+		return this.viewModel;
 	}
 
 }

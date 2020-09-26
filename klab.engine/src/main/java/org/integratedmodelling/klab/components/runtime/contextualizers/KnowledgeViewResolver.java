@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -26,7 +27,7 @@ public class KnowledgeViewResolver implements IResolver<IArtifact>, IExpression 
 	}
 
 	public KnowledgeViewResolver(String viewName) {
-		this.view = (IViewModel)Resources.INSTANCE.getModelObject(viewName);
+		this.view = (IViewModel) Resources.INSTANCE.getModelObject(viewName);
 	}
 
 	public static IServiceCall getServiceCall(IViewModel view) {
@@ -45,9 +46,26 @@ public class KnowledgeViewResolver implements IResolver<IArtifact>, IExpression 
 
 	@Override
 	public IArtifact resolve(IArtifact ret, IContextualizationScope scope) throws KlabException {
-		// artifact will normally be null
-		IKnowledgeView result = this.view.compileView((IObservation)ret, scope);
-		((IRuntimeScope)scope).addView(result);
+
+		boolean isInitialization = scope.getScale().getTime() == null
+				|| scope.getScale().getTime().is(ITime.Type.INITIALIZATION);
+
+		if (isInitialization) {
+
+			/*
+			 * run only when we have no schedule or we are scheduled to run at
+			 * initialization. All other cases are dealt with by the scheduler and if we get
+			 * here we have to run.
+			 */
+			IViewModel.Schedule schedule = this.view.getSchedule();
+			boolean run = schedule == null || schedule.isInit();
+			if (!run) {
+				return ret;
+			}
+		}
+
+		IKnowledgeView result = this.view.compileView((IObservation) ret, scope);
+		((IRuntimeScope) scope).addView(result);
 		return ret;
 	}
 }

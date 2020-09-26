@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
@@ -1621,10 +1622,38 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 * Only occurrents occur. FIXME yes, but they may affect continuants
 		 */
 		boolean isOccurrent = actuator.getType().isOccurrent();
+		IViewModel.Schedule viewSchedule = null;
+
+		if (actuator.getModel() != null && actuator.getModel().getViewModel() != null
+				&& actuator.getDataflow().getResolutionScale().isTemporallyDistributed()) {
+			/*
+			 * schedule according to the view's definition. For now views are the only thing
+			 * that can also be scheduled at termination, after contextualization. No
+			 * schedule means we get scheduled as if we adopted the main temporal schedule.
+			 * Otherwise we can get scheduled at start, end or (later) arbitrary
+			 * resolutions.
+			 * 
+			 * Init case is dealt with directly as the contextualizer is always called, and
+			 * only initializes if schedule.isInit() or is null.
+			 */
+			IViewModel.Schedule schedule = actuator.getModel().getViewModel().getSchedule();
+			if (schedule == null || schedule.isTemporal()) {
+				isOccurrent = true;
+			} else {
+				if (!schedule.isEnd() || schedule.isStart()) {
+					// pass the schedule on to the scheduler in each computation.
+					viewSchedule = schedule;
+				}
+			}
+		}
+
 		if (isOccurrent) {
 
 			List<Computation> schedule = new ArrayList<>();
 			for (Computation computation : actuator.getContextualizers()) {
+
+				// if not null, the scheduler will deal with it.
+				computation.schedule = viewSchedule;
 
 				/*
 				 * nothing meant for initialization should be scheduled. Resource is null if

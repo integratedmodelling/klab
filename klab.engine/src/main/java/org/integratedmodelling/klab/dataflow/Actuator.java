@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
@@ -100,6 +101,12 @@ public class Actuator implements IActuator {
 		public IObservable observable;
 		public String targetId;
 		public IVariable variable;
+
+		/*
+		 * views are non-semantic and may carry special scheduling requirements which
+		 * are passed to the scheduler through this field if not null.
+		 */
+		public IViewModel.Schedule schedule;
 
 		public Computation() {
 		}
@@ -523,7 +530,7 @@ public class Actuator implements IActuator {
 			// needs to store the full causal chain and any indirect observations.
 			ctx.getProvenance().addArtifact(ret);
 		}
-		
+
 		if (model != null) {
 			/*
 			 * notify to the report all model annotations that will create documentation

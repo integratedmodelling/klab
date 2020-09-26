@@ -64,4 +64,10 @@ public class GraphViewModel extends KimObject implements IViewModel {
 	public INamespace getNamespace() {
 		return this.namespace;
 	}
+
+	@Override
+	public Schedule getSchedule() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

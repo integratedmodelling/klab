@@ -72,4 +72,9 @@ public class TableViewModel extends KimObject implements IViewModel {
 	public INamespace getNamespace() {
 		return this.namespace;
 	}
+
+	@Override
+	public Schedule getSchedule() {
+		return spreadsheet.getSchedule();
+	}
 }

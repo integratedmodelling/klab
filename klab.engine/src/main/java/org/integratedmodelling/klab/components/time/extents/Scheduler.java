@@ -265,7 +265,7 @@ public class Scheduler implements IScheduler {
 					/*
 					 * If target is dead, return
 					 */
-					if (!target.isActive()) {
+					if (target != null && !target.isActive()) {
 						return ret;
 					}
 
@@ -554,9 +554,13 @@ public class Scheduler implements IScheduler {
 
 		/*
 		 * model and individual computables determine the temporal aspects of the
-		 * geometry. By now that should be entirely captured in the model coverage.
+		 * geometry. By now that should be entirely captured in the model coverage. View
+		 * model use the overall scale as they have none of their own.
 		 */
 		IScale modelScale = actuator.getModel() == null ? null : actuator.getModel().getCoverage(scope.getMonitor());
+		if (actuator.getModel() != null && actuator.getModel().getViewModel() != null) {
+			modelScale = overall;
+		}
 
 		/*
 		 * should not be the case if we get here at all, but who knows. TODO: if there
@@ -587,9 +591,10 @@ public class Scheduler implements IScheduler {
 		}
 
 		IObservation targetObservation = (IObservation) scope.getTargetArtifact();
-		if (targetObservation.getObservable().is(IKimConcept.Type.PROCESS)
+		// can be null with void actuators
+		if (targetObservation != null && (targetObservation.getObservable().is(IKimConcept.Type.PROCESS)
 				|| targetObservation.getObservable().is(IKimConcept.Type.EVENT)
-				|| targetObservation.getObservable().is(IKimConcept.Type.QUALITY)) {
+				|| targetObservation.getObservable().is(IKimConcept.Type.QUALITY))) {
 			targetObservation = scope.getContextObservation();
 		}
 
@@ -863,7 +868,7 @@ public class Scheduler implements IScheduler {
 		}
 
 		this.finished = true;
-		
+
 		/*
 		 * notify end
 		 */

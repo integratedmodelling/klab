@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IViewModel.Schedule;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -138,6 +139,10 @@ public class TableCompiler {
 	 * locators. If we're scanning a quality, we can iterate locators; otherwise we
 	 * iterate observations. The phase can tell us what we're locating against and
 	 * its own index in the set of phases.
+	 * <p>
+	 * For now the recognized phases are only temporal, but there's no reason why
+	 * they couldn't be spatial or logical, or more complex with separate
+	 * contextualization for different objects.
 	 * 
 	 * @author Ferd
 	 *
@@ -351,7 +356,7 @@ public class TableCompiler {
 	}
 
 	enum DimensionType {
-		ROW, COLUMN
+		ROW, COLUMN, SPLIT
 	}
 
 	/**
@@ -575,6 +580,8 @@ public class TableCompiler {
 	 */
 	private Set<ObservedConcept> observables = new HashSet<>();
 
+	//
+	private List<Dimension> splits = new ArrayList<>();
 	// columns in order of definition and expansion
 	private Map<String, Dimension> columns = new LinkedHashMap<>();
 	// rows in order of definition and expansion
@@ -588,6 +595,8 @@ public class TableCompiler {
 	private String name;
 	private String title;
 	private String label;
+	private Set<String> harvestedTimeSelectors = new HashSet<>();
+	private Schedule schedule;
 
 	/**
 	 * Return the passed dimensions in order of dependency. If circular dependencies
@@ -675,7 +684,6 @@ public class TableCompiler {
 	/*
 	 * ------- Definition and validation --------------------------
 	 */
-
 	public TableCompiler(String name, Map<?, ?> definition, @Nullable IObservable target, IMonitor monitor) {
 
 		this.name = name;
@@ -709,6 +717,61 @@ public class TableCompiler {
 			throw new KlabValidationException(
 					"table: only rows or columns may define a target observable, but not both");
 		}
+
+		compileSchedule(definition);
+
+	}
+
+	private void compileSchedule(Map<?, ?> definition) {
+		/*
+		 * infer using any harvested temporal classifiers, adding any that were
+		 * specified in the 'when' parameter
+		 */
+		if (definition.containsKey("when")) {
+			for (Object cls : definition.get("when") instanceof Collection ? (Collection<?>) definition.get("when")
+					: Collections.singleton(definition.get("when"))) {
+				if ("time".equals(cls) || "start".equals(cls) || "end".equals(cls) || "init".equals(cls)) {
+					harvestedTimeSelectors.add(cls.toString());
+				} else {
+					throw new KlabValidationException(
+							"table: temporal classifier " + cls + " not undestood or supported");
+				}
+			}
+		}
+
+		if (!harvestedTimeSelectors.isEmpty()) {
+
+			this.schedule = new Schedule() {
+
+				@Override
+				public boolean isStart() {
+					return harvestedTimeSelectors.contains("start");
+				}
+
+				@Override
+				public boolean isInit() {
+					return harvestedTimeSelectors.contains("init");
+				}
+
+				@Override
+				public boolean isEnd() {
+					return harvestedTimeSelectors.contains("end");
+				}
+
+				@Override
+				public boolean isTemporal() {
+					return harvestedTimeSelectors.contains("time");
+				}
+
+				@Override
+				public Resolution getResolution() {
+					// TODO Auto-generated method stub
+					return null;
+				}
+
+			};
+		}
+
 	}
 
 	public Collection<ObservedConcept> getObservables() {
@@ -1293,6 +1356,10 @@ public class TableCompiler {
 					case "start":
 					case "end":
 						filter.timeSelector = new TimeSelector(o);
+						// fall through
+					case "time":
+						harvestedTimeSelectors.add(o.toString());
+						break;
 					}
 				} else {
 					filter.classifier = Classifier.create(o);
@@ -1325,6 +1392,10 @@ public class TableCompiler {
 
 	public String getLabel() {
 		return this.label;
+	}
+
+	public Schedule getSchedule() {
+		return this.schedule;
 	}
 
 }
