@@ -702,7 +702,7 @@ public class Flowchart {
 			public Type getIdentifierType(String identifier) {
 				return types.get(identifier);
 			}
-		}, false);
+		});
 
 		return descriptor.getIdentifiers();
 	}

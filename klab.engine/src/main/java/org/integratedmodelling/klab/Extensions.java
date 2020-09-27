@@ -23,6 +23,7 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
@@ -314,13 +315,13 @@ public enum Extensions implements IExtensionService {
 		return ret;
 	}
 
-	public IExpression compileExpression(String expressionCode, String language, boolean forcedScalar) {
-		return getLanguageProcessor(language).compile(expressionCode, null, forcedScalar);
+	public IExpression compileExpression(String expressionCode, String language, CompilerOption...compilerOptions) {
+		return getLanguageProcessor(language).compile(expressionCode, null, compilerOptions);
 	}
 
 	public IExpression compileExpression(String expressionCode, IExpression.Context context, String language,
-			boolean forcedScalar) {
-		return getLanguageProcessor(language).compile(expressionCode, context, forcedScalar);
+			CompilerOption...compilerOptions) {
+		return getLanguageProcessor(language).compile(expressionCode, context, compilerOptions);
 	}
 
 	@Override
@@ -347,8 +348,8 @@ public enum Extensions implements IExtensionService {
 			}
 		} else if (condition.getExpression() != null) {
 			IExpression expression = getLanguageProcessor(DEFAULT_EXPRESSION_LANGUAGE).compile(
-					condition.getExpression().getCode(), context.getExpressionContext(),
-					condition.getExpression().isForcedScalar());
+					condition.getExpression().getCode(), context.getExpressionContext(), options(
+					condition.getExpression().isForcedScalar(), false));
 			Object o = expression.eval(context, context);
 			if (o instanceof Boolean) {
 				return (Boolean) o;
@@ -496,6 +497,20 @@ public enum Extensions implements IExtensionService {
 		} catch (Exception e) {
 			throw new KlabIOException(e);
 		}
+	}
+
+	// facilitates calling when options are true/false flags. Not very nice.
+	public static CompilerOption[] options(boolean scalar, boolean recontextualizeAsMaps) {
+
+		List<CompilerOption> ret = new ArrayList<>();
+		if (scalar) {
+			ret.add(CompilerOption.ForcedScalar);
+		}
+		if (recontextualizeAsMaps) {
+			ret.add(CompilerOption.RecontextualizeAsMap);
+		}
+		
+		return ret.toArray(new CompilerOption[ret.size()]);
 	}
 
 }

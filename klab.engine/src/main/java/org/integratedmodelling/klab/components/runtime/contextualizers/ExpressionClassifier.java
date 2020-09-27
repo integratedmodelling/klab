@@ -101,14 +101,14 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
 
 		IExpression.Context expressionContext = context.getExpressionContext();
-		Descriptor selector = processor.describe(parameters.get("code", String.class), expressionContext, false);
+		Descriptor selector = processor.describe(parameters.get("code", String.class), expressionContext);
 		Descriptor condition = null;
 		if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {
 			String condCode = parameters.get("ifcondition", String.class);
 			if (condCode == null) {
 				condCode = processor.negate(parameters.get("unlesscondition", String.class));
 			}
-			condition = processor.describe(condCode, expressionContext, false);
+			condition = processor.describe(condCode, expressionContext);
 		}
 
 		for (String key : parameters.keySet()) {

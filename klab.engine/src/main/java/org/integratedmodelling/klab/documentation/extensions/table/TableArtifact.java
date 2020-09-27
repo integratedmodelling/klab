@@ -6,7 +6,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -44,7 +47,15 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 	 */
 	public static class Cell {
 
+		// if we see only one phase, we keep the value here
 		Aggregator aggregator = null;
+
+		// otherwise we leave that null and set the values in this hash; the only way to
+		// get values will be to use expressions that reference them explicitly
+		Map<String, Aggregator> phaseHash = null;
+
+		// keep the last seen phase here so that we know when we see a different one.
+		String phase = null;
 
 		/*
 		 * the last value added to the aggregator.
@@ -111,6 +122,18 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		this.scope = scope;
 	}
 
+	/**
+	 * Accumulate a value to be aggregated later according to semantics. If we see
+	 * two different phases, remove the aggregation value (cell will be nodata) but
+	 * put the aggregators in a hash so that self@phase can be used in expressions.
+	 * 
+	 * @param value
+	 * @param observable
+	 * @param locator
+	 * @param phase
+	 * @param column
+	 * @param row
+	 */
 	public void accumulate(Object value, IObservable observable, ILocator locator, Phase phase, int column, int row) {
 
 		/*
@@ -132,18 +155,47 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 				cells[column][row] = cell;
 			}
 
-			/*
-			 * this is held to feed references in computations that happen at each cycle
-			 */
-			cells[column][row].currentValue = value;
-
-			/*
-			 * create aggregator if not there
-			 */
-			if (cell.aggregator == null) {
-				cell.aggregator = new Aggregator(observable, scope.getMonitor());
+			if (cell.phaseHash == null) {
+				if (cell.phase == null) {
+					cell.phase = phase.getKey();
+				} else if (!cell.phase.equals(phase.getKey())) {
+					// use the hash from now on. Every other use produces nodata.
+					cell.phaseHash = new HashMap<>();
+					cell.phaseHash.put(cell.phase, cell.aggregator);
+					cell.aggregator = null;
+					cell.phase = null;
+				}
 			}
-			cell.aggregator.add(value, observable, locator);
+
+			if (cell.phaseHash != null) {
+
+				if (!cell.phaseHash.containsKey(phase.getKey())) {
+					cell.phaseHash.put(phase.getKey(), new Aggregator(observable, scope.getMonitor()));
+				}
+
+				cell.phaseHash.get(phase.getKey()).add(value);
+				
+				/*
+				 * this is held to feed references in computations that happen at each cycle,
+				 * within the same phase
+				 */
+				cell.currentValue = value;
+
+			} else {
+
+				/*
+				 * this is held to feed references in computations that happen at each cycle
+				 */
+				cell.currentValue = value;
+
+				/*
+				 * create aggregator if not there
+				 */
+				if (cell.aggregator == null) {
+					cell.aggregator = new Aggregator(observable, scope.getMonitor());
+				}
+				cell.aggregator.add(value, observable, locator);
+			}
 
 		} else if (cells[column][row] != null) {
 
@@ -482,9 +534,39 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 
 	}
 
-	public Object getCurrentValue(Object columnRef, Object rowRef) {
-		// TODO Auto-generated method stub
+	public Object getCurrentValue(int column, int row, Object rowRef, boolean isValue) {
+
+		if (this.cells == null) {
+			return null;
+		}
+		
+		Cell cell = this.cells[column][row];
+
+		if ("value".equals(rowRef)) {
+			if (cell.phaseHash != null && !isValue) {
+				Map<String, Object> ret = new HashMap<String, Object>();
+				for (Entry<String, Aggregator> entry : cell.phaseHash.entrySet()) {
+					ret.put(entry.getKey(), entry.getValue().aggregate());
+				}
+				return ret;
+			} else if (isValue) {
+				return cell.currentValue;
+			} else if (cell.aggregator != null) {
+				return cell.aggregator.aggregate();
+			}
+		}
 		return null;
+	}
+
+	public void setValue(Object value, int column, int row) {
+		if (this.cells == null) {
+			return;
+		}
+		
+		Cell cell = this.cells[column][row];
+		if (cell != null) {
+			cell.computedValue = value;
+		}
 	}
 
 }

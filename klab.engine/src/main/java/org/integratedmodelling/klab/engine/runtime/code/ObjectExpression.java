@@ -44,7 +44,7 @@ public class ObjectExpression {
 		this.descriptor = Extensions.INSTANCE
 				.getLanguageProcessor(expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
 						: expression.getLanguage())
-				.describe(expression.getCode(), overallScope.getExpressionContext(), scalar);
+				.describe(expression.getCode(), overallScope.getExpressionContext(), Extensions.options(scalar, false));
 		this.expression = this.descriptor.compile();
 	}
 

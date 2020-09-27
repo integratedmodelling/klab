@@ -69,7 +69,7 @@ public class ConcaveHullInstantiator implements IExpression, IInstantiator {
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.exprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), context.getExpressionContext(), true);
+					.describe(expression.toString(), context.getExpressionContext(), CompilerOption.ForcedScalar);
 		}
 
 		IScale scale = context.getScale();

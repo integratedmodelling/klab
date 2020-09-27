@@ -402,7 +402,7 @@ public class Documentation implements IDocumentation {
 			parameters.putAll(context);
 			parameters.put("_section", section);
 			IExpression compiled = Extensions.INSTANCE.compileExpression(getCode(), context.getExpressionContext(),
-					Extensions.DEFAULT_EXPRESSION_LANGUAGE, false);
+					Extensions.DEFAULT_EXPRESSION_LANGUAGE);
 			if (compiled != null) {
 				ret = compiled.eval(parameters, context);
 			}

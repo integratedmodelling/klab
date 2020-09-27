@@ -60,7 +60,7 @@ public class Classifier implements IClassifier {
 		}
 		if (statement.getExpressionMatch() != null) {
 			this.expressionMatch = Extensions.INSTANCE.compileExpression(statement.getExpressionMatch().getCode(),
-					statement.getExpressionMatch().getLanguage(), false);
+					statement.getExpressionMatch().getLanguage());
 		}
 	}
 

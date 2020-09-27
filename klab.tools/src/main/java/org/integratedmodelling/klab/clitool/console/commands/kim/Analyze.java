@@ -17,8 +17,8 @@ public class Analyze implements ICommand {
 
 		String ret = "";
 		String expression = StringUtils.join((List<?>) call.getParameters().get("arguments"), ' ').trim();
-		boolean forceScalar = false; // call.
-		Descriptor descriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE).describe(expression, forceScalar);
+		// TODO options
+		Descriptor descriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE).describe(expression);
 		
 		ret += "Identifiers in scalar scope:\n";
 		for (String id : descriptor.getIdentifiersInScalarScope()) {

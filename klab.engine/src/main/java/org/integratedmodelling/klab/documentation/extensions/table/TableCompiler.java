@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -154,6 +155,9 @@ public class TableCompiler {
 		private int index;
 		private int total;
 		private IArtifact observation;
+		// each phase has a key that allows referencing of cell values as self@key
+		// whenever >1 phases are seen by a cell.
+		private String key;
 
 		public Phase(IScale scale, Object... classifiers) {
 			this.scale = scale;
@@ -253,6 +257,15 @@ public class TableCompiler {
 			}
 			return false;
 		}
+
+		public String getKey() {
+			return key;
+		}
+
+		public Phase setKey(String key) {
+			this.key = key;
+			return this;
+		}
 	}
 
 	/**
@@ -287,14 +300,16 @@ public class TableCompiler {
 				if (this.init) {
 					// TODO check use of root subject. Should use target artifact but it's hard from
 					// this call chain.
-					this.displayLabel = "before " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
-							scope.getRootSubject().getScale().getTime().getResolution());
+					this.displayLabel = "before "
+							+ Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
+									scope.getRootSubject().getScale().getTime().getResolution());
 				} else if (this.start) {
 					this.displayLabel = Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
 							scope.getRootSubject().getScale().getTime().getResolution());
 				} else if (this.end) {
-					this.displayLabel = "after " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(),
-							scope.getRootSubject().getScale().getTime().getResolution());
+					this.displayLabel = "after "
+							+ Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(),
+									scope.getRootSubject().getScale().getTime().getResolution());
 				}
 			}
 			return this.displayLabel;
@@ -454,6 +469,12 @@ public class TableCompiler {
 		List<Filter> filters;
 
 		/**
+		 * Classifiers are like filters but they don't prevent the addition of
+		 * non-matching values. May be empty, never null.
+		 */
+		List<Filter> classifiers;
+
+		/**
 		 * Aggregation type, if any.
 		 */
 		AggregationType aggregation = null;
@@ -483,6 +504,12 @@ public class TableCompiler {
 		 */
 		Set<Style> style = new HashSet<>();
 
+		private Map<String, Set<String>> phaseReferences = new HashMap<>();
+
+		private boolean referencesStates;
+
+		private boolean referencesPhases;
+
 		public Dimension(Dimension dim) {
 			this.aggregation = dim.aggregation;
 			this.computation = dim.computation;
@@ -497,6 +524,14 @@ public class TableCompiler {
 					this.filters.add(filter);
 				}
 			}
+			if (dim.classifiers != null) {
+				for (Filter filter : dim.classifiers) {
+					if (this.classifiers == null) {
+						this.classifiers = new ArrayList<>();
+					}
+					this.classifiers.add(filter);
+				}
+			}
 			this.hidden = dim.hidden;
 			this.id = dim.id;
 			this.titles = dim.titles;
@@ -505,6 +540,10 @@ public class TableCompiler {
 			this.separator = dim.separator;
 			this.style.addAll(dim.style);
 			this.symbols.addAll(dim.symbols);
+			this.referencesPhases = dim.referencesPhases;
+			this.referencesStates = dim.referencesStates;
+			this.phaseReferences.putAll(dim.phaseReferences);
+
 		}
 
 		public Dimension() {
@@ -516,7 +555,8 @@ public class TableCompiler {
 				ILanguageProcessor processor = Extensions.INSTANCE
 						.getLanguageProcessor(expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
 								: expression.getLanguage());
-				Descriptor descriptor = processor.describe(expression.getCode(), scope.getExpressionContext(), false);
+				Descriptor descriptor = processor.describe(expression.getCode(), scope.getExpressionContext(),
+						CompilerOption.RecontextualizeAsMap, CompilerOption.IgnoreContext);
 				for (String symbol : descriptor.getIdentifiersInScalarScope()) {
 					if (this.dimensionType == DimensionType.ROW && rows.containsKey(symbol)) {
 						throw new KlabValidationException(
@@ -526,10 +566,45 @@ public class TableCompiler {
 						throw new KlabValidationException(
 								"column formulas cannot access other column values: only row values in the same column can be referenced");
 					}
-					this.symbols.add(symbol);
+					if (columns.containsKey(symbol) || rows.containsKey(symbol)) {
+						this.symbols.add(symbol);
+					}
 				}
 				this.computation = descriptor.compile();
+				/*
+				 * TODO 1. if the expr has only scalars for self/ctx names, will eval and
+				 * accumulate the result; 2. if it has non-scalars for self/ctx, will accumulate
+				 * normally and then compute and set the value; 3. if keys contain
+				 * start/end/init, it will only compute at last phase.
+				 */
+
+				/*
+				 * if this is true, we must accumulate the evaluated value of the expression
+				 */
+				this.phaseReferences.putAll(descriptor.getMapIdentifiers());
+
+				for (String ref : descriptor.getIdentifiersInScalarScope()) {
+					if ("value".equals(ref) || scope.getArtifact(ref) instanceof IState) {
+						this.referencesStates = true;
+						break;
+					}
+				}
+
+				/*
+				 * if this is true, we accumulate the phase values and only evaluate the
+				 * expression at the end
+				 */
+				for (String ref : phaseReferences.keySet()) {
+					if ("value".equals(ref) || scope.getArtifact(ref) instanceof IState) {
+						this.referencesPhases = true;
+						if (!phaseItems.containsAll(phaseReferences.get(ref))) {
+							throw new KlabValidationException(
+									"table expression references unknown phases in @ locator");
+						}
+					}
+				}
 			}
+
 			return computation;
 
 		}
@@ -597,6 +672,15 @@ public class TableCompiler {
 					}
 				}
 			}
+			if (this.classifiers != null) {
+				for (Filter filter : this.classifiers) {
+					if (filter.objectFilter == null) {
+						ret.classifiers.add(filter);
+					} else {
+						ret.classifiers.add(new Filter(artifactId));
+					}
+				}
+			}
 			ret.hidden = this.hidden;
 			ret.id = this.id + "_" + index;
 			ret.titles = this.titles;
@@ -605,6 +689,10 @@ public class TableCompiler {
 			ret.separator = this.separator;
 			ret.symbols.addAll(this.symbols);
 			ret.style.addAll(this.style);
+			ret.referencesPhases = this.referencesPhases;
+			ret.referencesStates = this.referencesStates;
+			ret.phaseReferences.putAll(this.phaseReferences);
+
 			return ret;
 		}
 
@@ -770,6 +858,7 @@ public class TableCompiler {
 					: Collections.singleton(definition.get("when"))) {
 				if ("time".equals(cls) || "start".equals(cls) || "end".equals(cls) || "init".equals(cls)) {
 					harvestedTimeSelectors.add(cls.toString());
+					phaseItems.add(cls.toString());
 				} else {
 					throw new KlabValidationException(
 							"table: temporal classifier " + cls + " not undestood or supported");
@@ -858,10 +947,11 @@ public class TableCompiler {
 		int ret = 0;
 
 		Pair<ObservedConcept, TargetType> target = parseTarget(map.get("target"));
-
-		for (List<Filter> filters : expandClassifier(target.getFirst(), target.getSecond(), map.get("classifier"))) {
+		Object classifiers = map.containsKey("filter") ? map.get("filter") : map.get("classifier");
+		boolean isClassifier = map.containsKey("classifier");
+		for (List<Filter> filters : expandClassifier(target.getFirst(), target.getSecond(), classifiers)) {
 			Dimension dimension = newDimension(target.getFirst(), target.getSecond(), filters, map, type,
-					dimensions.size());
+					dimensions.size(), isClassifier);
 			dimensions.put(dimension.id, dimension);
 			if (!dimension.separator) {
 				ret++;
@@ -908,13 +998,14 @@ public class TableCompiler {
 	}
 
 	private Dimension newDimension(ObservedConcept target, TargetType targetType, List<Filter> filters,
-			Map<?, ?> theRest, DimensionType type, int lastIndex) {
+			Map<?, ?> theRest, DimensionType type, int lastIndex, boolean filtersAreClassifiers) {
 
 		Dimension ret = new Dimension();
 
 		ret.target = target;
 		ret.targetType = targetType;
-		ret.filters = filters;
+		ret.classifiers = filtersAreClassifiers ? filters : new ArrayList<>();
+		ret.filters = filtersAreClassifiers ? new ArrayList<>() : filters;
 		ret.dimensionType = type;
 
 		if (theRest.containsKey("name")) {
@@ -931,8 +1022,8 @@ public class TableCompiler {
 				}
 			} else {
 				String theTitle = theRest.get("title").toString();
-				// count the spaces in front to establish level
-				for (; theTitle.startsWith(" ");) {
+				// count the pound signs in front to establish level
+				for (; theTitle.startsWith("#");) {
 					titles.add("");
 					theTitle = theTitle.substring(1);
 				}
@@ -1048,8 +1139,6 @@ public class TableCompiler {
 		final int TIME = 4;
 		final int SPACE = 5;
 
-		// TODO must track the target and categorize pairs with target, object
-
 		for (Object o : (declaration instanceof Collection ? (Collection<?>) declaration
 				: Collections.singleton(declaration))) {
 			if (o instanceof IKimConcept || o instanceof IKimObservable) {
@@ -1159,7 +1248,6 @@ public class TableCompiler {
 	 * Compute all cells that want to be computed. Target comes from caller, if null
 	 * we must have an observable and find it in the catalog.
 	 */
-//	@Override
 	public TableArtifact compute(IObservation targetObservation, IRuntimeScope scope) {
 
 		scope.getMonitor().info("start computing table " + name);
@@ -1206,6 +1294,7 @@ public class TableCompiler {
 							continue;
 						}
 
+						// bring along the data of computation closest to us
 						ObservedConcept rowTarget = row.target == null ? columnTarget : row.target;
 						TargetType rowTargetType = row.targetType == null ? columnTargetType : row.targetType;
 						ComputationType rowComputationType = row.computationType == null ? column.computationType
@@ -1213,6 +1302,14 @@ public class TableCompiler {
 						IExpression rowExpression = row.getExpression(scope) == null ? column.getExpression(scope)
 								: row.getExpression(scope);
 						Set<String> rowSymbols = row.symbols == null ? column.symbols : row.symbols;
+						boolean referencesPhases = row.getExpression(scope) == null ? column.referencesPhases
+								: row.referencesPhases;
+						boolean referencesStates = row.getExpression(scope) == null ? column.referencesStates
+								: row.referencesStates;
+						Map<String, Set<String>> phaseReferences = row.getExpression(scope) == null
+								? column.phaseReferences
+								: row.phaseReferences;
+
 						if (row.computationType != null && row.computationType.isAggregation()) {
 							aggregationLevel++;
 						}
@@ -1246,16 +1343,25 @@ public class TableCompiler {
 						}
 
 						if (rowComputationType == null) {
+
 							ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(),
 									phase, column.index, row.index);
+
 						} else if (rowComputationType == ComputationType.Expression) {
-							val = evaluate(rowExpression, rowSymbols, value.getSecond(), ret, column.index, row.index,
-									scope);
-							// TODO: the observable may be different from the target if the f-user returns
-							// something from
-							// the context, which they certainly will.
+
+							if (!referencesPhases) {
+								val = evaluate(rowExpression, rowSymbols, value.getSecond(), ret, column.index,
+										row.index, true, scope);
+							}
+
 							ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(),
 									phase, column.index, row.index);
+
+							if (referencesPhases && phase.isLast()) {
+								ret.setValue(evaluate(rowExpression, rowSymbols, value.getSecond(), ret, column.index,
+										row.index, false, scope), column.index, row.index);
+							}
+
 						} else if (!inconsistentAggregation) {
 							// schedule for aggregation after all other cells are computed
 							ret.aggregate(rowComputationType, phase, column.index, row.index, aggregationLevel);
@@ -1271,16 +1377,18 @@ public class TableCompiler {
 	}
 
 	private Object evaluate(IExpression rowExpression, Set<String> rowSymbols, ILocator locator, TableArtifact ret,
-			int column, int row, IRuntimeScope scope) {
+			int column, int row, boolean isValue, IRuntimeScope scope) {
+
 		IExpression.Context ectx = scope.getExpressionContext();
 		// TODO this does not localize the context
 		IParameters<String> parameters = Parameters.create(scope);
+		parameters.put("value", ret.getCurrentValue(column, row, "value", isValue));
 		for (String symbol : rowSymbols) {
 			// match to current row/column if column/row name. TODO use ranges and
 			if (rows.containsKey(symbol)) {
-				parameters.put(symbol, ret.getCurrentValue(column, symbol));
+				parameters.put(symbol, ret.getCurrentValue(column, row, symbol, true));
 			} else if (columns.containsKey(symbol)) {
-				parameters.put(symbol, ret.getCurrentValue(symbol, row));
+				parameters.put(symbol, ret.getCurrentValue(column, row, row, true));
 			} else {
 				IArtifact artifact = scope.getArtifact(symbol);
 				if (artifact instanceof IState) {
@@ -1304,27 +1412,28 @@ public class TableCompiler {
 
 		if (trg instanceof ObservationGroup) {
 
-			ret.add(new Phase(trg));
+			ret.add(new Phase(trg).setKey("main"));
 
 		} else if (trg != null) {
 
 			if (phaseItems.isEmpty()) {
-				ret.add(new Phase(scope.getScale(), 1));
+				ret.add(new Phase(scope.getScale(), 1).setKey("main"));
 			} else {
 				if (trg.getScale().isTemporallyDistributed()) {
 					ITime time = trg.getScale().getTime();
 					if (phaseItems.contains("init")) {
-						ret.add(new Phase((IScale) trg.getScale().initialization(), "init"));
+						ret.add(new Phase((IScale) trg.getScale().initialization(), "init").setKey("init"));
 					}
 					if (phaseItems.contains("start")) {
-						ret.add(new Phase((IScale) trg.getScale().at(time.getExtent(time.size() < 3 ? 0 : 1)),
-								"start"));
+						ret.add(new Phase((IScale) trg.getScale().at(time.getExtent(time.size() < 3 ? 0 : 1)), "start")
+								.setKey("start"));
 					}
 					if (phaseItems.contains("end")) {
-						ret.add(new Phase((IScale) trg.getScale().at(time.getExtent(time.size() - 1)), "end"));
+						ret.add(new Phase((IScale) trg.getScale().at(time.getExtent(time.size() - 1)), "end")
+								.setKey("end"));
 					}
 				} else {
-					ret.add(new Phase(trg.getScale(), 1));
+					ret.add(new Phase(trg.getScale(), 1).setKey("main"));
 				}
 			}
 		}
@@ -1337,22 +1446,33 @@ public class TableCompiler {
 		return ret;
 	}
 
+	@SuppressWarnings("unchecked")
 	public Map<String, Object> getTemplateVars(Dimension dimension, IRuntimeScope scope) {
 		Map<String, Object> ret = new HashMap<>();
-		if (dimension.filters != null) {
-			for (Filter filter : dimension.filters) {
-				if (filter.classifier != null) {
-					ret.put("classifier", ((Classifier) filter.classifier).getDisplayLabel());
-					if (filter.classifier.isInterval()) {
-						ret.put("range", ((Classifier) filter.classifier).getDisplayLabel());
-					} else if (filter.classifier.isConcept()) {
-						ret.put("concept", ((Classifier) filter.classifier).getDisplayLabel());
+		for (List<Filter> filterList : new List[] { dimension.filters, dimension.classifiers }) {
+			if (filterList != null) {
+				for (Filter filter : filterList) {
+					if (filter.classifier != null) {
+						ret.put("classifier", ((Classifier) filter.classifier).getDisplayLabel());
+						if (filter.classifier.isInterval()) {
+							ret.put("range", ((Classifier) filter.classifier).getDisplayLabel());
+						} else if (filter.classifier.isConcept()) {
+							ret.put("concept", ((Classifier) filter.classifier).getDisplayLabel());
+						}
+					} else if (filter.timeSelector != null) {
+						ret.put("time", filter.timeSelector.getDisplayLabel(scope));
 					}
-				} else if (filter.timeSelector != null) {
-					ret.put("time", filter.timeSelector.getDisplayLabel(scope));
 				}
 			}
 		}
+		
+		ret.put("init", "pre-" + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
+				scope.getRootSubject().getScale().getTime().getResolution()));
+		ret.put("start", Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
+				scope.getRootSubject().getScale().getTime().getResolution()));
+		ret.put("end", "post-" + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(),
+				scope.getRootSubject().getScale().getTime().getResolution()));
+
 		return ret;
 	}
 

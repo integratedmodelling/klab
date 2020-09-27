@@ -57,7 +57,7 @@ public class AccumulateFlowResolver implements IResolver<IState>, IExpression {
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.accumulateDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), context.getExpressionContext(), false);
+					.describe(expression.toString(), context.getExpressionContext());
 		}
 		if (parameters.containsKey("distribute")) {
 			Object expression = parameters.get("distribute");
@@ -65,7 +65,7 @@ public class AccumulateFlowResolver implements IResolver<IState>, IExpression {
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.distributeDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), context.getExpressionContext(), false);
+					.describe(expression.toString(), context.getExpressionContext());
 		}
 		if (this.accumulateDescriptor == null && this.distributeDescriptor == null) {
 			throw new IllegalArgumentException("flow accumulation resolver: no expression to evaluate");
