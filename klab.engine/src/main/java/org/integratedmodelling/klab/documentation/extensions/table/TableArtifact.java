@@ -13,6 +13,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeSet;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -27,10 +28,13 @@ import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Phase;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Style;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
+import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.TemplateUtils;
 
 /**
@@ -101,6 +105,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 	private TableCompiler table;
 	private List<Dimension> rows;
 	private List<Dimension> columns;
+	private Map<String, Dimension> dimensionCatalog = new HashMap<>();
 	private IRuntimeScope scope;
 	Set<Integer> activeColumns = new TreeSet<>();
 	Set<Integer> activeRows = new TreeSet<>();
@@ -120,6 +125,16 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		this.rows = rowCatalog;
 		this.columns = colCatalog;
 		this.scope = scope;
+		/*
+		 * make a single catalog so we have the chance to catch ambiguous naming
+		 */
+		for (Dimension dimension : CollectionUtils.join(rowCatalog, colCatalog)) {
+			if (dimensionCatalog.containsKey(dimension.id)) {
+				throw new KlabValidationException(
+						"table: ambiguous identifier " + dimension.id + " identifies both a row and a column");
+			}
+			dimensionCatalog.put(dimension.id, dimension);
+		}
 	}
 
 	/**
@@ -174,7 +189,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 				}
 
 				cell.phaseHash.get(phase.getKey()).add(value);
-				
+
 				/*
 				 * this is held to feed references in computations that happen at each cycle,
 				 * within the same phase
@@ -380,42 +395,69 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 
 	private Object aggregateData(Cell cell) {
 
+		Object ret = null;
+
 		/*
 		 * find out who is asking me to aggregate, the row or the column; if both,
 		 * choose the row, scanned in the inner loop.
 		 */
 		DimensionType aggregatingDimension = (cell.row.computationType != null
 				&& cell.row.computationType.isAggregation()) ? DimensionType.ROW : DimensionType.COLUMN;
+		Dimension dimension = aggregatingDimension == DimensionType.ROW ? cell.row : cell.column;
 
-		/*
-		 * Create an aggregator w/o semantics according to the computation type, which
-		 * is guaranteed consistent.
-		 */
-		Aggregator aggregator = new Aggregator(cell.computationType.getAggregation());
+		if (dimension.computationType == ComputationType.Summarize) {
 
-		/*
-		 * scan the OTHER dimension and add the computedValue of all cells that have
-		 * aggregators
-		 */
-		if (aggregatingDimension == DimensionType.COLUMN) {
-			for (int i = 0; i < columns.size(); i++) {
-				Cell target = cells[i][cell.row.index];
-				if (target != null
-						&& (cell.computationType == null || cell.computationType == cell.column.computationType)) {
-					aggregator.add(target.computedValue == null ? 0 : target.computedValue);
+			/*
+			 * must compute an expression using the mentioned row or column values in the
+			 * correspondent dimension
+			 */
+			IParameters<String> parameters = Parameters.create();
+			for (String symbol : dimension.symbols) {
+				if (dimensionCatalog.containsKey(symbol)) {
+					int row = aggregatingDimension == DimensionType.ROW ? dimensionCatalog.get(symbol).index : cell.row.index;
+					int col = aggregatingDimension == DimensionType.ROW ? cell.column.index : dimensionCatalog.get(symbol).index;
+					Cell target = cells[col][row];
+					parameters.put(symbol, target == null ? 0 : (target.computedValue == null ? 0 : target.computedValue));
 				}
 			}
+
+			ret = dimension.getExpression(scope).eval(parameters, scope);
+
 		} else {
-			for (int i = 0; i < rows.size(); i++) {
-				Cell target = cells[cell.column.index][i];
-				if (target != null
-						&& (cell.computationType == null || cell.computationType == cell.row.computationType)) {
-					aggregator.add(target.computedValue == null ? 0 : target.computedValue);
+
+			/*
+			 * Create an aggregator w/o semantics according to the computation type, which
+			 * is guaranteed consistent.
+			 */
+			Aggregator aggregator = new Aggregator(cell.computationType.getAggregation());
+
+			/*
+			 * scan the OTHER dimension and add the computedValue of all cells that have
+			 * aggregators
+			 */
+			if (aggregatingDimension == DimensionType.COLUMN) {
+				for (int i = 0; i < columns.size(); i++) {
+					Cell target = cells[i][cell.row.index];
+					if (target != null
+							&& (cell.computationType == null || cell.computationType == cell.column.computationType)) {
+						aggregator.add(target.computedValue == null ? 0 : target.computedValue);
+					}
+				}
+			} else {
+				for (int i = 0; i < rows.size(); i++) {
+					Cell target = cells[cell.column.index][i];
+					if (target != null
+							&& (cell.computationType == null || cell.computationType == cell.row.computationType)) {
+						aggregator.add(target.computedValue == null ? 0 : target.computedValue);
+					}
 				}
 			}
+
+			ret = aggregator.aggregate();
+
 		}
 
-		return aggregator.aggregate();
+		return ret;
 	}
 
 	@Override
@@ -539,30 +581,49 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		if (this.cells == null) {
 			return null;
 		}
-		
-		Cell cell = this.cells[column][row];
+
+		Object ret = null;
 
 		if ("value".equals(rowRef)) {
-			if (cell.phaseHash != null && !isValue) {
-				Map<String, Object> ret = new HashMap<String, Object>();
-				for (Entry<String, Aggregator> entry : cell.phaseHash.entrySet()) {
-					ret.put(entry.getKey(), entry.getValue().aggregate());
-				}
-				return ret;
-			} else if (isValue) {
-				return cell.currentValue;
-			} else if (cell.aggregator != null) {
-				return cell.aggregator.aggregate();
+
+			Cell cell = this.cells[column][row];
+
+			if (cell == null) {
+				return null;
 			}
+
+			if (cell.phaseHash != null && !isValue) {
+				ret = new HashMap<String, Object>();
+				for (Entry<String, Aggregator> entry : cell.phaseHash.entrySet()) {
+					((Map<String, Object>) ret).put(entry.getKey(), entry.getValue().aggregate());
+				}
+			} else if (isValue) {
+				ret = cell.currentValue;
+			} else if (cell.aggregator != null) {
+				ret = cell.aggregator.aggregate();
+			}
+		} else if (dimensionCatalog.containsKey(rowRef)) {
+
+			Dimension dim = dimensionCatalog.get(rowRef);
+			if (dim.dimensionType == DimensionType.ROW) {
+				ret = getCurrentValue(column, dim.index, "value", isValue);
+			} else {
+				ret = getCurrentValue(dim.index, row, "value", isValue);
+			}
+			if (Observations.INSTANCE.isNodata(ret)) {
+				ret = dim.getDefault();
+			}
+
 		}
-		return null;
+
+		return ret;
 	}
 
 	public void setValue(Object value, int column, int row) {
 		if (this.cells == null) {
 			return;
 		}
-		
+
 		Cell cell = this.cells[column][row];
 		if (cell != null) {
 			cell.computedValue = value;

@@ -531,7 +531,8 @@ public class GroovyExpressionPreprocessor {
 		}
 
 		for (TokenDescriptor t : tokens) {
-			if (t.type == KNOWN_ID) {
+			if (t.type == KNOWN_ID
+					|| (t.type == UNKNOWN_ID && context != null && context.getIdentifiers().contains(t.token.trim()))) {
 				identifiers.add(t.token.trim());
 				if (t.methodCall) {
 					this.objectIds.add(t.token.trim());
@@ -668,7 +669,8 @@ public class GroovyExpressionPreprocessor {
 	}
 
 	private String translateParameter(String currentToken, boolean isScalar) {
-		return (isScalar || mapIdentifiers.containsKey(currentToken)) ? currentToken : "_p.get(\"" + currentToken + "\")";
+		return (isScalar || mapIdentifiers.containsKey(currentToken)) ? currentToken
+				: "_p.get(\"" + currentToken + "\")";
 	}
 
 	private String translateKnowledge(String k) {

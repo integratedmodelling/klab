@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
+import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -115,9 +116,15 @@ public class TableCompiler {
 		 */
 		Max(Aggregation.MAX),
 		/**
-		 * Compute a specific expression in the expression field
+		 * Compute a specific expression in the expression field, to be evaluated at
+		 * each pass and whose result is aggregated.
 		 */
-		Expression(null);
+		Expression(null),
+		/**
+		 * Compute an expression at the end of everything and only once, based on
+		 * results in other cells.
+		 */
+		Summarize(null);
 
 		Aggregation aggregation;
 
@@ -130,7 +137,7 @@ public class TableCompiler {
 		}
 
 		public boolean isAggregation() {
-			return this.aggregation != null;
+			return this.aggregation != null || this == Summarize;
 		}
 	}
 
@@ -413,8 +420,8 @@ public class TableCompiler {
 	}
 
 	/**
-	 * Represents both rows and columns. The index is the position of the cell
-	 * (which is not necessarily computed in order).
+	 * Represents rows, columns and (later) splits. The index is the position of the
+	 * cell (which is not necessarily computed in order).
 	 * 
 	 * @author Ferd
 	 *
@@ -455,6 +462,13 @@ public class TableCompiler {
 		 * associated context metrics such as area occupied per category or counts.
 		 */
 		public TargetType targetType;
+
+		/**
+		 * This is associated to the target and will determine the default for
+		 * non-existing columns. FIXME should have no default - this is a shortcut for
+		 * now.
+		 */
+		public IArtifact.Type dataType = IArtifact.Type.NUMBER;
 
 		/**
 		 * Hierarchically arranged titles at the levels we need them. Nulls for
@@ -542,6 +556,7 @@ public class TableCompiler {
 			this.symbols.addAll(dim.symbols);
 			this.referencesPhases = dim.referencesPhases;
 			this.referencesStates = dim.referencesStates;
+			this.dataType = dim.dataType;
 			this.phaseReferences.putAll(dim.phaseReferences);
 
 		}
@@ -555,16 +570,30 @@ public class TableCompiler {
 				ILanguageProcessor processor = Extensions.INSTANCE
 						.getLanguageProcessor(expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
 								: expression.getLanguage());
-				Descriptor descriptor = processor.describe(expression.getCode(), scope.getExpressionContext(),
+				Context context = scope.getExpressionContext();
+
+				// register row and column names unless the rows/colums are aggregations
+				for (Dimension dimension : rows.values()) {
+					if (dimension.computationType == null || !dimension.computationType.isAggregation()) {
+						context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
+					}
+				}
+				for (Dimension dimension : columns.values()) {
+					if (dimension.computationType == null || !dimension.computationType.isAggregation()) {
+						context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
+					}
+				}
+
+				Descriptor descriptor = processor.describe(expression.getCode(), context,
 						CompilerOption.RecontextualizeAsMap, CompilerOption.IgnoreContext);
 				for (String symbol : descriptor.getIdentifiersInScalarScope()) {
-					if (this.dimensionType == DimensionType.ROW && rows.containsKey(symbol)) {
+					if (this.dimensionType == DimensionType.ROW && columns.containsKey(symbol)) {
 						throw new KlabValidationException(
-								"row formulas cannot access other row values: only column values in the same row can be referenced");
+								"row formulas cannot access values in other columns: only same column values in other rows can be referenced");
 					}
-					if (this.dimensionType == DimensionType.COLUMN && columns.containsKey(symbol)) {
+					if (this.dimensionType == DimensionType.COLUMN && rows.containsKey(symbol)) {
 						throw new KlabValidationException(
-								"column formulas cannot access other column values: only row values in the same column can be referenced");
+								"column formulas cannot access values in other rows: only same row values in other columns can be referenced");
 					}
 					if (columns.containsKey(symbol) || rows.containsKey(symbol)) {
 						this.symbols.add(symbol);
@@ -692,8 +721,14 @@ public class TableCompiler {
 			ret.referencesPhases = this.referencesPhases;
 			ret.referencesStates = this.referencesStates;
 			ret.phaseReferences.putAll(this.phaseReferences);
+			ret.dataType = this.dataType;
 
 			return ret;
+		}
+
+		public Object getDefault() {
+			// TODO Auto-generated method stub
+			return 0;
 		}
 
 	}
@@ -1071,8 +1106,11 @@ public class TableCompiler {
 		if (theRest.get("compute") instanceof IKimExpression) {
 			ret.expression = (IKimExpression) theRest.get("compute");
 			ret.computationType = ComputationType.Expression;
-		} else if (theRest.containsKey("compute")) {
-			switch (theRest.get("compute").toString()) {
+		} else if (theRest.get("summarize") instanceof IKimExpression) {
+			ret.expression = (IKimExpression) theRest.get("summarize");
+			ret.computationType = ComputationType.Summarize;
+		} else if (theRest.containsKey("summarize")) {
+			switch (theRest.get("summarize").toString()) {
 			case "sum":
 				ret.computationType = ComputationType.Sum;
 				break;
@@ -1379,16 +1417,14 @@ public class TableCompiler {
 	private Object evaluate(IExpression rowExpression, Set<String> rowSymbols, ILocator locator, TableArtifact ret,
 			int column, int row, boolean isValue, IRuntimeScope scope) {
 
-		IExpression.Context ectx = scope.getExpressionContext();
+//		IExpression.Context ectx = scope.getExpressionContext();
 		// TODO this does not localize the context
 		IParameters<String> parameters = Parameters.create(scope);
 		parameters.put("value", ret.getCurrentValue(column, row, "value", isValue));
 		for (String symbol : rowSymbols) {
 			// match to current row/column if column/row name. TODO use ranges and
-			if (rows.containsKey(symbol)) {
+			if (rows.containsKey(symbol) || columns.containsKey(symbol)) {
 				parameters.put(symbol, ret.getCurrentValue(column, row, symbol, true));
-			} else if (columns.containsKey(symbol)) {
-				parameters.put(symbol, ret.getCurrentValue(column, row, row, true));
 			} else {
 				IArtifact artifact = scope.getArtifact(symbol);
 				if (artifact instanceof IState) {
@@ -1465,7 +1501,7 @@ public class TableCompiler {
 				}
 			}
 		}
-		
+
 		ret.put("init", "pre-" + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
 				scope.getRootSubject().getScale().getTime().getResolution()));
 		ret.put("start", Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),

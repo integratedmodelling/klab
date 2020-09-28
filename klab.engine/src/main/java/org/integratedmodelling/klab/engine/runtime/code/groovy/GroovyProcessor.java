@@ -33,6 +33,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
 		private List<KimNotification> errors;
 		private boolean forcedScalar;
 		private Map<String, Set<String>> mapIdentifiers;
+		private IExpression.Context context;
 		
 		GroovyDescriptor(String expression, IExpression.Context context, boolean contextual, CompilerOption... options) {
 
@@ -47,6 +48,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
 			INamespace namespace = context == null ? null : context.getNamespace();
 			Set<String> knownIdentifiers = context == null ? new HashSet<>()
 					: new HashSet<>(context.getStateIdentifiers());
+			this.context = context;
 			knownIdentifiers.add("self");
 
 			IScale scale = context == null ? null : context.getScale();

@@ -47,7 +47,7 @@ public interface IExpression {
 		ForcedScalar,
 		/**
 		 * Translate identifiers like id@ctx into id["ctx"] instead of inserting the
-		 * recontextualization hooks for states. This can be limited to 
+		 * recontextualization hooks for states. This can be limited to
 		 */
 		RecontextualizeAsMap
 	}
@@ -81,6 +81,12 @@ public interface IExpression {
 		 * @return
 		 */
 		Collection<String> getIdentifiers();
+
+		/**
+		 * Add a scalar identifier that we want recognized at compilation.
+		 * TODO this should use IArtifact.Type
+		 */
+		void addKnownIdentifier(String id, IKimConcept.Type type);
 
 		/**
 		 * All known identifiers of quality observations at the time of evaluation.
