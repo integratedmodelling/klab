@@ -26,12 +26,12 @@ public class CreateInitialUsers {
 	private MongoGroupRepository groupRepository;
 	private UserRepository userRepository;
 	private	LdapUserDetailsManager ldapUserDetailsManager;
-	private DelegatingPasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;
 	
 	public CreateInitialUsers(MongoGroupRepository groupRepository,
 			UserRepository userRepository,
 			LdapUserDetailsManager ldapUserDetailsManager,
-			DelegatingPasswordEncoder passwordEncoder) {
+			PasswordEncoder passwordEncoder) {
 		this.groupRepository = groupRepository;
 		this.userRepository = userRepository;
 		this.ldapUserDetailsManager = ldapUserDetailsManager;
@@ -163,7 +163,7 @@ public class CreateInitialUsers {
     	for(User user : users) {
     		try {
     			//This is our legacy password encoding
-    			user = new SetUserPasswordHash(user, user.getPasswordHash(),new LdapShaPasswordEncoder()).execute();
+    			user = new SetUserPasswordHash(user, user.getPasswordHash(),this.passwordEncoder).execute();
     			User newUser = new CreateUserWithRolesAndStatus(user, userRepository, ldapUserDetailsManager).execute();
     			if (newUser.getLastLogin() != null) {
     				int x = (int)(Math.random()*100+1);

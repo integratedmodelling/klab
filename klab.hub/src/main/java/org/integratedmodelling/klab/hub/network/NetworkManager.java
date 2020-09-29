@@ -20,16 +20,12 @@ import org.joda.time.DateTime;
 
 public enum NetworkManager {
 
-
 	INSTANCE;
 	
 	private Set<INodeIdentity> onlineNodes = Collections.synchronizedSet(new HashSet<>());
 	private Set<INodeIdentity> offlineNodes = Collections.synchronizedSet(new HashSet<>());
 	private Map<String, NodeReference> allNodes = new HashMap<>();
-	private Client client;
 
-	
-	//this does nothing
 	public Collection<NodeReference> getNodes(Set<Group> groups) {
 		Set<NodeReference> ret = new HashSet<>();
 		for (INodeIdentity node : onlineNodes) {
