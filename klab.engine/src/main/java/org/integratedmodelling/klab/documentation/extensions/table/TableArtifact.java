@@ -7,11 +7,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Observations;
@@ -94,6 +94,13 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 
 			return null;
 		}
+
+		@Override
+		public String toString() {
+			return "<[" + (row == null ? "*" : ("" + row.index)) + "," + (column == null ? "*" : ("" + column.index)) + "]: "
+					+ computedValue + (row.computation == null ? "" : row.computation) + ">";
+			
+		}
 	}
 
 	/**
@@ -107,8 +114,8 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 	private List<Dimension> columns;
 	private Map<String, Dimension> dimensionCatalog = new HashMap<>();
 	private IRuntimeScope scope;
-	Set<Integer> activeColumns = new TreeSet<>();
-	Set<Integer> activeRows = new TreeSet<>();
+	Set<Integer> activeColumns = new HashSet<>();
+	Set<Integer> activeRows = new HashSet<>();
 	private String compiledView;
 	private String id = "v" + NameGenerator.shortUUID();
 
@@ -233,17 +240,21 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			 * aggregations of aggregations are computed last. Put row and column in the
 			 * cell in this pass.
 			 */
-			for (int c = 0; c < columns.size(); c++) {
-				Dimension column = columns.get(c);
-				for (int r = 0; r < rows.size(); r++) {
-					Dimension row = rows.get(r);
-					Cell cell = cells[c][r];
+			for (Dimension column : getActiveColumns()) {
+				for (Dimension row : getActiveRows()) {
+					Cell cell = cells[column.index][row.index];
 					if (cell != null) {
 						cell.row = row;
 						cell.column = column;
 						if (cell.computationType == null && cell.aggregator != null) {
 							cell.computedValue = cell.get();
 						} else if (cell.computationType != null) {
+							// those with summarizing computations go first
+							if (cell.computationType == ComputationType.Summarize) {
+								cell.aggregationLevel = 0;
+							} else {
+								cell.aggregationLevel++;
+							}
 							aggregatedCells.add(cell);
 						}
 					}
@@ -313,8 +324,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 						// empty cells to leave space for row headers later
 						ret.append("      <th></th>\n");
 					}
-					for (Integer col : activeColumns) {
-						Dimension cDesc = columns.get(col);
+					for (Dimension cDesc : getActiveColumns()) {
 						if (cDesc.hidden) {
 							continue;
 						}
@@ -333,8 +343,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			 * data and row titles
 			 */
 			ret.append("  <tbody>\n");
-			for (Integer row : activeRows) {
-				Dimension rDesc = rows.get(row);
+			for (Dimension rDesc : getActiveRows()) {
 				if (rDesc.hidden) {
 					continue;
 				}
@@ -343,12 +352,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 					ret.append("      <th scope=\"row\"" + getStyle(rDesc.style) + ">"
 							+ Escape.forHTML(getHeader(rDesc, i, rTitles, scope)) + "</th>\n");
 				}
-				for (Integer col : activeColumns) {
-					Dimension cDesc = columns.get(col);
+				for (Dimension cDesc : getActiveColumns()) {
 					if (cDesc.hidden) {
 						continue;
 					}
-					Cell cell = cells[col][row];
+					Cell cell = cells[cDesc.index][rDesc.index];
 					ret.append("      <td" + getStyle(cell) + ">" + getData(cell) + "</td>\n");
 				}
 				ret.append("    </tr>\n");
@@ -360,6 +368,38 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			this.compiledView = ret.toString();
 		}
 		return this.compiledView;
+	}
+
+	/**
+	 * Return the active rows in order of definition.
+	 * 
+	 * @return
+	 */
+	private List<Dimension> getActiveRows() {
+		List<Dimension> ret = new ArrayList<>();
+		for (String id : table.getRowOrder()) {
+			Dimension dim = dimensionCatalog.get(id);
+			if (activeRows.contains(dim.index)) {
+				ret.add(dim);
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * Return the active columns in order of definition.
+	 * 
+	 * @return
+	 */
+	private List<Dimension> getActiveColumns() {
+		List<Dimension> ret = new ArrayList<>();
+		for (String id : table.getColumnOrder()) {
+			Dimension dim = dimensionCatalog.get(id);
+			if (activeColumns.contains(dim.index)) {
+				ret.add(dim);
+			}
+		}
+		return ret;
 	}
 
 	private String getStyle(Cell cell) {
@@ -430,10 +470,13 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			IParameters<String> parameters = Parameters.create();
 			for (String symbol : dimension.symbols) {
 				if (dimensionCatalog.containsKey(symbol)) {
-					int row = aggregatingDimension == DimensionType.ROW ? dimensionCatalog.get(symbol).index : cell.row.index;
-					int col = aggregatingDimension == DimensionType.ROW ? cell.column.index : dimensionCatalog.get(symbol).index;
+					int row = aggregatingDimension == DimensionType.ROW ? dimensionCatalog.get(symbol).index
+							: cell.row.index;
+					int col = aggregatingDimension == DimensionType.ROW ? cell.column.index
+							: dimensionCatalog.get(symbol).index;
 					Cell target = cells[col][row];
-					parameters.put(symbol, target == null ? 0 : (target.computedValue == null ? 0 : target.computedValue));
+					parameters.put(symbol,
+							target == null ? 0 : (target.computedValue == null ? 0 : target.computedValue));
 				}
 			}
 

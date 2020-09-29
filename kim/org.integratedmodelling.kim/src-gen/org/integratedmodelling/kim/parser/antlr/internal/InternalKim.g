@@ -13861,10 +13861,13 @@ ruleAnnotation returns [EObject current=null]
 			)
 		)
 		(
-			otherlv_1='('
-			{
-				newLeafNode(otherlv_1, grammarAccess.getAnnotationAccess().getLeftParenthesisKeyword_1_0());
-			}
+			(
+				('(')=>
+				otherlv_1='('
+				{
+					newLeafNode(otherlv_1, grammarAccess.getAnnotationAccess().getLeftParenthesisKeyword_1_0());
+				}
+			)
 			(
 				(
 					{

@@ -756,7 +756,7 @@ IdentityRequirement:
 //;
 
 Annotation:
-	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
+	name=ANNOTATION_ID (=> '(' parameters=ParameterList? ')')?;
 
 List:
 	{List} '(' contents+=ValueWithIdAndConcept? ((',')? contents+=ValueWithIdAndConcept)* ')';

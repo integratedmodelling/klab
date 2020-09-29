@@ -28574,7 +28574,7 @@ rule__Annotation__Group_1__0__Impl
 :
 (
 	{ before(grammarAccess.getAnnotationAccess().getLeftParenthesisKeyword_1_0()); }
-	'('
+	('(')
 	{ after(grammarAccess.getAnnotationAccess().getLeftParenthesisKeyword_1_0()); }
 )
 ;

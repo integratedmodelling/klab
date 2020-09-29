@@ -8228,10 +8228,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		////	value=Literal ('to' maxValue=Number)? 'for' property=PropertyId */
 		////;
 		//Annotation:
-		//	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
+		//	name=ANNOTATION_ID (=> '(' parameters=ParameterList? ')')?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?
+		//name=ANNOTATION_ID (=> '(' parameters=ParameterList? ')')?
 		public Group getGroup() { return cGroup; }
 		
 		//name=ANNOTATION_ID
@@ -8240,10 +8240,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//ANNOTATION_ID
 		public RuleCall getNameANNOTATION_IDTerminalRuleCall_0_0() { return cNameANNOTATION_IDTerminalRuleCall_0_0; }
 		
-		//('(' parameters=ParameterList? ')')?
+		//(=> '(' parameters=ParameterList? ')')?
 		public Group getGroup_1() { return cGroup_1; }
 		
-		//'('
+		//=> '('
 		public Keyword getLeftParenthesisKeyword_1_0() { return cLeftParenthesisKeyword_1_0; }
 		
 		//parameters=ParameterList?
@@ -11851,7 +11851,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	////	value=Literal ('to' maxValue=Number)? 'for' property=PropertyId */
 	////;
 	//Annotation:
-	//	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
+	//	name=ANNOTATION_ID (=> '(' parameters=ParameterList? ')')?;
 	public AnnotationElements getAnnotationAccess() {
 		return pAnnotation;
 	}

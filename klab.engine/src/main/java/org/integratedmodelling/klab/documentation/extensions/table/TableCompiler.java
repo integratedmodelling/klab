@@ -1046,8 +1046,10 @@ public class TableCompiler {
 		if (theRest.containsKey("name")) {
 			ret.id = theRest.get("name").toString();
 		} else {
-			ret.id = (type == DimensionType.ROW ? "r" : "c") + (lastIndex + 1);
+			ret.id = (type == DimensionType.ROW ? "r" : "c");
 		}
+		
+		checkNameSequence(ret);
 
 		if (theRest.containsKey("title")) {
 			List<String> titles = new ArrayList<>();
@@ -1143,6 +1145,42 @@ public class TableCompiler {
 		}
 
 		return ret;
+	}
+
+	private Map<String, Integer> idIndex = new HashMap<>();
+	
+	/**
+	 * Rename multiple rows with same ID to id1, id2.. etc
+	 * @param ret
+	 */
+	private void checkNameSequence(Dimension ret) {
+		Map<String, Dimension> dimensions = null;
+		if (ret.dimensionType == DimensionType.ROW) {
+			dimensions = rows;
+		} else if (ret.dimensionType == DimensionType.COLUMN) {
+			dimensions = columns;
+		} 
+		
+		// could be a split, in which case do nothing
+		if (dimensions != null) {
+			if (dimensions.containsKey(ret.id)) {
+				String prevId = ret.id + "1";
+				String newId = ret.id + "2";
+				idIndex.put(ret.id, 2);
+				Dimension dim = dimensions.remove(ret.id);
+				dim.id = prevId;
+				dimensions.put(prevId, dim);
+				ret.id = newId;
+			} else if (idIndex.containsKey(ret.id)) {
+				int prev = idIndex.get(ret.id);
+				prev ++;
+				String newId = ret.id + prev;
+				idIndex.put(ret.id, prev);
+				ret.id = newId;
+				// will be inserted later
+			}
+		}
+		
 	}
 
 	private Collection<List<Filter>> expandClassifier(ObservedConcept target, TargetType targetType,
@@ -1583,6 +1621,14 @@ public class TableCompiler {
 			}
 		}
 		return ret;
+	}
+	
+	public List<String> getRowOrder() {
+		return new ArrayList<>(rows.keySet());
+	}
+
+	public List<String> getColumnOrder() {
+		return new ArrayList<>(columns.keySet());
 	}
 
 	public int getActiveRows() {
