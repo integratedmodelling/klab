@@ -134,5 +134,4 @@ public class CreateGroupTask extends Task{
 	public void setType() {
 		this.setType(TaskType.createGroup);
 	}
-
 }
