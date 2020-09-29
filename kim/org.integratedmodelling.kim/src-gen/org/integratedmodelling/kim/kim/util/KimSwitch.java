@@ -28,7 +28,6 @@ import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.DefinitionBody;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.DocSelector;
-import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.FunctionOrID;
 import org.integratedmodelling.kim.kim.HeaderRow;
@@ -42,7 +41,6 @@ import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.LookupTable;
 import org.integratedmodelling.kim.kim.Map;
 import org.integratedmodelling.kim.kim.MapEntry;
-import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.ModelStatement;
@@ -414,21 +412,6 @@ public class KimSwitch<T> extends Switch<T>
       {
         Literal literal = (Literal)theEObject;
         T result = caseLiteral(literal);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case KimPackage.METADATA:
-      {
-        Metadata metadata = (Metadata)theEObject;
-        T result = caseMetadata(metadata);
-        if (result == null) result = caseDocumentation(metadata);
-        if (result == null) result = defaultCase(theEObject);
-        return result;
-      }
-      case KimPackage.DOCUMENTATION:
-      {
-        Documentation documentation = (Documentation)theEObject;
-        T result = caseDocumentation(documentation);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -1186,38 +1169,6 @@ public class KimSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseLiteral(Literal object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Metadata</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Metadata</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseMetadata(Metadata object)
-  {
-    return null;
-  }
-
-  /**
-   * Returns the result of interpreting the object as an instance of '<em>Documentation</em>'.
-   * <!-- begin-user-doc -->
-   * This implementation returns null;
-   * returning a non-null result will terminate the switch.
-   * <!-- end-user-doc -->
-   * @param object the target of the switch.
-   * @return the result of interpreting the object as an instance of '<em>Documentation</em>'.
-   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
-   * @generated
-   */
-  public T caseDocumentation(Documentation object)
   {
     return null;
   }

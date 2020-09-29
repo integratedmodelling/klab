@@ -14,14 +14,12 @@ import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.data.general.ITable;
-import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.storage.DataIterator;
 import org.integratedmodelling.klab.data.storage.LocatedState;
 import org.integratedmodelling.klab.data.storage.MediatingState;
@@ -222,11 +220,19 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	@Override
 	public void finalizeTransition(IScale scale) {
-		// TODO store locally
+		
 		Observations.INSTANCE.getStateSummary(this, scale);
 		setContextualized(true);
 		if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
 			setDynamic(true);
+			if (scale.getTime().getEnd() != null) {
+				if (updateTimestamps.size() == 0 || updateTimestamps.get(updateTimestamps.size() - 1) < scale.getTime()
+						.getEnd().getMilliseconds()) {
+					updateTimestamps.add(scale.getTime().getEnd().getMilliseconds());
+				}
+			}
+		} else if (this.updateTimestamps.size() == 0) {
+			updateTimestamps.add(0L);
 		}
 	}
 

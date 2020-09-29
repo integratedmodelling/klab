@@ -25,6 +25,7 @@ import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -54,6 +55,15 @@ public interface INamespace extends IKimObject {
 	 */
 	List<IKimObject> getAllObjects();
 
+	/**
+	 * The namespace may define knowledge views through class extensions with the define 
+	 * mechanism in k.IM. These are not model objects per se but are resolvables and are
+	 * kept separately.
+	 * 
+	 * @return
+	 */
+	Map<String, IViewModel> getKnowledgeViews();
+	
 	/**
 	 * <p>
 	 * getObject.

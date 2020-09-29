@@ -30,7 +30,7 @@ import org.integratedmodelling.klab.api.runtime.IScheduler;
  * that will provide behaviors for their instances (or a subset thereof). Once
  * made reactive, they can interact with each other and the system.
  * <p>
- * An observation 
+ * An observation
  *
  * @author ferdinando.villa
  * @version $Id: $Id
@@ -139,8 +139,8 @@ public interface IObservation extends IContextualizedIdentity, IArtifact {
 
 	/**
 	 * Time of creation. If the context has no time, this is equal to the
-	 * {@link IArtifact#getTimestamp()}; otherwise it is the time reported by
-	 * {@link IScheduler#getSliceOffsetInBackend()} at the moment of construction.
+	 * {@link IArtifact#getTimestamp()}; otherwise it is the time reported by the
+	 * scheduler at the moment of construction.
 	 * 
 	 * @return the time of creation
 	 */
@@ -155,5 +155,15 @@ public interface IObservation extends IContextualizedIdentity, IArtifact {
 	 */
 
 	long getExitTime();
+
+	/**
+	 * All times when the observation was modified, corresponding to the end of any
+	 * temporal transitions that changed it.This will always contain at least a 0
+	 * for initialization, except for events, event groups and qualities that have
+	 * no initial value because they describe a process.
+	 * 
+	 * @return
+	 */
+	long[] getUpdateTimestamps();
 
 }

@@ -49,7 +49,7 @@ public class Variable implements IVariable {
 								: this.expression.getLanguage());
 
 				ILanguageProcessor.Descriptor descriptor = processor.describe(this.expression.getCode(),
-						scope.getExpressionContext(), this.expression.isForcedScalar());
+						scope.getExpressionContext(), Extensions.options(this.expression.isForcedScalar(), false));
 
 				boolean contextual = false;
 				for (String id : parameters.keySet()) {

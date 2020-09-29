@@ -153,7 +153,15 @@ public interface IScale extends ILocator, IGeometry, ITopology<IScale> {
 	 * time at all.
 	 */
 	IScale initialization();
-	
+
+	/**
+	 * Return the scale after the end of contextualization. This scale is not
+	 * produced by the scale iterator, and is used only for scheduling.
+	 * 
+	 * @return
+	 */
+	IScale termination();
+
 	/**
 	 * Return a new scale without the passed dimension.
 	 * 

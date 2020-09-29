@@ -80,28 +80,30 @@ public class Time implements IExpression {
 		}
 		if (parameters.contains("step")) {
 
-			if (start == null || end == null) {
-//				throw new KlabValidationException("a step can only be specified along with both start and end");
-			}
-
 			if (parameters.get("step") instanceof IKimQuantity) {
 				IKimQuantity sq = parameters.get("step", IKimQuantity.class);
-				step = org.integratedmodelling.klab.components.time.extents.Time.duration(sq);
 				if (resolution == null) {
 					resolution = org.integratedmodelling.klab.components.time.extents.Time.resolution(sq);
+					if (resolution.getType() != null && resolution.getType().isRegular()) {
+						step = org.integratedmodelling.klab.components.time.extents.Time.duration(sq);
+					}
 				}
 			} else if (parameters.get("step") instanceof Quantity) {
 				Quantity sq = parameters.get("step", Quantity.class);
-				step = org.integratedmodelling.klab.components.time.extents.Time.duration(sq);
 				if (resolution == null) {
 					resolution = org.integratedmodelling.klab.components.time.extents.Time.resolution(sq);
+					if (resolution.getType() != null && resolution.getType().isRegular()) {
+						step = org.integratedmodelling.klab.components.time.extents.Time.duration(sq);
+					}
 				}
 			} else if (parameters.get("step") instanceof String) {
-				step = org.integratedmodelling.klab.components.time.extents.Time
-						.duration(parameters.get("step", String.class));
 				if (resolution == null) {
 					resolution = org.integratedmodelling.klab.components.time.extents.Time
 							.resolution(parameters.get("step", String.class));
+					if (resolution.getType() != null && resolution.getType().isRegular()) {
+						step = org.integratedmodelling.klab.components.time.extents.Time
+								.duration(parameters.get("step", String.class));
+					}
 				}
 			} else if (parameters.get("step") instanceof Number && resolution != null) {
 				step = org.integratedmodelling.klab.components.time.extents.Time

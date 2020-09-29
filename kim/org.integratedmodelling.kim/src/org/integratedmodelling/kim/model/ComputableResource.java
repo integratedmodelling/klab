@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -73,7 +74,8 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 	private Map<String, Object> interactiveParameters;
 	private Type type;
 	private IKimAction.Trigger trigger = IKimAction.Trigger.RESOLUTION;
-	// if true, this computes a single value to be added to the expression context later.
+	// if true, this computes a single value to be added to the expression context
+	// later.
 	private boolean variable;
 	/**
 	 * Slot to save a validated resource so that it won't need to be validated
@@ -271,7 +273,7 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 		}
 		this.resolutionMode = Mode.RESOLUTION;
 	}
-	
+
 //	public ComputableResource(List<String> mergedUrns, Mode mode, IArtifact.Type type) {
 //		this.mergedUrns = mergedUrns;
 //		this.mergedType = type;
@@ -427,7 +429,9 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 				if (ext != null) {
 					ILanguageProcessor processor = ext.getLanguageProcessor(
 							language == null ? IExtensionService.DEFAULT_EXPRESSION_LANGUAGE : language);
-					Descriptor descriptor = processor.describe(expression.getCode(), getExpression().isForcedScalar());
+					Descriptor descriptor = getExpression().isForcedScalar()
+							? processor.describe(expression.getCode(), CompilerOption.ForcedScalar)
+							: processor.describe(expression.getCode());
 					for (String var : descriptor.getIdentifiers()) {
 						requiredResourceNames.add(new Pair<>(var, IArtifact.Type.VALUE));
 					}
@@ -760,12 +764,12 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 
 	@Override
 	public IGeometry getGeometry() {
-		
+
 //		if (this.mergedGeometry != null) {
 //			return this.mergedGeometry;
 //		}
-		
-		switch(getType()) {
+
+		switch (getType()) {
 		case RESOURCE:
 			IResourceService rs = Services.INSTANCE.getService(IResourceService.class);
 			IResource resource = rs == null ? null : rs.resolveResource(this.urn);
@@ -789,7 +793,7 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 	public Trigger getTrigger() {
 		return this.trigger;
 	}
-	
+
 	public void setTrigger(Trigger trigger) {
 		this.trigger = trigger;
 	}
@@ -807,10 +811,10 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 	public void setVariable(boolean variable) {
 		this.variable = variable;
 	}
-	
+
 	@Override
 	public String getSourceCode() {
-		
+
 		// TODO if we ever support more stuff as aux vars
 		switch (getType()) {
 		case CLASSIFICATION:
@@ -831,9 +835,9 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 			break;
 		default:
 			break;
-		
+
 		}
 		return super.getSourceCode();
 	}
-	
+
 }

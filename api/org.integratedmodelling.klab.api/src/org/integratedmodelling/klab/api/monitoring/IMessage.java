@@ -349,7 +349,12 @@ public interface IMessage {
 		 * --- Sent F->B when a view action interacts with a component and B->F to send
 		 * a response to an explicit method call on a widget.
 		 */
-		ViewAction
+		ViewAction,
+		
+		/*
+		 * Sent B->F when a new view has been generated in a context
+		 */
+		ViewAvailable
 
 	}
 

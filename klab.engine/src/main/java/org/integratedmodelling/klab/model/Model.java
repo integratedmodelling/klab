@@ -19,12 +19,14 @@ import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Documentation;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Types;
@@ -39,13 +41,16 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
@@ -59,6 +64,7 @@ import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.table.LookupTable;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -66,6 +72,7 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.ObservationStrategy;
 import org.integratedmodelling.klab.resolution.ObservationStrategy.Strategy;
+import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
@@ -111,6 +118,9 @@ public class Model extends KimObject implements IModel {
 	private Strategy observationStrategy = Strategy.DIRECT;
 	private boolean learnsWithinArchetype;
 	private boolean distributesLearning;
+	private boolean multipleTimes = false;
+	private MergedResource mergedResource;
+	private IViewModel viewModel = null;
 
 	// only for the delegate RankedModel
 	protected Model() {
@@ -295,6 +305,36 @@ public class Model extends KimObject implements IModel {
 			}
 		}
 
+		if (getMainObservable() != null && getMainObservable().is(Type.PROCESS)) {
+
+			Set<IConcept> changed = new HashSet<>();
+
+			/*
+			 * Any change that isn't explicitly output should be added
+			 */
+			for (int oo = 0; i < observables.size(); i++) {
+				IObservable obs = observables.get(oo);
+				if (obs != null && obs.is(Type.CHANGE)) {
+					changed.add(Observables.INSTANCE.getDescribedType(obs.getType()));
+				}
+			}
+
+			/*
+			 * Add change in any secondary qualities that are affected by the process.
+			 */
+			List<IObservable> toAdd = new ArrayList<>();
+			for (int oo = 1; i < observables.size(); i++) {
+				IObservable obs = observables.get(oo);
+				if (obs != null && obs.is(Type.QUALITY) && !changed.contains(obs.getType())) {
+					if (Observables.INSTANCE.isAffectedBy(obs, getMainObservable())) {
+						toAdd.add(obs.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable());
+					}
+				}
+			}
+
+			this.observables.addAll(toAdd);
+		}
+
 		/*
 		 * add source(s) in main declaration as computables
 		 */
@@ -302,27 +342,14 @@ public class Model extends KimObject implements IModel {
 
 			try {
 
-				MergedResource merged = model.getResourceUrns().size() > 1 ? new MergedResource(model, monitor) : null;
-				ComputableResource urnResource = validate(
-						new ComputableResource(merged == null ? model.getResourceUrns().get(0) : merged.getUrn(),
-								this.isInstantiator() ? Mode.INSTANTIATION : Mode.RESOLUTION),
-						monitor);
+				this.mergedResource = model.getResourceUrns().size() > 1 ? new MergedResource(model, monitor) : null;
+				ComputableResource urnResource = validate(new ComputableResource(
+						this.mergedResource == null ? model.getResourceUrns().get(0) : this.mergedResource.getUrn(),
+						this.isInstantiator() ? Mode.INSTANTIATION : Mode.RESOLUTION), monitor);
 				this.resources.add(urnResource);
 
-				if (merged != null && merged.getType() == IArtifact.Type.PROCESS) {
-
-					/**
-					 * the resolved model of a process that changes a quality will normally also
-					 * have the quality itself as output, so we add it unless it's already there
-					 * either as an input or as an output.
-					 */
-					if (this.observables.get(0) != null && this.observables.get(0).is(Type.CHANGE)) {
-						IConcept inherent = Observables.INSTANCE.getDescribedType(this.observables.get(0).getType());
-						if (inherent != null && findOutput(inherent) == null && findOutput(inherent) == null) {
-							observables.add(Observable.promote(inherent));
-						}
-					}
-
+				if (this.mergedResource != null) {
+					this.multipleTimes = this.mergedResource.isGranular();
 				}
 
 			} catch (Throwable t) {
@@ -750,6 +777,52 @@ public class Model extends KimObject implements IModel {
 	}
 
 	/**
+	 * Create a model for the changed values from a resolver or instantiator of the
+	 * passed observable, resolved by the merged resource that has been already
+	 * checked for coverage of the temporal scope. The resulting model will have the
+	 * resource and all the computations from the original one.
+	 * 
+	 * @param mainObservable
+	 * @param resource
+	 * @param scope
+	 */
+	public Model(IObservable mainObservable, MergedResource resource, IModel originalModel, ResolutionScope scope) {
+		super(null);
+		if (originalModel instanceof RankedModel) {
+			// computables must be validated by the original model. This is pretty ugly of
+			// course.
+			originalModel = ((RankedModel) originalModel).getDelegate();
+		}
+		this.derived = true;
+		this.id = mainObservable.getName() + "_resolved_change";
+		IObservable changeObservable = mainObservable.getBuilder(scope.getMonitor()).as(UnarySemanticOperator.CHANGE)
+				.buildObservable();
+		this.namespace = scope.getResolutionNamespace();
+		this.contextualization = new Contextualization(null, this);
+		this.observables.add(changeObservable);
+		this.coverage = scope.getScale();
+		this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(changeObservable, resource));
+		for (int i = 1; i < ((Model) originalModel).getComputation().size(); i++) {
+			ComputableResource computation = (ComputableResource) ((Model) originalModel).getComputation().get(i);
+			this.resources.add(((Model) originalModel).validate(computation.copy(), scope.getMonitor()));
+		}
+	}
+
+	public Model(IViewModel view) {
+		super(null);
+		// Observable is the void concept (non-semantic artifact); all the independent
+		// observables in the view as dependencies, the view compilation as code
+		this.derived = true;
+		this.viewModel = view;
+		this.namespace = (Namespace) view.getNamespace();
+		this.observables.add(Observable.promote(Concepts.c(NS.CORE_VOID)));
+		this.id = view.getId() + "_resolver";
+		this.contextualization = new Contextualization(null, this);
+		this.dependencies.addAll(view.getObservables());
+		this.resources.add(Klab.INSTANCE.getRuntimeProvider().getViewResolver(view));
+	}
+
+	/**
 	 * Validate URNs, tables, classifications, inline values against network,
 	 * observables etc. Called in sequence so it should maintain the chain of
 	 * processing and validate each step, until the final type that should be
@@ -787,7 +860,7 @@ public class Model extends KimObject implements IModel {
 		} else if (resource.getAccordingTo() != null) {
 
 			IClassification classification = Types.INSTANCE
-					.createClassificationFromMetadata(observables.get(0).getType(), resource.getAccordingTo());
+					.createClassificationFromMetadata(getObservables().get(0).getType(), resource.getAccordingTo());
 			resource.setValidatedResource(classification);
 
 		} else if (resource.getUrn() != null) {
@@ -1353,4 +1426,29 @@ public class Model extends KimObject implements IModel {
 	public boolean distributesLearning() {
 		return this.distributesLearning;
 	}
+
+	@Override
+	public boolean hasDistributedResources(Dimension.Type dimension, IScale scale) {
+		if (dimension == Dimension.Type.TIME) {
+			// TODO handle scale
+			return multipleTimes;
+		}
+		// TODO handle space when we need it
+		return false;
+	}
+
+	public MergedResource getMergedResource() {
+		return this.mergedResource;
+	}
+
+	/**
+	 * View models are only created on observation with the specific constructor and
+	 * this method is non-API.
+	 * 
+	 * @return
+	 */
+	public IViewModel getViewModel() {
+		return this.viewModel;
+	}
+
 }

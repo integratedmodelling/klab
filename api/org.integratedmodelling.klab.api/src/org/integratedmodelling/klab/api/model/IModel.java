@@ -22,10 +22,12 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IComputationProvider;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 
@@ -60,7 +62,7 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 
 	/**
 	 * Annotation requesting a learner for a quality "within" a countable to also
-	 * compute the learned quality over the context of learning, requiring the 
+	 * compute the learned quality over the context of learning, requiring the
 	 * predictors to become dependencies in it.
 	 */
 	public static final String DISTRIBUTE_ANNOTATION = "distribute";
@@ -126,7 +128,7 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * @param observable a
 	 *                   {@link org.integratedmodelling.klab.api.knowledge.IObservable}
 	 *                   object.
-	 * @param the context of the observation, or null
+	 * @param the        context of the observation, or null
 	 * @return the name with which the passed observable (or one compatible with it)
 	 *         is known in this model. If the observable isn't found in the model,
 	 *         this method should return the passed observable's local name, not
@@ -237,14 +239,18 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 */
 	IGeometry getGeometry();
 
-//	/**
-//	 * If true, this model uses the 'merging' clause to merge resources or other
-//	 * models into a change model for the inherent observable. Such models have the
-//	 * same observable as an output instead of a dependency, as normal change models
-//	 * do.
-//	 * 
-//	 * @return
-//	 */
-//	boolean isResourceMerger();
+	/**
+	 * True if the model annotates >1 resources that represent different extents in
+	 * the passed dimension. If the dimension is time, returning true makes this
+	 * model also handle change after it has been accepted to resolve its
+	 * observable. The model is not registered as a resolver of change in its own
+	 * right, so that we can only use it to handle change <b>after</b> it has been
+	 * used to initialize the observation. This way we ensure that the resource set
+	 * is used consistently throughout the contextualization.
+	 * 
+	 * @return true if there is more than one resource and the annotated resources
+	 *         represent several extents in the passed dimension.
+	 */
+	boolean hasDistributedResources(Type dimension, IScale scale);
 
 }

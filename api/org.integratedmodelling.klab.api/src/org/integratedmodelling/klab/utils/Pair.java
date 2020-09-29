@@ -17,7 +17,6 @@ package org.integratedmodelling.klab.utils;
 
 import org.integratedmodelling.klab.api.data.utils.IPair;
 
-// TODO: Auto-generated Javadoc
 /**
  * Stupid generic pair class.
  *
@@ -28,101 +27,105 @@ import org.integratedmodelling.klab.api.data.utils.IPair;
  */
 public class Pair<T1, T2> implements IPair<T1, T2> {
 
-    static boolean cmpObj(Object o1, Object o2) {
-        return (o1 == null && o2 == null) || (o1 != null && o2 != null && o1.equals(o2));
-    }
+	static boolean cmpObj(Object o1, Object o2) {
+		return (o1 == null && o2 == null) || (o1 != null && o2 != null && o1.equals(o2));
+	}
 
-    public static <A,B> Pair<A,B> create(A a, B b) {
-        return new Pair<A, B>(a,b);
-    }
+	public static <A, B> Pair<A, B> create(A a, B b) {
+		return new Pair<A, B>(a, b);
+	}
 
-    private static final long serialVersionUID = 1L;
-    protected T1              first            = null;
-    protected T2              second           = null;
+	private static final long serialVersionUID = 1L;
+	protected T1 first = null;
+	protected T2 second = null;
 
-    /**
-     *  Pair constructor comment.
-     */
-    public Pair() {
-    }
+	/**
+	 * Pair constructor comment.
+	 */
+	public Pair() {
+	}
 
-    /**
-     * Instantiates a new pair.
-     *
-     * @param first the first
-     * @param second the second
-     */
-    public Pair(T1 first, T2 second) {
-        this.first = first;
-        this.second = second;
-    }
+	/**
+	 * Instantiates a new pair.
+	 *
+	 * @param first  the first
+	 * @param second the second
+	 */
+	public Pair(T1 first, T2 second) {
+		this.first = first;
+		this.second = second;
+	}
 
-    /**
-     * Instantiates a new pair.
-     *
-     * @param pc the pc
-     */
-    public Pair(Pair<T1, T2> pc) {
-        this.first = pc.first;
-        this.second = pc.second;
-    }
+	/**
+	 * Instantiates a new pair.
+	 *
+	 * @param pc the pc
+	 */
+	public Pair(Pair<T1, T2> pc) {
+		this.first = pc.first;
+		this.second = pc.second;
+	}
 
-    /**
-     * Sets the first.
-     *
-     * @param newValue the new first
-     */
-    public void setFirst(T1 newValue) {
-        this.first = newValue;
-    }
+	/**
+	 * Sets the first.
+	 *
+	 * @param newValue the new first
+	 */
+	public void setFirst(T1 newValue) {
+		this.first = newValue;
+	}
 
-    /**
-     * Sets the second.
-     *
-     * @param newValue the new second
-     */
-    public void setSecond(T2 newValue) {
-        this.second = newValue;
-    }
+	/**
+	 * Sets the second.
+	 *
+	 * @param newValue the new second
+	 */
+	public void setSecond(T2 newValue) {
+		this.second = newValue;
+	}
 
-    /**
-     * <p>Getter for the field <code>first</code>.</p>
-     *
-     * @return a T1 object.
-     */
-    public T1 getFirst() {
-        return first;
-    }
+	/**
+	 * <p>
+	 * Getter for the field <code>first</code>.
+	 * </p>
+	 *
+	 * @return a T1 object.
+	 */
+	public T1 getFirst() {
+		return first;
+	}
 
-    /**
-     * <p>Getter for the field <code>second</code>.</p>
-     *
-     * @return a T2 object.
-     */
-    public T2 getSecond() {
-        return second;
-    }
+	/**
+	 * <p>
+	 * Getter for the field <code>second</code>.
+	 * </p>
+	 *
+	 * @return a T2 object.
+	 */
+	public T2 getSecond() {
+		return second;
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public String toString() {
-        return "{" + getFirst() + "," + getSecond() + "}";
-    }
+	/** {@inheritDoc} */
+	@Override
+	public String toString() {
+		return "{" + getFirst() + "," + getSecond() + "}";
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public boolean equals(Object obj) {
+	/** {@inheritDoc} */
+	@Override
+	public boolean equals(Object obj) {
 
-        if (!(obj instanceof Pair))
-            return false;
+		if (!(obj instanceof Pair))
+			return false;
 
-        return cmpObj(first, ((Pair<?, ?>) obj).first) && cmpObj(first, ((Pair<?, ?>) obj).second);
-    }
+		return cmpObj(first, ((Pair<?, ?>) obj).first) && cmpObj(first, ((Pair<?, ?>) obj).second);
+	}
 
-    /** {@inheritDoc} */
-    @Override
-    public int hashCode() {
-        return (first == null ? 0 : first.hashCode()) + (second == null ? 0 : second.hashCode());
-    }
+	/** {@inheritDoc} */
+	@Override
+	public int hashCode() {
+		return (first == null ? 0 : first.hashCode()) + (second == null ? 0 : second.hashCode());
+	}
 
 }

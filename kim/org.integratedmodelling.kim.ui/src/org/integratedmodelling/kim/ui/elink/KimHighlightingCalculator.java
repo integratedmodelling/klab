@@ -231,6 +231,12 @@ public class KimHighlightingCalculator extends DefaultSemanticHighlightingCalcul
 							&& ((DefinitionBody) node.getSemanticElement()).getName() != null) {
 
 						List<INode> nodes = NodeModelUtils.findNodesForFeature(node.getSemanticElement(),
+								KimPackage.Literals.DEFINITION_BODY__DEFINE_CLASS);
+						if (nodes.size() == 1 && nodes.get(0).getOffset() > start) {
+							acceptor.addPosition(start = nodes.get(0).getOffset(), nodes.get(0).getLength(),
+									KimHighlightingConfiguration.DEFINITION_CLASS_ID);
+						}
+						nodes = NodeModelUtils.findNodesForFeature(node.getSemanticElement(),
 								KimPackage.Literals.DEFINITION_BODY__NAME);
 						if (nodes.size() == 1 && nodes.get(0).getOffset() > start) {
 							acceptor.addPosition(start = nodes.get(0).getOffset(), nodes.get(0).getLength(),

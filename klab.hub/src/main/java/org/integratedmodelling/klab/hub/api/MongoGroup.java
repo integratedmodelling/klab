@@ -22,8 +22,7 @@ public class MongoGroup extends GenericModel{
 
 	private List<String> projectUrls;
 
-	@NotNull
-	private Boolean worldview;
+	private boolean worldview;
 
 	@Reference
 	private List<Observable> observables;
@@ -86,14 +85,6 @@ public class MongoGroup extends GenericModel{
 		this.projectUrls = projectUrls;
 	}
 
-	public Boolean getWorldview() {
-		return worldview;
-	}
-
-	public void setWorldview(Boolean worldview) {
-		this.worldview = worldview;
-	}
-
 	public List<Observable> getObservables() {
 		return observables;
 	}
@@ -151,6 +142,34 @@ public class MongoGroup extends GenericModel{
 
 	public void setPreliminary(boolean preliminary) {
 		this.preliminary = preliminary;
+	}
+
+	/**
+	 * @return the worldview
+	 */
+	public boolean isWorldview() {
+		return worldview;
+	}
+
+	/**
+	 * @param worldview the worldview to set
+	 */
+	public void setWorldview(boolean worldview) {
+		this.worldview = worldview;
+	}
+
+	/**
+	 * @return the uploadLimit
+	 */
+	public long getUploadLimit() {
+		return uploadLimit;
+	}
+
+	/**
+	 * @param uploadLimit the uploadLimit to set
+	 */
+	public void setUploadLimit(long uploadLimit) {
+		this.uploadLimit = uploadLimit;
 	}
 
 	public long getMaxUpload() {

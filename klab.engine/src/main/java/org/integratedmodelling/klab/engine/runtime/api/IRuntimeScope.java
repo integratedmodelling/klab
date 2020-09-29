@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -27,6 +28,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ContextualizationStrategy;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.provenance.Provenance;
@@ -410,5 +412,25 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * context and cannot be revoked after setting.
 	 */
 	boolean isOccurrent();
+
+	/**
+	 * Create and return a shallow copy of the observation catalog optimized for
+	 * quick search with ObservedConcept.
+	 * 
+	 * @return
+	 */
+	Map<ObservedConcept, IObservation> getCatalog();
+
+	/**
+	 * Add a view after it was computed. The result is typically compiled text, such
+	 * as HTML or Markdown, which can be sent or inserted in a report, but may also
+	 * be some lazy evaluator that will need to be recognizable and handled at the
+	 * scope side. The scope's action would be to make it available for insertion in
+	 * reports and/or to send to clients for quick display. More complex
+	 * functionalities may use the view to handle actions such as exporting.
+	 * 
+	 * @param view
+	 */
+	void addView(IKnowledgeView view);
 
 }

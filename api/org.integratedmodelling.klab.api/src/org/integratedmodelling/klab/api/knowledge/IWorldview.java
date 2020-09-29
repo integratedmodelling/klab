@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.knowledge;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 
 /**
@@ -27,14 +28,16 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
  */
 public interface IWorldview extends IWorkspace {
 
-    /**
-     * Translate the geometry from a {@link org.integratedmodelling.klab.api.data.IResource} to the corresponding
-     * IScale for the worldview.
-     *
-     * @param geometry a {@link org.integratedmodelling.klab.api.data.IGeometry} object.
-     * @return the translated geometry
-     */
-    IScale getScale(IGeometry geometry);
+	/**
+	 * Translate the geometry from a
+	 * {@link org.integratedmodelling.klab.api.data.IResource} to the corresponding
+	 * IScale for the worldview.
+	 *
+	 * @param geometry a {@link org.integratedmodelling.klab.api.data.IGeometry}
+	 *                 object.
+	 * @return the translated geometry
+	 */
+	IScale getScale(IGeometry geometry);
 
 	/**
 	 * If the root domain of the ontology redefines the passed core concept, return
@@ -44,4 +47,11 @@ public interface IWorldview extends IWorkspace {
 	 * @return
 	 */
 	IConcept getCoreConcept(IConcept coreConcept);
+
+	/**
+	 * Get the root namespace of the worldview.
+	 * 
+	 * @return
+	 */
+	INamespace getRootNamespace();
 }

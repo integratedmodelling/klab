@@ -78,14 +78,14 @@ public class ExpressionCharacterizer implements IPredicateResolver<IDirectObserv
 		 * compile in scalar context as this is applied to an individual object (we want
 		 * self to be a variable, not an entry in the artifact table).
 		 */
-		Descriptor selector = processor.describe(parameters.get("code", String.class), expressionContext, true);
+		Descriptor selector = processor.describe(parameters.get("code", String.class), expressionContext, CompilerOption.ForcedScalar);
 		Descriptor condition = null;
 		if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {
 			String condCode = parameters.get("ifcondition", String.class);
 			if (condCode == null) {
 				condCode = processor.negate(parameters.get("unlesscondition", String.class));
 			}
-			condition = processor.describe(condCode, expressionContext, true);
+			condition = processor.describe(condCode, expressionContext, CompilerOption.ForcedScalar);
 		}
 
 		for (String key : parameters.keySet()) {

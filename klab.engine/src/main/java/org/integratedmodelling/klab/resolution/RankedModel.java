@@ -10,6 +10,8 @@ import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -21,6 +23,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
+import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Contextualization;
@@ -33,6 +36,14 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.StringUtils;
 
+/**
+ * TODO consider removing and letting a copy of Model be ranked - using the
+ * delegate has side effects and requires ugly code when derived models are
+ * created.
+ * 
+ * @author Ferd
+ *
+ */
 public class RankedModel extends Model implements IRankedModel {
 
 	String modelUrn;
@@ -43,11 +54,11 @@ public class RankedModel extends Model implements IRankedModel {
 	private transient ModelReference modelData;
 
 	public RankedModel(Model model) {
-	    this.delegate = model;
-	    this.modelUrn = model.getName();
-	    this.ranks = new HashMap<>();
+		this.delegate = model;
+		this.modelUrn = model.getName();
+		this.ranks = new HashMap<>();
 	}
-	
+
 	public RankedModel(ModelReference model, Map<String, Double> ranks, int priority) {
 		this.modelUrn = model.getUrn();
 		this.modelData = model;
@@ -55,7 +66,7 @@ public class RankedModel extends Model implements IRankedModel {
 		this.priority = priority;
 	}
 
-	private Model getDelegate() {
+	public Model getDelegate() {
 
 		if (delegate == null) {
 
@@ -258,7 +269,7 @@ public class RankedModel extends Model implements IRankedModel {
 	public int getPriority() {
 		return priority;
 	}
-	
+
 	@Override
 	public boolean isDerived() {
 		return delegate.isDerived();
@@ -268,4 +279,100 @@ public class RankedModel extends Model implements IRankedModel {
 	public Strategy getObservationStrategy() {
 		return delegate.getObservationStrategy();
 	}
+
+	@Override
+	public boolean isKnownDependency(String targetId) {
+		return delegate.isKnownDependency(targetId);
+	}
+
+	@Override
+	public boolean isKnownObservable(String targetId) {
+		return delegate.isKnownObservable(targetId);
+	}
+
+	@Override
+	public IObservable findDependency(String name) {
+		return delegate.findDependency(name);
+	}
+
+	@Override
+	public IObservable findDependency(IConcept concept) {
+		return delegate.findDependency(concept);
+	}
+
+	@Override
+	public IObservable findDependency(IObservable concept) {
+		return delegate.findDependency(concept);
+	}
+
+	@Override
+	public IObservable findOutput(IObservable concept) {
+		return delegate.findOutput(concept);
+	}
+
+	@Override
+	public IObservable findOutput(IConcept concept) {
+		return delegate.findOutput(concept);
+	}
+
+	@Override
+	public boolean isInactive() {
+		return delegate.isInactive();
+	}
+
+	@Override
+	public void setInactive(boolean inactive) {
+		delegate.setInactive(inactive);
+	}
+
+	@Override
+	public boolean isSemantic() {
+		return delegate.isSemantic();
+	}
+
+	@Override
+	public boolean isLearning() {
+		return delegate.isLearning();
+	}
+
+	@Override
+	public IGeometry getGeometry() {
+		return delegate.getGeometry();
+	}
+
+	@Override
+	public List<IObservable> getArchetypes() {
+		return delegate.getArchetypes();
+	}
+
+	@Override
+	public List<IObservable> getPredictors() {
+		return delegate.getPredictors();
+	}
+
+	@Override
+	public boolean learnsWithinArchetype() {
+		return delegate.learnsWithinArchetype();
+	}
+
+	@Override
+	public IObservable getArchetype() {
+		return delegate.getArchetype();
+	}
+
+	@Override
+	public boolean distributesLearning() {
+		return delegate.distributesLearning();
+	}
+
+	@Override
+	public boolean hasDistributedResources(Type dimension, IScale scale) {
+		return delegate.hasDistributedResources(dimension, scale);
+	}
+
+	@Override
+	public MergedResource getMergedResource() {
+		return delegate.getMergedResource();
+	}
+
 }

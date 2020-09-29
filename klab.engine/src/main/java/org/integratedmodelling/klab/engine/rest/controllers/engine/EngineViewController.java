@@ -9,6 +9,8 @@ import java.io.InputStream;
 import java.security.Principal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -19,6 +21,8 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
@@ -161,10 +165,10 @@ public class EngineViewController {
 
 			ret.add(Observations.INSTANCE.createArtifactDescriptor((IObservation) child/* , obs */, loc, 0,
 					obs instanceof ObservationGroupView ? obs.getId() : null));
-			
+
 			// assume this was notified
 			scope.getNotifiedObservations().add(child.getId());
-			
+
 			n++;
 		}
 
@@ -202,9 +206,6 @@ public class EngineViewController {
 
 		ILocator loc = obs.getScale().initialization();
 		if (locator != null) {
-			/*
-			 * NB: TEMPORARY! must send the T dimension locator if the context is temporal.
-			 */
 			if (obs.getScale().getTime() != null && !locator.toLowerCase().startsWith("t")) {
 				locator = "T1(1){time=INITIALIZATION}" + locator;
 			}
@@ -212,6 +213,9 @@ public class EngineViewController {
 			loc = obs.getScale().at(loc);
 		}
 
+//		System.out.println(
+//				"REQUESTED " + loc + ": " + obs.getTimestamp() + "\n   " + Arrays.toString(obs.getUpdateTimestamps()));
+		
 		boolean done = false;
 
 		// special handling for some types: with time, these may be integrated in the
@@ -253,7 +257,9 @@ public class EngineViewController {
 				String descr = value instanceof Number
 						? NumberFormat.getInstance().format(((Number) value).doubleValue())
 						: (value instanceof IConcept ? Concepts.INSTANCE.getDisplayLabel(((IConcept) value))
-								: (value instanceof Boolean ? ((Boolean) value ? Observations.PRESENT_LABEL : Observations.NOT_PRESENT_LABEL)
+								: (value instanceof Boolean
+										? ((Boolean) value ? Observations.PRESENT_LABEL
+												: Observations.NOT_PRESENT_LABEL)
 										: "No data"));
 
 				if (obs.getObservable().getUnit() != null) {

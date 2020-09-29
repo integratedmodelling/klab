@@ -200,8 +200,9 @@ public interface ITime extends IExtent {
 
 		/**
 		 * Get the <em>indicative</em> span of one step in milliseconds. Spans may be
-		 * under- or over-estimates if the resolution is in irregular steps, such as
-		 * months, years and multiple thereof.
+		 * under-estimates if the resolution is in irregular steps, such as months,
+		 * years and multiple thereof. In such cases, the smallest interval will be
+		 * reported and isRegular() will return false.
 		 * 
 		 * @return
 		 */
@@ -215,6 +216,12 @@ public interface ITime extends IExtent {
 		 * Time before time exists: used internally in contextualizing perdurants.
 		 */
 		INITIALIZATION,
+
+		/**
+		 * Time after all transitions have happened. Also used to contexualize views and
+		 * non-semantic artifacts that must see the entire context.
+		 */
+		TERMINATION,
 
 		/**
 		 * Generic focus on a period without temporally locating it but specifying the
@@ -317,7 +324,7 @@ public interface ITime extends IExtent {
 	boolean is(Type type);
 
 	/**
-	 * Get the time type.
+	 * Get the time type. Turns out there may be many, many ways to interpret time.
 	 * 
 	 * @return
 	 */
@@ -340,5 +347,23 @@ public interface ITime extends IExtent {
 	 * @return
 	 */
 	double getLength(IUnit temporalUnit);
+
+	/**
+	 * If this extent is a subdivision of a distributed extent, return the next in
+	 * line after it, or null if it's the last subdivision. Otherwise return null.
+	 * 
+	 * @return
+	 */
+	ITime getNext();
+
+	/**
+	 * A temporal extent always represents a period, but when created from a query
+	 * may be simply focused on a particular timepoint, used to locate the correct
+	 * period in a scale that has (regular or irregular) timeslices. These are not
+	 * produced during contextualization but can be used as locators.
+	 * 
+	 * @return
+	 */
+	ITimeInstant getFocus();
 
 }

@@ -125,7 +125,7 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 		// ? Units.INSTANCE.getTimeExtentUnit(values.getObservable().getUnit())
 		// : null;
 
-		for (ILocator locator : ret.getScale()) {
+		for (ILocator locator : context.getScale()) {
 
 			Object value = values.get(locator);
 			Object other = valueOperand;

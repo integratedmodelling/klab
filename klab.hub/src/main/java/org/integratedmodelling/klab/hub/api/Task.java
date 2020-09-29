@@ -12,6 +12,7 @@ import org.springframework.data.annotation.Id;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.Transient;
 import org.springframework.data.mongodb.core.mapping.Document;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 
@@ -20,6 +21,8 @@ public abstract class Task {
 
 	@Id
 	String id;
+	
+	String user;
 	
 	DateTime issued;
     
@@ -65,15 +68,31 @@ public abstract class Task {
     	this(null, parentStatus);
     }
     protected Task(Role roleRequirement, TaskStatus parentStatus) {
-    	this.roleRequirement = roleRequirement;
+    	this.setUser(SecurityContextHolder.getContext().getAuthentication().getName());
+    	this.setRoleRequirement(roleRequirement);;
     	this.setIssued();
 		this.setStatus(TaskStatus.pending);
 		this.setParentStatus(parentStatus);
 		this.setType(); // force to set the type
+		// this.setDescription(this.getType().name());
     }
 
 	public String getId() {
 		return id;
+	}
+
+	/**
+	 * @return the user
+	 */
+	public String getUser() {
+		return user;
+	}
+
+	/**
+	 * @param user the user to set
+	 */
+	public void setUser(String user) {
+		this.user = user;
 	}
 
 	public void setId(String id) {
@@ -200,7 +219,8 @@ public abstract class Task {
 	}
 	
 	/**
-	 * Added to force inmplementation to set the type, is called in constructor
+	 * Added to force implementation to set the type, is called in constructor
 	 */
 	public abstract void setType();
+
 }

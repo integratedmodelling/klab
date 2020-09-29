@@ -266,6 +266,7 @@ public class CoreOntology extends AbstractWorkspace {
 		 * the root domain for the ontologies.
 		 */
 		public static final String CORE_DOMAIN = "observation:Domain";
+		public static final String CORE_VOID = "observation:Void";
 		public static final String CORE_OBSERVABLE = "observation:Observable";
 		public static final String CORE_OBSERVATION = "observation:Observation";
 		public static final String CORE_OBJECT = "observation:DirectObservable";

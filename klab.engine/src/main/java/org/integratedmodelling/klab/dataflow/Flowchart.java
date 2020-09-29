@@ -702,7 +702,14 @@ public class Flowchart {
 			public Type getIdentifierType(String identifier) {
 				return types.get(identifier);
 			}
-		}, false);
+
+			@Override
+			public void addKnownIdentifier(String id, IKimConcept.Type type) {
+				// TODO Auto-generated method stub
+				
+			}
+
+		});
 
 		return descriptor.getIdentifiers();
 	}

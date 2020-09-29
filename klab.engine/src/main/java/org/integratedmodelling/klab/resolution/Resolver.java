@@ -8,12 +8,15 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.UnarySemanticOperator;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -34,6 +37,7 @@ import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
@@ -129,8 +133,10 @@ public class Resolver {
 	}
 
 	/**
-	 * Resolve the passed object in the passed parent scope, using the resolution
-	 * strategy appropriate for the type.
+	 * Root-level resolver: resolve the passed object in the passed parent scope,
+	 * using the resolution strategy appropriate for the type. If the first
+	 * resolution determines that the context occurs, determine which observables
+	 * may change and make further passes to resolve their change as well.
 	 * 
 	 * @param resolvable
 	 * @param parentScope
@@ -139,17 +145,68 @@ public class Resolver {
 	 */
 	public ResolutionScope resolve(IResolvable resolvable, ResolutionScope parentScope) throws KlabException {
 
+		ResolutionScope ret = null;
+
 		if (resolvable instanceof Observable) {
 			parentScope.setOriginalScope(
 					((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
-			return resolve((Observable) resolvable, parentScope,
+			ret = resolve((Observable) resolvable, parentScope,
 					((Observable) resolvable).getDescriptionType().getResolutionMode());
 		} else if (resolvable instanceof Model) {
 			parentScope.setOriginalScope(Scope.MODEL);
-			return resolve((Model) resolvable, parentScope);
+			ret = resolve((Model) resolvable, parentScope);
 		} else if (resolvable instanceof Observer) {
 			parentScope.setOriginalScope(Scope.OBSERVER);
-			return resolve((Observer) resolvable, parentScope);
+			ret = resolve((Observer) resolvable, parentScope);
+		}
+
+		if (ret != null) {
+
+			if (ret.isOccurrent()) {
+
+				/*
+				 * visit the scope (building a list of ResolvedObservable for all qualities that
+				 * may change) and resolve their change in parent scope
+				 */
+				for (ObservedConcept observable : parentScope.getResolved(Type.QUALITY)) {
+
+					if (observable.getObservable().getValueOperators().size() > 0) {
+						// these are mere transformations and we don't need their change.
+						continue;
+					}
+					
+					IObservable toResolve = observable.getObservable().getBuilder(parentScope.getMonitor())
+							.as(UnarySemanticOperator.CHANGE).buildObservable();
+
+					if (parentScope.getResolvedObservable(toResolve, Mode.RESOLUTION) != null) {
+						continue;
+					}
+					
+					ret.getMonitor().info("Resolution scope is occurrent: resolving additional observable "
+							+ Concepts.INSTANCE.getDisplayName(toResolve.getType()));
+
+					ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(ret), Mode.RESOLUTION);
+
+					if (cscope.getCoverage().isRelevant()) {
+
+						ret.getMonitor().info("Resolution of change in "
+								+ Concepts.INSTANCE.getDisplayName(observable.getConcept()) + " was successful with "
+								+ NumberFormat.getPercentInstance().format(ret.getCoverage().getCoverage())
+								+ " coverage");
+
+						ret.getOccurrentResolutions().add(cscope);
+
+					} else {
+						/*
+						 * These are accessible in the dataflow
+						 */
+						ret.getImplicitlyChangingObservables().add(observable);
+					}
+				}
+
+			}
+
+			return ret;
 		}
 
 		return parentScope.empty();
@@ -191,12 +248,7 @@ public class Resolver {
 	public ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode, IScale scale,
 			IModel model) throws KlabException {
 		// TODO support model
-		ResolutionScope ret = resolve(observable, parentScope.getChildScope(observable, mode, (Scale) scale, model),
-				mode);
-//		if (ret.getCoverage().isRelevant()) {
-//			parentScope.merge(ret);
-//		}
-		return ret;
+		return resolve(observable, parentScope.getChildScope(observable, mode, (Scale) scale, model), mode);
 	}
 
 	/**
@@ -212,13 +264,8 @@ public class Resolver {
 	 */
 	public ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Subject source, Subject target,
 			IScale scale, IModel upstreamModel) throws KlabException {
-
-		ResolutionScope ret = resolve(observable,
-				parentScope.getChildScope(observable, (Scale) scale, source, target, upstreamModel), Mode.RESOLUTION);
-//		if (ret.getCoverage().isRelevant()) {
-//			parentScope.merge(ret);
-//		}
-		return ret;
+		return resolve(observable, parentScope.getChildScope(observable, (Scale) scale, source, target, upstreamModel),
+				Mode.RESOLUTION);
 	}
 
 	/**
@@ -257,7 +304,7 @@ public class Resolver {
 	 *         mandatory, or the passed scope's coverage if it's optional.
 	 */
 	private ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode) {
-		
+
 		/*
 		 * Check first if we need to redistribute the observable, in which case we only
 		 * resolve the distribution context and we leave it to the runtime context to
@@ -301,7 +348,7 @@ public class Resolver {
 				deferred.setCoverage(ret.getCoverage());
 				ret.link(deferred);
 			}
-			
+
 			if (Observables.INSTANCE.isOccurrent(observable.getType())) {
 				parentScope.setOccurrent(true);
 			}
@@ -309,6 +356,10 @@ public class Resolver {
 			return ret;
 		}
 
+		/**
+		 * The result scope will have non-empty coverage if we have resolved this
+		 * observable upstream.
+		 */
 		ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
 		/*
@@ -332,7 +383,7 @@ public class Resolver {
 		 * resolution.
 		 */
 		Coverage coverage = new Coverage(ret.getCoverage());
-		
+
 		/**
 		 * If we're resolving something that has been resolved before (i.e. not
 		 * resolving a countable, which only happens before it is created), get the
@@ -342,10 +393,11 @@ public class Resolver {
 		Pair<String, IArtifact> previousArtifact = null;
 		boolean tryPrevious = ret.getContext() != null
 				&& (!observable.is(Type.COUNTABLE) || mode == Mode.INSTANTIATION);
+
 		if (tryPrevious) {
 			/*
-			 * look in the catalog. This will have accurate coverage but not necessarily every
-			 * observation (those coming from attributes will be missing).
+			 * look in the catalog. This will have accurate coverage but not necessarily
+			 * every observation (those coming from attributes will be missing).
 			 */
 			previousArtifact = ((DirectObservation) ret.getContext()).getScope().findArtifact(observable);
 			if (previousArtifact == null) {
@@ -466,11 +518,11 @@ public class Resolver {
 		}
 
 		if (coverage.isRelevant()) {
-			
+
 			if (Observables.INSTANCE.isOccurrent(observable)) {
 				parentScope.setOccurrent(true);
 			}
-			
+
 			ret.setCoverage(coverage);
 			parentScope.merge(ret);
 			if (ret.getCoverage().getCoverage() < 0.95) {

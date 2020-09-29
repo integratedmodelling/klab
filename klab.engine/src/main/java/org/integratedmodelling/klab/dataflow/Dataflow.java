@@ -5,12 +5,10 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 
-import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.api.IContextualizable;
-import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IContextualizable.InteractiveParameter;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Interaction;
 import org.integratedmodelling.klab.Klab;
@@ -37,7 +35,6 @@ import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
-import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
@@ -55,6 +52,7 @@ import org.integratedmodelling.klab.utils.TypeUtils;
 import org.integratedmodelling.klab.utils.Utils;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
+import org.jgrapht.graph.DefaultEdge;
 
 /**
  * The semantically aware implementation of {@link IDataflow}, built by the
@@ -86,11 +84,13 @@ import org.jgrapht.graph.DefaultDirectedGraph;
  */
 public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
+	public static final String ACTUATOR = "ACTUATOR";
+
 	private String description;
 	private DirectObservation context;
 	private ResolutionScope resolutionScope;
-	IDirectObservation relationshipSource;
-	IDirectObservation relationshipTarget;
+	private IDirectObservation relationshipSource;
+	private IDirectObservation relationshipTarget;
 
 	// this could simply be the "dataflow" in the parent actuator but it's clearer
 	// this way.
@@ -114,7 +114,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	// dependency structure, shared along the entire hierarchy
 	Graph<ObservedConcept, DefaultEdge> dependencies;
-	
+
 	class AnnotationParameterValue {
 
 		String annotationId;
@@ -182,11 +182,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		reset();
 
 		/*
-		 * TODO build the observable dependency hierarcy
+		 * build the observable dependency hierarchy to put in the runtime context. The
+		 * scheduler will use this to determine which actuators need recomputation among
+		 * those that have only implicit change associated.
 		 */
 		this.dependencies = buildDependencies();
 
-		
 		/*
 		 * we need the initialization scale for the dataflow but we must create our
 		 * targets with the overall scale. Problem is, occurrent actuators must create
@@ -200,12 +201,13 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 
 		/*
-		 * a trivial dataflow is the one that won't do anything but create the target, and notifying it
-		 * would be a lot of notification if it's called for 3000 instantiated objects.
+		 * a trivial dataflow is the one that won't do anything but create the target,
+		 * and notifying it would be a lot of notification if it's called for 3000
+		 * instantiated objects.
 		 */
 		boolean trivial = actuators.size() < 2 && (actuators.size() == 0 || (actuators.size() == 1
 				&& ((Actuator) actuators.get(0)).getObservable().is(IKimConcept.Type.COUNTABLE)
-				&& ((Actuator)actuators.get(0)).isTrivial()));
+				&& ((Actuator) actuators.get(0)).isTrivial()));
 
 		if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
 			((AbstractTask<?>) monitor.getIdentity()).notifyStart();
@@ -291,27 +293,17 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 
 		/*
-		 * Initialization run, which will also schedule any further temporal actions.
-		 * This is normally just one actuator. Children at the dataflow level could run
-		 * in parallel, so have the runtime start futures for each child and chain the
-		 * results when they come. This scenario is not possible at the moment so we
-		 * spare the trouble of coding it in.
+		 * Initialization run, which will also schedule and run any further temporal
+		 * actions. This is normally one initialization actuator plus any additional
+		 * process scheduling enqueued by resolving inferred change in occurrent
+		 * contexts.
 		 */
 		IArtifact ret = null;
-		for (IActuator actuator : actuators) {
-			try {
-
-				IArtifact data = Klab.INSTANCE.getRuntimeProvider()
-						.compute(actuator, this, scale, resolutionScope/* , context */, monitor).get();
-				if (ret == null) {
-					ret = data;
-				} else {
-					((ObservedArtifact) ret).chain(data);
-				}
-			} catch (Throwable e) {
-				if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
-					throw ((AbstractTask<?>) monitor.getIdentity()).notifyAbort(e);
-				}
+		try {
+			ret = Klab.INSTANCE.getRuntimeProvider().compute(this, scale.initialization(), resolutionScope, monitor).get();
+		} catch (Throwable e) {
+			if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
+				throw ((AbstractTask<?>) monitor.getIdentity()).notifyAbort(e);
 			}
 		}
 
@@ -320,7 +312,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		if (parentComputation == null) {
 			rootDataflow = this;
 			((RuntimeScope) ((Observation) ret).getScope()).setDataflow(this);
-		} else {
+		} else if (ret != null) {
 
 			rootDataflow = (Dataflow) ((Observation) ret).getScope().getDataflow();
 
@@ -428,25 +420,29 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		}
 	}
 
-
 	private Graph<ObservedConcept, DefaultEdge> buildDependencies() {
 		Graph<ObservedConcept, DefaultEdge> ret = new DefaultDirectedGraph<>(DefaultEdge.class);
+		boolean primary = true;
 		for (IActuator actuator : getActuators()) {
-			buildDependencies((Actuator) actuator, ret);
+			buildDependencies((Actuator) actuator, ret, primary);
+			primary = false;
 		}
 		return ret;
 	}
 
-	private ObservedConcept buildDependencies(Actuator actuator, Graph<ObservedConcept, DefaultEdge> graph) {
+	private ObservedConcept buildDependencies(Actuator actuator, Graph<ObservedConcept, DefaultEdge> graph,
+			boolean primary) {
 
 		ObservedConcept observable = new ObservedConcept(actuator.getObservable(), actuator.getMode());
+		observable.getData().put(ACTUATOR, actuator);
+
 		graph.addVertex(observable);
 		for (IActuator child : actuator.getActuators()) {
-			graph.addEdge(buildDependencies((Actuator)child, graph), observable);
+			graph.addEdge(buildDependencies((Actuator) child, graph, primary), observable);
 		}
 		return observable;
 	}
-	
+
 	/**
 	 * If the parameters in a specified annotation have been changed by the user,
 	 * return a new annotation with the new parameters.
@@ -604,7 +600,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 	public boolean isPrimary() {
 		return parent == null;
 	}
-	
+
 	public String getDescription() {
 		return description;
 	}
@@ -783,8 +779,13 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 		this.notificationMode = mode;
 		return this;
 	}
-	
+
 	public Graph<ObservedConcept, DefaultEdge> getDependencies() {
 		return this.dependencies;
 	}
+
+	public Set<ObservedConcept> getImplicitlyChangingObservables() {
+		return resolutionScope.getImplicitlyChangingObservables();
+	}
+
 }

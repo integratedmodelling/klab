@@ -11,7 +11,6 @@ import java.util.Set;
 import java.util.function.Function;
 
 import org.apache.commons.collections.IteratorUtils;
-import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -35,12 +34,14 @@ import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -92,10 +93,12 @@ import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
+import org.integratedmodelling.klab.rest.KnowledgeViewReference;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
@@ -148,6 +151,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	Map<ResolvedObservable, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
 	private IActuator actuator;
 	private boolean occurrent;
+	private List<IKnowledgeView> views = new ArrayList<>();
 
 	public RuntimeScope(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
@@ -766,7 +770,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 							"internal: cannot find merging actuator named " + actuator.getPartitionedTarget());
 				}
 
-				IArtifact merging = createTarget(mergingActuator, scale, scope, rootSubject);
+				IArtifact merging = createTarget(mergingActuator, actuator.getDataflow().getResolutionScale(), scope,
+						rootSubject);
 
 				/*
 				 * partition sub-state does not go in the catalog
@@ -786,8 +791,34 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		} else if (!actuator.isInput()) {
 
+			if (actuator.getObservable().is(Type.CHANGE) && actuator.getModel() != null
+					&& actuator.getModel().isDerived()) {
+				/*
+				 * Find the changing target and set that as the target. This is confusing but
+				 * the derived model copies any computation that affects the original quality,
+				 * so the alternative would be to keep it a process and duplicate all the
+				 * computation in the process contextualizer, which is way messier.
+				 */
+				IConcept changing = Observables.INSTANCE.getDescribedType(actuator.getObservable().getType());
+				for (IArtifact artifact : catalog.values()) {
+					if (artifact instanceof IObservation
+							&& ((IObservation) artifact).getObservable().getType().equals(changing)) {
+						ret.target = artifact;
+						break;
+					}
+				}
+
+				// TODO see if we need to change anything else. At this point the semantics and
+				// the type are out of sync
+				// with the target, which could be OK - we compute a change process by passing
+				// the changing target to
+				// known computations that require it.
+
+			} else if (ret.artifactType != Type.NOTHING) {
+				ret.target = ret.createTarget((Actuator) actuator, actuator.getDataflow().getResolutionScale(), scope,
+						rootSubject);
+			}
 			// save existing target
-			ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
 			if (ret.target != null && this.target != null) {
 				ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
 				// ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator)
@@ -822,7 +853,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		ret.actuator = actuator;
 		ret.contextSubject = scope.getContext();
 		ret.dataflow = (Dataflow) dataflow;
-		
+
 		for (IActuator a : actuator.getActuators()) {
 			if (!((Actuator) a).isExported()) {
 				String id = a.getAlias() == null ? a.getName() : a.getAlias();
@@ -836,7 +867,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 
 		// save existing target
-		ret.target = ret.createTarget((Actuator) actuator, scale, scope, rootSubject);
+		ret.target = ret.createTarget((Actuator) actuator, ((Actuator) actuator).getDataflow().getResolutionScale(),
+				scope, rootSubject);
 		if (ret.target != null && this.target != null) {
 			ret.semantics.put(actuator.getName(), ((Actuator) actuator).getObservable());
 			ret.artifactType = Observables.INSTANCE.getObservableType(((Actuator) actuator).getObservable(), true);
@@ -1572,8 +1604,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 					RuntimeScope root = getRootScope();
 					if (root.scheduler == null) {
-						root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope.getScale().getTime(),
-								monitor);
+						root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope, monitor);
 					}
 					root.occurrent = true;
 					((Scheduler) root.scheduler).schedule(action, observation, Time.create(aa), this);
@@ -1591,10 +1622,39 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 * Only occurrents occur. FIXME yes, but they may affect continuants
 		 */
 		boolean isOccurrent = actuator.getType().isOccurrent();
+		IViewModel.Schedule viewSchedule = null;
+
+		if (actuator.getModel() != null && actuator.getModel().getViewModel() != null
+				&& actuator.getDataflow().getResolutionScale().isTemporallyDistributed()) {
+			/*
+			 * schedule according to the view's definition. For now views are the only thing
+			 * that can also be scheduled at termination, after contextualization. No
+			 * schedule means we get scheduled as if we adopted the main temporal schedule.
+			 * Otherwise we can get scheduled at start, end or (later) arbitrary
+			 * resolutions.
+			 * 
+			 * Init case is dealt with directly as the contextualizer is always called, and
+			 * only initializes if schedule.isInit() or is null.
+			 */
+			IViewModel.Schedule schedule = actuator.getModel().getViewModel().getSchedule();
+			if (schedule == null || schedule.isTemporal()) {
+				isOccurrent = true;
+			} else {
+				if (schedule.isEnd() || schedule.isStart()) {
+					// pass the schedule on to the scheduler in each computation.
+					isOccurrent = true;
+					viewSchedule = schedule;
+				}
+			}
+		}
+
 		if (isOccurrent) {
 
 			List<Computation> schedule = new ArrayList<>();
 			for (Computation computation : actuator.getContextualizers()) {
+
+				// if not null, the scheduler will deal with it.
+				computation.schedule = viewSchedule;
 
 				/*
 				 * nothing meant for initialization should be scheduled. Resource is null if
@@ -1621,7 +1681,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 						|| (isOccurrent
 								&& Observables.INSTANCE.isAffectedBy(computation.observable, actuator.getObservable()))
 						|| (computation.target != null
-								&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null);
+								&& computation.resource.getGeometry().getDimension(Dimension.Type.TIME) != null)
+						// if model is derived, it was put here on purpose to represent change so we
+						// schedule it.
+						|| (actuator.getModel() != null && actuator.getModel().isDerived());
 
 				if (isTransition || targetOccurs) {
 					schedule.add(computation);
@@ -1636,7 +1699,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			root.occurrent = true;
 
 			if (root.scheduler == null) {
-				root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope.getScale().getTime(), monitor);
+				root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope, monitor);
 			}
 
 			((Scheduler) root.scheduler).schedule(actuator, schedule, this);
@@ -1781,6 +1844,45 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	public void setOccurrent() {
 		getRootScope().occurrent = true;
+	}
+
+	@Override
+	public Map<ObservedConcept, IObservation> getCatalog() {
+		Map<ObservedConcept, IObservation> ret = new HashMap<>();
+		for (IArtifact artifact : catalog.values()) {
+			if (artifact instanceof IObservation) {
+				ret.put(new ObservedConcept(((IObservation) artifact).getObservable(),
+						artifact instanceof ObservationGroup ? Mode.INSTANTIATION : Mode.RESOLUTION),
+						(IObservation) artifact);
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public void addView(IKnowledgeView view) {
+
+		this.views.add(view);
+
+		/*
+		 * send directly to clients. If view can export, keep view and send URL to
+		 * export service.
+		 */
+		KnowledgeViewReference descriptor = new KnowledgeViewReference();
+		descriptor.setContextId(monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
+		descriptor.setBody(view.getCompiledView("text/html"));
+		descriptor.setViewClass(view.getViewClass());
+		descriptor.setTitle(view.getTitle());
+		descriptor.setViewId(view.getId());
+		descriptor.getExportFormats().addAll(view.getExportFormats());
+		descriptor.setLabel(
+				view.getLabel() == null ? (StringUtil.capitalize(view.getViewClass()) + " " + (views.size() + 1))
+						: view.getLabel());
+
+		ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
+		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.UserInterface,
+				IMessage.Type.ViewAvailable, descriptor));
+
 	}
 
 }

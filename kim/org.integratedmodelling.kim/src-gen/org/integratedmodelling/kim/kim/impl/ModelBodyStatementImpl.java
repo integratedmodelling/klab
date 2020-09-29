@@ -25,7 +25,7 @@ import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Classification;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.KimPackage;
-import org.integratedmodelling.kim.kim.Metadata;
+import org.integratedmodelling.kim.kim.Map;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.Table;
@@ -301,7 +301,7 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @generated
    * @ordered
    */
-  protected Metadata metadata;
+  protected Map metadata;
 
   /**
    * <!-- begin-user-doc -->
@@ -745,7 +745,7 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @generated
    */
   @Override
-  public Metadata getMetadata()
+  public Map getMetadata()
   {
     return metadata;
   }
@@ -755,9 +755,9 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetMetadata(Metadata newMetadata, NotificationChain msgs)
+  public NotificationChain basicSetMetadata(Map newMetadata, NotificationChain msgs)
   {
-    Metadata oldMetadata = metadata;
+    Map oldMetadata = metadata;
     metadata = newMetadata;
     if (eNotificationRequired())
     {
@@ -773,7 +773,7 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @generated
    */
   @Override
-  public void setMetadata(Metadata newMetadata)
+  public void setMetadata(Map newMetadata)
   {
     if (newMetadata != metadata)
     {
@@ -935,7 +935,7 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         getActions().addAll((Collection<? extends ActionSpecification>)newValue);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__METADATA:
-        setMetadata((Metadata)newValue);
+        setMetadata((Map)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -1000,7 +1000,7 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         getActions().clear();
         return;
       case KimPackage.MODEL_BODY_STATEMENT__METADATA:
-        setMetadata((Metadata)null);
+        setMetadata((Map)null);
         return;
     }
     super.eUnset(featureID);

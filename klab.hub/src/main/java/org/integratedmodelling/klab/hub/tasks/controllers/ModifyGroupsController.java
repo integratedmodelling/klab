@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.hub.tasks.controllers;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
@@ -21,7 +21,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponents;
@@ -68,14 +67,15 @@ public class ModifyGroupsController {
 	public ResponseEntity<?> requestGroupsDecision(
 			@PathVariable("id") String id,
 			@RequestParam("accept") Boolean decision,
-			@RequestBody Optional<String> deniedMessage,
+			@RequestBody Map<String, String> body,
 			HttpServletRequest request,
 			UriComponentsBuilder b) {
 		Task task;
 		if (decision) {
 	    	task = service.acceptTask(id, request);
 	    } else {
-	    	task = service.denyTask(id, request, deniedMessage.isPresent() ? deniedMessage.get() : null);
+	    	String deniedMessage = body.get("deniedMessage");
+	    	task = service.denyTask(id, request, deniedMessage);
 	    }
 	    
 		UriComponents uriComponents = b.path(API.HUB.TASK_BASE_ID).buildAndExpand(id);

@@ -94,5 +94,4 @@ public class RemoveGroupTask extends ModifyGroupsTask{
 	protected TaskCommand getCommand() {
 		return command;
 	}
-
 }

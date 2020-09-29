@@ -45,7 +45,7 @@ public class StateSummary {
 	private Histogram histogram;
 
 	private Colormap colormap;
-	
+
 	/**
 	 * The data range
 	 */
@@ -55,7 +55,7 @@ public class StateSummary {
 	private double variance;
 	private boolean singleValued;
 	private double sum;
-	
+
 	/**
 	 * The value count
 	 */
@@ -166,11 +166,11 @@ public class StateSummary {
 	}
 
 	public double getSum() {
-	    return this.sum;
+		return this.sum;
 	}
 
 	public void setSum(double sum) {
-	    this.sum = sum;
+		this.sum = sum;
 	}
 
 	/**
@@ -190,9 +190,10 @@ public class StateSummary {
 	public boolean isSingleValued() {
 		return singleValued;
 	}
-	
+
 	public void setSingleValued(boolean b) {
 		this.singleValued = b;
 	}
+
 
 }

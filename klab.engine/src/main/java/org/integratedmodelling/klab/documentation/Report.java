@@ -123,7 +123,7 @@ public class Report implements IReport {
         this.taggedText.put(item.getId(), item);
     }
 
-    public IDocumentationProvider.Item getTaggedText(String tag) {
+	public IDocumentationProvider.Item getTaggedText(String tag) {
         return this.taggedText.get(tag);
     }
 

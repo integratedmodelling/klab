@@ -76,8 +76,6 @@ public class ModelReference {
 
 	private String id;
 	private String name;
-//	private String urn;
-
 	private String serverId;
 	private String projectUrn;
 	private String projectId;
@@ -86,7 +84,6 @@ public class ModelReference {
 	private boolean inScenario;
 	private boolean reification;
 	private boolean hasDirectData;
-	// private boolean computed;
 	private boolean hasDirectObjects;
 	private boolean spatial;
 	private boolean temporal;

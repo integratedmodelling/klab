@@ -70,6 +70,14 @@ public class Utils {
 		Arrays.fill(ret, value);
 		return ret;
 	}
+	
+	public static long[] toLongArray(List<Long> list) {
+		long[] ret = new long[list.size()];
+		for (int i = 0; i < list.size(); i++) {
+			ret[i] = list.get(i) == null ? 0L : list.get(i);
+		}
+		return ret;
+	}
 
 	public static boolean isPOD(Object value) {
 		if (value instanceof Class<?>) {

@@ -81,7 +81,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	@Override
 	public void add(Object value) {
 		if (state != null) {
-			state.set(state.getGeometry().at(offset++), value);
+			state.set(context.getScale().at(offset++), value);
 		} else {
 			throw new IllegalStateException("data builder: cannot add items: no state set");
 		}

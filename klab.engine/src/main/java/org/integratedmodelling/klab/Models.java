@@ -33,8 +33,10 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IModelService;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
+import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.kim.KimNotifier;
 import org.integratedmodelling.klab.model.Namespace;
@@ -142,11 +144,11 @@ public enum Models implements IModelService {
 	}
 
 	// @Override
-	public void index(IModel model, IMonitor monitor) throws KlabException {
+	public synchronized boolean index(IModel model, IMonitor monitor) throws KlabException {
 
 		// wrong models don't get indexed; non-semantic models do (as private)
 		if (model.getStatement().isErrors() || model.getObservables().size() == 0) {
-			return;
+			return true;
 		}
 
 		try {
@@ -154,11 +156,15 @@ public enum Models implements IModelService {
 			if (model.getScope() != Scope.NAMESPACE) {
 				Indexer.INSTANCE.index(model.getStatement(), model.getNamespace().getName());
 			}
+			monitor.info("model " + model.getName() + " was successfully indexed");
 		} catch (Throwable e) {
 			// happens with URN resources in space specs
-			monitor.error("error indexing model " + model.getName() + ": " + e.getMessage());
+			monitor.error("error indexing model " + model.getName() + ": model will be inactive"/* + e.getMessage() */);
 			((org.integratedmodelling.klab.model.Model) model).setInactive(true);
+			return false;
 		}
+
+		return true;
 	}
 
 	@Override
@@ -236,26 +242,48 @@ public enum Models implements IModelService {
 	}
 
 	/**
-     * Called when a candidate observable has more than one model and/or a computation, making it a 
-     * derived strategy to observe a given concepts. Must return a list with one single model with all
-     * the candidates as dependencies and the computations as computables, belonging to the namespace
-     * that resolution is currently happening into, wrapped into a ranked model
-     * with maximum rank.
-     * 
-     * When the whole thing becomes more intelligent, this may return a number of ranked alternative
-     * strategies, e.g. depending on previous paths taken and/or reasoning to find more complex pathways
-     * to the observation.
-     * 
-     * @param candidateObservable
-     * @param ret
-     * @return
-     */
-    public List<IRankedModel> createDerivedModel(Observable mainObservable, ObservationStrategy candidateObservable,
-            ResolutionScope scope) {
-    	
-    	org.integratedmodelling.klab.model.Model inner = new org.integratedmodelling.klab.model.Model(mainObservable, candidateObservable, scope);
-    	RankedModel outer = new RankedModel(inner);
-        return Collections.singletonList(outer);
-    }
+	 * Called when a candidate observable has more than one model and/or a
+	 * computation, making it a derived strategy to observe a given concepts. Must
+	 * return a list with one single model with all the candidates as dependencies
+	 * and the computations as computables, belonging to the namespace that
+	 * resolution is currently happening into, wrapped into a ranked model with
+	 * maximum rank.
+	 * 
+	 * When the whole thing becomes more intelligent, this may return a number of
+	 * ranked alternative strategies, e.g. depending on previous paths taken and/or
+	 * reasoning to find more complex pathways to the observation.
+	 * 
+	 * @param candidateObservable
+	 * @param ret
+	 * @return
+	 */
+	public List<IRankedModel> createDerivedModel(Observable mainObservable, ObservationStrategy candidateObservable,
+			ResolutionScope scope) {
+		org.integratedmodelling.klab.model.Model inner = new org.integratedmodelling.klab.model.Model(mainObservable,
+				candidateObservable, scope);
+		RankedModel outer = new RankedModel(inner);
+		return Collections.singletonList(outer);
+	}
+
+	/**
+	 * Create a new model for the change in the passed observable, based on the
+	 * changing data resolved by the passed merged resource. Used to pre-fill the
+	 * kbox catalog when a merged resource covering the period of occurrence has
+	 * resolved the unchanging observable.
+	 * 
+	 * @param unchangedObservable
+	 * @param resource
+	 * @return
+	 */
+	public IRankedModel createChangeModel(IObservable unchangedObservable, IModel model, ResolutionScope scope) {
+		MergedResource resource = ((org.integratedmodelling.klab.model.Model) model).getMergedResource();
+		if (resource == null) {
+			throw new KlabIllegalArgumentException(
+					"Cannot create a merged resource change model from a model that does not contain merged resources");
+		}
+		org.integratedmodelling.klab.model.Model inner = new org.integratedmodelling.klab.model.Model(
+				unchangedObservable, resource, model, scope);
+		return new RankedModel(inner);
+	}
 
 }
