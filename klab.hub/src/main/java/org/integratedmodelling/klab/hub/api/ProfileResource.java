@@ -60,7 +60,7 @@ public class ProfileResource implements OAuth2User{
 
     public DateTime lastLogin;
 
-	public DateTime lastEngineConnection;
+	public DateTime lastConnection;
 
     public AccountStatus accountStatus;
     
@@ -164,12 +164,12 @@ public class ProfileResource implements OAuth2User{
 		this.lastLogin = lastLogin;
 	}
 
-	public DateTime getLastEngineConnection() {
-		return lastEngineConnection;
+	public DateTime getLastConnection() {
+		return lastConnection;
 	}
 
-	public void setLastEngineConnection(DateTime lastEngineConnection) {
-		this.lastEngineConnection = lastEngineConnection;
+	public void setLastConnection(DateTime lastConnection) {
+		this.lastConnection = lastConnection;
 	}
 
 	public List<Group> getGroupsList() {
@@ -205,7 +205,7 @@ public class ProfileResource implements OAuth2User{
 		cleanedProfile.initials = initials;
 		cleanedProfile.jobTitle = jobTitle;
 		cleanedProfile.lastName = lastName;
-		cleanedProfile.lastEngineConnection = lastEngineConnection;
+		cleanedProfile.lastConnection = lastConnection;
 		cleanedProfile.lastLogin = lastLogin;
 		cleanedProfile.phone = phone;
 		cleanedProfile.registrationDate = registrationDate;

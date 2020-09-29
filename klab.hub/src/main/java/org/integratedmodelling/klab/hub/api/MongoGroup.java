@@ -179,16 +179,6 @@ public class MongoGroup extends GenericModel{
 	public void setMaxUpload(long maxUpload) {
 		this.maxUpload = maxUpload;
 	}
-
-	public long getUploadLimit() {
-		return uploadLimit;
-	}
-
-	public void setUploadLimit(long uploadLimit) {
-		this.uploadLimit = uploadLimit;
-	}
-
-
 	
 	
 }

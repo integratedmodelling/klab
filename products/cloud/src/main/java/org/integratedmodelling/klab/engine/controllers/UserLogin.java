@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.controllers;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.engine.services.HubUserService;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
+import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,12 +19,12 @@ public class UserLogin {
 	
 	
 	@PostMapping(value = API.HUB.AUTHENTICATE_USER, consumes="application/json",headers = "content-type=application/x-www-form-urlencoded;charset=UTF-8")
-	public ResponseEntity<?> loginResponse(@RequestBody UserAuthenticationRequest request) {
+	public ResponseEntity<?> loginResponse(@RequestBody UserAuthenticationRequest request) throws JSONException {
 		return remoteUserService.login(request);
 	}
 	
 	@GetMapping(API.HUB.AUTHENTICATE_USER)
-	public ResponseEntity<?> loginResponse() {
+	public ResponseEntity<?> loginResponse() throws JSONException {
 		return remoteUserService.login(new UserAuthenticationRequest());
 	}
 }
