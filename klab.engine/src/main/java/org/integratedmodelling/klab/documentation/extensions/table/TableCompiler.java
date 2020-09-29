@@ -1072,6 +1072,14 @@ public class TableCompiler {
 			ret.separator = true;
 		}
 
+		if (theRest.containsKey("hidden")) {
+			if (!(theRest.get("hidden") instanceof Boolean)) {
+				throw new KlabValidationException("the 'hidden' parameter only admits true/false values");
+			}
+			ret.hidden = (Boolean)theRest.get("hidden");
+		}
+
+		
 		if (theRest.containsKey("style")) {
 			for (Object style : (theRest.get("style") instanceof Collection ? ((Collection<?>) theRest.get("style"))
 					: Collections.singleton(theRest.get("style")))) {
@@ -1342,11 +1350,6 @@ public class TableCompiler {
 						Set<String> rowSymbols = row.symbols == null ? column.symbols : row.symbols;
 						boolean referencesPhases = row.getExpression(scope) == null ? column.referencesPhases
 								: row.referencesPhases;
-						boolean referencesStates = row.getExpression(scope) == null ? column.referencesStates
-								: row.referencesStates;
-						Map<String, Set<String>> phaseReferences = row.getExpression(scope) == null
-								? column.phaseReferences
-								: row.phaseReferences;
 
 						if (row.computationType != null && row.computationType.isAggregation()) {
 							aggregationLevel++;
@@ -1361,18 +1364,21 @@ public class TableCompiler {
 						if (rowTargetType != null && rowTarget != null) {
 							switch (rowTargetType) {
 							case AREA:
+								// TODO precompute this if grid
 								val = rowTarget.getObservable().getUnit().convert(
 										((IScale) value.getSecond()).getSpace().getStandardizedArea(),
 										Units.INSTANCE.SQUARE_METERS);
 								break;
 							case DURATION:
+								// TODO same
 								val = ((IScale) value.getSecond()).getTime()
 										.getLength(rowTarget.getObservable().getUnit());
 								break;
 							case NUMEROSITY:
-								// count some fucking object
+								// TODO count some fucking object
 								break;
 							case QUALITY:
+								// TODO maybe we have this already
 								val = ((IState) catalog.get(rowTarget)).get(value.getSecond());
 								break;
 							default:

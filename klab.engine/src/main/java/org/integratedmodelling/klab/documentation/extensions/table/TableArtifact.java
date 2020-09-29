@@ -276,6 +276,9 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			 */
 			int rTitles = 0;
 			for (Dimension row : rows) {
+				if (row.hidden) {
+					continue;
+				}
 				if (row.titles != null && row.titles.length > rTitles) {
 					rTitles = row.titles.length;
 				}
@@ -285,6 +288,9 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			}
 			int cTitles = 0;
 			for (Dimension column : columns) {
+				if (column.hidden) {
+					continue;
+				}
 				if (column.titles != null && column.titles.length > cTitles) {
 					cTitles = column.titles.length;
 				}
@@ -309,6 +315,9 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 					}
 					for (Integer col : activeColumns) {
 						Dimension cDesc = columns.get(col);
+						if (cDesc.hidden) {
+							continue;
+						}
 						/*
 						 * write the ct-th title, using the array starting counting from the bottom
 						 */
@@ -326,12 +335,19 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			ret.append("  <tbody>\n");
 			for (Integer row : activeRows) {
 				Dimension rDesc = rows.get(row);
+				if (rDesc.hidden) {
+					continue;
+				}
 				ret.append("    <tr>\n");
 				for (int i = 0; i < rTitles; i++) {
 					ret.append("      <th scope=\"row\"" + getStyle(rDesc.style) + ">"
 							+ Escape.forHTML(getHeader(rDesc, i, rTitles, scope)) + "</th>\n");
 				}
 				for (Integer col : activeColumns) {
+					Dimension cDesc = columns.get(col);
+					if (cDesc.hidden) {
+						continue;
+					}
 					Cell cell = cells[col][row];
 					ret.append("      <td" + getStyle(cell) + ">" + getData(cell) + "</td>\n");
 				}
