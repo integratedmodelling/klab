@@ -10,6 +10,7 @@ import java.util.Set;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.auth.Hub;
+import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.HubReference;
@@ -19,21 +20,20 @@ import org.joda.time.DateTime;
 
 public enum NetworkManager {
 
-
 	INSTANCE;
 	
 	private Set<INodeIdentity> onlineNodes = Collections.synchronizedSet(new HashSet<>());
 	private Set<INodeIdentity> offlineNodes = Collections.synchronizedSet(new HashSet<>());
 	private Map<String, NodeReference> allNodes = new HashMap<>();
 
-	
-	//this does nothing
 	public Collection<NodeReference> getNodes(Set<Group> groups) {
 		Set<NodeReference> ret = new HashSet<>();
 		for (INodeIdentity node : onlineNodes) {
+			node.getClient();
 			ret.add(createNodeReference(node, true));
 		}
 		for (INodeIdentity node : offlineNodes) {
+			node.getClient();
 			ret.add(createNodeReference(node, false));
 		}
 		return ret;

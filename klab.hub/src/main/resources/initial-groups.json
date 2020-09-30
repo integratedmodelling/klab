@@ -11,7 +11,7 @@
 		"worldview": true,
 		"preliminary": true,
         "observables": [],
-        "roleRequirement" : "ROLE_USER"
+        "roleRequirement" : "ROLE_ADMINISTRATOR"
 	},
 	"ALICE" : {
         "name": "ALICE",

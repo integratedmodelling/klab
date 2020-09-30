@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.hub.api;
 
+import java.util.Objects;
+
 import org.joda.time.DateTime;
 import org.springframework.data.mongodb.core.mapping.DBRef;
 
@@ -66,5 +68,22 @@ public class GroupEntry {
 	
 	public void setGroup(MongoGroup group) {
 		this.group = group;
+	}
+	
+	@Override
+	public int hashCode() {
+		return Objects.hash(group);
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		GroupEntry other = (GroupEntry) obj;
+		return Objects.equals(group, other.group);
 	}
 }
