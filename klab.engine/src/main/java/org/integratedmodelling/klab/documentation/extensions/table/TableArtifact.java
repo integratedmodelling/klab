@@ -17,6 +17,8 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.documentation.views.IDocumentationView;
+import org.integratedmodelling.klab.api.documentation.views.ITableView;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -32,7 +34,6 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
 import org.integratedmodelling.klab.utils.CollectionUtils;
-import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.TemplateUtils;
@@ -74,12 +75,14 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 
 		public ComputationType computationType;
 
-		// cells that aggregate other aggregated cells must be computed last, so we add
-		// 1 every time
-		// the cell collects an aggregation. If aggregationLevel > 1, the
-		// computationType is guaranteed to be the same in row and column, so
-		// aggregating
-		// is safe.
+		/*
+		 * cells that aggregate other aggregated cells must be computed last, so we add
+		 * 1 every time the cell collects an aggregation. If aggregationLevel > 1, the
+		 * computationType is guaranteed to be the same in row and column, so
+		 * aggregating is safe. This counting starts from 1; those with 0s are the
+		 * aggregators that use expressions rather than predefined aggregations, which
+		 * are always computed first.
+		 */
 		public int aggregationLevel = 0;
 
 		public Dimension column;
@@ -97,9 +100,9 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 
 		@Override
 		public String toString() {
-			return "<[" + (row == null ? "*" : ("" + row.index)) + "," + (column == null ? "*" : ("" + column.index)) + "]: "
-					+ computedValue + (row.computation == null ? "" : row.computation) + ">";
-			
+			return "<[" + (row == null ? "*" : ("" + row.index)) + "," + (column == null ? "*" : ("" + column.index))
+					+ "]: " + computedValue + (row.computation == null ? "" : row.computation) + ">";
+
 		}
 	}
 
@@ -116,7 +119,8 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 	private IRuntimeScope scope;
 	Set<Integer> activeColumns = new HashSet<>();
 	Set<Integer> activeRows = new HashSet<>();
-	private String compiledView;
+	// compiled views indexed by media type
+	private Map<String, ITableView> compiledViews = new HashMap<>();
 	private String id = "v" + NameGenerator.shortUUID();
 
 	/**
@@ -227,10 +231,28 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		}
 	}
 
+	/**
+	 * TODO turn into a private function that takes a table view and a sheet handle,
+	 * so it can be generalized to >1 sheets.
+	 */
 	@Override
-	public String getCompiledView(String mediaType) {
+	public IDocumentationView getCompiledView(String mediaType) {
 
-		if (this.compiledView == null) {
+		ITableView ret = this.compiledViews.get(mediaType);
+		if (ret == null) {
+
+			if ("text/html".equals(mediaType)) {
+				ret = new TableView();
+			} else if ("".equals(mediaType)) {
+
+			}
+
+			if (ret == null) {
+				throw new KlabValidationException("table view: media type " + mediaType + " is not supported");
+			}
+
+			// TODO externalize
+			int hSheet = ret.sheet("");
 
 			List<Cell> aggregatedCells = new ArrayList<>();
 
@@ -275,13 +297,8 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 				cell.computedValue = aggregateData(cell);
 			}
 
-			StringBuffer ret = new StringBuffer(columns.size() * rows.size() + 256);
+			int hTable = ret.table(this.table.getTitle(), hSheet);
 
-			ret.append("<table>\n");
-
-			if (this.table.getTitle() != null) {
-				ret.append("  <caption>" + Escape.forHTML(this.table.getTitle()) + "</caption>\n");
-			}
 			/*
 			 * add separator indices for both rows and columns
 			 */
@@ -314,60 +331,51 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			 * headers
 			 */
 			if (rTitles + cTitles > 0) {
-				ret.append("  <thead>\n");
+
+				int hHeader = ret.header(hTable);
+
 				/*
 				 * TODO GROUPS!
 				 */
 				for (int ct = 0; ct < cTitles; ct++) {
-					ret.append("    <tr>\n");
+
+					int tRow = ret.newRow(hHeader);
+
 					for (int rt = 0; rt < rTitles; rt++) {
-						// empty cells to leave space for row headers later
-						ret.append("      <th></th>\n");
+						ret.newHeaderCell(tRow, false);
 					}
 					for (Dimension cDesc : getActiveColumns()) {
 						if (cDesc.hidden) {
 							continue;
 						}
-						/*
-						 * write the ct-th title, using the array starting counting from the bottom
-						 */
-						ret.append("      <th" + getStyle(cDesc.style) + ">"
-								+ Escape.forHTML(getHeader(cDesc, ct, cTitles, scope)) + "</th>\n");
+						ret.write(ret.newHeaderCell(tRow, false), getHeader(cDesc, ct, cTitles, scope), cDesc.style);
 					}
-					ret.append("    </tr>\n");
 				}
-				ret.append("  </thead>\n");
 			}
 
 			/*
 			 * data and row titles
 			 */
-			ret.append("  <tbody>\n");
+			int hBody = ret.body(hTable);
 			for (Dimension rDesc : getActiveRows()) {
 				if (rDesc.hidden) {
 					continue;
 				}
-				ret.append("    <tr>\n");
+				int hRow = ret.newRow(hBody);
 				for (int i = 0; i < rTitles; i++) {
-					ret.append("      <th scope=\"row\"" + getStyle(rDesc.style) + ">"
-							+ Escape.forHTML(getHeader(rDesc, i, rTitles, scope)) + "</th>\n");
+					ret.write(ret.newHeaderCell(hRow, true), getHeader(rDesc, i, rTitles, scope), rDesc.style);
 				}
 				for (Dimension cDesc : getActiveColumns()) {
 					if (cDesc.hidden) {
 						continue;
 					}
 					Cell cell = cells[cDesc.index][rDesc.index];
-					ret.append("      <td" + getStyle(cell) + ">" + getData(cell) + "</td>\n");
+					ret.write(ret.newCell(hRow), getData(cell), getStyle(cell));
 				}
-				ret.append("    </tr>\n");
 			}
-			ret.append("  <tbody>\n");
-
-			ret.append("</table>");
-
-			this.compiledView = ret.toString();
+			this.compiledViews.put(mediaType, ret);
 		}
-		return this.compiledView;
+		return ret;
 	}
 
 	/**
@@ -402,51 +410,13 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		return ret;
 	}
 
-	private String getStyle(Cell cell) {
+	private Set<Style> getStyle(Cell cell) {
 		if (cell == null) {
-			return "";
+			return null;
 		}
 		Set<Style> style = cell.column.style;
 		style.addAll(cell.row.style);
-		return getStyle(style);
-	}
-
-	private String getStyle(Set<Style> style) {
-
-		if (!style.isEmpty()) {
-			String ret = "\"";
-			for (Style s : style) {
-				switch (s) {
-				case BOLD:
-					ret += (ret.length() == 1 ? "" : " ") + "kv-bold";
-					break;
-				case CENTER:
-					ret += (ret.length() == 1 ? "" : " ") + "kv-align-center";
-					break;
-				case ITALIC:
-					ret += (ret.length() == 1 ? "" : " ") + "kv-italic";
-					break;
-				case LEFT:
-					ret += (ret.length() == 1 ? "" : " ") + "kv-align-left";
-					break;
-				case RIGHT:
-					ret += (ret.length() == 1 ? "" : " ") + "kv-align-right";
-					break;
-				case BG_HIGHLIGHT:
-					ret += (ret.length() == 1 ? "" : " ") + "kv-bg-highlight";
-					break;
-				case FG_HIGHLIGHT:
-					ret += (ret.length() == 1 ? "" : " ") + "kv-fg-highlight";
-					break;
-				default:
-					break;
-
-				}
-			}
-
-			return " class=" + ret + "\"";
-		}
-		return "";
+		return style;
 	}
 
 	private Object aggregateData(Cell cell) {

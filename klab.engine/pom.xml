@@ -77,6 +77,15 @@
 	</build>
 	<dependencies>
 
+		<!-- Apache POI for Excel output of tables -->
+		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
+		<dependency>
+			<groupId>org.apache.poi</groupId>
+			<artifactId>poi-ooxml</artifactId>
+			<version>3.9</version>
+		</dependency>
+
+
 		<!-- Unirest, while redundant with Spring templates, removes a lot of pain 
 			when doing quick REST interactions -->
 		<dependency>
@@ -648,9 +657,9 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.verhas/license3j -->
 		<dependency>
-		    <groupId>com.verhas</groupId>
-		    <artifactId>license3j</artifactId>
-		    <version>2.0.0-JVM8</version>
+			<groupId>com.verhas</groupId>
+			<artifactId>license3j</artifactId>
+			<version>2.0.0-JVM8</version>
 		</dependency>
 		<dependency>
 			<groupId>commons-io</groupId>

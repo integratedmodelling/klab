@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.api.observations;
 import java.io.File;
 import java.util.Collection;
 
+import org.integratedmodelling.klab.api.documentation.views.IDocumentationView;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
 
@@ -42,16 +43,18 @@ public interface IKnowledgeView extends IArtifact {
 
 	/**
 	 * Export formats; if empty, no export is possible
+	 * 
 	 * @return
 	 */
 	Collection<ExportFormat> getExportFormats();
-	
+
 	/**
+	 * Return the compiled view in exportable form as a {@link IDocumentationView}.
 	 * 
 	 * @param mediaType
 	 * @return
 	 */
-	String getCompiledView(String mediaType);
+	IDocumentationView getCompiledView(String mediaType);
 
 	/**
 	 * 
