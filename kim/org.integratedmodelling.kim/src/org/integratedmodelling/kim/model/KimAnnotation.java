@@ -25,7 +25,8 @@ public class KimAnnotation extends KimServiceCall implements IKimAnnotation {
             		objects.add(Kim.INSTANCE.parseValue(value, namespace));
             	}
                 this.parameters.put(DEFAULT_PARAMETER_NAME, objects.size() == 1 ? objects.get(0) : objects);
-            } else if (statement.getParameters().getPairs() != null) {
+            } 
+            if (statement.getParameters().getPairs() != null) {
                 for (KeyValuePair kv : statement.getParameters().getPairs()) {
                     this.parameters.put(kv.getName(), Kim.INSTANCE.parseValue(kv.getValue(), namespace));
                     if (kv.isInteractive()) {

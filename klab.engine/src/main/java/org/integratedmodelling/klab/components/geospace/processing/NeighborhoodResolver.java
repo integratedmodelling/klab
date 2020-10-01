@@ -77,7 +77,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.selectDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), expressionContext, forceScalar);
+					.describe(expression.toString(), expressionContext, Extensions.options(forceScalar, false));
 		}
 		if (parameters.containsKey("aggregate")) {
 			Object expression = parameters.get("aggregate");
@@ -87,7 +87,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.valueDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), expressionContext, forceScalar);
+					.describe(expression.toString(), expressionContext, Extensions.options(forceScalar, false));
 		}
 
 		this.radius = parameters.get("radius", 0.0);

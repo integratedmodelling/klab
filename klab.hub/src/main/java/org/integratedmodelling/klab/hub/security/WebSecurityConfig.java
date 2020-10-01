@@ -117,16 +117,23 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 	 * passwords without needing to do some serious migration effort.  It is possible that
 	 * we will need to have users set a new password, or force the system to rehash the password
 	 * when the user logs in.
-	 */	
+	 * 
+	 * In the end there are limited possibilities in the options here.  The better way would be
+	 * to use a proper encoder and not some deprecated methodm but crowd can only handle one type
+	 * of encrcyption at a time.
+	 * 
+	 * 
+		 * String encodingId = "bcrypt"; Map<String, PasswordEncoder> encoders = new
+		 * HashMap<>(); encoders.put(encodingId, new BCryptPasswordEncoder());
+		 * encoders.put("SHA512", new LdapShaPasswordEncoder());
+		 * DelegatingPasswordEncoder delegatingPasswordEncoder = new
+		 * DelegatingPasswordEncoder(encodingId, encoders);
+		 * delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new
+		 * LdapShaPasswordEncoder()); return delegatingPasswordEncoder;
+	*/
 	@Bean
 	public PasswordEncoder passwordEncoder() {
-        String encodingId = "bcrypt";
-        Map<String, PasswordEncoder> encoders = new HashMap<>();
-        encoders.put(encodingId, new BCryptPasswordEncoder());
-        encoders.put("SHA512", new  LdapShaPasswordEncoder());
-        DelegatingPasswordEncoder delegatingPasswordEncoder = new DelegatingPasswordEncoder(encodingId, encoders);
-        delegatingPasswordEncoder.setDefaultPasswordEncoderForMatches(new LdapShaPasswordEncoder());
-        return delegatingPasswordEncoder;
+		return new LdapShaPasswordEncoder();
 	}
 
 	@Override

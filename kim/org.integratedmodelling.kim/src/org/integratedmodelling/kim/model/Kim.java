@@ -43,6 +43,7 @@ import org.eclipse.xtext.nodemodel.ICompositeNode;
 import org.eclipse.xtext.nodemodel.INode;
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.eclipse.xtext.validation.Issue;
+import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kim.api.IConceptDescriptor;
 import org.integratedmodelling.kim.api.IKimAnnotation;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -65,7 +66,6 @@ import org.integratedmodelling.kim.kim.ClassifierRHS;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.MapEntry;
-import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.Namespace;
@@ -590,11 +590,40 @@ public enum Kim {
 			// this intercepts any camelcase, so ensure that only fully qualified concepts
 			// are parsed
 			if (value.toString().contains(":")) {
-				return declareConcept(value.getConcept());
+
+				if (value.getConcept() instanceof ObservableSemantics) {
+					ObservableSemantics observable = (ObservableSemantics) value.getConcept();
+					if (observable.getUnit() == null && observable.getCurrency() == null
+							&& observable.getValueOperators().isEmpty() && !observable.isGeneric()
+							&& !observable.isGlobal()) {
+						return declareConcept(observable.getDeclaration());
+					} else {
+						return declareObservable(observable);
+					}
+				}
+
 			} else
 				return value.toString();
 		} else if (value.getExpr() != null) {
 			return new KimExpression(value.getExpr(), null);
+		} else if (value.getOp() != null) {
+			
+			Number op = parseNumber(value.getExpression());
+
+			if (value.getOp().isGe()) {
+				return new Range(op.doubleValue(), null, false, true);
+			} else if (value.getOp().isGt()) {
+				return new Range(op.doubleValue(), null, true, true);
+			} else if (value.getOp().isLe()) {
+				return new Range(null, op.doubleValue(), true, false);
+			} else if (value.getOp().isLt()) {
+				return new Range(null, op.doubleValue(), true, true);
+			} else if (value.getOp().isEq()) {
+				return op.doubleValue();
+			} else if (value.getOp().isNe()) {
+				// exclusive x-x range means != x
+				return new Range(op.doubleValue(), op.doubleValue(), true, true);
+			}
 		}
 
 		return null;
@@ -616,7 +645,7 @@ public enum Kim {
 	/*
 	 * The k.IM map preserves order.
 	 */
-	private Map<?, ?> parseMap(org.integratedmodelling.kim.kim.Map map, IKimNamespace namespace) {
+	public Map<?, ?> parseMap(org.integratedmodelling.kim.kim.Map map, IKimNamespace namespace) {
 		Map<Object, Object> ret = new LinkedHashMap<>();
 		for (MapEntry entry : map.getEntries()) {
 			Object key = parseClassifierAsValue(entry.getClassifier(), null, namespace);
@@ -655,7 +684,8 @@ public enum Kim {
 			} else if (statement.getOp().isEq()) {
 				return op.doubleValue();
 			} else if (statement.getOp().isNe()) {
-				// shouldn't happen, shouldn't throw
+				// exclusive x-x range means != x
+				return new Range(op.doubleValue(), op.doubleValue(), true, true);
 			}
 		}
 		if (statement.getConcept() != null) {
@@ -792,26 +822,27 @@ public enum Kim {
 		return ret;
 	}
 
-	public Parameters<String> parseMetadata(Metadata map, IKimNamespace namespace) {
-		Map<String, Object> ret = new LinkedHashMap<>();
-		for (int i = 0; i < map.getIds().size(); i++) {
-			String key = map.getIds().get(i);
-			Object value = parseLiteralObject(map.getValues().get(i), namespace);
-			ret.put(key, value);
-		}
-		return new Parameters<>(ret);
-	}
+//	public Parameters<String> parseMetadata(Metadata map, IKimNamespace namespace) {
+//		Map<String, Object> ret = new LinkedHashMap<>();
+//		for (int i = 0; i < map.getIds().size(); i++) {
+//			String key = map.getIds().get(i);
+//			Object value = parseLiteralObject(map.getValues().get(i), namespace);
+//			ret.put(key, value);
+//		}
+//		return new Parameters<>(ret);
+//	}
 
-	private Object parseLiteralObject(EObject eObject, IKimNamespace namespace) {
-		if (eObject instanceof Literal) {
-			return parseLiteral((Literal) eObject, namespace);
-		} else if (eObject instanceof org.integratedmodelling.kim.kim.List) {
-			return parseList((org.integratedmodelling.kim.kim.List) eObject, namespace);
-		} else if (eObject instanceof Metadata) {
-			return parseMetadata((Metadata) eObject, namespace);
-		}
-		throw new KlabInternalErrorException("WRONG METADATA VALUE - THIS SHOULD NOT HAPPEN");
-	}
+//	private Object parseLiteralObject(EObject eObject, IKimNamespace namespace) {
+//		if (eObject instanceof Literal) {
+//			return parseLiteral((Literal) eObject, namespace);
+//		} else if (eObject instanceof org.integratedmodelling.kim.kim.List) {
+//			return parseList((org.integratedmodelling.kim.kim.List) eObject, namespace);
+//		} /* ZIO TORDO
+//			 * else if (eObject instanceof Metadata) { return parseMetadata((Metadata)
+//			 * eObject, namespace); }
+//			 */
+//		throw new KlabInternalErrorException("WRONG METADATA VALUE - THIS SHOULD NOT HAPPEN");
+//	}
 
 	public Object parseLiteral(Literal literal, IKimNamespace namespace) {
 		if (literal.getBoolean() != null) {

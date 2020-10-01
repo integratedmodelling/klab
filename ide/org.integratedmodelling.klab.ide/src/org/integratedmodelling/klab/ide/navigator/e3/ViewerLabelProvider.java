@@ -349,6 +349,14 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
 							: "icons/resource.gif");
 		}
 		if (element instanceof EDefinition) {
+			if (((EDefinition)element).getDefineClass() != null) {
+				switch (((EDefinition)element).getDefineClass()) {
+				case "table":
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/table.gif");
+				case "chart":
+					return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/chart_bar.png");
+				}
+			}
 			return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/define.gif");
 		}
 		return delegate.getImage(element);

@@ -15,39 +15,40 @@ import org.integratedmodelling.klab.documentation.ProjectDocumentation;
 
 public enum Documentation implements IDocumentationService {
 
-    INSTANCE;
-    
+	INSTANCE;
+
 	private Documentation() {
 		Services.INSTANCE.registerService(this, IDocumentationService.class);
 	}
-	
-    private Map<String, org.integratedmodelling.klab.documentation.Documentation> catalog = Collections.synchronizedMap(new HashMap<>());
 
-    @Override
-    public IDocumentation getDocumentation(String docId, IParameters<?> parameters, IProject project) {
+	private Map<String, org.integratedmodelling.klab.documentation.Documentation> catalog = Collections
+			.synchronizedMap(new HashMap<>());
 
-        org.integratedmodelling.klab.documentation.Documentation ret = catalog.get(docId);
-        if (ret != null) {
-            return ret;
-        }
-        File docFile = IDocumentation.getDocumentationFile(docId, project.getRoot());
-        if (!docFile.exists()) {
-            return org.integratedmodelling.klab.documentation.Documentation.empty();
-        }
-        // read on the spot and forget
-        ProjectDocumentation documentation = new ProjectDocumentation(docFile);
-        ret = new org.integratedmodelling.klab.documentation.Documentation(documentation, docId, project);
-        ((org.integratedmodelling.klab.documentation.Documentation)ret).setDocfile(docFile);
-        catalog.put(docId, ret);
-        return ret;
-    }
-    
-    public synchronized void resetDocumentation(File docFile) {
-        Set<String> keys = new HashSet<>(catalog.keySet());
-        for (String key : keys) {
-            if (catalog.get(key).getDocfile().equals(docFile)) {
-                catalog.remove(key);
-            }
-        }
-    }
+	@Override
+	public IDocumentation getDocumentation(String docId, IParameters<?> parameters, IProject project) {
+
+		org.integratedmodelling.klab.documentation.Documentation ret = catalog.get(docId);
+		if (ret != null) {
+			return ret.configure(parameters);
+		}
+		File docFile = IDocumentation.getDocumentationFile(docId, project.getRoot());
+		if (!docFile.exists()) {
+			return org.integratedmodelling.klab.documentation.Documentation.empty();
+		}
+		// read on the spot and forget
+		ProjectDocumentation documentation = new ProjectDocumentation(docFile);
+		ret = new org.integratedmodelling.klab.documentation.Documentation(documentation, docId, project);
+		((org.integratedmodelling.klab.documentation.Documentation) ret).setDocfile(docFile);
+		catalog.put(docId, ret);
+		return ret.configure(parameters);
+	}
+
+	public synchronized void resetDocumentation(File docFile) {
+		Set<String> keys = new HashSet<>(catalog.keySet());
+		for (String key : keys) {
+			if (catalog.get(key).getDocfile().equals(docFile)) {
+				catalog.remove(key);
+			}
+		}
+	}
 }

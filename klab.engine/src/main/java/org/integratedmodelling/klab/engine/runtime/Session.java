@@ -6,6 +6,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -408,7 +409,11 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 				ITime time = null;
 				if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
-					time = Time.create(ITime.Type.PHYSICAL, this.temporalResolution.getType(),
+					/*
+					 * ACHTUNG if the time is PHYSICAL, states won't initialize properly (with the
+					 * first timeslice @0)!
+					 */
+					time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
 							this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
 							new TimeInstant(this.timeEnd), null);
 				} else {
@@ -690,7 +695,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		if (location.getContextId() == null) {
 			ITime time = null;
 			if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
-				time = Time.create(ITime.Type.PHYSICAL, this.temporalResolution.getType(),
+				time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
 						this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
 						new TimeInstant(this.timeEnd), null);
 			} else {

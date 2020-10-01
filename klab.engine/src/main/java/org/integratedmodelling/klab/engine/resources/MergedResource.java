@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.resources;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -30,6 +31,7 @@ import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.storage.ResourceCatalog;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
@@ -61,14 +63,15 @@ public class MergedResource implements IResource {
 	private long timeStart = -1;
 	private long timeEnd = -1;
 	private boolean logicalTime;
-	private ITime.Resolution coverageResolution;
+	private ITime.Resolution resolution;
+	private List<String> urns = new ArrayList<>();
 
 	class ResourceSet {
 		long start = -1;
 		long end = -1;
 		ICoverage coverage;
 		List<IResource> resources = new ArrayList<>();
-		public Resolution coverageResolution;
+		public Resolution resolution;
 	}
 
 	/*
@@ -94,7 +97,7 @@ public class MergedResource implements IResource {
 		this.timeStart = other.timeStart;
 		this.timeEnd = other.timeEnd;
 		this.logicalTime = other.logicalTime;
-		this.coverageResolution = other.coverageResolution;
+		this.resolution = other.resolution;
 		this.resources.putAll(other.resources);
 	}
 
@@ -113,10 +116,12 @@ public class MergedResource implements IResource {
 	 * @param statement
 	 */
 	public MergedResource(IKimModel statement, IMonitor monitor) {
+		
 		this.urn = "local:merged:" + statement.getNamespace() + ":" + statement.getName();
 
 		for (String urn : statement.getResourceUrns()) {
 
+			this.urns.add(urn);
 			IResource resource = null;
 			IScale scale = null;
 
@@ -133,7 +138,7 @@ public class MergedResource implements IResource {
 
 			this.logicalTime = scale.getTime() != null && scale.getTime().isGeneric();
 			if (this.logicalTime) {
-				this.coverageResolution = scale.getTime().getCoverageResolution();
+				this.resolution = scale.getTime().getCoverageResolution();
 			}
 
 			getResourceSet(scale).resources.add(resource);
@@ -144,6 +149,46 @@ public class MergedResource implements IResource {
 
 		((ResourceCatalog) Resources.INSTANCE.getLocalResourceCatalog()).addInlineResource(this);
 	}
+	
+	public MergedResource(List<String> urns, IRuntimeScope scope) {
+		
+		this.urn = "local:merged:" + scope.getNamespace() + ":" + scope.getTargetName();
+
+		for (String urn : urns) {
+
+			this.urns.add(urn);
+			IResource resource = null;
+			IScale scale = null;
+
+			resource = Resources.INSTANCE.resolveResource(urn);
+			if (resource == null) {
+				throw new KlabValidationException("URN " + urn + " does not specify a resource");
+			}
+			if (this.type != null && this.type != resource.getType()) {
+				throw new KlabValidationException(
+						"Cannot mix type " + this.type + " with " + resource.getType() + " from " + urn);
+			}
+			scale = Scale.create(resource.getGeometry());
+			this.type = resource.getType();
+
+			this.logicalTime = scale.getTime() != null && scale.getTime().isGeneric();
+			if (this.logicalTime) {
+				this.resolution = scale.getTime().getCoverageResolution();
+			}
+
+			getResourceSet(scale).resources.add(resource);
+
+		}
+
+		validate();
+
+//		((ResourceCatalog) Resources.INSTANCE.getLocalResourceCatalog()).addInlineResource(this);
+	}
+	
+	public List<String> getUrns() {
+		return urns;
+	}
+	
 
 	private ResourceSet getResourceSet(IScale scale) {
 
@@ -155,7 +200,7 @@ public class MergedResource implements IResource {
 					"Cannot merge resources in logical time with others with different temporal representation");
 		}
 
-		if (coverageResolution != null && !time.getCoverageResolution().equals(coverageResolution)) {
+		if (resolution != null && !time.getCoverageResolution().equals(resolution)) {
 			throw new KlabValidationException(
 					"Cannot merge resources in logical time and different coverage resolutions");
 		}
@@ -173,18 +218,11 @@ public class MergedResource implements IResource {
 						throw new KlabValidationException(
 								"Cannot merge temporal resources with non-temporal resources");
 					}
-					if (time.is(ITime.Type.LOGICAL)) {
-
-						if (time.getCoverageResolution() == null) {
-							throw new KlabValidationException(
-									"Temporal resources in logical time must specify temporal coverage to be merged");
-						}
-
+					if (time.is(ITime.Type.LOGICAL) && time.getCoverageResolution() != null) {
 						if (timeStart == time.getCoverageLocatorStart()) {
 							ret = set;
 							break;
 						}
-
 					} else if (time.getStart() != null && timeStart == time.getStart().getMilliseconds()) {
 						ret = set;
 						break;
@@ -196,32 +234,27 @@ public class MergedResource implements IResource {
 
 		if (ret == null) {
 
-			/*
-			 * TODO use coverage data for logical time
-			 */
-
 			ret = new ResourceSet();
 			ret.coverage = Coverage.full(scale);
 			if (time != null) {
 
-				if (time.is(ITime.Type.LOGICAL)) {
-
-					if (time.getCoverageResolution() == null) {
-						throw new KlabValidationException(
-								"Temporal resources in logical time must specify temporal coverage to be merged");
-					}
-
+				if (time.is(ITime.Type.LOGICAL) && time.getCoverageResolution() != null) {
 					ret.start = time.getCoverageLocatorStart();
 					ret.end = time.getCoverageLocatorEnd();
-					ret.coverageResolution = time.getCoverageResolution();
-
+					ret.resolution = time.getCoverageResolution();
 				} else {
-
 					ret.start = time.getStart() == null ? -1 : time.getStart().getMilliseconds();
 					ret.end = time.getEnd() == null ? -1 : time.getEnd().getMilliseconds();
+					ret.resolution = time.getResolution();
 				}
 			}
+
+			if (ret.start == -1 && ret.end == -1) {
+				throw new KlabValidationException("Resources that are merged must have temporal boundaries");
+			}
+			
 			resources.put(ret.start, ret);
+			
 			if (timeStart < 0 || timeStart > ret.start) {
 				timeStart = ret.start;
 			}
@@ -235,20 +268,18 @@ public class MergedResource implements IResource {
 
 	private void validate() {
 
-		if (resources.size() > 1) {
-			this.type = Type.PROCESS;
-		}
-
 		/*
-		 * TODO this sucks - set from resources; if logical, must be through coverage
+		 * default resolution if nothing can be understood from the data, which is very
+		 * unlikely.
 		 */
-		ITime.Resolution.Type resolution = ITime.Resolution.Type.MILLISECOND;
+		ITime.Resolution.Type restype = ITime.Resolution.Type.MILLISECOND;
+
+		Map<ITime.Resolution.Type, Integer> rcounts = new HashMap<>();
 
 		/*
 		 * create the final geometry with a shape and a time extent
 		 */
 		IShape shape = null;
-
 		for (Entry<Long, ResourceSet> key : resources.entrySet()) {
 			ResourceSet set = key.getValue();
 			if (shape == null && set.coverage.getSpace() != null) {
@@ -259,14 +290,46 @@ public class MergedResource implements IResource {
 				}
 				shape = shape.union(set.coverage.getSpace().getShape());
 			}
+			if (set.resolution != null) {
+				Integer count = rcounts.get(set.resolution.getType());
+				if (count == null) {
+					count = new Integer(1);
+				} else {
+					count = count + 1;
+				}
+				rcounts.put(set.resolution.getType(), count);
+			}
+		}
+
+		/*
+		 * TODO maybe also take the smallest multiplier instead of hard-coding it at 1.
+		 */
+		double resMultiplier = 1;
+		if (rcounts.size() > 0) {
+			restype = null;
+			int lastc = 0;
+			for (Entry<Resolution.Type, Integer> entry : rcounts.entrySet()) {
+				if (restype == null) {
+					restype = entry.getKey();
+					lastc = entry.getValue();
+				} else if (entry.getValue() > lastc) {
+					restype = entry.getKey();
+				}
+			}
 		}
 
 		ITime time = null;
-		if (timeStart > 0) {
-			time = Time.create(ITime.Type.PHYSICAL, resolution, 1, new TimeInstant(timeStart), null, null);
+		if (timeStart > 0 && timeEnd > 0) {
+			this.logicalTime = false;
+			time = Time.create(ITime.Type.PHYSICAL, restype, resMultiplier, new TimeInstant(timeStart),
+					timeEnd > 0 ? new TimeInstant(timeEnd) : null, null);
 		} else {
-			time = Time.create(ITime.Type.LOGICAL, resolution, 1, null, null, null);
+			time = Time.create(ITime.Type.LOGICAL, restype, resMultiplier,
+					timeStart > 0 ? new TimeInstant(timeStart) : null, timeEnd > 0 ? new TimeInstant(timeEnd) : null,
+					null);
 		}
+
+		this.resolution = time.getResolution();
 		this.scale = Scale.create(shape, time);
 		this.geometry = ((Scale) this.scale).asGeometry();
 
@@ -360,7 +423,7 @@ public class MergedResource implements IResource {
 
 	@Override
 	public boolean isGranular() {
-		return false;
+		return resources.size() > 1;
 	}
 
 	@Override
@@ -415,11 +478,11 @@ public class MergedResource implements IResource {
 	public List<IResource> contextualize(IScale scale) {
 
 		long locator = -1;
-		
+
 		if (logicalTime && resolutionTime != null) {
 
-			// anchor the locator to the resolution time
-			switch (this.coverageResolution.getType()) {
+			// TODO anchor the locator to the resolution time
+			switch (this.resolution.getType()) {
 			case CENTURY:
 				break;
 			case DAY:
@@ -444,21 +507,23 @@ public class MergedResource implements IResource {
 				break;
 			default:
 				break;
-			
+
 			}
-		} else if (scale.getTime() == null && scale.getTime().getStart() != null) {
-			locator =  scale.getTime().getStart().getMilliseconds();
+		} else if (scale.getTime() != null && scale.getTime().getStart() != null) {
+			locator = scale.getTime().getStart().getMilliseconds();
 		}
-		
+
 		List<IResource> ret = new ArrayList<>();
 		if (scale.getTime() == null && resources.size() > 0) {
-			ResourceSet set = resources.get(-1L);
+			Entry<Long, ResourceSet> set = resources.floorEntry(-1L);
 			if (set != null) {
-				ret.addAll(set.resources);
+				ret.addAll(set.getValue().resources);
 			}
 		} else {
-			ResourceSet set = resources.get(locator);
-			ret.addAll(set.resources);
+			Entry<Long, ResourceSet> set = resources.floorEntry(locator);
+			if (set != null) {
+				ret.addAll(set.getValue().resources);
+			}
 		}
 
 		return ret;

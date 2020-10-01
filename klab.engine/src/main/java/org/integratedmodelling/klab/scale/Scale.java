@@ -1522,6 +1522,12 @@ public class Scale implements IScale {
 	public IScale initialization() {
 		return getTime() == null ? this : at(Time.initialization(getTime()));
 	}
+	
+	@Override
+	public IScale termination() {
+		return getTime() == null ? this : at(Time.termination(getTime()));
+	}
+
 
 	public static IScale empty() {
 		return create();

@@ -128,7 +128,7 @@ public class MaximaFinderInstantiator implements IInstantiator, IExpression {
 				if (thresholdExpression != null) {
 
 					IExpression threx = Extensions.INSTANCE.compileExpression(thresholdExpression,
-							Extensions.DEFAULT_EXPRESSION_LANGUAGE, false);
+							Extensions.DEFAULT_EXPRESSION_LANGUAGE);
 
 					Object o = threx.eval(
 							Parameters.create("min", summary.getRange().get(0), "max", summary.getRange().get(1),

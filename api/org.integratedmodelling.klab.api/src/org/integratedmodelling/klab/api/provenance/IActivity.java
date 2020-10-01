@@ -80,7 +80,12 @@ public interface IActivity extends IProvenance.Node {
 		 * The resolution activity of a concrete trait or role that has been previously
 		 * attributed to an observation.
 		 */
-		CHARACTERIZATION(IResolutionScope.Mode.RESOLUTION);
+		CHARACTERIZATION(IResolutionScope.Mode.RESOLUTION),
+		/**
+		 * Compilation is the observation of a void observable, producing only side
+		 * effects. Creates non-semantic artifacts such as tables, charts, reports etc.
+		 */
+		COMPILATION(IResolutionScope.Mode.RESOLUTION);
 
 		IResolutionScope.Mode mode;
 
@@ -115,15 +120,17 @@ public interface IActivity extends IProvenance.Node {
 	 * @return a long.
 	 */
 	long getEnd();
-	
+
 	/**
 	 * Scheduler time of action. Null if agent is not the k.LAB scheduler.
+	 * 
 	 * @return
 	 */
 	ITime getSchedulerTime();
 
 	/**
 	 * The type of the action.
+	 * 
 	 * @return
 	 */
 	Type getType();

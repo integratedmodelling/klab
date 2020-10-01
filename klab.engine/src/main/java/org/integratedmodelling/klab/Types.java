@@ -16,9 +16,7 @@ import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.services.ITypeService;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.classification.Classifier;
-import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.owl.OWL;
 
 /**
  * Methods to deal with classified types.
@@ -182,6 +180,45 @@ public enum Types implements ITypeService {
 	}
 
 	/**
+	 * Get all concrete children for a type as a flat list.
+	 * 
+	 * @param baseType
+	 * @return
+	 */
+	public List<IConcept> getConcreteChildren(IConcept baseType) {
+
+		List<IConcept> ret = new ArrayList<>();
+		getConcreteChildren(baseType, ret, false);
+		return ret;
+	}
+
+	/**
+	 * Get all concrete children for a type that have no further children as a flat
+	 * list.
+	 * 
+	 * @param baseType
+	 * @return
+	 */
+	public List<IConcept> getConcreteLeaves(IConcept baseType) {
+
+		List<IConcept> ret = new ArrayList<>();
+		getConcreteChildren(baseType, ret, true);
+		return ret;
+	}
+
+	private void getConcreteChildren(IConcept baseType, List<IConcept> ret, boolean mustBeLeaf) {
+
+		Collection<IConcept> children = baseType.getChildren();
+
+		if (!baseType.isAbstract() && (!mustBeLeaf || children.isEmpty())) {
+			ret.add(baseType);
+		}
+		for (IConcept child : children) {
+			getConcreteChildren(child, ret, mustBeLeaf);
+		}
+	}
+
+	/**
 	 * Get the level of detail of current in the DECLARED hierarchy of base - i.e.
 	 * using the model objects declared in k.IM. Only works with trait and class
 	 * types, as this is only relevant to classifications.
@@ -259,7 +296,7 @@ public enum Types implements ITypeService {
 			throws KlabValidationException {
 
 		if (rootClass.is(Type.CLASS)) {
-			rootClass = getCategorizingType(rootClass);
+			rootClass = Observables.INSTANCE.getDescribedType(rootClass);
 		}
 
 		Classification ret = Classification.create(rootClass);
@@ -271,11 +308,11 @@ public enum Types implements ITypeService {
 
 			if (o != null && !(o instanceof Double && Double.isNaN((Double) o))) {
 				if (o instanceof List) {
-					
-					for (Object oo : ((List<?>)o)) {
+
+					for (Object oo : ((List<?>) o)) {
 						ret.addClassifier(Classifier.create(oo), (IConcept) c);
 					}
-					
+
 				} else {
 					ret.addClassifier(Classifier.create(o), (IConcept) c);
 				}
@@ -287,10 +324,10 @@ public enum Types implements ITypeService {
 		return ret;
 	}
 
-	public IConcept getCategorizingType(IConcept concept) {
-		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
-				Concepts.p(NS.INCARNATES_TRAIT_PROPERTY));
-		return cls.isEmpty() ? null : cls.iterator().next();
-	}
+//	public IConcept getCategorizingType(IConcept concept) {
+//		Collection<IConcept> cls = OWL.INSTANCE.getRestrictedClasses((IConcept) concept,
+//				Concepts.p(NS.INCARNATES_TRAIT_PROPERTY));
+//		return cls.isEmpty() ? null : cls.iterator().next();
+//	}
 
 }

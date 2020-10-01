@@ -545,6 +545,10 @@ public interface IResource extends IProvenance.Node, Serializable {
 	 * <p>
 	 * This is only called if the resource's geometry has generic time and the
 	 * context of use has specific time.
+	 * <p>
+	 * FIXME change to contextualize(); pass the semantics to check if merging is
+	 * needed; if so, return a resource merger with aggregation, otherwise return
+	 * latest (if multiple) or self. Make this mandatory to call.
 	 * 
 	 * @param time
 	 * @return this or another resource that can deal with the passed overall

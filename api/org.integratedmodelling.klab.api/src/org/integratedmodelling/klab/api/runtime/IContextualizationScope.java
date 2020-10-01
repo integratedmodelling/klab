@@ -106,6 +106,8 @@ public interface IContextualizationScope extends IParameters<String> {
 	 * Return all the observables that depend directly on the passed one in this
 	 * context for their passed resolution.
 	 * 
+	 * TODO refocus to IActivity and move to IProvenance
+	 * 
 	 * @param observable
 	 * @param resolutionMode TODO
 	 * @return
@@ -115,6 +117,8 @@ public interface IContextualizationScope extends IParameters<String> {
 	/**
 	 * Return all the observables that the passed one depends directly on in this
 	 * context for their passed resolution.
+	 * 
+	 * TODO refocus to IActivity and move to IProvenance
 	 * 
 	 * @param observable
 	 * @param resolutionMode TODO
@@ -488,8 +492,8 @@ public interface IContextualizationScope extends IParameters<String> {
 	Map<String, IVariable> getVariables();
 
 	/**
-	 * Create an expression context to compile an expression with all local
-	 * names matched to their observables.
+	 * Create an expression context to compile an expression with all local names
+	 * matched to their observables.
 	 * 
 	 * @return
 	 */

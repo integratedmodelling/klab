@@ -55,7 +55,7 @@ site:
   shortname: "im-dashboard"
   url: http://localhost/hub/
   server:
-    id: =im
+    id: im
     
 engine:
   url: https://localhost:8287
@@ -84,7 +84,7 @@ license:
   email: info@integratedmodelling.org
   name:  testHub
   hubId: Klab Hub (This is the key for the Dev Hub)
-  hubUrl: "http://192.168.39.1:8284/hub"
+  hubUrl: "http://127.0.0.1:8284/hub"
   secRing:
     filename: "keyring/SecRing.pgp"
     digest:

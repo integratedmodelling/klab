@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.model.contextualization.IContextualizer;
@@ -65,7 +66,10 @@ import org.integratedmodelling.klab.components.runtime.observations.StateLayer;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.data.table.LookupTable;
+import org.integratedmodelling.klab.documentation.DocumentationItem;
 import org.integratedmodelling.klab.documentation.Report;
+import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions;
+import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions.Annotation;
 import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -80,7 +84,6 @@ import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
-import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 
@@ -98,6 +101,12 @@ public class Actuator implements IActuator {
 		public IObservable observable;
 		public String targetId;
 		public IVariable variable;
+
+		/*
+		 * views are non-semantic and may carry special scheduling requirements which
+		 * are passed to the scheduler through this field if not null.
+		 */
+		public IViewModel.Schedule schedule;
 
 		public Computation() {
 		}
@@ -448,7 +457,7 @@ public class Actuator implements IActuator {
 				Computation step = new Computation();
 				step.contextualizer = contextualizer.getFirst();
 				step.observable = indirectTarget == null ? this.observable : indirectTarget;
-				step.target = artifactTable.get(targetId);
+				step.target = target;
 				step.targetId = targetId;
 				step.resource = contextualizer.getSecond();
 				this.computation.add(step);
@@ -464,7 +473,7 @@ public class Actuator implements IActuator {
 				context.setData(indirectTarget.getName(), artifactTable.get(targetId));
 			}
 
-			if (model != null && !input && !artifacts.contains(ret) && !ret.isArchetype()) {
+			if (ret != null && model != null && !input && !artifacts.contains(ret) && !ret.isArchetype()) {
 				artifacts.add(ret);
 				if (ret instanceof IObservation && !(ret instanceof StateLayer)) {
 					// ACH creates problems later
@@ -499,26 +508,42 @@ public class Actuator implements IActuator {
 			return ret;
 		}
 
-		if (!runtimeContext.getTargetArtifact().equals(ret)) {
+		if (ret != null) {
+			if (!runtimeContext.getTargetArtifact().equals(ret)) {
 
+				/*
+				 * Computation has changed the artifact: reset into catalog unless it's a proxy
+				 * artifact.
+				 */
+				if (!isProxy(target)) {
+					runtimeContext.setData(((IObservation) target).getObservable().getName(), ret);
+				}
+			}
+
+			// FIXME the original context does not get the indirect artifacts
+			if (runtimeContext.getTargetArtifact() == null || !runtimeContext.getTargetArtifact().equals(ret)) {
+				((IRuntimeScope) runtimeContext).setTarget(ret);
+			}
+
+			// add any artifact, including the empty artifact, to the provenance. FIXME the
+			// provenance doesn't get the indirect artifacts. This
+			// needs to store the full causal chain and any indirect observations.
+			ctx.getProvenance().addArtifact(ret);
+		}
+
+		if (model != null) {
 			/*
-			 * Computation has changed the artifact: reset into catalog unless it's a proxy
-			 * artifact.
+			 * notify to the report all model annotations that will create documentation
+			 * items.
 			 */
-			if (!isProxy(target)) {
-				runtimeContext.setData(((IObservation) target).getObservable().getName(), ret);
+			for (IAnnotation annotation : model.getAnnotations()) {
+				Annotation ctype = DocumentationExtensions.INSTANCE.validate(annotation, runtimeContext);
+				if (ctype != null) {
+					((Report) runtimeContext.getReport())
+							.addTaggedText(new DocumentationItem(ctype, annotation, runtimeContext, this.observable));
+				}
 			}
 		}
-
-		// FIXME the original context does not get the indirect artifacts
-		if (runtimeContext.getTargetArtifact() == null || !runtimeContext.getTargetArtifact().equals(ret)) {
-			((IRuntimeScope) runtimeContext).setTarget(ret);
-		}
-
-		// add any artifact, including the empty artifact, to the provenance. FIXME the
-		// provenance doesn't get the indirect artifacts. This
-		// needs to store the full causal chain and any indirect observations.
-		ctx.getProvenance().addArtifact(ret);
 
 		/*
 		 * If we're not importing a previously computed result, put outputs in product
@@ -547,7 +572,7 @@ public class Actuator implements IActuator {
 			}
 
 			IConfiguration configuration = null;
-			if (!ret.isEmpty() && (mode == Mode.INSTANTIATION || ret instanceof IState)) {
+			if (ret != null && !ret.isEmpty() && (mode == Mode.INSTANTIATION || ret instanceof IState)) {
 				/*
 				 * check for configuration triggered, only if we just resolved a state or
 				 * instantiated 1+ objects
@@ -581,6 +606,18 @@ public class Actuator implements IActuator {
 		return target instanceof RescalingState || target instanceof StateLayer;
 	}
 
+	/**
+	 * This is called by compute() at initialization and whenever needed by the
+	 * scheduler, after that.
+	 * 
+	 * @param contextualizer
+	 * @param observable
+	 * @param resource
+	 * @param ret
+	 * @param ctx
+	 * @param scale
+	 * @return
+	 */
 	@SuppressWarnings("unchecked")
 	public IArtifact runContextualizer(IContextualizer contextualizer, IObservable observable,
 			IContextualizable resource, IArtifact ret, IRuntimeScope ctx, IScale scale) {
@@ -636,7 +673,8 @@ public class Actuator implements IActuator {
 				/*
 				 * tell the scope to notify internal listeners (for actors and the like)
 				 */
-				ctx.notifyListeners((IObservation)ret);			}
+				ctx.notifyListeners((IObservation) ret);
+			}
 
 		} else if (contextualizer instanceof IResolver) {
 
@@ -718,11 +756,11 @@ public class Actuator implements IActuator {
 											IMessage.Type.ModifiedObservation, change));
 						}
 					}
-					
+
 					/*
 					 * tell the scope to notify internal listeners (for actors and the like)
 					 */
-					ctx.notifyListeners((IObservation)object);
+					ctx.notifyListeners((IObservation) object);
 
 					/*
 					 * notify end of contextualization if we're subscribed to the parent
@@ -814,9 +852,13 @@ public class Actuator implements IActuator {
 		// pre-compute before notification to speed up visualization
 		// TODO change to a state callback to finalize a transition after all values are
 		// in
-		((Observation) ret).finalizeTransition(ctx.getScale().initialization());
-
-		((Observation) ret).setContextualized(true);
+		if (ret instanceof Observation) {
+			/*
+			 * May be null for void contextualizers
+			 */
+			((Observation) ret).finalizeTransition(ctx.getScale().initialization());
+			((Observation) ret).setContextualized(true);
+		}
 
 		state.setStatus(Status.FINISHED);
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
@@ -857,7 +899,7 @@ public class Actuator implements IActuator {
 		 * Needed to infer formal parameters and the like when expressions are used
 		 */
 		ret.setModel(this.model);
-		
+
 		// compile mediators
 		List<Pair<IContextualizer, IContextualizable>> mediation = new ArrayList<>();
 		for (Pair<IServiceCall, IContextualizable> service : mediationStrategy) {
@@ -1416,6 +1458,7 @@ public class Actuator implements IActuator {
 		 * templates.
 		 */
 		for (IDocumentation doc : documentation) {
+			doc.instrumentReport(context.getReport(), observable, context);
 			for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
 				((Report) context.getReport()).include(template, context);
 			}

@@ -315,7 +315,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			this.declaration.setObservationType(type);
 		}
 
-		if (participants != null) {
+		if (participants != null && participants.length > 0) {
 			this.comparison = participants[0];
 			if (!declarationIsComplete) {
 				this.declaration.setOtherConcept(Concepts.INSTANCE.getDeclaration(participants[0]));
@@ -1430,7 +1430,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			ontology.define(axioms);
 			IConcept ret = ontology.getConcept(conceptId);
 
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.INCARNATES_TRAIT_PROPERTY), classified, ontology);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), classified, ontology);
 
 			/*
 			 * types inherit the context from their trait

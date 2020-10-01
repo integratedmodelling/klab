@@ -24,9 +24,11 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -40,7 +42,12 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
- * The Interface IRuntimeProvider.
+ * The Interface IRuntimeProvider. Responsible for most runtime tasks like
+ * creating observations, computing dataflows and defining any contextualizers
+ * used internally to access resources or mediate values. Instead of returning
+ * the actual contextualizers, returns function calls that can be encoded in
+ * k.DL to be executed by dataflows, so that dataflows can be serialized, loaded
+ * and run when needed.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
@@ -49,11 +56,10 @@ public interface IRuntimeProvider {
 
 	/**
 	 * The main executor for a k.LAB dataflow. Each call returns a new Future
-	 * artifact.
+	 * artifact. The scheduler should be created and run automatically in here if
+	 * needed.
 	 *
-	 * @param actuator a top-level actuator that has no dependencies on external
-	 *                 ones.
-	 * @param dataflow the dataflow to which the actuator belongs
+	 * @param dataflow the dataflow to run
 	 * @param scale    the scale in which to compute
 	 * @param scope    the resolution scope for the computation
 	 * @param context  the context observation for the computation. Can be null.
@@ -61,8 +67,8 @@ public interface IRuntimeProvider {
 	 * @return a future that is computing the final artifact for the actuator.
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	Future<IArtifact> compute(IActuator actuator, IDataflow<? extends IArtifact> dataflow, IScale scale,
-			IResolutionScope scope/* , IDirectObservation context */, IMonitor monitor) throws KlabException;
+	Future<IArtifact> compute(IDataflow<? extends IArtifact> dataflow, IScale scale, IResolutionScope scope,
+			IMonitor monitor) throws KlabException;
 
 	/**
 	 * Create an empty runtime context for the dataflow that will build the context
@@ -223,6 +229,17 @@ public interface IRuntimeProvider {
 	IContextualizable getOperatorResolver(IObservable classifiedObservable, ValueOperator operator, Object operand,
 			Set<ValueOperator> modifiers);
 
+	/**
+	 * Return a computation that will pick the appropriate temporal slice from a
+	 * resource to resolve the passed change process by contextualizing the
+	 * appropriate values in the changing observable.
+	 * 
+	 * @param changeObservable
+	 * @param mergedResource
+	 * @return
+	 */
+	IContextualizable getChangeResolver(IObservable changeObservable, IResource mergedResource);
+
 	/*
 	 * Called on a computation returned by getComputation() to change the target ID
 	 * after creation. FIXME this is ugly and unstable - needs a different logic and
@@ -233,5 +250,14 @@ public interface IRuntimeProvider {
 	 * @param targetId
 	 */
 	void setComputationTargetId(IContextualizable resource, String targetId);
+
+	/**
+	 * Return a void contextualizer that will resolve a view and send the compiled
+	 * results to the monitor.
+	 * 
+	 * @param view
+	 * @return
+	 */
+	IContextualizable getViewResolver(IViewModel view);
 
 }

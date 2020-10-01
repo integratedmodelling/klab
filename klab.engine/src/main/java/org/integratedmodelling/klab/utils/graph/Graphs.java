@@ -77,7 +77,7 @@ public class Graphs {
 				jgraph.setEditable(false);
 				jgraph.setAutoResizeGraph(true);
 				jgraph.setBendable(true);
-				
+
 				JFrame frame = new JFrame();
 				frame.setTitle(title);
 				frame.setSize(800, 800);
@@ -110,5 +110,45 @@ public class Graphs {
 	public static void showDependencies() {
 		show(((KimLoader) Resources.INSTANCE.getLoader()).getDependencyGraph(), "Dependencies", DefaultEdge.class);
 	}
+
+	/**
+	 * Return whether precursor has a directed edge to dependent in graph.
+	 * 
+	 * @param <V>
+	 * @param <E>
+	 * @param dependent
+	 * @param precursor
+	 * @param graph
+	 * @return true if dependency exists
+	 */
+	public static <V, E> boolean dependsOn(V dependent, V precursor, Graph<V, E> graph) {
+
+		for (E o : graph.incomingEdgesOf(dependent)) {
+			if (graph.getEdgeSource(o).equals(precursor)) {
+				return true;
+			}
+		}
+		return false;
+	}
+
+	/**
+	 * Shallow copy of graph into another.
+	 * 
+	 * @param <V>
+	 * @param <E>
+	 * @param graph
+	 * @param newGraph
+	 * @return same graph passed as receiver
+	 */
+	public static <V, E> Graph<V,E> copy(Graph<V, E> graph, Graph<V,E> newGraph) {
+		for (V vertex : graph.vertexSet()) {
+			newGraph.addVertex(vertex);
+		}
+		for (E edge : graph.edgeSet()) {
+			newGraph.addEdge(graph.getEdgeSource(edge), graph.getEdgeTarget(edge), edge);
+		}
+		return newGraph;
+	}
+
 
 }

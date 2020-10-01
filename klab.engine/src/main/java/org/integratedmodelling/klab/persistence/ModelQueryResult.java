@@ -23,6 +23,7 @@ package org.integratedmodelling.klab.persistence;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -61,6 +62,7 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 
 	// for logging only
 	boolean cached = false;
+	private Map<String, IRankedModel> modelCache = new HashMap<>();
 
 	public class It implements Iterator<IRankedModel> {
 
@@ -129,7 +131,12 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 			return null;
 		}
 
+		if (modelCache.containsKey(md.getId())) {
+			return modelCache.get(md.getId());
+		}
+		
 		return new RankedModel(md, comparator.getRanks(md), md.getPriority());
+
 		//
 		// if (md.getServerId() != null &&
 		// Resources.INSTANCE.getModelObject(md.getName()) == null) {
@@ -283,6 +290,22 @@ public class ModelQueryResult extends ImmutableList<IRankedModel>
 	 */
 	public void addCachedModel(ModelReference md) {
 		modelData.add(md);
+		sorted = false;
+		cached = true;
+	}
+
+	public void addCachedModel(IRankedModel md) {
+		ModelReference mmd = ((RankedModel) md).getModelData();
+		if (mmd == null) {
+			/*
+			 * model is ephemeral, not findable through k.IM resolution: save it for
+			 * retrieval later.
+			 */
+			mmd = new ModelReference();
+			mmd.setId(md.getId());
+			modelCache.put(md.getId(), md);
+		}
+		modelData.add(mmd);
 		sorted = false;
 		cached = true;
 	}

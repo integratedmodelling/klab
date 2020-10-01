@@ -4,7 +4,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
-import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -70,7 +70,7 @@ public class SystemBehavior {
 
 		@Override
 		public SetView direct() {
-			throw new KlabIllegalStatusException("Actors shouldn't stop themselves.");
+			throw new KlabIllegalStateException("Actors shouldn't stop themselves.");
 		}
 	}
 
@@ -90,7 +90,7 @@ public class SystemBehavior {
 
 		@Override
 		public Stop direct() {
-			throw new KlabIllegalStatusException("Actors shouldn't stop themselves.");
+			throw new KlabIllegalStateException("Actors shouldn't stop themselves.");
 		}
 	}
 

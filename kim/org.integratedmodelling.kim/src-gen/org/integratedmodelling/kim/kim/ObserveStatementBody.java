@@ -175,12 +175,12 @@ public interface ObserveStatementBody extends EObject
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Metadata</em>' containment reference.
-   * @see #setMetadata(Metadata)
+   * @see #setMetadata(Map)
    * @see org.integratedmodelling.kim.kim.KimPackage#getObserveStatementBody_Metadata()
    * @model containment="true"
    * @generated
    */
-  Metadata getMetadata();
+  Map getMetadata();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObserveStatementBody#getMetadata <em>Metadata</em>}' containment reference.
@@ -190,6 +190,6 @@ public interface ObserveStatementBody extends EObject
    * @see #getMetadata()
    * @generated
    */
-  void setMetadata(Metadata value);
+  void setMetadata(Map value);
 
 } // ObserveStatementBody

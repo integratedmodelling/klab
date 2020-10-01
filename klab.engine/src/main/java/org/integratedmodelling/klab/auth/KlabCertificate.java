@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.engine.resources.Worldview;
-import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -104,7 +104,7 @@ public class KlabCertificate implements ICertificate {
 			cert.isValid();
 			temp.delete();
 		} catch (IOException e) {
-			throw new KlabIllegalStatusException("certificate string could not be turned into a file");
+			throw new KlabIllegalStateException("certificate string could not be turned into a file");
 		}
 		return cert;
 		
@@ -126,7 +126,7 @@ public class KlabCertificate implements ICertificate {
 		if (Configuration.INSTANCE.allowAnonymousUsage()) {
 			return new AnonymousEngineCertificate();
 		}
-		throw new KlabIllegalStatusException("certificate file not found and anonymous usage not allowed");
+		throw new KlabIllegalStateException("certificate file not found and anonymous usage not allowed");
 	}
 
 	/**

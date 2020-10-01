@@ -28,6 +28,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getFrom <em>From</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getTo <em>To</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getName <em>Name</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#isGlobal <em>Global</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#isExclusive <em>Exclusive</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getAnnotations <em>Annotations</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ObservableSemantics#getCondition <em>Condition</em>}</li>
  * </ul>
@@ -269,6 +271,50 @@ public interface ObservableSemantics extends EObject
    * @generated
    */
   void setName(String value);
+
+  /**
+   * Returns the value of the '<em><b>Global</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Global</em>' attribute.
+   * @see #setGlobal(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_Global()
+   * @model
+   * @generated
+   */
+  boolean isGlobal();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#isGlobal <em>Global</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Global</em>' attribute.
+   * @see #isGlobal()
+   * @generated
+   */
+  void setGlobal(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Exclusive</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Exclusive</em>' attribute.
+   * @see #setExclusive(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getObservableSemantics_Exclusive()
+   * @model
+   * @generated
+   */
+  boolean isExclusive();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ObservableSemantics#isExclusive <em>Exclusive</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Exclusive</em>' attribute.
+   * @see #isExclusive()
+   * @generated
+   */
+  void setExclusive(boolean value);
 
   /**
    * Returns the value of the '<em><b>Annotations</b></em>' containment reference list.

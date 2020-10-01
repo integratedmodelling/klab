@@ -69,7 +69,7 @@ public class ConvexHullInstantiator implements IExpression, IInstantiator {
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.exprDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
-					.describe(expression.toString(), context.getExpressionContext(), false);
+					.describe(expression.toString(), context.getExpressionContext());
 		}
 
 		IScale scale = context.getScale();

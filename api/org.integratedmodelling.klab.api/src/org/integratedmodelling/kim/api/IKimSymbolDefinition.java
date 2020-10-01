@@ -16,7 +16,15 @@ public interface IKimSymbolDefinition extends IKimStatement {
 	String getName();
 
 	/**
-	 * Can currently be a POD literal, Java Map, Java List, IServiceCall or IKimTable.
+	 * If a class is specified, return it here.
+	 * 
+	 * @return
+	 */
+	String getDefineClass();
+
+	/**
+	 * Can currently be a POD literal, Java Map, Java List, IServiceCall or
+	 * IKimTable.
 	 * 
 	 * @return the value defined
 	 */

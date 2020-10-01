@@ -96,7 +96,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							 * at merge. FIXME this must be the entire scale now - each actuator creates its
 							 * artifacts, then initialization is handled when computing.
 							 */
-							ret = (ISubject) dataflow.run(scope.getCoverage().copy().initialization(), monitor);
+							ret = (ISubject) dataflow.run(scope.getCoverage().copy(), monitor);
 
 							if (ret != null) {
 								setContext((Subject)ret);

@@ -104,14 +104,14 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 
 		IExpression.Context expressionContext = context.getExpressionContext();
 		Boolean forceScalar = parameters.get("scalar", Boolean.FALSE);
-		Descriptor descriptor = processor.describe(parameters.get("code", String.class), expressionContext, false);
+		Descriptor descriptor = processor.describe(parameters.get("code", String.class), expressionContext);
 		Descriptor condition = null;
 		if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {
 			String condCode = parameters.get("ifcondition", String.class);
 			if (condCode == null) {
 				condCode = processor.negate(parameters.get("unlesscondition", String.class));
 			}
-			condition = processor.describe(condCode, expressionContext, false);
+			condition = processor.describe(condCode, expressionContext);
 		}
 
 		for (String key : parameters.keySet()) {

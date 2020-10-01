@@ -36,5 +36,6 @@ public enum Aggregation {
     MAJORITY,
     ANY_PRESENT,
     MAXIMUM_LIKELIHOOD,
-    COUNT
+    COUNT,
+    VARIANCE
 }

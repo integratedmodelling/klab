@@ -8,7 +8,7 @@ import java.util.Properties;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.auth.ICertificate;
-import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 

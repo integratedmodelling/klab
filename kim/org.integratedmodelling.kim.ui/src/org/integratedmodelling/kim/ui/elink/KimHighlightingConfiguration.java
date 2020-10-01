@@ -20,6 +20,7 @@ public class KimHighlightingConfiguration extends DefaultHighlightingConfigurati
 	public static final String DANGER_ID = "danger";
 	public static final String VERSION_NUMBER_ID = "versionNumber";
 	public static final String DEFINITION_ID = "definition";
+	public static final String DEFINITION_CLASS_ID = "definitionclass";
 	public static final String CODE_ID = "code";
 	public static final String CORE_CONCEPT_ID = "coreconcept";
 
@@ -59,6 +60,7 @@ public class KimHighlightingConfiguration extends DefaultHighlightingConfigurati
 		acceptor.acceptDefaultHighlighting(DANGER_ID, "Inconsistent concept", dangerTextStyle());
 		acceptor.acceptDefaultHighlighting(VERSION_NUMBER_ID, "Version number", versionTextStyle());
 		acceptor.acceptDefaultHighlighting(DEFINITION_ID, "Concept definition", definitionTextStyle());
+		acceptor.acceptDefaultHighlighting(DEFINITION_CLASS_ID, "Definition class", definitionClassTextStyle());
 		acceptor.acceptDefaultHighlighting(CODE_ID, "Expression code", codeTextStyle());
 		acceptor.acceptDefaultHighlighting(QUALITY_ID, "Quality", qualityTextStyle());
 		acceptor.acceptDefaultHighlighting(CORE_CONCEPT_ID, "Core ontology concept", coreConceptTextStyle());
@@ -226,6 +228,13 @@ public class KimHighlightingConfiguration extends DefaultHighlightingConfigurati
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(0, 100, 100));
 		// textStyle.setStyle(SWT.ITALIC);
+		return textStyle;
+	}
+	
+	protected TextStyle definitionClassTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(0, 100, 100));
+		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 

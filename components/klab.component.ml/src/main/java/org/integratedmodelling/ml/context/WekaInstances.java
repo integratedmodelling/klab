@@ -321,7 +321,7 @@ public class WekaInstances {
 			this.selectorDescriptor = Extensions.INSTANCE
 					.getLanguageProcessor(selector.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
 							: selector.getLanguage())
-					.describe(this.selector.getCode(), context.getExpressionContext(), false);
+					.describe(this.selector.getCode(), context.getExpressionContext());
 		}
 
 //		this.explicitContext = Observables.INSTANCE.getDirectContextType(predicted.getType());

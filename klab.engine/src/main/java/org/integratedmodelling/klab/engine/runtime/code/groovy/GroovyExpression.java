@@ -337,7 +337,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 		}
 
 		GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownKeys, domain,
-				runtimeContext.getExpressionContext(), true);
+				runtimeContext.getExpressionContext(), true, new HashSet<>());
 		this.preprocessed = processor.process(code);
 		this.errors.addAll(processor.getErrors());
 

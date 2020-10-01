@@ -32,7 +32,7 @@ DefineStatement:
 ;
 
 DefinitionBody:
-	name=UPPERCASE_ID 'as' value=Value
+	(defineClass=LOWERCASE_ID)? name=(UPPERCASE_ID|LOWERCASE_ID) 'as' value=Value
 ;
 
 ModelBodyStatement:
@@ -61,7 +61,7 @@ ModelBodyStatement:
 		 		(lookupTable=Table | lookupTableId=UPPERCASE_ID)
 		 )?
 		 actions+=ActionSpecification*
-		 ('metadata' metadata=Metadata)? 
+		 ('metadata' metadata=Map)? 
 ;
 
 Classification:
@@ -93,6 +93,18 @@ ClassifierRHSWithId returns ClassifierRHS:
 	op=REL_OPERATOR expression=Number | 
 	nodata='unknown' |
 	star?='*';	
+	
+ClassifierRHSWithIdNoSet returns ClassifierRHS:
+	(boolean='true' | boolean='false') | 
+	int0=Number (leftLimit='inclusive' | 'exclusive')? => 'to' => int1=Number (rightLimit='inclusive' | 'exclusive')? |
+	num=Number | 
+//	'in' set=List | 
+	string=STRING | 
+	concept=ConceptDeclaration | 
+	id = (LOWERCASE_ID | PropertyId) |
+	op=REL_OPERATOR expression=Number | 
+	nodata='unknown' |
+	star?='*';		
 	
 Urn:
 	// String used when there are strange chars or keywords in the URN. Consecutive strings will be merged.
@@ -243,10 +255,10 @@ Namespace:
 		('in' 'domain' (rootDomain?='root' | domainConcept=Concept))? & 
 		('disjoint' 'with' disjointNamespaces+=PathName (',' disjointNamespaces+=PathName* ))? & 
 		('version' version=VersionNumber)? & 
-		('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Metadata)?)?
+		('resolve' ('from' lookupNamespace+=PathName*)? & ('outside' blacklistNamespace+=PathName*)? & ('using' weights=Map)?)?
 	)
-	('parameters' parameters=Metadata)? 
-	('metadata' metadata=Metadata)? 
+	('parameters' parameters=Map)? 
+	('metadata' metadata=Map)? 
 	';';
 
 OwlImport:
@@ -302,7 +314,7 @@ ObserveStatementBody:
 		)?) 
 		(actions+=ActionSpecification*) &
 		('using' (accessor=Function)?)? &
-		('metadata' metadata=Metadata)? 
+		('metadata' metadata=Map)? 
 ;
 
 
@@ -318,13 +330,29 @@ ObservableSemantics:
 	(
 		('according' 'to' accordingTo=PropertyId)? &
 		(
-			('in' (unit=Unit | currency=Currency)) |
-			('per' unit=Unit)
+			(=> 'in' (unit=Unit | currency=Currency)) |
+			(=> 'per' unit=Unit)
 		)? &
 		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
 		(optional?='optional' | 'required')? &
 		(from=Number 'to' to=Number)? &
 		('named' name=(LOWERCASE_ID|STRING))?
+	);
+
+/*
+ * Used for constraints and values: has no value and admits the additional qualifiers to specify 
+ * the level of generality w.r.t. subclasses. Removes 'according to' but leaves value operators
+ */
+SimpleObservableSemantics returns ObservableSemantics:
+	(generic?='any' | global?='all' | exclusive?='only')?
+	declaration=ConceptDeclaration
+	( =>
+		( =>
+			(=> 'in' (unit=Unit | currency=Currency)) |
+			(=> 'per' unit=Unit)
+		)? &
+		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+		(from=Number 'to' to=Number)? 
 	);
 
 ValueOperator:
@@ -661,7 +689,7 @@ ConceptStatementBody:
 	
 		('uses' 'authority' authorities+=(UPPERCASE_ID|UPPERCASE_PATH))? &
 
-		('metadata' metadata=Metadata)? &
+		('metadata' metadata=Map)? &
 
 		// properties are only object properties and are declared on appearance. This makes typos
 		// problematic, of course, but the alternative is a load of ugly syntax.
@@ -728,10 +756,10 @@ IdentityRequirement:
 //;
 
 Annotation:
-	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
+	name=ANNOTATION_ID (=> '(' parameters=ParameterList? ')')?;
 
 List:
-	{List} '(' contents+=Value* ')';
+	{List} '(' contents+=ValueWithIdAndConcept? ((',')? contents+=ValueWithIdAndConcept)* ')';
 
 Literal:
 	 from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false');
@@ -742,18 +770,19 @@ LiteralOrID returns Literal:
 LiteralOrIdOrComma returns Literal:
 	 from=Number => 'to' => to=Number | number=Number | string=STRING | boolean=('true' | 'false') | id=ID | comma?=',';
 
-Metadata:
-	{Metadata} '{' (ids+=(PathName | LOWERCASE_ID | PropertyId | STRING) values+=(LiteralOrID | Metadata | List))* '}';
+//Metadata:
+//	{Metadata} '{' (ids+=(PathName | LOWERCASE_ID | PropertyId | STRING) values+=(LiteralOrID | Metadata | List))* '}';
 
-Documentation:
-	{Metadata} '{' (selectors+=DocSelector values+=LiteralOrID)* '}';
+//Documentation:
+//	{Metadata} '{' (selectors+=DocSelector values+=LiteralOrID)* '}';
 
 Map:
-	{Map} '{' (entries+=MapEntry (=> (',') entries+=MapEntry)*)? '}'
+	{Map} '{' (entries+=MapEntry (=> (',')? entries+=MapEntry)*)? '}'
 ;
 
 MapEntry:
-	classifier=ClassifierRHSWithId ':' value=ValueWithIdAndConcept
+	// must remove 'in (...)' from classifiers to avoid conflict with observable units, which are more needed.
+	classifier=ClassifierRHSWithIdNoSet ':' value=ValueWithIdAndConcept
 ;
 
 DocSelector:
@@ -771,20 +800,21 @@ KeyValuePair:
 
 ParameterList:
 	pairs+=KeyValuePair (=> ',' pairs+=KeyValuePair)* |
-	singleValue+=ValueWithIdAndConcept (=> ',' singleValue+=ValueWithIdAndConcept)*
+	singleValue+=ValueWithIdAndConcept (=> ',' (singleValue+=ValueWithIdAndConcept | pairs+=KeyValuePair))*
 ;
 
 ValueWithIdAndConcept returns Value:
-	concept=ConceptDeclaration |
+	list=List |
+	map=Map |
+	concept=SimpleObservableSemantics |
 	function=Function |
 	literal=Literal |
 	expr=EXPR |
 	id=(PathName|LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
-	list=List |
 	table=LookupTable |
 	date=Date |
-	map=Map |
 	quantity=Quantity |
+	op=REL_OPERATOR expression=Number | 
 	null?='unknown';
 
 Value:
@@ -894,25 +924,6 @@ PROPERTY_TYPE:
 	
 terminal ANNOTATION_ID:
 	'@' LOWERCASE_ID;
-
-///*
-// * Observable without the 'as' to use in model declarations and without the 'optional' that
-// * is only for dependencies.
-// */
-//SimpleObservableSemantics returns ObservableSemantics:
-//	
-//	declaration=ConceptDeclaration
-//	(
-//		('according' 'to' accordingTo=PropertyId)? &
-//		(
-//			('in' (unit=Unit | currency=Currency)) |
-//			('per' unit=Unit)
-//		)? &
-//		(from=Number 'to' to=Number)? &
-//		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
-//		(optional?='optional' | 'required')? &
-//		('named' name=(LOWERCASE_ID|STRING))?
-//	);
 
 /*
  * Full observable without the 'as <role>' but with 'optional'

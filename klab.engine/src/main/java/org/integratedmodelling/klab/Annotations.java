@@ -7,10 +7,8 @@ import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kdl.api.IKdlDataflow;
@@ -269,7 +267,7 @@ public enum Annotations implements IAnnotationService {
 			}
 			if (((IConcept) object).is(Type.CLASS)) {
 				// collect annotations from what is classified
-				IConcept classified = Types.INSTANCE.getCategorizingType((IConcept) object);
+				IConcept classified = Observables.INSTANCE.getDescribedType((IConcept) object);
 				if (classified != null) {
 					collectAnnotations(classified, collection);
 				}

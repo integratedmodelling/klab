@@ -111,7 +111,7 @@ public enum Concepts implements IConceptService {
 	}
 
 	@Override
-	public IConcept declare(IKimConcept conceptDefinition) {
+	public synchronized IConcept declare(IKimConcept conceptDefinition) {
 		return KimKnowledgeProcessor.INSTANCE.declare(conceptDefinition, Reasoner.INSTANCE.getOntology(),
 				Klab.INSTANCE.getRootMonitor());
 	}
