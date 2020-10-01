@@ -54,6 +54,9 @@ public class EmailConfig {
         return result;
     }
     
+    public String senderEmail() {
+    	return EMAIL_USERNAME;
+    }
 
     public String replyableGeneralEmailAddress() {
         return EMAIL_REPLYABLE_GENERAL;

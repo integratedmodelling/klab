@@ -43,7 +43,7 @@ public class EmailManager {
                         + "please let us know by replying to this email.",
                         linkConfig.getSiteName(), clickbackUrl);
         //logger.info("Sending email verification email to " + to + "...");
-        sendInternalEmail(emailConfig.replyableAdminEmailAddress(), to, subject, msg);
+        sendInternalEmail(emailConfig.senderEmail(), to, subject, msg);
     }
 
 	public void sendPasswordChangeConfirmation(String to) {
@@ -54,7 +54,7 @@ public class EmailManager {
                         + "Log in at: %s/#%s",
                         linkConfig.getSiteName(), linkConfig.getSiteUrl(), LOGIN_ROUTE);
         //logger.info("Sending password change confirmation email to " + to + "...");
-        sendInternalEmail(emailConfig.replyableGeneralEmailAddress(), to, subject, msg);
+        sendInternalEmail(emailConfig.senderEmail(), to, subject, msg);
 	}
     
     public void sendNewUser(String to, String username, URL clickbackUrl) {
@@ -65,12 +65,12 @@ public class EmailManager {
                         + "\n\nIf you did not create an account here, please let us know by replying to this email.",
                         linkConfig.getSiteName(), username, clickbackUrl.toExternalForm());
         //logger.info("Sending new user email to " + to + "...");
-        sendInternalEmail(emailConfig.replyableAdminEmailAddress(), to, subject, msg);
+        sendInternalEmail(emailConfig.senderEmail(), to, subject, msg);
     }
 
     public void sendFromMainEmailAddress(String to, String subject, String msg)
             throws MessagingException {
-    	sendInternalEmail(emailConfig.replyableGeneralEmailAddress(), to, subject, msg);
+    	sendInternalEmail(emailConfig.senderEmail(), to, subject, msg);
     }
     
     public void sendGroupRequestEmail(String username, URL clickbackUrl, String groups) {
@@ -80,7 +80,7 @@ public class EmailManager {
     				+ "\n\nPlease make sure those groups are appropriate for %s" 
     				+ "and if so click on the following link: %s",
     			username, groups, username,clickbackUrl);
-    	sendInternalEmail(emailConfig.replyableGeneralEmailAddress(), emailConfig.replyableGeneralEmailAddress(), subject,msg);
+    	sendInternalEmail(emailConfig.senderEmail(), emailConfig.replyableGeneralEmailAddress(), subject,msg);
     }
     
     public void sendInviteWithGroupsEmail(String to, URL clickbackUrl) throws MessagingException {
@@ -93,7 +93,7 @@ public class EmailManager {
     					"forward to working with you!" + 
     					"\n\n Please click the following link: %s",
     			clickbackUrl);
-    	sendInternalEmail(emailConfig.replyableGeneralEmailAddress(), to, subject, msg);
+    	sendInternalEmail(emailConfig.senderEmail(), to, subject, msg);
     }
 
 	public void sendLostPasswordEmail(String to, URL clickbackUrl) throws MessagingException {
@@ -103,7 +103,7 @@ public class EmailManager {
 						"Please click the following link: %s \n\n" +
 						"If you did not request a change of password please ignore this email. \n\n",
 				clickbackUrl);
-		sendInternalEmail(emailConfig.replyableGeneralEmailAddress(), to, subject, msg);
+		sendInternalEmail(emailConfig.senderEmail(), to, subject, msg);
 		
 	}
 	
@@ -114,7 +114,7 @@ public class EmailManager {
 						"Please click the following link: %s \n\n" +
 						"and sign in to download a new certificate.", linkConfig.getSiteUrl()
 				);
-		sendInternalEmail(emailConfig.replyableGeneralEmailAddress(), to, subject, msg);
+		sendInternalEmail(emailConfig.senderEmail(), to, subject, msg);
 		
 	}
 	
