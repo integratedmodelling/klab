@@ -496,4 +496,9 @@ public class Classifier implements IClassifier {
 		ret.conceptResolution = resolution;
 		return ret;
 	}
+
+	@Override
+	public IConcept getConcept() {
+		return conceptMatch;
+	}
 }

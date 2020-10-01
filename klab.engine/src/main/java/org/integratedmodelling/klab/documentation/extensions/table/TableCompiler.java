@@ -50,6 +50,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.classification.Classifier;
@@ -389,8 +390,28 @@ public class TableCompiler {
 			this.objectId = artifactId;
 		}
 
+		boolean isEnabled(Map<ObservedConcept, IObservation> catalog, IContextualizationScope scope) {
+
+			// TODO there may be other situations, like ranges that can't be matched, but
+			// maybe it's not worth checking compared to this.
+
+			if (classifier != null && target != null) {
+
+				IObservation observation = catalog.get(target);
+				if (observation instanceof IState) {
+					if (((IState) observation).getDataKey() != null && classifier.isConcept()) {
+						if (!((IState) observation).getDataKey().getConcepts().contains(classifier.getConcept())) {
+							return false;
+						}
+					}
+				}
+			}
+
+			return true;
+		}
+
 		boolean matches(Map<ObservedConcept, IObservation> catalog, ILocator locator, Phase phase, Object currentState,
-				IContextualizationScope scope) {
+				Dimension dimension, IContextualizationScope scope) {
 			if (universal) {
 				return true;
 			}
@@ -401,6 +422,7 @@ public class TableCompiler {
 			}
 			if (classifier != null) {
 				if (target != null) {
+
 					IObservation observation = catalog.get(target);
 					if (observation instanceof IState) {
 						currentState = ((IState) observation).get(locator);
@@ -524,6 +546,8 @@ public class TableCompiler {
 
 		private boolean referencesPhases;
 
+		private Set<String> referencedObjects = new HashSet<>();
+
 		public Dimension(Dimension dim) {
 			this.aggregation = dim.aggregation;
 			this.computation = dim.computation;
@@ -557,6 +581,7 @@ public class TableCompiler {
 			this.referencesPhases = dim.referencesPhases;
 			this.referencesStates = dim.referencesStates;
 			this.dataType = dim.dataType;
+			this.referencedObjects.addAll(dim.referencedObjects);
 			this.phaseReferences.putAll(dim.phaseReferences);
 
 		}
@@ -600,6 +625,8 @@ public class TableCompiler {
 					}
 				}
 				this.computation = descriptor.compile();
+				this.referencedObjects.addAll(descriptor.getIdentifiersInNonscalarScope());
+
 				/*
 				 * TODO 1. if the expr has only scalars for self/ctx names, will eval and
 				 * accumulate the result; 2. if it has non-scalars for self/ctx, will accumulate
@@ -641,6 +668,36 @@ public class TableCompiler {
 		boolean separator = false;
 
 		/**
+		 * Called once at sorting to weed out dimensions that cannot match the data
+		 * scope.
+		 * 
+		 * @param catalog
+		 * @param scope
+		 * @return
+		 */
+		public boolean isEnabled(Map<ObservedConcept, IObservation> catalog, IContextualizationScope scope) {
+
+			if (this.filters != null) {
+				for (Filter filter : this.filters) {
+					if (!filter.isEnabled(catalog, scope)) {
+						return false;
+					}
+				}
+			}
+
+			// classifiers are also checked
+			if (this.classifiers != null) {
+				for (Filter filter : this.classifiers) {
+					if (!filter.isEnabled(catalog, scope)) {
+						return false;
+					}
+				}
+			}
+
+			return true;
+		}
+
+		/**
 		 * True if all filters match, or there are no filters (unless it's a separator).
 		 * This should compute as quickly as possible.
 		 * 
@@ -657,9 +714,10 @@ public class TableCompiler {
 			if (this.separator) {
 				return false;
 			}
+
 			if (this.filters != null) {
 				for (Filter filter : this.filters) {
-					if (!filter.matches(catalog, locator, phase, currentState, scope)) {
+					if (!filter.matches(catalog, locator, phase, currentState, this, scope)) {
 						return false;
 					}
 				}
@@ -722,6 +780,7 @@ public class TableCompiler {
 			ret.referencesStates = this.referencesStates;
 			ret.phaseReferences.putAll(this.phaseReferences);
 			ret.dataType = this.dataType;
+			ret.referencedObjects.addAll(this.referencedObjects);
 
 			return ret;
 		}
@@ -772,6 +831,10 @@ public class TableCompiler {
 
 		List<Dimension> originalDims = new ArrayList<>();
 		for (Dimension dim : dimensions.values()) {
+
+			if (!dim.isEnabled(catalog, scope)) {
+				continue;
+			}
 
 			IObservation group = null;
 			ObservedConcept countable = null;
@@ -1048,7 +1111,7 @@ public class TableCompiler {
 		} else {
 			ret.id = (type == DimensionType.ROW ? "r" : "c");
 		}
-		
+
 		checkNameSequence(ret);
 
 		if (theRest.containsKey("title")) {
@@ -1078,10 +1141,9 @@ public class TableCompiler {
 			if (!(theRest.get("hidden") instanceof Boolean)) {
 				throw new KlabValidationException("the 'hidden' parameter only admits true/false values");
 			}
-			ret.hidden = (Boolean)theRest.get("hidden");
+			ret.hidden = (Boolean) theRest.get("hidden");
 		}
 
-		
 		if (theRest.containsKey("style")) {
 			for (Object style : (theRest.get("style") instanceof Collection ? ((Collection<?>) theRest.get("style"))
 					: Collections.singleton(theRest.get("style")))) {
@@ -1148,9 +1210,10 @@ public class TableCompiler {
 	}
 
 	private Map<String, Integer> idIndex = new HashMap<>();
-	
+
 	/**
 	 * Rename multiple rows with same ID to id1, id2.. etc
+	 * 
 	 * @param ret
 	 */
 	private void checkNameSequence(Dimension ret) {
@@ -1159,8 +1222,8 @@ public class TableCompiler {
 			dimensions = rows;
 		} else if (ret.dimensionType == DimensionType.COLUMN) {
 			dimensions = columns;
-		} 
-		
+		}
+
 		// could be a split, in which case do nothing
 		if (dimensions != null) {
 			if (dimensions.containsKey(ret.id)) {
@@ -1173,14 +1236,14 @@ public class TableCompiler {
 				ret.id = newId;
 			} else if (idIndex.containsKey(ret.id)) {
 				int prev = idIndex.get(ret.id);
-				prev ++;
+				prev++;
 				String newId = ret.id + prev;
 				idIndex.put(ret.id, prev);
 				ret.id = newId;
 				// will be inserted later
 			}
 		}
-		
+
 	}
 
 	private Collection<List<Filter>> expandClassifier(ObservedConcept target, TargetType targetType,
@@ -1349,15 +1412,36 @@ public class TableCompiler {
 		 */
 		List<Dimension> sortedColumns = getSortedDimension(columns, catalog, scope);
 		List<Dimension> sortedRows = getSortedDimension(rows, catalog, scope);
-
+		List<Phase> phases = getPhases(scope, catalog);
+		Map<String, Phase> phaseMap = new HashMap<>();
+		for (Phase phase : phases) {
+			phaseMap.put(phase.getKey(), phase);
+		}
 		/*
 		 * Find all observations in scope and fill in the observation map
 		 */
 		TableArtifact ret = new TableArtifact(this, sortedRows, sortedColumns, scope);
 
-		for (Phase phase : getPhases(scope, catalog)) {
+		Double fixedAreaMq = null;
+		Double adaptedAreaMq = null;
+		if (targetObservation.getScale().getSpace() != null
+				&& targetObservation.getScale().getSpace() instanceof Space) {
+			Space space = (Space) targetObservation.getScale().getSpace();
+			if (space.getGrid() != null) {
+				fixedAreaMq = space.getGrid().getCell(0).getStandardizedArea();
+			}
+		}
+
+		for (Phase phase : phases) {
 
 			for (Pair<Object, ILocator> value : phase.states(targetObservation)) {
+
+				/*
+				 * TODO check if there are situations where we want to tabulate nulls
+				 */
+				if (value.getFirst() == null) {
+					continue;
+				}
 
 				for (Dimension column : sortedColumns) {
 
@@ -1386,6 +1470,8 @@ public class TableCompiler {
 						IExpression rowExpression = row.getExpression(scope) == null ? column.getExpression(scope)
 								: row.getExpression(scope);
 						Set<String> rowSymbols = row.symbols == null ? column.symbols : row.symbols;
+						Set<String> objSymbols = row.referencedObjects.isEmpty() ? column.referencedObjects
+								: row.referencedObjects;
 						boolean referencesPhases = row.getExpression(scope) == null ? column.referencesPhases
 								: row.referencesPhases;
 
@@ -1402,10 +1488,17 @@ public class TableCompiler {
 						if (rowTargetType != null && rowTarget != null) {
 							switch (rowTargetType) {
 							case AREA:
-								// TODO precompute this if grid
-								val = rowTarget.getObservable().getUnit().convert(
-										((IScale) value.getSecond()).getSpace().getStandardizedArea(),
-										Units.INSTANCE.SQUARE_METERS);
+								// use precomputed if grid
+								if (adaptedAreaMq != null) {
+									val = adaptedAreaMq;
+								} else if (fixedAreaMq != null) {
+									val = adaptedAreaMq = rowTarget.getObservable().getUnit()
+											.convert(fixedAreaMq, Units.INSTANCE.SQUARE_METERS).doubleValue();
+								} else {
+									val = rowTarget.getObservable().getUnit().convert(
+											((IScale) value.getSecond()).getSpace().getStandardizedArea(),
+											Units.INSTANCE.SQUARE_METERS);
+								}
 								break;
 							case DURATION:
 								// TODO same
@@ -1432,16 +1525,18 @@ public class TableCompiler {
 						} else if (rowComputationType == ComputationType.Expression) {
 
 							if (!referencesPhases) {
-								val = evaluate(rowExpression, rowSymbols, value.getSecond(), ret, column.index,
-										row.index, true, scope);
+								val = evaluate(rowExpression, val, rowSymbols, objSymbols, value.getSecond(), ret,
+										column.index, row.index, column, row, true, phaseMap, scope);
 							}
 
 							ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(),
 									phase, column.index, row.index);
 
 							if (referencesPhases && phase.isLast()) {
-								ret.setValue(evaluate(rowExpression, rowSymbols, value.getSecond(), ret, column.index,
-										row.index, false, scope), column.index, row.index);
+								ret.setValue(
+										evaluate(rowExpression, val, rowSymbols, objSymbols, value.getSecond(), ret,
+												column.index, row.index, column, row, false, phaseMap, scope),
+										column.index, row.index);
 							}
 
 						} else if (!inconsistentAggregation) {
@@ -1458,17 +1553,25 @@ public class TableCompiler {
 		return ret;
 	}
 
-	private Object evaluate(IExpression rowExpression, Set<String> rowSymbols, ILocator locator, TableArtifact ret,
-			int column, int row, boolean isValue, IRuntimeScope scope) {
+	private Object evaluate(IExpression rowExpression, Object self, Set<String> scalarSymbols,
+			Set<String> objectSymbols, ILocator locator, TableArtifact ret, int columnIndex, int rowIndex,
+			Dimension column, Dimension row, boolean isValue, Map<String, Phase> phases, IRuntimeScope scope) {
 
-//		IExpression.Context ectx = scope.getExpressionContext();
-		// TODO this does not localize the context
 		IParameters<String> parameters = Parameters.create(scope);
-		parameters.put("value", ret.getCurrentValue(column, row, "value", isValue));
-		for (String symbol : rowSymbols) {
-			// match to current row/column if column/row name. TODO use ranges and
-			if (rows.containsKey(symbol) || columns.containsKey(symbol)) {
-				parameters.put(symbol, ret.getCurrentValue(column, row, symbol, true));
+		parameters.put("self", self);
+		for (String symbol : scalarSymbols) {
+			if ("value".equals(symbol)) {
+				parameters.put("value", null);
+			} else if ("start".equals(symbol)) {
+				parameters.put("start", null);
+			} else if ("init".equals(symbol)) {
+				parameters.put("init", null);
+			} else if ("end".equals(symbol)) {
+				parameters.put("end", null);
+			} else if ("time".equals(symbol)) {
+				parameters.put("time", ((IScale) locator).getTime());
+			} else if (rows.containsKey(symbol) || columns.containsKey(symbol)) {
+				parameters.put(symbol, ret.getCurrentValue(columnIndex, rowIndex, symbol, true));
 			} else {
 				IArtifact artifact = scope.getArtifact(symbol);
 				if (artifact instanceof IState) {
@@ -1479,6 +1582,20 @@ public class TableCompiler {
 			}
 			// intersections, for now fuck.
 		}
+		for (String symbol : objectSymbols) {
+			switch (symbol) {
+			case "cell":
+				parameters.put(symbol, new TableApiObjects.TableCell(ret, column, row, locator));
+				break;
+			case "row":
+				parameters.put(symbol, new TableApiObjects.TableDimension(row, locator));
+				break;
+			case "column":
+				parameters.put(symbol, new TableApiObjects.TableDimension(column, locator));
+				break;
+			}
+		}
+
 		return rowExpression.eval(parameters, scope);
 	}
 
@@ -1622,7 +1739,7 @@ public class TableCompiler {
 		}
 		return ret;
 	}
-	
+
 	public List<String> getRowOrder() {
 		return new ArrayList<>(rows.keySet());
 	}

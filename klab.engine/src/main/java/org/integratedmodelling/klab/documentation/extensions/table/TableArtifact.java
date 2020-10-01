@@ -387,7 +387,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		List<Dimension> ret = new ArrayList<>();
 		for (String id : table.getRowOrder()) {
 			Dimension dim = dimensionCatalog.get(id);
-			if (activeRows.contains(dim.index)) {
+			if (dim != null && activeRows.contains(dim.index)) {
 				ret.add(dim);
 			}
 		}
@@ -403,7 +403,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		List<Dimension> ret = new ArrayList<>();
 		for (String id : table.getColumnOrder()) {
 			Dimension dim = dimensionCatalog.get(id);
-			if (activeColumns.contains(dim.index)) {
+			if (dim != null && activeColumns.contains(dim.index)) {
 				ret.add(dim);
 			}
 		}

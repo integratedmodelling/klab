@@ -154,6 +154,7 @@ public class GroovyExpressionPreprocessor {
 	 * id["ctx"] and the ID plus any key encountered are placed here.
 	 */
 	private Map<String, Set<String>> mapIdentifiers = new HashMap<>();
+	private boolean ignoreContext;
 
 	static final int KNOWLEDGE = 1;
 	static final int DEFINE = 2;
@@ -175,6 +176,7 @@ public class GroovyExpressionPreprocessor {
 		this.context = context;
 		this.contextual = contextual;
 		this.recontextualizeAsMap = options.contains(CompilerOption.RecontextualizeAsMap);
+		this.ignoreContext = options.contains(CompilerOption.IgnoreContext);
 	}
 
 	public Geometry getInferredGeometry() {
@@ -669,8 +671,9 @@ public class GroovyExpressionPreprocessor {
 	}
 
 	private String translateParameter(String currentToken, boolean isScalar) {
-		return (isScalar || mapIdentifiers.containsKey(currentToken)) ? currentToken
-				: "_p.get(\"" + currentToken + "\")";
+		boolean isMapIdentifier = mapIdentifiers.containsKey(currentToken);
+		boolean includeLiterally = this.ignoreContext && !this.context.getStateIdentifiers().contains(currentToken);
+		return (isScalar || isMapIdentifier || includeLiterally) ? currentToken : "_p.get(\"" + currentToken + "\")";
 	}
 
 	private String translateKnowledge(String k) {

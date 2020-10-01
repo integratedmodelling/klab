@@ -42,11 +42,54 @@ public class TableView implements ITableView {
 		boolean header;
 		boolean rowScope;
 		String contents;
+		Set<Style> style;
 
-		public String getContents() {
-			return contents == null ? (header ? "<th" + (rowScope ? " scope=\"row\"" : "") + "></th>" : "<td></td>")
-					: contents;
+		public String getHtmlContents() {
+			if (contents == null) {
+				return (header ? "<th" + (rowScope ? " scope=\"row\"" : "") + "></th>" : "<td></td>");
+			}
+			return (header ? ("<th" + (rowScope ? " scope=\"ro\"" : "")) : "<td") + getStyle(style) + ">"
+					+ Escape.forHTML(contents.toString()) + (header ? "</th>" : "</td>");
 		}
+
+		private String getStyle(Set<Style> style) {
+
+			if (style != null && !style.isEmpty()) {
+				String ret = "\"";
+				for (Style s : style) {
+					switch (s) {
+					case BOLD:
+						ret += (ret.length() == 1 ? "" : " ") + "kv-bold";
+						break;
+					case CENTER:
+						ret += (ret.length() == 1 ? "" : " ") + "kv-align-center";
+						break;
+					case ITALIC:
+						ret += (ret.length() == 1 ? "" : " ") + "kv-italic";
+						break;
+					case LEFT:
+						ret += (ret.length() == 1 ? "" : " ") + "kv-align-left";
+						break;
+					case RIGHT:
+						ret += (ret.length() == 1 ? "" : " ") + "kv-align-right";
+						break;
+					case BG_HIGHLIGHT:
+						ret += (ret.length() == 1 ? "" : " ") + "kv-bg-highlight";
+						break;
+					case FG_HIGHLIGHT:
+						ret += (ret.length() == 1 ? "" : " ") + "kv-fg-highlight";
+						break;
+					default:
+						break;
+
+					}
+				}
+
+				return " class=" + ret + "\"";
+			}
+			return "";
+		}
+
 	}
 
 	@Override
@@ -63,7 +106,7 @@ public class TableView implements ITableView {
 		return ret.toString();
 	}
 
-	private String compile(Container sheet) {
+	protected String compile(Container sheet) {
 		StringBuffer ret = new StringBuffer(2048);
 		ret.append("<div>\n");
 		for (int t : sheet.children) {
@@ -82,7 +125,7 @@ public class TableView implements ITableView {
 					Container row = containers.get(r);
 					for (int c : row.children) {
 						Cell cell = cells.get(c);
-						ret.append("      " + cell.getContents() + "\n");
+						ret.append("      " + cell.getHtmlContents() + "\n");
 					}
 					ret.append("    </tr>\n");
 				}
@@ -178,54 +221,15 @@ public class TableView implements ITableView {
 	@Override
 	public void write(int cell, Object content, Object... options) {
 		Cell cll = cells.get(cell);
-		Set<Style> style = null;
 		for (Object option : options) {
 			if (option instanceof Set) {
-				style = (Set<Style>) option;
+				cll.style = (Set<Style>) option;
 			}
 			// TODO other parameters
 		}
-		cll.contents = (cll.header ? ("<th" + (cll.rowScope ? " scope=\"ro\"" : "")) : "<td") + getStyle(style) + ">"
-				+ Escape.forHTML(content.toString()) + (cll.header ? "</th>" : "</td>");
+		// TODO if there is formatting in the options, add it
+		cll.contents = content.toString();
 
-	}
-
-	private String getStyle(Set<Style> style) {
-
-		if (style != null && !style.isEmpty()) {
-			String ret = "\"";
-			for (Style s : style) {
-				switch (s) {
-				case BOLD:
-					ret += (ret.length() == 1 ? "" : " ") + "kv-bold";
-					break;
-				case CENTER:
-					ret += (ret.length() == 1 ? "" : " ") + "kv-align-center";
-					break;
-				case ITALIC:
-					ret += (ret.length() == 1 ? "" : " ") + "kv-italic";
-					break;
-				case LEFT:
-					ret += (ret.length() == 1 ? "" : " ") + "kv-align-left";
-					break;
-				case RIGHT:
-					ret += (ret.length() == 1 ? "" : " ") + "kv-align-right";
-					break;
-				case BG_HIGHLIGHT:
-					ret += (ret.length() == 1 ? "" : " ") + "kv-bg-highlight";
-					break;
-				case FG_HIGHLIGHT:
-					ret += (ret.length() == 1 ? "" : " ") + "kv-fg-highlight";
-					break;
-				default:
-					break;
-
-				}
-			}
-
-			return " class=" + ret + "\"";
-		}
-		return "";
 	}
 
 	@Override

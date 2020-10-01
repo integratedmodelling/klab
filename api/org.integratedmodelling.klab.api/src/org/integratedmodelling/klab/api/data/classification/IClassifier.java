@@ -15,6 +15,7 @@
  */
 package org.integratedmodelling.klab.api.data.classification;
 
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
@@ -95,5 +96,12 @@ public interface IClassifier {
 	 * @return
 	 */
 	public boolean isConcept();
+
+	/**
+	 * If isConcept(), getConcept.
+	 * 
+	 * @return
+	 */
+	public IConcept getConcept();
 
 }

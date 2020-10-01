@@ -24,13 +24,7 @@ package org.integratedmodelling.klab.api.documentation;
 
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.documentation.IDocumentation.Template;
-import org.integratedmodelling.klab.api.model.IModel;
-import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 
 /**
  * A report contains a DAG of sections.
