@@ -1559,16 +1559,11 @@ public class TableCompiler {
 
 		IParameters<String> parameters = Parameters.create(scope);
 		parameters.put("self", self);
+		for (String key : phases.keySet()) {
+			parameters.put(key, phases.get(key));
+		}
 		for (String symbol : scalarSymbols) {
-			if ("value".equals(symbol)) {
-				parameters.put("value", null);
-			} else if ("start".equals(symbol)) {
-				parameters.put("start", null);
-			} else if ("init".equals(symbol)) {
-				parameters.put("init", null);
-			} else if ("end".equals(symbol)) {
-				parameters.put("end", null);
-			} else if ("time".equals(symbol)) {
+			if ("time".equals(symbol)) {
 				parameters.put("time", ((IScale) locator).getTime());
 			} else if (rows.containsKey(symbol) || columns.containsKey(symbol)) {
 				parameters.put(symbol, ret.getCurrentValue(columnIndex, rowIndex, symbol, true));
