@@ -13,6 +13,9 @@ import org.integratedmodelling.klab.hub.api.User;
 import org.integratedmodelling.klab.hub.api.TokenVerifyAccountClickback;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
 import org.integratedmodelling.klab.hub.exception.ActivationTokenFailedException;
+import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
+import org.integratedmodelling.klab.hub.exception.ResponseEntityAdapter;
+import org.integratedmodelling.klab.hub.exception.UserByEmailDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.UserDoesNotExistException;
 import org.integratedmodelling.klab.hub.exception.UserEmailExistsException;
 import org.integratedmodelling.klab.hub.exception.UserExistsException;
@@ -113,8 +116,12 @@ public class UserRegistrationController {
 		ProfileResource profile = null;
 		try {
 			profile = profileService.getUserProfile(id);
-		} catch (UserDoesNotExistException e) {
-			profile = profileService.getUserProfileByEmail(id);
+		} catch (UserDoesNotExistException udnee) {
+			try {
+				profile = profileService.getUserProfileByEmail(id);
+			} catch (UserByEmailDoesNotExistException ubednee) {
+				return new ResponseEntityAdapter<UserByEmailDoesNotExistException>(HttpStatus.NOT_FOUND, ubednee).getResponse();
+			}
 		}
 		TokenLostPasswordClickback token = (TokenLostPasswordClickback)
 				tokenService.createToken(profile.getUsername(), TokenType.lostPassword);
@@ -122,7 +129,7 @@ public class UserRegistrationController {
 		emailManager.sendLostPasswordEmail(profile.getEmail(), token.getCallbackUrl());
 		
 		JSONObject resp = new JSONObject();
-		resp.appendField("message", "Reset password link sent to email address assoicated with user: " + profile.getUsername());
+		resp.appendField("message", "Reset password link sent to email address associated with user: " + profile.getUsername());
 		return new ResponseEntity<JSONObject>(resp,HttpStatus.CREATED);
 	}
 
