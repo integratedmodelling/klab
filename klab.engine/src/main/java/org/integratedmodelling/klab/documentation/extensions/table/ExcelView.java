@@ -1,13 +1,16 @@
 package org.integratedmodelling.klab.documentation.extensions.table;
 
+import java.io.IOException;
 import java.io.OutputStream;
 
-import org.integratedmodelling.klab.utils.Escape;
-import org.openxmlformats.schemas.spreadsheetml.x2006.main.WorksheetDocument;
+import org.apache.poi.xssf.usermodel.XSSFRow;
+import org.apache.poi.xssf.usermodel.XSSFSheet;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 
 public class ExcelView extends TableView {
 
-	WorksheetDocument document;
+	;
 
 	@Override
 	public boolean isText() {
@@ -21,47 +24,50 @@ public class ExcelView extends TableView {
 
 	@Override
 	public void write(OutputStream output) {
-		// TODO Auto-generated method stub
-		super.write(output);
+		XSSFWorkbook ret = new XSSFWorkbook();
+		int n = 0;
+		for (int s : this.sheets) {
+			compile(ret, containers.get(s), 0, n++);
+		}
+		try {
+			ret.write(output);
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
 	}
 
-	@Override
-	public void write(int cell, Object content, Object... options) {
-		// TODO Auto-generated method stub
-		super.write(cell, content, options);
-	}
+	protected int compile(XSSFWorkbook workbook, Container sheet, int startRow, int sheetNo) {
 
-	protected String compile(Container sheet) {
-		// TODO redo
-		StringBuffer ret = new StringBuffer(2048);
-		ret.append("<div>\n");
+		XSSFSheet sht = workbook
+				.createSheet(sheet.title == null || sheet.title.isEmpty() ? ("Sheet " + sheetNo) : sheet.title);
+
 		for (int t : sheet.children) {
-			ret.append("<table>\n");
+
 			Container table = containers.get(t);
 			if (table.title != null) {
-				ret.append("  <caption>");
-				ret.append(Escape.forHTML(table.title));
-				ret.append("  </caption>\n");
+				XSSFRow row = sht.createRow(startRow++);
+				row.createCell(0).setCellValue(table.title);
+				// skip a row after the title
+				startRow++;
 			}
 			for (int s : table.children) {
 				Container section = containers.get(s);
-				ret.append("  <" + section.title + "\n");
+				// TODO use specific style for headers and footers
 				for (int r : section.children) {
-					ret.append("    <tr>\n");
 					Container row = containers.get(r);
+					XSSFRow rw = sht.createRow(startRow++);
+					int cel = 0;
 					for (int c : row.children) {
 						Cell cell = cells.get(c);
-						ret.append("      " + cell.getHtmlContents() + "\n");
+						// TODO types, style, everything
+						rw.createCell(cel++).setCellValue(cell.contents);
 					}
-					ret.append("    </tr>\n");
 				}
-				ret.append("  </" + section.title + "\n");
+				// skip a row between tables
+				startRow++;
 			}
-			ret.append("</table>\n");
 		}
-		ret.append("</div>");
-		return ret.toString();
+		return startRow;
 	}
-
 
 }

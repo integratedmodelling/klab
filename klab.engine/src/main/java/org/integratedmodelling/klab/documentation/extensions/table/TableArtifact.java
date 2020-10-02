@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.documentation.extensions.table;
 
 import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -30,6 +32,7 @@ import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Phase;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Style;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.provenance.Artifact;
 import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
@@ -243,8 +246,8 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 
 			if ("text/html".equals(mediaType)) {
 				ret = new TableView();
-			} else if ("".equals(mediaType)) {
-
+			} else if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(mediaType)) {
+				ret = new ExcelView();
 			}
 
 			if (ret == null) {
@@ -491,7 +494,12 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 
 	@Override
 	public boolean export(File file, String mediaType) {
-		return false;
+		try (FileOutputStream output = new FileOutputStream(file)) {
+			getCompiledView(mediaType).write(output);
+			return true;
+		} catch (Exception e) {
+			throw new KlabIOException(e);
+		}
 	}
 
 	private String getData(Cell cell) {

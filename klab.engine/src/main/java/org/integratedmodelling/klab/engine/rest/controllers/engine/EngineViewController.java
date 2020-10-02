@@ -9,8 +9,6 @@ import java.io.InputStream;
 import java.security.Principal;
 import java.text.NumberFormat;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
 
 import javax.imageio.ImageIO;
@@ -21,11 +19,10 @@ import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -199,6 +196,36 @@ public class EngineViewController {
 			@RequestParam(required = false) String adapter, HttpServletResponse response) throws Exception {
 
 		ISession session = EngineSessionController.getSession(principal);
+
+		if (format == GeometryType.TABLE) {
+
+			/*
+			 * TODO this may change - tables and other views are indexed with
+			 * contextid.artifactid because the session does not index them individually.
+			 */
+			String[] ids = observation.split("\\.");
+			if (ids.length != 2) {
+				throw new IllegalArgumentException("view " + observation + " does not contain the context ID");
+			}
+
+			IObservation context = session.getObservation(ids[0]);
+			IArtifact view = ((Observation) context).getScope().getArtifact(ids[1]);
+			if (!(view instanceof IKnowledgeView)) {
+				throw new IllegalArgumentException("view " + observation + " does not exist or is not a view");
+			}
+
+			File file = File.createTempFile("view", "." + adapter);
+			if (((IKnowledgeView) view).export(file, outputFormat)) {
+
+				try (InputStream input = new FileInputStream(file)) {
+					response.setContentType(outputFormat);
+					IOUtils.copy(input, response.getOutputStream());
+				}
+				return;
+			}
+
+		}
+
 		IObservation obs = session.getObservation(observation);
 		if (obs == null) {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
@@ -215,7 +242,7 @@ public class EngineViewController {
 
 //		System.out.println(
 //				"REQUESTED " + loc + ": " + obs.getTimestamp() + "\n   " + Arrays.toString(obs.getUpdateTimestamps()));
-		
+
 		boolean done = false;
 
 		// special handling for some types: with time, these may be integrated in the

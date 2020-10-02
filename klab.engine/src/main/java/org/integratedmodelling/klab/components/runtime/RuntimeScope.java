@@ -151,7 +151,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	Map<ResolvedObservable, List<Pair<ICoverage, Dataflow>>> dataflowCache = new HashMap<>();
 	private IActuator actuator;
 	private boolean occurrent;
-	private List<IKnowledgeView> views = new ArrayList<>();
+	private Map<String, IKnowledgeView> views;
 
 	public RuntimeScope(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
@@ -173,6 +173,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable(), true);
 		this.dataflow = actuator.getDataflow();
 		this.watchedObservations = Collections.synchronizedSet(new HashSet<>());
+		this.views = new HashMap<>();
 
 		/*
 		 * Complex and convoluted, but there is no other way to get this which must be
@@ -235,6 +236,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.dataflow = context.dataflow;
 		this.behaviorBindings = context.behaviorBindings;
 		this.watchedObservations = context.watchedObservations;
+		this.views = context.views;
 	}
 
 	@Override
@@ -324,7 +326,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public IArtifact getArtifact(String localName) {
-		return catalog.get(localName);
+		IArtifact ret = catalog.get(localName);
+		if (ret == null) {
+			ret = this.views.get(localName);
+		}
+		return ret;
 	}
 
 	@Override
@@ -1862,7 +1868,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public void addView(IKnowledgeView view) {
 
-		this.views.add(view);
+		this.views.put(view.getId(), view);
 
 		/*
 		 * send directly to clients. If view can export, keep view and send URL to
