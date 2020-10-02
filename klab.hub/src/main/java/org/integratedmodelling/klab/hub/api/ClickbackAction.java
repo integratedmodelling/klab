@@ -5,8 +5,6 @@ public enum ClickbackAction {
             TokenType.verify),
     password(
             TokenType.password),
-    groups(
-    		TokenType.groups),
     invite(
     		TokenType.invite),
     newUser(

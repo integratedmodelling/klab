@@ -6,9 +6,9 @@ import org.springframework.data.annotation.TypeAlias;
 @TypeAlias("VerifyUser")
 public class TokenVerifyAccountClickback extends TokenChangePasswordClickback {
 
-    private static final long serialVersionUID = -9175135534782007340L;
+    private static final long serialVersionUID = -3080110256565225207L;
 
-    public TokenVerifyAccountClickback(String username) {
+	public TokenVerifyAccountClickback(String username) {
         super(username);
     }
 

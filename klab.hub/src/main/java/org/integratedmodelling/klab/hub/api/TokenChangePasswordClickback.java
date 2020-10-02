@@ -6,9 +6,9 @@ import org.springframework.data.annotation.TypeAlias;
 @TypeAlias("ChangePassword")
 public class TokenChangePasswordClickback extends TokenClickback {
 
-    private static final long serialVersionUID = -6813740740798681807L;
+    private static final long serialVersionUID = 8432748073739754935L;
 
-    public TokenChangePasswordClickback(String username) {
+	public TokenChangePasswordClickback(String username) {
         super(username);
     }
 
