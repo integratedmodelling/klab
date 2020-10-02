@@ -22,6 +22,7 @@
 package org.integratedmodelling.klab.engine.runtime.code.groovy;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -388,6 +389,11 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 	public ILanguageExpression override(Object... variables) {
 		this.overriding = variables;
 		return this;
+	}
+
+	@Override
+	public Collection<String> getIdentifiers() {
+		return descriptor.getIdentifiers();
 	}
 
 }

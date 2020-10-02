@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
+import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -240,6 +241,7 @@ public class TableCompiler {
 					}
 
 				};
+
 			}
 			return null;
 		}
@@ -528,7 +530,7 @@ public class TableCompiler {
 		 * calculating when we have a scope.
 		 */
 		IKimExpression expression;
-		IExpression computation;
+		ILanguageExpression computation;
 
 		/**
 		 * Any symbols used in computations, to compute dependencies.
@@ -590,7 +592,7 @@ public class TableCompiler {
 			// TODO Auto-generated constructor stub
 		}
 
-		public IExpression getExpression(IRuntimeScope scope) {
+		public ILanguageExpression getExpression(IRuntimeScope scope) {
 			if (expression != null && computation == null) {
 				ILanguageProcessor processor = Extensions.INSTANCE
 						.getLanguageProcessor(expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
@@ -608,6 +610,10 @@ public class TableCompiler {
 						context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
 					}
 				}
+				
+				context.addKnownIdentifier("cell", Type.COUNTABLE);
+				context.addKnownIdentifier("row", Type.COUNTABLE);
+				context.addKnownIdentifier("column", Type.COUNTABLE);
 
 				Descriptor descriptor = processor.describe(expression.getCode(), context,
 						CompilerOption.RecontextualizeAsMap, CompilerOption.IgnoreContext);
@@ -1413,10 +1419,23 @@ public class TableCompiler {
 		List<Dimension> sortedColumns = getSortedDimension(columns, catalog, scope);
 		List<Dimension> sortedRows = getSortedDimension(rows, catalog, scope);
 		List<Phase> phases = getPhases(scope, catalog);
-		Map<String, Phase> phaseMap = new HashMap<>();
+
+		// publish unchanging time extents for expressions
+		Map<String, ITime> phaseMap = new HashMap<>();
 		for (Phase phase : phases) {
-			phaseMap.put(phase.getKey(), phase);
+			if (phase.scale != null) {
+				// may be null
+				phaseMap.put(phase.getKey(), phase.scale.getTime());
+			}
 		}
+		if (!phaseMap.containsKey("init")) {
+			phaseMap.put("init", targetObservation.getScale().initialization().getTime());
+		}
+		if (!phaseMap.containsKey("start") && targetObservation.getScale().isTemporallyDistributed()) {
+			phaseMap.put("start", (ITime) targetObservation.getScale().getTime()
+					.getExtent(targetObservation.getScale().getTime().size() < 3 ? 0 : 1));
+		}
+
 		/*
 		 * Find all observations in scope and fill in the observation map
 		 */
@@ -1467,7 +1486,7 @@ public class TableCompiler {
 						TargetType rowTargetType = row.targetType == null ? columnTargetType : row.targetType;
 						ComputationType rowComputationType = row.computationType == null ? column.computationType
 								: row.computationType;
-						IExpression rowExpression = row.getExpression(scope) == null ? column.getExpression(scope)
+						ILanguageExpression rowExpression = row.getExpression(scope) == null ? column.getExpression(scope)
 								: row.getExpression(scope);
 						Set<String> rowSymbols = row.symbols == null ? column.symbols : row.symbols;
 						Set<String> objSymbols = row.referencedObjects.isEmpty() ? column.referencedObjects
@@ -1524,9 +1543,11 @@ public class TableCompiler {
 
 						} else if (rowComputationType == ComputationType.Expression) {
 
+							phaseMap.put("time", scope.getScale().getTime());
+
 							if (!referencesPhases) {
-								val = evaluate(rowExpression, val, rowSymbols, objSymbols, value.getSecond(), ret,
-										column.index, row.index, column, row, true, phaseMap, scope);
+								val = evaluate(rowExpression, val, rowSymbols, objSymbols, value, ret,
+										column.index, row.index, column, row, true, phaseMap, catalog, scope);
 							}
 
 							ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(),
@@ -1534,8 +1555,8 @@ public class TableCompiler {
 
 							if (referencesPhases && phase.isLast()) {
 								ret.setValue(
-										evaluate(rowExpression, val, rowSymbols, objSymbols, value.getSecond(), ret,
-												column.index, row.index, column, row, false, phaseMap, scope),
+										evaluate(rowExpression, val, rowSymbols, objSymbols, value, ret,
+												column.index, row.index, column, row, false, phaseMap, catalog, scope),
 										column.index, row.index);
 							}
 
@@ -1553,42 +1574,44 @@ public class TableCompiler {
 		return ret;
 	}
 
-	private Object evaluate(IExpression rowExpression, Object self, Set<String> scalarSymbols,
-			Set<String> objectSymbols, ILocator locator, TableArtifact ret, int columnIndex, int rowIndex,
-			Dimension column, Dimension row, boolean isValue, Map<String, Phase> phases, IRuntimeScope scope) {
+	/*
+	 * just a few parameters
+	 */
+	private Object evaluate(ILanguageExpression rowExpression, Object self, Set<String> scalarSymbols,
+			Set<String> objectSymbols, Pair<Object, ILocator> value, TableArtifact ret, int columnIndex, int rowIndex,
+			Dimension column, Dimension row, boolean isValue, Map<String, ITime> phases,
+			Map<ObservedConcept, IObservation> catalog, IRuntimeScope scope) {
 
 		IParameters<String> parameters = Parameters.create(scope);
 		parameters.put("self", self);
 		for (String key : phases.keySet()) {
 			parameters.put(key, phases.get(key));
 		}
-		for (String symbol : scalarSymbols) {
-			if ("time".equals(symbol)) {
-				parameters.put("time", ((IScale) locator).getTime());
-			} else if (rows.containsKey(symbol) || columns.containsKey(symbol)) {
-				parameters.put(symbol, ret.getCurrentValue(columnIndex, rowIndex, symbol, true));
-			} else {
-				IArtifact artifact = scope.getArtifact(symbol);
-				if (artifact instanceof IState) {
-					parameters.put(symbol, ((IState) artifact).get(locator));
-				} else if (artifact != null) {
-					parameters.put(symbol, artifact);
-				}
-			}
-			// intersections, for now fuck.
-		}
-		for (String symbol : objectSymbols) {
+		for (String symbol : rowExpression.getIdentifiers()) {
 			switch (symbol) {
 			case "cell":
-				parameters.put(symbol, new TableApiObjects.TableCell(ret, column, row, locator));
+				parameters.put(symbol, new TableApiObjects.TableCell(ret, value.getFirst(), column, row,  value.getSecond()));
 				break;
 			case "row":
-				parameters.put(symbol, new TableApiObjects.TableDimension(row, locator));
+				parameters.put(symbol, new TableApiObjects.TableDimension(row, catalog, value.getSecond()));
 				break;
 			case "column":
-				parameters.put(symbol, new TableApiObjects.TableDimension(column, locator));
+				parameters.put(symbol, new TableApiObjects.TableDimension(column, catalog, value.getSecond()));
+				break;
+			default:
+				if (rows.containsKey(symbol) || columns.containsKey(symbol)) {
+					parameters.put(symbol, ret.getCurrentValue(columnIndex, rowIndex, symbol, true));
+				} else {
+					IArtifact artifact = scope.getArtifact(symbol);
+					if (artifact instanceof IState) {
+						parameters.put(symbol, ((IState) artifact).get(value.getSecond()));
+					} else if (artifact != null) {
+						parameters.put(symbol, artifact);
+					}
+				}
 				break;
 			}
+			// intersections, for now fuck.
 		}
 
 		return rowExpression.eval(parameters, scope);

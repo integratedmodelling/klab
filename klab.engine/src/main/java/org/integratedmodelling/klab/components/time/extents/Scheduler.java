@@ -655,8 +655,10 @@ public class Scheduler implements IScheduler {
 			}
 		}
 
-		this.resolution = NumberUtils.gcd(NumberUtils.longArrayFromCollection(periods));
-
+		if (!periods.isEmpty()) {
+			this.resolution = NumberUtils.gcd(NumberUtils.longArrayFromCollection(periods));
+		}
+		
 		/*
 		 * wheel size should accommodate the longest interval @the chosen resolution,
 		 * but we cap it at MAX_HASH_WHEEL_SIZE. Keep it in powers of 2 for predictable
@@ -906,6 +908,9 @@ public class Scheduler implements IScheduler {
 		for (Registration registration : terminationRegistrations) {
 			registration.run(monitor);
 		}
+		
+		// don't do this again if we make further observations later
+		this.registrations.clear();
 
 		this.finished = true;
 
