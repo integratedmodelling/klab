@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = org.springframework.http.HttpStatus.FORBIDDEN)
 public final class GroupRequestTokenFailedException extends KlabException {
 
-    private static final long serialVersionUID = 1949675863417776169L;
+   private static final long serialVersionUID = 2778815718915500942L;
 
-    public GroupRequestTokenFailedException(String msg) {
+	public GroupRequestTokenFailedException(String msg) {
         super(msg);
     }
 

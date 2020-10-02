@@ -2,9 +2,9 @@ package org.integratedmodelling.klab.hub.exception;
 
 public class UserExistsException extends RuntimeException{
 
-    private static final long serialVersionUID = -1332212722467230931L;
+    private static final long serialVersionUID = 3765542602656572848L;
 
-    public UserExistsException(String username) {
+	public UserExistsException(String username) {
         this(username, null);
     }
 

@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = org.springframework.http.HttpStatus.FORBIDDEN)
 public final class AuthenticationFailedException extends KlabException {
 
-    private static final long serialVersionUID = 1949675863417776169L;
+   private static final long serialVersionUID = -5724804803097691001L;
 
-    public AuthenticationFailedException(String msg) {
+	public AuthenticationFailedException(String msg) {
         super(msg);
     }
 

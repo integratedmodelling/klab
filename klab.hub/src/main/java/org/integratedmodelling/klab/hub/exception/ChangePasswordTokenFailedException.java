@@ -6,9 +6,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 @ResponseStatus(value = org.springframework.http.HttpStatus.BAD_REQUEST)
 public final class ChangePasswordTokenFailedException extends KlabException {
 
-    private static final long serialVersionUID = 1949675863417776169L;
+    private static final long serialVersionUID = 2339468579166253922L;
 
-    public ChangePasswordTokenFailedException(String msg) {
+	public ChangePasswordTokenFailedException(String msg) {
         super(msg);
     }
 
