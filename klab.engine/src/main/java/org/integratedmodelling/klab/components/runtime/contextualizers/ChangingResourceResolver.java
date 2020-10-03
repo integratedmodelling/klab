@@ -71,7 +71,7 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
 			context.getMonitor().warn(
 					"Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
 		}
-
+		
 		IResource res = resources.get(0);
 		Urn urn = new Urn(res.getUrn());
 

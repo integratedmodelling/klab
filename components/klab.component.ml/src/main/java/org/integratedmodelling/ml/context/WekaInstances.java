@@ -44,6 +44,7 @@ import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.classification.Discretization;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -70,6 +71,7 @@ import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 public class WekaInstances {
 
 	private static final int MAX_ALLOWED_NODATA = 2;
+	private static final String PREDICTED_OBSERVABLE = "__PREDICTED_OBSERVABLE__";
 
 	private IObservable predictedObservable = null;
 	private IState predictedState = null;
@@ -269,6 +271,8 @@ public class WekaInstances {
 		this.attributes.set(0, getAttribute(observable, state));
 		if (discretizer != null) {
 			discretizers.put(name, new DiscretizerDescriptor(discretizer));
+			// we add this under the generic name to avoid having to match the output's name too
+			discretizers.put(PREDICTED_OBSERVABLE, new DiscretizerDescriptor(discretizer));
 		}
 	}
 
@@ -1242,9 +1246,9 @@ public class WekaInstances {
 	public Discretization getPredictedDiscretization() {
 
 		if (this.predictedDiscretization == null) {
-			DiscretizerDescriptor filter = discretizers.get(predictedState.getObservable().getName());
+			DiscretizerDescriptor filter = discretizers.get(PREDICTED_OBSERVABLE);
 			if (filter == null) {
-				throw new IllegalStateException(
+				throw new KlabIllegalStateException(
 						"Weka: cannot interpret a distribution if the predicted variable is not discretized.");
 			}
 			// no API for getCutPoints() - what a pain
