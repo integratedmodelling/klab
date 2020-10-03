@@ -299,7 +299,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 
 				// ...hence this:
 				Range range = instances.getDataRange(attribute.name());
-				if (range != null) {
+				if (!range.isInfinite()) {
 					// trained on objects
 					builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
 							"[" + range.getLowerBound() + "," + range.getUpperBound() + "]");
@@ -320,7 +320,7 @@ public abstract class AbstractWekaResolver<T extends Classifier> implements IRes
 				}
 
 				Range range = instances.getDataRange(observable.getName());
-				if (range != null) {
+				if (!range.isInfinite()) {
 					builder.withParameter(predicted ? "predicted.range" : ("predictor." + attribute.name() + ".range"),
 						"[" + range.getLowerBound() + "," + range.getUpperBound() + "]");
 				}

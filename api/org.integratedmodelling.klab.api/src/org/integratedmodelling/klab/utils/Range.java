@@ -34,6 +34,10 @@ public class Range implements IValueMediator {
 	public boolean isBounded() {
 		return !isLeftInfinite() && !isRightInfinite();
 	}
+	
+	public boolean isInfinite() {
+		return lowerBound == Double.NEGATIVE_INFINITY || upperBound == Double.POSITIVE_INFINITY;
+	}
 
 	/**
 	 * Create a range.
