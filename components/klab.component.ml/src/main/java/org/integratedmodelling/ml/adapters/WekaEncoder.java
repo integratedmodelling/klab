@@ -2,8 +2,11 @@ package org.integratedmodelling.ml.adapters;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.math3.distribution.EnumeratedRealDistribution;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -294,13 +297,20 @@ public class WekaEncoder implements IResourceEncoder {
 			initialize(predictedState, resource, context);
 		}
 
+//		Set<String> sperma = new HashSet<>();
+		
 		/*
 		 * proceed to inference
 		 */
 		for (ILocator locator : context.getScale()) {
 			Instance instance = instances.getInstance(locator);
 			if (instance != null) {
-				setValue(locator, classifier.predict(instance, context.getMonitor()), builder, resource,
+				Object result = classifier.predict(instance, context.getMonitor());
+//				if (!sperma.contains(instance.toString())) {
+//					System.out.println(instance + " -> " + Arrays.toString((double[])result));
+//					sperma.add(instance.toString());
+//				}
+				setValue(locator, result, builder, resource,
 						instances.getDatakey("predicted"));
 			}
 		}

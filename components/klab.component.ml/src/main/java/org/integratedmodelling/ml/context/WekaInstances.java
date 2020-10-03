@@ -1248,6 +1248,9 @@ public class WekaInstances {
 		if (this.predictedDiscretization == null) {
 			DiscretizerDescriptor filter = discretizers.get(PREDICTED_OBSERVABLE);
 			if (filter == null) {
+				filter = discretizers.get(predictedObservable.getName());
+			}
+			if (filter == null) {
 				throw new KlabIllegalStateException(
 						"Weka: cannot interpret a distribution if the predicted variable is not discretized.");
 			}
