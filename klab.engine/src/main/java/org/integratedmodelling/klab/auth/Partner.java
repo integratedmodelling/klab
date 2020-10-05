@@ -1,10 +1,8 @@
 package org.integratedmodelling.klab.auth;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
@@ -12,9 +10,9 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.ViewImpl;
-import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import akka.actor.typed.ActorRef;
@@ -23,7 +21,7 @@ public class Partner extends UserIdentity implements IPartnerIdentity, UserDetai
 
 	private static final long serialVersionUID = -129699145554376751L;
 
-	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
+	private IParameters<String> globalState = Parameters.createSynchronized();
 	private View view;
 	private ActorRef<KlabMessage> actor;
 
@@ -104,14 +102,14 @@ public class Partner extends UserIdentity implements IPartnerIdentity, UserDetai
 		return null;
 	}
 
-
 	@Override
 	public void instrument(ActorRef<KlabMessage> actor) {
 		// TODO Auto-generated method stub
 
 	}
 
-	public Map<String, Object> getState() {
+	@Override
+	public IParameters<String> getState() {
 		return globalState;
 	}
 

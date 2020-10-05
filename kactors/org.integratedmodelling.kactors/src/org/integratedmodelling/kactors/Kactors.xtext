@@ -119,7 +119,7 @@ NextStatement returns Statement:
 ;
 
 Assignment:
-	'set' variable=LOWERCASE_ID value=Value
+	'set' (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=Value
 ;
 
 IfStatement:

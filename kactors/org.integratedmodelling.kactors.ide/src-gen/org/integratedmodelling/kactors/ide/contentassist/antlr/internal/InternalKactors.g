@@ -6613,9 +6613,9 @@ rule__Assignment__Group__1__Impl
 	}
 :
 (
-	{ before(grammarAccess.getAssignmentAccess().getVariableAssignment_1()); }
-	(rule__Assignment__VariableAssignment_1)
-	{ after(grammarAccess.getAssignmentAccess().getVariableAssignment_1()); }
+	{ before(grammarAccess.getAssignmentAccess().getGroup_1()); }
+	(rule__Assignment__Group_1__0)?
+	{ after(grammarAccess.getAssignmentAccess().getGroup_1()); }
 )
 ;
 finally {
@@ -6628,6 +6628,7 @@ rule__Assignment__Group__2
 	}
 :
 	rule__Assignment__Group__2__Impl
+	rule__Assignment__Group__3
 ;
 finally {
 	restoreStackSize(stackSize);
@@ -6639,9 +6640,89 @@ rule__Assignment__Group__2__Impl
 	}
 :
 (
-	{ before(grammarAccess.getAssignmentAccess().getValueAssignment_2()); }
-	(rule__Assignment__ValueAssignment_2)
-	{ after(grammarAccess.getAssignmentAccess().getValueAssignment_2()); }
+	{ before(grammarAccess.getAssignmentAccess().getVariableAssignment_2()); }
+	(rule__Assignment__VariableAssignment_2)
+	{ after(grammarAccess.getAssignmentAccess().getVariableAssignment_2()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assignment__Group__3
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__Assignment__Group__3__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assignment__Group__3__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getAssignmentAccess().getValueAssignment_3()); }
+	(rule__Assignment__ValueAssignment_3)
+	{ after(grammarAccess.getAssignmentAccess().getValueAssignment_3()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__Assignment__Group_1__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__Assignment__Group_1__0__Impl
+	rule__Assignment__Group_1__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assignment__Group_1__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getAssignmentAccess().getRecipientAssignment_1_0()); }
+	(rule__Assignment__RecipientAssignment_1_0)
+	{ after(grammarAccess.getAssignmentAccess().getRecipientAssignment_1_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assignment__Group_1__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__Assignment__Group_1__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assignment__Group_1__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getAssignmentAccess().getFullStopKeyword_1_1()); }
+	'.'
+	{ after(grammarAccess.getAssignmentAccess().getFullStopKeyword_1_1()); }
 )
 ;
 finally {
@@ -19469,30 +19550,45 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Assignment__VariableAssignment_1
+rule__Assignment__RecipientAssignment_1_0
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getAssignmentAccess().getVariableLOWERCASE_IDTerminalRuleCall_1_0()); }
+		{ before(grammarAccess.getAssignmentAccess().getRecipientLOWERCASE_IDTerminalRuleCall_1_0_0()); }
 		RULE_LOWERCASE_ID
-		{ after(grammarAccess.getAssignmentAccess().getVariableLOWERCASE_IDTerminalRuleCall_1_0()); }
+		{ after(grammarAccess.getAssignmentAccess().getRecipientLOWERCASE_IDTerminalRuleCall_1_0_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Assignment__ValueAssignment_2
+rule__Assignment__VariableAssignment_2
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getAssignmentAccess().getValueValueParserRuleCall_2_0()); }
+		{ before(grammarAccess.getAssignmentAccess().getVariableLOWERCASE_IDTerminalRuleCall_2_0()); }
+		RULE_LOWERCASE_ID
+		{ after(grammarAccess.getAssignmentAccess().getVariableLOWERCASE_IDTerminalRuleCall_2_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assignment__ValueAssignment_3
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getAssignmentAccess().getValueValueParserRuleCall_3_0()); }
 		ruleValue
-		{ after(grammarAccess.getAssignmentAccess().getValueValueParserRuleCall_2_0()); }
+		{ after(grammarAccess.getAssignmentAccess().getValueValueParserRuleCall_3_0()); }
 	)
 ;
 finally {

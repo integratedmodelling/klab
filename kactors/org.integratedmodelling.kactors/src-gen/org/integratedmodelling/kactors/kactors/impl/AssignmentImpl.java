@@ -24,6 +24,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.AssignmentImpl#getRecipient <em>Recipient</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.AssignmentImpl#getVariable <em>Variable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.AssignmentImpl#getValue <em>Value</em>}</li>
  * </ul>
@@ -32,6 +33,26 @@ import org.integratedmodelling.kactors.kactors.Value;
  */
 public class AssignmentImpl extends MinimalEObjectImpl.Container implements Assignment
 {
+  /**
+   * The default value of the '{@link #getRecipient() <em>Recipient</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getRecipient()
+   * @generated
+   * @ordered
+   */
+  protected static final String RECIPIENT_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getRecipient() <em>Recipient</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getRecipient()
+   * @generated
+   * @ordered
+   */
+  protected String recipient = RECIPIENT_EDEFAULT;
+
   /**
    * The default value of the '{@link #getVariable() <em>Variable</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -81,6 +102,31 @@ public class AssignmentImpl extends MinimalEObjectImpl.Container implements Assi
   protected EClass eStaticClass()
   {
     return KactorsPackage.Literals.ASSIGNMENT;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getRecipient()
+  {
+    return recipient;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setRecipient(String newRecipient)
+  {
+    String oldRecipient = recipient;
+    recipient = newRecipient;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.ASSIGNMENT__RECIPIENT, oldRecipient, recipient));
   }
 
   /**
@@ -184,6 +230,8 @@ public class AssignmentImpl extends MinimalEObjectImpl.Container implements Assi
   {
     switch (featureID)
     {
+      case KactorsPackage.ASSIGNMENT__RECIPIENT:
+        return getRecipient();
       case KactorsPackage.ASSIGNMENT__VARIABLE:
         return getVariable();
       case KactorsPackage.ASSIGNMENT__VALUE:
@@ -202,6 +250,9 @@ public class AssignmentImpl extends MinimalEObjectImpl.Container implements Assi
   {
     switch (featureID)
     {
+      case KactorsPackage.ASSIGNMENT__RECIPIENT:
+        setRecipient((String)newValue);
+        return;
       case KactorsPackage.ASSIGNMENT__VARIABLE:
         setVariable((String)newValue);
         return;
@@ -222,6 +273,9 @@ public class AssignmentImpl extends MinimalEObjectImpl.Container implements Assi
   {
     switch (featureID)
     {
+      case KactorsPackage.ASSIGNMENT__RECIPIENT:
+        setRecipient(RECIPIENT_EDEFAULT);
+        return;
       case KactorsPackage.ASSIGNMENT__VARIABLE:
         setVariable(VARIABLE_EDEFAULT);
         return;
@@ -242,6 +296,8 @@ public class AssignmentImpl extends MinimalEObjectImpl.Container implements Assi
   {
     switch (featureID)
     {
+      case KactorsPackage.ASSIGNMENT__RECIPIENT:
+        return RECIPIENT_EDEFAULT == null ? recipient != null : !RECIPIENT_EDEFAULT.equals(recipient);
       case KactorsPackage.ASSIGNMENT__VARIABLE:
         return VARIABLE_EDEFAULT == null ? variable != null : !VARIABLE_EDEFAULT.equals(variable);
       case KactorsPackage.ASSIGNMENT__VALUE:
@@ -261,7 +317,9 @@ public class AssignmentImpl extends MinimalEObjectImpl.Container implements Assi
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (variable: ");
+    result.append(" (recipient: ");
+    result.append(recipient);
+    result.append(", variable: ");
     result.append(variable);
     result.append(')');
     return result.toString();

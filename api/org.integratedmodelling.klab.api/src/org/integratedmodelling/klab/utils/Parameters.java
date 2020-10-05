@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.utils;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -46,6 +47,33 @@ public class Parameters<T> implements IParameters<T> {
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> Parameters<T> create(Object... o) {
 		Map<T, Object> inp = new HashMap<T, Object>();
+		if (o != null) {
+			for (int i = 0; i < o.length; i++) {
+				if (o[i] instanceof Map) {
+					inp.putAll((Map) o[i]);
+				} else if (o[i] != null) {
+					if (!IGNORED_PARAMETER.equals(o[i])) {
+						inp.put((T) o[i], o[i + 1]);
+					}
+					i++;
+				}
+			}
+		}
+		return new Parameters(inp);
+	}
+	
+	/**
+	 * Create a parameters object from a list of key/value pairs, optionally
+	 * including also other (non-paired) map objects whose values are added as is. A
+	 * null in first position of a pair is ignored, as well as anything whose key is
+	 * {@link #IGNORED_PARAMETER}.
+	 * 
+	 * @param o
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <T> Parameters<T> createSynchronized(Object... o) {
+		Map<T, Object> inp = Collections.synchronizedMap(new HashMap<T, Object>());
 		if (o != null) {
 			for (int i = 0; i < o.length; i++) {
 				if (o[i] instanceof Map) {

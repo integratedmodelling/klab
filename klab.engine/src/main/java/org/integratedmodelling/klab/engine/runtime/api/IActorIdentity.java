@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.engine.runtime.api;
 
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewComponent;
@@ -49,18 +50,6 @@ public interface IActorIdentity<T> extends IRuntimeIdentity {
 	 */
 	ActorRef<T> getActor();
 
-//	/**
-//	 * When a behavior is loaded, the identity gets a "runtime" actor that is
-//	 * dedicated to performing tasks which may be triggered by the behavior itself,
-//	 * such as spawning other actors. These can be used safely while a behavior
-//	 * executes without risking a deadlock if the receiver of an action is the
-//	 * actor itself.
-//	 * 
-//	 * @return
-//	 */
-//	ActorRef<T> getRuntimeActor();
-
-
 	/**
 	 * Set the actor in the identity.
 	 * 
@@ -75,7 +64,7 @@ public interface IActorIdentity<T> extends IRuntimeIdentity {
 	 * 
 	 * @return
 	 */
-	Map<String, Object> getState();
+	IParameters<String> getState();
 
 	/**
 	 * If the actor has a view associated, return it. Otherwise return null.
@@ -86,8 +75,5 @@ public interface IActorIdentity<T> extends IRuntimeIdentity {
 
 	// must be in the API for now. Called to create the view.
 	void setLayout(Layout layout);
-
-//	// same - called by actors at behavior load to provide the runtime actor
-//	void setRuntimeActor(ActorRef<T> runtimeActor);
 
 }

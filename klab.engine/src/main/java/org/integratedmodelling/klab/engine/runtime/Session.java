@@ -6,7 +6,6 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.Date;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -31,6 +30,7 @@ import org.integratedmodelling.kactors.model.KActorsBehavior;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Authentication;
@@ -163,6 +163,7 @@ import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -195,7 +196,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	Set<String> relayIdentities = new HashSet<>();
 	SpatialExtent regionOfInterest = null;
 	ActorRef<KlabMessage> actor;
-	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
+	private IParameters<String> globalState = Parameters.createSynchronized();
 	private View view;
 	Map<String, ISession.ObservationListener> observationListeners = Collections.synchronizedMap(new LinkedHashMap<>());
 	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -1724,7 +1725,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		this.actorSet.set(true);
 	}
 
-	public Map<String, Object> getState() {
+	@Override
+	public IParameters<String> getState() {
 		return globalState;
 	}
 

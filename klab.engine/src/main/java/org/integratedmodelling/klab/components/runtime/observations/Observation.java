@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -37,6 +38,7 @@ import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -75,7 +77,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	protected List<IModificationListener> modificationListeners = new ArrayList<>();
 	private ActorRef<KlabMessage> actor;
 	// actor-scoped state, manipulated using "set" statements.
-	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
+	private IParameters<String> globalState = Parameters.createSynchronized();
 	protected List<Long> updateTimestamps = new ArrayList<>();
 	
 	// tracks the setting of the actor so we can avoid the ask pattern
@@ -374,7 +376,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		return this.actor != null;
 	}
 	
-	public Map<String, Object> getState() {
+	@Override
+	public IParameters<String> getState() {
 		return globalState;
 	}
 

@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
@@ -18,6 +19,7 @@ import org.integratedmodelling.klab.components.runtime.actors.UserActor;
 import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import akka.actor.typed.ActorRef;
@@ -27,10 +29,11 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 	private static final long serialVersionUID = -134196454400472128L;
 	private IEngineIdentity parent;
 	private ActorRef<KlabMessage> actor;
-	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
+	private IParameters<String> globalState = Parameters.createSynchronized();
 	private View view;
 
-	public Map<String, Object> getState() {
+	@Override
+	public IParameters<String> getState() {
 		return globalState;
 	}
 

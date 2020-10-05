@@ -24,11 +24,14 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.While;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsActionCall;
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
+import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
@@ -49,6 +52,8 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
+import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
@@ -565,8 +570,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			child = ObservationActor.create((Observation) this.identity, null);
 		} else if (this.identity instanceof Session) {
 			/**
-			 * TODO if the actor has a view, use a behavior can address
-			 * enable/disable/hide messages and the like.
+			 * TODO if the actor has a view, use a behavior can address enable/disable/hide
+			 * messages and the like.
 			 */
 			child = SessionActor.create((Session) this.identity, null);
 		} else if (this.identity instanceof EngineUser) {
@@ -716,8 +721,74 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	private void executeAssignment(Assignment code, Scope scope) {
-		// TODO Auto-generated method stub
+		this.identity.getState().put(code.getVariable(), evaluateInScope((KActorsValue) code.getValue(), scope));
+	}
 
+	protected Object evaluateInScope(KActorsValue arg, Scope scope) {
+		switch (arg.getType()) {
+		case ANYTHING:
+		case ANYVALUE:
+			break;
+		case ANYTRUE:
+			return true;
+		case ERROR:
+			throw arg.getValue() instanceof Throwable ? new KlabException((Throwable) arg.getValue())
+					: new KlabException(arg.getValue() == null ? "Unspecified actor error from error value"
+							: arg.getValue().toString());
+
+		case NUMBERED_PATTERN:
+		case IDENTIFIER:
+			
+			// TODO check for recipient in ID
+			return scope.getValue(arg.getValue().toString());
+
+		case EXPRESSION:
+
+			if (arg.getData() == null) {
+				arg.setData(new ObjectExpression((IKimExpression) arg.getValue(), scope.runtimeScope));
+			}
+			return ((ObjectExpression) arg.getData()).eval(scope.runtimeScope, identity,
+					Parameters.create(scope.symbolTable));
+
+		case BOOLEAN:
+		case CLASS:
+		case DATE:
+		case NUMBER:
+		case RANGE:
+		case STRING:
+		case OBSERVABLE:
+			return arg.getValue();
+		case OBSERVATION:
+			// TODO
+			break;
+		case SET:
+			// eval all args
+			break;
+		case LIST:
+			// eval all args
+			break;
+		case TREE:
+			// eval all args
+			break;
+		case MAP:
+			break;
+		case NODATA:
+			return null;
+//			return Observables.INSTANCE.declare(arg.getValue().toString());
+		case QUANTITY:
+			break;
+		case REGEXP:
+			break;
+		case TABLE:
+			break;
+		case TYPE:
+			break;
+		case URN:
+			return new Urn(arg.getValue().toString());
+//		default:
+//			break;
+		}
+		return null;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -755,10 +826,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			 */
 			if (receiver.contains("_")) {
 				int rn = receiver.lastIndexOf('_');
-				String num = receiver.substring(rn+1);
+				String num = receiver.substring(rn + 1);
 				if (NumberUtils.encodesInteger(num)) {
 					index = Integer.parseInt(num);
-					receiver = receiver.substring(0, rn-1);
+					receiver = receiver.substring(0, rn - 1);
 				}
 			}
 

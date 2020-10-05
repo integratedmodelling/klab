@@ -139,8 +139,8 @@ public class RuntimeBehavior {
 										 * TODO use a configurable geocoder that can be set up with
 										 * a scaled resource set
 										 */
-										
-										String geocoded = Geocoder.INSTANCE.geocode(extent);
+										String strategy = null;
+										String geocoded = Geocoder.INSTANCE.geocode(extent, strategy);
 										Map<String, Object> ret = new HashMap<>();
 										ret.put("description", geocoded);
 										ret.put("resolution", extent.getGridResolution());

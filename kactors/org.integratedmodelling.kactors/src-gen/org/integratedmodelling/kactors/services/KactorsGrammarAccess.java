@@ -1116,32 +1116,48 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Assignment");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cSetKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final Assignment cVariableAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cVariableLOWERCASE_IDTerminalRuleCall_1_0 = (RuleCall)cVariableAssignment_1.eContents().get(0);
-		private final Assignment cValueAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cValueValueParserRuleCall_2_0 = (RuleCall)cValueAssignment_2.eContents().get(0);
+		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
+		private final Assignment cRecipientAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
+		private final RuleCall cRecipientLOWERCASE_IDTerminalRuleCall_1_0_0 = (RuleCall)cRecipientAssignment_1_0.eContents().get(0);
+		private final Keyword cFullStopKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
+		private final Assignment cVariableAssignment_2 = (Assignment)cGroup.eContents().get(2);
+		private final RuleCall cVariableLOWERCASE_IDTerminalRuleCall_2_0 = (RuleCall)cVariableAssignment_2.eContents().get(0);
+		private final Assignment cValueAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cValueValueParserRuleCall_3_0 = (RuleCall)cValueAssignment_3.eContents().get(0);
 		
 		//Assignment:
-		//	'set' variable=LOWERCASE_ID value=Value;
+		//	'set' (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=Value;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'set' variable=LOWERCASE_ID value=Value
+		//'set' (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=Value
 		public Group getGroup() { return cGroup; }
 		
 		//'set'
 		public Keyword getSetKeyword_0() { return cSetKeyword_0; }
 		
-		//variable=LOWERCASE_ID
-		public Assignment getVariableAssignment_1() { return cVariableAssignment_1; }
+		//(recipient=LOWERCASE_ID '.')?
+		public Group getGroup_1() { return cGroup_1; }
+		
+		//recipient=LOWERCASE_ID
+		public Assignment getRecipientAssignment_1_0() { return cRecipientAssignment_1_0; }
 		
 		//LOWERCASE_ID
-		public RuleCall getVariableLOWERCASE_IDTerminalRuleCall_1_0() { return cVariableLOWERCASE_IDTerminalRuleCall_1_0; }
+		public RuleCall getRecipientLOWERCASE_IDTerminalRuleCall_1_0_0() { return cRecipientLOWERCASE_IDTerminalRuleCall_1_0_0; }
+		
+		//'.'
+		public Keyword getFullStopKeyword_1_1() { return cFullStopKeyword_1_1; }
+		
+		//variable=LOWERCASE_ID
+		public Assignment getVariableAssignment_2() { return cVariableAssignment_2; }
+		
+		//LOWERCASE_ID
+		public RuleCall getVariableLOWERCASE_IDTerminalRuleCall_2_0() { return cVariableLOWERCASE_IDTerminalRuleCall_2_0; }
 		
 		//value=Value
-		public Assignment getValueAssignment_2() { return cValueAssignment_2; }
+		public Assignment getValueAssignment_3() { return cValueAssignment_3; }
 		
 		//Value
-		public RuleCall getValueValueParserRuleCall_2_0() { return cValueValueParserRuleCall_2_0; }
+		public RuleCall getValueValueParserRuleCall_3_0() { return cValueValueParserRuleCall_3_0; }
 	}
 	public class IfStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.IfStatement");
@@ -5995,7 +6011,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Assignment:
-	//	'set' variable=LOWERCASE_ID value=Value;
+	//	'set' (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=Value;
 	public AssignmentElements getAssignmentAccess() {
 		return pAssignment;
 	}

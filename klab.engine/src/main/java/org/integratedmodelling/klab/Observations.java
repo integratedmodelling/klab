@@ -603,7 +603,7 @@ public enum Observations implements IObservationService {
 	public Observer makeROIObserver(final SpatialExtent regionOfInterest, ITime time, Namespace namespace,
 			IMonitor monitor) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
-		observable.setName(Geocoder.INSTANCE.geocode(regionOfInterest));
+		observable.setName(Geocoder.INSTANCE.geocode(regionOfInterest, null));
 		observable.setOptional(true);
 		if (namespace == null) {
 			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
@@ -613,7 +613,7 @@ public enum Observations implements IObservationService {
 
 	public Observer makeROIObserver(final Shape shape, ITime time, Namespace namespace, IMonitor monitor) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
-		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope()));
+		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope(), null));
 		observable.setOptional(true);
 		if (namespace == null) {
 			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
