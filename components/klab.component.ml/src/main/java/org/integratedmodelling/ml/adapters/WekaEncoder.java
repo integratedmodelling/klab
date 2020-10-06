@@ -238,17 +238,6 @@ public class WekaEncoder implements IResourceEncoder {
 				}
 			}
 
-			if (resource.getParameters().containsKey("key." + dependency.getName())) {
-				// build predictor datakey
-				try {
-					File file = ((Resource) resource).getLocalFile("key." + dependency.getName());
-					List<String> key = FileUtils.readLines(file);
-					instances.setDatakey(dependency.getName(), key);
-				} catch (IOException e) {
-					throw new KlabIOException(e);
-				}
-			}
-
 			/*
 			 * we may have less predictors than during training, so we put them in the
 			 * original place leaving any others as null. The index is the position in the
@@ -259,6 +248,17 @@ public class WekaEncoder implements IResourceEncoder {
 					resource.getParameters().get("predictor." + dependency.getName() + ".index").toString()) - 2;
 
 			instances.addPredictor(dependency.getName(), state.getObservable(), state, index, discretizer);
+
+			if (resource.getParameters().containsKey("key." + dependency.getName())) {
+				// build predictor datakey
+				try {
+					File file = ((Resource) resource).getLocalFile("key." + dependency.getName());
+					List<String> key = FileUtils.readLines(file);
+					instances.setDatakey(dependency.getName(), key);
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
+			}
 
 			StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
 			String range = resource.getParameters().get("predictor." + dependency.getName() + ".range", String.class);

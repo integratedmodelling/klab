@@ -403,39 +403,38 @@ public class ViewBehavior {
 	}
 	
 
-//	@Action(id = "combo")
-//	public static class Combo extends KlabWidgetAction {
-//
-//		public Tree(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-//				ActorRef<KlabMessage> sender, String callId) {
-//			super(identity, arguments, scope, sender, callId);
-//		}
-//
-//		@Override
-//		public ViewComponent createViewComponent(Scope scope) {
-//			ViewComponent message = new ViewComponent();
-//			message.setType(Type.Tree);
-//			message.set(getTree((KActorsValue) arguments.get(arguments.getUnnamedKeys().iterator().next())));
-//			message.getAttributes().putAll(getMetadata(arguments, scope));
-//			if (!message.getAttributes().containsKey("name")) {
-//				// tree "name" is the root element if it's a string
-//				message.setName(message.getTree().getValues().get(message.getTree().getRootId()).get("id"));
-//			}
-//			return message;
-//		}
-//
-//		@Override
-//		protected Object getFiredResult(ViewAction action) {
-//			return action.getStringValue();
-//		}
-//
-//		@Override
-//		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
-//			ViewAction ret = new ViewAction();
-//			return ret;
-//		}
-//
-//	}
+	@Action(id = "combo")
+	public static class Combo extends KlabWidgetAction {
+
+		public Combo(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		public ViewComponent createViewComponent(Scope scope) {
+			ViewComponent message = new ViewComponent();
+			message.setType(Type.Combo);
+			for (String argument : arguments.getUnnamedKeys()) {
+				Object value = arguments.get(argument);
+				message.getChoices().add(new Pair<>());
+			}
+			message.getAttributes().putAll(getMetadata(arguments, scope));
+			return message;
+		}
+
+		@Override
+		protected Object getFiredResult(ViewAction action) {
+			return action.getStringValue();
+		}
+
+		@Override
+		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
+			ViewAction ret = new ViewAction();
+			return ret;
+		}
+
+	}
 
 	@Action(id = "tree")
 	public static class Tree extends KlabWidgetAction {

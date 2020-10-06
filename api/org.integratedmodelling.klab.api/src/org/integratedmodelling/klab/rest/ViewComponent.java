@@ -89,6 +89,7 @@ public class ViewComponent {
 	private Map<String, String> attributes = new HashMap<>();
 	private IKActorsBehavior.Type destination;
 	private IKActorsBehavior.Platform platform;
+	private List<Pair<String, String>> choices = new ArrayList<>();
 	private String actorPath = null;
 
 	public String getId() {
@@ -238,6 +239,14 @@ public class ViewComponent {
 
 	public void setActorPath(String actorPath) {
 		this.actorPath = actorPath;
+	}
+
+	public List<Pair<String, String>> getChoices() {
+		return choices;
+	}
+
+	public void setChoices(List<Pair<String, String>> choices) {
+		this.choices = choices;
 	}
 
 }
