@@ -77,6 +77,14 @@
 	</build>
 	<dependencies>
 
+		<!-- xChart for the charting extension of the table view -->
+		<dependency>
+			<groupId>org.knowm.xchart</groupId>
+			<artifactId>xchart</artifactId>
+			<version>3.6.5</version>
+		</dependency>
+
+
 		<!-- Apache POI for Excel output of tables -->
 		<!-- https://mvnrepository.com/artifact/org.apache.poi/poi-ooxml -->
 		<dependency>

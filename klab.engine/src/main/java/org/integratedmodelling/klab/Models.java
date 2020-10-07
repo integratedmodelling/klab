@@ -156,7 +156,7 @@ public enum Models implements IModelService {
 			if (model.getScope() != Scope.NAMESPACE) {
 				Indexer.INSTANCE.index(model.getStatement(), model.getNamespace().getName());
 			}
-			monitor.info("model " + model.getName() + " was successfully indexed");
+//			monitor.info("model " + model.getName() + " was successfully indexed");
 		} catch (Throwable e) {
 			// happens with URN resources in space specs
 			monitor.error("error indexing model " + model.getName() + ": model will be inactive"/* + e.getMessage() */);

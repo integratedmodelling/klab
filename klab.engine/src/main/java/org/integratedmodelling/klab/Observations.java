@@ -208,6 +208,7 @@ public enum Observations implements IObservationService {
 			ret.setVariance(statistics.getVariance());
 			ret.setStandardDeviation(statistics.getStandardDeviation());
 			ret.setSingleValued(statistics.getMax() == statistics.getMin());
+			ret.setSum(statistics.getSum());
 		} 
 		ret.setRange(Arrays.asList(min, max));
 
