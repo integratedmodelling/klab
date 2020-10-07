@@ -10,8 +10,19 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
 
 public class ExcelView extends TableView {
 
-	;
-
+// TODO how to insert SVG 
+//    /* Create the drawing container */
+//    XSSFDrawing drawing = my_sheet.createDrawingPatriarch();
+//    /* Create an anchor point */
+//    ClientAnchor my_anchor = new XSSFClientAnchor();
+//    /* Define top left corner, and we can resize picture suitable from there */
+//    my_anchor.setCol1(4);
+//    my_anchor.setRow1(5);
+//    /* Invoke createPicture and pass the anchor point and ID */
+//    XSSFPicture my_picture = drawing.createPicture(my_anchor, my_picture_id);
+//    /* Call resize method, which resizes the image */
+//    my_picture.resize();
+	
 	@Override
 	public boolean isText() {
 		return false;

@@ -297,7 +297,7 @@ public class WekaEncoder implements IResourceEncoder {
 			initialize(predictedState, resource, context);
 		}
 
-		Set<String> sperma = new HashSet<>();
+//		Set<String> sperma = new HashSet<>();
 		
 		/*
 		 * proceed to inference
@@ -306,10 +306,10 @@ public class WekaEncoder implements IResourceEncoder {
 			Instance instance = instances.getInstance(locator);
 			if (instance != null) {
 				Object result = classifier.predict(instance, context.getMonitor());
-				if (!sperma.contains(instance.toString())) {
-					System.out.println(instance + " -> " + Arrays.toString((double[])result));
-					sperma.add(instance.toString());
-				}
+//				if (!sperma.contains(instance.toString())) {
+//					System.out.println(instance + " -> " + Arrays.toString((double[])result));
+//					sperma.add(instance.toString());
+//				}
 				setValue(locator, result, builder, resource,
 						instances.getDatakey("predicted"));
 			}

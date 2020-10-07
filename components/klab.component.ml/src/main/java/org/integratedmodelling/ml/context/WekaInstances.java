@@ -1156,6 +1156,7 @@ public class WekaInstances {
 			 */
 			if (predictor == null) {
 				ret.setMissing(i);
+				i++;
 				continue;
 			}
 
@@ -1201,7 +1202,7 @@ public class WekaInstances {
 			i++;
 		}
 
-		if (ndata < (predictorStates.size() - MAX_ALLOWED_NODATA)) {
+		if (ndata < /* (predictorStates.size() - */ MAX_ALLOWED_NODATA/* ) */) {
 			return null;
 		}
 
