@@ -57,6 +57,15 @@ public interface IParameters<T> extends Map<T, Object> {
 	<K> K get(T name, K defaultValue);
 
 	/**
+	 * Return the value that matches any of the passed keys, or null.
+	 * 
+	 * @param <K>
+	 * @param keys
+	 * @return
+	 */
+	<K> K getAny(T...keys);
+	
+	/**
 	 * When used as a parameter list parsed from a function call, this may contain
 	 * arguments that are unnamed. These are given default names and if any is
 	 * present, their names are returned here. Usage of this functionality is
@@ -91,4 +100,20 @@ public interface IParameters<T> extends Map<T, Object> {
 	 * @return true if object is there and belongs to cls
 	 */
 	boolean contains(T key, Class<?> cls);
+
+	/**
+	 * True if this contains any of the passed keys
+	 * 
+	 * @param keys
+	 * @return
+	 */
+	boolean containsAnyKey(T... keys);
+	
+	/**
+	 * True if this contains any of the passed values
+	 * 
+	 * @param keys
+	 * @return
+	 */
+	boolean containsAny(Object... objects);
 }

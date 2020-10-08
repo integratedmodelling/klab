@@ -143,4 +143,19 @@ public class KimMetadata extends KimStatement implements IParameters<String> {
 		return data.contains(key, cls);
 	}
 
+	@Override
+	public boolean containsAnyKey(String... keys) {
+		return data.containsAnyKey(keys);
+	}
+
+	@Override
+	public boolean containsAny(Object... objects) {
+		return data.containsAny(objects);
+	}
+
+	@Override
+	public <K> K getAny(String... keys) {
+		return data.getAny(keys);
+	}
+
 }

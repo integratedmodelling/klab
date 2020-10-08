@@ -133,7 +133,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		} else if (value.getMap() != null) {
 			this.value = parseMap(value.getMap(), this);
 			this.type = Type.MAP;
-		}
+		} 
 	}
 
 	public static String parseObservable(Observable observable) {

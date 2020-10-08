@@ -63,6 +63,31 @@ public class Parameters<T> implements IParameters<T> {
 	}
 	
 	/**
+	 * Like the other create() but also ignores null values for non-null keys.
+	 * 
+	 * @param <T>
+	 * @param o
+	 * @return
+	 */
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <T> Parameters<T> createNotNull(Object... o) {
+		Map<T, Object> inp = new HashMap<T, Object>();
+		if (o != null) {
+			for (int i = 0; i < o.length; i++) {
+				if (o[i] instanceof Map) {
+					inp.putAll((Map) o[i]);
+				} else if (o[i] != null) {
+					if (o[1+1] != null && !IGNORED_PARAMETER.equals(o[i])) {
+						inp.put((T) o[i], o[i + 1]);
+					}
+					i++;
+				}
+			}
+		}
+		return new Parameters(inp);
+	}
+	
+	/**
 	 * Create a parameters object from a list of key/value pairs, optionally
 	 * including also other (non-paired) map objects whose values are added as is. A
 	 * null in first position of a pair is ignored, as well as anything whose key is
@@ -277,6 +302,44 @@ public class Parameters<T> implements IParameters<T> {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public boolean containsAnyKey(T... keys) {
+		if (keys != null) {
+			for (T key : keys) {
+				if (this.containsKey(key)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	@Override
+	public boolean containsAny(Object... objects) {
+		if (objects != null) {
+			for (Object key : objects) {
+				if (this.containsValue(key)) {
+					return true;
+				}
+			}
+		}
+		return false;
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public <K> K getAny(T... keys) {
+		if (keys != null) {
+			for (T key : keys) {
+				K ret = (K) get(key);
+				if (ret != null) {
+					return (K)ret;
+				}
+			}
+		}
+		return null;
 	}
 
 }

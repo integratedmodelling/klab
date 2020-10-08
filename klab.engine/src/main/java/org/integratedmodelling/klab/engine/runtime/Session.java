@@ -164,6 +164,7 @@ import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
+import org.integratedmodelling.klab.utils.Utils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -408,17 +409,23 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 				roi.setGridResolution(this.spatialGridSize);
 				roi.setGridUnit(this.spatialGridUnits);
 
-				ITime time = null;
-				if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
-					/*
-					 * ACHTUNG if the time is PHYSICAL, states won't initialize properly (with the
-					 * first timeslice @0)!
-					 */
-					time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
-							this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
-							new TimeInstant(this.timeEnd), null);
-				} else {
-					time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+				/*
+				 * see if an application has defined a temporal context through the global state
+				 */
+				ITime time = getConfiguredTime();
+
+				if (time == null) {
+					if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
+						/*
+						 * ACHTUNG if the time is PHYSICAL, states won't initialize properly (with the
+						 * first timeslice @0)!
+						 */
+						time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
+								this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
+								new TimeInstant(this.timeEnd), null);
+					} else {
+						time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+					}
 				}
 
 				Observer observer = Observations.INSTANCE.makeROIObserver(roi, time, (Namespace) namespace, monitor);
@@ -443,6 +450,22 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		}
 
 		return new ObserveContextTask(this, (Observer) object, CollectionUtils.arrayToList(scenarios));
+	}
+
+	private ITime getConfiguredTime() {
+		if (this.globalState.containsAnyKey("startyear", "endyear", "year", "timestep", "start", "end", "step")) {
+
+			Object start = Utils.asType(this.globalState.get("startyear", "start"), Integer.class);
+			Object end = Utils.asType(this.globalState.getAny("endyear", "end"), Integer.class);
+			Object step = this.globalState.getAny("timestep", "step");
+			Object year = Utils.asType(this.globalState.get("year"), Integer.class);
+
+			Parameters<String> parameters = Parameters.createNotNull("start", start, "end", end, "step", step, "year",
+					year);
+
+			return (ITime)(new org.integratedmodelling.klab.components.time.services.Time()).eval(parameters, null);
+		}
+		return null;
 	}
 
 	public String toString() {

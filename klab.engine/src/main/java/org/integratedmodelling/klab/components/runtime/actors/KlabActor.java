@@ -54,6 +54,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
@@ -721,7 +722,18 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	private void executeAssignment(Assignment code, Scope scope) {
-		this.identity.getState().put(code.getVariable(), evaluateInScope((KActorsValue) code.getValue(), scope));
+		if (code.getRecipient() != null) {
+			if ("self".equals(code.getRecipient())) {
+				this.identity.getState().put(code.getVariable(),
+						evaluateInScope((KActorsValue) code.getValue(), scope));
+			} else {
+				// TODO find the actor reference and send it an internal message to set the
+				// state. Should be subject to scope and authorization
+				throw new KlabUnimplementedException("klab actor state setting is unimplemented");
+			}
+		} else {
+			scope.symbolTable.put(code.getVariable(), evaluateInScope((KActorsValue) code.getValue(), scope));
+		}
 	}
 
 	protected Object evaluateInScope(KActorsValue arg, Scope scope) {
@@ -738,7 +750,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 		case NUMBERED_PATTERN:
 		case IDENTIFIER:
-			
+
 			// TODO check for recipient in ID
 			return scope.getValue(arg.getValue().toString());
 
@@ -757,6 +769,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		case RANGE:
 		case STRING:
 		case OBSERVABLE:
+		case QUANTITY:
 			return arg.getValue();
 		case OBSERVATION:
 			// TODO
@@ -775,8 +788,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		case NODATA:
 			return null;
 //			return Observables.INSTANCE.declare(arg.getValue().toString());
-		case QUANTITY:
-			break;
 		case REGEXP:
 			break;
 		case TABLE:

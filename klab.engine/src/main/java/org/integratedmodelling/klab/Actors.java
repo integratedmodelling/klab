@@ -979,7 +979,7 @@ public enum Actors implements IActorsService {
 			}
 		}
 	}
-
+	
 	/**
 	 * Load all the behaviors in <klab>/user. These should be managed through the
 	 * IDE and there should always be a default one.
