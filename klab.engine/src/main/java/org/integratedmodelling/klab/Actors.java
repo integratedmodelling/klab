@@ -165,6 +165,9 @@ public enum Actors implements IActorsService {
 		layoutMetadata.add("equal");
 		layoutMetadata.add("collapse");
 		layoutMetadata.add("remove");
+		layoutMetadata.add("altfg");
+		layoutMetadata.add("altbg");
+		layoutMetadata.add("tooltip");
 	}
 
 	public IBehavior getBehavior(String behaviorId) {
