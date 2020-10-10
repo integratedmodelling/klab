@@ -75,6 +75,28 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		this.type = Type.BOOLEAN;
 		this.value = value;
 	}
+	
+	public KActorsValue(Literal value, KActorCodeStatement parent) {
+		super(value, parent);
+		if (value.getBoolean() != null) {
+			this.value = "true".equals(value.getBoolean());
+			this.type = Type.NUMBER;
+		} else if (value.getFrom() != null) {
+			Number from = parseNumber(value.getFrom());
+			Number to = parseNumber(value.getTo());
+			this.value = new Range(from.doubleValue(), to.doubleValue(), false, false);
+			type = Type.RANGE;
+		} else if (value.getNumber() != null) {
+			this.value = parseNumber(value.getNumber());
+			this.type = Type.BOOLEAN;
+		} else if (value.getString() != null) {
+			this.value = value.getString();
+			this.type = Type.STRING;
+		} else if (value.getDate() != null) {
+			this.value = new KActorsDate(value.getDate());
+			this.type = Type.DATE;
+		}
+	}
 
 	public KActorsValue(Classifier value, KActorCodeStatement parent) {
 		super(value, parent);

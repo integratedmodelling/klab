@@ -1560,9 +1560,9 @@ ruleMetadataPair returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getMetadataPairAccess().getValueValueParserRuleCall_1_0());
+					newCompositeNode(grammarAccess.getMetadataPairAccess().getValueLiteralParserRuleCall_1_0());
 				}
-				lv_value_1_0=ruleValue
+				lv_value_1_0=ruleLiteral
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getMetadataPairRule());
@@ -1571,7 +1571,7 @@ ruleMetadataPair returns [EObject current=null]
 						$current,
 						"value",
 						lv_value_1_0,
-						"org.integratedmodelling.kactors.Kactors.Value");
+						"org.integratedmodelling.kactors.Kactors.Literal");
 					afterParserOrEnumRuleCall();
 				}
 			)

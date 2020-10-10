@@ -20,6 +20,7 @@ import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -201,6 +202,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	private View view;
 	Map<String, ISession.ObservationListener> observationListeners = Collections.synchronizedMap(new LinkedHashMap<>());
 	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
+	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
 
 	public interface ROIListener {
 
@@ -463,7 +465,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			Parameters<String> parameters = Parameters.createNotNull("start", start, "end", end, "step", step, "year",
 					year);
 
-			return (ITime)(new org.integratedmodelling.klab.components.time.services.Time()).eval(parameters, null);
+			return (ITime) (new org.integratedmodelling.klab.components.time.services.Time()).eval(parameters, null);
 		}
 		return null;
 	}
@@ -1749,11 +1751,6 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	}
 
 	@Override
-	public IParameters<String> getState() {
-		return globalState;
-	}
-
-	@Override
 	public View getView() {
 		return view;
 	}
@@ -1763,4 +1760,26 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		this.view = new ViewImpl(layout);
 	}
 
+	@Override
+	public <V> V getState(String key, Class<V> cls) {
+		return this.globalState.get(key, cls);
+	}
+
+	@Override
+	public void setState(String key, Object value) {
+		this.globalState.put(key, value);
+		for (BiConsumer<String, Object> listener : stateChangeListeners.values()) {
+			listener.accept(key, value);
+		}
+	}
+
+	@Override
+	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
+		this.stateChangeListeners.put(name, listener);
+	}
+
+	@Override
+	public void removeStateChangeListener(String name) {
+		this.stateChangeListeners.remove(name);
+	}
 }

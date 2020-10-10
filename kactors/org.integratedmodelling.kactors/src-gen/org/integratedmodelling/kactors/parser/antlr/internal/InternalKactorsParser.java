@@ -4290,7 +4290,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleMetadataPair"
-    // InternalKactors.g:1534:1: ruleMetadataPair returns [EObject current=null] : ( ( (lv_key_0_0= RULE_KEY ) ) ( (lv_value_1_0= ruleValue ) )? ) ;
+    // InternalKactors.g:1534:1: ruleMetadataPair returns [EObject current=null] : ( ( (lv_key_0_0= RULE_KEY ) ) ( (lv_value_1_0= ruleLiteral ) )? ) ;
     public final EObject ruleMetadataPair() throws RecognitionException {
         EObject current = null;
 
@@ -4302,11 +4302,11 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalKactors.g:1540:2: ( ( ( (lv_key_0_0= RULE_KEY ) ) ( (lv_value_1_0= ruleValue ) )? ) )
-            // InternalKactors.g:1541:2: ( ( (lv_key_0_0= RULE_KEY ) ) ( (lv_value_1_0= ruleValue ) )? )
+            // InternalKactors.g:1540:2: ( ( ( (lv_key_0_0= RULE_KEY ) ) ( (lv_value_1_0= ruleLiteral ) )? ) )
+            // InternalKactors.g:1541:2: ( ( (lv_key_0_0= RULE_KEY ) ) ( (lv_value_1_0= ruleLiteral ) )? )
             {
-            // InternalKactors.g:1541:2: ( ( (lv_key_0_0= RULE_KEY ) ) ( (lv_value_1_0= ruleValue ) )? )
-            // InternalKactors.g:1542:3: ( (lv_key_0_0= RULE_KEY ) ) ( (lv_value_1_0= ruleValue ) )?
+            // InternalKactors.g:1541:2: ( ( (lv_key_0_0= RULE_KEY ) ) ( (lv_value_1_0= ruleLiteral ) )? )
+            // InternalKactors.g:1542:3: ( (lv_key_0_0= RULE_KEY ) ) ( (lv_value_1_0= ruleLiteral ) )?
             {
             // InternalKactors.g:1542:3: ( (lv_key_0_0= RULE_KEY ) )
             // InternalKactors.g:1543:4: (lv_key_0_0= RULE_KEY )
@@ -4338,23 +4338,23 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
 
             }
 
-            // InternalKactors.g:1560:3: ( (lv_value_1_0= ruleValue ) )?
+            // InternalKactors.g:1560:3: ( (lv_value_1_0= ruleLiteral ) )?
             int alt35=2;
             alt35 = dfa35.predict(input);
             switch (alt35) {
                 case 1 :
-                    // InternalKactors.g:1561:4: (lv_value_1_0= ruleValue )
+                    // InternalKactors.g:1561:4: (lv_value_1_0= ruleLiteral )
                     {
-                    // InternalKactors.g:1561:4: (lv_value_1_0= ruleValue )
-                    // InternalKactors.g:1562:5: lv_value_1_0= ruleValue
+                    // InternalKactors.g:1561:4: (lv_value_1_0= ruleLiteral )
+                    // InternalKactors.g:1562:5: lv_value_1_0= ruleLiteral
                     {
                     if ( state.backtracking==0 ) {
 
-                      					newCompositeNode(grammarAccess.getMetadataPairAccess().getValueValueParserRuleCall_1_0());
+                      					newCompositeNode(grammarAccess.getMetadataPairAccess().getValueLiteralParserRuleCall_1_0());
                       				
                     }
                     pushFollow(FOLLOW_2);
-                    lv_value_1_0=ruleValue();
+                    lv_value_1_0=ruleLiteral();
 
                     state._fsp--;
                     if (state.failed) return current;
@@ -4367,7 +4367,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						current,
                       						"value",
                       						lv_value_1_0,
-                      						"org.integratedmodelling.kactors.Kactors.Value");
+                      						"org.integratedmodelling.kactors.Kactors.Literal");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -11521,13 +11521,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                 int LA68_0 = input.LA(1);
 
                 if ( (LA68_0==75) ) {
-                    int LA68_2 = input.LA(2);
-
-                    if ( (synpred144_InternalKactors()) ) {
-                        alt68=1;
-                    }
-
-
+                    alt68=1;
                 }
 
 
@@ -27588,19 +27582,19 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
         EObject lv_value_1_0 = null;
 
 
-        // InternalKactors.g:1561:4: ( (lv_value_1_0= ruleValue ) )
-        // InternalKactors.g:1561:4: (lv_value_1_0= ruleValue )
+        // InternalKactors.g:1561:4: ( (lv_value_1_0= ruleLiteral ) )
+        // InternalKactors.g:1561:4: (lv_value_1_0= ruleLiteral )
         {
-        // InternalKactors.g:1561:4: (lv_value_1_0= ruleValue )
-        // InternalKactors.g:1562:5: lv_value_1_0= ruleValue
+        // InternalKactors.g:1561:4: (lv_value_1_0= ruleLiteral )
+        // InternalKactors.g:1562:5: lv_value_1_0= ruleLiteral
         {
         if ( state.backtracking==0 ) {
 
-          					newCompositeNode(grammarAccess.getMetadataPairAccess().getValueValueParserRuleCall_1_0());
+          					newCompositeNode(grammarAccess.getMetadataPairAccess().getValueLiteralParserRuleCall_1_0());
           				
         }
         pushFollow(FOLLOW_2);
-        lv_value_1_0=ruleValue();
+        lv_value_1_0=ruleLiteral();
 
         state._fsp--;
         if (state.failed) return ;
@@ -29245,108 +29239,6 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
         }
     }
     // $ANTLR end synpred143_InternalKactors
-
-    // $ANTLR start synpred144_InternalKactors
-    public final void synpred144_InternalKactors_fragment() throws RecognitionException {   
-        Token otherlv_1=null;
-        Token otherlv_3=null;
-        Token otherlv_5=null;
-        EObject lv_value_2_0 = null;
-
-        EObject lv_value_4_0 = null;
-
-
-        // InternalKactors.g:4485:4: ( ( ( '<-' )=>otherlv_1= '<-' ) ( ( (lv_value_2_0= ruleValueWithMetadataWithoutTree ) ) | ( ( ( '(' ( ( ruleTree ) ) ')' ) )=> (otherlv_3= '(' ( (lv_value_4_0= ruleTree ) ) otherlv_5= ')' ) ) ) )
-        // InternalKactors.g:4485:4: ( ( '<-' )=>otherlv_1= '<-' ) ( ( (lv_value_2_0= ruleValueWithMetadataWithoutTree ) ) | ( ( ( '(' ( ( ruleTree ) ) ')' ) )=> (otherlv_3= '(' ( (lv_value_4_0= ruleTree ) ) otherlv_5= ')' ) ) )
-        {
-        // InternalKactors.g:4485:4: ( ( '<-' )=>otherlv_1= '<-' )
-        // InternalKactors.g:4486:5: ( '<-' )=>otherlv_1= '<-'
-        {
-        otherlv_1=(Token)match(input,75,FOLLOW_37); if (state.failed) return ;
-
-        }
-
-        // InternalKactors.g:4492:4: ( ( (lv_value_2_0= ruleValueWithMetadataWithoutTree ) ) | ( ( ( '(' ( ( ruleTree ) ) ')' ) )=> (otherlv_3= '(' ( (lv_value_4_0= ruleTree ) ) otherlv_5= ')' ) ) )
-        int alt197=2;
-        alt197 = dfa197.predict(input);
-        switch (alt197) {
-            case 1 :
-                // InternalKactors.g:4493:5: ( (lv_value_2_0= ruleValueWithMetadataWithoutTree ) )
-                {
-                // InternalKactors.g:4493:5: ( (lv_value_2_0= ruleValueWithMetadataWithoutTree ) )
-                // InternalKactors.g:4494:6: (lv_value_2_0= ruleValueWithMetadataWithoutTree )
-                {
-                // InternalKactors.g:4494:6: (lv_value_2_0= ruleValueWithMetadataWithoutTree )
-                // InternalKactors.g:4495:7: lv_value_2_0= ruleValueWithMetadataWithoutTree
-                {
-                if ( state.backtracking==0 ) {
-
-                  							newCompositeNode(grammarAccess.getTreeAccess().getValueValueWithMetadataWithoutTreeParserRuleCall_1_1_0_0());
-                  						
-                }
-                pushFollow(FOLLOW_2);
-                lv_value_2_0=ruleValueWithMetadataWithoutTree();
-
-                state._fsp--;
-                if (state.failed) return ;
-
-                }
-
-
-                }
-
-
-                }
-                break;
-            case 2 :
-                // InternalKactors.g:4513:5: ( ( ( '(' ( ( ruleTree ) ) ')' ) )=> (otherlv_3= '(' ( (lv_value_4_0= ruleTree ) ) otherlv_5= ')' ) )
-                {
-                // InternalKactors.g:4513:5: ( ( ( '(' ( ( ruleTree ) ) ')' ) )=> (otherlv_3= '(' ( (lv_value_4_0= ruleTree ) ) otherlv_5= ')' ) )
-                // InternalKactors.g:4514:6: ( ( '(' ( ( ruleTree ) ) ')' ) )=> (otherlv_3= '(' ( (lv_value_4_0= ruleTree ) ) otherlv_5= ')' )
-                {
-                // InternalKactors.g:4524:6: (otherlv_3= '(' ( (lv_value_4_0= ruleTree ) ) otherlv_5= ')' )
-                // InternalKactors.g:4525:7: otherlv_3= '(' ( (lv_value_4_0= ruleTree ) ) otherlv_5= ')'
-                {
-                otherlv_3=(Token)match(input,53,FOLLOW_37); if (state.failed) return ;
-                // InternalKactors.g:4529:7: ( (lv_value_4_0= ruleTree ) )
-                // InternalKactors.g:4530:8: (lv_value_4_0= ruleTree )
-                {
-                // InternalKactors.g:4530:8: (lv_value_4_0= ruleTree )
-                // InternalKactors.g:4531:9: lv_value_4_0= ruleTree
-                {
-                if ( state.backtracking==0 ) {
-
-                  									newCompositeNode(grammarAccess.getTreeAccess().getValueTreeParserRuleCall_1_1_1_0_1_0());
-                  								
-                }
-                pushFollow(FOLLOW_26);
-                lv_value_4_0=ruleTree();
-
-                state._fsp--;
-                if (state.failed) return ;
-
-                }
-
-
-                }
-
-                otherlv_5=(Token)match(input,54,FOLLOW_2); if (state.failed) return ;
-
-                }
-
-
-                }
-
-
-                }
-                break;
-
-        }
-
-
-        }
-    }
-    // $ANTLR end synpred144_InternalKactors
 
     // $ANTLR start synpred149_InternalKactors
     public final void synpred149_InternalKactors_fragment() throws RecognitionException {   
@@ -33098,20 +32990,6 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred144_InternalKactors() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred144_InternalKactors_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
     public final boolean synpred54_InternalKactors() {
         state.backtracking++;
         int start = input.mark();
@@ -34276,7 +34154,6 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
     protected DFA138 dfa138 = new DFA138(this);
     protected DFA137 dfa137 = new DFA137(this);
     protected DFA161 dfa161 = new DFA161(this);
-    protected DFA197 dfa197 = new DFA197(this);
     protected DFA237 dfa237 = new DFA237(this);
     static final String dfa_1s = "\15\uffff";
     static final String dfa_2s = "\1\1\14\uffff";
@@ -34640,52 +34517,22 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
             throw nvae;
         }
     }
-    static final String dfa_16s = "\50\uffff";
-    static final String dfa_17s = "\1\17\47\uffff";
-    static final String dfa_18s = "\1\4\16\0\31\uffff";
-    static final String dfa_19s = "\1\134\16\0\31\uffff";
-    static final String dfa_20s = "\17\uffff\1\2\27\uffff\1\1";
-    static final String dfa_21s = "\1\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\31\uffff}>";
+    static final String dfa_16s = "\12\uffff";
+    static final String dfa_17s = "\1\7\11\uffff";
+    static final String dfa_18s = "\1\4\2\15\4\0\1\uffff\1\0\1\uffff";
+    static final String dfa_19s = "\1\134\2\15\4\0\1\uffff\1\0\1\uffff";
+    static final String dfa_20s = "\7\uffff\1\2\1\uffff\1\1";
+    static final String dfa_21s = "\3\uffff\1\2\1\4\1\3\1\1\1\uffff\1\0\1\uffff}>";
     static final String[] dfa_22s = {
-            "\1\5\1\10\3\17\1\15\1\1\2\17\1\4\2\uffff\1\17\26\uffff\1\17\13\uffff\2\17\1\12\3\17\1\uffff\6\17\1\uffff\1\6\1\7\3\17\1\11\2\uffff\1\13\2\17\3\uffff\1\14\1\16\12\uffff\1\2\1\3",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
-            "\1\uffff",
+            "\1\4\10\7\1\3\2\uffff\1\7\26\uffff\1\7\13\uffff\6\7\1\uffff\6\7\1\uffff\1\5\1\6\4\7\2\uffff\3\7\3\uffff\2\7\12\uffff\1\1\1\2",
+            "\1\10",
+            "\1\10",
             "\1\uffff",
             "\1\uffff",
             "\1\uffff",
             "\1\uffff",
             "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
-            "",
+            "\1\uffff",
             ""
     };
 
@@ -34711,40 +34558,40 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
             this.transition = dfa_22;
         }
         public String getDescription() {
-            return "1560:3: ( (lv_value_1_0= ruleValue ) )?";
+            return "1560:3: ( (lv_value_1_0= ruleLiteral ) )?";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA35_1 = input.LA(1);
+                        int LA35_8 = input.LA(1);
 
                          
-                        int index35_1 = input.index();
+                        int index35_8 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred53_InternalKactors()) ) {s = 39;}
+                        if ( (synpred53_InternalKactors()) ) {s = 9;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 7;}
 
                          
-                        input.seek(index35_1);
+                        input.seek(index35_8);
                         if ( s>=0 ) return s;
                         break;
                     case 1 : 
-                        int LA35_2 = input.LA(1);
+                        int LA35_6 = input.LA(1);
 
                          
-                        int index35_2 = input.index();
+                        int index35_6 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred53_InternalKactors()) ) {s = 39;}
+                        if ( (synpred53_InternalKactors()) ) {s = 9;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 7;}
 
                          
-                        input.seek(index35_2);
+                        input.seek(index35_6);
                         if ( s>=0 ) return s;
                         break;
                     case 2 : 
@@ -34754,177 +34601,42 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         int index35_3 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred53_InternalKactors()) ) {s = 39;}
+                        if ( (synpred53_InternalKactors()) ) {s = 9;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 7;}
 
                          
                         input.seek(index35_3);
                         if ( s>=0 ) return s;
                         break;
                     case 3 : 
-                        int LA35_4 = input.LA(1);
-
-                         
-                        int index35_4 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred53_InternalKactors()) ) {s = 39;}
-
-                        else if ( (true) ) {s = 15;}
-
-                         
-                        input.seek(index35_4);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 4 : 
                         int LA35_5 = input.LA(1);
 
                          
                         int index35_5 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred53_InternalKactors()) ) {s = 39;}
+                        if ( (synpred53_InternalKactors()) ) {s = 9;}
 
-                        else if ( (true) ) {s = 15;}
+                        else if ( (true) ) {s = 7;}
 
                          
                         input.seek(index35_5);
                         if ( s>=0 ) return s;
                         break;
-                    case 5 : 
-                        int LA35_6 = input.LA(1);
+                    case 4 : 
+                        int LA35_4 = input.LA(1);
 
                          
-                        int index35_6 = input.index();
+                        int index35_4 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred53_InternalKactors()) ) {s = 39;}
+                        if ( (synpred53_InternalKactors()) ) {s = 9;}
 
-                        else if ( (true) ) {s = 15;}
-
-                         
-                        input.seek(index35_6);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 6 : 
-                        int LA35_7 = input.LA(1);
+                        else if ( (true) ) {s = 7;}
 
                          
-                        int index35_7 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred53_InternalKactors()) ) {s = 39;}
-
-                        else if ( (true) ) {s = 15;}
-
-                         
-                        input.seek(index35_7);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 7 : 
-                        int LA35_8 = input.LA(1);
-
-                         
-                        int index35_8 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred53_InternalKactors()) ) {s = 39;}
-
-                        else if ( (true) ) {s = 15;}
-
-                         
-                        input.seek(index35_8);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 8 : 
-                        int LA35_9 = input.LA(1);
-
-                         
-                        int index35_9 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred53_InternalKactors()) ) {s = 39;}
-
-                        else if ( (true) ) {s = 15;}
-
-                         
-                        input.seek(index35_9);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 9 : 
-                        int LA35_10 = input.LA(1);
-
-                         
-                        int index35_10 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred53_InternalKactors()) ) {s = 39;}
-
-                        else if ( (true) ) {s = 15;}
-
-                         
-                        input.seek(index35_10);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 10 : 
-                        int LA35_11 = input.LA(1);
-
-                         
-                        int index35_11 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred53_InternalKactors()) ) {s = 39;}
-
-                        else if ( (true) ) {s = 15;}
-
-                         
-                        input.seek(index35_11);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 11 : 
-                        int LA35_12 = input.LA(1);
-
-                         
-                        int index35_12 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred53_InternalKactors()) ) {s = 39;}
-
-                        else if ( (true) ) {s = 15;}
-
-                         
-                        input.seek(index35_12);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 12 : 
-                        int LA35_13 = input.LA(1);
-
-                         
-                        int index35_13 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred53_InternalKactors()) ) {s = 39;}
-
-                        else if ( (true) ) {s = 15;}
-
-                         
-                        input.seek(index35_13);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 13 : 
-                        int LA35_14 = input.LA(1);
-
-                         
-                        int index35_14 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred53_InternalKactors()) ) {s = 39;}
-
-                        else if ( (true) ) {s = 15;}
-
-                         
-                        input.seek(index35_14);
+                        input.seek(index35_4);
                         if ( s>=0 ) return s;
                         break;
             }
@@ -36035,7 +35747,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
     static final String dfa_55s = "\1\4\1\uffff\2\15\1\4\1\uffff\1\4\6\uffff\3\4\2\15\1\uffff\1\5\1\uffff\1\4\1\0\2\15\3\4\1\5\3\4\2\5\3\4\2\0\1\4\1\5\2\4\1\5\3\4\4\0\1\5\2\4\1\0";
     static final String dfa_56s = "\1\134\1\uffff\2\15\1\142\1\uffff\1\134\6\uffff\2\137\1\u0099\2\134\1\uffff\1\5\1\uffff\1\134\1\0\2\15\3\134\1\5\3\134\2\5\3\134\2\0\1\134\1\5\2\134\1\5\3\134\4\0\1\5\2\134\1\0";
     static final String dfa_57s = "\1\uffff\1\1\3\uffff\1\2\1\uffff\1\4\1\5\1\6\1\7\1\10\1\11\5\uffff\1\12\1\uffff\1\3\42\uffff";
-    static final String dfa_58s = "\26\uffff\1\5\16\uffff\1\2\1\6\10\uffff\1\7\1\4\1\0\1\1\3\uffff\1\3}>";
+    static final String dfa_58s = "\26\uffff\1\6\16\uffff\1\7\1\5\10\uffff\1\1\1\4\1\3\1\0\3\uffff\1\2}>";
     static final String[] dfa_59s = {
             "\1\5\1\6\3\uffff\1\13\1\1\2\uffff\1\4\47\uffff\1\10\13\uffff\2\5\3\uffff\1\7\2\uffff\1\11\5\uffff\1\12\1\14\12\uffff\1\2\1\3",
             "",
@@ -36123,21 +35835,6 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA52_49 = input.LA(1);
-
-                         
-                        int index52_49 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred108_InternalKactors()) ) {s = 20;}
-
-                        else if ( (synpred109_InternalKactors()) ) {s = 7;}
-
-                         
-                        input.seek(index52_49);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 1 : 
                         int LA52_50 = input.LA(1);
 
                          
@@ -36152,11 +35849,11 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index52_50);
                         if ( s>=0 ) return s;
                         break;
-                    case 2 : 
-                        int LA52_37 = input.LA(1);
+                    case 1 : 
+                        int LA52_47 = input.LA(1);
 
                          
-                        int index52_37 = input.index();
+                        int index52_47 = input.index();
                         input.rewind();
                         s = -1;
                         if ( (synpred108_InternalKactors()) ) {s = 20;}
@@ -36164,10 +35861,10 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         else if ( (synpred109_InternalKactors()) ) {s = 7;}
 
                          
-                        input.seek(index52_37);
+                        input.seek(index52_47);
                         if ( s>=0 ) return s;
                         break;
-                    case 3 : 
+                    case 2 : 
                         int LA52_54 = input.LA(1);
 
                          
@@ -36180,6 +35877,21 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
 
                          
                         input.seek(index52_54);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 3 : 
+                        int LA52_49 = input.LA(1);
+
+                         
+                        int index52_49 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred108_InternalKactors()) ) {s = 20;}
+
+                        else if ( (synpred109_InternalKactors()) ) {s = 7;}
+
+                         
+                        input.seek(index52_49);
                         if ( s>=0 ) return s;
                         break;
                     case 4 : 
@@ -36198,21 +35910,6 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         if ( s>=0 ) return s;
                         break;
                     case 5 : 
-                        int LA52_22 = input.LA(1);
-
-                         
-                        int index52_22 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred107_InternalKactors()) ) {s = 5;}
-
-                        else if ( (true) ) {s = 18;}
-
-                         
-                        input.seek(index52_22);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 6 : 
                         int LA52_38 = input.LA(1);
 
                          
@@ -36227,11 +35924,26 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index52_38);
                         if ( s>=0 ) return s;
                         break;
-                    case 7 : 
-                        int LA52_47 = input.LA(1);
+                    case 6 : 
+                        int LA52_22 = input.LA(1);
 
                          
-                        int index52_47 = input.index();
+                        int index52_22 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred107_InternalKactors()) ) {s = 5;}
+
+                        else if ( (true) ) {s = 18;}
+
+                         
+                        input.seek(index52_22);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 7 : 
+                        int LA52_37 = input.LA(1);
+
+                         
+                        int index52_37 = input.index();
                         input.rewind();
                         s = -1;
                         if ( (synpred108_InternalKactors()) ) {s = 20;}
@@ -36239,7 +35951,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         else if ( (synpred109_InternalKactors()) ) {s = 7;}
 
                          
-                        input.seek(index52_47);
+                        input.seek(index52_37);
                         if ( s>=0 ) return s;
                         break;
             }
@@ -37524,7 +37236,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
     static final String dfa_131s = "\1\15\1\uffff\41\0\1\uffff";
     static final String dfa_132s = "\1\u0098\1\uffff\41\0\1\uffff";
     static final String dfa_133s = "\1\uffff\1\1\41\uffff\1\2";
-    static final String dfa_134s = "\2\uffff\1\16\1\30\1\0\1\36\1\31\1\22\1\14\1\11\1\6\1\3\1\1\1\37\1\32\1\23\1\15\1\33\1\5\1\13\1\34\1\17\1\4\1\21\1\24\1\7\1\35\1\2\1\20\1\25\1\40\1\10\1\12\1\26\1\27\1\uffff}>";
+    static final String dfa_134s = "\2\uffff\1\17\1\30\1\0\1\36\1\31\1\22\1\15\1\12\1\7\1\4\1\1\1\37\1\32\1\23\1\16\1\33\1\6\1\14\1\34\1\20\1\5\1\21\1\24\1\10\1\35\1\2\1\3\1\25\1\40\1\11\1\13\1\26\1\27\1\uffff}>";
     static final String[] dfa_135s = {
             "\1\32\31\uffff\1\37\6\uffff\1\1\7\uffff\1\36\7\uffff\1\1\1\2\10\uffff\1\12\1\uffff\1\34\13\uffff\1\4\1\7\1\14\1\6\1\5\1\30\1\31\6\uffff\1\3\1\26\1\27\1\33\1\22\1\23\1\24\1\25\1\1\1\uffff\1\1\1\21\7\1\1\10\1\11\1\13\1\15\1\16\1\17\1\20\31\uffff\1\42\1\40\1\41",
             "",
@@ -37638,6 +37350,21 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         if ( s>=0 ) return s;
                         break;
                     case 3 : 
+                        int LA138_28 = input.LA(1);
+
+                         
+                        int index138_28 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred279_InternalKactors()) ) {s = 1;}
+
+                        else if ( (true) ) {s = 35;}
+
+                         
+                        input.seek(index138_28);
+                        if ( s>=0 ) return s;
+                        break;
+                    case 4 : 
                         int LA138_11 = input.LA(1);
 
                          
@@ -37652,7 +37379,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index138_11);
                         if ( s>=0 ) return s;
                         break;
-                    case 4 : 
+                    case 5 : 
                         int LA138_22 = input.LA(1);
 
                          
@@ -37667,7 +37394,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index138_22);
                         if ( s>=0 ) return s;
                         break;
-                    case 5 : 
+                    case 6 : 
                         int LA138_18 = input.LA(1);
 
                          
@@ -37682,7 +37409,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index138_18);
                         if ( s>=0 ) return s;
                         break;
-                    case 6 : 
+                    case 7 : 
                         int LA138_10 = input.LA(1);
 
                          
@@ -37697,7 +37424,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index138_10);
                         if ( s>=0 ) return s;
                         break;
-                    case 7 : 
+                    case 8 : 
                         int LA138_25 = input.LA(1);
 
                          
@@ -37712,7 +37439,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index138_25);
                         if ( s>=0 ) return s;
                         break;
-                    case 8 : 
+                    case 9 : 
                         int LA138_31 = input.LA(1);
 
                          
@@ -37727,7 +37454,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index138_31);
                         if ( s>=0 ) return s;
                         break;
-                    case 9 : 
+                    case 10 : 
                         int LA138_9 = input.LA(1);
 
                          
@@ -37742,7 +37469,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index138_9);
                         if ( s>=0 ) return s;
                         break;
-                    case 10 : 
+                    case 11 : 
                         int LA138_32 = input.LA(1);
 
                          
@@ -37757,7 +37484,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index138_32);
                         if ( s>=0 ) return s;
                         break;
-                    case 11 : 
+                    case 12 : 
                         int LA138_19 = input.LA(1);
 
                          
@@ -37772,7 +37499,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index138_19);
                         if ( s>=0 ) return s;
                         break;
-                    case 12 : 
+                    case 13 : 
                         int LA138_8 = input.LA(1);
 
                          
@@ -37787,7 +37514,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index138_8);
                         if ( s>=0 ) return s;
                         break;
-                    case 13 : 
+                    case 14 : 
                         int LA138_16 = input.LA(1);
 
                          
@@ -37802,7 +37529,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index138_16);
                         if ( s>=0 ) return s;
                         break;
-                    case 14 : 
+                    case 15 : 
                         int LA138_2 = input.LA(1);
 
                          
@@ -37817,7 +37544,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                         input.seek(index138_2);
                         if ( s>=0 ) return s;
                         break;
-                    case 15 : 
+                    case 16 : 
                         int LA138_21 = input.LA(1);
 
                          
@@ -37830,21 +37557,6 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
 
                          
                         input.seek(index138_21);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 16 : 
-                        int LA138_28 = input.LA(1);
-
-                         
-                        int index138_28 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred279_InternalKactors()) ) {s = 1;}
-
-                        else if ( (true) ) {s = 35;}
-
-                         
-                        input.seek(index138_28);
                         if ( s>=0 ) return s;
                         break;
                     case 17 : 
@@ -38655,50 +38367,6 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
             throw nvae;
         }
     }
-
-    class DFA197 extends DFA {
-
-        public DFA197(BaseRecognizer recognizer) {
-            this.recognizer = recognizer;
-            this.decisionNumber = 197;
-            this.eot = dfa_73;
-            this.eof = dfa_73;
-            this.min = dfa_74;
-            this.max = dfa_75;
-            this.accept = dfa_76;
-            this.special = dfa_77;
-            this.transition = dfa_78;
-        }
-        public String getDescription() {
-            return "4492:4: ( ( (lv_value_2_0= ruleValueWithMetadataWithoutTree ) ) | ( ( ( '(' ( ( ruleTree ) ) ')' ) )=> (otherlv_3= '(' ( (lv_value_4_0= ruleTree ) ) otherlv_5= ')' ) ) )";
-        }
-        public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
-            TokenStream input = (TokenStream)_input;
-        	int _s = s;
-            switch ( s ) {
-                    case 0 : 
-                        int LA197_10 = input.LA(1);
-
-                         
-                        int index197_10 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred142_InternalKactors()) ) {s = 1;}
-
-                        else if ( (synpred143_InternalKactors()) ) {s = 15;}
-
-                         
-                        input.seek(index197_10);
-                        if ( s>=0 ) return s;
-                        break;
-            }
-            if (state.backtracking>0) {state.failed=true; return -1;}
-            NoViableAltException nvae =
-                new NoViableAltException(getDescription(), 197, _s, input);
-            error(nvae);
-            throw nvae;
-        }
-    }
     static final String dfa_146s = "\1\56\14\uffff";
     static final String dfa_147s = "\1\165\14\uffff";
     static final String[] dfa_148s = {
@@ -38816,7 +38484,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
     public static final BitSet FOLLOW_29 = new BitSet(new long[]{0x75E00000000026B0L,0x0000000018018246L});
     public static final BitSet FOLLOW_30 = new BitSet(new long[]{0x0010000000000042L});
     public static final BitSet FOLLOW_31 = new BitSet(new long[]{0x0000000000000042L});
-    public static final BitSet FOLLOW_32 = new BitSet(new long[]{0x0020000000002632L,0x0000000018018246L});
+    public static final BitSet FOLLOW_32 = new BitSet(new long[]{0x0000000000002012L,0x0000000018000006L});
     public static final BitSet FOLLOW_33 = new BitSet(new long[]{0x0000008000000002L});
     public static final BitSet FOLLOW_34 = new BitSet(new long[]{0x0000000000000102L});
     public static final BitSet FOLLOW_35 = new BitSet(new long[]{0x0000000000000142L});

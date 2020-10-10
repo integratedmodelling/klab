@@ -1,7 +1,12 @@
 package org.integratedmodelling.klab.auth;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -27,7 +32,8 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	private IParameters<String> globalState = Parameters.createSynchronized();
 	private View view;
 	private ActorRef<KlabMessage> actor;
-	
+	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
+
 	public KlabUser(String username, INodeIdentity node) {
 		super(username);
 		this.parent = node;
@@ -126,8 +132,16 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	}
 
 	@Override
-	public IParameters<String> getState() {
-		return globalState;
+	public <V> V getState(String key, Class<V> cls) {
+		return this.globalState.get(key, cls);
+	}
+
+	@Override
+	public void setState(String key, Object value) {
+		this.globalState.put(key, value);
+		for (BiConsumer<String, Object> listener : stateChangeListeners.values()) {
+			listener.accept(key, value);
+		}
 	}
 
 	@Override
@@ -156,5 +170,15 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	public IMonitor getMonitor() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
+		this.stateChangeListeners.put(name, listener);
+	}
+
+	@Override
+	public void removeStateChangeListener(String name) {
+		this.stateChangeListeners.remove(name);
 	}
 }

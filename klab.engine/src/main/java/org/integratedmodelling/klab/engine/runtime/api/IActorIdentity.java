@@ -1,8 +1,9 @@
 package org.integratedmodelling.klab.engine.runtime.api;
 
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewComponent;
@@ -60,11 +61,35 @@ public interface IActorIdentity<T> extends IRuntimeIdentity {
 
 	/**
 	 * Actors have a state that is manipulated through the "set" statement in
-	 * k.Actors.
+	 * k.Actors. Instead of exposing a symbol table we provide set/get methods so
+	 * that listeners can be installed in the API.
 	 * 
-	 * @return
+	 * @return the value or null
 	 */
-	IParameters<String> getState();
+	<V> V getState(String key, Class<V> cls);
+	
+	/**
+	 * Actors have a state that is manipulated through the "set" statement in
+	 * k.Actors. Instead of exposing a symbol table we provide set/get methods so
+	 * that listeners can be installed in the API.
+	 * 
+	 * @param key
+	 * @param value
+	 */
+	void setState(String key, Object value);
+	
+	/**
+	 * 
+	 * @param name
+	 * @param listener
+	 */
+	void setStateChangeListener(String name, BiConsumer<String, Object> listener);
+	
+	/**
+	 * 
+	 * @param name
+	 */
+	void removeStateChangeListener(String name);
 
 	/**
 	 * If the actor has a view associated, return it. Otherwise return null.

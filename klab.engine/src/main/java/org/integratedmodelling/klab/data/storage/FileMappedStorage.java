@@ -74,7 +74,7 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 				type = DataType.BYTE;
 			} else {
 				throw new IllegalStateException(
-						"NetCDF-backed storage cannot use type " + valueClass.getCanonicalName());
+						"file-backed storage cannot use type " + valueClass.getCanonicalName());
 			}
 		}
 

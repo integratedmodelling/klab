@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
@@ -31,7 +32,6 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
-import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
@@ -85,6 +85,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private Map<String, Long> actionBindings = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, ActorRef<KlabMessage>> receivers = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, List<ActorRef<KlabMessage>>> childInstances = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, Consumer<Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
 
 	/*
 	 * This is the parent that generated us through a 'new' instruction, if any.
@@ -275,7 +276,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			if (symbolTable.containsKey(string)) {
 				return symbolTable.get(string);
 			}
-			return identity.getState().get(string);
+			return identity.getState(string, Object.class);
 		}
 
 	}
@@ -724,8 +725,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private void executeAssignment(Assignment code, Scope scope) {
 		if (code.getRecipient() != null) {
 			if ("self".equals(code.getRecipient())) {
-				this.identity.getState().put(code.getVariable(),
-						evaluateInScope((KActorsValue) code.getValue(), scope));
+				this.identity.setState(code.getVariable(), evaluateInScope((KActorsValue) code.getValue(), scope));
 			} else {
 				// TODO find the actor reference and send it an internal message to set the
 				// state. Should be subject to scope and authorization

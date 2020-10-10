@@ -13,8 +13,8 @@ import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
+import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.MetadataPair;
-import org.integratedmodelling.kactors.kactors.Value;
 
 /**
  * <!-- begin-user-doc -->
@@ -60,7 +60,7 @@ public class MetadataPairImpl extends MinimalEObjectImpl.Container implements Me
    * @generated
    * @ordered
    */
-  protected Value value;
+  protected Literal value;
 
   /**
    * <!-- begin-user-doc -->
@@ -114,7 +114,7 @@ public class MetadataPairImpl extends MinimalEObjectImpl.Container implements Me
    * @generated
    */
   @Override
-  public Value getValue()
+  public Literal getValue()
   {
     return value;
   }
@@ -124,9 +124,9 @@ public class MetadataPairImpl extends MinimalEObjectImpl.Container implements Me
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetValue(Value newValue, NotificationChain msgs)
+  public NotificationChain basicSetValue(Literal newValue, NotificationChain msgs)
   {
-    Value oldValue = value;
+    Literal oldValue = value;
     value = newValue;
     if (eNotificationRequired())
     {
@@ -142,7 +142,7 @@ public class MetadataPairImpl extends MinimalEObjectImpl.Container implements Me
    * @generated
    */
   @Override
-  public void setValue(Value newValue)
+  public void setValue(Literal newValue)
   {
     if (newValue != value)
     {
@@ -206,7 +206,7 @@ public class MetadataPairImpl extends MinimalEObjectImpl.Container implements Me
         setKey((String)newValue);
         return;
       case KactorsPackage.METADATA_PAIR__VALUE:
-        setValue((Value)newValue);
+        setValue((Literal)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -226,7 +226,7 @@ public class MetadataPairImpl extends MinimalEObjectImpl.Container implements Me
         setKey(KEY_EDEFAULT);
         return;
       case KactorsPackage.METADATA_PAIR__VALUE:
-        setValue((Value)null);
+        setValue((Literal)null);
         return;
     }
     super.eUnset(featureID);
