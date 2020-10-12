@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -39,11 +40,11 @@ import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToFeatures;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToGrid;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToShape;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
-import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 
 import com.vividsolutions.jts.algorithm.ConvexHull;
@@ -83,6 +84,7 @@ public class Shape extends AbstractExtent implements IShape {
 	Envelope envelope;
 	IShape.Type type = null;
 	Projection projection;
+	IMetadata metadata;
 
 	// these are used to speed up repeated point-in-polygon operations like
 	// those that RasterActivationLayer does.
@@ -894,5 +896,13 @@ public class Shape extends AbstractExtent implements IShape {
 	@Override
 	public boolean contains(double[] coordinate) {
 		return this.shapeGeometry.intersects(makePoint(coordinate[0], coordinate[1]));
+	}
+	
+	@Override
+	public IMetadata getMetadata() {
+		if (this.metadata == null) {
+			this.metadata = new Metadata();
+		}
+		return this.metadata;
 	}
 }

@@ -52,7 +52,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
+import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
@@ -61,6 +61,7 @@ import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.indexing.Indexer;
 import org.integratedmodelling.klab.engine.resources.Worldview;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Namespace;
@@ -601,10 +602,11 @@ public enum Observations implements IObservationService {
 		return ret;
 	}
 
-	public Observer makeROIObserver(final SpatialExtent regionOfInterest, ITime time, Namespace namespace,
+	public Observer makeROIObserver(final SpatialExtent regionOfInterest, ITime time, Namespace namespace, String currentName,
 			IMonitor monitor) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
-		observable.setName(Geocoder.INSTANCE.geocode(regionOfInterest, null));
+		Session session = monitor.getIdentity().getParentIdentity(Session.class);
+		observable.setName(Geocoder.INSTANCE.geocode(regionOfInterest, session == null ? null : session.getGeocodingStrategy(), currentName, monitor));
 		observable.setOptional(true);
 		if (namespace == null) {
 			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
@@ -612,9 +614,10 @@ public enum Observations implements IObservationService {
 		return new Observer(regionOfInterest, time, observable, (Namespace) namespace);
 	}
 
-	public Observer makeROIObserver(final Shape shape, ITime time, Namespace namespace, IMonitor monitor) {
+	public Observer makeROIObserver(final Shape shape, ITime time, Namespace namespace, String currentName, IMonitor monitor) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
-		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope(), null));
+		Session session = monitor.getIdentity().getParentIdentity(Session.class);
+		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope(), session == null ? null : session.getGeocodingStrategy(), currentName, monitor));
 		observable.setOptional(true);
 		if (namespace == null) {
 			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());

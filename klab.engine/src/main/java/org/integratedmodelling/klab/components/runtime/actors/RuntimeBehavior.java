@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
+import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -48,7 +48,9 @@ public class RuntimeBehavior {
 	/**
 	 * Set the root context
 	 */
-	@Action(id = "context", fires = Type.OBSERVATION, description = "Used with a URN as parameter, creates the context from an observe statement. If used without parameters, fire the observation when a new context is established")
+	@Action(id = "context", fires = Type.OBSERVATION, 
+			description = "Used with a URN as parameter, creates the context from an observe statement. If used without" +
+					      " parameters, fire the observation when a new context is established")
 	public static class Context extends KlabAction {
 
 		String listenerId = null;
@@ -135,12 +137,8 @@ public class RuntimeBehavior {
 //									@Override
 //									public void run() {
 
-										/*
-										 * TODO use a configurable geocoder that can be set up with
-										 * a scaled resource set
-										 */
-										String strategy = null;
-										String geocoded = Geocoder.INSTANCE.geocode(extent, strategy);
+										String strategy = session.getGeocodingStrategy();
+										String geocoded = Geocoder.INSTANCE.geocode(extent, strategy, session.getRegionNameOfInterest(), scope.getMonitor());
 										Map<String, Object> ret = new HashMap<>();
 										ret.put("description", geocoded);
 										ret.put("resolution", extent.getGridResolution());

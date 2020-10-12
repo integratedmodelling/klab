@@ -15,18 +15,31 @@
  */
 package org.integratedmodelling.klab.api.observations.scale.space;
 
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
+
 /**
- * Anything that has coordinates is referenced.
+ * Anything that has coordinates is referenced. We also expose metadata so that
+ * additional info can be provided along with the referencing.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public abstract interface IReferenced {
 
-    /**
-     * <p>getProjection.</p>
-     *
-     * @return a {@link org.integratedmodelling.klab.api.observations.scale.space.IProjection} object.
-     */
-    IProjection getProjection();
+	/**
+	 * <p>
+	 * getProjection.
+	 * </p>
+	 *
+	 * @return a
+	 *         {@link org.integratedmodelling.klab.api.observations.scale.space.IProjection}
+	 *         object.
+	 */
+	IProjection getProjection();
+
+	/**
+	 * 
+	 * @return
+	 */
+	IMetadata getMetadata();
 }

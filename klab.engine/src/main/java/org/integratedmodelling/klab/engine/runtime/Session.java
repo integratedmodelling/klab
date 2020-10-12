@@ -90,8 +90,8 @@ import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
-import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
-import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder.Location;
+import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
+import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder.Location;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
@@ -203,6 +203,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	Map<String, ISession.ObservationListener> observationListeners = Collections.synchronizedMap(new LinkedHashMap<>());
 	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
 	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
+	ITime timeOfInterest = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 
 	public interface ROIListener {
 
@@ -320,6 +321,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	private AtomicBoolean lockTime = new AtomicBoolean(false);
 	private AtomicLong lastNetworkCheck = new AtomicLong(0);
 
+	private String regionNameOfInterest = "Region of interest";
+
 	public interface Listener {
 
 		void onClose(ISession session);
@@ -430,7 +433,9 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 					}
 				}
 
-				Observer observer = Observations.INSTANCE.makeROIObserver(roi, time, (Namespace) namespace, monitor);
+				Observer observer = Observations.INSTANCE.makeROIObserver(roi, time, (Namespace) namespace,
+						this.regionNameOfInterest, monitor);
+				this.regionNameOfInterest = observer.getName();
 				try {
 					ISubject subject = new ObserveContextTask(this, observer, CollectionUtils.arrayToList(scenarios))
 							.get();
@@ -457,7 +462,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	private ITime getConfiguredTime() {
 		if (this.globalState.containsAnyKey("startyear", "endyear", "year", "timestep", "start", "end", "step")) {
 
-			Object start = Utils.asType(this.globalState.get("startyear", "start"), Integer.class);
+			Object start = Utils.asType(this.globalState.getAny("startyear", "start"), Integer.class);
 			Object end = Utils.asType(this.globalState.getAny("endyear", "end"), Integer.class);
 			Object step = this.globalState.getAny("timestep", "step");
 			Object year = Utils.asType(this.globalState.get("year"), Integer.class);
@@ -465,7 +470,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			Parameters<String> parameters = Parameters.createNotNull("start", start, "end", end, "step", step, "year",
 					year);
 
-			return (ITime) (new org.integratedmodelling.klab.components.time.services.Time()).eval(parameters, null);
+			return (this.timeOfInterest = (ITime) (new org.integratedmodelling.klab.components.time.services.Time())
+					.eval(parameters, null));
 		}
 		return null;
 	}
@@ -719,16 +725,21 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	private void handleFeatureAdded(final SpatialLocation location) {
 
 		if (location.getContextId() == null) {
-			ITime time = null;
-			if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
-				time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
-						this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
-						new TimeInstant(this.timeEnd), null);
-			} else {
-				time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+			ITime time = getConfiguredTime();
+			if (time == null) {
+				if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
+					time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
+							this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
+							new TimeInstant(this.timeEnd), null);
+				} else {
+					time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+				}
 			}
 			Shape shape = Shape.create("EPSG:4326 " + location.getWktShape());
-			Observer observer = Observations.INSTANCE.makeROIObserver(shape, time, null, monitor);
+			Observer observer = Observations.INSTANCE.makeROIObserver(shape, time, null, this.regionNameOfInterest,
+					monitor);
+			this.regionNameOfInterest = observer.getName();
+			
 			try {
 				new ObserveContextTask(this, observer, new ArrayList<>()).get();
 			} catch (InterruptedException | ExecutionException e) {
@@ -1298,6 +1309,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		case RunUnitTest:
 			if (request.isStop()) {
 				stop(request.getBehavior());
+				this.globalState.clear();
 			} else {
 				IBehavior behavior = Actors.INSTANCE.getBehavior(request.getBehavior());
 				if (behavior != null) {
@@ -1360,7 +1372,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	 * @param message
 	 * @param request
 	 */
-	@MessageHandler
+	@MessageHandler(messageClass = IMessage.MessageClass.ProjectLifecycle)
 	private void handleProjectModificationRequest(IMessage message, final ProjectModificationRequest request) {
 
 		Project project = Resources.INSTANCE.getProject(request.getProjectId());
@@ -1484,6 +1496,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			this.temporalResolution = null;
 		}
 		this.regionOfInterest = null;
+		this.regionNameOfInterest = "Region of interest";
+		this.timeOfInterest = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 		monitor.send(IMessage.Type.ResetContext, IMessage.MessageClass.UserContextChange, "");
 	}
 
@@ -1781,5 +1795,19 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	@Override
 	public void removeStateChangeListener(String name) {
 		this.stateChangeListeners.remove(name);
+	}
+
+	@Override
+	public ITime getTimeOfInterest() {
+		return this.timeOfInterest;
+	}
+
+	public String getGeocodingStrategy() {
+		return globalState.get("geocodingstrategy", String.class);
+	}
+	
+	@Override
+	public String getRegionNameOfInterest() {
+		return this.regionNameOfInterest;
 	}
 }

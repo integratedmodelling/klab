@@ -442,6 +442,36 @@ public class ViewBehavior {
 		}
 
 	}
+	
+	@Action(id = "separator")
+	public static class Separator extends KlabWidgetAction {
+
+		public Separator(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		public ViewComponent createViewComponent(Scope scope) {
+			ViewComponent message = new ViewComponent();
+			message.setType(Type.Separator);
+			message.getAttributes().putAll(getMetadata(arguments, scope));
+			return message;
+		}
+
+		@Override
+		protected Object getFiredResult(ViewAction action) {
+			return action.getStringValue();
+		}
+
+		@Override
+		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
+			ViewAction ret = new ViewAction();
+			return ret;
+		}
+
+	}
+
 
 	@Action(id = "tree")
 	public static class Tree extends KlabWidgetAction {
