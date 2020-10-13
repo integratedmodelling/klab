@@ -835,6 +835,10 @@ public enum Actors implements IActorsService {
 					scope.optional().repeated());
 			break;
 		case INSTANTIATION:
+			/**
+			 * TODO add a placeholder panel and do NOT compile it now. Let KlabActor::load
+			 * do that and graft the components to it. 
+			 */
 			IBehavior behavior = getBehavior(((Instantiation) statement).getBehavior());
 			if (behavior != null && behavior.getDestination() == Type.COMPONENT) {
 				component = simplifyViewStructure(getView(behavior, scope.identity, scope.applicationId,
@@ -865,7 +869,7 @@ public enum Actors implements IActorsService {
 		}
 		return panels;
 	}
-	
+
 	private ViewComponent simplifyViewStructure(Layout view) {
 		List<ViewPanel> panels = getPanels(view);
 		if (panels.size() == 1) {
@@ -983,7 +987,7 @@ public enum Actors implements IActorsService {
 			}
 		}
 	}
-	
+
 	/**
 	 * Load all the behaviors in <klab>/user. These should be managed through the
 	 * IDE and there should always be a default one.

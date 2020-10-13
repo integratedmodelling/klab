@@ -192,6 +192,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		 */
 		String viewId;
 		ActorRef<KlabMessage> sender;
+		/*
+		 * if this is not null, the scope is running actions that have a view, and
+		 * should insert component views into the layout of the parent view passed here,
+		 * based on the component call ID.
+		 */
+		Layout view;
 
 		public Scope(IActorIdentity<KlabMessage> identity, String appId, IRuntimeScope scope) {
 			this.runtimeScope = scope;
@@ -229,6 +235,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.viewId = scope.viewId;
 			this.symbolTable.putAll(scope.symbolTable);
 			this.identity = scope.identity;
+			this.view = scope.view;
 		}
 
 		public String toString() {
@@ -277,6 +284,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				return symbolTable.get(string);
 			}
 			return identity.getState(string, Object.class);
+		}
+
+		public Scope withView(Layout view) {
+			this.view = view;
+			return this;
 		}
 
 	}
@@ -482,14 +494,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.actionBindings.clear();
 			this.actionCache.clear();
 
-			if (behavior.getDestination() == Type.APP) {
-				Layout view = Actors.INSTANCE.getView(behavior, identity, this.appId, null);
-				if (!view.empty()) {
-					this.view = view;
-					this.identity.setLayout(view);
-					this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
-							view);
-				}
+			Layout view = null;
+
+			if (behavior.getDestination() == Type.APP || behavior.getDestination() == Type.COMPONENT) {
+				view = Actors.INSTANCE.getView(behavior, identity, this.appId, null);
 			}
 
 			/*
@@ -497,14 +505,27 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			 * callback intervenes afterwards.
 			 */
 			for (IBehavior.Action action : this.behavior.getActions("init", "@init")) {
-				run(action, new Scope(this.identity, appId, message.scope));
+				run(action, new Scope(this.identity, appId, message.scope).withView(view));
 			}
 
 			/*
 			 * run any main actions
 			 */
 			for (IBehavior.Action action : this.behavior.getActions("main", "@main")) {
-				run(action, new Scope(this.identity, appId, message.scope));
+				Scope scope = new Scope(this.identity, appId, message.scope).withView(view);
+				scope.symbolTable.putAll(message.arguments);
+				run(action, scope);
+			}
+
+			/*
+			 * TODO send the view AFTER running main and collecting all components that
+			 * generate views!
+			 */
+			if (view != null && !view.empty()) {
+				this.view = view;
+				this.identity.setLayout(view);
+				this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
+						view);
 			}
 
 		}
@@ -602,7 +623,30 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		}
 
 		// remove the appId for the children, otherwise their messages will be rerouted
-		actor.tell(new Load(code.getBehavior(), null, scope.runtimeScope).withParent(getContext().getSelf()));
+		Map<String, Object> arguments = new HashMap<>();
+		if (code.getArguments() != null) {
+			/*
+			 * TODO match the arguments to the correspondent names for the declaration of
+			 * main()
+			 */
+			IBehavior childBehavior = Actors.INSTANCE.getBehavior(code.getBehavior());
+			Action main = childBehavior.getAction("main");
+			int n = 0;
+			for (int i = 0; i < main.getStatement().getArgumentNames().size(); i++) {
+				String arg = main.getStatement().getArgumentNames().get(i);
+				Object value = code.getArguments().get(arg);
+				if (value == null && code.getArguments().getUnnamedKeys().size() > n) {
+					value = code.getArguments().get(code.getArguments().getUnnamedKeys().get(n++));
+					if (value instanceof KActorsValue) {
+						value = evaluateInScope((KActorsValue) value, scope);
+					}
+				}
+				arguments.put(arg, value);
+			}
+			System.out.println("DUI");
+		}
+		actor.tell(new Load(code.getBehavior(), null, scope.runtimeScope).withMainArguments(arguments)
+				.withParent(getContext().getSelf()));
 
 		/*
 		 * if the new actor has a component associated, set its view to the component

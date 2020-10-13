@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.util.Map;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -36,11 +38,24 @@ public class SystemBehavior {
 		// if not null, this is a child behavior from a 'new' instruction and it carries
 		// a ref to the parent
 		ActorRef<KlabMessage> parent = null;
+		Map<String, Object> arguments;
 
 		public Load(String behavior, String appId, IRuntimeScope scope) {
 			this.behavior = behavior;
 			this.appId = appId;
 			this.scope = scope;
+		}
+
+		/**
+		 * Pass when the main() function may have arguments, typically in components
+		 * instantiated through 'new'.
+		 * 
+		 * @param arguments
+		 * @return
+		 */
+		public Load withMainArguments(Map<String, Object> arguments) {
+			this.arguments = arguments;
+			return this;
 		}
 
 		public Load withParent(ActorRef<KlabMessage> parent) {
