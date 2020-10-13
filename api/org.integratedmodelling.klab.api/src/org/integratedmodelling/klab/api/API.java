@@ -225,11 +225,11 @@ public interface API {
 		 */
 		public static final String AUTHENTICATE_LEVER = LEVER_BASE + AUTH_BASE;
 		/**
-		 * Called by users to log into the hub and recieve an authentication token.
+		 * Called by users to log into the hub and receive an authentication token.
 		 */
 		public static final String AUTHENTICATE_USER = USER_BASE + "/log-in";
 		/**
-		 * Called by users to log into the hub and recieve an authentication token.
+		 * Called by users to log into the hub and receive an authentication token.
 		 */
 		public static final String DEAUTHENTICATE_USER = USER_BASE + "/log-out";
 		/**

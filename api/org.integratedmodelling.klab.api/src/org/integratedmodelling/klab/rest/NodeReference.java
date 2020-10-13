@@ -38,8 +38,9 @@ public class NodeReference {
 		this.namespaces.addAll(node.getNamespaceIds());
 		this.catalogs.addAll(node.getCatalogIds());
 //		this.resources.addAll(node.getResources());
-		this.online = node.isOnline();
 		this.urls.addAll(node.getUrls());
+		this.online = node.isOnline();
+		
 	}
 
 	public NodeReference(NodeCapabilities capabilities) {

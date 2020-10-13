@@ -38,7 +38,7 @@ public class Node implements INodeIdentity {
 	private Date bootTime = new Date();
 	private String token;
 	private boolean online;
-	private int retryPeriod = 15;
+	private int retryPeriod = 0;
 	private long lastCheck = System.currentTimeMillis();
 	private Map<String, IAuthority.Capabilities> authorities = new HashMap<>();
 
