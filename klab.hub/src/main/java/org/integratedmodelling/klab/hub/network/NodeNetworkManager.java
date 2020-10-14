@@ -128,7 +128,6 @@ public enum NodeNetworkManager implements INetworkService {
 	
 	
 	private NodeReference createNodeReference(INodeIdentity node, boolean isOnline) {
-		node.getClient();
 		NodeReference ret = new NodeReference(node);
 		ret.setOnline(isOnline);
 		ret.setPartner(this.hub.getPartner());
@@ -137,6 +136,7 @@ public enum NodeNetworkManager implements INetworkService {
 	
 	
 	public void notifyAuthorizedNode(INodeIdentity ret, boolean online) {
+		ret.getClient();
 		if(getNodes().contains(ret) && online == true) {
 			//move the offline node to online node
 			synchronized (offlineNodes) {
@@ -176,21 +176,21 @@ public enum NodeNetworkManager implements INetworkService {
 	
 	private void checkNodes() {
 		Logging.INSTANCE.info("Checking nodes");
-		Collection<INodeIdentity> nodes = getNodes();
-		for (INodeIdentity iNode : nodes) {
+		Collection<NodeReference> nodes = getNodeReferences();
+		for (NodeReference ref : nodes) {
+			Node node = new Node(ref,null);
+			node.getClient();
 			try {
-				//set thhe node to false so ping can return true;
-				Node node = new Node(createNodeReference(iNode, false),null);
 				if(node.ping()) {
 					Logging.INSTANCE.info("Node Online: " + node.getName());
 					setNodeOnline(node);
 				} else {
-					Logging.INSTANCE.info("Node Offline: " + iNode.getName());
-					setNodeOffline(iNode);
+					Logging.INSTANCE.info("Node Offline: " + node.getId());
+					setNodeOffline(node);
 				}
 			} catch (ResourceAccessException e) {
-				Logging.INSTANCE.info("Node Offline: " + iNode.getName());
-				setNodeOffline(iNode);
+				Logging.INSTANCE.info("Node Offline: " + node.getId());
+				setNodeOffline(node);
 			}
 		}
 	}
