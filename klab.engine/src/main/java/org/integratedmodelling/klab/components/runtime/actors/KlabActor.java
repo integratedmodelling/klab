@@ -511,10 +511,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			Layout view = null;
 
 			if (behavior.getDestination() == Type.APP || behavior.getDestination() == Type.COMPONENT) {
-				
-				view = Actors.INSTANCE.getView(behavior, identity, this.appId,
-						(rootView ? null : (message.scope.view.getActorPath() + ".")) + message.instanceBaseName);
-				
+
+				view = Actors.INSTANCE.getView(behavior, identity, this.appId, rootView ? null
+						: ((message.scope.view.getActorPath() == null ? "" : (message.scope.view.getActorPath() + "."))
+								+ message.instanceBaseName));
+
 				if (behavior.getDestination() == Type.COMPONENT) {
 					view.setId(message.instanceBaseName);
 				}

@@ -853,6 +853,7 @@ public enum Actors implements IActorsService {
 				if (component != null) {
 					ViewPanel placeholder = new ViewPanel();
 					placeholder.setId(((Instantiation) statement).getActorBaseName());
+					placeholder.setParentId(parent.getId());
 					parent.getComponents().add(placeholder);
 //					component.setParentId(parent.getId());
 //					parent.getComponents().add(component);
