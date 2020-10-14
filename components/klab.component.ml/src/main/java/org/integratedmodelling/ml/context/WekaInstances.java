@@ -271,7 +271,8 @@ public class WekaInstances {
 		this.attributes.set(0, getAttribute(observable, state));
 		if (discretizer != null) {
 			discretizers.put(name, new DiscretizerDescriptor(discretizer));
-			// we add this under the generic name to avoid having to match the output's name too
+			// we add this under the generic name to avoid having to match the output's name
+			// too
 			discretizers.put(PREDICTED_OBSERVABLE, new DiscretizerDescriptor(discretizer));
 		}
 	}
@@ -322,9 +323,8 @@ public class WekaInstances {
 		this.selectFraction = selectFraction;
 
 		if (this.selector != null) {
-			this.selectorDescriptor = Extensions.INSTANCE
-					.getLanguageProcessor(selector.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
-							: selector.getLanguage())
+			this.selectorDescriptor = Extensions.INSTANCE.getLanguageProcessor(
+					selector.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE : selector.getLanguage())
 					.describe(this.selector.getCode(), context.getExpressionContext());
 		}
 
@@ -555,6 +555,13 @@ public class WekaInstances {
 	 * @return
 	 */
 	public IObservable getPredictorObservable(String attributeName) {
+		if (predictors == null && predictorStates != null) {
+			for (IState state : predictorStates) {
+				if (state != null && state.getObservable().getName().equals(attributeName)) {
+					return state.getObservable();
+				}
+			}
+		}
 		for (IObservable state : getPredictorObservables()) {
 			if (state.getName().equals(attributeName)) {
 				return state;
