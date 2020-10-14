@@ -1743,7 +1743,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	@Override
 	public String load(IBehavior behavior, IContextualizationScope scope) {
 		String ret = "app" + NameGenerator.shortUUID();
-		getActor().tell(new SystemBehavior.Load(behavior.getId(), ret, (IRuntimeScope) scope));
+		getActor().tell(new SystemBehavior.Load(this, behavior.getId(), ret, (IRuntimeScope) scope));
 		return ret;
 	}
 

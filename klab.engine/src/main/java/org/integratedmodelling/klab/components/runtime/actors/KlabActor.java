@@ -286,9 +286,22 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			return identity.getState(string, Object.class);
 		}
 
-		public Scope withView(Layout view) {
-			this.view = view;
-			return this;
+		public Scope getChild(String appId, Layout view) {
+			Scope ret = new Scope(this);
+			ret.appId = appId;
+			/*
+			 * TODO if we have a view, must graft the passed one onto it. The placeholder
+			 * panel has the getId() set to the actorReference of the component which is in
+			 * the ID of the new view.
+			 */
+			if (this.view != null && view != null) {
+				ViewPanel container = Actors.INSTANCE.findPanel(this.view, view.getId());
+				if (container != null) {
+					Actors.INSTANCE.mergeComponent(view, container);
+				}
+			}
+			ret.view = view;
+			return ret;
 		}
 
 	}
@@ -477,6 +490,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected Behavior<KlabMessage> loadBehavior(Load message) {
 
 		this.parentActor = message.parent;
+		boolean rootView = message.scope.view == null;
 
 		if (message.appId != null) {
 			/*
@@ -497,7 +511,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			Layout view = null;
 
 			if (behavior.getDestination() == Type.APP || behavior.getDestination() == Type.COMPONENT) {
-				view = Actors.INSTANCE.getView(behavior, identity, this.appId, null);
+				
+				view = Actors.INSTANCE.getView(behavior, identity, this.appId,
+						(rootView ? null : (message.scope.view.getActorPath() + ".")) + message.instanceBaseName);
+				
+				if (behavior.getDestination() == Type.COMPONENT) {
+					view.setId(message.instanceBaseName);
+				}
 			}
 
 			/*
@@ -505,29 +525,30 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			 * callback intervenes afterwards.
 			 */
 			for (IBehavior.Action action : this.behavior.getActions("init", "@init")) {
-				run(action, new Scope(this.identity, appId, message.scope).withView(view));
+				run(action, message.scope.getChild(this.appId, view));
 			}
 
 			/*
 			 * run any main actions
 			 */
 			for (IBehavior.Action action : this.behavior.getActions("main", "@main")) {
-				Scope scope = new Scope(this.identity, appId, message.scope).withView(view);
-				scope.symbolTable.putAll(message.arguments);
+				Scope scope = message.scope.getChild(this.appId, view);
+				if (message.arguments != null) {
+					scope.symbolTable.putAll(message.arguments);
+				}
 				run(action, scope);
 			}
 
 			/*
-			 * TODO send the view AFTER running main and collecting all components that
-			 * generate views!
+			 * send the view AFTER running main and collecting all components that generate
+			 * views.
 			 */
-			if (view != null && !view.empty()) {
+			if (rootView && view != null && !view.empty()) {
 				this.view = view;
 				this.identity.setLayout(view);
 				this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
 						view);
 			}
-
 		}
 
 		return Behaviors.same();
@@ -643,10 +664,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				}
 				arguments.put(arg, value);
 			}
-			System.out.println("DUI");
 		}
-		actor.tell(new Load(code.getBehavior(), null, scope.runtimeScope).withMainArguments(arguments)
-				.withParent(getContext().getSelf()));
+		actor.tell(new Load(this.identity, code.getBehavior(), null, scope).withActorBaseName(code.getActorBaseName())
+				.withMainArguments(arguments).withParent(getContext().getSelf()));
 
 		/*
 		 * if the new actor has a component associated, set its view to the component

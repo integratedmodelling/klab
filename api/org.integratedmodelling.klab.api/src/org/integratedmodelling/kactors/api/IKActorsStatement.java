@@ -157,7 +157,7 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 		 *         automatically generated one.
 		 */
 		String getActorBaseName();
-
+		
 	}
 
 	public interface Call extends IKActorsStatement {

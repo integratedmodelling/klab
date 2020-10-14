@@ -137,6 +137,9 @@ public enum Actors implements IActorsService {
 		layoutMetadata.add("hfill");
 		layoutMetadata.add("vfill");
 		layoutMetadata.add("fill");
+		layoutMetadata.add("icon");
+		layoutMetadata.add("iconname");
+		layoutMetadata.add("info");
 		layoutMetadata.add("disabled");
 		layoutMetadata.add("hidden");
 		layoutMetadata.add("hbox");
@@ -836,17 +839,23 @@ public enum Actors implements IActorsService {
 			break;
 		case INSTANTIATION:
 			/**
-			 * TODO add a placeholder panel and do NOT compile it now. Let KlabActor::load
-			 * do that and graft the components to it. 
+			 * add a placeholder panel and do NOT compile it now. Let
+			 * KlabActor::loadBehavior do that and graft the components to it. The panel
+			 * will hold as many instances as are generated if the instantiation is in a
+			 * loop or a conditional, and may be empty after code is executed.
 			 */
+			// FIXME shouldn't have to go through this to assess if there are components.
 			IBehavior behavior = getBehavior(((Instantiation) statement).getBehavior());
 			if (behavior != null && behavior.getDestination() == Type.COMPONENT) {
 				component = simplifyViewStructure(getView(behavior, scope.identity, scope.applicationId,
 						(parent.getActorPath() == null ? "" : (parent.getActorPath() + "."))
 								+ ((Instantiation) statement).getActorBaseName()));
 				if (component != null) {
-					component.setParentId(parent.getId());
-					parent.getComponents().add(component);
+					ViewPanel placeholder = new ViewPanel();
+					placeholder.setId(((Instantiation) statement).getActorBaseName());
+					parent.getComponents().add(placeholder);
+//					component.setParentId(parent.getId());
+//					parent.getComponents().add(component);
 				}
 			}
 			break;
@@ -999,5 +1008,55 @@ public enum Actors implements IActorsService {
 				KActors.INSTANCE.add(bfile);
 			}
 		}
+	}
+
+	public ViewPanel findPanel(Layout view, String id) {
+		ViewPanel ret = null;
+		for (Collection<?> panels : new Collection[] { view.getPanels(), view.getLeftPanels(), view.getRightPanels(),
+				Collections.singleton(view.getFooter()), Collections.singleton(view.getHeader()) }) {
+			for (Object panel : panels) {
+				ret = findPanel((ViewPanel) panel, id);
+				if (ret != null) {
+					return ret;
+				}
+			}
+		}
+		return null;
+	}
+
+	private ViewPanel findPanel(ViewComponent panel, String id) {
+		if (panel instanceof ViewPanel && id.equals(panel.getId())) {
+			return (ViewPanel) panel;
+		}
+		for (ViewComponent component : panel.getComponents()) {
+			ViewPanel ret = findPanel(component, id);
+			if (ret != null) {
+				return ret;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Load the contents of the passed layout into a destination panel. Used to
+	 * merge components. May be called more than once on the same panel if the
+	 * component is created inside a loop.
+	 * 
+	 * @param source
+	 * @param destination
+	 */
+	public void mergeComponent(Layout view, ViewPanel destination) {
+		// TODO for now only copy components from the first panel found non-empty in the
+		// view. Later maybe handle the layout within the panel.
+		for (Collection<?> panels : new Collection[] { view.getPanels(), view.getLeftPanels(), view.getRightPanels(),
+				Collections.singleton(view.getFooter()), Collections.singleton(view.getHeader()) }) {
+			for (Object panel : panels) {
+				if (panel != null) {
+					destination.getComponents().addAll(((ViewPanel) panel).getComponents());
+					return;
+				}
+			}
+		}
+
 	}
 }

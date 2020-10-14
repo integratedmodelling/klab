@@ -154,7 +154,7 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 	@Override
 	public String load(IBehavior behavior, IContextualizationScope scope) {
 		// TODO this gets a sucky runtime scope that is used to run main messages.
-		getActor().tell(new SystemBehavior.Load(behavior.getId(), getId(), (IRuntimeScope) scope));
+		getActor().tell(new SystemBehavior.Load(this, behavior.getId(), getId(), (IRuntimeScope) scope));
 		return getId();
 	}
 

@@ -354,7 +354,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	@Override
 	public String load(IBehavior behavior, IContextualizationScope scope) {
 		String behaviorId = "obh" + NameGenerator.shortUUID();
-		getActor().tell(new Load(behavior.getId(), behaviorId, (IRuntimeScope) scope));
+		getActor().tell(new Load(this, behavior.getId(), behaviorId, (IRuntimeScope) scope));
 		return behaviorId;
 	}
 

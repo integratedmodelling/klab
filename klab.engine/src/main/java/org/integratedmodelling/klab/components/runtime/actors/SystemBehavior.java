@@ -4,6 +4,7 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
@@ -33,16 +34,44 @@ public class SystemBehavior {
 	public static class Load implements KlabMessage {
 
 		String behavior;
-		IRuntimeScope scope;
+		Scope scope;
 		String appId;
+		IActorIdentity<KlabMessage> identity;
 		// if not null, this is a child behavior from a 'new' instruction and it carries
 		// a ref to the parent
 		ActorRef<KlabMessage> parent = null;
 		Map<String, Object> arguments;
+		// if not null, loading happens as a response to a 'new' and the base name
+		// identifies the instantiation for all needed purposes
+		String instanceBaseName;
 
-		public Load(String behavior, String appId, IRuntimeScope scope) {
+		/**
+		 * Called from actor identities, instantiates the actor scope
+		 * 
+		 * @param identity
+		 * @param behavior
+		 * @param appId
+		 * @param scope
+		 */
+		public Load(IActorIdentity<KlabMessage> identity, String behavior, String appId, IRuntimeScope scope) {
 			this.behavior = behavior;
 			this.appId = appId;
+			this.identity = identity;
+			this.scope = new Scope(identity, appId, scope);
+		}
+
+		/**
+		 * Called from instantiator in actors, uses the scope it's run into.
+		 * 
+		 * @param identity
+		 * @param behavior
+		 * @param appId
+		 * @param scope
+		 */
+		public Load(IActorIdentity<KlabMessage> identity, String behavior, String appId, Scope scope) {
+			this.behavior = behavior;
+			this.appId = appId;
+			this.identity = identity;
 			this.scope = scope;
 		}
 
@@ -65,7 +94,12 @@ public class SystemBehavior {
 
 		@Override
 		public Load direct() {
-			return new Load(behavior, null, scope);
+			return new Load(identity, behavior, null, scope.runtimeScope);
+		}
+
+		public Load withActorBaseName(String actorBaseName) {
+			this.instanceBaseName = actorBaseName;
+			return this;
 		}
 	}
 

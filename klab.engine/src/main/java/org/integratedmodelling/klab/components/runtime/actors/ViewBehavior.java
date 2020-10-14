@@ -455,6 +455,9 @@ public class ViewBehavior {
 		public ViewComponent createViewComponent(Scope scope) {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Separator);
+			if (arguments.getUnnamedKeys().size() > 0) {
+				message.setTitle(evaluateArgument(0, scope).toString());
+			}
 			message.getAttributes().putAll(getMetadata(arguments, scope));
 			return message;
 		}
