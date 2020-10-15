@@ -14,11 +14,7 @@ public class KActorsAssignment extends KActorsStatement implements Assignment {
 		super(assignment, parent, Type.ASSIGNMENT);
 		this.value = new KActorsValue(assignment.getValue(), this);
 		this.variable = assignment.getVariable();
-		if (this.variable.contains(".")) {
-			String[] vv = this.variable.split("\\.");
-			this.recipient = vv[0];
-			this.variable = vv[1];
-		}
+		this.recipient = assignment.getRecipient();
 	}
 
 	@Override

@@ -122,8 +122,8 @@ public class ResourceController {
 							: (ISubject) data.getFirst();
 
 			Observer observer = Observations.INSTANCE.makeROIObserver((Shape) ret.getScale().getSpace().getShape(),
-					org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR),
-					null, session.getMonitor());
+					session.getTimeOfInterest(),
+					null, session.getRegionNameOfInterest(), session.getMonitor());
 			try {
 				new ObserveContextTask((Session) session, observer, new ArrayList<>()).get();
 			} catch (InterruptedException | ExecutionException e) {

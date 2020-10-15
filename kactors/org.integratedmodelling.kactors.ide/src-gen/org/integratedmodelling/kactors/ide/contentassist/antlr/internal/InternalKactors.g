@@ -19181,9 +19181,9 @@ rule__MetadataPair__ValueAssignment_1
 	}
 :
 	(
-		{ before(grammarAccess.getMetadataPairAccess().getValueValueParserRuleCall_1_0()); }
-		ruleValue
-		{ after(grammarAccess.getMetadataPairAccess().getValueValueParserRuleCall_1_0()); }
+		{ before(grammarAccess.getMetadataPairAccess().getValueLiteralParserRuleCall_1_0()); }
+		ruleLiteral
+		{ after(grammarAccess.getMetadataPairAccess().getValueLiteralParserRuleCall_1_0()); }
 	)
 ;
 finally {

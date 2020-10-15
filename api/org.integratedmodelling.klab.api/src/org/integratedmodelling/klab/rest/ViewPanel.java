@@ -10,7 +10,6 @@ public class ViewPanel extends ViewComponent {
 		CenterPanel,
 	}
 
-
 	public ViewPanel() {}
 	
 	public ViewPanel(String name, String style) {

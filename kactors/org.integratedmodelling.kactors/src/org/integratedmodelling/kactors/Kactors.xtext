@@ -78,7 +78,7 @@ Metadata:
 ;
 
 MetadataPair:
-	key=KEY (value=Value)?
+	key=KEY (value=Literal)?
 ;
 
 StatementList:

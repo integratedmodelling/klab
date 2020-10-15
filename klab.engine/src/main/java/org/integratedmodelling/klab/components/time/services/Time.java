@@ -19,7 +19,7 @@ import org.joda.time.Years;
 public class Time implements IExpression {
 
 	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope scope) throws KlabException {
 
 		ITimeInstant start = null;
 		ITimeInstant end = null;

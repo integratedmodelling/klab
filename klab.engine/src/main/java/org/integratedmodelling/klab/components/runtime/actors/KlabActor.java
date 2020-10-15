@@ -7,6 +7,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
@@ -31,7 +32,6 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
-import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
@@ -54,6 +54,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
@@ -84,6 +85,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private Map<String, Long> actionBindings = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, ActorRef<KlabMessage>> receivers = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, List<ActorRef<KlabMessage>>> childInstances = Collections.synchronizedMap(new HashMap<>());
+	private Map<String, Consumer<Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
 
 	/*
 	 * This is the parent that generated us through a 'new' instruction, if any.
@@ -190,6 +192,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		 */
 		String viewId;
 		ActorRef<KlabMessage> sender;
+		/*
+		 * if this is not null, the scope is running actions that have a view, and
+		 * should insert component views into the layout of the parent view passed here,
+		 * based on the component call ID.
+		 */
+		Layout view;
 
 		public Scope(IActorIdentity<KlabMessage> identity, String appId, IRuntimeScope scope) {
 			this.runtimeScope = scope;
@@ -227,6 +235,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.viewId = scope.viewId;
 			this.symbolTable.putAll(scope.symbolTable);
 			this.identity = scope.identity;
+			this.view = scope.view;
 		}
 
 		public String toString() {
@@ -274,7 +283,25 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			if (symbolTable.containsKey(string)) {
 				return symbolTable.get(string);
 			}
-			return identity.getState().get(string);
+			return identity.getState(string, Object.class);
+		}
+
+		public Scope getChild(String appId, Layout view) {
+			Scope ret = new Scope(this);
+			ret.appId = appId;
+			/*
+			 * TODO if we have a view, must graft the passed one onto it. The placeholder
+			 * panel has the getId() set to the actorReference of the component which is in
+			 * the ID of the new view.
+			 */
+			if (this.view != null && view != null) {
+				ViewPanel container = Actors.INSTANCE.findPanel(this.view, view.getId());
+				if (container != null) {
+					Actors.INSTANCE.mergeComponent(view, container);
+				}
+			}
+			ret.view = view;
+			return ret;
 		}
 
 	}
@@ -463,6 +490,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected Behavior<KlabMessage> loadBehavior(Load message) {
 
 		this.parentActor = message.parent;
+		boolean rootView = message.scope.view == null;
 
 		if (message.appId != null) {
 			/*
@@ -480,13 +508,16 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.actionBindings.clear();
 			this.actionCache.clear();
 
-			if (behavior.getDestination() == Type.APP) {
-				Layout view = Actors.INSTANCE.getView(behavior, identity, this.appId, null);
-				if (!view.empty()) {
-					this.view = view;
-					this.identity.setLayout(view);
-					this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
-							view);
+			Layout view = null;
+
+			if (behavior.getDestination() == Type.APP || behavior.getDestination() == Type.COMPONENT) {
+
+				view = Actors.INSTANCE.getView(behavior, identity, this.appId, rootView ? null
+						: ((message.scope.view.getActorPath() == null ? "" : (message.scope.view.getActorPath() + "."))
+								+ message.instanceBaseName));
+
+				if (behavior.getDestination() == Type.COMPONENT) {
+					view.setId(message.instanceBaseName);
 				}
 			}
 
@@ -495,16 +526,30 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			 * callback intervenes afterwards.
 			 */
 			for (IBehavior.Action action : this.behavior.getActions("init", "@init")) {
-				run(action, new Scope(this.identity, appId, message.scope));
+				run(action, message.scope.getChild(this.appId, view));
 			}
 
 			/*
 			 * run any main actions
 			 */
 			for (IBehavior.Action action : this.behavior.getActions("main", "@main")) {
-				run(action, new Scope(this.identity, appId, message.scope));
+				Scope scope = message.scope.getChild(this.appId, view);
+				if (message.arguments != null) {
+					scope.symbolTable.putAll(message.arguments);
+				}
+				run(action, scope);
 			}
 
+			/*
+			 * send the view AFTER running main and collecting all components that generate
+			 * views.
+			 */
+			if (rootView && view != null && !view.empty()) {
+				this.view = view;
+				this.identity.setLayout(view);
+				this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
+						view);
+			}
 		}
 
 		return Behaviors.same();
@@ -600,7 +645,29 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		}
 
 		// remove the appId for the children, otherwise their messages will be rerouted
-		actor.tell(new Load(code.getBehavior(), null, scope.runtimeScope).withParent(getContext().getSelf()));
+		Map<String, Object> arguments = new HashMap<>();
+		if (code.getArguments() != null) {
+			/*
+			 * TODO match the arguments to the correspondent names for the declaration of
+			 * main()
+			 */
+			IBehavior childBehavior = Actors.INSTANCE.getBehavior(code.getBehavior());
+			Action main = childBehavior.getAction("main");
+			int n = 0;
+			for (int i = 0; i < main.getStatement().getArgumentNames().size(); i++) {
+				String arg = main.getStatement().getArgumentNames().get(i);
+				Object value = code.getArguments().get(arg);
+				if (value == null && code.getArguments().getUnnamedKeys().size() > n) {
+					value = code.getArguments().get(code.getArguments().getUnnamedKeys().get(n++));
+					if (value instanceof KActorsValue) {
+						value = evaluateInScope((KActorsValue) value, scope);
+					}
+				}
+				arguments.put(arg, value);
+			}
+		}
+		actor.tell(new Load(this.identity, code.getBehavior(), null, scope).withActorBaseName(code.getActorBaseName())
+				.withMainArguments(arguments).withParent(getContext().getSelf()));
 
 		/*
 		 * if the new actor has a component associated, set its view to the component
@@ -721,7 +788,17 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	private void executeAssignment(Assignment code, Scope scope) {
-		this.identity.getState().put(code.getVariable(), evaluateInScope((KActorsValue) code.getValue(), scope));
+		if (code.getRecipient() != null) {
+			if ("self".equals(code.getRecipient())) {
+				this.identity.setState(code.getVariable(), evaluateInScope((KActorsValue) code.getValue(), scope));
+			} else {
+				// TODO find the actor reference and send it an internal message to set the
+				// state. Should be subject to scope and authorization
+				throw new KlabUnimplementedException("klab actor state setting is unimplemented");
+			}
+		} else {
+			scope.symbolTable.put(code.getVariable(), evaluateInScope((KActorsValue) code.getValue(), scope));
+		}
 	}
 
 	protected Object evaluateInScope(KActorsValue arg, Scope scope) {
@@ -738,7 +815,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 		case NUMBERED_PATTERN:
 		case IDENTIFIER:
-			
+
 			// TODO check for recipient in ID
 			return scope.getValue(arg.getValue().toString());
 
@@ -757,6 +834,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		case RANGE:
 		case STRING:
 		case OBSERVABLE:
+		case QUANTITY:
 			return arg.getValue();
 		case OBSERVATION:
 			// TODO
@@ -775,8 +853,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		case NODATA:
 			return null;
 //			return Observables.INSTANCE.declare(arg.getValue().toString());
-		case QUANTITY:
-			break;
 		case REGEXP:
 			break;
 		case TABLE:

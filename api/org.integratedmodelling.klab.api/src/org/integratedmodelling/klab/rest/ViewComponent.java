@@ -29,7 +29,7 @@ public class ViewComponent {
 	 */
 	public static enum Type {
 		Panel, Alert, PushButton, CheckButton, RadioButton, TextInput, Combo, Group, Map, Tree, TreeItem, Confirm, View,
-		Container, MultiContainer, Label, Text, Table, Notification, InputGroup
+		Container, MultiContainer, Label, Text, Table, Notification, InputGroup, Separator
 		// etc
 	}
 

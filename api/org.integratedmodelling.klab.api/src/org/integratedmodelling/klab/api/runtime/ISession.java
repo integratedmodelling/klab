@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.engine.IEngine;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
@@ -49,7 +50,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  * and its token must authenticate those engine API calls that are
  * session-aware. All sessions have a {@link IUserIdentity} as parent.
  * <p>
- * If a session has a behavior associated (bound in the connection REST call by 
+ * If a session has a behavior associated (bound in the connection REST call by
  * name), it becomes an actor and implements it by setting priorities, views and
  * whatever else the behavior specifies.
  * <p>
@@ -66,12 +67,12 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	 *
 	 */
 	interface ObservationListener {
-	
+
 		void newObservation(IObservation observation, ISubject context);
-	
+
 		void newContext(ISubject context);
 	}
-	
+
 	/**
 	 * The observation action called on ISession always creates a new root subject.
 	 * The URN must specify a
@@ -79,10 +80,8 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	 * {@link #getRegionOfInterest()} returns a geometry that can be used as
 	 * context.
 	 *
-	 * @param urn
-	 *            specifying a (local or remote) observer
-	 * @param scenarios
-	 *            names of any scenario namespaces to use in resolution
+	 * @param urn       specifying a (local or remote) observer
+	 * @param scenarios names of any scenario namespaces to use in resolution
 	 * @return a Future that is observing the URN.
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
@@ -140,6 +139,15 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	IGeometry getRegionOfInterest();
 
 	/**
+	 * The time of interest starts set at the current year with yearly resolution as
+	 * a default. Applications and user action can change it by messaging the
+	 * session or setting temporal variables in the session global state.
+	 * 
+	 * @return
+	 */
+	ITime getTimeOfInterest();
+
+	/**
 	 * Interactive sessions have a human at the other end of the line and can ask
 	 * her questions.
 	 * 
@@ -150,5 +158,13 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	String addObservationListener(ObservationListener listener);
 
 	void removeObservationListener(String listenerId);
+
+	/**
+	 * The name of the latest region named by the geolocator, or a suitable generic
+	 * name localized to the session user's language.
+	 * 
+	 * @return
+	 */
+	String getRegionNameOfInterest();
 
 }

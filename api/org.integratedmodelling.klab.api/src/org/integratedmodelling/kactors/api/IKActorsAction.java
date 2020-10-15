@@ -1,5 +1,7 @@
 package org.integratedmodelling.kactors.api;
 
+import java.util.List;
+
 /**
  * Syntactic peer for an action in a behavior.
  * 
@@ -16,4 +18,12 @@ public interface IKActorsAction extends IKActorsCodeStatement {
 	 * @return
 	 */
 	IKActorsStatement getCode();
+
+	/**
+	 * Any formal argument names declared for the action, to be matched to
+	 * actual parameters.
+	 * 
+	 * @return
+	 */
+	List<String> getArgumentNames();
 }

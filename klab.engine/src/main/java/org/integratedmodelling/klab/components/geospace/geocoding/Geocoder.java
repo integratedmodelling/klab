@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.components.geospace.processing.osm;
+package org.integratedmodelling.klab.components.geospace.geocoding;
 
 import java.io.InputStream;
 import java.net.URL;
@@ -10,15 +10,16 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.Escape;
-import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
-import org.integratedmodelling.klab.utils.Range;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -60,26 +61,26 @@ public enum Geocoder {
 	// TODO add ours
 	public String[] OSM_API_URLS = { "https://www.openstreetmap.org/api/0.6" };
 
-	/**
-	 * Geocoding strategy to pick among collections of objects from resources. If
-	 * strategy is null, the default (using OSMNames) is used.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	class Strategy {
+	public static final String DEFAULT_GEOCODING_STRATEGY = "Map boundaries";
+	public static final String WATERSHED_GEOCODING_STRATEGY = "Watershed";
 
-		String label;
-		String id;
+	Map<String, GeocodingService> services = Collections.synchronizedMap(new HashMap<>());
 
-		/**
-		 * Range of zoom levels -> resource. Zoom level ranges may overlap but must be
-		 * ordered.
-		 */
-		List<Pair<Range, String>> resourceUrns = new ArrayList<>();
+	private Geocoder() {
+		services.put(DEFAULT_GEOCODING_STRATEGY, new OSMNamesGeocodingService(0.75));
+		services.put(WATERSHED_GEOCODING_STRATEGY, new ResourceGeocodingService(
+				new String[] { "im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev04#intersect=false",
+						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev05#intersect=false",
+						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev06#intersect=false",
+						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev07#intersect=false",
+						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev08#intersect=false",
+						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev09#intersect=false",
+						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev10#intersect=false",
+						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev11#intersect=false",
+						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev12#intersect=false" },
+				0.25));
+		// TODO other services
 	}
-
-	Map<String, Strategy> strategies = Collections.synchronizedMap(new HashMap<>());
 
 	// TODO this should be configurable. Also we must provide all this machinery as
 	// a remote resource using its own OSM mirror.
@@ -203,51 +204,75 @@ public enum Geocoder {
 		return ret;
 	}
 
-	public String geocode(IEnvelope envelope, String strategy) {
-		IEnvelope env = envelope.transform(Projection.getLatLon(), true);
+	public String geocode(IEnvelope envelope, String strategy, String defaultWhenBusy, IMonitor monitor) {
 
-		String ret = null;
+		/*
+		 * TODO use cache before everything - Guava CacheBuilder.newBuilder()
+		 */
 
-		if (strategy == null) {
-			String url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat="
-					+ env.getCenterCoordinates()[1] + "&lon=" + env.getCenterCoordinates()[0] + "&zoom="
-					+ closest(env.getScaleRank());
-
-			System.out.println(url);
-			try {
-				Map<?, ?> res = fastClient.get(url, Map.class);
-				if (res != null && res.containsKey("display_name")) {
-					ret = res.get("display_name").toString();
-				} else if (res != null && res.containsKey("name")) {
-					ret = res.get("name").toString();
+		GeocodingService service = services.get(strategy == null ? DEFAULT_GEOCODING_STRATEGY : strategy);
+		if (service != null) {
+			if (service.getRateLimiter().acquire() == 0) {
+				IShape shape = service.geocode(envelope, monitor);
+				if (shape != null) {
+					return shape.getMetadata().get(IMetadata.DC_DESCRIPTION).toString();
 				}
-			} catch (Throwable t) {
-				// shut up
 			}
 		}
-		return ret == null ? "Region of interest" : ret;
+		return defaultWhenBusy;
 	}
 
-	private static int[] levels = new int[] { 3, 5, 8, 10, 14, 16, 17, 18 };
+//	public String geoculo(IEnvelope envelope, String strategy) {
+//		IEnvelope env = envelope.transform(Projection.getLatLon(), true);
+//
+//		String ret = null;
+//
+//		if (strategy == null) {
+//			String url = "https://nominatim.openstreetmap.org/reverse?format=jsonv2&lat="
+//					+ env.getCenterCoordinates()[1] + "&lon=" + env.getCenterCoordinates()[0] + "&zoom="
+//					+ closest(env.getScaleRank());
+//
+//			System.out.println(url);
+//			try {
+//				Map<?, ?> res = fastClient.get(url, Map.class);
+//				if (res != null && res.containsKey("display_name")) {
+//					ret = res.get("display_name").toString();
+//				} else if (res != null && res.containsKey("name")) {
+//					ret = res.get("name").toString();
+//				}
+//			} catch (Throwable t) {
+//				// shut up
+//			}
+//		}
+//		return ret == null ? "Region of interest" : ret;
+//	}
 
-	private int closest(int scaleRank) {
+//	private static int[] levels = new int[] { 3, 5, 8, 10, 14, 16, 17, 18 };
+//
+//	private int closest(int scaleRank) {
+//
+//		int n = 0;
+//		for (int i : levels) {
+//			if (scaleRank == i) {
+//				return i;
+//			} else if (i > scaleRank) {
+//				return n > 0 ? levels[n - 1] : 3;
+//			}
+//			n++;
+//		}
+//		return 18;
+//	}
 
-		int n = 0;
-		for (int i : levels) {
-			if (scaleRank == i) {
-				return i;
-			} else if (i > scaleRank) {
-				return n > 0 ? levels[n - 1] : 3;
-			}
-			n++;
-		}
-		return 18;
-	}
+	public String geocode(SpatialExtent region, String strategy, String defaultWhenBusy, IMonitor monitor) {
 
-	public String geocode(SpatialExtent region, String strategy) {
 		return geocode(Envelope.create(region.getEast(), region.getWest(), region.getSouth(), region.getNorth(),
-				Projection.getLatLon()), strategy);
+				Projection.getLatLon()), strategy, defaultWhenBusy, monitor);
 	}
+
+//	public String geocode(SpatialExtent region, String strategy) {
+//		return geoculo(Envelope.create(region.getEast(), region.getWest(), region.getSouth(), region.getNorth(),
+//				Projection.getLatLon()), strategy);
+//	}
 
 	public static void main(String[] args) {
 		for (Location location : INSTANCE.lookup("france")) {

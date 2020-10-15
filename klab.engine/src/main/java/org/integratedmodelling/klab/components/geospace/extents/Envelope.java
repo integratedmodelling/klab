@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 import org.opengis.referencing.FactoryException;
@@ -21,6 +23,7 @@ public class Envelope implements IEnvelope {
 	ReferencedEnvelope envelope;
 	IProjection projection;
 	Integer scaleRank = null;
+	private IMetadata metadata;
 
 	@Override
 	public int hashCode() {
@@ -290,6 +293,14 @@ public class Envelope implements IEnvelope {
 	@Override
 	public IEnvelope standard() {
 		return transform(Projection.getDefault(), true);
+	}
+
+	@Override
+	public IMetadata getMetadata() {
+		if (this.metadata == null) {
+			this.metadata = new Metadata();
+		}
+		return this.metadata;
 	}
 
 }

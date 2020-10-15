@@ -837,13 +837,13 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cKeyAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cKeyKEYTerminalRuleCall_0_0 = (RuleCall)cKeyAssignment_0.eContents().get(0);
 		private final Assignment cValueAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cValueValueParserRuleCall_1_0 = (RuleCall)cValueAssignment_1.eContents().get(0);
+		private final RuleCall cValueLiteralParserRuleCall_1_0 = (RuleCall)cValueAssignment_1.eContents().get(0);
 		
 		//MetadataPair:
-		//	key=KEY value=Value?;
+		//	key=KEY value=Literal?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//key=KEY value=Value?
+		//key=KEY value=Literal?
 		public Group getGroup() { return cGroup; }
 		
 		//key=KEY
@@ -852,11 +852,11 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//KEY
 		public RuleCall getKeyKEYTerminalRuleCall_0_0() { return cKeyKEYTerminalRuleCall_0_0; }
 		
-		//value=Value?
+		//value=Literal?
 		public Assignment getValueAssignment_1() { return cValueAssignment_1; }
 		
-		//Value
-		public RuleCall getValueValueParserRuleCall_1_0() { return cValueValueParserRuleCall_1_0; }
+		//Literal
+		public RuleCall getValueLiteralParserRuleCall_1_0() { return cValueLiteralParserRuleCall_1_0; }
 	}
 	public class StatementListElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.StatementList");
@@ -5968,7 +5968,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//MetadataPair:
-	//	key=KEY value=Value?;
+	//	key=KEY value=Literal?;
 	public MetadataPairElements getMetadataPairAccess() {
 		return pMetadataPair;
 	}

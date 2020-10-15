@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
+import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
@@ -406,6 +407,8 @@ public class ViewBehavior {
 	@Action(id = "combo")
 	public static class Combo extends KlabWidgetAction {
 
+		private Map<String, IKActorsValue> values = new HashMap<>();
+		
 		public Combo(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
 			super(identity, arguments, scope, sender, callId);
@@ -417,7 +420,11 @@ public class ViewBehavior {
 			message.setType(Type.Combo);
 			for (String argument : arguments.getUnnamedKeys()) {
 				Object value = arguments.get(argument);
-				message.getChoices().add(new Pair<>());
+				if (value instanceof KActorsValue) {
+					Map<String, String> map = ((KActorsValue)value).asMap();
+					message.getChoices().add(new Pair<>(map.get("id"), map.get("label")));
+					this.values.put(map.get("id"), (IKActorsValue)value);
+				}
 			}
 			message.getAttributes().putAll(getMetadata(arguments, scope));
 			return message;
@@ -435,6 +442,39 @@ public class ViewBehavior {
 		}
 
 	}
+	
+	@Action(id = "separator")
+	public static class Separator extends KlabWidgetAction {
+
+		public Separator(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		public ViewComponent createViewComponent(Scope scope) {
+			ViewComponent message = new ViewComponent();
+			message.setType(Type.Separator);
+			if (arguments.getUnnamedKeys().size() > 0) {
+				message.setTitle(evaluateArgument(0, scope).toString());
+			}
+			message.getAttributes().putAll(getMetadata(arguments, scope));
+			return message;
+		}
+
+		@Override
+		protected Object getFiredResult(ViewAction action) {
+			return action.getStringValue();
+		}
+
+		@Override
+		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
+			ViewAction ret = new ViewAction();
+			return ret;
+		}
+
+	}
+
 
 	@Action(id = "tree")
 	public static class Tree extends KlabWidgetAction {

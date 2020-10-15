@@ -51,12 +51,12 @@ public interface MetadataPair extends EObject
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Value</em>' containment reference.
-   * @see #setValue(Value)
+   * @see #setValue(Literal)
    * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMetadataPair_Value()
    * @model containment="true"
    * @generated
    */
-  Value getValue();
+  Literal getValue();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.MetadataPair#getValue <em>Value</em>}' containment reference.
@@ -66,6 +66,6 @@ public interface MetadataPair extends EObject
    * @see #getValue()
    * @generated
    */
-  void setValue(Value value);
+  void setValue(Literal value);
 
 } // MetadataPair

@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
+import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -48,7 +48,8 @@ public class RuntimeBehavior {
 	/**
 	 * Set the root context
 	 */
-	@Action(id = "context", fires = Type.OBSERVATION, description = "Used with a URN as parameter, creates the context from an observe statement. If used without parameters, fire the observation when a new context is established")
+	@Action(id = "context", fires = Type.OBSERVATION, description = "Used with a URN as parameter, creates the context from an observe statement. If used without"
+			+ " parameters, fire the observation when a new context is established")
 	public static class Context extends KlabAction {
 
 		String listenerId = null;
@@ -77,21 +78,66 @@ public class RuntimeBehavior {
 
 				Object arg = evaluateArgument(0, scope);
 				if (arg instanceof Urn) {
+					try {
+						Future<ISubject> future = ((Session) identity).observe(((Urn) arg).getUrn());
+						fire(future.get(), true);
+					} catch (Throwable e) {
+						fail();
+					}
+				}
+			}
+		}
 
-//					new Thread() {
-//
-//						@Override
-//						public void run() {
+		@Override
+		public void dispose() {
+			if (this.listenerId != null) {
+				scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
+						.removeObservationListener(this.listenerId);
+			}
+		}
+	}
 
-							try {
-								Future<ISubject> future = ((Session) identity).observe(((Urn) arg).getUrn());
-								fire(future.get(), true);
-							} catch (Throwable e) {
-								fail();
+	/**
+	 * Make an observation, setting the context according to current preferences and
+	 * session state, or set the context itself if the observation is a subject and
+	 * the current context is not set.
+	 */
+	@Action(id = "observe", fires = Type.OBSERVATION, description = "With parameters, will make an observation which will be set as context if "
+			+ "there was no current context. The context is looked for in the session's global state. Without parameters, listens and reacts to any observation.")
+	public static class Observe extends KlabAction {
+
+		String listenerId = null;
+
+		public Observe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		void run(KlabActor.Scope scope) {
+
+			if (arguments.getUnnamedKeys().isEmpty()) {
+				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
+						.addObservationListener(new ISession.ObservationListener() {
+							@Override
+							public void newContext(ISubject observation) {
+								fire(observation, false);
 							}
-//						}
-//					}.start();
 
+							@Override
+							public void newObservation(IObservation observation, ISubject context) {
+							}
+						});
+			} else {
+
+				Object arg = evaluateArgument(0, scope);
+				if (arg instanceof Urn) {
+					try {
+						Future<ISubject> future = ((Session) identity).observe(((Urn) arg).getUrn());
+						fire(future.get(), true);
+					} catch (Throwable e) {
+						fail();
+					}
 				}
 			}
 		}
@@ -135,20 +181,17 @@ public class RuntimeBehavior {
 //									@Override
 //									public void run() {
 
-										/*
-										 * TODO use a configurable geocoder that can be set up with
-										 * a scaled resource set
-										 */
-										String strategy = null;
-										String geocoded = Geocoder.INSTANCE.geocode(extent, strategy);
-										Map<String, Object> ret = new HashMap<>();
-										ret.put("description", geocoded);
-										ret.put("resolution", extent.getGridResolution());
-										ret.put("unit", extent.getGridUnit());
-										ret.put("envelope", new double[] { extent.getWest(), extent.getSouth(),
-												extent.getEast(), extent.getNorth() });
+								String strategy = session.getGeocodingStrategy();
+								String geocoded = Geocoder.INSTANCE.geocode(extent, strategy,
+										session.getRegionNameOfInterest(), scope.getMonitor());
+								Map<String, Object> ret = new HashMap<>();
+								ret.put("description", geocoded);
+								ret.put("resolution", extent.getGridResolution());
+								ret.put("unit", extent.getGridUnit());
+								ret.put("envelope", new double[] { extent.getWest(), extent.getSouth(),
+										extent.getEast(), extent.getNorth() });
 
-										fire(ret, false);
+								fire(ret, false);
 //
 //									}
 //								}.start();

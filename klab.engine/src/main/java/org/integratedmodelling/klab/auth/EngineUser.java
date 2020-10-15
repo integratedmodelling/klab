@@ -4,6 +4,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
@@ -31,10 +33,19 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 	private ActorRef<KlabMessage> actor;
 	private IParameters<String> globalState = Parameters.createSynchronized();
 	private View view;
+	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
 
 	@Override
-	public IParameters<String> getState() {
-		return globalState;
+	public <V> V getState(String key, Class<V> cls) {
+		return this.globalState.get(key, cls);
+	}
+
+	@Override
+	public void setState(String key, Object value) {
+		this.globalState.put(key, value);
+		for (BiConsumer<String, Object> listener : stateChangeListeners.values()) {
+			listener.accept(key, value);
+		}
 	}
 
 	public EngineUser(String username, IEngineIdentity parent) {
@@ -143,7 +154,7 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 	@Override
 	public String load(IBehavior behavior, IContextualizationScope scope) {
 		// TODO this gets a sucky runtime scope that is used to run main messages.
-		getActor().tell(new SystemBehavior.Load(behavior.getId(), getId(), (IRuntimeScope)scope));
+		getActor().tell(new SystemBehavior.Load(this, behavior.getId(), getId(), (IRuntimeScope) scope));
 		return getId();
 	}
 
@@ -178,6 +189,16 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 	public IMonitor getMonitor() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
+		this.stateChangeListeners.put(name, listener);
+	}
+
+	@Override
+	public void removeStateChangeListener(String name) {
+		this.stateChangeListeners.remove(name);
 	}
 
 }

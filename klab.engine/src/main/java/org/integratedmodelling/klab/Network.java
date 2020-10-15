@@ -253,6 +253,7 @@ public enum Network implements INetworkService {
 				Resources.INSTANCE.getPublicResourceCatalog().update(node);
 				Logging.INSTANCE.info("node " + node.getName() + " went online");
 			} catch (Exception e) {
+				System.out.println("ZIO PUTESIO EXCEPTION DIOCAN");
 			}
 		}
 

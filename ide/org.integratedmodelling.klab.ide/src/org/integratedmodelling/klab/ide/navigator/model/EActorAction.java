@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.ide.navigator.model;
 
+import java.util.List;
+
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 
@@ -50,6 +52,11 @@ public class EActorAction extends EKimObject implements IKActorsAction {
 	@Override
 	public String getTag() {
 		return action.getTag();
+	}
+
+	@Override
+	public List<String> getArgumentNames() {
+		return action.getArgumentNames();
 	}
 
 
