@@ -185,11 +185,11 @@ public enum NodeNetworkManager implements INetworkService {
 					Logging.INSTANCE.info("Node Online: " + node.getName());
 					setNodeOnline(node);
 				} else {
-					Logging.INSTANCE.info("Node Offline: " + node.getId());
+					Logging.INSTANCE.info("Node Offline: " + node.getName());
 					setNodeOffline(node);
 				}
 			} catch (ResourceAccessException e) {
-				Logging.INSTANCE.info("Node Offline: " + node.getId());
+				Logging.INSTANCE.info("Node Offline: " + node.getName());
 				setNodeOffline(node);
 			}
 		}
