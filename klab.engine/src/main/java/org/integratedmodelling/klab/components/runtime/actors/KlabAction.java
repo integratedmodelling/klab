@@ -222,6 +222,10 @@ public abstract class KlabAction {
 		return arg;
 	}
 
+	public String getStatementId() {
+		return callId;
+	}
+	
 	/**
 	 * May be called more than once, so pass the scope again.
 	 * 

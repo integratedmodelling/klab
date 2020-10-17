@@ -8,9 +8,7 @@ import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Version;
-import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -26,7 +24,6 @@ import org.integratedmodelling.klab.rest.ViewAction.Operation;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewComponent.Type;
 import org.integratedmodelling.klab.utils.MarkdownUtils;
-import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtils;
 
@@ -116,37 +113,37 @@ public class ViewBehavior {
 			this.name = name;
 		}
 
+		// never called
 		@Override
 		void run(Scope scope) {
 
-			Session session = this.identity.getParentIdentity(Session.class);
-			String bindId = this.callId;
+//			String bindId = this.callId;
+//			scope.viewScope.addComponent(this, scope);
+//			/*
+//			 * if there are associated actions, bind the listener ID that matches the fire
+//			 * actions to the bindId in the actor, so that the view message can simulate a
+//			 * fire
+//			 */
+//			if (scope.listenerId != null) {
+//				scope.sender.tell(new BindUserAction(scope.listenerId, scope.appId, bindId));
+//			}
+			
+//			// if deemed dynamic at view setup, we create and communicate the component here
+//			if (this.identity.getView() != null && !this.identity.getView().getStaticComponents().containsKey(bindId)) {
+//
+//				bindId = "kad" + NameGenerator.shortUUID();
+//
+//				/*
+//				 * dynamic: create component in scope and send it
+//				 */
+//				ViewComponent component = createViewComponent(scope);
+//				component.setId(bindId);
+//				component.setParentId(this.callId);
+//				component.setApplicationId(this.identity.getId());
+//				session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent,
+//						component);
+//			}
 
-			// if deemed dynamic at view setup, we create and communicate the component here
-			if (this.identity.getView() != null && !this.identity.getView().getStaticComponents().containsKey(bindId)) {
-
-				bindId = "kad" + NameGenerator.shortUUID();
-
-				/*
-				 * dynamic: create component in scope and send it
-				 */
-				ViewComponent component = createViewComponent(scope);
-				component.setId(bindId);
-				component.setParentId(this.callId);
-				component.setApplicationId(this.identity.getId());
-				session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent,
-						component);
-			}
-
-			/*
-			 * if there are associated actions, bind the listener ID that matches the fire
-			 * actions to the bindId in the actor, so that the view message can simulate a
-			 * fire
-			 */
-			if (scope.listenerId != null) {
-				// TODO check this was sent to identity.getActor() but wouldn't work with child actors.
-				scope.sender.tell(new BindUserAction(scope.listenerId, scope.appId, bindId));
-			}
 		}
 
 		@Override
@@ -188,7 +185,10 @@ public class ViewBehavior {
 		 * @return
 		 */
 		public ViewComponent getViewComponent() {
-			return createViewComponent(this.scope);
+			ViewComponent ret = createViewComponent(this.scope);
+			ret.setApplicationId(this.identity.getId());
+			ret.setId(this.callId);
+			return ret;
 		}
 
 		/**
@@ -510,42 +510,42 @@ public class ViewBehavior {
 
 	}
 
-	@Action(id = "panel")
-	public static class Panel extends KlabWidgetAction {
-
-		public Panel(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender, String callId) {
-			super(identity, arguments, scope, sender, callId);
-		}
-
-		@Override
-		public ViewComponent createViewComponent(Scope scope) {
-			ViewComponent message = new ViewComponent();
-			message.setType(Type.Panel);
-			if (arguments.getUnnamedKeys().size() > 0) {
-				String behaviorId = ((KActorsValue) arguments.get(arguments.getUnnamedKeys().iterator().next()))
-						.getValue().toString();
-				IBehavior behavior = Actors.INSTANCE.getBehavior(behaviorId);
-				if (behavior != null) {
-					message.setLayout(Actors.INSTANCE.getView(behavior, identity, scope.appId, null));
-				}
-			}
-			message.getAttributes().putAll(getMetadata(arguments, scope));
-			return message;
-		}
-
-		@Override
-		protected Object getFiredResult(ViewAction action) {
-			// won't fire
-			return null;
-		}
-
-		@Override
-		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
-			ViewAction ret = new ViewAction();
-			return ret;
-		}
-	}
+//	@Action(id = "panel")
+//	public static class Panel extends KlabWidgetAction {
+//
+//		public Panel(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+//				ActorRef<KlabMessage> sender, String callId) {
+//			super(identity, arguments, scope, sender, callId);
+//		}
+//
+//		@Override
+//		public ViewComponent createViewComponent(Scope scope) {
+//			ViewComponent message = new ViewComponent();
+//			message.setType(Type.Panel);
+//			if (arguments.getUnnamedKeys().size() > 0) {
+//				String behaviorId = ((KActorsValue) arguments.get(arguments.getUnnamedKeys().iterator().next()))
+//						.getValue().toString();
+//				IBehavior behavior = Actors.INSTANCE.getBehavior(behaviorId);
+//				if (behavior != null) {
+//					message.setLayout(Actors.INSTANCE.getView(behavior, identity, scope.appId, null));
+//				}
+//			}
+//			message.getAttributes().putAll(getMetadata(arguments, scope));
+//			return message;
+//		}
+//
+//		@Override
+//		protected Object getFiredResult(ViewAction action) {
+//			// won't fire
+//			return null;
+//		}
+//
+//		@Override
+//		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
+//			ViewAction ret = new ViewAction();
+//			return ret;
+//		}
+//	}
 
 	/**
 	 * Bound to the %%% .... %%% template syntax; handled directly by actors. Can

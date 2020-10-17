@@ -7,7 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Consumer;
 
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
@@ -27,27 +26,29 @@ import org.integratedmodelling.kactors.model.KActorsActionCall;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Actors.PanelLocation;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage.Semaphore;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.BindUserAction;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Cleanup;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.ComponentFire;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Fire;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
-import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.SetView;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Stop;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
 import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
+import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetAction;
 import org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior.Match;
-import org.integratedmodelling.klab.components.runtime.actors.behavior.BehaviorAction;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -59,10 +60,15 @@ import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.Utils;
+
+import com.google.common.base.Optional;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
@@ -77,6 +83,11 @@ import akka.actor.typed.javadsl.ReceiveBuilder;
 public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	protected IBehavior behavior;
+	// this is set when a behavior is loaded and used to create proper actor paths
+	// for application components, so that
+	// user messages can be sent to the main application actor and directed to the
+	// actor that implements them.
+	private String childActorPath = null;
 	protected String appId;
 	protected IActorIdentity<KlabMessage> identity;
 	protected Map<Long, MatchActions> listeners = Collections.synchronizedMap(new HashMap<>());
@@ -85,7 +96,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private Map<String, Long> actionBindings = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, ActorRef<KlabMessage>> receivers = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, List<ActorRef<KlabMessage>>> childInstances = Collections.synchronizedMap(new HashMap<>());
-	private Map<String, Consumer<Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
+//	private Map<String, Consumer<Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
 
 	/*
 	 * This is the parent that generated us through a 'new' instruction, if any.
@@ -104,14 +115,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 */
 	private Map<String, KlabAction.Actor> localActions = Collections.synchronizedMap(new HashMap<>());
 
-	/*
-	 * if we have a view (either a layout for an app or a component for a component)
-	 * we put it here at initialization.
-	 */
-	private ViewComponent view;
+//	/*
+//	 * if we have a view (either a layout for an app or a component for a component)
+//	 * we put it here at initialization.
+//	 */
+//	private ViewComponent view;
 
 	protected ActorRef<KlabMessage> getDispatcher() {
-		if (appId == null) {
+		if (this.appId == null) {
 			return getContext().getSelf();
 		}
 		return identity.getActor();
@@ -158,12 +169,45 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	public interface KlabMessage {
 
 		/**
+		 * Message may contain one or more of these, which trigger messages at the
+		 * recipient's side which the sender can intercept to synchronize operations
+		 * when requested or needed. Because concurrent message exchange is problematic
+		 * during message execution, we use the Actors instance to organize these.
+		 * 
+		 * @author Ferd
+		 *
+		 */
+		public interface Semaphore {
+
+			public enum Type {
+				LOAD, FIRE
+			}
+
+			Type getType();
+		}
+
+		/**
 		 * Get another message identical to this but with no application ID, intended
 		 * for execution and not for dispatching.
 		 * 
 		 * @return
 		 */
 		KlabMessage direct();
+
+		/**
+		 * Add a semaphore for the recipient to honor and return self.
+		 * 
+		 * @param semaphor
+		 */
+		KlabMessage withSemaphore(Semaphore semaphor);
+
+		/**
+		 * Get all semaphors of the specified type.
+		 * 
+		 * @param type
+		 * @return
+		 */
+		List<Semaphore> getSemaphores(Semaphore.Type type);
 	}
 
 	/**
@@ -183,6 +227,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		Object match;
 		String appId;
 		public Map<String, Object> symbolTable = new HashMap<>();
+		ViewScope viewScope;
 
 		/**
 		 * Set when the action being run is tagged to have a specific panel (footer,
@@ -190,19 +235,20 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		 * and its ID set in the scope so that components created by view messages know
 		 * where to go.
 		 */
-		String viewId;
+//		String viewId;
 		ActorRef<KlabMessage> sender;
-		/*
-		 * if this is not null, the scope is running actions that have a view, and
-		 * should insert component views into the layout of the parent view passed here,
-		 * based on the component call ID.
-		 */
-		Layout view;
+//		/*
+//		 * if this is not null, the scope is running actions that have a view, and
+//		 * should insert component views into the layout of the parent view passed here,
+//		 * based on the component call ID.
+//		 */
+//		Layout view;
 
 		public Scope(IActorIdentity<KlabMessage> identity, String appId, IRuntimeScope scope) {
 			this.runtimeScope = scope;
 			this.identity = identity;
 			this.appId = appId;
+			this.viewScope = new ViewScope(this);
 		}
 
 		public Scope withMatch(Match match, Object value) {
@@ -232,10 +278,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			this.parent = scope;
 			this.listenerId = scope.listenerId;
 			this.sender = scope.sender;
-			this.viewId = scope.viewId;
+//			this.viewId = scope.viewId;
 			this.symbolTable.putAll(scope.symbolTable);
 			this.identity = scope.identity;
-			this.view = scope.view;
+//			this.view = scope.view;
+			this.viewScope = scope.viewScope;
 		}
 
 		public String toString() {
@@ -273,11 +320,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			return ret;
 		}
 
-		public Scope withViewId(String viewId) {
-			Scope ret = new Scope(this);
-			ret.viewId = viewId;
-			return ret;
-		}
+//		public Scope withViewId(String viewId) {
+//			Scope ret = new Scope(this);
+//			ret.viewId = viewId;
+//			return ret;
+//		}
 
 		public Object getValue(String string) {
 			if (symbolTable.containsKey(string)) {
@@ -286,21 +333,239 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			return identity.getState(string, Object.class);
 		}
 
-		public Scope getChild(String appId, Layout view) {
+		/**
+		 * Get a child scope for this action, which will create a panel viewscope if the
+		 * action has a view.
+		 * 
+		 * @param appId
+		 * @param action
+		 * @return
+		 */
+		public Scope getChild(String appId, Action action) {
 			Scope ret = new Scope(this);
 			ret.appId = appId;
-			/*
-			 * TODO if we have a view, must graft the passed one onto it. The placeholder
-			 * panel has the getId() set to the actorReference of the component which is in
-			 * the ID of the new view.
-			 */
-			if (this.view != null && view != null) {
-				ViewPanel container = Actors.INSTANCE.findPanel(this.view, view.getId());
-				if (container != null) {
-					Actors.INSTANCE.mergeComponent(view, container);
+			ret.viewScope = this.viewScope.getChild(action);
+			return ret;
+		}
+
+		public Scope getChild(ConcurrentGroup code) {
+			Scope ret = new Scope(this);
+			ret.viewScope = this.viewScope.getChild(code);
+			return ret;
+		}
+
+	}
+
+	static class ViewScope {
+
+		String identityId;
+		IIdentity identity;
+		String applicationId;
+		String actorPath = null;
+		Layout layout = null;
+		Optional<Boolean> notEmpty;
+		ViewComponent currentComponent;
+//		int nComponents = 0;
+
+		private Integer groupCounter = new Integer(0);
+//		private ViewComponent groupParent;
+
+		public ViewScope(Scope actorScope) {
+			this.applicationId = actorScope.appId;
+			this.identity = actorScope.identity;
+			this.identityId = actorScope.identity.getId();
+		}
+
+		public ViewScope getChild(ConcurrentGroup group) {
+
+			ViewComponent parent = this.currentComponent;
+			ViewComponent ret = new ViewComponent();
+			ret.setIdentity(identityId);
+			ret.setApplicationId(applicationId);
+			ret.setActorPath(actorPath);
+			boolean isActive = group.getGroupMetadata().containsKey("inputgroup");
+			ret.setType(isActive ? ViewComponent.Type.InputGroup : ViewComponent.Type.Group);
+			if (group.getGroupMetadata().containsKey("name")) {
+				ret.setName(group.getGroupMetadata().get("name").getValue().toString());
+			}
+			String id = null;
+			if (group.getGroupMetadata().containsKey("id")) {
+				id = group.getGroupMetadata().get("id").getValue().toString();
+			} else {
+				id = "g" + (groupCounter++);
+			}
+			setViewMetadata(ret, group.getGroupMetadata());
+			ret.setId(parent.getId() + "/" + id);
+			parent.getComponents().add(ret);
+
+			ViewScope child = new ViewScope(this);
+			child.currentComponent = ret;
+//			child.groupParent = parent;
+
+			return child;
+		}
+
+//		public void checkComponents() {
+//			// add the group only if it has at least one component
+//			this.nComponents = countComponents(this.currentComponent);
+//			if (countComponents(this.currentComponent) > 0) {
+////				this.groupParent.getComponents().add(this.currentComponent);
+//			}
+//		}
+
+//		private int countComponents(ViewComponent component) {
+//			int ret = 0;
+//			for (ViewComponent child : component.getComponents()) {
+//				ret += countComponents(child);
+//			}
+//			return ret;
+//		}
+
+//		public void addComponent(KlabWidgetAction action, Scope scope) {
+//			if (currentComponent != null) {
+////				this.nComponents++;
+//			}
+//		}
+
+		private void setViewMetadata(ViewComponent component, Map<String, ?> parameters) {
+			if (parameters != null) {
+				for (String key : parameters.keySet()) {
+					if (Actors.INSTANCE.getLayoutMetadata().contains(key)) {
+						Object param = parameters.get(key);
+						component.getAttributes().put(key,
+								param instanceof KActorsValue ? ((KActorsValue) param).getValue().toString()
+										: param.toString());
+					}
 				}
 			}
-			ret.view = view;
+		}
+
+		public ViewScope(IIdentity identity, Layout layout, String applicationId, String actorPath) {
+			this.identity = identity;
+			this.layout = layout;
+			this.identityId = identity == null ? null : identity.getId();
+			this.applicationId = applicationId;
+			this.actorPath = actorPath;
+			this.notEmpty = Optional.of(Boolean.FALSE);
+		}
+
+		public ViewScope(ViewScope scope) {
+			this.layout = scope.layout;
+			this.applicationId = scope.applicationId;
+			this.identityId = scope.identityId;
+			this.groupCounter = scope.groupCounter;
+			this.actorPath = scope.actorPath;
+			this.notEmpty = scope.notEmpty;
+		}
+
+		/**
+		 * Pass an action; if the action has a view associated, create the correspondent
+		 * panel (and, if needed, the layout) in the view scope passed with the actor
+		 * scope. The returned panel becomes the current view component for the calls in
+		 * the action to populate.
+		 * 
+		 * @param action
+		 * @param parent
+		 * @return
+		 */
+		public ViewPanel createPanel(Action action) {
+
+			ViewPanel panel = null;
+			boolean hasView = action.getBehavior().getDestination() == Type.COMPONENT
+					&& "main".equals(action.getName());
+			if (!hasView) {
+				// scan annotations
+				for (IAnnotation annotation : action.getAnnotations()) {
+
+					PanelLocation panelLocation = Utils.valueOf(StringUtils.capitalize(annotation.getName()),
+							PanelLocation.class);
+
+					if (panelLocation != null) {
+
+						/*
+						 * panel becomes current panel
+						 */
+
+						panel = new ViewPanel(
+								annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
+								annotation.get("style", String.class));
+						panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
+
+						if (this.layout == null) {
+							this.layout = createLayout(action.getBehavior());
+						}
+
+						switch (panelLocation) {
+						case Footer:
+							this.layout.setFooter(panel);
+							break;
+						case Header:
+							this.layout.setFooter(panel);
+							break;
+						case Left:
+							this.layout.getLeftPanels().add(panel);
+							break;
+						case Panel:
+							this.layout.getPanels().add(panel);
+							break;
+						case Right:
+							this.layout.getRightPanels().add(panel);
+							break;
+						case Window:
+							// TODO
+							break;
+						}
+					}
+				}
+
+			} else {
+
+				/*
+				 * must have component in scope; panel enters as new component
+				 */
+
+				panel = new ViewPanel(action.getBehavior().getId(), action.getBehavior().getStatement().getStyle());
+				for (IAnnotation annotation : action.getAnnotations()) {
+					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
+				}
+			}
+
+			return panel;
+		}
+
+		private Layout createLayout(IBehavior behavior) {
+
+			Layout ret = new Layout(behavior.getName(), this.applicationId);
+			ret.setStyle(behavior.getStatement().getStyle());
+			ret.setDestination(behavior.getDestination());
+			ret.setLabel(behavior.getStatement().getLabel());
+			ret.setDescription(StringUtils.pack(behavior.getStatement().getDescription()));
+			ret.setPlatform(behavior.getPlatform());
+			ret.setLogo(behavior.getStatement().getLogo());
+			ret.setProjectId(behavior.getProject());
+
+			if (behavior.getStatement().getStyleSpecs() != null) {
+				ret.setStyleSpecs(JsonUtils.printAsJson(behavior.getStatement().getStyleSpecs()));
+			}
+			return ret;
+		}
+
+		/**
+		 * Get the view scope for a panel, linked to an action
+		 * 
+		 * @param action
+		 * @return
+		 */
+		public ViewScope getChild(Action action) {
+
+			// this creates the layout if needed.
+			ViewPanel panel = createPanel(action);
+			if (panel == null) {
+				return this;
+			}
+
+			ViewScope ret = new ViewScope(this);
+			ret.currentComponent = panel;
 			return ret;
 		}
 
@@ -330,7 +595,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		return builder.onMessage(Load.class, this::loadBehavior).onMessage(Spawn.class, this::createChild)
 				.onMessage(Fire.class, this::reactToFire).onMessage(ComponentFire.class, this::reactToComponentFiring)
 				.onMessage(UserAction.class, this::reactToViewAction)
-				.onMessage(BindUserAction.class, this::bindViewAction).onMessage(SetView.class, this::setView)
+				.onMessage(BindUserAction.class, this::bindViewAction)/* .onMessage(SetView.class, this::setView) */
 				.onMessage(KActorsMessage.class, this::executeCall).onMessage(Stop.class, this::stopChild)
 				.onMessage(Cleanup.class, this::cleanup).onSignal(PostStop.class, signal -> onPostStop());
 	}
@@ -394,24 +659,31 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				if (elements.length > 0) {
 
 					String actorId = elements[0];
-					int idx = 0;
-					int cut = actorId.indexOf('_');
-					if (cut > 0) {
-						idx = Integer.parseInt(actorId.substring(cut + 1));
-						actorId = actorId.substring(0, cut);
-					}
-					List<ActorRef<KlabMessage>> actors = this.childInstances.get(actorId);
-
-					if (actors != null && actors.size() > idx) {
-
+//					int idx = 0;
+//					int cut = actorId.indexOf('_');
+//					if (cut > 0) {
+//						idx = Integer.parseInt(actorId.substring(cut + 1));
+//						actorId = actorId.substring(0, cut);
+//					}
+//
+//					List<ActorRef<KlabMessage>> actors = this.childInstances.get(actorId);
+//					if (actors != null && actors.size() > idx) {
+//
+//						if (elements.length == 1) {
+//							message.action.getComponent().setActorPath(null);
+//						} else if (elements.length > 1) {
+//							message.action.getComponent().setActorPath(Path.getRemainder(path, "."));
+//						}
+					ActorRef<KlabMessage> receiver = receivers.get(actorId);
+					if (receiver != null) {
 						if (elements.length == 1) {
 							message.action.getComponent().setActorPath(null);
 						} else if (elements.length > 1) {
 							message.action.getComponent().setActorPath(Path.getRemainder(path, "."));
 						}
-						actors.get(idx).tell(message);
+						receiver.tell(message);
 					} else {
-						System.out.println("HOSTIA unreferenced child actor " + elements[0]);
+						System.out.println("HOSTIA unreferenced child actor " + actorId);
 					}
 				}
 			}
@@ -444,11 +716,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		return Behaviors.same();
 	}
 
-	protected Behavior<KlabMessage> setView(SetView message) {
-		// TODO Set the action bindings for a component
-		this.view = message.component;
-		return Behaviors.same();
-	}
+//	protected Behavior<KlabMessage> setView(SetView message) {
+//		// TODO Set the action bindings for a component
+//		this.view = message.component;
+//		return Behaviors.same();
+//	}
 
 	protected Behavior<KlabMessage> reactToComponentFiring(ComponentFire message) {
 		// TODO
@@ -490,50 +762,58 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected Behavior<KlabMessage> loadBehavior(Load message) {
 
 		this.parentActor = message.parent;
-		boolean rootView = message.scope.view == null;
 
-		if (message.appId != null) {
+		if (message.forwardApplicationId != null) {
 			/*
 			 * spawn another actor and load the behavior in it.
 			 */
-			ActorRef<KlabMessage> child = getContext().spawn(SessionActor.create((Session) identity, message.appId),
-					message.appId);
-			this.receivers.put(message.appId, child);
+			ActorRef<KlabMessage> child = getContext().spawn(
+					SessionActor.create((Session) identity, message.forwardApplicationId),
+					message.forwardApplicationId);
+			this.receivers.put(message.forwardApplicationId, child);
 			child.tell(message.direct());
 
 		} else {
+
+			boolean rootView = message.scope.viewScope.layout == null;
 
 			this.behavior = Actors.INSTANCE.getBehavior(message.behavior);
 			this.listeners.clear();
 			this.actionBindings.clear();
 			this.actionCache.clear();
-
-			Layout view = null;
-
-			if (behavior.getDestination() == Type.APP || behavior.getDestination() == Type.COMPONENT) {
-
-				view = Actors.INSTANCE.getView(behavior, identity, this.appId, rootView ? null
-						: ((message.scope.view.getActorPath() == null ? "" : (message.scope.view.getActorPath() + "."))
-								+ message.instanceBaseName));
-
-				if (behavior.getDestination() == Type.COMPONENT) {
-					view.setId(message.instanceBaseName);
-				}
+			this.childActorPath = message.childActorPath;
+			if (message.applicationId != null) {
+				// this only happens when we're spawning a component from a top application
+				// using new
+				this.appId = message.applicationId;
 			}
+
+//			Layout view = null;
+//
+//			if (behavior.getDestination() == Type.APP || behavior.getDestination() == Type.COMPONENT) {
+//
+////				view = Actors.INSTANCE.getView(behavior, identity, this.appId, rootView ? null
+////						: ((message.scope.view.getActorPath() == null ? "" : (message.scope.view.getActorPath() + "."))
+////								+ message.instanceBaseName));
+//
+//				if (behavior.getDestination() == Type.COMPONENT) {
+//					view.setId(message.instanceBaseName);
+//				}
+//			}
 
 			/*
 			 * Init action called no matter what and before the behavior is set; the onLoad
 			 * callback intervenes afterwards.
 			 */
 			for (IBehavior.Action action : this.behavior.getActions("init", "@init")) {
-				run(action, message.scope.getChild(this.appId, view));
+				run(action, message.scope.getChild(this.appId, action));
 			}
 
 			/*
 			 * run any main actions
 			 */
 			for (IBehavior.Action action : this.behavior.getActions("main", "@main")) {
-				Scope scope = message.scope.getChild(this.appId, view);
+				Scope scope = message.scope.getChild(this.appId, action);
 				if (message.arguments != null) {
 					scope.symbolTable.putAll(message.arguments);
 				}
@@ -544,27 +824,29 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			 * send the view AFTER running main and collecting all components that generate
 			 * views.
 			 */
-			if (rootView && view != null && !view.empty()) {
-				this.view = view;
-				this.identity.setLayout(view);
+			if (rootView && message.scope.viewScope.layout != null) {
+				System.out.println(Actors.INSTANCE.dumpView(message.scope.viewScope.layout));
+//				this.view = message.scope.viewScope.layout;
+				this.identity.setLayout(message.scope.viewScope.layout);
 				this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
-						view);
+						message.scope.viewScope.layout);
 			}
+		}
+
+		/*
+		 * move on, you waiters
+		 */
+		for (Semaphore semaphore : message.getSemaphores(Semaphore.Type.LOAD)) {
+			Actors.INSTANCE.expire(semaphore);
 		}
 
 		return Behaviors.same();
 	}
 
 	protected void run(IBehavior.Action action, Scope scope) {
-		/*
-		 * TODO if this contains any of @panel, @modal, @header, @footer set the viewId
-		 * in the scope to the ID of the component created upon loading the behavior.
-		 * Look that up in viewIds using the name in the annotation or the annotation
-		 * ID.
-		 */
-		if (((BehaviorAction) action).getViewId() != null) {
-			scope = scope.withViewId(((BehaviorAction) action).getViewId());
-		}
+//		if (((BehaviorAction) action).getViewId() != null) {
+//			scope = scope.withViewId(((BehaviorAction) action).getViewId());
+//		}
 		execute(action.getStatement().getCode(), scope);
 	}
 
@@ -666,49 +948,55 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				arguments.put(arg, value);
 			}
 		}
-		actor.tell(new Load(this.identity, code.getBehavior(), null, scope).withActorBaseName(code.getActorBaseName())
-				.withMainArguments(arguments).withParent(getContext().getSelf()));
 
-		/*
-		 * if the new actor has a component associated, set its view to the component
-		 * and prepare bindings.
-		 */
-		ViewComponent componentView = extractComponent(this.view, code.getActorBaseName());
-		if (componentView != null) {
-			actor.tell(new SetView(componentView));
+		IBehavior actorBehavior = Actors.INSTANCE.getBehavior(code.getBehavior());
+		if (actorBehavior != null) {
+
+			/*
+			 * AppID in message is null because this is run by the newly spawned actor; we
+			 * communicate the overall appID through the specific field below.
+			 */
+			Load loadMessage = new Load(this.identity, code.getBehavior(), null, scope)
+					.withChildActorPath(
+							this.childActorPath == null ? actorName : (this.childActorPath + "." + actorName))
+					.withActorBaseName(code.getActorBaseName()).withMainArguments(arguments)
+					.withApplicationId(this.appId).withParent(getContext().getSelf());
+
+			Semaphore semaphore = null;
+			if (actorBehavior.getDestination() == Type.COMPONENT) {
+				/*
+				 * synchronize by default
+				 */
+				semaphore = Actors.INSTANCE.createSemaphore(Semaphore.Type.LOAD);
+				loadMessage.withSemaphore(semaphore);
+			}
+
+			actor.tell(loadMessage);
+
+			if (semaphore != null) {
+				waitForGreen(semaphore);
+			}
+
+			receivers.put(actorName, actor);
+
+			if (actors == null) {
+				actors = new ArrayList<>();
+				this.childInstances.put(actorName, actors);
+			}
+
+			actors.add(actor);
 		}
-
-		if (actors == null) {
-			actors = new ArrayList<>();
-			this.childInstances.put(code.getActorBaseName(), actors);
-		}
-
-		actors.add(actor);
-
 	}
 
-	private ViewComponent extractComponent(ViewComponent component, String actorBaseName) {
-		ViewComponent ret = null;
-		if (component != null) {
-			if (component instanceof Layout) {
-				for (ViewPanel panel : Actors.INSTANCE.getPanels((Layout) component)) {
-					if ((ret = extractComponent(panel, actorBaseName)) != null) {
-						return ret;
-					}
-				}
-			}
-			for (ViewComponent c : component.getComponents()) {
-				if (c.getActorPath() != null && c.getActorPath().startsWith(actorBaseName)) {
-					ret = c;
-					break;
-				}
-				ret = extractComponent(c, actorBaseName);
-				if (ret != null) {
-					return ret;
-				}
+	private void waitForGreen(Semaphore semaphore) {
+
+		while (!Actors.INSTANCE.expired(semaphore)) {
+			try {
+				Thread.sleep(50);
+			} catch (InterruptedException e) {
+				return;
 			}
 		}
-		return ret;
 	}
 
 	private void executeWhile(While code, Scope scope) {
@@ -732,8 +1020,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	private void executeGroup(ConcurrentGroup code, Scope scope) {
+		Scope groupScope = scope.getChild(code);
 		for (IKActorsStatement statement : code.getStatements()) {
-			execute(statement, scope);
+			execute(statement, groupScope);
 		}
 	}
 
@@ -874,7 +1163,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		 * TODO message reply ID for listeners must be same for every internal message
 		 * if there is a group: in that case, set the ID in the scope.
 		 */
-
 		Long notifyId = scope.listenerId;
 
 		if (code.getActions().size() > 0) {
@@ -895,6 +1183,65 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			if (message.contains(".")) {
 				receiver = Path.getLeading(message, '.');
 				message = Path.getLast(message, '.');
+			} else if (scope.viewScope.layout != null) {
+
+				/*
+				 * it's a message to self and we have a layout: check if the message is a view
+				 * component and if so, run it right here instead of sending a message, to save
+				 * time and avoid asynchronous execution. We force these to be executed
+				 * synchronously to avoid unexpected layouts. Calling them with explicit "self"
+				 * receiver will disable this mechanism just in case.
+				 */
+				Class<? extends KlabWidgetAction> actionClass = Actors.INSTANCE.getViewActionClass(message);
+				if (actionClass != null) {
+
+					// unlikely to be there, but maybe.
+					KlabWidgetAction action = (KlabWidgetAction) actionCache
+							.get(((KActorsActionCall) code).getInternalId());
+
+					if (action == null) {
+						action = (KlabWidgetAction) Actors.INSTANCE.getSystemAction(message, this.getIdentity(),
+								code.getArguments(), scope, getContext().getSelf(),
+								((KActorsActionCall) code).getInternalId());
+					}
+
+					if (action != null) {
+
+						actionCache.put(((KActorsActionCall) code).getInternalId(), action);
+
+						if (action instanceof KlabAction.Actor) {
+							/*
+							 * assign ID and store for later use
+							 */
+							if (code.getArguments().containsKey("tag")) {
+								Object t = code.getArguments().get("tag");
+								if (t instanceof KActorsValue) {
+									t = ((KActorsValue) t).getValue();
+								}
+								((KlabAction.Actor) action).setName(t.toString());
+								this.localActions.put(((KlabAction.Actor) action).getName(), (KlabAction.Actor) action);
+							}
+						}
+
+						/*
+						 * Register the component with the view and set call bindings, then return. The
+						 * component's run() method is never called.
+						 */
+						ViewComponent viewComponent = action.getViewComponent();
+						scope.viewScope.setViewMetadata(viewComponent, action.arguments);
+						viewComponent.setIdentity(this.identity.getId());
+						viewComponent.setApplicationId(this.appId);
+						viewComponent.setParentId(((KActorsActionCall) code).getInternalId()); // check
+						viewComponent.setId(((KActorsActionCall) code).getInternalId());
+						viewComponent.setActorPath(this.childActorPath);
+						scope.viewScope.currentComponent.getComponents().add(viewComponent);
+						if (code.getActions().size() > 0) {
+							this.actionBindings.put(viewComponent.getId(), notifyId);
+						}
+//						action.run(scope.withSender(getContext().getSelf(), appId));
+						return;
+					}
+				}
 			}
 
 			/*
@@ -1018,7 +1365,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			Action action = this.behavior == null ? null : this.behavior.getAction(message.message);
 			if (action != null) {
 				ran = true;
-				run(action, message.scope.withSender(message.sender, appId));
+				run(action, message.scope.withSender(message.sender, this.appId));
 			} else {
 
 				/*

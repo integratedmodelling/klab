@@ -31,11 +31,14 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Load implements KlabMessage {
+	public static class Load extends AbstractKlabMessage {
 
 		String behavior;
 		Scope scope;
-		String appId;
+		// application ID for forwarding
+		String forwardApplicationId;
+		// application ID to put in new actor
+		String applicationId;
 		IActorIdentity<KlabMessage> identity;
 		// if not null, this is a child behavior from a 'new' instruction and it carries
 		// a ref to the parent
@@ -44,6 +47,7 @@ public class SystemBehavior {
 		// if not null, loading happens as a response to a 'new' and the base name
 		// identifies the instantiation for all needed purposes
 		String instanceBaseName;
+		String childActorPath;
 
 		/**
 		 * Called from actor identities, instantiates the actor scope
@@ -55,7 +59,7 @@ public class SystemBehavior {
 		 */
 		public Load(IActorIdentity<KlabMessage> identity, String behavior, String appId, IRuntimeScope scope) {
 			this.behavior = behavior;
-			this.appId = appId;
+			this.forwardApplicationId = appId;
 			this.identity = identity;
 			this.scope = new Scope(identity, appId, scope);
 		}
@@ -70,7 +74,7 @@ public class SystemBehavior {
 		 */
 		public Load(IActorIdentity<KlabMessage> identity, String behavior, String appId, Scope scope) {
 			this.behavior = behavior;
-			this.appId = appId;
+			this.forwardApplicationId = appId;
 			this.identity = identity;
 			this.scope = scope;
 		}
@@ -101,27 +105,37 @@ public class SystemBehavior {
 			this.instanceBaseName = actorBaseName;
 			return this;
 		}
-	}
 
-	/**
-	 * Setup a view component with view actions
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	public static class SetView implements KlabMessage {
-
-		ViewComponent component;
-
-		public SetView(ViewComponent component) {
-			this.component = component;
+		public Load withChildActorPath(String parentActorPath) {
+			this.childActorPath = parentActorPath;
+			return this;
 		}
 
-		@Override
-		public SetView direct() {
-			throw new KlabIllegalStateException("Actors shouldn't stop themselves.");
+		public Load withApplicationId(String appId) {
+			this.applicationId = appId;
+			return this;
 		}
 	}
+
+//	/**
+//	 * Setup a view component with view actions
+//	 * 
+//	 * @author Ferd
+//	 *
+//	 */
+//	public static class SetView extends AbstractKlabMessage {
+//
+//		ViewComponent component;
+//
+//		public SetView(ViewComponent component) {
+//			this.component = component;
+//		}
+//
+//		@Override
+//		public SetView direct() {
+//			throw new KlabIllegalStateException("Actors shouldn't stop themselves.");
+//		}
+//	}
 
 	/**
 	 * Load a behavior
@@ -129,7 +143,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Stop implements KlabMessage {
+	public static class Stop extends AbstractKlabMessage {
 
 		String appId;
 
@@ -150,7 +164,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class UserAction implements KlabMessage {
+	public static class UserAction extends AbstractKlabMessage {
 
 		ViewAction action;
 		IRuntimeScope scope;
@@ -176,7 +190,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class BindUserAction implements KlabMessage {
+	public static class BindUserAction extends AbstractKlabMessage {
 
 		long notifyId;
 		String componentId;
@@ -201,7 +215,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Cleanup implements KlabMessage {
+	public static class Cleanup extends AbstractKlabMessage {
 
 		@Override
 		public KlabMessage direct() {
@@ -216,7 +230,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Transition implements KlabMessage {
+	public static class Transition extends AbstractKlabMessage {
 
 		KlabActor.Scope scope;
 		String appId;
@@ -238,7 +252,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Spawn implements KlabMessage {
+	public static class Spawn extends AbstractKlabMessage {
 
 		IActorIdentity<KlabMessage> identity;
 		String appId;
@@ -263,7 +277,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Fire implements KlabMessage {
+	public static class Fire extends AbstractKlabMessage {
 
 		Object value;
 		boolean finalize;
@@ -297,7 +311,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class ComponentFire implements KlabMessage {
+	public static class ComponentFire extends AbstractKlabMessage {
 
 		Object value;
 		boolean finalize;
@@ -329,7 +343,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class KActorsMessage implements KlabMessage {
+	public static class KActorsMessage extends AbstractKlabMessage {
 
 		ActorRef<KlabMessage> sender;
 		String message;
