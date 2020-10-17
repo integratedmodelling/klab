@@ -178,6 +178,7 @@ public enum Actors implements IActorsService {
 		layoutMetadata.add("altfg");
 		layoutMetadata.add("altbg");
 		layoutMetadata.add("tooltip");
+		layoutMetadata.add("ellipsis");
 	}
 
 	public IBehavior getBehavior(String behaviorId) {
