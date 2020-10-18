@@ -37,17 +37,15 @@ import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.services.IActorsService;
-import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.common.mediation.Unit;
-import org.integratedmodelling.klab.components.runtime.actors.KlabAction;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage.Semaphore;
-import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetAction;
+import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetActionExecutor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
-import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -100,9 +98,9 @@ public enum Actors implements IActorsService {
 	private ActorSystem<Void> supervisor;
 	private Map<String, IBehavior> behaviors = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, BehaviorReference> behaviorDescriptors = Collections.synchronizedMap(new HashMap<>());
-	private Map<String, Pair<String, Class<? extends KlabAction>>> actionClasses = Collections
+	private Map<String, Pair<String, Class<? extends KlabActionExecutor>>> actionClasses = Collections
 			.synchronizedMap(new HashMap<>());
-	private Map<String, Pair<String, Class<? extends KlabWidgetAction>>> viewActionClasses = Collections
+	private Map<String, Pair<String, Class<? extends KlabWidgetActionExecutor>>> viewActionClasses = Collections
 			.synchronizedMap(new HashMap<>());
 
 	static Set<String> layoutMetadata = null;
@@ -220,7 +218,7 @@ public enum Actors implements IActorsService {
 	}
 
 	private Actors() {
-		
+
 		IInjectorProvider injectorProvider = new KactorsInjectorProvider();
 		Injector injector = injectorProvider.getInjector();
 		if (injector != null) {
@@ -407,10 +405,11 @@ public enum Actors implements IActorsService {
 				ad.setName(message.id());
 				ad.setDescription(message.description());
 				descriptor.getActions().add(ad);
-				this.actionClasses.put(message.id(), new Pair<>(annotation.id(), (Class<? extends KlabAction>) cl));
-				if (KlabWidgetAction.class.isAssignableFrom(cl)) {
+				this.actionClasses.put(message.id(),
+						new Pair<>(annotation.id(), (Class<? extends KlabActionExecutor>) cl));
+				if (KlabWidgetActionExecutor.class.isAssignableFrom(cl)) {
 					this.viewActionClasses.put(message.id(),
-							new Pair<>(annotation.id(), (Class<? extends KlabWidgetAction>) cl));
+							new Pair<>(annotation.id(), (Class<? extends KlabWidgetActionExecutor>) cl));
 				}
 			}
 		}
@@ -438,35 +437,6 @@ public enum Actors implements IActorsService {
 	}
 
 	/**
-	 * Find the recipient for a message directed to self that does not match any
-	 * messages. This done at runtime to support shorthand syntax in k.Actors; any
-	 * unknown messages should go to the user actor using the UnknownMessage
-	 * pattern.
-	 * 
-	 * @param message
-	 * @param identity the identity that does not have the message. Look it up in
-	 *                 the identities above it.
-	 * @return an actor reference or null. If null, the asker should send an unknown
-	 *         message to the user actor.
-	 */
-	public Pair<String, ActorRef<KlabMessage>> lookupRecipient(String message, IActorIdentity<KlabMessage> identity) {
-
-		Pair<String, Class<? extends KlabAction>> record = actionClasses.get(message);
-		if (record != null) {
-			// it's one of the system behaviors: lookup the recipient based on behavior ID
-			switch (record.getFirst()) {
-			case "view":
-			case "session":
-				return new Pair<>(record.getFirst(), identity.getParentIdentity(Session.class).getActor());
-			case "user":
-				return new Pair<>(record.getFirst(), identity.getParentIdentity(EngineUser.class).getActor());
-			}
-		}
-
-		return null;
-	}
-
-	/**
 	 * Create and return an action from one of the system behaviors.
 	 * 
 	 * @param behavior
@@ -477,14 +447,14 @@ public enum Actors implements IActorsService {
 	 * @param scope
 	 * @return
 	 */
-	public KlabAction getSystemAction(String id, IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
-			KlabActor.Scope scope, ActorRef<KlabMessage> sender, String callId) {
+	public KlabActionExecutor getSystemAction(String id, IActorIdentity<KlabMessage> identity,
+			IParameters<String> arguments, KlabActor.Scope scope, ActorRef<KlabMessage> sender, String callId) {
 
-		Pair<String, Class<? extends KlabAction>> cls = actionClasses.get(id);
+		Pair<String, Class<? extends KlabActionExecutor>> cls = actionClasses.get(id);
 		if (cls != null) {
 			try {
-				Constructor<? extends KlabAction> constructor = cls.getSecond().getConstructor(IActorIdentity.class,
-						IParameters.class, KlabActor.Scope.class, ActorRef.class, String.class);
+				Constructor<? extends KlabActionExecutor> constructor = cls.getSecond().getConstructor(
+						IActorIdentity.class, IParameters.class, KlabActor.Scope.class, ActorRef.class, String.class);
 				return constructor.newInstance(identity, arguments, scope, sender, callId);
 			} catch (Throwable e) {
 				scope.getMonitor().error("Error while creating action " + id + ": " + e.getMessage());
@@ -493,13 +463,13 @@ public enum Actors implements IActorsService {
 		return null;
 	}
 
-	public Class<? extends KlabAction> getActionClass(String id) {
-		Pair<String, Class<? extends KlabAction>> ret = actionClasses.get(id);
+	public Class<? extends KlabActionExecutor> getActionClass(String id) {
+		Pair<String, Class<? extends KlabActionExecutor>> ret = actionClasses.get(id);
 		return ret == null ? null : ret.getSecond();
 	}
 
-	public Class<? extends KlabWidgetAction> getViewActionClass(String id) {
-		Pair<String, Class<? extends KlabWidgetAction>> ret = viewActionClasses.get(id);
+	public Class<? extends KlabWidgetActionExecutor> getViewActionClass(String id) {
+		Pair<String, Class<? extends KlabWidgetActionExecutor>> ret = viewActionClasses.get(id);
 		return ret == null ? null : ret.getSecond();
 	}
 
@@ -600,289 +570,6 @@ public enum Actors implements IActorsService {
 		return null;
 	}
 
-//	/**
-//	 * Find the first parameter that matches the passed class, looking up by name
-//	 * first and checking the unnamed parameters if not found, resolving actor
-//	 * values into their correspondent value.
-//	 * 
-//	 * @param <T>
-//	 * @param arguments
-//	 * @param parameterName
-//	 * @param class1
-//	 * @return
-//	 */
-//	public <T> T getArgument(IParameters<String> arguments, String parameterName, Class<T> class1) {
-//		// TODO Auto-generated method stub
-//		return null;
-//	}
-
-//	public Layout getView(IBehavior behavior, IIdentity identity, String applicationId, String actorPath) {
-//
-//		ViewScope scope = new ViewScope(identity, applicationId, actorPath);
-//
-//		/*
-//		 * collect info about the UI in a bean. If not empty, send bean so that the UI
-//		 * can prepare.
-//		 */
-//		Layout view = new Layout(behavior.getName(), applicationId);
-//		view.setStyle(behavior.getStatement().getStyle());
-//		view.setDestination(behavior.getDestination());
-//		view.setLabel(behavior.getStatement().getLabel());
-//		view.setDescription(StringUtils.pack(behavior.getStatement().getDescription()));
-//		view.setPlatform(behavior.getPlatform());
-//		view.setLogo(behavior.getStatement().getLogo());
-//		view.setProjectId(behavior.getProject());
-//
-//		if (behavior.getStatement().getStyleSpecs() != null) {
-//			view.setStyleSpecs(JsonUtils.printAsJson(behavior.getStatement().getStyleSpecs()));
-//		}
-//
-//		for (IBehavior.Action action : behavior.getActions()) {
-//
-//			ViewPanel panel = null;
-//
-//			for (IAnnotation annotation : action.getAnnotations()) {
-//				if ("panel".equals(annotation.getName())) {
-//					view.getPanels()
-//							.add(panel = new ViewPanel(
-//									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
-//									annotation.get("style", String.class)));
-//					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
-//				}
-//				if ("left".equals(annotation.getName())) {
-//					view.getLeftPanels()
-//							.add(panel = new ViewPanel(
-//									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
-//									annotation.get("style", String.class)));
-//					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
-//				}
-//				if ("right".equals(annotation.getName())) {
-//					view.getRightPanels()
-//							.add(panel = new ViewPanel(
-//									annotation.containsKey("id") ? annotation.get("id", String.class) : action.getId(),
-//									annotation.get("style", String.class)));
-//					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
-//				}
-//				if ("header".equals(annotation.getName()) || "header".equals(action.getId())
-//						|| "top".equals(annotation.getName())) {
-//					view.setHeader(panel = new ViewPanel(
-//							annotation.containsKey("id") ? annotation.get("id", String.class) : "header",
-//							annotation.get("style", String.class)));
-//					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
-//				}
-//				if ("footer".equals(annotation.getName()) || "footer".equals(action.getId())
-//						|| "bottom".equals(annotation.getName())) {
-//					view.setFooter(panel = new ViewPanel(
-//							annotation.containsKey("id") ? annotation.get("id", String.class) : "footer",
-//							annotation.get("style", String.class)));
-//					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
-//				}
-//
-//			}
-//
-//			/*
-//			 * Components make their own view from the main method without annotations
-//			 */
-//			if (panel == null && behavior.getDestination() == Type.COMPONENT && action.getId().equals("main")) {
-//				view.getPanels().add(panel = new ViewPanel(behavior.getId(), behavior.getStatement().getStyle()));
-//				for (IAnnotation annotation : action.getAnnotations()) {
-//					panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
-//				}
-//			}
-//
-//			if (panel != null) {
-//				/*
-//				 * visit action for view calls: if there is any call to the view actor, add the
-//				 * "default" panel unless already added
-//				 */
-//				panel.setApplicationId(applicationId);
-//				visitViewActions(action, panel, scope);
-//			}
-//		}
-//
-//		return view;
-//	}
-
-//	private class ViewScope {
-//
-//		String identityId;
-//		IIdentity identity;
-//		String applicationId;
-//		String actorPath = null;
-//		boolean optional = false;
-//		boolean repeated = false;
-//		private Integer groupCounter = new Integer(0);
-//
-//		public ViewScope(IIdentity identity, String applicationId, String actorPath) {
-//			this.identity = identity;
-//			this.identityId = identity == null ? null : identity.getId();
-//			this.applicationId = applicationId;
-//			this.actorPath = actorPath;
-//		}
-//
-//		public ViewScope(ViewScope scope) {
-//			this.applicationId = scope.applicationId;
-//			this.identityId = scope.identityId;
-//			this.repeated = scope.repeated;
-//			this.optional = scope.optional;
-//			this.groupCounter = scope.groupCounter;
-//			this.actorPath = scope.actorPath;
-//		}
-//
-//		public ViewScope repeated() {
-//			ViewScope ret = new ViewScope(this);
-//			ret.repeated = true;
-//			return ret;
-//		}
-//
-//		public ViewScope optional() {
-//			ViewScope ret = new ViewScope(this);
-//			ret.optional = true;
-//			return ret;
-//		}
-//	}
-
-//	public ViewComponent getChildComponent(IKActorsStatement.ConcurrentGroup group, ViewComponent parent,
-//			ViewScope scope) {
-//
-//		ViewComponent ret = new ViewComponent();
-//		ret.setIdentity(scope.identityId);
-//		ret.setApplicationId(scope.applicationId);
-//		ret.setActorPath(scope.actorPath);
-//		boolean isActive = group.getGroupMetadata().containsKey("inputgroup");
-//		ret.setType(isActive ? ViewComponent.Type.InputGroup : ViewComponent.Type.Group);
-//		if (group.getGroupMetadata().containsKey("name")) {
-//			ret.setName(group.getGroupMetadata().get("name").getValue().toString());
-//		}
-//		String id = null;
-//		if (group.getGroupMetadata().containsKey("id")) {
-//			id = group.getGroupMetadata().get("id").getValue().toString();
-//		} else {
-//			id = "g" + (scope.groupCounter++);
-//		}
-//		setViewMetadata(ret, group.getGroupMetadata());
-//		ret.setId(parent.getId() + "/" + id);
-//		parent.getComponents().add(ret);
-//		return ret;
-//	}
-
-//	private void setViewMetadata(ViewComponent component, Map<String, ?> parameters) {
-//		if (parameters != null) {
-//			for (String key : parameters.keySet()) {
-//				if (layoutMetadata.contains(key)) {
-//					Object param = parameters.get(key);
-//					component.getAttributes().put(key,
-//							param instanceof KActorsValue ? ((KActorsValue) param).getValue().toString()
-//									: param.toString());
-//				}
-//			}
-//		}
-//	}
-
-//	private void visitViewActions(IBehavior.Action action, ViewPanel panel, ViewScope scope) {
-//		IKActorsStatement code = ((BehaviorAction) action).getStatement().getCode();
-//		visitViewActions(code, panel, 0, scope);
-//	}
-//
-//	private void visitViewActions(IKActorsStatement statement, ViewComponent parent, int level, ViewScope scope) {
-//		switch (statement.getType()) {
-//		case ACTION_CALL:
-//			ViewComponent component = getViewComponent((IKActorsStatement.Call) statement, scope);
-//			if (component != null) {
-//				parent.getComponents().add(component);
-//			}
-//			break;
-//		case ASSIGNMENT:
-//			// see if this is a masked action call
-//			break;
-//		case CONCURRENT_GROUP:
-//			parent = level == 0 ? parent
-//					: getChildComponent((IKActorsStatement.ConcurrentGroup) statement, parent, scope);
-//			for (IKActorsStatement sequence : ((IKActorsStatement.ConcurrentGroup) statement).getStatements()) {
-//				visitViewActions(sequence, parent, level + 1, scope);
-//			}
-//
-//			if (parent.getType() != ViewComponent.Type.InputGroup && parent.getComponents().size() > 0) {
-//				// check if all children are radiobuttons or there are group actions, and force
-//				// the type to inputgroup if so.
-//				boolean activeGroup = ((IKActorsStatement.ConcurrentGroup) statement).getGroupActions().size() > 0;
-//				if (!activeGroup) {
-//					for (ViewComponent child : parent.getComponents()) {
-//						if (child.getType() != ViewComponent.Type.RadioButton) {
-//							activeGroup = false;
-//							break;
-//						}
-//					}
-//				}
-//				if (activeGroup) {
-//					parent.setType(ViewComponent.Type.InputGroup);
-//				}
-//			}
-//
-//			break;
-//		case DO_STATEMENT:
-//			// visit code with scope.optional().repeated()
-//			visitViewActions(((IKActorsStatement.Do) statement).getBody(), parent, level, scope.optional().repeated());
-//			break;
-//		case FOR_STATEMENT:
-//			// visit code with scope.optional().repeated()
-//			visitViewActions(((IKActorsStatement.For) statement).getBody(), parent, level, scope.optional().repeated());
-//			break;
-//		case IF_STATEMENT:
-//			visitViewActions(((IKActorsStatement.If) statement).getThen(), parent, level, scope.optional());
-//			for (Pair<IKActorsValue, IKActorsStatement> elseif : ((IKActorsStatement.If) statement).getElseIfs()) {
-//				visitViewActions(elseif.getSecond(), parent, level, scope.optional());
-//			}
-//			if (((IKActorsStatement.If) statement).getElse() != null) {
-//				visitViewActions(((IKActorsStatement.If) statement).getElse(), parent, level, scope.optional());
-//
-//			}
-//			break;
-//		case SEQUENCE:
-//			// dig in in same scope
-//			for (IKActorsStatement sequence : ((IKActorsStatement.Sequence) statement).getStatements()) {
-//				visitViewActions(sequence, parent, level, scope);
-//			}
-//			break;
-//		case TEXT_BLOCK:
-//			component = getViewComponent(new KActorsActionCall((TextBlock) statement), scope);
-//			if (component != null) {
-//				parent.getComponents().add(component);
-//			}
-//			break;
-//		case WHILE_STATEMENT:
-//			visitViewActions(((IKActorsStatement.While) statement).getBody(), parent, level,
-//					scope.optional().repeated());
-//			break;
-//		case INSTANTIATION:
-//			/**
-//			 * add a placeholder panel and do NOT compile it now. Let
-//			 * KlabActor::loadBehavior do that and graft the components to it. The panel
-//			 * will hold as many instances as are generated if the instantiation is in a
-//			 * loop or a conditional, and may be empty after code is executed.
-//			 */
-//			// FIXME shouldn't have to go through this to assess if there are components.
-//			IBehavior behavior = getBehavior(((Instantiation) statement).getBehavior());
-//			if (behavior != null && behavior.getDestination() == Type.COMPONENT) {
-//				component = simplifyViewStructure(getView(behavior, scope.identity, scope.applicationId,
-//						(parent.getActorPath() == null ? "" : (parent.getActorPath() + "."))
-//								+ ((Instantiation) statement).getActorBaseName()));
-//				if (component != null) {
-//					ViewPanel placeholder = new ViewPanel();
-//					placeholder.setId(((Instantiation) statement).getActorBaseName());
-//					placeholder.setParentId(parent.getId());
-//					parent.getComponents().add(placeholder);
-////					component.setParentId(parent.getId());
-////					parent.getComponents().add(component);
-//				}
-//			}
-//			break;
-//		default:
-//			// nothing to do for fire and instantiation
-//			break;
-//		}
-//	}
-//
 	public List<ViewPanel> getPanels(Layout view) {
 		List<ViewPanel> panels = new ArrayList<>();
 		panels.addAll(view.getLeftPanels());
@@ -896,63 +583,6 @@ public enum Actors implements IActorsService {
 		}
 		return panels;
 	}
-//
-//	private ViewComponent simplifyViewStructure(Layout view) {
-//		List<ViewPanel> panels = getPanels(view);
-//		if (panels.size() == 1) {
-//			// TODO merge style if defined in view preamble
-//			return panels.get(0);
-//		}
-//		return view;
-//	}
-//
-//	private ViewComponent getViewComponent(Call statement, ViewScope scope) {
-//
-//		Class<? extends KlabAction> cls = Actors.INSTANCE.getActionClass(statement.getMessage());
-//		ViewComponent ret = null;
-//		if (cls != null) {
-//			if (KlabAction.Component.class.isAssignableFrom(cls)) {
-//
-//				/*
-//				 * check if the arguments are variable
-//				 */
-//				boolean dynamic = scope.optional || scope.repeated;
-//				if (!dynamic && statement.getArguments() != null) {
-//					for (Object arg : statement.getArguments().values()) {
-//						if (arg instanceof KActorsValue && ((KActorsValue) arg).isVariable()) {
-//							dynamic = true;
-//							break;
-//						}
-//					}
-//				}
-//
-//				if (!dynamic) {
-//					// just a prototype
-//					KlabWidgetAction action = (KlabWidgetAction) getSystemAction(statement.getMessage(), null,
-//							statement.getArguments(), null, null, ((KActorsActionCall) statement).getInternalId());
-//					if (action != null) {
-//						ret = action.getViewComponent();
-//					}
-//				}
-//
-//				/*
-//				 * if we got here, we should return a placeholder
-//				 */
-//				if (ret == null) {
-//					ret = new ViewComponent();
-//					ret.setType(scope.repeated ? ViewComponent.Type.MultiContainer : ViewComponent.Type.Container);
-//				}
-//
-//				setViewMetadata(ret, statement.getArguments());
-//				ret.setIdentity(scope.identityId);
-//				ret.setApplicationId(scope.applicationId);
-//				ret.setId(((KActorsActionCall) statement).getInternalId());
-//				ret.setActorPath(scope.actorPath);
-//
-//			}
-//		}
-//		return ret;
-//	}
 
 	public String dumpView(Layout view) {
 		StringBuffer ret = new StringBuffer(2048);
@@ -1069,29 +699,6 @@ public enum Actors implements IActorsService {
 		}
 		return null;
 	}
-
-//	/**
-//	 * Load the contents of the passed layout into a destination panel. Used to
-//	 * merge components. May be called more than once on the same panel if the
-//	 * component is created inside a loop.
-//	 * 
-//	 * @param source
-//	 * @param destination
-//	 */
-//	public void mergeComponent(Layout view, ViewPanel destination) {
-//		// TODO for now only copy components from the first panel found non-empty in the
-//		// view. Later maybe handle the layout within the panel.
-//		for (Collection<?> panels : new Collection[] { view.getPanels(), view.getLeftPanels(), view.getRightPanels(),
-//				Collections.singleton(view.getFooter()), Collections.singleton(view.getHeader()) }) {
-//			for (Object panel : panels) {
-//				if (panel != null) {
-//					destination.getComponents().addAll(((ViewPanel) panel).getComponents());
-//					return;
-//				}
-//			}
-//		}
-//
-//	}
 
 	public Set<String> getLayoutMetadata() {
 		return layoutMetadata;

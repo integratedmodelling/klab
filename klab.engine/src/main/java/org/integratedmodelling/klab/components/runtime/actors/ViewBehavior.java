@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.components.runtime.actors.KlabAction.Component;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor.Component;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.BindUserAction;
@@ -93,13 +93,13 @@ public class ViewBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static abstract class KlabWidgetAction extends KlabAction implements Component {
+	public static abstract class KlabWidgetActionExecutor extends KlabActionExecutor implements Component {
 
 		Boolean dynamic = null;
 		String name;
 
-		public KlabWidgetAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, Scope scope,
-				ActorRef<KlabMessage> sender, String callId) {
+		public KlabWidgetActionExecutor(IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
+				Scope scope, ActorRef<KlabMessage> sender, String callId) {
 			super(identity, arguments, scope, sender, callId);
 		}
 
@@ -113,37 +113,9 @@ public class ViewBehavior {
 			this.name = name;
 		}
 
-		// never called
+		// never called, do nothing
 		@Override
 		void run(Scope scope) {
-
-//			String bindId = this.callId;
-//			scope.viewScope.addComponent(this, scope);
-//			/*
-//			 * if there are associated actions, bind the listener ID that matches the fire
-//			 * actions to the bindId in the actor, so that the view message can simulate a
-//			 * fire
-//			 */
-//			if (scope.listenerId != null) {
-//				scope.sender.tell(new BindUserAction(scope.listenerId, scope.appId, bindId));
-//			}
-			
-//			// if deemed dynamic at view setup, we create and communicate the component here
-//			if (this.identity.getView() != null && !this.identity.getView().getStaticComponents().containsKey(bindId)) {
-//
-//				bindId = "kad" + NameGenerator.shortUUID();
-//
-//				/*
-//				 * dynamic: create component in scope and send it
-//				 */
-//				ViewComponent component = createViewComponent(scope);
-//				component.setId(bindId);
-//				component.setParentId(this.callId);
-//				component.setApplicationId(this.identity.getId());
-//				session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent,
-//						component);
-//			}
-
 		}
 
 		@Override
@@ -210,7 +182,7 @@ public class ViewBehavior {
 	}
 
 	@Action(id = "alert")
-	public static class Alert extends KlabAction {
+	public static class Alert extends KlabActionExecutor {
 
 		public Alert(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -229,7 +201,7 @@ public class ViewBehavior {
 	}
 
 	@Action(id = "confirm")
-	public static class Confirm extends KlabAction {
+	public static class Confirm extends KlabActionExecutor {
 
 		public Confirm(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -250,7 +222,7 @@ public class ViewBehavior {
 	}
 
 	@Action(id = "button")
-	public static class Button extends KlabWidgetAction {
+	public static class Button extends KlabWidgetActionExecutor {
 
 		public Button(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -280,7 +252,7 @@ public class ViewBehavior {
 	}
 
 	@Action(id = "checkbutton")
-	public static class CheckButton extends KlabWidgetAction {
+	public static class CheckButton extends KlabWidgetActionExecutor {
 
 		public CheckButton(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -310,7 +282,7 @@ public class ViewBehavior {
 	}
 
 	@Action(id = "radiobutton")
-	public static class RadioButton extends KlabWidgetAction {
+	public static class RadioButton extends KlabWidgetActionExecutor {
 
 		public RadioButton(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -340,7 +312,7 @@ public class ViewBehavior {
 	}
 
 	@Action(id = "label")
-	public static class Label extends KlabWidgetAction {
+	public static class Label extends KlabWidgetActionExecutor {
 
 		public Label(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -374,7 +346,7 @@ public class ViewBehavior {
 	}
 
 	@Action(id = "textinput")
-	public static class Text extends KlabWidgetAction {
+	public static class Text extends KlabWidgetActionExecutor {
 
 		public Text(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -402,13 +374,12 @@ public class ViewBehavior {
 		}
 
 	}
-	
 
 	@Action(id = "combo")
-	public static class Combo extends KlabWidgetAction {
+	public static class Combo extends KlabWidgetActionExecutor {
 
 		private Map<String, IKActorsValue> values = new HashMap<>();
-		
+
 		public Combo(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
 			super(identity, arguments, scope, sender, callId);
@@ -421,9 +392,9 @@ public class ViewBehavior {
 			for (String argument : arguments.getUnnamedKeys()) {
 				Object value = arguments.get(argument);
 				if (value instanceof KActorsValue) {
-					Map<String, String> map = ((KActorsValue)value).asMap();
+					Map<String, String> map = ((KActorsValue) value).asMap();
 					message.getChoices().add(new Pair<>(map.get("id"), map.get("label")));
-					this.values.put(map.get("id"), (IKActorsValue)value);
+					this.values.put(map.get("id"), (IKActorsValue) value);
 				}
 			}
 			message.getAttributes().putAll(getMetadata(arguments, scope));
@@ -442,9 +413,9 @@ public class ViewBehavior {
 		}
 
 	}
-	
+
 	@Action(id = "separator")
-	public static class Separator extends KlabWidgetAction {
+	public static class Separator extends KlabWidgetActionExecutor {
 
 		public Separator(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -475,9 +446,8 @@ public class ViewBehavior {
 
 	}
 
-
 	@Action(id = "tree")
-	public static class Tree extends KlabWidgetAction {
+	public static class Tree extends KlabWidgetActionExecutor {
 
 		public Tree(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -509,44 +479,7 @@ public class ViewBehavior {
 		}
 
 	}
-
-//	@Action(id = "panel")
-//	public static class Panel extends KlabWidgetAction {
-//
-//		public Panel(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-//				ActorRef<KlabMessage> sender, String callId) {
-//			super(identity, arguments, scope, sender, callId);
-//		}
-//
-//		@Override
-//		public ViewComponent createViewComponent(Scope scope) {
-//			ViewComponent message = new ViewComponent();
-//			message.setType(Type.Panel);
-//			if (arguments.getUnnamedKeys().size() > 0) {
-//				String behaviorId = ((KActorsValue) arguments.get(arguments.getUnnamedKeys().iterator().next()))
-//						.getValue().toString();
-//				IBehavior behavior = Actors.INSTANCE.getBehavior(behaviorId);
-//				if (behavior != null) {
-//					message.setLayout(Actors.INSTANCE.getView(behavior, identity, scope.appId, null));
-//				}
-//			}
-//			message.getAttributes().putAll(getMetadata(arguments, scope));
-//			return message;
-//		}
-//
-//		@Override
-//		protected Object getFiredResult(ViewAction action) {
-//			// won't fire
-//			return null;
-//		}
-//
-//		@Override
-//		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
-//			ViewAction ret = new ViewAction();
-//			return ret;
-//		}
-//	}
-
+	
 	/**
 	 * Bound to the %%% .... %%% template syntax; handled directly by actors. Can
 	 * also be referenced directly.
@@ -555,7 +488,7 @@ public class ViewBehavior {
 	 *
 	 */
 	@Action(id = "text")
-	public static class RichText extends KlabWidgetAction {
+	public static class RichText extends KlabWidgetActionExecutor {
 
 		public RichText(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -612,13 +545,13 @@ public class ViewBehavior {
 		return ret;
 	}
 
-	public static String getDefaultAsString(IParameters<String> arguments, KlabAction action, Scope scope) {
+	public static String getDefaultAsString(IParameters<String> arguments, KlabActionExecutor action, Scope scope) {
 		String ret = "";
 		if (arguments.getUnnamedKeys().size() > 0) {
 			Object a = arguments.get(arguments.getUnnamedKeys().iterator().next());
 			if (a != null) {
 				if (a instanceof KActorsValue) {
-					a = action.evaluateInContext((KActorsValue)a, scope);
+					a = action.evaluateInContext((KActorsValue) a, scope);
 				}
 				if (a != null) {
 					ret = a.toString();

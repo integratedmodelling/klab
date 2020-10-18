@@ -50,7 +50,7 @@ public class RuntimeBehavior {
 	 */
 	@Action(id = "context", fires = Type.OBSERVATION, description = "Used with a URN as parameter, creates the context from an observe statement. If used without"
 			+ " parameters, fire the observation when a new context is established")
-	public static class Context extends KlabAction {
+	public static class Context extends KlabActionExecutor {
 
 		String listenerId = null;
 
@@ -103,8 +103,9 @@ public class RuntimeBehavior {
 	 * the current context is not set.
 	 */
 	@Action(id = "observe", fires = Type.OBSERVATION, description = "With parameters, will make an observation which will be set as context if "
-			+ "there was no current context. The context is looked for in the session's global state. Without parameters, listens and reacts to any observation.")
-	public static class Observe extends KlabAction {
+			+ "there was no current context. The context is looked for in the session's global state. Without parameters, "
+			+ "listens and reacts to any observation.")
+	public static class Observe extends KlabActionExecutor {
 
 		String listenerId = null;
 
@@ -155,7 +156,7 @@ public class RuntimeBehavior {
 	 * Set the root context
 	 */
 	@Action(id = "locate", fires = Type.MAP, description = "Listens to setting of spatial extent outside of a context")
-	public static class Locate extends KlabAction {
+	public static class Locate extends KlabActionExecutor {
 
 		String listenerId = null;
 
@@ -167,19 +168,12 @@ public class RuntimeBehavior {
 		@Override
 		void run(KlabActor.Scope scope) {
 
-			if (arguments.getUnnamedKeys().isEmpty()) {
+			if (arguments == null || arguments.getUnnamedKeys().isEmpty()) {
 				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(Session.class)
 						.addROIListener(new Session.ROIListener() {
 
 							@Override
 							public void onChange(final SpatialExtent extent) {
-								/**
-								 * Geolocate and fire in a separate thread to avoid holding up the actor.
-								 */
-//								new Thread() {
-//
-//									@Override
-//									public void run() {
 
 								String strategy = session.getGeocodingStrategy();
 								String geocoded = Geocoder.INSTANCE.geocode(extent, strategy,
@@ -192,9 +186,6 @@ public class RuntimeBehavior {
 										extent.getEast(), extent.getNorth() });
 
 								fire(ret, false);
-//
-//									}
-//								}.start();
 							}
 						});
 			} else {
@@ -211,7 +202,7 @@ public class RuntimeBehavior {
 	}
 
 	@Action(id = "maybe", fires = Type.BOOLEAN)
-	public static class Maybe extends KlabAction {
+	public static class Maybe extends KlabActionExecutor {
 
 		Random random = new Random();
 
@@ -245,7 +236,7 @@ public class RuntimeBehavior {
 	}
 
 	@Action(id = "info", fires = {})
-	public static class Info extends KlabAction {
+	public static class Info extends KlabActionExecutor {
 
 		public Info(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -263,7 +254,7 @@ public class RuntimeBehavior {
 	}
 
 	@Action(id = "warning", fires = {})
-	public static class Warning extends KlabAction {
+	public static class Warning extends KlabActionExecutor {
 
 		public Warning(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -281,7 +272,7 @@ public class RuntimeBehavior {
 	}
 
 	@Action(id = "error", fires = {})
-	public static class Error extends KlabAction {
+	public static class Error extends KlabActionExecutor {
 
 		public Error(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -299,7 +290,7 @@ public class RuntimeBehavior {
 	}
 
 	@Action(id = "debug", fires = {})
-	public static class Debug extends KlabAction {
+	public static class Debug extends KlabActionExecutor {
 
 		public Debug(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {

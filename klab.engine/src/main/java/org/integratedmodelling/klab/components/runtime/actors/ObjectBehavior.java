@@ -25,7 +25,7 @@ import akka.actor.typed.ActorRef;
 public class ObjectBehavior {
 
 	@Action(id = "observe", fires = Type.OBSERVATION)
-	public static class Observe extends KlabAction {
+	public static class Observe extends KlabActionExecutor {
 
 		public Observe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -67,7 +67,7 @@ public class ObjectBehavior {
 	}
 
 	@Action(id = "stop")
-	public static class MoveAway extends KlabAction {
+	public static class MoveAway extends KlabActionExecutor {
 
 		public MoveAway(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -83,7 +83,7 @@ public class ObjectBehavior {
 	}
 
 	@Action(id = "bind")
-	public static class Bind extends KlabAction {
+	public static class Bind extends KlabActionExecutor {
 
 		public Bind(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -112,7 +112,7 @@ public class ObjectBehavior {
 	 *
 	 */
 	@Action(id = "when")
-	public static class When extends KlabAction {
+	public static class When extends KlabActionExecutor {
 
 		String listener;
 
@@ -153,7 +153,7 @@ public class ObjectBehavior {
 	 *
 	 */
 	@Action(id = "siblings")
-	public static class Siblings extends KlabAction {
+	public static class Siblings extends KlabActionExecutor {
 
 		public Siblings(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -169,7 +169,7 @@ public class ObjectBehavior {
 	}
 
 	@Action(id = "connect")
-	public static class Connect extends KlabAction {
+	public static class Connect extends KlabActionExecutor {
 
 		public Connect(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {

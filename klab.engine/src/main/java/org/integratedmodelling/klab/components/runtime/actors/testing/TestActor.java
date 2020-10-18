@@ -27,8 +27,8 @@ public class TestActor extends SessionActor {
 	}
 
 	@Override
-	protected Behavior<KlabMessage> loadBehavior(Load message) {
-		super.loadBehavior(message);
+	protected Behavior<KlabMessage> handleLoadBehaviorMessage(Load message) {
+		super.handleLoadBehaviorMessage(message);
 		// TODO exec all tests
 		return Behaviors.same();
 	}

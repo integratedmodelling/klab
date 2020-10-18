@@ -347,18 +347,16 @@ public class SystemBehavior {
 
 		ActorRef<KlabMessage> sender;
 		String message;
-		String receiver;
 		IParameters<String> arguments = Parameters.create();
 		KlabActor.Scope scope;
 		String appId;
 		// for caching
 		String actionInternalId;
 
-		public KActorsMessage(ActorRef<KlabMessage> sender, String receiver, String actionId, String actionInternalId,
+		public KActorsMessage(ActorRef<KlabMessage> sender, String actionId, String actionInternalId,
 				IParameters<String> arguments, KlabActor.Scope scope, String appId) {
 
 			this.sender = sender;
-			this.receiver = receiver;
 			this.message = actionId;
 			this.actionInternalId = actionInternalId;
 			if (arguments != null) {
@@ -375,7 +373,7 @@ public class SystemBehavior {
 
 		@Override
 		public KActorsMessage direct() {
-			return new KActorsMessage(sender, receiver, message, actionInternalId, arguments, scope, null);
+			return new KActorsMessage(sender, message, actionInternalId, arguments, scope, null);
 		}
 
 	}

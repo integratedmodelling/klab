@@ -100,8 +100,8 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 		String getVariable();
 
 		/**
-		 * The value to set the variable to, which will be evaluated in the scope of
-		 * the recipient executing the set statement.
+		 * The value to set the variable to, which will be evaluated in the scope of the
+		 * recipient executing the set statement.
 		 * 
 		 * @return
 		 */
@@ -157,14 +157,22 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 		 *         automatically generated one.
 		 */
 		String getActorBaseName();
-		
+
 	}
 
 	public interface Call extends IKActorsStatement {
 
 		/**
-		 * If group != null, name will be null and the actions will refer to any of the
-		 * messages in the group.
+		 * Each call statement has a unique ID, so that we can cache its execution
+		 * strategy for repeated executions.
+		 * 
+		 * @return
+		 */
+		String getCallId();
+
+		/**
+		 * If group != null, the call message will be null and the actions will react to
+		 * the firing of any of the messages in the group.
 		 * 
 		 * @return
 		 */
