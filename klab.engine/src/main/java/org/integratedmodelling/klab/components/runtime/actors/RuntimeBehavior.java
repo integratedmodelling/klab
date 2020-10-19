@@ -102,14 +102,15 @@ public class RuntimeBehavior {
 	 * session state, or set the context itself if the observation is a subject and
 	 * the current context is not set.
 	 */
-	@Action(id = "observe", fires = Type.OBSERVATION, description = "With parameters, will make an observation which will be set as context if "
-			+ "there was no current context. The context is looked for in the session's global state. Without parameters, "
-			+ "listens and reacts to any observation.")
-	public static class Observe extends KlabActionExecutor {
+	@Action(id = "submit", fires = Type.OBSERVATION, description = "Submit a URN for observation, either in the current context or creating one from the "
+			+ " current preferences. The session will add it to the observation queue and make the observation when possible. "
+			+ "When done, the correspondent artifact (or an error) will be fired.")
+	
+	public static class Submit extends KlabActionExecutor {
 
 		String listenerId = null;
 
-		public Observe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+		public Submit(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
 			super(identity, arguments, scope, sender, callId);
 		}

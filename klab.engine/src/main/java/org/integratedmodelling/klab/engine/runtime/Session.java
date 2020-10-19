@@ -1303,7 +1303,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	}
 
 	@MessageHandler
-	private void handleRunScriptRequest(final LoadApplicationRequest request, final IMessage.Type type) {
+	private void handleLoadApplicationRequest(final LoadApplicationRequest request, final IMessage.Type type) {
 		switch (type) {
 		case RunApp:
 		case RunUnitTest:
