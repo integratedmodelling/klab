@@ -29,6 +29,10 @@ public class OSMNamesGeocodingService extends GeocodingService {
 				+ envelope.getCenterCoordinates()[1] + "&lon=" + envelope.getCenterCoordinates()[0] + "&zoom="
 				+ closest(envelope.getScaleRank());
 
+		/*
+		 * Let exceptions be thrown, don't return null without one.
+		 */
+		IShape ret = null;
 		String name = null;
 		System.out.println(url);
 		try {
@@ -38,20 +42,16 @@ public class OSMNamesGeocodingService extends GeocodingService {
 			} else if (res != null && res.containsKey("name")) {
 				name = res.get("name").toString();
 			}
-		} catch (Throwable t) {
-			// shut up and return null;
-		}
-		
-		if (name != null) {
-			IShape ret = Shape.create((Envelope)envelope);
+			ret = Shape.create((Envelope) envelope);
 			ret.getMetadata().put(IMetadata.DC_DESCRIPTION, name);
-			return ret;
+		} catch (Throwable t) {
+
 		}
-		
-		return null;
+		return ret;
 	}
-	
+
 	private static int[] levels = new int[] { 3, 5, 8, 10, 14, 16, 17, 18 };
+
 	protected int closest(int scaleRank) {
 
 		int n = 0;
@@ -65,7 +65,5 @@ public class OSMNamesGeocodingService extends GeocodingService {
 		}
 		return 18;
 	}
-
-
 
 }

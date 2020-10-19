@@ -31,7 +31,6 @@ import org.integratedmodelling.kactors.model.KActorsBehavior;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimProject;
-import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Authentication;
@@ -198,7 +197,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	Set<String> relayIdentities = new HashSet<>();
 	SpatialExtent regionOfInterest = null;
 	ActorRef<KlabMessage> actor;
-	private IParameters<String> globalState = Parameters.createSynchronized();
+	private SessionState globalState = new SessionState(this);
 	private View view;
 	Map<String, ISession.ObservationListener> observationListeners = Collections.synchronizedMap(new LinkedHashMap<>());
 	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -643,6 +642,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	 */
 	public void registerObservationContext(IRuntimeScope runtimeContext) {
 
+		this.globalState.setContext(runtimeContext);
+		
 		if (!observationContexts.offerFirst(runtimeContext)) {
 			disposeObservation(observationContexts.pollLast());
 			observationContexts.addFirst(runtimeContext);
@@ -1003,8 +1004,10 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	}
 
 	@MessageHandler
-	private void setRegionOfInterest(SpatialExtent extent) {
+	private synchronized void setRegionOfInterest(SpatialExtent extent) {
 
+		this.globalState.register(extent);
+		
 		Envelope envelope = Envelope.create(extent.getEast(), extent.getWest(), extent.getSouth(), extent.getNorth(),
 				Projection.getLatLon());
 		ScaleReference scale = new ScaleReference();
@@ -1304,6 +1307,9 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	@MessageHandler
 	private void handleLoadApplicationRequest(final LoadApplicationRequest request, final IMessage.Type type) {
+		
+		this.globalState.register(request);
+		
 		switch (type) {
 		case RunApp:
 		case RunUnitTest:
@@ -1330,6 +1336,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	@MessageHandler
 	private void handleViewAction(ViewAction action) {
 
+		this.globalState.register(action);
+		
 		if (action.getOperation() == Operation.UserAction) {
 			@SuppressWarnings("unchecked")
 			IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE
@@ -1488,6 +1496,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	@MessageHandler(type = IMessage.Type.ResetContext)
 	private void handleResetContextRequest(String dummy) {
+		
 		if (!lockSpace.get()) {
 			this.spatialGridSize = null;
 			this.spatialGridUnits = null;
@@ -1499,6 +1508,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		this.regionNameOfInterest = "Region of interest";
 		this.timeOfInterest = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 		monitor.send(IMessage.Type.ResetContext, IMessage.MessageClass.UserContextChange, "");
+		this.globalState.resetContext();
 	}
 
 	/**
@@ -1557,6 +1567,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	@MessageHandler
 	private void handleObservationRequest(final ObservationRequest request) {
 
+		this.globalState.register(request);
+		
 		// TODO add observer to other observer (with parameter in request)
 		// TODO substitute observer to existing context (not done at the moment)
 		if (request.getSearchContextId() != null) {
@@ -1589,6 +1601,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	@MessageHandler(type = IMessage.Type.ScaleDefined)
 	private void handleScaleChangeRequest(ScaleReference scaleRef) {
+		this.globalState.register(scaleRef);
 		this.spatialGridSize = Units.INSTANCE.METERS
 				.convert(scaleRef.getSpaceResolutionConverted(), Unit.create(scaleRef.getSpaceUnit())).doubleValue();
 		this.spatialGridUnits = scaleRef.getSpaceUnit();

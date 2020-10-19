@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
@@ -29,6 +28,7 @@ import org.integratedmodelling.klab.node.resources.FileStorageService;
 import org.integratedmodelling.klab.node.resources.ResourceManager;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.ResourceDataRequest;
+import org.integratedmodelling.klab.rest.ResourceOperationRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -240,4 +240,23 @@ public class ResourceController {
 		resourceManager.updateResource(urn, resource, (EngineAuthorization) principal, Klab.INSTANCE.getRootMonitor());
 	}
 
+	/**
+	 * Update a resource using an operation supported by the resource validator. This will	
+	 * replace the JSON descriptor with the passed one, increment the major version
+	 * number for the resource, and leave the previous version in the history of the
+	 * new resource.
+	 * 
+	 * @param urn       the CURRENT URN of the resource (even if the modification
+	 *                  changes it)
+	 * @param resource  the new body of the resource descriptor. No changes are
+	 *                  allowed besides modifying the resource descriptor; if new
+	 *                  content is needed, delete the resource and reimport.
+	 * @param principal the user
+	 * @return a ticket for
+	 */
+	@PostMapping(value = API.NODE.RESOURCE.UPDATE_URN, consumes = MediaType.APPLICATION_JSON_VALUE)
+	public TicketResponse.Ticket updateResource(@PathVariable String urn, @RequestBody ResourceOperationRequest resource, Principal principal) {
+		return resourceManager.updateResource(urn, resource, (EngineAuthorization) principal, Klab.INSTANCE.getRootMonitor());
+	}
+	
 }

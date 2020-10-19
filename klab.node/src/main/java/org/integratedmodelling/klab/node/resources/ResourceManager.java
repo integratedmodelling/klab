@@ -35,7 +35,9 @@ import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.Role;
 import org.integratedmodelling.klab.node.controllers.EngineController;
 import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.ResourceOperationRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.utils.Pair;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -246,7 +248,7 @@ public class ResourceManager {
 	public String getDefaultNamespace() {
 		return catalog.getDefaultNamespace();
 	}
-	
+
 	public List<Match> queryResources(String query) {
 		return ResourceIndexer.INSTANCE.query(query);
 	}
@@ -294,6 +296,22 @@ public class ResourceManager {
 			return permissions.isAuthorized(user.getUsername(), groups);
 		}
 		return false;
+	}
+
+	/**
+	 * Start an operation on a resource and return a ticket.
+	 * 
+	 * @param urn
+	 * @param resource
+	 * @param principal
+	 * @param rootMonitor
+	 * @return
+	 */
+	public TicketResponse.Ticket updateResource(String urn, ResourceOperationRequest resource,
+			EngineAuthorization principal, IMonitor rootMonitor) {
+		// TODO Auto-generated method stub
+		return null;
+
 	}
 
 }

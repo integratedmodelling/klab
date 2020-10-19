@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.components.geospace.geocoding;
 
-import java.util.concurrent.ExecutionException;
-
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
@@ -16,28 +14,32 @@ public abstract class GeocodingService {
 
 	private RateLimiter rateLimiter;
 	LoadingCache<String, IShape> cache;
-	
+
 	protected GeocodingService(double maxCallsPerSecond) {
 		this.rateLimiter = RateLimiter.create(maxCallsPerSecond);
 		cache = CacheBuilder.newBuilder().maximumSize(16).build(new CacheLoader<String, IShape>() {
 			@Override
 			public IShape load(String key) throws Exception {
 				return null;
-			}});
+			}
+		});
 	}
 
 	public IShape geocode(IEnvelope envelope, IMonitor monitor) {
 		try {
 			return cache.get(envelope.toString(), () -> getAnnotatedRegion(envelope, monitor));
-		} catch (ExecutionException e) {
+		} catch (Throwable e) {
 			// null was returned, nothing was cached
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Convert a Lat/Lon envelope into a shape if possible. The returned shape must
 	 * have the {@link IMetadata#DC_DESCRIPTION} field set in the metadata.
+	 * 
+	 * Because this is used to populate the cache, this must not return null - just
+	 * throw an exception and the cache will rethrow it.
 	 * 
 	 * @param envelope
 	 * @return
