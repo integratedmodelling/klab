@@ -157,6 +157,9 @@ public class Behavior implements IBehavior {
 				break;
 			case TREE:
 				break;
+			case CONSTANT:
+				return (value instanceof Enum && ((Enum<?>) value).name().toUpperCase().equals(this.value.getValue()))
+						|| (value instanceof String && ((String) value).equals(this.value.getValue()));
 			default:
 				break;
 

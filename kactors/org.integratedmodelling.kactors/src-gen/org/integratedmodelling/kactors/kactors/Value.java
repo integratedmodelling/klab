@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getQuantity <em>Quantity</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getConstant <em>Constant</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getMetadata <em>Metadata</em>}</li>
  * </ul>
  *
@@ -275,6 +276,28 @@ public interface Value extends EObject
    * @generated
    */
   void setQuantity(Quantity value);
+
+  /**
+   * Returns the value of the '<em><b>Constant</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Constant</em>' attribute.
+   * @see #setConstant(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Constant()
+   * @model
+   * @generated
+   */
+  String getConstant();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getConstant <em>Constant</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Constant</em>' attribute.
+   * @see #getConstant()
+   * @generated
+   */
+  void setConstant(String value);
 
   /**
    * Returns the value of the '<em><b>Metadata</b></em>' containment reference.

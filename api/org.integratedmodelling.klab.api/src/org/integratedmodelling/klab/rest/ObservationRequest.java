@@ -51,4 +51,12 @@ public class ObservationRequest {
         this.scenarios = scenarios;
     }
 
+	@Override
+	public String toString() {
+		return "ObservationRequest [urn=" + urn + ", contextId=" + contextId + ", searchContextId=" + searchContextId
+				+ ", scenarios=" + scenarios + "]";
+	}
+    
+    
+
 }

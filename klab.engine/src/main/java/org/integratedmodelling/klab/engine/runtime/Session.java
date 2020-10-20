@@ -1004,7 +1004,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	}
 
 	@MessageHandler
-	private synchronized void setRegionOfInterest(SpatialExtent extent) {
+	private void setRegionOfInterest(SpatialExtent extent) {
 
 		this.globalState.register(extent);
 		

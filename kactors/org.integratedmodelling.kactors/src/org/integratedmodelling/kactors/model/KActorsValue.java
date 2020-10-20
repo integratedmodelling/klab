@@ -196,6 +196,9 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		} else if (value.getUrn() != null) {
 			this.type = Type.URN;
 			this.value = value.getUrn();
+		}  else if (value.getConstant() != null) {
+			this.type = Type.CONSTANT;
+			this.value = value.getConstant();
 		} else if (value.getTree() != null) {
 			this.type = Type.TREE;
 			this.value = parseTree(value.getTree(), this);
@@ -253,6 +256,9 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		} else if (match.getList() != null) {
 			this.type = Type.LIST;
 			this.value = parseList(match.getList(), this);
+		}  else if (match.getConstant() != null) {
+			this.type = Type.CONSTANT;
+			this.value = match.getConstant();
 		}
 	}
 

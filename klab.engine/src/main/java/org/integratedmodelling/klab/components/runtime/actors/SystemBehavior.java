@@ -359,9 +359,9 @@ public class SystemBehavior {
 			this.sender = sender;
 			this.message = actionId;
 			this.actionInternalId = actionInternalId;
-			if (arguments != null) {
+//			if (arguments != null) {
 				this.arguments.putAll(arguments);
-			}
+//			}
 			this.scope = scope;
 			this.appId = appId;
 		}

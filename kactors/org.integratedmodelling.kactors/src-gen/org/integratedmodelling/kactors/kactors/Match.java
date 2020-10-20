@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getConstant <em>Constant</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getBoolean <em>Boolean</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getRegexp <em>Regexp</em>}</li>
@@ -79,6 +80,28 @@ public interface Match extends EObject
    * @generated
    */
   void setBody(StatementList value);
+
+  /**
+   * Returns the value of the '<em><b>Constant</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Constant</em>' attribute.
+   * @see #setConstant(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Constant()
+   * @model
+   * @generated
+   */
+  String getConstant();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getConstant <em>Constant</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Constant</em>' attribute.
+   * @see #getConstant()
+   * @generated
+   */
+  void setConstant(String value);
 
   /**
    * Returns the value of the '<em><b>Boolean</b></em>' attribute.

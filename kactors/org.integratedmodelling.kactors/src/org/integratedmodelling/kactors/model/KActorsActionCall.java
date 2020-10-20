@@ -42,6 +42,8 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 
 		if (messageCall.getParameters() != null) {
 			this.arguments = new KActorsArguments(messageCall.getParameters());
+		} else { 
+			this.arguments = new KActorsArguments();
 		}
 
 		if (messageCall.getActions() != null) {

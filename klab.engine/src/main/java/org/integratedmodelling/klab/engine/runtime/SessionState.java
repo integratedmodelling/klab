@@ -112,37 +112,40 @@ public class SessionState extends Parameters<String> {
 
 	public void register(LoadApplicationRequest request) {
 		// TODO Auto-generated method stub
-
+//		System.out.println("ZIO CAN " + request);
 	}
 
 	public void register(ViewAction action) {
 		// TODO Auto-generated method stub
+//		System.out.println("ZIO CAN " + action);
 
 	}
 
 	public void resetContext() {
 		// TODO Auto-generated method stub
+//		System.out.println("ZIO CAN RESET CONTEXT");
 
 	}
 
 	public void register(ObservationRequest request) {
 		// TODO Auto-generated method stub
+//		System.out.println("ZIO CAN " + request);
 
 	}
 
 	public void register(ScaleReference scaleRef) {
 		// TODO Auto-generated method stub
-
+//		System.out.println("ZIO CAN " + scaleRef);
 	}
 
 	public void register(SpatialExtent extent) {
 		// TODO Auto-generated method stub
-
+//		System.out.println("ZIO CAN " + extent);
 	}
 
 	public void setContext(IRuntimeScope runtimeContext) {
 		// TODO Auto-generated method stub
-		
+//		System.out.println("ZIO CAN SET CONTEXT");
 	}
 
 }

@@ -174,6 +174,7 @@ ValueWithMetadata returns Value:
 	 argvalue=ARGVALUE |
 	 literal=Literal |
 	 urn=UrnId | 
+	 constant=UPPERCASE_ID |
 	 id=PathName |
 	 list=List |
 	 map=Map |
@@ -214,6 +215,7 @@ ValueWithMetadataWithoutTree returns Value:
 
 Match:
 	id=LOWERCASE_ID '->' body=StatementList  |
+	constant=UPPERCASE_ID '->' body=StatementList  |
 	boolean=('true'|'false') '->' body=StatementList  |
 	type=CAMELCASE_ID '->' body=StatementList |
 	regexp=REGEXP '->' body=StatementList |

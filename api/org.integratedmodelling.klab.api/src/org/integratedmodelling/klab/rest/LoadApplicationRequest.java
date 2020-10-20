@@ -79,4 +79,11 @@ public class LoadApplicationRequest {
 		this.stop = stop;
 	}
 
+	@Override
+	public String toString() {
+		return "LoadApplicationRequest [behavior=" + behavior + ", stop=" + stop + ", parameters=" + parameters + "]";
+	}
+
+	
+	
 }

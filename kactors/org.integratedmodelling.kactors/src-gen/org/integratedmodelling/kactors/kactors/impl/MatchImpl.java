@@ -30,6 +30,7 @@ import org.integratedmodelling.kactors.kactors.StatementList;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getConstant <em>Constant</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getBoolean <em>Boolean</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getRegexp <em>Regexp</em>}</li>
@@ -77,6 +78,26 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @ordered
    */
   protected StatementList body;
+
+  /**
+   * The default value of the '{@link #getConstant() <em>Constant</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getConstant()
+   * @generated
+   * @ordered
+   */
+  protected static final String CONSTANT_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getConstant() <em>Constant</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getConstant()
+   * @generated
+   * @ordered
+   */
+  protected String constant = CONSTANT_EDEFAULT;
 
   /**
    * The default value of the '{@link #getBoolean() <em>Boolean</em>}' attribute.
@@ -362,6 +383,31 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__BODY, newBody, newBody));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getConstant()
+  {
+    return constant;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setConstant(String newConstant)
+  {
+    String oldConstant = constant;
+    constant = newConstant;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__CONSTANT, oldConstant, constant));
   }
 
   /**
@@ -829,6 +875,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return getId();
       case KactorsPackage.MATCH__BODY:
         return getBody();
+      case KactorsPackage.MATCH__CONSTANT:
+        return getConstant();
       case KactorsPackage.MATCH__BOOLEAN:
         return getBoolean();
       case KactorsPackage.MATCH__TYPE:
@@ -872,6 +920,9 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return;
       case KactorsPackage.MATCH__BODY:
         setBody((StatementList)newValue);
+        return;
+      case KactorsPackage.MATCH__CONSTANT:
+        setConstant((String)newValue);
         return;
       case KactorsPackage.MATCH__BOOLEAN:
         setBoolean((String)newValue);
@@ -929,6 +980,9 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
       case KactorsPackage.MATCH__BODY:
         setBody((StatementList)null);
         return;
+      case KactorsPackage.MATCH__CONSTANT:
+        setConstant(CONSTANT_EDEFAULT);
+        return;
       case KactorsPackage.MATCH__BOOLEAN:
         setBoolean(BOOLEAN_EDEFAULT);
         return;
@@ -983,6 +1037,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KactorsPackage.MATCH__BODY:
         return body != null;
+      case KactorsPackage.MATCH__CONSTANT:
+        return CONSTANT_EDEFAULT == null ? constant != null : !CONSTANT_EDEFAULT.equals(constant);
       case KactorsPackage.MATCH__BOOLEAN:
         return BOOLEAN_EDEFAULT == null ? boolean_ != null : !BOOLEAN_EDEFAULT.equals(boolean_);
       case KactorsPackage.MATCH__TYPE:
@@ -1024,6 +1080,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (id: ");
     result.append(id);
+    result.append(", constant: ");
+    result.append(constant);
     result.append(", boolean: ");
     result.append(boolean_);
     result.append(", type: ");

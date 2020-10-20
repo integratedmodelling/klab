@@ -1294,13 +1294,22 @@ public interface KactorsPackage extends EPackage
   int VALUE__QUANTITY = 10;
 
   /**
+   * The feature id for the '<em><b>Constant</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__CONSTANT = 11;
+
+  /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__METADATA = 11;
+  int VALUE__METADATA = 12;
 
   /**
    * The number of structural features of the '<em>Value</em>' class.
@@ -1309,7 +1318,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 12;
+  int VALUE_FEATURE_COUNT = 13;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl <em>Match</em>}' class.
@@ -1340,13 +1349,22 @@ public interface KactorsPackage extends EPackage
   int MATCH__BODY = 1;
 
   /**
+   * The feature id for the '<em><b>Constant</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MATCH__CONSTANT = 2;
+
+  /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MATCH__BOOLEAN = 2;
+  int MATCH__BOOLEAN = 3;
 
   /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -1355,7 +1373,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__TYPE = 3;
+  int MATCH__TYPE = 4;
 
   /**
    * The feature id for the '<em><b>Regexp</b></em>' attribute.
@@ -1364,7 +1382,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__REGEXP = 4;
+  int MATCH__REGEXP = 5;
 
   /**
    * The feature id for the '<em><b>Observable</b></em>' containment reference.
@@ -1373,7 +1391,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__OBSERVABLE = 5;
+  int MATCH__OBSERVABLE = 6;
 
   /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
@@ -1382,7 +1400,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__LITERAL = 6;
+  int MATCH__LITERAL = 7;
 
   /**
    * The feature id for the '<em><b>List</b></em>' containment reference.
@@ -1391,7 +1409,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__LIST = 7;
+  int MATCH__LIST = 8;
 
   /**
    * The feature id for the '<em><b>Set</b></em>' containment reference.
@@ -1400,7 +1418,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__SET = 8;
+  int MATCH__SET = 9;
 
   /**
    * The feature id for the '<em><b>Quantity</b></em>' containment reference.
@@ -1409,7 +1427,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__QUANTITY = 9;
+  int MATCH__QUANTITY = 10;
 
   /**
    * The feature id for the '<em><b>Expr</b></em>' attribute.
@@ -1418,7 +1436,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__EXPR = 10;
+  int MATCH__EXPR = 11;
 
   /**
    * The feature id for the '<em><b>Nodata</b></em>' attribute.
@@ -1427,7 +1445,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__NODATA = 11;
+  int MATCH__NODATA = 12;
 
   /**
    * The feature id for the '<em><b>Star</b></em>' attribute.
@@ -1436,7 +1454,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__STAR = 12;
+  int MATCH__STAR = 13;
 
   /**
    * The feature id for the '<em><b>Anything</b></em>' attribute.
@@ -1445,7 +1463,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__ANYTHING = 13;
+  int MATCH__ANYTHING = 14;
 
   /**
    * The number of structural features of the '<em>Match</em>' class.
@@ -1454,7 +1472,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH_FEATURE_COUNT = 14;
+  int MATCH_FEATURE_COUNT = 15;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ListImpl <em>List</em>}' class.
@@ -4622,6 +4640,17 @@ public interface KactorsPackage extends EPackage
   EReference getValue_Quantity();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#getConstant <em>Constant</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Constant</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#getConstant()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Constant();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getMetadata <em>Metadata</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4663,6 +4692,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getMatch_Body();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Match#getConstant <em>Constant</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Constant</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Match#getConstant()
+   * @see #getMatch()
+   * @generated
+   */
+  EAttribute getMatch_Constant();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Match#getBoolean <em>Boolean</em>}'.
@@ -7774,6 +7814,14 @@ public interface KactorsPackage extends EPackage
     EReference VALUE__QUANTITY = eINSTANCE.getValue_Quantity();
 
     /**
+     * The meta object literal for the '<em><b>Constant</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__CONSTANT = eINSTANCE.getValue_Constant();
+
+    /**
      * The meta object literal for the '<em><b>Metadata</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -7806,6 +7854,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference MATCH__BODY = eINSTANCE.getMatch_Body();
+
+    /**
+     * The meta object literal for the '<em><b>Constant</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MATCH__CONSTANT = eINSTANCE.getMatch_Constant();
 
     /**
      * The meta object literal for the '<em><b>Boolean</b></em>' attribute feature.

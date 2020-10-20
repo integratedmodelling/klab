@@ -177,6 +177,7 @@ public enum Actors implements IActorsService {
 		layoutMetadata.add("altbg");
 		layoutMetadata.add("tooltip");
 		layoutMetadata.add("ellipsis");
+		layoutMetadata.add("multiple");
 	}
 
 	public IBehavior getBehavior(String behaviorId) {

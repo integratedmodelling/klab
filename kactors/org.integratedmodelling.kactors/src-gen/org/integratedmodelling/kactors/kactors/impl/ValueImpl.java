@@ -42,6 +42,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getQuantity <em>Quantity</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getConstant <em>Constant</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getMetadata <em>Metadata</em>}</li>
  * </ul>
  *
@@ -198,6 +199,26 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected Quantity quantity;
+
+  /**
+   * The default value of the '{@link #getConstant() <em>Constant</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getConstant()
+   * @generated
+   * @ordered
+   */
+  protected static final String CONSTANT_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getConstant() <em>Constant</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getConstant()
+   * @generated
+   * @ordered
+   */
+  protected String constant = CONSTANT_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
@@ -686,6 +707,31 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
+  public String getConstant()
+  {
+    return constant;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setConstant(String newConstant)
+  {
+    String oldConstant = constant;
+    constant = newConstant;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__CONSTANT, oldConstant, constant));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Metadata getMetadata()
   {
     return metadata;
@@ -792,6 +838,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getTable();
       case KactorsPackage.VALUE__QUANTITY:
         return getQuantity();
+      case KactorsPackage.VALUE__CONSTANT:
+        return getConstant();
       case KactorsPackage.VALUE__METADATA:
         return getMetadata();
     }
@@ -840,6 +888,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KactorsPackage.VALUE__QUANTITY:
         setQuantity((Quantity)newValue);
+        return;
+      case KactorsPackage.VALUE__CONSTANT:
+        setConstant((String)newValue);
         return;
       case KactorsPackage.VALUE__METADATA:
         setMetadata((Metadata)newValue);
@@ -891,6 +942,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__QUANTITY:
         setQuantity((Quantity)null);
         return;
+      case KactorsPackage.VALUE__CONSTANT:
+        setConstant(CONSTANT_EDEFAULT);
+        return;
       case KactorsPackage.VALUE__METADATA:
         setMetadata((Metadata)null);
         return;
@@ -930,6 +984,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return table != null;
       case KactorsPackage.VALUE__QUANTITY:
         return quantity != null;
+      case KactorsPackage.VALUE__CONSTANT:
+        return CONSTANT_EDEFAULT == null ? constant != null : !CONSTANT_EDEFAULT.equals(constant);
       case KactorsPackage.VALUE__METADATA:
         return metadata != null;
     }
@@ -955,6 +1011,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     result.append(id);
     result.append(", expression: ");
     result.append(expression);
+    result.append(", constant: ");
+    result.append(constant);
     result.append(')');
     return result.toString();
   }
