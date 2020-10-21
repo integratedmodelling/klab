@@ -71,13 +71,21 @@ import akka.actor.typed.javadsl.Behaviors;
 import akka.actor.typed.javadsl.Receive;
 import akka.actor.typed.javadsl.ReceiveBuilder;
 
+/**
+ * The base actor implementation for k.Actors. Linked to an identity and capable
+ * of interpreting k.Actors code, whose interpreter is implemented here.
+ * 
+ * @author Ferd
+ *
+ */
 public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	protected IBehavior behavior;
-	// this is set when a behavior is loaded and used to create proper actor paths
-	// for application components, so that
-	// user messages can be sent to the main application actor and directed to the
-	// actor that implements them.
+	/*
+	 * this is set when a behavior is loaded and used to create proper actor paths
+	 * for application components, so that user messages can be sent to the main
+	 * application actor and directed to the actor that implements them.
+	 */
 	private String childActorPath = null;
 	protected String appId;
 	protected IActorIdentity<KlabMessage> identity;
@@ -87,7 +95,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private Map<String, Long> actionBindings = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, ActorRef<KlabMessage>> receivers = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, List<ActorRef<KlabMessage>>> childInstances = Collections.synchronizedMap(new HashMap<>());
-//	private Map<String, Consumer<Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
 
 	/*
 	 * This is the parent that generated us through a 'new' instruction, if any.
@@ -105,12 +112,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	 * so we can talk to them from k.Actors
 	 */
 	private Map<String, KlabActionExecutor.Actor> localActionExecutors = Collections.synchronizedMap(new HashMap<>());
-
-//	/*
-//	 * if we have a view (either a layout for an app or a component for a component)
-//	 * we put it here at initialization.
-//	 */
-//	private ViewComponent view;
 
 	protected ActorRef<KlabMessage> getDispatcher() {
 		if (this.appId == null) {
@@ -445,14 +446,18 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	private Object getActionValue(ViewAction action) {
-		if (action.getStringValue() != null) {
+		if (action.isBooleanValue() != null) {
+			return action.isBooleanValue();
+		} else if (action.getStringValue() != null) {
 			return action.getStringValue();
 		} else if (action.getDateValue() != null) {
 			return action.getDoubleValue();
-		} else if (action.getIntValue() != null) {
-			return action.getIntValue();
 		} else if (action.getDoubleValue() != null) {
 			return action.getDoubleValue();
+		} else if (action.getIntValue() != null) {
+			// ACHTUNG Jackson sticks a 0 in here even if the incoming JSON has null. MUST
+			// keep this check last!
+			return action.getIntValue();
 		}
 		return null;
 	}
@@ -650,7 +655,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 	private void executeIf(If code, Scope scope) {
 		// TODO Auto-generated method stub
-
+//		Object check = evaluateInScope((KActorsValue)code.getCondition(), scope);
+		System.out.println("IF");
 	}
 
 	private void executeFor(For code, Scope scope) {

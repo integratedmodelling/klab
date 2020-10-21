@@ -41,6 +41,7 @@ public class ViewAction {
 	private List<String> listValue = null;
 	private Map<String, String> data = null;
 	private Operation operation = Operation.UserAction;
+//	private boolean booleanSet = false;
 
 	public ViewAction() {
 	}
@@ -70,6 +71,7 @@ public class ViewAction {
 
 	public void setBooleanValue(boolean booleanValue) {
 		this.booleanValue = booleanValue;
+//		this.booleanSet = true;
 	}
 
 	public Double getDoubleValue() {
@@ -158,6 +160,14 @@ public class ViewAction {
 	public void setListValue(List<String> listValue) {
 		this.listValue = listValue;
 	}
+
+//	public boolean isBooleanSet() {
+//		return booleanSet;
+//	}
+//
+//	public void setBooleanSet(boolean booleanSet) {
+//		this.booleanSet = booleanSet;
+//	}
 	
 	
 

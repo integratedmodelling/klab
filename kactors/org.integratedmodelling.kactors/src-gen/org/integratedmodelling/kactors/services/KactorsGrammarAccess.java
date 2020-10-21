@@ -634,7 +634,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	public class ActorInstantiationElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.ActorInstantiation");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Keyword cNewKeyword_0 = (Keyword)cGroup.eContents().get(0);
+		private final Keyword cCreateKeyword_0 = (Keyword)cGroup.eContents().get(0);
 		private final Assignment cBehaviorAssignment_1 = (Assignment)cGroup.eContents().get(1);
 		private final RuleCall cBehaviorPathNameParserRuleCall_1_0 = (RuleCall)cBehaviorAssignment_1.eContents().get(0);
 		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
@@ -648,14 +648,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cActionsActionsParserRuleCall_3_1_0 = (RuleCall)cActionsAssignment_3_1.eContents().get(0);
 		
 		//ActorInstantiation:
-		//	'new' behavior=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions)?;
+		//	'create' behavior=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'new' behavior=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions)?
+		//'create' behavior=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions)?
 		public Group getGroup() { return cGroup; }
 		
-		//'new'
-		public Keyword getNewKeyword_0() { return cNewKeyword_0; }
+		//'create'
+		public Keyword getCreateKeyword_0() { return cCreateKeyword_0; }
 		
 		//behavior=PathName
 		public Assignment getBehaviorAssignment_1() { return cBehaviorAssignment_1; }
@@ -1163,8 +1163,13 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.IfStatement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cIfKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final Assignment cExpressionAssignment_1 = (Assignment)cGroup.eContents().get(1);
-		private final RuleCall cExpressionEXPRTerminalRuleCall_1_0 = (RuleCall)cExpressionAssignment_1.eContents().get(0);
+		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
+		private final Assignment cLiteralAssignment_1_0 = (Assignment)cAlternatives_1.eContents().get(0);
+		private final RuleCall cLiteralLiteralParserRuleCall_1_0_0 = (RuleCall)cLiteralAssignment_1_0.eContents().get(0);
+		private final Assignment cExpressionAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
+		private final RuleCall cExpressionEXPRTerminalRuleCall_1_1_0 = (RuleCall)cExpressionAssignment_1_1.eContents().get(0);
+		private final Assignment cVariableAssignment_1_2 = (Assignment)cAlternatives_1.eContents().get(2);
+		private final RuleCall cVariableLOWERCASE_IDTerminalRuleCall_1_2_0 = (RuleCall)cVariableAssignment_1_2.eContents().get(0);
 		private final Assignment cBodyAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cBodyStatementBodyParserRuleCall_2_0 = (RuleCall)cBodyAssignment_2.eContents().get(0);
 		private final Group cGroup_3 = (Group)cGroup.eContents().get(3);
@@ -1180,22 +1185,37 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cElseCallStatementBodyParserRuleCall_4_1_0 = (RuleCall)cElseCallAssignment_4_1.eContents().get(0);
 		
 		//IfStatement:
-		//	'if' expression=EXPR body=StatementBody ('else' 'if' elseIfExpression+=EXPR elseIfBody+=StatementBody)* ('else'
-		//	elseCall=StatementBody)?;
+		//	'if' (literal=Literal | expression=EXPR | variable=LOWERCASE_ID) body=StatementBody ('else' 'if'
+		//	elseIfExpression+=EXPR elseIfBody+=StatementBody)* ('else' elseCall=StatementBody)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'if' expression=EXPR body=StatementBody ('else' 'if' elseIfExpression+=EXPR elseIfBody+=StatementBody)* ('else'
-		//elseCall=StatementBody)?
+		//'if' (literal=Literal | expression=EXPR | variable=LOWERCASE_ID) body=StatementBody ('else' 'if' elseIfExpression+=EXPR
+		//elseIfBody+=StatementBody)* ('else' elseCall=StatementBody)?
 		public Group getGroup() { return cGroup; }
 		
 		//'if'
 		public Keyword getIfKeyword_0() { return cIfKeyword_0; }
 		
+		//(literal=Literal | expression=EXPR | variable=LOWERCASE_ID)
+		public Alternatives getAlternatives_1() { return cAlternatives_1; }
+		
+		//literal=Literal
+		public Assignment getLiteralAssignment_1_0() { return cLiteralAssignment_1_0; }
+		
+		//Literal
+		public RuleCall getLiteralLiteralParserRuleCall_1_0_0() { return cLiteralLiteralParserRuleCall_1_0_0; }
+		
 		//expression=EXPR
-		public Assignment getExpressionAssignment_1() { return cExpressionAssignment_1; }
+		public Assignment getExpressionAssignment_1_1() { return cExpressionAssignment_1_1; }
 		
 		//EXPR
-		public RuleCall getExpressionEXPRTerminalRuleCall_1_0() { return cExpressionEXPRTerminalRuleCall_1_0; }
+		public RuleCall getExpressionEXPRTerminalRuleCall_1_1_0() { return cExpressionEXPRTerminalRuleCall_1_1_0; }
+		
+		//variable=LOWERCASE_ID
+		public Assignment getVariableAssignment_1_2() { return cVariableAssignment_1_2; }
+		
+		//LOWERCASE_ID
+		public RuleCall getVariableLOWERCASE_IDTerminalRuleCall_1_2_0() { return cVariableLOWERCASE_IDTerminalRuleCall_1_2_0; }
 		
 		//body=StatementBody
 		public Assignment getBodyAssignment_2() { return cBodyAssignment_2; }
@@ -6002,7 +6022,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ActorInstantiation:
-	//	'new' behavior=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions)?;
+	//	'create' behavior=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions)?;
 	public ActorInstantiationElements getActorInstantiationAccess() {
 		return pActorInstantiation;
 	}
@@ -6095,8 +6115,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//IfStatement:
-	//	'if' expression=EXPR body=StatementBody ('else' 'if' elseIfExpression+=EXPR elseIfBody+=StatementBody)* ('else'
-	//	elseCall=StatementBody)?;
+	//	'if' (literal=Literal | expression=EXPR | variable=LOWERCASE_ID) body=StatementBody ('else' 'if'
+	//	elseIfExpression+=EXPR elseIfBody+=StatementBody)* ('else' elseCall=StatementBody)?;
 	public IfStatementElements getIfStatementAccess() {
 		return pIfStatement;
 	}

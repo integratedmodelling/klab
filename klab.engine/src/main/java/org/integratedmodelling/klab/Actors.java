@@ -412,7 +412,7 @@ public enum Actors implements IActorsService {
 				descriptor.getActions().add(ad);
 				this.actionClasses.put(message.id(),
 						new Pair<>(annotation.id(), (Class<? extends KlabActionExecutor>) cl));
-				if (KlabWidgetActionExecutor.class.isAssignableFrom(cl)) {
+				if (KlabActionExecutor.class.isAssignableFrom(cl)) {
 					this.viewActionClasses.put(message.id(),
 							new Pair<>(annotation.id(), (Class<? extends KlabWidgetActionExecutor>) cl));
 				}

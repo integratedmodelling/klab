@@ -15,7 +15,6 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor.Component;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
-import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.BindUserAction;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -323,7 +322,7 @@ public class ViewBehavior {
 		public ViewComponent createViewComponent(Scope scope) {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Label);
-			message.setContent(this.evaluateArgument(0, scope, "Label text"));
+			message.setContent(this.evaluateArgument(0, scope, null));
 			message.getAttributes().putAll(getMetadata(arguments, scope));
 			return message;
 		}
@@ -479,7 +478,7 @@ public class ViewBehavior {
 		}
 
 	}
-	
+
 	/**
 	 * Bound to the %%% .... %%% template syntax; handled directly by actors. Can
 	 * also be referenced directly.

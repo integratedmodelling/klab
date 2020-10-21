@@ -101,6 +101,10 @@ public class KactorsHighlightingCalculator extends DefaultSemanticHighlightingCa
 							acceptor.addPosition((start = node.getOffset()), node.getLength(),
 									KactorsHighlightingConfiguration.SESSION_VERB_ID);
 							break;
+						case EXPLORER:
+							acceptor.addPosition((start = node.getOffset()), node.getLength(),
+									KactorsHighlightingConfiguration.EXPLORER_VERB_ID);
+							break;
 						case STATE:
 							acceptor.addPosition((start = node.getOffset()), node.getLength(),
 									KactorsHighlightingConfiguration.STATE_VERB_ID);

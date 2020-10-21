@@ -41,6 +41,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getMessageCallAccess().getAlternatives_0(), "rule__MessageCall__Alternatives_0");
 			builder.put(grammarAccess.getStatementAccess().getAlternatives_0(), "rule__Statement__Alternatives_0");
 			builder.put(grammarAccess.getNextStatementAccess().getAlternatives_1(), "rule__NextStatement__Alternatives_1");
+			builder.put(grammarAccess.getIfStatementAccess().getAlternatives_1(), "rule__IfStatement__Alternatives_1");
 			builder.put(grammarAccess.getStatementBodyAccess().getAlternatives(), "rule__StatementBody__Alternatives");
 			builder.put(grammarAccess.getActionsAccess().getAlternatives(), "rule__Actions__Alternatives");
 			builder.put(grammarAccess.getValueAccess().getAlternatives(), "rule__Value__Alternatives");
@@ -375,7 +376,9 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getAssignmentAccess().getRecipientAssignment_1_0(), "rule__Assignment__RecipientAssignment_1_0");
 			builder.put(grammarAccess.getAssignmentAccess().getVariableAssignment_2(), "rule__Assignment__VariableAssignment_2");
 			builder.put(grammarAccess.getAssignmentAccess().getValueAssignment_3(), "rule__Assignment__ValueAssignment_3");
-			builder.put(grammarAccess.getIfStatementAccess().getExpressionAssignment_1(), "rule__IfStatement__ExpressionAssignment_1");
+			builder.put(grammarAccess.getIfStatementAccess().getLiteralAssignment_1_0(), "rule__IfStatement__LiteralAssignment_1_0");
+			builder.put(grammarAccess.getIfStatementAccess().getExpressionAssignment_1_1(), "rule__IfStatement__ExpressionAssignment_1_1");
+			builder.put(grammarAccess.getIfStatementAccess().getVariableAssignment_1_2(), "rule__IfStatement__VariableAssignment_1_2");
 			builder.put(grammarAccess.getIfStatementAccess().getBodyAssignment_2(), "rule__IfStatement__BodyAssignment_2");
 			builder.put(grammarAccess.getIfStatementAccess().getElseIfExpressionAssignment_3_2(), "rule__IfStatement__ElseIfExpressionAssignment_3_2");
 			builder.put(grammarAccess.getIfStatementAccess().getElseIfBodyAssignment_3_3(), "rule__IfStatement__ElseIfBodyAssignment_3_3");

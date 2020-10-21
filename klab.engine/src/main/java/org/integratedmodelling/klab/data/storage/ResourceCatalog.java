@@ -98,7 +98,8 @@ public class ResourceCatalog implements IResourceCatalog {
 			// sync resources, resulting in stack overflow.
 			IKimProject project = Kim.INSTANCE.getProject(resource.getLocalProjectName());
 			if (project == null) {
-				throw new KlabIOException("resource belongs to invalid project " + resource.getLocalProjectName());
+				throw new KlabIOException("resource " + resource.getUrn() + " belongs to invalid project "
+						+ resource.getLocalProjectName());
 			}
 			resPath = resPath.substring(resource.getLocalProjectName().length() + 1);
 			ret = new File(project.getRoot() + File.separator + resPath);
@@ -142,11 +143,11 @@ public class ResourceCatalog implements IResourceCatalog {
 
 		return null;
 	}
-	
+
 	public void addInlineResource(IResource resource) {
 		this.inlineResources.put(resource.getUrn(), resource);
 	}
-	
+
 	@Override
 	public IResource put(String key, IResource value) {
 
@@ -332,7 +333,7 @@ public class ResourceCatalog implements IResourceCatalog {
 
 	@Override
 	public IResource update(IResource resource, String message) {
-		return update(((Resource)resource).getReference());
+		return update(((Resource) resource).getReference());
 	}
 
 }

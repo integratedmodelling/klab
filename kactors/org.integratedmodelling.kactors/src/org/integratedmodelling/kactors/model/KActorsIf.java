@@ -10,6 +10,8 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class KActorsIf extends KActorsStatement implements If {
 	
+	IKActorsValue condition;
+	
 	public KActorsIf(IfStatement ifStatement, KActorCodeStatement parent) {
 		super(ifStatement, parent, Type.IF_STATEMENT);
 	}

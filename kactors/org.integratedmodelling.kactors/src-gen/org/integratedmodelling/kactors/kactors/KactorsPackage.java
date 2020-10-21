@@ -910,13 +910,31 @@ public interface KactorsPackage extends EPackage
   int IF_STATEMENT = 13;
 
   /**
+   * The feature id for the '<em><b>Literal</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IF_STATEMENT__LITERAL = 0;
+
+  /**
    * The feature id for the '<em><b>Expression</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int IF_STATEMENT__EXPRESSION = 0;
+  int IF_STATEMENT__EXPRESSION = 1;
+
+  /**
+   * The feature id for the '<em><b>Variable</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IF_STATEMENT__VARIABLE = 2;
 
   /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
@@ -925,7 +943,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IF_STATEMENT__BODY = 1;
+  int IF_STATEMENT__BODY = 3;
 
   /**
    * The feature id for the '<em><b>Else If Expression</b></em>' attribute list.
@@ -934,7 +952,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IF_STATEMENT__ELSE_IF_EXPRESSION = 2;
+  int IF_STATEMENT__ELSE_IF_EXPRESSION = 4;
 
   /**
    * The feature id for the '<em><b>Else If Body</b></em>' containment reference list.
@@ -943,7 +961,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IF_STATEMENT__ELSE_IF_BODY = 3;
+  int IF_STATEMENT__ELSE_IF_BODY = 5;
 
   /**
    * The feature id for the '<em><b>Else Call</b></em>' containment reference.
@@ -952,7 +970,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IF_STATEMENT__ELSE_CALL = 4;
+  int IF_STATEMENT__ELSE_CALL = 6;
 
   /**
    * The number of structural features of the '<em>If Statement</em>' class.
@@ -961,7 +979,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IF_STATEMENT_FEATURE_COUNT = 5;
+  int IF_STATEMENT_FEATURE_COUNT = 7;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.StatementBodyImpl <em>Statement Body</em>}' class.
@@ -4268,6 +4286,17 @@ public interface KactorsPackage extends EPackage
   EClass getIfStatement();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.IfStatement#getLiteral <em>Literal</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Literal</em>'.
+   * @see org.integratedmodelling.kactors.kactors.IfStatement#getLiteral()
+   * @see #getIfStatement()
+   * @generated
+   */
+  EReference getIfStatement_Literal();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.IfStatement#getExpression <em>Expression</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4277,6 +4306,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EAttribute getIfStatement_Expression();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.IfStatement#getVariable <em>Variable</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Variable</em>'.
+   * @see org.integratedmodelling.kactors.kactors.IfStatement#getVariable()
+   * @see #getIfStatement()
+   * @generated
+   */
+  EAttribute getIfStatement_Variable();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.IfStatement#getBody <em>Body</em>}'.
@@ -7554,12 +7594,28 @@ public interface KactorsPackage extends EPackage
     EClass IF_STATEMENT = eINSTANCE.getIfStatement();
 
     /**
+     * The meta object literal for the '<em><b>Literal</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference IF_STATEMENT__LITERAL = eINSTANCE.getIfStatement_Literal();
+
+    /**
      * The meta object literal for the '<em><b>Expression</b></em>' attribute feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EAttribute IF_STATEMENT__EXPRESSION = eINSTANCE.getIfStatement_Expression();
+
+    /**
+     * The meta object literal for the '<em><b>Variable</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute IF_STATEMENT__VARIABLE = eINSTANCE.getIfStatement_Variable();
 
     /**
      * The meta object literal for the '<em><b>Body</b></em>' containment reference feature.
