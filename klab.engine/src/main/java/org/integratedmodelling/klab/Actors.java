@@ -158,6 +158,10 @@ public enum Actors implements IActorsService {
 		layoutMetadata.add("bg");
 		layoutMetadata.add("bwidth");
 		layoutMetadata.add("checked");
+		layoutMetadata.add("waiting");
+		layoutMetadata.add("computing");
+		layoutMetadata.add("error");
+		layoutMetadata.add("done");
 		layoutMetadata.add("bstyle");
 		layoutMetadata.add("fstyle");
 		layoutMetadata.add("fsize");
