@@ -200,10 +200,10 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	private SessionState globalState = new SessionState(this);
 	private View view;
 	Map<String, ISession.ObservationListener> observationListeners = Collections.synchronizedMap(new LinkedHashMap<>());
-	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
 	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
 	ITime timeOfInterest = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 
+	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
 	public interface ROIListener {
 
 		public void onChange(SpatialExtent extent);

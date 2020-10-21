@@ -63,7 +63,7 @@ ArgumentDeclaration: {ArgumentDeclaration}
 MessageBody: {MessageBody} lists+=StatementList*;
 
 ActorInstantiation:
-	'new' behavior=PathName ('(' (parameters=ParameterList)? ')')? (':' actions=Actions)?
+	'create' behavior=PathName ('(' (parameters=ParameterList)? ')')? (':' actions=Actions)?
 ;
 
 MessageCall:
@@ -123,7 +123,8 @@ Assignment:
 ;
 
 IfStatement:
-	'if' expression=EXPR body=StatementBody	
+	'if' (literal=Literal | expression=EXPR | variable=LOWERCASE_ID) 
+		body=StatementBody	
 		('else' 'if' elseIfExpression+=EXPR elseIfBody+=StatementBody)* 
 		('else' elseCall=StatementBody)?
 ;

@@ -158,6 +158,10 @@ public enum Actors implements IActorsService {
 		layoutMetadata.add("bg");
 		layoutMetadata.add("bwidth");
 		layoutMetadata.add("checked");
+		layoutMetadata.add("waiting");
+		layoutMetadata.add("computing");
+		layoutMetadata.add("error");
+		layoutMetadata.add("done");
 		layoutMetadata.add("bstyle");
 		layoutMetadata.add("fstyle");
 		layoutMetadata.add("fsize");
@@ -408,7 +412,7 @@ public enum Actors implements IActorsService {
 				descriptor.getActions().add(ad);
 				this.actionClasses.put(message.id(),
 						new Pair<>(annotation.id(), (Class<? extends KlabActionExecutor>) cl));
-				if (KlabWidgetActionExecutor.class.isAssignableFrom(cl)) {
+				if (KlabActionExecutor.class.isAssignableFrom(cl)) {
 					this.viewActionClasses.put(message.id(),
 							new Pair<>(annotation.id(), (Class<? extends KlabWidgetActionExecutor>) cl));
 				}

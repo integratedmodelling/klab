@@ -48,6 +48,7 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 	public static final String UNKNOWN_VERB_ID = "unknownverb";
 	public static final String VIEW_VERB_ID = "viewverb";
 	public static final String SESSION_VERB_ID = "sessionverb";
+	public static final String EXPLORER_VERB_ID = "explorerverb";
 	public static final String LOCAL_VERB_ID = "localverb";
 	public static final String IMPORTED_VERB_ID = "importedverb";
 	public static final String OBJECT_VERB_ID = "objectverb";
@@ -97,6 +98,7 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 		acceptor.acceptDefaultHighlighting(UNKNOWN_VERB_ID, "Unknown action", unknownVerbTextStyle());
 		acceptor.acceptDefaultHighlighting(VIEW_VERB_ID, "View action", viewVerbTextStyle());
 		acceptor.acceptDefaultHighlighting(SESSION_VERB_ID, "Session action", sessionVerbTextStyle());
+		acceptor.acceptDefaultHighlighting(EXPLORER_VERB_ID, "Explorer action", explorerVerbTextStyle());
 		acceptor.acceptDefaultHighlighting(LOCAL_VERB_ID, "Local action", localVerbTextStyle());
 		acceptor.acceptDefaultHighlighting(IMPORTED_VERB_ID, "Imported action", importedVerbTextStyle());
 		acceptor.acceptDefaultHighlighting(OBJECT_VERB_ID, "Object action", objectVerbTextStyle());
@@ -303,6 +305,13 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 	protected TextStyle sessionVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
 		textStyle.setColor(new RGB(204, 68, 10));
+		textStyle.setStyle(SWT.BOLD);
+		return textStyle;
+	}
+	
+	protected TextStyle explorerVerbTextStyle() {
+		TextStyle textStyle = defaultTextStyle().copy();
+		textStyle.setColor(new RGB(218,165,32));
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}

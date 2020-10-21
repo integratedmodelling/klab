@@ -129,9 +129,9 @@ public class Engine extends Server implements IEngine, UserDetails {
 		}
 
 		public void setError(Throwable e) {
-			this.errorCount ++;
+			this.errorCount++;
 		}
-		
+
 		public List<Listener> getListeners() {
 			return listeners;
 		}
@@ -401,8 +401,6 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 	public boolean stop() {
 
-		
-		
 		// shutdown all components
 		if (this.sessionClosingTask != null) {
 			this.sessionClosingTask.cancel(true);
@@ -449,7 +447,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 		// shutdown the runtime
 		Klab.INSTANCE.getRuntimeProvider().shutdown();
-		
+
 		return true;
 	}
 
@@ -581,7 +579,13 @@ public class Engine extends Server implements IEngine, UserDetails {
 			/*
 			 * load component knowledge after all binary content is registered.
 			 */
-			Resources.INSTANCE.getComponentsWorkspace().load(getMonitor());
+			try {
+				Resources.INSTANCE.getComponentsWorkspace().load(getMonitor());
+			} catch (Throwable t) {
+				Logging.INSTANCE
+						.error("Component workspace contains errors: proceed at your own risk. Error message was: "
+								+ t.getMessage());
+			}
 
 			/*
 			 * save cache of function prototypes and resolved URNs for clients
@@ -635,7 +639,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 			Resources.INSTANCE.loadServiceWorkspace(this.monitor);
 
 			Actors.INSTANCE.loadUserBehaviors();
-			
+
 			/*
 			 * boot time is now
 			 */

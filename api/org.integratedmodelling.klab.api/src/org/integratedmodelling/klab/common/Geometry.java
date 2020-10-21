@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -103,7 +104,6 @@ public class Geometry implements IGeometry {
 					+ (geometry == null ? "" : geometry.toString()) + (offsets == null ? "" : Arrays.toString(offsets))
 					+ ">";
 		}
-
 	}
 
 	public static List<DimensionTarget> separateTargets(Object... locators) {
@@ -271,6 +271,17 @@ public class Geometry implements IGeometry {
 
 	public static Geometry create(String geometry) {
 		return makeGeometry(geometry, 0);
+	}
+	
+	/**
+	 * Create a geometry from a structured bean
+	 * @param bean
+	 * @return
+	 */
+	public static Geometry create(ScaleReference bean) {
+		Geometry ret = new Geometry();
+		// TODO
+		return ret;
 	}
 
 	private static Geometry create(Iterable<Dimension> dims) {
@@ -1318,6 +1329,16 @@ public class Geometry implements IGeometry {
 	}
 
 	public Geometry withGridResolution(IKimQuantity value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Geometry withTemporalEnd(Object value) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public Geometry withTemporalStart(Object value) {
 		// TODO Auto-generated method stub
 		return null;
 	}
