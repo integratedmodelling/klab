@@ -1466,13 +1466,31 @@ public interface KactorsPackage extends EPackage
   int MATCH__ANYTHING = 14;
 
   /**
+   * The feature id for the '<em><b>Empty</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MATCH__EMPTY = 15;
+
+  /**
+   * The feature id for the '<em><b>Exception</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MATCH__EXCEPTION = 16;
+
+  /**
    * The number of structural features of the '<em>Match</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MATCH_FEATURE_COUNT = 15;
+  int MATCH_FEATURE_COUNT = 17;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ListImpl <em>List</em>}' class.
@@ -4837,6 +4855,28 @@ public interface KactorsPackage extends EPackage
   EAttribute getMatch_Anything();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Match#isEmpty <em>Empty</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Empty</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Match#isEmpty()
+   * @see #getMatch()
+   * @generated
+   */
+  EAttribute getMatch_Empty();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Match#isException <em>Exception</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Exception</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Match#isException()
+   * @see #getMatch()
+   * @generated
+   */
+  EAttribute getMatch_Exception();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.List <em>List</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -7958,6 +7998,22 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute MATCH__ANYTHING = eINSTANCE.getMatch_Anything();
+
+    /**
+     * The meta object literal for the '<em><b>Empty</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MATCH__EMPTY = eINSTANCE.getMatch_Empty();
+
+    /**
+     * The meta object literal for the '<em><b>Exception</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MATCH__EXCEPTION = eINSTANCE.getMatch_Exception();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.ListImpl <em>List</em>}' class.

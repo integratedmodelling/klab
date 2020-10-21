@@ -17,17 +17,27 @@ package org.integratedmodelling.kactors.api;
 public interface IKActorsValue extends IKActorsCodeStatement {
 
 	public enum Type {
-		REGEXP, NUMBER, BOOLEAN, STRING, OBSERVABLE, IDENTIFIER, EXPRESSION, LIST, SET, CLASS, ANYVALUE, ANYTHING, NODATA,
-		RANGE, MAP, TABLE, TREE, QUANTITY, DATE, TYPE, NUMBERED_PATTERN, URN, ERROR, 
+		REGEXP, NUMBER, BOOLEAN, STRING, OBSERVABLE, IDENTIFIER, EXPRESSION, LIST, SET, CLASS, ANYVALUE, ANYTHING,
+		NODATA, RANGE, MAP, TABLE, TREE, QUANTITY, DATE, TYPE, NUMBERED_PATTERN, URN, 
+		/**
+		 * An action that raises an exception will match this.
+		 */
+		ERROR,
 		/*
-		 * enum-like uppercase constant, matching enum values (or strings) at the Java side.
+		 * Empty is a legal "nothing" result which may represent an empty collection or
+		 * an empty artifact
+		 */
+		EMPTY,
+		/*
+		 * enum-like uppercase constant, matching enum values (or strings) at the Java
+		 * side.
 		 */
 		CONSTANT,
 		/**
 		 * Matcher for anything that isn't null, false or error
 		 */
 		ANYTRUE,
-		
+
 		/**
 		 * Objects that don't have literals in the language but can be fired
 		 */
@@ -59,8 +69,8 @@ public interface IKActorsValue extends IKActorsCodeStatement {
 	<T> T as(Class<? extends T> cls);
 
 	/**
-	 * If true, the value specifies a constraint that excludes its own value when used in 
-	 * matching.
+	 * If true, the value specifies a constraint that excludes its own value when
+	 * used in matching.
 	 *
 	 * @return
 	 */

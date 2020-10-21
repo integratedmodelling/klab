@@ -4141,6 +4141,80 @@ ruleMatch returns [EObject current=null]
 				)
 			)
 		)
+		    |
+		(
+			(
+				(
+					lv_empty_43_0='empty'
+					{
+						newLeafNode(lv_empty_43_0, grammarAccess.getMatchAccess().getEmptyEmptyKeyword_14_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getMatchRule());
+						}
+						setWithLastConsumed($current, "empty", true, "empty");
+					}
+				)
+			)
+			(
+				('set' | '(' | 'new' | 'if' | 'while' | 'do' | 'for' | '+' | '-' | 'true' | 'false' | 'urn:klab:' | '#{' | '{' | '{{' | RULE_ARGVALUE | RULE_LOWERCASE_ID | RULE_EMBEDDEDTEXT | RULE_INT | RULE_STRING | RULE_EXPR | RULE_UPPERCASE_ID)=>
+				(
+					{
+						newCompositeNode(grammarAccess.getMatchAccess().getBodyStatementListParserRuleCall_14_1_0());
+					}
+					lv_body_44_0=ruleStatementList
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getMatchRule());
+						}
+						set(
+							$current,
+							"body",
+							lv_body_44_0,
+							"org.integratedmodelling.kactors.Kactors.StatementList");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
+		    |
+		(
+			(
+				(
+					lv_exception_45_0='exception'
+					{
+						newLeafNode(lv_exception_45_0, grammarAccess.getMatchAccess().getExceptionExceptionKeyword_15_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getMatchRule());
+						}
+						setWithLastConsumed($current, "exception", true, "exception");
+					}
+				)
+			)
+			(
+				('set' | '(' | 'new' | 'if' | 'while' | 'do' | 'for' | '+' | '-' | 'true' | 'false' | 'urn:klab:' | '#{' | '{' | '{{' | RULE_ARGVALUE | RULE_LOWERCASE_ID | RULE_EMBEDDEDTEXT | RULE_INT | RULE_STRING | RULE_EXPR | RULE_UPPERCASE_ID)=>
+				(
+					{
+						newCompositeNode(grammarAccess.getMatchAccess().getBodyStatementListParserRuleCall_15_1_0());
+					}
+					lv_body_46_0=ruleStatementList
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getMatchRule());
+						}
+						set(
+							$current,
+							"body",
+							lv_body_46_0,
+							"org.integratedmodelling.kactors.Kactors.StatementList");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)
 	)
 ;
 

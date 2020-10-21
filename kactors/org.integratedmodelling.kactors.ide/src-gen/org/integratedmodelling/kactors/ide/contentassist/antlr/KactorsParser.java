@@ -170,6 +170,8 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getMatchAccess().getGroup_11(), "rule__Match__Group_11__0");
 			builder.put(grammarAccess.getMatchAccess().getGroup_12(), "rule__Match__Group_12__0");
 			builder.put(grammarAccess.getMatchAccess().getGroup_13(), "rule__Match__Group_13__0");
+			builder.put(grammarAccess.getMatchAccess().getGroup_14(), "rule__Match__Group_14__0");
+			builder.put(grammarAccess.getMatchAccess().getGroup_15(), "rule__Match__Group_15__0");
 			builder.put(grammarAccess.getUrnIdAccess().getGroup(), "rule__UrnId__Group__0");
 			builder.put(grammarAccess.getUrnIdAccess().getGroup_8(), "rule__UrnId__Group_8__0");
 			builder.put(grammarAccess.getUrnIdAccess().getGroup_9(), "rule__UrnId__Group_9__0");
@@ -466,6 +468,10 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getMatchAccess().getBodyAssignment_12_2(), "rule__Match__BodyAssignment_12_2");
 			builder.put(grammarAccess.getMatchAccess().getAnythingAssignment_13_0(), "rule__Match__AnythingAssignment_13_0");
 			builder.put(grammarAccess.getMatchAccess().getBodyAssignment_13_2(), "rule__Match__BodyAssignment_13_2");
+			builder.put(grammarAccess.getMatchAccess().getEmptyAssignment_14_0(), "rule__Match__EmptyAssignment_14_0");
+			builder.put(grammarAccess.getMatchAccess().getBodyAssignment_14_1(), "rule__Match__BodyAssignment_14_1");
+			builder.put(grammarAccess.getMatchAccess().getExceptionAssignment_15_0(), "rule__Match__ExceptionAssignment_15_0");
+			builder.put(grammarAccess.getMatchAccess().getBodyAssignment_15_1(), "rule__Match__BodyAssignment_15_1");
 			builder.put(grammarAccess.getListAccess().getContentsAssignment_2(), "rule__List__ContentsAssignment_2");
 			builder.put(grammarAccess.getMapAccess().getEntriesAssignment_2_0(), "rule__Map__EntriesAssignment_2_0");
 			builder.put(grammarAccess.getMapAccess().getEntriesAssignment_2_1_1(), "rule__Map__EntriesAssignment_2_1_1");

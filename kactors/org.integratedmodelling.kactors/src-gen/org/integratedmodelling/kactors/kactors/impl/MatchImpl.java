@@ -43,6 +43,8 @@ import org.integratedmodelling.kactors.kactors.StatementList;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getNodata <em>Nodata</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isStar <em>Star</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isAnything <em>Anything</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isEmpty <em>Empty</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#isException <em>Exception</em>}</li>
  * </ul>
  *
  * @generated
@@ -288,6 +290,46 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @ordered
    */
   protected boolean anything = ANYTHING_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isEmpty() <em>Empty</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isEmpty()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean EMPTY_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isEmpty() <em>Empty</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isEmpty()
+   * @generated
+   * @ordered
+   */
+  protected boolean empty = EMPTY_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isException() <em>Exception</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isException()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean EXCEPTION_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isException() <em>Exception</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isException()
+   * @generated
+   * @ordered
+   */
+  protected boolean exception = EXCEPTION_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -841,6 +883,56 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @generated
    */
   @Override
+  public boolean isEmpty()
+  {
+    return empty;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setEmpty(boolean newEmpty)
+  {
+    boolean oldEmpty = empty;
+    empty = newEmpty;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__EMPTY, oldEmpty, empty));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isException()
+  {
+    return exception;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setException(boolean newException)
+  {
+    boolean oldException = exception;
+    exception = newException;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__EXCEPTION, oldException, exception));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -901,6 +993,10 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return isStar();
       case KactorsPackage.MATCH__ANYTHING:
         return isAnything();
+      case KactorsPackage.MATCH__EMPTY:
+        return isEmpty();
+      case KactorsPackage.MATCH__EXCEPTION:
+        return isException();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -959,6 +1055,12 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return;
       case KactorsPackage.MATCH__ANYTHING:
         setAnything((Boolean)newValue);
+        return;
+      case KactorsPackage.MATCH__EMPTY:
+        setEmpty((Boolean)newValue);
+        return;
+      case KactorsPackage.MATCH__EXCEPTION:
+        setException((Boolean)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -1019,6 +1121,12 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
       case KactorsPackage.MATCH__ANYTHING:
         setAnything(ANYTHING_EDEFAULT);
         return;
+      case KactorsPackage.MATCH__EMPTY:
+        setEmpty(EMPTY_EDEFAULT);
+        return;
+      case KactorsPackage.MATCH__EXCEPTION:
+        setException(EXCEPTION_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -1063,6 +1171,10 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return star != STAR_EDEFAULT;
       case KactorsPackage.MATCH__ANYTHING:
         return anything != ANYTHING_EDEFAULT;
+      case KactorsPackage.MATCH__EMPTY:
+        return empty != EMPTY_EDEFAULT;
+      case KactorsPackage.MATCH__EXCEPTION:
+        return exception != EXCEPTION_EDEFAULT;
     }
     return super.eIsSet(featureID);
   }
@@ -1096,6 +1208,10 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     result.append(star);
     result.append(", anything: ");
     result.append(anything);
+    result.append(", empty: ");
+    result.append(empty);
+    result.append(", exception: ");
+    result.append(exception);
     result.append(')');
     return result.toString();
   }

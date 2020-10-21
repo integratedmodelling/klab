@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
@@ -470,7 +471,7 @@ public class Geometry implements IGeometry {
 		public int getDimensionality() {
 			return dimensionality;
 		}
-		
+
 		public double getCoverage() {
 			return coverage;
 		}
@@ -609,7 +610,7 @@ public class Geometry implements IGeometry {
 		if (this.coverage == null) {
 			this.coverage = 1.0;
 			for (Dimension dim : getDimensions()) {
-				this.coverage *= ((DimensionImpl)dim).coverage;
+				this.coverage *= ((DimensionImpl) dim).coverage;
 			}
 		}
 		return this.coverage;
@@ -693,6 +694,44 @@ public class Geometry implements IGeometry {
 	}
 
 	/**
+	 * Return self if we have space, otherwise create a spatial dimension according
+	 * to parameters and return the merged geometry.
+	 * 
+	 * @return
+	 */
+	public Geometry spatial(int dimensions, boolean regular) {
+		if (getDimension(Type.SPACE) != null) {
+			return this;
+		}
+		DimensionImpl space = new DimensionImpl();
+		space.coverage = 1.0;
+		space.dimensionality = dimensions;
+		space.generic = false;
+		space.regular = regular;
+		space.type = Type.SPACE;
+		return new Geometry(this, space);
+	}
+	
+	/**
+	 * Return self if we have space, otherwise create a spatial dimension according
+	 * to parameters and return the merged geometry.
+	 * 
+	 * @return
+	 */
+	public Geometry temporal(boolean regular) {
+		if (getDimension(Type.TIME) != null) {
+			return this;
+		}
+		DimensionImpl space = new DimensionImpl();
+		space.coverage = 1.0;
+		space.dimensionality = 1;
+		space.generic = false;
+		space.regular = regular;
+		space.type = Type.TIME;
+		return new Geometry(this, space);
+	}
+
+	/**
 	 * 
 	 * @param shape
 	 * @return this
@@ -765,7 +804,16 @@ public class Geometry implements IGeometry {
 		return this;
 	}
 
-	protected Geometry() {
+	Geometry() {}
+	
+	private Geometry(Geometry geometry, DimensionImpl dimension) {
+		this.scalar = false;
+		LinkedHashMap<Dimension.Type, DimensionImpl> hash = new LinkedHashMap<>();
+		for (DimensionImpl dim : geometry.dimensions) {
+			hash.put(dim.type, dim);
+		}
+		hash.put(dimension.type, dimension);
+		this.dimensions.addAll(hash.values());
 	}
 
 	/*
@@ -902,8 +950,9 @@ public class Geometry implements IGeometry {
 //		Geometry g5 = create("S2(200,100){srid=EPSG:3040,bounds=[23.3 221.0 25.2 444.4]}T1(12)");
 
 //		System.out.println(separateTargets(ITime.class, 1, Dimension.Type.SPACE, 2, 3));
-		
-		Geometry gg = create("τ1{tend=725846400000,tscope=1.0,tstart=694224000000,ttype=logical,tunit=year}S2(129599,64799){bbox=[-180.0 180.00000000002876 -90.00000000001438 90.0],proj=EPSG:4326}");
+
+		Geometry gg = create(
+				"τ1{tend=725846400000,tscope=1.0,tstart=694224000000,ttype=logical,tunit=year}S2(129599,64799){bbox=[-180.0 180.00000000002876 -90.00000000001438 90.0],proj=EPSG:4326}");
 		System.out.println(gg.toString());
 //		System.out.println(separateTargets(ITime.class, Dimension.Type.SPACE, 2, 3));
 	}
@@ -1100,9 +1149,9 @@ public class Geometry implements IGeometry {
 
 		Map<Dimension.Type, Dimension> res = new LinkedHashMap<>();
 		for (Dimension dimension : getDimensions()) {
-			res.put(dimension.getType(), ((DimensionImpl)dimension).copy());
+			res.put(dimension.getType(), ((DimensionImpl) dimension).copy());
 		}
-		
+
 //		List<Dimension> result = new ArrayList<>();
 		for (Dimension dimension : geometry.getDimensions()) {
 			if (getDimension(dimension.getType()) == null) {
@@ -1266,6 +1315,11 @@ public class Geometry implements IGeometry {
 			return true;
 		}
 		return false;
+	}
+
+	public Geometry withGridResolution(IKimQuantity value) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -29,6 +29,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getNodata <em>Nodata</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isStar <em>Star</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isAnything <em>Anything</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isEmpty <em>Empty</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#isException <em>Exception</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch()
@@ -366,5 +368,49 @@ public interface Match extends EObject
    * @generated
    */
   void setAnything(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Empty</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Empty</em>' attribute.
+   * @see #setEmpty(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Empty()
+   * @model
+   * @generated
+   */
+  boolean isEmpty();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#isEmpty <em>Empty</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Empty</em>' attribute.
+   * @see #isEmpty()
+   * @generated
+   */
+  void setEmpty(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Exception</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Exception</em>' attribute.
+   * @see #setException(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Exception()
+   * @model
+   * @generated
+   */
+  boolean isException();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#isException <em>Exception</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Exception</em>' attribute.
+   * @see #isException()
+   * @generated
+   */
+  void setException(boolean value);
 
 } // Match

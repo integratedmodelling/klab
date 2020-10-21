@@ -259,7 +259,15 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		}  else if (match.getConstant() != null) {
 			this.type = Type.CONSTANT;
 			this.value = match.getConstant();
-		}
+		} else if (match.isEmpty()) {
+			this.type = Type.EMPTY;
+		} else if (match.isAnything()) {
+			this.type = Type.ANYTHING;
+		} else if (match.isException()) {
+			this.type = Type.ERROR;
+		} else if (match.isStar()) {
+			this.type = Type.ANYVALUE;
+		} 
 	}
 
 	private KActorsValue(Type type, Object value) {
