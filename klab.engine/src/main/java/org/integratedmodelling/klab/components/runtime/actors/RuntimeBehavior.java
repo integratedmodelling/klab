@@ -118,38 +118,17 @@ public class RuntimeBehavior {
 		@Override
 		void run(KlabActor.Scope scope) {
 
-			if (arguments.getUnnamedKeys().isEmpty()) {
-				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
-						.addObservationListener(new ISession.ObservationListener() {
-							@Override
-							public void newContext(ISubject observation) {
-								fire(observation, false);
-							}
-
-							@Override
-							public void newObservation(IObservation observation, ISubject context) {
-							}
-						});
-			} else {
-
-				Object arg = evaluateArgument(0, scope);
-				if (arg instanceof Urn) {
-					try {
-						Future<ISubject> future = ((Session) identity).observe(((Urn) arg).getUrn());
-						fire(future.get(), true);
-					} catch (Throwable e) {
-						fail();
-					}
-				}
+			if (!arguments.getUnnamedKeys().isEmpty()) {
+				System.out.println("SUBMIT " + KlabActor.evaluate(arguments.get(arguments.getUnnamedKeys().get(0)), scope));
 			}
 		}
 
 		@Override
 		public void dispose() {
-			if (this.listenerId != null) {
-				scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
-						.removeObservationListener(this.listenerId);
-			}
+//			if (this.listenerId != null) {
+//				scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
+//						.removeObservationListener(this.listenerId);
+//			}
 		}
 	}
 

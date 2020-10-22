@@ -1,6 +1,7 @@
 package org.integratedmodelling.kactors.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -25,6 +26,7 @@ import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Value;
 import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -75,7 +77,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		this.type = Type.BOOLEAN;
 		this.value = value;
 	}
-	
+
 	public KActorsValue(Literal value, KActorCodeStatement parent) {
 		super(value, parent);
 		if (value.getBoolean() != null) {
@@ -155,7 +157,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		} else if (value.getMap() != null) {
 			this.value = parseMap(value.getMap(), this);
 			this.type = Type.MAP;
-		} 
+		}
 	}
 
 	public static String parseObservable(Observable observable) {
@@ -164,7 +166,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		// remove leading spaces and backquotes
 		return ret.substring(1, ret.length() - 1).trim().replace("`", "");
 	}
-	
+
 	public KActorsValue(Value value, KActorCodeStatement parent) {
 		super(value, parent);
 		if (value.getId() != null) {
@@ -196,7 +198,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		} else if (value.getUrn() != null) {
 			this.type = Type.URN;
 			this.value = value.getUrn();
-		}  else if (value.getConstant() != null) {
+		} else if (value.getConstant() != null) {
 			this.type = Type.CONSTANT;
 			this.value = value.getConstant();
 		} else if (value.getTree() != null) {
@@ -220,7 +222,8 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 	}
 
-	public static Map<KActorsValue, KActorsValue> parseMap(org.integratedmodelling.kactors.kactors.Map map, KActorCodeStatement parent) {
+	public static Map<KActorsValue, KActorsValue> parseMap(org.integratedmodelling.kactors.kactors.Map map,
+			KActorCodeStatement parent) {
 		Map<KActorsValue, KActorsValue> ret = new LinkedHashMap<>();
 		for (MapEntry entry : map.getEntries()) {
 			ret.put(new KActorsValue(entry.getClassifier(), parent), new KActorsValue(entry.getValue(), parent));
@@ -256,7 +259,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		} else if (match.getList() != null) {
 			this.type = Type.LIST;
 			this.value = parseList(match.getList(), this);
-		}  else if (match.getConstant() != null) {
+		} else if (match.getConstant() != null) {
 			this.type = Type.CONSTANT;
 			this.value = match.getConstant();
 		} else if (match.isEmpty()) {
@@ -267,10 +270,10 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			this.type = Type.ERROR;
 		} else if (match.isStar()) {
 			this.type = Type.ANYVALUE;
-		} 
+		}
 	}
 
-	private KActorsValue(Type type, Object value) {
+	KActorsValue(Type type, Object value) {
 		this.type = type;
 		this.value = value;
 	}
@@ -483,6 +486,29 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 	public void setExclusive(boolean exclusive) {
 		this.exclusive = exclusive;
+	}
+
+	/**
+	 * Check for truth value. For now we consider true anything that is not null or
+	 * not empty, unless it's a boolean or number where we check the actual value for
+	 * true value or != 0.
+	 * 
+	 * @param check
+	 * @return
+	 */
+	public static boolean isTrue(Object check) {
+		if (check instanceof Boolean) {
+			return (Boolean) check;
+		} else if (check instanceof Integer) {
+			return ((Integer) check) != 0;
+		} else if (check instanceof Number) {
+			return ((Number) check).doubleValue() != 0;
+		} else if (check instanceof IArtifact) {
+			return !((IArtifact) check).isEmpty();
+		} else if (check instanceof Collection) {
+			return !((Collection<?>)check).isEmpty();
+		}
+		return check != null;
 	}
 
 }

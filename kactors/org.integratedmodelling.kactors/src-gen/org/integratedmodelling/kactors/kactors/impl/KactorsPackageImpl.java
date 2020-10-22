@@ -23,6 +23,7 @@ import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
+import org.integratedmodelling.kactors.kactors.ElseIfStatementBody;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -165,6 +166,13 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   private EClass ifStatementEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass elseIfStatementBodyEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1397,20 +1405,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getIfStatement_ElseIfExpression()
-  {
-    return (EAttribute)ifStatementEClass.getEStructuralFeatures().get(4);
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public EReference getIfStatement_ElseIfBody()
   {
-    return (EReference)ifStatementEClass.getEStructuralFeatures().get(5);
+    return (EReference)ifStatementEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -1421,7 +1418,62 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getIfStatement_ElseCall()
   {
-    return (EReference)ifStatementEClass.getEStructuralFeatures().get(6);
+    return (EReference)ifStatementEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getElseIfStatementBody()
+  {
+    return elseIfStatementBodyEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getElseIfStatementBody_Literal()
+  {
+    return (EReference)elseIfStatementBodyEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getElseIfStatementBody_Expression()
+  {
+    return (EAttribute)elseIfStatementBodyEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getElseIfStatementBody_Variable()
+  {
+    return (EAttribute)elseIfStatementBodyEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getElseIfStatementBody_Body()
+  {
+    return (EReference)elseIfStatementBodyEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -4126,9 +4178,14 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(ifStatementEClass, IF_STATEMENT__EXPRESSION);
     createEAttribute(ifStatementEClass, IF_STATEMENT__VARIABLE);
     createEReference(ifStatementEClass, IF_STATEMENT__BODY);
-    createEAttribute(ifStatementEClass, IF_STATEMENT__ELSE_IF_EXPRESSION);
     createEReference(ifStatementEClass, IF_STATEMENT__ELSE_IF_BODY);
     createEReference(ifStatementEClass, IF_STATEMENT__ELSE_CALL);
+
+    elseIfStatementBodyEClass = createEClass(ELSE_IF_STATEMENT_BODY);
+    createEReference(elseIfStatementBodyEClass, ELSE_IF_STATEMENT_BODY__LITERAL);
+    createEAttribute(elseIfStatementBodyEClass, ELSE_IF_STATEMENT_BODY__EXPRESSION);
+    createEAttribute(elseIfStatementBodyEClass, ELSE_IF_STATEMENT_BODY__VARIABLE);
+    createEReference(elseIfStatementBodyEClass, ELSE_IF_STATEMENT_BODY__BODY);
 
     statementBodyEClass = createEClass(STATEMENT_BODY);
     createEReference(statementBodyEClass, STATEMENT_BODY__VERB);
@@ -4528,9 +4585,14 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getIfStatement_Expression(), ecorePackage.getEString(), "expression", null, 0, 1, IfStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getIfStatement_Variable(), ecorePackage.getEString(), "variable", null, 0, 1, IfStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getIfStatement_Body(), this.getStatementBody(), null, "body", null, 0, 1, IfStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEAttribute(getIfStatement_ElseIfExpression(), ecorePackage.getEString(), "elseIfExpression", null, 0, -1, IfStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
-    initEReference(getIfStatement_ElseIfBody(), this.getStatementBody(), null, "elseIfBody", null, 0, -1, IfStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getIfStatement_ElseIfBody(), this.getElseIfStatementBody(), null, "elseIfBody", null, 0, -1, IfStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getIfStatement_ElseCall(), this.getStatementBody(), null, "elseCall", null, 0, 1, IfStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(elseIfStatementBodyEClass, ElseIfStatementBody.class, "ElseIfStatementBody", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getElseIfStatementBody_Literal(), this.getLiteral(), null, "literal", null, 0, 1, ElseIfStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getElseIfStatementBody_Expression(), ecorePackage.getEString(), "expression", null, 0, 1, ElseIfStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getElseIfStatementBody_Variable(), ecorePackage.getEString(), "variable", null, 0, 1, ElseIfStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getElseIfStatementBody_Body(), this.getStatementBody(), null, "body", null, 0, 1, ElseIfStatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(statementBodyEClass, StatementBody.class, "StatementBody", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getStatementBody_Verb(), this.getMessageCall(), null, "verb", null, 0, 1, StatementBody.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

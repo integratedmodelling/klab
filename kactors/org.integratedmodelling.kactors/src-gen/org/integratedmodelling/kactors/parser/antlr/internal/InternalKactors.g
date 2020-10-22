@@ -2308,28 +2308,10 @@ ruleIfStatement returns [EObject current=null]
 			}
 			(
 				(
-					lv_elseIfExpression_7_0=RULE_EXPR
 					{
-						newLeafNode(lv_elseIfExpression_7_0, grammarAccess.getIfStatementAccess().getElseIfExpressionEXPRTerminalRuleCall_3_2_0());
+						newCompositeNode(grammarAccess.getIfStatementAccess().getElseIfBodyElseIfStatementBodyParserRuleCall_3_2_0());
 					}
-					{
-						if ($current==null) {
-							$current = createModelElement(grammarAccess.getIfStatementRule());
-						}
-						addWithLastConsumed(
-							$current,
-							"elseIfExpression",
-							lv_elseIfExpression_7_0,
-							"org.integratedmodelling.kactors.Kactors.EXPR");
-					}
-				)
-			)
-			(
-				(
-					{
-						newCompositeNode(grammarAccess.getIfStatementAccess().getElseIfBodyStatementBodyParserRuleCall_3_3_0());
-					}
-					lv_elseIfBody_8_0=ruleStatementBody
+					lv_elseIfBody_7_0=ruleElseIfStatementBody
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getIfStatementRule());
@@ -2337,24 +2319,24 @@ ruleIfStatement returns [EObject current=null]
 						add(
 							$current,
 							"elseIfBody",
-							lv_elseIfBody_8_0,
-							"org.integratedmodelling.kactors.Kactors.StatementBody");
+							lv_elseIfBody_7_0,
+							"org.integratedmodelling.kactors.Kactors.ElseIfStatementBody");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 		)*
 		(
-			otherlv_9='else'
+			otherlv_8='else'
 			{
-				newLeafNode(otherlv_9, grammarAccess.getIfStatementAccess().getElseKeyword_4_0());
+				newLeafNode(otherlv_8, grammarAccess.getIfStatementAccess().getElseKeyword_4_0());
 			}
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getIfStatementAccess().getElseCallStatementBodyParserRuleCall_4_1_0());
 					}
-					lv_elseCall_10_0=ruleStatementBody
+					lv_elseCall_9_0=ruleStatementBody
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getIfStatementRule());
@@ -2362,13 +2344,110 @@ ruleIfStatement returns [EObject current=null]
 						set(
 							$current,
 							"elseCall",
-							lv_elseCall_10_0,
+							lv_elseCall_9_0,
 							"org.integratedmodelling.kactors.Kactors.StatementBody");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 		)?
+	)
+;
+
+// Entry rule entryRuleElseIfStatementBody
+entryRuleElseIfStatementBody returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getElseIfStatementBodyRule()); }
+	iv_ruleElseIfStatementBody=ruleElseIfStatementBody
+	{ $current=$iv_ruleElseIfStatementBody.current; }
+	EOF;
+
+// Rule ElseIfStatementBody
+ruleElseIfStatementBody returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getElseIfStatementBodyAccess().getLiteralLiteralParserRuleCall_0_0_0());
+					}
+					lv_literal_0_0=ruleLiteral
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getElseIfStatementBodyRule());
+						}
+						set(
+							$current,
+							"literal",
+							lv_literal_0_0,
+							"org.integratedmodelling.kactors.Kactors.Literal");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			    |
+			(
+				(
+					lv_expression_1_0=RULE_EXPR
+					{
+						newLeafNode(lv_expression_1_0, grammarAccess.getElseIfStatementBodyAccess().getExpressionEXPRTerminalRuleCall_0_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getElseIfStatementBodyRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"expression",
+							lv_expression_1_0,
+							"org.integratedmodelling.kactors.Kactors.EXPR");
+					}
+				)
+			)
+			    |
+			(
+				(
+					lv_variable_2_0=RULE_LOWERCASE_ID
+					{
+						newLeafNode(lv_variable_2_0, grammarAccess.getElseIfStatementBodyAccess().getVariableLOWERCASE_IDTerminalRuleCall_0_2_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getElseIfStatementBodyRule());
+						}
+						setWithLastConsumed(
+							$current,
+							"variable",
+							lv_variable_2_0,
+							"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
+					}
+				)
+			)
+		)
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getElseIfStatementBodyAccess().getBodyStatementBodyParserRuleCall_1_0());
+				}
+				lv_body_3_0=ruleStatementBody
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getElseIfStatementBodyRule());
+					}
+					set(
+						$current,
+						"body",
+						lv_body_3_0,
+						"org.integratedmodelling.kactors.Kactors.StatementBody");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
 	)
 ;
 

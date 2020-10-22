@@ -108,9 +108,14 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//IfStatement/expression"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//IfStatement/variable"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//IfStatement/body"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//IfStatement/elseIfExpression"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//IfStatement/elseIfBody"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//IfStatement/elseCall"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//ElseIfStatementBody">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//ElseIfStatementBody/literal"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//ElseIfStatementBody/expression"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//ElseIfStatementBody/variable"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//ElseIfStatementBody/body"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//StatementBody">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//StatementBody/verb"/>

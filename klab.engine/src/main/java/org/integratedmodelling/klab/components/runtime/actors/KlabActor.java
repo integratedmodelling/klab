@@ -48,7 +48,6 @@ import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.Unkno
 import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetActionExecutor;
 import org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior.Match;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
-import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -654,9 +653,25 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	}
 
 	private void executeIf(If code, Scope scope) {
-		// TODO Auto-generated method stub
-//		Object check = evaluateInScope((KActorsValue)code.getCondition(), scope);
-		System.out.println("IF");
+
+		Object check = evaluateInScope((KActorsValue) code.getCondition(), scope);
+		if (KActorsValue.isTrue(check)) {
+			if (code.getThen() != null) {
+				execute(code.getThen(), scope);
+			}
+		} else {
+			for (Pair<IKActorsValue, IKActorsStatement> conditions : code.getElseIfs()) {
+				check = evaluateInScope((KActorsValue) conditions.getFirst(), scope);
+				if (KActorsValue.isTrue(check)) {
+					execute(conditions.getSecond(), scope);
+					return;
+				}
+			}
+			if (code.getElse() != null) {
+				execute(code.getElse(), scope);
+			}
+		}
+
 	}
 
 	private void executeFor(For code, Scope scope) {
@@ -725,7 +740,18 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		}
 	}
 
+	protected static Object evaluate(Object value, Scope scope) {
+		if (value instanceof KActorsValue) {
+			return evaluateInScope((KActorsValue) value, scope, scope.identity);
+		}
+		return value;
+	}
+
 	protected Object evaluateInScope(KActorsValue arg, Scope scope) {
+		return evaluateInScope(arg, scope, this.identity);
+	}
+	
+	public static Object evaluateInScope(KActorsValue arg, Scope scope, IIdentity identity) {
 		switch (arg.getType()) {
 		case ANYTHING:
 		case ANYVALUE:
@@ -759,6 +785,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		case STRING:
 		case OBSERVABLE:
 		case QUANTITY:
+		case CONSTANT:
 			return arg.getValue();
 		case OBSERVATION:
 			// TODO
@@ -787,6 +814,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			return new Urn(arg.getValue().toString());
 //		default:
 //			break;
+		case EMPTY:
+			break;
+		default:
+			break;
 		}
 		return null;
 	}

@@ -3,12 +3,8 @@
  */
 package org.integratedmodelling.kactors.kactors.impl;
 
-import java.util.Collection;
-
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
-
-import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
@@ -16,34 +12,28 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EObjectContainmentEList;
-import org.eclipse.emf.ecore.util.InternalEList;
-
 import org.integratedmodelling.kactors.kactors.ElseIfStatementBody;
-import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.StatementBody;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>If Statement</b></em>'.
+ * An implementation of the model object '<em><b>Else If Statement Body</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getLiteral <em>Literal</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getExpression <em>Expression</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getVariable <em>Variable</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getBody <em>Body</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getElseIfBody <em>Else If Body</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getElseCall <em>Else Call</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ElseIfStatementBodyImpl#getLiteral <em>Literal</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ElseIfStatementBodyImpl#getExpression <em>Expression</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ElseIfStatementBodyImpl#getVariable <em>Variable</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ElseIfStatementBodyImpl#getBody <em>Body</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfStatement
+public class ElseIfStatementBodyImpl extends MinimalEObjectImpl.Container implements ElseIfStatementBody
 {
   /**
    * The cached value of the '{@link #getLiteral() <em>Literal</em>}' containment reference.
@@ -106,31 +96,11 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
   protected StatementBody body;
 
   /**
-   * The cached value of the '{@link #getElseIfBody() <em>Else If Body</em>}' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getElseIfBody()
-   * @generated
-   * @ordered
-   */
-  protected EList<ElseIfStatementBody> elseIfBody;
-
-  /**
-   * The cached value of the '{@link #getElseCall() <em>Else Call</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getElseCall()
-   * @generated
-   * @ordered
-   */
-  protected StatementBody elseCall;
-
-  /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected IfStatementImpl()
+  protected ElseIfStatementBodyImpl()
   {
     super();
   }
@@ -143,7 +113,7 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
   @Override
   protected EClass eStaticClass()
   {
-    return KactorsPackage.Literals.IF_STATEMENT;
+    return KactorsPackage.Literals.ELSE_IF_STATEMENT_BODY;
   }
 
   /**
@@ -168,7 +138,7 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
     literal = newLiteral;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_STATEMENT__LITERAL, oldLiteral, newLiteral);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.ELSE_IF_STATEMENT_BODY__LITERAL, oldLiteral, newLiteral);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -186,14 +156,14 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
     {
       NotificationChain msgs = null;
       if (literal != null)
-        msgs = ((InternalEObject)literal).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_STATEMENT__LITERAL, null, msgs);
+        msgs = ((InternalEObject)literal).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ELSE_IF_STATEMENT_BODY__LITERAL, null, msgs);
       if (newLiteral != null)
-        msgs = ((InternalEObject)newLiteral).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_STATEMENT__LITERAL, null, msgs);
+        msgs = ((InternalEObject)newLiteral).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ELSE_IF_STATEMENT_BODY__LITERAL, null, msgs);
       msgs = basicSetLiteral(newLiteral, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_STATEMENT__LITERAL, newLiteral, newLiteral));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.ELSE_IF_STATEMENT_BODY__LITERAL, newLiteral, newLiteral));
   }
 
   /**
@@ -218,7 +188,7 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
     String oldExpression = expression;
     expression = newExpression;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_STATEMENT__EXPRESSION, oldExpression, expression));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.ELSE_IF_STATEMENT_BODY__EXPRESSION, oldExpression, expression));
   }
 
   /**
@@ -243,7 +213,7 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
     String oldVariable = variable;
     variable = newVariable;
     if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_STATEMENT__VARIABLE, oldVariable, variable));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.ELSE_IF_STATEMENT_BODY__VARIABLE, oldVariable, variable));
   }
 
   /**
@@ -268,7 +238,7 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
     body = newBody;
     if (eNotificationRequired())
     {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_STATEMENT__BODY, oldBody, newBody);
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.ELSE_IF_STATEMENT_BODY__BODY, oldBody, newBody);
       if (msgs == null) msgs = notification; else msgs.add(notification);
     }
     return msgs;
@@ -286,79 +256,14 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
     {
       NotificationChain msgs = null;
       if (body != null)
-        msgs = ((InternalEObject)body).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_STATEMENT__BODY, null, msgs);
+        msgs = ((InternalEObject)body).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ELSE_IF_STATEMENT_BODY__BODY, null, msgs);
       if (newBody != null)
-        msgs = ((InternalEObject)newBody).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_STATEMENT__BODY, null, msgs);
+        msgs = ((InternalEObject)newBody).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ELSE_IF_STATEMENT_BODY__BODY, null, msgs);
       msgs = basicSetBody(newBody, msgs);
       if (msgs != null) msgs.dispatch();
     }
     else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_STATEMENT__BODY, newBody, newBody));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EList<ElseIfStatementBody> getElseIfBody()
-  {
-    if (elseIfBody == null)
-    {
-      elseIfBody = new EObjectContainmentEList<ElseIfStatementBody>(ElseIfStatementBody.class, this, KactorsPackage.IF_STATEMENT__ELSE_IF_BODY);
-    }
-    return elseIfBody;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public StatementBody getElseCall()
-  {
-    return elseCall;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetElseCall(StatementBody newElseCall, NotificationChain msgs)
-  {
-    StatementBody oldElseCall = elseCall;
-    elseCall = newElseCall;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_STATEMENT__ELSE_CALL, oldElseCall, newElseCall);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setElseCall(StatementBody newElseCall)
-  {
-    if (newElseCall != elseCall)
-    {
-      NotificationChain msgs = null;
-      if (elseCall != null)
-        msgs = ((InternalEObject)elseCall).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_STATEMENT__ELSE_CALL, null, msgs);
-      if (newElseCall != null)
-        msgs = ((InternalEObject)newElseCall).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_STATEMENT__ELSE_CALL, null, msgs);
-      msgs = basicSetElseCall(newElseCall, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_STATEMENT__ELSE_CALL, newElseCall, newElseCall));
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.ELSE_IF_STATEMENT_BODY__BODY, newBody, newBody));
   }
 
   /**
@@ -371,14 +276,10 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
   {
     switch (featureID)
     {
-      case KactorsPackage.IF_STATEMENT__LITERAL:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__LITERAL:
         return basicSetLiteral(null, msgs);
-      case KactorsPackage.IF_STATEMENT__BODY:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__BODY:
         return basicSetBody(null, msgs);
-      case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
-        return ((InternalEList<?>)getElseIfBody()).basicRemove(otherEnd, msgs);
-      case KactorsPackage.IF_STATEMENT__ELSE_CALL:
-        return basicSetElseCall(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -393,18 +294,14 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
   {
     switch (featureID)
     {
-      case KactorsPackage.IF_STATEMENT__LITERAL:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__LITERAL:
         return getLiteral();
-      case KactorsPackage.IF_STATEMENT__EXPRESSION:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__EXPRESSION:
         return getExpression();
-      case KactorsPackage.IF_STATEMENT__VARIABLE:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__VARIABLE:
         return getVariable();
-      case KactorsPackage.IF_STATEMENT__BODY:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__BODY:
         return getBody();
-      case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
-        return getElseIfBody();
-      case KactorsPackage.IF_STATEMENT__ELSE_CALL:
-        return getElseCall();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -414,30 +311,22 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
    * <!-- end-user-doc -->
    * @generated
    */
-  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
     switch (featureID)
     {
-      case KactorsPackage.IF_STATEMENT__LITERAL:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__LITERAL:
         setLiteral((Literal)newValue);
         return;
-      case KactorsPackage.IF_STATEMENT__EXPRESSION:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__EXPRESSION:
         setExpression((String)newValue);
         return;
-      case KactorsPackage.IF_STATEMENT__VARIABLE:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__VARIABLE:
         setVariable((String)newValue);
         return;
-      case KactorsPackage.IF_STATEMENT__BODY:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__BODY:
         setBody((StatementBody)newValue);
-        return;
-      case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
-        getElseIfBody().clear();
-        getElseIfBody().addAll((Collection<? extends ElseIfStatementBody>)newValue);
-        return;
-      case KactorsPackage.IF_STATEMENT__ELSE_CALL:
-        setElseCall((StatementBody)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -453,23 +342,17 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
   {
     switch (featureID)
     {
-      case KactorsPackage.IF_STATEMENT__LITERAL:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__LITERAL:
         setLiteral((Literal)null);
         return;
-      case KactorsPackage.IF_STATEMENT__EXPRESSION:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__EXPRESSION:
         setExpression(EXPRESSION_EDEFAULT);
         return;
-      case KactorsPackage.IF_STATEMENT__VARIABLE:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__VARIABLE:
         setVariable(VARIABLE_EDEFAULT);
         return;
-      case KactorsPackage.IF_STATEMENT__BODY:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__BODY:
         setBody((StatementBody)null);
-        return;
-      case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
-        getElseIfBody().clear();
-        return;
-      case KactorsPackage.IF_STATEMENT__ELSE_CALL:
-        setElseCall((StatementBody)null);
         return;
     }
     super.eUnset(featureID);
@@ -485,18 +368,14 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
   {
     switch (featureID)
     {
-      case KactorsPackage.IF_STATEMENT__LITERAL:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__LITERAL:
         return literal != null;
-      case KactorsPackage.IF_STATEMENT__EXPRESSION:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__EXPRESSION:
         return EXPRESSION_EDEFAULT == null ? expression != null : !EXPRESSION_EDEFAULT.equals(expression);
-      case KactorsPackage.IF_STATEMENT__VARIABLE:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__VARIABLE:
         return VARIABLE_EDEFAULT == null ? variable != null : !VARIABLE_EDEFAULT.equals(variable);
-      case KactorsPackage.IF_STATEMENT__BODY:
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY__BODY:
         return body != null;
-      case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
-        return elseIfBody != null && !elseIfBody.isEmpty();
-      case KactorsPackage.IF_STATEMENT__ELSE_CALL:
-        return elseCall != null;
     }
     return super.eIsSet(featureID);
   }
@@ -520,4 +399,4 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
     return result.toString();
   }
 
-} //IfStatementImpl
+} //ElseIfStatementBodyImpl

@@ -42,6 +42,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getStatementAccess().getAlternatives_0(), "rule__Statement__Alternatives_0");
 			builder.put(grammarAccess.getNextStatementAccess().getAlternatives_1(), "rule__NextStatement__Alternatives_1");
 			builder.put(grammarAccess.getIfStatementAccess().getAlternatives_1(), "rule__IfStatement__Alternatives_1");
+			builder.put(grammarAccess.getElseIfStatementBodyAccess().getAlternatives_0(), "rule__ElseIfStatementBody__Alternatives_0");
 			builder.put(grammarAccess.getStatementBodyAccess().getAlternatives(), "rule__StatementBody__Alternatives");
 			builder.put(grammarAccess.getActionsAccess().getAlternatives(), "rule__Actions__Alternatives");
 			builder.put(grammarAccess.getValueAccess().getAlternatives(), "rule__Value__Alternatives");
@@ -149,6 +150,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getIfStatementAccess().getGroup(), "rule__IfStatement__Group__0");
 			builder.put(grammarAccess.getIfStatementAccess().getGroup_3(), "rule__IfStatement__Group_3__0");
 			builder.put(grammarAccess.getIfStatementAccess().getGroup_4(), "rule__IfStatement__Group_4__0");
+			builder.put(grammarAccess.getElseIfStatementBodyAccess().getGroup(), "rule__ElseIfStatementBody__Group__0");
 			builder.put(grammarAccess.getWhileStatementAccess().getGroup(), "rule__WhileStatement__Group__0");
 			builder.put(grammarAccess.getDoStatementAccess().getGroup(), "rule__DoStatement__Group__0");
 			builder.put(grammarAccess.getForStatementAccess().getGroup(), "rule__ForStatement__Group__0");
@@ -380,9 +382,12 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getIfStatementAccess().getExpressionAssignment_1_1(), "rule__IfStatement__ExpressionAssignment_1_1");
 			builder.put(grammarAccess.getIfStatementAccess().getVariableAssignment_1_2(), "rule__IfStatement__VariableAssignment_1_2");
 			builder.put(grammarAccess.getIfStatementAccess().getBodyAssignment_2(), "rule__IfStatement__BodyAssignment_2");
-			builder.put(grammarAccess.getIfStatementAccess().getElseIfExpressionAssignment_3_2(), "rule__IfStatement__ElseIfExpressionAssignment_3_2");
-			builder.put(grammarAccess.getIfStatementAccess().getElseIfBodyAssignment_3_3(), "rule__IfStatement__ElseIfBodyAssignment_3_3");
+			builder.put(grammarAccess.getIfStatementAccess().getElseIfBodyAssignment_3_2(), "rule__IfStatement__ElseIfBodyAssignment_3_2");
 			builder.put(grammarAccess.getIfStatementAccess().getElseCallAssignment_4_1(), "rule__IfStatement__ElseCallAssignment_4_1");
+			builder.put(grammarAccess.getElseIfStatementBodyAccess().getLiteralAssignment_0_0(), "rule__ElseIfStatementBody__LiteralAssignment_0_0");
+			builder.put(grammarAccess.getElseIfStatementBodyAccess().getExpressionAssignment_0_1(), "rule__ElseIfStatementBody__ExpressionAssignment_0_1");
+			builder.put(grammarAccess.getElseIfStatementBodyAccess().getVariableAssignment_0_2(), "rule__ElseIfStatementBody__VariableAssignment_0_2");
+			builder.put(grammarAccess.getElseIfStatementBodyAccess().getBodyAssignment_1(), "rule__ElseIfStatementBody__BodyAssignment_1");
 			builder.put(grammarAccess.getStatementBodyAccess().getVerbAssignment_0(), "rule__StatementBody__VerbAssignment_0");
 			builder.put(grammarAccess.getStatementBodyAccess().getValueAssignment_1(), "rule__StatementBody__ValueAssignment_1");
 			builder.put(grammarAccess.getStatementBodyAccess().getGroupAssignment_2(), "rule__StatementBody__GroupAssignment_2");

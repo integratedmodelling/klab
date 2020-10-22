@@ -150,6 +150,15 @@ public interface KactorsFactory extends EFactory
   IfStatement createIfStatement();
 
   /**
+   * Returns a new object of class '<em>Else If Statement Body</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Else If Statement Body</em>'.
+   * @generated
+   */
+  ElseIfStatementBody createElseIfStatementBody();
+
+  /**
    * Returns a new object of class '<em>Statement Body</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

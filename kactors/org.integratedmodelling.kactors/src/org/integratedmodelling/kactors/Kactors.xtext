@@ -125,8 +125,12 @@ Assignment:
 IfStatement:
 	'if' (literal=Literal | expression=EXPR | variable=LOWERCASE_ID) 
 		body=StatementBody	
-		('else' 'if' elseIfExpression+=EXPR elseIfBody+=StatementBody)* 
+		('else' 'if' elseIfBody+=ElseIfStatementBody)* 
 		('else' elseCall=StatementBody)?
+;
+
+ElseIfStatementBody:
+	(literal=Literal | expression=EXPR | variable=LOWERCASE_ID) body=StatementBody
 ;
 
 /** 

@@ -22,6 +22,7 @@ import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
+import org.integratedmodelling.kactors.kactors.ElseIfStatementBody;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -190,6 +191,11 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
       public Adapter caseIfStatement(IfStatement object)
       {
         return createIfStatementAdapter();
+      }
+      @Override
+      public Adapter caseElseIfStatementBody(ElseIfStatementBody object)
+      {
+        return createElseIfStatementBodyAdapter();
       }
       @Override
       public Adapter caseStatementBody(StatementBody object)
@@ -584,6 +590,21 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createIfStatementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.ElseIfStatementBody <em>Else If Statement Body</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.ElseIfStatementBody
+   * @generated
+   */
+  public Adapter createElseIfStatementBodyAdapter()
   {
     return null;
   }

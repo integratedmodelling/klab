@@ -24,6 +24,7 @@ import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
+import org.integratedmodelling.kactors.kactors.ElseIfStatementBody;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfStatement;
@@ -128,6 +129,7 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.STATEMENT: return createStatement();
       case KactorsPackage.ASSIGNMENT: return createAssignment();
       case KactorsPackage.IF_STATEMENT: return createIfStatement();
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY: return createElseIfStatementBody();
       case KactorsPackage.STATEMENT_BODY: return createStatementBody();
       case KactorsPackage.WHILE_STATEMENT: return createWhileStatement();
       case KactorsPackage.DO_STATEMENT: return createDoStatement();
@@ -366,6 +368,18 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     IfStatementImpl ifStatement = new IfStatementImpl();
     return ifStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ElseIfStatementBody createElseIfStatementBody()
+  {
+    ElseIfStatementBodyImpl elseIfStatementBody = new ElseIfStatementBodyImpl();
+    return elseIfStatementBody;
   }
 
   /**

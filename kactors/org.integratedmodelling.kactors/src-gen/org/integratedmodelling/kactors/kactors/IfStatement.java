@@ -20,7 +20,6 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getVariable <em>Variable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getBody <em>Body</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getElseIfExpression <em>Else If Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getElseIfBody <em>Else If Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getElseCall <em>Else Call</em>}</li>
  * </ul>
@@ -120,20 +119,8 @@ public interface IfStatement extends EObject
   void setBody(StatementBody value);
 
   /**
-   * Returns the value of the '<em><b>Else If Expression</b></em>' attribute list.
-   * The list contents are of type {@link java.lang.String}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Else If Expression</em>' attribute list.
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getIfStatement_ElseIfExpression()
-   * @model unique="false"
-   * @generated
-   */
-  EList<String> getElseIfExpression();
-
-  /**
    * Returns the value of the '<em><b>Else If Body</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.StatementBody}.
+   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.ElseIfStatementBody}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Else If Body</em>' containment reference list.
@@ -141,7 +128,7 @@ public interface IfStatement extends EObject
    * @model containment="true"
    * @generated
    */
-  EList<StatementBody> getElseIfBody();
+  EList<ElseIfStatementBody> getElseIfBody();
 
   /**
    * Returns the value of the '<em><b>Else Call</b></em>' containment reference.
