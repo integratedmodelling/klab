@@ -72,6 +72,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -204,6 +205,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	ITime timeOfInterest = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 
 	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
+
 	public interface ROIListener {
 
 		public void onChange(SpatialExtent extent);
@@ -378,6 +380,24 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	@Override
 	public Future<ISubject> observe(String urn, String... scenarios) {
+		return observe(urn, CollectionUtils.arrayToList(scenarios), null, null);
+	}
+
+	/**
+	 * Listener consumers are called as things progress. The observation listener
+	 * is first called with null as a parameter when starting, then (if no error
+	 * occurs) another time with the observation as argument. The observation may be
+	 * empty. If an exception is thrown, the error listener is called with the
+	 * exception as argument.
+	 * 
+	 * @param urn
+	 * @param scenarios
+	 * @param observationListener
+	 * @param errorListener
+	 * @return
+	 */
+	public Future<ISubject> observe(String urn, Collection<String> scenarios, Consumer<IArtifact> observationListener,
+			Consumer<Throwable> errorListener) {
 
 		touch();
 
@@ -436,7 +456,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 						this.regionNameOfInterest, monitor);
 				this.regionNameOfInterest = observer.getName();
 				try {
-					ISubject subject = new ObserveContextTask(this, observer, CollectionUtils.arrayToList(scenarios))
+					ISubject subject = new ObserveContextTask(this, observer, scenarios)
 							.get();
 					if (subject != null) {
 						/*
@@ -455,7 +475,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			throw new KlabContextualizationException("Cannot observe " + urn + ": unknown or no context established");
 		}
 
-		return new ObserveContextTask(this, (Observer) object, CollectionUtils.arrayToList(scenarios));
+		return new ObserveContextTask(this, (Observer) object, scenarios, observationListener, errorListener);
 	}
 
 	private ITime getConfiguredTime() {
@@ -643,7 +663,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	public void registerObservationContext(IRuntimeScope runtimeContext) {
 
 		this.globalState.setContext(runtimeContext);
-		
+
 		if (!observationContexts.offerFirst(runtimeContext)) {
 			disposeObservation(observationContexts.pollLast());
 			observationContexts.addFirst(runtimeContext);
@@ -740,7 +760,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			Observer observer = Observations.INSTANCE.makeROIObserver(shape, time, null, this.regionNameOfInterest,
 					monitor);
 			this.regionNameOfInterest = observer.getName();
-			
+
 			try {
 				new ObserveContextTask(this, observer, new ArrayList<>()).get();
 			} catch (InterruptedException | ExecutionException e) {
@@ -1007,7 +1027,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	private void setRegionOfInterest(SpatialExtent extent) {
 
 		this.globalState.register(extent);
-		
+
 		Envelope envelope = Envelope.create(extent.getEast(), extent.getWest(), extent.getSouth(), extent.getNorth(),
 				Projection.getLatLon());
 		ScaleReference scale = new ScaleReference();
@@ -1307,9 +1327,9 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	@MessageHandler
 	private void handleLoadApplicationRequest(final LoadApplicationRequest request, final IMessage.Type type) {
-		
+
 		this.globalState.register(request);
-		
+
 		switch (type) {
 		case RunApp:
 		case RunUnitTest:
@@ -1337,7 +1357,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	private void handleViewAction(ViewAction action) {
 
 		this.globalState.register(action);
-		
+
 		if (action.getOperation() == Operation.UserAction) {
 			@SuppressWarnings("unchecked")
 			IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE
@@ -1496,7 +1516,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	@MessageHandler(type = IMessage.Type.ResetContext)
 	private void handleResetContextRequest(String dummy) {
-		
+
 		if (!lockSpace.get()) {
 			this.spatialGridSize = null;
 			this.spatialGridUnits = null;
@@ -1568,7 +1588,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	private void handleObservationRequest(final ObservationRequest request) {
 
 		this.globalState.register(request);
-		
+
 		// TODO add observer to other observer (with parameter in request)
 		// TODO substitute observer to existing context (not done at the moment)
 		if (request.getSearchContextId() != null) {
@@ -1787,40 +1807,50 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		this.view = new ViewImpl(layout);
 	}
 
-	@Override
-	public <V> V getState(String key, Class<V> cls) {
-		return this.globalState.get(key, cls);
-	}
+//	@Override
+//	public <V> V getState(String key, Class<V> cls) {
+//		return this.globalState.get(key, cls);
+//	}
+//
+//	@Override
+//	public void setState(String key, Object value) {
+//		this.globalState.put(key, value);
+//		for (BiConsumer<String, Object> listener : stateChangeListeners.values()) {
+//			listener.accept(key, value);
+//		}
+//	}
 
-	@Override
-	public void setState(String key, Object value) {
-		this.globalState.put(key, value);
-		for (BiConsumer<String, Object> listener : stateChangeListeners.values()) {
-			listener.accept(key, value);
-		}
-	}
+//	@Deprecated
+//	@Override
+//	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
+//		this.stateChangeListeners.put(name, listener);
+//	}
+//
+//	@Deprecated
+//	@Override
+//	public void removeStateChangeListener(String name) {
+//		this.stateChangeListeners.remove(name);
+//	}
 
-	@Override
-	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
-		this.stateChangeListeners.put(name, listener);
-	}
-
-	@Override
-	public void removeStateChangeListener(String name) {
-		this.stateChangeListeners.remove(name);
-	}
-
+	@Deprecated
 	@Override
 	public ITime getTimeOfInterest() {
 		return this.timeOfInterest;
 	}
 
+	@Deprecated
 	public String getGeocodingStrategy() {
 		return globalState.get("geocodingstrategy", String.class);
 	}
-	
+
+	@Deprecated
 	@Override
 	public String getRegionNameOfInterest() {
 		return this.regionNameOfInterest;
+	}
+
+	@Override
+	public SessionState getState() {
+		return globalState;
 	}
 }

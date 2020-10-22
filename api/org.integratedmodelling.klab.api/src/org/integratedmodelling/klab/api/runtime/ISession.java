@@ -167,4 +167,12 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	 */
 	String getRegionNameOfInterest();
 
+	/**
+	 * The session promotes its state to a structured {@link ISessionState} that can
+	 * be saved or restored, as well as used to build observation contexts with
+	 * successive atomic operations.
+	 */
+	@Override
+	ISessionState getState();
+
 }

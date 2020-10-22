@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.engine.runtime;
 
+import java.util.Collection;
 import java.util.Deque;
 import java.util.LinkedList;
 import java.util.TimerTask;
@@ -39,15 +40,15 @@ public class ObservationQueue {
 			public void run() {
 				Pair<String, Consumer<IArtifact>> job = tasks.pollLast();
 				if (job != null) {
-					
-					Future<ISubject> task = session.observe(job.getFirst() /* TODO scenarios from session state */);
 				}
 			}
 		};
 
 	}
 
-	public void submit(String urn, Consumer<IArtifact> listener) {
+	public Future<IArtifact> submit(String urn, ISubject context, Collection<String> scenarios, Consumer<IArtifact> observationListener,
+			Consumer<Throwable> errorListener) {
+		return null;
 	}
 
 	/**

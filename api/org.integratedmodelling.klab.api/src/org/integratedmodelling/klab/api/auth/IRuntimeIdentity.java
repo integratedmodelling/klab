@@ -15,6 +15,7 @@
  */
 package org.integratedmodelling.klab.api.auth;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -65,5 +66,13 @@ public abstract interface IRuntimeIdentity extends IIdentity {
 	 *         object.
 	 */
 	IMonitor getMonitor();
+
+	/**
+	 * At runtime, each identity has a state which in the simplest case is an
+	 * unstructured map.
+	 * 
+	 * @return
+	 */
+	IParameters<String> getState();
 
 }

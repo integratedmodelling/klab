@@ -6,7 +6,9 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -30,6 +32,7 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * A ITask that creates one or more Observations within a context subject.
@@ -41,6 +44,12 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 	FutureTask<IObservation> delegate;
 	String taskDescription = "<uninitialized contextual observation task " + token + ">";
+	IParameters<String> globalState = Parameters.create();
+
+	@Override
+	public IParameters<String> getState() {
+		return globalState;
+	}
 
 	public ObserveInContextTask(ObserveInContextTask parent, String description) {
 		super(parent);
@@ -49,6 +58,24 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 	}
 
 	public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios) {
+		this(context, urn, scenarios, null, null);
+	}
+
+	/**
+	 * Listener consumers are called as things progress. The observation listener is
+	 * first called with null as a parameter when starting, then (if no error
+	 * occurs) another time with the observation as argument. The observation may be
+	 * empty. If an exception is thrown, the error listener is called with the exception as
+	 * argument.
+	 * 
+	 * @param context
+	 * @param urn
+	 * @param scenarios
+	 * @param observationListener
+	 * @param errorListener
+	 */
+	public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios,
+			Consumer<IArtifact> observationListener, Consumer<Throwable> errorListener) {
 
 		this.context = context;
 		this.monitor = context.getMonitor().get(this);
@@ -67,6 +94,10 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 				try {
 
 					notifyStart();
+
+					if (observationListener != null) {
+						observationListener.accept(null);
+					}
 
 					/*
 					 * obtain the resolvable object corresponding to the URN - either a concept or a
@@ -89,9 +120,9 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 					 */
 					ResolutionScope scope = Resolver.create(null).resolve(resolvable,
 							ResolutionScope.create(context, monitor, scenarios));
-					
+
 					if (scope.getCoverage().isRelevant()) {
-						
+
 						Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
 								scope, null);
 
@@ -142,7 +173,15 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 
 					notifyEnd();
 
+					if (observationListener != null) {
+						observationListener.accept(ret);
+					}
+
 				} catch (Throwable e) {
+
+					if (errorListener != null) {
+						errorListener.accept(e);
+					}
 
 					throw notifyAbort(e);
 				}
@@ -219,6 +258,5 @@ public class ObserveInContextTask extends AbstractTask<IObservation> {
 	protected String getTaskDescription() {
 		return taskDescription;
 	}
-
 
 }

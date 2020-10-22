@@ -311,7 +311,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			if (symbolTable.containsKey(string)) {
 				return symbolTable.get(string);
 			}
-			return identity.getState(string, Object.class);
+			return identity.getState().get(string, Object.class);
 		}
 
 		/**
@@ -729,7 +729,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private void executeAssignment(Assignment code, Scope scope) {
 		if (code.getRecipient() != null) {
 			if ("self".equals(code.getRecipient())) {
-				this.identity.setState(code.getVariable(), evaluateInScope((KActorsValue) code.getValue(), scope));
+				this.identity.getState().put(code.getVariable(), evaluateInScope((KActorsValue) code.getValue(), scope));
 			} else {
 				// TODO find the actor reference and send it an internal message to set the
 				// state. Should be subject to scope and authorization

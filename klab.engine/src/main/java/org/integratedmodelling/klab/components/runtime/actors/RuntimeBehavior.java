@@ -16,11 +16,13 @@ import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
+import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 
 import akka.actor.typed.ActorRef;
@@ -105,7 +107,7 @@ public class RuntimeBehavior {
 	@Action(id = "submit", fires = Type.OBSERVATION, description = "Submit a URN for observation, either in the current context or creating one from the "
 			+ " current preferences. The session will add it to the observation queue and make the observation when possible. "
 			+ "When done, the correspondent artifact (or an error) will be fired.")
-	
+
 	public static class Submit extends KlabActionExecutor {
 
 		String listenerId = null;
@@ -119,16 +121,24 @@ public class RuntimeBehavior {
 		void run(KlabActor.Scope scope) {
 
 			if (!arguments.getUnnamedKeys().isEmpty()) {
-				System.out.println("SUBMIT " + KlabActor.evaluate(arguments.get(arguments.getUnnamedKeys().get(0)), scope));
+				fire(Status.WAITING, false);
+				identity.getParentIdentity(Session.class).getState()
+						.submit(KlabActor.evaluate(arguments.get(arguments.getUnnamedKeys().get(0)), scope).toString(),
+								(observation) -> {
+									if (observation == null) {
+										fire(Status.STARTED, false);
+									} else {
+										fire(observation, false);
+									}
+								},
+								(exception) -> {
+									fire(exception, false);
+								});
 			}
 		}
 
 		@Override
 		public void dispose() {
-//			if (this.listenerId != null) {
-//				scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
-//						.removeObservationListener(this.listenerId);
-//			}
 		}
 	}
 

@@ -20,6 +20,7 @@ import java.util.function.Consumer;
 import java.util.logging.Level;
 
 import org.eclipse.xtext.testing.IInjectorProvider;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Actors;
@@ -68,10 +69,10 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.kim.KimNotifier;
 import org.integratedmodelling.klab.kim.KimValidator;
 import org.integratedmodelling.klab.monitoring.Message;
-import org.integratedmodelling.klab.utils.DebugFile;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
@@ -99,6 +100,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 	private ExecutorService taskExecutor;
 	private String token = "e_" + NameGenerator.newName();
 	protected Set<GrantedAuthority> authorities = new HashSet<>();
+	public IParameters<String> globalState = Parameters.create();
 
 	/**
 	 * A scheduler to periodically check for abandoned sessions and close them
@@ -831,6 +833,11 @@ public class Engine extends Server implements IEngine, UserDetails {
 	public boolean stop(String behaviorId) {
 		// TODO Auto-generated method stub
 		return false;
+	}
+
+	@Override
+	public IParameters<String> getState() {
+		return globalState;
 	}
 
 }

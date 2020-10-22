@@ -10,18 +10,24 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Consumer;
 
-import org.integratedmodelling.kim.api.IKimQuantity;
+import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
-import org.integratedmodelling.klab.engine.runtime.Session.ROIListener;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
@@ -47,7 +53,7 @@ import com.ibm.icu.text.NumberFormat;
  * @author Ferd
  *
  */
-public class SessionState extends Parameters<String> {
+public class SessionState extends Parameters<String> implements ISessionState {
 
 	public final static String GEOCODING_STRATEGY_KEY = "geocodingstrategy";
 	public final static String SPATIAL_RESOLUTION_KEY = "spatialresolution";
@@ -55,14 +61,6 @@ public class SessionState extends Parameters<String> {
 	public final static String TIME_START_KEY = "timestart";
 	public final static String TIME_END_KEY = "timeend";
 	public final static String TIME_STEP_KEY = "timestep";
-
-	public interface Listener {
-
-//		public void onChange(SpatialExtent extent);
-
-		
-		
-	}
 
 	private Session session;
 	private ObservationQueue observationQueue;
@@ -75,6 +73,7 @@ public class SessionState extends Parameters<String> {
 	private AtomicBoolean lockSpace = new AtomicBoolean(false);
 	Map<String, Listener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
 	private ScaleReference regionOfInterest;
+	private ISubject context;
 
 	public SessionState(Session session) {
 		this.session = session;
@@ -82,19 +81,55 @@ public class SessionState extends Parameters<String> {
 		this.regionOfInterest = new ScaleReference();
 	}
 
+	@Override
 	public Future<IArtifact> submit(String urn) {
-		this.observationQueue.submit(urn, null);
-		return null;
+		return submit(urn, null, null);
 	}
 
+	public Future<IArtifact> submit(String urn, Consumer<IArtifact> observationListener,
+			Consumer<Throwable> errorListener) {
+
+		IResolvable resolvable = null;
+		Future<IArtifact> ret = null;
+		if (urn.contains(" ")) {
+			resolvable = Observables.INSTANCE.declare(urn);
+		} else {
+			IKimObject object = Resources.INSTANCE.getModelObject(urn);
+			if (object instanceof IResolvable) {
+				resolvable = (IResolvable) object;
+			}
+		}
+		if (this.context == null && !(resolvable instanceof IObserver)) {
+			/*
+			 * submit what we know about the region of interest to build the context.
+			 */
+			resetContext();
+			ret = this.observationQueue.submit(/* TODO */ null, null, this.scenarios, (obs) -> {
+				if (obs == null) {
+					// just sent the start message. This may be repeated downstream.
+					observationListener.accept(null);
+				}
+			}, errorListener);
+		}
+
+		/**
+		 * Submit the actual resolvable
+		 */
+		ret = this.observationQueue.submit(urn, this.context, this.scenarios, observationListener, errorListener);
+		return ret;
+	}
+
+	@Override
 	public boolean activateScenario(String scenario) {
 		return this.scenarios.add(scenario);
 	}
 
+	@Override
 	public boolean deactivateScenario(String scenario) {
 		return this.scenarios.remove(scenario);
 	}
 
+	@Override
 	public IGeometry getGeometry() {
 		return Geometry.create(this.regionOfInterest);
 	}
@@ -116,6 +151,7 @@ public class SessionState extends Parameters<String> {
 		return super.put(key, value);
 	}
 
+	@Override
 	public Set<String> getActiveScenarios() {
 		return scenarios;
 	}
@@ -130,7 +166,7 @@ public class SessionState extends Parameters<String> {
 	 * @param view
 	 */
 	public void setApplication(String applicationName, Layout view) {
-		
+
 	}
 
 	/**
@@ -138,6 +174,7 @@ public class SessionState extends Parameters<String> {
 	 * 
 	 * @param applicationName
 	 */
+	@Override
 	public void activateApplication(String applicationName) {
 
 	}
@@ -147,37 +184,39 @@ public class SessionState extends Parameters<String> {
 	 * 
 	 * @param applicationName
 	 */
+	@Override
 	public void deactivateApplication(String applicationName) {
 
 	}
 
+	@Override
 	public void addRole(IConcept role, IConcept target) {
 
 	}
 
+	@Override
 	public void removeRole(IConcept role, IConcept target) {
 
 	}
 
+	@Override
 	public void resetRoles() {
 		this.roles.clear();
 	}
 
-	public IGeometry getGeometryOfInterest() {
+	/**
+	 * 
+	 */
+	@Override
+	public String save() {
 		return null;
 	}
 
 	/**
 	 * 
 	 */
-	public void save() {
-
-	}
-
-	/**
-	 * 
-	 */
-	public void restore() {
+	@Override
+	public void restore(String stateId) {
 
 	}
 
@@ -192,10 +231,9 @@ public class SessionState extends Parameters<String> {
 
 	}
 
+	@Override
 	public void resetContext() {
-		// TODO Auto-generated method stub
-//		System.out.println("ZIO CAN RESET CONTEXT");
-
+		this.context = null;
 	}
 
 	public void register(ObservationRequest request) {
@@ -250,8 +288,7 @@ public class SessionState extends Parameters<String> {
 	}
 
 	public void setContext(IRuntimeScope runtimeContext) {
-		// TODO Auto-generated method stub
-//		System.out.println("ZIO CAN SET CONTEXT");
+		this.context = runtimeContext.getRootSubject();
 	}
 
 }
