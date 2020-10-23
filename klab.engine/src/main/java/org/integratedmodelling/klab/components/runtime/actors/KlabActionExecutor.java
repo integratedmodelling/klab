@@ -139,6 +139,7 @@ public abstract class KlabActionExecutor {
 		switch (arg.getType()) {
 		case ANYTHING:
 		case ANYVALUE:
+		case EMPTY:
 			break;
 		case ANYTRUE:
 			return true;
@@ -195,6 +196,8 @@ public abstract class KlabActionExecutor {
 			return new Urn(arg.getValue().toString());
 //		default:
 //			break;
+		case CONSTANT:
+			break;
 		}
 		return null;
 	}

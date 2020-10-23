@@ -122,18 +122,45 @@ public class RuntimeBehavior {
 
 			if (!arguments.getUnnamedKeys().isEmpty()) {
 				fire(Status.WAITING, false);
-				identity.getParentIdentity(Session.class).getState()
-						.submit(KlabActor.evaluate(arguments.get(arguments.getUnnamedKeys().get(0)), scope).toString(),
-								(observation) -> {
-									if (observation == null) {
-										fire(Status.STARTED, false);
-									} else {
-										fire(observation, false);
-									}
-								},
-								(exception) -> {
-									fire(exception, false);
-								});
+				identity.getParentIdentity(Session.class).getState().submit(
+						KlabActor.evaluate(arguments.get(arguments.getUnnamedKeys().get(0)), scope).toString(),
+						(observation) -> {
+							if (observation == null) {
+								fire(Status.STARTED, false);
+							} else {
+								fire(observation, false);
+							}
+						}, (exception) -> {
+							fire(exception, false);
+						});
+			}
+		}
+
+		@Override
+		public void dispose() {
+		}
+	}
+
+	/**
+	 * Make an observation, setting the context according to current preferences and
+	 * session state, or set the context itself if the observation is a subject and
+	 * the current context is not set.
+	 */
+	@Action(id = "setrole", fires = Type.EMPTY, description = "Apply a session-specific role to one or more observables or observations.")
+	public static class SetRole extends KlabActionExecutor {
+
+		String listenerId = null;
+
+		public SetRole(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		void run(KlabActor.Scope scope) {
+
+			if (!arguments.getUnnamedKeys().isEmpty()) {
+				// must have role as primary parameter, then other observables, observations or lists thereof
 			}
 		}
 

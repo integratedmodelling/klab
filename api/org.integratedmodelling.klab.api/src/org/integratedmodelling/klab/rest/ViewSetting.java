@@ -5,11 +5,11 @@ import java.util.Map;
 
 public class ViewSetting {
 
-	enum Operation {
+	public enum Operation {
 		Show, Hide, Enable, Disable
 	}
 
-	enum Target {
+	public enum Target {
 		Observation, View, Tree, Report, Dataflow
 	}
 
