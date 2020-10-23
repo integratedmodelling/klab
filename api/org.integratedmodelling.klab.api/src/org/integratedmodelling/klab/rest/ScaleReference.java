@@ -35,6 +35,7 @@ public class ScaleReference {
 	private double timeResolutionMultiplier;
 	private ITime.Resolution.Type timeUnit;
 	private String timeResolutionDescription;
+	private String shape;
 
 	private long start;
 	private long end;
@@ -198,6 +199,14 @@ public class ScaleReference {
 
 	public void setTimeResolutionDescription(String timeResolutionDescription) {
 		this.timeResolutionDescription = timeResolutionDescription;
+	}
+
+	public String getShape() {
+		return shape;
+	}
+
+	public void setShape(String shape) {
+		this.shape = shape;
 	}
 
 }
