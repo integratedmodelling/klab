@@ -275,6 +275,10 @@ public class ViewBehavior {
 		@Override
 		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
 			ViewAction ret = new ViewAction();
+			if ("update".equals(message.message)) {
+				ret.setOperation(Operation.Update);
+				ret.setStringValue(getDefaultAsString(message.arguments, this, scope));
+			}
 			return ret;
 		}
 
@@ -369,6 +373,10 @@ public class ViewBehavior {
 		@Override
 		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
 			ViewAction ret = new ViewAction();
+			if ("update".equals(message.message)) {
+				ret.setOperation(Operation.Update);
+				ret.setStringValue(getDefaultAsString(message.arguments, this, scope));
+			}
 			return ret;
 		}
 

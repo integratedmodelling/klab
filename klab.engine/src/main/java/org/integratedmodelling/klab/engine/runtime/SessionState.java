@@ -104,12 +104,11 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			 * submit what we know about the region of interest to build the context.
 			 */
 			resetContext();
-			ret = this.observationQueue.submit(/* TODO */ null, null, this.scenarios, (obs) -> {
-				if (obs == null) {
-					// just sent the start message. This may be repeated downstream.
-					observationListener.accept(null);
-				}
-			}, errorListener);
+			/*
+			 * TODO
+			 * just set up an observer if possible and if OK, pass it to the submit below instead of 
+			 * context. If not available, call the error listener and exit.
+			 */
 		}
 
 		/**

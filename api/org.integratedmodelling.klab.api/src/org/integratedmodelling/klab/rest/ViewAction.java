@@ -160,15 +160,6 @@ public class ViewAction {
 	public void setListValue(List<String> listValue) {
 		this.listValue = listValue;
 	}
-
-//	public boolean isBooleanSet() {
-//		return booleanSet;
-//	}
-//
-//	public void setBooleanSet(boolean booleanSet) {
-//		this.booleanSet = booleanSet;
-//	}
-	
 	
 
 }
