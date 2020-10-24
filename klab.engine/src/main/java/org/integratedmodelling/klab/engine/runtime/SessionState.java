@@ -101,8 +101,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	long startTime = System.currentTimeMillis();
 	private Set<String> scenarios = new HashSet<>();
 	private Map<IConcept, IConcept> roles = new HashMap<>();
-	private Double spatialGridSize;
-	private String spatialGridUnits;
+//	private Double spatialGridSize;
+//	private String spatialGridUnits;
 	private AtomicBoolean lockSpace = new AtomicBoolean(false);
 	private AtomicBoolean lockTime = new AtomicBoolean(false);
 	Map<String, Listener> listeners = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -403,46 +403,47 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	public void register(ScaleReference extent) {
 		// TODO Auto-generated method stub
-
-		Envelope envelope = Envelope.create(extent.getEast(), extent.getWest(), extent.getSouth(), extent.getNorth(),
-				Projection.getLatLon());
-		ScaleReference scale = new ScaleReference();
-
-		if (!lockSpace.get() || this.spatialGridSize == null) {
-			Pair<Integer, String> rres = envelope.getResolutionForZoomLevel();
-			this.spatialGridSize = (double) rres.getFirst();
-			this.spatialGridUnits = rres.getSecond();
-		}
-
-		Pair<Double, String> resolution = new Pair<>(this.spatialGridSize, this.spatialGridUnits);
-		Unit sunit = Unit.create(resolution.getSecond());
-		int scaleRank = envelope.getScaleRank();
-		scale.setEast(envelope.getMaxX());
-		scale.setWest(envelope.getMinX());
-		scale.setNorth(envelope.getMaxY());
-		scale.setSouth(envelope.getMinY());
-		scale.setSpaceUnit(resolution.getSecond());
-		scale.setSpaceResolution(resolution.getFirst());
-		scale.setSpaceResolutionConverted(sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
-		scale.setSpaceResolutionDescription(
-				NumberFormat.getInstance().format(scale.getSpaceResolutionConverted()) + " " + this.spatialGridUnits);
-		scale.setResolutionDescription(
-				NumberFormat.getInstance().format(scale.getSpaceResolutionConverted()) + " " + this.spatialGridUnits);
-		scale.setSpaceScale(scaleRank);
-
-		session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
-
-		for (Listener listener : listeners.values()) {
-			listener.scaleChanged(scale);
-		}
-
-		this.scaleOfInterest = extent;
+		System.out.println("ZIOPEPPE CHE FACCIO CON " + extent + "?");
+//
+//		Envelope envelope = Envelope.create(extent.getEast(), extent.getWest(), extent.getSouth(), extent.getNorth(),
+//				Projection.getLatLon());
+//		ScaleReference scale = new ScaleReference();
+//
+//		if (!lockSpace.get() || this.spatialGridSize == null) {
+//			Pair<Integer, String> rres = envelope.getResolutionForZoomLevel();
+//			this.spatialGridSize = (double) rres.getFirst();
+//			this.spatialGridUnits = rres.getSecond();
+//		}
+//
+//		Pair<Double, String> resolution = new Pair<>(this.spatialGridSize, this.spatialGridUnits);
+//		Unit sunit = Unit.create(resolution.getSecond());
+//		int scaleRank = envelope.getScaleRank();
+//		scale.setEast(envelope.getMaxX());
+//		scale.setWest(envelope.getMinX());
+//		scale.setNorth(envelope.getMaxY());
+//		scale.setSouth(envelope.getMinY());
+//		scale.setSpaceUnit(resolution.getSecond());
+//		scale.setSpaceResolution(resolution.getFirst());
+//		scale.setSpaceResolutionConverted(sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
+//		scale.setSpaceResolutionDescription(
+//				NumberFormat.getInstance().format(scale.getSpaceResolutionConverted()) + " " + this.spatialGridUnits);
+//		scale.setResolutionDescription(
+//				NumberFormat.getInstance().format(scale.getSpaceResolutionConverted()) + " " + this.spatialGridUnits);
+//		scale.setSpaceScale(scaleRank);
+//
+//		session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
+//
+//		for (Listener listener : listeners.values()) {
+//			listener.scaleChanged(scale);
+//		}
+//
+//		this.scaleOfInterest = extent;
 
 	}
 
 	/*
 	 * TODO use mutex, synchronized is not enough, we should reject every call and
-	 * just execute the last we got after finishing.
+	 * just execute the last we got after finishing. See rate limiter in Geocoder.
 	 */
 	public void register(SpatialExtent extent) {
 
@@ -454,10 +455,11 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		Envelope envelope = Envelope.create(extent.getEast(), extent.getWest(), extent.getSouth(), extent.getNorth(),
 				Projection.getLatLon());
 
-		if (!lockSpace.get() || this.spatialGridSize == null) {
+		if (!lockSpace.get() || this.scaleOfInterest.getSpaceUnit() == null) {
 			Pair<Integer, String> rres = envelope.getResolutionForZoomLevel();
-			this.spatialGridSize = (double) rres.getFirst();
-			this.spatialGridUnits = rres.getSecond();
+			this.scaleOfInterest.setSpaceResolution((double) rres.getFirst());
+			this.scaleOfInterest.setSpaceUnit(rres.getSecond());
+			this.scaleOfInterest.setSpaceScale(envelope.getScaleRank());
 		}
 
 		if (this.geocodingStrategy != null) {
@@ -466,20 +468,20 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 		}
 
-		Pair<Double, String> resolution = new Pair<>(this.spatialGridSize, this.spatialGridUnits);
-		Unit sunit = Unit.create(resolution.getSecond());
-		int scaleRank = envelope.getScaleRank();
-		this.scaleOfInterest.setSpaceUnit(resolution.getSecond());
-		this.scaleOfInterest.setSpaceResolution(resolution.getFirst());
+//		Pair<Double, String> resolution = new Pair<>(this.spatialGridSize, this.spatialGridUnits);
+		Unit sunit = Unit.create(scaleOfInterest.getSpaceUnit());
+//		int scaleRank = envelope.getScaleRank();
+//		this.scaleOfInterest.setSpaceUnit(resolution.getSecond());
+//		this.scaleOfInterest.setSpaceResolution(resolution.getFirst());
 		this.scaleOfInterest
-				.setSpaceResolutionConverted(sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
+				.setSpaceResolutionConverted(sunit.convert(scaleOfInterest.getSpaceResolution(), Units.INSTANCE.METERS).doubleValue());
 		this.scaleOfInterest.setSpaceResolutionDescription(
 				NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolutionConverted()) + " "
-						+ this.spatialGridUnits);
+						+ this.scaleOfInterest.getSpaceUnit());
 		this.scaleOfInterest.setResolutionDescription(
 				NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolutionConverted()) + " "
-						+ this.spatialGridUnits);
-		this.scaleOfInterest.setSpaceScale(scaleRank);
+						+ this.scaleOfInterest.getSpaceUnit());
+//		this.scaleOfInterest.setSpaceScale(scaleRank);
 
 		session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined,
 				scaleOfInterest);
