@@ -12,11 +12,11 @@ import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
-import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.utils.Pair;
 
 import akka.actor.typed.ActorRef;
@@ -51,8 +51,8 @@ public class ObjectBehavior {
 				try {
 					Object arg = evaluateArgument(0, scope);
 					if (arg instanceof IObservable) {
-						Future<ISubject> future = ((Session) this.identity)
-								.observe(((IObservable) arg).getDefinition());
+						Future<IArtifact> future = ((Session) this.identity).getState()
+								.submit(((IObservable) arg).getDefinition());
 						fire(future.get(), true);
 					}
 				} catch (Throwable e) {

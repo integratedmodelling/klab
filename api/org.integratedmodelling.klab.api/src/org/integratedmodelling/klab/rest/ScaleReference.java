@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
  */
 public class ScaleReference {
 
+	private String name;
 	private double east;
 	private double west;
 	private double north;
@@ -50,6 +51,7 @@ public class ScaleReference {
 
 	// FIXME REMOVE
 	private String resolutionDescription;
+	private int year = -1;
 
 	public double getEast() {
 		return east;
@@ -105,6 +107,14 @@ public class ScaleReference {
 
 	public void setEnd(long end) {
 		this.end = end;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
+	public int getYear() {
+		return this.year;
 	}
 
 	public long getStep() {
@@ -207,6 +217,14 @@ public class ScaleReference {
 
 	public void setShape(String shape) {
 		this.shape = shape;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 }

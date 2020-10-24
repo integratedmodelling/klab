@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.runtime;
 
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Future;
 
@@ -7,6 +8,8 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.rest.ScaleReference;
+import org.integratedmodelling.klab.rest.SessionActivity;
 
 /**
  * State of a session, set by users with successive operations and persistent if
@@ -18,7 +21,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 public interface ISessionState extends IParameters<String> {
 
 	public interface Listener {
-//		public void onChange(SpatialExtent extent);
+		public void scaleChanged(ScaleReference scale);
 	}
 
 	Future<IArtifact> submit(String urn);
@@ -27,6 +30,13 @@ public interface ISessionState extends IParameters<String> {
 
 	boolean deactivateScenario(String scenario);
 
+	/**
+	 * The geometry of interest according to the activity in the session. Used to
+	 * build the observer that will contain the first observation in case the latter
+	 * is not an observer itself.
+	 * 
+	 * @return
+	 */
 	IGeometry getGeometry();
 
 	Set<String> getActiveScenarios();
@@ -41,9 +51,17 @@ public interface ISessionState extends IParameters<String> {
 
 	void resetRoles();
 
+	String addListener(Listener listener);
+
+	void removeListener(String listenerId);
+
 	String save();
 
 	void resetContext();
 
 	void restore(String stateId);
+
+	List<SessionActivity> getHistory();
+	
+	String getRegionOfInterestName();
 }

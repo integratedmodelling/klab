@@ -154,7 +154,7 @@ public class TestRunner implements Annotations.Handler {
 					Session session = monitor.getIdentity().getParentIdentity(Session.class);
 
 					if (session != null && observer != null) {
-						ISubject subject = session.observe(observer.getName()).get();
+						ISubject subject = (ISubject)session.getState().submit(observer.getName()).get();
 						if (subject != null) {
 							for (Object o : observations) {
 								IObservation ret = subject.observe(o.toString()).get();

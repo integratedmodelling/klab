@@ -18,12 +18,12 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
+import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
-import org.integratedmodelling.klab.rest.SpatialExtent;
+import org.integratedmodelling.klab.rest.ScaleReference;
 
 import akka.actor.typed.ActorRef;
 
@@ -81,7 +81,7 @@ public class RuntimeBehavior {
 				Object arg = evaluateArgument(0, scope);
 				if (arg instanceof Urn) {
 					try {
-						Future<ISubject> future = ((Session) identity).observe(((Urn) arg).getUrn());
+						Future<IArtifact> future = ((Session) identity).getState().submit(((Urn) arg).getUrn());
 						fire(future.get(), true);
 					} catch (Throwable e) {
 						fail();
@@ -160,7 +160,8 @@ public class RuntimeBehavior {
 		void run(KlabActor.Scope scope) {
 
 			if (!arguments.getUnnamedKeys().isEmpty()) {
-				// must have role as primary parameter, then other observables, observations or lists thereof
+				// must have role as primary parameter, then other observables, observations or
+				// lists thereof
 			}
 		}
 
@@ -186,21 +187,18 @@ public class RuntimeBehavior {
 		void run(KlabActor.Scope scope) {
 
 			if (arguments == null || arguments.getUnnamedKeys().isEmpty()) {
-				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(Session.class)
-						.addROIListener(new Session.ROIListener() {
+				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(Session.class).getState()
+						.addListener(new ISessionState.Listener() {
 
 							@Override
-							public void onChange(final SpatialExtent extent) {
-
-								String strategy = session.getGeocodingStrategy();
-								String geocoded = Geocoder.INSTANCE.geocode(extent, strategy,
-										session.getRegionNameOfInterest(), scope.getMonitor());
+							public void scaleChanged(ScaleReference scale) {
 								Map<String, Object> ret = new HashMap<>();
-								ret.put("description", geocoded);
-								ret.put("resolution", extent.getGridResolution());
-								ret.put("unit", extent.getGridUnit());
-								ret.put("envelope", new double[] { extent.getWest(), extent.getSouth(),
-										extent.getEast(), extent.getNorth() });
+								// TODO reintegrate
+//								ret.put("description", geocoded);
+//								ret.put("resolution", scale.getGridResolution());
+//								ret.put("unit", scale.getGridUnit());
+								ret.put("envelope", new double[] { scale.getWest(), scale.getSouth(),
+										scale.getEast(), scale.getNorth() });
 
 								fire(ret, false);
 							}
@@ -213,7 +211,8 @@ public class RuntimeBehavior {
 		@Override
 		public void dispose() {
 			if (this.listenerId != null) {
-				scope.getMonitor().getIdentity().getParentIdentity(Session.class).removeROIListener(this.listenerId);
+				scope.getMonitor().getIdentity().getParentIdentity(Session.class).getState()
+						.removeListener(this.listenerId);
 			}
 		}
 	}

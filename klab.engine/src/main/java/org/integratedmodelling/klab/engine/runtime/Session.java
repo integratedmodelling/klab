@@ -24,7 +24,6 @@ import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
-import org.apache.commons.lang3.concurrent.ConcurrentUtils;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActorsBehavior;
@@ -41,9 +40,7 @@ import org.integratedmodelling.klab.Documentation;
 import org.integratedmodelling.klab.Indexing;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Network;
-import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
@@ -56,23 +53,18 @@ import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.knowledge.IAuthority.Identity;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
-import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -84,11 +76,8 @@ import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.auth.EngineUser;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
-import org.integratedmodelling.klab.components.geospace.extents.Envelope;
-import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder.Location;
@@ -96,7 +85,6 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMess
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
-import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.resources.Resource;
@@ -108,13 +96,9 @@ import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
-import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.model.KimObject;
-import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
-import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityResolutionRequest;
 import org.integratedmodelling.klab.rest.ContextualizationRequest;
@@ -156,21 +140,15 @@ import org.integratedmodelling.klab.rest.SpatialLocation;
 import org.integratedmodelling.klab.rest.TicketRequest;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.rest.ViewAction;
-import org.integratedmodelling.klab.rest.ViewAction.Operation;
 import org.integratedmodelling.klab.rest.WatchRequest;
-import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Parameters;
-import org.integratedmodelling.klab.utils.Utils;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-
-import com.ibm.icu.text.NumberFormat;
 
 import akka.actor.typed.ActorRef;
 
@@ -196,21 +174,21 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	long lastJoin = System.currentTimeMillis();
 	boolean isDefault = false;
 	Set<String> relayIdentities = new HashSet<>();
-	SpatialExtent regionOfInterest = null;
+//	SpatialExtent regionOfInterest = null;
 	ActorRef<KlabMessage> actor;
 	private SessionState globalState = new SessionState(this);
 	private View view;
 	Map<String, ISession.ObservationListener> observationListeners = Collections.synchronizedMap(new LinkedHashMap<>());
 	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
-	ITime timeOfInterest = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+//	ITime timeOfInterest = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 
-	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
-
-	public interface ROIListener {
-
-		public void onChange(SpatialExtent extent);
-
-	}
+//	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
+//
+//	public interface ROIListener {
+//
+//		public void onChange(SpatialExtent extent);
+//
+//	}
 
 	// a simple monitor that will only compile all notifications into a list to be
 	// sent back to clients
@@ -313,13 +291,13 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	private Long timeEnd = null;
 
 	private AtomicBoolean interactive = new AtomicBoolean(false);
-	/*
-	 * Space and time locking defines behavior at context reset: if context is reset
-	 * and resolution is locked, we keep the user-defined resolution (defining it
-	 * from the current at the moment of locking if the user res is null).
-	 */
-	private AtomicBoolean lockSpace = new AtomicBoolean(false);
-	private AtomicBoolean lockTime = new AtomicBoolean(false);
+//	/*
+//	 * Space and time locking defines behavior at context reset: if context is reset
+//	 * and resolution is locked, we keep the user-defined resolution (defining it
+//	 * from the current at the moment of locking if the user res is null).
+//	 */
+//	private AtomicBoolean lockSpace = new AtomicBoolean(false);
+//	private AtomicBoolean lockTime = new AtomicBoolean(false);
 	private AtomicLong lastNetworkCheck = new AtomicLong(0);
 
 	private String regionNameOfInterest = "Region of interest";
@@ -378,122 +356,123 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		this.closed = true;
 	}
 
-	@Override
-	public Future<ISubject> observe(String urn, String... scenarios) {
-		return observe(urn, CollectionUtils.arrayToList(scenarios), null, null);
-	}
+//	@Override
+//	public Future<ISubject> observe(String urn, String... scenarios) {
+//		return observe(urn, CollectionUtils.arrayToList(scenarios), null, null);
+//	}
 
-	/**
-	 * Listener consumers are called as things progress. The observation listener
-	 * is first called with null as a parameter when starting, then (if no error
-	 * occurs) another time with the observation as argument. The observation may be
-	 * empty. If an exception is thrown, the error listener is called with the
-	 * exception as argument.
-	 * 
-	 * @param urn
-	 * @param scenarios
-	 * @param observationListener
-	 * @param errorListener
-	 * @return
-	 */
-	public Future<ISubject> observe(String urn, Collection<String> scenarios, Consumer<IArtifact> observationListener,
-			Consumer<Throwable> errorListener) {
+//	/**
+//	 * Listener consumers are called as things progress. The observation listener
+//	 * is first called with null as a parameter when starting, then (if no error
+//	 * occurs) another time with the observation as argument. The observation may be
+//	 * empty. If an exception is thrown, the error listener is called with the
+//	 * exception as argument.
+//	 * 
+//	 * @param urn
+//	 * @param scenarios
+//	 * @param observationListener
+//	 * @param errorListener
+//	 * @return
+//	 */
+//	public Future<ISubject> observe(String urn, Collection<String> scenarios, Consumer<IArtifact> observationListener,
+//			Consumer<Throwable> errorListener) {
+//
+//		touch();
+//
+//		Object object = null;
+//
+//		if (urn.contains(" ")) {
+//			// can only be a declaration
+//			object = Observables.INSTANCE.declare(urn);
+//		} else {
+//			object = Resources.INSTANCE.getModelObject(urn);
+//		}
+//
+//		if (object == null) {
+//			// check for URN and launch a viewer task if so.
+//			IResource resource = Resources.INSTANCE.resolveResource(urn);
+//			if (resource != null) {
+//				return new UrnContextualizationTask(this, urn);
+//			} else {
+//				throw new KlabContextualizationException("cannot resolve URN " + urn);
+//			}
+//		}
+//
+//		if (!(object instanceof Observer)) {
+//
+//			if (regionOfInterest != null && (object instanceof KimObject || object instanceof IObservable)) {
+//
+//				INamespace namespace = object instanceof KimObject ? ((KimObject) object).getNamespace()
+//						: Namespaces.INSTANCE.getNamespace(((IObservable) object).getType().getNamespace());
+//				/*
+//				 * gridsize is defined if ROI is.
+//				 */
+//				SpatialExtent roi = new SpatialExtent(regionOfInterest);
+//				roi.setGridResolution(this.spatialGridSize);
+//				roi.setGridUnit(this.spatialGridUnits);
+//
+//				/*
+//				 * see if an application has defined a temporal context through the global state
+//				 */
+//				ITime time = getConfiguredTime();
+//
+//				if (time == null) {
+//					if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
+//						/*
+//						 * ACHTUNG if the time is PHYSICAL, states won't initialize properly (with the
+//						 * first timeslice @0)!
+//						 */
+//						time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
+//								this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
+//								new TimeInstant(this.timeEnd), null);
+//					} else {
+//						time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+//					}
+//				}
+//
+//				Observer observer = Observations.INSTANCE.makeROIObserver(roi, time, (Namespace) namespace,
+//						this.regionNameOfInterest, monitor);
+//				this.regionNameOfInterest = observer.getName();
+//				try {
+//					ISubject subject = new ObserveContextTask(this, observer, scenarios)
+//							.get();
+//					if (subject != null) {
+//						/*
+//						 * the inner task gets lost - should not matter as this is simply handling an
+//						 * asynchronous UI action.
+//						 */
+//						subject.observe(urn);
+//						return ConcurrentUtils.constantFuture(subject);
+//					}
+//				} catch (InterruptedException | ExecutionException e) {
+//					monitor.error(e);
+//					return null;
+//				}
+//			}
+//
+//			throw new KlabContextualizationException("Cannot observe " + urn + ": unknown or no context established");
+//		}
+//
+//		return new ObserveContextTask(this, (Observer) object, scenarios, observationListener, errorListener);
+//	}
 
-		touch();
-
-		Object object = null;
-
-		if (urn.contains(" ")) {
-			// can only be a declaration
-			object = Observables.INSTANCE.declare(urn);
-		} else {
-			object = Resources.INSTANCE.getModelObject(urn);
-		}
-
-		if (object == null) {
-			// check for URN and launch a viewer task if so.
-			IResource resource = Resources.INSTANCE.resolveResource(urn);
-			if (resource != null) {
-				return new UrnContextualizationTask(this, urn);
-			} else {
-				throw new KlabContextualizationException("cannot resolve URN " + urn);
-			}
-		}
-
-		if (!(object instanceof Observer)) {
-
-			if (regionOfInterest != null && (object instanceof KimObject || object instanceof IObservable)) {
-
-				INamespace namespace = object instanceof KimObject ? ((KimObject) object).getNamespace()
-						: Namespaces.INSTANCE.getNamespace(((IObservable) object).getType().getNamespace());
-				/*
-				 * gridsize is defined if ROI is.
-				 */
-				SpatialExtent roi = new SpatialExtent(regionOfInterest);
-				roi.setGridResolution(this.spatialGridSize);
-				roi.setGridUnit(this.spatialGridUnits);
-
-				/*
-				 * see if an application has defined a temporal context through the global state
-				 */
-				ITime time = getConfiguredTime();
-
-				if (time == null) {
-					if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
-						/*
-						 * ACHTUNG if the time is PHYSICAL, states won't initialize properly (with the
-						 * first timeslice @0)!
-						 */
-						time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
-								this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
-								new TimeInstant(this.timeEnd), null);
-					} else {
-						time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
-					}
-				}
-
-				Observer observer = Observations.INSTANCE.makeROIObserver(roi, time, (Namespace) namespace,
-						this.regionNameOfInterest, monitor);
-				this.regionNameOfInterest = observer.getName();
-				try {
-					ISubject subject = new ObserveContextTask(this, observer, scenarios)
-							.get();
-					if (subject != null) {
-						/*
-						 * the inner task gets lost - should not matter as this is simply handling an
-						 * asynchronous UI action.
-						 */
-						subject.observe(urn);
-						return ConcurrentUtils.constantFuture(subject);
-					}
-				} catch (InterruptedException | ExecutionException e) {
-					monitor.error(e);
-					return null;
-				}
-			}
-
-			throw new KlabContextualizationException("Cannot observe " + urn + ": unknown or no context established");
-		}
-
-		return new ObserveContextTask(this, (Observer) object, scenarios, observationListener, errorListener);
-	}
-
-	private ITime getConfiguredTime() {
-		if (this.globalState.containsAnyKey("startyear", "endyear", "year", "timestep", "start", "end", "step")) {
-
-			Object start = Utils.asType(this.globalState.getAny("startyear", "start"), Integer.class);
-			Object end = Utils.asType(this.globalState.getAny("endyear", "end"), Integer.class);
-			Object step = this.globalState.getAny("timestep", "step");
-			Object year = Utils.asType(this.globalState.get("year"), Integer.class);
-
-			Parameters<String> parameters = Parameters.createNotNull("start", start, "end", end, "step", step, "year",
-					year);
-
-			return (this.timeOfInterest = (ITime) (new org.integratedmodelling.klab.components.time.services.Time())
-					.eval(parameters, null));
-		}
-		return null;
-	}
+//	private ITime getConfiguredTime() {
+//		
+//		if (this.globalState.containsAnyKey("startyear", "endyear", "year", "timestep", "start", "end", "step")) {
+//
+//			Object start = Utils.asType(this.globalState.getAny("startyear", "start"), Integer.class);
+//			Object end = Utils.asType(this.globalState.getAny("endyear", "end"), Integer.class);
+//			Object step = this.globalState.getAny("timestep", "step");
+//			Object year = Utils.asType(this.globalState.get("year"), Integer.class);
+//
+//			Parameters<String> parameters = Parameters.createNotNull("start", start, "end", end, "step", step, "year",
+//					year);
+//
+//			return (this.timeOfInterest = (ITime) (new org.integratedmodelling.klab.components.time.services.Time())
+//					.eval(parameters, null));
+//		}
+//		return null;
+//	}
 
 	public String toString() {
 		// TODO add user
@@ -535,15 +514,15 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		return !closed;
 	}
 
-	@Override
-	public IGeometry getRegionOfInterest() {
-
-		if (regionOfInterest == null) {
-			return Geometry.empty();
-		}
-		return Geometry.create("S1").withBoundingBox(regionOfInterest.getEast(), regionOfInterest.getWest(),
-				regionOfInterest.getSouth(), regionOfInterest.getNorth());
-	}
+//	@Override
+//	public IGeometry getRegionOfInterest() {
+//
+//		if (regionOfInterest == null) {
+//			return Geometry.empty();
+//		}
+//		return Geometry.create("S1").withBoundingBox(regionOfInterest.getEast(), regionOfInterest.getWest(),
+//				regionOfInterest.getSouth(), regionOfInterest.getNorth());
+//	}
 
 	@Override
 	public IScript run(URL url) throws KlabException {
@@ -634,15 +613,15 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		observationListeners.remove(listenerId);
 	}
 
-	public String addROIListener(ROIListener listener) {
-		String ret = NameGenerator.newName();
-		roiListeners.put(ret, listener);
-		return ret;
-	}
-
-	public void removeROIListener(String listenerId) {
-		roiListeners.remove(listenerId);
-	}
+//	public String addROIListener(ROIListener listener) {
+//		String ret = NameGenerator.newName();
+//		roiListeners.put(ret, listener);
+//		return ret;
+//	}
+//
+//	public void removeROIListener(String listenerId) {
+//		roiListeners.remove(listenerId);
+//	}
 
 	/**
 	 * Register a task. It may be a ITask or a IScript, which only have the Future
@@ -668,6 +647,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 			disposeObservation(observationContexts.pollLast());
 			observationContexts.addFirst(runtimeContext);
 		}
+
 		// this is for human watchers, everything else is done by the runtime
 		monitor.info("new context registered with ID " + runtimeContext.getRootSubject().getId() + " for "
 				+ runtimeContext.getRootSubject());
@@ -688,20 +668,14 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	@MessageHandler(type = IMessage.Type.ChangeSetting)
 	private void handleSettingChange(final SettingChangeRequest request) {
+
 		switch (request.getSetting()) {
 		case InteractiveMode:
 			this.interactive.set(Boolean.parseBoolean(request.getNewValue()));
 			monitor.info("interactive mode set to " + (interactive.get() ? "on" : "off"));
 			break;
-		case LockSpace:
-			this.lockSpace.set(Boolean.parseBoolean(request.getNewValue()));
-			monitor.info("spatial resolution " + (lockSpace.get() ? "" : "un") + "locked");
-			break;
-		case LockTime:
-			this.lockTime.set(Boolean.parseBoolean(request.getNewValue()));
-			monitor.info("temporal resolution " + (lockSpace.get() ? "" : "un") + "locked");
-			break;
 		default:
+			this.globalState.register(request);
 			break;
 		}
 	}
@@ -745,8 +719,12 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	@MessageHandler(type = IMessage.Type.FeatureAdded)
 	private void handleFeatureAdded(final SpatialLocation location) {
 
+		/*
+		 * TODO this moves the context: must do through the state, not here.
+		 */
+		
 		if (location.getContextId() == null) {
-			ITime time = getConfiguredTime();
+			ITime time = ((SessionState)getState()).getTimeOfInterest();
 			if (time == null) {
 				if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
 					time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
@@ -1028,39 +1006,39 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 		this.globalState.register(extent);
 
-		Envelope envelope = Envelope.create(extent.getEast(), extent.getWest(), extent.getSouth(), extent.getNorth(),
-				Projection.getLatLon());
-		ScaleReference scale = new ScaleReference();
-
-		if (!lockSpace.get() || this.spatialGridSize == null) {
-			Pair<Integer, String> rres = envelope.getResolutionForZoomLevel();
-			this.spatialGridSize = (double) rres.getFirst();
-			this.spatialGridUnits = rres.getSecond();
-		}
-
-		Pair<Double, String> resolution = new Pair<>(this.spatialGridSize, this.spatialGridUnits);
-		Unit sunit = Unit.create(resolution.getSecond());
-		int scaleRank = envelope.getScaleRank();
-		scale.setEast(envelope.getMaxX());
-		scale.setWest(envelope.getMinX());
-		scale.setNorth(envelope.getMaxY());
-		scale.setSouth(envelope.getMinY());
-		scale.setSpaceUnit(resolution.getSecond());
-		scale.setSpaceResolution(resolution.getFirst());
-		scale.setSpaceResolutionConverted(sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
-		scale.setSpaceResolutionDescription(
-				NumberFormat.getInstance().format(scale.getSpaceResolutionConverted()) + " " + this.spatialGridUnits);
-		scale.setResolutionDescription(
-				NumberFormat.getInstance().format(scale.getSpaceResolutionConverted()) + " " + this.spatialGridUnits);
-		scale.setSpaceScale(scaleRank);
-
-		monitor.send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
-
-		for (ROIListener listener : roiListeners.values()) {
-			listener.onChange(extent);
-		}
-
-		this.regionOfInterest = extent;
+//		Envelope envelope = Envelope.create(extent.getEast(), extent.getWest(), extent.getSouth(), extent.getNorth(),
+//				Projection.getLatLon());
+//		ScaleReference scale = new ScaleReference();
+//
+//		if (!lockSpace.get() || this.spatialGridSize == null) {
+//			Pair<Integer, String> rres = envelope.getResolutionForZoomLevel();
+//			this.spatialGridSize = (double) rres.getFirst();
+//			this.spatialGridUnits = rres.getSecond();
+//		}
+//
+//		Pair<Double, String> resolution = new Pair<>(this.spatialGridSize, this.spatialGridUnits);
+//		Unit sunit = Unit.create(resolution.getSecond());
+//		int scaleRank = envelope.getScaleRank();
+//		scale.setEast(envelope.getMaxX());
+//		scale.setWest(envelope.getMinX());
+//		scale.setNorth(envelope.getMaxY());
+//		scale.setSouth(envelope.getMinY());
+//		scale.setSpaceUnit(resolution.getSecond());
+//		scale.setSpaceResolution(resolution.getFirst());
+//		scale.setSpaceResolutionConverted(sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
+//		scale.setSpaceResolutionDescription(
+//				NumberFormat.getInstance().format(scale.getSpaceResolutionConverted()) + " " + this.spatialGridUnits);
+//		scale.setResolutionDescription(
+//				NumberFormat.getInstance().format(scale.getSpaceResolutionConverted()) + " " + this.spatialGridUnits);
+//		scale.setSpaceScale(scaleRank);
+//
+//		monitor.send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
+//
+//		for (ROIListener listener : roiListeners.values()) {
+//			listener.onChange(extent);
+//		}
+//
+//		this.regionOfInterest = extent;
 	}
 
 	@MessageHandler
@@ -1079,7 +1057,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 		if (action.getMatchId().startsWith("klab:")) {
 			// TODO/FIXME: use a more robust test
-			observe(action.getMatchId());
+			getState().submit(action.getMatchId());
 			return;
 		}
 
@@ -1358,15 +1336,6 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 		this.globalState.register(action);
 
-		if (action.getOperation() == Operation.UserAction) {
-			@SuppressWarnings("unchecked")
-			IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE
-					.getIdentity(action.getComponent().getIdentity(), IActorIdentity.class);
-			if (receiver != null) {
-				receiver.getActor().tell(
-						new UserAction(action, action.getComponent().getApplicationId(), new SimpleRuntimeScope(this)));
-			}
-		}
 	}
 
 	/*
@@ -1517,18 +1486,20 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	@MessageHandler(type = IMessage.Type.ResetContext)
 	private void handleResetContextRequest(String dummy) {
 
-		if (!lockSpace.get()) {
-			this.spatialGridSize = null;
-			this.spatialGridUnits = null;
-			this.timeEnd = null;
-			this.timeStart = null;
-			this.temporalResolution = null;
-		}
-		this.regionOfInterest = null;
-		this.regionNameOfInterest = "Region of interest";
-		this.timeOfInterest = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
-		monitor.send(IMessage.Type.ResetContext, IMessage.MessageClass.UserContextChange, "");
 		this.globalState.resetContext();
+//		
+//		if (!lockSpace.get()) {
+//			this.spatialGridSize = null;
+//			this.spatialGridUnits = null;
+//			this.timeEnd = null;
+//			this.timeStart = null;
+//			this.temporalResolution = null;
+//		}
+//		this.regionOfInterest = null;
+//		this.regionNameOfInterest = "Region of interest";
+//		this.timeOfInterest = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+//		monitor.send(IMessage.Type.ResetContext, IMessage.MessageClass.UserContextChange, "");
+//		this.globalState.resetContext();
 	}
 
 	/**
@@ -1587,31 +1558,13 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	@MessageHandler
 	private void handleObservationRequest(final ObservationRequest request) {
 
-		this.globalState.register(request);
-
 		// TODO add observer to other observer (with parameter in request)
 		// TODO substitute observer to existing context (not done at the moment)
 		if (request.getSearchContextId() != null) {
 			searchContexts.remove(request.getSearchContextId());
 		}
 
-		if (request.getContextId() != null) {
-
-			IObservation subject = getObservation(request.getContextId());
-			if (!(subject instanceof ISubject)) {
-				throw new IllegalArgumentException("cannot use a state as the context for an observation");
-			}
-
-			if (!OWL.INSTANCE.isSemantic(subject.getObservable())) {
-				throw new IllegalArgumentException("context has no semantics and cannot support further observations");
-			}
-
-			((ISubject) subject).observe(request.getUrn(),
-					request.getScenarios().toArray(new String[request.getScenarios().size()]));
-
-		} else {
-			observe(request.getUrn(), request.getScenarios().toArray(new String[request.getScenarios().size()]));
-		}
+		this.globalState.register(request);
 	}
 
 	@MessageHandler(type = IMessage.Type.TaskInterrupted)
@@ -1674,6 +1627,11 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		ret.getAppUrns().addAll(Actors.INSTANCE.getPublicApps());
 		ret.getUserAppUrns().addAll(Actors.INSTANCE.getBehaviorIds(IKActorsBehavior.Type.USER));
 
+		/*
+		 * TODO add views in context; add running application IDs
+		 */
+		
+		
 		IUserIdentity user = getParentIdentity(IUserIdentity.class);
 		if (user != null) {
 			IdentityReference uid = new IdentityReference();
@@ -1806,7 +1764,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	public void setLayout(Layout layout) {
 		this.view = new ViewImpl(layout);
 	}
-
+//
 //	@Override
 //	public <V> V getState(String key, Class<V> cls) {
 //		return this.globalState.get(key, cls);
@@ -1832,22 +1790,22 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 //		this.stateChangeListeners.remove(name);
 //	}
 
-	@Deprecated
-	@Override
-	public ITime getTimeOfInterest() {
-		return this.timeOfInterest;
-	}
-
-	@Deprecated
-	public String getGeocodingStrategy() {
-		return globalState.get("geocodingstrategy", String.class);
-	}
-
-	@Deprecated
-	@Override
-	public String getRegionNameOfInterest() {
-		return this.regionNameOfInterest;
-	}
+//	@Deprecated
+//	@Override
+//	public ITime getTimeOfInterest() {
+//		return this.timeOfInterest;
+//	}
+//
+//	@Deprecated
+//	public String getGeocodingStrategy() {
+//		return globalState.get("geocodingstrategy", String.class);
+//	}
+//
+//	@Deprecated
+//	@Override
+//	public String getRegionNameOfInterest() {
+//		return this.regionNameOfInterest;
+//	}
 
 	@Override
 	public SessionState getState() {

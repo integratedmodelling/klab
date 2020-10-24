@@ -36,11 +36,11 @@ public enum Time implements ITimeService {
 		DateTime end = null;
 		switch (resolution) {
 		case CENTURY:
-			begin = new DateTime(now.getYear() - (now.getYear() % 100), 1, 1, 0, 0, 0, 0);
+			begin = new DateTime(now.getYear() - (now.getYear() % 100), 1, 1, 0, 0, 0, 0, DateTimeZone.UTC);
 			end = begin.plus(Years.years(100));
 			break;
 		case DAY:
-			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0);
+			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0, DateTimeZone.UTC);
 			end = begin.plus(Days.ONE);
 			break;
 		case DECADE:
@@ -48,37 +48,37 @@ public enum Time implements ITimeService {
 			end = begin.plus(Years.years(10));
 			break;
 		case HOUR:
-			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), now.getHourOfDay(), 0, 0, 0);
+			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), now.getHourOfDay(), 0, 0, 0, DateTimeZone.UTC);
 			end = begin.plus(Hours.ONE);
 			break;
 		case MILLENNIUM:
-			begin = new DateTime(now.getYear() - (now.getYear() % 1000), 1, 1, 0, 0, 0, 0);
+			begin = new DateTime(now.getYear() - (now.getYear() % 1000), 1, 1, 0, 0, 0, 0, DateTimeZone.UTC);
 			end = begin.plus(Years.years(1000));
 			break;
 		case MILLISECOND:
 			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), now.getHourOfDay(),
-					now.getMinuteOfHour(), now.getSecondOfMinute(), 0);
+					now.getMinuteOfHour(), now.getSecondOfMinute(), 0, DateTimeZone.UTC);
 			end = begin.plus(1);
 			break;
 		case MINUTE:
 			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), now.getHourOfDay(),
-					now.getMinuteOfHour(), 0, 0);
+					now.getMinuteOfHour(), 0, 0, DateTimeZone.UTC);
 			end = begin.plus(Minutes.ONE);
 			break;
 		case MONTH:
-			begin = new DateTime(now.getYear(), now.getMonthOfYear(), 1, 0, 0, 0, 0);
+			begin = new DateTime(now.getYear(), now.getMonthOfYear(), 1, 0, 0, 0, 0, DateTimeZone.UTC);
 			end = begin.plus(Months.ONE);
 			break;
 		case SECOND:
 			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), now.getHourOfDay(),
-					now.getMinuteOfHour(), now.getSecondOfMinute(), 0);
+					now.getMinuteOfHour(), now.getSecondOfMinute(), 0, DateTimeZone.UTC);
 			end = begin.plus(Seconds.ONE);
 			break;
 		case WEEK:
 			// TODO if we really want it.
 			break;
 		case YEAR:
-			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0);
+			begin = new DateTime(now.getYear(), now.getMonthOfYear(), now.getDayOfMonth(), 0, 0, 0, 0, DateTimeZone.UTC);
 			end = begin.plus(Years.ONE);
 			break;
 		default:
@@ -137,8 +137,8 @@ public enum Time implements ITimeService {
      */
     public static int[] yearsBetween(long start, long end) {
 
-        DateTime ds = new DateTime(start);
-        DateTime de = new DateTime(end);
+        DateTime ds = new DateTime(start, DateTimeZone.UTC);
+        DateTime de = new DateTime(end, DateTimeZone.UTC);
 
         int ny = de.getYear() - ds.getYear() + 1;
         int[] ret = new int[ny];
@@ -151,7 +151,7 @@ public enum Time implements ITimeService {
     }
 
     public static DateTime dateAt(int year, int dayInYear) {
-        DateTime ret = new DateTime(year, 1, 1, 0, 0);
+        DateTime ret = new DateTime(year, 1, 1, 0, 0, DateTimeZone.UTC);
         return ret.plusDays(dayInYear);
     }
 
@@ -168,9 +168,9 @@ public enum Time implements ITimeService {
 
         List<Integer> ret = new ArrayList<>(366);
         DateTime ds = new DateTime(start);
-        ds = new DateTime(ds.getYear(), ds.getMonthOfYear(), ds.getDayOfMonth(), 0, 0);
+        ds = new DateTime(ds.getYear(), ds.getMonthOfYear(), ds.getDayOfMonth(), 0, 0, DateTimeZone.UTC);
         DateTime de = new DateTime(end);
-        de = new DateTime(de.getYear(), de.getMonthOfYear(), de.getDayOfMonth(), 23, 59);
+        de = new DateTime(de.getYear(), de.getMonthOfYear(), de.getDayOfMonth(), 23, 59, DateTimeZone.UTC);
 
         for (DateTime d = ds; d.compareTo(de) <= 0; d = d.plusDays(1)) {
             if (d.getYear() > year) {
@@ -228,12 +228,12 @@ public enum Time implements ITimeService {
     }
 
     public static int getYear(ITimeInstant time) {
-        DateTime ds = new DateTime(time.getMilliseconds());
+        DateTime ds = new DateTime(time.getMilliseconds(), DateTimeZone.UTC);
         return ds.getYear();
     }
     
     public static int getYear(long start) {
-        DateTime ds = new DateTime(start);
+        DateTime ds = new DateTime(start, DateTimeZone.UTC);
         return ds.getYear();
     }
 

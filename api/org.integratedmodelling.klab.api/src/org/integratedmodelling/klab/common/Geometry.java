@@ -278,10 +278,12 @@ public class Geometry implements IGeometry {
 	 * @param bean
 	 * @return
 	 */
-	public static Geometry create(ScaleReference bean) {
-		Geometry ret = new Geometry();
-		// TODO
-		return ret;
+	public static Geometry create(ScaleReference scaleRef) {
+//		Geometry ret = new Geometry();
+		// TODO shape (possibly to be further geocoded) and time
+		return Geometry.create("S1").withBoundingBox(scaleRef.getEast(), scaleRef.getWest(),
+				scaleRef.getSouth(), scaleRef.getNorth());
+//		return ret;
 	}
 
 	private static Geometry create(Iterable<Dimension> dims) {
