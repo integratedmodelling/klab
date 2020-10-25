@@ -1322,13 +1322,22 @@ public interface KactorsPackage extends EPackage
   int VALUE__MAP = 6;
 
   /**
+   * The feature id for the '<em><b>Constant</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__CONSTANT = 7;
+
+  /**
    * The feature id for the '<em><b>Observable</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__OBSERVABLE = 7;
+  int VALUE__OBSERVABLE = 8;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' attribute.
@@ -1337,7 +1346,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__EXPRESSION = 8;
+  int VALUE__EXPRESSION = 9;
 
   /**
    * The feature id for the '<em><b>Table</b></em>' containment reference.
@@ -1346,7 +1355,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__TABLE = 9;
+  int VALUE__TABLE = 10;
 
   /**
    * The feature id for the '<em><b>Quantity</b></em>' containment reference.
@@ -1355,16 +1364,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__QUANTITY = 10;
-
-  /**
-   * The feature id for the '<em><b>Constant</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int VALUE__CONSTANT = 11;
+  int VALUE__QUANTITY = 11;
 
   /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
@@ -4743,6 +4743,17 @@ public interface KactorsPackage extends EPackage
   EReference getValue_Map();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#getConstant <em>Constant</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Constant</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#getConstant()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Constant();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getObservable <em>Observable</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4785,17 +4796,6 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getValue_Quantity();
-
-  /**
-   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#getConstant <em>Constant</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the attribute '<em>Constant</em>'.
-   * @see org.integratedmodelling.kactors.kactors.Value#getConstant()
-   * @see #getValue()
-   * @generated
-   */
-  EAttribute getValue_Constant();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getMetadata <em>Metadata</em>}'.
@@ -8001,6 +8001,14 @@ public interface KactorsPackage extends EPackage
     EReference VALUE__MAP = eINSTANCE.getValue_Map();
 
     /**
+     * The meta object literal for the '<em><b>Constant</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__CONSTANT = eINSTANCE.getValue_Constant();
+
+    /**
      * The meta object literal for the '<em><b>Observable</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -8031,14 +8039,6 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference VALUE__QUANTITY = eINSTANCE.getValue_Quantity();
-
-    /**
-     * The meta object literal for the '<em><b>Constant</b></em>' attribute feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EAttribute VALUE__CONSTANT = eINSTANCE.getValue_Constant();
 
     /**
      * The meta object literal for the '<em><b>Metadata</b></em>' containment reference feature.

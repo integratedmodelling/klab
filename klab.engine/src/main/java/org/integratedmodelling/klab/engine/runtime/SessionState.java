@@ -92,6 +92,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	public final static String SPACE_RESOLUTION_KEY = "spaceresolution";
 	public final static String TIME_START_KEY = "timestart";
 	public final static String TIME_END_KEY = "timeend";
+	public final static String TIME_TYPE_KEY = "timetype";
 	public final static String TIME_START_YEAR_KEY = "startyear";
 	public final static String TIME_END_YEAR_KEY = "endyear";
 	public final static String TIME_YEAR_KEY = "year";
@@ -253,6 +254,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		case TIME_START_KEY:
 			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setStart(check(value, Long.class));
+			break;
+		case TIME_TYPE_KEY:
+			this.scaleOfInterest.setTimeGeometry(null);
+			this.scaleOfInterest.setTimeType(value.toString());
 			break;
 		case TIME_RESOLUTION_MULTIPLIER_KEY:
 			this.scaleOfInterest.setTimeGeometry(null);

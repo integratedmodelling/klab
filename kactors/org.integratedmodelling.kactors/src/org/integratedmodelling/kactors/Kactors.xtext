@@ -168,6 +168,7 @@ Value:
 	id=PathName |
 	list=List |
 	map=Map |
+	constant=UPPERCASE_ID |
 	observable=Observable | 
 	expression=EXPR |
 	table=LookupTable |

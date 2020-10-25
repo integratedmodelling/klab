@@ -1542,22 +1542,24 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cListListParserRuleCall_5_0 = (RuleCall)cListAssignment_5.eContents().get(0);
 		private final Assignment cMapAssignment_6 = (Assignment)cAlternatives.eContents().get(6);
 		private final RuleCall cMapMapParserRuleCall_6_0 = (RuleCall)cMapAssignment_6.eContents().get(0);
-		private final Assignment cObservableAssignment_7 = (Assignment)cAlternatives.eContents().get(7);
-		private final RuleCall cObservableObservableParserRuleCall_7_0 = (RuleCall)cObservableAssignment_7.eContents().get(0);
-		private final Assignment cExpressionAssignment_8 = (Assignment)cAlternatives.eContents().get(8);
-		private final RuleCall cExpressionEXPRTerminalRuleCall_8_0 = (RuleCall)cExpressionAssignment_8.eContents().get(0);
-		private final Assignment cTableAssignment_9 = (Assignment)cAlternatives.eContents().get(9);
-		private final RuleCall cTableLookupTableParserRuleCall_9_0 = (RuleCall)cTableAssignment_9.eContents().get(0);
-		private final Assignment cQuantityAssignment_10 = (Assignment)cAlternatives.eContents().get(10);
-		private final RuleCall cQuantityQuantityParserRuleCall_10_0 = (RuleCall)cQuantityAssignment_10.eContents().get(0);
+		private final Assignment cConstantAssignment_7 = (Assignment)cAlternatives.eContents().get(7);
+		private final RuleCall cConstantUPPERCASE_IDTerminalRuleCall_7_0 = (RuleCall)cConstantAssignment_7.eContents().get(0);
+		private final Assignment cObservableAssignment_8 = (Assignment)cAlternatives.eContents().get(8);
+		private final RuleCall cObservableObservableParserRuleCall_8_0 = (RuleCall)cObservableAssignment_8.eContents().get(0);
+		private final Assignment cExpressionAssignment_9 = (Assignment)cAlternatives.eContents().get(9);
+		private final RuleCall cExpressionEXPRTerminalRuleCall_9_0 = (RuleCall)cExpressionAssignment_9.eContents().get(0);
+		private final Assignment cTableAssignment_10 = (Assignment)cAlternatives.eContents().get(10);
+		private final RuleCall cTableLookupTableParserRuleCall_10_0 = (RuleCall)cTableAssignment_10.eContents().get(0);
+		private final Assignment cQuantityAssignment_11 = (Assignment)cAlternatives.eContents().get(11);
+		private final RuleCall cQuantityQuantityParserRuleCall_11_0 = (RuleCall)cQuantityAssignment_11.eContents().get(0);
 		
 		//Value:
 		//	tree=Tree | argvalue=ARGVALUE | literal=Literal | urn=UrnId | id=PathName | list=List | map=Map |
-		//	observable=Observable | expression=EXPR | table=LookupTable | quantity=Quantity;
+		//	constant=UPPERCASE_ID | observable=Observable | expression=EXPR | table=LookupTable | quantity=Quantity;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//tree=Tree | argvalue=ARGVALUE | literal=Literal | urn=UrnId | id=PathName | list=List | map=Map | observable=Observable
-		//| expression=EXPR | table=LookupTable | quantity=Quantity
+		//tree=Tree | argvalue=ARGVALUE | literal=Literal | urn=UrnId | id=PathName | list=List | map=Map | constant=UPPERCASE_ID
+		//| observable=Observable | expression=EXPR | table=LookupTable | quantity=Quantity
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//tree=Tree
@@ -1602,29 +1604,35 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//Map
 		public RuleCall getMapMapParserRuleCall_6_0() { return cMapMapParserRuleCall_6_0; }
 		
+		//constant=UPPERCASE_ID
+		public Assignment getConstantAssignment_7() { return cConstantAssignment_7; }
+		
+		//UPPERCASE_ID
+		public RuleCall getConstantUPPERCASE_IDTerminalRuleCall_7_0() { return cConstantUPPERCASE_IDTerminalRuleCall_7_0; }
+		
 		//observable=Observable
-		public Assignment getObservableAssignment_7() { return cObservableAssignment_7; }
+		public Assignment getObservableAssignment_8() { return cObservableAssignment_8; }
 		
 		//Observable
-		public RuleCall getObservableObservableParserRuleCall_7_0() { return cObservableObservableParserRuleCall_7_0; }
+		public RuleCall getObservableObservableParserRuleCall_8_0() { return cObservableObservableParserRuleCall_8_0; }
 		
 		//expression=EXPR
-		public Assignment getExpressionAssignment_8() { return cExpressionAssignment_8; }
+		public Assignment getExpressionAssignment_9() { return cExpressionAssignment_9; }
 		
 		//EXPR
-		public RuleCall getExpressionEXPRTerminalRuleCall_8_0() { return cExpressionEXPRTerminalRuleCall_8_0; }
+		public RuleCall getExpressionEXPRTerminalRuleCall_9_0() { return cExpressionEXPRTerminalRuleCall_9_0; }
 		
 		//table=LookupTable
-		public Assignment getTableAssignment_9() { return cTableAssignment_9; }
+		public Assignment getTableAssignment_10() { return cTableAssignment_10; }
 		
 		//LookupTable
-		public RuleCall getTableLookupTableParserRuleCall_9_0() { return cTableLookupTableParserRuleCall_9_0; }
+		public RuleCall getTableLookupTableParserRuleCall_10_0() { return cTableLookupTableParserRuleCall_10_0; }
 		
 		//quantity=Quantity
-		public Assignment getQuantityAssignment_10() { return cQuantityAssignment_10; }
+		public Assignment getQuantityAssignment_11() { return cQuantityAssignment_11; }
 		
 		//Quantity
-		public RuleCall getQuantityQuantityParserRuleCall_10_0() { return cQuantityQuantityParserRuleCall_10_0; }
+		public RuleCall getQuantityQuantityParserRuleCall_11_0() { return cQuantityQuantityParserRuleCall_11_0; }
 	}
 	public class ValueWithMetadataElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.ValueWithMetadata");
@@ -6235,7 +6243,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	
 	//Value:
 	//	tree=Tree | argvalue=ARGVALUE | literal=Literal | urn=UrnId | id=PathName | list=List | map=Map |
-	//	observable=Observable | expression=EXPR | table=LookupTable | quantity=Quantity;
+	//	constant=UPPERCASE_ID | observable=Observable | expression=EXPR | table=LookupTable | quantity=Quantity;
 	public ValueElements getValueAccess() {
 		return pValue;
 	}

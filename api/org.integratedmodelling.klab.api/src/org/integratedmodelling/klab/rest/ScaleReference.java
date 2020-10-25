@@ -37,6 +37,7 @@ public class ScaleReference {
 	private ITime.Resolution.Type timeUnit;
 	private String timeResolutionDescription;
 	private String shape;
+	private String timeType;
 	
 	// used when we start from a geometry and it's quicker to specify this way.
 	private String timeGeometry;
@@ -245,6 +246,14 @@ public class ScaleReference {
 
 	public void setSpaceGeometry(String spaceGeometry) {
 		this.spaceGeometry = spaceGeometry;
+	}
+
+	public String getTimeType() {
+		return timeType;
+	}
+
+	public void setTimeType(String timeType) {
+		this.timeType = timeType;
 	}
 
 }

@@ -282,9 +282,11 @@ public class Geometry implements IGeometry {
 	public static Geometry create(ScaleReference scaleRef) {
 
 		String spec = scaleRef.getSpaceUnit() == null ? "S1" : "S2";
-
+		boolean hasTime = false;
+		
 		if (scaleRef.getTimeGeometry() != null) {
 			spec = scaleRef.getTimeGeometry() + spec;
+			hasTime = true;
 		}
 
 		Geometry ret = Geometry.create(spec).withProjection("EPSG:4326").withBoundingBox(scaleRef.getEast(),
@@ -297,15 +299,24 @@ public class Geometry implements IGeometry {
 		if (scaleRef.getTimeGeometry() == null) {
 			if (scaleRef.getStart() > 0) {
 				ret = ret.withTemporalStart(scaleRef.getStart());
+				hasTime = true;
 			}
 			if (scaleRef.getEnd() > 0) {
 				ret = ret.withTemporalEnd(scaleRef.getEnd());
+				hasTime = true;
 			}
 			if (scaleRef.getTimeResolutionDescription() != null) {
-				ret = ret.withTemporalResolution(scaleRef.getTimeResolutionDescription());
+				ret = ret.withTemporalResolution(scaleRef.getTimeResolutionDescription().trim().replaceAll("\\s", "."));
+				hasTime = true;
 			}
 		}
 
+		if (scaleRef.getTimeType() != null) {
+			ret = ret.withTimeType(scaleRef.getTimeType());
+		} else if (hasTime) {
+			ret = ret.withTimeType("LOGICAL");
+		}
+		
 		return ret;
 	}
 
@@ -775,7 +786,7 @@ public class Geometry implements IGeometry {
 	public Geometry withSpatialShape(long... shape) {
 		Dimension space = getDimension(Type.SPACE);
 		if (space == null) {
-			throw new IllegalStateException("cannot set spatial parameters on a geometry without space");
+			space = addLogicalSpace(this);
 		}
 		((DimensionImpl) space).shape = shape;
 		return this;
@@ -805,7 +816,7 @@ public class Geometry implements IGeometry {
 	public Geometry withTemporalShape(long n) {
 		Dimension time = getDimension(Type.TIME);
 		if (time == null) {
-			throw new IllegalStateException("cannot set temporal parameters on a geometry without time");
+			time = addLogicalTime(this);
 		}
 		((DimensionImpl) time).shape = new long[] { n };
 		return this;
@@ -819,7 +830,7 @@ public class Geometry implements IGeometry {
 	public Geometry withProjection(String projection) {
 		Dimension space = getDimension(Type.SPACE);
 		if (space == null) {
-			throw new IllegalStateException("cannot set spatial parameters on a geometry without space");
+			space = addLogicalSpace(this);
 		}
 		space.getParameters().put(PARAMETER_SPACE_PROJECTION, projection);
 		return this;
@@ -1357,7 +1368,7 @@ public class Geometry implements IGeometry {
 	public Geometry withGridResolution(IKimQuantity value) {
 		Dimension space = getDimension(Type.SPACE);
 		if (space == null) {
-			throw new IllegalStateException("cannot set spatial parameters on a geometry without space");
+			space = addLogicalSpace(this);
 		}
 		space.getParameters().put(PARAMETER_SPACE_GRIDRESOLUTION, value.toString());
 		return this;
@@ -1366,19 +1377,50 @@ public class Geometry implements IGeometry {
 	public Geometry withTemporalEnd(Object value) {
 		Dimension time = getDimension(Type.TIME);
 		if (time == null) {
-			throw new IllegalStateException("cannot set temporal parameters on a geometry without time");
+			time = addLogicalTime(this);
 		}
 		time.getParameters().put(PARAMETER_TIME_END, value);
+		return this;
+	}
+	
+	public Geometry withTimeType(String value) {
+		Dimension time = getDimension(Type.TIME);
+		if (time == null) {
+			time = addLogicalTime(this);
+		}
+		time.getParameters().put(PARAMETER_TIME_REPRESENTATION, value);
 		return this;
 	}
 
 	public Geometry withTemporalStart(Object value) {
 		Dimension time = getDimension(Type.TIME);
 		if (time == null) {
-			throw new IllegalStateException("cannot set temporal parameters on a geometry without time");
+			time = addLogicalTime(this);
 		}
 		time.getParameters().put(PARAMETER_TIME_START, value);
 		return this;
+	}
+
+	private Dimension addLogicalTime(Geometry geometry) {
+		DimensionImpl ret = new DimensionImpl();
+		ret.type = Dimension.Type.TIME;
+		ret.dimensionality = 1;
+		ret.coverage = 1.0;
+		ret.generic = false;
+		ret.regular = true;
+		geometry.dimensions.add(0, ret);
+		return ret;
+	}
+	
+	private Dimension addLogicalSpace(Geometry geometry) {
+		DimensionImpl ret = new DimensionImpl();
+		ret.type = Dimension.Type.SPACE;
+		ret.dimensionality = 2;
+		ret.coverage = 1.0;
+		ret.generic = false;
+		ret.regular = true;
+		geometry.dimensions.add(ret);
+		return ret;
 	}
 
 }

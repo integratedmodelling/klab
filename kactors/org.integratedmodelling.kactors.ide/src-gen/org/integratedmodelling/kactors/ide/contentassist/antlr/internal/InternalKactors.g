@@ -2171,27 +2171,33 @@ rule__Value__Alternatives
 	)
 	|
 	(
-		{ before(grammarAccess.getValueAccess().getObservableAssignment_7()); }
-		(rule__Value__ObservableAssignment_7)
-		{ after(grammarAccess.getValueAccess().getObservableAssignment_7()); }
+		{ before(grammarAccess.getValueAccess().getConstantAssignment_7()); }
+		(rule__Value__ConstantAssignment_7)
+		{ after(grammarAccess.getValueAccess().getConstantAssignment_7()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValueAccess().getExpressionAssignment_8()); }
-		(rule__Value__ExpressionAssignment_8)
-		{ after(grammarAccess.getValueAccess().getExpressionAssignment_8()); }
+		{ before(grammarAccess.getValueAccess().getObservableAssignment_8()); }
+		(rule__Value__ObservableAssignment_8)
+		{ after(grammarAccess.getValueAccess().getObservableAssignment_8()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValueAccess().getTableAssignment_9()); }
-		(rule__Value__TableAssignment_9)
-		{ after(grammarAccess.getValueAccess().getTableAssignment_9()); }
+		{ before(grammarAccess.getValueAccess().getExpressionAssignment_9()); }
+		(rule__Value__ExpressionAssignment_9)
+		{ after(grammarAccess.getValueAccess().getExpressionAssignment_9()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getValueAccess().getQuantityAssignment_10()); }
-		(rule__Value__QuantityAssignment_10)
-		{ after(grammarAccess.getValueAccess().getQuantityAssignment_10()); }
+		{ before(grammarAccess.getValueAccess().getTableAssignment_10()); }
+		(rule__Value__TableAssignment_10)
+		{ after(grammarAccess.getValueAccess().getTableAssignment_10()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getValueAccess().getQuantityAssignment_11()); }
+		(rule__Value__QuantityAssignment_11)
+		{ after(grammarAccess.getValueAccess().getQuantityAssignment_11()); }
 	)
 ;
 finally {
@@ -20394,60 +20400,75 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Value__ObservableAssignment_7
+rule__Value__ConstantAssignment_7
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getValueAccess().getObservableObservableParserRuleCall_7_0()); }
+		{ before(grammarAccess.getValueAccess().getConstantUPPERCASE_IDTerminalRuleCall_7_0()); }
+		RULE_UPPERCASE_ID
+		{ after(grammarAccess.getValueAccess().getConstantUPPERCASE_IDTerminalRuleCall_7_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Value__ObservableAssignment_8
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getValueAccess().getObservableObservableParserRuleCall_8_0()); }
 		ruleObservable
-		{ after(grammarAccess.getValueAccess().getObservableObservableParserRuleCall_7_0()); }
+		{ after(grammarAccess.getValueAccess().getObservableObservableParserRuleCall_8_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Value__ExpressionAssignment_8
+rule__Value__ExpressionAssignment_9
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getValueAccess().getExpressionEXPRTerminalRuleCall_8_0()); }
+		{ before(grammarAccess.getValueAccess().getExpressionEXPRTerminalRuleCall_9_0()); }
 		RULE_EXPR
-		{ after(grammarAccess.getValueAccess().getExpressionEXPRTerminalRuleCall_8_0()); }
+		{ after(grammarAccess.getValueAccess().getExpressionEXPRTerminalRuleCall_9_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Value__TableAssignment_9
+rule__Value__TableAssignment_10
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getValueAccess().getTableLookupTableParserRuleCall_9_0()); }
+		{ before(grammarAccess.getValueAccess().getTableLookupTableParserRuleCall_10_0()); }
 		ruleLookupTable
-		{ after(grammarAccess.getValueAccess().getTableLookupTableParserRuleCall_9_0()); }
+		{ after(grammarAccess.getValueAccess().getTableLookupTableParserRuleCall_10_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__Value__QuantityAssignment_10
+rule__Value__QuantityAssignment_11
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getValueAccess().getQuantityQuantityParserRuleCall_10_0()); }
+		{ before(grammarAccess.getValueAccess().getQuantityQuantityParserRuleCall_11_0()); }
 		ruleQuantity
-		{ after(grammarAccess.getValueAccess().getQuantityQuantityParserRuleCall_10_0()); }
+		{ after(grammarAccess.getValueAccess().getQuantityQuantityParserRuleCall_11_0()); }
 	)
 ;
 finally {

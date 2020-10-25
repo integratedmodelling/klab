@@ -410,10 +410,11 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getValueAccess().getIdAssignment_4(), "rule__Value__IdAssignment_4");
 			builder.put(grammarAccess.getValueAccess().getListAssignment_5(), "rule__Value__ListAssignment_5");
 			builder.put(grammarAccess.getValueAccess().getMapAssignment_6(), "rule__Value__MapAssignment_6");
-			builder.put(grammarAccess.getValueAccess().getObservableAssignment_7(), "rule__Value__ObservableAssignment_7");
-			builder.put(grammarAccess.getValueAccess().getExpressionAssignment_8(), "rule__Value__ExpressionAssignment_8");
-			builder.put(grammarAccess.getValueAccess().getTableAssignment_9(), "rule__Value__TableAssignment_9");
-			builder.put(grammarAccess.getValueAccess().getQuantityAssignment_10(), "rule__Value__QuantityAssignment_10");
+			builder.put(grammarAccess.getValueAccess().getConstantAssignment_7(), "rule__Value__ConstantAssignment_7");
+			builder.put(grammarAccess.getValueAccess().getObservableAssignment_8(), "rule__Value__ObservableAssignment_8");
+			builder.put(grammarAccess.getValueAccess().getExpressionAssignment_9(), "rule__Value__ExpressionAssignment_9");
+			builder.put(grammarAccess.getValueAccess().getTableAssignment_10(), "rule__Value__TableAssignment_10");
+			builder.put(grammarAccess.getValueAccess().getQuantityAssignment_11(), "rule__Value__QuantityAssignment_11");
 			builder.put(grammarAccess.getValueWithMetadataAccess().getTreeAssignment_0_0(), "rule__ValueWithMetadata__TreeAssignment_0_0");
 			builder.put(grammarAccess.getValueWithMetadataAccess().getArgvalueAssignment_0_1(), "rule__ValueWithMetadata__ArgvalueAssignment_0_1");
 			builder.put(grammarAccess.getValueWithMetadataAccess().getLiteralAssignment_0_2(), "rule__ValueWithMetadata__LiteralAssignment_0_2");
