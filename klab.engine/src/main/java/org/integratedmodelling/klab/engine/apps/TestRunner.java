@@ -157,7 +157,7 @@ public class TestRunner implements Annotations.Handler {
 						ISubject subject = (ISubject)session.getState().submit(observer.getName()).get();
 						if (subject != null) {
 							for (Object o : observations) {
-								IObservation ret = subject.observe(o.toString()).get();
+								IArtifact ret = subject.observe(o.toString()).get();
 								if (ret == null) {
 									monitor.warn(id + ": observation of " + o + " in context " + subject.getName()
 											+ " was unsuccessful");
@@ -165,7 +165,7 @@ public class TestRunner implements Annotations.Handler {
 									/*
 									 * TODO run any assertion indicated for the observations
 									 */
-									result.add(ret);
+									result.add((IObservation)ret);
 								}
 							}
 						} else {

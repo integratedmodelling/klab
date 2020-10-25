@@ -18,7 +18,7 @@ package org.integratedmodelling.klab.api.runtime;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.klab.api.auth.ITaskIdentity;
-import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**
  * A ITask computes an observational artifact, delegating to a Java Future that returns it when
@@ -28,6 +28,6 @@ import org.integratedmodelling.klab.api.observations.IObservation;
  * @version $Id: $Id
  * @param <T> the type of observation being resolved
  */
-public interface ITask<T extends IObservation> extends ITaskIdentity, Future<T> {
+public interface ITask<T extends IArtifact> extends ITaskIdentity, Future<T> {
   
 }

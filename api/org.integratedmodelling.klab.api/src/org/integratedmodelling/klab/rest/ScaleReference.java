@@ -37,10 +37,14 @@ public class ScaleReference {
 	private ITime.Resolution.Type timeUnit;
 	private String timeResolutionDescription;
 	private String shape;
+	
+	// used when we start from a geometry and it's quicker to specify this way.
+	private String timeGeometry;
+	private String spaceGeometry;
 
 	private long start;
 	private long end;
-
+	
 	// unused for now, or enabled in developer mode
 	private long step;
 
@@ -225,6 +229,22 @@ public class ScaleReference {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getTimeGeometry() {
+		return timeGeometry;
+	}
+
+	public void setTimeGeometry(String timeGeometry) {
+		this.timeGeometry = timeGeometry;
+	}
+
+	public String getSpaceGeometry() {
+		return spaceGeometry;
+	}
+
+	public void setSpaceGeometry(String spaceGeometry) {
+		this.spaceGeometry = spaceGeometry;
 	}
 
 }

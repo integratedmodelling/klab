@@ -39,7 +39,7 @@ public class ObjectBehavior {
 				Object arg = evaluateArgument(0, scope);
 				if (arg instanceof IObservable) {
 					try {
-						Future<IObservation> future = ((ISubject) identity)
+						Future<IArtifact> future = ((ISubject) identity)
 								.observe(((IObservable) arg).getDefinition());
 						fire(future.get(), true);
 					} catch (Throwable e) {

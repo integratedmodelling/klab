@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.engine.runtime;
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
@@ -37,7 +36,7 @@ import org.integratedmodelling.klab.utils.Parameters;
  * @author ferdinando.villa
  *
  */
-public class ObserveContextTask extends AbstractTask<ISubject> {
+public class ObserveContextTask extends AbstractTask<IArtifact> {
 
 	FutureTask<ISubject> delegate;
 	String taskDescription = "<uninitialized observation task " + token + ">";
@@ -55,7 +54,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 	}
 
 	public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
-		this(session, observer, scenarios, null, null);
+		this(session, observer, scenarios, null, null, session.getParentIdentity(Engine.class).getTaskExecutor());
 	}
 
 	/**
@@ -72,9 +71,8 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 	 * @param errorListener
 	 */
 	public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios,
-			Consumer<IArtifact> observationListener, Consumer<Throwable> errorListener) {
+			Consumer<IArtifact> observationListener, Consumer<Throwable> errorListener, Executor executor) {
 
-		Engine engine = session.getParentIdentity(Engine.class);
 		try {
 
 			this.monitor = (session.getMonitor()).get(this);
@@ -177,7 +175,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 
 			});
 
-			engine.getTaskExecutor().execute(delegate);
+			executor.execute(delegate);
 
 		} catch (Throwable e) {
 			monitor.error("error initializing context task: " + e.getMessage());
@@ -241,7 +239,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 	}
 
 	@Override
-	public ITaskTree<ISubject> createChild(String description) {
+	public ITaskTree<IArtifact> createChild(String description) {
 		return new ObserveContextTask(this, description);
 	}
 

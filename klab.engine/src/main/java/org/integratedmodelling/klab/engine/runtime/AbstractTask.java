@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.engine.runtime;
 
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.ITaskReference.Status;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.provenance.Activity;
 import org.integratedmodelling.klab.rest.TaskReference;
 import org.integratedmodelling.klab.utils.NameGenerator;
 
-public abstract class AbstractTask<T extends IObservation> implements ITaskTree<T> {
+public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> {
 
 	private ContextualizationStrategy contextualizationStrategy;
 

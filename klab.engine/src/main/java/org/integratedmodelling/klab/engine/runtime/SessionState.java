@@ -8,17 +8,18 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Consumer;
 
-import org.integratedmodelling.kactors.model.KActorsDate;
 import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.model.KimQuantity;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.Units;
@@ -42,8 +43,11 @@ import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
+import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
@@ -96,13 +100,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	public final static String TIME_RESOLUTION_UNIT_KEY = "timeunit";
 
 	private Session session;
-	private ObservationQueue observationQueue;
 	private List<SessionActivity> history = new ArrayList<>();
 	long startTime = System.currentTimeMillis();
 	private Set<String> scenarios = new HashSet<>();
-	private Map<IConcept, IConcept> roles = new HashMap<>();
-//	private Double spatialGridSize;
-//	private String spatialGridUnits;
+	private Map<IConcept, Set<IConcept>> roles = new HashMap<>();
 	private AtomicBoolean lockSpace = new AtomicBoolean(false);
 	private AtomicBoolean lockTime = new AtomicBoolean(false);
 	Map<String, Listener> listeners = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -119,7 +120,6 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	public SessionState(Session session) {
 		this.session = session;
-		this.observationQueue = new ObservationQueue(session);
 		this.scaleOfInterest = new ScaleReference();
 
 		/*
@@ -127,22 +127,30 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		 */
 		this.scaleOfInterest.setName("Region of interest");
 		ITime defaultTime = Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
-		this.scaleOfInterest.setTimeResolutionDescription(defaultTime.toString());
+		this.scaleOfInterest.setTimeResolutionDescription(defaultTime.getResolution().toString());
 		this.scaleOfInterest.setTimeResolutionMultiplier(defaultTime.getResolution().getMultiplier());
+		this.scaleOfInterest.setStart(defaultTime.getStart().getMilliseconds());
+		this.scaleOfInterest.setEnd(defaultTime.getEnd().getMilliseconds());
 		this.scaleOfInterest.setTimeScale(defaultTime.getScaleRank());
-//		this.regionOfInterest.setTimeUnit(null);
+		this.scaleOfInterest
+				.setTimeGeometry(((org.integratedmodelling.klab.components.time.extents.Time) defaultTime).encode());
 	}
 
 	@Override
 	public Future<IArtifact> submit(String urn) {
-		return submit(urn, null, null);
+		return submit(urn, (observation) -> {
+			// TODO stats, history
+			System.out.println("FATTO " + observation);
+		}, (error) -> {
+			// TODO stats, history
+			System.err.println("HOSTIA " + error);
+		});
 	}
 
 	public Future<IArtifact> submit(String urn, Consumer<IArtifact> observationListener,
 			Consumer<Throwable> errorListener) {
 
 		IResolvable resolvable = null;
-		Future<IArtifact> ret = null;
 		if (urn.contains(" ")) {
 			resolvable = Observables.INSTANCE.declare(urn);
 		} else {
@@ -151,22 +159,45 @@ public class SessionState extends Parameters<String> implements ISessionState {
 				resolvable = (IResolvable) object;
 			}
 		}
+
 		if (this.context == null && !(resolvable instanceof IObserver)) {
-			/*
-			 * submit what we know about the region of interest to build the context.
+
+//			this.context = null;
+//
+			IGeometry geometry = getGeometry();
+
+			if (geometry == null) {
+				throw new KlabContextualizationException(
+						"Cannot contextualize URN " + urn + " in an unspecified context");
+			}
+
+			/**
+			 * Submit all we know about the context. TODO metadata should contain provenance
+			 * info about the choices made to get here.
 			 */
-			resetContext();
+			Observer observer = Observations.INSTANCE.makeROIObserver(scaleOfInterest.getName(), geometry,
+					new Metadata());
 			/*
-			 * TODO just set up an observer if possible and if OK, pass it to the submit
-			 * below instead of context. If not available, call the error listener and exit.
+			 * goes into executor; next one won't exec before this is finished. Only call
+			 * the obs listener at the beginning of the contextualization.
 			 */
+			Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, (obs) -> {
+				if (obs == null) {
+					observationListener.accept(obs);
+				}
+			}, errorListener, executor);
+			try {
+				this.context = (ISubject) task.get();
+			} catch (InterruptedException | ExecutionException e) {
+				return task;
+			}
 		}
 
 		/**
 		 * Submit the actual resolvable
 		 */
-		ret = this.observationQueue.submit(urn, this.context, this.scenarios, observationListener, errorListener);
-		return ret;
+		return new ObserveInContextTask((Subject) this.context, urn, this.scenarios, observationListener, errorListener,
+				this.executor);
 	}
 
 	@Override
@@ -216,32 +247,40 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			this.lockTime.set(check(value, Boolean.class));
 			break;
 		case TIME_END_KEY:
+			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setEnd(check(value, Long.class));
 			break;
 		case TIME_START_KEY:
+			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setStart(check(value, Long.class));
 			break;
 		case TIME_RESOLUTION_MULTIPLIER_KEY:
+			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setTimeResolutionMultiplier(check(value, Number.class).doubleValue());
 			break;
 		case TIME_RESOLUTION_UNIT_KEY:
+			this.scaleOfInterest.setTimeGeometry(null);
 			Resolution res = org.integratedmodelling.klab.components.time.extents.Time
 					.resolution("1." + value.toString());
 			this.scaleOfInterest.setTimeUnit(res.getType());
 			break;
 		case TIME_RESOLUTION_KEY:
+			this.scaleOfInterest.setTimeGeometry(null);
 			res = org.integratedmodelling.klab.components.time.extents.Time.resolution(value.toString());
 			this.scaleOfInterest.setTimeResolutionMultiplier(res.getMultiplier());
 			this.scaleOfInterest.setTimeUnit(res.getType());
 			break;
 		case TIME_YEAR_KEY:
+			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setYear(check(value, Integer.class));
 			break;
 		case TIME_START_YEAR_KEY:
+			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest
 					.setStart(new DateTime(check(value, Integer.class), 1, 1, 0, 0, 0, DateTimeZone.UTC).getMillis());
 			break;
 		case TIME_END_YEAR_KEY:
+			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest
 					.setEnd(new DateTime(check(value, Integer.class), 1, 1, 0, 0, 0, DateTimeZone.UTC).getMillis());
 			break;
@@ -301,7 +340,6 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	@Override
 	public void addRole(IConcept role, IConcept target) {
-
 	}
 
 	@Override
@@ -362,21 +400,21 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		// roles and geocoding strategy remain as they are
 
 		this.context = null;
-		ScaleReference scale = new ScaleReference();
-		if (lockSpace.get()) {
-			scale.setSpaceScale(this.scaleOfInterest.getSpaceScale());
-			scale.setSpaceUnit(this.scaleOfInterest.getSpaceUnit());
-			scale.setSpaceResolutionConverted(this.scaleOfInterest.getSpaceResolutionConverted());
-			scale.setSpaceResolution(this.scaleOfInterest.getSpaceResolution());
-			scale.setResolutionDescription(this.scaleOfInterest.getResolutionDescription());
-		}
-		if (lockTime.get()) {
-			scale.setTimeResolutionDescription(this.scaleOfInterest.getTimeResolutionDescription());
-			scale.setTimeResolutionMultiplier(this.scaleOfInterest.getTimeResolutionMultiplier());
-			scale.setTimeScale(this.scaleOfInterest.getTimeScale());
-			scale.setTimeUnit(this.scaleOfInterest.getTimeUnit());
-		}
-		this.scaleOfInterest = scale;
+//		ScaleReference scale = new ScaleReference();
+//		if (lockSpace.get()) {
+//			scale.setSpaceScale(this.scaleOfInterest.getSpaceScale());
+//			scale.setSpaceUnit(this.scaleOfInterest.getSpaceUnit());
+//			scale.setSpaceResolutionConverted(this.scaleOfInterest.getSpaceResolutionConverted());
+//			scale.setSpaceResolution(this.scaleOfInterest.getSpaceResolution());
+//			scale.setResolutionDescription(this.scaleOfInterest.getResolutionDescription());
+//		}
+//		if (lockTime.get()) {
+//			scale.setTimeResolutionDescription(this.scaleOfInterest.getTimeResolutionDescription());
+//			scale.setTimeResolutionMultiplier(this.scaleOfInterest.getTimeResolutionMultiplier());
+//			scale.setTimeScale(this.scaleOfInterest.getTimeScale());
+//			scale.setTimeUnit(this.scaleOfInterest.getTimeUnit());
+//		}
+//		this.scaleOfInterest = scale;
 		session.getMonitor().send(IMessage.Type.ResetContext, IMessage.MessageClass.UserContextChange, "");
 
 	}
@@ -473,8 +511,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
 //		int scaleRank = envelope.getScaleRank();
 //		this.scaleOfInterest.setSpaceUnit(resolution.getSecond());
 //		this.scaleOfInterest.setSpaceResolution(resolution.getFirst());
-		this.scaleOfInterest
-				.setSpaceResolutionConverted(sunit.convert(scaleOfInterest.getSpaceResolution(), Units.INSTANCE.METERS).doubleValue());
+		this.scaleOfInterest.setSpaceResolutionConverted(
+				sunit.convert(scaleOfInterest.getSpaceResolution(), Units.INSTANCE.METERS).doubleValue());
 		this.scaleOfInterest.setSpaceResolutionDescription(
 				NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolutionConverted()) + " "
 						+ this.scaleOfInterest.getSpaceUnit());

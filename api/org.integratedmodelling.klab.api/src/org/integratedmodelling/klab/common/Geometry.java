@@ -272,18 +272,41 @@ public class Geometry implements IGeometry {
 	public static Geometry create(String geometry) {
 		return makeGeometry(geometry, 0);
 	}
-	
+
 	/**
-	 * Create a geometry from a structured bean
+	 * Create a geometry from a structured bean. Assumes time is there
+	 * 
 	 * @param bean
 	 * @return
 	 */
 	public static Geometry create(ScaleReference scaleRef) {
-//		Geometry ret = new Geometry();
-		// TODO shape (possibly to be further geocoded) and time
-		return Geometry.create("S1").withBoundingBox(scaleRef.getEast(), scaleRef.getWest(),
-				scaleRef.getSouth(), scaleRef.getNorth());
-//		return ret;
+
+		String spec = scaleRef.getSpaceUnit() == null ? "S1" : "S2";
+
+		if (scaleRef.getTimeGeometry() != null) {
+			spec = scaleRef.getTimeGeometry() + spec;
+		}
+
+		Geometry ret = Geometry.create(spec).withProjection("EPSG:4326").withBoundingBox(scaleRef.getEast(),
+				scaleRef.getWest(), scaleRef.getSouth(), scaleRef.getNorth());
+
+		if (scaleRef.getSpaceUnit() != null) {
+			ret = ret.withGridResolution(scaleRef.getResolutionDescription());
+		}
+
+		if (scaleRef.getTimeGeometry() == null) {
+			if (scaleRef.getStart() > 0) {
+				ret = ret.withTemporalStart(scaleRef.getStart());
+			}
+			if (scaleRef.getEnd() > 0) {
+				ret = ret.withTemporalEnd(scaleRef.getEnd());
+			}
+			if (scaleRef.getTimeResolutionDescription() != null) {
+				ret = ret.withTemporalResolution(scaleRef.getTimeResolutionDescription());
+			}
+		}
+
+		return ret;
 	}
 
 	private static Geometry create(Iterable<Dimension> dims) {
@@ -724,7 +747,7 @@ public class Geometry implements IGeometry {
 		space.type = Type.SPACE;
 		return new Geometry(this, space);
 	}
-	
+
 	/**
 	 * Return self if we have space, otherwise create a spatial dimension according
 	 * to parameters and return the merged geometry.
@@ -817,8 +840,9 @@ public class Geometry implements IGeometry {
 		return this;
 	}
 
-	Geometry() {}
-	
+	Geometry() {
+	}
+
 	private Geometry(Geometry geometry, DimensionImpl dimension) {
 		this.scalar = false;
 		LinkedHashMap<Dimension.Type, DimensionImpl> hash = new LinkedHashMap<>();
@@ -1331,18 +1355,30 @@ public class Geometry implements IGeometry {
 	}
 
 	public Geometry withGridResolution(IKimQuantity value) {
-		// TODO Auto-generated method stub
-		return null;
+		Dimension space = getDimension(Type.SPACE);
+		if (space == null) {
+			throw new IllegalStateException("cannot set spatial parameters on a geometry without space");
+		}
+		space.getParameters().put(PARAMETER_SPACE_GRIDRESOLUTION, value.toString());
+		return this;
 	}
 
 	public Geometry withTemporalEnd(Object value) {
-		// TODO Auto-generated method stub
-		return null;
+		Dimension time = getDimension(Type.TIME);
+		if (time == null) {
+			throw new IllegalStateException("cannot set temporal parameters on a geometry without time");
+		}
+		time.getParameters().put(PARAMETER_TIME_END, value);
+		return this;
 	}
 
 	public Geometry withTemporalStart(Object value) {
-		// TODO Auto-generated method stub
-		return null;
+		Dimension time = getDimension(Type.TIME);
+		if (time == null) {
+			throw new IllegalStateException("cannot set temporal parameters on a geometry without time");
+		}
+		time.getParameters().put(PARAMETER_TIME_START, value);
+		return this;
 	}
 
 }
