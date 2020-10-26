@@ -199,7 +199,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			if (cell.phaseHash != null) {
 
 				if (!cell.phaseHash.containsKey(phase.getKey())) {
-					cell.phaseHash.put(phase.getKey(), new Aggregator(observable, scope.getMonitor()));
+					cell.phaseHash.put(phase.getKey(), new Aggregator(observable, scope.getMonitor(), true));
 				}
 
 				cell.phaseHash.get(phase.getKey()).add(value);
@@ -221,7 +221,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 				 * create aggregator if not there
 				 */
 				if (cell.aggregator == null) {
-					cell.aggregator = new Aggregator(observable, scope.getMonitor());
+					cell.aggregator = new Aggregator(observable, scope.getMonitor(), true);
 				}
 				cell.aggregator.add(value, observable, locator);
 			}

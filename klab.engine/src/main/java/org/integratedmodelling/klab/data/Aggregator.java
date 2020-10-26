@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Triple;
 
@@ -39,13 +40,33 @@ public class Aggregator {
 	int temporalDimensionality = 0;
 	int spatialDimensionality = 0;
 
+	/*
+	 * if true, we don't expect different observables or units, and we just
+	 * accumulate values right away without mediation. Set to false by the default
+	 * semantic aggregator. For now values with mediation require an enormity of RAM
+	 * and GC on large extents.
+	 */
+	boolean stable = true;
+
+	/*
+	 * the next three are to support stable aggregation.
+	 */
+	double sum = 0;
+	long count = 0;
+	Map<Object, Integer> counts = new HashMap<>();
+
 	IUnit unit; // destination unit
 
 	public Aggregator(IObservable destinationObservable, IMonitor monitor) {
+		this(destinationObservable, monitor, false);
+	}
+
+	public Aggregator(IObservable destinationObservable, IMonitor monitor, boolean stable) {
 		this.observable = destinationObservable;
 		this.aggregation = getAggregation(destinationObservable);
 		this.monitor = monitor;
 		this.unit = this.observable.getUnit();
+		this.stable = stable;
 		if (this.unit == null && this.observable.getCurrency() != null) {
 			this.unit = this.observable.getCurrency().getUnit();
 			this.temporalDimensionality = Units.INSTANCE.getTemporalDimensionality(this.unit);
@@ -61,7 +82,7 @@ public class Aggregator {
 	public Aggregator(Aggregation aggregation) {
 		this.aggregation = aggregation;
 	}
-	
+
 	public void add(Object value) {
 		addenda.add(new Triple<>(value, null, null));
 	}
@@ -70,21 +91,37 @@ public class Aggregator {
 
 		if (Observations.INSTANCE.isData(value)) {
 
+			if (stable) {
+				if (value instanceof Number) {
+					sum += ((Number) value).doubleValue();
+					count++;
+				} else {
+					Integer cnt = counts.get(value);
+					if (cnt == null) {
+						counts.put(value, 1);
+					} else {
+						counts.put(value, cnt + 1);
+					}
+				}
+				return;
+			}
+
 			if (this.aggregation == Aggregation.SUM && value instanceof Number && locator instanceof IScale) {
-				
-				double nval = ((Number)value).doubleValue();
-				IScale incomingScale = (IScale)locator;
-				
+
+				double nval = ((Number) value).doubleValue();
+				IScale incomingScale = (IScale) locator;
+
 				/*
 				 * adapt value
 				 */
 				if (observable.getUnit() != null && this.unit != null) {
-					
+
 					int incomingSpatialDimensionality = Units.INSTANCE.getSpatialDimensionality(observable.getUnit());
 					int incomingTemporalDimensionality = Units.INSTANCE.getTemporalDimensionality(observable.getUnit());
-					
+
 					List<ExtentDimension> distribution = new ArrayList<>();
-					if (incomingSpatialDimensionality >=2 && spatialDimensionality == 0 && incomingScale.getSpace() != null) {
+					if (incomingSpatialDimensionality >= 2 && spatialDimensionality == 0
+							&& incomingScale.getSpace() != null) {
 
 						/*
 						 * aggregate over the spatial coverage of original locator
@@ -99,11 +136,12 @@ public class Aggregator {
 							// double factor = incomingScale.getSpace().getShape().getVolume(volumeUnit);
 							// nval *= factor;
 						}
-						
+
 						distribution.add(ExtentDimension.spatial(incomingSpatialDimensionality));
 					}
-					if (incomingTemporalDimensionality >=2 && temporalDimensionality == 0 && incomingScale.getTime() != null) {
-						
+					if (incomingTemporalDimensionality >= 2 && temporalDimensionality == 0
+							&& incomingScale.getTime() != null) {
+
 						/*
 						 * adjust for temporal coverage
 						 */
@@ -119,9 +157,9 @@ public class Aggregator {
 					if (distribution.size() > 0) {
 						baseUnit = Units.INSTANCE.removeExtents(baseUnit, distribution);
 					}
-					
+
 					value = this.unit.convert(nval, baseUnit);
-					
+
 				} else if (observable.getCurrency() != null && this.unit != null) {
 
 				}
@@ -130,7 +168,7 @@ public class Aggregator {
 			addenda.add(new Triple<>(value, observable, locator));
 		}
 	}
-	
+
 	/**
 	 * Perform the final aggregation.
 	 * 
@@ -138,6 +176,10 @@ public class Aggregator {
 	 * @return
 	 */
 	public Object aggregate() {
+
+		if (stable) {
+			return aggregateStable();
+		}
 
 		Object ret = null;
 		Object[] rets = null;
@@ -155,6 +197,36 @@ public class Aggregator {
 			}
 		}
 		return rets != null ? aggregate(rets, this.aggregation, monitor) : ret;
+	}
+
+	private Object aggregateStable() {
+
+		if (aggregation == null) {
+			return null;
+		}
+
+		switch (aggregation) {
+		case ANY_PRESENT:
+			return counts.size() > 1 || count > 0;
+		case COUNT:
+			throw new KlabUnimplementedException("count aggregation still unsupported on stable aggregator");
+		case MAJORITY:
+			throw new KlabUnimplementedException("majority aggregation still unsupported on stable aggregator");
+		case MAX:
+			throw new KlabUnimplementedException("max aggregation still unsupported on stable aggregator");
+		case MEAN:
+			return count > 0 ? (sum/count) : null;
+		case MIN:
+			throw new KlabUnimplementedException("min aggregation still unsupported on stable aggregator");
+		case STD:
+			throw new KlabUnimplementedException("std aggregation still unsupported on stable aggregator");
+		case SUM:
+			return count == 0 ? null : sum;
+		default:
+			break;
+		}
+
+		return null;
 	}
 
 	public Object aggregate(Object[] values, Aggregation aggregation, IMonitor monitor) {

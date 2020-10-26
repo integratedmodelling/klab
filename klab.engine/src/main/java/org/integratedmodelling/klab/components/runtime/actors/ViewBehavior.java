@@ -127,8 +127,10 @@ public class ViewBehavior {
 				switch (mess.message) {
 				case "disable":
 					action = new ViewAction(Operation.Enable, false);
+					break;
 				case "enable":
 					action = new ViewAction(Operation.Enable, true);
+					break;
 				default:
 					action = getResponse(mess, scope);
 				}

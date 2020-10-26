@@ -193,10 +193,9 @@ public class RuntimeBehavior {
 							@Override
 							public void scaleChanged(ScaleReference scale) {
 								Map<String, Object> ret = new HashMap<>();
-								// TODO reintegrate
-//								ret.put("description", geocoded);
-//								ret.put("resolution", scale.getGridResolution());
-//								ret.put("unit", scale.getGridUnit());
+								ret.put("description", scale.getName());
+								ret.put("resolution", scale.getSpaceResolution());
+								ret.put("unit", scale.getSpaceUnit());
 								ret.put("envelope", new double[] { scale.getWest(), scale.getSouth(),
 										scale.getEast(), scale.getNorth() });
 

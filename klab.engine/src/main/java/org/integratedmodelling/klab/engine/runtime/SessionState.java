@@ -506,9 +506,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		}
 
 		if (this.geocodingStrategy != null) {
-			String geocoded = Geocoder.INSTANCE.geocode(extent, this.geocodingStrategy, this.scaleOfInterest.getName(),
-					session.getMonitor());
-
+			this.scaleOfInterest.setName(Geocoder.INSTANCE.geocode(extent, this.geocodingStrategy,
+					this.scaleOfInterest.getName(), session.getMonitor()));
 		}
 
 //		Pair<Double, String> resolution = new Pair<>(this.spatialGridSize, this.spatialGridUnits);
