@@ -185,20 +185,12 @@ public class ViewBehavior {
 		 */
 		public ViewComponent getViewComponent() {
 			ViewComponent ret = createViewComponent(this.scope);
-			ret.setApplicationId(this.identity.getId());
-			ret.setId(this.callId);
+//			ret.setApplicationId(this.identity.getId());
+//			ret.setId(this.callId);
 			this.component = ret;
 			return ret;
 		}
-
-		/**
-		 * Return the result to be fired, based on the action message sent by the view.
-		 * 
-		 * @param action
-		 * @return
-		 */
-		protected abstract Object getFiredResult(ViewAction action);
-
+		
 		/**
 		 * Create a view component definition reflecting the widget. The component will
 		 * be indexed and inserted in the layout when called before run() is called.
@@ -207,6 +199,22 @@ public class ViewBehavior {
 		 */
 		protected abstract ViewComponent createViewComponent(Scope scope);
 
+		public Object getFiredValue(ViewAction action) {
+			Object ret = onViewAction(action);
+			session.getState().updateView(this.component);
+			return ret;
+		}
+		
+		/**
+		 * Receive the view action performed through the UI and return the valued that the
+		 * k.Actors component should fire. Update the component as needed to keep the view
+		 * descriptor synchronized in the session.
+		 * 
+		 * @param action
+		 * @return
+		 */
+		protected abstract Object onViewAction(ViewAction action);
+		
 	}
 
 	@Action(id = "alert")
@@ -261,19 +269,19 @@ public class ViewBehavior {
 		public ViewComponent createViewComponent(Scope scope) {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.PushButton);
-			message.setName(this.evaluateArgument(0, scope, "Button Text"));
+			message.setName(this.evaluateArgument(0, scope, ""));
 			message.getAttributes().putAll(getMetadata(arguments, scope));
 			return message;
 		}
 
 		@Override
-		protected Object getFiredResult(ViewAction action) {
-			return DEFAULT_FIRE;
+		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+			return this.component;
 		}
 
 		@Override
-		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
-			return this.component;
+		public Object onViewAction(ViewAction action) {
+			return true;
 		}
 
 	}
@@ -296,16 +304,41 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected Object getFiredResult(ViewAction action) {
-			return DEFAULT_FIRE;
-		}
-
-		@Override
 		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
 			if ("update".equals(message.message)) {
 				this.component.setName(getDefaultAsString(message.arguments, this, scope));
+			} else if ("waiting".equals(message.message)) {
+				this.component.getAttributes().remove("error");
+				this.component.getAttributes().remove("done");
+				this.component.getAttributes().remove("computing");
+				this.component.getAttributes().put("waiting", "true");
+			} else if ("error".equals(message.message)) {
+				this.component.getAttributes().remove("waiting");
+				this.component.getAttributes().remove("done");
+				this.component.getAttributes().remove("computing");
+				this.component.getAttributes().put("error", "true");
+			} else if ("done".equals(message.message)) {
+				this.component.getAttributes().remove("waiting");
+				this.component.getAttributes().remove("error");
+				this.component.getAttributes().remove("computing");
+				this.component.getAttributes().put("done", "true");
+			} else if ("computing".equals(message.message)) {
+				this.component.getAttributes().remove("waiting");
+				this.component.getAttributes().remove("error");
+				this.component.getAttributes().remove("done");
+				this.component.getAttributes().put("computing", "true");
 			}
 			return this.component;
+		}
+
+		@Override
+		public Object onViewAction(ViewAction action) {
+			if (action.isBooleanValue()) {
+				this.component.getAttributes().put("checked", "true");
+			} else {
+				this.component.getAttributes().remove("checked");
+			}
+			return action.isBooleanValue();
 		}
 
 	}
@@ -328,16 +361,21 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected Object getFiredResult(ViewAction action) {
-			return DEFAULT_FIRE;
-		}
-
-		@Override
 		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
 			if ("update".equals(message.message)) {
 				this.component.setName(getDefaultAsString(message.arguments, this, scope));
 			}
 			return this.component;
+		}
+
+		@Override
+		protected Object onViewAction(ViewAction action) {
+			if (action.isBooleanValue()) {
+				this.component.getAttributes().put("checked", "true");
+			} else {
+				this.component.getAttributes().remove("checked");
+			}
+			return action.isBooleanValue();
 		}
 
 	}
@@ -360,16 +398,24 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected Object getFiredResult(ViewAction action) {
-			return DEFAULT_FIRE;
-		}
-
-		@Override
 		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
 			if ("update".equals(message.message)) {
 				this.component.setContent(getDefaultAsString(message.arguments, this, scope));
 			}
 			return this.component;
+		}
+
+		@Override
+		protected Object onViewAction(ViewAction action) {
+			/*
+			 * this is on toggle. Should fire something else on hover.
+			 */
+			if (action.isBooleanValue()) {
+				this.component.getAttributes().put("checked", "true");
+			} else {
+				this.component.getAttributes().remove("checked");
+			}
+			return action.isBooleanValue();
 		}
 
 	}
@@ -392,16 +438,17 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected Object getFiredResult(ViewAction action) {
-			return action.getStringValue();
-		}
-
-		@Override
 		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
 			if ("update".equals(message.message)) {
 				this.component.setContent(getDefaultAsString(message.arguments, this, scope));
 			}
 			return this.component;
+		}
+
+		@Override
+		protected Object onViewAction(ViewAction action) {
+			this.component.setContent(action.getStringValue());
+			return action.getStringValue();
 		}
 
 	}
@@ -433,13 +480,14 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected Object getFiredResult(ViewAction action) {
-			return action.getStringValue();
+		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+			return this.component;
 		}
 
 		@Override
-		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
-			return this.component;
+		protected Object onViewAction(ViewAction action) {
+			// TODO set selection 
+			return action.getStringValue();
 		}
 
 	}
@@ -464,13 +512,14 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected Object getFiredResult(ViewAction action) {
-			return action.getStringValue();
+		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+			return this.component;
 		}
 
 		@Override
-		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
-			return this.component;
+		protected Object onViewAction(ViewAction action) {
+			// TODO info on hover
+			return true;
 		}
 
 	}
@@ -497,13 +546,14 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected Object getFiredResult(ViewAction action) {
-			return action.getStringValue();
+		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+			return this.component;
 		}
 
 		@Override
-		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
-			return this.component;
+		protected Object onViewAction(ViewAction action) {
+			// TODO Auto-generated method stub
+			return null;
 		}
 
 	}
@@ -533,23 +583,23 @@ public class ViewBehavior {
 			message.getAttributes().putAll(getMetadata(arguments, scope));
 			return message;
 		}
-
-		@Override
-		protected Object getFiredResult(ViewAction action) {
-			/**
-			 * TODO eventually handle links in the text; for now the Eclipse widget cannot
-			 * use them, and the explorer can implement them directly but should be able to
-			 * also fire the link when it's matched.
-			 */
-			return null;
-		}
-
+		
 		@Override
 		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
 			if ("update".equals(message.message)) {
 				this.component.setContent(processTemplate(getDefaultAsString(message.arguments, this, scope), scope));
 			}
 			return this.component;
+		}
+
+		@Override
+		protected Object onViewAction(ViewAction action) {
+			/**
+			 * TODO eventually handle links in the text; for now the Eclipse widget cannot
+			 * use them, and the explorer can implement them directly but should be able to
+			 * also fire the link when it's matched.
+			 */
+			return null;
 		}
 	}
 

@@ -131,7 +131,7 @@ public class RuntimeBehavior {
 								fire(observation, false);
 							}
 						}, (exception) -> {
-							fire(exception, false);
+							fire(Status.ABORTED, false);
 						});
 			}
 		}

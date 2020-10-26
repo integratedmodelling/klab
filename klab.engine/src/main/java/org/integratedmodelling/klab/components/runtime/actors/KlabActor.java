@@ -404,7 +404,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			if (notifyId != null && message.action.getComponent().getActorPath() == null) {
 				MatchActions actions = listeners.get(notifyId);
 				if (actions != null) {
-					actions.match(getActionValue(message.action));
+					KlabActionExecutor executor = actionCache.get(message.action.getComponent().getId());
+					actions.match(executor instanceof KlabWidgetActionExecutor
+							? ((KlabWidgetActionExecutor) executor).getFiredValue(message.action)
+							: getActionValue(message.action));
 				}
 			} else if (message.action.getComponent().getActorPath() != null) {
 
@@ -444,7 +447,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		return this;
 	}
 
-	private Object getActionValue(ViewAction action) {
+	public static Object getActionValue(ViewAction action) {
 		if (action.isBooleanValue() != null) {
 			return action.isBooleanValue();
 		} else if (action.getStringValue() != null) {
@@ -729,7 +732,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private void executeAssignment(Assignment code, Scope scope) {
 		if (code.getRecipient() != null) {
 			if ("self".equals(code.getRecipient())) {
-				this.identity.getState().put(code.getVariable(), evaluateInScope((KActorsValue) code.getValue(), scope));
+				this.identity.getState().put(code.getVariable(),
+						evaluateInScope((KActorsValue) code.getValue(), scope));
 			} else {
 				// TODO find the actor reference and send it an internal message to set the
 				// state. Should be subject to scope and authorization
@@ -750,7 +754,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected Object evaluateInScope(KActorsValue arg, Scope scope) {
 		return evaluateInScope(arg, scope, this.identity);
 	}
-	
+
 	public static Object evaluateInScope(KActorsValue arg, Scope scope, IIdentity identity) {
 		switch (arg.getType()) {
 		case ANYTHING:
@@ -915,24 +919,26 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			return;
 		}
 
+		String executorId = (this.childActorPath == null ? "" : (this.childActorPath + "_")) + code.getCallId();
+		
 		/*
 		 * Remaining option is a code action executor installed through a system
 		 * behavior. The executor cache is populated at every execution of the same
 		 * call, so this will be instantiated only if the call has been executed before
 		 * (in a loop or upon repeated calls of the same action).
 		 */
-		KlabActionExecutor executor = actionCache.get(code.getCallId());
+		KlabActionExecutor executor = actionCache.get(executorId);
 
 		if (executor == null) {
 			Class<? extends KlabActionExecutor> actionClass = Actors.INSTANCE.getActionClass(messageName);
 			if (actionClass != null) {
 
 				executor = Actors.INSTANCE.getSystemAction(messageName, this.getIdentity(), code.getArguments(),
-						scope.withNotifyId(notifyId), getContext().getSelf(), code.getCallId());
+						scope.withNotifyId(notifyId), getContext().getSelf(), executorId);
 
 				if (executor != null) {
 
-					actionCache.put(code.getCallId(), executor);
+					actionCache.put(executorId, executor);
 
 					if (executor instanceof KlabActionExecutor.Actor) {
 
@@ -954,7 +960,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 					 * if there are actions, set the bindings
 					 */
 					if (code.getActions().size() > 0) {
-						this.actionBindings.put(code.getCallId(), notifyId);
+						this.actionBindings.put(executorId, notifyId);
 					}
 				}
 			}
@@ -971,7 +977,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			viewComponent.setApplicationId(this.appId);
 			viewComponent.setParentId(code.getCallId()); // check - seems
 															// wrong
-			viewComponent.setId(code.getCallId());
+			viewComponent.setId(executorId);
 			viewComponent.setActorPath(this.childActorPath);
 			scope.viewScope.currentComponent.getComponents().add(viewComponent);
 		} else if (executor != null) {
