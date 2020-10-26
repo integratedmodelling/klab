@@ -926,14 +926,14 @@ public class AppView extends Composite {
 		
 		Control control = reactors.get(component.getComponentTag());
 		if (control != null) {
-			switch (component.getOperation()) {
-			case Enable:
-				control.setEnabled(component.isBooleanValue());
-				break;
-			case Hide:
-				control.setVisible(!component.isBooleanValue());
-				break;
-			case Update:
+//			switch (component.getOperation()) {
+//			case Enable:
+//				control.setEnabled(component.isBooleanValue());
+//				break;
+//			case Hide:
+//				control.setVisible(!component.isBooleanValue());
+//				break;
+//			case Update:
 				if (control instanceof Label) {
 					// TODO images
 					if (component.getStringValue() != null) {
@@ -948,13 +948,13 @@ public class AppView extends Composite {
 				if (component.getData() != null) {
 					setAttributes(control, component.getData());
 				}
-				break;
-			case UserAction:
-				break;
-			default:
-				break;
-
-			}
+//				break;
+//			case UserAction:
+//				break;
+//			default:
+//				break;
+//
+//			}
 		}
 	}
 

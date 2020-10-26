@@ -57,7 +57,7 @@ import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.rest.SettingChangeRequest;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.ViewAction;
-import org.integratedmodelling.klab.rest.ViewAction.Operation;
+import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -380,22 +380,14 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	public void register(ViewAction action) {
 
-		if (action.getOperation() == Operation.UserAction) {
-
-			/*
-			 * TODO synchronize the view's status by swapping the component's state. If we
-			 * have no view, something is wrong.
-			 */
-
-			@SuppressWarnings("unchecked")
-			IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE
-					.getIdentity(action.getComponent().getIdentity(), IActorIdentity.class);
-			if (receiver != null) {
-				receiver.getActor().tell(
-						// TODO consider having a scope in the state
-						new UserAction(action, action.getComponent().getApplicationId(),
-								new SimpleRuntimeScope(this.session)));
-			}
+		@SuppressWarnings("unchecked")
+		IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE.getIdentity(action.getComponent().getIdentity(),
+				IActorIdentity.class);
+		if (receiver != null) {
+			receiver.getActor().tell(
+					// TODO consider having a scope in the state
+					new UserAction(action, action.getComponent().getApplicationId(),
+							new SimpleRuntimeScope(this.session)));
 		}
 	}
 
@@ -599,6 +591,17 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Update the view to reflect the component as modified by a k.Actors action or
+	 * by the UI.
+	 * 
+	 * @param component
+	 */
+	public void updateView(ViewComponent component) {
+		// TODO Auto-generated method stub
+
 	}
 
 }

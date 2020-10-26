@@ -19,7 +19,6 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KAc
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.ViewAction;
-import org.integratedmodelling.klab.rest.ViewAction.Operation;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewComponent.Type;
 import org.integratedmodelling.klab.utils.MarkdownUtils;
@@ -94,8 +93,8 @@ public class ViewBehavior {
 	 */
 	public static abstract class KlabWidgetActionExecutor extends KlabActionExecutor implements Component {
 
-		Boolean dynamic = null;
-		String name;
+		protected String name;
+		protected ViewComponent component;
 
 		public KlabWidgetActionExecutor(IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
 				Scope scope, ActorRef<KlabMessage> sender, String callId) {
@@ -117,6 +116,9 @@ public class ViewBehavior {
 		void run(Scope scope) {
 		}
 
+		/**
+		 * Called when a k.Actors action is called with a component as receiver.
+		 */
 		@Override
 		public final void onMessage(KlabMessage message, Scope scope) {
 
@@ -126,34 +128,58 @@ public class ViewBehavior {
 				ViewAction action = null;
 				switch (mess.message) {
 				case "disable":
-					action = new ViewAction(Operation.Enable, false);
+					action = new ViewAction(this.component = enable(false));
 					break;
 				case "enable":
-					action = new ViewAction(Operation.Enable, true);
+					action = new ViewAction(this.component = enable(true));
+					break;
+				case "show":
+					action = new ViewAction(this.component = show(true));
+					break;
+				case "hide":
+					action = new ViewAction(this.component = show(false));
 					break;
 				default:
-					action = getResponse(mess, scope);
+					action = new ViewAction(this.component = setComponent(mess, scope));
 				}
 				action.setApplicationId(mess.appId);
 				action.setData(getMetadata(mess.arguments, scope));
 				action.setComponentTag(this.getName());
+				session.getState().updateView(this.component);
 				session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.ViewAction, action);
 			}
 		}
 
+		protected ViewComponent enable(boolean b) {
+			if (b) {
+				this.component.getAttributes().remove("disabled");
+			} else {
+				this.component.getAttributes().put("disabled", "true");
+			}
+			return this.component;
+		}
+
+		protected ViewComponent show(boolean b) {
+			if (b) {
+				this.component.getAttributes().remove("hidden");
+			} else {
+				this.component.getAttributes().put("hidden", "true");
+			}
+			return this.component;
+		}
+
 		/**
-		 * Create the view action response for the passed message to the widget. Should
-		 * only fill in the functional fields as the rest will be done in the
-		 * superclass.
+		 * Modify the component according to the message and return it. May modify the
+		 * current component directly or return a new one.
 		 * 
 		 * @param message
 		 * @param scope
 		 * @return
 		 */
-		protected abstract ViewAction getResponse(KActorsMessage message, Scope scope);
+		protected abstract ViewComponent setComponent(KActorsMessage message, Scope scope);
 
 		/**
-		 * Called only by static calls. Dynamic ones will use the call scope.
+		 * Call the virtual to create the component and save it for bookkeeping.
 		 * 
 		 * @return
 		 */
@@ -161,6 +187,7 @@ public class ViewBehavior {
 			ViewComponent ret = createViewComponent(this.scope);
 			ret.setApplicationId(this.identity.getId());
 			ret.setId(this.callId);
+			this.component = ret;
 			return ret;
 		}
 
@@ -245,9 +272,8 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
-			ViewAction ret = new ViewAction();
-			return ret;
+		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+			return this.component;
 		}
 
 	}
@@ -264,7 +290,7 @@ public class ViewBehavior {
 		public ViewComponent createViewComponent(Scope scope) {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.CheckButton);
-			message.setName(this.evaluateArgument(0, scope, "Button Text"));
+			message.setName(this.evaluateArgument(0, scope, ""));
 			message.getAttributes().putAll(getMetadata(arguments, scope));
 			return message;
 		}
@@ -275,13 +301,11 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
-			ViewAction ret = new ViewAction();
+		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
 			if ("update".equals(message.message)) {
-				ret.setOperation(Operation.Update);
-				ret.setStringValue(getDefaultAsString(message.arguments, this, scope));
+				this.component.setName(getDefaultAsString(message.arguments, this, scope));
 			}
-			return ret;
+			return this.component;
 		}
 
 	}
@@ -298,7 +322,7 @@ public class ViewBehavior {
 		public ViewComponent createViewComponent(Scope scope) {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.RadioButton);
-			message.setName(this.evaluateArgument(0, scope, "Button Text"));
+			message.setName(this.evaluateArgument(0, scope, ""));
 			message.getAttributes().putAll(getMetadata(arguments, scope));
 			return message;
 		}
@@ -309,9 +333,11 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
-			ViewAction ret = new ViewAction();
-			return ret;
+		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+			if ("update".equals(message.message)) {
+				this.component.setName(getDefaultAsString(message.arguments, this, scope));
+			}
+			return this.component;
 		}
 
 	}
@@ -339,13 +365,11 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
-			ViewAction ret = new ViewAction();
+		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
 			if ("update".equals(message.message)) {
-				ret.setOperation(Operation.Update);
-				ret.setStringValue(getDefaultAsString(message.arguments, this, scope));
+				this.component.setContent(getDefaultAsString(message.arguments, this, scope));
 			}
-			return ret;
+			return this.component;
 		}
 
 	}
@@ -373,13 +397,11 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
-			ViewAction ret = new ViewAction();
+		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
 			if ("update".equals(message.message)) {
-				ret.setOperation(Operation.Update);
-				ret.setStringValue(getDefaultAsString(message.arguments, this, scope));
+				this.component.setContent(getDefaultAsString(message.arguments, this, scope));
 			}
-			return ret;
+			return this.component;
 		}
 
 	}
@@ -416,9 +438,8 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
-			ViewAction ret = new ViewAction();
-			return ret;
+		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+			return this.component;
 		}
 
 	}
@@ -448,9 +469,8 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
-			ViewAction ret = new ViewAction();
-			return ret;
+		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+			return this.component;
 		}
 
 	}
@@ -482,9 +502,8 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
-			ViewAction ret = new ViewAction();
-			return ret;
+		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+			return this.component;
 		}
 
 	}
@@ -526,9 +545,11 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected ViewAction getResponse(KActorsMessage message, Scope scope) {
-			ViewAction ret = new ViewAction();
-			return ret;
+		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+			if ("update".equals(message.message)) {
+				this.component.setContent(processTemplate(getDefaultAsString(message.arguments, this, scope), scope));
+			}
+			return this.component;
 		}
 	}
 
