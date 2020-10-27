@@ -6,15 +6,19 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.ViewSetting;
 import org.integratedmodelling.klab.rest.ViewSetting.Operation;
 import org.integratedmodelling.klab.rest.ViewSetting.Target;
+import org.integratedmodelling.klab.utils.Pair;
 
 import akka.actor.typed.ActorRef;
 
@@ -45,7 +49,7 @@ public class ExplorerBehavior {
 		@Override
 		void run(KlabActor.Scope scope) {
 
-			if (arguments.getUnnamedKeys().isEmpty()) {
+			if (!arguments.getUnnamedKeys().isEmpty()) {
 
 				Object arg = arguments.get(arguments.getUnnamedKeys().get(0));
 
@@ -58,6 +62,13 @@ public class ExplorerBehavior {
 				} else if (what instanceof IKnowledgeView) {
 					message.setTarget(Target.View);
 					message.setTargetId(((IKnowledgeView) what).getId());
+				} else if (what instanceof IObservable && scope.identity instanceof ISession) {
+					IObservation observation = ((ISession) scope.identity).getState()
+							.getObservation((IObservable) what);
+					if (observation != null) {
+						message.setTarget(Target.Observation);
+						message.setTargetId(observation.getId());
+					}
 				} else {
 					if (arg instanceof IKActorsValue && ((IKActorsValue) arg).getType() == Type.CONSTANT) {
 						switch (what.toString()) {
@@ -94,7 +105,7 @@ public class ExplorerBehavior {
 		@Override
 		void run(KlabActor.Scope scope) {
 
-			if (arguments.getUnnamedKeys().isEmpty()) {
+			if (!arguments.getUnnamedKeys().isEmpty()) {
 				Object arg = arguments.get(arguments.getUnnamedKeys().get(0));
 
 				ViewSetting message = new ViewSetting();
@@ -106,6 +117,13 @@ public class ExplorerBehavior {
 				} else if (what instanceof IKnowledgeView) {
 					message.setTarget(Target.View);
 					message.setTargetId(((IKnowledgeView) what).getId());
+				} else if (what instanceof IObservable && scope.identity instanceof ISession) {
+					IObservation observation = ((ISession) scope.identity).getState()
+							.getObservation((IObservable) what);
+					if (observation != null) {
+						message.setTarget(Target.Observation);
+						message.setTargetId(observation.getId());
+					}
 				} else {
 					if (arg instanceof IKActorsValue && ((IKActorsValue) arg).getType() == Type.CONSTANT) {
 						switch (what.toString()) {

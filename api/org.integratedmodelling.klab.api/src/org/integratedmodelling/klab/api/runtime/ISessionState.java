@@ -7,6 +7,8 @@ import java.util.concurrent.Future;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
@@ -57,6 +59,8 @@ public interface ISessionState extends IParameters<String> {
 
 	String save();
 
+	IObservation getObservation(IObservable observable);
+	
 	void resetContext();
 
 	void restore(String stateId);

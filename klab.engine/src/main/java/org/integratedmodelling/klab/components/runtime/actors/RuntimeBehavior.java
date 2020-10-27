@@ -14,6 +14,8 @@ import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -106,7 +108,8 @@ public class RuntimeBehavior {
 	 */
 	@Action(id = "submit", fires = Type.OBSERVATION, description = "Submit a URN for observation, either in the current context or creating one from the "
 			+ " current preferences. The session will add it to the observation queue and make the observation when possible. "
-			+ "When done, the correspondent artifact (or an error) will be fired.")
+			+ "When done, the correspondent artifact (or an error) will be fired. Before then, the action will fire WAITING when the task is "
+			+ "queued, STARTED when it starts computing, and ABORTED in case of error.")
 
 	public static class Submit extends KlabActionExecutor {
 
@@ -123,7 +126,7 @@ public class RuntimeBehavior {
 			if (!arguments.getUnnamedKeys().isEmpty()) {
 				fire(Status.WAITING, false);
 				identity.getParentIdentity(Session.class).getState().submit(
-						KlabActor.evaluate(arguments.get(arguments.getUnnamedKeys().get(0)), scope).toString(),
+						getUrnValue(KlabActor.evaluate(arguments.get(arguments.getUnnamedKeys().get(0)), scope)),
 						(observation) -> {
 							if (observation == null) {
 								fire(Status.STARTED, false);
@@ -134,6 +137,16 @@ public class RuntimeBehavior {
 							fire(Status.ABORTED, false);
 						});
 			}
+		}
+
+		private String getUrnValue(Object object) {
+			if (object instanceof IConcept) {
+				return ((IConcept) object).getDefinition();
+			} else if (object instanceof IObservable) {
+				return ((IObservable) object).getDefinition();
+			}
+			// TODO other situations?
+			return object.toString();
 		}
 
 		@Override
@@ -196,8 +209,8 @@ public class RuntimeBehavior {
 								ret.put("description", scale.getName());
 								ret.put("resolution", scale.getSpaceResolution());
 								ret.put("unit", scale.getSpaceUnit());
-								ret.put("envelope", new double[] { scale.getWest(), scale.getSouth(),
-										scale.getEast(), scale.getNorth() });
+								ret.put("envelope", new double[] { scale.getWest(), scale.getSouth(), scale.getEast(),
+										scale.getNorth() });
 
 								fire(ret, false);
 							}

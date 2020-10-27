@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -141,10 +142,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	public Future<IArtifact> submit(String urn) {
 		return submit(urn, (observation) -> {
 			// TODO stats, history
-			System.out.println("FATTO " + observation);
 		}, (error) -> {
 			// TODO stats, history
-			System.err.println("HOSTIA " + error);
 		});
 	}
 
@@ -602,6 +601,17 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	public void updateView(ViewComponent component) {
 		// TODO Auto-generated method stub
 
+	}
+
+	@Override
+	public IObservation getObservation(IObservable observable) {
+		if (this.context != null) {
+			Pair<String, IArtifact> result = ((IRuntimeScope)((Subject)context).getScope()).findArtifact(observable);
+			if (result != null) {
+				return (IObservation)result.getSecond();
+			}
+		}
+		return null;
 	}
 
 }

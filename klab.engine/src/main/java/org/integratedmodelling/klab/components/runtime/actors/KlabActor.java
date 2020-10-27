@@ -94,7 +94,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private Map<String, Long> actionBindings = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, ActorRef<KlabMessage>> receivers = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, List<ActorRef<KlabMessage>>> childInstances = Collections.synchronizedMap(new HashMap<>());
-
+	private Map<String, Object> symbolTable = Collections.synchronizedMap(new HashMap<>());
+	
 	/*
 	 * This is the parent that generated us through a 'new' instruction, if any.
 	 */
@@ -140,6 +141,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			for (Pair<Match, IKActorsStatement> match : matches) {
 				if (match.getFirst().matches(value, scope)) {
 					execute(match.getSecond(), scope.withMatch(match.getFirst(), value));
+					break;
 				}
 			}
 		}
@@ -229,6 +231,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		Object match;
 		String appId;
 		public Map<String, Object> symbolTable = new HashMap<>();
+		public Map<String, Object> globalSymbols;
 		ViewScope viewScope;
 		ActorRef<KlabMessage> sender;
 
@@ -261,6 +264,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		}
 
 		public Scope(Scope scope) {
+			this.globalSymbols = scope.globalSymbols;
 			this.synchronous = scope.synchronous;
 			this.runtimeScope = scope.runtimeScope;
 			this.parent = scope;
@@ -310,6 +314,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		public Object getValue(String string) {
 			if (symbolTable.containsKey(string)) {
 				return symbolTable.get(string);
+			} else if (globalSymbols != null && globalSymbols.containsKey(string)) {
+				return globalSymbols.get(string);
 			}
 			return identity.getState().get(string, Object.class);
 		}
@@ -331,6 +337,16 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		public Scope getChild(ConcurrentGroup code) {
 			Scope ret = new Scope(this);
 			ret.viewScope = this.viewScope.getChild(code);
+			return ret;
+		}
+
+		public Map<String, Object> getSymbols(IActorIdentity<?> identity) {
+			Map<String, Object> ret = new HashMap<>();
+			ret.putAll(identity.getState());
+			if (globalSymbols != null) {
+				ret.putAll(globalSymbols);
+			}
+			ret.putAll(symbolTable);
 			return ret;
 		}
 
@@ -740,7 +756,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				throw new KlabUnimplementedException("klab actor state setting is unimplemented");
 			}
 		} else {
-			scope.symbolTable.put(code.getVariable(), evaluateInScope((KActorsValue) code.getValue(), scope));
+			// set goes into the actor's symbol table, only parameters can override it.
+			this.symbolTable.put(code.getVariable(), evaluateInScope((KActorsValue) code.getValue(), scope));
 		}
 	}
 
@@ -755,7 +772,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		return evaluateInScope(arg, scope, this.identity);
 	}
 
-	public static Object evaluateInScope(KActorsValue arg, Scope scope, IIdentity identity) {
+	public static Object evaluateInScope(KActorsValue arg, Scope scope, IActorIdentity<?> identity) {
 		switch (arg.getType()) {
 		case ANYTHING:
 		case ANYVALUE:
@@ -779,7 +796,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				arg.setData(new ObjectExpression((IKimExpression) arg.getValue(), scope.runtimeScope));
 			}
 			return ((ObjectExpression) arg.getData()).eval(scope.runtimeScope, identity,
-					Parameters.create(scope.symbolTable));
+					Parameters.create(scope.getSymbols(identity)));
 
 		case BOOLEAN:
 		case CLASS:
@@ -1038,6 +1055,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	protected Behavior<KlabMessage> handleLoadBehaviorMessage(Load message) {
 
 		this.parentActor = message.parent;
+		message.scope.globalSymbols = this.symbolTable;
 
 		if (message.forwardApplicationId != null) {
 			/*
