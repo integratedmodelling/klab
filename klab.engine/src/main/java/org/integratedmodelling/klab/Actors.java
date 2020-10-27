@@ -143,6 +143,8 @@ public enum Actors implements IActorsService {
 		layoutMetadata.add("fill");
 		layoutMetadata.add("icon");
 		layoutMetadata.add("iconname");
+		layoutMetadata.add("iconsize");
+		layoutMetadata.add("toggle");
 		layoutMetadata.add("info");
 		layoutMetadata.add("disabled");
 		layoutMetadata.add("hidden");
@@ -182,6 +184,7 @@ public enum Actors implements IActorsService {
 		layoutMetadata.add("tooltip");
 		layoutMetadata.add("ellipsis");
 		layoutMetadata.add("multiple");
+		layoutMetadata.add("type");
 	}
 
 	public IBehavior getBehavior(String behaviorId) {
