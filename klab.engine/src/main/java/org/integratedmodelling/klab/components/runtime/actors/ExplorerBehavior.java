@@ -72,10 +72,13 @@ public class ExplorerBehavior {
 						switch (what.toString()) {
 						case "TREE":
 							message.setTarget(Target.Tree);
+							break;
 						case "REPORT":
 							message.setTarget(Target.Report);
+							break;
 						case "DATAFLOW":
 							message.setTarget(Target.Dataflow);
+							break;
 						}
 					} else if (arg != null) {
 						IArtifact artifact = ((ISession) scope.identity).getState().getArtifact(arg.toString());
@@ -136,10 +139,13 @@ public class ExplorerBehavior {
 						switch (what.toString()) {
 						case "TREE":
 							message.setTarget(Target.Tree);
+							break;
 						case "REPORT":
 							message.setTarget(Target.Report);
+							break;
 						case "DATAFLOW":
 							message.setTarget(Target.Dataflow);
+							break;
 						}
 					} else if (arg != null) {
 						IArtifact artifact = ((ISession) scope.identity).getState().getArtifact(arg.toString());
