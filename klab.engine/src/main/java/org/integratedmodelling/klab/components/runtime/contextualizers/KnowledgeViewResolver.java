@@ -68,6 +68,6 @@ public class KnowledgeViewResolver implements IResolver<IArtifact>, IExpression 
 
 		IKnowledgeView result = this.view.compileView((IObservation) ret, scope);
 		((IRuntimeScope) scope).addView(result);
-		return ret;
+		return result;
 	}
 }

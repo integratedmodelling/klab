@@ -13,12 +13,10 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
-import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.ViewSetting;
 import org.integratedmodelling.klab.rest.ViewSetting.Operation;
 import org.integratedmodelling.klab.rest.ViewSetting.Target;
-import org.integratedmodelling.klab.utils.Pair;
 
 import akka.actor.typed.ActorRef;
 
@@ -79,6 +77,15 @@ public class ExplorerBehavior {
 						case "DATAFLOW":
 							message.setTarget(Target.Dataflow);
 						}
+					} else if (arg != null) {
+						IArtifact artifact = ((ISession) scope.identity).getState().getArtifact(arg.toString());
+						if (artifact instanceof IObservation) {
+							message.setTarget(Target.Observation);
+							message.setTargetId(((IObservation) artifact).getId());
+						} else if (artifact instanceof IKnowledgeView) {
+							message.setTarget(Target.View);
+							message.setTargetId(((IKnowledgeView) artifact).getId());
+						}
 					}
 				}
 
@@ -133,6 +140,15 @@ public class ExplorerBehavior {
 							message.setTarget(Target.Report);
 						case "DATAFLOW":
 							message.setTarget(Target.Dataflow);
+						}
+					} else if (arg != null) {
+						IArtifact artifact = ((ISession) scope.identity).getState().getArtifact(arg.toString());
+						if (artifact instanceof IObservation) {
+							message.setTarget(Target.Observation);
+							message.setTargetId(((IObservation) artifact).getId());
+						} else if (artifact instanceof IKnowledgeView) {
+							message.setTarget(Target.View);
+							message.setTargetId(((IKnowledgeView) artifact).getId());
 						}
 					}
 				}

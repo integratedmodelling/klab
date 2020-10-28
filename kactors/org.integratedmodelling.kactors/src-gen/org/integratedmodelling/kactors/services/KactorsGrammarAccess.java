@@ -2048,13 +2048,15 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_14 = (Group)cAlternatives.eContents().get(14);
 		private final Assignment cEmptyAssignment_14_0 = (Assignment)cGroup_14.eContents().get(0);
 		private final Keyword cEmptyEmptyKeyword_14_0_0 = (Keyword)cEmptyAssignment_14_0.eContents().get(0);
-		private final Assignment cBodyAssignment_14_1 = (Assignment)cGroup_14.eContents().get(1);
-		private final RuleCall cBodyStatementListParserRuleCall_14_1_0 = (RuleCall)cBodyAssignment_14_1.eContents().get(0);
+		private final Keyword cHyphenMinusGreaterThanSignKeyword_14_1 = (Keyword)cGroup_14.eContents().get(1);
+		private final Assignment cBodyAssignment_14_2 = (Assignment)cGroup_14.eContents().get(2);
+		private final RuleCall cBodyStatementListParserRuleCall_14_2_0 = (RuleCall)cBodyAssignment_14_2.eContents().get(0);
 		private final Group cGroup_15 = (Group)cAlternatives.eContents().get(15);
 		private final Assignment cExceptionAssignment_15_0 = (Assignment)cGroup_15.eContents().get(0);
 		private final Keyword cExceptionExceptionKeyword_15_0_0 = (Keyword)cExceptionAssignment_15_0.eContents().get(0);
-		private final Assignment cBodyAssignment_15_1 = (Assignment)cGroup_15.eContents().get(1);
-		private final RuleCall cBodyStatementListParserRuleCall_15_1_0 = (RuleCall)cBodyAssignment_15_1.eContents().get(0);
+		private final Keyword cHyphenMinusGreaterThanSignKeyword_15_1 = (Keyword)cGroup_15.eContents().get(1);
+		private final Assignment cBodyAssignment_15_2 = (Assignment)cGroup_15.eContents().get(2);
+		private final RuleCall cBodyStatementListParserRuleCall_15_2_0 = (RuleCall)cBodyAssignment_15_2.eContents().get(0);
 		
 		//Match:
 		//	id=LOWERCASE_ID '->' body=StatementList | constant=UPPERCASE_ID '->' body=StatementList | boolean=('true' | 'false')
@@ -2063,7 +2065,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//	body=StatementList |
 		//	'in' set=List '->' body=StatementList | quantity=Quantity '->' body=StatementList | expr=EXPR '->' body=StatementList
 		//	| nodata='unknown' '->' body=StatementList | star?='*' '->' body=StatementList | anything?='#' '->'
-		//	body=StatementList | empty?='empty' -> body=StatementList | exception?='exception' -> body=StatementList;
+		//	body=StatementList | empty?='empty' '->' body=StatementList | exception?='exception' '->' body=StatementList;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//id=LOWERCASE_ID '->' body=StatementList | constant=UPPERCASE_ID '->' body=StatementList | boolean=('true' | 'false')
@@ -2071,7 +2073,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//observable=Observable '->' body=StatementList | literal=Literal '->' body=StatementList | list=List '->'
 		//body=StatementList | 'in' set=List '->' body=StatementList | quantity=Quantity '->' body=StatementList | expr=EXPR
 		//'->' body=StatementList | nodata='unknown' '->' body=StatementList | star?='*' '->' body=StatementList | anything?='#'
-		//'->' body=StatementList | empty?='empty' -> body=StatementList | exception?='exception' -> body=StatementList
+		//'->' body=StatementList | empty?='empty' '->' body=StatementList | exception?='exception' '->' body=StatementList
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//id=LOWERCASE_ID '->' body=StatementList
@@ -2335,7 +2337,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_13_2_0() { return cBodyStatementListParserRuleCall_13_2_0; }
 		
-		//empty?='empty' -> body=StatementList
+		//empty?='empty' '->' body=StatementList
 		public Group getGroup_14() { return cGroup_14; }
 		
 		//empty?='empty'
@@ -2344,13 +2346,16 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//'empty'
 		public Keyword getEmptyEmptyKeyword_14_0_0() { return cEmptyEmptyKeyword_14_0_0; }
 		
-		//-> body=StatementList
-		public Assignment getBodyAssignment_14_1() { return cBodyAssignment_14_1; }
+		//'->'
+		public Keyword getHyphenMinusGreaterThanSignKeyword_14_1() { return cHyphenMinusGreaterThanSignKeyword_14_1; }
+		
+		//body=StatementList
+		public Assignment getBodyAssignment_14_2() { return cBodyAssignment_14_2; }
 		
 		//StatementList
-		public RuleCall getBodyStatementListParserRuleCall_14_1_0() { return cBodyStatementListParserRuleCall_14_1_0; }
+		public RuleCall getBodyStatementListParserRuleCall_14_2_0() { return cBodyStatementListParserRuleCall_14_2_0; }
 		
-		//exception?='exception' -> body=StatementList
+		//exception?='exception' '->' body=StatementList
 		public Group getGroup_15() { return cGroup_15; }
 		
 		//exception?='exception'
@@ -2359,11 +2364,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//'exception'
 		public Keyword getExceptionExceptionKeyword_15_0_0() { return cExceptionExceptionKeyword_15_0_0; }
 		
-		//-> body=StatementList
-		public Assignment getBodyAssignment_15_1() { return cBodyAssignment_15_1; }
+		//'->'
+		public Keyword getHyphenMinusGreaterThanSignKeyword_15_1() { return cHyphenMinusGreaterThanSignKeyword_15_1; }
+		
+		//body=StatementList
+		public Assignment getBodyAssignment_15_2() { return cBodyAssignment_15_2; }
 		
 		//StatementList
-		public RuleCall getBodyStatementListParserRuleCall_15_1_0() { return cBodyStatementListParserRuleCall_15_1_0; }
+		public RuleCall getBodyStatementListParserRuleCall_15_2_0() { return cBodyStatementListParserRuleCall_15_2_0; }
 	}
 	public class UrnIdElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.UrnId");
@@ -6292,7 +6300,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	//	body=StatementList |
 	//	'in' set=List '->' body=StatementList | quantity=Quantity '->' body=StatementList | expr=EXPR '->' body=StatementList
 	//	| nodata='unknown' '->' body=StatementList | star?='*' '->' body=StatementList | anything?='#' '->'
-	//	body=StatementList | empty?='empty' -> body=StatementList | exception?='exception' -> body=StatementList;
+	//	body=StatementList | empty?='empty' '->' body=StatementList | exception?='exception' '->' body=StatementList;
 	public MatchElements getMatchAccess() {
 		return pMatch;
 	}

@@ -152,6 +152,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	private IActuator actuator;
 	private boolean occurrent;
 	private Map<String, IKnowledgeView> views;
+	private Map<String, IKnowledgeView> viewsByUrn;
 
 	public RuntimeScope(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
@@ -174,6 +175,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.dataflow = actuator.getDataflow();
 		this.watchedObservations = Collections.synchronizedSet(new HashSet<>());
 		this.views = new HashMap<>();
+		this.viewsByUrn = new HashMap<>();
 
 		/*
 		 * Complex and convoluted, but there is no other way to get this which must be
@@ -237,6 +239,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.behaviorBindings = context.behaviorBindings;
 		this.watchedObservations = context.watchedObservations;
 		this.views = context.views;
+		this.viewsByUrn = context.viewsByUrn;
 	}
 
 	@Override
@@ -329,6 +332,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		IArtifact ret = catalog.get(localName);
 		if (ret == null) {
 			ret = this.views.get(localName);
+		} if (ret == null) {
+			ret = this.viewsByUrn.get(localName);
 		}
 		return ret;
 	}
@@ -1868,6 +1873,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public void addView(IKnowledgeView view) {
 
+		this.viewsByUrn.put(view.getUrn(), view);
 		this.views.put(view.getId(), view);
 
 		/*

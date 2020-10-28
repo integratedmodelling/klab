@@ -606,10 +606,18 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	@Override
 	public IObservation getObservation(IObservable observable) {
 		if (this.context != null) {
-			Pair<String, IArtifact> result = ((IRuntimeScope)((Subject)context).getScope()).findArtifact(observable);
+			Pair<String, IArtifact> result = ((IRuntimeScope) ((Subject) context).getScope()).findArtifact(observable);
 			if (result != null) {
-				return (IObservation)result.getSecond();
+				return (IObservation) result.getSecond();
 			}
+		}
+		return null;
+	}
+
+	@Override
+	public IArtifact getArtifact(String name) {
+		if (this.context != null) {
+			return ((IRuntimeScope) ((Subject) context).getScope()).getArtifact(name);
 		}
 		return null;
 	}

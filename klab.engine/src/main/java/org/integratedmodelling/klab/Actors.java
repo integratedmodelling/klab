@@ -300,6 +300,12 @@ public enum Actors implements IActorsService {
 					break;
 				case OBSERVATION:
 					break;
+				case CONSTANT:
+					break;
+				case EMPTY:
+					break;
+				default:
+					break;
 				}
 
 				return value;

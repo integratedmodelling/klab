@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.documentation.extensions.table;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -139,6 +138,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		this.rows = rowCatalog;
 		this.columns = colCatalog;
 		this.scope = scope;
+		
 		/*
 		 * make a single catalog so we have the chance to catch ambiguous naming
 		 */
@@ -151,6 +151,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		}
 	}
 
+	@Override
+	public String getUrn() {
+		return table.getNamespace().getName() + "." + table.getName();
+	}
+	
 	/**
 	 * Accumulate a value to be aggregated later according to semantics. If we see
 	 * two different phases, remove the aggregation value (cell will be nodata) but

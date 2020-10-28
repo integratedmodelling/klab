@@ -234,8 +234,8 @@ Match:
 	nodata='unknown' '->' body=StatementList |
 	star?='*' '->' body=StatementList |
 	anything?='#''->' body=StatementList |
-	empty?='empty' -> body=StatementList |
-	exception?='exception' -> body=StatementList
+	empty?='empty' '->' body=StatementList |
+	exception?='exception' '->' body=StatementList
 ;
 
 /**

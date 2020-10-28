@@ -327,6 +327,11 @@ public class ViewBehavior {
 				this.component.getAttributes().remove("error");
 				this.component.getAttributes().remove("done");
 				this.component.getAttributes().put("computing", "true");
+			} else if ("reset".equals(message.message)) {
+				this.component.getAttributes().remove("waiting");
+				this.component.getAttributes().remove("error");
+				this.component.getAttributes().remove("done");
+				this.component.getAttributes().remove("computing");
 			}
 			return this.component;
 		}

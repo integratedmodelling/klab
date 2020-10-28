@@ -60,12 +60,21 @@ public interface ISessionState extends IParameters<String> {
 	String save();
 
 	IObservation getObservation(IObservable observable);
-	
+
+	/**
+	 * Retrieve a known artifact by name. May be a view (identified by either ID or
+	 * full URN) or an observation or observation group ID.
+	 * 
+	 * @param name
+	 * @return
+	 */
+	IArtifact getArtifact(String name);
+
 	void resetContext();
 
 	void restore(String stateId);
 
 	List<SessionActivity> getHistory();
-	
+
 	String getRegionOfInterestName();
 }
