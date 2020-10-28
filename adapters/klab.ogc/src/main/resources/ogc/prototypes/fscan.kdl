@@ -1,0 +1,20 @@
+/*
+ * Parameters accepted in a raster resource
+ */
+ annotation fscan	
+	"The FSCAN adapter merges one or more polygon sources to provide the fastest access to polygon(s) that best fit
+	 the incoming bounding box."
+ {
+
+ 	optional text 'nameAttribute'
+ 		""
+ 		default ""
+ 		
+ 	optional boolean sanitize
+ 		""
+ 		default false
+ 	
+ 	optional text 'filter'
+ 		""
+ 		default ""
+ }
