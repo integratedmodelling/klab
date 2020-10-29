@@ -63,6 +63,7 @@ public enum Geocoder {
 
 	public static final String DEFAULT_GEOCODING_STRATEGY = "Map boundaries";
 	public static final String WATERSHED_GEOCODING_STRATEGY = "Watershed";
+	public static final String RANDOM_GEOCODING_STRATEGY = "I'm feeling stupid";
 
 	Map<String, GeocodingService> services = Collections.synchronizedMap(new HashMap<>());
 
@@ -79,6 +80,7 @@ public enum Geocoder {
 						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev11#intersect=false",
 						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev12#intersect=false" },
 				0.25));
+		services.put(RANDOM_GEOCODING_STRATEGY, new RandomGeocodingService(0.5));
 		// TODO other services
 	}
 
