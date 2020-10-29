@@ -293,7 +293,11 @@ public class Geometry implements IGeometry {
 				scaleRef.getWest(), scaleRef.getSouth(), scaleRef.getNorth());
 
 		if (scaleRef.getSpaceUnit() != null) {
-			ret = ret.withGridResolution(scaleRef.getResolutionDescription());
+			ret = ret.withGridResolution(scaleRef.getSpaceResolution() + " " + scaleRef.getSpaceUnit());
+		}
+		
+		if (scaleRef.getShape() != null) {
+			ret = ret.withShape(scaleRef.getShape());
 		}
 
 		if (scaleRef.getTimeGeometry() == null) {
@@ -306,8 +310,8 @@ public class Geometry implements IGeometry {
 				hasTime = true;
 			}
 			if (scaleRef.getTimeResolutionDescription() != null) {
-				ret = ret.withTemporalResolution(scaleRef.getTimeResolutionDescription().trim().replaceAll("\\s", "."));
-				hasTime = true;
+				ret = ret.withTemporalResolution(scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
+				hasTime = true; 
 			}
 		}
 

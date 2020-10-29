@@ -824,13 +824,13 @@ public class Shape extends AbstractExtent implements IShape {
 				return this;
 			}
 			if (locators[0] instanceof Cell) {
-				if (getEnvelope().intersects(((Cell)locators[0]).getEnvelope())) {
+				if (getEnvelope().intersects(((Cell) locators[0]).getEnvelope())) {
 					// TODO coverage
 					return this;
 				}
 				return null;
 			} else if (locators[0] instanceof IShape) {
-				if (getEnvelope().intersects(((Shape)locators[0]).getEnvelope())) {
+				if (getEnvelope().intersects(((Shape) locators[0]).getEnvelope())) {
 					// TODO coverage
 					return this;
 				}
@@ -897,7 +897,7 @@ public class Shape extends AbstractExtent implements IShape {
 	public boolean contains(double[] coordinate) {
 		return this.shapeGeometry.intersects(makePoint(coordinate[0], coordinate[1]));
 	}
-	
+
 	@Override
 	public IMetadata getMetadata() {
 		if (this.metadata == null) {
