@@ -25,12 +25,14 @@ import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -40,6 +42,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
@@ -497,15 +500,15 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		}
 
 		if (this.geocodingStrategy != null) {
-			this.scaleOfInterest.setName(Geocoder.INSTANCE.geocode(extent, this.geocodingStrategy,
-					this.scaleOfInterest.getName(), session.getMonitor()));
+			IShape shape = Geocoder.INSTANCE.geocodeToShape(extent, this.geocodingStrategy,
+					 session.getMonitor());
+			if (shape != null) {
+				this.scaleOfInterest.setName(shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class));
+				this.scaleOfInterest.setShape(((Shape)shape).getJTSGeometry().toString());
+			}
 		}
 
-//		Pair<Double, String> resolution = new Pair<>(this.spatialGridSize, this.spatialGridUnits);
 		Unit sunit = Unit.create(scaleOfInterest.getSpaceUnit());
-//		int scaleRank = envelope.getScaleRank();
-//		this.scaleOfInterest.setSpaceUnit(resolution.getSecond());
-//		this.scaleOfInterest.setSpaceResolution(resolution.getFirst());
 		this.scaleOfInterest.setSpaceResolutionConverted(
 				sunit.convert(scaleOfInterest.getSpaceResolution(), Units.INSTANCE.METERS).doubleValue());
 		this.scaleOfInterest.setSpaceResolutionDescription(
@@ -514,7 +517,6 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		this.scaleOfInterest.setResolutionDescription(
 				NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolutionConverted()) + " "
 						+ this.scaleOfInterest.getSpaceUnit());
-//		this.scaleOfInterest.setSpaceScale(scaleRank);
 
 		session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined,
 				scaleOfInterest);
