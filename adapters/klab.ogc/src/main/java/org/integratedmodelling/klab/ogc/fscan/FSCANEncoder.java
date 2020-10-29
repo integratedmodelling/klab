@@ -26,6 +26,14 @@ public class FSCANEncoder implements IResourceEncoder {
 	@Override
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			Builder builder, IContextualizationScope context) {
+		
+		if (resource.getParameters().containsKey("totalshapes")) {
+			indexShapes();
+		}
+		
+	}
+
+	private void indexShapes() {
 		// TODO Auto-generated method stub
 		
 	}

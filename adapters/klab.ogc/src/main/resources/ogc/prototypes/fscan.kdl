@@ -4,6 +4,7 @@
  annotation fscan	
 	"The FSCAN adapter merges one or more polygon sources to provide the fastest access to polygon(s) that best fit
 	 the incoming bounding box."
+	 label "Merge and retrieve scale-optimized polygons from a multi-scale repository"
  {
 
  	optional text 'nameAttribute'

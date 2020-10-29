@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.ogc.fscan;
 
 import java.io.File;
+import java.io.IOException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -9,19 +10,26 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.ogc.vector.files.VectorValidator;
+import org.integratedmodelling.klab.utils.FileUtils;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Triple;
 
 public class FSCANImporter implements IResourceImporter {
 
+	VectorValidator vectorValidator = new VectorValidator();
+	
 	@Override
 	public boolean acceptsMultiple() {
-		// TODO Auto-generated method stub
 		return true;
 	}
 
@@ -33,7 +41,31 @@ public class FSCANImporter implements IResourceImporter {
 
 	@Override
 	public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
-		// TODO Auto-generated method stub
+		if (vectorValidator.canHandle(new File(importLocation.getFile()), null)) {
+			
+			Builder builder = vectorValidator.validate(importLocation, target.getParameters(), monitor);
+			if (!builder.hasErrors()) {
+
+				String filename = MiscUtilities.getFileName(importLocation.toString());
+	            File originalFile = new File(importLocation.getFile());
+	            File bifFile = new File(((Resource) target).getPath() + File.separator + filename);
+	            try {
+					FileUtils.copyFile(originalFile, bifFile);
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
+				int existing = target.getParameters().getLike("filesource").size()  / 2;
+				target.getParameters().put("filesource.import" + (existing + 1) + ".name", filename);
+				target.getParameters().put("filesource.import" + (existing + 1) + ".level", 0);
+				// this triggers reconstruction of the index in the encoder.
+				target.getParameters().remove("totalshapes");
+				
+				// TODO this should get whatever catalog the resource is in, otherwise it won't work on nodes
+				Resources.INSTANCE.getCatalog(target).update(target, "Imported vector source " + importLocation);
+				
+				return true;
+			}
+		}
 		return false;
 	}
 

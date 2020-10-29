@@ -5,7 +5,7 @@ import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
-import org.integratedmodelling.klab.api.data.adapters.IFileResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
@@ -36,7 +36,7 @@ import org.integratedmodelling.klab.ogc.fscan.FSCANValidator;
  *
  */
 @ResourceAdapter(type = FSCANAdapter.ID, version = Version.CURRENT)
-public class FSCANAdapter implements IFileResourceAdapter {
+public class FSCANAdapter implements IResourceAdapter {
 
 	public static final String ID = "fscan";
 
@@ -67,7 +67,6 @@ public class FSCANAdapter implements IFileResourceAdapter {
 
 	@Override
 	public IResourceCalculator getCalculator(IResource resource) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 

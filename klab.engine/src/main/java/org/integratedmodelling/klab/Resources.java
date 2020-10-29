@@ -1284,6 +1284,16 @@ public enum Resources implements IResourceService {
 		return publicResourceCatalog;
 	}
 
+	public IResourceCatalog getCatalog(IResource resource) {
+		/*
+		 * TODO/CHECK this must also work on nodes
+		 */
+		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+			return getLocalResourceCatalog();
+		}
+		throw new KlabResourceAccessException("unimplemented alignment of public and local resource catalogs");
+	}
+	
 	// @Override
 	public Builder createResourceBuilder() {
 		return new ResourceBuilder();

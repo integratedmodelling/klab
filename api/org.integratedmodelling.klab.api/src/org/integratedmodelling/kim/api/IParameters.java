@@ -116,4 +116,12 @@ public interface IParameters<T> extends Map<T, Object> {
 	 * @return
 	 */
 	boolean containsAny(Object... objects);
+
+	/**
+	 * Return the subset of the map whose keys start with the passed string.
+	 * 
+	 * @param string
+	 * @return
+	 */
+	Map<T, Object> getLike(String string);
 }
