@@ -31,13 +31,35 @@ public class FSCANValidator implements IResourceValidator {
 	@Override
 	public List<Operation> getAllowedOperations(IResource resource) {
 		List<Operation> ret = new ArrayList<>();
+		ret.add(new Operation() {
+
+			@Override
+			public String getName() {
+				return "index";
+			}
+
+			@Override
+			public String getDescription() {
+				return "Rebuild shape index";
+			}
+
+			@Override
+			public boolean isShouldConfirm() {
+				return true;
+			}
+			
+		});
 		return ret;
 	}
 
 	@Override
 	public IResource performOperation(IResource resource, String operationName, IMonitor monitor) {
-		// TODO Auto-generated method stub
-		return null;
+		switch (operationName) {
+		case "index":
+			new FSCANEncoder().indexShapes(resource);
+		}
+		// return whatever has changed
+		return Resources.INSTANCE.getCatalog(resource).get(resource.getUrn());
 	}
 
 	@Override

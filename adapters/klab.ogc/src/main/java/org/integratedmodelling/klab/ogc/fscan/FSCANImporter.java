@@ -27,7 +27,7 @@ import org.integratedmodelling.klab.utils.Triple;
 public class FSCANImporter implements IResourceImporter {
 
 	VectorValidator vectorValidator = new VectorValidator();
-	
+
 	@Override
 	public boolean acceptsMultiple() {
 		return true;
@@ -42,27 +42,35 @@ public class FSCANImporter implements IResourceImporter {
 	@Override
 	public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
 		if (vectorValidator.canHandle(new File(importLocation.getFile()), null)) {
-			
+
 			Builder builder = vectorValidator.validate(importLocation, target.getParameters(), monitor);
 			if (!builder.hasErrors()) {
 
-				String filename = MiscUtilities.getFileName(importLocation.toString());
-	            File originalFile = new File(importLocation.getFile());
-	            File bifFile = new File(((Resource) target).getPath() + File.separator + filename);
-	            try {
-					FileUtils.copyFile(originalFile, bifFile);
-				} catch (IOException e) {
-					throw new KlabIOException(e);
+				File originalFile = new File(importLocation.getFile());
+				String mainFileName = MiscUtilities.getFileName(importLocation.toString());
+
+				for (File toCopy : vectorValidator.getAllFilesForResource(originalFile)) {
+					try {
+						String filename = MiscUtilities.getFileName(toCopy.toString());
+						File targetFile = new File(((Resource) target).getPath() + File.separator + filename);
+						FileUtils.copyFile(toCopy, targetFile);
+					} catch (IOException e) {
+						throw new KlabIOException(e);
+					}
 				}
-				int existing = target.getParameters().getLike("filesource").size()  / 2;
-				target.getParameters().put("filesource.import" + (existing + 1) + ".name", filename);
+				
+				int existing = target.getParameters().getLike("filesource").size() / 3;
+				target.getParameters().put("filesource.import" + (existing + 1) + ".name", mainFileName);
+				// stick in the default values and let user modify in the resource editor
 				target.getParameters().put("filesource.import" + (existing + 1) + ".level", 0);
+				target.getParameters().put("filesource.import" + (existing + 1) + ".nameExpression", "name");
 				// this triggers reconstruction of the index in the encoder.
 				target.getParameters().remove("totalshapes");
-				
-				// TODO this should get whatever catalog the resource is in, otherwise it won't work on nodes
+
+				// TODO this should get whatever catalog the resource is in, otherwise it won't
+				// work on nodes
 				Resources.INSTANCE.getCatalog(target).update(target, "Imported vector source " + importLocation);
-				
+
 				return true;
 			}
 		}
@@ -83,7 +91,7 @@ public class FSCANImporter implements IResourceImporter {
 
 	@Override
 	public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
-		List<Triple<String,String,String>> ret = new ArrayList<>();
+		List<Triple<String, String, String>> ret = new ArrayList<>();
 		return ret;
 	}
 

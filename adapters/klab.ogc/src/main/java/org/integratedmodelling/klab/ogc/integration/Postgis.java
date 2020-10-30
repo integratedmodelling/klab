@@ -23,22 +23,28 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.factory.Hints;
 import org.geotools.jdbc.JDBCDataStore;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.engine.runtime.code.Expression;
+import org.integratedmodelling.klab.engine.runtime.code.Expression.Scope;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
 import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource.Attribute;
 import org.integratedmodelling.klab.ogc.vector.files.VectorValidator;
 import org.integratedmodelling.klab.raster.files.RasterValidator;
+import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.postgresql.util.PSQLException;
 
 public class Postgis {
 
 	private static String DEFAULT_POSTGRES_DATABASE = "klab";
-
 	private boolean useCatalogNames = false;
 	private String database = DEFAULT_POSTGRES_DATABASE;
 	private String pgurl;
@@ -191,6 +197,11 @@ public class Postgis {
 		 * Attributes with their Java binding
 		 */
 		public List<Attribute> attributes = new ArrayList<>();
+
+		/**
+		 * The geometry type in the resource
+		 */
+		public String geometryType;
 	}
 
 	/**
@@ -218,10 +229,127 @@ public class Postgis {
 		return null;
 	}
 
-	private PublishedResource publishVector(File resource, Urn urn) throws KlabStorageException {
+	/**
+	 * Call this first
+	 * 
+	 * @param urn
+	 */
+	public void resetBoundaries(Urn urn) {
 
 		String table = urn.getNamespace() + "_" + urn.getResourceId();
 		table = table.replaceAll("\\.", "_").toLowerCase();
+		String table_boundaries = table + "_bb";
+		String table_simplified = table + "_sm";
+
+		try (Connection con = DriverManager.getConnection(this.pgurl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
+
+			for (String tablename : new String[] { table_boundaries, table_simplified }) {
+				st.execute("DROP TABLE IF EXISTS " + tablename + ";");
+				st.execute("CREATE TABLE " + tablename
+						+ "(gid serial, objectid numeric(10,0), shape_area numeric, shape_name varchar(512), table_name varchar(128), level integer);");
+				st.execute("ALTER TABLE " + tablename + " ADD PRIMARY KEY (gid);");
+				// we will force the shape to multipolygon for the simplified shape.
+				st.execute("SELECT AddGeometryColumn('public','" + tablename + "', 'geom', 4326, ' + "
+						+ (tablename.endsWith("_bb") ? "POLYGON" : "MULTIPOLYGON") + "', 2, false);");
+			}
+					
+		} catch (Throwable t) {
+			throw new KlabStorageException(t.getMessage());
+		}
+
+	}
+
+	/**
+	 * Only call AFTER resetBoundaries
+	 * 
+	 * @param file
+	 * @param urn
+	 * @param nameExpression
+	 * @param level
+	 */
+	public void indexBoundaries(File file, Urn urn, String nameExpression, int level) {
+
+		String table = urn.getNamespace() + "_" + MiscUtilities.getFileBaseName(file);
+		table = table.replaceAll("\\.", "_").toLowerCase();
+		PublishedResource published = publishVector(file, table);
+
+		String restable = urn.getNamespace() + "_" + urn.getResourceId();
+		restable = restable.replaceAll("\\.", "_").toLowerCase();
+		String table_boundaries = restable + "_bb";
+		String table_simplified = restable + "_sm";
+
+		IExpression nameCalculator = Extensions.INSTANCE.compileExpression(nameExpression,
+				Extensions.DEFAULT_EXPRESSION_LANGUAGE);
+
+		try {
+
+			/*
+			 * Bounding box and simplified coverage will contain only the feature ID of each
+			 * shape, the display name, its area in projection units, and the level field
+			 * for grouping. The schema is the same for both.
+			 */
+			try (Connection con = DriverManager.getConnection(this.pgurl,
+					Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+					Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+					Statement st = con.createStatement()) {
+
+				// add the data and compute names. We don't need the name in the main table.
+				con.setAutoCommit(false);
+				st.setFetchSize(50);
+
+				Parameters<String> parameters = Parameters.create();
+				Scope scope = new Expression.Scope(Klab.INSTANCE.getRootMonitor());
+				ResultSet rs = st.executeQuery("SELECT * FROM " + table);
+				int n = 0;
+				Statement ist = con.createStatement();
+				while (rs.next()) {
+					n++;
+					parameters.clear();
+					for (Attribute attribute : published.attributes) {
+						parameters.put(attribute.name, rs.getObject(attribute.name));
+					}
+					Object name = nameCalculator.eval(parameters, scope);
+					if (name == null) {
+						name = "Shape " + n;
+					}
+
+					// create bounding box and statistics
+					// gid is fid in original feature
+					IShape boundingBox = null;
+					double shape_area;
+
+					// insert in BOTH tables, add table name and level. The first gets the bounding box + area, the second the simplified shape 
+					// (with the original area and level, which we won't really use).
+//					ist.execute("INSERT INTO \"" + table_boundaries + "\" VALUES (" + ");");
+				}
+				rs.close();
+
+				/*
+				 * make indices now
+				 */
+				for (String tablename : new String[] { table_boundaries, table_simplified }) {
+					st.execute(
+							"CREATE INDEX \"" + tablename + "_gist\" on \"" + tablename + "\" USING GIST (\"geom\");");
+					st.execute("COMMIT;");
+				}
+
+			}
+		} catch (Throwable t) {
+			throw new KlabStorageException(t.getMessage());
+		}
+	}
+
+	private PublishedResource publishVector(File resource, Urn urn) throws KlabStorageException {
+		String table = urn.getNamespace() + "_" + urn.getResourceId();
+		table = table.replaceAll("\\.", "_").toLowerCase();
+		return publishVector(resource, table);
+	}
+
+	private PublishedResource publishVector(File resource, String table) throws KlabStorageException {
+
 		PublishedResource ret = new PublishedResource();
 
 		ret.name = table;
@@ -243,6 +371,8 @@ public class Postgis {
 			SimpleFeatureCollection collection = featureSource.getFeatures();
 
 			ret.srs = Projection.create(featureSource.getSchema().getCoordinateReferenceSystem()).getSimpleSRS();
+			ret.geometryType = featureSource.getSchema().getGeometryDescriptor().getType().getName().toString();
+
 			for (AttributeDescriptor ad : featureSource.getSchema().getAttributeDescriptors()) {
 				PublishedResource.Attribute attribute = new Attribute();
 				attribute.name = ad.getLocalName();

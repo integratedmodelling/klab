@@ -23,108 +23,111 @@ import weka.classifiers.bayes.BayesNet;
 
 public class WekaValidator implements IResourceValidator {
 
-    @Override
-    public Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
+	@Override
+	public Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
 
-        IResource.Builder ret = Resources.INSTANCE.createResourceBuilder().withType(IArtifact.Type.VALUE);
+		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder().withType(IArtifact.Type.VALUE);
 
-        try {
+		try {
 
-            File file = URLUtils.getFileForURL(url);
-            monitor.info("Validating " + file + " as WEKA resource");
-            ret.withParameter("fileUrl", url).withLocalName(MiscUtilities.getFileName(url.getFile()));
+			File file = URLUtils.getFileForURL(url);
+			monitor.info("Validating " + file + " as WEKA resource");
+			ret.withParameter("fileUrl", url).withLocalName(MiscUtilities.getFileName(url.getFile()));
 
-            if (file.toString().endsWith("xdsl")) {
-                monitor.info("Importing GENIE file " + file + " as a WEKA resource");
-                String wekaClass = userData.get("classifier", BayesNet.class.getCanonicalName());
-                if (!wekaClass.equals(BayesNet.class.getCanonicalName())) {
-                    ret.addError("Cannot import a XDSL file as a classifier that is not a BayesNet");
-                } else {
+			if (file.toString().endsWith("xdsl")) {
+				monitor.info("Importing GENIE file " + file + " as a WEKA resource");
+				String wekaClass = userData.get("classifier", BayesNet.class.getCanonicalName());
+				if (!wekaClass.equals(BayesNet.class.getCanonicalName())) {
+					ret.addError("Cannot import a XDSL file as a classifier that is not a BayesNet");
+				} else {
 
-                }
-            } else if (file.toString().endsWith("bif")) {
-                monitor.info("Importing BIF file " + file + " as a WEKA resource");
-                String wekaClass = userData.get("classifier", BayesNet.class.getCanonicalName());
-                if (!wekaClass.equals(BayesNet.class.getCanonicalName())) {
-                    ret.addError("Cannot import a XDSL file as a classifier that is not a BayesNet");
-                } else {
+				}
+			} else if (file.toString().endsWith("bif")) {
+				monitor.info("Importing BIF file " + file + " as a WEKA resource");
+				String wekaClass = userData.get("classifier", BayesNet.class.getCanonicalName());
+				if (!wekaClass.equals(BayesNet.class.getCanonicalName())) {
+					ret.addError("Cannot import a XDSL file as a classifier that is not a BayesNet");
+				} else {
 
-                }
+				}
 
-            } else {
-                monitor.info("Importing WEKA classifier from " + file + " as a WEKA resource");
-            }
+			} else {
+				monitor.info("Importing WEKA classifier from " + file + " as a WEKA resource");
+			}
 
-            if (ret.hasErrors()) {
-                monitor.info("WEKA resource has errors: validation failed");
-            }
+			if (ret.hasErrors()) {
+				monitor.info("WEKA resource has errors: validation failed");
+			}
 
-        } catch (Throwable e) {
-            ret.addError("Errors validating resource: " + e.getMessage());
-        }
+		} catch (Throwable e) {
+			ret.addError("Errors validating resource: " + e.getMessage());
+		}
 
-        return ret;
-    }
+		return ret;
+	}
 
-    @Override
-    public List<Operation> getAllowedOperations(IResource resource) {
+	@Override
+	public List<Operation> getAllowedOperations(IResource resource) {
 
-        List<Operation> ret = new ArrayList<>();
-        boolean isBayes = BayesNet.class.getCanonicalName()
-                .equals(resource.getParameters().get("classifier"));
-        File importFile = new File(resource.getLocalPath() + File.separator + "import.xml");
-        if (isBayes && importFile.exists()) {
-            ret.add(new ResourceReference.OperationReference("Learn CPTs", 
-                    "Learn the CPTs from the original instances. Perform this operation after making modifications to the"
-                    + " model, for example after importing a BIF file.", true));
-        }
-        return ret;
-    }
+		List<Operation> ret = new ArrayList<>();
 
-    @Override
-    public IResource performOperation(IResource resource, String operationName, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return resource;
-    }
+		if (resource != null) {
+			boolean isBayes = BayesNet.class.getCanonicalName().equals(resource.getParameters().get("classifier"));
+			File importFile = new File(resource.getLocalPath() + File.separator + "import.xml");
+			if (isBayes && importFile.exists()) {
+				ret.add(new ResourceReference.OperationReference("Learn CPTs",
+						"Learn the CPTs from the original instances. Perform this operation after making modifications to the"
+								+ " model, for example after importing a BIF file.",
+						true));
+			}
+		}
+		
+		return ret;
+	}
 
-    @Override
-    public boolean canHandle(File resource, IParameters<String> parameters) {
-        if (resource == null) {
-            return false;
-        }
-        String extension = MiscUtilities.getFileExtension(resource);
-        if (extension != null) {
-            return extension.toLowerCase().equals("bif") || extension.toLowerCase().equals("xdsl")
-                    || extension.toLowerCase().equals("model");
-        }
+	@Override
+	public IResource performOperation(IResource resource, String operationName, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return resource;
+	}
 
-        return false;
-    }
+	@Override
+	public boolean canHandle(File resource, IParameters<String> parameters) {
+		if (resource == null) {
+			return false;
+		}
+		String extension = MiscUtilities.getFileExtension(resource);
+		if (extension != null) {
+			return extension.toLowerCase().equals("bif") || extension.toLowerCase().equals("xdsl")
+					|| extension.toLowerCase().equals("model");
+		}
 
-    @Override
-    public Collection<File> getAllFilesForResource(File file) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+		return false;
+	}
 
-    public boolean validateImport(IResource resource, IMonitor monitor) {
+	@Override
+	public Collection<File> getAllFilesForResource(File file) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 
-        WekaClassifier classifier = null;
-        File imported = new File(((Resource) resource).getPath() + File.separator + "import.xml");
-        if (imported.exists()) {
-            try {
-                classifier = new WekaClassifier(imported, resource.getParameters()
-                        .get("classifier", String.class), resource.getParameters()
-                                .get("classifier.probabilistic", "false").equals("true"));
-            } catch (Throwable e) {
-            	monitor.error(e);
-                return false;
-            }
-        } else {
-            return false;
-        }
+	public boolean validateImport(IResource resource, IMonitor monitor) {
 
-        return classifier != null && classifier.getClassifier() != null;
-    }
+		WekaClassifier classifier = null;
+		File imported = new File(((Resource) resource).getPath() + File.separator + "import.xml");
+		if (imported.exists()) {
+			try {
+				classifier = new WekaClassifier(imported, resource.getParameters().get("classifier", String.class),
+						resource.getParameters().get("classifier.probabilistic", "false").equals("true"));
+			} catch (Throwable e) {
+				monitor.error(e);
+				return false;
+			}
+		} else {
+			return false;
+		}
+
+		return classifier != null && classifier.getClassifier() != null;
+	}
 
 }
