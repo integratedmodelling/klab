@@ -184,6 +184,7 @@ public enum Actors implements IActorsService {
 		layoutMetadata.add("tooltip");
 		layoutMetadata.add("ellipsis");
 		layoutMetadata.add("multiple");
+		layoutMetadata.add("selected");
 		layoutMetadata.add("type");
 	}
 
