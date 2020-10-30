@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
+import org.postgresql.geometric.PGbox;
 
 public class Postgis {
 
@@ -252,7 +253,7 @@ public class Postgis {
 						+ "(gid serial, objectid numeric(10,0), shape_area numeric, shape_name varchar(512), table_name varchar(128), level integer);");
 				st.execute("ALTER TABLE " + tablename + " ADD PRIMARY KEY (gid);");
 				// we will force the shape to multipolygon for the simplified shape.
-				st.execute("SELECT AddGeometryColumn('public','" + tablename + "', 'geom', 4326, ' + "
+				st.execute("SELECT AddGeometryColumn('public','" + tablename + "', 'geom', 4326, '"
 						+ (tablename.endsWith("_bb") ? "POLYGON" : "MULTIPOLYGON") + "', 2, false);");
 			}
 					
@@ -307,20 +308,25 @@ public class Postgis {
 				Statement ist = con.createStatement();
 				while (rs.next()) {
 					n++;
+
+					// create bounding box and statistics
+					// gid is fid in original feature
+					IShape boundingBox = null;
+					double shape_area;
+					Object geometry = rs.getObject("the_geom");
+					
 					parameters.clear();
 					for (Attribute attribute : published.attributes) {
-						parameters.put(attribute.name, rs.getObject(attribute.name));
+						if (!"the_geom".equals(attribute.name)) {
+							parameters.put(attribute.name, rs.getObject(attribute.name));
+						}
 					}
 					Object name = nameCalculator.eval(parameters, scope);
 					if (name == null) {
 						name = "Shape " + n;
 					}
 
-					// create bounding box and statistics
-					// gid is fid in original feature
-					IShape boundingBox = null;
-					double shape_area;
-
+					
 					// insert in BOTH tables, add table name and level. The first gets the bounding box + area, the second the simplified shape 
 					// (with the original area and level, which we won't really use).
 //					ist.execute("INSERT INTO \"" + table_boundaries + "\" VALUES (" + ");");
