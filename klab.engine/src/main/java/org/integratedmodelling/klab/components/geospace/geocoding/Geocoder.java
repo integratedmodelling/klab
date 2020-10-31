@@ -63,23 +63,15 @@ public enum Geocoder {
 
 	public static final String DEFAULT_GEOCODING_STRATEGY = "Map boundaries";
 	public static final String WATERSHED_GEOCODING_STRATEGY = "Watershed";
+	public static final String ADMIN_GEOCODING_STRATEGY = "Administrative region";
 	public static final String RANDOM_GEOCODING_STRATEGY = "I'm feeling stupid";
 
 	Map<String, GeocodingService> services = Collections.synchronizedMap(new HashMap<>());
 
 	private Geocoder() {
 		services.put(DEFAULT_GEOCODING_STRATEGY, new OSMNamesGeocodingService(0.75));
-		services.put(WATERSHED_GEOCODING_STRATEGY, new ResourceGeocodingService(
-				new String[] { "im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev04#intersect=false",
-						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev05#intersect=false",
-						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev06#intersect=false",
-						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev07#intersect=false",
-						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev08#intersect=false",
-						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev09#intersect=false",
-						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev10#intersect=false",
-						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev11#intersect=false",
-						"im.weather:wwf.hydrosheds:hydrology.global:basinatlas.v10.lev12#intersect=false" },
-				0.25));
+		services.put(ADMIN_GEOCODING_STRATEGY,
+				new ResourceGeocodingService("local:ferdinando.villa:scratch:administrative", 0.25));
 		services.put(RANDOM_GEOCODING_STRATEGY, new RandomGeocodingService(0.5));
 		// TODO other services
 	}

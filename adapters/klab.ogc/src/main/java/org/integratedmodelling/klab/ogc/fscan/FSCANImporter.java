@@ -63,7 +63,7 @@ public class FSCANImporter implements IResourceImporter {
 				target.getParameters().put("filesource.import" + (existing + 1) + ".name", mainFileName);
 				// stick in the default values and let user modify in the resource editor
 				target.getParameters().put("filesource.import" + (existing + 1) + ".level", 0);
-				target.getParameters().put("filesource.import" + (existing + 1) + ".nameExpression", "name");
+				target.getParameters().put("filesource.import" + (existing + 1) + ".label", "name");
 				// this triggers reconstruction of the index in the encoder.
 				target.getParameters().remove("totalshapes");
 
