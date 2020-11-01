@@ -451,7 +451,10 @@ public class Postgis {
 							parameters.put(attribute.name, rs.getObject(attribute.name));
 						}
 					}
-
+					
+					parameters.put("ID", "" + gid);
+					parameters.put("LEVEL", level + "");
+					
 					Object name = null;
 					try {
 						name = nameCalculator.eval(parameters, scope);
