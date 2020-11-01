@@ -44,6 +44,8 @@ public class OSMNamesGeocodingService extends GeocodingService {
 			}
 			ret = Shape.create((Envelope) envelope);
 			ret.getMetadata().put(IMetadata.DC_DESCRIPTION, name);
+			// this tells the view to not paint the shape
+			ret.getMetadata().put(IMetadata.IM_GEOGRAPHIC_AREA, Boolean.FALSE);
 		} catch (Throwable t) {
 
 		}

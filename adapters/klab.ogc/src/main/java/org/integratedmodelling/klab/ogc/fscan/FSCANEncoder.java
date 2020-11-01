@@ -58,15 +58,6 @@ public class FSCANEncoder implements IResourceEncoder {
 		
 		Urn urn = new Urn(resource.getUrn());
 
-//		if (false && resource.getParameters().containsKey("totalshapes")) {
-//			long n = indexShapes(resource);
-//			if (n >= 0) {
-//				resource.getParameters().put("totalshapes", n);
-//				Resources.INSTANCE.getCatalog(resource).update(resource,
-//						"spatial indices generated for " + n + " polygons");
-//			}
-//		}
-
 		/*
 		 * default behavior: find the shape that best fits the context
 		 */
@@ -74,8 +65,11 @@ public class FSCANEncoder implements IResourceEncoder {
 		IEnvelope envelope = scale.getSpace().getShape().getEnvelope().transform(Projection.getLatLon(), false);
 		IShape shape = postgis.getLargestInScale(urn, envelope);
 		if (shape != null) {
-			builder.startObject("result", shape.getMetadata().get(IMetadata.DC_NAME, String.class), Scale.create(shape))
-					.finishObject();
+			Builder bb = builder.startObject("result", shape.getMetadata().get(IMetadata.DC_NAME, String.class), Scale.create(shape));
+			for (String key : shape.getMetadata().keySet()) {
+				bb.withMetadata(key, shape.getMetadata().get(key));
+			}
+			bb.finishObject();
 		}
 
 	}

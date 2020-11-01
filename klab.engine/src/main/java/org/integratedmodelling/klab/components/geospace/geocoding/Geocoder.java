@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.Parameters;
 
+import com.google.common.util.concurrent.RateLimiter;
 import com.vividsolutions.jts.geom.Geometry;
 
 import de.topobyte.osm4j.core.access.OsmIterator;
@@ -206,11 +207,9 @@ public enum Geocoder {
 
 		GeocodingService service = services.get(strategy == null ? DEFAULT_GEOCODING_STRATEGY : strategy);
 		if (service != null) {
-			if (service.getRateLimiter().acquire() == 0) {
-				IShape shape = service.geocode(envelope, monitor);
-				if (shape != null) {
-					return shape;
-				}
+			IShape shape = service.geocode(envelope, monitor);
+			if (shape != null) {
+				return shape;
 			}
 		}
 		return null;
@@ -527,5 +526,13 @@ public enum Geocoder {
 	public boolean isGeocodingAccessible() {
 		// TODO periodically ping Nominatim URLs
 		return true;
+	}
+
+	public RateLimiter getRateLimiter(String strategy) {
+		GeocodingService service = services.get(strategy == null ? DEFAULT_GEOCODING_STRATEGY : strategy);
+		if (service != null) {
+			return service.getRateLimiter();
+		}
+		return null;
 	}
 }

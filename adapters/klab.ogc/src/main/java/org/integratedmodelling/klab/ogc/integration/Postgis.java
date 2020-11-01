@@ -246,10 +246,10 @@ public class Postgis {
 	 * @return
 	 */
 	public IShape getLargestInScale(Urn urn, IEnvelope envelope) {
-		
+
 		String table = urn.getNamespace() + "_" + urn.getResourceId();
 		table = table.replaceAll("\\.", "_").toLowerCase();
-		String bbTableName = table + "_bb";
+//		String bbTableName = table + "_bb";
 		String smTableName = table + "_sm";
 
 		int rank = envelope.getScaleRank();
@@ -259,12 +259,13 @@ public class Postgis {
 				+ ", " + envelope.getMaxY() + ", 4326)";
 
 		/*
-		 * this retrieves the best candidate. Should be fast.
+		 * this retrieves the best candidate. Should be relatively fast - adjust the
+		 * simplification settings for speed vs. precision.
 		 */
-		String chooseShape = "SELECT gid, table_name, shape_name, ABS(1 - (ST_Area(ST_Intersection(geom, " + envSql
-				+ "))/" + area + ")) as ared from " + bbTableName + "\n" + "WHERE \n" + "	rank BETWEEN " + (rank - 1)
-				+ " and " + (rank + 2) + "  \n" + "		AND \n" + "	geom && " + envSql + "\n"
-				+ "	ORDER BY ared LIMIT 3;";
+		String chooseShape = "SELECT gid, table_name, shape_name, geom, level, ABS(1 - (ST_Area(ST_Intersection(geom, "
+				+ envSql + "))/" + area + ")) as ared from " + smTableName + "\n" + "WHERE \n" + "	rank BETWEEN "
+				+ (rank - 1) + " and " + (rank + 2) + "  \n" + "		AND \n" + "	geom && " + envSql + "\n"
+				+ "	ORDER BY ared LIMIT 6;";
 
 		WKBReader wkb = new WKBReader();
 
@@ -284,29 +285,39 @@ public class Postgis {
 					long gid = rs.getLong(1);
 					String sourceTable = rs.getString(2);
 					String shapeName = rs.getString(3);
+					int level = rs.getInt(5);
+					
+					PGobject thegeom = (PGobject) rs.getObject(4);
+					Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
+					Shape shape = Shape.create(geometry, Projection.getLatLon());
+					shape.getMetadata().put(FSCANEncoder.FEATURE_ID, gid);
+					shape.getMetadata().put(FSCANEncoder.COLLECTION_ID, sourceTable);
+					shape.getMetadata().put(IMetadata.DC_NAME, shapeName);
+					shape.getMetadata().put(IMetadata.IM_MIN_SPATIAL_SCALE, level);
+					return shape;
 
-					/*
-					 * take the best candidate and retrieve the correspondent simplified shape
-					 */
-					String getShape = "SELECT shape_name, geom from " + smTableName + " WHERE gid = " + gid
-							+ " AND table_name = '" + sourceTable + "';";
-
-					try (Statement stt = con.createStatement()) {
-						ResultSet rss = stt.executeQuery(getShape);
-						while (rss.next()) {
-							PGobject thegeom = (PGobject) rss.getObject("geom");
-							Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
-							Shape shape = Shape.create(geometry, Projection.getLatLon());
-							shape.getMetadata().put(FSCANEncoder.FEATURE_ID, gid);
-							shape.getMetadata().put(FSCANEncoder.COLLECTION_ID, sourceTable);
-							shape.getMetadata().put(IMetadata.DC_NAME, shapeName);
-							return shape;
-						}
-					}
+//					/*
+//					 * take the best candidate and retrieve the correspondent simplified shape
+//					 */
+//					String getShape = "SELECT shape_name, geom from " + smTableName + " WHERE gid = " + gid
+//							+ " AND table_name = '" + sourceTable + "';";
+//
+//					try (Statement stt = con.createStatement()) {
+//						ResultSet rss = stt.executeQuery(getShape);
+//						while (rss.next()) {
+//							PGobject thegeom = (PGobject) rss.getObject("geom");
+//							Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
+//							Shape shape = Shape.create(geometry, Projection.getLatLon());
+//							shape.getMetadata().put(FSCANEncoder.FEATURE_ID, gid);
+//							shape.getMetadata().put(FSCANEncoder.COLLECTION_ID, sourceTable);
+//							shape.getMetadata().put(IMetadata.DC_NAME, shapeName);
+//							return shape;
+//						}
+//					}
 				}
 			}
 		} catch (Throwable t) {
-
+			Logging.INSTANCE.error(t);
 		}
 
 		return null;
@@ -322,7 +333,7 @@ public class Postgis {
 
 		String table = urn.getNamespace() + "_" + urn.getResourceId();
 		table = table.replaceAll("\\.", "_").toLowerCase();
-		String table_boundaries = table + "_bb";
+//		String table_boundaries = table + "_bb";
 		String table_simplified = table + "_sm";
 
 		try (Connection con = DriverManager.getConnection(this.pgurl,
@@ -330,7 +341,7 @@ public class Postgis {
 				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
 				Statement st = con.createStatement()) {
 
-			for (String tablename : new String[] { table_boundaries, table_simplified }) {
+			for (String tablename : new String[] { /* table_boundaries, */ table_simplified }) {
 				st.execute("DROP TABLE IF EXISTS " + tablename + ";");
 				st.execute("CREATE TABLE " + tablename
 						+ "(gid numeric(10, 0), shape_area numeric, shape_name varchar(512), table_name varchar(128), level integer, rank integer);");
@@ -350,14 +361,14 @@ public class Postgis {
 
 		String table = urn.getNamespace() + "_" + urn.getResourceId();
 		table = table.replaceAll("\\.", "_").toLowerCase();
-		String table_boundaries = table + "_bb";
+//		String table_boundaries = table + "_bb";
 		String table_simplified = table + "_sm";
 
 		try (Connection con = DriverManager.getConnection(this.pgurl,
 				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
 				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
 				Statement st = con.createStatement()) {
-			for (String tablename : new String[] { table_boundaries, table_simplified }) {
+			for (String tablename : new String[] { /* table_boundaries, */ table_simplified }) {
 				st.execute("CREATE INDEX \"" + tablename + "_gist\" on \"" + tablename + "\" USING GIST (\"geom\");");
 				st.execute("COMMIT;");
 			}
@@ -379,14 +390,14 @@ public class Postgis {
 		String table = urn.getNamespace() + "_" + MiscUtilities.getFileBaseName(file);
 		table = table.replaceAll("\\.", "_").toLowerCase();
 		long ret = 0;
-		
+
 		Logging.INSTANCE.info("FSCAN ingesting raw data for " + file);
 
 		PublishedResource published = publishVector(file, table);
 
 		String restable = urn.getNamespace() + "_" + urn.getResourceId();
 		restable = restable.replaceAll("\\.", "_").toLowerCase();
-		String table_boundaries = restable + "_bb";
+//		String table_boundaries = restable + "_bb";
 		String table_simplified = restable + "_sm";
 
 		IExpression nameCalculator = Extensions.INSTANCE.compileExpression(nameExpression,
@@ -459,15 +470,15 @@ public class Postgis {
 					// insert in BOTH tables, add table name and level. The first gets the bounding
 					// box + area, the second the simplified shape
 					// (with the original area and level, which we won't really use).
-					String sql_bb = "INSERT INTO \"" + table_boundaries + "\" VALUES (" + gid + ", " + shape_area
-							+ ", '" + Escape.forSQL(name.toString()) + "', '" + published.name + "', " + level + ", "
-							+ rank + ", ST_GeomFromText('" + boundingBox.getJTSGeometry() + "', 4326));";
+//					String sql_bb = "INSERT INTO \"" + table_boundaries + "\" VALUES (" + gid + ", " + shape_area
+//							+ ", '" + Escape.forSQL(name.toString()) + "', '" + published.name + "', " + level + ", "
+//							+ rank + ", ST_GeomFromText('" + boundingBox.getJTSGeometry() + "', 4326));";
 
 					String sql_nd = "INSERT INTO \"" + table_simplified + "\" VALUES (" + gid + ", " + shape_area
 							+ ", '" + Escape.forSQL(name.toString()) + "', '" + published.name + "', " + level + ", "
 							+ rank + ", ST_Multi(ST_GeomFromText('" + simplified.getJTSGeometry() + "', 4326)));";
 
-					ist.execute(sql_bb);
+//					ist.execute(sql_bb);
 					ist.execute(sql_nd);
 				}
 				ist.execute("COMMIT;");
@@ -482,7 +493,7 @@ public class Postgis {
 
 			throw new KlabStorageException(t.getMessage());
 		}
-		
+
 		return ret;
 	}
 

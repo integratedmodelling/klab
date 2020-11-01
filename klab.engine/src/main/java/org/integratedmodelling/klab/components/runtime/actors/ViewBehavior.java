@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.runtime.actors;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.commons.beanutils.BeanUtils;
 import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.api.IKActorsValue;
@@ -21,6 +22,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewComponent.Type;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -95,6 +97,7 @@ public class ViewBehavior {
 
 		protected String name;
 		protected ViewComponent component;
+		protected static BeanUtils beanUtils = new BeanUtils();
 
 		public KlabWidgetActionExecutor(IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
 				Scope scope, ActorRef<KlabMessage> sender, String callId) {
@@ -138,6 +141,10 @@ public class ViewBehavior {
 					break;
 				case "hide":
 					action = new ViewAction(this.component = show(false));
+					break;
+				case "reset":
+					// recreate the component in the original scope
+					action = new ViewAction(this.component = createViewComponent(this.scope));
 					break;
 				default:
 					action = new ViewAction(this.component = setComponent(mess, scope));
@@ -184,11 +191,8 @@ public class ViewBehavior {
 		 * @return
 		 */
 		public ViewComponent getViewComponent() {
-			ViewComponent ret = createViewComponent(this.scope);
-//			ret.setApplicationId(this.identity.getId());
-//			ret.setId(this.callId);
-			this.component = ret;
-			return ret;
+			this.component = createViewComponent(this.scope);
+			return this.component;
 		}
 		
 		/**

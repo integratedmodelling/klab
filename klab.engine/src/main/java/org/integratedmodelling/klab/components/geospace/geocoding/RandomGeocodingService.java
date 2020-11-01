@@ -23,6 +23,7 @@ public class RandomGeocodingService extends GeocodingService {
 	@Override
 	public IShape getAnnotatedRegion(IEnvelope envelope, IMonitor monitor) {
 		String nam = fortune.getCookie().toString();
+		System.out.println("GETTING NEW SHAPE FOR " + envelope);
 		Collection<IShape> results = RandomShapes.INSTANCE.create(envelope, 1, 1, 1, 32 + (int)(random.nextDouble() * 200));
 		IShape ret = results.size() == 0 ? null : results.iterator().next();
 		if (ret != null) {

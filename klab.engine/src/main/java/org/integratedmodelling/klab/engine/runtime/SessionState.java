@@ -8,11 +8,14 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.Timer;
+import java.util.TimerTask;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IKimQuantity;
@@ -122,6 +125,13 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	 * of an observation task.
 	 */
 	private Executor executor = Executors.newSingleThreadExecutor();
+
+	/*
+	 * The timer is used to ensure that requests for geolocation don't overlap
+	 * beyond the rate set by the geocoding service, but the latest extent arrived
+	 * in a quick sequence always gets through.
+	 */
+	Timer extentTimer = new Timer();
 
 	public SessionState(Session session) {
 		this.session = session;
@@ -440,49 +450,35 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	public void register(ScaleReference extent) {
 		// TODO Auto-generated method stub
-		System.out.println("ZIOPEPPE CHE FACCIO CON " + extent + "?");
-//
-//		Envelope envelope = Envelope.create(extent.getEast(), extent.getWest(), extent.getSouth(), extent.getNorth(),
-//				Projection.getLatLon());
-//		ScaleReference scale = new ScaleReference();
-//
-//		if (!lockSpace.get() || this.spatialGridSize == null) {
-//			Pair<Integer, String> rres = envelope.getResolutionForZoomLevel();
-//			this.spatialGridSize = (double) rres.getFirst();
-//			this.spatialGridUnits = rres.getSecond();
-//		}
-//
-//		Pair<Double, String> resolution = new Pair<>(this.spatialGridSize, this.spatialGridUnits);
-//		Unit sunit = Unit.create(resolution.getSecond());
-//		int scaleRank = envelope.getScaleRank();
-//		scale.setEast(envelope.getMaxX());
-//		scale.setWest(envelope.getMinX());
-//		scale.setNorth(envelope.getMaxY());
-//		scale.setSouth(envelope.getMinY());
-//		scale.setSpaceUnit(resolution.getSecond());
-//		scale.setSpaceResolution(resolution.getFirst());
-//		scale.setSpaceResolutionConverted(sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
-//		scale.setSpaceResolutionDescription(
-//				NumberFormat.getInstance().format(scale.getSpaceResolutionConverted()) + " " + this.spatialGridUnits);
-//		scale.setResolutionDescription(
-//				NumberFormat.getInstance().format(scale.getSpaceResolutionConverted()) + " " + this.spatialGridUnits);
-//		scale.setSpaceScale(scaleRank);
-//
-//		session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
-//
-//		for (Listener listener : listeners.values()) {
-//			listener.scaleChanged(scale);
-//		}
-//
-//		this.scaleOfInterest = extent;
+		System.out.println("TODO - sent when user changes scale through explorer's default switcher" + extent + "?");
+//		this.spatialGridSize = Units.INSTANCE.METERS
+//				.convert(scaleRef.getSpaceResolutionConverted(), Unit.create(scaleRef.getSpaceUnit())).doubleValue();
+//		this.spatialGridUnits = scaleRef.getSpaceUnit();
+//		this.temporalResolution = Time
+//				.resolution(scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
+//		this.timeStart = scaleRef.getStart() == 0 ? null : Long.valueOf(scaleRef.getStart());
+//		this.timeEnd = scaleRef.getEnd() == 0 ? null : Long.valueOf(scaleRef.getEnd());
 
 	}
 
-	/*
-	 * TODO use mutex, synchronized is not enough, we should reject every call and
-	 * just execute the last we got after finishing. See rate limiter in Geocoder.
-	 */
-	public void register(SpatialExtent extent) {
+	public void register(SpatialExtent extent, boolean secondary) {
+
+		if (this.geocodingStrategy != null && !secondary) {
+			if (Geocoder.INSTANCE.getRateLimiter(this.geocodingStrategy).acquire() != 0) {
+				extentTimer.cancel();
+				extentTimer = new Timer();
+				extentTimer.schedule(new TimerTask() {
+					@Override
+					public void run() {
+						register(extent, true);
+					}
+				}, 600);
+				return;
+			}
+		}
+
+		extentTimer.cancel();
+		extentTimer = new Timer();
 
 		this.scaleOfInterest.setEast(extent.getEast());
 		this.scaleOfInterest.setNorth(extent.getNorth());
@@ -500,11 +496,13 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		}
 
 		if (this.geocodingStrategy != null) {
-			IShape shape = Geocoder.INSTANCE.geocodeToShape(extent, this.geocodingStrategy,
-					 session.getMonitor());
+			IShape shape = Geocoder.INSTANCE.geocodeToShape(extent, this.geocodingStrategy, session.getMonitor());
 			if (shape != null) {
 				this.scaleOfInterest.setName(shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class));
-				this.scaleOfInterest.setShape(((Shape)shape).getJTSGeometry().toString());
+				if (!(shape.getMetadata().containsKey(IMetadata.IM_GEOGRAPHIC_AREA)
+						&& !shape.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA, Boolean.FALSE))) {
+					this.scaleOfInterest.setShape(((Shape) shape).getJTSGeometry().toString());
+				}
 			}
 		}
 

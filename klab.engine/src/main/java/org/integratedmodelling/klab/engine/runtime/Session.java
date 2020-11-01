@@ -514,16 +514,6 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		return !closed;
 	}
 
-//	@Override
-//	public IGeometry getRegionOfInterest() {
-//
-//		if (regionOfInterest == null) {
-//			return Geometry.empty();
-//		}
-//		return Geometry.create("S1").withBoundingBox(regionOfInterest.getEast(), regionOfInterest.getWest(),
-//				regionOfInterest.getSouth(), regionOfInterest.getNorth());
-//	}
-
 	@Override
 	public IScript run(URL url) throws KlabException {
 		IScript ret = null;
@@ -722,9 +712,9 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		/*
 		 * TODO this moves the context: must do through the state, not here.
 		 */
-		
+
 		if (location.getContextId() == null) {
-			ITime time = ((SessionState)getState()).getTimeOfInterest();
+			ITime time = ((SessionState) getState()).getTimeOfInterest();
 			if (time == null) {
 				if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
 					time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
@@ -1003,42 +993,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	@MessageHandler
 	private void setRegionOfInterest(SpatialExtent extent) {
-
-		this.globalState.register(extent);
-
-//		Envelope envelope = Envelope.create(extent.getEast(), extent.getWest(), extent.getSouth(), extent.getNorth(),
-//				Projection.getLatLon());
-//		ScaleReference scale = new ScaleReference();
-//
-//		if (!lockSpace.get() || this.spatialGridSize == null) {
-//			Pair<Integer, String> rres = envelope.getResolutionForZoomLevel();
-//			this.spatialGridSize = (double) rres.getFirst();
-//			this.spatialGridUnits = rres.getSecond();
-//		}
-//
-//		Pair<Double, String> resolution = new Pair<>(this.spatialGridSize, this.spatialGridUnits);
-//		Unit sunit = Unit.create(resolution.getSecond());
-//		int scaleRank = envelope.getScaleRank();
-//		scale.setEast(envelope.getMaxX());
-//		scale.setWest(envelope.getMinX());
-//		scale.setNorth(envelope.getMaxY());
-//		scale.setSouth(envelope.getMinY());
-//		scale.setSpaceUnit(resolution.getSecond());
-//		scale.setSpaceResolution(resolution.getFirst());
-//		scale.setSpaceResolutionConverted(sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
-//		scale.setSpaceResolutionDescription(
-//				NumberFormat.getInstance().format(scale.getSpaceResolutionConverted()) + " " + this.spatialGridUnits);
-//		scale.setResolutionDescription(
-//				NumberFormat.getInstance().format(scale.getSpaceResolutionConverted()) + " " + this.spatialGridUnits);
-//		scale.setSpaceScale(scaleRank);
-//
-//		monitor.send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined, scale);
-//
-//		for (ROIListener listener : roiListeners.values()) {
-//			listener.onChange(extent);
-//		}
-//
-//		this.regionOfInterest = extent;
+		this.globalState.register(extent, false);
 	}
 
 	@MessageHandler
@@ -1630,8 +1585,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		/*
 		 * TODO add views in context; add running application IDs
 		 */
-		
-		
+
 		IUserIdentity user = getParentIdentity(IUserIdentity.class);
 		if (user != null) {
 			IdentityReference uid = new IdentityReference();
@@ -1764,48 +1718,6 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	public void setLayout(Layout layout) {
 		this.view = new ViewImpl(layout);
 	}
-//
-//	@Override
-//	public <V> V getState(String key, Class<V> cls) {
-//		return this.globalState.get(key, cls);
-//	}
-//
-//	@Override
-//	public void setState(String key, Object value) {
-//		this.globalState.put(key, value);
-//		for (BiConsumer<String, Object> listener : stateChangeListeners.values()) {
-//			listener.accept(key, value);
-//		}
-//	}
-
-//	@Deprecated
-//	@Override
-//	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
-//		this.stateChangeListeners.put(name, listener);
-//	}
-//
-//	@Deprecated
-//	@Override
-//	public void removeStateChangeListener(String name) {
-//		this.stateChangeListeners.remove(name);
-//	}
-
-//	@Deprecated
-//	@Override
-//	public ITime getTimeOfInterest() {
-//		return this.timeOfInterest;
-//	}
-//
-//	@Deprecated
-//	public String getGeocodingStrategy() {
-//		return globalState.get("geocodingstrategy", String.class);
-//	}
-//
-//	@Deprecated
-//	@Override
-//	public String getRegionNameOfInterest() {
-//		return this.regionNameOfInterest;
-//	}
 
 	@Override
 	public SessionState getState() {
