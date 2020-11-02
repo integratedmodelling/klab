@@ -680,7 +680,7 @@ public class Actuator implements IActuator {
 
 			IArtifact result = ((IResolver<IArtifact>) contextualizer).resolve(ret, addParameters(ctx, ret, resource));
 
-			if (result != ret && ret != null) {
+			if (result != ret && ret instanceof IObservation) {
 				ctx.swapArtifact(ret, result);
 			}
 			ret = result;
