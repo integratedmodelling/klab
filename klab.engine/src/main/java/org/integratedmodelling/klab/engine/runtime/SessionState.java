@@ -204,6 +204,25 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			} catch (InterruptedException | ExecutionException e) {
 				return task;
 			}
+		} else if (this.context == null) {
+			
+			Observer observer = (Observer)resolvable;
+			
+			/*
+			 * goes into executor; next one won't exec before this is finished. Only call
+			 * the obs listener at the beginning of the contextualization.
+			 */
+			Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, (obs) -> {
+				if (obs == null) {
+					observationListener.accept(obs);
+				}
+			}, errorListener, executor);
+			try {
+				this.context = (ISubject) task.get();
+			} catch (InterruptedException | ExecutionException e) {
+				return task;
+			}
+			
 		}
 
 		/**

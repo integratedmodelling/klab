@@ -525,6 +525,10 @@ public class MergedResource implements IResource {
 		} else {
 			Entry<Long, ResourceSet> set = resources.floorEntry(locator);
 			if (set != null) {
+
+//				System.out.println("LOCATED RESOURCE FOR " + new Date(locator) + ": " + set.getValue().resources.get(0).getUrn());
+//				System.out.println(dump() + "\n");
+				
 				ret.addAll(set.getValue().resources);
 			}
 		}
@@ -538,6 +542,14 @@ public class MergedResource implements IResource {
 		return null;
 	}
 
+	public String dump() {
+		StringBuffer ret = new StringBuffer(1024);
+		for (Long key : resources.keySet()) {
+			ret.append(new Date(key) + ": " + resources.get(key).resources + "\n"); 
+		}
+		return ret.toString();
+	}
+	
 	@Override
 	public IResource localize(ITime time) {
 

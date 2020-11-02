@@ -25,8 +25,8 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
 	static final public String FUNCTION_ID = "klab.runtime.resourcechange";
 
 	private MergedResource resource;
-//	private IConcept changingObservable;
 	private IArtifact.Type type;
+	private String lastContextualized;
 
 	// don't remove - only used as expression
 	public ChangingResourceResolver() {
@@ -34,7 +34,6 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
 
 	public ChangingResourceResolver(IConcept changeProcess, MergedResource resource) {
 		this.resource = resource;
-//		this.changingObservable = Observables.INSTANCE.getDescribedType(changeProcess);
 	}
 
 	public static IServiceCall getServiceCall(IConcept change, MergedResource resource) throws KlabValidationException {
@@ -75,8 +74,14 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
 		IResource res = resources.get(0);
 		Urn urn = new Urn(res.getUrn());
 
+		if (lastContextualized !=  null && lastContextualized.equals(urn.getUrn())) {
+			System.out.println("SKIPPING PRE-CONTEXTUALIZED SUCKA " + lastContextualized);
+			return ret;
+		}
+		
 		System.err.println("GETTING DATA FROM " + res.getUrn());
 		IKlabData data = Resources.INSTANCE.getResourceData(res, urn.getParameters(), context.getScale(), context);
+		this.lastContextualized = urn.getUrn();
 		System.err.println("DONE " + res.getUrn());
 
 		if (data == null) {

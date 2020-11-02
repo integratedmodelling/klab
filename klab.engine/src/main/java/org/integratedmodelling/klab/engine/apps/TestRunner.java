@@ -161,12 +161,12 @@ public class TestRunner implements Annotations.Handler {
 								if (ret == null) {
 									monitor.warn(id + ": observation of " + o + " in context " + subject.getName()
 											+ " was unsuccessful");
-								} else {
+								} else if (ret instanceof IObservation) {
 									/*
 									 * TODO run any assertion indicated for the observations
 									 */
 									result.add((IObservation)ret);
-								}
+								} /* TODO it may be a view, run assertions on that too */
 							}
 						} else {
 							monitor.warn(id + ": observation of " + observer.getName() + " was unsuccessful");
