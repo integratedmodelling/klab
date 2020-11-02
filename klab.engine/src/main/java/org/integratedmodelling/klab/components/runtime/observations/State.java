@@ -3,8 +3,11 @@ package org.integratedmodelling.klab.components.runtime.observations;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Klab;
@@ -31,6 +34,8 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.AggregationUtils;
+import org.integratedmodelling.klab.utils.CollectionUtils;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
 
 /**
@@ -43,6 +48,29 @@ import org.integratedmodelling.klab.utils.Utils;
 public class State extends Observation implements IState, IKeyHolder {
 
 	public static final String STATE_SUMMARY_METADATA_KEY = "metadata.keys.state_summary_";
+
+	Set<Pair<Long, Long>> timeCoverage;
+
+	public class StateListener implements Consumer<ILocator> {
+
+		@Override
+		public void accept(ILocator t) {
+			ITime time = t instanceof ITime ? (ITime) t : null;
+			if (t instanceof IScale) {
+				time = ((IScale) t).getTime();
+			}
+			if (time != null && time.getStart() != null && time.getEnd() != null) {
+				long tstart = time.getStart().getMilliseconds();
+				long tend = time.getEnd().getMilliseconds();
+				if (time.getTimeType() == ITime.Type.INITIALIZATION) {
+					tend = tstart;
+					tstart = 0;
+				}
+				timeCoverage.add(new Pair<>(tstart, tend));
+			}
+		}
+
+	}
 
 	IDataStorage<?> storage;
 	IDataKey dataKey;
@@ -61,6 +89,8 @@ public class State extends Observation implements IState, IKeyHolder {
 	public State(Observable observable, Scale scale, IRuntimeScope context, IDataStorage<?> data) {
 		super(observable, scale, context);
 		this.storage = data;
+		data.addContextualizationListener(new StateListener());
+		this.timeCoverage = new LinkedHashSet<>();
 		this.layers.put(data.getType(), data);
 	}
 
@@ -73,7 +103,9 @@ public class State extends Observation implements IState, IKeyHolder {
 
 		IStorage<?> layer = layers.get(type);
 		if (layer == null) {
-			layers.put(type, layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale(), getScope()));
+			layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale(), getScope());
+			((IDataStorage<?>)layer).addContextualizationListener(new StateListener());
+			layers.put(type,layer);
 		}
 
 		return new StateLayer(this, (IDataStorage<?>) layer);
@@ -161,6 +193,34 @@ public class State extends Observation implements IState, IKeyHolder {
 	}
 
 	@Override
+	public long getLastUpdate() {
+		if (this.timeCoverage.size() > 0) {
+			long ret = -1;
+			for (Pair<Long,Long> ll : timeCoverage) {
+				ret = ll.getSecond() > 0 ? ll.getSecond() : ll.getFirst();
+			}
+			if (ret > 0) {
+				return ret;
+			}
+		}
+		return super.getLastUpdate();
+	}
+
+	@Override
+	public long[] getUpdateTimestamps() {
+		List<Long> list = new ArrayList<>();
+		if (this.timeCoverage.size() > 0) {
+			for (Pair<Long,Long> ll : timeCoverage) {
+				long lo = ll.getSecond() > 0 ? ll.getSecond() : ll.getFirst();
+				if (lo > 0) {
+					list.add(lo);
+				}
+			}
+		}
+		return Utils.toLongArray(list);
+	}
+
+	@Override
 	public IState in(IValueMediator mediator) {
 		return MediatingState.getMediator(this, mediator);
 	}
@@ -220,7 +280,7 @@ public class State extends Observation implements IState, IKeyHolder {
 
 	@Override
 	public void finalizeTransition(IScale scale) {
-		
+
 		Observations.INSTANCE.getStateSummary(this, scale);
 		setContextualized(true);
 		if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {

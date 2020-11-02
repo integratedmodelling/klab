@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import java.util.Date;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -13,8 +14,10 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -25,8 +28,6 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
 	static final public String FUNCTION_ID = "klab.runtime.resourcechange";
 
 	private MergedResource resource;
-	private IArtifact.Type type;
-	private String lastContextualized;
 
 	// don't remove - only used as expression
 	public ChangingResourceResolver() {
@@ -56,9 +57,9 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
 	@Override
 	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
 
-		List<IResource> resources = ((MergedResource) this.resource).contextualize(context.getScale());
+		List<IResource> resources = ((MergedResource) this.resource).contextualize(context.getScale(), ret);
 		if (resources.isEmpty()) {
-			context.getMonitor().warn("resource " + this.resource.getUrn() + " cannot be contextualized in this scale");
+			// this can happen when the resource can't add anything to the artifact.
 			return ret;
 		}
 
@@ -70,18 +71,12 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
 			context.getMonitor().warn(
 					"Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
 		}
-		
+
 		IResource res = resources.get(0);
 		Urn urn = new Urn(res.getUrn());
 
-		if (lastContextualized !=  null && lastContextualized.equals(urn.getUrn())) {
-			System.out.println("SKIPPING PRE-CONTEXTUALIZED SUCKA " + lastContextualized);
-			return ret;
-		}
-		
 		System.err.println("GETTING DATA FROM " + res.getUrn());
 		IKlabData data = Resources.INSTANCE.getResourceData(res, urn.getParameters(), context.getScale(), context);
-		this.lastContextualized = urn.getUrn();
 		System.err.println("DONE " + res.getUrn());
 
 		if (data == null) {

@@ -672,4 +672,10 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		}
 	}
 
+	@Override
+	public long getLastUpdate() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

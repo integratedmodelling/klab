@@ -31,6 +31,7 @@ public class StateLayer extends State implements IState {
 	public StateLayer(State state, IDataStorage<?> layer) {
 		super(state.getObservable(), state.getScale(), (RuntimeScope) state.getScope(), layer);
 		this.delegate = state;
+		this.timeCoverage = state.timeCoverage;
 		// share the same layers map of the original layer
 		this.layers = state.layers;
 	}

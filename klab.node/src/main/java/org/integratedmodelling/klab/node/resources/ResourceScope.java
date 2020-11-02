@@ -621,6 +621,12 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 			return null;
 		}
 
+		@Override
+		public long getLastUpdate() {
+			// TODO Auto-generated method stub
+			return 0;
+		}
+
 	}
 
 	@Override

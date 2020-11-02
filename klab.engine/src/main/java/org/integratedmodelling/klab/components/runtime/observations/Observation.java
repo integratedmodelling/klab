@@ -61,8 +61,9 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	// observed. Should eventually
 	// come from provenance.
 	private boolean main;
-	// only kept updated in the root observation
-	private long lastUpdate;
+	// only kept updated in the root observation; in others, 0 is expected default and 
+	// the implementations redefine getLastUpdate() to report correctly
+	private long lastUpdate = 0;
 	// separately kept time of creation and exit, using timestamp if non-temporal
 	private long creationTime;
 	private long exitTime;
@@ -259,6 +260,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		this.main = main;
 	}
 
+	@Override
 	public long getLastUpdate() {
 		return lastUpdate;
 	}

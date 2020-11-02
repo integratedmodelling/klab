@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.provenance.IActivity;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
@@ -469,7 +470,12 @@ public class MergedResource implements IResource {
 	/**
 	 * Pick the specific resource(s) to use for the passed scale. TODO return a
 	 * collection of resources and use the next to either fill in for any nodata in
-	 * the previous, or add/average
+	 * the previous, or add/average.
+	 * 
+	 * Return an empty collection if there is no new information to be added to the
+	 * passed artifact. This should take into consideration having data to cover the
+	 * specific timeslice we are being asked, checking that the artifact was not
+	 * already contextualized up to the time limit of the last available resource.
 	 * 
 	 * TODO should take a storage parameter and return null when the resource has
 	 * been already used to contextualize the latest step, to prevent superfluous
@@ -478,7 +484,7 @@ public class MergedResource implements IResource {
 	 * @param scale
 	 * @return
 	 */
-	public List<IResource> contextualize(IScale scale) {
+	public List<IResource> contextualize(IScale scale, IArtifact artifact) {
 
 		long locator = -1;
 
@@ -526,10 +532,21 @@ public class MergedResource implements IResource {
 			Entry<Long, ResourceSet> set = resources.floorEntry(locator);
 			if (set != null) {
 
-//				System.out.println("LOCATED RESOURCE FOR " + new Date(locator) + ": " + set.getValue().resources.get(0).getUrn());
-//				System.out.println(dump() + "\n");
-				
-				ret.addAll(set.getValue().resources);
+				boolean ok = true;
+				if (artifact != null) {
+					/*
+					 * if the artifact has already been contextualized up to this, don't add
+					 * anything
+					 */
+					long seen = artifact.getLastUpdate();
+					if (seen >= set.getKey()) {
+						ok = false;
+					}
+				}
+
+				if (ok) {
+					ret.addAll(set.getValue().resources);
+				}
 			}
 		}
 
@@ -545,11 +562,11 @@ public class MergedResource implements IResource {
 	public String dump() {
 		StringBuffer ret = new StringBuffer(1024);
 		for (Long key : resources.keySet()) {
-			ret.append(new Date(key) + ": " + resources.get(key).resources + "\n"); 
+			ret.append(new Date(key) + ": " + resources.get(key).resources + "\n");
 		}
 		return ret.toString();
 	}
-	
+
 	@Override
 	public IResource localize(ITime time) {
 
