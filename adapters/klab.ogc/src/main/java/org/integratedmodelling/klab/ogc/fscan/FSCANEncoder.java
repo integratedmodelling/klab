@@ -55,8 +55,25 @@ public class FSCANEncoder implements IResourceEncoder {
 		if (!isOnline()) {
 			return;
 		}
-		
+
 		Urn urn = new Urn(resource.getUrn());
+
+		/*
+		 * Formats:
+		 * 
+		 * no parameters -> get the largest shape that fits the bounding box at scale
+		 * level in its pre-simplified form (or use #simplified=false).
+		 *
+		 * #id=nnnn,collection=abcd[,simplified=false] -> get the specific shape,
+		 * simplified to fit the incoming resolution (or not if false)
+		 * 
+		 * #within[,id=nnnn,collection=abcd,simplified=false] -> find the largest shape
+		 * in bounding box (or passed), then return all the shapes of the level below
+		 * that intersect it; use resolution-dependent simplification or none
+		 * 
+		 * #level=n[simplified=false] -> return all in bounding box at given level,
+		 * resolution-dependent simplification or none
+		 */
 
 		/*
 		 * default behavior: find the shape that best fits the context
@@ -65,7 +82,8 @@ public class FSCANEncoder implements IResourceEncoder {
 		IEnvelope envelope = scale.getSpace().getShape().getEnvelope().transform(Projection.getLatLon(), false);
 		IShape shape = postgis.getLargestInScale(urn, envelope);
 		if (shape != null) {
-			Builder bb = builder.startObject("result", shape.getMetadata().get(IMetadata.DC_NAME, String.class), Scale.create(shape));
+			Builder bb = builder.startObject(context.getTargetName() == null ? "result" : context.getTargetName(),
+					shape.getMetadata().get(IMetadata.DC_NAME, String.class), Scale.create(shape));
 			for (String key : shape.getMetadata().keySet()) {
 				bb.withMetadata(key, shape.getMetadata().get(key));
 			}
@@ -112,7 +130,7 @@ public class FSCANEncoder implements IResourceEncoder {
 		 * rebuild indices
 		 */
 		postgis.reindexBoundaries(urn);
-		
+
 		Logging.INSTANCE.info("FSCAN indexing complete");
 
 		return ret;

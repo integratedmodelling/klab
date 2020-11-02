@@ -241,6 +241,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		switch (key) {
 		case GEOCODING_STRATEGY_KEY:
 			this.setGeocodingStrategy(value.toString());
+			if (this.scaleOfInterest.getSpaceUnit() != null) {
+				// don't call unless it was set at least once
+				register(getCurrentExtent(), false);
+			}
 			break;
 		case SPACE_RESOLUTION_KEY:
 			IKimQuantity q = KimQuantity.parse(value.toString());
@@ -303,6 +307,17 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			break;
 		}
 		return super.put(key, value);
+	}
+
+	private SpatialExtent getCurrentExtent() {
+		SpatialExtent ret = new SpatialExtent();
+		ret.setNorth(this.scaleOfInterest.getNorth());
+		ret.setEast(this.scaleOfInterest.getEast());
+		ret.setSouth(this.scaleOfInterest.getSouth());
+		ret.setWest(this.scaleOfInterest.getWest());
+		ret.setGridResolution(this.scaleOfInterest.getSpaceResolution());
+		ret.setGridUnit(this.scaleOfInterest.getSpaceUnit());
+		return ret;
 	}
 
 	private <T> T check(Object value, Class<T> cls) {

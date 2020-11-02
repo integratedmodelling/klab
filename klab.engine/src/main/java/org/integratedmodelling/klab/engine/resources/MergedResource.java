@@ -116,7 +116,7 @@ public class MergedResource implements IResource {
 	 * @param statement
 	 */
 	public MergedResource(IKimModel statement, IMonitor monitor) {
-		
+
 		this.urn = "local:merged:" + statement.getNamespace() + ":" + statement.getName();
 
 		for (String urn : statement.getResourceUrns()) {
@@ -149,9 +149,9 @@ public class MergedResource implements IResource {
 
 		((ResourceCatalog) Resources.INSTANCE.getLocalResourceCatalog()).addInlineResource(this);
 	}
-	
+
 	public MergedResource(List<String> urns, IRuntimeScope scope) {
-		
+
 		this.urn = "local:merged:" + scope.getNamespace() + ":" + scope.getTargetName();
 
 		for (String urn : urns) {
@@ -184,11 +184,10 @@ public class MergedResource implements IResource {
 
 //		((ResourceCatalog) Resources.INSTANCE.getLocalResourceCatalog()).addInlineResource(this);
 	}
-	
+
 	public List<String> getUrns() {
 		return urns;
 	}
-	
 
 	private ResourceSet getResourceSet(IScale scale) {
 
@@ -252,9 +251,9 @@ public class MergedResource implements IResource {
 			if (ret.start == -1 && ret.end == -1) {
 				throw new KlabValidationException("Resources that are merged must have temporal boundaries");
 			}
-			
+
 			resources.put(ret.start, ret);
-			
+
 			if (timeStart < 0 || timeStart > ret.start) {
 				timeStart = ret.start;
 			}
@@ -471,6 +470,10 @@ public class MergedResource implements IResource {
 	 * Pick the specific resource(s) to use for the passed scale. TODO return a
 	 * collection of resources and use the next to either fill in for any nodata in
 	 * the previous, or add/average
+	 * 
+	 * TODO should take a storage parameter and return null when the resource has
+	 * been already used to contextualize the latest step, to prevent superfluous
+	 * data access.
 	 * 
 	 * @param scale
 	 * @return
