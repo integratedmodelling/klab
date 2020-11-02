@@ -269,6 +269,8 @@ public class Postgis {
 
 		WKBReader wkb = new WKBReader();
 
+		System.out.println(chooseShape);
+		
 		try {
 			try (Connection con = DriverManager.getConnection(this.pgurl,
 					Configuration.INSTANCE.getServiceProperty("postgres", "user"),
@@ -441,7 +443,7 @@ public class Postgis {
 					double shape_area = geometry.getArea();
 					IEnvelope envelope = shape.getEnvelope();
 					int rank = envelope.getScaleRank();
-					Shape boundingBox = Shape.create(envelope);
+//					Shape boundingBox = Shape.create(envelope);
 
 					long gid = rs.getLong("fid");
 
@@ -479,7 +481,7 @@ public class Postgis {
 
 					String sql_nd = "INSERT INTO \"" + table_simplified + "\" VALUES (" + gid + ", " + shape_area
 							+ ", '" + Escape.forSQL(name.toString()) + "', '" + published.name + "', " + level + ", "
-							+ rank + ", ST_Multi(ST_GeomFromText('" + simplified.getJTSGeometry() + "', 4326)));";
+							+ rank + ", ST_MakeValid(ST_Multi(ST_GeomFromText('" + simplified.getJTSGeometry().buffer(0) + "', 4326))));";
 
 //					ist.execute(sql_bb);
 					ist.execute(sql_nd);

@@ -16,6 +16,8 @@ public class RandomGeocodingService extends GeocodingService {
 	Fortune fortune = new Fortune(new String[] {});
 	Random random = new Random();
 
+	private static double GROW_FACTOR = 2.0;
+
 	protected RandomGeocodingService(double maxCallsPerSecond) {
 		super(maxCallsPerSecond);
 	}
@@ -23,8 +25,8 @@ public class RandomGeocodingService extends GeocodingService {
 	@Override
 	public IShape getAnnotatedRegion(IEnvelope envelope, IMonitor monitor) {
 		String nam = fortune.getCookie().toString();
-		System.out.println("GETTING NEW SHAPE FOR " + envelope);
-		Collection<IShape> results = RandomShapes.INSTANCE.create(envelope, 1, 1, 1, 32 + (int)(random.nextDouble() * 200));
+		Collection<IShape> results = RandomShapes.INSTANCE.create(envelope.grow(GROW_FACTOR), 1, 1, 1,
+				32 + (int) (random.nextDouble() * 200));
 		IShape ret = results.size() == 0 ? null : results.iterator().next();
 		if (ret != null) {
 			ret.getMetadata().put(IMetadata.DC_DESCRIPTION, nam);

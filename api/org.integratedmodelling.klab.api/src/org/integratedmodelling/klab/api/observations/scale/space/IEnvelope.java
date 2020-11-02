@@ -144,4 +144,12 @@ public interface IEnvelope extends IReferenced {
      * 
      */
     int getScaleRank();
+    
+    /**
+     * Return a larger envelope containing the previous.
+     * 
+     * @param factor
+     * @return
+     */
+    IEnvelope grow(double factor);
 }
