@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -34,7 +35,6 @@ import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.AggregationUtils;
-import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -191,6 +191,19 @@ public class State extends Observation implements IState, IKeyHolder {
 
 		return this;
 	}
+	
+	public String getUpdateDescription() {
+		String ret = "";
+		for (Pair<Long,Long> ll : timeCoverage) {
+			ret += (ret.isEmpty() ? "" : "; ");
+			ret += ll.getFirst() == 0 ? "" : new Date(ll.getFirst());
+			if (ll.getSecond() > 0 ) {
+				ret += (ll.getFirst() == 0 ? "" : " to ") + new Date(ll.getSecond());
+			}
+		}
+		return ret;
+	}
+	
 
 	@Override
 	public long getLastUpdate() {

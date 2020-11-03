@@ -475,28 +475,30 @@ public class Scheduler implements IScheduler {
 	// registrations scheduled to be run after the last transition. So far only
 	// views can do this.
 	private List<Registration> terminationRegistrations = new ArrayList<>();
+	private IRuntimeScope runtimeScope;
 
-	public Scheduler(String contextId, ITime time, IMonitor monitor) {
-		this.contextId = contextId;
-		this.session = monitor.getIdentity().getParentIdentity(ISession.class);
-		Date now = new Date();
-		this.monitor = monitor;
-		this.type = time.is(ITime.Type.REAL) ? Type.REAL_TIME : Type.MOCK_TIME;
-		this.startTime = time.getStart() == null ? 0 : time.getStart().getMilliseconds();
-		if (time.getEnd() != null) {
-			this.endTime = time.getEnd().getMilliseconds();
-		}
-		if (this.type == Type.REAL_TIME) {
-			this.waitStrategy = new WaitStrategy.YieldingWait();
-			if (this.startTime > 0 && now.getTime() > this.startTime) {
-				this.startTime = 0;
-			}
-		}
-	}
+//	public Scheduler(String contextId, ITime time, IMonitor monitor) {
+//		this.contextId = contextId;
+//		this.session = monitor.getIdentity().getParentIdentity(ISession.class);
+//		Date now = new Date();
+//		this.monitor = monitor;
+//		this.type = time.is(ITime.Type.REAL) ? Type.REAL_TIME : Type.MOCK_TIME;
+//		this.startTime = time.getStart() == null ? 0 : time.getStart().getMilliseconds();
+//		if (time.getEnd() != null) {
+//			this.endTime = time.getEnd().getMilliseconds();
+//		}
+//		if (this.type == Type.REAL_TIME) {
+//			this.waitStrategy = new WaitStrategy.YieldingWait();
+//			if (this.startTime > 0 && now.getTime() > this.startTime) {
+//				this.startTime = 0;
+//			}
+//		}
+//	}
 
-	public Scheduler(String contextId, IResolutionScope scope, IMonitor monitor) {
+	public Scheduler(IRuntimeScope runtimeScope, String contextId, IResolutionScope scope, IMonitor monitor) {
 		this.contextId = contextId;
 		this.resolutionScope = scope;
+		this.runtimeScope = runtimeScope;
 		this.session = monitor.getIdentity().getParentIdentity(ISession.class);
 		Date now = new Date();
 		this.monitor = monitor;
@@ -658,7 +660,7 @@ public class Scheduler implements IScheduler {
 		if (!periods.isEmpty()) {
 			this.resolution = NumberUtils.gcd(NumberUtils.longArrayFromCollection(periods));
 		}
-		
+
 		/*
 		 * wheel size should accommodate the longest interval @the chosen resolution,
 		 * but we cap it at MAX_HASH_WHEEL_SIZE. Keep it in powers of 2 for predictable
@@ -824,6 +826,8 @@ public class Scheduler implements IScheduler {
 		long time = startTime;
 		long lastAdvanced = startTime;
 
+		Map<ObservedConcept, IObservation> catalog = this.runtimeScope.getCatalog();
+
 		while (this.activeRegistrations > 0) {
 
 			if (this.wheel[cursor] != null && !this.wheel[cursor].isEmpty()) {
@@ -855,20 +859,24 @@ public class Scheduler implements IScheduler {
 							lastAdvanced = registration.time.getEnd().getMilliseconds();
 						}
 
-						ITime previousTime = reschedule(registration, false);
+
+						ITime toRun = registration.time;
+						
+//						System.out.println("RUNNING " + registration.actuator + " AT " + registration.time.getStart()
+//								+ " TO " + registration.time.getEnd());
+
+						reschedule(registration, false);
 
 						// check for implicitly affected actuators. This must be done when the last
 						// registration with each particular delay has finished.
-						if (previousTime != null && registration.endsPeriod && changed.size() > 0
+						if (toRun != null && registration.endsPeriod && changed.size() > 0
 								&& this.resolutionScope != null) {
-
-//							Graphs.show(registration.actuator.getDataflow().getDependencies(), "Dio cane");
 
 							Set<ObservedConcept> computed = new HashSet<>();
 							for (ObservedConcept tracked : ((ResolutionScope) resolutionScope)
 									.getImplicitlyChangingObservables()) {
-								computeImplicitDependents(tracked, changed, computed, previousTime, registration.scope,
-										registration.actuator.getDataflow().getDependencies());
+								computeImplicitDependents(tracked, changed, computed, toRun, registration.scope,
+										registration.actuator.getDataflow().getDependencies(), catalog);
 							}
 
 							changed.clear();
@@ -908,7 +916,7 @@ public class Scheduler implements IScheduler {
 		for (Registration registration : terminationRegistrations) {
 			registration.run(monitor);
 		}
-		
+
 		// don't do this again if we make further observations later
 		this.registrations.clear();
 
@@ -954,16 +962,21 @@ public class Scheduler implements IScheduler {
 	 */
 	private void computeImplicitDependents(ObservedConcept observable, Set<ObservedConcept> changed,
 			Set<ObservedConcept> computed, ITime time, IRuntimeScope runtimeScope,
-			Graph<ObservedConcept, DefaultEdge> dependencies) {
+			Graph<ObservedConcept, DefaultEdge> dependencies, Map<ObservedConcept, IObservation> catalog) {
 		if (!computed.contains(observable)) {
 			boolean recompute = false;
 			for (ObservedConcept precursor : getPrecursors(dependencies, observable)) {
-				computeImplicitDependents(precursor, changed, computed, time, runtimeScope, dependencies);
+				computeImplicitDependents(precursor, changed, computed, time, runtimeScope, dependencies, catalog);
 				if (changed.contains(precursor) && !changed.contains(observable)) {
-					recompute = true;
+					IObservation pre = catalog.get(precursor);
+					IObservation post = catalog.get(observable);
+					if (pre != null && post != null && pre.getLastUpdate() > post.getLastUpdate()) {
+						recompute = true;
+					}
 				}
 			}
 			if (recompute) {
+				System.out.println("RECOMPUTING PORCHER " + observable + " DUE TO CHANGE IN PRECURSORS");
 				reinitializeObservation(observable.getObservable(), getActuator(observable, dependencies), time,
 						runtimeScope);
 				computed.add(observable);

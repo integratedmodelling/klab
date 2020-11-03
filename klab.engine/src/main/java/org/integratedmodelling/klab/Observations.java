@@ -56,6 +56,7 @@ import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.data.classification.Discretization;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -78,7 +79,6 @@ import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.ScaleReference;
-import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
@@ -367,6 +367,13 @@ public enum Observations implements IObservationService {
 
 			ret.setScaleReference(scaleReference);
 		}
+		
+		if (observation instanceof State) {
+			String modTimes = ((State)observation).getUpdateDescription();
+			if (!modTimes.isEmpty()) {
+				ret.getMetadata().put("Temporal transitions", modTimes);
+			}
+		}		
 
 		// fill in spatio/temporal info and mode of visualization
 		if (space != null) {

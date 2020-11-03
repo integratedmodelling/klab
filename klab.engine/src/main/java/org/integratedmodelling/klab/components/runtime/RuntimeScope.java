@@ -1615,7 +1615,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 					RuntimeScope root = getRootScope();
 					if (root.scheduler == null) {
-						root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope, monitor);
+						root.scheduler = new Scheduler(this, this.rootSubject.getId(), resolutionScope, monitor);
 					}
 					root.occurrent = true;
 					((Scheduler) root.scheduler).schedule(action, observation, Time.create(aa), this);
@@ -1710,7 +1710,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			root.occurrent = true;
 
 			if (root.scheduler == null) {
-				root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope, monitor);
+				root.scheduler = new Scheduler(this, this.rootSubject.getId(), resolutionScope, monitor);
 			}
 
 			((Scheduler) root.scheduler).schedule(actuator, schedule, this);
