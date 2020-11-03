@@ -862,9 +862,6 @@ public class Scheduler implements IScheduler {
 
 						ITime toRun = registration.time;
 						
-//						System.out.println("RUNNING " + registration.actuator + " AT " + registration.time.getStart()
-//								+ " TO " + registration.time.getEnd());
-
 						reschedule(registration, false);
 
 						// check for implicitly affected actuators. This must be done when the last
@@ -976,7 +973,6 @@ public class Scheduler implements IScheduler {
 				}
 			}
 			if (recompute) {
-				System.out.println("RECOMPUTING PORCHER " + observable + " DUE TO CHANGE IN PRECURSORS");
 				reinitializeObservation(observable.getObservable(), getActuator(observable, dependencies), time,
 						runtimeScope);
 				computed.add(observable);

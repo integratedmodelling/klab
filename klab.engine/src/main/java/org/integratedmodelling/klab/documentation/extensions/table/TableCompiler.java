@@ -311,14 +311,14 @@ public class TableCompiler {
 				if (this.init) {
 					// TODO check use of root subject. Should use target artifact but it's hard from
 					// this call chain.
-					this.displayLabel = "before "
+					this.displayLabel = "at start of "
 							+ Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
 									scope.getRootSubject().getScale().getTime().getResolution());
 				} else if (this.start) {
 					this.displayLabel = Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
 							scope.getRootSubject().getScale().getTime().getResolution());
 				} else if (this.end) {
-					this.displayLabel = "after "
+					this.displayLabel = "at start of "
 							+ Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(),
 									scope.getRootSubject().getScale().getTime().getResolution());
 				}
@@ -1687,11 +1687,11 @@ public class TableCompiler {
 			}
 		}
 
-		ret.put("init", "pre-" + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
+		ret.put("init", "at start of " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
 				scope.getRootSubject().getScale().getTime().getResolution()));
 		ret.put("start", Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
 				scope.getRootSubject().getScale().getTime().getResolution()));
-		ret.put("end", "post-" + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(),
+		ret.put("end", "at start of " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(),
 				scope.getRootSubject().getScale().getTime().getResolution()));
 
 		return ret;
