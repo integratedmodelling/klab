@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
@@ -23,7 +24,25 @@ import org.integratedmodelling.klab.rest.SessionActivity;
 public interface ISessionState extends IParameters<String> {
 
 	public interface Listener {
+
+		/*
+		 * 
+		 */
 		public void scaleChanged(ScaleReference scale);
+
+		/**
+		 * Null means context was reset
+		 * 
+		 * @param context
+		 */
+		public void newContext(ISubject context);
+		
+		/**
+		 * 
+		 * @param observation
+		 * @param context
+		 */
+		public void newObservation(IObservation observation, ISubject context);
 	}
 
 	Future<IArtifact> submit(String urn);
@@ -77,4 +96,14 @@ public interface ISessionState extends IParameters<String> {
 	List<SessionActivity> getHistory();
 
 	String getRegionOfInterestName();
+
+	/**
+	 * Add a listener that will only be called if the current application is the one
+	 * indicated.
+	 * 
+	 * @param listener
+	 * @param applicationId
+	 * @return
+	 */
+	String addApplicationListener(Listener listener, String applicationId);
 }

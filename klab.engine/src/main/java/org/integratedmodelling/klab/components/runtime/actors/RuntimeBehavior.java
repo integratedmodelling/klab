@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
@@ -67,8 +68,8 @@ public class RuntimeBehavior {
 		void run(KlabActor.Scope scope) {
 
 			if (arguments.getUnnamedKeys().isEmpty()) {
-				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
-						.addObservationListener(new ISession.ObservationListener() {
+				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState()
+						.addApplicationListener(new ISessionState.Listener() {
 							@Override
 							public void newContext(ISubject observation) {
 								fire(observation, false);
@@ -77,7 +78,11 @@ public class RuntimeBehavior {
 							@Override
 							public void newObservation(IObservation observation, ISubject context) {
 							}
-						});
+
+							@Override
+							public void scaleChanged(ScaleReference scale) {
+							}
+						}, scope.appId);
 			} else {
 
 				Object arg = evaluateArgument(0, scope);
@@ -95,8 +100,8 @@ public class RuntimeBehavior {
 		@Override
 		public void dispose() {
 			if (this.listenerId != null) {
-				scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
-						.removeObservationListener(this.listenerId);
+				scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState()
+						.removeListener(this.listenerId);
 			}
 		}
 	}
@@ -201,7 +206,7 @@ public class RuntimeBehavior {
 
 			if (arguments == null || arguments.getUnnamedKeys().isEmpty()) {
 				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(Session.class).getState()
-						.addListener(new ISessionState.Listener() {
+						.addApplicationListener(new ISessionState.Listener() {
 
 							@Override
 							public void scaleChanged(ScaleReference scale) {
@@ -214,7 +219,15 @@ public class RuntimeBehavior {
 
 								fire(ret, false);
 							}
-						});
+
+							@Override
+							public void newContext(ISubject context) {
+							}
+
+							@Override
+							public void newObservation(IObservation observation, ISubject context) {
+							}
+						}, scope.appId);
 			} else {
 				// TODO set from a previously saved map
 			}
@@ -260,6 +273,20 @@ public class RuntimeBehavior {
 				// fire anyway so that anything that's waiting can continue
 				fire(false, true);
 			}
+		}
+	}
+
+	@Action(id = "reset", fires = {})
+	public static class Reset extends KlabActionExecutor {
+
+		public Reset(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		void run(KlabActor.Scope scope) {
+			scope.sender.tell(new AppReset(scope, scope.appId));
 		}
 	}
 

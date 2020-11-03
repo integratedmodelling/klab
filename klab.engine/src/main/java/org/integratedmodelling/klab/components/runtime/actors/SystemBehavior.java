@@ -336,6 +336,28 @@ public class SystemBehavior {
 
 	}
 
+	public static class AppReset extends AbstractKlabMessage {
+
+		Scope scope;
+		String appId;
+		
+		public AppReset(Scope scope, String appId) {
+			this.scope = scope;
+			this.appId = appId;
+		}
+
+		@Override
+		public String toString() {
+			return "[RESET]";
+		}
+
+		@Override
+		public AppReset direct() {
+			return this;
+		}
+
+	}
+	
 	/**
 	 * The shuttle for a k.Actors message call. Always comes from a k.Actors
 	 * behavior, sent by an actor to another.
@@ -359,9 +381,9 @@ public class SystemBehavior {
 			this.sender = sender;
 			this.message = actionId;
 			this.actionInternalId = actionInternalId;
-//			if (arguments != null) {
+			if (arguments != null) {
 				this.arguments.putAll(arguments);
-//			}
+			}
 			this.scope = scope;
 			this.appId = appId;
 		}

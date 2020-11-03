@@ -332,7 +332,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		IArtifact ret = catalog.get(localName);
 		if (ret == null) {
 			ret = this.views.get(localName);
-		} if (ret == null) {
+		}
+		if (ret == null) {
 			ret = this.viewsByUrn.get(localName);
 		}
 		return ret;
@@ -1837,13 +1838,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public void notifyListeners(IObservation object) {
-		for (ISession.ObservationListener listener : monitor.getIdentity().getParentIdentity(Session.class)
-				.getObservationListeners()) {
-			if (object.equals(rootSubject)) {
-				listener.newContext((ISubject) object);
-			} else {
-				listener.newObservation(object, rootSubject);
-			}
+		if (object.equals(rootSubject)) {
+			monitor.getIdentity().getParentIdentity(Session.class).notifyNewContext((ISubject) object);
+		} else {
+			monitor.getIdentity().getParentIdentity(Session.class).notifyNewObservation(object, rootSubject);
 		}
 	}
 

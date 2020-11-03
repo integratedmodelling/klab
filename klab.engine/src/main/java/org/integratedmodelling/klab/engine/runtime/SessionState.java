@@ -15,7 +15,6 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IKimQuantity;
@@ -114,10 +113,22 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	private Map<IConcept, Set<IConcept>> roles = new HashMap<>();
 	private AtomicBoolean lockSpace = new AtomicBoolean(false);
 	private AtomicBoolean lockTime = new AtomicBoolean(false);
-	Map<String, Listener> listeners = Collections.synchronizedMap(new LinkedHashMap<>());
+	Map<String, ListenerWrapper> listeners = Collections.synchronizedMap(new LinkedHashMap<>());
 	private ScaleReference scaleOfInterest;
 	private ISubject context;
 	private String geocodingStrategy;
+
+	private class ListenerWrapper {
+
+		Listener listener;
+		String applicationId;
+
+		public ListenerWrapper(Listener listener, String id) {
+			this.listener = listener;
+			this.applicationId = id;
+		}
+
+	}
 
 	/*
 	 * this executor ensures that observation tasks sent through submit() are
@@ -132,6 +143,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	 * in a quick sequence always gets through.
 	 */
 	Timer extentTimer = new Timer();
+	private Object currentApplicationId;
 
 	public SessionState(Session session) {
 		this.session = session;
@@ -174,8 +186,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		}
 
 		if (resolvable instanceof Observer) {
-			return new ObserveContextTask(this.session, (Observer)resolvable, scenarios, observationListener, errorListener,
-					executor);
+			return new ObserveContextTask(this.session, (Observer) resolvable, scenarios, observationListener,
+					errorListener, executor);
 		}
 
 		if (this.context == null && !(resolvable instanceof IObserver)) {
@@ -343,19 +355,6 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	}
 
 	/**
-	 * Set and activate the passed application. All UI actions will automatically
-	 * reflect on the view state. Only one application can be active in a session at
-	 * any time, although the state of previous applications will be saved until
-	 * session ends or deactivation.
-	 * 
-	 * @param applicationName
-	 * @param view
-	 */
-	public void setApplication(String applicationName, Layout view) {
-
-	}
-
-	/**
 	 * Make the current application the current one and reload its view.
 	 * 
 	 * @param applicationName
@@ -406,7 +405,6 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	}
 
 	public void register(LoadApplicationRequest request) {
-		// TODO Auto-generated method stub
 		System.out.println("ZIO CAN " + request);
 	}
 
@@ -425,27 +423,14 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	@Override
 	public void resetContext() {
-
-		// roles and geocoding strategy remain as they are
-
+		// roles and geocoding strategy remain as they are (? - application can choose by listening to event).
 		this.context = null;
-//		ScaleReference scale = new ScaleReference();
-//		if (lockSpace.get()) {
-//			scale.setSpaceScale(this.scaleOfInterest.getSpaceScale());
-//			scale.setSpaceUnit(this.scaleOfInterest.getSpaceUnit());
-//			scale.setSpaceResolutionConverted(this.scaleOfInterest.getSpaceResolutionConverted());
-//			scale.setSpaceResolution(this.scaleOfInterest.getSpaceResolution());
-//			scale.setResolutionDescription(this.scaleOfInterest.getResolutionDescription());
-//		}
-//		if (lockTime.get()) {
-//			scale.setTimeResolutionDescription(this.scaleOfInterest.getTimeResolutionDescription());
-//			scale.setTimeResolutionMultiplier(this.scaleOfInterest.getTimeResolutionMultiplier());
-//			scale.setTimeScale(this.scaleOfInterest.getTimeScale());
-//			scale.setTimeUnit(this.scaleOfInterest.getTimeUnit());
-//		}
-//		this.scaleOfInterest = scale;
+		for (ListenerWrapper listener : listeners.values()) {
+			if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {
+				listener.listener.newContext(this.context);
+			}
+		}
 		session.getMonitor().send(IMessage.Type.ResetContext, IMessage.MessageClass.UserContextChange, "");
-
 	}
 
 	public void register(ObservationRequest request) {
@@ -539,13 +524,20 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined,
 				scaleOfInterest);
 
-		for (Listener listener : listeners.values()) {
-			listener.scaleChanged(scaleOfInterest);
+		for (ListenerWrapper listener : listeners.values()) {
+			if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {
+				listener.listener.scaleChanged(scaleOfInterest);
+			}
 		}
 	}
 
 	public void setContext(IRuntimeScope runtimeContext) {
 		this.context = runtimeContext.getRootSubject();
+		for (ListenerWrapper listener : listeners.values()) {
+			if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {
+				listener.listener.newContext(this.context);
+			}
+		}
 	}
 
 	@Override
@@ -556,7 +548,14 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	@Override
 	public String addListener(Listener listener) {
 		String id = "sls" + NameGenerator.shortUUID();
-		this.listeners.put(id, listener);
+		this.listeners.put(id, new ListenerWrapper(listener, null));
+		return id;
+	}
+
+	@Override
+	public String addApplicationListener(Listener listener, String applicationId) {
+		String id = "sls" + NameGenerator.shortUUID();
+		this.listeners.put(id, new ListenerWrapper(listener, applicationId));
 		return id;
 	}
 
@@ -613,14 +612,14 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	}
 
 	/**
-	 * Update the view to reflect the component as modified by a k.Actors action or
-	 * by the UI.
+	 * Update the view (in the session) to reflect the component as modified by a
+	 * k.Actors action or by the UI.
 	 * 
 	 * @param component
 	 */
 	public void updateView(ViewComponent component) {
 		// TODO Auto-generated method stub
-
+		System.out.println("UPDATE VIEW CALLED");
 	}
 
 	@Override
@@ -640,6 +639,44 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			return ((IRuntimeScope) ((Subject) context).getScope()).getArtifact(name);
 		}
 		return null;
+	}
+
+	/**
+	 * Register a new application and remove all listeners that have a different
+	 * application ID.
+	 * 
+	 * @param ret
+	 */
+	public void setApplicationId(String ret) {
+		
+		List<String> toRemove = new ArrayList<>();
+		for (String key : listeners.keySet()) {
+			if (listeners.get(key).applicationId != null) {
+				toRemove.add(key);
+			}
+		}
+		
+		for (String key : toRemove) {
+			listeners.remove(key);
+		}
+		
+		this.currentApplicationId = ret;
+	}
+
+	public void notifyNewObservation(IObservation observation, ISubject context) {
+		for (ListenerWrapper listener : listeners.values()) {
+			if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {
+				listener.listener.newObservation(observation, context);
+			}
+		}
+	}
+
+	public void notifyNewContext(ISubject object) {
+		for (ListenerWrapper listener : listeners.values()) {
+			if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {
+				listener.listener.newContext(this.context);
+			}
+		}
 	}
 
 }

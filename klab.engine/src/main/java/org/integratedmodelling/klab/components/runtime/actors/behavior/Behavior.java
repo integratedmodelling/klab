@@ -159,10 +159,12 @@ public class Behavior implements IBehavior {
 			case TREE:
 				break;
 			case CONSTANT:
-				return (value instanceof Enum && ((Enum<?>) value).name().toUpperCase().equals(this.value.getValue()))
+				return (value instanceof Enum
+								&& ((Enum<?>) value).name().toUpperCase().equals(this.value.getValue()))
 						|| (value instanceof String && ((String) value).equals(this.value.getValue()));
 			case EMPTY:
-				return (value instanceof Collection && ((Collection<?>) value).isEmpty())
+				return value == null
+						|| (value instanceof Collection && ((Collection<?>) value).isEmpty())
 						|| (value instanceof String && ((String) value).isEmpty())
 						|| (value instanceof IArtifact && ((IArtifact) value).isEmpty());
 			default:

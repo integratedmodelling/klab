@@ -60,18 +60,18 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  */
 public interface ISession extends IEngineSessionIdentity, Closeable {
 
-	/**
-	 * These can be installed to be notified of each new observation.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	interface ObservationListener {
-
-		void newObservation(IObservation observation, ISubject context);
-
-		void newContext(ISubject context);
-	}
+//	/**
+//	 * These can be installed to be notified of each new observation.
+//	 * 
+//	 * @author Ferd
+//	 *
+//	 */
+//	interface ObservationListener {
+//
+//		void newObservation(IObservation observation, ISubject context);
+//
+//		void newContext(ISubject context);
+//	}
 
 //	/**
 //	 * The observation action called on ISession always creates a new root subject.
@@ -155,9 +155,9 @@ public interface ISession extends IEngineSessionIdentity, Closeable {
 	 */
 	boolean isInteractive();
 
-	String addObservationListener(ObservationListener listener);
-
-	void removeObservationListener(String listenerId);
+//	String addObservationListener(ObservationListener listener);
+//
+//	void removeObservationListener(String listenerId);
 //
 //	/**
 //	 * The name of the latest region named by the geolocator, or a suitable generic

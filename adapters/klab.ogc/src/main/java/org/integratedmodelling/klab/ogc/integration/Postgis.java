@@ -445,6 +445,10 @@ public class Postgis {
 					int rank = envelope.getScaleRank();
 //					Shape boundingBox = Shape.create(envelope);
 
+					if (!shape.getJTSGeometry().isValid()) {
+						continue;
+					}
+					
 					long gid = rs.getLong("fid");
 
 					parameters.clear();
@@ -479,6 +483,10 @@ public class Postgis {
 //							+ ", '" + Escape.forSQL(name.toString()) + "', '" + published.name + "', " + level + ", "
 //							+ rank + ", ST_GeomFromText('" + boundingBox.getJTSGeometry() + "', 4326));";
 
+					if (!simplified.getJTSGeometry().isValid()) {
+						continue;
+					}
+					
 					String sql_nd = "INSERT INTO \"" + table_simplified + "\" VALUES (" + gid + ", " + shape_area
 							+ ", '" + Escape.forSQL(name.toString()) + "', '" + published.name + "', " + level + ", "
 							+ rank + ", ST_MakeValid(ST_Multi(ST_GeomFromText('" + simplified.getJTSGeometry().buffer(0) + "', 4326))));";

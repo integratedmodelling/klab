@@ -14,9 +14,11 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
+import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.utils.Pair;
 
 import akka.actor.typed.ActorRef;
@@ -124,8 +126,8 @@ public class ObjectBehavior {
 
 		@Override
 		void run(KlabActor.Scope scope) {
-			this.listener = scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
-					.addObservationListener(new ISession.ObservationListener() {
+			this.listener = scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState()
+					.addApplicationListener(new ISessionState.Listener() {
 						@Override
 						public void newObservation(IObservation observation, ISubject context) {
 							// TODO filter if a filter was configured; also may need to have a "current
@@ -137,12 +139,19 @@ public class ObjectBehavior {
 						@Override
 						public void newContext(ISubject context) {
 						}
-					});
+
+						@Override
+						public void scaleChanged(ScaleReference scale) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+					}, scope.appId);
 		}
 
 		@Override
 		public void dispose() {
-			scope.getMonitor().getIdentity().getParentIdentity(ISession.class).removeObservationListener(this.listener);
+			scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState().removeListener(this.listener);
 		}
 	}
 

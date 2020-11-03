@@ -63,6 +63,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -178,8 +179,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	ActorRef<KlabMessage> actor;
 	private SessionState globalState = new SessionState(this);
 	private View view;
-	Map<String, ISession.ObservationListener> observationListeners = Collections.synchronizedMap(new LinkedHashMap<>());
-	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
+//	Map<String, ISession.ObservationListener> observationListeners = Collections.synchronizedMap(new LinkedHashMap<>());
+//	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
 //	ITime timeOfInterest = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 
 //	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -586,22 +587,22 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		}
 		return false;
 	}
-
-	public Collection<ObservationListener> getObservationListeners() {
-		return observationListeners.values();
-	}
-
-	@Override
-	public String addObservationListener(ISession.ObservationListener listener) {
-		String ret = NameGenerator.newName();
-		observationListeners.put(ret, listener);
-		return ret;
-	}
-
-	@Override
-	public void removeObservationListener(String listenerId) {
-		observationListeners.remove(listenerId);
-	}
+//
+//	public Collection<ObservationListener> getObservationListeners() {
+//		return observationListeners.values();
+//	}
+//
+//	@Override
+//	public String addObservationListener(ISession.ObservationListener listener) {
+//		String ret = NameGenerator.newName();
+//		observationListeners.put(ret, listener);
+//		return ret;
+//	}
+//
+//	@Override
+//	public void removeObservationListener(String listenerId) {
+//		observationListeners.remove(listenerId);
+//	}
 
 //	public String addROIListener(ROIListener listener) {
 //		String ret = NameGenerator.newName();
@@ -1689,6 +1690,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	public String load(IBehavior behavior, IContextualizationScope scope) {
 		String ret = "app" + NameGenerator.shortUUID();
 		getActor().tell(new SystemBehavior.Load(this, behavior.getId(), ret, (IRuntimeScope) scope));
+		globalState.setApplicationId(ret);
 		return ret;
 	}
 
@@ -1722,5 +1724,13 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	@Override
 	public SessionState getState() {
 		return globalState;
+	}
+
+	public void notifyNewContext(ISubject object) {
+		globalState.notifyNewContext(object);
+	}
+
+	public void notifyNewObservation(IObservation object, ISubject context) {
+		globalState.notifyNewObservation(object, context);
 	}
 }

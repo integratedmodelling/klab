@@ -35,6 +35,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage.Semaphore;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.BindUserAction;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Cleanup;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.ComponentFire;
@@ -95,7 +96,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private Map<String, ActorRef<KlabMessage>> receivers = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, List<ActorRef<KlabMessage>>> childInstances = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, Object> symbolTable = Collections.synchronizedMap(new HashMap<>());
-	
+
 	/*
 	 * This is the parent that generated us through a 'new' instruction, if any.
 	 */
@@ -377,6 +378,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				.onMessage(Spawn.class, this::handleCreateChildMessage).onMessage(Fire.class, this::handleFireMessage)
 				.onMessage(ComponentFire.class, this::handleComponentFireMessage)
 				.onMessage(UserAction.class, this::handleUserActionMessage)
+				.onMessage(AppReset.class, this::handleAppReset)
 				.onMessage(BindUserAction.class, this::handleBindActionMessage)
 				.onMessage(KActorsMessage.class, this::handleCallMessage).onMessage(Stop.class, this::stopChild)
 				.onMessage(Cleanup.class, this::handleCleanupMessage).onSignal(PostStop.class, signal -> onPostStop());
@@ -406,6 +408,45 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 		return Behaviors.same();
 
+	}
+
+	protected Behavior<KlabMessage> handleAppReset(AppReset message) {
+
+//		if (message.appId != null) {
+//			ActorRef<KlabMessage> receiver = receivers.get(message.appId);
+//			if (receiver != null) {
+//				receiver.tell(message.direct());
+//			}
+//		} else {
+			KActorsMessage mes = new KActorsMessage(getContext().getSelf(), "reset", null, null, message.scope,
+					message.scope.appId);
+
+			/*
+			 * 1. call init if we are a component or an app and we have it
+			 */
+			if (this.behavior.getDestination() == Type.APP || this.behavior.getDestination() == Type.COMPONENT) {
+				for (IBehavior.Action action : this.behavior.getActions("init", "@init")) {
+					run(action, message.scope.getChild(this.appId, action));
+				}
+			}
+
+			/*
+			 * 2. send reset to all sub-actors that are components
+			 */
+			for (ActorRef<KlabMessage> actor : receivers.values()) {
+				actor.tell(message);
+			}
+
+			/*
+			 * 3. reset all UI components
+			 */
+			for (KlabActionExecutor executor : actionCache.values()) {
+				if (executor instanceof KlabWidgetActionExecutor) {
+					((KlabWidgetActionExecutor) executor).onMessage(mes, message.scope);
+				}
+			}
+//		}
+		return Behaviors.same();
 	}
 
 	protected Behavior<KlabMessage> handleUserActionMessage(UserAction message) {
@@ -937,7 +978,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		}
 
 		String executorId = (this.childActorPath == null ? "" : (this.childActorPath + "_")) + code.getCallId();
-		
+
 		/*
 		 * Remaining option is a code action executor installed through a system
 		 * behavior. The executor cache is populated at every execution of the same
