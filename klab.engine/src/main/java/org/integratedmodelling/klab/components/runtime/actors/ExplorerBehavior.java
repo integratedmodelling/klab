@@ -80,8 +80,8 @@ public class ExplorerBehavior {
 							message.setTarget(Target.Dataflow);
 							break;
 						}
-					} else if (arg != null) {
-						IArtifact artifact = ((ISession) scope.identity).getState().getArtifact(arg.toString());
+					} else if (what != null) {
+						IArtifact artifact = ((ISession) scope.identity).getState().getArtifact(what.toString());
 						if (artifact instanceof IObservation) {
 							message.setTarget(Target.Observation);
 							message.setTargetId(((IObservation) artifact).getId());
