@@ -963,6 +963,7 @@ public class Scheduler implements IScheduler {
 		if (!computed.contains(observable)) {
 			boolean recompute = false;
 			for (ObservedConcept precursor : getPrecursors(dependencies, observable)) {
+				computed.add(observable);
 				computeImplicitDependents(precursor, changed, computed, time, runtimeScope, dependencies, catalog);
 				if (changed.contains(precursor) && !changed.contains(observable)) {
 					IObservation pre = catalog.get(precursor);
@@ -975,7 +976,6 @@ public class Scheduler implements IScheduler {
 			if (recompute) {
 				reinitializeObservation(observable.getObservable(), getActuator(observable, dependencies), time,
 						runtimeScope);
-				computed.add(observable);
 				changed.add(observable);
 			}
 		}

@@ -1049,6 +1049,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 															// wrong
 			viewComponent.setId(executorId);
 			viewComponent.setActorPath(this.childActorPath);
+			((KlabWidgetActionExecutor) executor).setInitializedComponent(viewComponent);
+			
 			scope.viewScope.currentComponent.getComponents().add(viewComponent);
 		} else if (executor != null) {
 			executor.run(scope.withNotifyId(notifyId).withSender(getContext().getSelf(), appId));
@@ -1152,14 +1154,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			}
 			/*
 			 * Init action called no matter what and before the behavior is set; the onLoad
-			 * callback intervenes afterwards.
+			 * callback intervenes afterwards. Do not create UI (use raw scope).
 			 */
 			for (IBehavior.Action action : this.behavior.getActions("init", "@init")) {
-				run(action, message.scope.getChild(this.appId, action));
+				run(action, message.scope);
 			}
 
 			/*
-			 * run any main actions
+			 * run any main actions. This is the only action that may create a UI.
 			 */
 			for (IBehavior.Action action : this.behavior.getActions("main", "@main")) {
 				Scope scope = message.scope.getChild(this.appId, action);

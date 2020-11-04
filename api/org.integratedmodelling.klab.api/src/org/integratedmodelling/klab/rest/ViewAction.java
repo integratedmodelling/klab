@@ -13,15 +13,6 @@ import java.util.Map;
  *
  */
 public class ViewAction {
-//
-//	public enum Operation {
-//		UserAction,
-//		Enable, // true/false
-//		Disable,
-//		Hide, // true/false
-//		Show,
-//		Update  // according to type; data may also contain new attribute values
-//	}
 
 	/**
 	 * When it comes from the view, should include the component
@@ -42,7 +33,6 @@ public class ViewAction {
 	private Date dateValue = null;
 	private List<String> listValue = null;
 	private Map<String, String> data = null;
-//	private Operation operation = Operation.UserAction;
 
 	public ViewAction() {
 	}
@@ -60,11 +50,6 @@ public class ViewAction {
 		this.component = component;
 		this.booleanValue = value;
 	}
-//
-//	public ViewAction(ViewComponent component, Operation operation) {
-//		this.operation = operation;
-//		this.component = component;
-//	}
 
 	public Boolean isBooleanValue() {
 		return booleanValue;

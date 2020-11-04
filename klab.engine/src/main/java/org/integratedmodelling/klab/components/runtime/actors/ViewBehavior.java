@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,6 +26,8 @@ import org.integratedmodelling.klab.rest.ViewComponent.Type;
 import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtils;
+
+import com.sun.tools.javac.util.List;
 
 import akka.actor.typed.ActorRef;
 
@@ -96,7 +99,8 @@ public class ViewBehavior {
 
 		protected String name;
 		protected ViewComponent component;
-		protected static BeanUtils beanUtils = new BeanUtils();
+		// immutable copy of the original component installed by the actor after instrumenting it.
+		protected ViewComponent initializedComponent;
 
 		public KlabWidgetActionExecutor(IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
 				Scope scope, ActorRef<KlabMessage> sender, String callId) {
@@ -142,8 +146,7 @@ public class ViewBehavior {
 					action = new ViewAction(this.component = show(false));
 					break;
 				case "reset":
-					// recreate the component in the original scope
-					action = new ViewAction(this.component = createViewComponent(this.scope));
+					action = new ViewAction(this.component = copyComponent(this.initializedComponent));
 					break;
 				default:
 					action = new ViewAction(this.component = setComponent(mess, scope));
@@ -193,7 +196,7 @@ public class ViewBehavior {
 			this.component = createViewComponent(this.scope);
 			return this.component;
 		}
-		
+
 		/**
 		 * Create a view component definition reflecting the widget. The component will
 		 * be indexed and inserted in the layout when called before run() is called.
@@ -207,17 +210,30 @@ public class ViewBehavior {
 			session.getState().updateView(this.component);
 			return ret;
 		}
-		
+
 		/**
-		 * Receive the view action performed through the UI and return the valued that the
-		 * k.Actors component should fire. Update the component as needed to keep the view
-		 * descriptor synchronized in the session.
+		 * Receive the view action performed through the UI and return the valued that
+		 * the k.Actors component should fire. Update the component as needed to keep
+		 * the view descriptor synchronized in the session.
 		 * 
 		 * @param action
 		 * @return
 		 */
 		protected abstract Object onViewAction(ViewAction action);
-		
+
+		public void setInitializedComponent(ViewComponent viewComponent) {
+			this.initializedComponent = copyComponent(viewComponent);
+		}
+
+		private ViewComponent copyComponent(ViewComponent viewComponent) {
+			try {
+				return (ViewComponent)BeanUtils.cloneBean(viewComponent);
+			} catch (Throwable e) {
+				this.identity.getMonitor().error("internal error cloning view component");
+			}
+			return viewComponent;
+		}
+
 	}
 
 	@Action(id = "alert")
@@ -478,9 +494,18 @@ public class ViewBehavior {
 			for (String argument : arguments.getUnnamedKeys()) {
 				Object value = arguments.get(argument);
 				if (value instanceof KActorsValue) {
-					Map<String, String> map = ((KActorsValue) value).asMap();
-					message.getChoices().add(new Pair<>(map.get("id"), map.get("label")));
-					this.values.put(map.get("id"), (IKActorsValue) value);
+					if (((KActorsValue) value).getType() == IKActorsValue.Type.LIST) {
+						List<?> list = (List<?>) ((KActorsValue) value).getValue();
+						if (list.size() >= 2) {
+							this.values.put((list.get(0) instanceof IKActorsValue
+									? ((KActorsValue) list.get(0)).getValue().toString()
+									: list.get(0).toString()), (IKActorsValue) list.get(1));
+						}
+					} else {
+						Map<String, String> map = ((KActorsValue) value).asMap();
+						message.getChoices().add(new Pair<>(map.get("id"), map.get("label")));
+						this.values.put(map.get("id"), (IKActorsValue) value);
+					}
 				}
 			}
 			message.getAttributes().putAll(getMetadata(arguments, scope));
@@ -494,7 +519,7 @@ public class ViewBehavior {
 
 		@Override
 		protected Object onViewAction(ViewAction action) {
-			// TODO set selection 
+			// TODO set selection
 			return action.getStringValue();
 		}
 
@@ -591,7 +616,7 @@ public class ViewBehavior {
 			message.getAttributes().putAll(getMetadata(arguments, scope));
 			return message;
 		}
-		
+
 		@Override
 		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
 			if ("update".equals(message.message)) {
