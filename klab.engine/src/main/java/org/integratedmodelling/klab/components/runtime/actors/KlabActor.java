@@ -96,7 +96,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 	private Map<String, ActorRef<KlabMessage>> receivers = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, List<ActorRef<KlabMessage>>> childInstances = Collections.synchronizedMap(new HashMap<>());
 	private Map<String, Object> symbolTable = Collections.synchronizedMap(new HashMap<>());
-
+	private List<ActorRef<KlabMessage>> componentActors = Collections.synchronizedList(new ArrayList<>());
+	
 	/*
 	 * This is the parent that generated us through a 'new' instruction, if any.
 	 */
@@ -418,33 +419,43 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 //				receiver.tell(message.direct());
 //			}
 //		} else {
-			KActorsMessage mes = new KActorsMessage(getContext().getSelf(), "reset", null, null, message.scope,
-					message.scope.appId);
+		KActorsMessage mes = new KActorsMessage(getContext().getSelf(), "reset", null, null, message.scope,
+				message.scope.appId);
+
+		/**
+		 * FIXME not sure how this happens, but apparently it's only during debugging.
+		 */
+		if (this.behavior != null) {
 
 			/*
-			 * 1. call init if we are a component or an app and we have it
+			 * 1. call init and then reset if we are a component or an app and we have the
+			 * actions
 			 */
 			if (this.behavior.getDestination() == Type.APP || this.behavior.getDestination() == Type.COMPONENT) {
 				for (IBehavior.Action action : this.behavior.getActions("init", "@init")) {
 					run(action, message.scope.getChild(this.appId, action));
 				}
-			}
-
-			/*
-			 * 2. send reset to all sub-actors that are components
-			 */
-			for (ActorRef<KlabMessage> actor : receivers.values()) {
-				actor.tell(message);
-			}
-
-			/*
-			 * 3. reset all UI components
-			 */
-			for (KlabActionExecutor executor : actionCache.values()) {
-				if (executor instanceof KlabWidgetActionExecutor) {
-					((KlabWidgetActionExecutor) executor).onMessage(mes, message.scope);
+				for (IBehavior.Action action : this.behavior.getActions("reset", "@reset")) {
+					run(action, message.scope.getChild(this.appId, action));
 				}
 			}
+		}
+		
+		/*
+		 * 2. send reset to all sub-actors that are components
+		 */
+		for (ActorRef<KlabMessage> actor : componentActors) {
+			actor.tell(message);
+		}
+
+		/*
+		 * 3. reset all UI components
+		 */
+		for (KlabActionExecutor executor : actionCache.values()) {
+			if (executor instanceof KlabWidgetActionExecutor) {
+				((KlabWidgetActionExecutor) executor).onMessage(mes, message.scope);
+			}
+		}
 //		}
 		return Behaviors.same();
 	}
@@ -655,6 +666,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				 */
 				semaphore = Actors.INSTANCE.createSemaphore(Semaphore.Type.LOAD);
 				loadMessage.withSemaphore(semaphore);
+				componentActors.add(actor);
 			}
 
 			actor.tell(loadMessage);
