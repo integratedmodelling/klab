@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewComponent.Type;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -225,7 +226,7 @@ public class ViewBehavior {
 
 		private ViewComponent copyComponent(ViewComponent viewComponent) {
 			try {
-				return (ViewComponent)BeanUtils.cloneBean(viewComponent);
+				return JsonUtils.cloneObject(viewComponent);
 			} catch (Throwable e) {
 				this.identity.getMonitor().error("internal error cloning view component");
 			}
