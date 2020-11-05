@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.beanutils.BeanUtils;
@@ -26,8 +26,6 @@ import org.integratedmodelling.klab.rest.ViewComponent.Type;
 import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtils;
-
-import com.sun.tools.javac.util.List;
 
 import akka.actor.typed.ActorRef;
 
