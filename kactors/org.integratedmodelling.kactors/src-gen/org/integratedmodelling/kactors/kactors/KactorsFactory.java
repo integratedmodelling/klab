@@ -231,6 +231,15 @@ public interface KactorsFactory extends EFactory
   List createList();
 
   /**
+   * Returns a new object of class '<em>List Element</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>List Element</em>'.
+   * @generated
+   */
+  ListElement createListElement();
+
+  /**
    * Returns a new object of class '<em>Map</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

@@ -4618,9 +4618,9 @@ ruleList returns [EObject current=null]
 		(
 			(
 				{
-					newCompositeNode(grammarAccess.getListAccess().getContentsValueWithMetadataParserRuleCall_2_0());
+					newCompositeNode(grammarAccess.getListAccess().getContentsListElementParserRuleCall_2_0());
 				}
-				lv_contents_2_0=ruleValueWithMetadata
+				lv_contents_2_0=ruleListElement
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getListRule());
@@ -4629,7 +4629,7 @@ ruleList returns [EObject current=null]
 						$current,
 						"contents",
 						lv_contents_2_0,
-						"org.integratedmodelling.kactors.Kactors.ValueWithMetadata");
+						"org.integratedmodelling.kactors.Kactors.ListElement");
 					afterParserOrEnumRuleCall();
 				}
 			)
@@ -4638,6 +4638,63 @@ ruleList returns [EObject current=null]
 		{
 			newLeafNode(otherlv_3, grammarAccess.getListAccess().getRightParenthesisKeyword_3());
 		}
+	)
+;
+
+// Entry rule entryRuleListElement
+entryRuleListElement returns [EObject current=null]:
+	{ newCompositeNode(grammarAccess.getListElementRule()); }
+	iv_ruleListElement=ruleListElement
+	{ $current=$iv_ruleListElement.current; }
+	EOF;
+
+// Rule ListElement
+ruleListElement returns [EObject current=null]
+@init {
+	enterRule();
+}
+@after {
+	leaveRule();
+}:
+	(
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getListElementAccess().getValueValueWithMetadataParserRuleCall_0_0());
+				}
+				lv_value_0_0=ruleValueWithMetadata
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getListElementRule());
+					}
+					set(
+						$current,
+						"value",
+						lv_value_0_0,
+						"org.integratedmodelling.kactors.Kactors.ValueWithMetadata");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)
+		    |
+		(
+			(
+				lv_tag_1_0=RULE_TAG
+				{
+					newLeafNode(lv_tag_1_0, grammarAccess.getListElementAccess().getTagTAGTerminalRuleCall_1_0());
+				}
+				{
+					if ($current==null) {
+						$current = createModelElement(grammarAccess.getListElementRule());
+					}
+					setWithLastConsumed(
+						$current,
+						"tag",
+						lv_tag_1_0,
+						"org.integratedmodelling.kactors.Kactors.TAG");
+				}
+			)
+		)
 	)
 ;
 

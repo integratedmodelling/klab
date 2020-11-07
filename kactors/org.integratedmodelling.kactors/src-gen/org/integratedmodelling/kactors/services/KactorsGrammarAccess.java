@@ -2520,14 +2520,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Action cListAction_0 = (Action)cGroup.eContents().get(0);
 		private final Keyword cLeftParenthesisKeyword_1 = (Keyword)cGroup.eContents().get(1);
 		private final Assignment cContentsAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cContentsValueWithMetadataParserRuleCall_2_0 = (RuleCall)cContentsAssignment_2.eContents().get(0);
+		private final RuleCall cContentsListElementParserRuleCall_2_0 = (RuleCall)cContentsAssignment_2.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_3 = (Keyword)cGroup.eContents().get(3);
 		
 		//List:
-		//	{List} '(' contents+=ValueWithMetadata* ')';
+		//	{List} '(' contents+=ListElement* ')';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//{List} '(' contents+=ValueWithMetadata* ')'
+		//{List} '(' contents+=ListElement* ')'
 		public Group getGroup() { return cGroup; }
 		
 		//{List}
@@ -2536,14 +2536,41 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//'('
 		public Keyword getLeftParenthesisKeyword_1() { return cLeftParenthesisKeyword_1; }
 		
-		//contents+=ValueWithMetadata*
+		//contents+=ListElement*
 		public Assignment getContentsAssignment_2() { return cContentsAssignment_2; }
 		
-		//ValueWithMetadata
-		public RuleCall getContentsValueWithMetadataParserRuleCall_2_0() { return cContentsValueWithMetadataParserRuleCall_2_0; }
+		//ListElement
+		public RuleCall getContentsListElementParserRuleCall_2_0() { return cContentsListElementParserRuleCall_2_0; }
 		
 		//')'
 		public Keyword getRightParenthesisKeyword_3() { return cRightParenthesisKeyword_3; }
+	}
+	public class ListElementElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.ListElement");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Assignment cValueAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final RuleCall cValueValueWithMetadataParserRuleCall_0_0 = (RuleCall)cValueAssignment_0.eContents().get(0);
+		private final Assignment cTagAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
+		private final RuleCall cTagTAGTerminalRuleCall_1_0 = (RuleCall)cTagAssignment_1.eContents().get(0);
+		
+		//ListElement:
+		//	value=ValueWithMetadata | tag=TAG;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//value=ValueWithMetadata | tag=TAG
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//value=ValueWithMetadata
+		public Assignment getValueAssignment_0() { return cValueAssignment_0; }
+		
+		//ValueWithMetadata
+		public RuleCall getValueValueWithMetadataParserRuleCall_0_0() { return cValueValueWithMetadataParserRuleCall_0_0; }
+		
+		//tag=TAG
+		public Assignment getTagAssignment_1() { return cTagAssignment_1; }
+		
+		//TAG
+		public RuleCall getTagTAGTerminalRuleCall_1_0() { return cTagTAGTerminalRuleCall_1_0; }
 	}
 	public class MapElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Map");
@@ -5838,6 +5865,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	private final UrnIdElements pUrnId;
 	private final UrnKvpElements pUrnKvp;
 	private final ListElements pList;
+	private final ListElementElements pListElement;
 	private final MapElements pMap;
 	private final TreeElements pTree;
 	private final MapEntryElements pMapEntry;
@@ -5928,6 +5956,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		this.pUrnId = new UrnIdElements();
 		this.pUrnKvp = new UrnKvpElements();
 		this.pList = new ListElements();
+		this.pListElement = new ListElementElements();
 		this.pMap = new MapElements();
 		this.pTree = new TreeElements();
 		this.pMapEntry = new MapEntryElements();
@@ -6336,13 +6365,23 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//List:
-	//	{List} '(' contents+=ValueWithMetadata* ')';
+	//	{List} '(' contents+=ListElement* ')';
 	public ListElements getListAccess() {
 		return pList;
 	}
 	
 	public ParserRule getListRule() {
 		return getListAccess().getRule();
+	}
+	
+	//ListElement:
+	//	value=ValueWithMetadata | tag=TAG;
+	public ListElementElements getListElementAccess() {
+		return pListElement;
+	}
+	
+	public ParserRule getListElementRule() {
+		return getListElementAccess().getRule();
 	}
 	
 	//Map:

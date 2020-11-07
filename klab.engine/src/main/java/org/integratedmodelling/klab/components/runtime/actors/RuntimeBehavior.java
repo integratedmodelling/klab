@@ -1,14 +1,19 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.Future;
 
+import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
@@ -160,11 +165,10 @@ public class RuntimeBehavior {
 	}
 
 	/**
-	 * Make an observation, setting the context according to current preferences and
-	 * session state, or set the context itself if the observation is a subject and
-	 * the current context is not set.
+	 * Reset roles to the passed arguments. Pass individual observables/roles or
+	 * collections thereof.
 	 */
-	@Action(id = "setrole", fires = Type.EMPTY, description = "Apply a session-specific role to one or more observables or observations.")
+	@Action(id = "roles", fires = Type.EMPTY, description = "Apply a set of roles to one or more observables or observations. Any previously set roles are deactivated.")
 	public static class SetRole extends KlabActionExecutor {
 
 		String listenerId = null;
@@ -177,14 +181,72 @@ public class RuntimeBehavior {
 		@Override
 		void run(KlabActor.Scope scope) {
 
-			if (!arguments.getUnnamedKeys().isEmpty()) {
-				// must have role as primary parameter, then other observables, observations or
-				// lists thereof
+			Set<IConcept> roles = new HashSet<>();
+			Set<IConcept> observables = new HashSet<>();
+
+			for (Object arg : arguments.getUnnamedArguments()) {
+				Object value = KlabActor.evaluate(arg, scope);
+				if (value instanceof IObservable) {
+					IConcept c = ((IObservable) value).getType();
+					if (c.is(IKimConcept.Type.ROLE)) {
+						roles.add(c);
+					} else {
+						observables.add(c);
+					}
+				} else if (value instanceof Collection) {
+					for (Object cc : ((Collection<?>) value)) {
+						if (cc instanceof IObservable) {
+							IConcept c = ((IObservable) cc).getType();
+							if (c.is(IKimConcept.Type.ROLE)) {
+								roles.add(c);
+							} else {
+								observables.add(c);
+							}
+						}
+					}
+				}
+			}
+
+			session.getState().resetRoles();
+			for (IConcept role : roles) {
+				for (IConcept target : observables) {
+					session.getState().addRole(role, target);
+				}
 			}
 		}
 
 		@Override
 		public void dispose() {
+		}
+	}
+
+	/**
+	 * Make an observation, setting the context according to current preferences and
+	 * session state, or set the context itself if the observation is a subject and
+	 * the current context is not set.
+	 */
+	@Action(id = "scenarios", fires = Type.EMPTY, description = "Apply a session-specific role to one or more observables or observations.")
+	public static class SetScenarios extends KlabActionExecutor {
+
+		String listenerId = null;
+
+		public SetScenarios(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		void run(KlabActor.Scope scope) {
+			Set<String> scenarios = new HashSet<>();
+			for (String key : arguments.getUnnamedKeys()) {
+				scenarios.add(KlabActor.evaluate((IKActorsValue) arguments.get(key), scope).toString());
+			}
+			session.getState().setActiveScenarios(scenarios);
+		}
+
+		@Override
+		public void dispose() {
+			session.getState().getActiveScenarios().clear();
 		}
 	}
 

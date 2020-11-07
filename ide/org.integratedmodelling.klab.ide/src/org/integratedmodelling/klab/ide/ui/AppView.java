@@ -101,15 +101,15 @@ public class AppView extends Composite {
 
 			List<Map<String, String>> ret = new ArrayList<>();
 			if (item instanceof TreeWrapper) {
-				for (Pair<Integer, Integer> link : tree.getLinks()) {
-					if (link.getSecond() == tree.getRootId()) {
+				for (Pair<String, String> link : tree.getLinks()) {
+					if (link.getSecond().equals(tree.getRootId())) {
 						ret.add(tree.getValues().get(link.getFirst()));
 					}
 				}
 			} else {
 				@SuppressWarnings("unchecked")
-				int i = Integer.parseInt(((Map<String, String>) item).get("__IID"));
-				for (Pair<Integer, Integer> link : tree.getLinks()) {
+				String i = ((Map<String, String>) item).get("__IID");
+				for (Pair<String, String> link : tree.getLinks()) {
 					if (link.getSecond() == i) {
 						ret.add(tree.getValues().get(link.getFirst()));
 					}
@@ -123,12 +123,12 @@ public class AppView extends Composite {
 			if (parent instanceof Map) {
 				@SuppressWarnings("unchecked")
 				Map<String, String> mparent = (Map<String, String>) parent;
-				int i = Integer.parseInt(mparent.get("__IID"));
-				if (i == tree.getRootId()) {
+				String i = mparent.get("__IID");
+				if (i.equals(tree.getRootId())) {
 					return this;
 				}
-				for (Pair<Integer, Integer> link : tree.getLinks()) {
-					if (link.getFirst() == i) {
+				for (Pair<String, String> link : tree.getLinks()) {
+					if (link.getFirst().equals(i)) {
 						return tree.getValues().get(link.getSecond());
 					}
 				}

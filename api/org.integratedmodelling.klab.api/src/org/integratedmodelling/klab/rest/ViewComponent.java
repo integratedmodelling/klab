@@ -43,32 +43,33 @@ public class ViewComponent {
 	 */
 	public static class Tree {
 
-		private List<Map<String, String>> values = new ArrayList<>();
-		private int rootId;
-		private List<Pair<Integer, Integer>> links = new ArrayList<>();
+		private Map<String, Map<String, String>> values = new HashMap<>();
+		private String rootId;
+		private List<Pair<String, String>> links = new ArrayList<>();
 
-		public List<Map<String, String>> getValues() {
-			return values;
-		}
 
-		public void setValues(List<Map<String, String>> values) {
-			this.values = values;
-		}
-
-		public int getRootId() {
+		public String getRootId() {
 			return rootId;
 		}
 
-		public void setRootId(int rootId) {
+		public void setRootId(String rootId) {
 			this.rootId = rootId;
 		}
 
-		public List<Pair<Integer, Integer>> getLinks() {
+		public List<Pair<String, String>> getLinks() {
 			return links;
 		}
 
-		public void setLinks(List<Pair<Integer, Integer>> links) {
+		public void setLinks(List<Pair<String, String>> links) {
 			this.links = links;
+		}
+
+		public Map<String, Map<String, String>> getValues() {
+			return values;
+		}
+
+		public void setValues(Map<String, Map<String, String>> values) {
+			this.values = values;
 		}
 
 	}

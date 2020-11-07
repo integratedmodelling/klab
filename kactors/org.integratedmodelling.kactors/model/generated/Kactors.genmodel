@@ -178,6 +178,10 @@
     <genClasses ecoreClass="Kactors.ecore#//List">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//List/contents"/>
     </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//ListElement">
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//ListElement/value"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//ListElement/tag"/>
+    </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Map">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Map/entries"/>
     </genClasses>

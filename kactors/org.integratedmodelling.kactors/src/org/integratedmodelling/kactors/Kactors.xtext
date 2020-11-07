@@ -252,7 +252,12 @@ UrnKvp:
 ;	
 	
 List:
-	{List} '(' contents+=ValueWithMetadata* ')';
+	{List} '(' contents+=ListElement* ')';
+	
+ListElement:
+	value=ValueWithMetadata |
+	tag=TAG	
+;	
 	
 Map:
 	{Map} '#{' (entries+=MapEntry (=> (',') entries+=MapEntry)*)? '}'

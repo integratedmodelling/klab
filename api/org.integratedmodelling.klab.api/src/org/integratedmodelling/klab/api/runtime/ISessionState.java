@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.api.runtime;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Future;
 
@@ -36,7 +38,7 @@ public interface ISessionState extends IParameters<String> {
 		 * @param context
 		 */
 		public void newContext(ISubject context);
-		
+
 		/**
 		 * 
 		 * @param observation
@@ -61,6 +63,8 @@ public interface ISessionState extends IParameters<String> {
 	IGeometry getGeometry();
 
 	Set<String> getActiveScenarios();
+
+	void setActiveScenarios(Collection<String> scenarios);
 
 	void activateApplication(String applicationName);
 
@@ -106,4 +110,11 @@ public interface ISessionState extends IParameters<String> {
 	 * @return
 	 */
 	String addApplicationListener(Listener listener, String applicationId);
+
+	/**
+	 * Get all the roles set explicitly in the session.
+	 * 
+	 * @return
+	 */
+	Map<IConcept, Collection<IConcept>> getRoles();
 }

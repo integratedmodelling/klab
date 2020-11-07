@@ -29,6 +29,7 @@ import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.KeyValuePair;
 import org.integratedmodelling.kactors.kactors.List;
+import org.integratedmodelling.kactors.kactors.ListElement;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
@@ -236,6 +237,11 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
       public Adapter caseList(List object)
       {
         return createListAdapter();
+      }
+      @Override
+      public Adapter caseListElement(ListElement object)
+      {
+        return createListElementAdapter();
       }
       @Override
       public Adapter caseMap(Map object)
@@ -725,6 +731,21 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createListAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.ListElement <em>List Element</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.ListElement
+   * @generated
+   */
+  public Adapter createListElementAdapter()
   {
     return null;
   }

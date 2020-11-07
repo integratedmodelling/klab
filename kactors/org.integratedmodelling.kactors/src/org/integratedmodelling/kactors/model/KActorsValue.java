@@ -16,6 +16,7 @@ import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Classifier;
+import org.integratedmodelling.kactors.kactors.ListElement;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
@@ -293,8 +294,12 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 	public List<?> parseList(org.integratedmodelling.kactors.kactors.List list, KActorCodeStatement parent) {
 		List<Object> ret = new ArrayList<>();
-		for (Value val : list.getContents()) {
-			ret.add(new KActorsValue(val, parent));
+		for (ListElement val : list.getContents()) {
+			if (val.getValue() != null) {
+				ret.add(new KActorsValue(val.getValue(), parent));
+			} else if (val.getTag() != null) {
+				this.setTag(val.getTag());
+			}
 		}
 		return ret;
 	}
@@ -393,8 +398,10 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 	private Tree getSubTree(Value value) {
 		if (value.getList() != null && value.getList().getContents().size() == 1
-				&& value.getList().getContents().get(0).getTree() != null) {
-			return value.getList().getContents().get(0).getTree();
+				// jesus, give me a null-safe operator
+				&& value.getList().getContents().get(0).getValue() != null
+				&& value.getList().getContents().get(0).getValue().getTree() != null) {
+			return value.getList().getContents().get(0).getValue().getTree();
 		}
 		return null;
 	}
@@ -490,8 +497,8 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 	/**
 	 * Check for truth value. For now we consider true anything that is not null or
-	 * not empty, unless it's a boolean or number where we check the actual value for
-	 * true value or != 0.
+	 * not empty, unless it's a boolean or number where we check the actual value
+	 * for true value or != 0.
 	 * 
 	 * @param check
 	 * @return
@@ -506,7 +513,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		} else if (check instanceof IArtifact) {
 			return !((IArtifact) check).isEmpty();
 		} else if (check instanceof Collection) {
-			return !((Collection<?>)check).isEmpty();
+			return !((Collection<?>) check).isEmpty();
 		}
 		return check != null;
 	}

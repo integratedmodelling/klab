@@ -33,6 +33,7 @@ import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.KeyValuePair;
 import org.integratedmodelling.kactors.kactors.List;
+import org.integratedmodelling.kactors.kactors.ListElement;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
@@ -147,6 +148,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case KactorsPackage.LIST:
 				sequence_List(context, (List) semanticObject); 
+				return; 
+			case KactorsPackage.LIST_ELEMENT:
+				sequence_ListElement(context, (ListElement) semanticObject); 
 				return; 
 			case KactorsPackage.LITERAL:
 				sequence_Literal(context, (Literal) semanticObject); 
@@ -396,8 +400,8 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)?
@@ -427,8 +431,8 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)?
@@ -605,10 +609,22 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	
 	/**
 	 * Contexts:
+	 *     ListElement returns ListElement
+	 *
+	 * Constraint:
+	 *     (value=ValueWithMetadata | tag=TAG)
+	 */
+	protected void sequence_ListElement(ISerializationContext context, ListElement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     List returns List
 	 *
 	 * Constraint:
-	 *     contents+=ValueWithMetadata*
+	 *     contents+=ListElement*
 	 */
 	protected void sequence_List(ISerializationContext context, List semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);

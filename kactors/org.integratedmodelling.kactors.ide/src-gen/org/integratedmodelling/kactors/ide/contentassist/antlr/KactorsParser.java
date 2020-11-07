@@ -55,6 +55,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getUrnIdAccess().getAlternatives_9_1(), "rule__UrnId__Alternatives_9_1");
 			builder.put(grammarAccess.getUrnIdAccess().getAlternatives_9_2_1(), "rule__UrnId__Alternatives_9_2_1");
 			builder.put(grammarAccess.getUrnKvpAccess().getAlternatives_2(), "rule__UrnKvp__Alternatives_2");
+			builder.put(grammarAccess.getListElementAccess().getAlternatives(), "rule__ListElement__Alternatives");
 			builder.put(grammarAccess.getTreeAccess().getAlternatives_1_1(), "rule__Tree__Alternatives_1_1");
 			builder.put(grammarAccess.getClassifierAccess().getAlternatives(), "rule__Classifier__Alternatives");
 			builder.put(grammarAccess.getClassifierAccess().getAlternatives_0(), "rule__Classifier__Alternatives_0");
@@ -482,6 +483,8 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getMatchAccess().getExceptionAssignment_15_0(), "rule__Match__ExceptionAssignment_15_0");
 			builder.put(grammarAccess.getMatchAccess().getBodyAssignment_15_2(), "rule__Match__BodyAssignment_15_2");
 			builder.put(grammarAccess.getListAccess().getContentsAssignment_2(), "rule__List__ContentsAssignment_2");
+			builder.put(grammarAccess.getListElementAccess().getValueAssignment_0(), "rule__ListElement__ValueAssignment_0");
+			builder.put(grammarAccess.getListElementAccess().getTagAssignment_1(), "rule__ListElement__TagAssignment_1");
 			builder.put(grammarAccess.getMapAccess().getEntriesAssignment_2_0(), "rule__Map__EntriesAssignment_2_0");
 			builder.put(grammarAccess.getMapAccess().getEntriesAssignment_2_1_1(), "rule__Map__EntriesAssignment_2_1_1");
 			builder.put(grammarAccess.getTreeAccess().getRootAssignment_0(), "rule__Tree__RootAssignment_0");

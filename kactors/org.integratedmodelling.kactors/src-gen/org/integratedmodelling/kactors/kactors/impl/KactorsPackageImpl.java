@@ -31,6 +31,7 @@ import org.integratedmodelling.kactors.kactors.KactorsFactory;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.KeyValuePair;
 import org.integratedmodelling.kactors.kactors.List;
+import org.integratedmodelling.kactors.kactors.ListElement;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
@@ -229,6 +230,13 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   private EClass listEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass listElementEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -2057,6 +2065,39 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   public EReference getList_Contents()
   {
     return (EReference)listEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getListElement()
+  {
+    return listElementEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getListElement_Value()
+  {
+    return (EReference)listElementEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getListElement_Tag()
+  {
+    return (EAttribute)listElementEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -4248,6 +4289,10 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     listEClass = createEClass(LIST);
     createEReference(listEClass, LIST__CONTENTS);
 
+    listElementEClass = createEClass(LIST_ELEMENT);
+    createEReference(listElementEClass, LIST_ELEMENT__VALUE);
+    createEAttribute(listElementEClass, LIST_ELEMENT__TAG);
+
     mapEClass = createEClass(MAP);
     createEReference(mapEClass, MAP__ENTRIES);
 
@@ -4653,7 +4698,11 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getMatch_Exception(), ecorePackage.getEBoolean(), "exception", null, 0, 1, Match.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(listEClass, List.class, "List", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getList_Contents(), this.getValue(), null, "contents", null, 0, -1, List.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getList_Contents(), this.getListElement(), null, "contents", null, 0, -1, List.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(listElementEClass, ListElement.class, "ListElement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getListElement_Value(), this.getValue(), null, "value", null, 0, 1, ListElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getListElement_Tag(), ecorePackage.getEString(), "tag", null, 0, 1, ListElement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(mapEClass, Map.class, "Map", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getMap_Entries(), this.getMapEntry(), null, "entries", null, 0, -1, Map.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

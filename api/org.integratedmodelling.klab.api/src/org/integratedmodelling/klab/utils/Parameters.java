@@ -353,4 +353,13 @@ public class Parameters<T> implements IParameters<T> {
 		return ret;
 	}
 
+	@Override
+	public List<Object> getUnnamedArguments() {
+		List<Object> ret = new ArrayList<>();
+		for (T key : getUnnamedKeys()) {
+			ret.add(get(key));
+		}
+		return ret;
+	}
+
 }

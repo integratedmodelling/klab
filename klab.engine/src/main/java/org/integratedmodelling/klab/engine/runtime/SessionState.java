@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.engine.runtime;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -55,7 +56,6 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
-import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ScaleReference;
@@ -110,7 +110,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	private List<SessionActivity> history = new ArrayList<>();
 	long startTime = System.currentTimeMillis();
 	private Set<String> scenarios = new HashSet<>();
-	private Map<IConcept, Set<IConcept>> roles = new HashMap<>();
+	private Map<IConcept, Collection<IConcept>> roles = new HashMap<>();
 	private AtomicBoolean lockSpace = new AtomicBoolean(false);
 	private AtomicBoolean lockTime = new AtomicBoolean(false);
 	Map<String, ListenerWrapper> listeners = Collections.synchronizedMap(new LinkedHashMap<>());
@@ -376,11 +376,20 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	@Override
 	public void addRole(IConcept role, IConcept target) {
+		Set<IConcept> roles = (Set<IConcept>)this.roles.get(role);
+		if (roles == null) {
+			roles = new HashSet<>();
+			this.roles.put(role, roles);
+		}
+		roles.add(target);
 	}
 
 	@Override
 	public void removeRole(IConcept role, IConcept target) {
-
+		Set<IConcept> roles = (Set<IConcept>)this.roles.get(role);
+		if (roles != null) {
+			roles.remove(target);
+		}
 	}
 
 	@Override
@@ -677,6 +686,17 @@ public class SessionState extends Parameters<String> implements ISessionState {
 				listener.listener.newContext(this.context);
 			}
 		}
+	}
+
+	@Override
+	public void setActiveScenarios(Collection<String> scenarios) {
+		this.scenarios.clear();
+		this.scenarios.addAll(scenarios);
+	}
+
+	@Override
+	public Map<IConcept, Collection<IConcept>> getRoles() {
+		return this.roles;
 	}
 
 }

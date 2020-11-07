@@ -1,10 +1,11 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.beanutils.BeanUtils;
+import org.apache.groovy.util.Maps;
 import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.api.IKActorsValue;
@@ -27,6 +28,7 @@ import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtils;
+import org.integratedmodelling.klab.utils.Triple;
 
 import akka.actor.typed.ActorRef;
 
@@ -98,7 +100,8 @@ public class ViewBehavior {
 
 		protected String name;
 		protected ViewComponent component;
-		// immutable copy of the original component installed by the actor after instrumenting it.
+		// immutable copy of the original component installed by the actor after
+		// instrumenting it.
 		protected ViewComponent initializedComponent;
 
 		public KlabWidgetActionExecutor(IActorIdentity<KlabMessage> identity, IParameters<String> arguments,
@@ -205,7 +208,7 @@ public class ViewBehavior {
 		protected abstract ViewComponent createViewComponent(Scope scope);
 
 		public Object getFiredValue(ViewAction action) {
-			Object ret = onViewAction(action);
+			Object ret = onViewAction(action, scope);
 			session.getState().updateView(this.component);
 			return ret;
 		}
@@ -218,7 +221,7 @@ public class ViewBehavior {
 		 * @param action
 		 * @return
 		 */
-		protected abstract Object onViewAction(ViewAction action);
+		protected abstract Object onViewAction(ViewAction action, Scope scope);
 
 		public void setInitializedComponent(ViewComponent viewComponent) {
 			this.initializedComponent = copyComponent(viewComponent);
@@ -232,7 +235,6 @@ public class ViewBehavior {
 			}
 			return viewComponent;
 		}
-
 	}
 
 	@Action(id = "alert")
@@ -298,7 +300,7 @@ public class ViewBehavior {
 		}
 
 		@Override
-		public Object onViewAction(ViewAction action) {
+		public Object onViewAction(ViewAction action, Scope scope) {
 			return true;
 		}
 
@@ -355,7 +357,7 @@ public class ViewBehavior {
 		}
 
 		@Override
-		public Object onViewAction(ViewAction action) {
+		public Object onViewAction(ViewAction action, Scope scope) {
 			if (action.isBooleanValue()) {
 				this.component.getAttributes().put("checked", "true");
 			} else {
@@ -392,7 +394,7 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected Object onViewAction(ViewAction action) {
+		protected Object onViewAction(ViewAction action, Scope scope) {
 			if (action.isBooleanValue()) {
 				this.component.getAttributes().put("checked", "true");
 			} else {
@@ -429,7 +431,7 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected Object onViewAction(ViewAction action) {
+		protected Object onViewAction(ViewAction action, Scope scope) {
 			/*
 			 * this is on toggle. Should fire something else on hover.
 			 */
@@ -469,11 +471,42 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected Object onViewAction(ViewAction action) {
+		protected Object onViewAction(ViewAction action, Scope scope) {
 			this.component.setContent(action.getStringValue());
 			return action.getStringValue();
 		}
 
+	}
+
+	/**
+	 * Recover an id, a label and a value from a value passed as an item for a tree,
+	 * combo or list component.
+	 * 
+	 * @param value
+	 * @return
+	 */
+	public static Triple<String, String, IKActorsValue> getItem(IKActorsValue value) {
+
+		String id = value.getTag();
+		String label = null;
+		IKActorsValue val = value;
+		if (((KActorsValue) value).getType() == IKActorsValue.Type.LIST) {
+			List<?> list = (List<?>) ((KActorsValue) value).getValue();
+			if (list.size() == 2) {
+				if (id == null) {
+					id = ((KActorsValue) list.get(0)).getValue().toString();
+				} else {
+					label = ((KActorsValue) list.get(0)).getValue().toString();
+				}
+				val = ((KActorsValue) list.get(1));
+			}
+		} else {
+			Map<String, String> map = ((KActorsValue) value).asMap();
+			id = map.get("id");
+			label = map.get("label");
+		}
+
+		return new Triple<>(id, label, val);
 	}
 
 	@Action(id = "combo")
@@ -491,21 +524,10 @@ public class ViewBehavior {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Combo);
 			for (String argument : arguments.getUnnamedKeys()) {
-				Object value = arguments.get(argument);
-				if (value instanceof KActorsValue) {
-					if (((KActorsValue) value).getType() == IKActorsValue.Type.LIST) {
-						List<?> list = (List<?>) ((KActorsValue) value).getValue();
-						if (list.size() >= 2) {
-							this.values.put((list.get(0) instanceof IKActorsValue
-									? ((KActorsValue) list.get(0)).getValue().toString()
-									: list.get(0).toString()), (IKActorsValue) list.get(1));
-						}
-					} else {
-						Map<String, String> map = ((KActorsValue) value).asMap();
-						message.getChoices().add(new Pair<>(map.get("id"), map.get("label")));
-						this.values.put(map.get("id"), (IKActorsValue) value);
-					}
-				}
+				Triple<String, String, IKActorsValue> value = getItem(arguments.get(argument, IKActorsValue.class));
+				message.getChoices().add(new Pair<>(value.getFirst(), value.getSecond()));
+				this.values.put(value.getFirst(), value.getThird());
+
 			}
 			message.getAttributes().putAll(getMetadata(arguments, scope));
 			return message;
@@ -517,7 +539,7 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected Object onViewAction(ViewAction action) {
+		protected Object onViewAction(ViewAction action, Scope scope) {
 			// TODO set selection
 			return action.getStringValue();
 		}
@@ -549,7 +571,7 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected Object onViewAction(ViewAction action) {
+		protected Object onViewAction(ViewAction action, Scope scope) {
 			// TODO info on hover
 			return true;
 		}
@@ -558,6 +580,8 @@ public class ViewBehavior {
 
 	@Action(id = "tree")
 	public static class Tree extends KlabWidgetActionExecutor {
+
+		private Map<String, IKActorsValue> values = new HashMap<>();
 
 		public Tree(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -568,7 +592,8 @@ public class ViewBehavior {
 		public ViewComponent createViewComponent(Scope scope) {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Tree);
-			message.setTree(getTree((KActorsValue) arguments.get(arguments.getUnnamedKeys().iterator().next())));
+			message.setTree(
+					getTree((KActorsValue) arguments.get(arguments.getUnnamedKeys().iterator().next()), values));
 			message.getAttributes().putAll(getMetadata(arguments, scope));
 			if (!message.getAttributes().containsKey("name")) {
 				// tree "name" is the root element if it's a string
@@ -583,9 +608,16 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected Object onViewAction(ViewAction action) {
-			// TODO Auto-generated method stub
-			return null;
+		protected Object onViewAction(ViewAction action, Scope scope) {
+			List<Object> ret = new ArrayList<>();
+			if (action.getListValue() != null) {
+				for (String choice : action.getListValue()) {
+					String[] split = choice.split("\\-");
+					// TODO review the split[1] with Enrico - should be split[0] or maybe not.
+					ret.add(KlabActor.evaluate(values.get(split[1]), scope));
+				}
+			}
+			return ret;
 		}
 
 	}
@@ -625,7 +657,7 @@ public class ViewBehavior {
 		}
 
 		@Override
-		protected Object onViewAction(ViewAction action) {
+		protected Object onViewAction(ViewAction action, Scope scope) {
 			/**
 			 * TODO eventually handle links in the text; for now the Eclipse widget cannot
 			 * use them, and the explorer can implement them directly but should be able to
@@ -635,20 +667,20 @@ public class ViewBehavior {
 		}
 	}
 
-	public static ViewComponent.Tree getTree(KActorsValue tree) {
+	public static ViewComponent.Tree getTree(KActorsValue tree, Map<String, IKActorsValue> values) {
 		@SuppressWarnings("unchecked")
 		Graph<KActorsValue, DefaultEdge> graph = (Graph<KActorsValue, DefaultEdge>) tree.getValue();
 		ViewComponent.Tree ret = new ViewComponent.Tree();
-		int rootId = -1;
-		int id = 0;
-		Map<KActorsValue, Integer> ids = new HashMap<>();
+		String rootId = "";
+		Map<KActorsValue, String> ids = new HashMap<>();
 		for (KActorsValue value : graph.vertexSet()) {
-			ids.put(value, id);
-			if (rootId < 0 && graph.outgoingEdgesOf(value).isEmpty()) {
-				rootId = id;
+			Triple<String, String, IKActorsValue> item = getItem(value);
+			ids.put(value, item.getFirst());
+			if (rootId.isEmpty() && graph.outgoingEdgesOf(value).isEmpty()) {
+				rootId = item.getFirst();
 			}
-			ret.getValues().add(value.asMap());
-			id++;
+			values.put(item.getFirst(), item.getThird());
+			ret.getValues().put(item.getFirst(), Maps.of("id", item.getFirst(), "label", item.getSecond()));
 		}
 		for (DefaultEdge edge : graph.edgeSet()) {
 			ret.getLinks().add(new Pair<>(ids.get(graph.getEdgeSource(edge)), ids.get(graph.getEdgeTarget(edge))));

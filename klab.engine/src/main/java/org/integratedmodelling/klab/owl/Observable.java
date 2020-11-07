@@ -1,7 +1,10 @@
 package org.integratedmodelling.klab.owl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -17,9 +20,9 @@ import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -71,6 +74,7 @@ public class Observable implements IObservable {
 	private boolean active = true;
 	private IConcept temporalInherent;
 	private Resolution resolution;
+	private Set<IConcept> contextualRoles = new HashSet<>();
 
 	/*
 	 * Target predicate is a concrete predicate that may be added to the observable
@@ -173,6 +177,7 @@ public class Observable implements IObservable {
 		this.active = observable.active;
 		this.temporalInherent = observable.temporalInherent;
 		this.resolution = observable.resolution;
+		this.contextualRoles.addAll(observable.contextualRoles);
 	}
 
 	public Observable withoutModel() {
@@ -262,6 +267,11 @@ public class Observable implements IObservable {
 	@Override
 	public Object getValue() {
 		return value;
+	}
+	
+	@Override
+	public Collection<IConcept> getContextualRoles() {
+		return this.contextualRoles;
 	}
 
 	public String getDeclaration() {
@@ -769,6 +779,11 @@ public class Observable implements IObservable {
 
 	public void setResolution(Resolution resolution) {
 		this.resolution = resolution;
+	}
+
+	public IObservable withRole(IConcept role) {
+		this.contextualRoles.add(role);
+		return this;
 	}
 
 }

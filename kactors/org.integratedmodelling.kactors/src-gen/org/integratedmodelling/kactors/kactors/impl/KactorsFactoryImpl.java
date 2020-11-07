@@ -32,6 +32,7 @@ import org.integratedmodelling.kactors.kactors.KactorsFactory;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.KeyValuePair;
 import org.integratedmodelling.kactors.kactors.List;
+import org.integratedmodelling.kactors.kactors.ListElement;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
@@ -138,6 +139,7 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.VALUE: return createValue();
       case KactorsPackage.MATCH: return createMatch();
       case KactorsPackage.LIST: return createList();
+      case KactorsPackage.LIST_ELEMENT: return createListElement();
       case KactorsPackage.MAP: return createMap();
       case KactorsPackage.TREE: return createTree();
       case KactorsPackage.MAP_ENTRY: return createMapEntry();
@@ -476,6 +478,18 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     ListImpl list = new ListImpl();
     return list;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ListElement createListElement()
+  {
+    ListElementImpl listElement = new ListElementImpl();
+    return listElement;
   }
 
   /**

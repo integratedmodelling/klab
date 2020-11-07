@@ -553,4 +553,17 @@ public interface IObservable extends ISemantic, IResolvable {
 	 */
 	Resolution getResolution();
 
+	/**
+	 * Return any role picked up during resolution for this observable. This happens
+	 * when the observable has been resolved from a generic dependency on the role,
+	 * which may have been defined by the session or implied during the resolution
+	 * of an upstream process or direct observable.
+	 * <p>
+	 * The roles returned here are not part of the observable's semantics and only
+	 * apply to it in the specific resolution and contextualization scope.
+	 * 
+	 * @return
+	 */
+	Collection<IConcept> getContextualRoles();
+
 }
