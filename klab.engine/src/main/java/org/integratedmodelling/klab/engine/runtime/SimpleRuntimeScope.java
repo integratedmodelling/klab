@@ -784,4 +784,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		
 	}
 
+	@Override
+	public IRuntimeScope targetForChange() {
+		// TODO Auto-generated method stub
+		return this;
+	}
+
 }

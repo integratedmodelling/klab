@@ -560,8 +560,10 @@ public class Scheduler implements IScheduler {
 	}
 
 	public void schedule(final Actuator actuator, final List<Actuator.Computation> computations,
-			final IRuntimeScope scope) {
+			IRuntimeScope scope) {
 
+		scope = scope.targetForChange();
+		
 		if (this.dataflow == null) {
 			this.dataflow = actuator.getDataflow();
 		}
@@ -974,6 +976,7 @@ public class Scheduler implements IScheduler {
 				}
 			}
 			if (recompute) {
+				System.out.println("RECOMPUTING " + observable);
 				reinitializeObservation(observable.getObservable(), getActuator(observable, dependencies), time,
 						runtimeScope);
 				changed.add(observable);

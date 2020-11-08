@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
-import java.util.Date;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -14,10 +13,8 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;

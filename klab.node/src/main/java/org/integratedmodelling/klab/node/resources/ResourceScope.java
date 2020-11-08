@@ -720,4 +720,10 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 		
 	}
 
+	@Override
+	public IRuntimeScope targetForChange() {
+		// TODO Auto-generated method stub
+		return this;
+	}
+
 }

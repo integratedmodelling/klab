@@ -345,6 +345,11 @@ public class Actuator implements IActuator {
 		 * a mediator.
 		 */
 		IRuntimeScope ctx = setupContext(target, runtimeContext);
+		
+		if (target == null && ctx.getTargetArtifact() != null) {
+			// contextualization redefined the target, which happens in change processes
+			target = ctx.getTargetArtifact();
+		}
 
 		for (Pair<IServiceCall, IContextualizable> service : computationStrategy) {
 
@@ -509,7 +514,7 @@ public class Actuator implements IActuator {
 		}
 
 		if (ret != null) {
-			if (!runtimeContext.getTargetArtifact().equals(ret)) {
+			if (!ctx.getTargetArtifact().equals(ret)) {
 
 				/*
 				 * Computation has changed the artifact: reset into catalog unless it's a proxy
@@ -937,6 +942,10 @@ public class Actuator implements IActuator {
 			}
 		}
 
+		if (this.getType() == IArtifact.Type.PROCESS) {
+			ret = ret.targetForChange();
+		}
+		
 		return ret;
 	}
 

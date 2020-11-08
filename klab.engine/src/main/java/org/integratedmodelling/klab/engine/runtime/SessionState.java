@@ -267,12 +267,15 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			IKimQuantity q = KimQuantity.parse(value.toString());
 			this.scaleOfInterest.setSpaceResolution(q.getValue().doubleValue());
 			this.scaleOfInterest.setSpaceUnit(q.getUnit());
+			// TODO sync normalized res and description
 			break;
 		case SPACE_RESOLUTION_MULTIPLIER_KEY:
 			this.scaleOfInterest.setSpaceResolution(check(value, Number.class).doubleValue());
+			// TODO sync normalized res and description
 			break;
 		case SPACE_RESOLUTION_UNIT_KEY:
 			this.scaleOfInterest.setSpaceUnit(value.toString());
+			// TODO sync normalized res and description
 			break;
 		case LOCK_SPACE_KEY:
 			this.lockSpace.set(check(value, Boolean.class));
@@ -340,6 +343,9 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	private <T> T check(Object value, Class<T> cls) {
 		if (value == null) {
 			return null;
+		}
+		if (value instanceof String) {
+			value = Utils.asPOD((String)value);
 		}
 		if (!cls.isAssignableFrom(value.getClass())) {
 			this.session.getMonitor().warn("internal error: session state assigned value " + value + " where a "

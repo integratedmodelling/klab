@@ -1895,4 +1895,32 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	}
 
+	@Override
+	public IRuntimeScope targetForChange() {
+
+		RuntimeScope ret = this;
+		if (this.artifactType == Type.PROCESS && this.targetSemantics.is(Type.CHANGE)) {
+			if (this.target == null || !(this.target instanceof IState)) {
+				IConcept changing = Observables.INSTANCE.getDescribedType(this.targetSemantics.getType());
+				if (changing != null) {
+					ret = new RuntimeScope(this);
+					Collection<IArtifact> trg = getArtifact(changing);
+					if (!trg.isEmpty()) {
+						ret.target = trg.iterator().next();
+						ret.targetSemantics = ((IObservation) ret.target).getObservable();
+						ret.artifactType = Observables.INSTANCE.getObservableType(ret.targetSemantics, true);
+						ret.targetName = ret.targetSemantics.getName();
+					}
+				}
+			} else if (this.target instanceof IState) {
+				ret = new RuntimeScope(this);
+				ret.targetSemantics = ((IObservation) ret.target).getObservable();
+				ret.artifactType = Observables.INSTANCE.getObservableType(ret.targetSemantics, true);
+				ret.targetName = ret.targetSemantics.getName();
+			}
+		}
+
+		return ret;
+	}
+
 }

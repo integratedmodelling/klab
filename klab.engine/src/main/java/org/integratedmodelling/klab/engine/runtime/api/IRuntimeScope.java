@@ -433,4 +433,13 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	void addView(IKnowledgeView view);
 
+	/**
+	 * Get the scope to contextualize a changing resource from that used to
+	 * contextualize its change. The result will have the target artifact, semantics
+	 * and artifact name set properly according to the context.
+	 * 
+	 * @return
+	 */
+	IRuntimeScope targetForChange();
+
 }

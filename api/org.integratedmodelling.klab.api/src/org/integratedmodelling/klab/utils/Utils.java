@@ -15,10 +15,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 
 public class Utils {
 
-	enum Dio {
-		Can, Bue
-	}
-
 	/**
 	 * Call the valueOf method on an enum and return the value or null if there is
 	 * no such value, without errors.
