@@ -298,7 +298,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 			if (val.getValue() != null) {
 				ret.add(new KActorsValue(val.getValue(), parent));
 			} else if (val.getTag() != null) {
-				this.setTag(val.getTag());
+				this.setTag(val.getTag().substring(1));
 			}
 		}
 		return ret;

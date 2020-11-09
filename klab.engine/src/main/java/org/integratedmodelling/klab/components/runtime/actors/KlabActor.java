@@ -236,6 +236,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		public Map<String, Object> globalSymbols;
 		ViewScope viewScope;
 		ActorRef<KlabMessage> sender;
+		private boolean initializing;
 
 		public Scope(IActorIdentity<KlabMessage> identity, String appId, IRuntimeScope scope) {
 			this.runtimeScope = scope;
@@ -338,7 +339,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
 		public Scope getChild(ConcurrentGroup code) {
 			Scope ret = new Scope(this);
-			ret.viewScope = this.viewScope.getChild(code);
+			if (!initializing) {
+				ret.viewScope = this.viewScope.getChild(code);
+			}
 			return ret;
 		}
 
@@ -349,6 +352,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 				ret.putAll(globalSymbols);
 			}
 			ret.putAll(symbolTable);
+			return ret;
+		}
+
+		public Scope forInit() {
+			Scope ret = new Scope(this);
+			ret.initializing = true;
 			return ret;
 		}
 
@@ -1157,7 +1166,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			 * callback intervenes afterwards. Do not create UI (use raw scope).
 			 */
 			for (IBehavior.Action action : this.behavior.getActions("init", "@init")) {
-				run(action, message.scope);
+				run(action, message.scope.forInit());
 			}
 
 			/*
