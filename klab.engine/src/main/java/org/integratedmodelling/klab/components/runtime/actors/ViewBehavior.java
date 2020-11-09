@@ -599,9 +599,6 @@ public class ViewBehavior {
 				// tree "name" is the root element if it's a string
 				message.setName(message.getTree().getValues().get(message.getTree().getRootId()).get("id"));
 			}
-			
-			System.out.println(JsonUtils.printAsJson(message));
-			
 			return message;
 		}
 

@@ -832,6 +832,12 @@ public class Scheduler implements IScheduler {
 
 		while (this.activeRegistrations > 0) {
 
+			if (monitor.isInterrupted()) {
+				this.registrations.clear();
+				this.finished = true;
+				return;
+			}
+
 			if (this.wheel[cursor] != null && !this.wheel[cursor].isEmpty()) {
 
 				List<Registration> regs = tagExpirations(this.wheel[cursor]);
@@ -845,7 +851,9 @@ public class Scheduler implements IScheduler {
 				for (Registration registration : regs) {
 
 					if (monitor.isInterrupted()) {
-						break;
+						this.registrations.clear();
+						this.finished = true;
+						return;
 					}
 
 					if (registration.rounds == 0) {
@@ -876,6 +884,13 @@ public class Scheduler implements IScheduler {
 									.getImplicitlyChangingObservables()) {
 								computeImplicitDependents(tracked, changed, computed, toRun, registration.scope,
 										registration.actuator.getDataflow().getDependencies(), catalog);
+								
+								if (monitor.isInterrupted()) {
+									this.registrations.clear();
+									this.finished = true;
+									return;
+								}
+
 							}
 
 							changed.clear();
@@ -962,6 +977,11 @@ public class Scheduler implements IScheduler {
 	private void computeImplicitDependents(ObservedConcept observable, Set<ObservedConcept> changed,
 			Set<ObservedConcept> computed, ITime time, IRuntimeScope runtimeScope,
 			Graph<ObservedConcept, DefaultEdge> dependencies, Map<ObservedConcept, IObservation> catalog) {
+
+		if (monitor.isInterrupted()) {
+			return;
+		}
+		
 		if (!computed.contains(observable)) {
 			boolean recompute = false;
 			for (ObservedConcept precursor : getPrecursors(dependencies, observable)) {
@@ -994,6 +1014,8 @@ public class Scheduler implements IScheduler {
 			ILocator transitionScale = resolutionScope.getScale().at(time);
 			IRuntimeScope transitionContext = runtimeScope.locate(transitionScale, monitor);
 
+			long lastUpdate = target.getLastUpdate();
+			
 			/*
 			 * TODO if the target is a group of events, it has been filtered to only contain
 			 * those that occur in this transition. They must now be resolved in the
@@ -1025,11 +1047,15 @@ public class Scheduler implements IScheduler {
 				artifact = actuator.runContextualizer(computation.contextualizer, computation.observable,
 						computation.resource, artifact, transitionContext, (IScale) transitionScale);
 
+				if (monitor.isInterrupted()) {
+					return;
+				}
+
 				((Observation) artifact).finalizeTransition((IScale) transitionScale);
 
 			}
 
-			if (true /* TODO: call if it actually changed */) {
+			if (target.getLastUpdate() > lastUpdate && !monitor.isInterrupted()) {
 
 				((Observation) target).finalizeTransition((IScale) transitionScale);
 
