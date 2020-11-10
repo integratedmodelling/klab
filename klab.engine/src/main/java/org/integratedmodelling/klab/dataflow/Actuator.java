@@ -70,6 +70,7 @@ import org.integratedmodelling.klab.documentation.DocumentationItem;
 import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions;
 import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions.Annotation;
+import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IKeyHolder;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -631,6 +632,8 @@ public class Actuator implements IActuator {
 			return Observation.empty(getObservable(), ctx);
 		}
 
+		long timer = Debug.INSTANCE.startTimer("Contextualizing " + getObservable(), null);
+		
 		ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
 		DataflowState state = new DataflowState();
 		state.setNodeId(ctx.getContextualizationStrategy().getComputationToNodeIdTable().get(resource.getDataflowId()));
@@ -869,6 +872,8 @@ public class Actuator implements IActuator {
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 				IMessage.Type.DataflowStateChanged, state));
 
+		Debug.INSTANCE.endTimer(timer);
+		
 		return ret;
 	}
 

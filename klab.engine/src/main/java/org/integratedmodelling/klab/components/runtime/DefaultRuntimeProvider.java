@@ -157,6 +157,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 				for (IActuator actuator : dataflow.getActuators()) {
 
+					if (monitor.isInterrupted()) {
+						return null;
+					}
+					
 					if (firstActuator == null) {
 						firstActuator = actuator;
 					}
@@ -168,6 +172,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 					int i = 0;
 					for (Actuator active : order) {
+
+						if (monitor.isInterrupted()) {
+							return null;
+						}
 
 						IRuntimeScope ctx = runtimeContext;
 						if (active != firstActuator) {
@@ -187,6 +195,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 										&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
 							((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
 						}
+						
+						if (monitor.isInterrupted()) {
+							return null;
+						}
 
 						ctx.scheduleActions(active);
 
@@ -198,7 +210,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				 * auto-start the scheduler if transitions have been registered.
 				 */
 				if (((Dataflow) dataflow).isPrimary() && runtimeContext.getScheduler() != null
-						&& !runtimeContext.getScheduler().isEmpty()) {
+						&& !runtimeContext.getScheduler().isEmpty() && !monitor.isInterrupted()) {
 					ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity())
 							.createChild("Temporal contextualization");
 					try {

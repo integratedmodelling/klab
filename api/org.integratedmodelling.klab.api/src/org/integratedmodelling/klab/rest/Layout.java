@@ -75,8 +75,15 @@ Oppure un tipo Dialog que puó avere delle implementazioni per alert e confirm
  */
 public class Layout extends ViewComponent {
 
-	public static final String DEFAULT_PANEL_NAME = "defaultpanel";
+//	public static final String DEFAULT_PANEL_NAME = "defaultpanel";
 
+	public static enum Workspace {
+		Main,
+		Window,
+		Stack,
+		Modal
+	}
+	
 	private List<ViewPanel> panels = new ArrayList<>();
 	private List<ViewPanel> leftPanels = new ArrayList<>();
 	private List<ViewPanel> rightPanels = new ArrayList<>();
@@ -88,6 +95,7 @@ public class Layout extends ViewComponent {
 	private String logo;
 	private String projectId;
 	private String styleSpecs = null;
+	private Workspace workspace = Workspace.Main;
 	
 	// this is for layout management in clients, not API
 	private int index;
@@ -201,5 +209,13 @@ public class Layout extends ViewComponent {
 
 	public void setStyleSpecs(String styleSpecs) {
 		this.styleSpecs = styleSpecs;
+	}
+
+	public Workspace getWorkspace() {
+		return workspace;
+	}
+
+	public void setWorkspace(Workspace workspace) {
+		this.workspace = workspace;
 	}
 }

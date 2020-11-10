@@ -146,10 +146,13 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 	 */
 	public KlabTaskException notifyAbort(Throwable e) {
 		getReference().setError(e.getLocalizedMessage());
-		if (!(e instanceof KlabTaskException)) {
+		if (!(e instanceof KlabTaskException || e instanceof InterruptedException)) {
 			monitor.error(e);
 			session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 					IMessage.Type.TaskAborted, getReference()));
+		} else if (e instanceof InterruptedException) {
+			// you never know
+			((Monitor)monitor).interrupt();
 		} else {
 			((Monitor) monitor).setError(e);
 		}
