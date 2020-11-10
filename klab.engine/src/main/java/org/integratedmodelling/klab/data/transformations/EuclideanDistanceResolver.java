@@ -8,7 +8,6 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -19,6 +18,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -59,8 +59,8 @@ public class EuclideanDistanceResolver implements IResolver<IState>, IExpression
 
 		Map<ObservedConcept, IObservation> catalog = ((IRuntimeScope) context).getCatalog();
 
-		Set<IState> targets = extractStates("target", catalog);
-		Set<IState> sources = extractStates("source", catalog);
+		Set<IState> targets = extractStates("target", catalog, context);
+		Set<IState> sources = extractStates("source", catalog, context);
 		Object weight = parameters.get("weights");
 		
 		for (ILocator locator : context.getScale()) {
@@ -98,27 +98,27 @@ public class EuclideanDistanceResolver implements IResolver<IState>, IExpression
 
 	}
 
-	private Set<IState> extractStates(String string, Map<ObservedConcept, IObservation> catalog) {
+	private Set<IState> extractStates(String string, Map<ObservedConcept, IObservation> catalog, IContextualizationScope scope) {
 		Set<IState> ret = new HashSet<>();
 		Object o = parameters.get(string);
 		if (o != null) {
-			ret.addAll(extractState(o, catalog));
+			ret.addAll(extractState(o, catalog, scope));
 		} else if (o instanceof Collection) {
 			for (Object oo : ((Collection<?>) o)) {
-				ret.addAll(extractState(oo, catalog));
+				ret.addAll(extractState(oo, catalog, scope));
 			}
 		}
 		return ret;
 	}
 
-	private Set<IState> extractState(Object o, Map<ObservedConcept, IObservation> catalog) {
+	private Set<IState> extractState(Object o, Map<ObservedConcept, IObservation> catalog, IContextualizationScope scope) {
 		Set<IState> ret = new HashSet<>();
 		if (o instanceof IKimConcept) {
 			IConcept concept = Concepts.INSTANCE.declare((IKimConcept) o);
 			if (concept.is(IKimConcept.Type.ROLE)) {
 				for (ObservedConcept key : catalog.keySet()) {
 					for (IConcept role : key.getObservable().getContextualRoles()) {
-						if (role.is(concept) && catalog.get(key) instanceof IState) {
+						if (((RuntimeScope)scope).cached_is(role, concept) && catalog.get(key) instanceof IState) {
 							ret.add((IState) catalog.get(key));
 						}
 					}

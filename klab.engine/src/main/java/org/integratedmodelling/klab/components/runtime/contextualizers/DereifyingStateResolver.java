@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.data.storage.MergingState;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -67,7 +68,7 @@ public class DereifyingStateResolver implements IResolver<IArtifact>, IProcessor
 			for (IArtifact object : distributing.iterator().next()) {
 				if (object instanceof IDirectObservation) {
 					for (IState state : ((IDirectObservation) object).getStates()) {
-						if (state.getObservable().getType().is(distributedQuality)) {
+						if (((RuntimeScope)context).cached_is(state.getObservable().getType(), distributedQuality)) {
 							this.state.add(state);
 						}
 					}

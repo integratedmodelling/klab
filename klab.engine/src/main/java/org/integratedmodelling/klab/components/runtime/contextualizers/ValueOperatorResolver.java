@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -16,6 +15,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
@@ -60,29 +60,29 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 		return new ValueOperatorResolver(classified, operator, valueOperand, stateOperand);
 	}
 
-	/*
-	 * TODO extract this mechanism into a caching class which also handles AND and
-	 * OR as needed.
-	 */
-	private boolean is(IConcept c1, IConcept c2) {
-
-		if (c1 == null || c2 == null) {
-			return false;
-		}
-
-		String key = c1 + "#" + c2;
-		Boolean ret = null;
-		if (_reasonCache.get() != null)
-			ret = _reasonCache.get().get(key);
-		if (ret == null) {
-			if (_reasonCache.get() == null) {
-				_reasonCache.set(new HashMap<String, Boolean>());
-			}
-			ret = c1.is(c2);
-			_reasonCache.get().put(key, ret);
-		}
-		return ret;
-	}
+//	/*
+//	 * TODO extract this mechanism into a caching class which also handles AND and
+//	 * OR as needed.
+//	 */
+//	private boolean is(IConcept c1, IConcept c2) {
+//
+//		if (c1 == null || c2 == null) {
+//			return false;
+//		}
+//
+//		String key = c1 + "#" + c2;
+//		Boolean ret = null;
+//		if (_reasonCache.get() != null)
+//			ret = _reasonCache.get().get(key);
+//		if (ret == null) {
+//			if (_reasonCache.get() == null) {
+//				_reasonCache.set(new HashMap<String, Boolean>());
+//			}
+//			ret = c1.is(c2);
+//			_reasonCache.get().put(key, ret);
+//		}
+//		return ret;
+//	}
 
 	@Override
 	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
@@ -156,7 +156,7 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 						value = null;
 					}
 				} else if (value instanceof IConcept && other instanceof IConcept) {
-					if (!is((IConcept) value, ((IConcept) other))) {
+					if (!((RuntimeScope)context).cached_is((IConcept) value, ((IConcept) other))) {
 						value = null;
 					}
 				} else if (value != null && other != null) {
@@ -230,7 +230,7 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 				break;
 			case WITHOUT:
 				if (value instanceof IConcept && other instanceof IConcept) {
-					if (is((IConcept)value, (IConcept)other)) {
+					if (((RuntimeScope)context).cached_is((IConcept)value, (IConcept)other)) {
 						value = null;
 					}
 				} else if (other != null && value.equals(other)) {
