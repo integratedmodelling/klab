@@ -348,9 +348,9 @@ public class Scheduler implements IScheduler {
 							}
 						}
 
-						if (artifact instanceof Observation) {
-							((Observation) artifact).finalizeTransition((IScale) transitionScale);
-						}
+//						if (artifact instanceof Observation) {
+//							((Observation) artifact).finalizeTransition((IScale) transitionScale);
+//						}
 
 					}
 
@@ -477,24 +477,6 @@ public class Scheduler implements IScheduler {
 	private List<Registration> terminationRegistrations = new ArrayList<>();
 	private IRuntimeScope runtimeScope;
 
-//	public Scheduler(String contextId, ITime time, IMonitor monitor) {
-//		this.contextId = contextId;
-//		this.session = monitor.getIdentity().getParentIdentity(ISession.class);
-//		Date now = new Date();
-//		this.monitor = monitor;
-//		this.type = time.is(ITime.Type.REAL) ? Type.REAL_TIME : Type.MOCK_TIME;
-//		this.startTime = time.getStart() == null ? 0 : time.getStart().getMilliseconds();
-//		if (time.getEnd() != null) {
-//			this.endTime = time.getEnd().getMilliseconds();
-//		}
-//		if (this.type == Type.REAL_TIME) {
-//			this.waitStrategy = new WaitStrategy.YieldingWait();
-//			if (this.startTime > 0 && now.getTime() > this.startTime) {
-//				this.startTime = 0;
-//			}
-//		}
-//	}
-
 	public Scheduler(IRuntimeScope runtimeScope, String contextId, IResolutionScope scope, IMonitor monitor) {
 		this.contextId = contextId;
 		this.resolutionScope = scope;
@@ -559,11 +541,10 @@ public class Scheduler implements IScheduler {
 		registrations.add(new Registration(targetObservation, action, scale, runtimeScope, endTime));
 	}
 
-	public void schedule(final Actuator actuator, final List<Actuator.Computation> computations,
-			IRuntimeScope scope) {
+	public void schedule(final Actuator actuator, final List<Actuator.Computation> computations, IRuntimeScope scope) {
 
 		scope = scope.targetForChange();
-		
+
 		if (this.dataflow == null) {
 			this.dataflow = actuator.getDataflow();
 		}
@@ -869,9 +850,8 @@ public class Scheduler implements IScheduler {
 							lastAdvanced = registration.time.getEnd().getMilliseconds();
 						}
 
-
 						ITime toRun = registration.time;
-						
+
 						reschedule(registration, false);
 
 						// check for implicitly affected actuators. This must be done when the last
@@ -882,9 +862,13 @@ public class Scheduler implements IScheduler {
 							Set<ObservedConcept> computed = new HashSet<>();
 							for (ObservedConcept tracked : ((ResolutionScope) resolutionScope)
 									.getImplicitlyChangingObservables()) {
-								computeImplicitDependents(tracked, changed, computed, toRun, registration.scope,
-										registration.actuator.getDataflow().getDependencies(), catalog);
-								
+								computeImplicitDependents(tracked, changed, computed, toRun,
+										/*
+										 * FIXME THIS PASSES THE SCOPE FOR THE PRECURSOR: MUST RETUNE SEMANTICS AND
+										 * TARGET NAME TO THE DEPENDENTS BEING CONTEXTUALIZED
+										 */registration.scope, registration.actuator.getDataflow().getDependencies(),
+										catalog);
+
 								if (monitor.isInterrupted()) {
 									this.registrations.clear();
 									this.finished = true;
@@ -981,7 +965,7 @@ public class Scheduler implements IScheduler {
 		if (monitor.isInterrupted()) {
 			return;
 		}
-		
+
 		if (!computed.contains(observable)) {
 			boolean recompute = false;
 			for (ObservedConcept precursor : getPrecursors(dependencies, observable)) {
@@ -1015,7 +999,7 @@ public class Scheduler implements IScheduler {
 			IRuntimeScope transitionContext = runtimeScope.locate(transitionScale, monitor);
 
 			long lastUpdate = target.getLastUpdate();
-			
+
 			/*
 			 * TODO if the target is a group of events, it has been filtered to only contain
 			 * those that occur in this transition. They must now be resolved in the
@@ -1051,7 +1035,7 @@ public class Scheduler implements IScheduler {
 					return;
 				}
 
-				((Observation) artifact).finalizeTransition((IScale) transitionScale);
+//				((Observation) artifact).finalizeTransition((IScale) transitionScale);
 
 			}
 

@@ -388,7 +388,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		long sliceOffset = product(offsets.pos, trivial ? 0 : 1);
 		long timeOffset = trivial ? 0 : offsets.pos[0];
 		boolean noData = Observations.INSTANCE.isNodata(value);
-
+		
 		synchronized (this) {
 
 			if (noData && slices.isEmpty()) {

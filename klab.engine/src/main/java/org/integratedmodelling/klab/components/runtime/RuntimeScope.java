@@ -1421,6 +1421,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public void replaceTarget(IArtifact target) {
 		this.target = target;
+		if ("landcover".equals(targetName) && target instanceof IState && ((IState)target).getObservable().toString().contains("EcosystemType")) {
+			System.out.println("ADDFDFDSWS");
+		}
 		if (target != null) {
 			Map<String, IArtifact> newCatalog = new HashMap<>();
 			newCatalog.putAll(this.catalog);

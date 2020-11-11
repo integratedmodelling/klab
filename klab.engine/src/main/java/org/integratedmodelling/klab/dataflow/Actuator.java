@@ -21,6 +21,7 @@ import org.integratedmodelling.kim.model.ComputableResource;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
@@ -49,6 +50,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -59,6 +61,7 @@ import org.integratedmodelling.klab.api.runtime.IVariable;
 import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.components.runtime.observations.DirectObservation;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservedArtifact;
@@ -346,7 +349,7 @@ public class Actuator implements IActuator {
 		 * a mediator.
 		 */
 		IRuntimeScope ctx = setupContext(target, runtimeContext);
-		
+
 		if (target == null && ctx.getTargetArtifact() != null) {
 			// contextualization redefined the target, which happens in change processes
 			target = ctx.getTargetArtifact();
@@ -632,8 +635,11 @@ public class Actuator implements IActuator {
 			return Observation.empty(getObservable(), ctx);
 		}
 
-		long timer = Debug.INSTANCE.startTimer("Contextualizing " + getObservable(), null);
-		
+		long timer = 0;
+		if (Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_SHOWTIMES_PROPERTY, null) != null) {
+			Debug.INSTANCE.startTimer("Contextualizing " + getObservable(), null);
+		}
+
 		ISession session = ctx.getMonitor().getIdentity().getParentIdentity(ISession.class);
 		DataflowState state = new DataflowState();
 		state.setNodeId(ctx.getContextualizationStrategy().getComputationToNodeIdTable().get(resource.getDataflowId()));
@@ -860,7 +866,7 @@ public class Actuator implements IActuator {
 		// pre-compute before notification to speed up visualization
 		// TODO change to a state callback to finalize a transition after all values are
 		// in
-		if (ret instanceof Observation) {
+		if (ret instanceof Observation && (scale.getTime() == null || scale.getTime().is(ITime.Type.INITIALIZATION))) {
 			/*
 			 * May be null for void contextualizers
 			 */
@@ -872,8 +878,10 @@ public class Actuator implements IActuator {
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 				IMessage.Type.DataflowStateChanged, state));
 
-		Debug.INSTANCE.endTimer(timer);
-		
+		if (Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_SHOWTIMES_PROPERTY, null) != null) {
+			Debug.INSTANCE.endTimer(timer);
+		}
+
 		return ret;
 	}
 
@@ -950,7 +958,7 @@ public class Actuator implements IActuator {
 		if (this.getType() == IArtifact.Type.PROCESS) {
 			ret = ret.targetForChange();
 		}
-		
+
 		return ret;
 	}
 

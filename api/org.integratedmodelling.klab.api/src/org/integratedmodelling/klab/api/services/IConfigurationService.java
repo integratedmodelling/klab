@@ -88,6 +88,11 @@ public interface IConfigurationService {
 	 */
 	public static final String RUNTIME_PROVIDER_COMPONENT = "klab.runtime.provider.class";
 
+	/**
+	 * If defined, the engine will print times for each actuator run 
+	 */
+	public static final String KLAB_SHOWTIMES_PROPERTY = "klab.showtimes";
+
 	
 
 	/**
