@@ -790,4 +790,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		return this;
 	}
 
+	@Override
+	public IRuntimeScope targetToObservation(IObservation target) {
+		// TODO Auto-generated method stub
+		return this;
+	}
+
 }

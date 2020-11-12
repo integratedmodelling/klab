@@ -726,4 +726,10 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 		return this;
 	}
 
+	@Override
+	public IRuntimeScope targetToObservation(IObservation target) {
+		// TODO Auto-generated method stub
+		return this;
+	}
+
 }

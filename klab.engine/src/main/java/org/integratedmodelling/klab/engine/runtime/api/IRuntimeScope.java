@@ -442,4 +442,13 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	IRuntimeScope targetForChange();
 
+	/**
+	 * Recontextualize the scope to a specific target observation. Used to compute
+	 * the inferred dependents of a changed observation after a temporal transition.
+	 * 
+	 * @param target
+	 * @return
+	 */
+	IRuntimeScope targetToObservation(IObservation target);
+
 }

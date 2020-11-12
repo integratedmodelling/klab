@@ -862,12 +862,8 @@ public class Scheduler implements IScheduler {
 							Set<ObservedConcept> computed = new HashSet<>();
 							for (ObservedConcept tracked : ((ResolutionScope) resolutionScope)
 									.getImplicitlyChangingObservables()) {
-								computeImplicitDependents(tracked, changed, computed, toRun,
-										/*
-										 * FIXME THIS PASSES THE SCOPE FOR THE PRECURSOR: MUST RETUNE SEMANTICS AND
-										 * TARGET NAME TO THE DEPENDENTS BEING CONTEXTUALIZED
-										 */registration.scope, registration.actuator.getDataflow().getDependencies(),
-										catalog);
+								computeImplicitDependents(tracked, changed, computed, toRun, registration.scope,
+										registration.actuator.getDataflow().getDependencies(), catalog);
 
 								if (monitor.isInterrupted()) {
 									this.registrations.clear();
@@ -981,6 +977,10 @@ public class Scheduler implements IScheduler {
 			}
 			if (recompute) {
 				System.out.println("RECOMPUTING " + observable);
+				/*
+				 * FIXME THIS PASSES THE SCOPE FOR THE PRECURSOR: MUST RETUNE SEMANTICS, TARGET
+				 * AND TARGET NAME TO THE DEPENDENTS BEING CONTEXTUALIZED
+				 */
 				reinitializeObservation(observable.getObservable(), getActuator(observable, dependencies), time,
 						runtimeScope);
 				changed.add(observable);
@@ -988,6 +988,15 @@ public class Scheduler implements IScheduler {
 		}
 	}
 
+	/**
+	 * ACHTUNG: the passed runtime scope is for the original dependent and must be
+	 * retargeted to the target.
+	 * 
+	 * @param observable
+	 * @param actuator
+	 * @param time
+	 * @param runtimeScope
+	 */
 	private void reinitializeObservation(IObservable observable, Actuator actuator, ITime time,
 			IRuntimeScope runtimeScope) {
 
@@ -996,8 +1005,7 @@ public class Scheduler implements IScheduler {
 
 			IObservation target = (IObservation) targetd.getSecond();
 			ILocator transitionScale = resolutionScope.getScale().at(time);
-			IRuntimeScope transitionContext = runtimeScope.locate(transitionScale, monitor);
-
+			IRuntimeScope transitionContext = runtimeScope.targetToObservation(target).locate(transitionScale, monitor);
 			long lastUpdate = target.getLastUpdate();
 
 			/*

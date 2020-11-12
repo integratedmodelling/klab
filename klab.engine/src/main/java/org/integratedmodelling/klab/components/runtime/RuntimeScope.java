@@ -1421,9 +1421,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public void replaceTarget(IArtifact target) {
 		this.target = target;
-		if ("landcover".equals(targetName) && target instanceof IState && ((IState)target).getObservable().toString().contains("EcosystemType")) {
-			System.out.println("ADDFDFDSWS");
-		}
 		if (target != null) {
 			Map<String, IArtifact> newCatalog = new HashMap<>();
 			newCatalog.putAll(this.catalog);
@@ -1594,7 +1591,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		Set<IArtifact> ret = new HashSet<>();
 		for (IArtifact artifact : catalog.values()) {
-			if (artifact instanceof IObservation && (cached_is(((IObservation) artifact).getObservable().getType(), concept))) {
+			if (artifact instanceof IObservation
+					&& (cached_is(((IObservation) artifact).getObservable().getType(), concept))) {
 				ret.add(artifact);
 			}
 		}
@@ -1944,6 +1942,17 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 
+		return ret;
+	}
+
+	@Override
+	public IRuntimeScope targetToObservation(IObservation target) {
+
+		RuntimeScope ret = this;
+		ret = new RuntimeScope(this);
+		ret.targetSemantics = target.getObservable();
+		ret.artifactType = Observables.INSTANCE.getObservableType(target.getObservable(), true);
+		ret.targetName = ret.targetSemantics.getName();
 		return ret;
 	}
 
