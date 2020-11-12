@@ -176,6 +176,10 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
 	public String getTag() {
 		return this.tag;
 	}
+	
+	protected void setTag(String tag) {
+		this.tag = tag;
+	}
 
 
 }

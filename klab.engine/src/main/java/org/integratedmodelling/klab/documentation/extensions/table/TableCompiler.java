@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IViewModel.Schedule;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -310,14 +311,14 @@ public class TableCompiler {
 				if (this.init) {
 					// TODO check use of root subject. Should use target artifact but it's hard from
 					// this call chain.
-					this.displayLabel = "before "
+					this.displayLabel = "at start of "
 							+ Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
 									scope.getRootSubject().getScale().getTime().getResolution());
 				} else if (this.start) {
 					this.displayLabel = Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
 							scope.getRootSubject().getScale().getTime().getResolution());
 				} else if (this.end) {
-					this.displayLabel = "after "
+					this.displayLabel = "at start of "
 							+ Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(),
 									scope.getRootSubject().getScale().getTime().getResolution());
 				}
@@ -610,7 +611,7 @@ public class TableCompiler {
 						context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
 					}
 				}
-				
+
 				context.addKnownIdentifier("cell", Type.COUNTABLE);
 				context.addKnownIdentifier("row", Type.COUNTABLE);
 				context.addKnownIdentifier("column", Type.COUNTABLE);
@@ -823,6 +824,7 @@ public class TableCompiler {
 	private String label;
 	private Set<String> harvestedTimeSelectors = new HashSet<>();
 	private Schedule schedule;
+	private INamespace namespace;
 
 	/**
 	 * Return the passed dimensions in order of dependency. If circular dependencies
@@ -914,7 +916,8 @@ public class TableCompiler {
 	/*
 	 * ------- Definition and validation --------------------------
 	 */
-	public TableCompiler(String name, Map<?, ?> definition, @Nullable IObservable target, IMonitor monitor) {
+	public TableCompiler(String name, Map<?, ?> definition, @Nullable IObservable target, INamespace namespace,
+			IMonitor monitor) {
 
 		this.name = name;
 		this.monitor = monitor;
@@ -925,6 +928,7 @@ public class TableCompiler {
 		this.activeRows = parseDimension(definition.get("rows"), this.rows, DimensionType.ROW);
 		this.title = definition.containsKey("title") ? definition.get("title").toString() : null;
 		this.label = definition.containsKey("label") ? definition.get("label").toString() : null;
+		this.namespace = namespace;
 
 		/*
 		 * validate that only rows OR columns have an additional target but not both.
@@ -1486,7 +1490,8 @@ public class TableCompiler {
 						TargetType rowTargetType = row.targetType == null ? columnTargetType : row.targetType;
 						ComputationType rowComputationType = row.computationType == null ? column.computationType
 								: row.computationType;
-						ILanguageExpression rowExpression = row.getExpression(scope) == null ? column.getExpression(scope)
+						ILanguageExpression rowExpression = row.getExpression(scope) == null
+								? column.getExpression(scope)
 								: row.getExpression(scope);
 						Set<String> rowSymbols = row.symbols == null ? column.symbols : row.symbols;
 						Set<String> objSymbols = row.referencedObjects.isEmpty() ? column.referencedObjects
@@ -1546,8 +1551,8 @@ public class TableCompiler {
 							phaseMap.put("time", scope.getScale().getTime());
 
 							if (!referencesPhases) {
-								val = evaluate(rowExpression, val, rowSymbols, objSymbols, value, ret,
-										column.index, row.index, column, row, true, phaseMap, catalog, scope);
+								val = evaluate(rowExpression, val, rowSymbols, objSymbols, value, ret, column.index,
+										row.index, column, row, true, phaseMap, catalog, scope);
 							}
 
 							ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(),
@@ -1555,8 +1560,8 @@ public class TableCompiler {
 
 							if (referencesPhases && phase.isLast()) {
 								ret.setValue(
-										evaluate(rowExpression, val, rowSymbols, objSymbols, value, ret,
-												column.index, row.index, column, row, false, phaseMap, catalog, scope),
+										evaluate(rowExpression, val, rowSymbols, objSymbols, value, ret, column.index,
+												row.index, column, row, false, phaseMap, catalog, scope),
 										column.index, row.index);
 							}
 
@@ -1590,7 +1595,8 @@ public class TableCompiler {
 		for (String symbol : rowExpression.getIdentifiers()) {
 			switch (symbol) {
 			case "cell":
-				parameters.put(symbol, new TableApiObjects.TableCell(ret, value.getFirst(), column, row,  value.getSecond()));
+				parameters.put(symbol,
+						new TableApiObjects.TableCell(ret, value.getFirst(), column, row, value.getSecond()));
 				break;
 			case "row":
 				parameters.put(symbol, new TableApiObjects.TableDimension(row, catalog, value.getSecond()));
@@ -1681,11 +1687,11 @@ public class TableCompiler {
 			}
 		}
 
-		ret.put("init", "pre-" + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
+		ret.put("init", "at start of " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
 				scope.getRootSubject().getScale().getTime().getResolution()));
 		ret.put("start", Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
 				scope.getRootSubject().getScale().getTime().getResolution()));
-		ret.put("end", "post-" + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(),
+		ret.put("end", "at start of " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(),
 				scope.getRootSubject().getScale().getTime().getResolution()));
 
 		return ret;
@@ -1788,6 +1794,10 @@ public class TableCompiler {
 
 	public Schedule getSchedule() {
 		return this.schedule;
+	}
+
+	public INamespace getNamespace() {
+		return namespace;
 	}
 
 }

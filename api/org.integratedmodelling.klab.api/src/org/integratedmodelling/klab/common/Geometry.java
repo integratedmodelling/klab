@@ -10,6 +10,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
+import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -102,7 +104,6 @@ public class Geometry implements IGeometry {
 					+ (geometry == null ? "" : geometry.toString()) + (offsets == null ? "" : Arrays.toString(offsets))
 					+ ">";
 		}
-
 	}
 
 	public static List<DimensionTarget> separateTargets(Object... locators) {
@@ -270,6 +271,57 @@ public class Geometry implements IGeometry {
 
 	public static Geometry create(String geometry) {
 		return makeGeometry(geometry, 0);
+	}
+
+	/**
+	 * Create a geometry from a structured bean. Assumes time is there
+	 * 
+	 * @param bean
+	 * @return
+	 */
+	public static Geometry create(ScaleReference scaleRef) {
+
+		String spec = scaleRef.getSpaceUnit() == null ? "S1" : "S2";
+		boolean hasTime = false;
+		
+		if (scaleRef.getTimeGeometry() != null) {
+			spec = scaleRef.getTimeGeometry() + spec;
+			hasTime = true;
+		}
+
+		Geometry ret = Geometry.create(spec).withProjection("EPSG:4326").withBoundingBox(scaleRef.getEast(),
+				scaleRef.getWest(), scaleRef.getSouth(), scaleRef.getNorth());
+
+		if (scaleRef.getSpaceUnit() != null) {
+			ret = ret.withGridResolution(scaleRef.getSpaceResolution() + " " + scaleRef.getSpaceUnit());
+		}
+		
+		if (scaleRef.getShape() != null) {
+			ret = ret.withShape(scaleRef.getShape());
+		}
+
+		if (scaleRef.getTimeGeometry() == null) {
+			if (scaleRef.getStart() > 0) {
+				ret = ret.withTemporalStart(scaleRef.getStart());
+				hasTime = true;
+			}
+			if (scaleRef.getEnd() > 0) {
+				ret = ret.withTemporalEnd(scaleRef.getEnd());
+				hasTime = true;
+			}
+			if (scaleRef.getTimeResolutionDescription() != null) {
+				ret = ret.withTemporalResolution(scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
+				hasTime = true; 
+			}
+		}
+
+		if (scaleRef.getTimeType() != null) {
+			ret = ret.withTimeType(scaleRef.getTimeType());
+		} else if (hasTime) {
+			ret = ret.withTimeType("LOGICAL");
+		}
+		
+		return ret;
 	}
 
 	private static Geometry create(Iterable<Dimension> dims) {
@@ -470,7 +522,7 @@ public class Geometry implements IGeometry {
 		public int getDimensionality() {
 			return dimensionality;
 		}
-		
+
 		public double getCoverage() {
 			return coverage;
 		}
@@ -609,7 +661,7 @@ public class Geometry implements IGeometry {
 		if (this.coverage == null) {
 			this.coverage = 1.0;
 			for (Dimension dim : getDimensions()) {
-				this.coverage *= ((DimensionImpl)dim).coverage;
+				this.coverage *= ((DimensionImpl) dim).coverage;
 			}
 		}
 		return this.coverage;
@@ -693,6 +745,44 @@ public class Geometry implements IGeometry {
 	}
 
 	/**
+	 * Return self if we have space, otherwise create a spatial dimension according
+	 * to parameters and return the merged geometry.
+	 * 
+	 * @return
+	 */
+	public Geometry spatial(int dimensions, boolean regular) {
+		if (getDimension(Type.SPACE) != null) {
+			return this;
+		}
+		DimensionImpl space = new DimensionImpl();
+		space.coverage = 1.0;
+		space.dimensionality = dimensions;
+		space.generic = false;
+		space.regular = regular;
+		space.type = Type.SPACE;
+		return new Geometry(this, space);
+	}
+
+	/**
+	 * Return self if we have space, otherwise create a spatial dimension according
+	 * to parameters and return the merged geometry.
+	 * 
+	 * @return
+	 */
+	public Geometry temporal(boolean regular) {
+		if (getDimension(Type.TIME) != null) {
+			return this;
+		}
+		DimensionImpl space = new DimensionImpl();
+		space.coverage = 1.0;
+		space.dimensionality = 1;
+		space.generic = false;
+		space.regular = regular;
+		space.type = Type.TIME;
+		return new Geometry(this, space);
+	}
+
+	/**
 	 * 
 	 * @param shape
 	 * @return this
@@ -700,7 +790,7 @@ public class Geometry implements IGeometry {
 	public Geometry withSpatialShape(long... shape) {
 		Dimension space = getDimension(Type.SPACE);
 		if (space == null) {
-			throw new IllegalStateException("cannot set spatial parameters on a geometry without space");
+			space = addLogicalSpace(this);
 		}
 		((DimensionImpl) space).shape = shape;
 		return this;
@@ -730,7 +820,7 @@ public class Geometry implements IGeometry {
 	public Geometry withTemporalShape(long n) {
 		Dimension time = getDimension(Type.TIME);
 		if (time == null) {
-			throw new IllegalStateException("cannot set temporal parameters on a geometry without time");
+			time = addLogicalTime(this);
 		}
 		((DimensionImpl) time).shape = new long[] { n };
 		return this;
@@ -744,7 +834,7 @@ public class Geometry implements IGeometry {
 	public Geometry withProjection(String projection) {
 		Dimension space = getDimension(Type.SPACE);
 		if (space == null) {
-			throw new IllegalStateException("cannot set spatial parameters on a geometry without space");
+			space = addLogicalSpace(this);
 		}
 		space.getParameters().put(PARAMETER_SPACE_PROJECTION, projection);
 		return this;
@@ -765,7 +855,17 @@ public class Geometry implements IGeometry {
 		return this;
 	}
 
-	protected Geometry() {
+	Geometry() {
+	}
+
+	private Geometry(Geometry geometry, DimensionImpl dimension) {
+		this.scalar = false;
+		LinkedHashMap<Dimension.Type, DimensionImpl> hash = new LinkedHashMap<>();
+		for (DimensionImpl dim : geometry.dimensions) {
+			hash.put(dim.type, dim);
+		}
+		hash.put(dimension.type, dimension);
+		this.dimensions.addAll(hash.values());
 	}
 
 	/*
@@ -902,8 +1002,9 @@ public class Geometry implements IGeometry {
 //		Geometry g5 = create("S2(200,100){srid=EPSG:3040,bounds=[23.3 221.0 25.2 444.4]}T1(12)");
 
 //		System.out.println(separateTargets(ITime.class, 1, Dimension.Type.SPACE, 2, 3));
-		
-		Geometry gg = create("τ1{tend=725846400000,tscope=1.0,tstart=694224000000,ttype=logical,tunit=year}S2(129599,64799){bbox=[-180.0 180.00000000002876 -90.00000000001438 90.0],proj=EPSG:4326}");
+
+		Geometry gg = create(
+				"τ1{tend=725846400000,tscope=1.0,tstart=694224000000,ttype=logical,tunit=year}S2(129599,64799){bbox=[-180.0 180.00000000002876 -90.00000000001438 90.0],proj=EPSG:4326}");
 		System.out.println(gg.toString());
 //		System.out.println(separateTargets(ITime.class, Dimension.Type.SPACE, 2, 3));
 	}
@@ -1100,9 +1201,9 @@ public class Geometry implements IGeometry {
 
 		Map<Dimension.Type, Dimension> res = new LinkedHashMap<>();
 		for (Dimension dimension : getDimensions()) {
-			res.put(dimension.getType(), ((DimensionImpl)dimension).copy());
+			res.put(dimension.getType(), ((DimensionImpl) dimension).copy());
 		}
-		
+
 //		List<Dimension> result = new ArrayList<>();
 		for (Dimension dimension : geometry.getDimensions()) {
 			if (getDimension(dimension.getType()) == null) {
@@ -1266,6 +1367,64 @@ public class Geometry implements IGeometry {
 			return true;
 		}
 		return false;
+	}
+
+	public Geometry withGridResolution(IKimQuantity value) {
+		Dimension space = getDimension(Type.SPACE);
+		if (space == null) {
+			space = addLogicalSpace(this);
+		}
+		space.getParameters().put(PARAMETER_SPACE_GRIDRESOLUTION, value.toString());
+		return this;
+	}
+
+	public Geometry withTemporalEnd(Object value) {
+		Dimension time = getDimension(Type.TIME);
+		if (time == null) {
+			time = addLogicalTime(this);
+		}
+		time.getParameters().put(PARAMETER_TIME_END, value);
+		return this;
+	}
+	
+	public Geometry withTimeType(String value) {
+		Dimension time = getDimension(Type.TIME);
+		if (time == null) {
+			time = addLogicalTime(this);
+		}
+		time.getParameters().put(PARAMETER_TIME_REPRESENTATION, value);
+		return this;
+	}
+
+	public Geometry withTemporalStart(Object value) {
+		Dimension time = getDimension(Type.TIME);
+		if (time == null) {
+			time = addLogicalTime(this);
+		}
+		time.getParameters().put(PARAMETER_TIME_START, value);
+		return this;
+	}
+
+	private Dimension addLogicalTime(Geometry geometry) {
+		DimensionImpl ret = new DimensionImpl();
+		ret.type = Dimension.Type.TIME;
+		ret.dimensionality = 1;
+		ret.coverage = 1.0;
+		ret.generic = false;
+		ret.regular = true;
+		geometry.dimensions.add(0, ret);
+		return ret;
+	}
+	
+	private Dimension addLogicalSpace(Geometry geometry) {
+		DimensionImpl ret = new DimensionImpl();
+		ret.type = Dimension.Type.SPACE;
+		ret.dimensionality = 2;
+		ret.coverage = 1.0;
+		ret.generic = false;
+		ret.regular = true;
+		geometry.dimensions.add(ret);
+		return ret;
 	}
 
 }

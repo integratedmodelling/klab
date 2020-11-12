@@ -122,6 +122,8 @@ public class Activator extends AbstractUIPlugin {
 					return BehaviorId.STATE;
 				case "session":
 					return BehaviorId.SESSION;
+				case "explorer":
+					return BehaviorId.EXPLORER;
 				}
 				return BehaviorId.IMPORTED;
 			}

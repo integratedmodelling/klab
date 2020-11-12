@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.ILeverIdentity;
@@ -12,6 +13,7 @@ import org.integratedmodelling.klab.api.auth.IPartnerIdentity;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.IClient;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class Lever implements ILeverIdentity{
 	
@@ -21,6 +23,13 @@ public class Lever implements ILeverIdentity{
 	private String authenticatingHub;
 	private List<String> urls = new ArrayList<>();
 	private Date bootTime = new Date();
+	IParameters<String> globalState = Parameters.create();
+
+	@Override
+	public IParameters<String> getState() {
+		return globalState;
+	}
+	
 	public Lever(String name, IPartnerIdentity rootIdentity) {
 		this.name = name;
 		this.parent = rootIdentity;

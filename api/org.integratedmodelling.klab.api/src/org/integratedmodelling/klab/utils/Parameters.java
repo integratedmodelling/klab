@@ -46,7 +46,7 @@ public class Parameters<T> implements IParameters<T> {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> Parameters<T> create(Object... o) {
-		Map<T, Object> inp = new HashMap<T, Object>();
+		Map<T, Object> inp = new LinkedHashMap<T, Object>();
 		if (o != null) {
 			for (int i = 0; i < o.length; i++) {
 				if (o[i] instanceof Map) {
@@ -71,7 +71,7 @@ public class Parameters<T> implements IParameters<T> {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> Parameters<T> createNotNull(Object... o) {
-		Map<T, Object> inp = new HashMap<T, Object>();
+		Map<T, Object> inp = new LinkedHashMap<T, Object>();
 		if (o != null) {
 			for (int i = 0; i < o.length; i++) {
 				if (o[i] instanceof Map) {
@@ -98,7 +98,7 @@ public class Parameters<T> implements IParameters<T> {
 	 */
 	@SuppressWarnings({ "unchecked", "rawtypes" })
 	public static <T> Parameters<T> createSynchronized(Object... o) {
-		Map<T, Object> inp = Collections.synchronizedMap(new HashMap<T, Object>());
+		Map<T, Object> inp = Collections.synchronizedMap(new LinkedHashMap<T, Object>());
 		if (o != null) {
 			for (int i = 0; i < o.length; i++) {
 				if (o[i] instanceof Map) {
@@ -340,6 +340,26 @@ public class Parameters<T> implements IParameters<T> {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public Map<T, Object> getLike(String string) {
+		Map<T, Object> ret = new LinkedHashMap<>();
+		for (T key : keySet()) {
+			if (key.toString().startsWith(string)) {
+				ret.put(key, get(key));
+			}
+		}
+		return ret;
+	}
+
+	@Override
+	public List<Object> getUnnamedArguments() {
+		List<Object> ret = new ArrayList<>();
+		for (T key : getUnnamedKeys()) {
+			ret.add(get(key));
+		}
+		return ret;
 	}
 
 }

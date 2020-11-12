@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
  */
 public class ScaleReference {
 
+	private String name;
 	private double east;
 	private double west;
 	private double north;
@@ -35,10 +36,16 @@ public class ScaleReference {
 	private double timeResolutionMultiplier;
 	private ITime.Resolution.Type timeUnit;
 	private String timeResolutionDescription;
+	private String shape;
+	private String timeType;
+	
+	// used when we start from a geometry and it's quicker to specify this way.
+	private String timeGeometry;
+	private String spaceGeometry;
 
 	private long start;
 	private long end;
-
+	
 	// unused for now, or enabled in developer mode
 	private long step;
 
@@ -49,6 +56,7 @@ public class ScaleReference {
 
 	// FIXME REMOVE
 	private String resolutionDescription;
+	private int year = -1;
 
 	public double getEast() {
 		return east;
@@ -104,6 +112,14 @@ public class ScaleReference {
 
 	public void setEnd(long end) {
 		this.end = end;
+	}
+
+	public void setYear(int year) {
+		this.year = year;
+	}
+
+	public int getYear() {
+		return this.year;
 	}
 
 	public long getStep() {
@@ -198,6 +214,46 @@ public class ScaleReference {
 
 	public void setTimeResolutionDescription(String timeResolutionDescription) {
 		this.timeResolutionDescription = timeResolutionDescription;
+	}
+
+	public String getShape() {
+		return shape;
+	}
+
+	public void setShape(String shape) {
+		this.shape = shape;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getTimeGeometry() {
+		return timeGeometry;
+	}
+
+	public void setTimeGeometry(String timeGeometry) {
+		this.timeGeometry = timeGeometry;
+	}
+
+	public String getSpaceGeometry() {
+		return spaceGeometry;
+	}
+
+	public void setSpaceGeometry(String spaceGeometry) {
+		this.spaceGeometry = spaceGeometry;
+	}
+
+	public String getTimeType() {
+		return timeType;
+	}
+
+	public void setTimeType(String timeType) {
+		this.timeType = timeType;
 	}
 
 }

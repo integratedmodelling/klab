@@ -184,7 +184,7 @@ public class Scheduler implements IScheduler {
 					 * RUN THE ACTION
 					 */
 					String appId = null /* TODO! */;
-					recipient.getActor().tell(new KActorsMessage(sender, "self", scheduled.getId(), null, null,
+					recipient.getActor().tell(new KActorsMessage(sender, scheduled.getId(), null, null,
 							new KlabActor.Scope(observation, appId, transitionContext), appId));
 
 					recipient.finalizeTransition((IScale) transitionScale);
@@ -348,9 +348,9 @@ public class Scheduler implements IScheduler {
 							}
 						}
 
-						if (artifact instanceof Observation) {
-							((Observation) artifact).finalizeTransition((IScale) transitionScale);
-						}
+//						if (artifact instanceof Observation) {
+//							((Observation) artifact).finalizeTransition((IScale) transitionScale);
+//						}
 
 					}
 
@@ -475,28 +475,12 @@ public class Scheduler implements IScheduler {
 	// registrations scheduled to be run after the last transition. So far only
 	// views can do this.
 	private List<Registration> terminationRegistrations = new ArrayList<>();
+	private IRuntimeScope runtimeScope;
 
-	public Scheduler(String contextId, ITime time, IMonitor monitor) {
-		this.contextId = contextId;
-		this.session = monitor.getIdentity().getParentIdentity(ISession.class);
-		Date now = new Date();
-		this.monitor = monitor;
-		this.type = time.is(ITime.Type.REAL) ? Type.REAL_TIME : Type.MOCK_TIME;
-		this.startTime = time.getStart() == null ? 0 : time.getStart().getMilliseconds();
-		if (time.getEnd() != null) {
-			this.endTime = time.getEnd().getMilliseconds();
-		}
-		if (this.type == Type.REAL_TIME) {
-			this.waitStrategy = new WaitStrategy.YieldingWait();
-			if (this.startTime > 0 && now.getTime() > this.startTime) {
-				this.startTime = 0;
-			}
-		}
-	}
-
-	public Scheduler(String contextId, IResolutionScope scope, IMonitor monitor) {
+	public Scheduler(IRuntimeScope runtimeScope, String contextId, IResolutionScope scope, IMonitor monitor) {
 		this.contextId = contextId;
 		this.resolutionScope = scope;
+		this.runtimeScope = runtimeScope;
 		this.session = monitor.getIdentity().getParentIdentity(ISession.class);
 		Date now = new Date();
 		this.monitor = monitor;
@@ -557,8 +541,9 @@ public class Scheduler implements IScheduler {
 		registrations.add(new Registration(targetObservation, action, scale, runtimeScope, endTime));
 	}
 
-	public void schedule(final Actuator actuator, final List<Actuator.Computation> computations,
-			final IRuntimeScope scope) {
+	public void schedule(final Actuator actuator, final List<Actuator.Computation> computations, IRuntimeScope scope) {
+
+		scope = scope.targetForChange();
 
 		if (this.dataflow == null) {
 			this.dataflow = actuator.getDataflow();
@@ -658,7 +643,7 @@ public class Scheduler implements IScheduler {
 		if (!periods.isEmpty()) {
 			this.resolution = NumberUtils.gcd(NumberUtils.longArrayFromCollection(periods));
 		}
-		
+
 		/*
 		 * wheel size should accommodate the longest interval @the chosen resolution,
 		 * but we cap it at MAX_HASH_WHEEL_SIZE. Keep it in powers of 2 for predictable
@@ -824,7 +809,15 @@ public class Scheduler implements IScheduler {
 		long time = startTime;
 		long lastAdvanced = startTime;
 
+		Map<ObservedConcept, IObservation> catalog = this.runtimeScope.getCatalog();
+
 		while (this.activeRegistrations > 0) {
+
+			if (monitor.isInterrupted()) {
+				this.registrations.clear();
+				this.finished = true;
+				return;
+			}
 
 			if (this.wheel[cursor] != null && !this.wheel[cursor].isEmpty()) {
 
@@ -839,7 +832,9 @@ public class Scheduler implements IScheduler {
 				for (Registration registration : regs) {
 
 					if (monitor.isInterrupted()) {
-						break;
+						this.registrations.clear();
+						this.finished = true;
+						return;
 					}
 
 					if (registration.rounds == 0) {
@@ -855,20 +850,27 @@ public class Scheduler implements IScheduler {
 							lastAdvanced = registration.time.getEnd().getMilliseconds();
 						}
 
-						ITime previousTime = reschedule(registration, false);
+						ITime toRun = registration.time;
+
+						reschedule(registration, false);
 
 						// check for implicitly affected actuators. This must be done when the last
 						// registration with each particular delay has finished.
-						if (previousTime != null && registration.endsPeriod && changed.size() > 0
+						if (toRun != null && registration.endsPeriod && changed.size() > 0
 								&& this.resolutionScope != null) {
-
-//							Graphs.show(registration.actuator.getDataflow().getDependencies(), "Dio cane");
 
 							Set<ObservedConcept> computed = new HashSet<>();
 							for (ObservedConcept tracked : ((ResolutionScope) resolutionScope)
 									.getImplicitlyChangingObservables()) {
-								computeImplicitDependents(tracked, changed, computed, previousTime, registration.scope,
-										registration.actuator.getDataflow().getDependencies());
+								computeImplicitDependents(tracked, changed, computed, toRun, registration.scope,
+										registration.actuator.getDataflow().getDependencies(), catalog);
+
+								if (monitor.isInterrupted()) {
+									this.registrations.clear();
+									this.finished = true;
+									return;
+								}
+
 							}
 
 							changed.clear();
@@ -908,7 +910,7 @@ public class Scheduler implements IScheduler {
 		for (Registration registration : terminationRegistrations) {
 			registration.run(monitor);
 		}
-		
+
 		// don't do this again if we make further observations later
 		this.registrations.clear();
 
@@ -954,24 +956,47 @@ public class Scheduler implements IScheduler {
 	 */
 	private void computeImplicitDependents(ObservedConcept observable, Set<ObservedConcept> changed,
 			Set<ObservedConcept> computed, ITime time, IRuntimeScope runtimeScope,
-			Graph<ObservedConcept, DefaultEdge> dependencies) {
+			Graph<ObservedConcept, DefaultEdge> dependencies, Map<ObservedConcept, IObservation> catalog) {
+
+		if (monitor.isInterrupted()) {
+			return;
+		}
+
 		if (!computed.contains(observable)) {
 			boolean recompute = false;
 			for (ObservedConcept precursor : getPrecursors(dependencies, observable)) {
-				computeImplicitDependents(precursor, changed, computed, time, runtimeScope, dependencies);
+				computed.add(observable);
+				computeImplicitDependents(precursor, changed, computed, time, runtimeScope, dependencies, catalog);
 				if (changed.contains(precursor) && !changed.contains(observable)) {
-					recompute = true;
+					IObservation pre = catalog.get(precursor);
+					IObservation post = catalog.get(observable);
+					if (pre != null && post != null && pre.getLastUpdate() > post.getLastUpdate()) {
+						recompute = true;
+					}
 				}
 			}
 			if (recompute) {
+				System.out.println("RECOMPUTING " + observable);
+				/*
+				 * FIXME THIS PASSES THE SCOPE FOR THE PRECURSOR: MUST RETUNE SEMANTICS, TARGET
+				 * AND TARGET NAME TO THE DEPENDENTS BEING CONTEXTUALIZED
+				 */
 				reinitializeObservation(observable.getObservable(), getActuator(observable, dependencies), time,
 						runtimeScope);
-				computed.add(observable);
 				changed.add(observable);
 			}
 		}
 	}
 
+	/**
+	 * ACHTUNG: the passed runtime scope is for the original dependent and must be
+	 * retargeted to the target.
+	 * 
+	 * @param observable
+	 * @param actuator
+	 * @param time
+	 * @param runtimeScope
+	 */
 	private void reinitializeObservation(IObservable observable, Actuator actuator, ITime time,
 			IRuntimeScope runtimeScope) {
 
@@ -980,7 +1005,8 @@ public class Scheduler implements IScheduler {
 
 			IObservation target = (IObservation) targetd.getSecond();
 			ILocator transitionScale = resolutionScope.getScale().at(time);
-			IRuntimeScope transitionContext = runtimeScope.locate(transitionScale, monitor);
+			IRuntimeScope transitionContext = runtimeScope.targetToObservation(target).locate(transitionScale, monitor);
+			long lastUpdate = target.getLastUpdate();
 
 			/*
 			 * TODO if the target is a group of events, it has been filtered to only contain
@@ -1013,11 +1039,15 @@ public class Scheduler implements IScheduler {
 				artifact = actuator.runContextualizer(computation.contextualizer, computation.observable,
 						computation.resource, artifact, transitionContext, (IScale) transitionScale);
 
-				((Observation) artifact).finalizeTransition((IScale) transitionScale);
+				if (monitor.isInterrupted()) {
+					return;
+				}
+
+//				((Observation) artifact).finalizeTransition((IScale) transitionScale);
 
 			}
 
-			if (true /* TODO: call if it actually changed */) {
+			if (target.getLastUpdate() > lastUpdate && !monitor.isInterrupted()) {
 
 				((Observation) target).finalizeTransition((IScale) transitionScale);
 

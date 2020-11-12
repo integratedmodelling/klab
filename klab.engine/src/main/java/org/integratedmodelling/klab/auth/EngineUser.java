@@ -1,11 +1,6 @@
 package org.integratedmodelling.klab.auth;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
@@ -33,20 +28,20 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 	private ActorRef<KlabMessage> actor;
 	private IParameters<String> globalState = Parameters.createSynchronized();
 	private View view;
-	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
+//	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
 
-	@Override
-	public <V> V getState(String key, Class<V> cls) {
-		return this.globalState.get(key, cls);
-	}
-
-	@Override
-	public void setState(String key, Object value) {
-		this.globalState.put(key, value);
-		for (BiConsumer<String, Object> listener : stateChangeListeners.values()) {
-			listener.accept(key, value);
-		}
-	}
+//	@Override
+//	public <V> V getState(String key, Class<V> cls) {
+//		return this.globalState.get(key, cls);
+//	}
+//
+//	@Override
+//	public void setState(String key, Object value) {
+//		this.globalState.put(key, value);
+//		for (BiConsumer<String, Object> listener : stateChangeListeners.values()) {
+//			listener.accept(key, value);
+//		}
+//	}
 
 	public EngineUser(String username, IEngineIdentity parent) {
 		super(username);
@@ -191,14 +186,19 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 		return null;
 	}
 
-	@Override
-	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
-		this.stateChangeListeners.put(name, listener);
-	}
+//	@Override
+//	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
+//		this.stateChangeListeners.put(name, listener);
+//	}
+//
+//	@Override
+//	public void removeStateChangeListener(String name) {
+//		this.stateChangeListeners.remove(name);
+//	}
 
 	@Override
-	public void removeStateChangeListener(String name) {
-		this.stateChangeListeners.remove(name);
+	public IParameters<String> getState() {
+		return globalState;
 	}
 
 }

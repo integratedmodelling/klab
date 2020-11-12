@@ -1,11 +1,13 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.TreeMap;
+import java.util.function.Consumer;
 
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.integratedmodelling.klab.Observations;
@@ -45,6 +47,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	private long maxTimeOffset;
 	private long sliceSize;
 	private long slicesInBackend = 0;
+	protected List<Consumer<ILocator>> listeners = Collections.synchronizedList(new ArrayList<>());
 
 	// FIXME this is only for debugging, remove when done.
 	private IGeometry geometry;
@@ -322,8 +325,9 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			 */
 			NavigableMap<Long, Slice> aggregatable = slices.subMap(timeStart, false, timeEnd, true);
 			if (aggregatable.isEmpty()) {
+				Slice theSlice = slices.get(timeStart);
 				// use state before start if existing, otherwise result is NaN
-				return slices.get(timeStart) == null ? null : slices.get(timeStart).getAt(sliceOffset);
+				return theSlice == null ? (slice == null ? null : slice.getAt(sliceOffset)) : theSlice.getAt(sliceOffset);
 			}
 			return aggregate(aggregatable, sliceOffset);
 		}
@@ -384,7 +388,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		long sliceOffset = product(offsets.pos, trivial ? 0 : 1);
 		long timeOffset = trivial ? 0 : offsets.pos[0];
 		boolean noData = Observations.INSTANCE.isNodata(value);
-
+		
 		synchronized (this) {
 
 			if (noData && slices.isEmpty()) {
@@ -415,6 +419,9 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			 */
 			if (slice == null || slice.timestep != timeOffset) {
 				slice = addSlice(timeOffset, timeStart, timeEnd, slice);
+				for (Consumer<ILocator> listener : this.listeners) {
+					listener.accept(locator);
+				}
 			}
 
 			slice.setAt(sliceOffset, value);
@@ -464,6 +471,11 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	@Override
 	public IGeometry getGeometry() {
 		return geometry;
+	}
+
+	@Override
+	public void addContextualizationListener(Consumer<ILocator> listener) {
+		this.listeners.add(listener);
 	}
 
 }

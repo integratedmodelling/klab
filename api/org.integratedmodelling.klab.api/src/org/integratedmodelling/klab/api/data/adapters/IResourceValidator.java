@@ -31,35 +31,35 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
  */
 public interface IResourceValidator {
 
-    /**
-     * Describe all additional operations that a validator can perform on
-     * a resource. Returned by getAllowedOperations.
-     * 
-     * @author Ferd
-     *
-     */
-    interface Operation {
-        /**
-         * ID of operation. Will be seen by users.
-         * 
-         * @return
-         */
-        String getName();
-        
-        /**
-         * Description. Should clarify all possible consequences and wait times.
-         * 
-         * @return
-         */
-        String getDescription();
-        
-        /**
-         * True if we should confirm before attempting the operation.
-         * 
-         * @return
-         */
-        boolean isShouldConfirm();
-    }
+	/**
+	 * Describe all additional operations that a validator can perform on a
+	 * resource. Returned by getAllowedOperations.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	interface Operation {
+		/**
+		 * ID of operation. Will be seen by users.
+		 * 
+		 * @return
+		 */
+		String getName();
+
+		/**
+		 * Description. Should clarify all possible consequences and wait times.
+		 * 
+		 * @return
+		 */
+		String getDescription();
+
+		/**
+		 * True if we should confirm before attempting the operation.
+		 * 
+		 * @return
+		 */
+		boolean isShouldConfirm();
+	}
 
 	/**
 	 * Validate the resource pointed to by the URL and tagged with the passed
@@ -67,38 +67,35 @@ public interface IResourceValidator {
 	 * produce the resource to be published or to report any errors resulting from
 	 * unsuccessful validation.
 	 *
-	 * @param url
-	 *            the URL to the raw resource (normally a file resource). In some
-	 *            situations, e.g. when wrapping service calls that are not directly
-	 *            described by a single URL, this may be null and all the
-	 *            information may be given as userData. May be null.
-	 * @param userData
-	 *            a {@link org.integratedmodelling.kim.api.IParameters} object
-	 *            describing any user metadata to accompany the raw resource URL. In
-	 *            some situations this may be empty, in others it may be the entire
-	 *            description. Not null.
-	 * @param monitor
-	 *            for notifications and identity retrieval
+	 * @param url      the URL to the raw resource (normally a file resource). In
+	 *                 some situations, e.g. when wrapping service calls that are
+	 *                 not directly described by a single URL, this may be null and
+	 *                 all the information may be given as userData. May be null.
+	 * @param userData a {@link org.integratedmodelling.kim.api.IParameters} object
+	 *                 describing any user metadata to accompany the raw resource
+	 *                 URL. In some situations this may be empty, in others it may
+	 *                 be the entire description. Not null.
+	 * @param monitor  for notifications and identity retrieval
 	 * @return a builder for the resource, containing any validation errors. Never
 	 *         null.
 	 */
 	Builder validate(URL url, IParameters<String> userData, IMonitor monitor);
 
-	
 	/**
-	 * Return all the operations allowed on this resource. This must not include
-	 * any operations already performed whose results are irreversible.
+	 * Return all the operations allowed on this resource, or all operations if the
+	 * resource is null. If a resource is passed, the result must not include any
+	 * operations already performed whose results are irreversible.
 	 * 
-	 * @param resource
+	 * @param resource. Must accept null to retrieve a list of all operations
 	 * @return all allowed operations
 	 */
 	List<Operation> getAllowedOperations(IResource resource);
-	
+
 	/**
-	 * Perform the passed operation on a resource, returning the modifier
-	 * resource when finished. May run long so should be called in a 
-	 * separate thread. Anything including errors, success etc should be
-	 * reported through the monitor.
+	 * Perform the passed operation on a resource, returning the modifier resource
+	 * when finished. May run long so should be called in a separate thread.
+	 * Anything including errors, success etc should be reported through the
+	 * monitor.
 	 * 
 	 * @param resource
 	 * @param operationName
@@ -106,22 +103,21 @@ public interface IResourceValidator {
 	 * @return
 	 */
 	IResource performOperation(IResource resource, String operationName, IMonitor monitor);
-	
+
 	/**
 	 * Check if the passed file and/or parameters can be validated by this
 	 * validator. Should be a quick check.
 	 * 
-	 * @param resource
-	 *            a file resource. Can be null.
-	 * @param parameters
-	 *            parameters associated with a creation request. Can be empty.
+	 * @param resource   a file resource. Can be null.
+	 * @param parameters parameters associated with a creation request. Can be
+	 *                   empty.
 	 * @return true if input can be validated
 	 */
 	boolean canHandle(File resource, IParameters<String> parameters);
 
 	/**
-	 * Return all the files that make up a resource identified by the main file imported, including
-	 * the main file itself. Returned files must exist.
+	 * Return all the files that make up a resource identified by the main file
+	 * imported, including the main file itself. Returned files must exist.
 	 * 
 	 * @param file
 	 * @return all relevant files for the resource.

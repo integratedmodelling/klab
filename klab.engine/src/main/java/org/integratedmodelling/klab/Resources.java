@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+import org.integratedmodelling.klab.api.data.adapters.IResourceValidator.Operation;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -94,6 +95,7 @@ import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
+import org.integratedmodelling.klab.rest.ResourceAdapterReference.OperationReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceDataRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
@@ -1284,6 +1286,16 @@ public enum Resources implements IResourceService {
 		return publicResourceCatalog;
 	}
 
+	public IResourceCatalog getCatalog(IResource resource) {
+		/*
+		 * TODO/CHECK this must also work on nodes
+		 */
+		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+			return getLocalResourceCatalog();
+		}
+		throw new KlabResourceAccessException("unimplemented alignment of public and local resource catalogs");
+	}
+	
 	// @Override
 	public Builder createResourceBuilder() {
 		return new ResourceBuilder();
@@ -1539,6 +1551,15 @@ public enum Resources implements IResourceService {
 			ref.getExportCapabilities().putAll(Resources.INSTANCE.getResourceAdapter(adapter).getImporter()
 					.getExportCapabilities((IResource) null));
 			ref.setMultipleResources(resourceAdapters.get(adapter).getImporter().acceptsMultiple());
+			
+			for (Operation operation : resourceAdapters.get(adapter).getValidator().getAllowedOperations(null)) {
+				OperationReference op = new OperationReference();
+				op.setDescription(operation.getDescription());
+				op.setName(operation.getName());
+				op.setRequiresConfirmation(operation.isShouldConfirm());
+				ref.getOperations().add(op);
+			}
+			
 			ret.add(ref);
 		}
 		for (String adapter : urnAdapters.keySet()) {

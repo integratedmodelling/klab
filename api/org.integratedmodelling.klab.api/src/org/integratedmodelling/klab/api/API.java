@@ -176,7 +176,7 @@ public interface API {
 		 * <br/>
 		 * <b>Authentication:</b> open
 		 */
-		
+
 		public static final String API_BASE = "/api/v2";
 		/**
 		 * Base URL path for node on the hub.
@@ -196,7 +196,7 @@ public interface API {
 		public static final String LEVER_BASE = API_BASE + "/lever";
 		/**
 		 * Base URL path for engine resources on the hub.
-		 */		
+		 */
 		public static final String ENGINE_BASE = API_BASE + "/engines";
 		/**
 		 * Base URL path for tasks resources on the hub.
@@ -204,15 +204,15 @@ public interface API {
 		public static final String TASK_BASE = API_BASE + "/tasks";
 		/**
 		 * Base URL path for email resources and services on the hub.
-		 */		
+		 */
 		public static final String EMAIL_BASE = API_BASE + "/emails";
 		/**
 		 * Base URL path for authenticating resources.
-		 */		
+		 */
 		public static final String AUTH_BASE = "/auth-cert";
-		
+
 		public static final String AUTHENTICATE_ENGINE = ENGINE_BASE + AUTH_BASE;
-		
+
 		public static final String LEGACY_AUTHENTICATE_ENGINE = "/api/auth-cert/engine";
 		/**
 		 * Called by nodes on hubs when authenticating with them. Parameters like the
@@ -239,11 +239,11 @@ public interface API {
 		/**
 		 * Base URL path for user resources on the hub.
 		 */
-		public static final String USER_BASE_ID = USER_BASE+ "/{id}";
+		public static final String USER_BASE_ID = USER_BASE + "/{id}";
 		/**
 		 * Base URL path for user resources on the hub.
 		 */
-		public static final String GROUPS_BASE_ID = GROUPS_BASE+ "/{id}";
+		public static final String GROUPS_BASE_ID = GROUPS_BASE + "/{id}";
 		/**
 		 * Base URL path for lever resources on the hub.
 		 */
@@ -258,11 +258,11 @@ public interface API {
 		public static final String EMAIL_BASE_ID = EMAIL_BASE + "/{id}";
 		/**
 		 * Base URL path application logs.
-		 */	
+		 */
 		public static final String LOGS = API_BASE + "/system/logs";
 		/**
 		 * Base URL path for deleted users.
-		 */			
+		 */
 		public static final String DELETED_USERS = USER_BASE + "/deleted-users";
 		/**
 		 * URL path for deleted users by id.
@@ -272,15 +272,14 @@ public interface API {
 		 * URL path for current user profile, based on Authentication Token parsing.
 		 */
 		public static final String CURRENT_PROFILE = USER_BASE + "/me";
-		
-		
+
 		public static interface PARAMETERS {
 			/**
 			 * URL PARAMETER for user activation tokens.
 			 */
 			public static final String USER_ACTIVATION = "activate";
 			/**
-			 * URL PARAMETER for user requesting groups.  Should be deprecated tokens.
+			 * URL PARAMETER for user requesting groups. Should be deprecated tokens.
 			 */
 			@Deprecated
 			public static final String USER_GROUPS = "groups";
@@ -322,30 +321,32 @@ public interface API {
 			public static final String ACCEPT = "accept";
 			/**
 			 * URL PARAMETER for a create group task
-			 */			
+			 */
 			public static final String CREATE_GROUP = "create-group";
 			/**
 			 * URL PARAMETER for template in the email service
-			 */			
+			 */
 			public static final String TEMPLATES = "templates";
 			/**
-			 * URL PARAMETER for user group entry service, request a particular group by name
-			 */	
+			 * URL PARAMETER for user group entry service, request a particular group by
+			 * name
+			 */
 			public static final String REQUEST_GROUPS = "request-groups";
 			/**
 			 * URL PARAMETER for user group entry service, set a particular group by name
-			 */	
+			 */
 			public static final String SET_GROUPS = "set-groups";
 			/**
 			 * URL PARAMETER for user group entry service, remove a particular group by name
-			 */	
+			 */
 			public static final String REMOVE_GROUPS = "remove-groups";
 			/**
-			 * URL PARAMETER for user group entry service, find users with a particular group
-			 */				
+			 * URL PARAMETER for user group entry service, find users with a particular
+			 * group
+			 */
 			public static final String HAS_GROUP = "has-group";
 		}
-		
+
 		public static interface INDEXING {
 
 			/**
@@ -445,9 +446,12 @@ public interface API {
 			public static final String PUBLISH_URN = "/resource/publish/" + P_URN;
 
 			/**
-			 * Modify resource data. Triggers revalidation.
+			 * Modify resource data. Triggers revalidation. May be sent as PUT with the
+			 * entire data for the new resource as payload, or as POST with a
+			 * ResourceOperationRequest, in which case it returns a ticket. Both could be
+			 * PATCH.
 			 * 
-			 * PATCH
+			 * PUT, POST
 			 */
 			public static final String UPDATE_URN = "/resource/update/" + P_URN;
 
@@ -550,18 +554,18 @@ public interface API {
 		public static final String CAPABILITIES = "/public/authority/" + P_AUTHORITY + "/capabilities";
 
 		/**
-         * Resolve the identity and return all related data or errors.
-         * 
-         * GET JSON
+		 * Resolve the identity and return all related data or errors.
+		 * 
+		 * GET JSON
 		 */
 		public static final String RESOLVE = "/public/authority/" + P_AUTHORITY + "/resolve/" + P_IDENTIFIER;
 
 		/**
-		 * Setup and/or reset caches for an authority. This is the only non-public endpoint.
+		 * Setup and/or reset caches for an authority. This is the only non-public
+		 * endpoint.
 		 */
 		public static final String SETUP = "/authority/" + P_AUTHORITY + "/setup";
 
-		
 		/**
 		 * The Constant QUERY.
 		 *

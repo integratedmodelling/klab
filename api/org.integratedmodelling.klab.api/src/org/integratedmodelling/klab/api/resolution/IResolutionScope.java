@@ -16,7 +16,9 @@
 package org.integratedmodelling.klab.api.resolution;
 
 import java.util.Collection;
+import java.util.Map;
 
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -195,5 +197,18 @@ public interface IResolutionScope {
 	 * @return
 	 */
 	IObservable getResolvedObservable(IObservable observable, Mode mode);
+
+	/**
+	 * Return all known role settings in the current resolution context. Roles may
+	 * be set explicitly by users or applications in the session state, in addition
+	 * to being implied by specific observables being resolved (processes or context
+	 * observations). At any moment during the resolution, dependencies for
+	 * observables tagged with roles will be resolved against the current roles.
+	 * 
+	 * @return a collection of pairs where the first element is the role and the
+	 *         second a collection of all the observables to which the role has been
+	 *         assigned.
+	 */
+	Map<IConcept, Collection<IConcept>> getRoles();
 
 }

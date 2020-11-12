@@ -56,6 +56,7 @@ import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.data.classification.Discretization;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
@@ -78,7 +79,6 @@ import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
 import org.integratedmodelling.klab.rest.ScaleReference;
-import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
@@ -89,7 +89,7 @@ import org.integratedmodelling.klab.utils.Utils;
 public enum Observations implements IObservationService {
 
 	INSTANCE;
-	
+
 	public static final String PRESENT_LABEL = "Present";
 	public static final String NOT_PRESENT_LABEL = "Not present";
 
@@ -170,12 +170,12 @@ public enum Observations implements IObservationService {
 
 		ret.setStateTimestamp(((Observation) state).getTimestamp());
 		double min, max;
-		
+
 		List<Integer> dataKey = state.getDataKey() != null
 				? state.getDataKey().getAllValues().stream().map(dk -> dk.getFirst()).collect(Collectors.toList())
 				: null;
 		boolean isBoolean = state.getType() == IArtifact.Type.BOOLEAN;
-		
+
 		if (dataKey != null || isBoolean) {
 			min = Double.MIN_VALUE;
 			max = Double.MAX_VALUE;
@@ -201,7 +201,8 @@ public enum Observations implements IObservationService {
 			}
 			min = statistics.getMin();
 			max = statistics.getMax();
-			ret.setDegenerate(ndata == 0 || !Double.isFinite(statistics.getMax()) || !Double.isFinite(statistics.getMax()));
+			ret.setDegenerate(
+					ndata == 0 || !Double.isFinite(statistics.getMax()) || !Double.isFinite(statistics.getMax()));
 			ret.setNodataPercentage((double) nndat / (double) tdata);
 			ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
 			ret.setValueCount(ndata + nndat);
@@ -210,13 +211,12 @@ public enum Observations implements IObservationService {
 			ret.setStandardDeviation(statistics.getStandardDeviation());
 			ret.setSingleValued(statistics.getMax() == statistics.getMin());
 			ret.setSum(statistics.getSum());
-		} 
+		}
 		ret.setRange(Arrays.asList(min, max));
 
 		if (ret.getNodataPercentage() < 1) {
-			Builder histogram = Histogram.builder(min, max,
-					isBoolean ? 2 : (dataKey == null ? 10 : dataKey.size()));
-			
+			Builder histogram = Histogram.builder(min, max, isBoolean ? 2 : (dataKey == null ? 10 : dataKey.size()));
+
 			for (Iterator<Number> it = state.iterator(locator, Number.class); it.hasNext();) {
 				Number d = it.next();
 				if (d != null) {
@@ -367,6 +367,13 @@ public enum Observations implements IObservationService {
 
 			ret.setScaleReference(scaleReference);
 		}
+		
+		if (observation instanceof State) {
+			String modTimes = ((State)observation).getUpdateDescription();
+			if (!modTimes.isEmpty()) {
+				ret.getMetadata().put("Temporal transitions", modTimes);
+			}
+		}		
 
 		// fill in spatio/temporal info and mode of visualization
 		if (space != null) {
@@ -488,10 +495,12 @@ public enum Observations implements IObservationService {
 				ds.getCategories().add(1, PRESENT_LABEL);
 			} else if (dataKey != null) {
 				ds.setCategorized(true);
-				ds.getCategories().addAll(dataKey.getAllValues().stream().map(key -> key.getSecond()).collect(Collectors.toList()));
+				ds.getCategories().addAll(
+						dataKey.getAllValues().stream().map(key -> key.getSecond()).collect(Collectors.toList()));
 			} else {
 				ds.setCategorized(false);
-				double step = (summary.getRange().get(1) - summary.getRange().get(0)) / (double) ds.getHistogram().size();
+				double step = (summary.getRange().get(1) - summary.getRange().get(0))
+						/ (double) ds.getHistogram().size();
 
 				for (int i = 0; i < ds.getHistogram().size(); i++) {
 					// TODO use labels for categories
@@ -602,22 +611,24 @@ public enum Observations implements IObservationService {
 		return ret;
 	}
 
-	public Observer makeROIObserver(final SpatialExtent regionOfInterest, ITime time, Namespace namespace, String currentName,
+//	public Observer makeROIObserver(final SpatialExtent regionOfInterest, ITime time, Namespace namespace, String currentName,
+//			IMonitor monitor) {
+//		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
+//		Session session = monitor.getIdentity().getParentIdentity(Session.class);
+//		observable.setName(Geocoder.INSTANCE.geocode(regionOfInterest, session == null ? null : session.getGeocodingStrategy(), currentName, monitor));
+//		observable.setOptional(true);
+//		if (namespace == null) {
+//			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
+//		}
+//		return new Observer(regionOfInterest, time, observable, (Namespace) namespace);
+//	}
+//
+	public Observer makeROIObserver(final Shape shape, ITime time, Namespace namespace, String currentName,
 			IMonitor monitor) {
 		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
 		Session session = monitor.getIdentity().getParentIdentity(Session.class);
-		observable.setName(Geocoder.INSTANCE.geocode(regionOfInterest, session == null ? null : session.getGeocodingStrategy(), currentName, monitor));
-		observable.setOptional(true);
-		if (namespace == null) {
-			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
-		}
-		return new Observer(regionOfInterest, time, observable, (Namespace) namespace);
-	}
-
-	public Observer makeROIObserver(final Shape shape, ITime time, Namespace namespace, String currentName, IMonitor monitor) {
-		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
-		Session session = monitor.getIdentity().getParentIdentity(Session.class);
-		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope(), session == null ? null : session.getGeocodingStrategy(), currentName, monitor));
+		observable.setName(Geocoder.INSTANCE.geocode(shape.getEnvelope(),
+				session == null ? null : session.getState().getGeocodingStrategy(), currentName, monitor));
 		observable.setOptional(true);
 		if (namespace == null) {
 			namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
@@ -630,6 +641,16 @@ public enum Observations implements IObservationService {
 		observable.setName(name);
 		observable.setOptional(true);
 		Observer ret = new Observer((Shape) shape, time, observable,
+				Namespaces.INSTANCE.getNamespace(observable.getNamespace()));
+		ret.getMetadata().putAll(metadata);
+		return ret;
+	}
+
+	public Observer makeROIObserver(String name, IGeometry geometry, IMetadata metadata) {
+		final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
+		observable.setName(name);
+		observable.setOptional(true);
+		Observer ret = new Observer(name, Scale.create(geometry), observable,
 				Namespaces.INSTANCE.getNamespace(observable.getNamespace()));
 		ret.getMetadata().putAll(metadata);
 		return ret;
@@ -741,11 +762,9 @@ public enum Observations implements IObservationService {
 	 * @return
 	 */
 	public boolean occurs(IObservation observation) {
-		return 
-				observation instanceof IProcess || 
-				observation instanceof IEvent ||
-				observation.getScope().getParentOf(observation) instanceof IEvent ||
-				((IRuntimeScope)observation.getScope()).getStructure().getOwningProcess(observation) != null;
+		return observation instanceof IProcess || observation instanceof IEvent
+				|| observation.getScope().getParentOf(observation) instanceof IEvent
+				|| ((IRuntimeScope) observation.getScope()).getStructure().getOwningProcess(observation) != null;
 	}
 
 }

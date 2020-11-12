@@ -25,8 +25,6 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
 	static final public String FUNCTION_ID = "klab.runtime.resourcechange";
 
 	private MergedResource resource;
-//	private IConcept changingObservable;
-	private IArtifact.Type type;
 
 	// don't remove - only used as expression
 	public ChangingResourceResolver() {
@@ -34,7 +32,6 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
 
 	public ChangingResourceResolver(IConcept changeProcess, MergedResource resource) {
 		this.resource = resource;
-//		this.changingObservable = Observables.INSTANCE.getDescribedType(changeProcess);
 	}
 
 	public static IServiceCall getServiceCall(IConcept change, MergedResource resource) throws KlabValidationException {
@@ -57,9 +54,9 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
 	@Override
 	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
 
-		List<IResource> resources = ((MergedResource) this.resource).contextualize(context.getScale());
+		List<IResource> resources = ((MergedResource) this.resource).contextualize(context.getScale(), ret);
 		if (resources.isEmpty()) {
-			context.getMonitor().warn("resource " + this.resource.getUrn() + " cannot be contextualized in this scale");
+			// this can happen when the resource can't add anything to the artifact.
 			return ret;
 		}
 
@@ -71,7 +68,7 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
 			context.getMonitor().warn(
 					"Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
 		}
-		
+
 		IResource res = resources.get(0);
 		Urn urn = new Urn(res.getUrn());
 

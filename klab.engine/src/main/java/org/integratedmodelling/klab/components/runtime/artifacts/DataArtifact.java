@@ -117,4 +117,10 @@ public class DataArtifact extends Artifact implements IDataArtifact {
 		return group == null ? (n == 0 ? this : null) : (group.size() > (n-1) ? group.get(n-1) : null);
 	}
 
+	@Override
+	public long getLastUpdate() {
+		// TODO Auto-generated method stub
+		return 0;
+	}
+
 }

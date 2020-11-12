@@ -27,7 +27,7 @@ public interface List extends EObject
 {
   /**
    * Returns the value of the '<em><b>Contents</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.Value}.
+   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.ListElement}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Contents</em>' containment reference list.
@@ -35,6 +35,6 @@ public interface List extends EObject
    * @model containment="true"
    * @generated
    */
-  EList<Value> getContents();
+  EList<ListElement> getContents();
 
 } // List

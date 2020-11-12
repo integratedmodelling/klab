@@ -119,7 +119,8 @@ public class ResolutionScope implements IResolutionScope {
 	private Observable observable;
 	private Model model;
 	private Observer observer;
-
+	private Map<IConcept, Collection<IConcept>> roles = new HashMap<>();
+	
 	/*
 	 * When an artifact is here, it's from the context and will be turned into an
 	 * 'input' actuator in the dataflow. Scopes resolved with an artifact have a
@@ -368,6 +369,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.coverage = Coverage.full(contextSubject.getScale());
 		this.context = contextSubject;
 		this.scenarios.addAll(scenarios);
+		this.roles.putAll(monitor.getIdentity().getParentIdentity(ISession.class).getState().getRoles());
 		this.resolutionNamespace = contextSubject.getNamespace();
 		this.monitor = monitor;
 		this.occurrent = contextSubject.getScope().isOccurrent() || this.coverage.isTemporallyDistributed();
@@ -376,6 +378,7 @@ public class ResolutionScope implements IResolutionScope {
 	private ResolutionScope(Observer observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
 		this.coverage = Coverage.full(Scale.create(observer.getContextualization().getExtents(monitor)));
 		this.scenarios.addAll(scenarios);
+		this.roles.putAll(monitor.getIdentity().getParentIdentity(ISession.class).getState().getRoles());
 		this.resolutionNamespace = observer.getNamespace();
 		this.observer = observer;
 		this.monitor = monitor;
@@ -424,6 +427,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.contextObservable = other.contextObservable;
 		this.occurrent = other.occurrent;
 		this.previousResolution.addAll(other.previousResolution);
+		this.roles.putAll(other.roles);
 		if (copyResolution) {
 			this.observable = other.observable;
 			this.model = other.model;
@@ -1460,6 +1464,11 @@ public class ResolutionScope implements IResolutionScope {
 			}
 		}
 		return ret;
+	}
+
+	@Override
+	public Map<IConcept, Collection<IConcept>> getRoles() {
+		return this.roles;
 	}
 
 }

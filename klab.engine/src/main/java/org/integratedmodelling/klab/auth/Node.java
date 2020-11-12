@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -23,6 +24,7 @@ import org.integratedmodelling.klab.communication.client.Client.NodeClient;
 import org.integratedmodelling.klab.rest.NodeCapabilities;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class Node implements INodeIdentity {
 
@@ -41,7 +43,13 @@ public class Node implements INodeIdentity {
 	private int retryPeriod = 15;
 	private long lastCheck = System.currentTimeMillis();
 	private Map<String, IAuthority.Capabilities> authorities = new HashMap<>();
+	IParameters<String> globalState = Parameters.create();
 
+	@Override
+	public IParameters<String> getState() {
+		return globalState;
+	}
+	
 	private Client client;
 
 	public Node(String name, IPartnerIdentity owner) {

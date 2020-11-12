@@ -2,10 +2,10 @@ package org.integratedmodelling.klab.utils;
 
 import java.io.File;
 import java.lang.reflect.Array;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -14,6 +14,26 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 
 public class Utils {
+
+	/**
+	 * Call the valueOf method on an enum and return the value or null if there is
+	 * no such value, without errors.
+	 * 
+	 * @param <T>
+	 * @param name
+	 * @param enumClass
+	 * @return
+	 */
+	@SuppressWarnings("unchecked")
+	public static <T extends Enum<?>> T valueOf(String name, Class<T> enumClass) {
+		try {
+			Method method = enumClass.getDeclaredMethod("valueOf", String.class);
+			Object ret = method.invoke(enumClass, name);
+			return (T) ret;
+		} catch (Throwable e) {
+		}
+		return null;
+	}
 
 	/**
 	 * Return file name with no path or extension
@@ -70,7 +90,7 @@ public class Utils {
 		Arrays.fill(ret, value);
 		return ret;
 	}
-	
+
 	public static long[] toLongArray(List<Long> list) {
 		long[] ret = new long[list.size()];
 		for (int i = 0; i < list.size(); i++) {
@@ -256,7 +276,7 @@ public class Utils {
 				return (T) new Long(((Boolean) ret) ? 1 : 0);
 			}
 			if (cls.equals(Short.class)) {
-				return (T) new Short(((Boolean) ret) ? (short)1 : 0);
+				return (T) new Short(((Boolean) ret) ? (short) 1 : 0);
 			}
 			if (cls.equals(Integer.class)) {
 				return (T) new Integer(((Boolean) ret) ? 1 : 0);

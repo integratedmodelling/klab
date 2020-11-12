@@ -1,9 +1,42 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class ResourceAdapterReference {
+
+	public static class OperationReference {
+		private String name;
+		private String description;
+		private boolean requiresConfirmation;
+
+		public String getName() {
+			return name;
+		}
+
+		public void setName(String name) {
+			this.name = name;
+		}
+
+		public String getDescription() {
+			return description;
+		}
+
+		public void setDescription(String description) {
+			this.description = description;
+		}
+
+		public boolean isRequiresConfirmation() {
+			return requiresConfirmation;
+		}
+
+		public void setRequiresConfirmation(boolean requiresConfirmation) {
+			this.requiresConfirmation = requiresConfirmation;
+		}
+
+	}
 
 	private String name;
 	private String description;
@@ -13,6 +46,7 @@ public class ResourceAdapterReference {
 	private boolean universal;
 	private Map<String, String> exportCapabilities = new HashMap<>();
 	private boolean multipleResources;
+	private List<OperationReference> operations = new ArrayList<>();
 
 	public ServicePrototype getParameters() {
 		return parameters;
@@ -76,5 +110,13 @@ public class ResourceAdapterReference {
 
 	public void setUniversal(boolean universal) {
 		this.universal = universal;
+	}
+
+	public List<OperationReference> getOperations() {
+		return operations;
+	}
+
+	public void setOperations(List<OperationReference> operations) {
+		this.operations = operations;
 	}
 }

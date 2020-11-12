@@ -8,6 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.function.Function;
 
 import org.apache.commons.collections.IteratorUtils;
@@ -84,6 +85,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.engine.runtime.code.ExpressionContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.extensions.groovy.model.Concept;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.IntelligentMap;
@@ -102,6 +104,10 @@ import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Triple;
 import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
+
+import com.google.common.cache.CacheBuilder;
+import com.google.common.cache.CacheLoader;
+import com.google.common.cache.LoadingCache;
 
 /**
  * A runtime scope is installed in the root subject to keep track of what
@@ -152,6 +158,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	private IActuator actuator;
 	private boolean occurrent;
 	private Map<String, IKnowledgeView> views;
+	private Map<String, IKnowledgeView> viewsByUrn;
+
+	// cache for IS operator in groovy expressions
+	private LoadingCache<String, Boolean> reasonerCache;
 
 	public RuntimeScope(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
@@ -174,6 +184,18 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.dataflow = actuator.getDataflow();
 		this.watchedObservations = Collections.synchronizedSet(new HashSet<>());
 		this.views = new HashMap<>();
+		this.viewsByUrn = new HashMap<>();
+
+		// cache for groovy IS operator in this context
+		this.reasonerCache = CacheBuilder.newBuilder().maximumSize(2048).build(new CacheLoader<String, Boolean>() {
+			@Override
+			public Boolean load(String key) throws Exception {
+				String[] split = key.split(";");
+				IConcept a = Concepts.c(split[0]);
+				IConcept b = Concepts.c(split[1]);
+				return a.is(b);
+			}
+		});
 
 		/*
 		 * Complex and convoluted, but there is no other way to get this which must be
@@ -237,6 +259,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.behaviorBindings = context.behaviorBindings;
 		this.watchedObservations = context.watchedObservations;
 		this.views = context.views;
+		this.viewsByUrn = context.viewsByUrn;
+		this.reasonerCache = context.reasonerCache;
 	}
 
 	@Override
@@ -329,6 +353,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		IArtifact ret = catalog.get(localName);
 		if (ret == null) {
 			ret = this.views.get(localName);
+		}
+		if (ret == null) {
+			ret = this.viewsByUrn.get(localName);
 		}
 		return ret;
 	}
@@ -1564,7 +1591,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		Set<IArtifact> ret = new HashSet<>();
 		for (IArtifact artifact : catalog.values()) {
-			if (artifact instanceof IObservation && ((IObservation) artifact).getObservable().getType().is(concept)) {
+			if (artifact instanceof IObservation
+					&& (cached_is(((IObservation) artifact).getObservable().getType(), concept))) {
 				ret.add(artifact);
 			}
 		}
@@ -1610,7 +1638,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 					RuntimeScope root = getRootScope();
 					if (root.scheduler == null) {
-						root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope, monitor);
+						root.scheduler = new Scheduler(this, this.rootSubject.getId(), resolutionScope, monitor);
 					}
 					root.occurrent = true;
 					((Scheduler) root.scheduler).schedule(action, observation, Time.create(aa), this);
@@ -1705,7 +1733,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			root.occurrent = true;
 
 			if (root.scheduler == null) {
-				root.scheduler = new Scheduler(this.rootSubject.getId(), resolutionScope, monitor);
+				root.scheduler = new Scheduler(this, this.rootSubject.getId(), resolutionScope, monitor);
 			}
 
 			((Scheduler) root.scheduler).schedule(actuator, schedule, this);
@@ -1832,13 +1860,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public void notifyListeners(IObservation object) {
-		for (ISession.ObservationListener listener : monitor.getIdentity().getParentIdentity(Session.class)
-				.getObservationListeners()) {
-			if (object.equals(rootSubject)) {
-				listener.newContext((ISubject) object);
-			} else {
-				listener.newObservation(object, rootSubject);
-			}
+		if (object.equals(rootSubject)) {
+			monitor.getIdentity().getParentIdentity(Session.class).notifyNewContext((ISubject) object);
+		} else {
+			monitor.getIdentity().getParentIdentity(Session.class).notifyNewObservation(object, rootSubject);
 		}
 	}
 
@@ -1868,6 +1893,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public void addView(IKnowledgeView view) {
 
+		this.viewsByUrn.put(view.getUrn(), view);
 		this.views.put(view.getId(), view);
 
 		/*
@@ -1889,6 +1915,57 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.UserInterface,
 				IMessage.Type.ViewAvailable, descriptor));
 
+	}
+
+	@Override
+	public IRuntimeScope targetForChange() {
+
+		RuntimeScope ret = this;
+		if (this.artifactType == Type.PROCESS && this.targetSemantics.is(Type.CHANGE)) {
+			if (this.target == null || !(this.target instanceof IState)) {
+				IConcept changing = Observables.INSTANCE.getDescribedType(this.targetSemantics.getType());
+				if (changing != null) {
+					ret = new RuntimeScope(this);
+					Collection<IArtifact> trg = getArtifact(changing);
+					if (!trg.isEmpty()) {
+						ret.target = trg.iterator().next();
+						ret.targetSemantics = ((IObservation) ret.target).getObservable();
+						ret.artifactType = Observables.INSTANCE.getObservableType(ret.targetSemantics, true);
+						ret.targetName = ret.targetSemantics.getName();
+					}
+				}
+			} else if (this.target instanceof IState) {
+				ret = new RuntimeScope(this);
+				ret.targetSemantics = ((IObservation) ret.target).getObservable();
+				ret.artifactType = Observables.INSTANCE.getObservableType(ret.targetSemantics, true);
+				ret.targetName = ret.targetSemantics.getName();
+			}
+		}
+
+		return ret;
+	}
+
+	@Override
+	public IRuntimeScope targetToObservation(IObservation target) {
+
+		RuntimeScope ret = this;
+		ret = new RuntimeScope(this);
+		ret.targetSemantics = target.getObservable();
+		ret.artifactType = Observables.INSTANCE.getObservableType(target.getObservable(), true);
+		ret.targetName = ret.targetSemantics.getName();
+		return ret;
+	}
+
+	public boolean cached_is(Object c1, Object c2) {
+		if (c2 == null || c1 == null) {
+			return false;
+		}
+		try {
+			return reasonerCache.get((c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : c1.toString())
+					+ ";" + (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() : c2.toString()));
+		} catch (ExecutionException e) {
+			return false;
+		}
 	}
 
 }

@@ -925,7 +925,7 @@ public class Time extends Extent implements ITime {
 		Double scope = dimension.getParameters().get(Geometry.PARAMETER_TIME_SCOPE, Double.class);
 		String unit = dimension.getParameters().get(Geometry.PARAMETER_TIME_SCOPE_UNIT, String.class);
 		Long locator = dimension.getParameters().get(Geometry.PARAMETER_TIME_LOCATOR, Long.class);
-		Long tstep = dimension.getParameters().get(Geometry.PARAMETER_TIME_GRIDRESOLUTION, Long.class);
+		String res = dimension.getParameters().get(Geometry.PARAMETER_TIME_GRIDRESOLUTION, String.class);
 		Long tstart = dimension.getParameters().get(Geometry.PARAMETER_TIME_START, Long.class);
 		Long tend = dimension.getParameters().get(Geometry.PARAMETER_TIME_END, Long.class);
 		String cunit = dimension.getParameters().get(Geometry.PARAMETER_TIME_COVERAGE_UNIT, String.class);
@@ -943,7 +943,7 @@ public class Time extends Extent implements ITime {
 
 		if (dimension.isGeneric()) {
 			type = ITime.Type.LOGICAL;
-		}
+		} 
 
 		TimeInstant start = tstart == null ? null : new TimeInstant(tstart);
 		TimeInstant end = tend == null ? null : new TimeInstant(tend);
@@ -960,9 +960,13 @@ public class Time extends Extent implements ITime {
 		}
 
 		Resolution.Type resType = unit == null ? null : Resolution.Type.parse(unit);
-		ITimeDuration step = tstep == null ? null : TimeDuration.create(tstep, resType);
-
-		return create(type, resType, (scope == null ? null : 1.0), start, end, step, coverage,
+		if (resType == null && res != null) {
+			Resolution rres = resolution(KimQuantity.parse(res));
+			resType = rres.getType();
+			scope = rres.getMultiplier();
+		}
+		
+		return create(type, resType, (scope == null ? null : 1.0), start, end, null, coverage,
 				(cstart == null ? -1 : cstart), (cend == null ? -1 : cend));
 	}
 

@@ -15,7 +15,7 @@ public class UserBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class UnknownMessage implements KlabMessage {
+	public static class UnknownMessage extends AbstractKlabMessage {
 		
 		KActorsMessage call;
 		String appId;

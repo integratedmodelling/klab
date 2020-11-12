@@ -433,4 +433,22 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	void addView(IKnowledgeView view);
 
+	/**
+	 * Get the scope to contextualize a changing resource from that used to
+	 * contextualize its change. The result will have the target artifact, semantics
+	 * and artifact name set properly according to the context.
+	 * 
+	 * @return
+	 */
+	IRuntimeScope targetForChange();
+
+	/**
+	 * Recontextualize the scope to a specific target observation. Used to compute
+	 * the inferred dependents of a changed observation after a temporal transition.
+	 * 
+	 * @param target
+	 * @return
+	 */
+	IRuntimeScope targetToObservation(IObservation target);
+
 }

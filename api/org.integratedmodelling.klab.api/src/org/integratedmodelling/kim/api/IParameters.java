@@ -63,8 +63,8 @@ public interface IParameters<T> extends Map<T, Object> {
 	 * @param keys
 	 * @return
 	 */
-	<K> K getAny(T...keys);
-	
+	<K> K getAny(T... keys);
+
 	/**
 	 * When used as a parameter list parsed from a function call, this may contain
 	 * arguments that are unnamed. These are given default names and if any is
@@ -75,6 +75,13 @@ public interface IParameters<T> extends Map<T, Object> {
 	 * @return a list of unnamed argument keys, possibly empty.
 	 */
 	List<T> getUnnamedKeys();
+
+	/**
+	 * Return all the unnamed arguments in order of declaration.
+	 * 
+	 * @return
+	 */
+	List<Object> getUnnamedArguments();
 
 	/**
 	 * Return all the keys that correspond to named parameters.
@@ -108,7 +115,7 @@ public interface IParameters<T> extends Map<T, Object> {
 	 * @return
 	 */
 	boolean containsAnyKey(T... keys);
-	
+
 	/**
 	 * True if this contains any of the passed values
 	 * 
@@ -116,4 +123,12 @@ public interface IParameters<T> extends Map<T, Object> {
 	 * @return
 	 */
 	boolean containsAny(Object... objects);
+
+	/**
+	 * Return the subset of the map whose keys start with the passed string.
+	 * 
+	 * @param string
+	 * @return
+	 */
+	Map<T, Object> getLike(String string);
 }

@@ -19,7 +19,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.List;
-import org.integratedmodelling.kactors.kactors.Value;
+import org.integratedmodelling.kactors.kactors.ListElement;
 
 /**
  * <!-- begin-user-doc -->
@@ -44,7 +44,7 @@ public class ListImpl extends MinimalEObjectImpl.Container implements List
    * @generated
    * @ordered
    */
-  protected EList<Value> contents;
+  protected EList<ListElement> contents;
 
   /**
    * <!-- begin-user-doc -->
@@ -73,11 +73,11 @@ public class ListImpl extends MinimalEObjectImpl.Container implements List
    * @generated
    */
   @Override
-  public EList<Value> getContents()
+  public EList<ListElement> getContents()
   {
     if (contents == null)
     {
-      contents = new EObjectContainmentEList<Value>(Value.class, this, KactorsPackage.LIST__CONTENTS);
+      contents = new EObjectContainmentEList<ListElement>(ListElement.class, this, KactorsPackage.LIST__CONTENTS);
     }
     return contents;
   }
@@ -127,7 +127,7 @@ public class ListImpl extends MinimalEObjectImpl.Container implements List
     {
       case KactorsPackage.LIST__CONTENTS:
         getContents().clear();
-        getContents().addAll((Collection<? extends Value>)newValue);
+        getContents().addAll((Collection<? extends ListElement>)newValue);
         return;
     }
     super.eSet(featureID, newValue);

@@ -42,6 +42,8 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 
 		if (messageCall.getParameters() != null) {
 			this.arguments = new KActorsArguments(messageCall.getParameters());
+		} else { 
+			this.arguments = new KActorsArguments();
 		}
 
 		if (messageCall.getActions() != null) {
@@ -109,13 +111,8 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 		return group;
 	}
 
-	/**
-	 * Used to build and cache repeated action calls or any that needs to be created
-	 * in advance.
-	 * 
-	 * @return
-	 */
-	public String getInternalId() {
+	@Override
+	public String getCallId() {
 		return this.internalId;
 	}
 

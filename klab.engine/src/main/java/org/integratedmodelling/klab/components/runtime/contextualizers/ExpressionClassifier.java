@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 
 /**
  * A classifier that defines the predicate to attribute a direct observation
@@ -86,7 +87,7 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 			return null;
 		}
 
-		if (ret instanceof IConcept && ((IConcept) ret).is(abstractPredicate)) {
+		if (ret instanceof IConcept && ((RuntimeScope)context).cached_is(ret, abstractPredicate)) {
 			return (IConcept) ret;
 		}
 

@@ -75,6 +75,7 @@ import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
+import org.integratedmodelling.klab.rest.ResourceAdapterReference.OperationReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceOperationRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
@@ -135,6 +136,8 @@ public class ResourceEditor extends ViewPart {
 	private Button executeActionButton;
 	private List<NodeReference> publishingNodes;
 	private Combo categorizationsCombo;
+
+	private Combo actionChooser;
 
 	public static class AttributeContentProvider implements IStructuredContentProvider {
 
@@ -432,6 +435,11 @@ public class ResourceEditor extends ViewPart {
 				.setInput(resource.getDependencies() == null ? new ArrayList<Attribute>() : resource.getDependencies());
 		this.outputViewer.setInput(resource.getOutputs() == null ? new ArrayList<Attribute>() : resource.getOutputs());
 
+		this.actionChooser.removeAll();
+		for (OperationReference operation : this.adapter.getOperations()) {
+			this.actionChooser.add(operation.getDescription());
+		}
+		
 		this.title.setText(this.metadata.containsKey(IMetadata.DC_TITLE) ? this.metadata.get(IMetadata.DC_TITLE) : "");
 		this.keywords.setText(
 				this.metadata.containsKey(IMetadata.IM_KEYWORDS) ? this.metadata.get(IMetadata.IM_KEYWORDS) : "");
@@ -716,7 +724,7 @@ public class ResourceEditor extends ViewPart {
 			lblOperations.setLayoutData(new GridData(SWT.RIGHT, SWT.CENTER, false, false, 1, 1));
 			lblOperations.setText("Operations:");
 
-			Combo actionChooser = new Combo(composite_3, SWT.READ_ONLY);
+			this.actionChooser = new Combo(composite_3, SWT.READ_ONLY);
 			for (ResourceOperationRequest.Standard operation : ResourceOperationRequest.Standard.values()) {
 				actionChooser.add(operation.name());
 			}
@@ -1150,9 +1158,22 @@ public class ResourceEditor extends ViewPart {
 	protected void executeSelectedOperation() {
 		if (resource != null && resource.getUrn() != null && selectedOperation != null) {
 			ResourceOperationRequest request = new ResourceOperationRequest();
-			request.setUrn(resource.getUrn());
-			request.setOperation(selectedOperation);
-			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceOperation, request);
+			for (OperationReference operation : adapter.getOperations()) {
+				if (operation.getDescription().equals(selectedOperation)) { 
+					selectedOperation = operation.getName();
+					if (operation.isRequiresConfirmation()) {
+						if (!Eclipse.INSTANCE.confirm("Confirm execution of " + operation.getName() + " operation?")) {
+							selectedOperation = null;
+						}
+					}
+					break;
+				}
+			}
+			if (selectedOperation != null) {
+				request.setUrn(resource.getUrn());
+				request.setOperation(selectedOperation);
+				Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceOperation, request);
+			}
 		}
 	}
 

@@ -158,4 +158,14 @@ public class KimMetadata extends KimStatement implements IParameters<String> {
 		return data.getAny(keys);
 	}
 
+	@Override
+	public Map<String, Object> getLike(String string) {
+		return data.getLike(string);
+	}
+
+	@Override
+	public List<Object> getUnnamedArguments() {
+		return data.getUnnamedArguments();
+	}
+
 }

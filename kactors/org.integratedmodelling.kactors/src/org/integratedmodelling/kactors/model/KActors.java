@@ -67,7 +67,7 @@ public enum KActors {
 	public interface CodeAssistant {
 
 		enum BehaviorId {
-			VIEW, SESSION, LOCAL, IMPORTED, OBJECT, STATE, USER, UNKNOWN, AMBIGUOUS
+			VIEW, SESSION, LOCAL, IMPORTED, OBJECT, STATE, USER, UNKNOWN, AMBIGUOUS, EXPLORER
 		}
 
 		BehaviorId classifyVerb(String call);

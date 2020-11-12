@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
+import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.Pair;
 
 /**
@@ -34,6 +35,10 @@ public class ObservedConcept {
 	String conceptDeclaration = null;
 	private List<Pair<ValueOperator, Object>> valueOperators;
 
+	public ObservedConcept(IConcept observable) {
+		this(Observable.promote(observable), observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+	}
+	
 	public ObservedConcept(IObservable observable) {
 		this(observable, observable.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
 	}

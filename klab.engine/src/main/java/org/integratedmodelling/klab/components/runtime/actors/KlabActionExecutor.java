@@ -27,7 +27,7 @@ import akka.actor.typed.ActorRef;
  * @author Ferd
  *
  */
-public abstract class KlabAction {
+public abstract class KlabActionExecutor {
 
 	/**
 	 * An action implementing this interface will be saved in the actor where the
@@ -92,7 +92,7 @@ public abstract class KlabAction {
 
 	protected final Boolean DEFAULT_FIRE = Boolean.TRUE;
 
-	public KlabAction(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+	public KlabActionExecutor(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 			ActorRef<KlabMessage> sender, String callId) {
 		this.sender = sender;
 		this.session = identity == null ? null : identity.getParentIdentity(Session.class);
@@ -139,6 +139,7 @@ public abstract class KlabAction {
 		switch (arg.getType()) {
 		case ANYTHING:
 		case ANYVALUE:
+		case EMPTY:
 			break;
 		case ANYTRUE:
 			return true;
@@ -195,6 +196,8 @@ public abstract class KlabAction {
 			return new Urn(arg.getValue().toString());
 //		default:
 //			break;
+		case CONSTANT:
+			break;
 		}
 		return null;
 	}
@@ -222,6 +225,10 @@ public abstract class KlabAction {
 		return arg;
 	}
 
+	public String getStatementId() {
+		return callId;
+	}
+	
 	/**
 	 * May be called more than once, so pass the scope again.
 	 * 

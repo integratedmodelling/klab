@@ -21,3 +21,26 @@ filter number standardize
 		
 	class org.integratedmodelling.klab.data.transformations.StandardizingTransformation
 }
+
+filter number euclideandistance 
+	"Compute a family of Euclidean distance-based metrics and indicators." 
+	label "Standardize"
+{
+	optional import number artifact 
+		"The artifact to standardize. Defaults to the target artifact."
+		
+	optional value weights
+		"Weighting scheme for the observations: either a number (equal for all) or a map of concept -> weight"
+		
+	optional value source
+		"What to aggregate as distance source: a role, attribute, observable, or list thereof. All dependencies will be matched."
+
+	optional value target
+		"What to aggregate as distance target: a role, attribute, observable, or list thereof. All dependencies will be matched. If only
+		this is passed, must match one of those indicators that compute implicit distances."
+		
+	optional text indicator
+		"The indicator we compute. For now either nothing (traditional ED), "	
+		
+	class org.integratedmodelling.klab.data.transformations.EuclideanDistanceResolver
+}

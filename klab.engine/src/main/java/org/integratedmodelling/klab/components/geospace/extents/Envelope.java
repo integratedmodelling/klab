@@ -21,7 +21,7 @@ public class Envelope implements IEnvelope {
 	public static final int DEFAULT_MIN_RESOLUTION = 5;
 
 	ReferencedEnvelope envelope;
-	IProjection projection;
+	Projection projection;
 	Integer scaleRank = null;
 	private IMetadata metadata;
 
@@ -119,7 +119,7 @@ public class Envelope implements IEnvelope {
 	}
 
 	@Override
-	public IProjection getProjection() {
+	public Projection getProjection() {
 		return projection;
 	}
 
@@ -180,7 +180,7 @@ public class Envelope implements IEnvelope {
 		} catch (TransformException | FactoryException e) {
 			throw new KlabValidationException(e);
 		}
-		ret.projection = projection;
+		ret.projection = (Projection)projection;
 		return ret;
 	}
 
@@ -301,6 +301,16 @@ public class Envelope implements IEnvelope {
 			this.metadata = new Metadata();
 		}
 		return this.metadata;
+	}
+
+	@Override
+	public IEnvelope grow(double factor) {
+		if (factor != 1) {
+			double xgrow = ((getWidth()*factor) - getWidth())/2.0;
+			double ygrow = ((getHeight()*factor) - getHeight())/2.0;
+			return create(getMinX()-xgrow, getMaxX()+xgrow, getMinY()-ygrow, getMaxY()+ygrow, getProjection());
+		}
+		return this;
 	}
 
 }

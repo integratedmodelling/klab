@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.localstorage.impl;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -45,8 +46,9 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 	public synchronized long put(T value, ILocator locator) {
 
 		Integer cValue = null;
-		
-		// proprio necessaria, sta roba? Basically, trying to keep the concept key synchronized with an externally supplied
+
+		// proprio necessaria, sta roba? Basically, trying to keep the concept key
+		// synchronized with an externally supplied
 		// datakey, but allow for expansion, which sounds strange.
 		if (dataKey != null) {
 			cValue = dataKey.reverseLookup(value);
@@ -187,14 +189,13 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 		@SuppressWarnings("unchecked")
 		@Override
 		public void include(Object value) {
-			if (!this.key.containsKey((T)value)) {
-				this.key.put((T)value, this.key.size());
+			if (!this.key.containsKey((T) value)) {
+				this.key.put((T) value, this.key.size());
 			}
 		}
-		
+
 	}
 
-	
 	@Override
 	public IGeometry getGeometry() {
 		return geometry;
@@ -203,7 +204,12 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 	@Override
 	public void touch(ITime time) {
 		// TODO Auto-generated method stub
-		
+
+	}
+
+	@Override
+	public void addContextualizationListener(Consumer<ILocator> listener) {
+		((IDataStorage<?>) this.keyStore).addContextualizationListener(listener);
 	}
 
 }

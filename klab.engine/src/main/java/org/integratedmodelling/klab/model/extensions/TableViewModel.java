@@ -36,7 +36,7 @@ public class TableViewModel extends KimObject implements IViewModel {
 			throw new KlabValidationException("definition is not compatible with a table view");
 		}
 		this.definition = (Map<?, ?>) definition;
-		this.spreadsheet = new TableCompiler(this.name, this.definition, null, monitor);
+		this.spreadsheet = new TableCompiler(this.name, this.definition, null, namespace, monitor);
 	}
 
 	@Override

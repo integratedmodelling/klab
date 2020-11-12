@@ -719,7 +719,7 @@ public class KimValidator extends AbstractKimValidator {
             this.error("Dependency has undefined semantics", KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
             ok = false;
           } else {
-            if (((!definition.is(IKimConcept.Type.OBSERVABLE)) && (!definition.is(IKimConcept.Type.TRAIT)))) {
+            if ((((!definition.is(IKimConcept.Type.OBSERVABLE)) && (!definition.is(IKimConcept.Type.TRAIT))) && (!(definition.is(IKimConcept.Type.ROLE) && observable.isGeneric())))) {
               this.error("Models can only describe observables or traits", 
                 KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
               ok = false;

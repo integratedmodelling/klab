@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Resolution;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -181,7 +182,7 @@ public class Classifier implements IClassifier {
 			if (this.conceptResolution == IObservable.Resolution.Only) {
 				return conceptMatch.getDefinition().equals(c.getDefinition());
 			}
-			return negated ? !is(c, conceptMatch) : is(c, conceptMatch);
+			return negated ? !is(c, conceptMatch, context) : is(c, conceptMatch, context);
 
 		} else if (stringMatch != null) {
 
@@ -205,7 +206,7 @@ public class Classifier implements IClassifier {
 			for (List<IConcept> or : conceptMatches) {
 				boolean oneOk = false;
 				for (IConcept oc : or) {
-					if (negated ? !is(cc, oc) : is(cc, oc)) {
+					if (negated ? !is(cc, oc, context) : is(cc, oc, context)) {
 						oneOk = true;
 						break;
 					}
@@ -229,7 +230,11 @@ public class Classifier implements IClassifier {
 	 * @param conceptMatch2
 	 * @return
 	 */
-	private boolean is(IConcept c1, IConcept c2) {
+	private boolean is(IConcept c1, IConcept c2, IContextualizationScope scope) {
+		
+		if (scope != null) {
+			return ((RuntimeScope)scope).cached_is(c1, c2);
+		}
 
 		if (c1 == null || c2 == null) {
 			return false;

@@ -35,6 +35,10 @@ public class ExpressionContext implements IExpression.Context {
 		ret.scale = context.getScale();
 		ret.monitor = context.getMonitor();
 		ret.returnType = context.getArtifactType();
+		
+		if (ret.returnType == Type.PROCESS && context.getTargetArtifact() instanceof IState) {
+			ret.returnType = Type.QUALITY;
+		}
 
 		/*
 		 * use the catalog

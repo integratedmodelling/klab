@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
@@ -20,6 +21,7 @@ import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
@@ -98,7 +100,8 @@ public class ResourceCatalog implements IResourceCatalog {
 			// sync resources, resulting in stack overflow.
 			IKimProject project = Kim.INSTANCE.getProject(resource.getLocalProjectName());
 			if (project == null) {
-				throw new KlabIOException("resource belongs to invalid project " + resource.getLocalProjectName());
+				throw new KlabIOException("resource " + resource.getUrn() + " belongs to invalid project "
+						+ resource.getLocalProjectName());
 			}
 			resPath = resPath.substring(resource.getLocalProjectName().length() + 1);
 			ret = new File(project.getRoot() + File.separator + resPath);
@@ -142,11 +145,11 @@ public class ResourceCatalog implements IResourceCatalog {
 
 		return null;
 	}
-	
+
 	public void addInlineResource(IResource resource) {
 		this.inlineResources.put(resource.getUrn(), resource);
 	}
-	
+
 	@Override
 	public IResource put(String key, IResource value) {
 
@@ -324,15 +327,32 @@ public class ResourceCatalog implements IResourceCatalog {
 		return null;
 	}
 
-	public IResource update(ResourceReference reference) {
-		// TODO
-		// ENSURE THE RESOURCE TIMESTAMP IS NEW
-		return null;
-	}
+//	public IResource update(ResourceReference reference) {
+//		
+//	}
 
 	@Override
 	public IResource update(IResource resource, String message) {
-		return update(((Resource)resource).getReference());
+
+		((Resource) resource).validate(Resources.INSTANCE);
+
+		ResourceReference ref = ((Resource) resource).getReference();
+		ref.getNotifications().add(new Notification(message, Level.INFO.getName(), System.currentTimeMillis()));
+		resources.put(resource.getUrn(), ref);
+		
+		File resourcePath = getResourcePath(resource);
+		if (resourcePath != null) {
+			try {
+				File resFile = new File(resourcePath + File.separator + "resource.json");
+				if (!resFile.exists() || resFile.lastModified() < ref.getResourceTimestamp()) {
+					FileUtils.writeStringToFile(resFile, JsonUtils.printAsJson(ref), StandardCharsets.UTF_8);
+				}
+			} catch (IOException e) {
+				throw new KlabIOException(e);
+			}
+		}
+		
+		return get(resource.getUrn());
 	}
 
 }

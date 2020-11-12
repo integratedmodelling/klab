@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.utils.Range;
@@ -151,12 +152,21 @@ public class Behavior implements IBehavior {
 				break;
 			case ERROR:
 				// match any error? any literal for that?
-				break;
+				return value instanceof Throwable;
 			case OBSERVATION:
 				// might
 				break;
 			case TREE:
 				break;
+			case CONSTANT:
+				return (value instanceof Enum
+								&& ((Enum<?>) value).name().toUpperCase().equals(this.value.getValue()))
+						|| (value instanceof String && ((String) value).equals(this.value.getValue()));
+			case EMPTY:
+				return value == null
+						|| (value instanceof Collection && ((Collection<?>) value).isEmpty())
+						|| (value instanceof String && ((String) value).isEmpty())
+						|| (value instanceof IArtifact && ((IArtifact) value).isEmpty());
 			default:
 				break;
 

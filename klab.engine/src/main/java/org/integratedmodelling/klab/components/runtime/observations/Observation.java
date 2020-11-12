@@ -61,8 +61,9 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	// observed. Should eventually
 	// come from provenance.
 	private boolean main;
-	// only kept updated in the root observation
-	private long lastUpdate;
+	// only kept updated in the root observation; in others, 0 is expected default and 
+	// the implementations redefine getLastUpdate() to report correctly
+	private long lastUpdate = 0;
 	// separately kept time of creation and exit, using timestamp if non-temporal
 	private long creationTime;
 	private long exitTime;
@@ -81,7 +82,6 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	// actor-scoped state, manipulated using "set" statements.
 	private IParameters<String> globalState = Parameters.createSynchronized();
 	protected List<Long> updateTimestamps = new ArrayList<>();
-	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
 
 	// tracks the setting of the actor so we can avoid the ask pattern
 	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
@@ -260,6 +260,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		this.main = main;
 	}
 
+	@Override
 	public long getLastUpdate() {
 		return lastUpdate;
 	}
@@ -379,18 +380,18 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		return this.actor != null;
 	}
 
-	@Override
-	public <V> V getState(String key, Class<V> cls) {
-		return this.globalState.get(key, cls);
-	}
-
-	@Override
-	public void setState(String key, Object value) {
-		this.globalState.put(key, value);
-		for (BiConsumer<String, Object> listener : stateChangeListeners.values()) {
-			listener.accept(key, value);
-		}
-	}
+//	@Override
+//	public <V> V getState(String key, Class<V> cls) {
+//		return this.globalState.get(key, cls);
+//	}
+//
+//	@Override
+//	public void setState(String key, Object value) {
+//		this.globalState.put(key, value);
+//		for (BiConsumer<String, Object> listener : stateChangeListeners.values()) {
+//			listener.accept(key, value);
+//		}
+//	}
 
 	public List<ObservationChange> getChangeset() {
 		return changeset;
@@ -454,14 +455,19 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	public long[] getUpdateTimestamps() {
 		return Utils.toLongArray(updateTimestamps);
 	}
-
+	
 	@Override
-	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
-		this.stateChangeListeners.put(name, listener);
+	public IParameters<String> getState() {
+		return globalState;
 	}
 
-	@Override
-	public void removeStateChangeListener(String name) {
-		this.stateChangeListeners.remove(name);
-	}
+//	@Override
+//	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
+//		this.stateChangeListeners.put(name, listener);
+//	}
+//
+//	@Override
+//	public void removeStateChangeListener(String name) {
+//		this.stateChangeListeners.remove(name);
+//	}
 }

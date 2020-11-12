@@ -27,9 +27,9 @@ import org.integratedmodelling.klab.api.data.utils.IPair;
  */
 public class Pair<T1, T2> implements IPair<T1, T2> {
 
-	static boolean cmpObj(Object o1, Object o2) {
-		return (o1 == null && o2 == null) || (o1 != null && o2 != null && o1.equals(o2));
-	}
+//	static boolean cmpObj(Object o1, Object o2) {
+//		return (o1 == null && o2 == null) || (o1 != null && o2 != null && o1.equals(o2));
+//	}
 
 	public static <A, B> Pair<A, B> create(A a, B b) {
 		return new Pair<A, B>(a, b);
@@ -112,20 +112,37 @@ public class Pair<T1, T2> implements IPair<T1, T2> {
 		return "{" + getFirst() + "," + getSecond() + "}";
 	}
 
-	/** {@inheritDoc} */
-	@Override
-	public boolean equals(Object obj) {
-
-		if (!(obj instanceof Pair))
-			return false;
-
-		return cmpObj(first, ((Pair<?, ?>) obj).first) && cmpObj(first, ((Pair<?, ?>) obj).second);
-	}
-
-	/** {@inheritDoc} */
 	@Override
 	public int hashCode() {
-		return (first == null ? 0 : first.hashCode()) + (second == null ? 0 : second.hashCode());
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((first == null) ? 0 : first.hashCode());
+		result = prime * result + ((second == null) ? 0 : second.hashCode());
+		return result;
 	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Pair<?,?> other = (Pair<?,?>) obj;
+		if (first == null) {
+			if (other.first != null)
+				return false;
+		} else if (!first.equals(other.first))
+			return false;
+		if (second == null) {
+			if (other.second != null)
+				return false;
+		} else if (!second.equals(other.second))
+			return false;
+		return true;
+	}
+
+
 
 }

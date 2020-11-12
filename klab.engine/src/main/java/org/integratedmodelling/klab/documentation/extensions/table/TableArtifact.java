@@ -1,7 +1,6 @@
 package org.integratedmodelling.klab.documentation.extensions.table;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -139,6 +138,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		this.rows = rowCatalog;
 		this.columns = colCatalog;
 		this.scope = scope;
+		
 		/*
 		 * make a single catalog so we have the chance to catch ambiguous naming
 		 */
@@ -151,6 +151,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		}
 	}
 
+	@Override
+	public String getUrn() {
+		return table.getNamespace().getName() + "." + table.getName();
+	}
+	
 	/**
 	 * Accumulate a value to be aggregated later according to semantics. If we see
 	 * two different phases, remove the aggregation value (cell will be nodata) but
@@ -199,7 +204,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			if (cell.phaseHash != null) {
 
 				if (!cell.phaseHash.containsKey(phase.getKey())) {
-					cell.phaseHash.put(phase.getKey(), new Aggregator(observable, scope.getMonitor()));
+					cell.phaseHash.put(phase.getKey(), new Aggregator(observable, scope.getMonitor(), true));
 				}
 
 				cell.phaseHash.get(phase.getKey()).add(value);
@@ -221,7 +226,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 				 * create aggregator if not there
 				 */
 				if (cell.aggregator == null) {
-					cell.aggregator = new Aggregator(observable, scope.getMonitor());
+					cell.aggregator = new Aggregator(observable, scope.getMonitor(), true);
 				}
 				cell.aggregator.add(value, observable, locator);
 			}
@@ -665,6 +670,12 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		if (cell != null) {
 			cell.computedValue = value;
 		}
+	}
+
+	@Override
+	public long getLastUpdate() {
+		// TODO Auto-generated method stub
+		return 0;
 	}
 
 }

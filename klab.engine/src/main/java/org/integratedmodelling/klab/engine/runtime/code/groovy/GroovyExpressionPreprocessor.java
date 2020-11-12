@@ -224,6 +224,25 @@ public class GroovyExpressionPreprocessor {
 			return this.token;
 		}
 
+		/**
+		 * Return the literal token value: only used for knowledge for now, so it should
+		 * be either an identifier (left alone) or a string (wrapped in quotation marks).
+		 */
+		public String encode() {
+			String ret = token;
+			switch (type) {
+			case URN:
+			case KNOWLEDGE:
+			case KNOWN_MODEL_OBJECT:
+				ret = "\"" + token + "\"";
+				break;
+			case LITERAL_NULL:
+				ret = "null";
+				break;
+			}
+			return ret;
+		}
+
 		public String translate(IExpression.Context context) {
 			String ret = token;
 			switch (type) {
@@ -496,15 +515,16 @@ public class GroovyExpressionPreprocessor {
 		String ret = "";
 
 		/*
-		 * reduce KNOWN_ID 'is' KNOWLEDGE to ID.isa(CONCEPT)
+		 * reduce KNOWN_ID 'is' KNOWLEDGE to _c.cached_is(ID, KNOWLEDGE)
 		 */
 		List<TokenDescriptor> reduced = new ArrayList<>();
 		for (int i = 0; i < tokens.size(); i++) {
 			if (tokens.get(i).type == KNOWN_ID && tokens.size() - i >= 4 && tokens.get(i + 1).token.trim().isEmpty()
 					&& tokens.get(i + 2).token.equals("is") && tokens.get(i + 3).token.trim().isEmpty()
 					&& tokens.get(i + 4).type == KNOWLEDGE) {
-				reduced.add(
-						new TokenDescriptor(INFERENCE, tokens.get(i) + ".isa(" + tokens.get(i + 4).translate() + ")"));
+				reduced.add(new TokenDescriptor(INFERENCE,
+						"_c.cached_is(" + tokens.get(i) + "," + tokens.get(i + 4).encode() + ")"));
+//						new TokenDescriptor(INFERENCE, tokens.get(i) + ".isa(" + tokens.get(i + 4).translate() + ")"));
 				i += 4;
 			} else {
 				reduced.add(tokens.get(i));

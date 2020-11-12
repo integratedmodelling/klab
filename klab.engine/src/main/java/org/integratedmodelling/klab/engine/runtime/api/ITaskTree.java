@@ -1,7 +1,7 @@
 package org.integratedmodelling.klab.engine.runtime.api;
 
 import org.integratedmodelling.klab.api.auth.IIdentity;
-import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ITask;
 
 /**
@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.api.runtime.ITask;
  *
  * @param <T>
  */
-public interface ITaskTree<T extends IObservation> extends ITask<T> {
+public interface ITaskTree<T extends IArtifact> extends ITask<T> {
 
 	/**
 	 * Create a child task.

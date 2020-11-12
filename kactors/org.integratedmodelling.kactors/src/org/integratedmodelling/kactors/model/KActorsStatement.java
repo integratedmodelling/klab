@@ -4,9 +4,10 @@ import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Statement;
+import org.integratedmodelling.kactors.kactors.StatementBody;
 
 public abstract class KActorsStatement extends KActorCodeStatement implements IKActorsStatement {
-	
+
 	private Type type;
 
 	public KActorsStatement(EObject statement, KActorCodeStatement parent, Type type) {
@@ -19,22 +20,39 @@ public abstract class KActorsStatement extends KActorCodeStatement implements IK
 		this.type = type;
 	}
 
-	public static KActorsStatement create(Statement statement, KActorCodeStatement parent) {
-		
+	public static KActorsStatement create(StatementBody statementBody, KActorCodeStatement parent) {
 		KActorsStatement ret = null;
-		
+		if (statementBody.getGroup() != null) {
+			ret =  new KActorsConcurrentGroup(statementBody.getGroup(), parent);
+		} else if (statementBody.getVerb() != null) {
+			if (statementBody.getVerb().getName() != null && "$".equals(statementBody.getVerb().getName().trim())) {
+				// special case: it's "re-fire whatever was fired"
+				ret = new KActorsFire(parent);
+			} else {
+				ret = new KActorsActionCall(statementBody.getVerb(), parent);
+			}
+		} else if (statementBody.getValue() != null) {
+			ret = new KActorsFire(statementBody.getValue(), parent);
+		}
+		return ret;
+	}
+
+	public static KActorsStatement create(Statement statement, KActorCodeStatement parent) {
+
+		KActorsStatement ret = null;
+
 		if (statement.getAssignment() != null) {
 			ret = new KActorsAssignment(statement.getAssignment(), parent);
 		} else if (statement.getDo() != null) {
-			ret =  new KActorsDo(statement.getDo(), parent);
+			ret = new KActorsDo(statement.getDo(), parent);
 		} else if (statement.getFor() != null) {
-			ret =  new KActorsFor(statement.getFor(), parent);
+			ret = new KActorsFor(statement.getFor(), parent);
 		} else if (statement.getIf() != null) {
-			ret =  new KActorsIf(statement.getIf(), parent);
+			ret = new KActorsIf(statement.getIf(), parent);
 		} else if (statement.getWhile() != null) {
-			ret =  new KActorsWhile(statement.getWhile(), parent);
+			ret = new KActorsWhile(statement.getWhile(), parent);
 		} else if (statement.getText() != null) {
-			ret =  new KActorsText(statement, parent);
+			ret = new KActorsText(statement, parent);
 			if (statement.getMetadata() != null) {
 				for (MetadataPair pair : statement.getMetadata().getPairs()) {
 					String key = pair.getKey().substring(1);
@@ -49,26 +67,26 @@ public abstract class KActorsStatement extends KActorCodeStatement implements IK
 				}
 			}
 		} else if (statement.getValue() != null) {
-			ret =  new KActorsFire(statement.getValue(), parent);
+			ret = new KActorsFire(statement.getValue(), parent);
 		} else if (statement.getVerb() != null) {
 			if ("$".equals(statement.getVerb().getName().trim())) {
 				// special case: it's "re-fire whatever was fired"
-				ret =  new KActorsFire(parent);
+				ret = new KActorsFire(parent);
 			} else {
-				ret =  new KActorsActionCall(statement.getVerb(), parent);
+				ret = new KActorsActionCall(statement.getVerb(), parent);
 			}
 		} else if (statement.getGroup() != null) {
-			ret =  new KActorsConcurrentGroup(statement.getGroup(), parent);
+			ret = new KActorsConcurrentGroup(statement.getGroup(), parent);
 		} else if (statement.getInstantiation() != null) {
 			ret = new KActorsInstantiation(statement.getInstantiation(), parent);
 		}
-		
+
 		if (ret != null) {
 
 			if (statement.getTag() != null) {
 				ret.tag = statement.getTag().substring(1);
 			}
-			
+
 		}
 
 		return ret;

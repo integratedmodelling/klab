@@ -5,6 +5,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -14,6 +15,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * A ITask that creates a root subject within a Session.
@@ -29,7 +31,13 @@ public class UrnContextualizationTask extends AbstractTask<ISubject> {
 
     FutureTask<ISubject>  delegate;
     String                taskDescription = "<uninitialized URN preview task " + token + ">";
+	IParameters<String> globalState = Parameters.create();
 
+	@Override
+	public IParameters<String> getState() {
+		return globalState;
+	}
+	
     public UrnContextualizationTask(UrnContextualizationTask parent, String description) {
         super(parent);
         this.delegate = parent.delegate;

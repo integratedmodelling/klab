@@ -210,6 +210,10 @@ public interface IMessage {
 		 * {@link SettingChangeRequest}. F->B
 		 */
 		ChangeSetting,
+		/*
+		 * B->F, modify fixed explorer view settings
+		 */
+		ViewSetting,
 
 		/*
 		 * F->B: ask engine to modify or delete projects or project assets
