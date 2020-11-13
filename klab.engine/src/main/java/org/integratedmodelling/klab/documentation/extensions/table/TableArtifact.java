@@ -134,6 +134,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 	 */
 	public TableArtifact(TableCompiler table, List<Dimension> rowCatalog, List<Dimension> colCatalog,
 			IRuntimeScope scope) {
+		
 		this.table = table;
 		this.rows = rowCatalog;
 		this.columns = colCatalog;

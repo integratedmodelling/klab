@@ -332,8 +332,8 @@ public enum Observations implements IObservationService {
 
 					scaleReference.setSpaceUnit(resolution.getSecond());
 					scaleReference.setSpaceResolution(resolution.getFirst());
-					scaleReference.setSpaceResolutionConverted(
-							sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
+//					scaleReference.setSpaceResolutionConverted(
+//							sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS).doubleValue());
 					scaleReference.setSpaceResolutionDescription(
 							sunit.convert(resolution.getFirst(), Units.INSTANCE.METERS) + " " + resolution.getSecond());
 					scaleReference.setResolutionDescription(
@@ -347,7 +347,7 @@ public enum Observations implements IObservationService {
 							.doubleValue();
 					scaleReference.setSpaceUnit(unit.toString());
 					scaleReference.setSpaceResolution(grid.getCellWidth());
-					scaleReference.setSpaceResolutionConverted(cw);
+//					scaleReference.setSpaceResolutionConverted(cw);
 					scaleReference
 							.setSpaceResolutionDescription(String.format("%.1f", cw) + " " + resolution.getSecond());
 					scaleReference.setResolutionDescription(String.format("%.1f", cw) + " " + resolution.getSecond());

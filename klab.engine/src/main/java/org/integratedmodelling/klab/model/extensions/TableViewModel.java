@@ -36,7 +36,7 @@ public class TableViewModel extends KimObject implements IViewModel {
 			throw new KlabValidationException("definition is not compatible with a table view");
 		}
 		this.definition = (Map<?, ?>) definition;
-		this.spreadsheet = new TableCompiler(this.name, this.definition, null, namespace, monitor);
+		this.spreadsheet = new TableCompiler(this.name, this.definition, null, namespace, null, monitor);
 	}
 
 	@Override
@@ -55,7 +55,7 @@ public class TableViewModel extends KimObject implements IViewModel {
 
 	@Override
 	public IKnowledgeView compileView(IObservation target, IContextualizationScope scope) {
-		return spreadsheet.compute(target, (IRuntimeScope)scope);
+		return spreadsheet.contextualize((IRuntimeScope)scope).compute(target, (IRuntimeScope)scope);
 	}
 
 	@Override

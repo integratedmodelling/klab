@@ -108,7 +108,8 @@ public class ObservationStrategy {
 			for (IObservable dependency : expandDependency(dep, observable, model, scope)) {
 				if (((Observable) dependency).isActive()) {
 					dependencies.add(dependency);
-					ret.add(new ObservationStrategy((Observable) dependency, dependency.getDescriptionType().getResolutionMode()));
+					ret.add(new ObservationStrategy((Observable) dependency,
+							dependency.getDescriptionType().getResolutionMode()));
 				}
 			}
 		}
@@ -195,7 +196,6 @@ public class ObservationStrategy {
 			IResolutionScope scope) {
 		List<IObservable> ret = new ArrayList<>();
 		if (dep.isGeneric()) {
-			// TODO
 			IConcept type = dep.getType();
 			if (type.is(Type.ROLE)) {
 				for (IConcept role : scope.getRoles().keySet()) {
@@ -207,8 +207,8 @@ public class ObservationStrategy {
 				}
 			}
 		} /*
-			 * for now abstract is OK due to its role in attribute instantiator, TODO check later
-			 * else if (dep.isAbstract()) { // TODO System.out.println("HOSTIAZ"); }
+			 * for now abstract is OK due to its role in attribute instantiator, TODO check
+			 * later else if (dep.isAbstract()) { // TODO System.out.println("HOSTIAZ"); }
 			 */else {
 			ret.add(dep);
 		}

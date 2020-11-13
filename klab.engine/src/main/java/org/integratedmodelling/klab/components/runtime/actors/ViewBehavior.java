@@ -535,6 +535,9 @@ public class ViewBehavior {
 
 		@Override
 		protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+			if ("update".equals(message.message)) {
+				this.component.setContent(getDefaultAsString(message.arguments, this, scope));
+			}
 			return this.component;
 		}
 

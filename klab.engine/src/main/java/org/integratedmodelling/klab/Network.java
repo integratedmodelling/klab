@@ -41,7 +41,7 @@ public enum Network implements INetworkService {
 	Map<String, INodeIdentity> onlineNodes = Collections.synchronizedMap(new HashMap<>());
 	Map<String, INodeIdentity> offlineNodes = Collections.synchronizedMap(new HashMap<>());
 
-	private Timer timer = new Timer("Network checking");
+	private Timer timer = new Timer("network checking");
 
 	private Network() {
 		Services.INSTANCE.registerService(this, INetworkService.class);
@@ -253,7 +253,8 @@ public enum Network implements INetworkService {
 				Resources.INSTANCE.getPublicResourceCatalog().update(node);
 				Logging.INSTANCE.info("node " + node.getName() + " went online");
 			} catch (Exception e) {
-				System.out.println("ZIO PUTESIO EXCEPTION DIOCAN");
+				Logging.INSTANCE
+						.error("exception while checking offline node " + node.getName() + ": " + e.getMessage());
 			}
 		}
 
@@ -318,7 +319,7 @@ public enum Network implements INetworkService {
 		}
 		return ret;
 	}
-	
+
 	private Collection<INodeIdentity> getNodesWithAuthority(String authority) {
 		List<INodeIdentity> ret = new ArrayList<>();
 		for (INodeIdentity node : onlineNodes.values()) {

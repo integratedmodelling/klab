@@ -234,7 +234,7 @@ public class Envelope implements IEnvelope {
 		if (gridRounded > 2000) {
 			gridRounded = (((gridRounded) + 500) / 1000);
 			unit = "km";
-			gridRounded *= 1000;
+//			gridRounded *= 1000;
 		} else if (gridRounded < roundTo) {
 			gridRounded = roundTo;
 			unit = "m";

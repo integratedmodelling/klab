@@ -144,7 +144,7 @@ public class Observable implements IObservable {
 		ret.observable = (Concept) concept;
 		ret.declaration = concept.getDefinition().trim();
 		ret.isAbstract = concept.isAbstract();
-		ret.generic = false;
+		ret.generic = concept.is(Type.ROLE);
 		ret.referenceName = ret.name = Concepts.INSTANCE.getCodeName(ret.observable);
 		if (ret.referenceName == null) {
 			// happens with non-standard observables like observation:Void.

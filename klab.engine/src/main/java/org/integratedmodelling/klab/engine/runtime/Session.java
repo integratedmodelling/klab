@@ -285,11 +285,11 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	 * These are defined every time the ROI is set unless space or time are locked,
 	 * in which case they will only be set if null.
 	 */
-	private Double spatialGridSize = null;
-	private String spatialGridUnits = null;
-	private Resolution temporalResolution;
-	private Long timeStart = null;
-	private Long timeEnd = null;
+//	private Double spatialGridSize = null;
+//	private String spatialGridUnits = null;
+//	private Resolution temporalResolution;
+//	private Long timeStart = null;
+//	private Long timeEnd = null;
 
 	private AtomicBoolean interactive = new AtomicBoolean(false);
 //	/*
@@ -717,13 +717,13 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		if (location.getContextId() == null) {
 			ITime time = ((SessionState) getState()).getTimeOfInterest();
 			if (time == null) {
-				if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
-					time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
-							this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
-							new TimeInstant(this.timeEnd), null);
-				} else {
-					time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
-				}
+//				if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
+//					time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
+//							this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
+//							new TimeInstant(this.timeEnd), null);
+//				} else {
+//					time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
+//				}
 			}
 			Shape shape = Shape.create("EPSG:4326 " + location.getWktShape());
 			Observer observer = Observations.INSTANCE.makeROIObserver(shape, time, null, this.regionNameOfInterest,
@@ -1531,13 +1531,13 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	@MessageHandler(type = IMessage.Type.ScaleDefined)
 	private void handleScaleChangeRequest(ScaleReference scaleRef) {
 		this.globalState.register(scaleRef);
-		this.spatialGridSize = Units.INSTANCE.METERS
-				.convert(scaleRef.getSpaceResolutionConverted(), Unit.create(scaleRef.getSpaceUnit())).doubleValue();
-		this.spatialGridUnits = scaleRef.getSpaceUnit();
-		this.temporalResolution = Time
-				.resolution(scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
-		this.timeStart = scaleRef.getStart() == 0 ? null : Long.valueOf(scaleRef.getStart());
-		this.timeEnd = scaleRef.getEnd() == 0 ? null : Long.valueOf(scaleRef.getEnd());
+//		this.spatialGridSize = Units.INSTANCE.METERS
+//				.convert(scaleRef.getSpaceResolutionConverted(), Unit.create(scaleRef.getSpaceUnit())).doubleValue();
+//		this.spatialGridUnits = scaleRef.getSpaceUnit();
+//		this.temporalResolution = Time
+//				.resolution(scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
+//		this.timeStart = scaleRef.getStart() == 0 ? null : Long.valueOf(scaleRef.getStart());
+//		this.timeEnd = scaleRef.getEnd() == 0 ? null : Long.valueOf(scaleRef.getEnd());
 	}
 
 	@MessageHandler

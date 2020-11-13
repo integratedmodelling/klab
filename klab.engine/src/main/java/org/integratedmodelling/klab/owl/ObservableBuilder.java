@@ -1413,6 +1413,10 @@ public class ObservableBuilder implements IObservable.Builder {
 		Ontology ontology = (Ontology) classified.getOntology();
 		String conceptId = ontology.getIdForDefinition(definition);
 
+		if (classified.is(Type.ROLE)) {
+			System.out.println("ZOAZ");
+		}
+		
 		if (conceptId == null) {
 
 			conceptId = ontology.createIdForDefinition(definition);

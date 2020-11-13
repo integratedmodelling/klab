@@ -267,24 +267,24 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			IKimQuantity q = KimQuantity.parse(value.toString());
 			this.scaleOfInterest.setSpaceResolution(q.getValue().doubleValue());
 			this.scaleOfInterest.setSpaceUnit(q.getUnit());
-			this.scaleOfInterest.setSpaceResolutionConverted(
-					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
-							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
+//			this.scaleOfInterest.setSpaceResolutionConverted(
+//					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
+//							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
 			this.scaleOfInterest.setSpaceResolutionDescription(NumberFormat.getInstance()
 					.format(this.scaleOfInterest.getSpaceResolution()) + " " + this.scaleOfInterest.getSpaceUnit());
 		case SPACE_RESOLUTION_MULTIPLIER_KEY:
 			this.scaleOfInterest.setSpaceResolution(check(value, Number.class).doubleValue());
-			this.scaleOfInterest.setSpaceResolutionConverted(
-					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
-							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
+//			this.scaleOfInterest.setSpaceResolutionConverted(
+//					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
+//							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
 			this.scaleOfInterest.setSpaceResolutionDescription(NumberFormat.getInstance()
 					.format(this.scaleOfInterest.getSpaceResolution()) + " " + this.scaleOfInterest.getSpaceUnit());
 			break;
 		case SPACE_RESOLUTION_UNIT_KEY:
 			this.scaleOfInterest.setSpaceUnit(value.toString());
-			this.scaleOfInterest.setSpaceResolutionConverted(
-					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
-							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
+//			this.scaleOfInterest.setSpaceResolutionConverted(
+//					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
+//							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
 			this.scaleOfInterest.setSpaceResolutionDescription(NumberFormat.getInstance()
 					.format(this.scaleOfInterest.getSpaceResolution()) + " " + this.scaleOfInterest.getSpaceUnit());
 			break;
@@ -538,14 +538,14 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			}
 		}
 
-		Unit sunit = Unit.create(scaleOfInterest.getSpaceUnit());
-		this.scaleOfInterest.setSpaceResolutionConverted(
-				sunit.convert(scaleOfInterest.getSpaceResolution(), Units.INSTANCE.METERS).doubleValue());
+//		Unit sunit = Unit.create(scaleOfInterest.getSpaceUnit());
+//		this.scaleOfInterest.setSpaceResolutionConverted(
+//				sunit.convert(scaleOfInterest.getSpaceResolution(), Units.INSTANCE.METERS).doubleValue());
 		this.scaleOfInterest.setSpaceResolutionDescription(
-				NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolutionConverted()) + " "
+				NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
 						+ this.scaleOfInterest.getSpaceUnit());
 		this.scaleOfInterest.setResolutionDescription(
-				NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolutionConverted()) + " "
+				NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
 						+ this.scaleOfInterest.getSpaceUnit());
 
 		session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined,

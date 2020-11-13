@@ -186,7 +186,6 @@ public enum Types implements ITypeService {
 	 * @return
 	 */
 	public List<IConcept> getConcreteChildren(IConcept baseType) {
-
 		List<IConcept> ret = new ArrayList<>();
 		getConcreteChildren(baseType, ret, false);
 		return ret;

@@ -278,7 +278,6 @@ public class RuntimeBehavior {
 								ret.put("unit", scale.getSpaceUnit());
 								ret.put("envelope", new double[] { scale.getWest(), scale.getSouth(), scale.getEast(),
 										scale.getNorth() });
-
 								fire(ret, false);
 							}
 

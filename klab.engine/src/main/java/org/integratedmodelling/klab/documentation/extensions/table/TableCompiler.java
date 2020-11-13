@@ -51,6 +51,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
@@ -826,6 +827,15 @@ public class TableCompiler {
 	private Schedule schedule;
 	private INamespace namespace;
 
+	// saved to build contextualized schedules
+	private Map<?, ?> definition;
+
+	// scope is null when created from k.IM, which is just an instance for
+	// validation.
+	private IRuntimeScope scope;
+
+	private IObservable targetObservable;
+
 	/**
 	 * Return the passed dimensions in order of dependency. If circular dependencies
 	 * are detected throw a validation exception as the definition is misconfigured.
@@ -914,13 +924,17 @@ public class TableCompiler {
 	}
 
 	/*
-	 * ------- Definition and validation --------------------------
+	 * Definition and validation. Called with scope == null when read from k.IM, for
+	 * validation. Called again with actual scope at contextualize(), when roles and
+	 * other contextual classifiers should be expanded.
 	 */
 	public TableCompiler(String name, Map<?, ?> definition, @Nullable IObservable target, INamespace namespace,
-			IMonitor monitor) {
+			IRuntimeScope scope, IMonitor monitor) {
 
 		this.name = name;
 		this.monitor = monitor;
+		this.scope = scope;
+		this.targetObservable = target;
 		Pair<ObservedConcept, TargetType> tdesc = parseTarget(definition.get("target"));
 		this.target = tdesc.getFirst();
 		this.targetType = tdesc.getSecond();
@@ -929,6 +943,7 @@ public class TableCompiler {
 		this.title = definition.containsKey("title") ? definition.get("title").toString() : null;
 		this.label = definition.containsKey("label") ? definition.get("label").toString() : null;
 		this.namespace = namespace;
+		this.definition = definition;
 
 		/*
 		 * validate that only rows OR columns have an additional target but not both.
@@ -953,7 +968,19 @@ public class TableCompiler {
 		}
 
 		compileSchedule(definition);
+	}
 
+	/**
+	 * Create a copy of this compiler contextualized to the passed scope. This will
+	 * expand roles and any other contextual classifiers. Called at resolution when
+	 * the target artifact is built, before actual observations are made.
+	 * 
+	 * @param original
+	 * @param scope
+	 */
+	private TableCompiler(TableCompiler original, IRuntimeScope scope) {
+		this(original.name, original.definition, original.targetObservable, original.namespace, scope,
+				scope.getMonitor());
 	}
 
 	private void compileSchedule(Map<?, ?> definition) {
@@ -1378,7 +1405,24 @@ public class TableCompiler {
 		/*
 		 * TODO support down to, all and any in the observable, which may be null
 		 */
-		if (!category.isAbstract() && (observable == null || !(observable.isGeneric() || observable.isGlobal()))) {
+		if (category.is(Type.ROLE)) {
+			if (this.scope != null) {
+				ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
+				for (IConcept c : session.getState().getRoles().keySet()) {
+					if (category.getType().is(c)) {
+						for (IConcept trg : session.getState().getRoles().get(c)) {
+							ret.add(new ObservedConcept(Observable.promote(trg), Mode.RESOLUTION));
+						}
+					}
+				}
+			} else {
+				/*
+				 * keep the role in the reference copy, it won't be used.
+				 */
+				ret.add(new ObservedConcept(Observable.promote(category), Mode.RESOLUTION));
+			}
+		} else if (!category.isAbstract()
+				&& (observable == null || !(observable.isGeneric() || observable.isGlobal()))) {
 			// just add the concept
 			ret.add((new ObservedConcept(Observable.promote(category), Mode.RESOLUTION)));
 			// add the reified base observable to those we need to have
@@ -1798,6 +1842,10 @@ public class TableCompiler {
 
 	public INamespace getNamespace() {
 		return namespace;
+	}
+
+	public TableCompiler contextualize(IRuntimeScope scope) {
+		return new TableCompiler(this, scope);
 	}
 
 }
