@@ -8,6 +8,7 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -30,7 +31,7 @@ public class TableValidator implements IResourceValidator {
     }
 
     @Override
-    public IResource performOperation(IResource resource, String operationName, IMonitor monitor) {
+    public IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog, IMonitor monitor) {
         // TODO Auto-generated method stub
         return null;
     }

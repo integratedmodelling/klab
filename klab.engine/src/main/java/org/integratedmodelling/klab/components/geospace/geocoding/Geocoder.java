@@ -81,7 +81,7 @@ public enum Geocoder {
 
 	// TODO this should be configurable. Also we must provide all this machinery as
 	// a remote resource using its own OSM mirror.
-	public static final String[] OVERPASS_URLS = { "http://150.241.222.1/overpass/api/interpreter",
+	public static final String[] OVERPASS_URLS = { "https://knowledge.integratedmodelling.org/overpass/api/interpreter",
 			"http://overpass-api.de/api/interpreter" };
 
 	public List<Location> lookup(String query) {

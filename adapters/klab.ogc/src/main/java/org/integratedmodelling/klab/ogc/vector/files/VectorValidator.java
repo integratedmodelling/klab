@@ -38,6 +38,7 @@ import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -267,7 +268,7 @@ public class VectorValidator implements IResourceValidator {
     }
 
     @Override
-    public IResource performOperation(IResource resource, String operationName, IMonitor monitor) {
+    public IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog, IMonitor monitor) {
         throw new KlabUnimplementedException("resource operations unimplemented");
     }
 

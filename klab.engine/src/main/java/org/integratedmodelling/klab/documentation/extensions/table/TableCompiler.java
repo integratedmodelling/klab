@@ -307,18 +307,46 @@ public class TableCompiler {
 			}
 		}
 
+		public String toString() {
+			if (init) {
+				return "init";
+			}
+			if (end) {
+				return "end";
+			}
+			return "IMPLEMENT ME";
+		}
+
 		public String getDisplayLabel(IRuntimeScope scope) {
 			if (this.displayLabel == null) {
 				if (this.init) {
+
+					if (timelabels != null && timelabels.containsKey("init")) {
+						// TODO eval if it's an expression
+						return timelabels.get("init").toString();
+					}
+
 					// TODO check use of root subject. Should use target artifact but it's hard from
 					// this call chain.
 					this.displayLabel = "at start of "
 							+ Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
 									scope.getRootSubject().getScale().getTime().getResolution());
 				} else if (this.start) {
+
+					if (timelabels != null && timelabels.containsKey("start")) {
+						// TODO eval if it's an expression
+						return timelabels.get("start").toString();
+					}
+
 					this.displayLabel = Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
 							scope.getRootSubject().getScale().getTime().getResolution());
 				} else if (this.end) {
+
+					if (timelabels != null && timelabels.containsKey("end")) {
+						// TODO eval if it's an expression
+						return timelabels.get("end").toString();
+					}
+
 					this.displayLabel = "at start of "
 							+ Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getEnd(),
 									scope.getRootSubject().getScale().getTime().getResolution());
@@ -394,6 +422,20 @@ public class TableCompiler {
 			this.objectId = artifactId;
 		}
 
+		public String toString() {
+			String ret = "";
+			if (classifier != null) {
+				ret += classifier.toString();
+			}
+			if (timeSelector != null) {
+				ret += (ret.isEmpty() ? "" : " ") + timeSelector.toString();
+			}
+			if (expression != null) {
+				ret += (ret.isEmpty() ? "" : " ") + "[" + expression + "]";
+			}
+			return ret;
+		}
+
 		boolean isEnabled(Map<ObservedConcept, IObservation> catalog, IContextualizationScope scope) {
 
 			// TODO there may be other situations, like ranges that can't be matched, but
@@ -446,6 +488,96 @@ public class TableCompiler {
 	}
 
 	/**
+	 * Operations that will redefine a target concept; these operate on the targets
+	 * inherited during scan and use operations from parent dimensions to implement
+	 * complex transformation chains.
+	 * 
+	 * For now we recognize: unary semantic operators (to remove or add), removal or
+	 * addition of a role or attribute. Specified with one token for add (the
+	 * concept or 'value', 'magnitude' etc.) and with (remove ...) for removal.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	class TargetOperation {
+
+		UnarySemanticOperator operatorRemove;
+		UnarySemanticOperator operatorAdd;
+		IConcept predicateAdd;
+		IConcept predicateRemove;
+
+		public TargetOperation(Object object) {
+			String operation = "add";
+			Object operand = null;
+			if (object instanceof List && ((List<?>) object).size() > 1) {
+				operation = ((List<?>) object).get(0).toString();
+				object = ((List<?>) object).get(1);
+			}
+			if (object instanceof String) {
+				operand = object;
+			} else if (object instanceof IKimConcept) {
+				operand = Concepts.INSTANCE.declare((IKimConcept) object);
+			}
+			if (operand != null) {
+				switch (operation) {
+				case "remove":
+					if (operand instanceof IConcept && ((IConcept) operand).is(Type.PREDICATE)) {
+						predicateRemove = (IConcept) operand;
+					} else if (operand instanceof String) {
+						switch ((String) operand) {
+						case "value":
+							operatorRemove = UnarySemanticOperator.VALUE;
+							break;
+						// TODO the rest
+						}
+					}
+					break;
+				case "add":
+					if (operand instanceof IConcept && ((IConcept) operand).is(Type.PREDICATE)) {
+						predicateAdd = (IConcept) operand;
+					} else if (operand instanceof String) {
+						switch ((String) operand) {
+						case "value":
+							operatorAdd = UnarySemanticOperator.VALUE;
+							break;
+						// TODO the rest
+						}
+					}
+					break;
+				}
+			}
+		}
+
+		public ObservedConcept transform(ObservedConcept trg) {
+			ObservedConcept ret = trg;
+			if (this.operatorAdd != null) {
+				return new ObservedConcept(
+						trg.getObservable().getBuilder(monitor).as(this.operatorAdd).buildObservable(), trg.getMode());
+			} else if (this.operatorRemove != null) {
+				return new ObservedConcept(
+						Observable.promote(Observables.INSTANCE.getDescribedType(trg.getObservable().getType())),
+						trg.getMode());
+			} else if (this.predicateAdd != null) {
+				if (this.predicateAdd.is(Type.ROLE)) {
+					return new ObservedConcept(
+							trg.getObservable().getBuilder(monitor).withRole(this.predicateAdd).buildObservable(),
+							trg.getMode());
+				} else {
+					return new ObservedConcept(
+							trg.getObservable().getBuilder(monitor).withTrait(this.predicateAdd).buildObservable(),
+							trg.getMode());
+				}
+			} else if (this.predicateRemove != null) {
+				return new ObservedConcept(
+						trg.getObservable().getBuilder(monitor).without(this.predicateRemove).buildObservable(),
+						trg.getMode());
+			}
+			return ret;
+		}
+
+	}
+
+	/**
 	 * Represents rows, columns and (later) splits. The index is the position of the
 	 * cell (which is not necessarily computed in order).
 	 * 
@@ -478,10 +610,37 @@ public class TableCompiler {
 		int index;
 
 		/**
+		 * Index of this column in same group of child columns. Values of columns in
+		 * same group may be referenced using g1...gn in expressions.
+		 */
+		int groupIndex = -1;
+
+		/**
+		 * Parent column for columns that are declared inside of others.
+		 */
+		Dimension parent;
+
+		/**
+		 * Children - sucks to keep both parents and children but these will not get
+		 * garbage collected that often, and it makes it easy to browse the hierarchy
+		 * when referenced in expressions.
+		 */
+		Collection<Dimension> children = new ArrayList<>();
+
+		/**
 		 * Where the value we specify comes from. Null if computed or just coming from
-		 * another dimension.
+		 * another dimension. Target operations will fill this in at the first usage.
 		 */
 		ObservedConcept target;
+
+		/**
+		 * If specified (using retarget) the existing (stated or inherited) target will
+		 * be transformed at the first usage and set into target. Target operations are
+		 * semantic transformations that will redefine the target when it's known, and
+		 * if the target of a column is unspecified, will apply to the rows when the
+		 * target is assigned.
+		 */
+		List<TargetOperation> targetOperation = new ArrayList<>();
 
 		/**
 		 * This tells us if we're scanning the actual values of the target or only the
@@ -552,6 +711,8 @@ public class TableCompiler {
 
 		private Set<String> referencedObjects = new HashSet<>();
 
+		private int multiplicity = 1;
+
 		public Dimension(Dimension dim) {
 			this.aggregation = dim.aggregation;
 			this.computation = dim.computation;
@@ -587,7 +748,11 @@ public class TableCompiler {
 			this.dataType = dim.dataType;
 			this.referencedObjects.addAll(dim.referencedObjects);
 			this.phaseReferences.putAll(dim.phaseReferences);
-
+			this.targetOperation.addAll(dim.targetOperation);
+			this.parent = dim.parent;
+			this.children.addAll(dim.children);
+			this.multiplicity = dim.multiplicity;
+			this.filterClassId = dim.filterClassId;
 		}
 
 		public Dimension() {
@@ -673,7 +838,35 @@ public class TableCompiler {
 
 		}
 
+		@Override
+		public String toString() {
+			return "<" + dimensionType + " " + this.id + " " + encodeFilters() + ">";
+		}
+
+		private String encodeFilters() {
+			String fret = "";
+			if (this.filters != null) {
+				for (Filter filter : this.filters) {
+					fret += (fret.isEmpty() ? "" : ", ") + filter.toString();
+				}
+			}
+			String cret = "";
+			if (this.classifiers != null) {
+				for (Filter filter : this.classifiers) {
+					cret += (cret.isEmpty() ? "" : ", ") + filter.toString();
+				}
+			}
+			String ret = (fret.isEmpty() ? "" : ("F(" + fret + ")"));
+			return (ret.isEmpty() ? "" : (ret + " ")) + (cret.isEmpty() ? "" : ("C(" + cret + ")"));
+		}
+
 		boolean separator = false;
+
+		private String filterClassId;
+
+		// ensures that all rows get their target computed properly and transformed as
+		// needed before any cell is computed.
+		public Map<String, ObservedConcept> columnTargets = new HashMap<>();
 
 		/**
 		 * Called once at sorting to weed out dimensions that cannot match the data
@@ -723,10 +916,23 @@ public class TableCompiler {
 				return false;
 			}
 
-			if (this.filters != null) {
-				for (Filter filter : this.filters) {
-					if (!filter.matches(catalog, locator, phase, currentState, this, scope)) {
-						return false;
+			/*
+			 * match the filters starting at the top parent.
+			 */
+			List<Dimension> parents = new ArrayList<Dimension>();
+			Dimension myparent = this;
+			parents.add(myparent);
+			while (myparent.parent != null) {
+				parents.add(myparent.parent);
+				myparent = myparent.parent;
+			}
+
+			for (int i = parents.size() - 1; i >= 0; i--) {
+				if (parents.get(i).filters != null) {
+					for (Filter filter : parents.get(i).filters) {
+						if (!filter.matches(catalog, locator, phase, currentState, this, scope)) {
+							return false;
+						}
 					}
 				}
 			}
@@ -789,6 +995,11 @@ public class TableCompiler {
 			ret.phaseReferences.putAll(this.phaseReferences);
 			ret.dataType = this.dataType;
 			ret.referencedObjects.addAll(this.referencedObjects);
+			ret.targetOperation.addAll(this.targetOperation);
+			ret.parent = this.parent;
+			ret.children.addAll(this.children);
+			ret.filterClassId = this.filterClassId;
+			ret.multiplicity = this.multiplicity;
 
 			return ret;
 		}
@@ -796,6 +1007,20 @@ public class TableCompiler {
 		public Object getDefault() {
 			// TODO Auto-generated method stub
 			return 0;
+		}
+
+//		public void retarget(ObservedConcept target) {
+//			// TODO execute all the retargeting operations and reassign the target
+//
+//			this.target = target;
+//		}
+
+		public ObservedConcept findTarget() {
+			Dimension dim = this;
+			while (dim.target == null && dim.parent != null) {
+				dim = dim.parent;
+			}
+			return dim.target;
 		}
 
 	}
@@ -835,6 +1060,8 @@ public class TableCompiler {
 	private IRuntimeScope scope;
 
 	private IObservable targetObservable;
+
+	private Map<?, ?> timelabels;
 
 	/**
 	 * Return the passed dimensions in order of dependency. If circular dependencies
@@ -935,15 +1162,37 @@ public class TableCompiler {
 		this.monitor = monitor;
 		this.scope = scope;
 		this.targetObservable = target;
-		Pair<ObservedConcept, TargetType> tdesc = parseTarget(definition.get("target"));
-		this.target = tdesc.getFirst();
-		this.targetType = tdesc.getSecond();
-		this.activeColumns = parseDimension(definition.get("columns"), this.columns, DimensionType.COLUMN);
-		this.activeRows = parseDimension(definition.get("rows"), this.rows, DimensionType.ROW);
+		List<Pair<ObservedConcept, TargetType>> tdesc = parseTarget(definition.get("target"));
+		if (tdesc.size() > 1) {
+			throw new KlabValidationException(
+					"Only one specific target is admitted for the top-level target of a table");
+		} else if (tdesc.size() > 0) {
+			this.target = tdesc.get(0).getFirst();
+			this.targetType = tdesc.get(0).getSecond();
+		}
+
+		List<Dimension> rowList = new ArrayList<>();
+		List<Dimension> colList = new ArrayList<>();
+
+		this.activeColumns = parseDimension(definition.get("columns"), colList, DimensionType.COLUMN, null);
+		this.activeRows = parseDimension(definition.get("rows"), rowList, DimensionType.ROW, null);
+		for (Dimension row : rowList) {
+			String id = rename.containsKey(row.id) ? rename.get(row.id) : row.id;
+			row.id = id;
+			this.rows.put(id, row);
+		}
+		for (Dimension col : colList) {
+			String id = rename.containsKey(col.id) ? rename.get(col.id) : col.id;
+			col.id = id;
+			this.columns.put(id, col);
+		}
 		this.title = definition.containsKey("title") ? definition.get("title").toString() : null;
 		this.label = definition.containsKey("label") ? definition.get("label").toString() : null;
 		this.namespace = namespace;
 		this.definition = definition;
+		if (definition.get("timelabels") instanceof Map) {
+			this.timelabels = (Map<?, ?>) definition.get("timelabels");
+		}
 
 		/*
 		 * validate that only rows OR columns have an additional target but not both.
@@ -1040,21 +1289,21 @@ public class TableCompiler {
 		return observables;
 	}
 
-	private int parseDimension(Object object, Map<String, Dimension> dimensions, DimensionType type) {
+	private int parseDimension(Object object, List<Dimension> dimensions, DimensionType type, Dimension parent) {
 
 		int ret = 0;
 
 		if (object instanceof Collection) {
 			for (Object o : ((Collection<?>) object)) {
 				if (o instanceof Map) {
-					ret += parseDimension((Map<?, ?>) o, dimensions, type);
+					ret += parseDimension((Map<?, ?>) o, dimensions, type, parent);
 				} else if (o instanceof String) {
 					switch (o.toString()) {
 					case "empty":
 						Dimension empty = new Dimension();
 						empty.separator = true;
 						empty.id = "s" + dimensions.size();
-						dimensions.put(empty.id, empty);
+						dimensions.add(empty);
 						break;
 					// TODO others?
 					}
@@ -1064,7 +1313,7 @@ public class TableCompiler {
 				}
 			}
 		} else if (object instanceof Map) {
-			ret = parseDimension((Map<?, ?>) object, dimensions, type);
+			ret = parseDimension((Map<?, ?>) object, dimensions, type, parent);
 		} else {
 			throw new KlabValidationException(
 					"table dimensions (rows and columns) must be specified as maps or lists of maps");
@@ -1077,35 +1326,54 @@ public class TableCompiler {
 	 * A classifier spec may turn into >1 classifiers. Return the number of ACTIVE
 	 * dimensions built from the classifier list.
 	 */
-	private int parseDimension(Map<?, ?> map, Map<String, Dimension> dimensions, DimensionType type) {
+	private int parseDimension(Map<?, ?> map, List<Dimension> dimensions, DimensionType type, Dimension parent) {
 
 		int ret = 0;
 
-		Pair<ObservedConcept, TargetType> target = parseTarget(map.get("target"));
-		Object classifiers = map.containsKey("filter") ? map.get("filter") : map.get("classifier");
-		boolean isClassifier = map.containsKey("classifier");
-		for (List<Filter> filters : expandClassifier(target.getFirst(), target.getSecond(), classifiers)) {
-			Dimension dimension = newDimension(target.getFirst(), target.getSecond(), filters, map, type,
-					dimensions.size(), isClassifier);
-			dimensions.put(dimension.id, dimension);
-			if (!dimension.separator) {
-				ret++;
+		for (Pair<ObservedConcept, TargetType> target : parseTarget(map.get("target"))) {
+			Object classifiers = map.containsKey("filter") ? map.get("filter") : map.get("classifier");
+			boolean isClassifier = map.containsKey("classifier");
+			Pair<Collection<List<Filter>>, String> clss = expandClassifier(target.getFirst(), target.getSecond(),
+					classifiers);
+			for (List<Filter> filters : clss.getFirst()) {
+				Dimension dimension = newDimension(target.getFirst(), target.getSecond(), filters, map, type,
+						dimensions.size(), isClassifier, clss.getSecond(), parent, dimensions);
+				dimensions.add(dimension);
+				if (!dimension.separator) {
+					ret += dimension.multiplicity;
+				}
 			}
 		}
+
 		return ret;
 	}
 
-	private Pair<ObservedConcept, TargetType> parseTarget(Object object) {
+	private List<Pair<ObservedConcept, TargetType>> parseTarget(Object object) {
+
+		List<Pair<ObservedConcept, TargetType>> ret = new ArrayList<>();
 
 		ObservedConcept target = null;
 		TargetType targetType = null;
 
 		if (object instanceof IKimConcept || object instanceof IKimObservable) {
+
 			IKimStatement tdef = (IKimStatement) object;
 			IObservable trg = tdef instanceof IKimObservable
 					? Observables.INSTANCE.declare((IKimObservable) tdef, monitor)
 					: Observable.promote(Concepts.INSTANCE.declare((IKimConcept) tdef));
-			if (trg != null) {
+
+			if (trg != null && trg.is(Type.ROLE) && this.scope != null) {
+
+				ISession session = scope.getMonitor().getIdentity().getParentIdentity(ISession.class);
+				for (IConcept c : session.getState().getRoles().keySet()) {
+					if (trg.is(c)) {
+						for (IConcept targ : session.getState().getRoles().get(c)) {
+							ret.add(new Pair<>(new ObservedConcept(Observable.promote(targ), Mode.RESOLUTION),
+									trg.is(Type.QUALITY) ? TargetType.QUALITY : null));
+						}
+					}
+				}
+			} else if (trg != null) {
 
 				target = new ObservedConcept(trg,
 						trg.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
@@ -1120,20 +1388,28 @@ public class TableCompiler {
 					this.observables.add(target);
 					targetType = trg.is(Type.QUALITY) ? TargetType.QUALITY : null;
 				}
+
+				ret.add(new Pair<>(target, targetType));
+
 			} else {
 				throw new KlabValidationException(
 						"Table definition: target: " + object + " does not specify a known observable");
 			}
+
 		} else if (object != null) {
 			throw new KlabValidationException("Table definition: unknown target: " + object);
+		} else {
+			// universal
+			ret.add(new Pair<>(null, null));
 		}
 
-		return new Pair<>(target, targetType);
+		return ret;
 
 	}
 
 	private Dimension newDimension(ObservedConcept target, TargetType targetType, List<Filter> filters,
-			Map<?, ?> theRest, DimensionType type, int lastIndex, boolean filtersAreClassifiers) {
+			Map<?, ?> theRest, DimensionType type, int lastIndex, boolean filtersAreClassifiers, String filterClassId,
+			Dimension parent, List<Dimension> dimensions) {
 
 		Dimension ret = new Dimension();
 
@@ -1142,14 +1418,20 @@ public class TableCompiler {
 		ret.classifiers = filtersAreClassifiers ? filters : new ArrayList<>();
 		ret.filters = filtersAreClassifiers ? new ArrayList<>() : filters;
 		ret.dimensionType = type;
+		ret.parent = parent;
+		ret.filterClassId = filterClassId;
+
+		if (parent != null) {
+			ret.parent.children.add(ret);
+		}
 
 		if (theRest.containsKey("name")) {
 			ret.id = theRest.get("name").toString();
 		} else {
-			ret.id = (type == DimensionType.ROW ? "r" : "c");
+			ret.id = (parent == null ? "" : parent.id) + (type == DimensionType.ROW ? "r" : "c");
 		}
 
-		checkNameSequence(ret);
+		ret.id = checkNameSequence(ret.id, ret.dimensionType);
 
 		if (theRest.containsKey("title")) {
 			List<String> titles = new ArrayList<>();
@@ -1179,6 +1461,18 @@ public class TableCompiler {
 				throw new KlabValidationException("the 'hidden' parameter only admits true/false values");
 			}
 			ret.hidden = (Boolean) theRest.get("hidden");
+		}
+
+		if (theRest.containsKey("retarget")) {
+			Object retarget = theRest.get("retarget");
+			if (retarget instanceof List && ((List<?>) retarget).size() > 0
+					&& ((List<?>) retarget).get(0) instanceof List) {
+				for (Object rt : ((List<?>) retarget)) {
+					ret.targetOperation.add(new TargetOperation(rt));
+				}
+			} else {
+				ret.targetOperation.add(new TargetOperation(retarget));
+			}
 		}
 
 		if (theRest.containsKey("style")) {
@@ -1243,54 +1537,68 @@ public class TableCompiler {
 			}
 		}
 
+		if (theRest.containsKey(type == DimensionType.COLUMN ? "columns" : "rows")) {
+			ret.multiplicity += parseDimension(theRest.get(type == DimensionType.COLUMN ? "columns" : "rows"),
+					dimensions, type, ret);
+		}
+
 		return ret;
 	}
 
 	private Map<String, Integer> idIndex = new HashMap<>();
+	private Set<String> rowNames = new HashSet<>();
+	private Set<String> colNames = new HashSet<>();
+	private Map<String, String> rename = new HashMap<>();
 
 	/**
 	 * Rename multiple rows with same ID to id1, id2.. etc
 	 * 
 	 * @param ret
 	 */
-	private void checkNameSequence(Dimension ret) {
-		Map<String, Dimension> dimensions = null;
-		if (ret.dimensionType == DimensionType.ROW) {
-			dimensions = rows;
-		} else if (ret.dimensionType == DimensionType.COLUMN) {
-			dimensions = columns;
+	private String checkNameSequence(String baseId, DimensionType type) {
+
+		Set<String> dimensions = null;
+		if (type == DimensionType.ROW) {
+			dimensions = rowNames;
+		} else if (type == DimensionType.COLUMN) {
+			dimensions = colNames;
 		}
 
+		String ret = baseId;
 		// could be a split, in which case do nothing
 		if (dimensions != null) {
-			if (dimensions.containsKey(ret.id)) {
-				String prevId = ret.id + "1";
-				String newId = ret.id + "2";
-				idIndex.put(ret.id, 2);
-				Dimension dim = dimensions.remove(ret.id);
-				dim.id = prevId;
-				dimensions.put(prevId, dim);
-				ret.id = newId;
-			} else if (idIndex.containsKey(ret.id)) {
-				int prev = idIndex.get(ret.id);
-				prev++;
-				String newId = ret.id + prev;
-				idIndex.put(ret.id, prev);
-				ret.id = newId;
-				// will be inserted later
+			if (dimensions.contains(baseId)) {
+				boolean ren = false;
+				Integer index = idIndex.get(baseId);
+				if (index == null) {
+					index = 1;
+					ren = true;
+				}
+				String prevId = baseId + index;
+				String newId = baseId + (index + 1);
+				idIndex.put(baseId, index + 1);
+				if (ren) {
+					rename.put(baseId, prevId);
+				}
+				ret = newId;
+			} else {
+				dimensions.add(baseId);
 			}
 		}
 
+		return ret;
+
 	}
 
-	private Collection<List<Filter>> expandClassifier(ObservedConcept target, TargetType targetType,
+	private Pair<Collection<List<Filter>>, String> expandClassifier(ObservedConcept target, TargetType targetType,
 			Object declaration) {
 
 		List<List<Filter>> ret = new ArrayList<>();
+		String classId = null;
 
 		if (declaration == null) {
 			ret.add(new ArrayList<>());
-			return ret;
+			return new Pair<>(ret, null);
 		}
 
 		if (declaration instanceof Map) {
@@ -1298,15 +1606,20 @@ public class TableCompiler {
 				if ("default".equals(entry.getKey())) {
 					expandClassifiers(target, targetType, declaration, ret);
 				} else {
-					Pair<ObservedConcept, TargetType> classifierTarget = parseTarget(entry.getKey());
-					expandClassifiers(classifierTarget.getFirst(), classifierTarget.getSecond(), declaration, ret);
+					List<Pair<ObservedConcept, TargetType>> classifierTarget = parseTarget(entry.getKey());
+					if (classifierTarget.size() > 1) {
+						throw new KlabValidationException("Only one specific target is admitted in a classifier");
+					} else if (classifierTarget.size() > 0) {
+						expandClassifiers(classifierTarget.get(0).getFirst(), classifierTarget.get(0).getSecond(),
+								declaration, ret);
+					}
 				}
 			}
 		} else {
 			expandClassifiers(target, targetType, declaration, ret);
 		}
 
-		return ret;
+		return new Pair<>(ret, classId);
 	}
 
 	private void expandClassifiers(ObservedConcept target, TargetType targetType, Object declaration,
@@ -1392,7 +1705,6 @@ public class TableCompiler {
 	}
 
 	public List<ObservedConcept> expandCategory(IObservable observable) {
-
 		IConcept category = Observables.INSTANCE.getDescribedType(observable.getType());
 		this.observables.add(new ObservedConcept(observable, Mode.RESOLUTION));
 		return expandConcept(category, observable);
@@ -1503,6 +1815,10 @@ public class TableCompiler {
 
 			for (Pair<Object, ILocator> value : phase.states(targetObservation)) {
 
+				if (monitor.isInterrupted()) {
+					return ret;
+				}
+
 				/*
 				 * TODO check if there are situations where we want to tabulate nulls
 				 */
@@ -1512,7 +1828,12 @@ public class TableCompiler {
 
 				for (Dimension column : sortedColumns) {
 
-					if (!column.isActive(catalog, value.getSecond(), phase, value.getFirst(), scope)) {
+					if (monitor.isInterrupted()) {
+						return ret;
+					}
+
+					if (column.children.size() > 0
+							|| !column.isActive(catalog, value.getSecond(), phase, value.getFirst(), scope)) {
 						continue;
 					}
 
@@ -1525,12 +1846,16 @@ public class TableCompiler {
 
 					for (Dimension row : sortedRows) {
 
+						if (monitor.isInterrupted()) {
+							return ret;
+						}
+
 						if (!row.isActive(catalog, value.getSecond(), phase, value.getFirst(), scope)) {
 							continue;
 						}
 
 						// bring along the data of computation closest to us
-						ObservedConcept rowTarget = row.target == null ? columnTarget : row.target;
+						ObservedConcept rowTarget = getCellTarget(row, column, columnTarget);
 						TargetType rowTargetType = row.targetType == null ? columnTargetType : row.targetType;
 						ComputationType rowComputationType = row.computationType == null ? column.computationType
 								: row.computationType;
@@ -1578,7 +1903,14 @@ public class TableCompiler {
 								break;
 							case QUALITY:
 								// TODO maybe we have this already
-								val = ((IState) catalog.get(rowTarget)).get(value.getSecond());
+								IArtifact source = catalog.get(rowTarget);
+								if (!(source instanceof IState)) {
+									continue;
+								}
+								val = ((IState) source).get(value.getSecond());
+								if (val == null) {
+									continue;
+								}
 								break;
 							default:
 								break;
@@ -1589,6 +1921,10 @@ public class TableCompiler {
 
 							ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(),
 									phase, column.index, row.index);
+
+//							System.out.println("Accumulating " + val + " of " + rowTarget + " in " + column + ", " + row
+//									+ " at " + ((Cell) ((IScale) value.getSecond()).getSpace()).getX() + ","
+//									+ ((Cell) ((IScale) value.getSecond()).getSpace()).getY());
 
 						} else if (rowComputationType == ComputationType.Expression) {
 
@@ -1619,6 +1955,66 @@ public class TableCompiler {
 		}
 
 		scope.getMonitor().info("table " + name + " computed successfully");
+
+		return ret;
+	}
+
+	private ObservedConcept getCellTarget(Dimension row, Dimension column, ObservedConcept defaultTarget) {
+
+		if (!row.columnTargets.containsKey(column.id)) {
+
+			ObservedConcept trg = row.target;
+			if (trg == null) {
+				/*
+				 * get the closest target for the row, then for the column, then the default.
+				 */
+				trg = row.findTarget();
+				if (trg /* still */ == null) {
+					trg = column.findTarget();
+				}
+				if (trg /* still */ == null) {
+					trg = defaultTarget;
+				}
+			}
+
+			if (trg != null) {
+				for (TargetOperation op : compileOperations(row, column)) {
+					trg = op.transform(trg);
+				}
+			}
+
+			row.columnTargets.put(column.id, trg);
+
+		}
+
+		return row.columnTargets.get(column.id);
+	}
+
+	private List<TargetOperation> compileOperations(Dimension row, Dimension column) {
+		List<TargetOperation> ret = new ArrayList<>();
+
+		/*
+		 * accumulate the ops in reverse order first from the row, then columns. TODO
+		 * these should be optimized if there is a remove following by an add of the
+		 * same thing.
+		 */
+		Dimension r = row;
+		do {
+			int insertPoint = 0;
+			for (TargetOperation op : r.targetOperation) {
+				ret.add(insertPoint++, op);
+			}
+			r = r.parent;
+		} while (r != null);
+
+		r = column;
+		do {
+			int insertPoint = 0;
+			for (TargetOperation op : r.targetOperation) {
+				ret.add(insertPoint++, op);
+			}
+			r = r.parent;
+		} while (r != null);
 
 		return ret;
 	}
@@ -1729,6 +2125,10 @@ public class TableCompiler {
 					}
 				}
 			}
+		}
+
+		if (dimension.target != null) {
+			ret.put("target", Observables.INSTANCE.getDisplayName(dimension.target.getObservable()));
 		}
 
 		ret.put("init", "at start of " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),

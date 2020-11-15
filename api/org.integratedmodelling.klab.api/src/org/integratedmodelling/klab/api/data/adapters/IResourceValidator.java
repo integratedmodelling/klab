@@ -21,6 +21,7 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
@@ -102,7 +103,7 @@ public interface IResourceValidator {
 	 * @param monitor
 	 * @return
 	 */
-	IResource performOperation(IResource resource, String operationName, IMonitor monitor);
+	IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog, IMonitor monitor);
 
 	/**
 	 * Check if the passed file and/or parameters can be validated by this

@@ -781,7 +781,7 @@ Map:
 ;
 
 MapEntry:
-	// must remove 'in (...)' from classifiers to avoid conflict with observable units, which are more needed.
+	// must remove 'in (...)' from classifiers to avoid conflict with observable units, which are more necessary.
 	classifier=ClassifierRHSWithIdNoSet ':' value=ValueWithIdAndConcept
 ;
 

@@ -6,10 +6,10 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -92,7 +92,7 @@ public class FSCANEncoder implements IResourceEncoder {
 
 	}
 
-	public long indexShapes(IResource resource) {
+	public long indexShapes(IResource resource, IResourceCatalog catalog) {
 
 		Logging.INSTANCE.info("Start FSCAN indexing for " + resource.getUrn() + "...");
 

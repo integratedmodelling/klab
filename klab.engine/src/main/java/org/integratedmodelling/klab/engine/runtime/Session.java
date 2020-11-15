@@ -831,7 +831,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 					}
 				} else {
 					IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
-					res = adapter.getValidator().performOperation(resource, request.getOperation(), rmonitor);
+					res = adapter.getValidator().performOperation(resource, request.getOperation(),
+							Resources.INSTANCE.getCatalog(resource), rmonitor);
 				}
 
 				response.setUrn(resource.getUrn());

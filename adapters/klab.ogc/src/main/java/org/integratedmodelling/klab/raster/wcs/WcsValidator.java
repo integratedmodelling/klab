@@ -25,6 +25,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator.Operation;
@@ -106,7 +107,7 @@ public class WcsValidator implements IResourceValidator {
     }
 
     @Override
-    public IResource performOperation(IResource resource, String operationName, IMonitor monitor) {
+    public IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog, IMonitor monitor) {
         throw new KlabUnimplementedException("resource operations unimplemented");
     }
 

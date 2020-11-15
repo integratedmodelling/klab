@@ -466,7 +466,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithout(ret.roles, concept);
 			ret.roles = new ArrayList<>(rdelta.getFirst());
 			ret.removed.addAll(rdelta.getSecond());
-			for (int i = 0; i < tdelta.getSecond().size(); i++) {
+			for (int i = 0; i < rdelta.getSecond().size(); i++) {
 				removedRoles.add(ObservableRole.ROLE);
 			}
 			if (ret.context != null && ret.context.equals(concept)) {
