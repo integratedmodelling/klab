@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.KlabUser;
 import org.integratedmodelling.klab.engine.Engine;
+import org.integratedmodelling.klab.engine.configs.ConsulAgentService;
 import org.integratedmodelling.klab.engine.configs.ConsulConfig;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.rest.Group;
@@ -50,14 +51,14 @@ public class HubUserService implements RemoteUserService {
 	RestTemplate restTemplate;
 	
 	@Autowired
-	ConsulConfig consul;
+	ConsulDnsService dnsService;
 	
 	/*
 	 * Generates a response entity a url to the session generated after succesful
 	 * authentication.
 	 */
 	@Override
-	public ResponseEntity<?> login(UserAuthenticationRequest login) throws JSONException {
+	public ResponseEntity<?> login(UserAuthenticationRequest login) {
 		ResponseEntity<HubLoginResponse> result;
 		try {
 			result = hubLogin(login);
@@ -77,6 +78,43 @@ public class HubUserService implements RemoteUserService {
 			
         	HubUserProfile profile = result.getBody().getProfile();
         	
+        	return processProfile(profile);
+			
+
+		} else {
+			throw new KlabAuthorizationException("Failed to login user: " + login.getUsername());			
+		}
+		
+	}
+	
+	public ResponseEntity<?> login(String token) {
+		ResponseEntity<HubUserProfile> result;
+		try {
+			result = hubProfile(token);
+		} catch (HttpClientErrorException e) {
+			if (e.getRawStatusCode() == 401) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to login with token");
+			}
+			throw new KlabAuthorizationException("Failed to login with token"); 
+		}
+		
+		
+        if (result != null && result.getStatusCode().is2xxSuccessful()) {
+    		
+        	if(activeSession()) {
+        		return getUserActiveSession();
+        	}
+			
+        	HubUserProfile profile = result.getBody();
+        	
+        	return processProfile(profile);
+
+		} else {
+			throw new KlabAuthorizationException("Failed to login with token");			
+		}
+	}
+	
+	 private ResponseEntity<?> processProfile(HubUserProfile profile) {
 			List<String> roles = profile.getRoles();
 			List<GrantedAuthority> authorities = getAuthorities(roles);
 			List<Group> groups = new ArrayList<>();
@@ -88,12 +126,13 @@ public class HubUserService implements RemoteUserService {
 			});
 	        
 			String token = NameGenerator.newName();
-			KlabUser user = new KlabUser(login.getUsername(), token, authorities);
+			KlabUser user = new KlabUser(profile.getName(), token, authorities);
 			user.getGroups().addAll(groups);
-			
+
+
 			String sessionId = getSession(user);
 			//consul.setWeight(user.getWeight(), restTemplate);
-			adjustServiceWeight(profile);
+			dnsService.adjustServiceWeight(profile);
 			
 			String redirectUrl = "/modeler/ui/viewer?session=" + sessionId;
 			
@@ -105,27 +144,11 @@ public class HubUserService implements RemoteUserService {
 		    return ResponseEntity.status(HttpStatus.ACCEPTED)
 		            .location(URI.create(redirectUrl))
 		            .body(response);
-		} else {
-			throw new KlabAuthorizationException("Failed to login user: " + login.getUsername());			
-		}
-		
-	}
+		 
+	 }
+
 	
-
-	/*
-	 * This is a mock of different weights.
-	 */
-	private int getProfileWeight(HubUserProfile profile) {
-		if(profile.getRoles().contains("ROLE_SYSTEM")){
-			return 21845;
-		} else if (profile.getRoles().contains("ROLE_ADMINSTRATOR")) {
-			return 13107;
-		} else {
-			return 4369;
-		}
-		
-	}
-
+	
 
 
 //	private HubUserProfile getProfile(Object object) throws IllegalArgumentException, JSONException {
@@ -187,6 +210,16 @@ public class HubUserService implements RemoteUserService {
         return restTemplate.postForEntity(getHubUrl(), request, HubLoginResponse.class);
 	}
 	
+	private ResponseEntity<HubUserProfile> hubProfile(String token){
+		HttpHeaders headers = new HttpHeaders();
+		headers.add("Authentication", token);
+        HttpEntity<?> request = new HttpEntity<>(headers);
+        ResponseEntity<HubUserProfile> response = restTemplate.exchange(
+        		getProfileUrl(),
+        		HttpMethod.GET,
+        		request, HubUserProfile.class);
+        return response;
+	}
 	
 	private String getHubUrl() {
 		return KlabCertificate
@@ -195,51 +228,11 @@ public class HubUserService implements RemoteUserService {
 				API.HUB.AUTHENTICATE_USER;
 	}
 	
-	
-	public ConsulAgentService getService () {
-		ResponseEntity<ConsulAgentService> resp =
-				restTemplate.exchange(consul.getServiceUrl(),
-		                    HttpMethod.GET, null, ConsulAgentService.class);
-		
-		
-		if (resp.getStatusCode().equals(HttpStatus.OK)) {
-			return resp.getBody();
-		} else {
-			return null;
-		}
-		
-	}
-	
-	
-	public void adjustServiceWeight(HubUserProfile profile) throws JSONException {
-			ConsulAgentService service = getService();
-			
-			int userWeight = getProfileWeight(profile); 
-			service.getWeights().setPassing(service.getWeights().getPassing()-userWeight);
-			
-			if(service.getMeta().containsKey("Users")) {
-				JSONObject json = new JSONObject(service.getMeta().get("Users"));
-				if(json.has(profile.getName())) {
-					return;
-				} else {
-					json.append(profile.getName(), userWeight);
-					service.getMeta().replace("Users", json.toString());	
-				}
-			} else {
-				JSONObject entry = new JSONObject().put(profile.getName(), userWeight);
-				service.getMeta().put("Users", entry.toString());
-			}
-			
-			service.setRegister();
-			restTemplate.put(consul.registerServiceUrl(), service);
-	}
-	
-	
-	public void setIntialServiceWeight() {
-			ConsulAgentService service = getService();
-			service.getWeights().setPassing(65535);
-			service.setRegister();
-			restTemplate.put(consul.registerServiceUrl(), service);
+	private String getProfileUrl() {
+		return KlabCertificate
+				.createFromString(Configuration.INSTANCE.getProperty("klab.certificate", ""))
+				.getProperty(KlabCertificate.KEY_PARTNER_HUB) + 
+				API.HUB.CURRENT_PROFILE;
 	}
 	
 }

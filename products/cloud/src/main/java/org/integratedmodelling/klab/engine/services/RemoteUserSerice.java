@@ -8,5 +8,6 @@ import org.springframework.stereotype.Service;
 public abstract interface RemoteUserSerice {
 	
 	abstract ResponseEntity<Object> login(UserAuthenticationRequest request);
+	abstract ResponseEntity<Object> login(String token);
 
 }

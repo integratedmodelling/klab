@@ -1,4 +1,4 @@
-package org.integratedmodelling.klab.engine.services;
+package org.integratedmodelling.klab.engine.configs;
 
 import java.util.List;
 import java.util.Map;

@@ -5,6 +5,7 @@ import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.engine.configs.ConsulConfig;
+import org.integratedmodelling.klab.engine.services.ConsulDnsService;
 import org.integratedmodelling.klab.engine.services.HubUserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,7 @@ import org.springframework.web.client.RestTemplate;
 public class ConsulServiceRegistryAspect {
 	
 	@Autowired
-	HubUserService service;
+	ConsulDnsService service;
 	
 	
 	@After("execution(* org.springframework.cloud.consul.serviceregistry.ConsulServiceRegistry.register(..))")
