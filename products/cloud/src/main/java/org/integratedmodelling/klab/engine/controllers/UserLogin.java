@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.json.JSONException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -17,7 +18,7 @@ public class UserLogin {
 	@Autowired
 	private HubUserService remoteUserService;
 	
-	
+	@CrossOrigin(origins = "http://localhost:8080")
 	@PostMapping(value = API.HUB.AUTHENTICATE_USER, consumes="application/json",headers = "content-type=application/x-www-form-urlencoded;charset=UTF-8")
 	public ResponseEntity<?> loginResponse(@RequestBody UserAuthenticationRequest request) throws JSONException {
 		return remoteUserService.login(request);

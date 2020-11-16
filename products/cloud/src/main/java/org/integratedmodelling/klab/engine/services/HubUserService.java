@@ -27,6 +27,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.JsonNode;
@@ -57,11 +58,18 @@ public class HubUserService implements RemoteUserService {
 	 */
 	@Override
 	public ResponseEntity<?> login(UserAuthenticationRequest login) throws JSONException {
+		ResponseEntity<HubLoginResponse> result;
+		try {
+			result = hubLogin(login);
+		} catch (HttpClientErrorException e) {
+			if (e.getRawStatusCode() == 401) {
+				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to login user: " + login.getUsername());
+			}
+			throw new KlabAuthorizationException("Failed to login user: " + login.getUsername(), e); 
+		}
 		
-		ResponseEntity<HubLoginResponse> result = hubLogin(login);
 		
-		
-        if (result.getStatusCode().is2xxSuccessful()) {
+        if (result != null && result.getStatusCode().is2xxSuccessful()) {
     		
         	if(activeSession()) {
         		return getUserActiveSession();
