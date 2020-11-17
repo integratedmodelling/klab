@@ -1985,6 +1985,8 @@ public class TableCompiler {
 
 			row.columnTargets.put(column.id, trg);
 
+			System.out.println(row.id +"," + column.id +": " + trg + "; col = " + column +", row = " + row);
+			
 		}
 
 		return row.columnTargets.get(column.id);

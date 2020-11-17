@@ -662,7 +662,7 @@ public class ModelKbox extends ObservableKbox {
 				if (model.isInstantiator()) {
 					IConcept context = Observables.INSTANCE.getContextType(type);
 					if (context == null || !context.is(model.getObservables().get(0))) {
-						type = attr.getBuilder(monitor).within(model.getObservables().get(0).getType()).buildConcept();
+						type = attr.getBuilder(monitor).of(model.getObservables().get(0).getType()).buildConcept();
 					}
 				}
 				ModelReference m = ret.get(0).copy();

@@ -9,10 +9,12 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Observations;
@@ -134,12 +136,12 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 	 */
 	public TableArtifact(TableCompiler table, List<Dimension> rowCatalog, List<Dimension> colCatalog,
 			IRuntimeScope scope) {
-		
+
 		this.table = table;
 		this.rows = rowCatalog;
 		this.columns = colCatalog;
 		this.scope = scope;
-		
+
 		/*
 		 * make a single catalog so we have the chance to catch ambiguous naming
 		 */
@@ -156,7 +158,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 	public String getUrn() {
 		return table.getNamespace().getName() + "." + table.getName();
 	}
-	
+
 	/**
 	 * Accumulate a value to be aggregated later according to semantics. If we see
 	 * two different phases, remove the aggregation value (cell will be nodata) but
@@ -240,6 +242,14 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 		}
 	}
 
+	class Group {
+		String title;
+		int nDimensions;
+		int level;
+		int startIndex;
+		List<Group> children = new ArrayList<>();
+	}
+
 	/**
 	 * TODO turn into a private function that takes a table view and a sheet handle,
 	 * so it can be generalized to >1 sheets.
@@ -264,6 +274,39 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			int hSheet = ret.sheet("");
 
 			List<Cell> aggregatedCells = new ArrayList<>();
+
+			/*
+			 * compute groups based on dimension hierarchies. Dimensions that stand alone
+			 * will have a group all by themselves. These must preserve order or we're
+			 * screwed.
+			 */
+			Map<String, Group> colGroups = new LinkedHashMap<>();
+			Map<String, Group> rowGroups = new LinkedHashMap<>();
+			int cGroupLevel = 0, rGroupLevel = 0;
+			int sCol = 0, sRow = 0;
+			
+			for (Dimension column : getActiveColumns()) {
+				if (column.hidden) {
+					continue;
+				}
+				sCol ++;
+				int level = checkGroups(column, scope, sCol++, colGroups);
+				if (cGroupLevel < level) {
+					cGroupLevel = level;
+				}
+				for (Dimension row : getActiveRows()) {
+					if (row.hidden) {
+						continue;
+					}
+					if (sCol == 1) {
+						sRow ++;
+					}
+					level = checkGroups(row, scope, sRow++, rowGroups);
+					if (rGroupLevel < level) {
+						rGroupLevel = level;
+					}
+				}
+			}
 
 			/*
 			 * precompute all cells with aggregators and not those that aggregate them; the
@@ -339,13 +382,36 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			/*
 			 * headers
 			 */
-			if (rTitles + cTitles > 0) {
+			if ((rTitles + cTitles) > 0 || (colGroups.size() + rowGroups.size()) > 0) {
 
 				int hHeader = ret.header(hTable);
 
-				/*
-				 * TODO GROUPS!
-				 */
+				for (int i = cGroupLevel; i > 0; i--) {
+
+					int tRow = ret.newRow(hHeader);
+					int level = i;
+					int nCols = 0;
+					
+					// skip row titles
+					for (int n = 0; n < rTitles; n++) {
+						ret.newHeaderCell(tRow, false);
+					}
+
+					for (Group group : colGroups.values().stream().filter(group -> group.level == level).collect(Collectors.toList())) {
+						while (nCols > group.startIndex) {
+							ret.newHeaderCell(tRow, false);
+							nCols ++;
+						}
+						int cell = ret.newHeaderCell(tRow, group.nDimensions, false);
+						ret.write(cell, group.title, Style.BOLD);
+						nCols += group.nDimensions;
+					}
+					
+					for (int n = nCols; n < sCol; n++) {
+						ret.newHeaderCell(tRow, false);
+					}
+				}
+				
 				for (int ct = 0; ct < cTitles; ct++) {
 
 					int tRow = ret.newRow(hHeader);
@@ -363,7 +429,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			}
 
 			/*
-			 * data and row titles
+			 * data and row titles. Row groups can go to hell for now.
 			 */
 			int hBody = ret.body(hTable);
 			for (Dimension rDesc : getActiveRows()) {
@@ -382,8 +448,38 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 					ret.write(ret.newCell(hRow), getData(cell), getStyle(cell));
 				}
 			}
+						
 			this.compiledViews.put(mediaType, ret);
 		}
+		return ret;
+	}
+
+	private int checkGroups(Dimension dimension, IRuntimeScope scope, int startIndex, Map<String, Group> container) {
+
+		int ret = 0;
+		Dimension groupDim = dimension.parent;
+		Group gparent = null;
+		while (groupDim != null) {
+			ret ++;
+			String title = (groupDim.titles == null || groupDim.titles.length == 0) ? "{classifier}" : groupDim.titles[0];
+			String groupName = TemplateUtils.expandMatches(title, this.table.getTemplateVars(groupDim, scope)).get(0);
+			Group group = container.get(groupName); 
+			if (group == null) {
+				group = new Group();
+				container.put(groupName, group);
+				group.title = groupName;
+				group.level = ret;
+				group.startIndex = startIndex;
+			}
+			group.nDimensions ++;
+			if (gparent != null) {
+				gparent.children.add(group);
+			}
+			
+			groupDim = groupDim.parent;
+			gparent = group;
+		}
+		
 		return ret;
 	}
 

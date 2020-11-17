@@ -75,7 +75,7 @@ public enum Geocoder {
 				new ResourceGeocodingService("local:ferdinando.villa:scratch:administrative", 0.5));
 		services.put(WATERSHED_GEOCODING_STRATEGY,
 				new ResourceGeocodingService("local:ferdinando.villa:scratch:watershed", 0.5));
-		services.put(RANDOM_GEOCODING_STRATEGY, new RandomGeocodingService(0.5));
+//		services.put(RANDOM_GEOCODING_STRATEGY, new RandomGeocodingService(0.5));
 		// TODO other services
 	}
 
