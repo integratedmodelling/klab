@@ -407,7 +407,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 						nCols += group.nDimensions;
 					}
 					
-					for (int n = nCols; n < sCol; n++) {
+					for (int n = nCols; n < (sCol - nCols); n++) {
 						ret.newHeaderCell(tRow, false);
 					}
 				}
