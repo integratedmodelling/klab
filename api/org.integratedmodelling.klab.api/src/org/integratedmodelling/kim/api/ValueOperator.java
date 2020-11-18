@@ -41,6 +41,10 @@ public enum ValueOperator {
     }
 
 	public static ValueOperator getOperator(String valueModifier) {
+		if ("only".equals(valueModifier)) {
+			// 'is' synonym for classifications
+			valueModifier = "=";
+		}
 		for (ValueOperator m : ValueOperator.values()) {
 			if (m.declaration.equals(valueModifier)) {
 				return m;

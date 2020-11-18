@@ -225,7 +225,7 @@ VALUE_OPERATOR:
 	'<'|
 	'where'|
 	'=='|
-	'='|
+	'='| 'only'|
 	'without'|
 	'!='|
 	'plus'|

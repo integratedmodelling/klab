@@ -413,6 +413,9 @@ public class TableCompiler {
 		// a
 		// object match. Not used for filtering.
 		public ObservedConcept objectFilter;
+		
+		// save the last value matched through classifier. For debugging only.
+		Object lastMatched;
 
 		public Filter() {
 			this.universal = true;
@@ -477,6 +480,8 @@ public class TableCompiler {
 				if (!classifier.classify(currentState, scope)) {
 					return false;
 				}
+
+				this.lastMatched = currentState;
 			}
 
 			return true;
@@ -840,7 +845,7 @@ public class TableCompiler {
 
 		@Override
 		public String toString() {
-			return "<" + dimensionType + " " + this.id + " " + encodeFilters() + ">";
+			return "<" + dimensionType + " " + this.id + " T[" + target + "] " + encodeFilters() + ">";
 		}
 
 		private String encodeFilters() {
@@ -940,6 +945,41 @@ public class TableCompiler {
 			return true;
 		}
 
+		/**
+		 * for debugging
+		 * @param concept
+		 * @return
+		 */
+		public boolean matches(IConcept concept) {
+
+			if (this.separator) {
+				return false;
+			}
+
+			/*
+			 * match the filters starting at the top parent.
+			 */
+			List<Dimension> parents = new ArrayList<Dimension>();
+			Dimension myparent = this;
+			parents.add(myparent);
+			while (myparent.parent != null) {
+				parents.add(myparent.parent);
+				myparent = myparent.parent;
+			}
+
+			for (int i = parents.size() - 1; i >= 0; i--) {
+				if (parents.get(i).filters != null) {
+					for (Filter filter : parents.get(i).filters) {
+						if (filter.classifier != null && filter.classifier.classify(concept, null)) {
+							return true;
+						}
+					}
+				}
+			}
+
+			return false;
+		}
+		
 		/**
 		 * For each one of the observations in this group, make a copy of this with the
 		 * filter that has the objectFilter matching that specific observation.
@@ -1836,7 +1876,7 @@ public class TableCompiler {
 							|| !column.isActive(catalog, value.getSecond(), phase, value.getFirst(), scope)) {
 						continue;
 					}
-
+					
 					ObservedConcept columnTarget = column.target == null ? this.target : column.target;
 					TargetType columnTargetType = column.targetType == null ? this.targetType : column.targetType;
 					ComputationType columnComputationType = column.computationType;
@@ -1899,7 +1939,8 @@ public class TableCompiler {
 										.getLength(rowTarget.getObservable().getUnit());
 								break;
 							case NUMEROSITY:
-								// TODO count some fucking object
+								// add one to the cell
+								val = 1;
 								break;
 							case QUALITY:
 								// TODO maybe we have this already

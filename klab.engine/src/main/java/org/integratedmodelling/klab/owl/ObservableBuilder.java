@@ -1782,9 +1782,9 @@ public class ObservableBuilder implements IObservable.Builder {
 			cId += "As" + roleIds;
 			// only add role names to user description if roles are not from the
 			// root of the worldview
-			if (!rolesAreFundamental(roles)) {
+//			if (!rolesAreFundamental(roles)) {
 				cDs = roleIds + Concepts.INSTANCE.getDisplayName(main);
-			}
+//			}
 		}
 
 //		if (distributedInherency) {

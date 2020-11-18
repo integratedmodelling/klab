@@ -206,10 +206,10 @@ public class ObservationStrategy {
 					}
 				}
 			}
-		} /*
+		} else {/*
 			 * for now abstract is OK due to its role in attribute instantiator, TODO check
 			 * later else if (dep.isAbstract()) { // TODO System.out.println("HOSTIAZ"); }
-			 */else {
+			 */
 			ret.add(dep);
 		}
 		return ret;

@@ -4397,46 +4397,52 @@ ruleVALUE_OPERATOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRule
 			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getEqualsSignKeyword_6());
 		}
 		    |
+		kw='only'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getOnlyKeyword_7());
+		}
+		    |
 		kw='without'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getWithoutKeyword_7());
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getWithoutKeyword_8());
 		}
 		    |
 		kw='!='
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getExclamationMarkEqualsSignKeyword_8());
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getExclamationMarkEqualsSignKeyword_9());
 		}
 		    |
 		kw='plus'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getPlusKeyword_9());
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getPlusKeyword_10());
 		}
 		    |
 		kw='minus'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getMinusKeyword_10());
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getMinusKeyword_11());
 		}
 		    |
 		kw='times'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getTimesKeyword_11());
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getTimesKeyword_12());
 		}
 		    |
 		kw='over'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getOverKeyword_12());
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getOverKeyword_13());
 		}
 		    |
 		kw='by'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getByKeyword_13());
+			newLeafNode(kw, grammarAccess.getVALUE_OPERATORAccess().getByKeyword_14());
 		}
 	)
 ;

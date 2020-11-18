@@ -2670,13 +2670,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cWhereKeyword_4 = (Keyword)cAlternatives.eContents().get(4);
 		private final Keyword cEqualsSignEqualsSignKeyword_5 = (Keyword)cAlternatives.eContents().get(5);
 		private final Keyword cEqualsSignKeyword_6 = (Keyword)cAlternatives.eContents().get(6);
-		private final Keyword cWithoutKeyword_7 = (Keyword)cAlternatives.eContents().get(7);
-		private final Keyword cExclamationMarkEqualsSignKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
-		private final Keyword cPlusKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
-		private final Keyword cMinusKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
-		private final Keyword cTimesKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
-		private final Keyword cOverKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
-		private final Keyword cByKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
+		private final Keyword cOnlyKeyword_7 = (Keyword)cAlternatives.eContents().get(7);
+		private final Keyword cWithoutKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
+		private final Keyword cExclamationMarkEqualsSignKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
+		private final Keyword cPlusKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
+		private final Keyword cMinusKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
+		private final Keyword cTimesKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
+		private final Keyword cOverKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
+		private final Keyword cByKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
 		
 		//VALUE_OPERATOR:
 		//	'>' |
@@ -2685,7 +2686,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	'<' |
 		//	'where' |
 		//	'==' |
-		//	'=' |
+		//	'=' | 'only' |
 		//	'without' |
 		//	'!=' |
 		//	'plus' |
@@ -2695,7 +2696,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	'by';
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over' | 'by'
+		//'>' | '>=' | '<=' | '<' | 'where' | '==' | '=' | 'only' | 'without' | '!=' | 'plus' | 'minus' | 'times' | 'over' | 'by'
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//'>'
@@ -2719,26 +2720,29 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'='
 		public Keyword getEqualsSignKeyword_6() { return cEqualsSignKeyword_6; }
 		
+		//'only'
+		public Keyword getOnlyKeyword_7() { return cOnlyKeyword_7; }
+		
 		//'without'
-		public Keyword getWithoutKeyword_7() { return cWithoutKeyword_7; }
+		public Keyword getWithoutKeyword_8() { return cWithoutKeyword_8; }
 		
 		//'!='
-		public Keyword getExclamationMarkEqualsSignKeyword_8() { return cExclamationMarkEqualsSignKeyword_8; }
+		public Keyword getExclamationMarkEqualsSignKeyword_9() { return cExclamationMarkEqualsSignKeyword_9; }
 		
 		//'plus'
-		public Keyword getPlusKeyword_9() { return cPlusKeyword_9; }
+		public Keyword getPlusKeyword_10() { return cPlusKeyword_10; }
 		
 		//'minus'
-		public Keyword getMinusKeyword_10() { return cMinusKeyword_10; }
+		public Keyword getMinusKeyword_11() { return cMinusKeyword_11; }
 		
 		//'times'
-		public Keyword getTimesKeyword_11() { return cTimesKeyword_11; }
+		public Keyword getTimesKeyword_12() { return cTimesKeyword_12; }
 		
 		//'over'
-		public Keyword getOverKeyword_12() { return cOverKeyword_12; }
+		public Keyword getOverKeyword_13() { return cOverKeyword_13; }
 		
 		//'by'
-		public Keyword getByKeyword_13() { return cByKeyword_13; }
+		public Keyword getByKeyword_14() { return cByKeyword_14; }
 	}
 	public class NamespaceElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Namespace");
@@ -8575,11 +8579,11 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	classifier=ClassifierRHSWithIdNoSet ':' value=ValueWithIdAndConcept;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//// must remove 'in (...)' from classifiers to avoid conflict with observable units, which are more needed.
+		//// must remove 'in (...)' from classifiers to avoid conflict with observable units, which are more necessary.
 		//classifier=ClassifierRHSWithIdNoSet ':' value=ValueWithIdAndConcept
 		public Group getGroup() { return cGroup; }
 		
-		//// must remove 'in (...)' from classifiers to avoid conflict with observable units, which are more needed.
+		//// must remove 'in (...)' from classifiers to avoid conflict with observable units, which are more necessary.
 		//classifier=ClassifierRHSWithIdNoSet
 		public Assignment getClassifierAssignment_0() { return cClassifierAssignment_0; }
 		
@@ -11354,7 +11358,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	'<' |
 	//	'where' |
 	//	'==' |
-	//	'=' |
+	//	'=' | 'only' |
 	//	'without' |
 	//	'!=' |
 	//	'plus' |

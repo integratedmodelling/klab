@@ -3701,45 +3701,51 @@ rule__VALUE_OPERATOR__Alternatives
 	)
 	|
 	(
-		{ before(grammarAccess.getVALUE_OPERATORAccess().getWithoutKeyword_7()); }
+		{ before(grammarAccess.getVALUE_OPERATORAccess().getOnlyKeyword_7()); }
+		'only'
+		{ after(grammarAccess.getVALUE_OPERATORAccess().getOnlyKeyword_7()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getVALUE_OPERATORAccess().getWithoutKeyword_8()); }
 		'without'
-		{ after(grammarAccess.getVALUE_OPERATORAccess().getWithoutKeyword_7()); }
+		{ after(grammarAccess.getVALUE_OPERATORAccess().getWithoutKeyword_8()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getVALUE_OPERATORAccess().getExclamationMarkEqualsSignKeyword_8()); }
+		{ before(grammarAccess.getVALUE_OPERATORAccess().getExclamationMarkEqualsSignKeyword_9()); }
 		'!='
-		{ after(grammarAccess.getVALUE_OPERATORAccess().getExclamationMarkEqualsSignKeyword_8()); }
+		{ after(grammarAccess.getVALUE_OPERATORAccess().getExclamationMarkEqualsSignKeyword_9()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getVALUE_OPERATORAccess().getPlusKeyword_9()); }
+		{ before(grammarAccess.getVALUE_OPERATORAccess().getPlusKeyword_10()); }
 		'plus'
-		{ after(grammarAccess.getVALUE_OPERATORAccess().getPlusKeyword_9()); }
+		{ after(grammarAccess.getVALUE_OPERATORAccess().getPlusKeyword_10()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getVALUE_OPERATORAccess().getMinusKeyword_10()); }
+		{ before(grammarAccess.getVALUE_OPERATORAccess().getMinusKeyword_11()); }
 		'minus'
-		{ after(grammarAccess.getVALUE_OPERATORAccess().getMinusKeyword_10()); }
+		{ after(grammarAccess.getVALUE_OPERATORAccess().getMinusKeyword_11()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getVALUE_OPERATORAccess().getTimesKeyword_11()); }
+		{ before(grammarAccess.getVALUE_OPERATORAccess().getTimesKeyword_12()); }
 		'times'
-		{ after(grammarAccess.getVALUE_OPERATORAccess().getTimesKeyword_11()); }
+		{ after(grammarAccess.getVALUE_OPERATORAccess().getTimesKeyword_12()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getVALUE_OPERATORAccess().getOverKeyword_12()); }
+		{ before(grammarAccess.getVALUE_OPERATORAccess().getOverKeyword_13()); }
 		'over'
-		{ after(grammarAccess.getVALUE_OPERATORAccess().getOverKeyword_12()); }
+		{ after(grammarAccess.getVALUE_OPERATORAccess().getOverKeyword_13()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getVALUE_OPERATORAccess().getByKeyword_13()); }
+		{ before(grammarAccess.getVALUE_OPERATORAccess().getByKeyword_14()); }
 		'by'
-		{ after(grammarAccess.getVALUE_OPERATORAccess().getByKeyword_13()); }
+		{ after(grammarAccess.getVALUE_OPERATORAccess().getByKeyword_14()); }
 	)
 ;
 finally {
