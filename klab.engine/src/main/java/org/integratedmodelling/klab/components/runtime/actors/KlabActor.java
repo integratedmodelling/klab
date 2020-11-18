@@ -640,6 +640,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			 * main()
 			 */
 			IBehavior childBehavior = Actors.INSTANCE.getBehavior(code.getBehavior());
+			if (childBehavior == null) {
+				this.getIdentity().getMonitor()
+					.error("unreferenced child behavior: " + code.getBehavior() + " when execute instantiation");
+				return;
+			}
 			Action main = childBehavior.getAction("main");
 			int n = 0;
 			for (int i = 0; i < main.getStatement().getArgumentNames().size(); i++) {
