@@ -1268,13 +1268,22 @@ public interface KactorsPackage extends EPackage
   int VALUE__TREE = 0;
 
   /**
+   * The feature id for the '<em><b>Empty</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__EMPTY = 1;
+
+  /**
    * The feature id for the '<em><b>Argvalue</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__ARGVALUE = 1;
+  int VALUE__ARGVALUE = 2;
 
   /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
@@ -1283,7 +1292,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LITERAL = 2;
+  int VALUE__LITERAL = 3;
 
   /**
    * The feature id for the '<em><b>Urn</b></em>' attribute.
@@ -1292,7 +1301,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__URN = 3;
+  int VALUE__URN = 4;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1301,7 +1310,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__ID = 4;
+  int VALUE__ID = 5;
 
   /**
    * The feature id for the '<em><b>List</b></em>' containment reference.
@@ -1310,7 +1319,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LIST = 5;
+  int VALUE__LIST = 6;
 
   /**
    * The feature id for the '<em><b>Map</b></em>' containment reference.
@@ -1319,7 +1328,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__MAP = 6;
+  int VALUE__MAP = 7;
 
   /**
    * The feature id for the '<em><b>Constant</b></em>' attribute.
@@ -1328,7 +1337,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__CONSTANT = 7;
+  int VALUE__CONSTANT = 8;
 
   /**
    * The feature id for the '<em><b>Observable</b></em>' containment reference.
@@ -1337,7 +1346,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__OBSERVABLE = 8;
+  int VALUE__OBSERVABLE = 9;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' attribute.
@@ -1346,7 +1355,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__EXPRESSION = 9;
+  int VALUE__EXPRESSION = 10;
 
   /**
    * The feature id for the '<em><b>Table</b></em>' containment reference.
@@ -1355,7 +1364,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__TABLE = 10;
+  int VALUE__TABLE = 11;
 
   /**
    * The feature id for the '<em><b>Quantity</b></em>' containment reference.
@@ -1364,7 +1373,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__QUANTITY = 11;
+  int VALUE__QUANTITY = 12;
 
   /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
@@ -1373,7 +1382,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__METADATA = 12;
+  int VALUE__METADATA = 13;
 
   /**
    * The number of structural features of the '<em>Value</em>' class.
@@ -1382,7 +1391,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 13;
+  int VALUE_FEATURE_COUNT = 14;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl <em>Match</em>}' class.
@@ -4714,6 +4723,17 @@ public interface KactorsPackage extends EPackage
   EReference getValue_Tree();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#isEmpty <em>Empty</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Empty</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#isEmpty()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Empty();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#getArgvalue <em>Argvalue</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -8020,6 +8040,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference VALUE__TREE = eINSTANCE.getValue_Tree();
+
+    /**
+     * The meta object literal for the '<em><b>Empty</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__EMPTY = eINSTANCE.getValue_Empty();
 
     /**
      * The meta object literal for the '<em><b>Argvalue</b></em>' attribute feature.

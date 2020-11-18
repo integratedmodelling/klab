@@ -56,7 +56,7 @@
 'e'=35
 'each'=134
 'else'=82
-'empty'=123
+'empty'=122
 'exception'=124
 'exclusive'=31
 'false'=30
@@ -112,7 +112,7 @@
 'true'=29
 'type'=146
 'uncertainty'=143
-'unknown'=122
+'unknown'=123
 'urn:klab:'=88
 'user'=121
 'value'=152

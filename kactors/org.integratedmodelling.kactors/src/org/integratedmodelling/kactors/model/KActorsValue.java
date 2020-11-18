@@ -205,6 +205,9 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		} else if (value.getTree() != null) {
 			this.type = Type.TREE;
 			this.value = parseTree(value.getTree(), this);
+		} else if (value.isEmpty()) {
+			this.type = Type.EMPTY;
+			this.value = null;
 		}
 
 		if (value.getMetadata() != null) {

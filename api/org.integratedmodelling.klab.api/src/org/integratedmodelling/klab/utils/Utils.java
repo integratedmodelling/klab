@@ -1,6 +1,8 @@
 package org.integratedmodelling.klab.utils;
 
 import java.io.File;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.lang.reflect.Array;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
@@ -8,6 +10,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -498,6 +501,12 @@ public class Utils {
 		}
 
 		return ret;
+	}
+
+	public static String propertiesToString(Properties prop) {
+		StringWriter writer = new StringWriter();
+		prop.list(new PrintWriter(writer));
+		return writer.getBuffer().toString();
 	}
 
 }

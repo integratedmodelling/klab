@@ -257,7 +257,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	public Object put(String key, Object value) {
 		switch (key) {
 		case GEOCODING_STRATEGY_KEY:
-			this.setGeocodingStrategy(value.toString());
+			setGeocodingStrategy(value == null ? null : value.toString());
+			this.scaleOfInterest.setShape(null);
 			if (this.scaleOfInterest.getSpaceUnit() != null) {
 				// don't call unless it was set at least once
 				register(getCurrentExtent(), false);
@@ -270,23 +271,26 @@ public class SessionState extends Parameters<String> implements ISessionState {
 //			this.scaleOfInterest.setSpaceResolutionConverted(
 //					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
 //							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
-			this.scaleOfInterest.setSpaceResolutionDescription(NumberFormat.getInstance()
-					.format(this.scaleOfInterest.getSpaceResolution()) + " " + this.scaleOfInterest.getSpaceUnit());
+			this.scaleOfInterest.setSpaceResolutionDescription(
+					NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
+							+ this.scaleOfInterest.getSpaceUnit());
 		case SPACE_RESOLUTION_MULTIPLIER_KEY:
 			this.scaleOfInterest.setSpaceResolution(check(value, Number.class).doubleValue());
 //			this.scaleOfInterest.setSpaceResolutionConverted(
 //					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
 //							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
-			this.scaleOfInterest.setSpaceResolutionDescription(NumberFormat.getInstance()
-					.format(this.scaleOfInterest.getSpaceResolution()) + " " + this.scaleOfInterest.getSpaceUnit());
+			this.scaleOfInterest.setSpaceResolutionDescription(
+					NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
+							+ this.scaleOfInterest.getSpaceUnit());
 			break;
 		case SPACE_RESOLUTION_UNIT_KEY:
 			this.scaleOfInterest.setSpaceUnit(value.toString());
 //			this.scaleOfInterest.setSpaceResolutionConverted(
 //					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
 //							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
-			this.scaleOfInterest.setSpaceResolutionDescription(NumberFormat.getInstance()
-					.format(this.scaleOfInterest.getSpaceResolution()) + " " + this.scaleOfInterest.getSpaceUnit());
+			this.scaleOfInterest.setSpaceResolutionDescription(
+					NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
+							+ this.scaleOfInterest.getSpaceUnit());
 			break;
 		case LOCK_SPACE_KEY:
 			this.lockSpace.set(check(value, Boolean.class));
@@ -544,9 +548,9 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		this.scaleOfInterest.setSpaceResolutionDescription(
 				NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
 						+ this.scaleOfInterest.getSpaceUnit());
-		this.scaleOfInterest.setResolutionDescription(
-				NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
-						+ this.scaleOfInterest.getSpaceUnit());
+		this.scaleOfInterest
+				.setResolutionDescription(NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution())
+						+ " " + this.scaleOfInterest.getSpaceUnit());
 
 		session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined,
 				scaleOfInterest);
@@ -596,7 +600,36 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	}
 
 	public void setGeocodingStrategy(String geocodingStrategy) {
+		
+		boolean reset = this.geocodingStrategy != null && !this.geocodingStrategy.equals(geocodingStrategy);
 		this.geocodingStrategy = geocodingStrategy;
+		if (this.scaleOfInterest != null && reset) {
+
+			this.scaleOfInterest.setShape(null);
+			if (this.geocodingStrategy != null) {
+
+				Envelope envelope = Envelope.create(this.scaleOfInterest.getEast(), this.scaleOfInterest.getWest(),
+						this.scaleOfInterest.getSouth(), this.scaleOfInterest.getNorth(), Projection.getLatLon());
+
+				IShape shape = Geocoder.INSTANCE.geocodeToShape(envelope, this.geocodingStrategy, session.getMonitor());
+				if (shape != null) {
+					this.scaleOfInterest.setName(shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class));
+					if (!(shape.getMetadata().containsKey(IMetadata.IM_GEOGRAPHIC_AREA)
+							&& !shape.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA, Boolean.FALSE))) {
+						this.scaleOfInterest.setShape(((Shape) shape).getJTSGeometry().toString());
+					}
+				}
+			}
+
+			session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined,
+					scaleOfInterest);
+
+			for (ListenerWrapper listener : listeners.values()) {
+				if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {
+					listener.listener.scaleChanged(scaleOfInterest);
+				}
+			}
+		}
 	}
 
 	public void register(SettingChangeRequest request) {

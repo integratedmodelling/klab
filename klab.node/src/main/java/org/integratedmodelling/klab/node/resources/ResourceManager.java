@@ -11,6 +11,7 @@ import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
@@ -175,11 +176,14 @@ public class ResourceManager {
 		String originalUrn = null;
 		File resourcePath = null;
 		if (uploadArchive != null) {
+			Logging.INSTANCE.info("unpacking resource archive from " + uploadArchive);
 			Pair<File, String> unpacked = catalog.unpackArchive(uploadArchive);
 			resourcePath = unpacked.getFirst();
 			originalUrn = unpacked.getSecond();
+			Logging.INSTANCE.info("resource archive unpacked into  " + resourcePath + " for " + originalUrn);
 		} else {
 			originalUrn = resourceReference.getUrn();
+			Logging.INSTANCE.info("publishing logical resource " + originalUrn + " from posted descriptor");
 		}
 
 		final ITicket ret = ticketService.open(ITicket.Type.ResourcePublication, "resource", originalUrn, "user",
@@ -207,7 +211,7 @@ public class ResourceManager {
 					ret.resolve("urn", resource.getUrn());
 				} catch (Throwable t) {
 					Logging.INSTANCE
-							.error("exception when publishing " + resourceReference.getUrn() + ": " + t.getMessage());
+							.error("exception when publishing " + resourceReference.getUrn() + ": " + ExceptionUtils.getStackTrace(t));
 					ret.error("Publishing failed with exception: " + t.getMessage());
 				}
 			}

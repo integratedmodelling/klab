@@ -1721,7 +1721,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getValue_Argvalue()
+  public EAttribute getValue_Empty()
   {
     return (EAttribute)valueEClass.getEStructuralFeatures().get(1);
   }
@@ -1732,9 +1732,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EAttribute getValue_Argvalue()
+  {
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getValue_Literal()
   {
-    return (EReference)valueEClass.getEStructuralFeatures().get(2);
+    return (EReference)valueEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -1745,7 +1756,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getValue_Urn()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(3);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -1756,7 +1767,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getValue_Id()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(4);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(5);
   }
 
   /**
@@ -1767,7 +1778,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getValue_List()
   {
-    return (EReference)valueEClass.getEStructuralFeatures().get(5);
+    return (EReference)valueEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -1778,7 +1789,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getValue_Map()
   {
-    return (EReference)valueEClass.getEStructuralFeatures().get(6);
+    return (EReference)valueEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -1789,7 +1800,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getValue_Constant()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(7);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -1800,7 +1811,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getValue_Observable()
   {
-    return (EReference)valueEClass.getEStructuralFeatures().get(8);
+    return (EReference)valueEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -1811,7 +1822,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EAttribute getValue_Expression()
   {
-    return (EAttribute)valueEClass.getEStructuralFeatures().get(9);
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -1822,7 +1833,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getValue_Table()
   {
-    return (EReference)valueEClass.getEStructuralFeatures().get(10);
+    return (EReference)valueEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -1833,7 +1844,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getValue_Quantity()
   {
-    return (EReference)valueEClass.getEStructuralFeatures().get(11);
+    return (EReference)valueEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -1844,7 +1855,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getValue_Metadata()
   {
-    return (EReference)valueEClass.getEStructuralFeatures().get(12);
+    return (EReference)valueEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -4254,6 +4265,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     valueEClass = createEClass(VALUE);
     createEReference(valueEClass, VALUE__TREE);
+    createEAttribute(valueEClass, VALUE__EMPTY);
     createEAttribute(valueEClass, VALUE__ARGVALUE);
     createEReference(valueEClass, VALUE__LITERAL);
     createEAttribute(valueEClass, VALUE__URN);
@@ -4665,6 +4677,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     initEClass(valueEClass, Value.class, "Value", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getValue_Tree(), this.getTree(), null, "tree", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getValue_Empty(), ecorePackage.getEBoolean(), "empty", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Argvalue(), ecorePackage.getEString(), "argvalue", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Literal(), this.getLiteral(), null, "literal", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getValue_Urn(), ecorePackage.getEString(), "urn", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

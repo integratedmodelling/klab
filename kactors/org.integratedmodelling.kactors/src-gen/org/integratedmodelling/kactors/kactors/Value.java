@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getTree <em>Tree</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#isEmpty <em>Empty</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getArgvalue <em>Argvalue</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getUrn <em>Urn</em>}</li>
@@ -56,6 +57,28 @@ public interface Value extends EObject
    * @generated
    */
   void setTree(Tree value);
+
+  /**
+   * Returns the value of the '<em><b>Empty</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Empty</em>' attribute.
+   * @see #setEmpty(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Empty()
+   * @model
+   * @generated
+   */
+  boolean isEmpty();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#isEmpty <em>Empty</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Empty</em>' attribute.
+   * @see #isEmpty()
+   * @generated
+   */
+  void setEmpty(boolean value);
 
   /**
    * Returns the value of the '<em><b>Argvalue</b></em>' attribute.
