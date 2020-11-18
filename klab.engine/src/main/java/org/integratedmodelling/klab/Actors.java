@@ -628,7 +628,7 @@ public enum Actors implements IActorsService {
 		}
 
 		if (view.getFooter() != null) {
-			dumpPanel(view.getHeader(), "Footer", ret, offset + 3);
+			dumpPanel(view.getFooter(), "Footer", ret, offset + 3);
 		}
 
 	}
