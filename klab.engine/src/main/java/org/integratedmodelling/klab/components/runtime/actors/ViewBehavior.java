@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
+import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewComponent.Type;
@@ -595,8 +596,12 @@ public class ViewBehavior {
 		public ViewComponent createViewComponent(Scope scope) {
 			ViewComponent message = new ViewComponent();
 			message.setType(Type.Tree);
+			if (arguments.getUnnamedKeys().size() == 0) {
+				this.identity.getMonitor().error("Error on component, no unnamed keys");
+				throw new KlabActorException("Error on component, no unnamed keys");
+			}
 			message.setTree(
-					getTree((KActorsValue) arguments.get(arguments.getUnnamedKeys().iterator().next()), values));
+				getTree((KActorsValue) arguments.get(arguments.getUnnamedKeys().iterator().next()), values));
 			message.getAttributes().putAll(getMetadata(arguments, scope));
 			if (!message.getAttributes().containsKey("name")) {
 				// tree "name" is the root element if it's a string
