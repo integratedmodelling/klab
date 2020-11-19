@@ -40,7 +40,7 @@ public class Info implements ICommand {
 		INodeIdentity node = Network.INSTANCE.getNode(nodeId);
 		if (node != null && node.isOnline()) {
 			Map<?,?> info = node.getClient().get(API.NODE.RESOURCE.INFO, Map.class, "urn", urn);
-			ret.append(JsonUtils.asString(info));
+			ret.append(JsonUtils.printAsJson(info));
 		} else {
 			return "Node " + nodeId + " is " + (node == null ? "unknown" : "offline");
 		}

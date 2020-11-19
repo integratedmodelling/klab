@@ -261,8 +261,8 @@ public class Postgis {
 			ResultSet rs = st.executeQuery("SELECT COUNT('gid'), level FROM " + smTableName + " GROUP BY level");
 			long n = 0;
 			while (rs.next()) {
-				ret.put("simplified_count_level_" + rs.getInt(1), rs.getObject(2));
-				n += rs.getLong(2);
+				ret.put("simplified_count_level_" + rs.getObject(2), rs.getLong(1));
+				n += rs.getLong(1);
 			}
 			ret.put("total_shapes", n);
 
