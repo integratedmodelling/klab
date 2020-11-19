@@ -160,8 +160,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	private Map<String, IKnowledgeView> views;
 	private Map<String, IKnowledgeView> viewsByUrn;
 
-	// cache for IS operator in groovy expressions
+	// cache for IS operator in groovy expressions, both for proper subsumption and
+	// correlations such as "adopts role/trait"
 	private LoadingCache<String, Boolean> reasonerCache;
+	private LoadingCache<String, Boolean> relatedReasonerCache;
 
 	public RuntimeScope(Actuator actuator, IResolutionScope scope, IScale scale, IMonitor monitor) {
 
@@ -194,6 +196,22 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				IConcept a = Concepts.c(split[0]);
 				IConcept b = Concepts.c(split[1]);
 				return a.is(b);
+			}
+		});
+		
+		this.relatedReasonerCache = CacheBuilder.newBuilder().maximumSize(2048).build(new CacheLoader<String, Boolean>() {
+			@Override
+			public Boolean load(String key) throws Exception {
+				String[] split = key.split(";");
+
+				IConcept a = Concepts.c(split[0]);
+				IConcept b = Concepts.c(split[1]);
+				
+				boolean ret = a.is(b);
+				if (!ret && (b.is(Type.PREDICATE))) {
+					// TODO check for adoption
+				}
+				return ret;
 			}
 		});
 
@@ -261,6 +279,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.views = context.views;
 		this.viewsByUrn = context.viewsByUrn;
 		this.reasonerCache = context.reasonerCache;
+		this.relatedReasonerCache = context.relatedReasonerCache;
 	}
 
 	@Override
@@ -1962,6 +1981,18 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		}
 		try {
 			return reasonerCache.get((c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : c1.toString())
+					+ ";" + (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() : c2.toString()));
+		} catch (ExecutionException e) {
+			return false;
+		}
+	}
+
+	public boolean cached_is_related(Object c1, Object c2) {
+		if (c2 == null || c1 == null) {
+			return false;
+		}
+		try {
+			return relatedReasonerCache.get((c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : c1.toString())
 					+ ";" + (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() : c2.toString()));
 		} catch (ExecutionException e) {
 			return false;

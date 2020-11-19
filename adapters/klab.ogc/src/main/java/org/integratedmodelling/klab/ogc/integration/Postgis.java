@@ -305,7 +305,7 @@ public class Postgis {
 
 		WKBReader wkb = new WKBReader();
 
-		System.out.println(chooseShape);
+//		System.out.println(chooseShape);
 
 		try {
 			try (Connection con = DriverManager.getConnection(this.pgurl,
