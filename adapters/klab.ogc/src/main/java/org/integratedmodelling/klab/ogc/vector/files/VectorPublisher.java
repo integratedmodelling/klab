@@ -71,10 +71,11 @@ public class VectorPublisher implements IResourceEnhancer {
 			Urn urn = new Urn(resource.getUrn());
 
 			if (!geoserver.isOnline()) {
-				Logging.INSTANCE.warn("geoserver instance enabled but not reachable: aborting ingestion of " + resource.getUrn());
+				Logging.INSTANCE.warn(
+						"geoserver instance enabled but not reachable: aborting ingestion of " + resource.getUrn());
 				return resource;
 			}
-			
+
 			if (Postgis.isEnabled()) {
 				Postgis postgis = Postgis.create(urn);
 				if (postgis.isOnline()) {
@@ -119,6 +120,12 @@ public class VectorPublisher implements IResourceEnhancer {
 		}
 
 		return ret;
+	}
+
+	@Override
+	public boolean unpublish(IResource resource, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -42,4 +42,10 @@ public class RasterPublisher implements IResourcePublisher {
 		return ret;
 	}
 
+	@Override
+	public boolean unpublish(IResource resource, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

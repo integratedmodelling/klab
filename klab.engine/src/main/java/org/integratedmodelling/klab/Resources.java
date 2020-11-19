@@ -1691,7 +1691,7 @@ public enum Resources implements IResourceService {
 			public void run() {
 				try {
 					if (Urns.INSTANCE.isLocal(resource.getUrn())) {
-						if (resource.getLocalPaths().isEmpty()) {
+						if (!hasFileContent(resource)) {
 							ResourceReference reference = ((Resource) resource).getReference();
 							reference.getMetadata().putAll(suggestions);
 							TicketResponse.Ticket response = node.getClient().post(API.NODE.RESOURCE.SUBMIT_DESCRIPTOR,
@@ -1731,6 +1731,14 @@ public enum Resources implements IResourceService {
 
 		return ret;
 
+	}
+
+	protected boolean hasFileContent(IResource resource) {
+
+		if (!resource.getLocalPaths().isEmpty()) {
+			return true;
+		}
+		return ((Resource)resource).getPath().listFiles().length > 1;
 	}
 
 	@Override

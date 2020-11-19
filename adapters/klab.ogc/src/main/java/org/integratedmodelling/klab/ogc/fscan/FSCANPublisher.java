@@ -13,4 +13,10 @@ public class FSCANPublisher implements IResourcePublisher {
 		return new FSCANValidator().performOperation(localResource, "index", catalog, Klab.INSTANCE.getRootMonitor());
 	}
 
+	@Override
+	public boolean unpublish(IResource resource, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

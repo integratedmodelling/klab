@@ -81,6 +81,8 @@ public class FSCANEncoder implements IResourceEncoder {
 		IScale scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
 		IEnvelope envelope = scale.getSpace().getShape().getEnvelope().transform(Projection.getLatLon(), false);
 		IShape shape = postgis.getLargestInScale(urn, envelope);
+		Logging.INSTANCE.info("Query in " + envelope + " returned " + shape);
+		Logging.INSTANCE.info("Builder class is " + builder.getClass());
 		if (shape != null) {
 			Builder bb = builder.startObject(context.getTargetName() == null ? "result" : context.getTargetName(),
 					shape.getMetadata().get(IMetadata.DC_NAME, String.class), Scale.create(shape));
@@ -89,7 +91,6 @@ public class FSCANEncoder implements IResourceEncoder {
 			}
 			bb.finishObject();
 		}
-
 	}
 
 	public long indexShapes(IResource resource, IResourceCatalog catalog) {
