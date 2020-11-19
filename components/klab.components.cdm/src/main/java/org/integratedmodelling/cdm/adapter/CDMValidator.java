@@ -4,7 +4,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -28,7 +30,8 @@ public class CDMValidator implements IResourceValidator {
 	}
 
 	@Override
-	public IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog, IMonitor monitor) {
+	public IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog,
+			IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -43,6 +46,13 @@ public class CDMValidator implements IResourceValidator {
 	public Collection<File> getAllFilesForResource(File file) {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public Map<String, Object> describeResource(IResource resource) {
+		Map<String, Object> ret = new LinkedHashMap<>();
+		// TODO
+		return ret;
 	}
 
 }

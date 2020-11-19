@@ -4,16 +4,21 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.ogc.FSCANAdapter;
 
 public class FSCANValidator implements IResourceValidator {
 
@@ -75,4 +80,17 @@ public class FSCANValidator implements IResourceValidator {
 		return null;
 	}
 
+	@Override
+	public Map<String, Object> describeResource(IResource resource) {
+		
+		Map<String, Object> ret = new LinkedHashMap<>();
+		FSCANEncoder encoder = new FSCANEncoder();
+		if (!encoder.isOnline(resource, Klab.INSTANCE.getRootMonitor())) {
+			ret.put("status", "DATA OFFLINE");
+		} else {
+			ret.putAll(FSCANAdapter.getPostgis().describeContents(new Urn(resource.getUrn())));
+		}
+		
+		return ret;
+	}
 }

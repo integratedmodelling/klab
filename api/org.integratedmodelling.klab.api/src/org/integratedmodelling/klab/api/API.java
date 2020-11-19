@@ -503,6 +503,14 @@ public interface API {
 			 */
 			public static final String LIST = "/resource/list";
 
+			/**
+			 * List detailed information about the passed resource, including the online
+			 * status and anything related to the associated storage.
+			 * 
+			 * GET
+			 */
+			public static final String INFO = "/resource/info/" + P_URN;
+
 		}
 
 	}

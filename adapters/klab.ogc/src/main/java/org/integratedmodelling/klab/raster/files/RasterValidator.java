@@ -19,7 +19,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridGeometry2D;
@@ -182,4 +184,11 @@ public class RasterValidator implements IResourceValidator {
     public IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog, IMonitor monitor) {
         throw new KlabUnimplementedException("resource operations unimplemented");
     }
+
+	@Override
+	public Map<String, Object> describeResource(IResource resource) {
+		Map<String, Object> ret = new LinkedHashMap<>();
+		// TODO
+		return ret;
+	}
 }

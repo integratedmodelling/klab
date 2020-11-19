@@ -66,7 +66,7 @@ public class List implements ICommand {
 				ret.append("\n" + n + " resources retrieved\n");
 			} else {
 				for (String urn : resourceIds) {
-					ResourceReference resource = node.getClient().get(API.NODE.RESOURCE.RESOLVE_URN, ResourceReference.class);
+					ResourceReference resource = node.getClient().get(API.NODE.RESOURCE.RESOLVE_URN, ResourceReference.class, "urn", urn);
 					ret.append(resource.getUrn() + (verbose ? ":\n" : "\n"));
 					if (verbose) {
 						ret.append(StringUtils.indent(JsonUtils.printAsJson(resource)));

@@ -17,8 +17,10 @@ import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
@@ -124,5 +126,16 @@ public interface IResourceValidator {
 	 * @return all relevant files for the resource.
 	 */
 	Collection<File> getAllFilesForResource(File file);
+
+	/**
+	 * Return a map with all known and useful details about this resource,
+	 * particularly those related to the internal storage built to support it.
+	 * Called by the {@link API.NODE.RESOURCE} INFO endpoint to report about the
+	 * status of a resource in a remote node.
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	Map<? extends String, ? extends Object> describeResource(IResource resource);
 
 }

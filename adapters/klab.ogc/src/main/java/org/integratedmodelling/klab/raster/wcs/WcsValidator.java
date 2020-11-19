@@ -19,7 +19,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
@@ -111,4 +113,10 @@ public class WcsValidator implements IResourceValidator {
         throw new KlabUnimplementedException("resource operations unimplemented");
     }
 
+	@Override
+	public Map<String, Object> describeResource(IResource resource) {
+		Map<String, Object> ret = new LinkedHashMap<>();
+		// TODO
+		return ret;
+	}
 }

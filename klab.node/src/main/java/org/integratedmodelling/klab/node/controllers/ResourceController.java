@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
@@ -140,6 +141,20 @@ public class ResourceController {
 			}
 		}
 		return ret;
+	}
+	
+	@GetMapping(value = API.NODE.RESOURCE.INFO, produces = "application/json")
+	@ResponseBody
+	public Map<String, Object> getResourceInfo(Principal principal, @PathVariable String urn) {
+
+		IResource resource = resourceManager.getResource(urn, ((EngineAuthorization) principal).getGroups());
+		if (!resourceManager.canAccess(urn, (EngineAuthorization) principal)) {
+			throw new SecurityException(urn);
+		}
+		if (resource == null) {
+			throw new KlabResourceNotFoundException("resource " + urn + " not found on this node");
+		}
+		return resourceManager.getResourceInfo(resource);
 	}
 
 	/**

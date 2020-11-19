@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.ogc.FSCANAdapter;
 import org.integratedmodelling.klab.ogc.integration.Postgis;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Path;
@@ -29,19 +30,10 @@ public class FSCANEncoder implements IResourceEncoder {
 	public static final String FEATURE_ID = "fscan.feature_id";
 	public static final String COLLECTION_ID = "fscan.collection_id";
 
-	private Postgis postgis = null;
-
-	private boolean isOnline() {
-		if (Postgis.isEnabled()) {
-			this.postgis = Postgis.create();
-			return this.postgis.isOnline();
-		}
-		return false;
-	}
-
+	
 	@Override
 	public boolean isOnline(IResource resource, IMonitor monitor) {
-		if (isOnline()) {
+		if (FSCANAdapter.isOnline()) {
 			// TODO check for data in resource
 			return true;
 		}
@@ -52,7 +44,7 @@ public class FSCANEncoder implements IResourceEncoder {
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			Builder builder, IContextualizationScope context) {
 
-		if (!isOnline()) {
+		if (!FSCANAdapter.isOnline()) {
 			return;
 		}
 
@@ -80,7 +72,7 @@ public class FSCANEncoder implements IResourceEncoder {
 		 */
 		IScale scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
 		IEnvelope envelope = scale.getSpace().getShape().getEnvelope().transform(Projection.getLatLon(), false);
-		IShape shape = postgis.getLargestInScale(urn, envelope);
+		IShape shape = FSCANAdapter.getPostgis().getLargestInScale(urn, envelope);
 		Logging.INSTANCE.info("Query in " + envelope + " returned " + shape);
 		Logging.INSTANCE.info("Builder class is " + builder.getClass());
 		if (shape != null) {
@@ -97,7 +89,7 @@ public class FSCANEncoder implements IResourceEncoder {
 
 		Logging.INSTANCE.info("Start FSCAN indexing for " + resource.getUrn() + "...");
 
-		if (!isOnline()) {
+		if (!FSCANAdapter.isOnline()) {
 			Logging.INSTANCE.warn("FSCAN indexing aborted: Postgres service is not online");
 			return -1;
 		}
@@ -108,7 +100,7 @@ public class FSCANEncoder implements IResourceEncoder {
 		 * reset the boundary tables with bounding box and simplified polygons for all
 		 * shapes
 		 */
-		postgis.resetBoundaries(urn);
+		FSCANAdapter.getPostgis().resetBoundaries(urn);
 
 		long ret = 0;
 		Set<File> files = new HashSet<>();
@@ -120,7 +112,7 @@ public class FSCANEncoder implements IResourceEncoder {
 					String nameExpression = resource.getParameters().get(Path.getLeading(key, '.') + '.' + "label",
 							String.class);
 					files.add(file);
-					ret += postgis.indexBoundaries(file, urn, nameExpression, level);
+					ret += FSCANAdapter.getPostgis().indexBoundaries(file, urn, nameExpression, level);
 				}
 			}
 		}
@@ -130,7 +122,7 @@ public class FSCANEncoder implements IResourceEncoder {
 		/*
 		 * rebuild indices
 		 */
-		postgis.reindexBoundaries(urn);
+		FSCANAdapter.getPostgis().reindexBoundaries(urn);
 
 		Logging.INSTANCE.info("FSCAN indexing complete");
 

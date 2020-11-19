@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.ogc.fscan.FSCANEncoder;
 import org.integratedmodelling.klab.ogc.fscan.FSCANImporter;
 import org.integratedmodelling.klab.ogc.fscan.FSCANPublisher;
 import org.integratedmodelling.klab.ogc.fscan.FSCANValidator;
+import org.integratedmodelling.klab.ogc.integration.Postgis;
 
 /**
  * Specialized vector adapter that merges one or more vector sources (limited to
@@ -40,6 +41,21 @@ public class FSCANAdapter implements IResourceAdapter {
 
 	public static final String ID = "fscan";
 
+	private static Postgis postgis;
+
+	public static Postgis getPostgis() {
+		if (Postgis.isEnabled()) {
+			postgis = Postgis.create();
+			postgis.isOnline();
+		}
+		return postgis;
+	}
+	
+	public static boolean isOnline() {
+		return getPostgis() != null && getPostgis().isOnline();
+	}
+	
+	
 	@Override
 	public String getName() {
 		return ID;
