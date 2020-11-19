@@ -476,8 +476,9 @@ public class Resource implements IResource {
 				}
 			} else {
 				/*
-				 * node resource
+				 * node resource, simpler because getLocalPath is set up for that
 				 */
+				return new File(getLocalPath() + File.separator + this.parameters.get(parameter));
 			}
 		}
 		return null;

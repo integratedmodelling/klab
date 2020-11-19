@@ -95,7 +95,7 @@ public class FSCANValidator implements IResourceValidator {
 			if (key.startsWith("filesource.import")) {
 				File file = ((Resource) resource).getLocalFile(Path.getLeading(key, '.') + '.' + "name");
 				ret.put("file_" + Path.getLeading(key, '.') + '.' + "name",
-						file.exists() ? "EXISTS" : "DOES NOT EXIST");
+						(file != null && file.exists()) ? "EXISTS" : "DOES NOT EXIST");
 			}
 		}
 
