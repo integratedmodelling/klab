@@ -251,15 +251,20 @@ public class Postgis {
 		table = table.replaceAll("\\.", "_").toLowerCase();
 		String smTableName = table + "_sm";
 
+		ret.put("simplified_table_name", smTableName);
+
 		try (Connection con = DriverManager.getConnection(this.pgurl,
 				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
 				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
 				Statement st = con.createStatement()) {
 
-			ResultSet rs = st.executeQuery("SELECT COUNT('gid') FROM " + smTableName + " GROUP BY level");
+			ResultSet rs = st.executeQuery("SELECT COUNT('gid'), level FROM " + smTableName + " GROUP BY level");
+			long n = 0;
 			while (rs.next()) {
 				ret.put("simplified_count_level_" + rs.getInt(1), rs.getObject(2));
+				n += rs.getLong(2);
 			}
+			ret.put("total_shapes", n);
 
 		} catch (Throwable t) {
 			ret.put("error during query", ExceptionUtils.getStackTrace(t));

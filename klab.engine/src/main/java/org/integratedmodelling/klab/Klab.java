@@ -593,7 +593,7 @@ public enum Klab implements IRuntimeService {
 				// check with node
 				System.out.println("Checking open ticket " + open.getId() + "...");
 				INodeIdentity node = Network.INSTANCE.getNode(open.getData().get("node"));
-				if (node != null) {
+				if (node != null && open.getData().get("ticket") != null) {
 					TicketResponse.Ticket response = node.getClient().get(API.TICKET.INFO, TicketResponse.Ticket.class,
 							"ticket", open.getData().get("ticket"));
 					System.out.println("GOT " + response);
