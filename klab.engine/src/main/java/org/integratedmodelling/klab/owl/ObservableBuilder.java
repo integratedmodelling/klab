@@ -1947,7 +1947,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
 				ret.setDeclaration(ret.getDeclaration() + " (" + ((Observable) valueOperand).getDeclaration() + ")");
 				if (name == null) {
-					ret.setName(ret.getName() + "_" + ((Observable) valueOperand).getName());
+					ret.setName(ret.getName() + "_" + Observables.INSTANCE.getDisplayName((Observable) valueOperand));
 				}
 			} else {
 

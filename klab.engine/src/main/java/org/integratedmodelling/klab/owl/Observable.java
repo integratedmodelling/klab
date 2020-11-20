@@ -356,8 +356,7 @@ public class Observable implements IObservable {
 		 * TODO check: operators are only allowed at the receiving end. We should also
 		 * allow the same operators and operands as us in the provider.
 		 */
-		return conceptsAreEqual && (obj.valueOperators.isEmpty()
-				|| CollectionUtils.isEqualCollection(this.valueOperators, obj.valueOperators));
+		return conceptsAreEqual && CollectionUtils.isEqualCollection(this.valueOperators, obj.valueOperators);
 	}
 
 	@Override

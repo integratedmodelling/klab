@@ -8,7 +8,11 @@ filter number normalize
 {
 	optional import number artifact 
 		"The artifact to normalize. Defaults to the target artifact."
-		
+
+	optional boolean invert
+		"If true, invert the results by computing x = max - x + min"
+		default false
+				
 	class org.integratedmodelling.klab.data.transformations.NormalizingTransformation
 }
 
@@ -18,6 +22,10 @@ filter number standardize
 {
 	optional import number artifact 
 		"The artifact to standardize. Defaults to the target artifact."
+		
+	optional boolean invert
+		"If true, invert the results by computing x = max - x + min"
+		default false
 		
 	class org.integratedmodelling.klab.data.transformations.StandardizingTransformation
 }

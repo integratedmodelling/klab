@@ -6,6 +6,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -44,15 +45,15 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 	public static IServiceCall getServiceCall(IObservable classified, ValueOperator operator, Object operand)
 			throws KlabValidationException {
 		return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getName(), "operator", operator.name(),
-				"value", operand);
+				"value", operand instanceof IObservable ? ((IObservable)operand).getName() : operand);
 	}
 
 	@Override
 	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 
 		IArtifact classified = context.getArtifact(parameters.get("artifact", String.class));
-		IArtifact stateOperand = parameters.containsKey("state")
-				? context.getArtifact(parameters.get("state", String.class))
+		IArtifact stateOperand = parameters.containsKey("value")
+				? context.getArtifact(parameters.get("value", String.class))
 				: null;
 		ValueOperator operator = ValueOperator.valueOf(parameters.get("operator", String.class));
 		Object valueOperand = parameters.get("value");
@@ -156,7 +157,7 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 						value = null;
 					}
 				} else if (value instanceof IConcept && other instanceof IConcept) {
-					if (!((RuntimeScope)context).cached_is((IConcept) value, ((IConcept) other))) {
+					if (!((RuntimeScope)context).cached_is_related((IConcept) value, ((IConcept) other))) {
 						value = null;
 					}
 				} else if (value != null && other != null) {
@@ -224,7 +225,7 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 				value = total;
 				break;
 			case WHERE:
-				if (other == null || (other instanceof Number && Double.isNaN(((Number) other).doubleValue()))) {
+				if (Observations.INSTANCE.isNodata(other)) {
 					value = null;
 				}
 				break;
