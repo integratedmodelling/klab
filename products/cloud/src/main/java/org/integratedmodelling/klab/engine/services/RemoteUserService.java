@@ -9,5 +9,6 @@ import org.springframework.stereotype.Service;
 public abstract interface RemoteUserService {
 	
 	abstract ResponseEntity<?> login(RemoteUserAuthenticationRequest request) throws JSONException;
-
+	abstract ResponseEntity<?> login(String token);
+	abstract ResponseEntity<?> logout(String token);
 }

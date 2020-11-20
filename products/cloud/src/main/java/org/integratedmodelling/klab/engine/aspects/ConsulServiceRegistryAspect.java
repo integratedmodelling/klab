@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.engine.aspects;
 import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.annotation.After;
 import org.aspectj.lang.annotation.Aspect;
+import org.aspectj.lang.annotation.Before;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.engine.configs.ConsulConfig;
 import org.integratedmodelling.klab.engine.services.ConsulDnsService;
@@ -27,10 +28,10 @@ public class ConsulServiceRegistryAspect {
         service.setIntialServiceWeight();
     }
 	
-	@After("execution(* org.integratedmodelling.klab.engine.Engine.createSession(..))")
+	@Before("execution(* org.integratedmodelling.klab.engine.Engine.closeExpiredSessions(..))")
     public void createdSessiont(JoinPoint joinPoint) 
     {
-        Logging.INSTANCE.debug("Created Session for remote user.");
+        Logging.INSTANCE.debug("Reaper is comming");
     }
 	
 	@After("execution(* org.integratedmodelling.klab.engine.runtime.Session.close(..))")

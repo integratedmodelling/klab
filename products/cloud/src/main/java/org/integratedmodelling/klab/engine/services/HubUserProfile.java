@@ -2,8 +2,23 @@ package org.integratedmodelling.klab.engine.services;
 
 import java.util.List;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.integratedmodelling.klab.rest.ObservableReference;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
+
+/**
+ * @author steve
+ * 
+ * This is what happens when you make a mistake and keep having to
+ * eat it over and over again.  The Hub ProfileResource class should
+ * have been moved out of the application to the api or made into something
+ * much more rational.  Now it is a PITA.  This has to be here because I 
+ * wanted a jackson serialization, fyi static class for inner is important,
+ * but means it needs to be in services when it is called.  This is dumb.
+ *
+ */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class HubUserProfile {
 	private String name;
@@ -50,16 +65,79 @@ public class HubUserProfile {
 		
 		@JsonIgnoreProperties(ignoreUnknown = true)
 		static class Group {
-			private String name;
+			
+			@JsonProperty("name")
+			private String id;
+			
+			private String description;
+			
+			private String iconUrl;
+			
+			private List<String> projectUrls;
+			
+			private List<ObservableReference> observables;
+			
+			private boolean worldview;
+			
+			private long maxUpload;
 
-			public String getName() {
-				return name;
+			public String getId() {
+				return id;
 			}
 
-			public void setName(String name) {
-				this.name = name;
+			public void setId(String id) {
+				this.id = id;
+			}
+
+			public String getDescription() {
+				return description;
+			}
+
+			public void setDescription(String description) {
+				this.description = description;
+			}
+
+			public String getIconUrl() {
+				return iconUrl;
+			}
+
+			public void setIconUrl(String iconUrl) {
+				this.iconUrl = iconUrl;
+			}
+
+			public List<String> getProjectUrls() {
+				return projectUrls;
+			}
+
+			public void setProjectUrls(List<String> projectUrls) {
+				this.projectUrls = projectUrls;
+			}
+
+			public List<ObservableReference> getObservables() {
+				return observables;
+			}
+
+			public void setObservables(List<ObservableReference> observables) {
+				this.observables = observables;
+			}
+
+			public boolean isWorldview() {
+				return worldview;
+			}
+
+			public void setWorldview(boolean worldview) {
+				this.worldview = worldview;
+			}
+
+			public long getMaxUpload() {
+				return maxUpload;
+			}
+
+			public void setMaxUpload(long maxUpload) {
+				this.maxUpload = maxUpload;
 			}
 		}
+		
 
 		public Group getGroup() {
 			return group;

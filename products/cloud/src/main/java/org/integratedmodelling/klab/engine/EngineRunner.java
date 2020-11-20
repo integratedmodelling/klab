@@ -5,9 +5,9 @@ import java.util.stream.StreamSupport;
 
 import javax.annotation.PreDestroy;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.context.ApplicationListener;
@@ -39,7 +39,7 @@ public class EngineRunner implements ApplicationListener<ApplicationPreparedEven
 	public EngineRunner() {
 	}
 	
-	private static Engine engine;
+	private static RemoteEngine engine;
 	private static Environment environment;
 	private ICertificate certificate;
 
@@ -71,7 +71,19 @@ public class EngineRunner implements ApplicationListener<ApplicationPreparedEven
 			String certString = env.getProperty("klab.certificate");
 			this.certificate = KlabCertificate.createFromString(certString);
 			setPropertiesFromEnvironment(env);
-			engine = Engine.start(this.certificate);
+//			engine =  new Engine(certificate, new EngineStartupOptions()) {
+//
+//				/**
+//				 * 
+//				 */
+//				private static final long serialVersionUID = 2144220261177478999L;
+//				
+//				@Override
+//				protected void closeExpiredSessions() {
+//					Logging.INSTANCE.info("my little override");
+//				}
+//			};
+			engine = RemoteEngine.start(this.certificate, new EngineStartupOptions());
 		} catch (Throwable e) {
 			return false;
 		}
@@ -91,7 +103,7 @@ public class EngineRunner implements ApplicationListener<ApplicationPreparedEven
 
 	@Override
 	public void onApplicationEvent(ApplicationPreparedEvent event) {
-		if (engine == null ) {
+		if (engine == null) {
 			start(event);
 		} else {
 			return;

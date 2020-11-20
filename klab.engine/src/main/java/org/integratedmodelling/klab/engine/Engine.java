@@ -468,7 +468,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 	 * @return true if the boot was successful, false otherwise. Exceptions are only
 	 *         thrown in case of bad usage (called before a certificate is read).
 	 */
-	private boolean boot(IEngineStartupOptions options) {
+	protected boolean boot(IEngineStartupOptions options) {
 
 		runJvmChecks();
 
@@ -619,7 +619,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 			 * Schedule the session reaper
 			 */
 			this.sessionClosingTask = scheduler.scheduleAtFixedRate(() -> closeExpiredSessions(), 10,
-					sessionCheckMinutes, TimeUnit.MINUTES);
+					sessionCheckMinutes, TimeUnit.SECONDS);
 
 			/*
 			 * After the engine has successfully booted, it becomes the root identity and is

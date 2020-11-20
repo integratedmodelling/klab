@@ -1,5 +1,6 @@
-package org.integratedmodelling.klab.engine.services;
+package org.integratedmodelling.klab.engine.api;
 
+import org.integratedmodelling.klab.engine.services.HubUserProfile;
 import org.json.JSONObject;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
@@ -12,10 +13,14 @@ public class HubLoginResponse {
 	private HubUserProfile profile;
 	
 	@JsonProperty("Authentication")
-	private JSONObject authentication;
+	private AuthenticationToken authentication;
 
 	public HubUserProfile getProfile() {
 		return profile;
+	}
+	
+	public AuthenticationToken getAuthentication() {
+		return authentication;
 	}
 	
 }
