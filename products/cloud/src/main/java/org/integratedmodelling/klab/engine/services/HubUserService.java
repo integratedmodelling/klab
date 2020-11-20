@@ -2,8 +2,8 @@ package org.integratedmodelling.klab.engine.services;
 
 import java.net.URI;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
+
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.API;
@@ -11,14 +11,11 @@ import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.KlabUser;
 import org.integratedmodelling.klab.engine.Engine;
-import org.integratedmodelling.klab.engine.configs.ConsulAgentService;
-import org.integratedmodelling.klab.engine.configs.ConsulConfig;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.RemoteUserAuthenticationRequest;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.integratedmodelling.klab.utils.NameGenerator;
-import org.json.JSONException;
-import org.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -30,10 +27,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.datatype.joda.JodaModule;
 
 /**
  * This hub service is used to authenticate a user request to login to an engine that
@@ -58,33 +51,37 @@ public class HubUserService implements RemoteUserService {
 	 * authentication.
 	 */
 	@Override
-	public ResponseEntity<?> login(UserAuthenticationRequest login) {
-		ResponseEntity<HubLoginResponse> result;
-		try {
-			result = hubLogin(login);
-		} catch (HttpClientErrorException e) {
-			if (e.getRawStatusCode() == 401) {
-				return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to login user: " + login.getUsername());
+	public ResponseEntity<?> login(RemoteUserAuthenticationRequest login) {
+		
+		if (!"".equals(login.getUsername()) && !"".equals(login.getPassword())) {		
+			ResponseEntity<HubLoginResponse> result;
+			try {
+				result = hubLogin(login);
+			} catch (HttpClientErrorException e) {
+				if (e.getRawStatusCode() == 401) {
+					return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Failed to login user: " + login.getUsername());
+				}
+				throw new KlabAuthorizationException("Failed to login user: " + login.getUsername(), e); 
 			}
-			throw new KlabAuthorizationException("Failed to login user: " + login.getUsername(), e); 
-		}
-		
-		
-        if (result != null && result.getStatusCode().is2xxSuccessful()) {
-    		
-        	if(activeSession()) {
-        		return getUserActiveSession();
-        	}
 			
-        	HubUserProfile profile = result.getBody().getProfile();
-        	
-        	return processProfile(profile);
 			
-
+	        if (result != null && result.getStatusCode().is2xxSuccessful()) {
+	    		
+	        	if(activeSession()) {
+	        		return getUserActiveSession();
+	        	}
+				
+	        	HubUserProfile profile = result.getBody().getProfile();
+	        	
+	        	return processProfile(profile);
+				
+	
+			} else {
+				throw new KlabAuthorizationException("Failed to login user: " + login.getUsername());			
+			}
 		} else {
-			throw new KlabAuthorizationException("Failed to login user: " + login.getUsername());			
+			return login(login.getToken());
 		}
-		
 	}
 	
 	public ResponseEntity<?> login(String token) {

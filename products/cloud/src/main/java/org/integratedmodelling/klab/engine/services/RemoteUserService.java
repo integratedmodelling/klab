@@ -1,6 +1,6 @@
 package org.integratedmodelling.klab.engine.services;
 
-import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
+import org.integratedmodelling.klab.rest.RemoteUserAuthenticationRequest;
 import org.json.JSONException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -8,6 +8,6 @@ import org.springframework.stereotype.Service;
 @Service
 public abstract interface RemoteUserService {
 	
-	abstract ResponseEntity<?> login(UserAuthenticationRequest request) throws JSONException;
+	abstract ResponseEntity<?> login(RemoteUserAuthenticationRequest request) throws JSONException;
 
 }
