@@ -14,13 +14,6 @@ import java.util.Map;
  */
 public class ViewAction {
 
-	public enum Operation {
-		UserAction,
-		Enable, // true/false
-		Hide, // true/false
-		Update  // according to type; data may also contain new attribute values
-	}
-
 	/**
 	 * When it comes from the view, should include the component
 	 */
@@ -40,7 +33,6 @@ public class ViewAction {
 	private Date dateValue = null;
 	private List<String> listValue = null;
 	private Map<String, String> data = null;
-	private Operation operation = Operation.UserAction;
 
 	public ViewAction() {
 	}
@@ -57,11 +49,6 @@ public class ViewAction {
 	public ViewAction(ViewComponent component, boolean value) {
 		this.component = component;
 		this.booleanValue = value;
-	}
-
-	public ViewAction(Operation operation, boolean b) {
-		this.operation = operation;
-		this.booleanValue = b;
 	}
 
 	public Boolean isBooleanValue() {
@@ -128,13 +115,13 @@ public class ViewAction {
 		this.componentTag = componentTag;
 	}
 
-	public Operation getOperation() {
-		return operation;
-	}
-
-	public void setOperation(Operation operation) {
-		this.operation = operation;
-	}
+//	public Operation getOperation() {
+//		return operation;
+//	}
+//
+//	public void setOperation(Operation operation) {
+//		this.operation = operation;
+//	}
 
 	public String getApplicationId() {
 		return applicationId;
@@ -148,7 +135,7 @@ public class ViewAction {
 	public String toString() {
 		return "ViewAction [componentTag=" + componentTag + ", booleanValue=" + booleanValue + ", doubleValue="
 				+ doubleValue + ", intValue=" + intValue + ", stringValue=" + stringValue + ", dateValue=" + dateValue
-				+ ", data=" + data + ", operation=" + operation + "]";
+				+ ", data=" + data + "]";
 	}
 
 	public List<String> getListValue() {
@@ -158,7 +145,6 @@ public class ViewAction {
 	public void setListValue(List<String> listValue) {
 		this.listValue = listValue;
 	}
-	
 	
 
 }

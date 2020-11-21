@@ -150,6 +150,15 @@ public interface KactorsFactory extends EFactory
   IfStatement createIfStatement();
 
   /**
+   * Returns a new object of class '<em>Else If Statement Body</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Else If Statement Body</em>'.
+   * @generated
+   */
+  ElseIfStatementBody createElseIfStatementBody();
+
+  /**
    * Returns a new object of class '<em>Statement Body</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -220,6 +229,15 @@ public interface KactorsFactory extends EFactory
    * @generated
    */
   List createList();
+
+  /**
+   * Returns a new object of class '<em>List Element</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>List Element</em>'.
+   * @generated
+   */
+  ListElement createListElement();
 
   /**
    * Returns a new object of class '<em>Map</em>'.

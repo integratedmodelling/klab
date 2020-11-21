@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -30,6 +31,7 @@ import org.integratedmodelling.klab.engine.rest.controllers.engine.EngineSession
 import org.integratedmodelling.klab.engine.runtime.ObserveContextTask;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.http.HttpStatus;
@@ -121,9 +123,10 @@ public class ResourceController {
 							? (ISubject) ((ObservationGroup) data.getSecond()).iterator().next()
 							: (ISubject) data.getFirst();
 
+			IScale scale = Scale.create(session.getState().getGeometry());
 			Observer observer = Observations.INSTANCE.makeROIObserver((Shape) ret.getScale().getSpace().getShape(),
-					org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR),
-					null, session.getMonitor());
+					scale.getTime(),
+					null, session.getState().getRegionOfInterestName(), session.getMonitor());
 			try {
 				new ObserveContextTask((Session) session, observer, new ArrayList<>()).get();
 			} catch (InterruptedException | ExecutionException e) {

@@ -51,6 +51,7 @@ import org.integratedmodelling.klab.rest.Colormap;
 import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.utils.ColorUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
+import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.Triple;
@@ -160,7 +161,7 @@ public enum Renderer {
 		
 		boolean stateIsBoolean = state.getType() == IArtifact.Type.BOOLEAN;
 
-		if (summary.getRange().get(0).equals(summary.getRange().get(1))) {
+		if (NumberUtils.equal(summary.getRange().get(0), summary.getRange().get(1))) {
 
 			// TODO this won't show anything when we have one value AND no-data - which is
 			// wrong.

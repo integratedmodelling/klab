@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Resolution;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -303,7 +304,7 @@ public enum KimKnowledgeProcessor {
 		return main;
 	}
 
-	public @Nullable Observable declare(final IKimObservable concept, IOntology declarationOntology,
+	public synchronized @Nullable Observable declare(final IKimObservable concept, IOntology declarationOntology,
 			final IMonitor monitor) {
 
 		if (concept.getNonSemanticType() != null) {
@@ -363,11 +364,18 @@ public enum KimKnowledgeProcessor {
 		}
 
 		ret.setOptional(concept.isOptional());
-		ret.setGeneric(concept.isAbstractObservable());
+		ret.setGeneric(concept.isGeneric());
+		ret.setGlobal(concept.isGlobal());
 		ret.setReferenceName(concept.getMain().getCodeName().replace("-","_"));
 		
-//		ret.setReferenceName(Concepts.INSTANCE.getCodeName(main));
-
+		if (concept.isExclusive()) {
+			ret.setResolution(Resolution.Only);
+		} else if (concept.isGlobal()) {
+			ret.setResolution(Resolution.All);
+		} else if (concept.isGeneric()) {
+			ret.setResolution(Resolution.Any);
+		}
+		
 		for (Pair<ValueOperator, Object> operator : concept.getValueOperators()) {
 
 			Object operand = null;
@@ -387,8 +395,7 @@ public enum KimKnowledgeProcessor {
 				operand = declare((IKimObservable) operator.getSecond(), (Ontology) declarationOntology, monitor);
 				declaration += " (" + operator.getSecond() + ")";
 				ret.setReferenceName(
-						ret.getReferenceName() + "_" + ((IKimObservable) operator.getSecond()).getFormalName());
-
+						ret.getReferenceName() + "_" + ((IKimObservable) operator.getSecond()).getCodeName().replaceAll("\\-", "_"));
 			} else {
 
 				operand = operator.getSecond();
@@ -399,6 +406,7 @@ public enum KimKnowledgeProcessor {
 			}
 
 			ret.getValueOperators().add(new Pair<>(operator.getFirst(), operand));
+			
 		}
 
 		ret.setDeclaration(declaration);
@@ -430,7 +438,7 @@ public enum KimKnowledgeProcessor {
 		return declareInternal(concept, (Ontology) declarationOntology, monitor);
 	}
 
-	private @Nullable Concept declareInternal(final IKimConcept concept, Ontology ontology, final IMonitor monitor) {
+	private synchronized @Nullable Concept declareInternal(final IKimConcept concept, Ontology ontology, final IMonitor monitor) {
 
 		Concept main = null;
 

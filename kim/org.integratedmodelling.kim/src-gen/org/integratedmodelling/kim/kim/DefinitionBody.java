@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.DefinitionBody#getDefineClass <em>Define Class</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.DefinitionBody#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.DefinitionBody#getValue <em>Value</em>}</li>
  * </ul>
@@ -25,6 +26,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface DefinitionBody extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Define Class</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Define Class</em>' attribute.
+   * @see #setDefineClass(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getDefinitionBody_DefineClass()
+   * @model
+   * @generated
+   */
+  String getDefineClass();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.DefinitionBody#getDefineClass <em>Define Class</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Define Class</em>' attribute.
+   * @see #getDefineClass()
+   * @generated
+   */
+  void setDefineClass(String value);
+
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->

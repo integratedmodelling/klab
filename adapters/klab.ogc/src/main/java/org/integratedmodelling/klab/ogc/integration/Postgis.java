@@ -8,9 +8,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.DataUtilities;
@@ -23,22 +25,36 @@ import org.geotools.data.simple.SimpleFeatureSource;
 import org.geotools.factory.Hints;
 import org.geotools.jdbc.JDBCDataStore;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
+import org.integratedmodelling.klab.ogc.fscan.FSCANEncoder;
 import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource.Attribute;
 import org.integratedmodelling.klab.ogc.vector.files.VectorValidator;
 import org.integratedmodelling.klab.raster.files.RasterValidator;
+import org.integratedmodelling.klab.utils.Escape;
+import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.opengis.feature.simple.SimpleFeature;
 import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
-import org.postgresql.util.PSQLException;
+import org.postgresql.util.PGobject;
+
+import com.vividsolutions.jts.geom.Geometry;
+import com.vividsolutions.jts.io.WKBReader;
 
 public class Postgis {
 
 	private static String DEFAULT_POSTGRES_DATABASE = "klab";
-
 	private boolean useCatalogNames = false;
 	private String database = DEFAULT_POSTGRES_DATABASE;
 	private String pgurl;
@@ -191,6 +207,11 @@ public class Postgis {
 		 * Attributes with their Java binding
 		 */
 		public List<Attribute> attributes = new ArrayList<>();
+
+		/**
+		 * The geometry type in the resource
+		 */
+		public String geometryType;
 	}
 
 	/**
@@ -214,14 +235,326 @@ public class Postgis {
 	private PublishedResource publishRaster(File resource, Urn urn) {
 		// TODO Auto-generated method stub
 		String name = urn.getNamespace() + "_" + urn.getResourceId();
-
 		return null;
 	}
 
-	private PublishedResource publishVector(File resource, Urn urn) throws KlabStorageException {
+	/**
+	 * Report on the number of stored shapes associated with this resource.
+	 * 
+	 * @param urn
+	 * @return
+	 */
+	public Map<String, Object> describeContents(Urn urn) {
+
+		Map<String, Object> ret = new LinkedHashMap<>();
+		String table = urn.getNamespace() + "_" + urn.getResourceId();
+		table = table.replaceAll("\\.", "_").toLowerCase();
+		String smTableName = table + "_sm";
+
+		ret.put("simplified_table_name", smTableName);
+
+		try (Connection con = DriverManager.getConnection(this.pgurl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
+
+			ResultSet rs = st.executeQuery("SELECT COUNT('gid'), level FROM " + smTableName + " GROUP BY level");
+			long n = 0;
+			while (rs.next()) {
+				ret.put("simplified_count_level_" + rs.getObject(2), rs.getLong(1));
+				n += rs.getLong(1);
+			}
+			ret.put("total_shapes", n);
+
+		} catch (Throwable t) {
+			ret.put("error during query", ExceptionUtils.getStackTrace(t));
+		}
+
+		return ret;
+	}
+
+	/**
+	 * Return the simplified shape that best fills the passed envelope using the
+	 * previously built indices. The shape will contain the metadata fields
+	 * FEATURE_ID and COLLECTION_ID for successive retrieval of the full polygon.
+	 * 
+	 * @param envelope
+	 * @return
+	 */
+	public IShape getLargestInScale(Urn urn, IEnvelope envelope) {
 
 		String table = urn.getNamespace() + "_" + urn.getResourceId();
 		table = table.replaceAll("\\.", "_").toLowerCase();
+//		String bbTableName = table + "_bb";
+		String smTableName = table + "_sm";
+
+		int rank = envelope.getScaleRank();
+		double area = envelope.getHeight() * envelope.getWidth();
+
+		String envSql = "ST_MakeEnvelope(" + envelope.getMinX() + ", " + envelope.getMinY() + ", " + envelope.getMaxX()
+				+ ", " + envelope.getMaxY() + ", 4326)";
+
+		/*
+		 * this retrieves the best candidate. Should be relatively fast - adjust the
+		 * simplification settings for speed vs. precision.
+		 */
+		String chooseShape = "SELECT gid, table_name, shape_name, geom, level, ABS(1 - (ST_Area(ST_Intersection(geom, "
+				+ envSql + "))/" + area + ")) as ared from " + smTableName + "\n" + "WHERE \n" + "	rank BETWEEN "
+				+ (rank - 1) + " and " + (rank + 2) + "  \n" + "		AND \n" + "	geom && " + envSql + "\n"
+				+ "	ORDER BY ared LIMIT 6;";
+
+		WKBReader wkb = new WKBReader();
+
+//		System.out.println(chooseShape);
+
+		try {
+			try (Connection con = DriverManager.getConnection(this.pgurl,
+					Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+					Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+					Statement st = con.createStatement()) {
+
+				// add the data and compute names. We don't need the name in the main table.
+				con.setAutoCommit(false);
+				st.setFetchSize(50);
+				ResultSet rs = st.executeQuery(chooseShape);
+
+				while (rs.next()) {
+
+					long gid = rs.getLong(1);
+					String sourceTable = rs.getString(2);
+					String shapeName = rs.getString(3);
+					int level = rs.getInt(5);
+
+					PGobject thegeom = (PGobject) rs.getObject(4);
+					Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
+					Shape shape = Shape.create(geometry, Projection.getLatLon());
+					shape.getMetadata().put(FSCANEncoder.FEATURE_ID, gid);
+					shape.getMetadata().put(FSCANEncoder.COLLECTION_ID, sourceTable);
+					shape.getMetadata().put(IMetadata.DC_NAME, shapeName);
+					shape.getMetadata().put(IMetadata.IM_MIN_SPATIAL_SCALE, level);
+					return shape;
+
+//					/*
+//					 * take the best candidate and retrieve the correspondent simplified shape
+//					 */
+//					String getShape = "SELECT shape_name, geom from " + smTableName + " WHERE gid = " + gid
+//							+ " AND table_name = '" + sourceTable + "';";
+//
+//					try (Statement stt = con.createStatement()) {
+//						ResultSet rss = stt.executeQuery(getShape);
+//						while (rss.next()) {
+//							PGobject thegeom = (PGobject) rss.getObject("geom");
+//							Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
+//							Shape shape = Shape.create(geometry, Projection.getLatLon());
+//							shape.getMetadata().put(FSCANEncoder.FEATURE_ID, gid);
+//							shape.getMetadata().put(FSCANEncoder.COLLECTION_ID, sourceTable);
+//							shape.getMetadata().put(IMetadata.DC_NAME, shapeName);
+//							return shape;
+//						}
+//					}
+				}
+			}
+		} catch (Throwable t) {
+			Logging.INSTANCE.error(t);
+		}
+
+		return null;
+
+	}
+
+	/**
+	 * Call this first
+	 * 
+	 * @param urn
+	 */
+	public void resetBoundaries(Urn urn) {
+
+		String table = urn.getNamespace() + "_" + urn.getResourceId();
+		table = table.replaceAll("\\.", "_").toLowerCase();
+//		String table_boundaries = table + "_bb";
+		String table_simplified = table + "_sm";
+
+		try (Connection con = DriverManager.getConnection(this.pgurl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
+
+			for (String tablename : new String[] { /* table_boundaries, */ table_simplified }) {
+				st.execute("DROP TABLE IF EXISTS " + tablename + ";");
+				st.execute("CREATE TABLE " + tablename
+						+ "(gid numeric(10, 0), shape_area numeric, shape_name varchar(512), table_name varchar(128), level integer, rank integer);");
+				st.execute("ALTER TABLE " + tablename + " ADD PRIMARY KEY (gid,table_name);");
+				// we will force the shape to multipolygon for the simplified shape.
+				st.execute("SELECT AddGeometryColumn('public','" + tablename + "', 'geom', 4326, '"
+						+ (tablename.endsWith("_bb") ? "POLYGON" : "MULTIPOLYGON") + "', 2, false);");
+			}
+
+		} catch (Throwable t) {
+			throw new KlabStorageException(t.getMessage());
+		}
+
+	}
+
+	public void reindexBoundaries(Urn urn) {
+
+		String table = urn.getNamespace() + "_" + urn.getResourceId();
+		table = table.replaceAll("\\.", "_").toLowerCase();
+//		String table_boundaries = table + "_bb";
+		String table_simplified = table + "_sm";
+
+		try (Connection con = DriverManager.getConnection(this.pgurl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
+			for (String tablename : new String[] { /* table_boundaries, */ table_simplified }) {
+				st.execute("CREATE INDEX \"" + tablename + "_gist\" on \"" + tablename + "\" USING GIST (\"geom\");");
+				st.execute("COMMIT;");
+			}
+		} catch (Throwable t) {
+			throw new KlabStorageException(t.getMessage());
+		}
+	}
+
+	/**
+	 * Only call AFTER resetBoundaries
+	 * 
+	 * @param file
+	 * @param urn
+	 * @param nameExpression
+	 * @param level
+	 */
+	public long indexBoundaries(File file, Urn urn, String nameExpression, int level) {
+
+		String table = urn.getNamespace() + "_" + MiscUtilities.getFileBaseName(file);
+		table = table.replaceAll("\\.", "_").toLowerCase();
+		long ret = 0;
+
+		Logging.INSTANCE.info("FSCAN ingesting raw data for " + file);
+
+		PublishedResource published = publishVector(file, table);
+
+		String restable = urn.getNamespace() + "_" + urn.getResourceId();
+		restable = restable.replaceAll("\\.", "_").toLowerCase();
+//		String table_boundaries = restable + "_bb";
+		String table_simplified = restable + "_sm";
+
+		IExpression nameCalculator = Extensions.INSTANCE.compileExpression(nameExpression,
+				Extensions.DEFAULT_EXPRESSION_LANGUAGE);
+
+		Logging.INSTANCE.info("Start FSCAN indexing of " + file);
+
+		try {
+
+			/*
+			 * Bounding box and simplified coverage will contain only the feature ID of each
+			 * shape, the display name, its area in projection units, and the level field
+			 * for grouping. The schema is the same for both. Each shape computes its scale
+			 * rank, stored along with the stated level.
+			 */
+			try (Connection con = DriverManager.getConnection(this.pgurl,
+					Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+					Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+					Statement st = con.createStatement()) {
+
+				// add the data and compute names. We don't need the name in the main table.
+				con.setAutoCommit(false);
+				st.setFetchSize(50);
+
+				WKBReader wkb = new WKBReader();
+				Projection projection = Projection.create(published.srs);
+				Parameters<String> parameters = Parameters.create();
+				SimpleRuntimeScope scope = new SimpleRuntimeScope(Klab.INSTANCE.getRootMonitor());
+
+				ResultSet rs = st.executeQuery("SELECT * FROM " + table);
+				int n = 0;
+				Statement ist = con.createStatement();
+				while (rs.next()) {
+					ret++;
+
+					// create bounding box and statistics
+					// gid is fid in original feature
+					PGobject thegeom = (PGobject) rs.getObject("the_geom");
+					Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
+					Shape shape = Shape.create(geometry, projection);
+					double shape_area = geometry.getArea();
+					IEnvelope envelope = shape.getEnvelope();
+					int rank = envelope.getScaleRank();
+//					Shape boundingBox = Shape.create(envelope);
+
+					if (!shape.getJTSGeometry().isValid()) {
+						continue;
+					}
+
+					long gid = rs.getLong("fid");
+
+					parameters.clear();
+					for (Attribute attribute : published.attributes) {
+						if (!"the_geom".equals(attribute.name)) {
+							parameters.put(attribute.name, rs.getObject(attribute.name));
+						}
+					}
+
+					parameters.put("ID", "" + gid);
+					parameters.put("LEVEL", level + "");
+
+					Object name = null;
+					try {
+						name = nameCalculator.eval(parameters, scope);
+					} catch (Throwable e) {
+						// TODO just say it
+
+					}
+					if (name == null) {
+						name = nameExpression + " " + n;
+					}
+
+					// TODO use sensible numbers. These work OK with the explorer in most cases, so
+					// start here.
+					Shape simplified = shape.simplifyIfNecessary(1000, 2000);
+
+					// insert in BOTH tables, add table name and level. The first gets the bounding
+					// box + area, the second the simplified shape
+					// (with the original area and level, which we won't really use).
+//					String sql_bb = "INSERT INTO \"" + table_boundaries + "\" VALUES (" + gid + ", " + shape_area
+//							+ ", '" + Escape.forSQL(name.toString()) + "', '" + published.name + "', " + level + ", "
+//							+ rank + ", ST_GeomFromText('" + boundingBox.getJTSGeometry() + "', 4326));";
+
+					if (!simplified.getJTSGeometry().isValid()) {
+						continue;
+					}
+
+					String sql_nd = "INSERT INTO \"" + table_simplified + "\" VALUES (" + gid + ", " + shape_area
+							+ ", '" + Escape.forSQL(name.toString()) + "', '" + published.name + "', " + level + ", "
+							+ rank + ", ST_MakeValid(ST_Multi(ST_GeomFromText('" + simplified.getJTSGeometry().buffer(0)
+							+ "', 4326))));";
+
+//					ist.execute(sql_bb);
+					ist.execute(sql_nd);
+				}
+				ist.execute("COMMIT;");
+				rs.close();
+
+				Logging.INSTANCE.info("FSCAN indexing of " + file + " completed");
+
+			}
+		} catch (Throwable t) {
+
+			Logging.INSTANCE.error("FSCAN indexing of " + file + " aborted: " + t.getMessage());
+
+			throw new KlabStorageException(t.getMessage());
+		}
+
+		return ret;
+	}
+
+	private PublishedResource publishVector(File resource, Urn urn) throws KlabStorageException {
+		String table = urn.getNamespace() + "_" + urn.getResourceId();
+		table = table.replaceAll("\\.", "_").toLowerCase();
+		return publishVector(resource, table);
+	}
+
+	private PublishedResource publishVector(File resource, String table) throws KlabStorageException {
+
 		PublishedResource ret = new PublishedResource();
 
 		ret.name = table;
@@ -243,6 +576,8 @@ public class Postgis {
 			SimpleFeatureCollection collection = featureSource.getFeatures();
 
 			ret.srs = Projection.create(featureSource.getSchema().getCoordinateReferenceSystem()).getSimpleSRS();
+			ret.geometryType = featureSource.getSchema().getGeometryDescriptor().getType().getName().toString();
+
 			for (AttributeDescriptor ad : featureSource.getSchema().getAttributeDescriptors()) {
 				PublishedResource.Attribute attribute = new Attribute();
 				attribute.name = ad.getLocalName();
@@ -269,8 +604,8 @@ public class Postgis {
 
 			try (FeatureWriter<SimpleFeatureType, SimpleFeature> writer = datastore.getFeatureWriterAppend(table,
 					Transaction.AUTO_COMMIT)) {
-
-				for (SimpleFeatureIterator it = collection.features(); it.hasNext();) {
+				SimpleFeatureIterator it = collection.features();
+				for (; it.hasNext();) {
 					SimpleFeature feature = it.next();
 					SimpleFeature toWrite = writer.next();
 					toWrite.setAttributes(feature.getAttributes());
@@ -288,6 +623,7 @@ public class Postgis {
 
 					}
 				}
+				it.close();
 			} finally {
 				Logging.INSTANCE.info("import finished with " + added + " features and " + errors + "  errors");
 				datastore.dispose();
@@ -307,7 +643,7 @@ public class Postgis {
 		}
 
 		Postgis pg = Postgis.create();
-		System.out.println("DELETING EVERYTHING - CIÖCIA LÉ");
+		System.out.println("DELETING EVERYTHING - SUCA");
 		pg.clear();
 
 //		Urn urn = new Urn("im.data:spain:infrastructure:admin");

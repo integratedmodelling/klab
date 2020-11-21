@@ -36,6 +36,20 @@ public class Quantity {
 		return range;
 	}
 	
+	/**
+	 * Parseable: only range produces output incompatible with KimQuantity.parse().
+	 */
+	@Override
+	public String toString() {
+		if (unit != null) {
+			return value + "." + unit;
+		}
+		if (currency != null) {
+			return value + "." + currency;
+		}
+		return value.toString() + (range == null ? "" : (" ") + range);
+	}
+	
 	public static Quantity create(Number value, IUnit unit) {
 		Quantity ret = new Quantity();
 		ret.value = value;

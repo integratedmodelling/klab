@@ -7,6 +7,7 @@ import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Models;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class Script implements IScript {
 
@@ -27,7 +29,13 @@ public class Script implements IScript {
 	IMonitor monitor;
 	Session session;
 	String token = NameGenerator.shortUUID();
+	IParameters<String> globalState = Parameters.create();
 
+	@Override
+	public IParameters<String> getState() {
+		return globalState;
+	}
+	
 	public Script(Session session, URL resource) {
 
 		this.scriptUrl = resource;

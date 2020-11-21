@@ -16,9 +16,10 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getExpression <em>Expression</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getVariable <em>Variable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getBody <em>Body</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getElseIfExpression <em>Else If Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getElseIfBody <em>Else If Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.IfStatement#getElseCall <em>Else Call</em>}</li>
  * </ul>
@@ -29,6 +30,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface IfStatement extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Literal</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Literal</em>' containment reference.
+   * @see #setLiteral(Literal)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getIfStatement_Literal()
+   * @model containment="true"
+   * @generated
+   */
+  Literal getLiteral();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.IfStatement#getLiteral <em>Literal</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Literal</em>' containment reference.
+   * @see #getLiteral()
+   * @generated
+   */
+  void setLiteral(Literal value);
+
   /**
    * Returns the value of the '<em><b>Expression</b></em>' attribute.
    * <!-- begin-user-doc -->
@@ -50,6 +73,28 @@ public interface IfStatement extends EObject
    * @generated
    */
   void setExpression(String value);
+
+  /**
+   * Returns the value of the '<em><b>Variable</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Variable</em>' attribute.
+   * @see #setVariable(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getIfStatement_Variable()
+   * @model
+   * @generated
+   */
+  String getVariable();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.IfStatement#getVariable <em>Variable</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Variable</em>' attribute.
+   * @see #getVariable()
+   * @generated
+   */
+  void setVariable(String value);
 
   /**
    * Returns the value of the '<em><b>Body</b></em>' containment reference.
@@ -74,20 +119,8 @@ public interface IfStatement extends EObject
   void setBody(StatementBody value);
 
   /**
-   * Returns the value of the '<em><b>Else If Expression</b></em>' attribute list.
-   * The list contents are of type {@link java.lang.String}.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Else If Expression</em>' attribute list.
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getIfStatement_ElseIfExpression()
-   * @model unique="false"
-   * @generated
-   */
-  EList<String> getElseIfExpression();
-
-  /**
    * Returns the value of the '<em><b>Else If Body</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.StatementBody}.
+   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.ElseIfStatementBody}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Else If Body</em>' containment reference list.
@@ -95,7 +128,7 @@ public interface IfStatement extends EObject
    * @model containment="true"
    * @generated
    */
-  EList<StatementBody> getElseIfBody();
+  EList<ElseIfStatementBody> getElseIfBody();
 
   /**
    * Returns the value of the '<em><b>Else Call</b></em>' containment reference.

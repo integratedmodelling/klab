@@ -562,6 +562,7 @@ public class DataflowCompiler {
 				ret.setType(Type.VOID);
 				break;
 			default:
+				ret.setType(Type.VOID);
 				break;
 			}
 		}
@@ -953,6 +954,7 @@ public class DataflowCompiler {
 
 				ModelD md = compileModel(model, /* d.indirectAdapters, */ d.isPartition && honorPartitions);
 				for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
+					System.out.println("RESOLVING " + graph.getEdgeSource(o) + " -> " + graph.getEdgeTarget(o));
 					ret.children.add(compileActuator(graph.getEdgeSource(o), o.mode, graph,
 							o.coverage == null ? scale : o.coverage, monitor));
 				}
@@ -1170,5 +1172,5 @@ public class DataflowCompiler {
 
 		return ret;
 	}
-
+	
 }

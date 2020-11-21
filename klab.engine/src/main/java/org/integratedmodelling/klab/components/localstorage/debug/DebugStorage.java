@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -156,6 +157,12 @@ public class DebugStorage<T> implements IDataStorage<T> {
 
 	@Override
 	public void touch(ITime time) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addContextualizationListener(Consumer<ILocator> listener) {
 		// TODO Auto-generated method stub
 		
 	}

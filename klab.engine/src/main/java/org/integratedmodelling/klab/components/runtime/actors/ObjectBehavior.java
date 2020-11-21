@@ -12,11 +12,13 @@ import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
-import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.utils.Pair;
 
 import akka.actor.typed.ActorRef;
@@ -25,7 +27,7 @@ import akka.actor.typed.ActorRef;
 public class ObjectBehavior {
 
 	@Action(id = "observe", fires = Type.OBSERVATION)
-	public static class Observe extends KlabAction {
+	public static class Observe extends KlabActionExecutor {
 
 		public Observe(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -39,7 +41,7 @@ public class ObjectBehavior {
 				Object arg = evaluateArgument(0, scope);
 				if (arg instanceof IObservable) {
 					try {
-						Future<IObservation> future = ((ISubject) identity)
+						Future<IArtifact> future = ((ISubject) identity)
 								.observe(((IObservable) arg).getDefinition());
 						fire(future.get(), true);
 					} catch (Throwable e) {
@@ -51,8 +53,8 @@ public class ObjectBehavior {
 				try {
 					Object arg = evaluateArgument(0, scope);
 					if (arg instanceof IObservable) {
-						Future<ISubject> future = ((Session) this.identity)
-								.observe(((IObservable) arg).getDefinition());
+						Future<IArtifact> future = ((Session) this.identity).getState()
+								.submit(((IObservable) arg).getDefinition());
 						fire(future.get(), true);
 					}
 				} catch (Throwable e) {
@@ -67,7 +69,7 @@ public class ObjectBehavior {
 	}
 
 	@Action(id = "stop")
-	public static class MoveAway extends KlabAction {
+	public static class MoveAway extends KlabActionExecutor {
 
 		public MoveAway(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -83,7 +85,7 @@ public class ObjectBehavior {
 	}
 
 	@Action(id = "bind")
-	public static class Bind extends KlabAction {
+	public static class Bind extends KlabActionExecutor {
 
 		public Bind(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -112,7 +114,7 @@ public class ObjectBehavior {
 	 *
 	 */
 	@Action(id = "when")
-	public static class When extends KlabAction {
+	public static class When extends KlabActionExecutor {
 
 		String listener;
 
@@ -124,8 +126,8 @@ public class ObjectBehavior {
 
 		@Override
 		void run(KlabActor.Scope scope) {
-			this.listener = scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
-					.addObservationListener(new ISession.ObservationListener() {
+			this.listener = scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState()
+					.addApplicationListener(new ISessionState.Listener() {
 						@Override
 						public void newObservation(IObservation observation, ISubject context) {
 							// TODO filter if a filter was configured; also may need to have a "current
@@ -137,12 +139,19 @@ public class ObjectBehavior {
 						@Override
 						public void newContext(ISubject context) {
 						}
-					});
+
+						@Override
+						public void scaleChanged(ScaleReference scale) {
+							// TODO Auto-generated method stub
+							
+						}
+						
+					}, scope.appId);
 		}
 
 		@Override
 		public void dispose() {
-			scope.getMonitor().getIdentity().getParentIdentity(ISession.class).removeObservationListener(this.listener);
+			scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState().removeListener(this.listener);
 		}
 	}
 
@@ -153,7 +162,7 @@ public class ObjectBehavior {
 	 *
 	 */
 	@Action(id = "siblings")
-	public static class Siblings extends KlabAction {
+	public static class Siblings extends KlabActionExecutor {
 
 		public Siblings(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -169,7 +178,7 @@ public class ObjectBehavior {
 	}
 
 	@Action(id = "connect")
-	public static class Connect extends KlabAction {
+	public static class Connect extends KlabActionExecutor {
 
 		public Connect(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {

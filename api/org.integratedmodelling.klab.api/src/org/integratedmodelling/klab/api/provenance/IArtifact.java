@@ -467,4 +467,12 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 	 *         artifact other than inspection of the relevant specifics.
 	 */
 	boolean isArchetype();
+
+	/**
+	 * Get the last update time in <em>context</em> time, or 0 if the context is not
+	 * temporal.
+	 * 
+	 * @return
+	 */
+	long getLastUpdate();
 }

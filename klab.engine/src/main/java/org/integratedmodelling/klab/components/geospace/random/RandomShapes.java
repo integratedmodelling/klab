@@ -55,7 +55,17 @@ public enum RandomShapes {
 		NormalDistribution xnormal = new NormalDistribution(xwidth, 0.1);
 		NormalDistribution ynormal = new NormalDistribution(ywidth, 0.1);
 
-		List<Double> xbreaks = new ArrayList<>();
+		if (xdivs == 1 || ydivs == 1) {
+
+			/*
+			 * FIXME wrong: if any of the two is > 1 it should create a vbox/hbox.
+			 */
+			ret.add(createPolygon(envelope.getMinX(), envelope.getMaxX(), envelope.getMinY(), envelope.getMaxY(),
+					vertices, envelope.getProjection()));
+
+		} else {
+
+			List<Double> xbreaks = new ArrayList<>();
 		List<Double> ybreaks = new ArrayList<>();
 		for (double xlimit = envelope.getMinX(); xlimit < envelope.getMaxX(); xlimit += randomIncrement(xwidth,
 				xnormal)) {
@@ -66,14 +76,16 @@ public enum RandomShapes {
 			ybreaks.add(ylimit);
 		}
 
-		for (int x = 1; x < xbreaks.size(); x++) {
-			for (int y = 1; y < ybreaks.size(); y++) {
-				if (Math.random() <= frequency) {
-					ret.add(createPolygon(xbreaks.get(x - 1), xbreaks.get(x), ybreaks.get(y - 1), ybreaks.get(y),
-							vertices, envelope.getProjection()));
-				}
-			}
 
+			for (int x = 1; x < xbreaks.size(); x++) {
+				for (int y = 1; y < ybreaks.size(); y++) {
+					if (Math.random() <= frequency) {
+						ret.add(createPolygon(xbreaks.get(x - 1), xbreaks.get(x), ybreaks.get(y - 1), ybreaks.get(y),
+								vertices, envelope.getProjection()));
+					}
+				}
+
+			}
 		}
 
 		return ret;

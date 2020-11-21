@@ -14,4 +14,10 @@ public class WekaPublisher implements IResourcePublisher {
 		return localResource;
 	}
 
+	@Override
+	public boolean unpublish(IResource resource, IMonitor monitor) {
+		// TODO Auto-generated method stub
+		return false;
+	}
+
 }

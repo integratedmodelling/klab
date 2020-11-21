@@ -116,6 +116,11 @@ public class JsonUtils {
 		});
 	}
 
+	@SuppressWarnings("unchecked")
+	public static <T> T cloneObject(T object) {
+		return (T)parseObject(printAsJson(object), object.getClass());
+	}
+	
 	/**
 	 * Load an object from a file.
 	 * 

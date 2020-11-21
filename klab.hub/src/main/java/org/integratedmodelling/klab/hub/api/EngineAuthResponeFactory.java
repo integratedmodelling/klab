@@ -51,7 +51,7 @@ public class EngineAuthResponeFactory {
 			} else {
 				ProfileResource profile = userProfileService.getRawUserProfile(request.getName());
 				EngineAuthenticationResponse response = remoteEngine(profile, request.getCertificate(), config);
-	    		profile.setLastEngineConnection(DateTime.now());
+	    		profile.setLastConnection(DateTime.now());
 	    		userProfileService.updateUserByProfile(profile);
 	    		return response;
 			}
@@ -130,7 +130,7 @@ public class EngineAuthResponeFactory {
 		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engine.getGroups(),
 				tomorrow.toString(), engine.getId());
 		
-		profile.setLastEngineConnection(now);
+		profile.setLastConnection(now);
 		userProfileService.updateUserByProfile(profile);
 
 		Logging.INSTANCE.info("Local Engine Run on hub with User: " + engine.getUsername());

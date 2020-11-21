@@ -154,19 +154,19 @@ public class TestRunner implements Annotations.Handler {
 					Session session = monitor.getIdentity().getParentIdentity(Session.class);
 
 					if (session != null && observer != null) {
-						ISubject subject = session.observe(observer.getName()).get();
+						ISubject subject = (ISubject)session.getState().submit(observer.getName()).get();
 						if (subject != null) {
 							for (Object o : observations) {
-								IObservation ret = subject.observe(o.toString()).get();
+								IArtifact ret = subject.observe(o.toString()).get();
 								if (ret == null) {
 									monitor.warn(id + ": observation of " + o + " in context " + subject.getName()
 											+ " was unsuccessful");
-								} else {
+								} else if (ret instanceof IObservation) {
 									/*
 									 * TODO run any assertion indicated for the observations
 									 */
-									result.add(ret);
-								}
+									result.add((IObservation)ret);
+								} /* TODO it may be a view, run assertions on that too */
 							}
 						} else {
 							monitor.warn(id + ": observation of " + observer.getName() + " was unsuccessful");

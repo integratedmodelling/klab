@@ -20,16 +20,19 @@ import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
@@ -50,10 +53,12 @@ import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.contextualizers.CastingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.CategoryClassificationResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.ChangingResourceResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.DereifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.KnowledgeViewResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LookupStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ObjectClassificationResolver;
@@ -71,12 +76,14 @@ import org.integratedmodelling.klab.components.runtime.observations.Relationship
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
-import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -110,8 +117,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	private ExecutorService executor = Executors.newFixedThreadPool(Configuration.INSTANCE.getDataflowThreadCount());
 
 	@Override
-	public Future<IArtifact> compute(IActuator actuator, IDataflow<? extends IArtifact> dataflow, IScale scale,
-			IResolutionScope scope, IMonitor monitor) throws KlabException {
+	public Future<IArtifact> compute(IDataflow<? extends IArtifact> dataflow, IScale scale, IResolutionScope scope,
+			IMonitor monitor) throws KlabException {
 
 		Callable<IArtifact> task = new Callable<IArtifact>() {
 
@@ -119,69 +126,91 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			public IArtifact call() throws Exception {
 
 				IDirectObservation context = scope.getContext();
-
-				boolean switchContext = context != null
-						&& ((Actuator) actuator).getObservable().getType().is(Type.COUNTABLE)
+				IRuntimeScope runtimeContext = null;
+				Actuator initializer = (Actuator) dataflow.getActuators().get(0);
+				boolean switchContext = context != null && initializer.getObservable().getType().is(Type.COUNTABLE)
 						&& scope.getMode() == Mode.RESOLUTION;
 
 				/*
 				 * We get the overall scale, which we merge with the actuator's. This ensures
 				 * that scale constraints at the model level are dealt with before own artifacts
 				 * are created.
+				 * 
+				 * TODO/CHECK should use all the top-level actuators and merge from the dataflow
 				 */
-				IScale actuatorScale = actuator.mergeScale(scale, monitor);
+				IScale actuatorScale = initializer.mergeScale(scale, monitor);
 
-				IRuntimeScope runtimeContext = null;
 				if (switchContext) {
 					// new catalog, new scale, context subject is in the scope, network remains
-					runtimeContext = ((Observation) context).getScope().createContext(actuatorScale, actuator,
+					runtimeContext = ((Observation) context).getScope().createContext(actuatorScale, initializer,
 							dataflow, scope, monitor);
 				} else if (context == null) {
 					// new context
-					runtimeContext = createRuntimeContext(actuator, scope, actuatorScale, monitor);
+					runtimeContext = createRuntimeContext(initializer, scope, actuatorScale, monitor);
 				} else {
 					// instantiating or resolving states: stay in context
-					runtimeContext = ((Subject) context).getScope().createChild(actuatorScale, actuator, scope,
+					runtimeContext = ((Subject) context).getScope().createChild(actuatorScale, initializer, scope,
 							monitor);
 				}
 
-				List<Actuator> order = ((Actuator) actuator).dependencyOrder();
+				IActuator firstActuator = null;
 
-				// must merge in any constraints from the model before calling this.
-				IScale initializationScale = ((Scale) actuatorScale).copy().initialization();
+				for (IActuator actuator : dataflow.getActuators()) {
 
-				int i = 0;
-				for (Actuator active : order) {
-
-					IRuntimeScope ctx = runtimeContext;
-					if (active != actuator) {
-						ctx = runtimeContext.createChild(actuatorScale, active, scope, monitor)
-								.locate(initializationScale, monitor);
+					if (monitor.isInterrupted()) {
+						return null;
+					}
+					
+					if (firstActuator == null) {
+						firstActuator = actuator;
 					}
 
-					/*
-					 * this won't actually run the contextualizers unless the observation is a
-					 * continuant.
-					 */
-					if (active.isComputed() || ((Actuator) active).isMerging()) {
-						active.compute(ctx.getTargetArtifact(), ctx);
-					}
-					if (!((Actuator) active).getDataflow().isSecondary()
-							&& !(monitor.getIdentity().is(IIdentity.Type.TASK)
-									&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
-						((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
-					}
+					List<Actuator> order = ((Actuator) actuator).dependencyOrder();
 
-					ctx.scheduleActions(active);
+					// must merge in any constraints from the model before calling this.
+					IScale initializationScale = ((Scale) actuatorScale).copy().initialization();
 
-					i++;
+					int i = 0;
+					for (Actuator active : order) {
+
+						if (monitor.isInterrupted()) {
+							return null;
+						}
+
+						IRuntimeScope ctx = runtimeContext;
+						if (active != firstActuator) {
+							ctx = runtimeContext.createChild(actuatorScale, active, scope, monitor)
+									.locate(initializationScale, monitor);
+						}
+
+						/*
+						 * this won't actually run the contextualizers unless the observation is a
+						 * continuant.
+						 */
+						if (active.isComputed() || ((Actuator) active).isMerging()) {
+							active.compute(ctx.getTargetArtifact(), ctx);
+						}
+						if (!((Actuator) active).getDataflow().isSecondary()
+								&& !(monitor.getIdentity().is(IIdentity.Type.TASK)
+										&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
+							((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
+						}
+						
+						if (monitor.isInterrupted()) {
+							return null;
+						}
+
+						ctx.scheduleActions(active);
+
+						i++;
+					}
 				}
 
 				/*
 				 * auto-start the scheduler if transitions have been registered.
 				 */
-				if (((Actuator) actuator).getDataflow().isPrimary() && runtimeContext.getScheduler() != null
-						&& !runtimeContext.getScheduler().isEmpty()) {
+				if (((Dataflow) dataflow).isPrimary() && runtimeContext.getScheduler() != null
+						&& !runtimeContext.getScheduler().isEmpty() && !monitor.isInterrupted()) {
 					ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity())
 							.createChild("Temporal contextualization");
 					try {
@@ -257,7 +286,16 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					((ComputableResource) resource).getValidatedResource(IClassification.class),
 					resource.getCondition(), resource.isNegated());
 		} else if (resource.getAccordingTo() != null) {
-			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(observable.getType(),
+			IConcept classifiable = observable.getType();
+			if (classifiable.is(Type.CHANGE)) {
+				/*
+				 * This happens when we use a derived model to describe the change in a resolved
+				 * quality. I'd like this to not be necessary, but I'm not ready to trace the
+				 * consequence of this done "right".
+				 */
+				classifiable = Observables.INSTANCE.getDescribedType(classifiable);
+			}
+			IClassification classification = Types.INSTANCE.createClassificationFromMetadata(classifiable,
 					resource.getAccordingTo());
 			ret = ClassifyingStateResolver.getServiceCall(classification, resource.getCondition(),
 					resource.isNegated());
@@ -295,7 +333,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			ILocator scale) throws KlabException {
 
 		boolean reentrant = !resolver.getClass().isAnnotationPresent(NonReentrant.class);
-		if (context.getModel() != null && Annotations.INSTANCE.hasAnnotation(context.getModel(), "serial")) {
+		if (System.getProperty("synchronous") != null
+				|| (context.getModel() != null && Annotations.INSTANCE.hasAnnotation(context.getModel(), "serial"))) {
 			reentrant = false;
 		}
 		IArtifact self = context.get("self", IArtifact.class);
@@ -379,7 +418,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	public static IObservation createObservation(IObservable observable, IScale scale, RuntimeScope scope,
 			boolean createArchetype) {
 
-		boolean createActors = observable.is(Type.COUNTABLE) && scale.isTemporallyDistributed();
 		Activity activity = null;
 
 		IIdentity identity = scope.getMonitor().getIdentity();
@@ -412,9 +450,6 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		}
 
 		ret.setGenerator(activity);
-
-		// into an Akka
-		// actor and register with the actor
 
 		return ret;
 	}
@@ -530,5 +565,20 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		return new ComputableResource(
 				DereifyingStateResolver.getServiceCall(distributingType, inherentType, targetType), Mode.RESOLUTION);
 
+	}
+
+	@Override
+	public IContextualizable getChangeResolver(IObservable changeObservable, IResource mergedResource) {
+		if (!(mergedResource instanceof MergedResource)) {
+			throw new KlabIllegalStateException("change resolver can only be used with a merged resource");
+		}
+		return new ComputableResource(
+				ChangingResourceResolver.getServiceCall(changeObservable.getType(), (MergedResource) mergedResource),
+				Mode.RESOLUTION);
+	}
+
+	@Override
+	public IContextualizable getViewResolver(IViewModel view) {
+		return new ComputableResource(KnowledgeViewResolver.getServiceCall(view), Mode.RESOLUTION);
 	}
 }

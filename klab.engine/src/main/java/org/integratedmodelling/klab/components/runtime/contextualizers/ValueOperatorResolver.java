@@ -1,12 +1,12 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
-import java.util.HashMap;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
@@ -44,15 +45,15 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 	public static IServiceCall getServiceCall(IObservable classified, ValueOperator operator, Object operand)
 			throws KlabValidationException {
 		return KimServiceCall.create(FUNCTION_ID, "artifact", classified.getName(), "operator", operator.name(),
-				"value", operand);
+				"value", operand instanceof IObservable ? ((IObservable)operand).getName() : operand);
 	}
 
 	@Override
 	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
 
 		IArtifact classified = context.getArtifact(parameters.get("artifact", String.class));
-		IArtifact stateOperand = parameters.containsKey("state")
-				? context.getArtifact(parameters.get("state", String.class))
+		IArtifact stateOperand = parameters.containsKey("value")
+				? context.getArtifact(parameters.get("value", String.class))
 				: null;
 		ValueOperator operator = ValueOperator.valueOf(parameters.get("operator", String.class));
 		Object valueOperand = parameters.get("value");
@@ -60,29 +61,29 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 		return new ValueOperatorResolver(classified, operator, valueOperand, stateOperand);
 	}
 
-	/*
-	 * TODO extract this mechanism into a caching class which also handles AND and
-	 * OR as needed.
-	 */
-	private boolean is(IConcept c1, IConcept c2) {
-
-		if (c1 == null || c2 == null) {
-			return false;
-		}
-
-		String key = c1 + "#" + c2;
-		Boolean ret = null;
-		if (_reasonCache.get() != null)
-			ret = _reasonCache.get().get(key);
-		if (ret == null) {
-			if (_reasonCache.get() == null) {
-				_reasonCache.set(new HashMap<String, Boolean>());
-			}
-			ret = c1.is(c2);
-			_reasonCache.get().put(key, ret);
-		}
-		return ret;
-	}
+//	/*
+//	 * TODO extract this mechanism into a caching class which also handles AND and
+//	 * OR as needed.
+//	 */
+//	private boolean is(IConcept c1, IConcept c2) {
+//
+//		if (c1 == null || c2 == null) {
+//			return false;
+//		}
+//
+//		String key = c1 + "#" + c2;
+//		Boolean ret = null;
+//		if (_reasonCache.get() != null)
+//			ret = _reasonCache.get().get(key);
+//		if (ret == null) {
+//			if (_reasonCache.get() == null) {
+//				_reasonCache.set(new HashMap<String, Boolean>());
+//			}
+//			ret = c1.is(c2);
+//			_reasonCache.get().put(key, ret);
+//		}
+//		return ret;
+//	}
 
 	@Override
 	public IState resolve(IState ret, IContextualizationScope context) throws KlabException {
@@ -125,7 +126,7 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 		// ? Units.INSTANCE.getTimeExtentUnit(values.getObservable().getUnit())
 		// : null;
 
-		for (ILocator locator : ret.getScale()) {
+		for (ILocator locator : context.getScale()) {
 
 			Object value = values.get(locator);
 			Object other = valueOperand;
@@ -156,7 +157,7 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 						value = null;
 					}
 				} else if (value instanceof IConcept && other instanceof IConcept) {
-					if (!is((IConcept) value, ((IConcept) other))) {
+					if (!((RuntimeScope)context).cached_is_related((IConcept) value, ((IConcept) other))) {
 						value = null;
 					}
 				} else if (value != null && other != null) {
@@ -224,13 +225,13 @@ public class ValueOperatorResolver implements IResolver<IState>, IProcessor, IEx
 				value = total;
 				break;
 			case WHERE:
-				if (other == null || (other instanceof Number && Double.isNaN(((Number) other).doubleValue()))) {
+				if (Observations.INSTANCE.isNodata(other)) {
 					value = null;
 				}
 				break;
 			case WITHOUT:
 				if (value instanceof IConcept && other instanceof IConcept) {
-					if (is((IConcept)value, (IConcept)other)) {
+					if (((RuntimeScope)context).cached_is((IConcept)value, (IConcept)other)) {
 						value = null;
 					}
 				} else if (other != null && value.equals(other)) {

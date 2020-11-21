@@ -1,7 +1,10 @@
 package org.integratedmodelling.klab.owl;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -19,6 +22,7 @@ import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -32,11 +36,13 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.model.Annotation;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
@@ -67,6 +73,8 @@ public class Observable implements IObservable {
 	private boolean distributedInherency;
 	private boolean active = true;
 	private IConcept temporalInherent;
+	private Resolution resolution;
+	private Set<IConcept> contextualRoles = new HashSet<>();
 
 	/*
 	 * Target predicate is a concrete predicate that may be added to the observable
@@ -97,6 +105,7 @@ public class Observable implements IObservable {
 	 */
 	transient String originatingModelId;
 	private boolean mustContextualize;
+	private boolean global;
 
 	Observable(Concept concept) {
 		this.observable = concept;
@@ -112,6 +121,22 @@ public class Observable implements IObservable {
 		return ret;
 	}
 
+	/**
+	 * The observable for a view is for now the only instance of a void observable
+	 * as the view is a non-semantic artifact.
+	 * 
+	 * @param view
+	 * @return
+	 */
+	public static Observable promote(IViewModel view) {
+		Observable ret = new Observable(Concepts.c(NS.CORE_VOID));
+		ret.generic = false;
+		ret.declaration = NS.CORE_VOID;
+		ret.referenceName = ret.name = "void";
+		ret.resolvedModel = new Model(view);
+		return ret;
+	}
+
 	public static Observable promote(IConcept concept) {
 
 		Observable ret = new Observable((Concept) concept);
@@ -119,8 +144,12 @@ public class Observable implements IObservable {
 		ret.observable = (Concept) concept;
 		ret.declaration = concept.getDefinition().trim();
 		ret.isAbstract = concept.isAbstract();
-		ret.generic = concept.isAbstract();
+		ret.generic = concept.is(Type.ROLE);
 		ret.referenceName = ret.name = Concepts.INSTANCE.getCodeName(ret.observable);
+		if (ret.referenceName == null) {
+			// happens with non-standard observables like observation:Void.
+			ret.referenceName = ret.name = concept.getName().toLowerCase();
+		}
 
 		return ret;
 	}
@@ -147,6 +176,8 @@ public class Observable implements IObservable {
 		this.distributedInherency = observable.distributedInherency;
 		this.active = observable.active;
 		this.temporalInherent = observable.temporalInherent;
+		this.resolution = observable.resolution;
+		this.contextualRoles.addAll(observable.contextualRoles);
 	}
 
 	public Observable withoutModel() {
@@ -237,6 +268,11 @@ public class Observable implements IObservable {
 	public Object getValue() {
 		return value;
 	}
+	
+	@Override
+	public Collection<IConcept> getContextualRoles() {
+		return this.contextualRoles;
+	}
 
 	public String getDeclaration() {
 		return declaration;
@@ -265,6 +301,9 @@ public class Observable implements IObservable {
 				boolean distributed = Observables.INSTANCE.hasDistributedInherency(observable);
 				observationType = distributed ? IActivity.Description.CLASSIFICATION
 						: IActivity.Description.CHARACTERIZATION;
+			} else {
+				// void observable: just do it, no semantics.
+				observationType = IActivity.Description.COMPILATION;
 			}
 		}
 		return observationType;
@@ -317,8 +356,7 @@ public class Observable implements IObservable {
 		 * TODO check: operators are only allowed at the receiving end. We should also
 		 * allow the same operators and operands as us in the provider.
 		 */
-		return conceptsAreEqual && (obj.valueOperators.isEmpty()
-				|| CollectionUtils.isEqualCollection(this.valueOperators, obj.valueOperators));
+		return conceptsAreEqual && CollectionUtils.isEqualCollection(this.valueOperators, obj.valueOperators);
 	}
 
 	@Override
@@ -374,7 +412,7 @@ public class Observable implements IObservable {
 		if (valueOperators == null) {
 			if (other.valueOperators != null)
 				return false;
-		} else if (!valueOperators.equals(other.valueOperators))
+		} else if (!Observables.INSTANCE.compareOperators(valueOperators, other.valueOperators))
 			return false;
 		return true;
 	}
@@ -722,6 +760,29 @@ public class Observable implements IObservable {
 
 	public void setTemporalInherent(IConcept temporalInherent) {
 		this.temporalInherent = temporalInherent;
+	}
+
+	@Override
+	public boolean isGlobal() {
+		return this.global;
+	}
+
+	public void setGlobal(boolean global) {
+		this.global = global;
+	}
+
+	@Override
+	public Resolution getResolution() {
+		return this.resolution;
+	}
+
+	public void setResolution(Resolution resolution) {
+		this.resolution = resolution;
+	}
+
+	public IObservable withRole(IConcept role) {
+		this.contextualRoles.add(role);
+		return this;
 	}
 
 }

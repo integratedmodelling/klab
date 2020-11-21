@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.geospace.processing;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Triple;
 
@@ -152,6 +154,14 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 			n++;
 		}
 
+
+		List<IObjectArtifact> ret = new ArrayList<>();
+
+		if (chosen == null) {
+			context.getMonitor().warn("k.LAB resources for " + Concepts.INSTANCE.getDisplayName(semantics.getType()) + " did not respond or did not match the context");
+			return ret;
+		}
+		
 		context.getMonitor().debug("chosen level " + chosen);
 
 		/*
@@ -165,8 +175,6 @@ public abstract class ScaleChooserInstantiator implements IInstantiator {
 		chosen += detail;
 
 		context.getMonitor().debug("adjusted level " + chosen + ": " + getResourceUrns()[chosen]);
-
-		List<IObjectArtifact> ret = new ArrayList<>();
 
 		// keep name, scale and metadata for later use
 		List<Triple<String, IScale, IMetadata>> tmp = new ArrayList<>();

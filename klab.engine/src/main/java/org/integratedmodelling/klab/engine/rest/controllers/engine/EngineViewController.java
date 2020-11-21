@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.INetwork;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -161,10 +162,10 @@ public class EngineViewController {
 
 			ret.add(Observations.INSTANCE.createArtifactDescriptor((IObservation) child/* , obs */, loc, 0,
 					obs instanceof ObservationGroupView ? obs.getId() : null));
-			
+
 			// assume this was notified
 			scope.getNotifiedObservations().add(child.getId());
-			
+
 			n++;
 		}
 
@@ -195,6 +196,36 @@ public class EngineViewController {
 			@RequestParam(required = false) String adapter, HttpServletResponse response) throws Exception {
 
 		ISession session = EngineSessionController.getSession(principal);
+
+		if (format == GeometryType.TABLE) {
+
+			/*
+			 * TODO this may change - tables and other views are indexed with
+			 * contextid.artifactid because the session does not index them individually.
+			 */
+			String[] ids = observation.split("\\.");
+			if (ids.length != 2) {
+				throw new IllegalArgumentException("view " + observation + " does not contain the context ID");
+			}
+
+			IObservation context = session.getObservation(ids[0]);
+			IArtifact view = ((Observation) context).getScope().getArtifact(ids[1]);
+			if (!(view instanceof IKnowledgeView)) {
+				throw new IllegalArgumentException("view " + observation + " does not exist or is not a view");
+			}
+
+			File file = File.createTempFile("view", "." + adapter);
+			if (((IKnowledgeView) view).export(file, outputFormat)) {
+
+				try (InputStream input = new FileInputStream(file)) {
+					response.setContentType(outputFormat);
+					IOUtils.copy(input, response.getOutputStream());
+				}
+				return;
+			}
+
+		}
+
 		IObservation obs = session.getObservation(observation);
 		if (obs == null) {
 			throw new IllegalArgumentException("observation " + observation + " does not exist");
@@ -202,15 +233,15 @@ public class EngineViewController {
 
 		ILocator loc = obs.getScale().initialization();
 		if (locator != null) {
-			/*
-			 * NB: TEMPORARY! must send the T dimension locator if the context is temporal.
-			 */
 			if (obs.getScale().getTime() != null && !locator.toLowerCase().startsWith("t")) {
 				locator = "T1(1){time=INITIALIZATION}" + locator;
 			}
 			loc = Geometry.create(locator);
 			loc = obs.getScale().at(loc);
 		}
+
+//		System.out.println(
+//				"REQUESTED " + loc + ": " + obs.getTimestamp() + "\n   " + Arrays.toString(obs.getUpdateTimestamps()));
 
 		boolean done = false;
 
@@ -253,7 +284,9 @@ public class EngineViewController {
 				String descr = value instanceof Number
 						? NumberFormat.getInstance().format(((Number) value).doubleValue())
 						: (value instanceof IConcept ? Concepts.INSTANCE.getDisplayLabel(((IConcept) value))
-								: (value instanceof Boolean ? ((Boolean) value ? Observations.PRESENT_LABEL : Observations.NOT_PRESENT_LABEL)
+								: (value instanceof Boolean
+										? ((Boolean) value ? Observations.PRESENT_LABEL
+												: Observations.NOT_PRESENT_LABEL)
 										: "No data"));
 
 				if (obs.getObservable().getUnit() != null) {

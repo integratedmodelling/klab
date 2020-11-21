@@ -63,7 +63,7 @@ ArgumentDeclaration: {ArgumentDeclaration}
 MessageBody: {MessageBody} lists+=StatementList*;
 
 ActorInstantiation:
-	'new' behavior=PathName ('(' (parameters=ParameterList)? ')')? (':' actions=Actions)?
+	'create' behavior=PathName ('(' (parameters=ParameterList)? ')')? (':' actions=Actions)?
 ;
 
 MessageCall:
@@ -78,7 +78,7 @@ Metadata:
 ;
 
 MetadataPair:
-	key=KEY (value=Value)?
+	key=KEY (value=Literal)?
 ;
 
 StatementList:
@@ -119,13 +119,18 @@ NextStatement returns Statement:
 ;
 
 Assignment:
-	'set' variable=LOWERCASE_ID value=Value
+	'set' (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=Value
 ;
 
 IfStatement:
-	'if' expression=EXPR body=StatementBody	
-		('else' 'if' elseIfExpression+=EXPR elseIfBody+=StatementBody)* 
+	'if' (literal=Literal | expression=EXPR | variable=LOWERCASE_ID) 
+		body=StatementBody	
+		('else' 'if' elseIfBody+=ElseIfStatementBody)* 
 		('else' elseCall=StatementBody)?
+;
+
+ElseIfStatementBody:
+	(literal=Literal | expression=EXPR | variable=LOWERCASE_ID) body=StatementBody
 ;
 
 /** 
@@ -157,12 +162,14 @@ Actions:
 
 Value:
 	tree=Tree |
+	empty?='empty' |
 	argvalue=ARGVALUE |
 	literal=Literal |
 	urn=UrnId | 
 	id=PathName |
 	list=List |
 	map=Map |
+	constant=UPPERCASE_ID |
 	observable=Observable | 
 	expression=EXPR |
 	table=LookupTable |
@@ -174,6 +181,7 @@ ValueWithMetadata returns Value:
 	 argvalue=ARGVALUE |
 	 literal=Literal |
 	 urn=UrnId | 
+	 constant=UPPERCASE_ID |
 	 id=PathName |
 	 list=List |
 	 map=Map |
@@ -214,6 +222,7 @@ ValueWithMetadataWithoutTree returns Value:
 
 Match:
 	id=LOWERCASE_ID '->' body=StatementList  |
+	constant=UPPERCASE_ID '->' body=StatementList  |
 	boolean=('true'|'false') '->' body=StatementList  |
 	type=CAMELCASE_ID '->' body=StatementList |
 	regexp=REGEXP '->' body=StatementList |
@@ -225,7 +234,9 @@ Match:
 	expr=EXPR '->' body=StatementList |
 	nodata='unknown' '->' body=StatementList |
 	star?='*' '->' body=StatementList |
-	anything?='#''->' body=StatementList 
+	anything?='#''->' body=StatementList |
+	empty?='empty' '->' body=StatementList |
+	exception?='exception' '->' body=StatementList
 ;
 
 /**
@@ -242,7 +253,12 @@ UrnKvp:
 ;	
 	
 List:
-	{List} '(' contents+=ValueWithMetadata* ')';
+	{List} '(' contents+=ListElement* ')';
+	
+ListElement:
+	value=ValueWithMetadata |
+	tag=TAG	
+;	
 	
 Map:
 	{Map} '#{' (entries+=MapEntry (=> (',') entries+=MapEntry)*)? '}'

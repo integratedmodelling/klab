@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -88,6 +89,27 @@ public class Observer extends KimObject implements IObserver {
 		};
 	}
 
+	public Observer(String name, IScale scale, Observable observable, Namespace namespace) {
+		
+		super(null);
+
+		this.namespace = namespace;
+		this.observable = observable;
+		this.name = name;
+		this.behavior = new Contextualization(null, this) {
+
+			@Override
+			public Collection<IExtent> getExtents(IMonitor monitor) throws KlabException {
+				if (urn != null) {
+					VisitingDataBuilder builder = new VisitingDataBuilder(1);
+					IKlabData data = Resources.INSTANCE.getResourceData(urn, builder, monitor);
+					return data.getObjectCount() > 0 ? data.getObjectScale(0).getExtents() : new ArrayList<>();
+				}
+				return scale.getExtents();
+			}
+		};
+	}
+	
 	public Observer(Shape shape, ITime time, Observable observable, Namespace namespace) {
 		
 		super(null);

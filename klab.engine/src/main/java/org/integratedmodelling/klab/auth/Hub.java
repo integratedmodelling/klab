@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -16,6 +17,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.IClient;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.rest.HubReference;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class Hub implements IServerIdentity {
 
@@ -29,7 +31,13 @@ public class Hub implements IServerIdentity {
     private long lastCheck = System.currentTimeMillis();
 
     private Client client;
+	IParameters<String> globalState = Parameters.create();
 
+	@Override
+	public IParameters<String> getState() {
+		return globalState;
+	}
+	
     public Hub(String name, IPartnerIdentity owner) {
         this.name = name;
         this.parent = owner;

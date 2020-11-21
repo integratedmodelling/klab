@@ -88,44 +88,44 @@ public class H2Database {
 	private Set<Class<?>> initializedSchemata = new HashSet<>();
 
 	// these support the more modern table functions
-	private List<Pair<Class<?>, Function<?, String>>> serializers = new ArrayList<>();
-	private List<Pair<Class<?>, Function<Map<String, Object>, ?>>> deserializers = new ArrayList<>();
+//	private List<Pair<Class<?>, Function<?, String>>> serializers = new ArrayList<>();
+//	private List<Pair<Class<?>, Function<Map<String, Object>, ?>>> deserializers = new ArrayList<>();
 
-	public static class Builder {
+//	public static class Builder {
+//
+//		private List<Structure> tables = new ArrayList<>();
+////		private String name;
+////		private boolean persistent;
+////		private List<Pair<Class<?>, Function<?, String>>> serializers = new ArrayList<>();
+////		private List<Pair<Class<?>, Function<Map<String, Object>, ?>>> deserializers = new ArrayList<>();
+//
+//		public Builder(String databaseName, boolean persistent) {
+////			this.name = databaseName;
+////			this.persistent = persistent;
+//		}
+//
+//		public Builder table(Structure structure) {
+//			tables.add(structure);
+//			return this;
+//		}
+//
+//		public <T> Builder serialize(Function<T, String> serializer, Class<? extends T> cls) {
+//			return this;
+//		}
+//
+//		public <T> Builder deserialize(Function<Map<String, Object>, T> deserializer, Class<? extends T> cls) {
+//			return this;
+//		}
+//
+//		public H2Database build() {
+//			return null;
+//		}
+//
+//	}
 
-		private List<Structure> tables = new ArrayList<>();
-		private String name;
-		private boolean persistent;
-		private List<Pair<Class<?>, Function<?, String>>> serializers = new ArrayList<>();
-		private List<Pair<Class<?>, Function<Map<String, Object>, ?>>> deserializers = new ArrayList<>();
-
-		public Builder(String databaseName, boolean persistent) {
-			this.name = databaseName;
-			this.persistent = persistent;
-		}
-
-		public Builder table(Structure structure) {
-			tables.add(structure);
-			return this;
-		}
-
-		public <T> Builder serialize(Function<T, String> serializer, Class<? extends T> cls) {
-			return this;
-		}
-
-		public <T> Builder deserialize(Function<Map<String, Object>, T> deserializer, Class<? extends T> cls) {
-			return this;
-		}
-
-		public H2Database build() {
-			return null;
-		}
-
-	}
-
-	public static Builder builder(String databaseName, boolean persistent) {
-		return new Builder(databaseName, persistent);
-	}
+//	public static Builder builder(String databaseName, boolean persistent) {
+//		return new Builder(databaseName, persistent);
+//	}
 
 	public List<Map<String, String>> dump(String table) throws KlabStorageException {
 		List<Map<String, String>> ret = new ArrayList<>();
@@ -347,6 +347,7 @@ public class H2Database {
 		try {
 			connection = getConnection();
 			connection.createStatement().execute(sql);
+			connection.commit();
 			// connection.close();
 		} catch (SQLException e) {
 			throw new KlabStorageException(e);

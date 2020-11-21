@@ -25,8 +25,10 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -40,6 +42,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -145,6 +148,13 @@ public class GroovyExpressionPreprocessor {
 	IExpression.Context context;
 	private boolean contextual;
 	private List<IObservable> declarations = new ArrayList<>();
+	private boolean recontextualizeAsMap;
+	/*
+	 * if recontextualizeAsMap is passed, identifiers like id@ctx are translated as
+	 * id["ctx"] and the ID plus any key encountered are placed here.
+	 */
+	private Map<String, Set<String>> mapIdentifiers = new HashMap<>();
+	private boolean ignoreContext;
 
 	static final int KNOWLEDGE = 1;
 	static final int DEFINE = 2;
@@ -159,12 +169,14 @@ public class GroovyExpressionPreprocessor {
 	private static final String DECLARATION_ID_PREFIX = "___DECL_";
 
 	public GroovyExpressionPreprocessor(INamespace currentNamespace, Set<String> knownIdentifiers, IGeometry geometry,
-			IExpression.Context context, boolean contextual) {
+			IExpression.Context context, boolean contextual, Set<CompilerOption> options) {
 		this.domains = geometry;
 		this.namespace = currentNamespace;
 		this.knownIdentifiers = knownIdentifiers;
 		this.context = context;
 		this.contextual = contextual;
+		this.recontextualizeAsMap = options.contains(CompilerOption.RecontextualizeAsMap);
+		this.ignoreContext = options.contains(CompilerOption.IgnoreContext);
 	}
 
 	public Geometry getInferredGeometry() {
@@ -210,6 +222,25 @@ public class GroovyExpressionPreprocessor {
 
 		public String toString() {
 			return this.token;
+		}
+
+		/**
+		 * Return the literal token value: only used for knowledge for now, so it should
+		 * be either an identifier (left alone) or a string (wrapped in quotation marks).
+		 */
+		public String encode() {
+			String ret = token;
+			switch (type) {
+			case URN:
+			case KNOWLEDGE:
+			case KNOWN_MODEL_OBJECT:
+				ret = "\"" + token + "\"";
+				break;
+			case LITERAL_NULL:
+				ret = "null";
+				break;
+			}
+			return ret;
 		}
 
 		public String translate(IExpression.Context context) {
@@ -427,17 +458,31 @@ public class GroovyExpressionPreprocessor {
 			if (t.contains("@")) {
 				t = t.trim();
 				String[] tt = t.split("@");
-				token.append(" _recontextualize(\"" + tt[0] + "\", \"" + tt[1] + "\")");
 
-				/*
-				 * record contextualizers
-				 */
-				String[] pp = tt[1].split(",");
-				for (String p : pp) {
-					while (Character.isDigit(p.charAt(p.length() - 1))) {
-						p = p.substring(0, p.length() - 1);
+				if (recontextualizeAsMap) {
+
+					// using the dot-form also classifies the identifier usage as non-scalar later.
+					token.append(tt[0] + "." + tt[1]);
+
+					if (!this.mapIdentifiers.containsKey(tt[0])) {
+						this.mapIdentifiers.put(tt[0], new HashSet<>());
 					}
-					contextualizers.add(p);
+					this.mapIdentifiers.get(tt[0]).add(tt[1]);
+
+				} else {
+
+					token.append(" _recontextualize(\"" + tt[0] + "\", \"" + tt[1] + "\")");
+
+					/*
+					 * record contextualizers
+					 */
+					String[] pp = tt[1].split(",");
+					for (String p : pp) {
+						while (Character.isDigit(p.charAt(p.length() - 1))) {
+							p = p.substring(0, p.length() - 1);
+						}
+						contextualizers.add(p);
+					}
 				}
 
 			} else {
@@ -470,15 +515,16 @@ public class GroovyExpressionPreprocessor {
 		String ret = "";
 
 		/*
-		 * reduce KNOWN_ID 'is' KNOWLEDGE to ID.isa(CONCEPT)
+		 * reduce KNOWN_ID 'is' KNOWLEDGE to _c.cached_is(ID, KNOWLEDGE)
 		 */
 		List<TokenDescriptor> reduced = new ArrayList<>();
 		for (int i = 0; i < tokens.size(); i++) {
 			if (tokens.get(i).type == KNOWN_ID && tokens.size() - i >= 4 && tokens.get(i + 1).token.trim().isEmpty()
 					&& tokens.get(i + 2).token.equals("is") && tokens.get(i + 3).token.trim().isEmpty()
 					&& tokens.get(i + 4).type == KNOWLEDGE) {
-				reduced.add(
-						new TokenDescriptor(INFERENCE, tokens.get(i) + ".isa(" + tokens.get(i + 4).translate() + ")"));
+				reduced.add(new TokenDescriptor(INFERENCE,
+						"_c.cached_is(" + tokens.get(i) + "," + tokens.get(i + 4).encode() + ")"));
+//						new TokenDescriptor(INFERENCE, tokens.get(i) + ".isa(" + tokens.get(i + 4).translate() + ")"));
 				i += 4;
 			} else {
 				reduced.add(tokens.get(i));
@@ -507,7 +553,8 @@ public class GroovyExpressionPreprocessor {
 		}
 
 		for (TokenDescriptor t : tokens) {
-			if (t.type == KNOWN_ID) {
+			if (t.type == KNOWN_ID
+					|| (t.type == UNKNOWN_ID && context != null && context.getIdentifiers().contains(t.token.trim()))) {
 				identifiers.add(t.token.trim());
 				if (t.methodCall) {
 					this.objectIds.add(t.token.trim());
@@ -644,7 +691,9 @@ public class GroovyExpressionPreprocessor {
 	}
 
 	private String translateParameter(String currentToken, boolean isScalar) {
-		return isScalar ? currentToken : "_p.get(\"" + currentToken + "\")";
+		boolean isMapIdentifier = mapIdentifiers.containsKey(currentToken);
+		boolean includeLiterally = this.ignoreContext && !this.context.getStateIdentifiers().contains(currentToken);
+		return (isScalar || isMapIdentifier || includeLiterally) ? currentToken : "_p.get(\"" + currentToken + "\")";
 	}
 
 	private String translateKnowledge(String k) {
@@ -678,8 +727,12 @@ public class GroovyExpressionPreprocessor {
 	public Set<String> getContextualizers() {
 		return contextualizers;
 	}
-	
+
 	public static void main(String[] args) {
-		
+
+	}
+
+	public Map<String, Set<String>> getMapIdentifiers() {
+		return mapIdentifiers;
 	}
 }

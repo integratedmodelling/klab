@@ -2,10 +2,15 @@ package org.integratedmodelling.ml.adapters;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.math3.distribution.EnumeratedRealDistribution;
+import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -39,6 +44,7 @@ public class WekaEncoder implements IResourceEncoder {
 	WekaClassifier classifier = null;
 	WekaInstances instances = null;
 	boolean initialized = false;
+	IState uncertaintyState = null;
 
 	@Override
 	public boolean isOnline(IResource resource, IMonitor monitor) {
@@ -167,6 +173,17 @@ public class WekaEncoder implements IResourceEncoder {
 					resource.getParameters().get("classifier.probabilistic", "false").equals("true"));
 		}
 
+		if (context.getModel() != null) {
+			for (int i = 1; i < context.getModel().getObservables().size(); i++) {
+				IObservable observable = context.getModel().getObservables().get(i);
+				if (observable.getName().endsWith("_uncertainty") || observable.is(Type.UNCERTAINTY)
+						&& Observables.INSTANCE.getDescribedType(observable.getType())
+								.equals(context.getModel().getObservables().get(0).getType())) {
+					this.uncertaintyState = context.getArtifact(observable.getType(), IState.class);
+				}
+			}
+		}
+
 		this.instances = new WekaInstances(context, resource.getInputs().size());
 		this.instances.admitNodata(resource.getParameters().get("submitNodata", "true").equals("true"));
 
@@ -221,17 +238,6 @@ public class WekaEncoder implements IResourceEncoder {
 				}
 			}
 
-			if (resource.getParameters().containsKey("key." + dependency.getName())) {
-				// build predictor datakey
-				try {
-					File file = ((Resource) resource).getLocalFile("key." + dependency.getName());
-					List<String> key = FileUtils.readLines(file);
-					instances.setDatakey(dependency.getName(), key);
-				} catch (IOException e) {
-					throw new KlabIOException(e);
-				}
-			}
-
 			/*
 			 * we may have less predictors than during training, so we put them in the
 			 * original place leaving any others as null. The index is the position in the
@@ -243,10 +249,21 @@ public class WekaEncoder implements IResourceEncoder {
 
 			instances.addPredictor(dependency.getName(), state.getObservable(), state, index, discretizer);
 
+			if (resource.getParameters().containsKey("key." + dependency.getName())) {
+				// build predictor datakey
+				try {
+					File file = ((Resource) resource).getLocalFile("key." + dependency.getName());
+					List<String> key = FileUtils.readLines(file);
+					instances.setDatakey(dependency.getName(), key);
+				} catch (IOException e) {
+					throw new KlabIOException(e);
+				}
+			}
+
 			StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
 			String range = resource.getParameters().get("predictor." + dependency.getName() + ".range", String.class);
 			if (range != null) {
-				// 
+				//
 				Range original = Range.create(range);
 				Range actual = Range.create(summary.getRange());
 				if (!original.contains(actual)) {
@@ -280,13 +297,20 @@ public class WekaEncoder implements IResourceEncoder {
 			initialize(predictedState, resource, context);
 		}
 
+//		Set<String> sperma = new HashSet<>();
+		
 		/*
 		 * proceed to inference
 		 */
 		for (ILocator locator : context.getScale()) {
 			Instance instance = instances.getInstance(locator);
 			if (instance != null) {
-				setValue(locator, classifier.predict(instance, context.getMonitor()), builder, resource,
+				Object result = classifier.predict(instance, context.getMonitor());
+//				if (!sperma.contains(instance.toString())) {
+//					System.out.println(instance + " -> " + Arrays.toString((double[])result));
+//					sperma.add(instance.toString());
+//				}
+				setValue(locator, result, builder, resource,
 						instances.getDatakey("predicted"));
 			}
 		}
@@ -296,12 +320,26 @@ public class WekaEncoder implements IResourceEncoder {
 
 		if (prediction instanceof double[]) {
 
-			// predicted state must be discretized
-			// FIXME this could be a categorical state without discretization
+			// a numeric predicted state must be discretized
 			if (resource.getType() == IArtifact.Type.NUMBER) {
 				EnumeratedRealDistribution distribution = new EnumeratedRealDistribution(
 						instances.getPredictedDiscretization().getMidpoints(), (double[]) prediction);
 				target.add(distribution.getNumericalMean(), locator);
+
+				if (this.uncertaintyState != null) {
+					/*
+					 * TODO categorical distribution should use Shannon - redo with original
+					 * distribution
+					 */
+					/*
+					 * FIXME this uses the state directly, which breaks the resource's contract in
+					 * case the adapter is used remotely. Must set the builder up for additional
+					 * outputs instead.
+					 */
+					this.uncertaintyState.set(locator,
+							Math.sqrt(distribution.getNumericalVariance()) / distribution.getNumericalMean());
+				}
+
 			} else {
 //				// find the most likely class. TODO give the option of stochastic inference.
 //				EnumeratedDistribution<IConcept> concept = new EnumeratedDistribution<IConcept>(
@@ -313,13 +351,6 @@ public class WekaEncoder implements IResourceEncoder {
 					target.add(dataKey.lookup(val), locator);
 				}
 			}
-
-			// if (uncertainty != null) {
-			// // TODO categorical distribution should use Shannon - redo with original
-			// // distribution
-			// uncertainty.set(locator, Math.sqrt(distribution.getNumericalVariance())
-			// / distribution.getNumericalMean());
-			// }
 
 		} else {
 			if (resource.getType() == IArtifact.Type.NUMBER) {

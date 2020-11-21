@@ -25,6 +25,7 @@ import org.integratedmodelling.kim.kim.Value;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.DefinitionBodyImpl#getDefineClass <em>Define Class</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DefinitionBodyImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.DefinitionBodyImpl#getValue <em>Value</em>}</li>
  * </ul>
@@ -33,6 +34,26 @@ import org.integratedmodelling.kim.kim.Value;
  */
 public class DefinitionBodyImpl extends MinimalEObjectImpl.Container implements DefinitionBody
 {
+  /**
+   * The default value of the '{@link #getDefineClass() <em>Define Class</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDefineClass()
+   * @generated
+   * @ordered
+   */
+  protected static final String DEFINE_CLASS_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getDefineClass() <em>Define Class</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDefineClass()
+   * @generated
+   * @ordered
+   */
+  protected String defineClass = DEFINE_CLASS_EDEFAULT;
+
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -82,6 +103,31 @@ public class DefinitionBodyImpl extends MinimalEObjectImpl.Container implements 
   protected EClass eStaticClass()
   {
     return KimPackage.Literals.DEFINITION_BODY;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getDefineClass()
+  {
+    return defineClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setDefineClass(String newDefineClass)
+  {
+    String oldDefineClass = defineClass;
+    defineClass = newDefineClass;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.DEFINITION_BODY__DEFINE_CLASS, oldDefineClass, defineClass));
   }
 
   /**
@@ -185,6 +231,8 @@ public class DefinitionBodyImpl extends MinimalEObjectImpl.Container implements 
   {
     switch (featureID)
     {
+      case KimPackage.DEFINITION_BODY__DEFINE_CLASS:
+        return getDefineClass();
       case KimPackage.DEFINITION_BODY__NAME:
         return getName();
       case KimPackage.DEFINITION_BODY__VALUE:
@@ -203,6 +251,9 @@ public class DefinitionBodyImpl extends MinimalEObjectImpl.Container implements 
   {
     switch (featureID)
     {
+      case KimPackage.DEFINITION_BODY__DEFINE_CLASS:
+        setDefineClass((String)newValue);
+        return;
       case KimPackage.DEFINITION_BODY__NAME:
         setName((String)newValue);
         return;
@@ -223,6 +274,9 @@ public class DefinitionBodyImpl extends MinimalEObjectImpl.Container implements 
   {
     switch (featureID)
     {
+      case KimPackage.DEFINITION_BODY__DEFINE_CLASS:
+        setDefineClass(DEFINE_CLASS_EDEFAULT);
+        return;
       case KimPackage.DEFINITION_BODY__NAME:
         setName(NAME_EDEFAULT);
         return;
@@ -243,6 +297,8 @@ public class DefinitionBodyImpl extends MinimalEObjectImpl.Container implements 
   {
     switch (featureID)
     {
+      case KimPackage.DEFINITION_BODY__DEFINE_CLASS:
+        return DEFINE_CLASS_EDEFAULT == null ? defineClass != null : !DEFINE_CLASS_EDEFAULT.equals(defineClass);
       case KimPackage.DEFINITION_BODY__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KimPackage.DEFINITION_BODY__VALUE:
@@ -262,7 +318,9 @@ public class DefinitionBodyImpl extends MinimalEObjectImpl.Container implements 
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (name: ");
+    result.append(" (defineClass: ");
+    result.append(defineClass);
+    result.append(", name: ");
     result.append(name);
     result.append(')');
     return result.toString();

@@ -56,7 +56,7 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 		IResource res = this.resource;
 
 		if (this.resource instanceof MergedResource) {
-			List<IResource> resources = ((MergedResource) this.resource).contextualize(context.getScale());
+			List<IResource> resources = ((MergedResource) this.resource).contextualize(context.getScale(), context.getTargetArtifact());
 			if (resources.isEmpty()) {
 				context.getMonitor()
 						.warn("resource " + this.resource.getUrn() + " cannot be contextualized in this scale");

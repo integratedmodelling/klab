@@ -30,7 +30,6 @@ import org.integratedmodelling.kim.kim.DefineStatement;
 import org.integratedmodelling.kim.kim.DefinitionBody;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.DocSelector;
-import org.integratedmodelling.kim.kim.Documentation;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.FunctionOrID;
 import org.integratedmodelling.kim.kim.HeaderRow;
@@ -44,7 +43,6 @@ import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.LookupTable;
 import org.integratedmodelling.kim.kim.Map;
 import org.integratedmodelling.kim.kim.MapEntry;
-import org.integratedmodelling.kim.kim.Metadata;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.ModelStatement;
@@ -336,16 +334,6 @@ public class KimAdapterFactory extends AdapterFactoryImpl
       public Adapter caseLiteral(Literal object)
       {
         return createLiteralAdapter();
-      }
-      @Override
-      public Adapter caseMetadata(Metadata object)
-      {
-        return createMetadataAdapter();
-      }
-      @Override
-      public Adapter caseDocumentation(Documentation object)
-      {
-        return createDocumentationAdapter();
       }
       @Override
       public Adapter caseMap(Map object)
@@ -1050,36 +1038,6 @@ public class KimAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createLiteralAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Metadata <em>Metadata</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kim.kim.Metadata
-   * @generated
-   */
-  public Adapter createMetadataAdapter()
-  {
-    return null;
-  }
-
-  /**
-   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kim.kim.Documentation <em>Documentation</em>}'.
-   * <!-- begin-user-doc -->
-   * This default implementation returns null so that we can easily ignore cases;
-   * it's useful to ignore a case when inheritance will catch all the cases anyway.
-   * <!-- end-user-doc -->
-   * @return the new adapter.
-   * @see org.integratedmodelling.kim.kim.Documentation
-   * @generated
-   */
-  public Adapter createDocumentationAdapter()
   {
     return null;
   }

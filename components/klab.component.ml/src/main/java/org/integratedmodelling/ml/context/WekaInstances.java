@@ -44,6 +44,7 @@ import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.data.classification.Discretization;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -70,6 +71,7 @@ import weka.filters.unsupervised.attribute.ReplaceMissingValues;
 public class WekaInstances {
 
 	private static final int MAX_ALLOWED_NODATA = 2;
+	private static final String PREDICTED_OBSERVABLE = "__PREDICTED_OBSERVABLE__";
 
 	private IObservable predictedObservable = null;
 	private IState predictedState = null;
@@ -269,6 +271,9 @@ public class WekaInstances {
 		this.attributes.set(0, getAttribute(observable, state));
 		if (discretizer != null) {
 			discretizers.put(name, new DiscretizerDescriptor(discretizer));
+			// we add this under the generic name to avoid having to match the output's name
+			// too
+			discretizers.put(PREDICTED_OBSERVABLE, new DiscretizerDescriptor(discretizer));
 		}
 	}
 
@@ -318,10 +323,9 @@ public class WekaInstances {
 		this.selectFraction = selectFraction;
 
 		if (this.selector != null) {
-			this.selectorDescriptor = Extensions.INSTANCE
-					.getLanguageProcessor(selector.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
-							: selector.getLanguage())
-					.describe(this.selector.getCode(), context.getExpressionContext(), false);
+			this.selectorDescriptor = Extensions.INSTANCE.getLanguageProcessor(
+					selector.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE : selector.getLanguage())
+					.describe(this.selector.getCode(), context.getExpressionContext());
 		}
 
 //		this.explicitContext = Observables.INSTANCE.getDirectContextType(predicted.getType());
@@ -551,6 +555,13 @@ public class WekaInstances {
 	 * @return
 	 */
 	public IObservable getPredictorObservable(String attributeName) {
+		if (predictors == null && predictorStates != null) {
+			for (IState state : predictorStates) {
+				if (state != null && state.getObservable().getName().equals(attributeName)) {
+					return state.getObservable();
+				}
+			}
+		}
 		for (IObservable state : getPredictorObservables()) {
 			if (state.getName().equals(attributeName)) {
 				return state;
@@ -1152,6 +1163,7 @@ public class WekaInstances {
 			 */
 			if (predictor == null) {
 				ret.setMissing(i);
+				i++;
 				continue;
 			}
 
@@ -1197,7 +1209,7 @@ public class WekaInstances {
 			i++;
 		}
 
-		if (ndata < (predictorStates.size() - MAX_ALLOWED_NODATA)) {
+		if (ndata < /* (predictorStates.size() - */ MAX_ALLOWED_NODATA/* ) */) {
 			return null;
 		}
 
@@ -1242,9 +1254,12 @@ public class WekaInstances {
 	public Discretization getPredictedDiscretization() {
 
 		if (this.predictedDiscretization == null) {
-			DiscretizerDescriptor filter = discretizers.get(predictedState.getObservable().getName());
+			DiscretizerDescriptor filter = discretizers.get(PREDICTED_OBSERVABLE);
 			if (filter == null) {
-				throw new IllegalStateException(
+				filter = discretizers.get(predictedObservable.getName());
+			}
+			if (filter == null) {
+				throw new KlabIllegalStateException(
 						"Weka: cannot interpret a distribution if the predicted variable is not discretized.");
 			}
 			// no API for getCutPoints() - what a pain

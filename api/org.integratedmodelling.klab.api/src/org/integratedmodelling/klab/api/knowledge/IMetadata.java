@@ -27,19 +27,19 @@ import org.integratedmodelling.kim.api.IParameters;
 public interface IMetadata extends IParameters<String> {
 
 	/** The dc name. */
-	public static String DC_NAME = "dc:name";
+	public final static String DC_NAME = "dc:name";
 
 	/** The dc label. */
-	public static String DC_LABEL = "dc:label";
+	public final static String DC_LABEL = "dc:label";
 
 	/** The dc comment. */
-	public static String DC_COMMENT = "dc:comment";
+	public final static String DC_COMMENT = "dc:comment";
 
 	/** The dc definition. */
-	public static String DC_DEFINITION = "dc:definition";
+	public final static String DC_DEFINITION = "dc:definition";
 
 	/** The dc seealso. */
-	public static String DC_SEEALSO = "dc:name";
+	public final static String DC_SEEALSO = "dc:name";
 
 	/**
 	 * DCMI point http://dublincore.org/documents/dcmi-point/ ISO 3166
@@ -47,27 +47,27 @@ public interface IMetadata extends IParameters<String> {
 	 * http://dublincore.org/documents/dcmi-box/ TGN
 	 * http://shiva.pub.getty.edu/tgn_browser/
 	 */
-	public static String DC_COVERAGE_SPATIAL = "dc:coverage-spatial";
+	public final static String DC_COVERAGE_SPATIAL = "dc:coverage-spatial";
 
 	/**
 	 * DCMI period http://dublincore.org/documents/dcmi-period/ W3C-DTF
 	 * http://www.w3.org/TR/NOTE-datetime
 	 */
-	public static String DC_COVERAGE_TEMPORAL = "dc:coverage-temporal";
+	public final static String DC_COVERAGE_TEMPORAL = "dc:coverage-temporal";
 
 	/** free text. */
-	public static String DC_DESCRIPTION = "dc:description";
+	public final static String DC_DESCRIPTION = "dc:description";
 
 	/** free text. */
-	public static String DC_DESCRIPTION_TABLEOFCONTENTS = "dc:tableofcontents";
+	public final static String DC_DESCRIPTION_TABLEOFCONTENTS = "dc:tableofcontents";
 
 	/** free text. */
-	public static String DC_DESCRIPTION_ABSTRACT = "dc:abstract";
+	public final static String DC_DESCRIPTION_ABSTRACT = "dc:abstract";
 
 	/**
 	 * DCMI type vocabulary http://dublincore.org/documents/dcmi-type-vocabulary/
 	 */
-	public static String DC_TYPE = "dc:type";
+	public final static String DC_TYPE = "dc:type";
 
 	/**
 	 * The dc relation.
@@ -75,48 +75,48 @@ public interface IMetadata extends IParameters<String> {
 	 * @deprecated use subclasses
 	 */
 	@Deprecated
-	public static String DC_RELATION = "dc:relation";
+	public final static String DC_RELATION = "dc:relation";
 
 	/**
 	 * URI http://www.ietf.org/rfc/rfc2396.txt
 	 */
-	public static String DC_RELATION_ISVERSIONOF = "dc:isversionof";
+	public final static String DC_RELATION_ISVERSIONOF = "dc:isversionof";
 
 	/** URI. */
-	public static String DC_RELATION_HASVERSION = "dc:hasversion";
+	public final static String DC_RELATION_HASVERSION = "dc:hasversion";
 
 	/** URI. */
-	public static String DC_RELATION_ISREPLACEDBY = "dc:isreplacedby";
+	public final static String DC_RELATION_ISREPLACEDBY = "dc:isreplacedby";
 
 	/** URI. */
-	public static String DC_RELATION_REPLACES = "dc:replaces";
+	public final static String DC_RELATION_REPLACES = "dc:replaces";
 
 	/** URI. */
-	public static String DC_RELATION_ISREQUIREDBY = "dc:isrequiredby";
+	public final static String DC_RELATION_ISREQUIREDBY = "dc:isrequiredby";
 
 	/** URI. */
-	public static String DC_RELATION_REQUIRES = "dc:requires";
+	public final static String DC_RELATION_REQUIRES = "dc:requires";
 
 	/** URI. */
-	public static String DC_RELATION_ISPARTOF = "dc:ispartof";
+	public final static String DC_RELATION_ISPARTOF = "dc:ispartof";
 
 	/** URI. */
-	public static String DC_RELATION_HASPART = "dc:haspart";
+	public final static String DC_RELATION_HASPART = "dc:haspart";
 
 	/** URI. */
-	public static String DC_RELATION_ISREFERENCEDBY = "dc:isreferencedby";
+	public final static String DC_RELATION_ISREFERENCEDBY = "dc:isreferencedby";
 
 	/** URI. */
-	public static String DC_RELATION_REFERENCES = "dc:references";
+	public final static String DC_RELATION_REFERENCES = "dc:references";
 
 	/** URI. */
-	public static String DC_RELATION_ISFORMATOF = "dc:isformatof";
+	public final static String DC_RELATION_ISFORMATOF = "dc:isformatof";
 
 	/** URI. */
-	public static String DC_RELATION_HASFORMAT = "dc:hasformat";
+	public final static String DC_RELATION_HASFORMAT = "dc:hasformat";
 
 	/** URI. */
-	public static String DC_SOURCE = "dc:source";
+	public final static String DC_SOURCE = "dc:source";
 
 	/**
 	 * Vocabularies:

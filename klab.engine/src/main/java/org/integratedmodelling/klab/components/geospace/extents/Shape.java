@@ -23,11 +23,13 @@ import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScaleMediator;
 import org.integratedmodelling.klab.api.observations.scale.ITopologicallyComparable;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
@@ -39,11 +41,11 @@ import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToFeatures;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToGrid;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.ShapeToShape;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.scale.AbstractExtent;
-import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 
 import com.vividsolutions.jts.algorithm.ConvexHull;
@@ -83,6 +85,7 @@ public class Shape extends AbstractExtent implements IShape {
 	Envelope envelope;
 	IShape.Type type = null;
 	Projection projection;
+	IMetadata metadata;
 
 	// these are used to speed up repeated point-in-polygon operations like
 	// those that RasterActivationLayer does.
@@ -128,7 +131,7 @@ public class Shape extends AbstractExtent implements IShape {
 		return ret;
 	}
 
-	public static Shape create(Envelope envelope) {
+	public static Shape create(IEnvelope envelope) {
 		return create(envelope.getMinX(), envelope.getMinY(), envelope.getMaxX(), envelope.getMaxY(),
 				(Projection) envelope.getProjection());
 	}
@@ -822,13 +825,13 @@ public class Shape extends AbstractExtent implements IShape {
 				return this;
 			}
 			if (locators[0] instanceof Cell) {
-				if (getEnvelope().intersects(((Cell)locators[0]).getEnvelope())) {
+				if (getEnvelope().intersects(((Cell) locators[0]).getEnvelope())) {
 					// TODO coverage
 					return this;
 				}
 				return null;
 			} else if (locators[0] instanceof IShape) {
-				if (getEnvelope().intersects(((Shape)locators[0]).getEnvelope())) {
+				if (getEnvelope().intersects(((Shape) locators[0]).getEnvelope())) {
 					// TODO coverage
 					return this;
 				}
@@ -894,5 +897,13 @@ public class Shape extends AbstractExtent implements IShape {
 	@Override
 	public boolean contains(double[] coordinate) {
 		return this.shapeGeometry.intersects(makePoint(coordinate[0], coordinate[1]));
+	}
+
+	@Override
+	public IMetadata getMetadata() {
+		if (this.metadata == null) {
+			this.metadata = new Metadata();
+		}
+		return this.metadata;
 	}
 }

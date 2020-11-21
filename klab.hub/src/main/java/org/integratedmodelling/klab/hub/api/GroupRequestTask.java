@@ -92,5 +92,4 @@ public class GroupRequestTask extends ModifyGroupsTask{
 	protected TaskCommand getCommand() {
 		return command;
 	}
-
 }

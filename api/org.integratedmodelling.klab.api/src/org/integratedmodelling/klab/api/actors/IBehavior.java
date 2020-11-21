@@ -18,6 +18,9 @@ public interface IBehavior extends IKimObject {
 
 	public interface Action extends IKimObject {
 
+		
+		IBehavior getBehavior();
+		
 		@Override
 		IKActorsAction getStatement();
 

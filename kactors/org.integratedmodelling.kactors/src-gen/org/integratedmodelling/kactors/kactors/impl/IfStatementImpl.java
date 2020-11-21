@@ -16,12 +16,13 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
+import org.integratedmodelling.kactors.kactors.ElseIfStatementBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
+import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.StatementBody;
 
 /**
@@ -32,9 +33,10 @@ import org.integratedmodelling.kactors.kactors.StatementBody;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getExpression <em>Expression</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getVariable <em>Variable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getBody <em>Body</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getElseIfExpression <em>Else If Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getElseIfBody <em>Else If Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.IfStatementImpl#getElseCall <em>Else Call</em>}</li>
  * </ul>
@@ -43,6 +45,16 @@ import org.integratedmodelling.kactors.kactors.StatementBody;
  */
 public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfStatement
 {
+  /**
+   * The cached value of the '{@link #getLiteral() <em>Literal</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLiteral()
+   * @generated
+   * @ordered
+   */
+  protected Literal literal;
+
   /**
    * The default value of the '{@link #getExpression() <em>Expression</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -64,6 +76,26 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
   protected String expression = EXPRESSION_EDEFAULT;
 
   /**
+   * The default value of the '{@link #getVariable() <em>Variable</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getVariable()
+   * @generated
+   * @ordered
+   */
+  protected static final String VARIABLE_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getVariable() <em>Variable</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getVariable()
+   * @generated
+   * @ordered
+   */
+  protected String variable = VARIABLE_EDEFAULT;
+
+  /**
    * The cached value of the '{@link #getBody() <em>Body</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -74,16 +106,6 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
   protected StatementBody body;
 
   /**
-   * The cached value of the '{@link #getElseIfExpression() <em>Else If Expression</em>}' attribute list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getElseIfExpression()
-   * @generated
-   * @ordered
-   */
-  protected EList<String> elseIfExpression;
-
-  /**
    * The cached value of the '{@link #getElseIfBody() <em>Else If Body</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -91,7 +113,7 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
    * @generated
    * @ordered
    */
-  protected EList<StatementBody> elseIfBody;
+  protected EList<ElseIfStatementBody> elseIfBody;
 
   /**
    * The cached value of the '{@link #getElseCall() <em>Else Call</em>}' containment reference.
@@ -130,6 +152,56 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
    * @generated
    */
   @Override
+  public Literal getLiteral()
+  {
+    return literal;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetLiteral(Literal newLiteral, NotificationChain msgs)
+  {
+    Literal oldLiteral = literal;
+    literal = newLiteral;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_STATEMENT__LITERAL, oldLiteral, newLiteral);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setLiteral(Literal newLiteral)
+  {
+    if (newLiteral != literal)
+    {
+      NotificationChain msgs = null;
+      if (literal != null)
+        msgs = ((InternalEObject)literal).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_STATEMENT__LITERAL, null, msgs);
+      if (newLiteral != null)
+        msgs = ((InternalEObject)newLiteral).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.IF_STATEMENT__LITERAL, null, msgs);
+      msgs = basicSetLiteral(newLiteral, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_STATEMENT__LITERAL, newLiteral, newLiteral));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public String getExpression()
   {
     return expression;
@@ -147,6 +219,31 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
     expression = newExpression;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_STATEMENT__EXPRESSION, oldExpression, expression));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getVariable()
+  {
+    return variable;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setVariable(String newVariable)
+  {
+    String oldVariable = variable;
+    variable = newVariable;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.IF_STATEMENT__VARIABLE, oldVariable, variable));
   }
 
   /**
@@ -205,26 +302,11 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
    * @generated
    */
   @Override
-  public EList<String> getElseIfExpression()
-  {
-    if (elseIfExpression == null)
-    {
-      elseIfExpression = new EDataTypeEList<String>(String.class, this, KactorsPackage.IF_STATEMENT__ELSE_IF_EXPRESSION);
-    }
-    return elseIfExpression;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public EList<StatementBody> getElseIfBody()
+  public EList<ElseIfStatementBody> getElseIfBody()
   {
     if (elseIfBody == null)
     {
-      elseIfBody = new EObjectContainmentEList<StatementBody>(StatementBody.class, this, KactorsPackage.IF_STATEMENT__ELSE_IF_BODY);
+      elseIfBody = new EObjectContainmentEList<ElseIfStatementBody>(ElseIfStatementBody.class, this, KactorsPackage.IF_STATEMENT__ELSE_IF_BODY);
     }
     return elseIfBody;
   }
@@ -289,6 +371,8 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
   {
     switch (featureID)
     {
+      case KactorsPackage.IF_STATEMENT__LITERAL:
+        return basicSetLiteral(null, msgs);
       case KactorsPackage.IF_STATEMENT__BODY:
         return basicSetBody(null, msgs);
       case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
@@ -309,12 +393,14 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
   {
     switch (featureID)
     {
+      case KactorsPackage.IF_STATEMENT__LITERAL:
+        return getLiteral();
       case KactorsPackage.IF_STATEMENT__EXPRESSION:
         return getExpression();
+      case KactorsPackage.IF_STATEMENT__VARIABLE:
+        return getVariable();
       case KactorsPackage.IF_STATEMENT__BODY:
         return getBody();
-      case KactorsPackage.IF_STATEMENT__ELSE_IF_EXPRESSION:
-        return getElseIfExpression();
       case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
         return getElseIfBody();
       case KactorsPackage.IF_STATEMENT__ELSE_CALL:
@@ -334,19 +420,21 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
   {
     switch (featureID)
     {
+      case KactorsPackage.IF_STATEMENT__LITERAL:
+        setLiteral((Literal)newValue);
+        return;
       case KactorsPackage.IF_STATEMENT__EXPRESSION:
         setExpression((String)newValue);
+        return;
+      case KactorsPackage.IF_STATEMENT__VARIABLE:
+        setVariable((String)newValue);
         return;
       case KactorsPackage.IF_STATEMENT__BODY:
         setBody((StatementBody)newValue);
         return;
-      case KactorsPackage.IF_STATEMENT__ELSE_IF_EXPRESSION:
-        getElseIfExpression().clear();
-        getElseIfExpression().addAll((Collection<? extends String>)newValue);
-        return;
       case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
         getElseIfBody().clear();
-        getElseIfBody().addAll((Collection<? extends StatementBody>)newValue);
+        getElseIfBody().addAll((Collection<? extends ElseIfStatementBody>)newValue);
         return;
       case KactorsPackage.IF_STATEMENT__ELSE_CALL:
         setElseCall((StatementBody)newValue);
@@ -365,14 +453,17 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
   {
     switch (featureID)
     {
+      case KactorsPackage.IF_STATEMENT__LITERAL:
+        setLiteral((Literal)null);
+        return;
       case KactorsPackage.IF_STATEMENT__EXPRESSION:
         setExpression(EXPRESSION_EDEFAULT);
         return;
+      case KactorsPackage.IF_STATEMENT__VARIABLE:
+        setVariable(VARIABLE_EDEFAULT);
+        return;
       case KactorsPackage.IF_STATEMENT__BODY:
         setBody((StatementBody)null);
-        return;
-      case KactorsPackage.IF_STATEMENT__ELSE_IF_EXPRESSION:
-        getElseIfExpression().clear();
         return;
       case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
         getElseIfBody().clear();
@@ -394,12 +485,14 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
   {
     switch (featureID)
     {
+      case KactorsPackage.IF_STATEMENT__LITERAL:
+        return literal != null;
       case KactorsPackage.IF_STATEMENT__EXPRESSION:
         return EXPRESSION_EDEFAULT == null ? expression != null : !EXPRESSION_EDEFAULT.equals(expression);
+      case KactorsPackage.IF_STATEMENT__VARIABLE:
+        return VARIABLE_EDEFAULT == null ? variable != null : !VARIABLE_EDEFAULT.equals(variable);
       case KactorsPackage.IF_STATEMENT__BODY:
         return body != null;
-      case KactorsPackage.IF_STATEMENT__ELSE_IF_EXPRESSION:
-        return elseIfExpression != null && !elseIfExpression.isEmpty();
       case KactorsPackage.IF_STATEMENT__ELSE_IF_BODY:
         return elseIfBody != null && !elseIfBody.isEmpty();
       case KactorsPackage.IF_STATEMENT__ELSE_CALL:
@@ -421,8 +514,8 @@ public class IfStatementImpl extends MinimalEObjectImpl.Container implements IfS
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (expression: ");
     result.append(expression);
-    result.append(", elseIfExpression: ");
-    result.append(elseIfExpression);
+    result.append(", variable: ");
+    result.append(variable);
     result.append(')');
     return result.toString();
   }

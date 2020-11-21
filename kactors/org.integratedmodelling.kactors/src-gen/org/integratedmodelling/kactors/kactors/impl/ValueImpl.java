@@ -32,12 +32,14 @@ import org.integratedmodelling.kactors.kactors.Value;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTree <em>Tree</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#isEmpty <em>Empty</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getArgvalue <em>Argvalue</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getUrn <em>Urn</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getMap <em>Map</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getConstant <em>Constant</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getObservable <em>Observable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTable <em>Table</em>}</li>
@@ -58,6 +60,26 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected Tree tree;
+
+  /**
+   * The default value of the '{@link #isEmpty() <em>Empty</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isEmpty()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean EMPTY_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isEmpty() <em>Empty</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isEmpty()
+   * @generated
+   * @ordered
+   */
+  protected boolean empty = EMPTY_EDEFAULT;
 
   /**
    * The default value of the '{@link #getArgvalue() <em>Argvalue</em>}' attribute.
@@ -148,6 +170,26 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected Map map;
+
+  /**
+   * The default value of the '{@link #getConstant() <em>Constant</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getConstant()
+   * @generated
+   * @ordered
+   */
+  protected static final String CONSTANT_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getConstant() <em>Constant</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getConstant()
+   * @generated
+   * @ordered
+   */
+  protected String constant = CONSTANT_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getObservable() <em>Observable</em>}' containment reference.
@@ -278,6 +320,31 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__TREE, newTree, newTree));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isEmpty()
+  {
+    return empty;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setEmpty(boolean newEmpty)
+  {
+    boolean oldEmpty = empty;
+    empty = newEmpty;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__EMPTY, oldEmpty, empty));
   }
 
   /**
@@ -503,6 +570,31 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__MAP, newMap, newMap));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getConstant()
+  {
+    return constant;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setConstant(String newConstant)
+  {
+    String oldConstant = constant;
+    constant = newConstant;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__CONSTANT, oldConstant, constant));
   }
 
   /**
@@ -772,6 +864,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     {
       case KactorsPackage.VALUE__TREE:
         return getTree();
+      case KactorsPackage.VALUE__EMPTY:
+        return isEmpty();
       case KactorsPackage.VALUE__ARGVALUE:
         return getArgvalue();
       case KactorsPackage.VALUE__LITERAL:
@@ -784,6 +878,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getList();
       case KactorsPackage.VALUE__MAP:
         return getMap();
+      case KactorsPackage.VALUE__CONSTANT:
+        return getConstant();
       case KactorsPackage.VALUE__OBSERVABLE:
         return getObservable();
       case KactorsPackage.VALUE__EXPRESSION:
@@ -811,6 +907,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__TREE:
         setTree((Tree)newValue);
         return;
+      case KactorsPackage.VALUE__EMPTY:
+        setEmpty((Boolean)newValue);
+        return;
       case KactorsPackage.VALUE__ARGVALUE:
         setArgvalue((String)newValue);
         return;
@@ -828,6 +927,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KactorsPackage.VALUE__MAP:
         setMap((Map)newValue);
+        return;
+      case KactorsPackage.VALUE__CONSTANT:
+        setConstant((String)newValue);
         return;
       case KactorsPackage.VALUE__OBSERVABLE:
         setObservable((Observable)newValue);
@@ -861,6 +963,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__TREE:
         setTree((Tree)null);
         return;
+      case KactorsPackage.VALUE__EMPTY:
+        setEmpty(EMPTY_EDEFAULT);
+        return;
       case KactorsPackage.VALUE__ARGVALUE:
         setArgvalue(ARGVALUE_EDEFAULT);
         return;
@@ -878,6 +983,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KactorsPackage.VALUE__MAP:
         setMap((Map)null);
+        return;
+      case KactorsPackage.VALUE__CONSTANT:
+        setConstant(CONSTANT_EDEFAULT);
         return;
       case KactorsPackage.VALUE__OBSERVABLE:
         setObservable((Observable)null);
@@ -910,6 +1018,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     {
       case KactorsPackage.VALUE__TREE:
         return tree != null;
+      case KactorsPackage.VALUE__EMPTY:
+        return empty != EMPTY_EDEFAULT;
       case KactorsPackage.VALUE__ARGVALUE:
         return ARGVALUE_EDEFAULT == null ? argvalue != null : !ARGVALUE_EDEFAULT.equals(argvalue);
       case KactorsPackage.VALUE__LITERAL:
@@ -922,6 +1032,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return list != null;
       case KactorsPackage.VALUE__MAP:
         return map != null;
+      case KactorsPackage.VALUE__CONSTANT:
+        return CONSTANT_EDEFAULT == null ? constant != null : !CONSTANT_EDEFAULT.equals(constant);
       case KactorsPackage.VALUE__OBSERVABLE:
         return observable != null;
       case KactorsPackage.VALUE__EXPRESSION:
@@ -947,12 +1059,16 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (argvalue: ");
+    result.append(" (empty: ");
+    result.append(empty);
+    result.append(", argvalue: ");
     result.append(argvalue);
     result.append(", urn: ");
     result.append(urn);
     result.append(", id: ");
     result.append(id);
+    result.append(", constant: ");
+    result.append(constant);
     result.append(", expression: ");
     result.append(expression);
     result.append(')');

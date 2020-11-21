@@ -16,9 +16,11 @@
 package org.integratedmodelling.klab.api.extensions;
 
 import java.util.Collection;
+import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 
 /**
@@ -58,8 +60,7 @@ public interface ILanguageProcessor {
 		 * identifiers within a transition (i.e. used alone or with locator semantics
 		 * for space or other non-temporal domain).
 		 * 
-		 * @param identifier
-		 *            identifiers representing states
+		 * @param identifier identifiers representing states
 		 * 
 		 * @return true if the identifier is used in a scalar context.
 		 */
@@ -70,8 +71,7 @@ public interface ILanguageProcessor {
 		 * identifiers within a transition (i.e. used as an object, with methods called
 		 * on it).
 		 * 
-		 * @param identifier
-		 *            identifiers representing states
+		 * @param identifier identifiers representing states
 		 * 
 		 * @return true if the identifier is used in a scalar context.
 		 */
@@ -82,8 +82,7 @@ public interface ILanguageProcessor {
 		 * identifiers within a transition (i.e. used alone or with locator semantics
 		 * for space or other non-temporal domain).
 		 * 
-		 * @param stateIdentifiers
-		 *            identifiers representing states
+		 * @param stateIdentifiers identifiers representing states
 		 * 
 		 * @return true if any of the identifiers is used in a scalar context.
 		 */
@@ -94,8 +93,7 @@ public interface ILanguageProcessor {
 		 * identifiers within a transition (i.e. used as an object, with methods called
 		 * on it).
 		 * 
-		 * @param stateIdentifiers
-		 *            identifiers representing states
+		 * @param stateIdentifiers identifiers representing states
 		 * 
 		 * @return true if any of the identifiers is used in a scalar context.
 		 */
@@ -109,8 +107,7 @@ public interface ILanguageProcessor {
 		 * 
 		 * @return a compiled expression ready for execution in the context that
 		 *         produced the descriptor
-		 * @throws IllegalArgumentException
-		 *             if the descriptor has errors
+		 * @throws IllegalArgumentException if the descriptor has errors
 		 */
 		ILanguageExpression compile();
 
@@ -133,22 +130,33 @@ public interface ILanguageProcessor {
 		 * @return
 		 */
 		boolean isForcedScalar();
+
+		/**
+		 * If the expression was compiled with the
+		 * {@link CompilerOption#RecontextualizeAsMap} option, any identifier seen as
+		 * id@ctx will have been turned into id["ctx"] and the id plus all the keys will
+		 * be available here.
+		 * 
+		 * @return
+		 */
+		Map<String, Set<String>> getMapIdentifiers();
 	}
 
 	/**
 	 * Compile the expression in the passed context, which may be null.
 	 *
-	 * @param expression
-	 *            a {@link java.lang.String} object.
-	 * @param context
-	 *            a
-	 *            {@link org.integratedmodelling.klab.api.runtime.IContextualizationScope}
-	 *            object.
+	 * @param expression a {@link java.lang.String} object.
+	 * @param context    a
+	 *                   {@link org.integratedmodelling.klab.api.runtime.IContextualizationScope}
+	 *                   object.
 	 * @return the compiled expression
-	 * @throws org.integratedmodelling.klab.exceptions.KlabValidationException
-	 *             if compilation produces any errors
+	 * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if
+	 *                                                                         compilation
+	 *                                                                         produces
+	 *                                                                         any
+	 *                                                                         errors
 	 */
-	IExpression compile(String expression, IExpression.Context context, boolean forcedScalar)
+	IExpression compile(String expression, IExpression.Context context, CompilerOption... options)
 			throws KlabValidationException;
 
 	/**
@@ -156,22 +164,24 @@ public interface ILanguageProcessor {
 	 * but the expression is still assumed to be in k.LAB contextualization scope -
 	 * i.e. no identifiers will be recognized as known if the context is null.
 	 *
-	 * @param expression
-	 *            a {@link java.lang.String} object.
-	 * @param context
-	 *            a
-	 *            {@link org.integratedmodelling.klab.api.runtime.IContextualizationScope}
-	 *            object.
-	 * @param forcedScalar
-	 *            if true, the expression will be forced to evaluate in scalar
-	 *            context independent of its content.
+	 * @param expression a {@link java.lang.String} object.
+	 * @param context    a
+	 *                   {@link org.integratedmodelling.klab.api.runtime.IContextualizationScope}
+	 *                   object.
+	 * @param options    Options for the compiler.
 	 * 
 	 * @return a preprocessed descriptor, which must be enough to produce an
 	 *         IExpression on request.
-	 * @throws org.integratedmodelling.klab.exceptions.KlabValidationException
-	 *             if the expression contains syntax of logical errors
+	 * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if
+	 *                                                                         the
+	 *                                                                         expression
+	 *                                                                         contains
+	 *                                                                         syntax
+	 *                                                                         of
+	 *                                                                         logical
+	 *                                                                         errors
 	 */
-	Descriptor describe(String expression, IExpression.Context context, boolean forcedScalar)
+	Descriptor describe(String expression, IExpression.Context context, CompilerOption... options)
 			throws KlabValidationException;
 
 	/**
@@ -180,29 +190,30 @@ public interface ILanguageProcessor {
 	 * all identifiers in the expression will be recognized as "known", assuming
 	 * values will be supplied at evaluation.
 	 *
-	 * @param expression
-	 *            a {@link java.lang.String} object.
-	 * @param forcedScalar
-	 *            if true, the expression will be forced to evaluate in scalar
-	 *            context independent of its content.
+	 * @param expression      a {@link java.lang.String} object.
+	 * @param compilerOptions options for the compiler.
 	 *
 	 * @return a preprocessed descriptor, which must be enough to produce an
 	 *         IExpression on request.
-	 * @throws org.integratedmodelling.klab.exceptions.KlabValidationException
-	 *             if the expression contains syntax of logical errors
+	 * @throws org.integratedmodelling.klab.exceptions.KlabValidationException if
+	 *                                                                         the
+	 *                                                                         expression
+	 *                                                                         contains
+	 *                                                                         syntax
+	 *                                                                         of
+	 *                                                                         logical
+	 *                                                                         errors
 	 */
-	Descriptor describe(String expression, boolean forcedScalar) throws KlabValidationException;
+	Descriptor describe(String expression, CompilerOption... compilerOptions) throws KlabValidationException;
 
 	/**
 	 * Assume that the passed expression evaluates to a boolean and produce the
 	 * language equivalent of its negation.
 	 *
-	 * @param expression
-	 *            a {@link java.lang.String} object.
-	 * @param forcedScalar
-	 *            if true, the expression will be forced to evaluate in scalar
-	 *            context independent of its content.
-     *
+	 * @param expression   a {@link java.lang.String} object.
+	 * @param forcedScalar if true, the expression will be forced to evaluate in
+	 *                     scalar context independent of its content.
+	 *
 	 * @return another expression producing the opposite truth value as the original
 	 */
 	String negate(String expression);

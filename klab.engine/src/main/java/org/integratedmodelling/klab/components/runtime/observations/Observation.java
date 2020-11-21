@@ -7,7 +7,10 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
@@ -37,7 +40,9 @@ import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.utils.Utils;
 
 import akka.actor.typed.ActorRef;
 
@@ -56,8 +61,9 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	// observed. Should eventually
 	// come from provenance.
 	private boolean main;
-	// only kept updated in the root observation
-	private long lastUpdate;
+	// only kept updated in the root observation; in others, 0 is expected default and 
+	// the implementations redefine getLastUpdate() to report correctly
+	private long lastUpdate = 0;
 	// separately kept time of creation and exit, using timestamp if non-temporal
 	private long creationTime;
 	private long exitTime;
@@ -74,9 +80,9 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	protected List<IModificationListener> modificationListeners = new ArrayList<>();
 	private ActorRef<KlabMessage> actor;
 	// actor-scoped state, manipulated using "set" statements.
-	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
+	private IParameters<String> globalState = Parameters.createSynchronized();
+	protected List<Long> updateTimestamps = new ArrayList<>();
 
-	
 	// tracks the setting of the actor so we can avoid the ask pattern
 	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
 
@@ -98,7 +104,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		this.globalState.putAll(other.globalState);
 		this.actorSet = other.actorSet;
 	}
-	
+
 	public String getUrn() {
 		return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
 	}
@@ -240,7 +246,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	public int groupSize() {
 		return group == null ? 1 : group.groupSize();
 	}
-	
+
 	@Override
 	public IArtifact getGroupMember(int n) {
 		return group == null ? null : (group.groupSize() > n ? group.getGroupMember(n) : null);
@@ -254,6 +260,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		this.main = main;
 	}
 
+	@Override
 	public long getLastUpdate() {
 		return lastUpdate;
 	}
@@ -348,7 +355,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	@Override
 	public String load(IBehavior behavior, IContextualizationScope scope) {
 		String behaviorId = "obh" + NameGenerator.shortUUID();
-		getActor().tell(new Load(behavior.getId(), behaviorId, (IRuntimeScope)scope));
+		getActor().tell(new Load(this, behavior.getId(), behaviorId, (IRuntimeScope) scope));
 		return behaviorId;
 	}
 
@@ -372,15 +379,24 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		// TODO check if terminated (use ActorSelection apparently).
 		return this.actor != null;
 	}
-	
-	public Map<String, Object> getState() {
-		return globalState;
-	}
+
+//	@Override
+//	public <V> V getState(String key, Class<V> cls) {
+//		return this.globalState.get(key, cls);
+//	}
+//
+//	@Override
+//	public void setState(String key, Object value) {
+//		this.globalState.put(key, value);
+//		for (BiConsumer<String, Object> listener : stateChangeListeners.values()) {
+//			listener.accept(key, value);
+//		}
+//	}
 
 	public List<ObservationChange> getChangeset() {
 		return changeset;
 	}
-	
+
 	public ObservationChange createChangeEvent(ObservationChange.Type type) {
 		ObservationChange change = new ObservationChange();
 		change.setContextId(getScope().getRootSubject().getId());
@@ -388,7 +404,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		change.setType(type);
 		return change;
 	}
-	
+
 	public ObservationChange requireStructureChangeEvent() {
 		for (ObservationChange change : getChangeset()) {
 			if (change.getType() == ObservationChange.Type.StructureChange) {
@@ -424,7 +440,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	public void finalizeTransition(IScale scale) {
 		// do nothing here
 	}
-	
+
 	@Override
 	public View getView() {
 		return view;
@@ -435,4 +451,23 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		this.view = new ViewImpl(layout);
 	}
 
+	@Override
+	public long[] getUpdateTimestamps() {
+		return Utils.toLongArray(updateTimestamps);
+	}
+	
+	@Override
+	public IParameters<String> getState() {
+		return globalState;
+	}
+
+//	@Override
+//	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
+//		this.stateChangeListeners.put(name, listener);
+//	}
+//
+//	@Override
+//	public void removeStateChangeListener(String name) {
+//		this.stateChangeListeners.remove(name);
+//	}
 }

@@ -1,27 +1,37 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Random;
+import java.util.Set;
 import java.util.concurrent.Future;
 
+import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.components.geospace.processing.osm.Geocoder;
+import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
-import org.integratedmodelling.klab.rest.SpatialExtent;
+import org.integratedmodelling.klab.rest.DataflowState.Status;
+import org.integratedmodelling.klab.rest.ScaleReference;
 
 import akka.actor.typed.ActorRef;
 
@@ -48,8 +58,9 @@ public class RuntimeBehavior {
 	/**
 	 * Set the root context
 	 */
-	@Action(id = "context", fires = Type.OBSERVATION, description = "Used with a URN as parameter, creates the context from an observe statement. If used without parameters, fire the observation when a new context is established")
-	public static class Context extends KlabAction {
+	@Action(id = "context", fires = Type.OBSERVATION, description = "Used with a URN as parameter, creates the context from an observe statement. If used without"
+			+ " parameters, fire the observation when a new context is established")
+	public static class Context extends KlabActionExecutor {
 
 		String listenerId = null;
 
@@ -62,8 +73,8 @@ public class RuntimeBehavior {
 		void run(KlabActor.Scope scope) {
 
 			if (arguments.getUnnamedKeys().isEmpty()) {
-				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
-						.addObservationListener(new ISession.ObservationListener() {
+				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState()
+						.addApplicationListener(new ISessionState.Listener() {
 							@Override
 							public void newContext(ISubject observation) {
 								fire(observation, false);
@@ -72,26 +83,21 @@ public class RuntimeBehavior {
 							@Override
 							public void newObservation(IObservation observation, ISubject context) {
 							}
-						});
+
+							@Override
+							public void scaleChanged(ScaleReference scale) {
+							}
+						}, scope.appId);
 			} else {
 
 				Object arg = evaluateArgument(0, scope);
 				if (arg instanceof Urn) {
-
-//					new Thread() {
-//
-//						@Override
-//						public void run() {
-
-							try {
-								Future<ISubject> future = ((Session) identity).observe(((Urn) arg).getUrn());
-								fire(future.get(), true);
-							} catch (Throwable e) {
-								fail();
-							}
-//						}
-//					}.start();
-
+					try {
+						Future<IArtifact> future = ((Session) identity).getState().submit(((Urn) arg).getUrn());
+						fire(future.get(), true);
+					} catch (Throwable e) {
+						fail();
+					}
 				}
 			}
 		}
@@ -99,9 +105,148 @@ public class RuntimeBehavior {
 		@Override
 		public void dispose() {
 			if (this.listenerId != null) {
-				scope.getMonitor().getIdentity().getParentIdentity(ISession.class)
-						.removeObservationListener(this.listenerId);
+				scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState()
+						.removeListener(this.listenerId);
 			}
+		}
+	}
+
+	/**
+	 * Make an observation, setting the context according to current preferences and
+	 * session state, or set the context itself if the observation is a subject and
+	 * the current context is not set.
+	 */
+	@Action(id = "submit", fires = Type.OBSERVATION, description = "Submit a URN for observation, either in the current context or creating one from the "
+			+ " current preferences. The session will add it to the observation queue and make the observation when possible. "
+			+ "When done, the correspondent artifact (or an error) will be fired. Before then, the action will fire WAITING when the task is "
+			+ "queued, STARTED when it starts computing, and ABORTED in case of error.")
+
+	public static class Submit extends KlabActionExecutor {
+
+		String listenerId = null;
+
+		public Submit(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		void run(KlabActor.Scope scope) {
+
+			if (!arguments.getUnnamedKeys().isEmpty()) {
+				fire(Status.WAITING, false);
+				identity.getParentIdentity(Session.class).getState().submit(
+						getUrnValue(KlabActor.evaluate(arguments.get(arguments.getUnnamedKeys().get(0)), scope)),
+						(observation) -> {
+							if (observation == null) {
+								fire(Status.STARTED, false);
+							} else {
+								fire(observation, false);
+							}
+						}, (exception) -> {
+							fire(Status.ABORTED, false);
+						});
+			}
+		}
+
+		private String getUrnValue(Object object) {
+			if (object instanceof IConcept) {
+				return ((IConcept) object).getDefinition();
+			} else if (object instanceof IObservable) {
+				return ((IObservable) object).getDefinition();
+			}
+			// TODO other situations?
+			return object.toString();
+		}
+
+		@Override
+		public void dispose() {
+		}
+	}
+
+	/**
+	 * Reset roles to the passed arguments. Pass individual observables/roles or
+	 * collections thereof.
+	 */
+	@Action(id = "roles", fires = Type.EMPTY, description = "Apply a set of roles to one or more observables or observations. Any previously set roles are deactivated.")
+	public static class SetRole extends KlabActionExecutor {
+
+		String listenerId = null;
+
+		public SetRole(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		void run(KlabActor.Scope scope) {
+
+			Set<IConcept> roles = new HashSet<>();
+			Set<IConcept> observables = new HashSet<>();
+
+			for (Object arg : arguments.getUnnamedArguments()) {
+				Object value = KlabActor.evaluate(arg, scope);
+				if (value instanceof IObservable) {
+					IConcept c = ((IObservable) value).getType();
+					if (c.is(IKimConcept.Type.ROLE)) {
+						roles.add(c);
+					} else {
+						observables.add(c);
+					}
+				} else if (value instanceof Collection) {
+					for (Object cc : ((Collection<?>) value)) {
+						if (cc instanceof IObservable) {
+							IConcept c = ((IObservable) cc).getType();
+							if (c.is(IKimConcept.Type.ROLE)) {
+								roles.add(c);
+							} else {
+								observables.add(c);
+							}
+						}
+					}
+				}
+			}
+
+			session.getState().resetRoles();
+			for (IConcept role : roles) {
+				for (IConcept target : observables) {
+					session.getState().addRole(role, target);
+				}
+			}
+		}
+
+		@Override
+		public void dispose() {
+		}
+	}
+
+	/**
+	 * Make an observation, setting the context according to current preferences and
+	 * session state, or set the context itself if the observation is a subject and
+	 * the current context is not set.
+	 */
+	@Action(id = "scenarios", fires = Type.EMPTY, description = "Apply a session-specific role to one or more observables or observations.")
+	public static class SetScenarios extends KlabActionExecutor {
+
+		String listenerId = null;
+
+		public SetScenarios(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		void run(KlabActor.Scope scope) {
+			Set<String> scenarios = new HashSet<>();
+			for (String key : arguments.getUnnamedKeys()) {
+				scenarios.add(KlabActor.evaluate((IKActorsValue) arguments.get(key), scope).toString());
+			}
+			session.getState().setActiveScenarios(scenarios);
+		}
+
+		@Override
+		public void dispose() {
+			session.getState().getActiveScenarios().clear();
 		}
 	}
 
@@ -109,7 +254,7 @@ public class RuntimeBehavior {
 	 * Set the root context
 	 */
 	@Action(id = "locate", fires = Type.MAP, description = "Listens to setting of spatial extent outside of a context")
-	public static class Locate extends KlabAction {
+	public static class Locate extends KlabActionExecutor {
 
 		String listenerId = null;
 
@@ -121,39 +266,29 @@ public class RuntimeBehavior {
 		@Override
 		void run(KlabActor.Scope scope) {
 
-			if (arguments.getUnnamedKeys().isEmpty()) {
-				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(Session.class)
-						.addROIListener(new Session.ROIListener() {
+			if (arguments == null || arguments.getUnnamedKeys().isEmpty()) {
+				this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(Session.class).getState()
+						.addApplicationListener(new ISessionState.Listener() {
 
 							@Override
-							public void onChange(final SpatialExtent extent) {
-								/**
-								 * Geolocate and fire in a separate thread to avoid holding up the actor.
-								 */
-//								new Thread() {
-//
-//									@Override
-//									public void run() {
-
-										/*
-										 * TODO use a configurable geocoder that can be set up with
-										 * a scaled resource set
-										 */
-										
-										String geocoded = Geocoder.INSTANCE.geocode(extent);
-										Map<String, Object> ret = new HashMap<>();
-										ret.put("description", geocoded);
-										ret.put("resolution", extent.getGridResolution());
-										ret.put("unit", extent.getGridUnit());
-										ret.put("envelope", new double[] { extent.getWest(), extent.getSouth(),
-												extent.getEast(), extent.getNorth() });
-
-										fire(ret, false);
-//
-//									}
-//								}.start();
+							public void scaleChanged(ScaleReference scale) {
+								Map<String, Object> ret = new HashMap<>();
+								ret.put("description", scale.getName());
+								ret.put("resolution", scale.getSpaceResolution());
+								ret.put("unit", scale.getSpaceUnit());
+								ret.put("envelope", new double[] { scale.getWest(), scale.getSouth(), scale.getEast(),
+										scale.getNorth() });
+								fire(ret, false);
 							}
-						});
+
+							@Override
+							public void newContext(ISubject context) {
+							}
+
+							@Override
+							public void newObservation(IObservation observation, ISubject context) {
+							}
+						}, scope.appId);
 			} else {
 				// TODO set from a previously saved map
 			}
@@ -162,13 +297,14 @@ public class RuntimeBehavior {
 		@Override
 		public void dispose() {
 			if (this.listenerId != null) {
-				scope.getMonitor().getIdentity().getParentIdentity(Session.class).removeROIListener(this.listenerId);
+				scope.getMonitor().getIdentity().getParentIdentity(Session.class).getState()
+						.removeListener(this.listenerId);
 			}
 		}
 	}
 
 	@Action(id = "maybe", fires = Type.BOOLEAN)
-	public static class Maybe extends KlabAction {
+	public static class Maybe extends KlabActionExecutor {
 
 		Random random = new Random();
 
@@ -201,8 +337,22 @@ public class RuntimeBehavior {
 		}
 	}
 
+	@Action(id = "reset", fires = {})
+	public static class Reset extends KlabActionExecutor {
+
+		public Reset(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+				ActorRef<KlabMessage> sender, String callId) {
+			super(identity, arguments, scope, sender, callId);
+		}
+
+		@Override
+		void run(KlabActor.Scope scope) {
+			scope.sender.tell(new AppReset(scope, scope.appId));
+		}
+	}
+
 	@Action(id = "info", fires = {})
-	public static class Info extends KlabAction {
+	public static class Info extends KlabActionExecutor {
 
 		public Info(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -220,7 +370,7 @@ public class RuntimeBehavior {
 	}
 
 	@Action(id = "warning", fires = {})
-	public static class Warning extends KlabAction {
+	public static class Warning extends KlabActionExecutor {
 
 		public Warning(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -238,7 +388,7 @@ public class RuntimeBehavior {
 	}
 
 	@Action(id = "error", fires = {})
-	public static class Error extends KlabAction {
+	public static class Error extends KlabActionExecutor {
 
 		public Error(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {
@@ -256,7 +406,7 @@ public class RuntimeBehavior {
 	}
 
 	@Action(id = "debug", fires = {})
-	public static class Debug extends KlabAction {
+	public static class Debug extends KlabActionExecutor {
 
 		public Debug(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
 				ActorRef<KlabMessage> sender, String callId) {

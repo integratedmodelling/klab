@@ -5,7 +5,10 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IKlabUserIdentity;
@@ -16,6 +19,7 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMess
 import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.security.core.GrantedAuthority;
 
 import akka.actor.typed.ActorRef;
@@ -25,10 +29,11 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 	private static final long serialVersionUID = -5902039133869228876L;
 	private IIdentity parent;
 	protected boolean online;
-	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
+	private IParameters<String> globalState = Parameters.createSynchronized();
 	private View view;
 	private ActorRef<KlabMessage> actor;
-	
+//	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
+
 	public KlabUser(String username, INodeIdentity node) {
 		super(username);
 		this.parent = node;
@@ -126,9 +131,24 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 		// TODO Auto-generated method stub
 	}
 
-	public Map<String, Object> getState() {
+	@Override
+	public IParameters<String> getState() {
 		return globalState;
 	}
+
+	
+//	@Override
+//	public <V> V getState(String key, Class<V> cls) {
+//		return this.globalState.get(key, cls);
+//	}
+//
+//	@Override
+//	public void setState(String key, Object value) {
+//		this.globalState.put(key, value);
+//		for (BiConsumer<String, Object> listener : stateChangeListeners.values()) {
+//			listener.accept(key, value);
+//		}
+//	}
 
 	@Override
 	public View getView() {
@@ -157,4 +177,14 @@ public class KlabUser extends UserIdentity implements IKlabUserIdentity {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+//	@Override
+////	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
+//		this.stateChangeListeners.put(name, listener);
+//	}
+//
+//	@Override
+//	public void removeStateChangeListener(String name) {
+//		this.stateChangeListeners.remove(name);
+//	}
 }

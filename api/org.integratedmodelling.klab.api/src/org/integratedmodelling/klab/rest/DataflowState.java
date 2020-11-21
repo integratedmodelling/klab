@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.rest;
 public class DataflowState {
 
 	public enum Status {
-		STARTED, FINISHED, ABORTED
+		WAITING, STARTED, FINISHED, ABORTED
 	}
 
 	private String nodeId;

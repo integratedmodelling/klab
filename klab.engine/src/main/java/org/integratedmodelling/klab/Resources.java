@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+import org.integratedmodelling.klab.api.data.adapters.IResourceValidator.Operation;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IProject;
@@ -94,6 +95,7 @@ import org.integratedmodelling.klab.rest.LocalResourceReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
 import org.integratedmodelling.klab.rest.ProjectReference;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
+import org.integratedmodelling.klab.rest.ResourceAdapterReference.OperationReference;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceDataRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
@@ -105,6 +107,7 @@ import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.ZipUtils;
 import org.springframework.core.io.ClassPathResource;
@@ -901,9 +904,9 @@ public enum Resources implements IResourceService {
 		}
 	}
 
-
 	/**
 	 * Only works for a flat hierarchy!
+	 * 
 	 * @param resourcePattern
 	 * @param destinationDirectory
 	 */
@@ -1201,16 +1204,19 @@ public enum Resources implements IResourceService {
 
 		if (serverId == null) {
 
-			String ns = Path.getLeading(urn, '.');
-			String ob = Path.getLast(urn, '.');
-			if (ns == null && SemanticType.validate(urn)) {
+			String ob = null;
+			INamespace namespace = null;
+			if (StringUtil.countMatches(urn, ":") == 1 && SemanticType.validate(urn)) {
 				SemanticType st = new SemanticType(urn);
-				ns = st.getNamespace();
 				ob = st.getName();
+				namespace = Namespaces.INSTANCE.getNamespace(st.getNamespace());
+			} else {
+				ob = Path.getLast(urn, '.');
+				String ns = Path.getLeading(urn, '.');
+				namespace = Namespaces.INSTANCE.getNamespace(ns);
 			}
 
-			INamespace namespace = Namespaces.INSTANCE.getNamespace(ns);
-			if (namespace == null) {
+			if (namespace == null || ob == null) {
 				return null;
 			}
 
@@ -1280,6 +1286,16 @@ public enum Resources implements IResourceService {
 		return publicResourceCatalog;
 	}
 
+	public IResourceCatalog getCatalog(IResource resource) {
+		/*
+		 * TODO/CHECK this must also work on nodes
+		 */
+		if (Urns.INSTANCE.isLocal(resource.getUrn())) {
+			return getLocalResourceCatalog();
+		}
+		throw new KlabResourceAccessException("unimplemented alignment of public and local resource catalogs");
+	}
+	
 	// @Override
 	public Builder createResourceBuilder() {
 		return new ResourceBuilder();
@@ -1535,6 +1551,15 @@ public enum Resources implements IResourceService {
 			ref.getExportCapabilities().putAll(Resources.INSTANCE.getResourceAdapter(adapter).getImporter()
 					.getExportCapabilities((IResource) null));
 			ref.setMultipleResources(resourceAdapters.get(adapter).getImporter().acceptsMultiple());
+			
+			for (Operation operation : resourceAdapters.get(adapter).getValidator().getAllowedOperations(null)) {
+				OperationReference op = new OperationReference();
+				op.setDescription(operation.getDescription());
+				op.setName(operation.getName());
+				op.setRequiresConfirmation(operation.isShouldConfirm());
+				ref.getOperations().add(op);
+			}
+			
 			ret.add(ref);
 		}
 		for (String adapter : urnAdapters.keySet()) {
@@ -1666,7 +1691,7 @@ public enum Resources implements IResourceService {
 			public void run() {
 				try {
 					if (Urns.INSTANCE.isLocal(resource.getUrn())) {
-						if (resource.getLocalPaths().isEmpty()) {
+						if (!hasFileContent(resource)) {
 							ResourceReference reference = ((Resource) resource).getReference();
 							reference.getMetadata().putAll(suggestions);
 							TicketResponse.Ticket response = node.getClient().post(API.NODE.RESOURCE.SUBMIT_DESCRIPTOR,
@@ -1706,6 +1731,14 @@ public enum Resources implements IResourceService {
 
 		return ret;
 
+	}
+
+	protected boolean hasFileContent(IResource resource) {
+
+		if (!resource.getLocalPaths().isEmpty()) {
+			return true;
+		}
+		return ((Resource)resource).getPath().listFiles().length > 1;
 	}
 
 	@Override

@@ -377,12 +377,12 @@ public interface Namespace extends EObject
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Weights</em>' containment reference.
-   * @see #setWeights(Metadata)
+   * @see #setWeights(Map)
    * @see org.integratedmodelling.kim.kim.KimPackage#getNamespace_Weights()
    * @model containment="true"
    * @generated
    */
-  Metadata getWeights();
+  Map getWeights();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kim.kim.Namespace#getWeights <em>Weights</em>}' containment reference.
@@ -392,19 +392,19 @@ public interface Namespace extends EObject
    * @see #getWeights()
    * @generated
    */
-  void setWeights(Metadata value);
+  void setWeights(Map value);
 
   /**
    * Returns the value of the '<em><b>Parameters</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Parameters</em>' containment reference.
-   * @see #setParameters(Metadata)
+   * @see #setParameters(Map)
    * @see org.integratedmodelling.kim.kim.KimPackage#getNamespace_Parameters()
    * @model containment="true"
    * @generated
    */
-  Metadata getParameters();
+  Map getParameters();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kim.kim.Namespace#getParameters <em>Parameters</em>}' containment reference.
@@ -414,19 +414,19 @@ public interface Namespace extends EObject
    * @see #getParameters()
    * @generated
    */
-  void setParameters(Metadata value);
+  void setParameters(Map value);
 
   /**
    * Returns the value of the '<em><b>Metadata</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Metadata</em>' containment reference.
-   * @see #setMetadata(Metadata)
+   * @see #setMetadata(Map)
    * @see org.integratedmodelling.kim.kim.KimPackage#getNamespace_Metadata()
    * @model containment="true"
    * @generated
    */
-  Metadata getMetadata();
+  Map getMetadata();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kim.kim.Namespace#getMetadata <em>Metadata</em>}' containment reference.
@@ -436,6 +436,6 @@ public interface Namespace extends EObject
    * @see #getMetadata()
    * @generated
    */
-  void setMetadata(Metadata value);
+  void setMetadata(Map value);
 
 } // Namespace

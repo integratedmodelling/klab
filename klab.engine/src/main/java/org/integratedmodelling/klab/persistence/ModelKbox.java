@@ -148,25 +148,25 @@ public class ModelKbox extends ObservableKbox {
 	 * to the network and merge results before returning.
 	 * 
 	 * @param observable
-	 * @param context
+	 * @param resolutionScope
 	 * @return models resulting from query, best first.
 	 * @throws KlabException
 	 */
-	public List<IRankedModel> query(IObservable observable, ResolutionScope context) throws KlabException {
+	public List<IRankedModel> query(IObservable observable, ResolutionScope resolutionScope) throws KlabException {
 
-		initialize(context.getMonitor());
+		initialize(resolutionScope.getMonitor());
 
 		// Contextualize the observable if needed
-		if (context.getContext() != null && ((Observable) observable).mustContextualizeAtResolution()) {
+		if (resolutionScope.getContext() != null && ((Observable) observable).mustContextualizeAtResolution()) {
 			observable = Observables.INSTANCE.contextualizeTo(observable,
-					context.getContext().getObservable().getType(), true, context.getMonitor());
+					resolutionScope.getContext().getObservable().getType(), true, resolutionScope.getMonitor());
 		}
 
-		Pair<Scale, Set<IRankedModel>> preResolved = context.isCaching() ? null
-				: context.getPreresolvedModels(observable);
+		Pair<Scale, Set<IRankedModel>> preResolved = resolutionScope.isCaching() ? null
+				: resolutionScope.getPreresolvedModels(observable);
 
-		IPrioritizer<ModelReference> prioritizer = Resolver.getPrioritizer(context);
-		ModelQueryResult ret = new ModelQueryResult(prioritizer, context.getMonitor());
+		IPrioritizer<ModelReference> prioritizer = Resolver.getPrioritizer(resolutionScope);
+		ModelQueryResult ret = new ModelQueryResult(prioritizer, resolutionScope.getMonitor());
 		Set<ModelReference> local = new HashSet<>();
 
 		/*
@@ -175,15 +175,18 @@ public class ModelKbox extends ObservableKbox {
 		 * TODO check use of contains(): overlaps() would be more correct but then we
 		 * would need to continue resolving, which misses the whole point of caching,
 		 * and limit the resolution to "other" models.
+		 * 
+		 * FIXME: MODELS FROM SCENARIOS MUST STILL TAKE OVER THESE!
 		 */
-		if (preResolved != null && preResolved.getFirst().contains(context.getCoverage())) {
+		if (preResolved != null && preResolved.getFirst().contains(resolutionScope.getCoverage())) {
 
 			for (IRankedModel model : preResolved.getSecond()) {
-				// rank them again in our scale.
-				ret.addCachedModel(((RankedModel) model).getModelData());
+				// rank them again in our scale
+				ret.addCachedModel(model);
 			}
 
 			if (!Configuration.INSTANCE.resolveAllInstances()) {
+				resolutionScope.getMonitor().debug("Model for " + observable + " was preset at resolution");
 				return ret;
 			}
 		}
@@ -192,7 +195,7 @@ public class ModelKbox extends ObservableKbox {
 		 * only query locally if we've seen a model before.
 		 */
 		if (database.hasTable("model")) {
-			for (ModelReference md : queryModels(observable, context)) {
+			for (ModelReference md : queryModels(observable, resolutionScope)) {
 				local.add(md);
 				ret.addModel(md);
 			}
@@ -226,13 +229,13 @@ public class ModelKbox extends ObservableKbox {
 					+ (ret.getOfflineModels().size() < 2 ? " was" : "s were") + " chosen but found offline";
 
 			if (ret.size() > 0) {
-				context.getMonitor().info(message);
+				resolutionScope.getMonitor().info(message);
 			} else {
-				context.getMonitor().warn(message);
+				resolutionScope.getMonitor().warn(message);
 			}
 
 			for (ModelReference ref : ret.getOfflineModels()) {
-				context.getMonitor().debug("model " + ref.getName() + " is offline");
+				resolutionScope.getMonitor().debug("model " + ref.getName() + " is offline");
 			}
 		}
 
@@ -659,7 +662,7 @@ public class ModelKbox extends ObservableKbox {
 				if (model.isInstantiator()) {
 					IConcept context = Observables.INSTANCE.getContextType(type);
 					if (context == null || !context.is(model.getObservables().get(0))) {
-						type = attr.getBuilder(monitor).within(model.getObservables().get(0).getType()).buildConcept();
+						type = attr.getBuilder(monitor).of(model.getObservables().get(0).getType()).buildConcept();
 					}
 				}
 				ModelReference m = ret.get(0).copy();
@@ -809,21 +812,21 @@ public class ModelKbox extends ObservableKbox {
 
 	private static List<IObservable> unpackObservables(IObservable oobs, IObservable main, boolean first) {
 		List<IObservable> ret = new ArrayList<>();
-		if (first || !main.is(Type.PROCESS)) {
+//		if (first || !main.is(Type.PROCESS)) {
 			ret.add(oobs);
-		} else {
-			if (main.is(Type.PROCESS) && oobs.is(Type.QUALITY)) {
-
-				/*
-				 * if the main observable is a process, any qualities CREATED should provide
-				 * only a model of their CHANGE; qualities AFFECTED that are output should
-				 * provide BOTH a change and a quality model.
-				 */
-
-			} else {
-				ret.add(oobs);
-			}
-		}
+//		} else {
+//			if (main.is(Type.PROCESS) && oobs.is(Type.QUALITY)) {
+//
+//				/*
+//				 * if the main observable is a process, any qualities CREATED should provide
+//				 * only a model of their CHANGE; qualities AFFECTED that are output should
+//				 * provide BOTH a change and a quality model.
+//				 */
+//
+//			} else {
+//				ret.add(oobs);
+//			}
+//		}
 		return ret;
 	}
 

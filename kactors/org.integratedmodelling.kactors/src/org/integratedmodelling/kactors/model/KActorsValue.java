@@ -1,6 +1,7 @@
 package org.integratedmodelling.kactors.model;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -15,6 +16,7 @@ import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Classifier;
+import org.integratedmodelling.kactors.kactors.ListElement;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.MapEntry;
 import org.integratedmodelling.kactors.kactors.Match;
@@ -25,6 +27,7 @@ import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Value;
 import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.utils.Range;
 
@@ -74,6 +77,28 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		super(null, parent);
 		this.type = Type.BOOLEAN;
 		this.value = value;
+	}
+
+	public KActorsValue(Literal value, KActorCodeStatement parent) {
+		super(value, parent);
+		if (value.getBoolean() != null) {
+			this.value = "true".equals(value.getBoolean());
+			this.type = Type.NUMBER;
+		} else if (value.getFrom() != null) {
+			Number from = parseNumber(value.getFrom());
+			Number to = parseNumber(value.getTo());
+			this.value = new Range(from.doubleValue(), to.doubleValue(), false, false);
+			type = Type.RANGE;
+		} else if (value.getNumber() != null) {
+			this.value = parseNumber(value.getNumber());
+			this.type = Type.BOOLEAN;
+		} else if (value.getString() != null) {
+			this.value = value.getString();
+			this.type = Type.STRING;
+		} else if (value.getDate() != null) {
+			this.value = new KActorsDate(value.getDate());
+			this.type = Type.DATE;
+		}
 	}
 
 	public KActorsValue(Classifier value, KActorCodeStatement parent) {
@@ -142,7 +167,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		// remove leading spaces and backquotes
 		return ret.substring(1, ret.length() - 1).trim().replace("`", "");
 	}
-	
+
 	public KActorsValue(Value value, KActorCodeStatement parent) {
 		super(value, parent);
 		if (value.getId() != null) {
@@ -174,9 +199,15 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		} else if (value.getUrn() != null) {
 			this.type = Type.URN;
 			this.value = value.getUrn();
+		} else if (value.getConstant() != null) {
+			this.type = Type.CONSTANT;
+			this.value = value.getConstant();
 		} else if (value.getTree() != null) {
 			this.type = Type.TREE;
 			this.value = parseTree(value.getTree(), this);
+		} else if (value.isEmpty()) {
+			this.type = Type.EMPTY;
+			this.value = null;
 		}
 
 		if (value.getMetadata() != null) {
@@ -195,7 +226,8 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 	}
 
-	public static Map<KActorsValue, KActorsValue> parseMap(org.integratedmodelling.kactors.kactors.Map map, KActorCodeStatement parent) {
+	public static Map<KActorsValue, KActorsValue> parseMap(org.integratedmodelling.kactors.kactors.Map map,
+			KActorCodeStatement parent) {
 		Map<KActorsValue, KActorsValue> ret = new LinkedHashMap<>();
 		for (MapEntry entry : map.getEntries()) {
 			ret.put(new KActorsValue(entry.getClassifier(), parent), new KActorsValue(entry.getValue(), parent));
@@ -231,10 +263,21 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 		} else if (match.getList() != null) {
 			this.type = Type.LIST;
 			this.value = parseList(match.getList(), this);
+		} else if (match.getConstant() != null) {
+			this.type = Type.CONSTANT;
+			this.value = match.getConstant();
+		} else if (match.isEmpty()) {
+			this.type = Type.EMPTY;
+		} else if (match.isAnything()) {
+			this.type = Type.ANYTHING;
+		} else if (match.isException()) {
+			this.type = Type.ERROR;
+		} else if (match.isStar()) {
+			this.type = Type.ANYVALUE;
 		}
 	}
 
-	private KActorsValue(Type type, Object value) {
+	KActorsValue(Type type, Object value) {
 		this.type = type;
 		this.value = value;
 	}
@@ -254,8 +297,12 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 	public List<?> parseList(org.integratedmodelling.kactors.kactors.List list, KActorCodeStatement parent) {
 		List<Object> ret = new ArrayList<>();
-		for (Value val : list.getContents()) {
-			ret.add(new KActorsValue(val, parent));
+		for (ListElement val : list.getContents()) {
+			if (val.getValue() != null) {
+				ret.add(new KActorsValue(val.getValue(), parent));
+			} else if (val.getTag() != null) {
+				this.setTag(val.getTag().substring(1));
+			}
 		}
 		return ret;
 	}
@@ -354,8 +401,10 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 	private Tree getSubTree(Value value) {
 		if (value.getList() != null && value.getList().getContents().size() == 1
-				&& value.getList().getContents().get(0).getTree() != null) {
-			return value.getList().getContents().get(0).getTree();
+				// jesus, give me a null-safe operator
+				&& value.getList().getContents().get(0).getValue() != null
+				&& value.getList().getContents().get(0).getValue().getTree() != null) {
+			return value.getList().getContents().get(0).getValue().getTree();
 		}
 		return null;
 	}
@@ -447,6 +496,29 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
 	public void setExclusive(boolean exclusive) {
 		this.exclusive = exclusive;
+	}
+
+	/**
+	 * Check for truth value. For now we consider true anything that is not null or
+	 * not empty, unless it's a boolean or number where we check the actual value
+	 * for true value or != 0.
+	 * 
+	 * @param check
+	 * @return
+	 */
+	public static boolean isTrue(Object check) {
+		if (check instanceof Boolean) {
+			return (Boolean) check;
+		} else if (check instanceof Integer) {
+			return ((Integer) check) != 0;
+		} else if (check instanceof Number) {
+			return ((Number) check).doubleValue() != 0;
+		} else if (check instanceof IArtifact) {
+			return !((IArtifact) check).isEmpty();
+		} else if (check instanceof Collection) {
+			return !((Collection<?>) check).isEmpty();
+		}
+		return check != null;
 	}
 
 }

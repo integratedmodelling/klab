@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 
 /**
  * A classifier that defines the predicate to attribute a direct observation
@@ -86,7 +87,7 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 			return null;
 		}
 
-		if (ret instanceof IConcept && ((IConcept) ret).is(abstractPredicate)) {
+		if (ret instanceof IConcept && ((RuntimeScope)context).cached_is(ret, abstractPredicate)) {
 			return (IConcept) ret;
 		}
 
@@ -101,14 +102,14 @@ public class ExpressionClassifier implements IPredicateClassifier<IDirectObserva
 				.getLanguageProcessor(parameters.get("language", Extensions.DEFAULT_EXPRESSION_LANGUAGE));
 
 		IExpression.Context expressionContext = context.getExpressionContext();
-		Descriptor selector = processor.describe(parameters.get("code", String.class), expressionContext, false);
+		Descriptor selector = processor.describe(parameters.get("code", String.class), expressionContext);
 		Descriptor condition = null;
 		if (parameters.get("ifcondition") != null || parameters.get("unlesscondition") != null) {
 			String condCode = parameters.get("ifcondition", String.class);
 			if (condCode == null) {
 				condCode = processor.negate(parameters.get("unlesscondition", String.class));
 			}
-			condition = processor.describe(condCode, expressionContext, false);
+			condition = processor.describe(condCode, expressionContext);
 		}
 
 		for (String key : parameters.keySet()) {

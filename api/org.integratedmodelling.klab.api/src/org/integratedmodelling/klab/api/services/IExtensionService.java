@@ -16,10 +16,14 @@
 package org.integratedmodelling.klab.api.services;
 
 import java.util.Collection;
+
+import org.integratedmodelling.kim.api.IKimSymbolDefinition;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.component.IComponent;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
@@ -35,60 +39,71 @@ import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
  */
 public interface IExtensionService {
 
-    public static final String DEFAULT_EXPRESSION_LANGUAGE = "groovy";
+	public static final String DEFAULT_EXPRESSION_LANGUAGE = "groovy";
 
-    /**
-     * All components registered with the runtime, active or not.
-     *
-     * @return all components
-     */
-    Collection<IComponent> getComponents();
+	/**
+	 * All components registered with the runtime, active or not.
+	 *
+	 * @return all components
+	 */
+	Collection<IComponent> getComponents();
 
-    /**
-     * Return the prototype for the named service or function.
-     *
-     * @param service
-     *            id
-     * @return a prototype, or null if the service is unknown.
-     */
-    IPrototype getPrototype(String service);
+	/**
+	 * Return the prototype for the named service or function.
+	 *
+	 * @param service id
+	 * @return a prototype, or null if the service is unknown.
+	 */
+	IPrototype getPrototype(String service);
 
-    /**
-     * Any k.IM function call stated in k.IM and contained in a k.IM object is
-     * executed here.
-     *
-     * @param functionCall
-     *            a {@link org.integratedmodelling.kim.api.IServiceCall} object.
-     * @param monitor
-     *            a
-     *            {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
-     *            object.
-     * @return the return value of the function
-     * @throws KlabResourceNotFoundException
-     *             if the function is unknown
-     * @throws org.integratedmodelling.klab.exceptions.KlabException
-     *             if any exception was thrown during evaluation
-     */
-    Object callFunction(IServiceCall functionCall, IMonitor monitor) throws KlabException;
+	/**
+	 * Any k.IM function call stated in k.IM and contained in a k.IM object is
+	 * executed here.
+	 *
+	 * @param functionCall a {@link org.integratedmodelling.kim.api.IServiceCall}
+	 *                     object.
+	 * @param monitor      a
+	 *                     {@link org.integratedmodelling.klab.api.runtime.monitoring.IMonitor}
+	 *                     object.
+	 * @return the return value of the function
+	 * @throws KlabResourceNotFoundException                         if the function
+	 *                                                               is unknown
+	 * @throws org.integratedmodelling.klab.exceptions.KlabException if any
+	 *                                                               exception was
+	 *                                                               thrown during
+	 *                                                               evaluation
+	 */
+	Object callFunction(IServiceCall functionCall, IMonitor monitor) throws KlabException;
 
-    /**
-     * Get an instance of a language processor appropriate for the passed language.
-     * Only {@link #DEFAULT_EXPRESSION_LANGUAGE} is guaranteed to not return null.
-     * 
-     * @param language
-     * @return a language processor or null
-     */
-    ILanguageProcessor getLanguageProcessor(String language);
+	/**
+	 * Get an instance of a language processor appropriate for the passed language.
+	 * Only {@link #DEFAULT_EXPRESSION_LANGUAGE} is guaranteed to not return null.
+	 * 
+	 * @param language
+	 * @return a language processor or null
+	 */
+	ILanguageProcessor getLanguageProcessor(String language);
 
-    /**
-     * Return a specific component implementation. If active, it will have already been
-     * initialized.
-     *
-     * @param componentId
-     *            a {@link java.lang.String} object.
-     * @param requestedClass
-     * @return the component implementation, or null if unknown.
-     */
-    <T> T getComponentImplementation(String componentId, Class<? extends T> requestedClass);
+	/**
+	 * Return a specific component implementation. If active, it will have already
+	 * been initialized.
+	 *
+	 * @param componentId    a {@link java.lang.String} object.
+	 * @param requestedClass
+	 * @return the component implementation, or null if unknown.
+	 */
+	<T> T getComponentImplementation(String componentId, Class<? extends T> requestedClass);
+
+	/**
+	 * Define statements that use a specific class will have their argument filtered
+	 * by this method, so that the object can be processed appropriately. If the
+	 * resulting object is a {@link IViewModel} it will be resolvable by the
+	 * engine.
+	 * 
+	 * @param viewClass
+	 * @param definition
+	 * @return
+	 */
+	Object processDefinition(IKimSymbolDefinition statement, Object definition, INamespace namespace, IMonitor monitor);
 
 }

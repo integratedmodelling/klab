@@ -460,17 +460,25 @@ public class Resource implements IResource {
 	 * @return
 	 */
 	public File getLocalFile(String parameter) {
+
 		if (this.parameters.containsKey(parameter)) {
 			if (projectName != null) {
 				IProject project = Services.INSTANCE.getService(IResourceService.class).getProject(projectName);
 				if (project != null) {
-					return new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER + File.separator
-							+ Path.getLast(urn, ':') + File.separator + this.parameters.get(parameter));
+					File folder = new File(project.getRoot() + File.separator + IKimProject.RESOURCE_FOLDER
+							+ File.separator + Path.getLast(urn, ':'));
+					if (!folder.exists()) {
+						folder = new File(folder + ".v" + version);
+					}
+					if (folder.exists()) {
+						return new File(folder + File.separator + this.parameters.get(parameter));
+					}
 				}
 			} else {
 				/*
-				 * node resource
+				 * node resource, simpler because getLocalPath is set up for that
 				 */
+				return new File(getLocalPath() + File.separator + this.parameters.get(parameter));
 			}
 		}
 		return null;

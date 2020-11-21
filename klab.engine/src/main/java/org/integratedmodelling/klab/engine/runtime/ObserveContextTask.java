@@ -2,16 +2,20 @@ package org.integratedmodelling.klab.engine.runtime;
 
 import java.util.Collection;
 import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
+import java.util.function.Consumer;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
@@ -24,6 +28,7 @@ import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.utils.Parameters;
 
 /**
  * A ITask that creates a root subject within a Session.
@@ -31,10 +36,16 @@ import org.integratedmodelling.klab.rest.DataflowReference;
  * @author ferdinando.villa
  *
  */
-public class ObserveContextTask extends AbstractTask<ISubject> {
+public class ObserveContextTask extends AbstractTask<IArtifact> {
 
 	FutureTask<ISubject> delegate;
 	String taskDescription = "<uninitialized observation task " + token + ">";
+	IParameters<String> globalState = Parameters.create();
+
+	@Override
+	public IParameters<String> getState() {
+		return globalState;
+	}
 
 	public ObserveContextTask(ObserveContextTask parent, String description) {
 		super(parent);
@@ -43,8 +54,25 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 	}
 
 	public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
+		this(session, observer, scenarios, null, null, session.getParentIdentity(Engine.class).getTaskExecutor());
+	}
 
-		Engine engine = session.getParentIdentity(Engine.class);
+	/**
+	 * Listener consumers are called as things progress. The observation listener
+	 * is first called with null as a parameter when starting, then (if no error
+	 * occurs) another time with the observation as argument. The observation may be
+	 * empty. If an exception is thrown, the error listener is called with the
+	 * exception as argument.
+	 * 
+	 * @param session
+	 * @param observer
+	 * @param scenarios
+	 * @param observationListener
+	 * @param errorListener
+	 */
+	public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios,
+			Consumer<IArtifact> observationListener, Consumer<Throwable> errorListener, Executor executor) {
+
 		try {
 
 			this.monitor = (session.getMonitor()).get(this);
@@ -66,6 +94,10 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 						 * register the task so it can be interrupted and inquired about
 						 */
 						notifyStart();
+
+						if (observationListener != null) {
+							observationListener.accept(null);
+						}
 
 						// TODO put all this logics in the resolver, call it from within Observations
 						// and use that here.
@@ -96,13 +128,13 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							 * at merge. FIXME this must be the entire scale now - each actuator creates its
 							 * artifacts, then initialization is handled when computing.
 							 */
-							ret = (ISubject) dataflow.run(scope.getCoverage().copy().initialization(), monitor);
+							ret = (ISubject) dataflow.run(scope.getCoverage().copy(), monitor);
 
 							if (ret != null) {
-								setContext((Subject)ret);
+								setContext((Subject) ret);
 								getDescriptor().setContextId(ret.getId());
 							}
-							
+
 							/*
 							 * load any behaviors and schedule repeating actions
 							 */
@@ -119,15 +151,21 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 							/*
 							 * tell the scope to notify internal listeners (for actors and the like)
 							 */
-							((Observation) ret).getScope().notifyListeners((IObservation)ret);
-							
+							((Observation) ret).getScope().notifyListeners((IObservation) ret);
 
-							
+						}
+
+						if (observationListener != null) {
+							observationListener.accept(ret);
 						}
 
 						notifyEnd();
 
 					} catch (Throwable e) {
+
+						if (errorListener != null) {
+							errorListener.accept(e);
+						}
 
 						throw notifyAbort(e);
 
@@ -137,8 +175,8 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 
 			});
 
-			engine.getTaskExecutor().execute(delegate);
-			
+			executor.execute(delegate);
+
 		} catch (Throwable e) {
 			monitor.error("error initializing context task: " + e.getMessage());
 		}
@@ -201,7 +239,7 @@ public class ObserveContextTask extends AbstractTask<ISubject> {
 	}
 
 	@Override
-	public ITaskTree<ISubject> createChild(String description) {
+	public ITaskTree<IArtifact> createChild(String description) {
 		return new ObserveContextTask(this, description);
 	}
 

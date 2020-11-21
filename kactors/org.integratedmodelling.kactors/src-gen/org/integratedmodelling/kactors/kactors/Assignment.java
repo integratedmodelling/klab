@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Assignment#getRecipient <em>Recipient</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Assignment#getVariable <em>Variable</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Assignment#getValue <em>Value</em>}</li>
  * </ul>
@@ -24,6 +25,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Assignment extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Recipient</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Recipient</em>' attribute.
+   * @see #setRecipient(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getAssignment_Recipient()
+   * @model
+   * @generated
+   */
+  String getRecipient();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Assignment#getRecipient <em>Recipient</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Recipient</em>' attribute.
+   * @see #getRecipient()
+   * @generated
+   */
+  void setRecipient(String value);
+
   /**
    * Returns the value of the '<em><b>Variable</b></em>' attribute.
    * <!-- begin-user-doc -->

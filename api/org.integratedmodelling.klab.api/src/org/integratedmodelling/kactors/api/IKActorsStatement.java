@@ -80,8 +80,31 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 
 	public interface Assignment extends IKActorsStatement {
 
+		/**
+		 * Recipient is the part before the dot if set x.y value is issued. It may be
+		 * null (local variable in the internal actor's symbols), refer to the state of
+		 * another actor, or be 'self' which means the value is published to the state
+		 * of the k.LAB identity connected to the actor, not to the internal actor's
+		 * state. It's not possible to touch the state of an identity connected to
+		 * another actor.
+		 * 
+		 * @return
+		 */
+		String getRecipient();
+
+		/**
+		 * Variable, which may or may not be prefixed with a recipient.
+		 * 
+		 * @return
+		 */
 		String getVariable();
 
+		/**
+		 * The value to set the variable to, which will be evaluated in the scope of the
+		 * recipient executing the set statement.
+		 * 
+		 * @return
+		 */
 		IKActorsValue getValue();
 	}
 
@@ -140,8 +163,16 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 	public interface Call extends IKActorsStatement {
 
 		/**
-		 * If group != null, name will be null and the actions will refer to any of the
-		 * messages in the group.
+		 * Each call statement has a unique ID, so that we can cache its execution
+		 * strategy for repeated executions.
+		 * 
+		 * @return
+		 */
+		String getCallId();
+
+		/**
+		 * If group != null, the call message will be null and the actions will react to
+		 * the firing of any of the messages in the group.
 		 * 
 		 * @return
 		 */

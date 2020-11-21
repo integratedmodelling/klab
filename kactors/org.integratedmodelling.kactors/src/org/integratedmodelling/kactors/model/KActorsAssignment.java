@@ -4,21 +4,32 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.Assignment;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 
 public class KActorsAssignment extends KActorsStatement implements Assignment {
-	
-	public KActorsAssignment(org.integratedmodelling.kactors.kactors.Assignment assignment, KActorCodeStatement parent) {
+
+	private String recipient;
+	private String variable;
+	private KActorsValue value;
+
+	public KActorsAssignment(org.integratedmodelling.kactors.kactors.Assignment assignment,
+			KActorCodeStatement parent) {
 		super(assignment, parent, Type.ASSIGNMENT);
+		this.value = new KActorsValue(assignment.getValue(), this);
+		this.variable = assignment.getVariable();
+		this.recipient = assignment.getRecipient();
 	}
 
 	@Override
 	public String getVariable() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.variable;
 	}
 
 	@Override
 	public IKActorsValue getValue() {
-		// TODO Auto-generated method stub
-		return null;
+		return this.value;
+	}
+
+	@Override
+	public String getRecipient() {
+		return this.recipient;
 	}
 
 }

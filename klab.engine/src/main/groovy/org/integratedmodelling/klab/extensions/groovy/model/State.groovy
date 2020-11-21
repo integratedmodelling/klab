@@ -14,6 +14,7 @@ class State extends Observation<IState> {
 	// only used to tag a state for reduction when transformed
 	IConcept dataReduction = null;
 //	ILocator timePointer = ITime.INITIALIZATION;
+	@Deprecated
 	StateSummary summary;
 
 	State(IState obs, Binding binding) {

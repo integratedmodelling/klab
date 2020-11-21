@@ -4,9 +4,11 @@ import java.io.File;
 import java.util.Collection;
 
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.scale.Scale;
 
@@ -39,6 +41,11 @@ public class Worldview extends MonitorableGitWorkspace implements IWorldview {
 		 * TODO! Tie to annotation in worldview AND configured parameter to override
 		 */
 		return Concepts.c("earth:Region");
+	}
+
+	@Override
+	public INamespace getRootNamespace() {
+		return Namespaces.INSTANCE.getNamespace(getName());
 	}
 
 }

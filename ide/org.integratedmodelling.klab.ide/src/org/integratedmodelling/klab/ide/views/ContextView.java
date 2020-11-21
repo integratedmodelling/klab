@@ -9,6 +9,9 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.eclipse.jface.action.Action;
+import org.eclipse.jface.action.ActionContributionItem;
+import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.action.IMenuCreator;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.util.LocalSelectionTransfer;
@@ -40,6 +43,7 @@ import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
 import org.eclipse.swt.widgets.Composite;
+import org.eclipse.swt.widgets.Control;
 import org.eclipse.swt.widgets.Display;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Menu;
@@ -59,6 +63,7 @@ import org.integratedmodelling.klab.ide.model.KlabPeer;
 import org.integratedmodelling.klab.ide.model.KlabPeer.Sender;
 import org.integratedmodelling.klab.ide.navigator.model.EActorBehavior;
 import org.integratedmodelling.klab.ide.navigator.model.EConcept;
+import org.integratedmodelling.klab.ide.navigator.model.EDefinition;
 import org.integratedmodelling.klab.ide.navigator.model.EKimObject;
 import org.integratedmodelling.klab.ide.navigator.model.EModel;
 import org.integratedmodelling.klab.ide.navigator.model.EObserver;
@@ -92,6 +97,7 @@ public class ContextView extends ViewPart {
 
 	private KlabPeer klab;
 	private Action openViewerAction;
+//	private Action openSessionAction;
 	private Action resetContextAction;
 
 	/**
@@ -462,7 +468,7 @@ public class ContextView extends ViewPart {
 					// toolkit.adapt(btnNewButtonT, true, true);
 				}
 			}
-			
+
 			dropTarget.addDropListener(new DropTargetAdapter() {
 
 				@Override
@@ -516,6 +522,8 @@ public class ContextView extends ViewPart {
 							}
 						} else if (dropped instanceof EResourceReference) {
 							Activator.session().previewResource((EResourceReference) dropped);
+						} else if (dropped instanceof EDefinition && ((EDefinition) dropped).getDefineClass() != null) {
+							Activator.session().observe(((EDefinition) dropped).getName());
 						}
 					}
 				}
@@ -674,6 +682,7 @@ public class ContextView extends ViewPart {
 			dropImage.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, icon));
 			dropImage.setToolTipText(tooltip);
 			openViewerAction.setEnabled(eviewer);
+//			openSessionAction.setEnabled(eviewer);
 			resetContextAction.setEnabled(ereset);
 			subjectLabel.setForeground(currentContext == null ? SWTResourceManager.getColor(SWT.COLOR_GRAY)
 					: SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
@@ -683,9 +692,9 @@ public class ContextView extends ViewPart {
 				this.manager.add(new Action(cd.getRoot().getLabel()) {
 					// TODO
 				});
-	 		}
+			}
 		});
-		
+
 	}
 
 	protected void searchObservations(String text) {
@@ -851,25 +860,94 @@ public class ContextView extends ViewPart {
 		super.dispose();
 	}
 
+	class OpenViewerAction extends Action implements IMenuCreator {
+
+		private Menu fMenu;
+
+		OpenViewerAction() {
+			super("", IAction.AS_DROP_DOWN_MENU);
+			setMenuCreator(this);
+			setImageDescriptor(
+					ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/browser.gif"));
+		}
+
+		@Override
+		public void run() {
+			if (Activator.engineMonitor().isRunning()) {
+				BrowserUtils.startBrowser(
+						"http://localhost:8283/modeler/ui/viewer?session=" + Activator.engineMonitor().getSessionId());
+			}
+		}
+
+		@Override
+		public void dispose() {
+			if (fMenu != null) {
+				fMenu.dispose();
+				fMenu = null;
+			}
+		}
+
+		@Override
+		public Menu getMenu(Control parent) {
+			if (fMenu != null) {
+				fMenu.dispose();
+			}
+			fMenu = new Menu(parent);
+			int i = 0;
+
+			Action filterAction = new Action("New session") {
+				public void run() {
+				}
+			};
+
+			Action gen = new Action("Rejoin session...", IAction.AS_DROP_DOWN_MENU) {
+				public void run() {
+				}
+			};
+
+			addActionToMenu(fMenu, filterAction);
+			new MenuItem(fMenu, SWT.SEPARATOR);
+			addActionToMenu(fMenu, gen);
+
+			return fMenu;
+		}
+
+		protected void addActionToMenu(Menu parent, Action action) {
+			ActionContributionItem item = new ActionContributionItem(action);
+			item.fill(parent, -1);
+		}
+
+		@Override
+		public Menu getMenu(Menu parent) {
+			return null;
+		}
+	}
+
 	/**
 	 * Create the actions.
 	 */
 	private void createActions() {
 
+//		{
+//			openViewerAction = new Action("Open new viewer") {
+//
+//				@Override
+//				public void run() {
+//					if (Activator.engineMonitor().isRunning()) {
+//						BrowserUtils.startBrowser("http://localhost:8283/modeler/ui/viewer?session="
+//								+ Activator.engineMonitor().getSessionId());
+//					}
+//				}
+//
+//			};
+//
+//			openViewerAction.setEnabled(Activator.engineMonitor().isRunning());
+//			openViewerAction.setImageDescriptor(
+//					ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/browser.gif"));
+//		}
 		{
-			openViewerAction = new Action("Open new viewer") {
-
-				@Override
-				public void run() {
-					if (Activator.engineMonitor().isRunning()) {
-						BrowserUtils.startBrowser("http://localhost:8283/modeler/ui/viewer?session="
-								+ Activator.engineMonitor().getSessionId());
-					}
-				}
-			};
+			openViewerAction = new OpenViewerAction();
 			openViewerAction.setEnabled(Activator.engineMonitor().isRunning());
-			openViewerAction.setImageDescriptor(
-					ResourceManager.getPluginImageDescriptor("org.integratedmodelling.klab.ide", "icons/browser.gif"));
 		}
 		{
 			resetContextAction = new Action("Reset context") {
@@ -894,6 +972,7 @@ public class ContextView extends ViewPart {
 		IToolBarManager tbm = getViewSite().getActionBars().getToolBarManager();
 		tbm.add(resetContextAction);
 		tbm.add(openViewerAction);
+//		tbm.add(openSessionAction);
 	}
 
 	/**
@@ -901,7 +980,8 @@ public class ContextView extends ViewPart {
 	 */
 	private void initializeMenu() {
 		this.manager = getViewSite().getActionBars().getMenuManager();
-		// this is for hierarchical menus - add the this to the manager and the actions to this 
+		// this is for hierarchical menus - add the this to the manager and the actions
+		// to this
 //		MenuManager menuManager = new MenuManager("Previous contexts");
 //		manager.add(action);
 //		menuManager.add(action);

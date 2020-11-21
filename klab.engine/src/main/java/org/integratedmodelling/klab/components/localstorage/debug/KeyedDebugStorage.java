@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.localstorage.debug;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.function.Consumer;
 
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -194,6 +195,12 @@ public class KeyedDebugStorage<T> implements IDataStorage<T>, IKeyHolder {
 
 	@Override
 	public void touch(ITime time) {
+		// TODO Auto-generated method stub
+		
+	}
+
+	@Override
+	public void addContextualizationListener(Consumer<ILocator> listener) {
 		// TODO Auto-generated method stub
 		
 	}

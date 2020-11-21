@@ -1,5 +1,8 @@
 package org.integratedmodelling.kactors.model;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.kactors.Annotation;
@@ -9,7 +12,8 @@ public class KActorsAction extends KActorCodeStatement implements IKActorsAction
 
 	private String name;
 	private KActorsConcurrentGroup code;
-
+	private List<String> argumentNames = new ArrayList<>();
+	
 	public KActorsAction(Definition definition, KActorsBehavior parent) {
 		super(definition, parent);
 		this.name = definition.getName();
@@ -19,6 +23,9 @@ public class KActorsAction extends KActorCodeStatement implements IKActorsAction
 			}
 		}
 		this.code = new KActorsConcurrentGroup(definition.getBody().getLists(), this);
+		if (definition.getArguments() != null) {
+			argumentNames.addAll(definition.getArguments().getIds());
+		}
 	}
 
 	@Override
@@ -29,6 +36,11 @@ public class KActorsAction extends KActorCodeStatement implements IKActorsAction
 	@Override
 	public IKActorsStatement getCode() {
 		return code;
+	}
+	
+	@Override
+	public List<String> getArgumentNames() {
+		return argumentNames;
 	}
 
 }

@@ -867,12 +867,12 @@ public interface ConceptStatementBody extends EObject
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @return the value of the '<em>Metadata</em>' containment reference.
-   * @see #setMetadata(Metadata)
+   * @see #setMetadata(Map)
    * @see org.integratedmodelling.kim.kim.KimPackage#getConceptStatementBody_Metadata()
    * @model containment="true"
    * @generated
    */
-  Metadata getMetadata();
+  Map getMetadata();
 
   /**
    * Sets the value of the '{@link org.integratedmodelling.kim.kim.ConceptStatementBody#getMetadata <em>Metadata</em>}' containment reference.
@@ -882,7 +882,7 @@ public interface ConceptStatementBody extends EObject
    * @see #getMetadata()
    * @generated
    */
-  void setMetadata(Metadata value);
+  void setMetadata(Map value);
 
   /**
    * Returns the value of the '<em><b>Properties</b></em>' containment reference list.

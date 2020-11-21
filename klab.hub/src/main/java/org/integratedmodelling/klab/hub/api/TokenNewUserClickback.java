@@ -6,9 +6,9 @@ import org.springframework.data.annotation.TypeAlias;
 @TypeAlias("NewUser")
 public class TokenNewUserClickback extends TokenClickback {
 
-	private static final long serialVersionUID = -6813740740798681807L;
+	private static final long serialVersionUID = -6237803138942268818L;
 
-    public TokenNewUserClickback(String username) {
+	public TokenNewUserClickback(String username) {
 		super(username);
 	}
 

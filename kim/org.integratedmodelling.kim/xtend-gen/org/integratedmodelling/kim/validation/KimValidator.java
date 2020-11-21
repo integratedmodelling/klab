@@ -54,7 +54,7 @@ import org.integratedmodelling.kim.kim.IdentityRequirement;
 import org.integratedmodelling.kim.kim.Import;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.List;
-import org.integratedmodelling.kim.kim.Metadata;
+import org.integratedmodelling.kim.kim.Map;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.ModelStatement;
@@ -719,7 +719,7 @@ public class KimValidator extends AbstractKimValidator {
             this.error("Dependency has undefined semantics", KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
             ok = false;
           } else {
-            if (((!definition.is(IKimConcept.Type.OBSERVABLE)) && (!definition.is(IKimConcept.Type.TRAIT)))) {
+            if ((((!definition.is(IKimConcept.Type.OBSERVABLE)) && (!definition.is(IKimConcept.Type.TRAIT))) && (!(definition.is(IKimConcept.Type.ROLE) && observable.isGeneric())))) {
               this.error("Models can only describe observables or traits", 
                 KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
               ok = false;
@@ -1047,10 +1047,10 @@ public class KimValidator extends AbstractKimValidator {
           ((KimObservable) _get_1).setFormalName(descriptor.name);
           ns_1.getSymbolTable().put(descriptor.name, descriptor);
         }
-        Metadata _metadata = model.getMetadata();
+        Map _metadata = model.getMetadata();
         boolean _tripleNotEquals_11 = (_metadata != null);
         if (_tripleNotEquals_11) {
-          Metadata _metadata_1 = model.getMetadata();
+          Map _metadata_1 = model.getMetadata();
           KimMetadata _kimMetadata = new KimMetadata(_metadata_1, descriptor);
           descriptor.setMetadata(_kimMetadata);
         }
@@ -2954,10 +2954,10 @@ public class KimValidator extends AbstractKimValidator {
         }
       }
     }
-    Metadata _metadata = concept.getMetadata();
+    Map _metadata = concept.getMetadata();
     boolean _tripleNotEquals_12 = (_metadata != null);
     if (_tripleNotEquals_12) {
-      Metadata _metadata_1 = concept.getMetadata();
+      Map _metadata_1 = concept.getMetadata();
       KimMetadata _kimMetadata = new KimMetadata(_metadata_1, ret);
       ret.setMetadata(_kimMetadata);
     }

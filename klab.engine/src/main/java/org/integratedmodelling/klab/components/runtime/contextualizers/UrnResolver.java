@@ -66,14 +66,15 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
 		if (this.resource instanceof MergedResource) {
 
-			List<IResource> resources = ((MergedResource) this.resource).contextualize(context.getScale());
+			List<IResource> resources = ((MergedResource) this.resource).contextualize(context.getScale(), observation);
 			if (resources.isEmpty()) {
 				context.getMonitor()
 						.warn("resource " + this.resource.getUrn() + " cannot be contextualized in this scale");
 				return observation;
 			}
 
-			// TODO must contextualize the LIST, not just the first resource
+			// TODO must contextualize the LIST, not just the first resource. For now it can only happen with
+			// multiple spatial extents, but it could happen also with multiple temporal slices.
 			if (resources.size() > 1) {
 				context.getMonitor().warn(
 						"Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");

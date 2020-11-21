@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
  */
 public class ScaleReference {
 
+	private String name;
 	private double east;
 	private double west;
 	private double north;
@@ -30,15 +31,21 @@ public class ScaleReference {
 	 * Description is in whatever unit is more convenient
 	 */
 	private String spaceResolutionDescription;
-	private double spaceResolutionConverted;
+//	private double spaceResolutionConverted;
 	private String spaceUnit;
 	private double timeResolutionMultiplier;
 	private ITime.Resolution.Type timeUnit;
 	private String timeResolutionDescription;
+	private String shape;
+	private String timeType;
+	
+	// used when we start from a geometry and it's quicker to specify this way.
+	private String timeGeometry;
+	private String spaceGeometry;
 
 	private long start;
 	private long end;
-
+	
 	// unused for now, or enabled in developer mode
 	private long step;
 
@@ -49,6 +56,7 @@ public class ScaleReference {
 
 	// FIXME REMOVE
 	private String resolutionDescription;
+	private int year = -1;
 
 	public double getEast() {
 		return east;
@@ -106,6 +114,14 @@ public class ScaleReference {
 		this.end = end;
 	}
 
+	public void setYear(int year) {
+		this.year = year;
+	}
+
+	public int getYear() {
+		return this.year;
+	}
+
 	public long getStep() {
 		return step;
 	}
@@ -159,14 +175,14 @@ public class ScaleReference {
 	public String getResolutionDescription() {
 		return this.resolutionDescription;
 	}
-
-	public double getSpaceResolutionConverted() {
-		return spaceResolutionConverted;
-	}
-
-	public void setSpaceResolutionConverted(double spaceResolutionConverted) {
-		this.spaceResolutionConverted = spaceResolutionConverted;
-	}
+//
+//	public double getSpaceResolutionConverted() {
+//		return spaceResolutionConverted;
+//	}
+//
+//	public void setSpaceResolutionConverted(double spaceResolutionConverted) {
+//		this.spaceResolutionConverted = spaceResolutionConverted;
+//	}
 
 	public String getContextId() {
 		return contextId;
@@ -198,6 +214,46 @@ public class ScaleReference {
 
 	public void setTimeResolutionDescription(String timeResolutionDescription) {
 		this.timeResolutionDescription = timeResolutionDescription;
+	}
+
+	public String getShape() {
+		return shape;
+	}
+
+	public void setShape(String shape) {
+		this.shape = shape;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
+	public String getTimeGeometry() {
+		return timeGeometry;
+	}
+
+	public void setTimeGeometry(String timeGeometry) {
+		this.timeGeometry = timeGeometry;
+	}
+
+	public String getSpaceGeometry() {
+		return spaceGeometry;
+	}
+
+	public void setSpaceGeometry(String spaceGeometry) {
+		this.spaceGeometry = spaceGeometry;
+	}
+
+	public String getTimeType() {
+		return timeType;
+	}
+
+	public void setTimeType(String timeType) {
+		this.timeType = timeType;
 	}
 
 }

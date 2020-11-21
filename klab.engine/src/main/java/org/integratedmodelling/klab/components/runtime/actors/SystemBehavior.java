@@ -1,10 +1,13 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.util.Map;
+
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
-import org.integratedmodelling.klab.exceptions.KlabIllegalStatusException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -28,19 +31,64 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Load implements KlabMessage {
+	public static class Load extends AbstractKlabMessage {
 
 		String behavior;
-		IRuntimeScope scope;
-		String appId;
+		Scope scope;
+		// application ID for forwarding
+		String forwardApplicationId;
+		// application ID to put in new actor
+		String applicationId;
+		IActorIdentity<KlabMessage> identity;
 		// if not null, this is a child behavior from a 'new' instruction and it carries
 		// a ref to the parent
 		ActorRef<KlabMessage> parent = null;
+		Map<String, Object> arguments;
+		// if not null, loading happens as a response to a 'new' and the base name
+		// identifies the instantiation for all needed purposes
+		String instanceBaseName;
+		String childActorPath;
 
-		public Load(String behavior, String appId, IRuntimeScope scope) {
+		/**
+		 * Called from actor identities, instantiates the actor scope
+		 * 
+		 * @param identity
+		 * @param behavior
+		 * @param appId
+		 * @param scope
+		 */
+		public Load(IActorIdentity<KlabMessage> identity, String behavior, String appId, IRuntimeScope scope) {
 			this.behavior = behavior;
-			this.appId = appId;
+			this.forwardApplicationId = appId;
+			this.identity = identity;
+			this.scope = new Scope(identity, appId, scope);
+		}
+
+		/**
+		 * Called from instantiator in actors, uses the scope it's run into.
+		 * 
+		 * @param identity
+		 * @param behavior
+		 * @param appId
+		 * @param scope
+		 */
+		public Load(IActorIdentity<KlabMessage> identity, String behavior, String appId, Scope scope) {
+			this.behavior = behavior;
+			this.forwardApplicationId = appId;
+			this.identity = identity;
 			this.scope = scope;
+		}
+
+		/**
+		 * Pass when the main() function may have arguments, typically in components
+		 * instantiated through 'new'.
+		 * 
+		 * @param arguments
+		 * @return
+		 */
+		public Load withMainArguments(Map<String, Object> arguments) {
+			this.arguments = arguments;
+			return this;
 		}
 
 		public Load withParent(ActorRef<KlabMessage> parent) {
@@ -50,29 +98,44 @@ public class SystemBehavior {
 
 		@Override
 		public Load direct() {
-			return new Load(behavior, null, scope);
+			return new Load(identity, behavior, null, scope.runtimeScope);
+		}
+
+		public Load withActorBaseName(String actorBaseName) {
+			this.instanceBaseName = actorBaseName;
+			return this;
+		}
+
+		public Load withChildActorPath(String parentActorPath) {
+			this.childActorPath = parentActorPath;
+			return this;
+		}
+
+		public Load withApplicationId(String appId) {
+			this.applicationId = appId;
+			return this;
 		}
 	}
 
-	/**
-	 * Setup a view component with view actions
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	public static class SetView implements KlabMessage {
-
-		ViewComponent component;
-
-		public SetView(ViewComponent component) {
-			this.component = component;
-		}
-
-		@Override
-		public SetView direct() {
-			throw new KlabIllegalStatusException("Actors shouldn't stop themselves.");
-		}
-	}
+//	/**
+//	 * Setup a view component with view actions
+//	 * 
+//	 * @author Ferd
+//	 *
+//	 */
+//	public static class SetView extends AbstractKlabMessage {
+//
+//		ViewComponent component;
+//
+//		public SetView(ViewComponent component) {
+//			this.component = component;
+//		}
+//
+//		@Override
+//		public SetView direct() {
+//			throw new KlabIllegalStateException("Actors shouldn't stop themselves.");
+//		}
+//	}
 
 	/**
 	 * Load a behavior
@@ -80,7 +143,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Stop implements KlabMessage {
+	public static class Stop extends AbstractKlabMessage {
 
 		String appId;
 
@@ -90,7 +153,7 @@ public class SystemBehavior {
 
 		@Override
 		public Stop direct() {
-			throw new KlabIllegalStatusException("Actors shouldn't stop themselves.");
+			throw new KlabIllegalStateException("Actors shouldn't stop themselves.");
 		}
 	}
 
@@ -101,7 +164,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class UserAction implements KlabMessage {
+	public static class UserAction extends AbstractKlabMessage {
 
 		ViewAction action;
 		IRuntimeScope scope;
@@ -127,7 +190,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class BindUserAction implements KlabMessage {
+	public static class BindUserAction extends AbstractKlabMessage {
 
 		long notifyId;
 		String componentId;
@@ -152,7 +215,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Cleanup implements KlabMessage {
+	public static class Cleanup extends AbstractKlabMessage {
 
 		@Override
 		public KlabMessage direct() {
@@ -167,7 +230,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Transition implements KlabMessage {
+	public static class Transition extends AbstractKlabMessage {
 
 		KlabActor.Scope scope;
 		String appId;
@@ -189,7 +252,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Spawn implements KlabMessage {
+	public static class Spawn extends AbstractKlabMessage {
 
 		IActorIdentity<KlabMessage> identity;
 		String appId;
@@ -214,7 +277,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class Fire implements KlabMessage {
+	public static class Fire extends AbstractKlabMessage {
 
 		Object value;
 		boolean finalize;
@@ -248,7 +311,7 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class ComponentFire implements KlabMessage {
+	public static class ComponentFire extends AbstractKlabMessage {
 
 		Object value;
 		boolean finalize;
@@ -273,6 +336,28 @@ public class SystemBehavior {
 
 	}
 
+	public static class AppReset extends AbstractKlabMessage {
+
+		Scope scope;
+		String appId;
+		
+		public AppReset(Scope scope, String appId) {
+			this.scope = scope;
+			this.appId = appId;
+		}
+
+		@Override
+		public String toString() {
+			return "[RESET]";
+		}
+
+		@Override
+		public AppReset direct() {
+			return this;
+		}
+
+	}
+	
 	/**
 	 * The shuttle for a k.Actors message call. Always comes from a k.Actors
 	 * behavior, sent by an actor to another.
@@ -280,22 +365,20 @@ public class SystemBehavior {
 	 * @author Ferd
 	 *
 	 */
-	public static class KActorsMessage implements KlabMessage {
+	public static class KActorsMessage extends AbstractKlabMessage {
 
 		ActorRef<KlabMessage> sender;
 		String message;
-		String receiver;
 		IParameters<String> arguments = Parameters.create();
 		KlabActor.Scope scope;
 		String appId;
 		// for caching
 		String actionInternalId;
 
-		public KActorsMessage(ActorRef<KlabMessage> sender, String receiver, String actionId, String actionInternalId,
+		public KActorsMessage(ActorRef<KlabMessage> sender, String actionId, String actionInternalId,
 				IParameters<String> arguments, KlabActor.Scope scope, String appId) {
 
 			this.sender = sender;
-			this.receiver = receiver;
 			this.message = actionId;
 			this.actionInternalId = actionInternalId;
 			if (arguments != null) {
@@ -312,7 +395,7 @@ public class SystemBehavior {
 
 		@Override
 		public KActorsMessage direct() {
-			return new KActorsMessage(sender, receiver, message, actionInternalId, arguments, scope, null);
+			return new KActorsMessage(sender, message, actionInternalId, arguments, scope, null);
 		}
 
 	}

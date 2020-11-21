@@ -1,8 +1,10 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 import org.opengis.referencing.FactoryException;
@@ -19,8 +21,9 @@ public class Envelope implements IEnvelope {
 	public static final int DEFAULT_MIN_RESOLUTION = 5;
 
 	ReferencedEnvelope envelope;
-	IProjection projection;
+	Projection projection;
 	Integer scaleRank = null;
+	private IMetadata metadata;
 
 	@Override
 	public int hashCode() {
@@ -116,7 +119,7 @@ public class Envelope implements IEnvelope {
 	}
 
 	@Override
-	public IProjection getProjection() {
+	public Projection getProjection() {
 		return projection;
 	}
 
@@ -177,7 +180,7 @@ public class Envelope implements IEnvelope {
 		} catch (TransformException | FactoryException e) {
 			throw new KlabValidationException(e);
 		}
-		ret.projection = projection;
+		ret.projection = (Projection)projection;
 		return ret;
 	}
 
@@ -231,7 +234,7 @@ public class Envelope implements IEnvelope {
 		if (gridRounded > 2000) {
 			gridRounded = (((gridRounded) + 500) / 1000);
 			unit = "km";
-			gridRounded *= 1000;
+//			gridRounded *= 1000;
 		} else if (gridRounded < roundTo) {
 			gridRounded = roundTo;
 			unit = "m";
@@ -290,6 +293,24 @@ public class Envelope implements IEnvelope {
 	@Override
 	public IEnvelope standard() {
 		return transform(Projection.getDefault(), true);
+	}
+
+	@Override
+	public IMetadata getMetadata() {
+		if (this.metadata == null) {
+			this.metadata = new Metadata();
+		}
+		return this.metadata;
+	}
+
+	@Override
+	public IEnvelope grow(double factor) {
+		if (factor != 1) {
+			double xgrow = ((getWidth()*factor) - getWidth())/2.0;
+			double ygrow = ((getHeight()*factor) - getHeight())/2.0;
+			return create(getMinX()-xgrow, getMaxX()+xgrow, getMinY()-ygrow, getMaxY()+ygrow, getProjection());
+		}
+		return this;
 	}
 
 }

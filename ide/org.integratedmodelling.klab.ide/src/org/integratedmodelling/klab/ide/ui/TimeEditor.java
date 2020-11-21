@@ -696,7 +696,7 @@ public class TimeEditor extends Composite {
 				format = "MM-yyyy";
 				break;
 			case 2:
-				format = "dd-MM-yyyy";
+				format = "yyyy-MM-dd";
 				break;
 			}
 		}
@@ -720,7 +720,7 @@ public class TimeEditor extends Composite {
 		}
 
 		SimpleDateFormat ret = format == null ? null : new SimpleDateFormat(format);
-		ret.setTimeZone(TimeZone.getTimeZone("UTC"));
+//		ret.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 		return ret;
 

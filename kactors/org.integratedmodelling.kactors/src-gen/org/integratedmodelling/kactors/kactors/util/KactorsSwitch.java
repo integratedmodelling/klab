@@ -20,12 +20,14 @@ import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
 import org.integratedmodelling.kactors.kactors.DoStatement;
+import org.integratedmodelling.kactors.kactors.ElseIfStatementBody;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 import org.integratedmodelling.kactors.kactors.HeaderRow;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.KeyValuePair;
 import org.integratedmodelling.kactors.kactors.List;
+import org.integratedmodelling.kactors.kactors.ListElement;
 import org.integratedmodelling.kactors.kactors.Literal;
 import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
@@ -217,6 +219,13 @@ public class KactorsSwitch<T> extends Switch<T>
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
+      case KactorsPackage.ELSE_IF_STATEMENT_BODY:
+      {
+        ElseIfStatementBody elseIfStatementBody = (ElseIfStatementBody)theEObject;
+        T result = caseElseIfStatementBody(elseIfStatementBody);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
       case KactorsPackage.STATEMENT_BODY:
       {
         StatementBody statementBody = (StatementBody)theEObject;
@@ -270,6 +279,13 @@ public class KactorsSwitch<T> extends Switch<T>
       {
         List list = (List)theEObject;
         T result = caseList(list);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.LIST_ELEMENT:
+      {
+        ListElement listElement = (ListElement)theEObject;
+        T result = caseListElement(listElement);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -677,6 +693,22 @@ public class KactorsSwitch<T> extends Switch<T>
   }
 
   /**
+   * Returns the result of interpreting the object as an instance of '<em>Else If Statement Body</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Else If Statement Body</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseElseIfStatementBody(ElseIfStatementBody object)
+  {
+    return null;
+  }
+
+  /**
    * Returns the result of interpreting the object as an instance of '<em>Statement Body</em>'.
    * <!-- begin-user-doc -->
    * This implementation returns null;
@@ -800,6 +832,22 @@ public class KactorsSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseList(List object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>List Element</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>List Element</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseListElement(ListElement object)
   {
     return null;
   }

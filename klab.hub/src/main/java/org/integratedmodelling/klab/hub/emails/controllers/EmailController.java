@@ -156,7 +156,7 @@ public class EmailController {
 		ResponseEntity<String> response = null;
 		// checks
 		// normally from is ever the same and coming from configuration, so the check is not needed
-		email.from = emailConfig.replyableGeneralEmailAddress();
+		email.from = emailConfig.senderEmail();
 		// if (Arrays.stream(emailConfig.getAuthorizedEmailAddresses()).anyMatch(email.from::equals)) {
 		// to and replayTo are known
 		for(String userEmail: email.to) {

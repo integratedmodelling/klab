@@ -1,10 +1,8 @@
 package org.integratedmodelling.klab.auth;
 
-import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineIdentity;
@@ -18,6 +16,7 @@ import org.integratedmodelling.klab.components.runtime.actors.UserActor;
 import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.Layout;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 
 import akka.actor.typed.ActorRef;
@@ -27,12 +26,22 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 	private static final long serialVersionUID = -134196454400472128L;
 	private IEngineIdentity parent;
 	private ActorRef<KlabMessage> actor;
-	private Map<String, Object> globalState = Collections.synchronizedMap(new HashMap<>());
+	private IParameters<String> globalState = Parameters.createSynchronized();
 	private View view;
+//	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
 
-	public Map<String, Object> getState() {
-		return globalState;
-	}
+//	@Override
+//	public <V> V getState(String key, Class<V> cls) {
+//		return this.globalState.get(key, cls);
+//	}
+//
+//	@Override
+//	public void setState(String key, Object value) {
+//		this.globalState.put(key, value);
+//		for (BiConsumer<String, Object> listener : stateChangeListeners.values()) {
+//			listener.accept(key, value);
+//		}
+//	}
 
 	public EngineUser(String username, IEngineIdentity parent) {
 		super(username);
@@ -140,7 +149,7 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 	@Override
 	public String load(IBehavior behavior, IContextualizationScope scope) {
 		// TODO this gets a sucky runtime scope that is used to run main messages.
-		getActor().tell(new SystemBehavior.Load(behavior.getId(), getId(), (IRuntimeScope)scope));
+		getActor().tell(new SystemBehavior.Load(this, behavior.getId(), getId(), (IRuntimeScope) scope));
 		return getId();
 	}
 
@@ -175,6 +184,21 @@ public class EngineUser extends UserIdentity implements IEngineUserIdentity {
 	public IMonitor getMonitor() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+//	@Override
+//	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
+//		this.stateChangeListeners.put(name, listener);
+//	}
+//
+//	@Override
+//	public void removeStateChangeListener(String name) {
+//		this.stateChangeListeners.remove(name);
+//	}
+
+	@Override
+	public IParameters<String> getState() {
+		return globalState;
 	}
 
 }

@@ -94,4 +94,9 @@ public class BehaviorAction implements IBehavior.Action {
 		this.viewId = viewId;
 	}
 
+	@Override
+	public IBehavior getBehavior() {
+		return behavior;
+	}
+
 }

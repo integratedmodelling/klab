@@ -26,12 +26,12 @@ public class CreateInitialUsers {
 	private MongoGroupRepository groupRepository;
 	private UserRepository userRepository;
 	private	LdapUserDetailsManager ldapUserDetailsManager;
-	private DelegatingPasswordEncoder passwordEncoder;
+	private PasswordEncoder passwordEncoder;
 	
 	public CreateInitialUsers(MongoGroupRepository groupRepository,
 			UserRepository userRepository,
 			LdapUserDetailsManager ldapUserDetailsManager,
-			DelegatingPasswordEncoder passwordEncoder) {
+			PasswordEncoder passwordEncoder) {
 		this.groupRepository = groupRepository;
 		this.userRepository = userRepository;
 		this.ldapUserDetailsManager = ldapUserDetailsManager;
@@ -50,8 +50,11 @@ public class CreateInitialUsers {
 	private static final User hades = testUser("hades", "password", "hades@integratedmodelling.org", "Hades",
             "of Greece", Role.ROLE_USER, Role.ROLE_ADMINISTRATOR);
     
-	private static final User developer = testUser("srwohl", "password", "steven.wohl@bc3research.org",
+	private static final User developerS = testUser("srwohl", "password", "steven.wohl@bc3research.org",
             "Hercules", "of Rome", Role.ROLE_USER);
+	
+	private static final User developerE = testUser("enrico", "password", "enrico.girotto@bc3research.org",
+            "Enrico", "of Venice", Role.ROLE_USER);
     
 	private static final User achilles_activeMissingLdap = testUser("achilles", "password",
             "achilles@integratedmodelling.org", "Achilles", "of Greece", Role.ROLE_USER);
@@ -145,14 +148,17 @@ public class CreateInitialUsers {
         system.addGroupEntries(alice);
         hades.addGroupEntries(aries);
         hades.addGroupEntries(im);
-        developer.addGroupEntries(aries);
-        developer.addGroupEntries(im);
+        developerS.addGroupEntries(aries);
+        developerS.addGroupEntries(im);
+        developerE.addGroupEntries(aries);
+        developerE.addGroupEntries(im);
         achilles_activeMissingLdap.addGroupEntries(im);
         triton_pendingMissingLdap.addGroupEntries(aries);
         triton_pendingMissingLdap.setAccountStatus(AccountStatus.pendingActivation);
         initialUsers.add(system);
         initialUsers.add(hades);
-        initialUsers.add(developer);
+        initialUsers.add(developerS);
+        initialUsers.add(developerE);
         initialUsers.add(achilles_activeMissingLdap);
         initialUsers.add(triton_pendingMissingLdap);
         return initialUsers;
@@ -163,7 +169,7 @@ public class CreateInitialUsers {
     	for(User user : users) {
     		try {
     			//This is our legacy password encoding
-    			user = new SetUserPasswordHash(user, user.getPasswordHash(),new LdapShaPasswordEncoder()).execute();
+    			user = new SetUserPasswordHash(user, user.getPasswordHash(),this.passwordEncoder).execute();
     			User newUser = new CreateUserWithRolesAndStatus(user, userRepository, ldapUserDetailsManager).execute();
     			if (newUser.getLastLogin() != null) {
     				int x = (int)(Math.random()*100+1);

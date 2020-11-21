@@ -315,7 +315,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			this.declaration.setObservationType(type);
 		}
 
-		if (participants != null) {
+		if (participants != null && participants.length > 0) {
 			this.comparison = participants[0];
 			if (!declarationIsComplete) {
 				this.declaration.setOtherConcept(Concepts.INSTANCE.getDeclaration(participants[0]));
@@ -335,52 +335,52 @@ public class ObservableBuilder implements IObservable.Builder {
 
 			switch (type) {
 			case ASSESSMENT:
-				reset(makeAssessment(argument, false));
+				reset(makeAssessment(argument, true));
 				break;
 			case CHANGE:
-				reset(makeChange(argument, false));
+				reset(makeChange(argument, true));
 				break;
 			case COUNT:
-				reset(makeCount(argument, false));
+				reset(makeCount(argument, true));
 				break;
 			case DISTANCE:
-				reset(makeDistance(argument, false));
+				reset(makeDistance(argument, true));
 				break;
 			case OCCURRENCE:
-				reset(makeOccurrence(argument, false));
+				reset(makeOccurrence(argument, true));
 				break;
 			case PRESENCE:
-				reset(makePresence(argument, false));
+				reset(makePresence(argument, true));
 				break;
 			case PROBABILITY:
-				reset(makeProbability(argument, false));
+				reset(makeProbability(argument, true));
 				break;
 			case PROPORTION:
-				reset(makeProportion(argument, this.comparison, false, false));
+				reset(makeProportion(argument, this.comparison, true, false));
 				break;
 			case PERCENTAGE:
-				reset(makeProportion(argument, this.comparison, false, true));
+				reset(makeProportion(argument, this.comparison, true, true));
 				break;
 			case RATIO:
-				reset(makeRatio(argument, this.comparison, false));
+				reset(makeRatio(argument, this.comparison, true));
 				break;
 			case UNCERTAINTY:
-				reset(makeUncertainty(argument, false));
+				reset(makeUncertainty(argument, true));
 				break;
 			case VALUE:
-				reset(makeValue(argument, this.comparison, false));
+				reset(makeValue(argument, this.comparison, true));
 				break;
 			case OBSERVABILITY:
-				reset(makeObservability(argument, false));
+				reset(makeObservability(argument, true));
 				break;
 			case MAGNITUDE:
-				reset(makeMagnitude(argument, false));
+				reset(makeMagnitude(argument, true));
 				break;
 			case LEVEL:
-				reset(makeLevel(argument, false));
+				reset(makeLevel(argument, true));
 				break;
 			case TYPE:
-				reset(makeType(argument, false));
+				reset(makeType(argument, true));
 				break;
 			default:
 				break;
@@ -466,7 +466,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithout(ret.roles, concept);
 			ret.roles = new ArrayList<>(rdelta.getFirst());
 			ret.removed.addAll(rdelta.getSecond());
-			for (int i = 0; i < tdelta.getSecond().size(); i++) {
+			for (int i = 0; i < rdelta.getSecond().size(); i++) {
 				removedRoles.add(ObservableRole.ROLE);
 			}
 			if (ret.context != null && ret.context.equals(concept)) {
@@ -747,6 +747,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			ax.add(Axiom.ClassAssertion(conceptId, newType));
 			ax.add(Axiom.SubClass(NS.CORE_CHANGE, conceptId));
 			ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
+			ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
 			ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
 
 			if (addDefinition) {
@@ -1412,6 +1413,10 @@ public class ObservableBuilder implements IObservable.Builder {
 		Ontology ontology = (Ontology) classified.getOntology();
 		String conceptId = ontology.getIdForDefinition(definition);
 
+		if (classified.is(Type.ROLE)) {
+			System.out.println("ZOAZ");
+		}
+		
 		if (conceptId == null) {
 
 			conceptId = ontology.createIdForDefinition(definition);
@@ -1430,7 +1435,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			ontology.define(axioms);
 			IConcept ret = ontology.getConcept(conceptId);
 
-			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.INCARNATES_TRAIT_PROPERTY), classified, ontology);
+			OWL.INSTANCE.restrictSome(ret, Concepts.p(NS.DESCRIBES_OBSERVABLE_PROPERTY), classified, ontology);
 
 			/*
 			 * types inherit the context from their trait
@@ -1777,9 +1782,9 @@ public class ObservableBuilder implements IObservable.Builder {
 			cId += "As" + roleIds;
 			// only add role names to user description if roles are not from the
 			// root of the worldview
-			if (!rolesAreFundamental(roles)) {
+//			if (!rolesAreFundamental(roles)) {
 				cDs = roleIds + Concepts.INSTANCE.getDisplayName(main);
-			}
+//			}
 		}
 
 //		if (distributedInherency) {
@@ -1942,7 +1947,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
 				ret.setDeclaration(ret.getDeclaration() + " (" + ((Observable) valueOperand).getDeclaration() + ")");
 				if (name == null) {
-					ret.setName(ret.getName() + "_" + ((Observable) valueOperand).getName());
+					ret.setName(ret.getName() + "_" + Observables.INSTANCE.getDisplayName((Observable) valueOperand));
 				}
 			} else {
 

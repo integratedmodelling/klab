@@ -8,7 +8,46 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
+
+
+## [0.10.0.232] -- 2020/11/21
 ### Added
+- Streamline and modularize the geocoding services so that more can be
+  added easily. Implement the standard bounding box naming and add 
+  administrative and watershed selection based on FSCAN node-provided
+  services.
+- Parameter "invert" for normalizing and standardizing contextualizers.
+- FSCAN adapter indexes multiple vector sources and provides fast reaction to
+  queries for the smallest polygon that fits the bounding box, plus the ability
+  of extracting features based on the level implied by the current scale.  
+- Stubs for SDMX component.
+- Extensive testing and improvements in k.Actors and the handling of UI components
+  through it, with full-duplex interaction with the new session state.
+- Handling of roles is now understood and implemented. Roles used in 
+  observable declarations are handled like regular attributes, while roles
+  implied by observables or stated by users as part of session state are used
+  in the relevant branch of resolution. Dependencies for "any <role>" will be
+  expanded to imply all observables currently incarnating that role. Implications
+  are unimplemented for now, but session-defined roles are working. 
+- Session state now elevated to API and managing all details of interaction with
+  clients, including submission of observables that are queued for contextualization
+  so that the level of concurrency within sessions can be controlled. Session 
+  state is set up to collect history beans and for saving/restoring info, including
+  the current state of application views.
+- Annotation syntax now admits unnamed parameters in coexistence with named 
+  ones.
+- Implemented "knowledge views" as resolvable void artifacts declared with a
+  configurable, typed define statement. Table view implemented and functional,
+  with extensive testing needed due to extensive complexity.
+- Values in k.IM now admit entire observables and relational operators on numbers, 
+  resolved to ranges.
+- Change models are automatically resolved for all qualities that may be affected by
+  processes or events whenever the context is temporal and there is a condition for
+  occurrence (either occurrents are resolved or the context has temporal distribution). 
+  If there is no explicit change statement in the network scope, the scheduler will
+  insert a check at each effective timestep for change of any observations from which 
+  others depend, and re-run the actuator for those where the check is positive. This 
+  essentially makes any model track change even if it's not made explicitly dynamic.
 - Implement syntactic typing for change rates ('change rate of') and change events 
   ('changed <quality>'). Support in engine (unit/context validation and model inference)
   still missing.
@@ -158,6 +197,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   enhancement of vector/raster public resources to WFS/WCS ones.
 ### Fixed
 - Several fixes in unit validation.
+- Testing and fixes in use of "where" value operator.
 
 ## [0.10.0.222] -- 2020/02/01
 ### Added

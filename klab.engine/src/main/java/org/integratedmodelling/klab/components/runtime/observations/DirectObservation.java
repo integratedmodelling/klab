@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.rest.ObservationChange;
@@ -45,7 +46,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 		this.active = other.active;
 		this.predicates.addAll(other.predicates);
 	}
-	
+
 	protected DirectObservation(String name, Observable observable, Scale scale, IRuntimeScope context) {
 		super(observable, scale, context);
 		this.name = name;
@@ -64,8 +65,8 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	@Override
 	public IObservation getChildObservation(IObservable observable) {
 		for (IArtifact child : getScope().getChildArtifactsOf(this)) {
-			if (child instanceof IObservation
-					&& ((IObservation) child).getObservable().getType().is(observable.getType())) {
+			if (child instanceof IObservation && ((RuntimeScope) this.getScope())
+					.cached_is(((IObservation) child).getObservable().getType(), observable.getType())) {
 				return (IObservation) child;
 			}
 		}
@@ -73,8 +74,9 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	}
 
 	/**
-	 * Return the first observation that resolves the passed observable in the context of this one,
-	 * reassessing the context if the observable comes with an explicit 'within' clause.
+	 * Return the first observation that resolves the passed observable in the
+	 * context of this one, reassessing the context if the observable comes with an
+	 * explicit 'within' clause.
 	 * 
 	 * @param observable
 	 * @return

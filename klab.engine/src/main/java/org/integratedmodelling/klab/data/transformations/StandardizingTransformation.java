@@ -17,11 +17,13 @@ import org.integratedmodelling.klab.rest.StateSummary;
 public class StandardizingTransformation implements IResolver<IState>, IProcessor, IExpression {
 
 	IState state;
+	boolean invert;
 
 	public StandardizingTransformation() {}
 	
 	public StandardizingTransformation(IParameters<String> parameters, IContextualizationScope context) {
 		IArtifact artifact = context.getArtifact(parameters.get("artifact", String.class));
+		this.invert = parameters.get("invert", Boolean.FALSE);
 		if (artifact instanceof IState && (artifact.getType() != Type.NUMBER && artifact.getType() != Type.VALUE)) {
 			throw new IllegalArgumentException("normalization operations can only be performed on numeric states");
 		}
@@ -47,7 +49,11 @@ public class StandardizingTransformation implements IResolver<IState>, IProcesso
 		if (state == null) {
 			state = context.get("self", IState.class);
 		}
+		
 		StateSummary summary = Observations.INSTANCE.getStateSummary(state, context.getScale());
+		double min = Double.NaN;
+		double max = Double.NaN;
+		
 		if (!summary.isDegenerate()) {
 			for (ILocator locator : context.getScale()) {
 				Object value = state.get(locator);
@@ -55,6 +61,19 @@ public class StandardizingTransformation implements IResolver<IState>, IProcesso
 					double nval = ((Number) value).doubleValue();
 					nval = (nval - summary.getMean()) / summary.getStandardDeviation();
 					ret.set(locator, nval);
+					if (invert) {
+						max = Double.isNaN(nval) || max < nval ? nval : max;
+						min = Double.isNaN(nval) || min > nval ? nval : min;
+					}
+				}
+			}
+			
+			if (invert && !Double.isNaN(min) && !Double.isNaN(max)) {
+				for (ILocator locator : context.getScale()) {
+					Object value = ret.get(locator);
+					if (value instanceof Number && !Double.isNaN(((Number) value).doubleValue())) {
+						ret.set(locator, max - ((Number)value).doubleValue() + min);
+					}
 				}
 			}
 		}

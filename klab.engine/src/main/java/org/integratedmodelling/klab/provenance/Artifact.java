@@ -196,6 +196,12 @@ public abstract class Artifact implements IArtifact {
 			public IArtifact getGroupMember(int n) {
 				return null;
 			}
+
+			@Override
+			public long getLastUpdate() {
+				// TODO Auto-generated method stub
+				return 0;
+			}
 		};
 		ret.empty = true;
 		return ret;

@@ -24,7 +24,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Function;
 import org.integratedmodelling.kim.kim.KimPackage;
-import org.integratedmodelling.kim.kim.Metadata;
+import org.integratedmodelling.kim.kim.Map;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
 import org.integratedmodelling.kim.kim.ObserveStatementBody;
 import org.integratedmodelling.kim.kim.Urn;
@@ -150,7 +150,7 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @generated
    * @ordered
    */
-  protected Metadata metadata;
+  protected Map metadata;
 
   /**
    * <!-- begin-user-doc -->
@@ -414,7 +414,7 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @generated
    */
   @Override
-  public Metadata getMetadata()
+  public Map getMetadata()
   {
     return metadata;
   }
@@ -424,9 +424,9 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * <!-- end-user-doc -->
    * @generated
    */
-  public NotificationChain basicSetMetadata(Metadata newMetadata, NotificationChain msgs)
+  public NotificationChain basicSetMetadata(Map newMetadata, NotificationChain msgs)
   {
-    Metadata oldMetadata = metadata;
+    Map oldMetadata = metadata;
     metadata = newMetadata;
     if (eNotificationRequired())
     {
@@ -442,7 +442,7 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
    * @generated
    */
   @Override
-  public void setMetadata(Metadata newMetadata)
+  public void setMetadata(Map newMetadata)
   {
     if (newMetadata != metadata)
     {
@@ -558,7 +558,7 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
         setAccessor((Function)newValue);
         return;
       case KimPackage.OBSERVE_STATEMENT_BODY__METADATA:
-        setMetadata((Metadata)newValue);
+        setMetadata((Map)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -599,7 +599,7 @@ public class ObserveStatementBodyImpl extends MinimalEObjectImpl.Container imple
         setAccessor((Function)null);
         return;
       case KimPackage.OBSERVE_STATEMENT_BODY__METADATA:
-        setMetadata((Metadata)null);
+        setMetadata((Map)null);
         return;
     }
     super.eUnset(featureID);

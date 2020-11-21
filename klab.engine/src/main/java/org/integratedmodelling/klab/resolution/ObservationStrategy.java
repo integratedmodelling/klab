@@ -102,32 +102,33 @@ public class ObservationStrategy {
 			IResolutionScope scope) {
 
 		List<ObservationStrategy> ret = new ArrayList<>();
-
-		if (scope.isOccurrent()) {
-			System.out.println("OCCURS!");
-		}
-		
+		List<IObservable> dependencies = new ArrayList<>();
 		for (IObservable dep : model.getDependencies()) {
-			// add all the active dependencies. Only inherent learners deactivate them so far.
-			if (((Observable)dep).isActive()) {
-				ret.add(new ObservationStrategy((Observable) dep, dep.getDescriptionType().getResolutionMode()));
+			// add all the active dependencies, expanding any generic ones.
+			for (IObservable dependency : expandDependency(dep, observable, model, scope)) {
+				if (((Observable) dependency).isActive()) {
+					dependencies.add(dependency);
+					ret.add(new ObservationStrategy((Observable) dependency,
+							dependency.getDescriptionType().getResolutionMode()));
+				}
 			}
 		}
 
 		if (observable.is(Type.RELATIONSHIP)) {
 			IConcept source = Observables.INSTANCE.getRelationshipSource(observable.getType());
 			IConcept target = Observables.INSTANCE.getRelationshipTarget(observable.getType());
-			if (((Model) model).findDependency(source) == null) {
+			if (findDependency(dependencies, source) == null) {
 				ret.add(new ObservationStrategy(Observable.promote(source), Mode.INSTANTIATION));
 			}
-			if (!target.equals(source) && ((Model) model).findDependency(target) == null) {
+			if (!target.equals(source) && findDependency(dependencies, target) == null) {
 				ret.add(new ObservationStrategy(Observable.promote(target), Mode.INSTANTIATION));
 			}
 		}
-		
+
 		if (observable.getTemporalInherent() != null) {
-			if (((Model) model).findDependency(observable.getTemporalInherent()) == null) {
-				ret.add(new ObservationStrategy(Observable.promote(observable.getTemporalInherent()), Mode.INSTANTIATION));
+			if (findDependency(dependencies, observable.getTemporalInherent()) == null) {
+				ret.add(new ObservationStrategy(Observable.promote(observable.getTemporalInherent()),
+						Mode.INSTANTIATION));
 			}
 		}
 
@@ -137,7 +138,7 @@ public class ObservationStrategy {
 		 */
 		if (observable.getDescriptionType() == IActivity.Description.CLASSIFICATION) {
 			IConcept dep = Observables.INSTANCE.getDescribedType(observable.getType());
-			if (((Model) model).findDependency(dep) == null) {
+			if (findDependency(dependencies, dep) == null) {
 				ret.add(new ObservationStrategy(Observable.promote(dep),
 						observable.getDescriptionType().getResolutionMode()));
 			}
@@ -150,7 +151,7 @@ public class ObservationStrategy {
 		 */
 		if (observable.is(Type.CHANGE) && !model.isResolved()) {
 			IConcept dep = Observables.INSTANCE.getDescribedType(observable.getType());
-			if (((Model) model).findDependency(dep) == null && ((Model) model).findOutput(dep) == null) {
+			if (findDependency(dependencies, dep) == null && ((Model) model).findOutput(dep) == null) {
 				ret.add(new ObservationStrategy(Observable.promote(dep), Mode.RESOLUTION));
 			}
 		}
@@ -162,19 +163,66 @@ public class ObservationStrategy {
 
 			if (operator.getSecond() instanceof IConcept) {
 				IConcept dep = (IConcept) operator.getSecond();
-				if (((Model) model).findDependency(dep) == null) {
+				if (findDependency(dependencies, dep) == null) {
 					ret.add(new ObservationStrategy(Observable.promote(dep),
 							dep.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION));
 				}
 			} else if (operator.getSecond() instanceof IObservable) {
 				IObservable dep = (IObservable) operator.getSecond();
-				if (((Model) model).findDependency(dep) == null) {
+				if (findDependency(dependencies, dep) == null) {
 					ret.add(new ObservationStrategy((Observable) dep, dep.getDescriptionType().getResolutionMode()));
 				}
 			}
 		}
 
 		return ret;
+	}
+
+	/*
+	 * TODO/FIXME - see if this is necessary vs. the other, and if the canResolve
+	 * implementation is still OK. Could/should have a single implementation with
+	 * ISemantic as an argument.
+	 */
+	private static IObservable findDependency(List<IObservable> dependencies, IObservable concept) {
+		for (IObservable dependency : dependencies) {
+			if (((Observable) concept).canResolve((Observable) dependency)) {
+				return dependency;
+			}
+		}
+		return null;
+	}
+
+	private static List<IObservable> expandDependency(IObservable dep, IObservable observable, IModel model,
+			IResolutionScope scope) {
+		List<IObservable> ret = new ArrayList<>();
+		if (dep.isGeneric()) {
+			IConcept type = dep.getType();
+			if (type.is(Type.ROLE)) {
+				for (IConcept role : scope.getRoles().keySet()) {
+					if (role.is(type)) {
+						for (IConcept obs : scope.getRoles().get(role)) {
+							ret.add(Observable.promote(obs).withRole(type));
+						}
+					}
+				}
+			}
+		} else {/*
+			 * for now abstract is OK due to its role in attribute instantiator, TODO check
+			 * later else if (dep.isAbstract()) { // TODO System.out.println("HOSTIAZ"); }
+			 */
+			ret.add(dep);
+		}
+		return ret;
+
+	}
+
+	private static IObservable findDependency(List<IObservable> dependencies, IConcept concept) {
+		for (IObservable dependency : dependencies) {
+			if (dependency.getType().getSemanticDistance(concept) == 0) {
+				return dependency;
+			}
+		}
+		return null;
 	}
 
 	/**
@@ -207,7 +255,7 @@ public class ObservationStrategy {
 				? Observables.INSTANCE.getDirectInherentType(observable.getType())
 				: null;
 		if (inherent != null) {
-			IConcept context = /*Observables.INSTANCE.getContextType(observable.getType())*/ observable.getContext();
+			IConcept context = /* Observables.INSTANCE.getContextType(observable.getType()) */ observable.getContext();
 			if (context != null && context.equals(inherent)) {
 				observable = observable.getBuilder(scope.getMonitor()).without(ObservableRole.INHERENT)
 						.buildObservable();
@@ -403,7 +451,7 @@ public class ObservationStrategy {
 	public Mode getMode() {
 		return this.mode;
 	}
-	
+
 	/**
 	 * Tells the model and the dataflow compiler how to handle the
 	 * contextualization.

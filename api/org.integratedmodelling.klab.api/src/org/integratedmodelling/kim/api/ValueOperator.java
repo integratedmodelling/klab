@@ -31,7 +31,7 @@ public enum ValueOperator {
 	OVER("over", "over", false);
 	
     public String declaration;
-    public String textForm;
+	public String textForm;
     public boolean isModifier;
     
 	ValueOperator(String declaration, String textForm, boolean modifier) {
@@ -41,6 +41,10 @@ public enum ValueOperator {
     }
 
 	public static ValueOperator getOperator(String valueModifier) {
+		if ("only".equals(valueModifier)) {
+			// 'is' synonym for classifications
+			valueModifier = "=";
+		}
 		for (ValueOperator m : ValueOperator.values()) {
 			if (m.declaration.equals(valueModifier)) {
 				return m;

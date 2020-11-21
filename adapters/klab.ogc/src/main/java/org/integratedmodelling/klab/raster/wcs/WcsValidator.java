@@ -19,12 +19,15 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator.Operation;
@@ -106,8 +109,14 @@ public class WcsValidator implements IResourceValidator {
     }
 
     @Override
-    public IResource performOperation(IResource resource, String operationName, IMonitor monitor) {
+    public IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog, IMonitor monitor) {
         throw new KlabUnimplementedException("resource operations unimplemented");
     }
 
+	@Override
+	public Map<String, Object> describeResource(IResource resource) {
+		Map<String, Object> ret = new LinkedHashMap<>();
+		// TODO
+		return ret;
+	}
 }

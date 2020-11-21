@@ -7,8 +7,6 @@ public enum TokenType {
             TokenAuthentication.class),
     password(
             TokenChangePasswordClickback.class),
-    groups(
-    		GroupsClickbackToken.class),
 	invite(
 			TokenInviteUserClickback.class),
 	newUser(
