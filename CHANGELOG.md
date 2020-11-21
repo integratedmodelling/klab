@@ -12,6 +12,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [0.10.0.232] -- 2020/11/21
 ### Added
+- Streamline and modularize the geocoding services so that more can be
+  added easily. Implement the standard bounding box naming and add 
+  administrative and watershed selection based on FSCAN node-provided
+  services.
 - Parameter "invert" for normalizing and standardizing contextualizers.
 - FSCAN adapter indexes multiple vector sources and provides fast reaction to
   queries for the smallest polygon that fits the bounding box, plus the ability
