@@ -27,6 +27,7 @@ import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.Aggregation;
@@ -41,6 +42,8 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.knowledge.IViewModel.Schedule;
+import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -413,7 +416,7 @@ public class TableCompiler {
 		// a
 		// object match. Not used for filtering.
 		public ObservedConcept objectFilter;
-		
+
 		// save the last value matched through classifier. For debugging only.
 		Object lastMatched;
 
@@ -947,6 +950,7 @@ public class TableCompiler {
 
 		/**
 		 * for debugging
+		 * 
 		 * @param concept
 		 * @return
 		 */
@@ -979,7 +983,7 @@ public class TableCompiler {
 
 			return false;
 		}
-		
+
 		/**
 		 * For each one of the observations in this group, make a copy of this with the
 		 * filter that has the objectFilter matching that specific observation.
@@ -1437,7 +1441,20 @@ public class TableCompiler {
 			}
 
 		} else if (object != null) {
-			throw new KlabValidationException("Table definition: unknown target: " + object);
+
+			IKimObject resource = Resources.INSTANCE.getModelObject(object.toString());
+			if (resource instanceof IModel) {
+				IObservable trgObs = ((IModel) resource).getObservables().get(0);
+				target = new ObservedConcept(Observable.promote((IModel) resource),
+						trgObs.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+				targetType = trgObs.is(Type.QUALITY) ? TargetType.QUALITY : null;
+				ret.add(new Pair<>(target, targetType));
+				this.observables.add(target);
+				
+			} else {
+				throw new KlabValidationException("Table definition: unknown target: " + object);
+			}
+
 		} else {
 			// universal
 			ret.add(new Pair<>(null, null));
@@ -1876,7 +1893,7 @@ public class TableCompiler {
 							|| !column.isActive(catalog, value.getSecond(), phase, value.getFirst(), scope)) {
 						continue;
 					}
-					
+
 					ObservedConcept columnTarget = column.target == null ? this.target : column.target;
 					TargetType columnTargetType = column.targetType == null ? this.targetType : column.targetType;
 					ComputationType columnComputationType = column.computationType;
@@ -1893,6 +1910,10 @@ public class TableCompiler {
 						if (!row.isActive(catalog, value.getSecond(), phase, value.getFirst(), scope)) {
 							continue;
 						}
+						
+//						if (row.matches(Concepts.c("es.nca:Cropland"))) {
+//							System.out.println("HSOS");
+//						}
 
 						// bring along the data of computation closest to us
 						ObservedConcept rowTarget = getCellTarget(row, column, columnTarget);
@@ -2026,8 +2047,8 @@ public class TableCompiler {
 
 			row.columnTargets.put(column.id, trg);
 
-			System.out.println(row.id +"," + column.id +": " + trg + "; col = " + column +", row = " + row);
-			
+//			System.out.println(row.id + "," + column.id + ": " + trg + "; col = " + column + ", row = " + row);
+
 		}
 
 		return row.columnTargets.get(column.id);
@@ -2289,6 +2310,10 @@ public class TableCompiler {
 
 	public TableCompiler contextualize(IRuntimeScope scope) {
 		return new TableCompiler(this, scope);
+	}
+
+	public IObservable getTargetObservable() {
+		return this.target == null ? null : this.target.getObservable();
 	}
 
 }

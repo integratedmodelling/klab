@@ -34,7 +34,7 @@ public interface IViewModel extends IResolvable, IKimObject {
 	 *
 	 */
 	interface Schedule {
-		
+
 		boolean isStart();
 
 		boolean isInit();
@@ -96,5 +96,13 @@ public interface IViewModel extends IResolvable, IKimObject {
 	 * @return
 	 */
 	Schedule getSchedule();
+
+	/**
+	 * The target observable. This one may return null but if it does, a runtime
+	 * error will be generated when the view is computed.
+	 * 
+	 * @return
+	 */
+	IObservable getTargetObservable();
 
 }

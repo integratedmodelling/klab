@@ -435,7 +435,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	}
 
 	public void register(LoadApplicationRequest request) {
-		System.out.println("ZIO CAN " + request);
+//		System.out.println("ZIO CAN " + request);
 	}
 
 	public void register(ViewAction action) {
@@ -679,7 +679,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	 */
 	public void updateView(ViewComponent component) {
 		// TODO Auto-generated method stub
-		System.out.println("UPDATE VIEW CALLED");
+//		System.out.println("UPDATE VIEW CALLED");
 	}
 
 	@Override
