@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.engine;
 
 import java.io.File;
+import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -15,24 +16,20 @@ import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.services.CloseRemoteSession;
 import org.integratedmodelling.klab.engine.services.ConsulDnsService;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class RemoteEngine extends Engine {
 	
-    /**
-	 * 
-	 */
-	@Autowired
-	ConsulDnsService consulDnsService;
-	
 	private static final long serialVersionUID = -7180871922872370852L;
+	
+	private Long sessionDeadBand = 1L;
+	private ConsulDnsService dnsService;
 	
 	public RemoteEngine(ICertificate certificate) {
         super(certificate);
-        //consulDnsService.setIntialServiceWeight();
     }
     
    
@@ -76,8 +73,27 @@ public class RemoteEngine extends Engine {
 		return ret;
 	}
 	
+	
 	@Override
 	protected void closeExpiredSessions() {
+		try {
+			Logging.INSTANCE.info("Collecting dead souls");
+			long current = System.currentTimeMillis();
+			activeSessions().forEach(sesh -> {
+	 			long last = sesh.getLastActivity();
+				if(last < (current + sessionDeadBand * 60)) {
+					dnsService.removeSessionWeight(sesh);
+				}
+				try {
+					sesh.close();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			});	
+		} catch ( Exception e ) {
+			System.out.println( e.toString() );
+		}
 		
 	}
 
@@ -89,4 +105,10 @@ public class RemoteEngine extends Engine {
 		});
 		return sessions;
 	}
+
+
+	public void setDnsService(ConsulDnsService dnsService) {
+		this.dnsService = dnsService;
+	}
+
 }
