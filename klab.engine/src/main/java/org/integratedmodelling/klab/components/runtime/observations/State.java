@@ -308,5 +308,10 @@ public class State extends Observation implements IState, IKeyHolder {
 			updateTimestamps.add(0L);
 		}
 	}
+	
+	@Override
+	public String dump() {
+		return "";
+	}
 
 }

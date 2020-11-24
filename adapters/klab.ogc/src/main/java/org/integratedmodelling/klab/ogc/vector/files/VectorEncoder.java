@@ -128,9 +128,12 @@ public class VectorEncoder implements IResourceEncoder {
 				: true;
 
 		Map<String, Class<?>> attributes = new HashMap<>();
+		Map<String, String> attributeNames = new HashMap<>();
+
 		for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
 			if (!ad.getLocalName().equals(geomName)) {
 				attributes.put(ad.getLocalName(), ad.getType().getBinding());
+				attributeNames.put(ad.getLocalName().toLowerCase(), ad.getLocalName());
 				if (idRequested == null && (urnParameters.containsKey(ad.getLocalName().toLowerCase())
 						|| urnParameters.containsKey(ad.getLocalName().toUpperCase()))) {
 					try {
@@ -197,6 +200,7 @@ public class VectorEncoder implements IResourceEncoder {
 		if (nameAttribute == null && attributes.get("NAME") != null) {
 			nameAttribute = "NAME";
 		}
+		
 
 		int n = 1;
 		FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
@@ -230,12 +234,9 @@ public class VectorEncoder implements IResourceEncoder {
 					Object value = Boolean.TRUE;
 
 					if (idRequested != null) {
-						value = feature.getAttribute(idRequested);
-						if (value == null) {
-							value = feature.getAttribute(idRequested.toUpperCase());
-						}
-						if (value == null) {
-							value = feature.getAttribute(idRequested.toLowerCase());
+						String attrName = attributeNames.get(idRequested);
+						if (attrName != null) {
+							value = feature.getAttribute(attrName);
 						}
 					}
 
@@ -285,7 +286,7 @@ public class VectorEncoder implements IResourceEncoder {
 		}
 
 		it.close();
-
+		
 		if (rasterize) {
 			final Builder stateBuilder = builder;
 			rasterizer.finish((b, xy) -> {

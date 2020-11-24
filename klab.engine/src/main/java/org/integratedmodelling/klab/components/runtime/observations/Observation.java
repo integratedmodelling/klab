@@ -1,14 +1,9 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.ArrayList;
-import java.util.Collections;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -461,13 +456,12 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		return globalState;
 	}
 
-//	@Override
-//	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
-//		this.stateChangeListeners.put(name, listener);
-//	}
-//
-//	@Override
-//	public void removeStateChangeListener(String name) {
-//		this.stateChangeListeners.remove(name);
-//	}
+	/**
+	 * Debug output with as much detail as possible on the internal structure.
+	 * 
+	 * @return
+	 */
+	public abstract String dump();
+	
+	
 }

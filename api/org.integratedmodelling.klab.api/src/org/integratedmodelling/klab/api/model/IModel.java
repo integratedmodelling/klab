@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IComputationProvider;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
  * A Model is a statement that produces a computed observation. It has at least
@@ -128,13 +129,14 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * @param observable a
 	 *                   {@link org.integratedmodelling.klab.api.knowledge.IObservable}
 	 *                   object.
-	 * @param the        context of the observation, or null
+	 * @param context of the observation, or null
+	 * @param monitor
 	 * @return the name with which the passed observable (or one compatible with it)
 	 *         is known in this model. If the observable isn't found in the model,
 	 *         this method should return the passed observable's local name, not
 	 *         null.
 	 */
-	String getLocalNameFor(IObservable observable, IConcept context);
+	String getLocalNameFor(IObservable observable, IConcept context, IMonitor monitor);
 
 	/**
 	 * Return true if this model can be computed on its own and has associated data.

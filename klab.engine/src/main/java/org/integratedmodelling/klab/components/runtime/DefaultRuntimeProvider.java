@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
@@ -160,7 +161,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 					if (monitor.isInterrupted()) {
 						return null;
 					}
-					
+
 					if (firstActuator == null) {
 						firstActuator = actuator;
 					}
@@ -195,7 +196,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 										&& ((AbstractTask<?>) monitor.getIdentity()).isChildTask())) {
 							((Actuator) active).notifyArtifacts(i == order.size() - 1, ctx);
 						}
-						
+
 						if (monitor.isInterrupted()) {
 							return null;
 						}
@@ -266,7 +267,15 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			}
 		} else if (resource.getUrn() != null) {
 			if (resource.getComputationMode() == Mode.INSTANTIATION) {
-				ret = UrnInstantiator.getServiceCall(resource.getUrn(), resource.getCondition(), resource.isNegated());
+				if (observable.getDescriptionType() == Description.INSTANTIATION) {
+					ret = UrnInstantiator.getServiceCall(resource.getUrn(), resource.getCondition(),
+							resource.isNegated());
+				} else if (observable.getDescriptionType() == Description.QUANTIFICATION) {
+					// observable should contain an attribute to dereify
+					String urn = resource.getUrn() + (((Observable) observable).getDereifiedAttribute() == null ? ""
+							: ("#" + ((Observable) observable).getDereifiedAttribute()));
+					ret = UrnResolver.getServiceCall(urn, resource.getCondition(), resource.isNegated());
+				}
 			} else {
 				ret = UrnResolver.getServiceCall(resource.getUrn(), resource.getCondition(), resource.isNegated());
 			}

@@ -272,4 +272,10 @@ public class SubjectiveState extends Observation implements ISubjectiveState {
 		}
 	}
 
+	@Override
+	public String dump() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
