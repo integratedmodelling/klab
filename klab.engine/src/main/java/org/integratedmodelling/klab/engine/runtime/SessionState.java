@@ -237,6 +237,11 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	public boolean deactivateScenario(String scenario) {
 		return this.scenarios.remove(scenario);
 	}
+	
+	@Override
+	public ISubject getCurrentContext() {
+		return context;
+	}
 
 	@Override
 	public IGeometry getGeometry() {
