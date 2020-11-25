@@ -77,13 +77,19 @@
 	</build>
 	<dependencies>
 
-		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils -->
 		<dependency>
+			<groupId>org.beryx</groupId>
+			<artifactId>text-io</artifactId>
+			<version>3.4.1</version>
+		</dependency>
+
+ 		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils 
+ 				<dependency>
 			<groupId>commons-beanutils</groupId>
 			<artifactId>commons-beanutils</artifactId>
 			<version>1.9.4</version>
 		</dependency>
-
+ -->
 
 		<!-- for tests. Remove at will. -->
 		<dependency>

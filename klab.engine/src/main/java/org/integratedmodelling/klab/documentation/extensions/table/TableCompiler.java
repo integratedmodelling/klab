@@ -61,6 +61,7 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
+import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -1937,6 +1938,8 @@ public class TableCompiler {
 						boolean inconsistentAggregation = columnComputationType != null && row.computationType != null
 								&& rowComputationType.isAggregation() && column.computationType.isAggregation()
 								&& row.computationType != column.computationType;
+						
+//						Debug.INSTANCE.say("DIO PIROGA");
 
 						Object val = value.getFirst();
 						if (rowTargetType != null && rowTarget != null) {

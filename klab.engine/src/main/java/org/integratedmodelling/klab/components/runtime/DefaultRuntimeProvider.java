@@ -338,8 +338,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IDataArtifact distributeComputation(IStateResolver resolver, IState data, IContextualizationScope context,
-			ILocator scale) throws KlabException {
+	public IDataArtifact distributeComputation(IStateResolver resolver, IObservation data, IContextualizable resource,
+			IContextualizationScope context, ILocator scale) throws KlabException {
 
 		boolean reentrant = !resolver.getClass().isAnnotationPresent(NonReentrant.class);
 		if (System.getProperty("synchronous") != null
@@ -347,15 +347,16 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			reentrant = false;
 		}
 		IArtifact self = context.get("self", IArtifact.class);
+		IState target = data instanceof IState ? (IState)data : context.get(resource.getTargetId(), IState.class);
 		RuntimeScope ctx = new RuntimeScope((RuntimeScope) context, context.getVariables());
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
-
+		
 //		System.err.println("DISTRIBUTING COMPUTATION FOR " + data + " AT " + scale + " WITH " + resolver);
 
 		if (reentrant) {
 			StreamSupport.stream(((Scale) scale).spliterator(context.getMonitor()), true).forEach((state) -> {
 				if (!context.getMonitor().isInterrupted()) {
-					data.set(state, resolver.resolve(data.getObservable(),
+					target.set(state, resolver.resolve(target.getObservable(),
 							variables.isEmpty() ? ctx : localizeContext(ctx, state, self, variables)));
 				}
 			});
@@ -364,7 +365,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				if (context.getMonitor().isInterrupted()) {
 					break;
 				}
-				data.set(state, resolver.resolve(data.getObservable(),
+				target.set(state, resolver.resolve(target.getObservable(),
 						variables.isEmpty() ? ctx : localizeContext(ctx, (IScale) state, self, variables)));
 			}
 		}
@@ -373,7 +374,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 //
 //		Debug.INSTANCE.summarize(data);
 
-		return data;
+		return target;
 	}
 
 	private IContextualizationScope localizeContext(RuntimeScope context, IScale state, IArtifact self,

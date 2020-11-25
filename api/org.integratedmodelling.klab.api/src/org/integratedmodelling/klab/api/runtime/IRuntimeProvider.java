@@ -108,18 +108,24 @@ public interface IRuntimeProvider {
 	 * Distribute the computation of the passed state resolver over the passed
 	 * scale.
 	 *
-	 * @param resolver the state contextualizer, which will be called as many times
-	 *                 as scale.size().
-	 * @param data     the data being computed (receiver of results). According to
-	 *                 the context of computation it may or may not contain
-	 *                 initialized values.
-	 * @param context  the context before distribution - i.e., all states in it will
-	 *                 be whole states and need to be contextualized to each extent
-	 *                 before computation happens (the resolver expects individual
-	 *                 values at each call). The current version of the target
-	 *                 artifact will be set in it as 'self' if it exists.
-	 * @param scale    the scale, already set to the geometry needed for this
-	 *                 computation so that all of its states are computed.
+	 * @param resolver   the state contextualizer, which will be called as many
+	 *                   times as scale.size().
+	 * @param mainTarget the observation being computed. This may be a state if the
+	 *                   computation is resolving one, but also a process where the
+	 *                   specific contextualizable targets a state. According to the
+	 *                   context of computation, the state may or may not contain
+	 *                   initialized values.
+	 * @param resource   the computation to be distributed, which has generated the
+	 *                   resolver. This is passed because in case the main target is
+	 *                   a process, it should be used to retrieve the state that is
+	 *                   the ultimate target of the computation.
+	 * @param context    the context before distribution - i.e., all states in it
+	 *                   will be whole states and need to be contextualized to each
+	 *                   extent before computation happens (the resolver expects
+	 *                   individual values at each call). The current version of the
+	 *                   target artifact will be set in it as 'self' if it exists.
+	 * @param scale      the scale, already set to the geometry needed for this
+	 *                   computation so that all of its states are computed.
 	 * 
 	 * @return the computed result - return the same object passed as data whenever
 	 *         possible. If a different one is collected, the original one will be
@@ -127,8 +133,8 @@ public interface IRuntimeProvider {
 	 * 
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	IDataArtifact distributeComputation(IStateResolver resolver, IState data, IContextualizationScope context,
-			ILocator locator) throws KlabException;
+	IDataArtifact distributeComputation(IStateResolver resolver, IObservation mainTarget, IContextualizable resource,
+			IContextualizationScope context, ILocator locator) throws KlabException;
 
 	/**
 	 * The "empty" observation must contain the observable and the scale. It is

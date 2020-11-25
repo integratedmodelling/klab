@@ -6,6 +6,10 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
+import org.beryx.textio.TextIO;
+import org.beryx.textio.TextIoFactory;
+import org.beryx.textio.TextTerminal;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.utils.Triple;
@@ -15,8 +19,14 @@ public enum Debug {
 
 	INSTANCE;
 
+	TextIO textIO = null;
+	TextTerminal<?> terminal = null;
 	Map<Long, Triple<Long, String, Consumer<Period>>> timers = Collections.synchronizedMap(new HashMap<>());
 	AtomicLong timerIDs = new AtomicLong(0L);
+
+	public boolean isDebug() {
+		return Configuration.INSTANCE.getProperty("debug", null) != null;
+	}
 
 	public void summarize(Object object) {
 		if (object instanceof RescalingState) {
@@ -24,6 +34,21 @@ public enum Debug {
 		} else if (object instanceof State) {
 
 		}
+	}
+
+	public void say(String string) {
+		if (textIO == null) {
+			textIO = TextIoFactory.getTextIO();
+			terminal = textIO.getTextTerminal();
+		}
+		terminal.println(string);
+	}
+
+	public String ask(String prompt) {
+		if (textIO == null) {
+			textIO = TextIoFactory.getTextIO();
+		}
+		return textIO.newStringInputReader().read(prompt);
 	}
 
 	/**
