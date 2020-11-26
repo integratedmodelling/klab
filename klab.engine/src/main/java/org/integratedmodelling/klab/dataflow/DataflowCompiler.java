@@ -341,6 +341,7 @@ public class DataflowCompiler {
 			Actuator ret = Actuator.create(dataflow, mode);
 
 			IObservable modelObservable = null;
+			String attributeId = null;
 			if (!models.isEmpty()) {
 				modelObservable = models.iterator().next().model.getObservables().get(0);
 				if (!modelObservable.getType().resolves(this.observable.getType(), getDataflowContext())) {
@@ -349,26 +350,41 @@ public class DataflowCompiler {
 					 * may be an attribute, in which case we already have the observation, nothing
 					 * is needed and we return null and get ignored.
 					 */
-					for (IObservable attribute : models.iterator().next().model.getAttributeObservables().values()) {
+					IObservable inherentAttribute = null;
+					for (String key : models.iterator().next().model.getAttributeObservables().keySet()) {
+						IObservable attribute = models.iterator().next().model.getAttributeObservables().get(key);
 						if (attribute.getType().resolves(this.observable.getType(), getDataflowContext())) {
-							return null;
+							attributeId = key;
+							if (generated.contains(models.iterator().next())) {
+								return null;
+							} else {
+								inherentAttribute = attribute;
+								break;
+							}
 						}
 					}
-					/**
-					 * Secondary output! We may be already part of the actuator for this (in which
-					 * case we just add our empty actuator to create the observation and leave it to
-					 * the outer actuator) or we may not, in which case we must create the outer
-					 * actuator and put the empty actuator in it.
-					 */
-					if (!generated.contains(models.iterator().next())) {
+					if (inherentAttribute != null) {
 
+						/*
+						 * Resolve the secondary output as the primary target of the actuator.
+						 */
+						
+					} else if (!generated.contains(models.iterator().next())) {
+
+						/**
+						 * Secondary output! We may be already part of the actuator for this (in which
+						 * case we just add our empty actuator to create the observation and leave it to
+						 * the outer actuator) or we may not, in which case we must create the outer
+						 * actuator and put the empty actuator in it.
+						 */
 						Actuator child = Actuator.create(dataflow,
 								this.observable.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
 						child.setObservable(this.observable);
 						child.setName(observable.getReferenceName());
 						if (models.size() > 0) {
-							child.setAlias(models.iterator().next().model
-									.getCompatibleOutput(observable, getDataflowContext()).getName());
+							child.setAlias(models.iterator().next().model.getCompatibleOutput(
+									inherentAttribute == null ? observable : (Observable) inherentAttribute,
+									getDataflowContext(), monitor).getName());
 						}
 						child.setType(this.observable.getArtifactType());
 						child.setExport(true);
@@ -381,6 +397,7 @@ public class DataflowCompiler {
 			}
 
 			ret.setObservable(observable);
+			ret.getObservable().setDereifiedAttribute(attributeId);
 			ret.setName(observable.getReferenceName());
 			ret.setAlias(observable.getName());
 			ret.getDeferredObservables().addAll(deferredObservables);
@@ -448,7 +465,7 @@ public class DataflowCompiler {
 				ModelD theModel = models.iterator().next();
 				ret.setReferenceName(theModel.model.getObservables().get(0).getName());
 				defineActuator(ret,
-						root ? observable.getName() : theModel.model.getLocalNameFor(observable, getDataflowContext()),
+						root ? observable.getName() : theModel.model.getLocalNameFor(observable, getDataflowContext(), monitor),
 						theModel, generated);
 
 			} else if (this.hasPartitions) {
@@ -472,7 +489,7 @@ public class DataflowCompiler {
 
 					// rename and set the target name as partitioned. Number is the priority if
 					// known.
-					String name = modelDesc.model.getLocalNameFor(observable, getDataflowContext()) + "_" + index;
+					String name = modelDesc.model.getLocalNameFor(observable, getDataflowContext(), monitor) + "_" + index;
 					partial.setPartitionedTarget(ret.getName());
 					partial.setName(name);
 					partial.setObservable(observable);
@@ -742,7 +759,7 @@ public class DataflowCompiler {
 
 					Model model = md.model;
 
-					modelObservable = model.getCompatibleOutput(ret.getObservable(), getDataflowContext());
+					modelObservable = model.getCompatibleOutput(ret.getObservable(), getDataflowContext(), scope.getMonitor());
 					if (modelObservable == null) {
 						continue;
 					}
@@ -944,7 +961,7 @@ public class DataflowCompiler {
 
 				Model model = (Model) source;
 
-				Observable compatibleOutput = model.getCompatibleOutput(ret.observable, getDataflowContext());
+				Observable compatibleOutput = model.getCompatibleOutput(ret.observable, getDataflowContext(), monitor);
 				if (compatibleOutput == null) {
 					// only happens when the observable is resolved indirectly
 					compatibleOutput = ret.observable;
@@ -1172,5 +1189,5 @@ public class DataflowCompiler {
 
 		return ret;
 	}
-	
+
 }

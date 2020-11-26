@@ -77,4 +77,9 @@ public class TableViewModel extends KimObject implements IViewModel {
 	public Schedule getSchedule() {
 		return spreadsheet.getSchedule();
 	}
+
+	@Override
+	public IObservable getTargetObservable() {
+		return spreadsheet.getTargetObservable();
+	}
 }

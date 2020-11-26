@@ -219,5 +219,10 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	public void setActive(boolean active) {
 		this.active = active;
 	}
+	
+	@Override
+	public String dump() {
+		return "";
+	}
 
 }

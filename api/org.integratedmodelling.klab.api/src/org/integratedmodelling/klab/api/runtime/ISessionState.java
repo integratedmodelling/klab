@@ -117,4 +117,12 @@ public interface ISessionState extends IParameters<String> {
 	 * @return
 	 */
 	Map<IConcept, Collection<IConcept>> getRoles();
+
+	/**
+	 * A session can have many context, but the current session state has one (the
+	 * last established) or none.
+	 * 
+	 * @return
+	 */
+	ISubject getCurrentContext();
 }

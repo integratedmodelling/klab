@@ -1085,6 +1085,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 				// attribute the name if any
 				if (dataflow.getTargetName() != null && ((Actuator) actuator).getMode() == Mode.RESOLUTION
+						&& dataflow.getObservationGroup() != null
 						&& observable.is(dataflow.getObservationGroup().getObservable())) {
 					obs = new Observable(obs);
 					obs.setName(dataflow.getTargetName());

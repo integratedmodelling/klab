@@ -70,4 +70,10 @@ public class GraphViewModel extends KimObject implements IViewModel {
 		// TODO Auto-generated method stub
 		return null;
 	}
+
+	@Override
+	public IObservable getTargetObservable() {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

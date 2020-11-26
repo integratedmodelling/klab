@@ -25,7 +25,6 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Time;
-import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -42,7 +41,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.common.Geometry;
-import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -238,6 +236,11 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	@Override
 	public boolean deactivateScenario(String scenario) {
 		return this.scenarios.remove(scenario);
+	}
+	
+	@Override
+	public ISubject getCurrentContext() {
+		return context;
 	}
 
 	@Override
@@ -435,7 +438,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	}
 
 	public void register(LoadApplicationRequest request) {
-		System.out.println("ZIO CAN " + request);
+//		System.out.println("ZIO CAN " + request);
 	}
 
 	public void register(ViewAction action) {
@@ -679,7 +682,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	 */
 	public void updateView(ViewComponent component) {
 		// TODO Auto-generated method stub
-		System.out.println("UPDATE VIEW CALLED");
+//		System.out.println("UPDATE VIEW CALLED");
 	}
 
 	@Override

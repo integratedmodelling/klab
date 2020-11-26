@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.scale.Extent;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
  * Smart storage using a configurable backend to store slices that are only
@@ -476,6 +477,17 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	@Override
 	public void addContextualizationListener(Consumer<ILocator> listener) {
 		this.listeners.add(listener);
+	}
+
+	public String getInfo(int indent) {
+		String spacer = StringUtil.spaces(indent);
+		String ret = null;
+		for (Long key : slices.keySet()) {
+			Slice slice = slices.get(key);
+			ret += spacer + slice + "\n";
+			ret += spacer + spacer + "nodata: + " + slice.nodata + "; " + slice.statistics + "\n";
+		}
+		return ret;
 	}
 
 }

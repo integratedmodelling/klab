@@ -31,7 +31,7 @@ public enum ValueOperator {
 	OVER("over", "over", false);
 	
     public String declaration;
-    public String textForm;
+	public String textForm;
     public boolean isModifier;
     
 	ValueOperator(String declaration, String textForm, boolean modifier) {

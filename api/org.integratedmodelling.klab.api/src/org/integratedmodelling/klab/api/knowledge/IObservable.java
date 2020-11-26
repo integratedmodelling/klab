@@ -340,6 +340,15 @@ public interface IObservable extends ISemantic, IResolvable {
 		 */
 		Builder withTemporalInherent(IConcept concept);
 
+		/**
+		 * Add the dereified attribute to the observable. Will only affect the
+		 * computations built from it after it's resolved.
+		 * 
+		 * @param dereifiedAttribute
+		 * @return
+		 */
+		Builder withDereifiedAttribute(String dereifiedAttribute);
+
 	}
 
 	/**

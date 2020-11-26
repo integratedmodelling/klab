@@ -22,5 +22,6 @@
   	<module>klab.component.landcover</module>
   	<module>klab.component.noisemodelling</module>
   	<module>klab.component.random</module>
+  	<module>klab.component.sdmx</module>
   </modules>
 </project>

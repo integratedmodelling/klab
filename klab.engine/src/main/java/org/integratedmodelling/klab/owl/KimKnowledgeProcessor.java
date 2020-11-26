@@ -395,8 +395,7 @@ public enum KimKnowledgeProcessor {
 				operand = declare((IKimObservable) operator.getSecond(), (Ontology) declarationOntology, monitor);
 				declaration += " (" + operator.getSecond() + ")";
 				ret.setReferenceName(
-						ret.getReferenceName() + "_" + ((IKimObservable) operator.getSecond()).getFormalName());
-
+						ret.getReferenceName() + "_" + ((IKimObservable) operator.getSecond()).getCodeName().replaceAll("\\-", "_"));
 			} else {
 
 				operand = operator.getSecond();
@@ -407,6 +406,7 @@ public enum KimKnowledgeProcessor {
 			}
 
 			ret.getValueOperators().add(new Pair<>(operator.getFirst(), operand));
+			
 		}
 
 		ret.setDeclaration(declaration);
