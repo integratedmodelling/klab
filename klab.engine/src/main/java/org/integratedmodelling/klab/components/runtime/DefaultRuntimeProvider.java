@@ -338,7 +338,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IDataArtifact distributeComputation(IStateResolver resolver, IObservation data, IContextualizable resource,
+	public IObservation distributeComputation(IStateResolver resolver, IObservation data, IContextualizable resource,
 			IContextualizationScope context, ILocator scale) throws KlabException {
 
 		boolean reentrant = !resolver.getClass().isAnnotationPresent(NonReentrant.class);
@@ -347,7 +347,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			reentrant = false;
 		}
 		IArtifact self = context.get("self", IArtifact.class);
-		IState target = data instanceof IState ? (IState)data : context.get(resource.getTargetId(), IState.class);
+		final IState target = data instanceof IState ? (IState)data : context.getArtifact(resource.getTargetId(), IState.class);
 		RuntimeScope ctx = new RuntimeScope((RuntimeScope) context, context.getVariables());
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
 		
@@ -374,7 +374,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 //
 //		Debug.INSTANCE.summarize(data);
 
-		return target;
+		return data;
 	}
 
 	private IContextualizationScope localizeContext(RuntimeScope context, IScale state, IArtifact self,

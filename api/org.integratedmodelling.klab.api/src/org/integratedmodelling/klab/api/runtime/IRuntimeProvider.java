@@ -26,10 +26,9 @@ import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
-import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -127,13 +126,14 @@ public interface IRuntimeProvider {
 	 * @param scale      the scale, already set to the geometry needed for this
 	 *                   computation so that all of its states are computed.
 	 * 
-	 * @return the computed result - return the same object passed as data whenever
-	 *         possible. If a different one is collected, the original one will be
-	 *         garbage collected.
+	 * @return the computed result - return the same object passed as main target
+	 *         whenever possible. If a different one is collected, the original one
+	 *         will be garbage collected. If the passed observation is a process
+	 *         (change), return the process, not the resource target state.
 	 * 
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	IDataArtifact distributeComputation(IStateResolver resolver, IObservation mainTarget, IContextualizable resource,
+	IObservation distributeComputation(IStateResolver resolver, IObservation mainTarget, IContextualizable resource,
 			IContextualizationScope context, ILocator locator) throws KlabException;
 
 	/**
