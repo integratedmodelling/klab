@@ -110,7 +110,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 	/**
 	 * Check interval for session expiration in minutes. TODO configure.
 	 */
-	protected long sessionCheckMinutes = 1L;
+	protected long sessionCheckMinutes = 15L;
 	private ScheduledFuture<?> sessionClosingTask;
 
 	public static class Monitor implements IMonitor {
@@ -619,7 +619,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 			 * Schedule the session reaper
 			 */
 			this.sessionClosingTask = scheduler.scheduleAtFixedRate(() -> closeExpiredSessions(), 1,
-					sessionCheckMinutes, TimeUnit.SECONDS);
+					sessionCheckMinutes, TimeUnit.MINUTES);
 
 			/*
 			 * After the engine has successfully booted, it becomes the root identity and is

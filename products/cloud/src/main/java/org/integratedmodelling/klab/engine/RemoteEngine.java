@@ -5,7 +5,6 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
-
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
@@ -24,7 +23,7 @@ public class RemoteEngine extends Engine {
 	
 	private static final long serialVersionUID = -7180871922872370852L;
 	
-	private Long sessionDeadBand = 1L;
+	private Long sessionDeadBand = 24L;
 	private ConsulDnsService dnsService;
 	
 	public RemoteEngine(ICertificate certificate) {
@@ -76,18 +75,17 @@ public class RemoteEngine extends Engine {
 	@Override
 	protected void closeExpiredSessions() {
 		try {
-			Logging.INSTANCE.info("Collecting dead souls");
 			long current = System.currentTimeMillis();
 			activeSessions().forEach(sesh -> {
-	 			long last = sesh.getLastActivity();
-				if(last < (current + sessionDeadBand * 60)) {
-					dnsService.removeSessionWeight(sesh);
-				}
-				try {
-					sesh.close();
-				} catch (IOException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
+	 			long last = sesh.getLastActivity() + (sessionDeadBand * 3600000) ;
+				if(last < (current)) {
+					try {
+						sesh.close();
+						dnsService.removeSessionWeight(sesh);
+					} catch (IOException e) {
+						// I do not want to throw anything because the thread would die
+						Logging.INSTANCE.info("Error closing inactive session or removing dead weight.");
+					}
 				}
 			});	
 		} catch ( Exception e ) {
