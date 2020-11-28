@@ -195,7 +195,12 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 		}
 
 	}
-
+	
+	public String getInfo(int indent) {
+		return ((AbstractAdaptiveStorage<?>)keyStore).getInfo(indent);
+	}
+	
+	
 	@Override
 	public IGeometry getGeometry() {
 		return geometry;
@@ -210,6 +215,14 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 	@Override
 	public void addContextualizationListener(Consumer<ILocator> listener) {
 		((IDataStorage<?>) this.keyStore).addContextualizationListener(listener);
+	}
+
+	public Object[] getTimeseries(ILocator locator) {
+		List<Object> ret = new ArrayList<>();
+		for (Object o : ((AbstractAdaptiveStorage<?>)keyStore).getTimeseries(locator)) {
+			ret.add(o == null ? null : conceptKey.inverse().get(o));
+		}
+		return ret.toArray();
 	}
 
 }

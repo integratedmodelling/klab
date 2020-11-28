@@ -5,7 +5,9 @@ import java.util.Collection;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -264,6 +266,12 @@ public abstract class Expression implements IExpression {
 		public Collection<IObservable> getPrecursors(IObservable observable, Mode resolutionMode) {
 			// TODO Auto-generated method stub
 			return null;
+		}
+
+		@Override
+		public IParameters<String> localize(ILocator locator) {
+			// TODO Auto-generated method stub
+			return this;
 		}
 	}
 

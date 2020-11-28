@@ -78,6 +78,7 @@ import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
@@ -353,7 +354,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		
 //		System.err.println("DISTRIBUTING COMPUTATION FOR " + data + " AT " + scale + " WITH " + resolver);
 
-		if (reentrant) {
+		if (reentrant && !Debug.INSTANCE.isDebugging()) {
 			StreamSupport.stream(((Scale) scale).spliterator(context.getMonitor()), true).forEach((state) -> {
 				if (!context.getMonitor().isInterrupted()) {
 					target.set(state, resolver.resolve(target.getObservable(),

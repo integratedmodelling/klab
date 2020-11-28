@@ -47,6 +47,8 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
+import org.integratedmodelling.klab.engine.debugger.Debug;
+import org.integratedmodelling.klab.engine.debugger.Debugger.Watcher;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.monitoring.Message;
@@ -412,6 +414,12 @@ public class Scheduler implements IScheduler {
 
 		public Collection<ObservedConcept> run(IMonitor monitor) {
 
+			if (Debug.INSTANCE.isDebugging()) {
+				for (Watcher  watch : ((Observation)runtimeScope.getRootSubject()).getWatches()) {
+					watch.newTransition(time, this.target);
+				}
+			}
+			
 			if (synchronicity == Synchronicity.SYNCHRONOUS) {
 				/*
 				 * run in current thread, return when finished

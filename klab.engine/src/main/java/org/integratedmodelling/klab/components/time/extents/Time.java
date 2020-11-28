@@ -1258,4 +1258,14 @@ public class Time extends Extent implements ITime {
 		return time.toString();
 	}
 
+	@Override
+	public ITime earliest() {
+		return size() > 1 ? (ITime)getExtent(1) : null;
+	}
+
+	@Override
+	public ITime latest() {
+		return size() > 1 ? (ITime)getExtent(size() - 1) : null;
+	}
+
 }
