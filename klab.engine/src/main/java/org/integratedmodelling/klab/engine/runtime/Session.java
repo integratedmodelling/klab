@@ -1014,7 +1014,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 		if (action.getMatchId().startsWith("klab:")) {
 			// TODO/FIXME: use a more robust test
-			getState().submit(action.getMatchId());
+			getState().submitGeolocation(action.getMatchId());
 			return;
 		}
 
