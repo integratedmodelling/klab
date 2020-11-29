@@ -200,38 +200,6 @@ public class Debugger implements BiConsumer<TextIO, ISession> {
 		// TODO
 	}
 
-	private void find(String expression) {
-
-		// TODO if a @ is present, split on that and take init/end/<n> to mean the n-th
-		// time in the temporal context, use that for
-		// localization. Default is latest or init.
-
-		IScale scale = getContext().getScale();
-		IRuntimeScope transitionContext = getScope();
-
-		if (getContext().getScale().isTemporallyDistributed()) {
-			scale = (IScale) getContext().getScale().at(getContext().getScale().getTime().latest());
-			transitionContext = getScope().locate(scale, getScope().getMonitor());
-		}
-
-		boolean found = false;
-		IExpression code = Extensions.INSTANCE.compileExpression(expression, transitionContext.getExpressionContext(),
-				Extensions.DEFAULT_EXPRESSION_LANGUAGE, CompilerOption.ForcedScalar);
-		for (ILocator locator : scale) {
-			Object o = code.eval(transitionContext.localize(locator), transitionContext);
-			if (o instanceof Boolean && ((Boolean) o)) {
-				this.prospectiveFocus = locator;
-				setLocator(locator);
-				found = true;
-				break;
-			}
-		}
-		
-		if (!found) {
-			terminal.println("No match for find expression");
-		}
-	}
-
 	private ISubject getContext() {
 		return session.getState().getCurrentContext();
 	}
@@ -286,11 +254,8 @@ public class Debugger implements BiConsumer<TextIO, ISession> {
 			case "i":
 				info(StringUtil.join(cmds, 1, " "));
 				break;
-			case "f":
-				find(StringUtil.join(cmds, 1, " "));
-				break;
 			case "l":
-				locate(cmds);
+				locate(StringUtil.join(cmds, 1, " "));
 				break;
 			case "b":
 				breakpoint(cmds);
@@ -299,8 +264,36 @@ public class Debugger implements BiConsumer<TextIO, ISession> {
 		}
 	}
 
-	private void locate(String[] cmds) {
+	private void locate(String where) {
 
+		// TODO if a @ is present, split on that and take init/end/<n> to mean the n-th
+		// time in the temporal context, use that for
+		// localization. Default is latest or init.
+
+		IScale scale = getContext().getScale();
+		IRuntimeScope transitionContext = getScope();
+
+		if (getContext().getScale().isTemporallyDistributed()) {
+			scale = (IScale) getContext().getScale().at(getContext().getScale().getTime().latest());
+			transitionContext = getScope().locate(scale, getScope().getMonitor());
+		}
+
+		boolean found = false;
+		IExpression code = Extensions.INSTANCE.compileExpression(where, transitionContext.getExpressionContext(),
+				Extensions.DEFAULT_EXPRESSION_LANGUAGE, CompilerOption.ForcedScalar);
+		for (ILocator locator : scale) {
+			Object o = code.eval(transitionContext.localize(locator), transitionContext);
+			if (o instanceof Boolean && ((Boolean) o)) {
+				this.prospectiveFocus = locator;
+				setLocator(locator);
+				found = true;
+				break;
+			}
+		}
+		
+		if (!found) {
+			terminal.println("No match for find expression");
+		}
 	}
 
 	private void breakpoint(String[] cmds) {

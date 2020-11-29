@@ -905,9 +905,16 @@ public class ContextView extends ViewPart {
 				}
 			};
 
+			Action debugger = new Action("Open debugger") {
+				public void run() {
+				}
+			};
+
 			addActionToMenu(fMenu, filterAction);
 			new MenuItem(fMenu, SWT.SEPARATOR);
 			addActionToMenu(fMenu, gen);
+			new MenuItem(fMenu, SWT.SEPARATOR);
+			addActionToMenu(fMenu, debugger);
 
 			return fMenu;
 		}
