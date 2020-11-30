@@ -114,14 +114,14 @@ public class KimDate implements IKimDate {
 		this.ms = ms;
 	}
 
-	@Override
-	public java.util.Date getDate() {
-		java.util.Date ret = new GregorianCalendar(year, month, day, hour, min, sec).getTime();
-		if (ms > 0) {
-			ret = new java.util.Date(ret.getTime() + ms);
-		}
-		return ret;
-	}
+//	@Override
+//	public java.util.Date getDate() {
+//		java.util.Date ret = new GregorianCalendar(year, month, day, hour, min, sec).getTime();
+//		if (ms > 0) {
+//			ret = new java.util.Date(ret.getTime() + ms);
+//		}
+//		return ret;
+//	}
 	
 	@Override
 	public boolean isValid() {

@@ -53,7 +53,7 @@ public class TimeEditor extends Composite {
 	private Combo coverageUnit;
 
 	// used for converting the longs in geometries to reparseable dates
-	DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+	DateFormat dateFormat;
 
 	/**
 	 * Pass one to the constructor to be notified of any changes that result in a
@@ -72,6 +72,8 @@ public class TimeEditor extends Composite {
 
 	public TimeEditor(Composite parent, int style, Listener listener) {
 		super(parent, style);
+		this.dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		this.dateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
 		this.listener = listener;
 		setLayout(new GridLayout(1, false));
 		Composite grpTime = new Composite(this, SWT.NONE);
@@ -720,7 +722,7 @@ public class TimeEditor extends Composite {
 		}
 
 		SimpleDateFormat ret = format == null ? null : new SimpleDateFormat(format);
-//		ret.setTimeZone(TimeZone.getTimeZone("UTC"));
+		ret.setTimeZone(TimeZone.getTimeZone("UTC"));
 
 		return ret;
 
@@ -737,4 +739,6 @@ public class TimeEditor extends Composite {
 	public void setListener(Listener listener) {
 		this.listener = listener;
 	}
+
+	
 }
