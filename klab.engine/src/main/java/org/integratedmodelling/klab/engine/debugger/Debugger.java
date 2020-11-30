@@ -114,7 +114,7 @@ public class Debugger implements BiConsumer<TextIO, ISession> {
 		this.session = session;
 		this.terminal = textIO.getTextTerminal();
 		if (this.terminal instanceof SwingTextTerminal) {
-			System.out.println("CROSTONME");
+			// still kills the engine when closed. What to do?
 			((SwingTextTerminal)this.terminal).getFrame().setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		}
 		terminal.println("k.LAB debugger " + Version.CURRENT);

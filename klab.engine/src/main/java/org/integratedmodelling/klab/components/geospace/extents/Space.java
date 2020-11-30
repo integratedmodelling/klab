@@ -244,7 +244,10 @@ public class Space extends Extent implements ISpace {
 	}
 
 	private Space(Shape shape, Grid grid) {
-		shape = shape.getSimplified(Math.max(grid.getCellHeight(), grid.getCellWidth()));
+		
+		if (grid.getXCells() * grid.getYCells() > 1000) {
+			shape = shape.getSimplified(Math.max(grid.getCellHeight(), grid.getCellWidth()));
+		}
 		this.projection = shape.getProjection();
 		this.shape = shape;
 		this.grid = grid;

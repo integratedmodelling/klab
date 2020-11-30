@@ -516,6 +516,11 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	public void register(ScaleReference extent) {
 		// TODO Auto-generated method stub
+		this.scaleOfInterest.setSpaceResolution(extent.getSpaceResolution());
+		this.scaleOfInterest.setSpaceUnit(extent.getSpaceUnit());
+		this.scaleOfInterest.setSpaceResolutionDescription(extent.getResolutionDescription());
+		this.scaleOfInterest.setTimeResolutionMultiplier(extent.getTimeResolutionMultiplier());
+		this.scaleOfInterest.setTimeUnit(extent.getTimeUnit());
 		System.out.println("TODO - sent when user changes scale through explorer's default switcher" + extent + "?");
 //		this.spatialGridSize = Units.INSTANCE.METERS
 //				.convert(scaleRef.getSpaceResolutionConverted(), Unit.create(scaleRef.getSpaceUnit())).doubleValue();
