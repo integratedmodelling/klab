@@ -86,6 +86,8 @@ public class Shape extends AbstractExtent implements IShape {
 	IShape.Type type = null;
 	Projection projection;
 	IMetadata metadata;
+	// to avoid multiple rounds of simplification
+	boolean simplified = false;
 
 	// these are used to speed up repeated point-in-polygon operations like
 	// those that RasterActivationLayer does.
@@ -668,8 +670,13 @@ public class Shape extends AbstractExtent implements IShape {
 	}
 
 	public Shape getSimplified(double simplifyFactor) {
+		if (this.simplified) {
+			return this;
+		}
 		Geometry geom = TopologyPreservingSimplifier.simplify(shapeGeometry, simplifyFactor);
-		return create(geom, this.projection);
+		Shape ret = create(geom, this.projection);
+		ret.simplified = true;
+		return ret;
 	}
 
 	public boolean containsPoint(double[] coordinates) {

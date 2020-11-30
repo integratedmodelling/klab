@@ -1,8 +1,11 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -22,6 +25,8 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMess
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.debugger.Debugger;
+import org.integratedmodelling.klab.engine.debugger.Debugger.Watcher;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -56,7 +61,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	// observed. Should eventually
 	// come from provenance.
 	private boolean main;
-	// only kept updated in the root observation; in others, 0 is expected default and 
+	// only kept updated in the root observation; in others, 0 is expected default
+	// and
 	// the implementations redefine getLastUpdate() to report correctly
 	private long lastUpdate = 0;
 	// separately kept time of creation and exit, using timestamp if non-temporal
@@ -81,6 +87,12 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	// tracks the setting of the actor so we can avoid the ask pattern
 	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
 
+	/*
+	 * these are for debugging. Watches in the root observation monitor the entire
+	 * context.
+	 */
+	protected Map<String, Debugger.Watcher> watches = new HashMap<>();
+
 	protected Observation(Observation other) {
 		super(other);
 		this.observable = other.observable;
@@ -102,6 +114,20 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	public String getUrn() {
 		return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
+	}
+
+	public Collection<Watcher> getWatches() {
+		return watches.values();
+	}
+
+	public String addWatch(Watcher watch) {
+		String id = NameGenerator.shortUUID();
+		this.watches.put(id, watch);
+		return id;
+	}
+
+	public void removeWatch(String id) {
+		this.watches.remove(id);
 	}
 
 	public static IObservation empty(IObservable observable, IContextualizationScope context) {
@@ -450,7 +476,7 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	public long[] getUpdateTimestamps() {
 		return Utils.toLongArray(updateTimestamps);
 	}
-	
+
 	@Override
 	public IParameters<String> getState() {
 		return globalState;
@@ -462,6 +488,5 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	 * @return
 	 */
 	public abstract String dump();
-	
-	
+
 }

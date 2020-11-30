@@ -78,6 +78,7 @@ import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
@@ -338,7 +339,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IDataArtifact distributeComputation(IStateResolver resolver, IObservation data, IContextualizable resource,
+	public IObservation distributeComputation(IStateResolver resolver, IObservation data, IContextualizable resource,
 			IContextualizationScope context, ILocator scale) throws KlabException {
 
 		boolean reentrant = !resolver.getClass().isAnnotationPresent(NonReentrant.class);
@@ -347,13 +348,13 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			reentrant = false;
 		}
 		IArtifact self = context.get("self", IArtifact.class);
-		IState target = data instanceof IState ? (IState)data : context.get(resource.getTargetId(), IState.class);
+		final IState target = data instanceof IState ? (IState)data : context.getArtifact(resource.getTargetId(), IState.class);
 		RuntimeScope ctx = new RuntimeScope((RuntimeScope) context, context.getVariables());
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
 		
 //		System.err.println("DISTRIBUTING COMPUTATION FOR " + data + " AT " + scale + " WITH " + resolver);
 
-		if (reentrant) {
+		if (reentrant && !Debug.INSTANCE.isDebugging()) {
 			StreamSupport.stream(((Scale) scale).spliterator(context.getMonitor()), true).forEach((state) -> {
 				if (!context.getMonitor().isInterrupted()) {
 					target.set(state, resolver.resolve(target.getObservable(),
@@ -374,7 +375,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 //
 //		Debug.INSTANCE.summarize(data);
 
-		return target;
+		return data;
 	}
 
 	private IContextualizationScope localizeContext(RuntimeScope context, IScale state, IArtifact self,

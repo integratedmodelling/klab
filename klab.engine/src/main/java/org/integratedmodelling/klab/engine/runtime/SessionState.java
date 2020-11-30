@@ -26,6 +26,8 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -34,6 +36,8 @@ import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
@@ -49,6 +53,7 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMess
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
@@ -62,6 +67,7 @@ import org.integratedmodelling.klab.rest.SettingChangeRequest;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -215,6 +221,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 				}
 			}, errorListener, executor);
 			try {
+				this.scaleOfInterest.setShape(null);
 				this.context = (ISubject) task.get();
 			} catch (InterruptedException | ExecutionException e) {
 				return task;
@@ -237,7 +244,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	public boolean deactivateScenario(String scenario) {
 		return this.scenarios.remove(scenario);
 	}
-	
+
 	@Override
 	public ISubject getCurrentContext() {
 		return context;
@@ -467,6 +474,26 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		session.getMonitor().send(IMessage.Type.ResetContext, IMessage.MessageClass.UserContextChange, "");
 	}
 
+	public void submitGeolocation(String urn) {
+
+		Envelope envelope = Envelope.create(this.scaleOfInterest.getEast(), this.scaleOfInterest.getWest(),
+				this.scaleOfInterest.getSouth(), this.scaleOfInterest.getNorth(), Projection.getLatLon());
+		IKlabData data = Resources.INSTANCE.getResourceData(urn, new VisitingDataBuilder(), Scale.create(
+				envelope.asGrid(this.scaleOfInterest.getSpaceResolution(), this.scaleOfInterest.getSpaceUnit())),
+				session.getMonitor());
+		if (data.getArtifact() != null) {
+			IGeometry geometry = data.getArtifact().getGeometry();
+			if (geometry != null) {
+				IShape ret = geometry instanceof IScale ? ((IScale) geometry).getSpace().getShape()
+						: Scale.create(geometry).getSpace().getShape();
+				if (ret != null) {
+					ret.getMetadata().put(IMetadata.DC_DESCRIPTION, ((IObjectArtifact) data.getArtifact()).getName());
+					setShape(ret);
+				}
+			}
+		}
+	}
+
 	public void register(ObservationRequest request) {
 
 		if (request.getContextId() != null) {
@@ -489,6 +516,11 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	public void register(ScaleReference extent) {
 		// TODO Auto-generated method stub
+		this.scaleOfInterest.setSpaceResolution(extent.getSpaceResolution());
+		this.scaleOfInterest.setSpaceUnit(extent.getSpaceUnit());
+		this.scaleOfInterest.setSpaceResolutionDescription(extent.getResolutionDescription());
+		this.scaleOfInterest.setTimeResolutionMultiplier(extent.getTimeResolutionMultiplier());
+		this.scaleOfInterest.setTimeUnit(extent.getTimeUnit());
 		System.out.println("TODO - sent when user changes scale through explorer's default switcher" + extent + "?");
 //		this.spatialGridSize = Units.INSTANCE.METERS
 //				.convert(scaleRef.getSpaceResolutionConverted(), Unit.create(scaleRef.getSpaceUnit())).doubleValue();
@@ -498,6 +530,52 @@ public class SessionState extends Parameters<String> implements ISessionState {
 //		this.timeStart = scaleRef.getStart() == 0 ? null : Long.valueOf(scaleRef.getStart());
 //		this.timeEnd = scaleRef.getEnd() == 0 ? null : Long.valueOf(scaleRef.getEnd());
 
+	}
+
+	public void setShape(IShape shape) {
+
+		IEnvelope envelope = shape.getEnvelope();
+
+		this.scaleOfInterest.setEast(envelope.getMinX());
+		this.scaleOfInterest.setNorth(envelope.getMaxY());
+		this.scaleOfInterest.setSouth(envelope.getMinY());
+		this.scaleOfInterest.setWest(envelope.getMaxX());
+
+		if (!lockSpace.get() || this.scaleOfInterest.getSpaceUnit() == null) {
+			Pair<Integer, String> rres = ((Envelope) envelope).getResolutionForZoomLevel();
+			this.scaleOfInterest.setSpaceResolution((double) rres.getFirst());
+			this.scaleOfInterest.setSpaceUnit(rres.getSecond());
+			this.scaleOfInterest.setSpaceScale(envelope.getScaleRank());
+		}
+
+		String name = shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class);
+		if (name == null) {
+			/*
+			 * geocode using the standard geocoder
+			 */
+			name = Geocoder.INSTANCE.geocode(shape.getEnvelope(), Geocoder.DEFAULT_GEOCODING_STRATEGY,
+					"Region of interest", session.getMonitor());
+		}
+		this.scaleOfInterest.setName(name);
+		if (!(shape.getMetadata().containsKey(IMetadata.IM_GEOGRAPHIC_AREA)
+				&& !shape.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA, Boolean.FALSE))) {
+			this.scaleOfInterest.setShape(((Shape) shape).getJTSGeometry().toString());
+		}
+		this.scaleOfInterest.setSpaceResolutionDescription(
+				NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
+						+ this.scaleOfInterest.getSpaceUnit());
+		this.scaleOfInterest
+				.setResolutionDescription(NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution())
+						+ " " + this.scaleOfInterest.getSpaceUnit());
+
+		session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined,
+				scaleOfInterest);
+
+		for (ListenerWrapper listener : listeners.values()) {
+			if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {
+				listener.listener.scaleChanged(scaleOfInterest);
+			}
+		}
 	}
 
 	public void register(SpatialExtent extent, boolean secondary) {
@@ -603,7 +681,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	}
 
 	public void setGeocodingStrategy(String geocodingStrategy) {
-		
+
 		boolean reset = this.geocodingStrategy != null && !this.geocodingStrategy.equals(geocodingStrategy);
 		this.geocodingStrategy = geocodingStrategy;
 		if (this.scaleOfInterest != null && reset) {

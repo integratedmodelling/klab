@@ -357,6 +357,22 @@ public interface ITime extends IExtent {
 	ITime getNext();
 
 	/**
+	 * If this extent is a subdivision of a distributed extent, return the first
+	 * sub-extent time that is not initialization. If not, return null.
+	 * 
+	 * @return
+	 */
+	ITime earliest();
+
+	/**
+	 * If this extent is a subdivision of a distributed extent, return the last
+	 * sub-extent time that is not initialization. If not, return null.
+	 * 
+	 * @return
+	 */
+	ITime latest();
+
+	/**
 	 * A temporal extent always represents a period, but when created from a query
 	 * may be simply focused on a particular timepoint, used to locate the correct
 	 * period in a scale that has (regular or irregular) timeslices. These are not

@@ -597,9 +597,11 @@ public class TableCompiler {
 
 		/**
 		 * Mandatory id, either assigned in configuration or attributed using the scheme
-		 * c<n> for columns and r<n> for rows.
+		 * c<n> for columns and r<n> for rows. It is private so that the getName()
+		 * method must be used: the column name is composed by the name of the parent
+		 * (not part of this) + the assigned name.
 		 */
-		String id;
+		private String id;
 
 		/**
 		 * Only used to validate use of cross-references, as rows can only refer to
@@ -663,6 +665,13 @@ public class TableCompiler {
 		 * now.
 		 */
 		public IArtifact.Type dataType = IArtifact.Type.NUMBER;
+
+		/**
+		 * Associated to the "require" tag, contains zero or more IDs for sub-columns in
+		 * a group that are required to be non-empty in order for the whole group to be
+		 * compiled in the final table.
+		 */
+		Set<String> required = new HashSet<>();
 
 		/**
 		 * Hierarchically arranged titles at the levels we need them. Nulls for
@@ -762,6 +771,7 @@ public class TableCompiler {
 			this.children.addAll(dim.children);
 			this.multiplicity = dim.multiplicity;
 			this.filterClassId = dim.filterClassId;
+			this.required.addAll(dim.required);
 		}
 
 		public Dimension() {
@@ -778,11 +788,13 @@ public class TableCompiler {
 				// register row and column names unless the rows/colums are aggregations
 				for (Dimension dimension : rows.values()) {
 					if (dimension.computationType == null || !dimension.computationType.isAggregation()) {
+						// FIXME IDs for all siblings, getName() for others
 						context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
 					}
 				}
 				for (Dimension dimension : columns.values()) {
 					if (dimension.computationType == null || !dimension.computationType.isAggregation()) {
+						// FIXME IDs for all siblings, getName() for others
 						context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
 					}
 				}
@@ -849,7 +861,7 @@ public class TableCompiler {
 
 		@Override
 		public String toString() {
-			return "<" + dimensionType + " " + this.id + " T[" + target + "] " + encodeFilters() + ">";
+			return "<" + dimensionType + " " + this.getName() + " T[" + target + "] " + encodeFilters() + ">";
 		}
 
 		private String encodeFilters() {
@@ -1045,6 +1057,7 @@ public class TableCompiler {
 			ret.children.addAll(this.children);
 			ret.filterClassId = this.filterClassId;
 			ret.multiplicity = this.multiplicity;
+			ret.required.addAll(this.required);
 
 			return ret;
 		}
@@ -1066,6 +1079,14 @@ public class TableCompiler {
 				dim = dim.parent;
 			}
 			return dim.target;
+		}
+		
+		public String getName() {
+			return (parent == null ? "" : parent.getName()) + getLocalName(); 
+		}
+
+		public String getLocalName() {
+			return this.id;
 		}
 
 	}
@@ -1169,13 +1190,13 @@ public class TableCompiler {
 		for (Dimension dimension : originalDims) {
 			// reindex before sorting
 			dimension.index = i++;
-			dictionary.put(dimension.id, dimension);
-			graph.addVertex(dimension.id);
+			dictionary.put(dimension.getName(), dimension);
+			graph.addVertex(dimension.getName());
 			if (dimension.getExpression(scope) != null) {
 				for (String s : dimension.symbols) {
 					if (dimensions.containsKey(s)) {
 						graph.addVertex(s);
-						graph.addEdge(s, dimension.id);
+						graph.addEdge(s, dimension.getName());
 					}
 				}
 			}
@@ -1222,13 +1243,13 @@ public class TableCompiler {
 		this.activeColumns = parseDimension(definition.get("columns"), colList, DimensionType.COLUMN, null);
 		this.activeRows = parseDimension(definition.get("rows"), rowList, DimensionType.ROW, null);
 		for (Dimension row : rowList) {
-			String id = rename.containsKey(row.id) ? rename.get(row.id) : row.id;
-			row.id = id;
+			String id = rename.containsKey(row.getName()) ? rename.get(row.getName()) : row.getName();
+			row.id = id.substring(row.parent == null ? 0 : row.parent.getName().length());
 			this.rows.put(id, row);
 		}
 		for (Dimension col : colList) {
-			String id = rename.containsKey(col.id) ? rename.get(col.id) : col.id;
-			col.id = id;
+			String id = rename.containsKey(col.getName()) ? rename.get(col.getName()) : col.getName();
+			col.id = id.substring(col.parent == null ? 0 : col.parent.getName().length());
 			this.columns.put(id, col);
 		}
 		this.title = definition.containsKey("title") ? definition.get("title").toString() : null;
@@ -1451,7 +1472,7 @@ public class TableCompiler {
 				targetType = trgObs.is(Type.QUALITY) ? TargetType.QUALITY : null;
 				ret.add(new Pair<>(target, targetType));
 				this.observables.add(target);
-				
+
 			} else {
 				throw new KlabValidationException("Table definition: unknown target: " + object);
 			}
@@ -1466,8 +1487,8 @@ public class TableCompiler {
 	}
 
 	private Dimension newDimension(ObservedConcept target, TargetType targetType, List<Filter> filters,
-			Map<?, ?> theRest, DimensionType type, int lastIndex, boolean filtersAreClassifiers, String filterClassId,
-			Dimension parent, List<Dimension> dimensions) {
+			Map<?, ?> definition, DimensionType type, int lastIndex, boolean filtersAreClassifiers,
+			String filterClassId, Dimension parent, List<Dimension> dimensions) {
 
 		Dimension ret = new Dimension();
 
@@ -1483,22 +1504,33 @@ public class TableCompiler {
 			ret.parent.children.add(ret);
 		}
 
-		if (theRest.containsKey("name")) {
-			ret.id = theRest.get("name").toString();
+		if (definition.containsKey("name")) {
+			ret.id = definition.get("name").toString();
 		} else {
-			ret.id = (parent == null ? "" : parent.id) + (type == DimensionType.ROW ? "r" : "c");
+			ret.id = (type == DimensionType.ROW ? "r" : "c");
 		}
 
-		ret.id = checkNameSequence(ret.id, ret.dimensionType);
+		if (definition.containsKey("require")) {
+			Object required = definition.get("require");
+			if (required instanceof String) {
+				ret.required.add((String) required);
+			} else if (required instanceof List) {
+				for (Object r : (List<?>) required) {
+					ret.required.add(r.toString());
+				}
+			}
+		}
 
-		if (theRest.containsKey("title")) {
+		ret.id = checkNameSequence(ret);
+
+		if (definition.containsKey("title")) {
 			List<String> titles = new ArrayList<>();
-			if (theRest.get("title") instanceof Collection) {
-				for (Object o : ((Collection<?>) theRest.get("title"))) {
+			if (definition.get("title") instanceof Collection) {
+				for (Object o : ((Collection<?>) definition.get("title"))) {
 					titles.add(o == null ? "" : o.toString());
 				}
 			} else {
-				String theTitle = theRest.get("title").toString();
+				String theTitle = definition.get("title").toString();
 				// count the pound signs in front to establish level
 				for (; theTitle.startsWith("#");) {
 					titles.add("");
@@ -1509,20 +1541,20 @@ public class TableCompiler {
 			ret.titles = titles.toArray(new String[titles.size()]);
 		}
 
-		if (theRest.containsKey("separator")) {
+		if (definition.containsKey("separator")) {
 			// TODO separator types for display
 			ret.separator = true;
 		}
 
-		if (theRest.containsKey("hidden")) {
-			if (!(theRest.get("hidden") instanceof Boolean)) {
+		if (definition.containsKey("hidden")) {
+			if (!(definition.get("hidden") instanceof Boolean)) {
 				throw new KlabValidationException("the 'hidden' parameter only admits true/false values");
 			}
-			ret.hidden = (Boolean) theRest.get("hidden");
+			ret.hidden = (Boolean) definition.get("hidden");
 		}
 
-		if (theRest.containsKey("retarget")) {
-			Object retarget = theRest.get("retarget");
+		if (definition.containsKey("retarget")) {
+			Object retarget = definition.get("retarget");
 			if (retarget instanceof List && ((List<?>) retarget).size() > 0
 					&& ((List<?>) retarget).get(0) instanceof List) {
 				for (Object rt : ((List<?>) retarget)) {
@@ -1533,9 +1565,10 @@ public class TableCompiler {
 			}
 		}
 
-		if (theRest.containsKey("style")) {
-			for (Object style : (theRest.get("style") instanceof Collection ? ((Collection<?>) theRest.get("style"))
-					: Collections.singleton(theRest.get("style")))) {
+		if (definition.containsKey("style")) {
+			for (Object style : (definition.get("style") instanceof Collection
+					? ((Collection<?>) definition.get("style"))
+					: Collections.singleton(definition.get("style")))) {
 				switch (style.toString()) {
 				case "bold":
 					ret.style.add(Style.BOLD);
@@ -1564,14 +1597,14 @@ public class TableCompiler {
 			}
 		}
 
-		if (theRest.get("compute") instanceof IKimExpression) {
-			ret.expression = (IKimExpression) theRest.get("compute");
+		if (definition.get("compute") instanceof IKimExpression) {
+			ret.expression = (IKimExpression) definition.get("compute");
 			ret.computationType = ComputationType.Expression;
-		} else if (theRest.get("summarize") instanceof IKimExpression) {
-			ret.expression = (IKimExpression) theRest.get("summarize");
+		} else if (definition.get("summarize") instanceof IKimExpression) {
+			ret.expression = (IKimExpression) definition.get("summarize");
 			ret.computationType = ComputationType.Summarize;
-		} else if (theRest.containsKey("summarize")) {
-			switch (theRest.get("summarize").toString()) {
+		} else if (definition.containsKey("summarize")) {
+			switch (definition.get("summarize").toString()) {
 			case "sum":
 				ret.computationType = ComputationType.Sum;
 				break;
@@ -1591,12 +1624,12 @@ public class TableCompiler {
 				ret.computationType = ComputationType.Max;
 				break;
 			default:
-				throw new KlabValidationException("unrecognized symbol in computation: " + theRest.get("compute"));
+				throw new KlabValidationException("unrecognized symbol in computation: " + definition.get("compute"));
 			}
 		}
 
-		if (theRest.containsKey(type == DimensionType.COLUMN ? "columns" : "rows")) {
-			ret.multiplicity += parseDimension(theRest.get(type == DimensionType.COLUMN ? "columns" : "rows"),
+		if (definition.containsKey(type == DimensionType.COLUMN ? "columns" : "rows")) {
+			ret.multiplicity += parseDimension(definition.get(type == DimensionType.COLUMN ? "columns" : "rows"),
 					dimensions, type, ret);
 		}
 
@@ -1607,27 +1640,28 @@ public class TableCompiler {
 	private Set<String> rowNames = new HashSet<>();
 	private Set<String> colNames = new HashSet<>();
 	private Map<String, String> rename = new HashMap<>();
-
+	
 	/**
 	 * Rename multiple rows with same ID to id1, id2.. etc
 	 * 
 	 * @param ret
 	 */
-	private String checkNameSequence(String baseId, DimensionType type) {
+	private String checkNameSequence(Dimension dimension) {
 
 		Set<String> dimensions = null;
-		if (type == DimensionType.ROW) {
+		if (dimension.dimensionType == DimensionType.ROW) {
 			dimensions = rowNames;
-		} else if (type == DimensionType.COLUMN) {
+		} else if (dimension.dimensionType == DimensionType.COLUMN) {
 			dimensions = colNames;
 		}
 
-		String ret = baseId;
+		String ret = dimension.getName();
+		String baseId = ret;
 		// could be a split, in which case do nothing
 		if (dimensions != null) {
-			if (dimensions.contains(baseId)) {
+			if (dimensions.contains(ret)) {
 				boolean ren = false;
-				Integer index = idIndex.get(baseId);
+				Integer index = idIndex.get(ret);
 				if (index == null) {
 					index = 1;
 					ren = true;
@@ -1644,7 +1678,7 @@ public class TableCompiler {
 			}
 		}
 
-		return ret;
+		return ret.substring(dimension.parent == null ? 0 : dimension.parent.getName().length());
 
 	}
 
@@ -1911,7 +1945,7 @@ public class TableCompiler {
 						if (!row.isActive(catalog, value.getSecond(), phase, value.getFirst(), scope)) {
 							continue;
 						}
-						
+
 //						if (row.matches(Concepts.c("es.nca:Cropland"))) {
 //							System.out.println("HSOS");
 //						}
@@ -1938,7 +1972,7 @@ public class TableCompiler {
 						boolean inconsistentAggregation = columnComputationType != null && row.computationType != null
 								&& rowComputationType.isAggregation() && column.computationType.isAggregation()
 								&& row.computationType != column.computationType;
-						
+
 //						Debug.INSTANCE.say("DIO PIROGA");
 
 						Object val = value.getFirst();
@@ -2026,7 +2060,7 @@ public class TableCompiler {
 
 	private ObservedConcept getCellTarget(Dimension row, Dimension column, ObservedConcept defaultTarget) {
 
-		if (!row.columnTargets.containsKey(column.id)) {
+		if (!row.columnTargets.containsKey(column.getName())) {
 
 			ObservedConcept trg = row.target;
 			if (trg == null) {
@@ -2048,13 +2082,13 @@ public class TableCompiler {
 				}
 			}
 
-			row.columnTargets.put(column.id, trg);
+			row.columnTargets.put(column.getName(), trg);
 
 //			System.out.println(row.id + "," + column.id + ": " + trg + "; col = " + column + ", row = " + row);
 
 		}
 
-		return row.columnTargets.get(column.id);
+		return row.columnTargets.get(column.getName());
 	}
 
 	private List<TargetOperation> compileOperations(Dimension row, Dimension column) {

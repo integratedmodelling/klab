@@ -15,9 +15,12 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.Offset;
+import org.integratedmodelling.klab.engine.debugger.Debugger.Watcher;
 import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
@@ -49,6 +52,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	private long sliceSize;
 	private long slicesInBackend = 0;
 	protected List<Consumer<ILocator>> listeners = Collections.synchronizedList(new ArrayList<>());
+	private IState state;
 
 	// FIXME this is only for debugging, remove when done.
 	private IGeometry geometry;
@@ -62,6 +66,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	 * one slice.
 	 */
 	private boolean trivial;
+	private Map<String, Watcher> watches;
 
 	/**
 	 * A slice is generated when there are values in a timestep. Within a slice,
@@ -235,6 +240,10 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 	 */
 	protected abstract void setValueIntoBackend(T value, long offsetInSlice, long backendTimeSlice);
 
+	public void setState(IState state) {
+		this.state = state;
+	}
+
 	@SuppressWarnings("unchecked")
 	public synchronized T get(ILocator locator) {
 
@@ -328,7 +337,8 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			if (aggregatable.isEmpty()) {
 				Slice theSlice = slices.get(timeStart);
 				// use state before start if existing, otherwise result is NaN
-				return theSlice == null ? (slice == null ? null : slice.getAt(sliceOffset)) : theSlice.getAt(sliceOffset);
+				return theSlice == null ? (slice == null ? null : slice.getAt(sliceOffset))
+						: theSlice.getAt(sliceOffset);
 			}
 			return aggregate(aggregatable, sliceOffset);
 		}
@@ -353,6 +363,14 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		System.out.println("AGGREGATE " + map.size() + " VALUES");
 
 		return null;
+	}
+
+	private long getSliceOffset(ILocator locator) {
+		if (isScalar) {
+			return 0;
+		}
+		Offset offsets = locator.as(Offset.class);
+		return product(offsets.pos, trivial ? 0 : 1);
 	}
 
 	public long put(T value, ILocator locator) {
@@ -389,7 +407,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		long sliceOffset = product(offsets.pos, trivial ? 0 : 1);
 		long timeOffset = trivial ? 0 : offsets.pos[0];
 		boolean noData = Observations.INSTANCE.isNodata(value);
-		
+
 		synchronized (this) {
 
 			if (noData && slices.isEmpty()) {
@@ -422,6 +440,11 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 				slice = addSlice(timeOffset, timeStart, timeEnd, slice);
 				for (Consumer<ILocator> listener : this.listeners) {
 					listener.accept(locator);
+				}
+				if (this.watches != null) {
+					for (Watcher watch : watches.values()) {
+//						watch.newStateSlice(state, slice.timestart);
+					}
 				}
 			}
 
@@ -484,10 +507,26 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		String ret = null;
 		for (Long key : slices.keySet()) {
 			Slice slice = slices.get(key);
-			ret += spacer + slice + "\n";
-			ret += spacer + spacer + "nodata: + " + slice.nodata + "; " + slice.statistics + "\n";
+			ret += spacer + spacer
+					+ ((slice.timestart == 0 || slice.timeend == 0) ? "Initialization"
+							: (new Date(slice.timestart) + " " + new Date(slice.timeend)))
+					+ ": NODATA= + " + slice.nodata + '/' + geometry.getDimension(Type.SPACE).size() + " ["
+					+ slice.statistics.getMin() + "-" + slice.statistics.getMax() + "]\n";
 		}
 		return ret;
+	}
+
+	public void setWatches(Map<String, Watcher> watches) {
+		this.watches = watches;
+	}
+
+	public Object[] getTimeseries(ILocator locator) {
+		List<Object> ret = new ArrayList<>();
+		long sliceOffset = getSliceOffset(locator);
+		for (Slice slice : slices.values()) {
+			ret.add(slice.getAt(sliceOffset));
+		}
+		return ret.toArray();
 	}
 
 }
