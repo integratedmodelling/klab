@@ -125,6 +125,12 @@ public interface IMessage {
 		Void,
 
 		/*
+		 * For basic engine requests of class EngineLifecycle that don't require a
+		 * response besides collateral effects.
+		 */
+		ExecuteCommand,
+
+		/*
 		 * UserContextChange-class types.
 		 */
 		/**
@@ -354,7 +360,7 @@ public interface IMessage {
 		 * a response to an explicit method call on a widget.
 		 */
 		ViewAction,
-		
+
 		/*
 		 * Sent B->F when a new view has been generated in a context
 		 */

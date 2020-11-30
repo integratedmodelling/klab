@@ -8,10 +8,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.function.BiConsumer;
 
+import javax.swing.WindowConstants;
+
 import org.beryx.textio.PropertiesConstants;
 import org.beryx.textio.TextIO;
 import org.beryx.textio.TextIoFactory;
 import org.beryx.textio.TextTerminal;
+import org.beryx.textio.swing.SwingTextTerminal;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
@@ -110,6 +113,10 @@ public class Debugger implements BiConsumer<TextIO, ISession> {
 
 		this.session = session;
 		this.terminal = textIO.getTextTerminal();
+		if (this.terminal instanceof SwingTextTerminal) {
+			System.out.println("CROSTONME");
+			((SwingTextTerminal)this.terminal).getFrame().setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+		}
 		terminal.println("k.LAB debugger " + Version.CURRENT);
 		terminal.println();
 
@@ -165,6 +172,9 @@ public class Debugger implements BiConsumer<TextIO, ISession> {
 
 	private void listContext() {
 		this.scopeCatalog.clear();
+		if (getScope() == null) {
+			terminal.println("No context.");
+		}
 		Map<ObservedConcept, IObservation> cat = getScope().getCatalog();
 		int n = 1;
 		for (ObservedConcept key : cat.keySet()) {
@@ -193,11 +203,14 @@ public class Debugger implements BiConsumer<TextIO, ISession> {
 	}
 
 	private IRuntimeScope getScope() {
-		return (IRuntimeScope) session.getState().getCurrentContext().getScope();
+		return session.getState().getCurrentContext() == null ? null
+				: (IRuntimeScope) session.getState().getCurrentContext().getScope();
 	}
 
 	public void reset() {
 		// TODO
+		catalog.clear();
+		terminal.println("Context cleared.");
 	}
 
 	private ISubject getContext() {
@@ -290,7 +303,7 @@ public class Debugger implements BiConsumer<TextIO, ISession> {
 				break;
 			}
 		}
-		
+
 		if (!found) {
 			terminal.println("No match for find expression");
 		}

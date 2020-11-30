@@ -527,7 +527,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	}
 
-	private void setShape(IShape shape) {
+	public void setShape(IShape shape) {
 
 		IEnvelope envelope = shape.getEnvelope();
 
@@ -543,7 +543,15 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			this.scaleOfInterest.setSpaceScale(envelope.getScaleRank());
 		}
 
-		this.scaleOfInterest.setName(shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class));
+		String name = shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class);
+		if (name == null) {
+			/*
+			 * geocode using the standard geocoder
+			 */
+			name = Geocoder.INSTANCE.geocode(shape.getEnvelope(), Geocoder.DEFAULT_GEOCODING_STRATEGY,
+					"Region of interest", session.getMonitor());
+		}
+		this.scaleOfInterest.setName(name);
 		if (!(shape.getMetadata().containsKey(IMetadata.IM_GEOGRAPHIC_AREA)
 				&& !shape.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA, Boolean.FALSE))) {
 			this.scaleOfInterest.setShape(((Shape) shape).getJTSGeometry().toString());

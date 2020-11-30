@@ -9,18 +9,15 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -64,8 +61,6 @@ import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -77,7 +72,6 @@ import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.auth.EngineUser;
-import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
@@ -86,19 +80,17 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMess
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
-import org.integratedmodelling.klab.components.time.extents.Time;
-import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityResolutionRequest;
@@ -106,6 +98,7 @@ import org.integratedmodelling.klab.rest.ContextualizationRequest;
 import org.integratedmodelling.klab.rest.DataflowDetail;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DocumentationReference;
+import org.integratedmodelling.klab.rest.EngineAction;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.GroupReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
@@ -709,35 +702,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	@MessageHandler(type = IMessage.Type.FeatureAdded)
 	private void handleFeatureAdded(final SpatialLocation location) {
-
-		/*
-		 * TODO this moves the context: must do through the state, not here.
-		 */
-
-		if (location.getContextId() == null) {
-			ITime time = ((SessionState) getState()).getTimeOfInterest();
-			if (time == null) {
-//				if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
-//					time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
-//							this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
-//							new TimeInstant(this.timeEnd), null);
-//				} else {
-//					time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
-//				}
-			}
-			Shape shape = Shape.create("EPSG:4326 " + location.getWktShape());
-			Observer observer = Observations.INSTANCE.makeROIObserver(shape, time, null, this.regionNameOfInterest,
-					monitor);
-			this.regionNameOfInterest = observer.getName();
-
-			try {
-				new ObserveContextTask(this, observer, new ArrayList<>()).get();
-			} catch (InterruptedException | ExecutionException e) {
-				monitor.error(e);
-			}
-		} else {
-			// TODO do something with the shape - must involve user to define semantics
-		}
+		Shape shape = Shape.create("EPSG:4326 " + location.getWktShape());
+		this.globalState.setShape(shape);
 	}
 
 	@MessageHandler
@@ -1438,6 +1404,17 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		default:
 			break;
 		}
+	}
+
+	@MessageHandler
+	private void handleEngineCommand(EngineAction message) {
+
+		switch (message.getRequest()) {
+		case "debugger":
+			Debug.INSTANCE.newDebugger(this);
+			break;
+		}
+
 	}
 
 	@MessageHandler(type = IMessage.Type.ResetContext)
