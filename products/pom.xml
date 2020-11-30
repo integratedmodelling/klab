@@ -11,5 +11,6 @@
   <modules>
   	<module>engine</module>
   	<module>cli</module>
+  	<module>cloud</module>
   </modules>
 </project>
