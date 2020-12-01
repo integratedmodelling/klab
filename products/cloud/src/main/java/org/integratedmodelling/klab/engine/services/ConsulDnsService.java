@@ -72,9 +72,9 @@ public class ConsulDnsService {
 		ConsulAgentService service = getService();
 		Map<String, String> userWeights = getUserWeights(service);
 		if(userWeights.containsKey(name)) {
-			int weight = Integer.parseInt(userWeights.get(name));
+			int userWeight = Integer.parseInt(userWeights.get(name));
 			userWeights.remove(name);
-			service.getWeights().setPassing(service.getWeights().getPassing()-weight);
+			service.getWeights().setPassing(service.getWeights().getPassing()+userWeight);
 			service.getMeta().put("Users", userWeights.toString());
 		}
 		service.setRegister();
