@@ -144,6 +144,7 @@ public class HubUserService implements RemoteUserService {
         	if(checkForActiveSessions(profile)) {
         		Session active  = activeSessions(profile).iterator().next();
         		try {
+        			dnsService.removeSessionWeight(active);
 					active.close();
 				} catch (IOException e) {
 					throw new KlabException("Could not close the session :(");

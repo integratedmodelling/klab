@@ -1,8 +1,8 @@
 package org.integratedmodelling.klab.engine.services;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
-
 import org.integratedmodelling.klab.engine.configs.ConsulAgentService;
 import org.integratedmodelling.klab.engine.configs.ConsulConfig;
 import org.integratedmodelling.klab.engine.runtime.Session;
@@ -68,15 +68,20 @@ public class ConsulDnsService {
 	
 	
 	public void removeSessionWeight(Session session) {
-		String name = session.getUsername();
+		String name = session.getParentIdentity().getUsername();
 		ConsulAgentService service = getService();
 		Map<String, String> userWeights = getUserWeights(service);
-		if(userWeights.containsKey(name)) {
-			int userWeight = Integer.parseInt(userWeights.get(name));
-			userWeights.remove(name);
-			service.getWeights().setPassing(service.getWeights().getPassing()+userWeight);
-			service.getMeta().put("Users", userWeights.toString());
-		}
+		Iterator<String> iterator = userWeights.keySet().iterator();
+
+	    while(iterator.hasNext()){
+	    	String key = iterator.next();
+	        if(key.equals(name)){
+	        	int userWeight = Integer.parseInt(userWeights.get(name));
+	        	service.getWeights().setPassing(service.getWeights().getPassing()+userWeight);
+	        	iterator.remove();
+	        }
+	    }
+		service.getMeta().put("Users", userWeights.toString());
 		service.setRegister();
 		restTemplate.put(consul.registerServiceUrl(), service);
 	}
@@ -93,10 +98,13 @@ public class ConsulDnsService {
 	private Map<String, String> getUserWeights(ConsulAgentService service){
 		Map<String, String> userWeights = new HashMap<>();
 		if(service.getMeta().containsKey("Users")) {
-			 userWeights = Splitter.on(",")
-					.withKeyValueSeparator("=")
-					.split(service.getMeta().get("Users")
-							.replace("{", "").replace("}", ""));
+			if(!service.getMeta().get("Users").equals("{}")) {
+				 userWeights =  new HashMap<>(Splitter.on(",")
+							.trimResults()
+							.withKeyValueSeparator("=")
+							.split(service.getMeta().get("Users")
+									.replace("{", "").replace("}", "")));	
+			}
 		}
 		return userWeights;
 	}
