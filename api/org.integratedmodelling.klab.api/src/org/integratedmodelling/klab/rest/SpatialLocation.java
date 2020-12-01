@@ -15,8 +15,8 @@ public class SpatialLocation {
 
 	private double easting = Double.NaN;
 	private double northing = Double.NaN;
-	private String wktShape = null;
-	private String contextId = null;
+	private String wktShape;
+	private String contextId;
 
 	/**
 	 * Easting (longitude)

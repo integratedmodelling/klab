@@ -534,39 +534,50 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	public void setShape(IShape shape) {
 
-		IEnvelope envelope = shape.getEnvelope();
+		if (shape == null) {
+			
+			Envelope envelope = Envelope.create(this.scaleOfInterest.getEast(), this.scaleOfInterest.getWest(),
+					this.scaleOfInterest.getSouth(), this.scaleOfInterest.getNorth(), Projection.getLatLon());
+			this.scaleOfInterest.setShape(null);
+			this.scaleOfInterest.setName(Geocoder.INSTANCE.geocode(envelope, Geocoder.DEFAULT_GEOCODING_STRATEGY,
+					"Region of interest", session.getMonitor()));
+		} else {
 
-		this.scaleOfInterest.setEast(envelope.getMinX());
-		this.scaleOfInterest.setNorth(envelope.getMaxY());
-		this.scaleOfInterest.setSouth(envelope.getMinY());
-		this.scaleOfInterest.setWest(envelope.getMaxX());
+			IEnvelope envelope = shape.getEnvelope();
 
-		if (!lockSpace.get() || this.scaleOfInterest.getSpaceUnit() == null) {
-			Pair<Integer, String> rres = ((Envelope) envelope).getResolutionForZoomLevel();
-			this.scaleOfInterest.setSpaceResolution((double) rres.getFirst());
-			this.scaleOfInterest.setSpaceUnit(rres.getSecond());
-			this.scaleOfInterest.setSpaceScale(envelope.getScaleRank());
-		}
+			this.scaleOfInterest.setEast(envelope.getMinX());
+			this.scaleOfInterest.setNorth(envelope.getMaxY());
+			this.scaleOfInterest.setSouth(envelope.getMinY());
+			this.scaleOfInterest.setWest(envelope.getMaxX());
 
-		String name = shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class);
-		if (name == null) {
-			/*
-			 * geocode using the standard geocoder
-			 */
-			name = Geocoder.INSTANCE.geocode(shape.getEnvelope(), Geocoder.DEFAULT_GEOCODING_STRATEGY,
-					"Region of interest", session.getMonitor());
+			if (!lockSpace.get() || this.scaleOfInterest.getSpaceUnit() == null) {
+				Pair<Integer, String> rres = ((Envelope) envelope).getResolutionForZoomLevel();
+				this.scaleOfInterest.setSpaceResolution((double) rres.getFirst());
+				this.scaleOfInterest.setSpaceUnit(rres.getSecond());
+				this.scaleOfInterest.setSpaceScale(envelope.getScaleRank());
+			}
+
+			String name = shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class);
+			if (name == null) {
+				/*
+				 * geocode using the standard geocoder
+				 */
+				name = Geocoder.INSTANCE.geocode(shape.getEnvelope(), Geocoder.DEFAULT_GEOCODING_STRATEGY,
+						"Region of interest", session.getMonitor());
+			}
+			this.scaleOfInterest.setName(name);
+			if (!(shape.getMetadata().containsKey(IMetadata.IM_GEOGRAPHIC_AREA)
+					&& !shape.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA, Boolean.FALSE))) {
+				this.scaleOfInterest.setShape(((Shape) shape).getJTSGeometry().toString());
+			}
+			this.scaleOfInterest.setSpaceResolutionDescription(
+					NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
+							+ this.scaleOfInterest.getSpaceUnit());
+			this.scaleOfInterest.setResolutionDescription(
+					NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
+							+ this.scaleOfInterest.getSpaceUnit());
+
 		}
-		this.scaleOfInterest.setName(name);
-		if (!(shape.getMetadata().containsKey(IMetadata.IM_GEOGRAPHIC_AREA)
-				&& !shape.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA, Boolean.FALSE))) {
-			this.scaleOfInterest.setShape(((Shape) shape).getJTSGeometry().toString());
-		}
-		this.scaleOfInterest.setSpaceResolutionDescription(
-				NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
-						+ this.scaleOfInterest.getSpaceUnit());
-		this.scaleOfInterest
-				.setResolutionDescription(NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution())
-						+ " " + this.scaleOfInterest.getSpaceUnit());
 
 		session.getMonitor().send(IMessage.MessageClass.UserContextDefinition, IMessage.Type.ScaleDefined,
 				scaleOfInterest);

@@ -702,8 +702,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	@MessageHandler(type = IMessage.Type.FeatureAdded)
 	private void handleFeatureAdded(final SpatialLocation location) {
-		Shape shape = Shape.create("EPSG:4326 " + location.getWktShape());
-		this.globalState.setShape(shape);
+		this.globalState
+				.setShape(location.getWktShape() == null ? null : Shape.create("EPSG:4326 " + location.getWktShape()));
 	}
 
 	@MessageHandler

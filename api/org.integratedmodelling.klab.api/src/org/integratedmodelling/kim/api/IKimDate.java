@@ -17,9 +17,7 @@ public interface IKimDate {
 	int getSec();
 
 	int getMs();
-
-	Date getDate();
-
+	
 	boolean isValid();
 
 }

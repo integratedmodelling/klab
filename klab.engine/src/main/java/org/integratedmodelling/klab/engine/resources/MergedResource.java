@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.engine.resources;
 
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -8,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
+import java.util.TimeZone;
 import java.util.TreeMap;
 
 import org.integratedmodelling.kim.api.IKimModel;
@@ -539,7 +543,7 @@ public class MergedResource implements IResource {
 					 * anything
 					 */
 					long seen = artifact.getLastUpdate();
-					if (seen >= set.getKey()) {
+					if (seen > set.getKey()) {
 						ok = false;
 					}
 				}
