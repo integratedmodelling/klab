@@ -46,7 +46,6 @@ import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -76,6 +75,7 @@ import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class Model extends KimObject implements IModel {
 
@@ -1037,8 +1037,8 @@ public class Model extends KimObject implements IModel {
 	}
 
 	@Override
-	public String getLocalNameFor(IObservable observable, IConcept context) {
-		IObservable obs = getCompatibleOutput((Observable) observable, context);
+	public String getLocalNameFor(IObservable observable, IConcept context, IMonitor monitor) {
+		IObservable obs = getCompatibleOutput((Observable) observable, context, monitor);
 		if (obs != null) {
 			return obs.getName();
 		}
@@ -1275,18 +1275,29 @@ public class Model extends KimObject implements IModel {
 	}
 
 	/**
-	 * Get the output that can satisfy this observable, possibly with mediation. Do
-	 * not compare inherency to let distributed models through.
+	 * Get the output that can satisfy this observable, possibly with mediation. If
+	 * we are matching a dereified output of an instantiator, give it back its
+	 * inherency before returning it.
 	 * 
 	 * @param observable
+	 * 
+	 * 
 	 * @return an existing output observable or null
 	 */
-	public Observable getCompatibleOutput(Observable observable, IConcept context) {
+	public Observable getCompatibleOutput(Observable observable, IConcept context, IMonitor monitor) {
 		for (IObservable output : observables) {
 			if (output.getType().resolves(observable.getType(), context)) {
 				return (Observable) output;
 			}
 		}
+		for (String key : attributeObservables.keySet()) {
+			IObservable output = attributeObservables.get(key);
+			if (output.getType().resolves(observable.getType(), context)) {
+				return (Observable) output.getBuilder(monitor).of(getMainObservable().getType())
+						.withDereifiedAttribute(key).buildObservable();
+			}
+		}
+
 		return null;
 	}
 

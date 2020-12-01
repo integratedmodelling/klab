@@ -762,9 +762,14 @@ public class Concept extends Knowledge implements IConcept {
 
 				if (ourInherent != null && ourInherent.isAbstract()) {
 					component = getDistance(ourInherent, itsInherent, false);
+				} else if (ourInherent == null && itsInherent != null && context != null) {
+					/*
+					 * Situations like: does XXX resolve YYY of ZZZ when ZZZ is the context.
+					 */
+					component = getDistance(context, itsInherent, false);
 				} else {
 					component = getDistance(itsInherent, ourInherent, false);
-				}
+				} 
 
 				if (component < 0) {
 					double d = ((double) component / 10.0);

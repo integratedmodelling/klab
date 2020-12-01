@@ -24,6 +24,8 @@ import org.integratedmodelling.klab.api.observations.ISubjectiveState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
+import org.integratedmodelling.klab.components.localstorage.impl.KeyedStorage;
 import org.integratedmodelling.klab.data.storage.DataIterator;
 import org.integratedmodelling.klab.data.storage.LocatedState;
 import org.integratedmodelling.klab.data.storage.MediatingState;
@@ -92,6 +94,10 @@ public class State extends Observation implements IState, IKeyHolder {
 		data.addContextualizationListener(new StateListener());
 		this.timeCoverage = new LinkedHashSet<>();
 		this.layers.put(data.getType(), data);
+		if (data instanceof AbstractAdaptiveStorage) {
+			((AbstractAdaptiveStorage<?>)data).setState(this);
+			((AbstractAdaptiveStorage<?>)data).setWatches(this.watches);
+		}
 	}
 
 	@Override
@@ -105,11 +111,21 @@ public class State extends Observation implements IState, IKeyHolder {
 		if (layer == null) {
 			layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale(), getScope());
 			((IDataStorage<?>)layer).addContextualizationListener(new StateListener());
+			if (layer instanceof AbstractAdaptiveStorage) {
+				((AbstractAdaptiveStorage<?>)layer).setWatches(this.watches);
+			}
+
 			layers.put(type,layer);
 		}
 
-		return new StateLayer(this, (IDataStorage<?>) layer);
+		IState ret = new StateLayer(this, (IDataStorage<?>) layer);
+		if (layer instanceof AbstractAdaptiveStorage) {
+			((AbstractAdaptiveStorage<?>)layer).setState(ret);
+		}
+		
+		return ret;
 	}
+	
 
 	public Object get(ILocator index) {
 		return storage.get(index);
@@ -307,6 +323,21 @@ public class State extends Observation implements IState, IKeyHolder {
 		} else if (this.updateTimestamps.size() == 0) {
 			updateTimestamps.add(0L);
 		}
+	}
+	
+	@Override
+	public String dump() {
+		return "";
+	}
+
+	// for debugging: return all values in all slices, ignoring time in the passed locator.
+	public Object[] getTimeseries(ILocator locator) {
+		if (getStorage() instanceof AbstractAdaptiveStorage) {
+			return ((AbstractAdaptiveStorage<?>)getStorage()).getTimeseries(locator);
+		} else if (getStorage() instanceof KeyedStorage) {
+			return ((KeyedStorage<?>)getStorage()).getTimeseries(locator);
+		}
+		return new Object[] {};
 	}
 
 }

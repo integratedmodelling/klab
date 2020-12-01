@@ -273,4 +273,12 @@ public class StringUtil {
         return str == null || str.length() == 0;
     }
 
+	public static String join(String[] cmds, int i, String string) {
+		String ret = "";
+		for (int n = i; n < cmds.length; n++) {
+			ret += (ret.isEmpty() ? "" : string) + cmds[n];
+		}
+		return ret;
+	}
+
 }

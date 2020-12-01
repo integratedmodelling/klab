@@ -42,6 +42,7 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Months;
 import org.joda.time.YearMonth;
 
@@ -195,7 +196,7 @@ public class Time extends Extent implements ITime {
 		Time ret = new Time();
 		ret.extentType = ITime.Type.PHYSICAL;
 		ret.start = new TimeInstant(year);
-		ret.end = new TimeInstant(new DateTime(year + 1, 1, 1, 0, 0));
+		ret.end = new TimeInstant(new DateTime(year + 1, 1, 1, 0, 0, DateTimeZone.UTC));
 		ret.resolution = new ResolutionImpl(Resolution.Type.YEAR, 1.0);
 		return ret;
 	}
@@ -301,7 +302,7 @@ public class Time extends Extent implements ITime {
 
 	public static ITimeInstant instant(KimDate date) {
 		DateTime dtime = new DateTime(date.getYear(), date.getMonth(), date.getDay(), date.getHour(), date.getMin(),
-				date.getSec(), date.getMs());
+				date.getSec(), date.getMs(), DateTimeZone.UTC);
 		return new TimeInstant(dtime);
 	}
 
@@ -1256,6 +1257,16 @@ public class Time extends Extent implements ITime {
 					+ ((TimeInstant) time).time.getYear();
 		}
 		return time.toString();
+	}
+
+	@Override
+	public ITime earliest() {
+		return size() > 1 ? (ITime)getExtent(1) : null;
+	}
+
+	@Override
+	public ITime latest() {
+		return size() > 1 ? (ITime)getExtent(size() - 1) : null;
 	}
 
 }

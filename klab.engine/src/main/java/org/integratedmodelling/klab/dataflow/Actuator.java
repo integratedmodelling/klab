@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -675,7 +676,7 @@ public class Actuator implements IActuator {
 			 * parallelization instead of hard-coding a loop here.
 			 */
 			IArtifact result = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
-					(IState) ret, addParameters(ctx, self, resource), scale);
+					(IObservation)ret, resource, addParameters(ctx, self, resource), scale);
 
 			if (result != ret) {
 				ctx.swapArtifact(ret, result);
@@ -897,6 +898,9 @@ public class Actuator implements IActuator {
 	 */
 	private IRuntimeScope addParameters(IRuntimeScope ctx, IArtifact self, IContextualizable resource) {
 		IRuntimeScope ret = ctx.copy();
+		if (self instanceof IProcess && resource.getTargetId() != null && ctx.getArtifact(resource.getTargetId()) != null) {
+			self = ctx.getArtifact(resource.getTargetId());
+		}
 		if (self != null) {
 			ret.replaceTarget(self);
 			ret.set("self", self);

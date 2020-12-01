@@ -367,13 +367,13 @@ public enum Observations implements IObservationService {
 
 			ret.setScaleReference(scaleReference);
 		}
-		
+
 		if (observation instanceof State) {
-			String modTimes = ((State)observation).getUpdateDescription();
+			String modTimes = ((State) observation).getUpdateDescription();
 			if (!modTimes.isEmpty()) {
 				ret.getMetadata().put("Temporal transitions", modTimes);
 			}
-		}		
+		}
 
 		// fill in spatio/temporal info and mode of visualization
 		if (space != null) {
@@ -765,6 +765,14 @@ public enum Observations implements IObservationService {
 		return observation instanceof IProcess || observation instanceof IEvent
 				|| observation.getScope().getParentOf(observation) instanceof IEvent
 				|| ((IRuntimeScope) observation.getScope()).getStructure().getOwningProcess(observation) != null;
+	}
+
+	public String describeValue(Object value) {
+		return value instanceof Number ? NumberFormat.getInstance().format(((Number) value).doubleValue())
+				: (value instanceof IConcept ? Concepts.INSTANCE.getDisplayLabel(((IConcept) value))
+						: (value instanceof Boolean
+								? ((Boolean) value ? Observations.PRESENT_LABEL : Observations.NOT_PRESENT_LABEL)
+								: "No data"));
 	}
 
 }

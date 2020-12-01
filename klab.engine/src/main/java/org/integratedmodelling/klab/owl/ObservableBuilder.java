@@ -76,7 +76,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IUnit unit;
 	private ICurrency currency;
 	private List<IAnnotation> annotations = new ArrayList<>();
-
+	private String dereifiedAttribute; 
 	private boolean isTrivial = true;
 	private boolean distributedInherency = false;
 	private KimConcept declaration;
@@ -1973,6 +1973,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		ret.getAnnotations().addAll(annotations);
 		ret.setDistributedInherency(distributedInherency);
 		ret.setTemporalInherent(temporalInherent);
+		ret.setDereifiedAttribute(this.dereifiedAttribute);
 
 		return ret;
 	}
@@ -2016,6 +2017,12 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder withTargetPredicate(IConcept targetPredicate) {
 		this.targetPredicate = targetPredicate;
+		return this;
+	}
+
+	@Override
+	public Builder withDereifiedAttribute(String dereifiedAttribute) {
+		this.dereifiedAttribute = dereifiedAttribute;
 		return this;
 	}
 

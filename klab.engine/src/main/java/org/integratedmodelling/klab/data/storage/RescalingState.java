@@ -416,4 +416,10 @@ public class RescalingState extends Observation implements IState {
 		}
 	}
 
+	@Override
+	public String dump() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }

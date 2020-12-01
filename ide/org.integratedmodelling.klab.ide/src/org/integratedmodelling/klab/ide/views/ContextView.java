@@ -72,6 +72,7 @@ import org.integratedmodelling.klab.ide.navigator.model.EScript;
 import org.integratedmodelling.klab.ide.navigator.model.ETestCase;
 import org.integratedmodelling.klab.ide.navigator.model.beans.EResourceReference;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.rest.EngineAction;
 import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.RuntimeEvent;
@@ -905,9 +906,19 @@ public class ContextView extends ViewPart {
 				}
 			};
 
+			Action debugger = new Action("Open debugger") {
+				public void run() {
+					EngineAction request = new EngineAction();
+					request.setRequest("debugger");
+					Activator.post(IMessage.MessageClass.EngineLifecycle, IMessage.Type.ExecuteCommand, request);
+				}
+			};
+
 			addActionToMenu(fMenu, filterAction);
 			new MenuItem(fMenu, SWT.SEPARATOR);
 			addActionToMenu(fMenu, gen);
+			new MenuItem(fMenu, SWT.SEPARATOR);
+			addActionToMenu(fMenu, debugger);
 
 			return fMenu;
 		}

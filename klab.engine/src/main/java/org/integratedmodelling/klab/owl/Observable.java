@@ -100,6 +100,10 @@ public class Observable implements IObservable {
 	private String referenceName;
 	private String url;
 
+	// added to carry the attribute if the resolution of the observable comes from
+	// an instantiator dereification
+	private String dereifiedAttribute;
+
 	/*
 	 * this is only for debugging
 	 */
@@ -178,6 +182,7 @@ public class Observable implements IObservable {
 		this.temporalInherent = observable.temporalInherent;
 		this.resolution = observable.resolution;
 		this.contextualRoles.addAll(observable.contextualRoles);
+		this.dereifiedAttribute = observable.dereifiedAttribute;
 	}
 
 	public Observable withoutModel() {
@@ -268,7 +273,7 @@ public class Observable implements IObservable {
 	public Object getValue() {
 		return value;
 	}
-	
+
 	@Override
 	public Collection<IConcept> getContextualRoles() {
 		return this.contextualRoles;
@@ -783,6 +788,14 @@ public class Observable implements IObservable {
 	public IObservable withRole(IConcept role) {
 		this.contextualRoles.add(role);
 		return this;
+	}
+
+	public String getDereifiedAttribute() {
+		return this.dereifiedAttribute;
+	}
+
+	public void setDereifiedAttribute(String dereifiedAttribute) {
+		this.dereifiedAttribute = dereifiedAttribute;
 	}
 
 }

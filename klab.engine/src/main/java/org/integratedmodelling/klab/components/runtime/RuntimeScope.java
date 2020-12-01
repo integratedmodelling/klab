@@ -17,6 +17,7 @@ import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Klab;
@@ -29,6 +30,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -225,7 +227,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 		// store and set up for further resolutions
 		this.resolutionScope = (ResolutionScope) scope;
-
 		this.semantics = new HashMap<>();
 		this.semantics.put(actuator.getName(), this.targetSemantics);
 
@@ -1085,6 +1086,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 				// attribute the name if any
 				if (dataflow.getTargetName() != null && ((Actuator) actuator).getMode() == Mode.RESOLUTION
+						&& dataflow.getObservationGroup() != null
 						&& observable.is(dataflow.getObservationGroup().getObservable())) {
 					obs = new Observable(obs);
 					obs.setName(dataflow.getTargetName());
@@ -1153,7 +1155,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 				// transmit all annotations and any interpretation keys to the artifact
 				actuator.notifyNewObservation(observation);
-
+				
 				/*
 				 * register the obs and potentially the root subject
 				 */
@@ -1997,6 +1999,24 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		} catch (ExecutionException e) {
 			return false;
 		}
+	}
+
+	@Override
+	public IParameters<String> localize(ILocator locator) {
+
+		RuntimeScope ret = new RuntimeScope(this);
+		Collection<Pair<String, IDataArtifact>> variables = getArtifacts(IDataArtifact.class);
+		for (Pair<String, IDataArtifact> variable : variables) {
+			// this ensures that Groovy expressions are computable
+			Object value = variable.getSecond().get(locator);
+			if (value == null && variable.getSecond().getType() == IArtifact.Type.NUMBER) {
+				value = Double.NaN;
+			}
+			ret.set(variable.getFirst(), value);
+		}
+
+		ret.setScale((IScale)locator);
+		return ret;
 	}
 
 }

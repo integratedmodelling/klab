@@ -10,6 +10,7 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -723,7 +724,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public void updateNotifications(IObservation observation) {
 		// TODO Auto-generated method stub
@@ -751,7 +752,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	@Override
 	public void notifyListeners(IObservation object) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -781,7 +782,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	@Override
 	public void addView(IKnowledgeView view) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -792,6 +793,12 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
 	@Override
 	public IRuntimeScope targetToObservation(IObservation target) {
+		// TODO Auto-generated method stub
+		return this;
+	}
+
+	@Override
+	public IParameters<String> localize(ILocator locator) {
 		// TODO Auto-generated method stub
 		return this;
 	}

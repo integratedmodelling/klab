@@ -134,8 +134,8 @@ public class RankedModel extends Model implements IRankedModel {
 		return getDelegate().getAttributeObservables();
 	}
 
-	public String getLocalNameFor(IObservable observable, IConcept context) {
-		return getDelegate().getLocalNameFor(observable, context);
+	public String getLocalNameFor(IObservable observable, IConcept context, IMonitor monitor) {
+		return getDelegate().getLocalNameFor(observable, context, monitor);
 	}
 
 	public boolean isResolved() {
@@ -236,8 +236,8 @@ public class RankedModel extends Model implements IRankedModel {
 	}
 
 	@Override
-	public Observable getCompatibleOutput(Observable observable, IConcept context) {
-		return getDelegate().getCompatibleOutput(observable, context);
+	public Observable getCompatibleOutput(Observable observable, IConcept context, IMonitor monitor) {
+		return getDelegate().getCompatibleOutput(observable, context, monitor);
 	}
 
 	@Override

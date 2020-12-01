@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -728,6 +729,12 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 
 	@Override
 	public IRuntimeScope targetToObservation(IObservation target) {
+		// TODO Auto-generated method stub
+		return this;
+	}
+	
+	@Override
+	public IParameters<String> localize(ILocator locator) {
 		// TODO Auto-generated method stub
 		return this;
 	}
