@@ -31,7 +31,7 @@ public class ScaleReference {
 	 * Description is in whatever unit is more convenient
 	 */
 	private String spaceResolutionDescription;
-//	private double spaceResolutionConverted;
+	private double spaceResolutionConverted;
 	private String spaceUnit;
 	private double timeResolutionMultiplier;
 	private ITime.Resolution.Type timeUnit;
@@ -175,14 +175,14 @@ public class ScaleReference {
 	public String getResolutionDescription() {
 		return this.resolutionDescription;
 	}
-//
-//	public double getSpaceResolutionConverted() {
-//		return spaceResolutionConverted;
-//	}
-//
-//	public void setSpaceResolutionConverted(double spaceResolutionConverted) {
-//		this.spaceResolutionConverted = spaceResolutionConverted;
-//	}
+
+	public double getSpaceResolutionConverted() {
+		return spaceResolutionConverted;
+	}
+
+	public void setSpaceResolutionConverted(double spaceResolutionConverted) {
+		this.spaceResolutionConverted = spaceResolutionConverted;
+	}
 
 	public String getContextId() {
 		return contextId;
