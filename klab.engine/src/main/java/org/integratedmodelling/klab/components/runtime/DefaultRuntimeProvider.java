@@ -217,7 +217,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 							.createChild("Temporal contextualization");
 					try {
 						((AbstractTask<?>) subtask).notifyStart();
-						runtimeContext.getScheduler().run(subtask.getMonitor());
+						runtimeContext.getScheduler().run(dataflow, subtask.getMonitor());
 						((AbstractTask<?>) subtask).notifyEnd();
 					} catch (Throwable e) {
 						throw ((AbstractTask<?>) subtask).notifyAbort(e);

@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.IScheduler;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
@@ -87,7 +88,7 @@ public class Scheduler implements IScheduler {
 	private int cursor = 0;
 	private ExecutorService executor;
 	private WaitStrategy waitStrategy;
-	private Dataflow dataflow;
+//	private Dataflow dataflow;
 	private boolean finished = false;
 
 	/*
@@ -553,9 +554,9 @@ public class Scheduler implements IScheduler {
 
 		scope = scope.targetForChange();
 
-		if (this.dataflow == null) {
-			this.dataflow = actuator.getDataflow();
-		}
+//		if (this.dataflow == null) {
+//			this.dataflow = actuator.getDataflow();
+//		}
 
 		/*
 		 * overall scale fills in any missing info.
@@ -618,7 +619,7 @@ public class Scheduler implements IScheduler {
 	 * one-shot scheduling, re-entrant
 	 */
 	@SuppressWarnings("unchecked")
-	public void schedule() {
+	public void schedule(IDataflow<?> dataflow) {
 
 		long longest = 0;
 
@@ -630,8 +631,8 @@ public class Scheduler implements IScheduler {
 		 * there is only one resolution this is also the order of registration, but if
 		 * there are successive resolutions for change this no longer holds.
 		 */
-		if (this.dataflow != null) {
-			regs = computeDynamicDependencyOrder(regs, dataflow.getDependencies());
+		if (dataflow != null) {
+			regs = computeDynamicDependencyOrder(regs, ((Dataflow)dataflow).getDependencies());
 		}
 
 		/*
@@ -791,13 +792,13 @@ public class Scheduler implements IScheduler {
 	}
 
 	@Override
-	public void run(IMonitor monitor) {
+	public void run(IDataflow<?> dataflow, IMonitor monitor) {
 
 		if (this.registrations.size() < 1) {
 			return;
 		}
 
-		schedule();
+		schedule(dataflow);
 
 		if (startTime == 0 && type == Type.REAL_TIME) {
 			startTime = DateTime.now().getMillis();
@@ -1169,23 +1170,23 @@ public class Scheduler implements IScheduler {
 
 	}
 
-	@Override
-	public void start(final IMonitor monitor) {
-		new Thread() {
-			@Override
-			public void run() {
-				Scheduler.this.run(monitor);
-			}
-		}.start();
-	}
-
-	@Override
-	public void stop() {
-		this.stopped.set(true);
-		if (executor != null && !executor.isTerminated()) {
-			executor.shutdownNow();
-		}
-	}
+//	@Override
+//	public void start(final IMonitor monitor) {
+//		new Thread() {
+//			@Override
+//			public void run() {
+//				Scheduler.this.run(monitor);
+//			}
+//		}.start();
+//	}
+//
+//	@Override
+//	public void stop() {
+//		this.stopped.set(true);
+//		if (executor != null && !executor.isTerminated()) {
+//			executor.shutdownNow();
+//		}
+//	}
 
 	@Override
 	public boolean isEmpty() {
