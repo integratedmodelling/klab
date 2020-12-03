@@ -54,6 +54,9 @@ public class HubUserService implements RemoteUserService {
 	@Autowired
 	ConsulDnsService dnsService;
 	
+	@Autowired
+	AgentServiceCheck check;
+	
 	/*
 	 * Generates a response entity a url to the session generated after succesful
 	 * authentication.
@@ -113,6 +116,7 @@ public class HubUserService implements RemoteUserService {
         	
         	if(checkForActiveSessions(profile)) {
         		response = getActiveSessionResponse(profile);
+        		check.setLoad(10);
         	} else {
         		response = processProfile(profile);
         	}
@@ -145,6 +149,7 @@ public class HubUserService implements RemoteUserService {
         		Session active  = activeSessions(profile).iterator().next();
         		try {
         			dnsService.removeSessionWeight(active);
+        			check.setLoad(100);
 					active.close();
 				} catch (IOException e) {
 					throw new KlabException("Could not close the session :(");

@@ -14,11 +14,16 @@ public class RemoteEngineReadyService {
 	ConsulDnsService dnsService;
 	
 	@Autowired
+	AgentServiceCheck check;
+	
+	@Autowired
 	RemoteEngineService engineService;
 	
     @EventListener(ApplicationReadyEvent.class)
     public void ContextRefreshedEventExecute(){
         engineService.getEngine().setDnsService(dnsService);
+        check.start();
+        engineService.getEngine().setCheck(check);
     }
     
 }

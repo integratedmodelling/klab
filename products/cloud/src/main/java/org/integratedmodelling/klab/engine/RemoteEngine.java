@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.engine.IEngineStartupOptions;
 import org.integratedmodelling.klab.auth.AnonymousEngineCertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.services.AgentServiceCheck;
 import org.integratedmodelling.klab.engine.services.ConsulDnsService;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -25,6 +26,7 @@ public class RemoteEngine extends Engine {
 	
 	private Long sessionDeadBand = 24L;
 	private ConsulDnsService dnsService;
+	private AgentServiceCheck check;
 	
 	public RemoteEngine(ICertificate certificate) {
         super(certificate);
@@ -106,6 +108,16 @@ public class RemoteEngine extends Engine {
 
 	public void setDnsService(ConsulDnsService dnsService) {
 		this.dnsService = dnsService;
+	}
+
+
+	public AgentServiceCheck getCheck() {
+		return check;
+	}
+
+
+	public void setCheck(AgentServiceCheck check) {
+		this.check = check;
 	}
 
 }
