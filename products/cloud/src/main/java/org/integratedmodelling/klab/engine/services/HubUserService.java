@@ -82,6 +82,7 @@ public class HubUserService implements RemoteUserService {
         		response = getActiveSessionResponse(profile);
         	} else {
         		response = processProfile(profile);
+        		check.setLoad(10);
         	}
         	response.setAuthorization(result.getBody().getAuthentication().getTokenString());
         	return ResponseEntity.status(HttpStatus.ACCEPTED)
@@ -116,9 +117,9 @@ public class HubUserService implements RemoteUserService {
         	
         	if(checkForActiveSessions(profile)) {
         		response = getActiveSessionResponse(profile);
-        		check.setLoad(10);
         	} else {
         		response = processProfile(profile);
+        		check.setLoad(10);
         	}
         	response.setAuthorization(token);
         	return ResponseEntity.status(HttpStatus.ACCEPTED)
