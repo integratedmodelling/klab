@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -73,6 +74,17 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	// just for clients
 	private boolean contextualized;
 	private View view;
+
+	/*
+	 * If this is not null, the observation is being recontextualized by a dataflow
+	 * successive to the one that produced its change, and the getLastUpdate()
+	 * method should respond a time relative to that instead of the very last one.
+	 * 
+	 * FIXME this is a potentially dangerous approach but using a wrapper destroys
+	 * the referential integrity of the context. Should externalize this info within
+	 * the scheduler.
+	 */
+	protected ITime replayingTime = null;
 
 	/*
 	 * Any modification that needs to be reported to clients is recorded here
@@ -147,6 +159,10 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	protected void reportChange(ObservationChange change) {
 		this.changeset.add(change);
+	}
+
+	public void setReplayingTime(ITime time) {
+		this.replayingTime = time;
 	}
 
 	protected void touch() {

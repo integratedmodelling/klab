@@ -19,6 +19,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   the rest and makes "proposals" that become the context at the first observation,
   rather than setting the context right away.
 ### Fixed
+- Temporal contextualization now behaves correctly when changing states from 
+  previous resolutions have dependencies in the current one.
 - Various issues in temporal resolution and contextualization
 
 ## [0.10.0.232] -- 2020/11/21

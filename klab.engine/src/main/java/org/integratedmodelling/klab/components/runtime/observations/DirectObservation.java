@@ -8,6 +8,7 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -82,9 +83,21 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 	 * @return
 	 */
 	public IObservation getObservationResolving(IObservable observable) {
+		
+		/*
+		 * TODO contextualized dynamic states must resolve 'change in' X
+		 */
+		IConcept changing = null;
+		if (observable.is(IKimConcept.Type.CHANGE)) {
+			changing = Observables.INSTANCE.getDescribedType(observable.getType());
+		}
+	
 		for (IArtifact child : getScope().getChildArtifactsOf(this)) {
 			if (child instanceof IObservation && ((IObservation) child).getObservable().getType()
-					.resolves(observable.getType(), getObservable().getType())) {
+					.resolves(changing == null ? observable.getType() : changing, getObservable().getType())) {
+				if (changing != null) {
+					return child instanceof Observation && ((Observation)child).isDynamic() ? (IObservation)child : null;
+				}
 				return (IObservation) child;
 			}
 		}

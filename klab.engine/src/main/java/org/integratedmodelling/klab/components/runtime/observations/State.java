@@ -52,7 +52,6 @@ public class State extends Observation implements IState, IKeyHolder {
 	public static final String STATE_SUMMARY_METADATA_KEY = "metadata.keys.state_summary_";
 
 	Set<Pair<Long, Long>> timeCoverage;
-
 	public class StateListener implements Consumer<ILocator> {
 
 		@Override
@@ -220,9 +219,24 @@ public class State extends Observation implements IState, IKeyHolder {
 		return ret;
 	}
 	
-
 	@Override
 	public long getLastUpdate() {
+		
+		if (this.replayingTime != null && this.replayingTime.getEnd() != null) {
+			long ret = -1;
+			for (long l : getUpdateTimestamps()) {
+				if (l > this.replayingTime.getEnd().getMilliseconds()) {
+					break;
+				}
+				if (l > ret) {
+					ret = l;
+				}
+			}
+			if (ret >= 0) {
+				return ret;
+			}
+		}
+		
 		if (this.timeCoverage.size() > 0) {
 			long ret = -1;
 			for (Pair<Long,Long> ll : timeCoverage) {
