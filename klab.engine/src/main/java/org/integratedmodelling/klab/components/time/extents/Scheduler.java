@@ -54,7 +54,6 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
-import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.rest.SchedulerNotification;
 import org.integratedmodelling.klab.scale.AbstractExtent;
@@ -88,7 +87,6 @@ public class Scheduler implements IScheduler {
 	private int cursor = 0;
 	private ExecutorService executor;
 	private WaitStrategy waitStrategy;
-//	private Dataflow dataflow;
 	private boolean finished = false;
 
 	/*
@@ -336,40 +334,42 @@ public class Scheduler implements IScheduler {
 											: Mode.RESOLUTION));
 							// TODO if in group, group has changed too
 							break;
-						}
-
-						if (computation.target instanceof IProcess) {
+						} else if (computation.target instanceof IProcess) {
 							// report all changed states that were affected or created.
 							for (IConcept affected : Observables.INSTANCE
 									.getAffectedQualities(((IProcess) computation.target).getObservable().getType())) {
 								IState state = scope.getArtifact(affected, IState.class);
-								if (state != null) {
-									// TODO only if changed!
+								if (state != null && state.getLastUpdate() > transitionContext.getScale().getTime()
+										.getStart().getMilliseconds()) {
 									changed.add(state);
 									ret.add(new ObservedConcept(state.getObservable(), Mode.RESOLUTION));
 								}
 							}
+						} else if (computation.target instanceof IState
+								&& actuator.getObservable().is(IKimConcept.Type.CHANGE)) {
+							if (computation.target.getLastUpdate() > transitionContext.getScale().getTime().getStart()
+									.getMilliseconds()) {
+								changed.add((IObservation) computation.target);
+								ret.add(new ObservedConcept(((IObservation) computation.target).getObservable(),
+										actuator.getMode()));
+							}
 						}
 
-//						if (artifact instanceof Observation) {
-//							((Observation) artifact).finalizeTransition((IScale) transitionScale);
-//						}
-
 					}
 
-					/*
-					 * report only states for now - must become discriminating and intelligent. If
-					 * in folder...
-					 *
-					 */
-					if (artifact instanceof IState /*
-													 * TODO check if changes happened independent of type
-													 */) {
-						changed.add((IObservation) ctarget);
-						ret.add(new ObservedConcept(((IObservation) ctarget).getObservable(),
-								((IObservation) ctarget) instanceof ObservationGroup ? Mode.INSTANTIATION
-										: Mode.RESOLUTION));
-					}
+//					/*
+//					 * report only states for now - must become discriminating and intelligent. If
+//					 * in folder...
+//					 *
+//					 */
+//					if (artifact instanceof IState /*
+//													 * TODO check if changes happened independent of type
+//													 */) {
+//						changed.add((IObservation) ctarget);
+//						ret.add(new ObservedConcept(((IObservation) ctarget).getObservable(),
+//								((IObservation) ctarget) instanceof ObservationGroup ? Mode.INSTANTIATION
+//										: Mode.RESOLUTION));
+//					}
 
 					/*
 					 * 4. Notify whatever has changed.
@@ -416,11 +416,11 @@ public class Scheduler implements IScheduler {
 		public Collection<ObservedConcept> run(IMonitor monitor) {
 
 			if (Debug.INSTANCE.isDebugging()) {
-				for (Watcher  watch : ((Observation)runtimeScope.getRootSubject()).getWatches()) {
+				for (Watcher watch : ((Observation) runtimeScope.getRootSubject()).getWatches()) {
 					watch.newTransition(time, this.target);
 				}
 			}
-			
+
 			if (synchronicity == Synchronicity.SYNCHRONOUS) {
 				/*
 				 * run in current thread, return when finished
@@ -479,7 +479,6 @@ public class Scheduler implements IScheduler {
 	private long resolution;
 	private String contextId;
 	private ISession session;
-	private IResolutionScope resolutionScope;
 	private int activeRegistrations;
 	// registrations scheduled to be run after the last transition. So far only
 	// views can do this.
@@ -488,7 +487,6 @@ public class Scheduler implements IScheduler {
 
 	public Scheduler(IRuntimeScope runtimeScope, String contextId, IResolutionScope scope, IMonitor monitor) {
 		this.contextId = contextId;
-		this.resolutionScope = scope;
 		this.runtimeScope = runtimeScope;
 		this.session = monitor.getIdentity().getParentIdentity(ISession.class);
 		Date now = new Date();
@@ -553,10 +551,6 @@ public class Scheduler implements IScheduler {
 	public void schedule(final Actuator actuator, final List<Actuator.Computation> computations, IRuntimeScope scope) {
 
 		scope = scope.targetForChange();
-
-//		if (this.dataflow == null) {
-//			this.dataflow = actuator.getDataflow();
-//		}
 
 		/*
 		 * overall scale fills in any missing info.
@@ -632,7 +626,7 @@ public class Scheduler implements IScheduler {
 		 * there are successive resolutions for change this no longer holds.
 		 */
 		if (dataflow != null) {
-			regs = computeDynamicDependencyOrder(regs, ((Dataflow)dataflow).getDependencies());
+			regs = computeDynamicDependencyOrder(regs, ((Dataflow) dataflow).getDependencies());
 		}
 
 		/*
@@ -711,11 +705,11 @@ public class Scheduler implements IScheduler {
 
 		for (ObservedConcept oc : dynamicDependencies.vertexSet()) {
 //			if (dependencies.vertexSet().contains(oc)) {
-				for (DefaultEdge dc : dependencies.incomingEdgesOf(oc)) {
-					if (dynamicDependencies.containsVertex(dependencies.getEdgeSource(dc))) {
-						dynamicDependencies.addEdge(dependencies.getEdgeSource(dc), oc);
-					}
+			for (DefaultEdge dc : dependencies.incomingEdgesOf(oc)) {
+				if (dynamicDependencies.containsVertex(dependencies.getEdgeSource(dc))) {
+					dynamicDependencies.addEdge(dependencies.getEdgeSource(dc), oc);
 				}
+			}
 //			}
 		}
 
@@ -865,16 +859,16 @@ public class Scheduler implements IScheduler {
 
 						reschedule(registration, false);
 
-						// check for implicitly affected actuators. This must be done when the last
-						// registration with each particular delay has finished.
-						if (toRun != null && registration.endsPeriod && changed.size() > 0
-								&& this.resolutionScope != null) {
+						/*
+						 * check for implicitly affected actuators. This must be done when the last
+						 * registration with each particular delay has finished.
+						 */
+						if (toRun != null && registration.endsPeriod && changed.size() > 0) {
 
 							Set<ObservedConcept> computed = new HashSet<>();
-							for (ObservedConcept tracked : ((ResolutionScope) resolutionScope)
-									.getImplicitlyChangingObservables()) {
+							for (ObservedConcept tracked : ((Dataflow) dataflow).getImplicitlyChangingObservables()) {
 								computeImplicitDependents(tracked, changed, computed, toRun, registration.scope,
-										registration.actuator.getDataflow().getDependencies(), catalog);
+										registration.actuator.getDataflow().getDependencies(), catalog, dataflow);
 
 								if (monitor.isInterrupted()) {
 									this.registrations.clear();
@@ -967,7 +961,8 @@ public class Scheduler implements IScheduler {
 	 */
 	private void computeImplicitDependents(ObservedConcept observable, Set<ObservedConcept> changed,
 			Set<ObservedConcept> computed, ITime time, IRuntimeScope runtimeScope,
-			Graph<ObservedConcept, DefaultEdge> dependencies, Map<ObservedConcept, IObservation> catalog) {
+			Graph<ObservedConcept, DefaultEdge> dependencies, Map<ObservedConcept, IObservation> catalog,
+			IDataflow<?> dataflow) {
 
 		if (monitor.isInterrupted()) {
 			return;
@@ -977,7 +972,8 @@ public class Scheduler implements IScheduler {
 			boolean recompute = false;
 			for (ObservedConcept precursor : getPrecursors(dependencies, observable)) {
 				computed.add(observable);
-				computeImplicitDependents(precursor, changed, computed, time, runtimeScope, dependencies, catalog);
+				computeImplicitDependents(precursor, changed, computed, time, runtimeScope, dependencies, catalog,
+						dataflow);
 				if (changed.contains(precursor) && !changed.contains(observable)) {
 					IObservation pre = catalog.get(precursor);
 					IObservation post = catalog.get(observable);
@@ -988,12 +984,8 @@ public class Scheduler implements IScheduler {
 			}
 			if (recompute) {
 				System.out.println("RECOMPUTING " + observable);
-				/*
-				 * FIXME THIS PASSES THE SCOPE FOR THE PRECURSOR: MUST RETUNE SEMANTICS, TARGET
-				 * AND TARGET NAME TO THE DEPENDENTS BEING CONTEXTUALIZED
-				 */
 				reinitializeObservation(observable.getObservable(), getActuator(observable, dependencies), time,
-						runtimeScope);
+						runtimeScope, dataflow);
 				changed.add(observable);
 			}
 		}
@@ -1009,13 +1001,13 @@ public class Scheduler implements IScheduler {
 	 * @param runtimeScope
 	 */
 	private void reinitializeObservation(IObservable observable, Actuator actuator, ITime time,
-			IRuntimeScope runtimeScope) {
+			IRuntimeScope runtimeScope, IDataflow<?> dataflow) {
 
 		Pair<String, IArtifact> targetd = runtimeScope.findArtifact(observable);
 		if (targetd != null) {
 
 			IObservation target = (IObservation) targetd.getSecond();
-			ILocator transitionScale = resolutionScope.getScale().at(time);
+			ILocator transitionScale = dataflow.getResolutionScale().at(time);
 			IRuntimeScope transitionContext = runtimeScope.targetToObservation(target).locate(transitionScale, monitor);
 			long lastUpdate = target.getLastUpdate();
 
@@ -1076,7 +1068,7 @@ public class Scheduler implements IScheduler {
 						change.setType(ObservationChange.Type.Termination);
 					}
 
-					ISession session = resolutionScope.getMonitor().getIdentity().getParentIdentity(ISession.class);
+					ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
 					session.getMonitor().send(Message.create(session.getId(),
 							IMessage.MessageClass.ObservationLifecycle, IMessage.Type.ModifiedObservation, change));
 				} else {
@@ -1169,24 +1161,6 @@ public class Scheduler implements IScheduler {
 		return ret;
 
 	}
-
-//	@Override
-//	public void start(final IMonitor monitor) {
-//		new Thread() {
-//			@Override
-//			public void run() {
-//				Scheduler.this.run(monitor);
-//			}
-//		}.start();
-//	}
-//
-//	@Override
-//	public void stop() {
-//		this.stopped.set(true);
-//		if (executor != null && !executor.isTerminated()) {
-//			executor.shutdownNow();
-//		}
-//	}
 
 	@Override
 	public boolean isEmpty() {

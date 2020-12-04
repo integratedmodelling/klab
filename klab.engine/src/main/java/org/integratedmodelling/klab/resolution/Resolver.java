@@ -174,18 +174,19 @@ public class Resolver {
 						// these are mere transformations and we don't need their change.
 						continue;
 					}
-					
+
 					IObservable toResolve = observable.getObservable().getBuilder(parentScope.getMonitor())
 							.as(UnarySemanticOperator.CHANGE).buildObservable();
 
 					if (parentScope.getResolvedObservable(toResolve, Mode.RESOLUTION) != null) {
 						continue;
 					}
-					
+
 					ret.getMonitor().info("Resolution scope is occurrent: resolving additional observable "
 							+ Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
-					ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(ret), Mode.RESOLUTION);
+					ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(ret),
+							Mode.RESOLUTION);
 
 					if (cscope.getCoverage().isRelevant()) {
 
@@ -406,7 +407,12 @@ public class Resolver {
 				 */
 				IObservation previous = ((DirectObservation) ret.getContext()).getObservationResolving(observable);
 				if (previous != null) {
-					previousArtifact = new Pair<>(previous.getObservable().getName(), previous);
+
+					if (observable.is(Type.CHANGE) && previous.getObservable().is(Type.QUALITY)) {
+						observable = observable.withResolvedModel(new Model(observable, previous, ret));
+					} else {
+						previousArtifact = new Pair<>(previous.getObservable().getName(), previous);
+					}
 				}
 			}
 		}

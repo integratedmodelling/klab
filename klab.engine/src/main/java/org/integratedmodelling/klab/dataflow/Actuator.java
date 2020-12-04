@@ -684,7 +684,9 @@ public class Actuator implements IActuator {
 			ret = result;
 
 			if (this.model != null && ret instanceof Observation) {
-				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, ctx);
+				if (scale.getTime() != null && scale.getTime().is(ITime.Type.INITIALIZATION)){
+					Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, ctx);
+				}
 				/*
 				 * tell the scope to notify internal listeners (for actors and the like)
 				 */
@@ -700,7 +702,7 @@ public class Actuator implements IActuator {
 			}
 			ret = result;
 
-			if (this.model != null && ret instanceof Observation) {
+			if (this.model != null && ret instanceof Observation && scale.getTime() != null && scale.getTime().is(ITime.Type.INITIALIZATION)) {
 				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, ctx);
 			}
 

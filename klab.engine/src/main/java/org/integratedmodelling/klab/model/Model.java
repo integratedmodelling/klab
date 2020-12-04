@@ -46,6 +46,7 @@ import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -75,7 +76,6 @@ import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
-import org.integratedmodelling.klab.utils.Pair;
 
 public class Model extends KimObject implements IModel {
 
@@ -806,6 +806,21 @@ public class Model extends KimObject implements IModel {
 			ComputableResource computation = (ComputableResource) ((Model) originalModel).getComputation().get(i);
 			this.resources.add(((Model) originalModel).validate(computation.copy(), scope.getMonitor()));
 		}
+	}
+	
+	public Model(IObservable mainObservable, IObservation resolvedChangingObservation, ResolutionScope scope) {
+		super(null);
+		this.derived = true;
+		this.id = mainObservable.getName() + "_resolved_change";
+		this.namespace = scope.getResolutionNamespace();
+		this.contextualization = new Contextualization(null, this);
+		this.observables.add(mainObservable);
+		this.coverage = scope.getScale();
+		this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(mainObservable, resolvedChangingObservation));
+//		for (int i = 1; i < ((Model) originalModel).getComputation().size(); i++) {
+//			ComputableResource computation = (ComputableResource) ((Model) originalModel).getComputation().get(i);
+//			this.resources.add(((Model) originalModel).validate(computation.copy(), scope.getMonitor()));
+//		}
 	}
 
 	public Model(IViewModel view) {
