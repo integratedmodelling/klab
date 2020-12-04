@@ -382,6 +382,10 @@ public class ContributingCell extends Expando {
 	public double getDistance(ISpace extent) {
 		return delegate.getStandardizedDistance(extent);
 	}
+	
+	public double getDistance(ContributingCell extent) {
+		return delegate.getStandardizedDistance(extent.delegate);
+	}
 
 	public IShape getShape() {
 		return delegate.getShape();
