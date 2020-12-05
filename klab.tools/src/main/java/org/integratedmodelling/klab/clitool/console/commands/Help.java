@@ -21,7 +21,7 @@ public class Help implements ICommand {
         if (!pack.equals("main")) {
           synopsis = StringUtil.leftIndent(synopsis, 3);
         }
-        output += "* " + synopsis + "\n";
+        output += prototype.getName() + ":\n\n" + synopsis + "\n";
       }
     }
     return output;

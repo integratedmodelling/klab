@@ -355,16 +355,17 @@ public class Prototype implements IPrototype {
 				}
 			}
 
-			String ret = StringUtil
-					.pack(description == null || description.isEmpty() ? "No description provided." : description)
-					+ (tags ? "<p>" : "\n\n");
+			String ret = StringUtil.justifyLeft(
+					StringUtil.pack(
+							description == null || description.isEmpty() ? "No description provided." : description),
+					80) + (tags ? "<p>" : "\n\n");
 			if (tags) {
 				ret += "<dl>";
 			}
 			for (String argument : arguments.keySet()) {
 				Argument arg = arguments.get(argument);
 				ret += "  " + (tags ? "<dt>" : "") + (arg.isOptional() ? "" : "* ") + argument + (tags ? "</dt>" : "")
-						+ (tags ? "" : ":\n");
+						+ (tags ? "" : ": ");
 				String description = StringUtil.pack(
 						arg.getDescription() == null || arg.getDescription().isEmpty() ? "No description provided."
 								: arg.getDescription());
@@ -378,13 +379,13 @@ public class Prototype implements IPrototype {
 
 			if (imports.size() > 0) {
 				ret += "\n\n" + (tags ? "<p>" : "");
-				ret += "Imports (match dependency names):" + (tags ? "</p>" : "")+ "\n\n";
+				ret += "Imports (match dependency names):" + (tags ? "</p>" : "") + "\n\n";
 				if (tags) {
 					ret += "<dl>";
 				}
 				for (Argument arg : imports) {
 					ret += "  " + (tags ? "<dt>" : "") + (arg.isOptional() ? "" : "* ") + arg.getName()
-							+ (tags ? "</dt>" : "") + (tags ? "" : ":\n");
+							+ (tags ? "</dt>" : "") + (tags ? "" : ": ");
 					String description = StringUtil.pack(
 							arg.getDescription() == null || arg.getDescription().isEmpty() ? "No description provided."
 									: arg.getDescription());
@@ -399,7 +400,7 @@ public class Prototype implements IPrototype {
 
 			if (exports.size() > 0) {
 				ret += "\n\n" + (tags ? "<p>" : "");
-				ret += "Exports (match output names):" + (tags ? "</p>" : "")+ "\n\n";
+				ret += "Exports (match output names):" + (tags ? "</p>" : "") + "\n\n";
 				if (tags) {
 					ret += "<dl>";
 				}
@@ -490,7 +491,7 @@ public class Prototype implements IPrototype {
 	public List<Argument> listExports() {
 		return new CastUtils<ArgumentImpl, Argument>().cast(exports);
 	}
-	
+
 	public List<Argument> getImports() {
 		return new CastUtils<ArgumentImpl, Argument>().cast(imports);
 	}
@@ -498,13 +499,13 @@ public class Prototype implements IPrototype {
 	public List<Argument> getExports() {
 		return new CastUtils<ArgumentImpl, Argument>().cast(exports);
 	}
-	
+
 	public void setImports(List<ArgumentImpl> arguments) {
 		this.imports = arguments;
 	}
 
 	public void setExports(List<ArgumentImpl> arguments) {
-		this.exports =  arguments;
+		this.exports = arguments;
 	}
 
 	@Override

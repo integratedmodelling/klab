@@ -44,6 +44,12 @@ message KlabData {
 		LookupTable table = 7;
 		string externalDatasourceUrl = 8;
 		map<string,string> metadata = 9;
+		// string data may encode concepts, JSON map objects or arrays for multiple objects (the
+		// corresponding values cannot be repeated)
+		repeated string stringdata = 10;
+		// specifies the type (string = 'string' or null, 'map', 'array' (both JSON) or 'concept'
+		// if classification is known.
+		string stringdataencoding = 11;
 	}
 
 	string geometry = 1;
