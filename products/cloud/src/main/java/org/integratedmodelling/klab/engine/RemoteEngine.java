@@ -119,5 +119,4 @@ public class RemoteEngine extends Engine {
 	public void setCheck(AgentServiceCheck check) {
 		this.check = check;
 	}
-
 }

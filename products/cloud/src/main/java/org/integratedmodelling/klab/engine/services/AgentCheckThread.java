@@ -22,7 +22,6 @@ public class AgentCheckThread extends Thread {
             writer.println( Integer.toString(load)+"%\n"); 
             socket.close();
         } catch (IOException ex) {
-            System.out.println("Server exception: " + ex.getMessage());
             ex.printStackTrace();
         }
     }

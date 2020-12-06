@@ -18,12 +18,19 @@ public class ConsulConfig {
 	@Value("${spring.cloud.consul.discovery.instanceId}")
 	private String id;
 	
+	@Value("${spring.cloud.consul.store:engine-users}")
+	private String store;
+	
 	public String getHost() {
 		return host;
 	}
 
 	public String getId() {
 		return id;
+	}
+	
+	public String getStore() {
+		return store;
 	}
 
 	public String getServiceUrl() {
@@ -32,6 +39,10 @@ public class ConsulConfig {
 	
 	public String registerServiceUrl() {
 		return "http://" + host + ":" + port + "/v1/agent/service/register";
+	}
+	
+	public String getStoreUrl() {
+		return "http://" + host + ":" + port + "/v1/kv/" + getStore();
 	}
 	
 }

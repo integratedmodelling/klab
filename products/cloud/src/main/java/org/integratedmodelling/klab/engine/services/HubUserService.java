@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.auth.KlabUser;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.api.HubLoginResponse;
 import org.integratedmodelling.klab.engine.api.RemoteUserLoginResponse;
+import org.integratedmodelling.klab.engine.events.UserEventPublisher;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -50,12 +51,9 @@ public class HubUserService implements RemoteUserService {
 	
 	@Autowired
 	RestTemplate restTemplate;
-	
+
 	@Autowired
-	ConsulDnsService dnsService;
-	
-	@Autowired
-	AgentServiceCheck check;
+	UserEventPublisher publisher;
 	
 	/*
 	 * Generates a response entity a url to the session generated after succesful
@@ -82,7 +80,6 @@ public class HubUserService implements RemoteUserService {
         		response = getActiveSessionResponse(profile);
         	} else {
         		response = processProfile(profile);
-        		check.setLoad(10);
         	}
         	response.setAuthorization(result.getBody().getAuthentication().getTokenString());
         	return ResponseEntity.status(HttpStatus.ACCEPTED)
@@ -94,8 +91,8 @@ public class HubUserService implements RemoteUserService {
 			return login(login.getToken());
 		}
 	}
-	
-	
+
+
 	@Override
 	public ResponseEntity<?> login(String token) {
 		ResponseEntity<HubUserProfile> result;
@@ -119,7 +116,6 @@ public class HubUserService implements RemoteUserService {
         		response = getActiveSessionResponse(profile);
         	} else {
         		response = processProfile(profile);
-        		check.setLoad(10);
         	}
         	response.setAuthorization(token);
         	return ResponseEntity.status(HttpStatus.ACCEPTED)
@@ -147,11 +143,10 @@ public class HubUserService implements RemoteUserService {
         	HubUserProfile profile = result.getBody();
         	
         	if(checkForActiveSessions(profile)) {
-        		Session active  = activeSessions(profile).iterator().next();
+        		Session session  = activeSessions(profile).iterator().next();
         		try {
-        			dnsService.removeSessionWeight(active);
-        			check.setLoad(100);
-					active.close();
+        			session.close();
+					publisher.logout(profile, session);
 				} catch (IOException e) {
 					throw new KlabException("Could not close the session :(");
 				}
@@ -197,8 +192,8 @@ public class HubUserService implements RemoteUserService {
 		
 		Session session = getSession(user);
 		
-		dnsService.adjustServiceWeight(profile);
-		 
+		publisher.login(profile, session);
+
 		response.setPublicApps(session.getSessionReference().getPublicApps());
 		response.setRedirect("/modeler/ui/viewer?session=" + session.getId());
 		return response;
