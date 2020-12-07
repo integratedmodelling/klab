@@ -408,8 +408,10 @@ public class Resolver {
 				IObservation previous = ((DirectObservation) ret.getContext()).getObservationResolving(observable);
 				if (previous != null) {
 
+					String previousArtifactName = ((DirectObservation) ret.getContext()).getScope().getArtifactName(previous);
+
 					if (observable.is(Type.CHANGE) && previous.getObservable().is(Type.QUALITY)) {
-						observable = observable.withResolvedModel(new Model(observable, previous, ret));
+						observable = observable.withResolvedModel(new Model(observable, previousArtifactName, ret));
 					} else {
 						previousArtifact = new Pair<>(previous.getObservable().getName(), previous);
 					}

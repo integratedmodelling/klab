@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -46,7 +47,6 @@ import org.integratedmodelling.klab.api.model.IAction;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -91,7 +91,8 @@ public class Model extends KimObject implements IModel {
 	private boolean inactive;
 	private boolean learning;
 	private IObservable archetype;
-
+	private Set<IConcept> requiredRoles = null;
+	
 	/*
 	 * the geometry implicitly declared for the project, gathered from the resources
 	 * and the services used in it. Does not include the explicit contextualization
@@ -808,7 +809,7 @@ public class Model extends KimObject implements IModel {
 		}
 	}
 	
-	public Model(IObservable mainObservable, IObservation resolvedChangingObservation, ResolutionScope scope) {
+	public Model(IObservable mainObservable, String resolvedChangingObservationName, ResolutionScope scope) {
 		super(null);
 		this.derived = true;
 		this.id = mainObservable.getName() + "_resolved_change";
@@ -816,11 +817,7 @@ public class Model extends KimObject implements IModel {
 		this.contextualization = new Contextualization(null, this);
 		this.observables.add(mainObservable);
 		this.coverage = scope.getScale();
-		this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(mainObservable, resolvedChangingObservation));
-//		for (int i = 1; i < ((Model) originalModel).getComputation().size(); i++) {
-//			ComputableResource computation = (ComputableResource) ((Model) originalModel).getComputation().get(i);
-//			this.resources.add(((Model) originalModel).validate(computation.copy(), scope.getMonitor()));
-//		}
+		this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(mainObservable, resolvedChangingObservationName));
 	}
 
 	public Model(IViewModel view) {
@@ -1475,6 +1472,34 @@ public class Model extends KimObject implements IModel {
 	 */
 	public IViewModel getViewModel() {
 		return this.viewModel;
+	}
+
+	@Override
+	public Collection<IConcept> getRequiredRoles() {
+		if (this.requiredRoles == null) {
+			this.requiredRoles = new HashSet<>();
+			for (IObservable observable : observables) {
+				if (observable != null) {
+					for (IConcept role : Roles.INSTANCE.getRoles(observable.getType())) {
+						if (role.isAbstract()) {
+							this.requiredRoles.add(role);
+						}
+					}
+				}
+			}
+			for (IObservable observable : dependencies) {
+				if (observable != null) {
+					if (observable != null) {
+						for (IConcept role : Roles.INSTANCE.getRoles(observable.getType())) {
+							if (role.isAbstract()) {
+								this.requiredRoles.add(role);
+							}
+						}
+					}
+				}
+			}
+		}
+		return this.requiredRoles;
 	}
 
 }

@@ -2,16 +2,9 @@
   <modelVersion>4.0.0</modelVersion>
   <parent>
     <groupId>org.integratedmodelling</groupId>
-    <artifactId>klab</artifactId>
+    <artifactId>products</artifactId>
     <version>0.10.0-SNAPSHOT</version>
   </parent>
-  <artifactId>products</artifactId>
-  <packaging>pom</packaging>
-  <description>Parent module for all deliverable k.LAB stack products, both production and testing.</description>
-  <modules>
-  	<module>engine</module>
-  	<module>cli</module>
-  	<module>monitor</module>
-  	<module>semantic</module>
-  </modules>
+  <artifactId>semantic</artifactId>
+  <name>k.LAB community semantic server</name>
 </project>

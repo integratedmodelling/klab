@@ -76,7 +76,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IUnit unit;
 	private ICurrency currency;
 	private List<IAnnotation> annotations = new ArrayList<>();
-	private String dereifiedAttribute; 
+	private String dereifiedAttribute;
 	private boolean isTrivial = true;
 	private boolean distributedInherency = false;
 	private KimConcept declaration;
@@ -368,7 +368,8 @@ public class ObservableBuilder implements IObservable.Builder {
 				reset(makeUncertainty(argument, true));
 				break;
 			case VALUE:
-				reset(makeValue(argument, this.comparison, true));
+			case MONETARY_VALUE:
+				reset(makeValue(argument, this.comparison, true, type == UnarySemanticOperator.MONETARY_VALUE));
 				break;
 			case OBSERVABILITY:
 				reset(makeObservability(argument, true));
@@ -1357,11 +1358,13 @@ public class ObservableBuilder implements IObservable.Builder {
 		return ontology.getConcept(conceptId);
 	}
 
-	public Concept makeValue(IConcept concept, IConcept comparison, boolean addDefinition) {
+	public Concept makeValue(IConcept concept, IConcept comparison, boolean addDefinition, boolean monetary) {
 
-		String cName = "ValueOf" + getCleanId(concept) + (comparison == null ? "" : ("Vs" + getCleanId(comparison)));
+		String cName = (monetary ? "MonetaryValueOf" : "ValueOf") + getCleanId(concept)
+				+ (comparison == null ? "" : ("Vs" + getCleanId(comparison)));
 
-		String definition = UnarySemanticOperator.VALUE.declaration[0] + " (" + concept.getDefinition() + ")"
+		String definition = (monetary ? UnarySemanticOperator.MONETARY_VALUE.declaration[0]
+				: UnarySemanticOperator.VALUE.declaration[0]) + " (" + concept.getDefinition() + ")"
 				+ (comparison == null ? ""
 						: (UnarySemanticOperator.VALUE.declaration[1] + " (" + comparison.getDefinition() + ")"));
 
@@ -1372,11 +1375,12 @@ public class ObservableBuilder implements IObservable.Builder {
 
 			conceptId = ontology.createIdForDefinition(definition);
 
-			EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.VALUE.name());
+			EnumSet<Type> newType = Kim.INSTANCE.getType(
+					monetary ? UnarySemanticOperator.MONETARY_VALUE.name() : UnarySemanticOperator.VALUE.name());
 
 			ArrayList<IAxiom> ax = new ArrayList<>();
 			ax.add(Axiom.ClassAssertion(conceptId, newType));
-			ax.add(Axiom.SubClass(NS.CORE_VALUE, conceptId));
+			ax.add(Axiom.SubClass(monetary ? NS.CORE_MONETARY_VALUE : NS.CORE_VALUE, conceptId));
 			ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
 			ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
 			if (addDefinition) {
@@ -1416,7 +1420,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (classified.is(Type.ROLE)) {
 			System.out.println("ZOAZ");
 		}
-		
+
 		if (conceptId == null) {
 
 			conceptId = ontology.createIdForDefinition(definition);
@@ -1783,7 +1787,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			// only add role names to user description if roles are not from the
 			// root of the worldview
 //			if (!rolesAreFundamental(roles)) {
-				cDs = roleIds + Concepts.INSTANCE.getDisplayName(main);
+			cDs = roleIds + Concepts.INSTANCE.getDisplayName(main);
 //			}
 		}
 

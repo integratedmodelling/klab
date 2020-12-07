@@ -129,7 +129,7 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * @param observable a
 	 *                   {@link org.integratedmodelling.klab.api.knowledge.IObservable}
 	 *                   object.
-	 * @param context of the observation, or null
+	 * @param context    of the observation, or null
 	 * @param monitor
 	 * @return the name with which the passed observable (or one compatible with it)
 	 *         is known in this model. If the observable isn't found in the model,
@@ -240,6 +240,17 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * @return the implicit geometry from the resources, or null.
 	 */
 	IGeometry getGeometry();
+
+	/**
+	 * If the result collection isn't empty, the model can only be used to resolve
+	 * its observable if all the returned roles are assigned in the resolution
+	 * scope. This corresponds to having any dependency or observable defined in
+	 * terms of a non-generic ("any") abstract role, which will be redefined to its
+	 * concrete counterpart(s) before resolution.
+	 * 
+	 * @return
+	 */
+	Collection<IConcept> getRequiredRoles();
 
 	/**
 	 * True if the model annotates >1 resources that represent different extents in

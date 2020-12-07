@@ -255,7 +255,7 @@ public interface IRuntimeProvider {
 	 * @param changingObservation
 	 * @return
 	 */
-	IContextualizable getChangeResolver(IObservable changeObservable, IObservation changingObservation);
+	IContextualizable getChangeResolver(IObservable changeObservable, String changingObservationName);
 
 	/*
 	 * Called on a computation returned by getComputation() to change the target ID

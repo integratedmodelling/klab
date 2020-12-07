@@ -539,9 +539,13 @@ class KimValidator extends AbstractKimValidator {
 						i, BAD_OBSERVABLE)
 					ok = false
 				} else if (!definition.is(Type.OBSERVABLE) && !definition.is(Type.TRAIT) && !(definition.is(Type.ROLE) && observable.generic)) {
-					error('Models can only describe observables or traits',
-						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
-					ok = false
+					if (!(definition.is(Type.ROLE) && definition.is(Type.ABSTRACT))) {
+						// special case: define a dependency in terms of an abstract role that must be resolved contextually. This
+						// makes the model generic in that role.
+						error('Models can only describe observables or traits',
+							KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
+						ok = false
+					}
 				} else if (observable.main.distributedInherent !== null) {
 					error("Distributed inherency (of each, for each, within each) are only allowed as main observables",
 						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)

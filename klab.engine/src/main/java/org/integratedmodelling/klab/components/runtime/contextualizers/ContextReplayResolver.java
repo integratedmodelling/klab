@@ -32,8 +32,8 @@ public class ContextReplayResolver implements IResolver<IArtifact>, IExpression 
 		}
 	}
 
-	public static IServiceCall getServiceCall(IObservation resource) throws KlabValidationException {
-		return KimServiceCall.create(FUNCTION_ID, "artifact", resource.getObservable().getName());
+	public static IServiceCall getServiceCall(String artifactName) throws KlabValidationException {
+		return KimServiceCall.create(FUNCTION_ID, "artifact", artifactName);
 	}
 
 	@Override

@@ -596,7 +596,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	}
 
 	@Override
-	public IContextualizable getChangeResolver(IObservable changeObservable, IObservation changingObservation) {
-		return new ComputableResource(ContextReplayResolver.getServiceCall(changingObservation), Mode.RESOLUTION);
+	public IContextualizable getChangeResolver(IObservable changeObservable, String changingObservationName) {
+		return new ComputableResource(ContextReplayResolver.getServiceCall(changingObservationName), Mode.RESOLUTION);
 	}
 }
