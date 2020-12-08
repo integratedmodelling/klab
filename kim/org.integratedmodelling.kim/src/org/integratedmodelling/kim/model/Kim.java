@@ -1097,6 +1097,7 @@ public enum Kim {
 		case "magnitude":
 			return EnumSet.of(Type.MAGNITUDE, Type.QUALITY, Type.OBSERVABLE, Type.SUBJECTIVE, Type.QUANTIFIABLE);
 		case "monetary_value":
+		case "money":
 			return EnumSet.of(Type.MONEY, Type.QUALITY, Type.OBSERVABLE, Type.QUANTIFIABLE);
 		case "duration":
 			return EnumSet.of(Type.DURATION, Type.QUALITY, Type.EXTENSIVE_PROPERTY, Type.OBSERVABLE, Type.QUANTIFIABLE);
