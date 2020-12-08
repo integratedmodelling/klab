@@ -16,6 +16,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   observables.
 ### Fixed
 - Monetary value declarations are now handled properly.
+- Three-way communication of resolutions in time and space now more reliable.
+- Temporal prioritization with disjoint extents now disregards specificity and
+  takes temporal distance into consideration.
 
 ## [0.10.0.234] -- 2020/12/4
 ### Fixed
