@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
@@ -146,12 +147,34 @@ public class Resolver {
 	public ResolutionScope resolve(IResolvable resolvable, ResolutionScope parentScope) throws KlabException {
 
 		ResolutionScope ret = null;
-
 		if (resolvable instanceof Observable) {
+
+			Coverage coverage = null;
 			parentScope.setOriginalScope(
 					((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
-			ret = resolve((Observable) resolvable, parentScope,
-					((Observable) resolvable).getDescriptionType().getResolutionMode());
+
+			for (IObservable observable : Observables.INSTANCE.expandRoles((IObservable) resolvable, parentScope)) {
+				ResolutionScope mscope = resolve((Observable) observable, parentScope,
+						observable.getDescriptionType().getResolutionMode());
+				if (ret == null) {
+					ret = mscope;
+					coverage = mscope.getCoverage();
+				} else {
+					coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
+				}
+				
+				if (coverage.isEmpty()) {
+					break;
+				}
+			}
+
+			ret.setCoverage(coverage);
+//
+//			parentScope.setOriginalScope(
+//					((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
+//			ret = resolve((Observable) resolvable, parentScope,
+//					((Observable) resolvable).getDescriptionType().getResolutionMode());
+
 		} else if (resolvable instanceof Model) {
 			parentScope.setOriginalScope(Scope.MODEL);
 			ret = resolve((Model) resolvable, parentScope);
@@ -174,18 +197,19 @@ public class Resolver {
 						// these are mere transformations and we don't need their change.
 						continue;
 					}
-					
+
 					IObservable toResolve = observable.getObservable().getBuilder(parentScope.getMonitor())
 							.as(UnarySemanticOperator.CHANGE).buildObservable();
 
 					if (parentScope.getResolvedObservable(toResolve, Mode.RESOLUTION) != null) {
 						continue;
 					}
-					
+
 					ret.getMonitor().info("Resolution scope is occurrent: resolving additional observable "
 							+ Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
-					ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(ret), Mode.RESOLUTION);
+					ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(ret),
+							Mode.RESOLUTION);
 
 					if (cscope.getCoverage().isRelevant()) {
 
@@ -406,7 +430,15 @@ public class Resolver {
 				 */
 				IObservation previous = ((DirectObservation) ret.getContext()).getObservationResolving(observable);
 				if (previous != null) {
-					previousArtifact = new Pair<>(previous.getObservable().getName(), previous);
+
+					String previousArtifactName = ((DirectObservation) ret.getContext()).getScope()
+							.getArtifactName(previous);
+
+					if (observable.is(Type.CHANGE) && previous.getObservable().is(Type.QUALITY)) {
+						observable = observable.withResolvedModel(new Model(observable, previousArtifactName, ret));
+					} else {
+						previousArtifact = new Pair<>(previous.getObservable().getName(), previous);
+					}
 				}
 			}
 		}

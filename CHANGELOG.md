@@ -7,6 +7,25 @@ as unreleased until merged to master.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/), 
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## Unreleased
+
+### Added
+- Observables that contain abstract roles are expanded into the correspondent concrete
+  observables after substituting the role's incarnation(s) in the context of resolution before
+  resolving. The expansion is limited to (concrete) predicates for now, as part of
+  observables.
+### Fixed
+- Monetary value declarations are now handled properly.
+- Three-way communication of resolutions in time and space now more reliable.
+- Temporal prioritization with disjoint extents now disregards specificity and
+  takes temporal distance into consideration.
+
+## [0.10.0.234] -- 2020/12/4
+### Fixed
+- Incorporate various fixes in apps UI behavior
+- Temporal contextualization now behaves correctly when changing states from 
+  previous resolutions have dependencies in the current one.
+
 ## [0.10.0.233] -- 2020/12/1
 
 ### Added

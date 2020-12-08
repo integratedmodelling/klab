@@ -21,6 +21,8 @@ import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
+import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -76,18 +78,47 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 		@SuppressWarnings({ "rawtypes" })
 		@Override
 		public int compare(Map<String, Object> o1, Map<String, Object> o2) {
+
 			Comparable n1 = (Comparable) o1.get(_field);
 			Comparable n2 = (Comparable) o2.get(_field);
 
 			/*
 			 * comparator is icky if it gets an int and a double.
 			 */
+//			double d1 = 0;
+//			double d2 = 0;
+
 			if (n1 instanceof Number) {
 				n1 = ((Number) n1).doubleValue();
+//				d1 = ((Double) n1).doubleValue();
 			}
 			if (n2 instanceof Number) {
 				n2 = ((Number) n2).doubleValue();
+//				d2 = ((Double) n2).doubleValue();
 			}
+
+//			if (d1 != d2 && o1.containsKey(NS.SUBJECTIVE_CONCORDANCE) && o2.containsKey(NS.SUBJECTIVE_CONCORDANCE)) {
+//
+//				/*
+//				 * if the better one has a lower subjective concordance, the better one must be
+//				 * better by at least the percent difference in subjective concordances.
+//				 */
+//				double s1 = (double) o1.get(NS.SUBJECTIVE_CONCORDANCE);
+//				double s2 = (double) o2.get(NS.SUBJECTIVE_CONCORDANCE);
+//				double sd = Math.abs(s1 - s2);
+//
+//				if (d1 > d2) {
+//					if (d1 - sd < d2) {
+//						return 0;
+//					}
+//				} else {
+//					if (d2 - sd < d1) {
+//						return 0;
+//					}
+//				}
+//
+//			}
+
 			// TODO restore the null acceptance after testing. Should not get nulls.
 			return ObjectUtils.compare(n1, n2/* , false */);
 		}
@@ -535,7 +566,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 	public static double[] computeTemporalCriteria(long modelStart, long modelEnd, ITime time) {
 
 		double[] ret = new double[] { -1, -1, -1 };
-		
+
 		if (time == null) {
 			return ret;
 		}
@@ -552,19 +583,39 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 //
 //		} else {
 
-		double d = mrange.exclusionOf(crange);
+		boolean compare = true;
+		if (!mrange.contains(crange)) {
 
-		if (d == 1) {
-			ret[0] = 1; // very least but we don't reject
-		} else if (d == 0) {
-			ret[0] = 100;
-		} else if (mrange.isBounded()) {
-			ret[0] = 75 - (d * 25);
+			ret[0] = 25;
+			if (mrange.isBounded() && crange.isBounded()) {
+				
+				// this subtracts from 25 if the model is in the future, but that shouldn't even get here.
+				double gap = crange.getLowerBound() - mrange.getUpperBound();
+				double error = (crange.getWidth() - gap)/crange.getWidth();
+				if (error > 1) {
+					error = 1;
+				}
+				ret[0] += error * 25.0;
+				
+			} 
+			
+			compare = false;
+
 		} else {
-			ret[0] = 50 - (d * 49);
-		}
 
-//		}
+			double d = mrange.exclusionOf(crange);
+
+			if (d == 1) {
+				ret[0] = 1; // very least but we don't reject
+			} else if (d == 0) {
+				ret[0] = 100;
+			} else if (mrange.isBounded()) {
+				ret[0] = 75 - (d * 25);
+			} else {
+				ret[0] = 50 - (d * 49);
+			}
+
+		}
 
 		/*
 		 * specificity differs by resolution type (even if generic) and is corrected by
@@ -572,7 +623,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 		 * universal, return 50.
 		 */
 
-		if (crange.isBounded()) {
+		if (compare && crange.isBounded()) {
 
 			double focalPointModel = mrange.isLeftBounded() ? mrange.getLowerBound() : mrange.getFocalPoint();
 			double focalPointContext = crange.getLowerBound();
@@ -596,8 +647,7 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 				ret[1] = 25;
 			} else {
 
-				double distanceFactor = (focalPointModel > focalPointContext) ? (focalPointModel - focalPointContext)
-						: (focalPointContext - focalPointModel);
+				double distanceFactor = Math.abs(focalPointModel - focalPointContext);
 				distanceFactor /= (time.getResolution().getType().getMilliseconds()
 						* time.getResolution().getMultiplier());
 
@@ -696,9 +746,8 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 
 		for (String s : subjectiveCriteria) {
 
-			int val = (model.getMetadata() != null && model.getMetadata().containsKey(s))
-					? Integer.parseInt(model.getMetadata().get(s))
-					: 50;
+			int val = extractSubjectiveCriterion(s, model, 50);
+
 			int wei = 100;
 			if (nm != null && nm.get(s) != null) {
 				wei = context.getResolutionNamespace().getResolutionCriteria().get(s, Integer.class);
@@ -708,6 +757,24 @@ public class Prioritizer implements IPrioritizer<ModelReference> {
 			vals.add(new Pair<>(val, wei));
 		}
 		return aggregate(vals) * 100;
+	}
+
+	private int extractSubjectiveCriterion(String s, ModelReference model, int defaultValue) {
+
+		if (model.getMetadata() != null && model.getMetadata().containsKey(s)) {
+			return Integer.parseInt(model.getMetadata().get(s));
+		} else if (model.getName() != null /* happens with generated models */) {
+			IKimObject m = Resources.INSTANCE.getModelObject(model.getName());
+			if (m != null) {
+				for (IAnnotation annotation : m.getAnnotations()) {
+					if (s.endsWith(":" + annotation.getName()) && annotation.get("value") instanceof Number) {
+						return ((Number) annotation.get("value")).intValue();
+					}
+				}
+			}
+		}
+
+		return defaultValue;
 	}
 
 	/*

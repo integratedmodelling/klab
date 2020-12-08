@@ -216,6 +216,9 @@ public class ResourceCatalog implements IResourceCatalog {
 		reference.setVersion("1.0.0");
 		reference.getMetadata().put(IMetadata.DC_DATE_AVAILABLE, "" + new Date().getTime());
 		reference.getMetadata().put(IMetadata.DC_CONTRIBUTOR, user.getUsername());
+		for (Object key : importSettings.keySet()) {
+			reference.getMetadata().put(key.toString(), importSettings.get(key).toString());
+		}
 
 		String catalog = getCatalogName(reference, importSettings);
 		String namespace = getNamespace(reference, importSettings);

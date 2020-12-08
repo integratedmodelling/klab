@@ -720,9 +720,12 @@ public class KimValidator extends AbstractKimValidator {
             ok = false;
           } else {
             if ((((!definition.is(IKimConcept.Type.OBSERVABLE)) && (!definition.is(IKimConcept.Type.TRAIT))) && (!(definition.is(IKimConcept.Type.ROLE) && observable.isGeneric())))) {
-              this.error("Models can only describe observables or traits", 
-                KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
-              ok = false;
+              boolean _not = (!(definition.is(IKimConcept.Type.ROLE) && definition.is(IKimConcept.Type.ABSTRACT)));
+              if (_not) {
+                this.error("Models can only describe observables or traits", 
+                  KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
+                ok = false;
+              }
             } else {
               IKimConcept.ObservableRole _distributedInherent = observable.getMain().getDistributedInherent();
               boolean _tripleNotEquals_5 = (_distributedInherent != null);

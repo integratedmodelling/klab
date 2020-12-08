@@ -451,4 +451,13 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	IRuntimeScope targetToObservation(IObservation target);
 
+	/**
+	 * Find the name of an artifact in this context. Return null if the artifact is
+	 * not in the catalog.
+	 * 
+	 * @param previous
+	 * @return
+	 */
+	String getArtifactName(IArtifact previous);
+
 }

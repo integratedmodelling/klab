@@ -259,6 +259,12 @@ public class Observable implements IObservable {
 			this.unit = (Unit) Unit.unitless().divide(this.unit);
 		}
 	}
+	
+	public Observable withResolvedModel(IModel model) {
+		Observable ret = new Observable(this);
+		ret.resolvedModel = model;
+		return ret;
+	}
 
 	public void setCurrency(Currency currency) {
 		this.currency = currency;

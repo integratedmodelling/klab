@@ -2019,4 +2019,14 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		return ret;
 	}
 
+	@Override
+	public String getArtifactName(IArtifact artifact) {
+		for (String key : catalog.keySet()) {
+			if (artifact.equals(catalog.get(key))) {
+				return key;
+			}
+		}
+		return null;
+	}
+
 }

@@ -32,8 +32,8 @@ import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -56,6 +56,7 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.CastingSt
 import org.integratedmodelling.klab.components.runtime.contextualizers.CategoryClassificationResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ChangingResourceResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.ContextReplayResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ConversionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.DereifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
@@ -217,7 +218,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 							.createChild("Temporal contextualization");
 					try {
 						((AbstractTask<?>) subtask).notifyStart();
-						runtimeContext.getScheduler().run(subtask.getMonitor());
+						runtimeContext.getScheduler().run(dataflow, subtask.getMonitor());
 						((AbstractTask<?>) subtask).notifyEnd();
 					} catch (Throwable e) {
 						throw ((AbstractTask<?>) subtask).notifyAbort(e);
@@ -348,10 +349,11 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			reentrant = false;
 		}
 		IArtifact self = context.get("self", IArtifact.class);
-		final IState target = data instanceof IState ? (IState)data : context.getArtifact(resource.getTargetId(), IState.class);
+		final IState target = data instanceof IState ? (IState) data
+				: context.getArtifact(resource.getTargetId(), IState.class);
 		RuntimeScope ctx = new RuntimeScope((RuntimeScope) context, context.getVariables());
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
-		
+
 //		System.err.println("DISTRIBUTING COMPUTATION FOR " + data + " AT " + scale + " WITH " + resolver);
 
 		if (reentrant && !Debug.INSTANCE.isDebugging()) {
@@ -591,5 +593,10 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	@Override
 	public IContextualizable getViewResolver(IViewModel view) {
 		return new ComputableResource(KnowledgeViewResolver.getServiceCall(view), Mode.RESOLUTION);
+	}
+
+	@Override
+	public IContextualizable getChangeResolver(IObservable changeObservable, String changingObservationName) {
+		return new ComputableResource(ContextReplayResolver.getServiceCall(changingObservationName), Mode.RESOLUTION);
 	}
 }

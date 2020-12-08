@@ -11,6 +11,8 @@
   <modules>
   	<module>engine</module>
   	<module>cli</module>
+  	<module>monitor</module>
+  	<module>semantic</module>
   	<module>cloud</module>
   </modules>
 </project>

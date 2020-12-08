@@ -284,10 +284,10 @@ public class Geometry implements IGeometry {
 		String spec = scaleRef.getSpaceUnit() == null ? "S1" : "S2";
 		boolean hasTime = false;
 		
-		if (scaleRef.getTimeGeometry() != null) {
-			spec = scaleRef.getTimeGeometry() + spec;
-			hasTime = true;
-		}
+//		if (scaleRef.getTimeGeometry() != null) {
+//			spec = scaleRef.getTimeGeometry() + spec;
+//			hasTime = true;
+//		}
 
 		Geometry ret = Geometry.create(spec).withProjection("EPSG:4326").withBoundingBox(scaleRef.getEast(),
 				scaleRef.getWest(), scaleRef.getSouth(), scaleRef.getNorth());
@@ -300,7 +300,7 @@ public class Geometry implements IGeometry {
 			ret = ret.withShape(scaleRef.getShape());
 		}
 
-		if (scaleRef.getTimeGeometry() == null) {
+//		if (scaleRef.getTimeGeometry() == null) {
 			if (scaleRef.getStart() > 0) {
 				ret = ret.withTemporalStart(scaleRef.getStart());
 				hasTime = true;
@@ -313,7 +313,7 @@ public class Geometry implements IGeometry {
 				ret = ret.withTemporalResolution(scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
 				hasTime = true; 
 			}
-		}
+//		}
 
 		if (scaleRef.getTimeType() != null) {
 			ret = ret.withTimeType(scaleRef.getTimeType());

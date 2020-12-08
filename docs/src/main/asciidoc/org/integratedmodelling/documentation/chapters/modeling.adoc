@@ -112,6 +112,59 @@ Modes of extension:
 
 See the developer documentation to learn how to define components.
 
+=== Debugging
+
+Situations that arise most commonly during modeling
+
+==== Resolution
+
+A typical situation is that the model picked by the system to resolve a particular concept is not the one the modeler expects. Resolution prioritization is complex and it helps to visualize the set of criteria used by the prioritizer. This can be done by setting the `klab.debugging.resolution.ranks` property to true, either permanently in the ~/.klab.properties file or manually in the engine command line window:
+
+----
+set klab.debugging.resolution.ranks true
+----
+
+After this is done, each resolution will print all the models found to resolve each concept, in order of priority (chosen model first), each followed by the rankings for each criterion chosen (the criteria may be different from what you see below):
+
+----
+model query for explanation of [land_cover_type = landcover:LandCoverType] found 2 models
+---- SCORES ------
+  1.  data.global.landcover.land-cover-type-resolver [local]
+    im:lexical-scope          0.0
+    im:semantic-concordance   0.0
+    im:trait-concordance      100.0
+    im:evidence               100.0
+    im:time-specificity       71.04657534246576
+    im:time-coverage          100.0
+    im:space-specificity      0.035397563347683014
+    im:space-coverage         100.0
+    im:subjective-concordance 50.0
+    im:inherency              0.0
+
+  2.  data.global.landcover.corine_land_cover [local]
+    im:lexical-scope          0.0
+    im:semantic-concordance   0.0
+    im:trait-concordance      100.0
+    im:evidence               100.0
+    im:time-specificity       69.04657534246576
+    im:time-coverage          100.0
+    im:space-specificity      1.1905609130529544
+    im:space-coverage         49.13483424377154
+    im:subjective-concordance 50.0
+    im:inherency              0.0
+
+------------------
+accepting data.global.landcover.land-cover-type-resolver to resolve 100% of [land_cover_type = landcover:LandCoverType]
+----
+
+Inspecting the scores can be very useful to understand, and possibly change, why the resolver pick each specific model. If the expected model does not appear in the list, it probably has errors or is out of scope of the resolution.
+
+==== The context debugger
+
+Since build 234, k.LAB incorporates a simple _context debugger_ that is particularly useful to inspect values and their change when they are part of large and complex contexts, such as raster space. 
+
+TODO debugger usage
+
 include::./modeling/random.adoc[]
 
 include::./modeling/weather.adoc[]

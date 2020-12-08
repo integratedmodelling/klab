@@ -6,6 +6,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -30,6 +31,7 @@ import org.integratedmodelling.kim.model.KimObservable;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.api.knowledge.IProperty;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.model.IModel;
@@ -46,6 +48,7 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -56,6 +59,7 @@ import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.resources.CoreOntology;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
+import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.KimKnowledgeProcessor;
 import org.integratedmodelling.klab.owl.OWL;
@@ -66,6 +70,7 @@ import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.xtext.KimInjectorProvider;
 
+import com.google.common.collect.Sets;
 import com.google.inject.Inject;
 import com.google.inject.Injector;
 
@@ -1101,6 +1106,67 @@ public enum Observables implements IObservableService {
 			}
 		}
 		return true;
+	}
+
+	/**
+	 * If the passed observable references one or more abstract role, find the
+	 * correspondent concepts in the resolution scope and return the expanded set of
+	 * observables with the role substituted by the concepts that incarnate it,
+	 * keeping the original roles as contextual roles in the resulting observables.
+	 * 
+	 * @param observable
+	 * @param scope
+	 * @return
+	 */
+	public Collection<IObservable> expandRoles(IObservable observable, IResolutionScope scope) {
+		List<IObservable> ret = new ArrayList<>();
+		Set<IConcept> roles = new HashSet<>();
+		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
+			if (role.isAbstract()) {
+				roles.add(role);
+			}
+		}
+		if (roles.isEmpty()) {
+			ret.add(observable);
+		} else {
+			/*
+			 * ensure the scope incarnates all of the existing abstract roles. If not, we
+			 * produce no observables. We match roles by equality, not by inference, which
+			 * may require rethinking.
+			 */
+			Map<IConcept, Set<IConcept>> incarnated = new LinkedHashMap<>();
+			for (IConcept role : roles) {
+				Collection<IConcept> known = scope.getRoles().get(role);
+				if (known == null || known.isEmpty()) {
+					return ret;
+				}
+				incarnated.put(role, new HashSet<>(known));
+			}
+
+			List<Set<IConcept>> concepts = new ArrayList<>(incarnated.values());
+			for (List<IConcept> incarnation : Sets.cartesianProduct(concepts)) {
+				Builder builder = observable.getBuilder(scope.getMonitor());
+				int i = 0;
+				for (IConcept orole : incarnated.keySet()) {
+					builder = builder.without(orole);
+					IConcept peer = incarnation.get(i++);
+					if (peer.is(Type.ROLE)) {
+						builder = builder.withRole(peer);
+					} else if (peer.is(Type.TRAIT)) {
+						builder = builder.withTrait(peer);
+					} else {
+						throw new KlabUnsupportedFeatureException(
+								"Abstract role substitution is only allowed for predicates at the moment");
+					}
+				}
+				
+				IObservable result = builder.buildObservable();
+				result.getContextualRoles().addAll(incarnated.keySet());
+				ret.add(result);
+			}
+
+		}
+		return ret;
 	}
 
 	/**

@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Time;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -45,6 +46,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
@@ -160,11 +162,12 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		ITime defaultTime = Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 		this.scaleOfInterest.setTimeResolutionDescription(defaultTime.getResolution().toString());
 		this.scaleOfInterest.setTimeResolutionMultiplier(defaultTime.getResolution().getMultiplier());
+		this.scaleOfInterest.setTimeUnit(defaultTime.getResolution().getType());
 		this.scaleOfInterest.setStart(defaultTime.getStart().getMilliseconds());
 		this.scaleOfInterest.setEnd(defaultTime.getEnd().getMilliseconds());
 		this.scaleOfInterest.setTimeScale(defaultTime.getScaleRank());
-		this.scaleOfInterest
-				.setTimeGeometry(((org.integratedmodelling.klab.components.time.extents.Time) defaultTime).encode());
+//		this.scaleOfInterest
+//				.setTimeGeometry(((org.integratedmodelling.klab.components.time.extents.Time) defaultTime).encode());
 	}
 
 	@Override
@@ -278,26 +281,26 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			IKimQuantity q = KimQuantity.parse(value.toString());
 			this.scaleOfInterest.setSpaceResolution(q.getValue().doubleValue());
 			this.scaleOfInterest.setSpaceUnit(q.getUnit());
-//			this.scaleOfInterest.setSpaceResolutionConverted(
-//					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
-//							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
+			this.scaleOfInterest.setSpaceResolutionConverted(
+					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
+							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
 			this.scaleOfInterest.setSpaceResolutionDescription(
 					NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
 							+ this.scaleOfInterest.getSpaceUnit());
 		case SPACE_RESOLUTION_MULTIPLIER_KEY:
 			this.scaleOfInterest.setSpaceResolution(check(value, Number.class).doubleValue());
-//			this.scaleOfInterest.setSpaceResolutionConverted(
-//					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
-//							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
+			this.scaleOfInterest.setSpaceResolutionConverted(
+					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
+							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
 			this.scaleOfInterest.setSpaceResolutionDescription(
 					NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
 							+ this.scaleOfInterest.getSpaceUnit());
 			break;
 		case SPACE_RESOLUTION_UNIT_KEY:
 			this.scaleOfInterest.setSpaceUnit(value.toString());
-//			this.scaleOfInterest.setSpaceResolutionConverted(
-//					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
-//							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
+			this.scaleOfInterest.setSpaceResolutionConverted(
+					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
+							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
 			this.scaleOfInterest.setSpaceResolutionDescription(
 					NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
 							+ this.scaleOfInterest.getSpaceUnit());
@@ -309,44 +312,44 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			this.lockTime.set(check(value, Boolean.class));
 			break;
 		case TIME_END_KEY:
-			this.scaleOfInterest.setTimeGeometry(null);
+//			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setEnd(check(value, Long.class));
 			break;
 		case TIME_START_KEY:
-			this.scaleOfInterest.setTimeGeometry(null);
+//			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setStart(check(value, Long.class));
 			break;
 		case TIME_TYPE_KEY:
-			this.scaleOfInterest.setTimeGeometry(null);
+//			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setTimeType(value.toString());
 			break;
 		case TIME_RESOLUTION_MULTIPLIER_KEY:
-			this.scaleOfInterest.setTimeGeometry(null);
+//			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setTimeResolutionMultiplier(check(value, Number.class).doubleValue());
 			break;
 		case TIME_RESOLUTION_UNIT_KEY:
-			this.scaleOfInterest.setTimeGeometry(null);
+//			this.scaleOfInterest.setTimeGeometry(null);
 			Resolution res = org.integratedmodelling.klab.components.time.extents.Time
 					.resolution("1." + value.toString());
 			this.scaleOfInterest.setTimeUnit(res.getType());
 			break;
 		case TIME_RESOLUTION_KEY:
-			this.scaleOfInterest.setTimeGeometry(null);
+//			this.scaleOfInterest.setTimeGeometry(null);
 			res = org.integratedmodelling.klab.components.time.extents.Time.resolution(value.toString());
 			this.scaleOfInterest.setTimeResolutionMultiplier(res.getMultiplier());
 			this.scaleOfInterest.setTimeUnit(res.getType());
 			break;
 		case TIME_YEAR_KEY:
-			this.scaleOfInterest.setTimeGeometry(null);
+//			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setYear(check(value, Integer.class));
 			break;
 		case TIME_START_YEAR_KEY:
-			this.scaleOfInterest.setTimeGeometry(null);
+//			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest
 					.setStart(new DateTime(check(value, Integer.class), 1, 1, 0, 0, 0, DateTimeZone.UTC).getMillis());
 			break;
 		case TIME_END_YEAR_KEY:
-			this.scaleOfInterest.setTimeGeometry(null);
+//			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest
 					.setEnd(new DateTime(check(value, Integer.class), 1, 1, 0, 0, 0, DateTimeZone.UTC).getMillis());
 			break;
@@ -515,13 +518,20 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	}
 
 	public void register(ScaleReference extent) {
-		// TODO Auto-generated method stub
+
 		this.scaleOfInterest.setSpaceResolution(extent.getSpaceResolution());
 		this.scaleOfInterest.setSpaceUnit(extent.getSpaceUnit());
 		this.scaleOfInterest.setSpaceResolutionDescription(extent.getResolutionDescription());
+		
 		this.scaleOfInterest.setTimeResolutionMultiplier(extent.getTimeResolutionMultiplier());
 		this.scaleOfInterest.setTimeUnit(extent.getTimeUnit());
-		System.out.println("TODO - sent when user changes scale through explorer's default switcher" + extent + "?");
+		this.scaleOfInterest.setStart(extent.getStart());
+		this.scaleOfInterest.setEnd(extent.getEnd());
+		
+		this.scaleOfInterest.setSpaceResolutionConverted(Units.INSTANCE.METERS
+				.convert(this.scaleOfInterest.getSpaceResolution(), Unit.create(this.scaleOfInterest.getSpaceUnit()))
+				.doubleValue());
+//		System.out.println("TODO - sent when user changes scale through explorer's default switcher" + extent + "?");
 //		this.spatialGridSize = Units.INSTANCE.METERS
 //				.convert(scaleRef.getSpaceResolutionConverted(), Unit.create(scaleRef.getSpaceUnit())).doubleValue();
 //		this.spatialGridUnits = scaleRef.getSpaceUnit();
@@ -530,12 +540,17 @@ public class SessionState extends Parameters<String> implements ISessionState {
 //		this.timeStart = scaleRef.getStart() == 0 ? null : Long.valueOf(scaleRef.getStart());
 //		this.timeEnd = scaleRef.getEnd() == 0 ? null : Long.valueOf(scaleRef.getEnd());
 
+		for (ListenerWrapper listener : listeners.values()) {
+			if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {
+				listener.listener.scaleChanged(scaleOfInterest);
+			}
+		}
 	}
 
 	public void setShape(IShape shape) {
 
 		if (shape == null) {
-			
+
 			Envelope envelope = Envelope.create(this.scaleOfInterest.getEast(), this.scaleOfInterest.getWest(),
 					this.scaleOfInterest.getSouth(), this.scaleOfInterest.getNorth(), Projection.getLatLon());
 			this.scaleOfInterest.setShape(null);
@@ -555,6 +570,9 @@ public class SessionState extends Parameters<String> implements ISessionState {
 				this.scaleOfInterest.setSpaceResolution((double) rres.getFirst());
 				this.scaleOfInterest.setSpaceUnit(rres.getSecond());
 				this.scaleOfInterest.setSpaceScale(envelope.getScaleRank());
+				this.scaleOfInterest.setSpaceResolutionConverted(
+						Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
+								Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
 			}
 
 			String name = shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class);
@@ -621,6 +639,9 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			this.scaleOfInterest.setSpaceResolution((double) rres.getFirst());
 			this.scaleOfInterest.setSpaceUnit(rres.getSecond());
 			this.scaleOfInterest.setSpaceScale(envelope.getScaleRank());
+			this.scaleOfInterest.setSpaceResolutionConverted(
+					Units.INSTANCE.METERS.convert(this.scaleOfInterest.getSpaceResolution(),
+							Unit.create(this.scaleOfInterest.getSpaceUnit())).doubleValue());
 		}
 
 		if (this.geocodingStrategy != null) {
@@ -634,9 +655,6 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			}
 		}
 
-//		Unit sunit = Unit.create(scaleOfInterest.getSpaceUnit());
-//		this.scaleOfInterest.setSpaceResolutionConverted(
-//				sunit.convert(scaleOfInterest.getSpaceResolution(), Units.INSTANCE.METERS).doubleValue());
 		this.scaleOfInterest.setSpaceResolutionDescription(
 				NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
 						+ this.scaleOfInterest.getSpaceUnit());

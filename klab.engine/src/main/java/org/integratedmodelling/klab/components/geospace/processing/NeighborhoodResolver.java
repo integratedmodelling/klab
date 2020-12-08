@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.LongAdder;
 import java.util.stream.StreamSupport;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
@@ -69,11 +71,15 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 
 		IExpression.Context expressionContext = context.getExpressionContext();
 
+		// TODO should be artifact OBJECT type
+		expressionContext.addKnownIdentifier("cell", IKimConcept.Type.SUBJECT);
+		expressionContext.addKnownIdentifier("origin", IKimConcept.Type.SUBJECT);
+
 		if (parameters.containsKey("select")) {
 			Object expression = parameters.get("select");
 			boolean forceScalar = false;
 			if (expression instanceof IKimExpression) {
-				forceScalar = ((IKimExpression)expression).isForcedScalar();
+				forceScalar = ((IKimExpression) expression).isForcedScalar();
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.selectDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
@@ -83,7 +89,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 			Object expression = parameters.get("aggregate");
 			boolean forceScalar = false;
 			if (expression instanceof IKimExpression) {
-				forceScalar = ((IKimExpression)expression).isForcedScalar();
+				forceScalar = ((IKimExpression) expression).isForcedScalar();
 				expression = ((IKimExpression) expression).getCode();
 			}
 			this.valueDescriptor = Extensions.INSTANCE.getLanguageProcessor(Extensions.DEFAULT_EXPRESSION_LANGUAGE)
@@ -152,7 +158,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		}
 
 		/*
-		 * build offset mask for quick addressing
+		 * build offset mask for quick addressing TODO can use kernels from JAI tools
 		 */
 		int maskSize = hCells * 2 + 1;
 		@SuppressWarnings("unchecked")
@@ -187,9 +193,9 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 					IState state = context.getArtifact(input, IState.class);
 					sourceStates.add(state);
 					this.stateIdentifiers.put(state, input);
-					if (input.equals("origin")) {
-						isLinear = false;
-					}
+				}
+				if (input.equals("origin")) {
+					isLinear = false;
 				}
 			}
 			if (sourceStates.isEmpty()) {
@@ -200,7 +206,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 			if (isLinear && valueDescriptor.getContextualizers().contains("origin")) {
 				isLinear = false;
 			}
-			
+
 			valueExpression = valueDescriptor.compile();
 		} else {
 			throw new KlabValidationException(
@@ -228,7 +234,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 			}
 			selectExpression = selectDescriptor.compile();
 		}
-		
+
 		/*
 		 * go for it
 		 */
@@ -259,7 +265,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 					value = evalStates(valueExpression, sourceStates, locator, Object.class, "self", self);
 					if (value != null && valueCache == null) {
 						synchronized (NeighborhoodResolver.this) {
-							valueCache = (IDataStorage<?>)Klab.INSTANCE.getStorageProvider()
+							valueCache = (IDataStorage<?>) Klab.INSTANCE.getStorageProvider()
 									.createStorage(Utils.getArtifactType(value.getClass()), target.getScale(), context);
 						}
 					}
@@ -339,6 +345,15 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 
 		Parameters<String> parameters = Parameters.create(parms);
 		parameters.put("space", where);
+		parameters.put("radius", radius);
+		parameters.put("cellradius", cellradius);
+
+		if (parameters.get("origin") instanceof Cell) {
+			parameters.put("origin", new ContributingCell(parameters.get("origin", Cell.class)));
+		}
+		if (where instanceof Cell) {
+			parameters.put("cell", new ContributingCell((Cell) where));
+		}
 		for (IState state : states) {
 			Object o = state.get(where, Object.class);
 			parameters.put(stateIdentifiers.get(state), o);
@@ -374,7 +389,8 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 	}
 
 	@Override
-	public NeighborhoodResolver eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public NeighborhoodResolver eval(IParameters<String> parameters, IContextualizationScope context)
+			throws KlabException {
 		return new NeighborhoodResolver(parameters, context);
 	}
 

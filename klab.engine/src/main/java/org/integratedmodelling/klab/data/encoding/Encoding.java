@@ -31,11 +31,23 @@ public final class Encoding {
         getGeometryBytes();
 
     /**
+     * <pre>
+     * the semantics field may carry a URN in a contextualization request 
+     * encoded as a single KlabData object. Otherwise it's provided for 
+     * future usage (and should probably come with a worldview field).
+     * </pre>
+     *
      * <code>string semantics = 2;</code>
      * @return The semantics.
      */
     java.lang.String getSemantics();
     /**
+     * <pre>
+     * the semantics field may carry a URN in a contextualization request 
+     * encoded as a single KlabData object. Otherwise it's provided for 
+     * future usage (and should probably come with a worldview field).
+     * </pre>
+     *
      * <code>string semantics = 2;</code>
      * @return The bytes for semantics.
      */
@@ -179,7 +191,7 @@ public final class Encoding {
    *
    * Protobuf type {@code org.integratedmodelling.klab.data.encoding.KlabData}
    */
-  public  static final class KlabData extends
+  public static final class KlabData extends
       com.google.protobuf.GeneratedMessageV3 implements
       // @@protoc_insertion_point(message_implements:org.integratedmodelling.klab.data.encoding.KlabData)
       KlabDataOrBuilder {
@@ -405,6 +417,10 @@ public final class Encoding {
 
       public final com.google.protobuf.Descriptors.EnumValueDescriptor
           getValueDescriptor() {
+        if (this == UNRECOGNIZED) {
+          throw new java.lang.IllegalStateException(
+              "Can't get the descriptor of an unrecognized enum value.");
+        }
         return getDescriptor().getValues().get(ordinal());
       }
       public final com.google.protobuf.Descriptors.EnumDescriptor
@@ -469,7 +485,7 @@ public final class Encoding {
     /**
      * Protobuf type {@code org.integratedmodelling.klab.data.encoding.KlabData.Notification}
      */
-    public  static final class Notification extends
+    public static final class Notification extends
         com.google.protobuf.GeneratedMessageV3 implements
         // @@protoc_insertion_point(message_implements:org.integratedmodelling.klab.data.encoding.KlabData.Notification)
         NotificationOrBuilder {
@@ -563,6 +579,7 @@ public final class Encoding {
        * <code>string text = 1;</code>
        * @return The text.
        */
+      @java.lang.Override
       public java.lang.String getText() {
         java.lang.Object ref = text_;
         if (ref instanceof java.lang.String) {
@@ -579,6 +596,7 @@ public final class Encoding {
        * <code>string text = 1;</code>
        * @return The bytes for text.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString
           getTextBytes() {
         java.lang.Object ref = text_;
@@ -599,14 +617,14 @@ public final class Encoding {
        * <code>.org.integratedmodelling.klab.data.encoding.KlabData.Severity severity = 2;</code>
        * @return The enum numeric value on the wire for severity.
        */
-      public int getSeverityValue() {
+      @java.lang.Override public int getSeverityValue() {
         return severity_;
       }
       /**
        * <code>.org.integratedmodelling.klab.data.encoding.KlabData.Severity severity = 2;</code>
        * @return The severity.
        */
-      public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Severity getSeverity() {
+      @java.lang.Override public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Severity getSeverity() {
         @SuppressWarnings("deprecation")
         org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Severity result = org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Severity.valueOf(severity_);
         return result == null ? org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Severity.UNRECOGNIZED : result;
@@ -1011,7 +1029,7 @@ public final class Encoding {
          * <code>.org.integratedmodelling.klab.data.encoding.KlabData.Severity severity = 2;</code>
          * @return The enum numeric value on the wire for severity.
          */
-        public int getSeverityValue() {
+        @java.lang.Override public int getSeverityValue() {
           return severity_;
         }
         /**
@@ -1020,6 +1038,7 @@ public final class Encoding {
          * @return This builder for chaining.
          */
         public Builder setSeverityValue(int value) {
+          
           severity_ = value;
           onChanged();
           return this;
@@ -1028,6 +1047,7 @@ public final class Encoding {
          * <code>.org.integratedmodelling.klab.data.encoding.KlabData.Severity severity = 2;</code>
          * @return The severity.
          */
+        @java.lang.Override
         public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Severity getSeverity() {
           @SuppressWarnings("deprecation")
           org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Severity result = org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Severity.valueOf(severity_);
@@ -1257,7 +1277,7 @@ public final class Encoding {
     /**
      * Protobuf type {@code org.integratedmodelling.klab.data.encoding.KlabData.Object}
      */
-    public  static final class Object extends
+    public static final class Object extends
         com.google.protobuf.GeneratedMessageV3 implements
         // @@protoc_insertion_point(message_implements:org.integratedmodelling.klab.data.encoding.KlabData.Object)
         ObjectOrBuilder {
@@ -1418,6 +1438,7 @@ public final class Encoding {
        * <code>string name = 1;</code>
        * @return The name.
        */
+      @java.lang.Override
       public java.lang.String getName() {
         java.lang.Object ref = name_;
         if (ref instanceof java.lang.String) {
@@ -1434,6 +1455,7 @@ public final class Encoding {
        * <code>string name = 1;</code>
        * @return The bytes for name.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString
           getNameBytes() {
         java.lang.Object ref = name_;
@@ -1478,6 +1500,7 @@ public final class Encoding {
        * <code>map&lt;string, string&gt; properties = 2;</code>
        */
 
+      @java.lang.Override
       public boolean containsProperties(
           java.lang.String key) {
         if (key == null) { throw new java.lang.NullPointerException(); }
@@ -1486,6 +1509,7 @@ public final class Encoding {
       /**
        * Use {@link #getPropertiesMap()} instead.
        */
+      @java.lang.Override
       @java.lang.Deprecated
       public java.util.Map<java.lang.String, java.lang.String> getProperties() {
         return getPropertiesMap();
@@ -1493,6 +1517,7 @@ public final class Encoding {
       /**
        * <code>map&lt;string, string&gt; properties = 2;</code>
        */
+      @java.lang.Override
 
       public java.util.Map<java.lang.String, java.lang.String> getPropertiesMap() {
         return internalGetProperties().getMap();
@@ -1500,6 +1525,7 @@ public final class Encoding {
       /**
        * <code>map&lt;string, string&gt; properties = 2;</code>
        */
+      @java.lang.Override
 
       public java.lang.String getPropertiesOrDefault(
           java.lang.String key,
@@ -1512,6 +1538,7 @@ public final class Encoding {
       /**
        * <code>map&lt;string, string&gt; properties = 2;</code>
        */
+      @java.lang.Override
 
       public java.lang.String getPropertiesOrThrow(
           java.lang.String key) {
@@ -1529,12 +1556,14 @@ public final class Encoding {
       /**
        * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.State states = 3;</code>
        */
+      @java.lang.Override
       public java.util.List<org.integratedmodelling.klab.data.encoding.Encoding.KlabData.State> getStatesList() {
         return states_;
       }
       /**
        * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.State states = 3;</code>
        */
+      @java.lang.Override
       public java.util.List<? extends org.integratedmodelling.klab.data.encoding.Encoding.KlabData.StateOrBuilder> 
           getStatesOrBuilderList() {
         return states_;
@@ -1542,18 +1571,21 @@ public final class Encoding {
       /**
        * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.State states = 3;</code>
        */
+      @java.lang.Override
       public int getStatesCount() {
         return states_.size();
       }
       /**
        * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.State states = 3;</code>
        */
+      @java.lang.Override
       public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.State getStates(int index) {
         return states_.get(index);
       }
       /**
        * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.State states = 3;</code>
        */
+      @java.lang.Override
       public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.StateOrBuilder getStatesOrBuilder(
           int index) {
         return states_.get(index);
@@ -1564,12 +1596,14 @@ public final class Encoding {
       /**
        * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Object objects = 4;</code>
        */
+      @java.lang.Override
       public java.util.List<org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Object> getObjectsList() {
         return objects_;
       }
       /**
        * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Object objects = 4;</code>
        */
+      @java.lang.Override
       public java.util.List<? extends org.integratedmodelling.klab.data.encoding.Encoding.KlabData.ObjectOrBuilder> 
           getObjectsOrBuilderList() {
         return objects_;
@@ -1577,18 +1611,21 @@ public final class Encoding {
       /**
        * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Object objects = 4;</code>
        */
+      @java.lang.Override
       public int getObjectsCount() {
         return objects_.size();
       }
       /**
        * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Object objects = 4;</code>
        */
+      @java.lang.Override
       public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Object getObjects(int index) {
         return objects_.get(index);
       }
       /**
        * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Object objects = 4;</code>
        */
+      @java.lang.Override
       public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.ObjectOrBuilder getObjectsOrBuilder(
           int index) {
         return objects_.get(index);
@@ -1600,6 +1637,7 @@ public final class Encoding {
        * <code>string geometry = 5;</code>
        * @return The geometry.
        */
+      @java.lang.Override
       public java.lang.String getGeometry() {
         java.lang.Object ref = geometry_;
         if (ref instanceof java.lang.String) {
@@ -1616,6 +1654,7 @@ public final class Encoding {
        * <code>string geometry = 5;</code>
        * @return The bytes for geometry.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString
           getGeometryBytes() {
         java.lang.Object ref = geometry_;
@@ -1660,6 +1699,7 @@ public final class Encoding {
        * <code>map&lt;string, string&gt; metadata = 6;</code>
        */
 
+      @java.lang.Override
       public boolean containsMetadata(
           java.lang.String key) {
         if (key == null) { throw new java.lang.NullPointerException(); }
@@ -1668,6 +1708,7 @@ public final class Encoding {
       /**
        * Use {@link #getMetadataMap()} instead.
        */
+      @java.lang.Override
       @java.lang.Deprecated
       public java.util.Map<java.lang.String, java.lang.String> getMetadata() {
         return getMetadataMap();
@@ -1675,6 +1716,7 @@ public final class Encoding {
       /**
        * <code>map&lt;string, string&gt; metadata = 6;</code>
        */
+      @java.lang.Override
 
       public java.util.Map<java.lang.String, java.lang.String> getMetadataMap() {
         return internalGetMetadata().getMap();
@@ -1682,6 +1724,7 @@ public final class Encoding {
       /**
        * <code>map&lt;string, string&gt; metadata = 6;</code>
        */
+      @java.lang.Override
 
       public java.lang.String getMetadataOrDefault(
           java.lang.String key,
@@ -1694,6 +1737,7 @@ public final class Encoding {
       /**
        * <code>map&lt;string, string&gt; metadata = 6;</code>
        */
+      @java.lang.Override
 
       public java.lang.String getMetadataOrThrow(
           java.lang.String key) {
@@ -2323,6 +2367,7 @@ public final class Encoding {
          * <code>map&lt;string, string&gt; properties = 2;</code>
          */
 
+        @java.lang.Override
         public boolean containsProperties(
             java.lang.String key) {
           if (key == null) { throw new java.lang.NullPointerException(); }
@@ -2331,6 +2376,7 @@ public final class Encoding {
         /**
          * Use {@link #getPropertiesMap()} instead.
          */
+        @java.lang.Override
         @java.lang.Deprecated
         public java.util.Map<java.lang.String, java.lang.String> getProperties() {
           return getPropertiesMap();
@@ -2338,6 +2384,7 @@ public final class Encoding {
         /**
          * <code>map&lt;string, string&gt; properties = 2;</code>
          */
+        @java.lang.Override
 
         public java.util.Map<java.lang.String, java.lang.String> getPropertiesMap() {
           return internalGetProperties().getMap();
@@ -2345,6 +2392,7 @@ public final class Encoding {
         /**
          * <code>map&lt;string, string&gt; properties = 2;</code>
          */
+        @java.lang.Override
 
         public java.lang.String getPropertiesOrDefault(
             java.lang.String key,
@@ -2357,6 +2405,7 @@ public final class Encoding {
         /**
          * <code>map&lt;string, string&gt; properties = 2;</code>
          */
+        @java.lang.Override
 
         public java.lang.String getPropertiesOrThrow(
             java.lang.String key) {
@@ -3002,6 +3051,7 @@ public final class Encoding {
          * <code>map&lt;string, string&gt; metadata = 6;</code>
          */
 
+        @java.lang.Override
         public boolean containsMetadata(
             java.lang.String key) {
           if (key == null) { throw new java.lang.NullPointerException(); }
@@ -3010,6 +3060,7 @@ public final class Encoding {
         /**
          * Use {@link #getMetadataMap()} instead.
          */
+        @java.lang.Override
         @java.lang.Deprecated
         public java.util.Map<java.lang.String, java.lang.String> getMetadata() {
           return getMetadataMap();
@@ -3017,6 +3068,7 @@ public final class Encoding {
         /**
          * <code>map&lt;string, string&gt; metadata = 6;</code>
          */
+        @java.lang.Override
 
         public java.util.Map<java.lang.String, java.lang.String> getMetadataMap() {
           return internalGetMetadata().getMap();
@@ -3024,6 +3076,7 @@ public final class Encoding {
         /**
          * <code>map&lt;string, string&gt; metadata = 6;</code>
          */
+        @java.lang.Override
 
         public java.lang.String getMetadataOrDefault(
             java.lang.String key,
@@ -3036,6 +3089,7 @@ public final class Encoding {
         /**
          * <code>map&lt;string, string&gt; metadata = 6;</code>
          */
+        @java.lang.Override
 
         public java.lang.String getMetadataOrThrow(
             java.lang.String key) {
@@ -3188,7 +3242,7 @@ public final class Encoding {
     /**
      * Protobuf type {@code org.integratedmodelling.klab.data.encoding.KlabData.LookupTable}
      */
-    public  static final class LookupTable extends
+    public static final class LookupTable extends
         com.google.protobuf.GeneratedMessageV3 implements
         // @@protoc_insertion_point(message_implements:org.integratedmodelling.klab.data.encoding.KlabData.LookupTable)
         LookupTableOrBuilder {
@@ -3318,6 +3372,7 @@ public final class Encoding {
        * <code>map&lt;uint32, string&gt; table = 1;</code>
        */
 
+      @java.lang.Override
       public boolean containsTable(
           int key) {
         
@@ -3326,6 +3381,7 @@ public final class Encoding {
       /**
        * Use {@link #getTableMap()} instead.
        */
+      @java.lang.Override
       @java.lang.Deprecated
       public java.util.Map<java.lang.Integer, java.lang.String> getTable() {
         return getTableMap();
@@ -3333,6 +3389,7 @@ public final class Encoding {
       /**
        * <code>map&lt;uint32, string&gt; table = 1;</code>
        */
+      @java.lang.Override
 
       public java.util.Map<java.lang.Integer, java.lang.String> getTableMap() {
         return internalGetTable().getMap();
@@ -3340,6 +3397,7 @@ public final class Encoding {
       /**
        * <code>map&lt;uint32, string&gt; table = 1;</code>
        */
+      @java.lang.Override
 
       public java.lang.String getTableOrDefault(
           int key,
@@ -3352,6 +3410,7 @@ public final class Encoding {
       /**
        * <code>map&lt;uint32, string&gt; table = 1;</code>
        */
+      @java.lang.Override
 
       public java.lang.String getTableOrThrow(
           int key) {
@@ -3730,6 +3789,7 @@ public final class Encoding {
          * <code>map&lt;uint32, string&gt; table = 1;</code>
          */
 
+        @java.lang.Override
         public boolean containsTable(
             int key) {
           
@@ -3738,6 +3798,7 @@ public final class Encoding {
         /**
          * Use {@link #getTableMap()} instead.
          */
+        @java.lang.Override
         @java.lang.Deprecated
         public java.util.Map<java.lang.Integer, java.lang.String> getTable() {
           return getTableMap();
@@ -3745,6 +3806,7 @@ public final class Encoding {
         /**
          * <code>map&lt;uint32, string&gt; table = 1;</code>
          */
+        @java.lang.Override
 
         public java.util.Map<java.lang.Integer, java.lang.String> getTableMap() {
           return internalGetTable().getMap();
@@ -3752,6 +3814,7 @@ public final class Encoding {
         /**
          * <code>map&lt;uint32, string&gt; table = 1;</code>
          */
+        @java.lang.Override
 
         public java.lang.String getTableOrDefault(
             int key,
@@ -3764,6 +3827,7 @@ public final class Encoding {
         /**
          * <code>map&lt;uint32, string&gt; table = 1;</code>
          */
+        @java.lang.Override
 
         public java.lang.String getTableOrThrow(
             int key) {
@@ -4043,6 +4107,73 @@ public final class Encoding {
 
       java.lang.String getMetadataOrThrow(
           java.lang.String key);
+
+      /**
+       * <pre>
+       * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+       * corresponding values cannot be repeated)
+       * </pre>
+       *
+       * <code>repeated string stringdata = 10;</code>
+       * @return A list containing the stringdata.
+       */
+      java.util.List<java.lang.String>
+          getStringdataList();
+      /**
+       * <pre>
+       * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+       * corresponding values cannot be repeated)
+       * </pre>
+       *
+       * <code>repeated string stringdata = 10;</code>
+       * @return The count of stringdata.
+       */
+      int getStringdataCount();
+      /**
+       * <pre>
+       * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+       * corresponding values cannot be repeated)
+       * </pre>
+       *
+       * <code>repeated string stringdata = 10;</code>
+       * @param index The index of the element to return.
+       * @return The stringdata at the given index.
+       */
+      java.lang.String getStringdata(int index);
+      /**
+       * <pre>
+       * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+       * corresponding values cannot be repeated)
+       * </pre>
+       *
+       * <code>repeated string stringdata = 10;</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the stringdata at the given index.
+       */
+      com.google.protobuf.ByteString
+          getStringdataBytes(int index);
+
+      /**
+       * <pre>
+       * specifies the type (string = 'string' or null, 'map', 'array' (both JSON) or 'concept'
+       * if classification is known.
+       * </pre>
+       *
+       * <code>string stringdataencoding = 11;</code>
+       * @return The stringdataencoding.
+       */
+      java.lang.String getStringdataencoding();
+      /**
+       * <pre>
+       * specifies the type (string = 'string' or null, 'map', 'array' (both JSON) or 'concept'
+       * if classification is known.
+       * </pre>
+       *
+       * <code>string stringdataencoding = 11;</code>
+       * @return The bytes for stringdataencoding.
+       */
+      com.google.protobuf.ByteString
+          getStringdataencodingBytes();
     }
     /**
      * <pre>
@@ -4051,7 +4182,7 @@ public final class Encoding {
      *
      * Protobuf type {@code org.integratedmodelling.klab.data.encoding.KlabData.State}
      */
-    public  static final class State extends
+    public static final class State extends
         com.google.protobuf.GeneratedMessageV3 implements
         // @@protoc_insertion_point(message_implements:org.integratedmodelling.klab.data.encoding.KlabData.State)
         StateOrBuilder {
@@ -4068,6 +4199,8 @@ public final class Encoding {
         intdata_ = emptyLongList();
         booleandata_ = emptyBooleanList();
         externalDatasourceUrl_ = "";
+        stringdata_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        stringdataencoding_ = "";
       }
 
       @java.lang.Override
@@ -4229,6 +4362,21 @@ public final class Encoding {
                     metadata__.getKey(), metadata__.getValue());
                 break;
               }
+              case 82: {
+                java.lang.String s = input.readStringRequireUtf8();
+                if (!((mutable_bitField0_ & 0x00000020) != 0)) {
+                  stringdata_ = new com.google.protobuf.LazyStringArrayList();
+                  mutable_bitField0_ |= 0x00000020;
+                }
+                stringdata_.add(s);
+                break;
+              }
+              case 90: {
+                java.lang.String s = input.readStringRequireUtf8();
+
+                stringdataencoding_ = s;
+                break;
+              }
               default: {
                 if (!parseUnknownField(
                     input, unknownFields, extensionRegistry, tag)) {
@@ -4255,6 +4403,9 @@ public final class Encoding {
           }
           if (((mutable_bitField0_ & 0x00000008) != 0)) {
             booleandata_.makeImmutable(); // C
+          }
+          if (((mutable_bitField0_ & 0x00000020) != 0)) {
+            stringdata_ = stringdata_.getUnmodifiableView();
           }
           this.unknownFields = unknownFields.build();
           makeExtensionsImmutable();
@@ -4291,6 +4442,7 @@ public final class Encoding {
        * <code>string name = 1;</code>
        * @return The name.
        */
+      @java.lang.Override
       public java.lang.String getName() {
         java.lang.Object ref = name_;
         if (ref instanceof java.lang.String) {
@@ -4307,6 +4459,7 @@ public final class Encoding {
        * <code>string name = 1;</code>
        * @return The bytes for name.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString
           getNameBytes() {
         java.lang.Object ref = name_;
@@ -4327,6 +4480,7 @@ public final class Encoding {
        * <code>string semantics = 2;</code>
        * @return The semantics.
        */
+      @java.lang.Override
       public java.lang.String getSemantics() {
         java.lang.Object ref = semantics_;
         if (ref instanceof java.lang.String) {
@@ -4343,6 +4497,7 @@ public final class Encoding {
        * <code>string semantics = 2;</code>
        * @return The bytes for semantics.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString
           getSemanticsBytes() {
         java.lang.Object ref = semantics_;
@@ -4363,6 +4518,7 @@ public final class Encoding {
        * <code>repeated double doubledata = 3;</code>
        * @return A list containing the doubledata.
        */
+      @java.lang.Override
       public java.util.List<java.lang.Double>
           getDoubledataList() {
         return doubledata_;
@@ -4394,6 +4550,7 @@ public final class Encoding {
        * <code>repeated uint32 tabledata = 4;</code>
        * @return A list containing the tabledata.
        */
+      @java.lang.Override
       public java.util.List<java.lang.Integer>
           getTabledataList() {
         return tabledata_;
@@ -4429,6 +4586,7 @@ public final class Encoding {
        * <code>repeated sint64 intdata = 5;</code>
        * @return A list containing the intdata.
        */
+      @java.lang.Override
       public java.util.List<java.lang.Long>
           getIntdataList() {
         return intdata_;
@@ -4456,6 +4614,7 @@ public final class Encoding {
        * <code>repeated bool booleandata = 6;</code>
        * @return A list containing the booleandata.
        */
+      @java.lang.Override
       public java.util.List<java.lang.Boolean>
           getBooleandataList() {
         return booleandata_;
@@ -4483,6 +4642,7 @@ public final class Encoding {
        * <code>.org.integratedmodelling.klab.data.encoding.KlabData.LookupTable table = 7;</code>
        * @return Whether the table field is set.
        */
+      @java.lang.Override
       public boolean hasTable() {
         return table_ != null;
       }
@@ -4490,12 +4650,14 @@ public final class Encoding {
        * <code>.org.integratedmodelling.klab.data.encoding.KlabData.LookupTable table = 7;</code>
        * @return The table.
        */
+      @java.lang.Override
       public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.LookupTable getTable() {
         return table_ == null ? org.integratedmodelling.klab.data.encoding.Encoding.KlabData.LookupTable.getDefaultInstance() : table_;
       }
       /**
        * <code>.org.integratedmodelling.klab.data.encoding.KlabData.LookupTable table = 7;</code>
        */
+      @java.lang.Override
       public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.LookupTableOrBuilder getTableOrBuilder() {
         return getTable();
       }
@@ -4506,6 +4668,7 @@ public final class Encoding {
        * <code>string externalDatasourceUrl = 8;</code>
        * @return The externalDatasourceUrl.
        */
+      @java.lang.Override
       public java.lang.String getExternalDatasourceUrl() {
         java.lang.Object ref = externalDatasourceUrl_;
         if (ref instanceof java.lang.String) {
@@ -4522,6 +4685,7 @@ public final class Encoding {
        * <code>string externalDatasourceUrl = 8;</code>
        * @return The bytes for externalDatasourceUrl.
        */
+      @java.lang.Override
       public com.google.protobuf.ByteString
           getExternalDatasourceUrlBytes() {
         java.lang.Object ref = externalDatasourceUrl_;
@@ -4566,6 +4730,7 @@ public final class Encoding {
        * <code>map&lt;string, string&gt; metadata = 9;</code>
        */
 
+      @java.lang.Override
       public boolean containsMetadata(
           java.lang.String key) {
         if (key == null) { throw new java.lang.NullPointerException(); }
@@ -4574,6 +4739,7 @@ public final class Encoding {
       /**
        * Use {@link #getMetadataMap()} instead.
        */
+      @java.lang.Override
       @java.lang.Deprecated
       public java.util.Map<java.lang.String, java.lang.String> getMetadata() {
         return getMetadataMap();
@@ -4581,6 +4747,7 @@ public final class Encoding {
       /**
        * <code>map&lt;string, string&gt; metadata = 9;</code>
        */
+      @java.lang.Override
 
       public java.util.Map<java.lang.String, java.lang.String> getMetadataMap() {
         return internalGetMetadata().getMap();
@@ -4588,6 +4755,7 @@ public final class Encoding {
       /**
        * <code>map&lt;string, string&gt; metadata = 9;</code>
        */
+      @java.lang.Override
 
       public java.lang.String getMetadataOrDefault(
           java.lang.String key,
@@ -4600,6 +4768,7 @@ public final class Encoding {
       /**
        * <code>map&lt;string, string&gt; metadata = 9;</code>
        */
+      @java.lang.Override
 
       public java.lang.String getMetadataOrThrow(
           java.lang.String key) {
@@ -4610,6 +4779,109 @@ public final class Encoding {
           throw new java.lang.IllegalArgumentException();
         }
         return map.get(key);
+      }
+
+      public static final int STRINGDATA_FIELD_NUMBER = 10;
+      private com.google.protobuf.LazyStringList stringdata_;
+      /**
+       * <pre>
+       * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+       * corresponding values cannot be repeated)
+       * </pre>
+       *
+       * <code>repeated string stringdata = 10;</code>
+       * @return A list containing the stringdata.
+       */
+      public com.google.protobuf.ProtocolStringList
+          getStringdataList() {
+        return stringdata_;
+      }
+      /**
+       * <pre>
+       * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+       * corresponding values cannot be repeated)
+       * </pre>
+       *
+       * <code>repeated string stringdata = 10;</code>
+       * @return The count of stringdata.
+       */
+      public int getStringdataCount() {
+        return stringdata_.size();
+      }
+      /**
+       * <pre>
+       * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+       * corresponding values cannot be repeated)
+       * </pre>
+       *
+       * <code>repeated string stringdata = 10;</code>
+       * @param index The index of the element to return.
+       * @return The stringdata at the given index.
+       */
+      public java.lang.String getStringdata(int index) {
+        return stringdata_.get(index);
+      }
+      /**
+       * <pre>
+       * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+       * corresponding values cannot be repeated)
+       * </pre>
+       *
+       * <code>repeated string stringdata = 10;</code>
+       * @param index The index of the value to return.
+       * @return The bytes of the stringdata at the given index.
+       */
+      public com.google.protobuf.ByteString
+          getStringdataBytes(int index) {
+        return stringdata_.getByteString(index);
+      }
+
+      public static final int STRINGDATAENCODING_FIELD_NUMBER = 11;
+      private volatile java.lang.Object stringdataencoding_;
+      /**
+       * <pre>
+       * specifies the type (string = 'string' or null, 'map', 'array' (both JSON) or 'concept'
+       * if classification is known.
+       * </pre>
+       *
+       * <code>string stringdataencoding = 11;</code>
+       * @return The stringdataencoding.
+       */
+      @java.lang.Override
+      public java.lang.String getStringdataencoding() {
+        java.lang.Object ref = stringdataencoding_;
+        if (ref instanceof java.lang.String) {
+          return (java.lang.String) ref;
+        } else {
+          com.google.protobuf.ByteString bs = 
+              (com.google.protobuf.ByteString) ref;
+          java.lang.String s = bs.toStringUtf8();
+          stringdataencoding_ = s;
+          return s;
+        }
+      }
+      /**
+       * <pre>
+       * specifies the type (string = 'string' or null, 'map', 'array' (both JSON) or 'concept'
+       * if classification is known.
+       * </pre>
+       *
+       * <code>string stringdataencoding = 11;</code>
+       * @return The bytes for stringdataencoding.
+       */
+      @java.lang.Override
+      public com.google.protobuf.ByteString
+          getStringdataencodingBytes() {
+        java.lang.Object ref = stringdataencoding_;
+        if (ref instanceof java.lang.String) {
+          com.google.protobuf.ByteString b = 
+              com.google.protobuf.ByteString.copyFromUtf8(
+                  (java.lang.String) ref);
+          stringdataencoding_ = b;
+          return b;
+        } else {
+          return (com.google.protobuf.ByteString) ref;
+        }
       }
 
       private byte memoizedIsInitialized = -1;
@@ -4673,6 +4945,12 @@ public final class Encoding {
             internalGetMetadata(),
             MetadataDefaultEntryHolder.defaultEntry,
             9);
+        for (int i = 0; i < stringdata_.size(); i++) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 10, stringdata_.getRaw(i));
+        }
+        if (!getStringdataencodingBytes().isEmpty()) {
+          com.google.protobuf.GeneratedMessageV3.writeString(output, 11, stringdataencoding_);
+        }
         unknownFields.writeTo(output);
       }
 
@@ -4755,6 +5033,17 @@ public final class Encoding {
           size += com.google.protobuf.CodedOutputStream
               .computeMessageSize(9, metadata__);
         }
+        {
+          int dataSize = 0;
+          for (int i = 0; i < stringdata_.size(); i++) {
+            dataSize += computeStringSizeNoTag(stringdata_.getRaw(i));
+          }
+          size += dataSize;
+          size += 1 * getStringdataList().size();
+        }
+        if (!getStringdataencodingBytes().isEmpty()) {
+          size += com.google.protobuf.GeneratedMessageV3.computeStringSize(11, stringdataencoding_);
+        }
         size += unknownFields.getSerializedSize();
         memoizedSize = size;
         return size;
@@ -4791,6 +5080,10 @@ public final class Encoding {
             .equals(other.getExternalDatasourceUrl())) return false;
         if (!internalGetMetadata().equals(
             other.internalGetMetadata())) return false;
+        if (!getStringdataList()
+            .equals(other.getStringdataList())) return false;
+        if (!getStringdataencoding()
+            .equals(other.getStringdataencoding())) return false;
         if (!unknownFields.equals(other.unknownFields)) return false;
         return true;
       }
@@ -4832,6 +5125,12 @@ public final class Encoding {
           hash = (37 * hash) + METADATA_FIELD_NUMBER;
           hash = (53 * hash) + internalGetMetadata().hashCode();
         }
+        if (getStringdataCount() > 0) {
+          hash = (37 * hash) + STRINGDATA_FIELD_NUMBER;
+          hash = (53 * hash) + getStringdataList().hashCode();
+        }
+        hash = (37 * hash) + STRINGDATAENCODING_FIELD_NUMBER;
+        hash = (53 * hash) + getStringdataencoding().hashCode();
         hash = (29 * hash) + unknownFields.hashCode();
         memoizedHashCode = hash;
         return hash;
@@ -5012,6 +5311,10 @@ public final class Encoding {
           externalDatasourceUrl_ = "";
 
           internalGetMutableMetadata().clear();
+          stringdata_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+          bitField0_ = (bitField0_ & ~0x00000020);
+          stringdataencoding_ = "";
+
           return this;
         }
 
@@ -5069,6 +5372,12 @@ public final class Encoding {
           result.externalDatasourceUrl_ = externalDatasourceUrl_;
           result.metadata_ = internalGetMetadata();
           result.metadata_.makeImmutable();
+          if (((bitField0_ & 0x00000020) != 0)) {
+            stringdata_ = stringdata_.getUnmodifiableView();
+            bitField0_ = (bitField0_ & ~0x00000020);
+          }
+          result.stringdata_ = stringdata_;
+          result.stringdataencoding_ = stringdataencoding_;
           onBuilt();
           return result;
         }
@@ -5174,6 +5483,20 @@ public final class Encoding {
           }
           internalGetMutableMetadata().mergeFrom(
               other.internalGetMetadata());
+          if (!other.stringdata_.isEmpty()) {
+            if (stringdata_.isEmpty()) {
+              stringdata_ = other.stringdata_;
+              bitField0_ = (bitField0_ & ~0x00000020);
+            } else {
+              ensureStringdataIsMutable();
+              stringdata_.addAll(other.stringdata_);
+            }
+            onChanged();
+          }
+          if (!other.getStringdataencoding().isEmpty()) {
+            stringdataencoding_ = other.stringdataencoding_;
+            onChanged();
+          }
           this.mergeUnknownFields(other.unknownFields);
           onChanged();
           return this;
@@ -5925,6 +6248,7 @@ public final class Encoding {
          * <code>map&lt;string, string&gt; metadata = 9;</code>
          */
 
+        @java.lang.Override
         public boolean containsMetadata(
             java.lang.String key) {
           if (key == null) { throw new java.lang.NullPointerException(); }
@@ -5933,6 +6257,7 @@ public final class Encoding {
         /**
          * Use {@link #getMetadataMap()} instead.
          */
+        @java.lang.Override
         @java.lang.Deprecated
         public java.util.Map<java.lang.String, java.lang.String> getMetadata() {
           return getMetadataMap();
@@ -5940,6 +6265,7 @@ public final class Encoding {
         /**
          * <code>map&lt;string, string&gt; metadata = 9;</code>
          */
+        @java.lang.Override
 
         public java.util.Map<java.lang.String, java.lang.String> getMetadataMap() {
           return internalGetMetadata().getMap();
@@ -5947,6 +6273,7 @@ public final class Encoding {
         /**
          * <code>map&lt;string, string&gt; metadata = 9;</code>
          */
+        @java.lang.Override
 
         public java.lang.String getMetadataOrDefault(
             java.lang.String key,
@@ -5959,6 +6286,7 @@ public final class Encoding {
         /**
          * <code>map&lt;string, string&gt; metadata = 9;</code>
          */
+        @java.lang.Override
 
         public java.lang.String getMetadataOrThrow(
             java.lang.String key) {
@@ -6015,6 +6343,262 @@ public final class Encoding {
             java.util.Map<java.lang.String, java.lang.String> values) {
           internalGetMutableMetadata().getMutableMap()
               .putAll(values);
+          return this;
+        }
+
+        private com.google.protobuf.LazyStringList stringdata_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+        private void ensureStringdataIsMutable() {
+          if (!((bitField0_ & 0x00000020) != 0)) {
+            stringdata_ = new com.google.protobuf.LazyStringArrayList(stringdata_);
+            bitField0_ |= 0x00000020;
+           }
+        }
+        /**
+         * <pre>
+         * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+         * corresponding values cannot be repeated)
+         * </pre>
+         *
+         * <code>repeated string stringdata = 10;</code>
+         * @return A list containing the stringdata.
+         */
+        public com.google.protobuf.ProtocolStringList
+            getStringdataList() {
+          return stringdata_.getUnmodifiableView();
+        }
+        /**
+         * <pre>
+         * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+         * corresponding values cannot be repeated)
+         * </pre>
+         *
+         * <code>repeated string stringdata = 10;</code>
+         * @return The count of stringdata.
+         */
+        public int getStringdataCount() {
+          return stringdata_.size();
+        }
+        /**
+         * <pre>
+         * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+         * corresponding values cannot be repeated)
+         * </pre>
+         *
+         * <code>repeated string stringdata = 10;</code>
+         * @param index The index of the element to return.
+         * @return The stringdata at the given index.
+         */
+        public java.lang.String getStringdata(int index) {
+          return stringdata_.get(index);
+        }
+        /**
+         * <pre>
+         * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+         * corresponding values cannot be repeated)
+         * </pre>
+         *
+         * <code>repeated string stringdata = 10;</code>
+         * @param index The index of the value to return.
+         * @return The bytes of the stringdata at the given index.
+         */
+        public com.google.protobuf.ByteString
+            getStringdataBytes(int index) {
+          return stringdata_.getByteString(index);
+        }
+        /**
+         * <pre>
+         * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+         * corresponding values cannot be repeated)
+         * </pre>
+         *
+         * <code>repeated string stringdata = 10;</code>
+         * @param index The index to set the value at.
+         * @param value The stringdata to set.
+         * @return This builder for chaining.
+         */
+        public Builder setStringdata(
+            int index, java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureStringdataIsMutable();
+          stringdata_.set(index, value);
+          onChanged();
+          return this;
+        }
+        /**
+         * <pre>
+         * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+         * corresponding values cannot be repeated)
+         * </pre>
+         *
+         * <code>repeated string stringdata = 10;</code>
+         * @param value The stringdata to add.
+         * @return This builder for chaining.
+         */
+        public Builder addStringdata(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  ensureStringdataIsMutable();
+          stringdata_.add(value);
+          onChanged();
+          return this;
+        }
+        /**
+         * <pre>
+         * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+         * corresponding values cannot be repeated)
+         * </pre>
+         *
+         * <code>repeated string stringdata = 10;</code>
+         * @param values The stringdata to add.
+         * @return This builder for chaining.
+         */
+        public Builder addAllStringdata(
+            java.lang.Iterable<java.lang.String> values) {
+          ensureStringdataIsMutable();
+          com.google.protobuf.AbstractMessageLite.Builder.addAll(
+              values, stringdata_);
+          onChanged();
+          return this;
+        }
+        /**
+         * <pre>
+         * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+         * corresponding values cannot be repeated)
+         * </pre>
+         *
+         * <code>repeated string stringdata = 10;</code>
+         * @return This builder for chaining.
+         */
+        public Builder clearStringdata() {
+          stringdata_ = com.google.protobuf.LazyStringArrayList.EMPTY;
+          bitField0_ = (bitField0_ & ~0x00000020);
+          onChanged();
+          return this;
+        }
+        /**
+         * <pre>
+         * string data may encode concepts, JSON map objects or arrays for multiple objects (the
+         * corresponding values cannot be repeated)
+         * </pre>
+         *
+         * <code>repeated string stringdata = 10;</code>
+         * @param value The bytes of the stringdata to add.
+         * @return This builder for chaining.
+         */
+        public Builder addStringdataBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+          ensureStringdataIsMutable();
+          stringdata_.add(value);
+          onChanged();
+          return this;
+        }
+
+        private java.lang.Object stringdataencoding_ = "";
+        /**
+         * <pre>
+         * specifies the type (string = 'string' or null, 'map', 'array' (both JSON) or 'concept'
+         * if classification is known.
+         * </pre>
+         *
+         * <code>string stringdataencoding = 11;</code>
+         * @return The stringdataencoding.
+         */
+        public java.lang.String getStringdataencoding() {
+          java.lang.Object ref = stringdataencoding_;
+          if (!(ref instanceof java.lang.String)) {
+            com.google.protobuf.ByteString bs =
+                (com.google.protobuf.ByteString) ref;
+            java.lang.String s = bs.toStringUtf8();
+            stringdataencoding_ = s;
+            return s;
+          } else {
+            return (java.lang.String) ref;
+          }
+        }
+        /**
+         * <pre>
+         * specifies the type (string = 'string' or null, 'map', 'array' (both JSON) or 'concept'
+         * if classification is known.
+         * </pre>
+         *
+         * <code>string stringdataencoding = 11;</code>
+         * @return The bytes for stringdataencoding.
+         */
+        public com.google.protobuf.ByteString
+            getStringdataencodingBytes() {
+          java.lang.Object ref = stringdataencoding_;
+          if (ref instanceof String) {
+            com.google.protobuf.ByteString b = 
+                com.google.protobuf.ByteString.copyFromUtf8(
+                    (java.lang.String) ref);
+            stringdataencoding_ = b;
+            return b;
+          } else {
+            return (com.google.protobuf.ByteString) ref;
+          }
+        }
+        /**
+         * <pre>
+         * specifies the type (string = 'string' or null, 'map', 'array' (both JSON) or 'concept'
+         * if classification is known.
+         * </pre>
+         *
+         * <code>string stringdataencoding = 11;</code>
+         * @param value The stringdataencoding to set.
+         * @return This builder for chaining.
+         */
+        public Builder setStringdataencoding(
+            java.lang.String value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  
+          stringdataencoding_ = value;
+          onChanged();
+          return this;
+        }
+        /**
+         * <pre>
+         * specifies the type (string = 'string' or null, 'map', 'array' (both JSON) or 'concept'
+         * if classification is known.
+         * </pre>
+         *
+         * <code>string stringdataencoding = 11;</code>
+         * @return This builder for chaining.
+         */
+        public Builder clearStringdataencoding() {
+          
+          stringdataencoding_ = getDefaultInstance().getStringdataencoding();
+          onChanged();
+          return this;
+        }
+        /**
+         * <pre>
+         * specifies the type (string = 'string' or null, 'map', 'array' (both JSON) or 'concept'
+         * if classification is known.
+         * </pre>
+         *
+         * <code>string stringdataencoding = 11;</code>
+         * @param value The bytes for stringdataencoding to set.
+         * @return This builder for chaining.
+         */
+        public Builder setStringdataencodingBytes(
+            com.google.protobuf.ByteString value) {
+          if (value == null) {
+    throw new NullPointerException();
+  }
+  checkByteStringIsUtf8(value);
+          
+          stringdataencoding_ = value;
+          onChanged();
           return this;
         }
         @java.lang.Override
@@ -6076,6 +6660,7 @@ public final class Encoding {
      * <code>string geometry = 1;</code>
      * @return The geometry.
      */
+    @java.lang.Override
     public java.lang.String getGeometry() {
       java.lang.Object ref = geometry_;
       if (ref instanceof java.lang.String) {
@@ -6092,6 +6677,7 @@ public final class Encoding {
      * <code>string geometry = 1;</code>
      * @return The bytes for geometry.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getGeometryBytes() {
       java.lang.Object ref = geometry_;
@@ -6109,9 +6695,16 @@ public final class Encoding {
     public static final int SEMANTICS_FIELD_NUMBER = 2;
     private volatile java.lang.Object semantics_;
     /**
+     * <pre>
+     * the semantics field may carry a URN in a contextualization request 
+     * encoded as a single KlabData object. Otherwise it's provided for 
+     * future usage (and should probably come with a worldview field).
+     * </pre>
+     *
      * <code>string semantics = 2;</code>
      * @return The semantics.
      */
+    @java.lang.Override
     public java.lang.String getSemantics() {
       java.lang.Object ref = semantics_;
       if (ref instanceof java.lang.String) {
@@ -6125,9 +6718,16 @@ public final class Encoding {
       }
     }
     /**
+     * <pre>
+     * the semantics field may carry a URN in a contextualization request 
+     * encoded as a single KlabData object. Otherwise it's provided for 
+     * future usage (and should probably come with a worldview field).
+     * </pre>
+     *
      * <code>string semantics = 2;</code>
      * @return The bytes for semantics.
      */
+    @java.lang.Override
     public com.google.protobuf.ByteString
         getSemanticsBytes() {
       java.lang.Object ref = semantics_;
@@ -6148,6 +6748,7 @@ public final class Encoding {
      * <code>int64 elapsed = 3;</code>
      * @return The elapsed.
      */
+    @java.lang.Override
     public long getElapsed() {
       return elapsed_;
     }
@@ -6161,6 +6762,7 @@ public final class Encoding {
      *
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Notification notifications = 4;</code>
      */
+    @java.lang.Override
     public java.util.List<org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Notification> getNotificationsList() {
       return notifications_;
     }
@@ -6171,6 +6773,7 @@ public final class Encoding {
      *
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Notification notifications = 4;</code>
      */
+    @java.lang.Override
     public java.util.List<? extends org.integratedmodelling.klab.data.encoding.Encoding.KlabData.NotificationOrBuilder> 
         getNotificationsOrBuilderList() {
       return notifications_;
@@ -6182,6 +6785,7 @@ public final class Encoding {
      *
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Notification notifications = 4;</code>
      */
+    @java.lang.Override
     public int getNotificationsCount() {
       return notifications_.size();
     }
@@ -6192,6 +6796,7 @@ public final class Encoding {
      *
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Notification notifications = 4;</code>
      */
+    @java.lang.Override
     public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Notification getNotifications(int index) {
       return notifications_.get(index);
     }
@@ -6202,6 +6807,7 @@ public final class Encoding {
      *
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Notification notifications = 4;</code>
      */
+    @java.lang.Override
     public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.NotificationOrBuilder getNotificationsOrBuilder(
         int index) {
       return notifications_.get(index);
@@ -6216,6 +6822,7 @@ public final class Encoding {
      *
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Object objects = 5;</code>
      */
+    @java.lang.Override
     public java.util.List<org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Object> getObjectsList() {
       return objects_;
     }
@@ -6226,6 +6833,7 @@ public final class Encoding {
      *
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Object objects = 5;</code>
      */
+    @java.lang.Override
     public java.util.List<? extends org.integratedmodelling.klab.data.encoding.Encoding.KlabData.ObjectOrBuilder> 
         getObjectsOrBuilderList() {
       return objects_;
@@ -6237,6 +6845,7 @@ public final class Encoding {
      *
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Object objects = 5;</code>
      */
+    @java.lang.Override
     public int getObjectsCount() {
       return objects_.size();
     }
@@ -6247,6 +6856,7 @@ public final class Encoding {
      *
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Object objects = 5;</code>
      */
+    @java.lang.Override
     public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.Object getObjects(int index) {
       return objects_.get(index);
     }
@@ -6257,6 +6867,7 @@ public final class Encoding {
      *
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.Object objects = 5;</code>
      */
+    @java.lang.Override
     public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.ObjectOrBuilder getObjectsOrBuilder(
         int index) {
       return objects_.get(index);
@@ -6267,12 +6878,14 @@ public final class Encoding {
     /**
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.State states = 6;</code>
      */
+    @java.lang.Override
     public java.util.List<org.integratedmodelling.klab.data.encoding.Encoding.KlabData.State> getStatesList() {
       return states_;
     }
     /**
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.State states = 6;</code>
      */
+    @java.lang.Override
     public java.util.List<? extends org.integratedmodelling.klab.data.encoding.Encoding.KlabData.StateOrBuilder> 
         getStatesOrBuilderList() {
       return states_;
@@ -6280,18 +6893,21 @@ public final class Encoding {
     /**
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.State states = 6;</code>
      */
+    @java.lang.Override
     public int getStatesCount() {
       return states_.size();
     }
     /**
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.State states = 6;</code>
      */
+    @java.lang.Override
     public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.State getStates(int index) {
       return states_.get(index);
     }
     /**
      * <code>repeated .org.integratedmodelling.klab.data.encoding.KlabData.State states = 6;</code>
      */
+    @java.lang.Override
     public org.integratedmodelling.klab.data.encoding.Encoding.KlabData.StateOrBuilder getStatesOrBuilder(
         int index) {
       return states_.get(index);
@@ -6307,6 +6923,7 @@ public final class Encoding {
      * <code>int32 noChange = 7;</code>
      * @return The noChange.
      */
+    @java.lang.Override
     public int getNoChange() {
       return noChange_;
     }
@@ -6916,6 +7533,12 @@ public final class Encoding {
 
       private java.lang.Object semantics_ = "";
       /**
+       * <pre>
+       * the semantics field may carry a URN in a contextualization request 
+       * encoded as a single KlabData object. Otherwise it's provided for 
+       * future usage (and should probably come with a worldview field).
+       * </pre>
+       *
        * <code>string semantics = 2;</code>
        * @return The semantics.
        */
@@ -6932,6 +7555,12 @@ public final class Encoding {
         }
       }
       /**
+       * <pre>
+       * the semantics field may carry a URN in a contextualization request 
+       * encoded as a single KlabData object. Otherwise it's provided for 
+       * future usage (and should probably come with a worldview field).
+       * </pre>
+       *
        * <code>string semantics = 2;</code>
        * @return The bytes for semantics.
        */
@@ -6949,6 +7578,12 @@ public final class Encoding {
         }
       }
       /**
+       * <pre>
+       * the semantics field may carry a URN in a contextualization request 
+       * encoded as a single KlabData object. Otherwise it's provided for 
+       * future usage (and should probably come with a worldview field).
+       * </pre>
+       *
        * <code>string semantics = 2;</code>
        * @param value The semantics to set.
        * @return This builder for chaining.
@@ -6964,6 +7599,12 @@ public final class Encoding {
         return this;
       }
       /**
+       * <pre>
+       * the semantics field may carry a URN in a contextualization request 
+       * encoded as a single KlabData object. Otherwise it's provided for 
+       * future usage (and should probably come with a worldview field).
+       * </pre>
+       *
        * <code>string semantics = 2;</code>
        * @return This builder for chaining.
        */
@@ -6974,6 +7615,12 @@ public final class Encoding {
         return this;
       }
       /**
+       * <pre>
+       * the semantics field may carry a URN in a contextualization request 
+       * encoded as a single KlabData object. Otherwise it's provided for 
+       * future usage (and should probably come with a worldview field).
+       * </pre>
+       *
        * <code>string semantics = 2;</code>
        * @param value The bytes for semantics to set.
        * @return This builder for chaining.
@@ -6995,6 +7642,7 @@ public final class Encoding {
        * <code>int64 elapsed = 3;</code>
        * @return The elapsed.
        */
+      @java.lang.Override
       public long getElapsed() {
         return elapsed_;
       }
@@ -7893,6 +8541,7 @@ public final class Encoding {
        * <code>int32 noChange = 7;</code>
        * @return The noChange.
        */
+      @java.lang.Override
       public int getNoChange() {
         return noChange_;
       }
@@ -8033,7 +8682,7 @@ public final class Encoding {
   static {
     java.lang.String[] descriptorData = {
       "\n\016Encoding.proto\022*org.integratedmodellin" +
-      "g.klab.data.encoding\"\344\013\n\010KlabData\022\020\n\010geo" +
+      "g.klab.data.encoding\"\224\014\n\010KlabData\022\020\n\010geo" +
       "metry\030\001 \001(\t\022\021\n\tsemantics\030\002 \001(\t\022\017\n\007elapse" +
       "d\030\003 \001(\003\022X\n\rnotifications\030\004 \003(\0132A.org.int" +
       "egratedmodelling.klab.data.encoding.Klab" +
@@ -8060,7 +8709,7 @@ public final class Encoding {
       "ble\022Z\n\005table\030\001 \003(\0132K.org.integratedmodel" +
       "ling.klab.data.encoding.KlabData.LookupT" +
       "able.TableEntry\032,\n\nTableEntry\022\013\n\003key\030\001 \001" +
-      "(\r\022\r\n\005value\030\002 \001(\t:\0028\001\032\362\002\n\005State\022\014\n\004name\030" +
+      "(\r\022\r\n\005value\030\002 \001(\t:\0028\001\032\242\003\n\005State\022\014\n\004name\030" +
       "\001 \001(\t\022\021\n\tsemantics\030\002 \001(\t\022\022\n\ndoubledata\030\003" +
       " \003(\001\022\021\n\ttabledata\030\004 \003(\r\022\017\n\007intdata\030\005 \003(\022" +
       "\022\023\n\013booleandata\030\006 \003(\010\022O\n\005table\030\007 \001(\0132@.o" +
@@ -8068,10 +8717,11 @@ public final class Encoding {
       "g.KlabData.LookupTable\022\035\n\025externalDataso" +
       "urceUrl\030\010 \001(\t\022Z\n\010metadata\030\t \003(\0132H.org.in" +
       "tegratedmodelling.klab.data.encoding.Kla" +
-      "bData.State.MetadataEntry\032/\n\rMetadataEnt" +
-      "ry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\0028\001\"7\n\010Se" +
-      "verity\022\010\n\004INFO\020\000\022\013\n\007WARNING\020\001\022\t\n\005ERROR\020\002" +
-      "\022\t\n\005DEBUG\020\003b\006proto3"
+      "bData.State.MetadataEntry\022\022\n\nstringdata\030" +
+      "\n \003(\t\022\032\n\022stringdataencoding\030\013 \001(\t\032/\n\rMet" +
+      "adataEntry\022\013\n\003key\030\001 \001(\t\022\r\n\005value\030\002 \001(\t:\002" +
+      "8\001\"7\n\010Severity\022\010\n\004INFO\020\000\022\013\n\007WARNING\020\001\022\t\n" +
+      "\005ERROR\020\002\022\t\n\005DEBUG\020\003b\006proto3"
     };
     descriptor = com.google.protobuf.Descriptors.FileDescriptor
       .internalBuildGeneratedFileFrom(descriptorData,
@@ -8124,7 +8774,7 @@ public final class Encoding {
     internal_static_org_integratedmodelling_klab_data_encoding_KlabData_State_fieldAccessorTable = new
       com.google.protobuf.GeneratedMessageV3.FieldAccessorTable(
         internal_static_org_integratedmodelling_klab_data_encoding_KlabData_State_descriptor,
-        new java.lang.String[] { "Name", "Semantics", "Doubledata", "Tabledata", "Intdata", "Booleandata", "Table", "ExternalDatasourceUrl", "Metadata", });
+        new java.lang.String[] { "Name", "Semantics", "Doubledata", "Tabledata", "Intdata", "Booleandata", "Table", "ExternalDatasourceUrl", "Metadata", "Stringdata", "Stringdataencoding", });
     internal_static_org_integratedmodelling_klab_data_encoding_KlabData_State_MetadataEntry_descriptor =
       internal_static_org_integratedmodelling_klab_data_encoding_KlabData_State_descriptor.getNestedTypes().get(0);
     internal_static_org_integratedmodelling_klab_data_encoding_KlabData_State_MetadataEntry_fieldAccessorTable = new

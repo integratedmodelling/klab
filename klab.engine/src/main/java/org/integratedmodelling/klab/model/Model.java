@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -75,7 +76,6 @@ import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
-import org.integratedmodelling.klab.utils.Pair;
 
 public class Model extends KimObject implements IModel {
 
@@ -91,7 +91,8 @@ public class Model extends KimObject implements IModel {
 	private boolean inactive;
 	private boolean learning;
 	private IObservable archetype;
-
+	private Set<IConcept> requiredRoles = null;
+	
 	/*
 	 * the geometry implicitly declared for the project, gathered from the resources
 	 * and the services used in it. Does not include the explicit contextualization
@@ -807,6 +808,17 @@ public class Model extends KimObject implements IModel {
 			this.resources.add(((Model) originalModel).validate(computation.copy(), scope.getMonitor()));
 		}
 	}
+	
+	public Model(IObservable mainObservable, String resolvedChangingObservationName, ResolutionScope scope) {
+		super(null);
+		this.derived = true;
+		this.id = mainObservable.getName() + "_resolved_change";
+		this.namespace = scope.getResolutionNamespace();
+		this.contextualization = new Contextualization(null, this);
+		this.observables.add(mainObservable);
+		this.coverage = scope.getScale();
+		this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(mainObservable, resolvedChangingObservationName));
+	}
 
 	public Model(IViewModel view) {
 		super(null);
@@ -1460,6 +1472,34 @@ public class Model extends KimObject implements IModel {
 	 */
 	public IViewModel getViewModel() {
 		return this.viewModel;
+	}
+
+	@Override
+	public Collection<IConcept> getRequiredRoles() {
+		if (this.requiredRoles == null) {
+			this.requiredRoles = new HashSet<>();
+			for (IObservable observable : observables) {
+				if (observable != null) {
+					for (IConcept role : Roles.INSTANCE.getRoles(observable.getType())) {
+						if (role.isAbstract()) {
+							this.requiredRoles.add(role);
+						}
+					}
+				}
+			}
+			for (IObservable observable : dependencies) {
+				if (observable != null) {
+					if (observable != null) {
+						for (IConcept role : Roles.INSTANCE.getRoles(observable.getType())) {
+							if (role.isAbstract()) {
+								this.requiredRoles.add(role);
+							}
+						}
+					}
+				}
+			}
+		}
+		return this.requiredRoles;
 	}
 
 }

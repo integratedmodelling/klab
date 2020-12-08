@@ -1,19 +1,26 @@
 package org.integratedmodelling.klab.engine.apps;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
+import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.auth.IIdentity.Type;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -56,7 +63,6 @@ public class TestRunner implements Annotations.Handler {
 
 		int okCount = 0;
 		int failCount = 0;
-		
 
 		protected TestMonitor(IMonitor monitor) {
 			super((Monitor) monitor);
@@ -68,18 +74,19 @@ public class TestRunner implements Annotations.Handler {
 					System.currentTimeMillis());
 			result.details.addAll(test.getDetails());
 			data.add(result);
-			failCount ++;
+			failCount++;
 		}
 
 		/**
 		 * Report in reverse
+		 * 
 		 * @return
 		 */
 		public List<String> report() {
 			List<String> ret = new ArrayList<>();
 			for (int i = data.size() - 1; i >= 0; i--) {
 				TestResult result = data.get(i);
-				for (int d = result.details.size() - 1; d >= 0; d --) {
+				for (int d = result.details.size() - 1; d >= 0; d--) {
 					ret.add("   " + result.details.get(d));
 				}
 				ret.add((result.ok ? "SUCCESS: " : "   FAIL: ") + result.assertion.getName() + " on "
@@ -92,7 +99,7 @@ public class TestRunner implements Annotations.Handler {
 			info("assertion " + assertion.getName() + " succeeded");
 			data.add(new TestResult(assertion, "assertion " + assertion.getName() + " succeeded", true,
 					System.currentTimeMillis()));
-			okCount ++;
+			okCount++;
 		}
 
 		public int failCount() {
@@ -106,6 +113,10 @@ public class TestRunner implements Annotations.Handler {
 
 	@Override
 	public Object process(IKimObject target, IParameters<String> arguments, IMonitor monitor) throws Exception {
+
+		/*
+		 * TODO each test should run in its own session!
+		 */
 
 		// switch monitor for a test monitor that also logs and summarizes
 		monitor = new TestMonitor(monitor);
@@ -153,8 +164,40 @@ public class TestRunner implements Annotations.Handler {
 					IObserver observer = (IObserver) target;
 					Session session = monitor.getIdentity().getParentIdentity(Session.class);
 
+					session.getState().resetContext();
+					session.getState().resetRoles();
+
+					if (arguments.contains("roles") && arguments.get("roles") instanceof Map) {
+						Map<?, ?> roles = arguments.get("roles", Map.class);
+						for (Entry<?, ?> role : roles.entrySet()) {
+							
+							IConcept r = null;
+							if (role.getKey() instanceof IKimConcept) {
+								r = Concepts.INSTANCE.declare((IKimConcept) role.getKey());
+							} else if (role.getKey() instanceof IKimObservable) {
+								r = Observables.INSTANCE.declare((IKimObservable) role.getKey(), monitor).getType();
+							}
+
+							if (r != null) {
+								for (Object o : (role.getValue() instanceof List ? ((List<?>) role.getValue())
+										: Collections.singletonList(role.getValue()))) {
+									IConcept c = null;
+									if (o instanceof IKimConcept) {
+										c = Concepts.INSTANCE.declare((IKimConcept) role.getKey());
+									} else if (o instanceof IKimObservable) {
+										c = Observables.INSTANCE.declare((IKimObservable) role.getKey(), monitor).getType();
+									}
+									if (c != null) {
+										monitor.info("Setting role " + r.getDefinition() + " for " + c.getDefinition());
+										session.getState().addRole(r, c);
+									}
+								}
+							}
+						}
+					}
+
 					if (session != null && observer != null) {
-						ISubject subject = (ISubject)session.getState().submit(observer.getName()).get();
+						ISubject subject = (ISubject) session.getState().submit(observer.getName()).get();
 						if (subject != null) {
 							for (Object o : observations) {
 								IArtifact ret = subject.observe(o.toString()).get();
@@ -165,7 +208,7 @@ public class TestRunner implements Annotations.Handler {
 									/*
 									 * TODO run any assertion indicated for the observations
 									 */
-									result.add((IObservation)ret);
+									result.add((IObservation) ret);
 								} /* TODO it may be a view, run assertions on that too */
 							}
 						} else {
@@ -230,6 +273,9 @@ public class TestRunner implements Annotations.Handler {
 					} else {
 						monitor.error(id + ": errors in retrieving observer or session");
 					}
+
+					session.getState().resetRoles();
+
 				} catch (Throwable t) {
 					monitor.error(t);
 				}
