@@ -52,6 +52,7 @@ public class IUPACAuthority implements IAuthority {
 		this.db = DBMaker.fileDB(Configuration.INSTANCE.getDataPath("authorities") + File.separator + "iupac_ids.db")
 				.closeOnJvmShutdown().transactionEnable().make();
 		this.cache = db.treeMap("collectionName", Serializer.STRING, Serializer.STRING).createOrOpen();
+		Unirest.config().verifySsl(false);
 	}
 
 	@Override
