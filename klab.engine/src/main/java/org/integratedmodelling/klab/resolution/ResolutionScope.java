@@ -952,7 +952,7 @@ public class ResolutionScope implements IResolutionScope {
 		 * children and may not be accepted if the current resolution branch fails.
 		 */
 		for (ObservedConcept o : resolvedObservables.keySet()) {
-			if (((Observable) o.getObservable()).canResolve(observable) && o.getMode() == mode) {
+			if (((Observable) o.getObservable()).resolvesStrictly(observable) && o.getMode() == mode) {
 				return (ResolutionScope) o.getData().get("resolved.observable.scope");
 			}
 		}
@@ -962,7 +962,7 @@ public class ResolutionScope implements IResolutionScope {
 		 * resolution.
 		 */
 		for (ResolutionScope o : previousResolution) {
-			if (o.observable.canResolve(observable) && o.mode == mode) {
+			if (o.observable.resolvesStrictly(observable) && o.mode == mode) {
 				return o;
 			}
 		}
@@ -973,7 +973,7 @@ public class ResolutionScope implements IResolutionScope {
 	@Override
 	public Observable getResolvedObservable(IObservable observable, Mode mode) {
 		for (ObservedConcept o : resolvedObservables.keySet()) {
-			if (((Observable) o.getObservable()).canResolve((Observable) observable) && o.getMode() == mode) {
+			if (((Observable) o.getObservable()).resolvesStrictly((Observable) observable) && o.getMode() == mode) {
 				return (Observable) o.getObservable();
 			}
 		}
@@ -1227,7 +1227,7 @@ public class ResolutionScope implements IResolutionScope {
 		}
 
 		if (knownObservables.containsKey(resolvable.getReferenceName())
-				&& !((Observable) knownObservables.get(resolvable.getReferenceName())).canResolve(resolvable)) {
+				&& !((Observable) knownObservables.get(resolvable.getReferenceName())).resolvesStrictly(resolvable)) {
 
 			boolean domainsTested = false;
 			boolean namespacesTested = false;

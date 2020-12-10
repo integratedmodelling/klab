@@ -1475,7 +1475,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		for (String key : catalog.keySet()) {
 			IArtifact artifact = catalog.get(key);
 			if (artifact != null && artifact instanceof IObservation
-					&& ((Observable) ((IObservation) artifact).getObservable()).canResolve((Observable) observable)) {
+					&& ((Observable) ((IObservation) artifact).getObservable()).resolvesStrictly((Observable) observable)) {
 				return new Pair<>(key, artifact);
 			}
 		}

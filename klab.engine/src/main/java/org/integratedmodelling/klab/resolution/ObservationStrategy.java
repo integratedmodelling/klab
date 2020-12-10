@@ -185,7 +185,7 @@ public class ObservationStrategy {
 	 */
 	private static IObservable findDependency(List<IObservable> dependencies, IObservable concept) {
 		for (IObservable dependency : dependencies) {
-			if (((Observable) concept).canResolve((Observable) dependency)) {
+			if (((Observable) concept).resolvesStrictly((Observable) dependency)) {
 				return dependency;
 			}
 		}

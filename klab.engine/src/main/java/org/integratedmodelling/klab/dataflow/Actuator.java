@@ -1510,7 +1510,7 @@ public class Actuator implements IActuator {
 
 	boolean hasDependency(IActuator dependency) {
 		for (IActuator actuator : actuators) {
-			if (((Actuator) actuator).getObservable().canResolve(((Actuator) dependency).observable)) {
+			if (((Actuator) actuator).getObservable().resolvesStrictly(((Actuator) dependency).observable)) {
 				return true;
 			}
 		}

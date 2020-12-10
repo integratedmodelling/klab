@@ -987,7 +987,7 @@ public class Model extends KimObject implements IModel {
 	 */
 	public IObservable findDependency(IObservable concept) {
 		for (IObservable dependency : dependencies) {
-			if (((Observable) concept).canResolve((Observable) dependency)) {
+			if (((Observable) concept).resolvesStrictly((Observable) dependency)) {
 				return dependency;
 			}
 		}
@@ -1002,7 +1002,7 @@ public class Model extends KimObject implements IModel {
 	 */
 	public IObservable findOutput(IObservable concept) {
 		for (IObservable observable : observables) {
-			if (((Observable) concept).canResolve((Observable) observable)) {
+			if (((Observable) concept).resolvesStrictly((Observable) observable)) {
 				return observable;
 			}
 		}
