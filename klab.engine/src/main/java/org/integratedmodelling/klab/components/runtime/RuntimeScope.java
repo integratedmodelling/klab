@@ -1446,16 +1446,27 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		if (target != null) {
 			IArtifact current = this.catalog.get(targetName);
 			/*
-			 * FIXME this avoid some weird error conditions when targets are processes and they substitute their
-			 * changing states, but it's definitely not thought through properly.
+			 * FIXME this avoid some error conditions when targets are processes and they substitute their
+			 * changing states, but it's definitely not thought through properly yet. This kind of switch
+			 * must happen to enable layering in states that start numeric and become categorical or the 
+			 * like.
 			 */
-			if (current == null || (current != target && current.getClass().equals(target.getClass()))) {
+			if (differentAndCompatible(current, target)) {
 				Map<String, IArtifact> newCatalog = new HashMap<>();
 				newCatalog.putAll(this.catalog);
 				newCatalog.put(targetName, target);
 				this.catalog = newCatalog;
 			}
 		}
+	}
+
+	private boolean differentAndCompatible(IArtifact current, IArtifact target) {
+		if (current == null) {
+			return true;
+		} else if (current != target) {
+			return current instanceof IState && target instanceof IState;
+		}
+		return false;
 	}
 
 	@Override
