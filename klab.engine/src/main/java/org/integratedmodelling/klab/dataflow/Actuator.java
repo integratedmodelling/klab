@@ -899,6 +899,7 @@ public class Actuator implements IActuator {
 	 * @return
 	 */
 	private IRuntimeScope addParameters(IRuntimeScope ctx, IArtifact self, IContextualizable resource) {
+
 		IRuntimeScope ret = ctx.copy();
 		if (self instanceof IProcess && resource.getTargetId() != null && ctx.getArtifact(resource.getTargetId()) != null) {
 			self = ctx.getArtifact(resource.getTargetId());
@@ -1509,7 +1510,7 @@ public class Actuator implements IActuator {
 
 	boolean hasDependency(IActuator dependency) {
 		for (IActuator actuator : actuators) {
-			if (((Actuator) actuator).getObservable().canResolve(((Actuator) dependency).observable)) {
+			if (((Actuator) actuator).getObservable().resolvesStrictly(((Actuator) dependency).observable)) {
 				return true;
 			}
 		}

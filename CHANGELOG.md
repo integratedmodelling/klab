@@ -9,6 +9,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+## [0.10.0.235] -- 2020/12/8
 ### Added
 - Observables that contain abstract roles are expanded into the correspondent concrete
   observables after substituting the role's incarnation(s) in the context of resolution before

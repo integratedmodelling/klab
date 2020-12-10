@@ -662,7 +662,10 @@ public class Grid extends Area implements IGrid {
 
 		@Override
 		public double getStandardizedDistance(ISpace space) {
-			return getShape().getStandardizedDistance(space.getShape());
+			if (space instanceof IGrid.Cell)
+				return getShape().getCentroid().getStandardizedDistance(space.getShape().getCentroid());
+			else 
+				return getShape().getCentroid().getStandardizedDistance(space.getShape());
 		}
 
 		@Override

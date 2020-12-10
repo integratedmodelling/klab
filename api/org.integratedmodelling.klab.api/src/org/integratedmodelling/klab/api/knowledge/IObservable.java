@@ -575,4 +575,14 @@ public interface IObservable extends ISemantic, IResolvable {
 	 */
 	Collection<IConcept> getContextualRoles();
 
+	/**
+	 * Complements the equivalent {@link IConcept#resolves(IConcept, IConcept)} with
+	 * a check on value operators and other possible differences.
+	 * 
+	 * @param other
+	 * @param context
+	 * @return
+	 */
+	boolean resolves(IObservable other, IObservable context);
+
 }

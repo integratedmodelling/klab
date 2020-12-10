@@ -200,22 +200,23 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				return a.is(b);
 			}
 		});
-		
-		this.relatedReasonerCache = CacheBuilder.newBuilder().maximumSize(2048).build(new CacheLoader<String, Boolean>() {
-			@Override
-			public Boolean load(String key) throws Exception {
-				String[] split = key.split(";");
 
-				IConcept a = Concepts.c(split[0]);
-				IConcept b = Concepts.c(split[1]);
-				
-				boolean ret = a.is(b);
-				if (!ret && (b.is(Type.PREDICATE))) {
-					// TODO check for adoption
-				}
-				return ret;
-			}
-		});
+		this.relatedReasonerCache = CacheBuilder.newBuilder().maximumSize(2048)
+				.build(new CacheLoader<String, Boolean>() {
+					@Override
+					public Boolean load(String key) throws Exception {
+						String[] split = key.split(";");
+
+						IConcept a = Concepts.c(split[0]);
+						IConcept b = Concepts.c(split[1]);
+
+						boolean ret = a.is(b);
+						if (!ret && (b.is(Type.PREDICATE))) {
+							// TODO check for adoption
+						}
+						return ret;
+					}
+				});
 
 		/*
 		 * Complex and convoluted, but there is no other way to get this which must be
@@ -1155,7 +1156,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
 				// transmit all annotations and any interpretation keys to the artifact
 				actuator.notifyNewObservation(observation);
-				
+
 				/*
 				 * register the obs and potentially the root subject
 				 */
@@ -1443,11 +1444,29 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	public void replaceTarget(IArtifact target) {
 		this.target = target;
 		if (target != null) {
-			Map<String, IArtifact> newCatalog = new HashMap<>();
-			newCatalog.putAll(this.catalog);
-			newCatalog.put(targetName, target);
-			this.catalog = newCatalog;
+			IArtifact current = this.catalog.get(targetName);
+			/*
+			 * FIXME this avoid some error conditions when targets are processes and they substitute their
+			 * changing states, but it's definitely not thought through properly yet. This kind of switch
+			 * must happen to enable layering in states that start numeric and become categorical or the 
+			 * like.
+			 */
+			if (differentAndCompatible(current, target)) {
+				Map<String, IArtifact> newCatalog = new HashMap<>();
+				newCatalog.putAll(this.catalog);
+				newCatalog.put(targetName, target);
+				this.catalog = newCatalog;
+			}
 		}
+	}
+
+	private boolean differentAndCompatible(IArtifact current, IArtifact target) {
+		if (current == null) {
+			return true;
+		} else if (current != target) {
+			return current instanceof IState && target instanceof IState;
+		}
+		return false;
 	}
 
 	@Override
@@ -1456,7 +1475,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		for (String key : catalog.keySet()) {
 			IArtifact artifact = catalog.get(key);
 			if (artifact != null && artifact instanceof IObservation
-					&& ((Observable) ((IObservation) artifact).getObservable()).canResolve((Observable) observable)) {
+					&& ((Observable) ((IObservation) artifact).getObservable()).resolvesStrictly((Observable) observable)) {
 				return new Pair<>(key, artifact);
 			}
 		}
@@ -1994,8 +2013,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			return false;
 		}
 		try {
-			return relatedReasonerCache.get((c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : c1.toString())
-					+ ";" + (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() : c2.toString()));
+			return relatedReasonerCache
+					.get((c1 instanceof Concept ? ((Concept) c1).getConcept().toString() : c1.toString()) + ";"
+							+ (c2 instanceof Concept ? ((Concept) c2).getConcept().toString() : c2.toString()));
 		} catch (ExecutionException e) {
 			return false;
 		}
@@ -2015,7 +2035,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			ret.set(variable.getFirst(), value);
 		}
 
-		ret.setScale((IScale)locator);
+		ret.setScale((IScale) locator);
 		return ret;
 	}
 

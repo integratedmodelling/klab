@@ -259,7 +259,7 @@ public class Observable implements IObservable {
 			this.unit = (Unit) Unit.unitless().divide(this.unit);
 		}
 	}
-	
+
 	public Observable withResolvedModel(IModel model) {
 		Observable ret = new Observable(this);
 		ret.resolvedModel = model;
@@ -351,7 +351,7 @@ public class Observable implements IObservable {
 	 * @param obj
 	 * @return
 	 */
-	public boolean canResolve(Observable obj) {
+	public boolean resolvesStrictly(Observable obj) {
 
 		if (observer == null) {
 			if (obj.observer != null) {
@@ -802,6 +802,12 @@ public class Observable implements IObservable {
 
 	public void setDereifiedAttribute(String dereifiedAttribute) {
 		this.dereifiedAttribute = dereifiedAttribute;
+	}
+
+	@Override
+	public boolean resolves(IObservable other, IObservable context) {
+		return getType().resolves(other.getType(), context == null ? null : context.getType())
+				&& CollectionUtils.isEqualCollection(this.valueOperators, ((Observable)other).valueOperators);
 	}
 
 }
