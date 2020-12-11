@@ -6,7 +6,7 @@ import org.integratedmodelling.klab.rest.BehaviorReference;
 
 public class RemoteUserLoginResponse {
 	private String redirect;
-	
+	private String session;
 	private String token;
 	
 	private List<BehaviorReference> publicApps;
@@ -17,6 +17,14 @@ public class RemoteUserLoginResponse {
 
 	public void setRedirect(String redirect) {
 		this.redirect = redirect;
+	}
+
+	public String getSession() {
+		return session;
+	}
+
+	public void setSession(String session) {
+		this.session = session;
 	}
 
 	public String getAuthorization() {

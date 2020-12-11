@@ -166,6 +166,7 @@ public class HubUserService implements RemoteUserService {
 		Session active  = activeSessions(profile).iterator().next();
 		response.setPublicApps(active.getSessionReference().getPublicApps());
 		response.setRedirect("/modeler/ui/viewer?session=" + active.getId());
+		response.setSession(active.getId());
 		return response;
 	}
 
@@ -196,6 +197,7 @@ public class HubUserService implements RemoteUserService {
 
 		response.setPublicApps(session.getSessionReference().getPublicApps());
 		response.setRedirect("/modeler/ui/viewer?session=" + session.getId());
+		response.setSession(session.getId());
 		return response;
 	}
 
