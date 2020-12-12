@@ -1119,15 +1119,26 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				if (parent != null && actuator.getDataflow().getModel() != null) {
 					for (String attr : actuator.getDataflow().getModel().getAttributeObservables().keySet()) {
 
+						/*
+						 * TODO/FIXME:
+						 * 
+						 * both of these must be turned into contextualizers and run within the
+						 * dataflow. Reasons: 1) no replicability if the dataflow is used by itself; 2)
+						 * (worse for now): no dynamics if the states change with time.
+						 */
+
 						boolean done = false;
 						if (metadata != null) {
 							/* state specs may be in metadata from resource attributes */
-							Object obj = metadata.getCaseInsensitive(attr);
-							IState state = (IState) DefaultRuntimeProvider.createObservation(
-									actuator.getDataflow().getModel().getAttributeObservables().get(attr), scale, this);
-							((State) state).distributeScalar(obj);
-							predefinedStates.add(state);
-							done = true;
+							if (metadata.containsKey(attr)) {
+								Object obj = metadata.getCaseInsensitive(attr);
+								IState state = (IState) DefaultRuntimeProvider.createObservation(
+										actuator.getDataflow().getModel().getAttributeObservables().get(attr), scale,
+										this);
+								((State) state).distributeScalar(obj);
+								predefinedStates.add(state);
+								done = true;
+							}
 						}
 
 						if (!done) {
@@ -1446,10 +1457,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		if (target != null) {
 			IArtifact current = this.catalog.get(targetName);
 			/*
-			 * FIXME this avoid some error conditions when targets are processes and they substitute their
-			 * changing states, but it's definitely not thought through properly yet. This kind of switch
-			 * must happen to enable layering in states that start numeric and become categorical or the 
-			 * like.
+			 * FIXME this avoid some error conditions when targets are processes and they
+			 * substitute their changing states, but it's definitely not thought through
+			 * properly yet. This kind of switch must happen to enable layering in states
+			 * that start numeric and become categorical or the like.
 			 */
 			if (differentAndCompatible(current, target)) {
 				Map<String, IArtifact> newCatalog = new HashMap<>();
@@ -1475,7 +1486,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		for (String key : catalog.keySet()) {
 			IArtifact artifact = catalog.get(key);
 			if (artifact != null && artifact instanceof IObservation
-					&& ((Observable) ((IObservation) artifact).getObservable()).resolvesStrictly((Observable) observable)) {
+					&& ((Observable) ((IObservation) artifact).getObservable())
+							.resolvesStrictly((Observable) observable)) {
 				return new Pair<>(key, artifact);
 			}
 		}

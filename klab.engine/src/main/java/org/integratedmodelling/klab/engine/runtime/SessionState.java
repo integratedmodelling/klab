@@ -61,6 +61,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ScaleReference;
@@ -172,14 +173,39 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	@Override
 	public Future<IArtifact> submit(String urn) {
+
+		final SessionActivity activity = newActivity();
+
+		activity.setUrnObserved(urn);
+		activity.setUser(session.getUsername());
+		activity.setSessionId(session.getId());
+//		activity.setGeometrySet(obs.getGeometry().encode());
+//		activity.setContextId(obs.getObservationContextId());
+//		activity.setDataflowCode(obs.getScope().getDataflow().getKdlCode());
+//		activity.setStart(obs.getCreationTime());
+//		activity.setEnd(obs.getTimestamp());
+
 		return submit(urn, (observation) -> {
 			// TODO stats, history
+			activity.setEnd(System.currentTimeMillis());
+			activity.setStatus(DataflowState.Status.FINISHED);
 		}, (error) -> {
 			// TODO stats, history
+			activity.setEnd(System.currentTimeMillis());
+			activity.setStatus(DataflowState.Status.FINISHED);
 		});
 	}
 
-	public Future<IArtifact> submit(String urn, Consumer<IArtifact> observationListener,
+	private SessionActivity newActivity() {
+		SessionActivity ret = new SessionActivity();
+		if (this.context == null) {
+
+		}
+		return ret;
+	}
+
+	public Future<IArtifact> submit(String urn,
+			/* TODO needs a listener for when the task starts */ Consumer<IArtifact> observationListener,
 			Consumer<Throwable> errorListener) {
 
 		IResolvable resolvable = null;
@@ -522,12 +548,12 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		this.scaleOfInterest.setSpaceResolution(extent.getSpaceResolution());
 		this.scaleOfInterest.setSpaceUnit(extent.getSpaceUnit());
 		this.scaleOfInterest.setSpaceResolutionDescription(extent.getResolutionDescription());
-		
+
 		this.scaleOfInterest.setTimeResolutionMultiplier(extent.getTimeResolutionMultiplier());
 		this.scaleOfInterest.setTimeUnit(extent.getTimeUnit());
 		this.scaleOfInterest.setStart(extent.getStart());
 		this.scaleOfInterest.setEnd(extent.getEnd());
-		
+
 		this.scaleOfInterest.setSpaceResolutionConverted(Units.INSTANCE.METERS
 				.convert(this.scaleOfInterest.getSpaceResolution(), Unit.create(this.scaleOfInterest.getSpaceUnit()))
 				.doubleValue());
