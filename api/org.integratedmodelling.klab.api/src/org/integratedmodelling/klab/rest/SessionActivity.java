@@ -14,6 +14,56 @@ import org.integratedmodelling.klab.rest.DataflowState.Status;
  */
 public class SessionActivity {
 
+	public static class ResourceActivity {
+		
+		private String urn;
+		private Status status;
+		private long start;
+		private long end;
+		private String node;
+
+		public String getUrn() {
+			return urn;
+		}
+
+		public void setUrn(String urn) {
+			this.urn = urn;
+		}
+
+		public Status getStatus() {
+			return status;
+		}
+
+		public void setStatus(Status status) {
+			this.status = status;
+		}
+
+		public long getStart() {
+			return start;
+		}
+
+		public void setStart(long start) {
+			this.start = start;
+		}
+
+		public long getEnd() {
+			return end;
+		}
+
+		public void setEnd(long end) {
+			this.end = end;
+		}
+
+		public String getNode() {
+			return node;
+		}
+
+		public void setNode(String node) {
+			this.node = node;
+		}
+
+	}
+
 	private String user;
 	private String sessionId;
 	private long start;
@@ -27,7 +77,10 @@ public class SessionActivity {
 	private List<String> scenarios = new ArrayList<>();
 	private long datasize;
 	private long load;
-
+	private String stackTrace;
+	private List<ResourceActivity> resourceActivities = new ArrayList<>();
+	private List<SessionActivity> children = new ArrayList<>();
+	
 	public String getUser() {
 		return user;
 	}
@@ -130,6 +183,30 @@ public class SessionActivity {
 
 	public void setApplicationLoaded(String applicationLoaded) {
 		this.applicationLoaded = applicationLoaded;
+	}
+
+	public String getStackTrace() {
+		return stackTrace;
+	}
+
+	public void setStackTrace(String stackTrace) {
+		this.stackTrace = stackTrace;
+	}
+
+	public List<ResourceActivity> getResourceActivities() {
+		return resourceActivities;
+	}
+
+	public void setResourceActivities(List<ResourceActivity> resourceActivities) {
+		this.resourceActivities = resourceActivities;
+	}
+
+	public List<SessionActivity> getChildren() {
+		return children;
+	}
+
+	public void setChildren(List<SessionActivity> children) {
+		this.children = children;
 	}
 
 }

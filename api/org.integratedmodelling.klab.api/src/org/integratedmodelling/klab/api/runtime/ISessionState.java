@@ -45,6 +45,18 @@ public interface ISessionState extends IParameters<String> {
 		 * @param context
 		 */
 		public void newObservation(IObservation observation, ISubject context);
+
+		/**
+		 * Called with the <i>root</i> activity descriptor for the context every time an
+		 * observation activity finishes in the context described.
+		 * 
+		 * @param history      the list of root activities in the current session, in
+		 *                     chronological order
+		 * @param rootActivity the root activity where the notified change happened (at
+		 *                     root or child level)
+		 */
+		public void historyChanged(List<SessionActivity> history, SessionActivity rootActivity);
+
 	}
 
 	Future<IArtifact> submit(String urn);
