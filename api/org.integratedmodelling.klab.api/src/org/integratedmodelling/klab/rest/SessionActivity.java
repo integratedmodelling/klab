@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.rest.DataflowState.Status;
 public class SessionActivity {
 
 	public static class ResourceActivity {
-		
+
 		private String urn;
 		private Status status;
 		private long start;
@@ -79,7 +79,8 @@ public class SessionActivity {
 	private long load;
 	private String stackTrace;
 	private List<ResourceActivity> resourceActivities = new ArrayList<>();
-	private List<SessionActivity> children = new ArrayList<>();
+	private String parentActivityId;
+	private String activityId;
 	
 	public String getUser() {
 		return user;
@@ -201,12 +202,20 @@ public class SessionActivity {
 		this.resourceActivities = resourceActivities;
 	}
 
-	public List<SessionActivity> getChildren() {
-		return children;
+	public String getActivityId() {
+		return activityId;
 	}
 
-	public void setChildren(List<SessionActivity> children) {
-		this.children = children;
+	public void setActivityId(String activityId) {
+		this.activityId = activityId;
+	}
+
+	public String getParentActivityId() {
+		return parentActivityId;
+	}
+
+	public void setParentActivityId(String parentActivityId) {
+		this.parentActivityId = parentActivityId;
 	}
 
 }

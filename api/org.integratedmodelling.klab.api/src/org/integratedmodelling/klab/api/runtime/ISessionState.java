@@ -50,12 +50,13 @@ public interface ISessionState extends IParameters<String> {
 		 * Called with the <i>root</i> activity descriptor for the context every time an
 		 * observation activity finishes in the context described.
 		 * 
-		 * @param history      the list of root activities in the current session, in
-		 *                     chronological order
-		 * @param rootActivity the root activity where the notified change happened (at
-		 *                     root or child level)
+		 * @param history      the root activity, which generated the current context.
+		 *                     Never null.
+		 * @param rootActivity the activity where the notified change happened. If the
+		 *                     listener is invoked on the root activity, this will be
+		 *                     null.
 		 */
-		public void historyChanged(List<SessionActivity> history, SessionActivity rootActivity);
+		public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity);
 
 	}
 

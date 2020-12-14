@@ -149,11 +149,9 @@ public class ObjectBehavior {
 						}
 
 						@Override
-						public void historyChanged(List<SessionActivity> history, SessionActivity rootActivity) {
-							// TODO Auto-generated method stub
-							
+						public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
 						}
-						
+
 					}, scope.appId);
 		}
 

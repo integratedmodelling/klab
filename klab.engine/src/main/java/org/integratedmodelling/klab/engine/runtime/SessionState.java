@@ -28,6 +28,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.auth.ITaskIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -156,7 +157,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	private SessionActivity currentActivity;
 
 	public SessionState(Session session) {
-		
+
 		this.session = session;
 		this.scaleOfInterest = new ScaleReference();
 
@@ -192,7 +193,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		final SessionActivity activity = newActivity();
 
 		activity.setUrnObserved(urn);
-		activity.setUser(session.getUsername());
+		activity.setUser(session.getParentIdentity(IUserIdentity.class).getUsername());
 		activity.setSessionId(session.getId());
 
 		IResolvable resolvable = null;
@@ -208,8 +209,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		if (this.currentActivity == null || resolvable instanceof Observer) {
 			this.currentActivity = activity;
 			history.add(activity);
-		} else {
-			this.currentActivity.getChildren().add(activity);
+		} else if (this.currentActivity != null) {
+			activity.setParentActivityId(this.currentActivity.getActivityId());
 		}
 
 		List<BiConsumer<ITaskIdentity, IArtifact>> oListeners = new ArrayList<>();
@@ -223,7 +224,11 @@ public class SessionState extends Parameters<String> implements ISessionState {
 				 */
 				IGeometry geom = getGeometry();
 				activity.setStart(System.currentTimeMillis());
-				activity.setGeometrySet(geom == null ? null : geom.encode());
+				if (this.currentActivity.getGeometrySet() == null && geom != null) {
+					this.currentActivity.setGeometrySet(geom.encode());
+				}
+				activity.setActivityId(task.getId());
+
 			} else {
 				/*
 				 * activity ended successfully - TODO report actual computational load
@@ -232,22 +237,24 @@ public class SessionState extends Parameters<String> implements ISessionState {
 				activity.setStatus(DataflowState.Status.FINISHED);
 
 				for (ListenerWrapper listener : listeners.values()) {
-					listener.listener.historyChanged(this.history, this.currentActivity);
+					listener.listener.historyChanged(this.currentActivity,
+							activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
 				}
 			}
 		});
 
 		eListeners.add((task, error) -> {
-			
+
 			/*
 			 * activity ended with error - TODO report actual computational load
 			 */
 			activity.setEnd(System.currentTimeMillis());
 			activity.setStatus(DataflowState.Status.FINISHED);
 			activity.setStackTrace(ExceptionUtils.getStackTrace(error));
-			
+
 			for (ListenerWrapper listener : listeners.values()) {
-				listener.listener.historyChanged(this.history, this.currentActivity);
+				listener.listener.historyChanged(this.currentActivity,
+						activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
 			}
 
 		});

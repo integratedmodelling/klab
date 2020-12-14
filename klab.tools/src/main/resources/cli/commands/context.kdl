@@ -13,6 +13,12 @@ void info
 	class org.integratedmodelling.klab.clitool.console.commands.context.Info
 }
 
+void history
+	"Print the history collected through observations in the entire session."
+{	
+	class org.integratedmodelling.klab.clitool.console.commands.context.History
+}
+
 void submit
 	"Submit a URN to the current context for observation."
 {	
