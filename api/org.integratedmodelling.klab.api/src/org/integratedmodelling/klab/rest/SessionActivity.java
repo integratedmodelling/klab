@@ -1,7 +1,11 @@
 package org.integratedmodelling.klab.rest;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.klab.rest.DataflowState.Status;
 
@@ -17,11 +21,13 @@ public class SessionActivity {
 	public static class ResourceActivity {
 
 		private String urn;
-		private Status status;
-		private long start;
-		private long end;
-		private String node;
-
+		private long averageTimeMs;
+		private long minTimeMs;
+		private long maxTimeMs;
+		private Set<String> nodes = new LinkedHashSet<>();
+		private Set<String> errors = new LinkedHashSet<>();
+		private int nCalls;
+		
 		public String getUrn() {
 			return urn;
 		}
@@ -30,38 +36,56 @@ public class SessionActivity {
 			this.urn = urn;
 		}
 
-		public Status getStatus() {
-			return status;
+		public long getAverageTimeMs() {
+			return averageTimeMs;
 		}
 
-		public void setStatus(Status status) {
-			this.status = status;
+		public void setAverageTimeMs(long averageTimeMs) {
+			this.averageTimeMs = averageTimeMs;
 		}
 
-		public long getStart() {
-			return start;
+		public long getMinTimeMs() {
+			return minTimeMs;
 		}
 
-		public void setStart(long start) {
-			this.start = start;
+		public void setMinTimeMs(long minTimeMs) {
+			this.minTimeMs = minTimeMs;
 		}
 
-		public long getEnd() {
-			return end;
+		public long getMaxTimeMs() {
+			return maxTimeMs;
 		}
 
-		public void setEnd(long end) {
-			this.end = end;
+		public void setMaxTimeMs(long maxTimeMs) {
+			this.maxTimeMs = maxTimeMs;
 		}
 
-		public String getNode() {
-			return node;
+		public Set<String> getNodes() {
+			return nodes;
 		}
 
-		public void setNode(String node) {
-			this.node = node;
+		public void setNodes(Set<String> nodes) {
+			this.nodes = nodes;
 		}
 
+		public Set<String> getErrors() {
+			return errors;
+		}
+
+		public void setErrors(Set<String> errors) {
+			this.errors = errors;
+		}
+
+		public int getnCalls() {
+			return nCalls;
+		}
+
+		public void setnCalls(int nCalls) {
+			this.nCalls = nCalls;
+		}
+
+		
+		
 	}
 
 	private String user;
@@ -78,7 +102,8 @@ public class SessionActivity {
 	private long datasize;
 	private long load;
 	private String stackTrace;
-	private List<ResourceActivity> resourceActivities = new ArrayList<>();
+	private Map<String,ResourceActivity> resourceActivities = new LinkedHashMap<>();
+	private Map<String, ResourceActivity> modelActivities = new LinkedHashMap<>();
 	private String parentActivityId;
 	private String activityId;
 	
@@ -194,11 +219,11 @@ public class SessionActivity {
 		this.stackTrace = stackTrace;
 	}
 
-	public List<ResourceActivity> getResourceActivities() {
+	public Map<String, ResourceActivity> getResourceActivities() {
 		return resourceActivities;
 	}
 
-	public void setResourceActivities(List<ResourceActivity> resourceActivities) {
+	public void setResourceActivities(Map<String, ResourceActivity> resourceActivities) {
 		this.resourceActivities = resourceActivities;
 	}
 
@@ -216,6 +241,14 @@ public class SessionActivity {
 
 	public void setParentActivityId(String parentActivityId) {
 		this.parentActivityId = parentActivityId;
+	}
+
+	public Map<String,ResourceActivity> getModelActivities() {
+		return modelActivities;
+	}
+
+	public void setModelActivities(Map<String,ResourceActivity> modelActivities) {
+		this.modelActivities = modelActivities;
 	}
 
 }
