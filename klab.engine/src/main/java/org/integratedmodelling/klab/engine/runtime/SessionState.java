@@ -118,6 +118,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	private Session session;
 	private List<SessionActivity> history = new ArrayList<>();
+	private Map<String, SessionActivity> historyByContext = new HashMap<>();
 	long startTime = System.currentTimeMillis();
 	private Set<String> scenarios = new HashSet<>();
 	private Map<IConcept, Collection<IConcept>> roles = new HashMap<>();
@@ -179,18 +180,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		return submit(urn, null, null);
 	}
 
-	private SessionActivity newActivity() {
-		SessionActivity ret = new SessionActivity();
-		if (this.context == null) {
-
-		}
-		return ret;
-	}
-
 	public Future<IArtifact> submit(String urn, BiConsumer<ITaskIdentity, IArtifact> observationListener,
 			BiConsumer<ITaskIdentity, Throwable> errorListener) {
 
-		final SessionActivity activity = newActivity();
+		final SessionActivity activity = new SessionActivity();
 
 		activity.setUrnObserved(urn);
 		activity.setUser(session.getParentIdentity(IUserIdentity.class).getUsername());
@@ -217,6 +210,11 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		List<BiConsumer<ITaskIdentity, Throwable>> eListeners = new ArrayList<>();
 
 		oListeners.add((task, observation) -> {
+
+			if (this.currentActivity != null) {
+				activity.setContextId(this.currentActivity.getContextId());
+			}
+			
 			if (observation == null) {
 				/*
 				 * task has started; record geometry (proxy to size). TODO tap into provenance
@@ -235,7 +233,12 @@ public class SessionState extends Parameters<String> implements ISessionState {
 				 */
 				activity.setEnd(System.currentTimeMillis());
 				activity.setStatus(DataflowState.Status.FINISHED);
-
+				
+				if (activity.getActivityId().equals(this.currentActivity.getActivityId())) {
+					this.currentActivity.setContextId(observation.getId());
+					this.historyByContext.put(observation.getId(), activity);
+				} 
+				
 				for (ListenerWrapper listener : listeners.values()) {
 					listener.listener.historyChanged(this.currentActivity,
 							activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
@@ -268,7 +271,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 		if (resolvable instanceof Observer) {
 			return new ObserveContextTask(this.session, (Observer) resolvable, scenarios, oListeners, eListeners,
-					executor);
+					executor, activity);
 		}
 
 		if (this.context == null && !(resolvable instanceof IObserver)) {
@@ -298,7 +301,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			});
 
 			Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, ctxListeners, eListeners,
-					executor);
+					executor, activity);
 			try {
 				this.scaleOfInterest.setShape(null);
 				this.context = (ISubject) task.get();
@@ -311,7 +314,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		 * Submit the actual resolvable
 		 */
 		return new ObserveInContextTask((Subject) this.context, urn, this.scenarios, oListeners, eListeners,
-				this.executor);
+				this.executor, activity);
 	}
 
 	@Override

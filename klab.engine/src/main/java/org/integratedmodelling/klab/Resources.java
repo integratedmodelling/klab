@@ -16,6 +16,7 @@ import java.util.Properties;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimProject;
@@ -76,6 +77,7 @@ import org.integratedmodelling.klab.engine.resources.MonitorableFileWorkspace;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.resources.PublicResourceCatalog;
 import org.integratedmodelling.klab.engine.resources.ServiceWorkspace;
+import org.integratedmodelling.klab.engine.runtime.AbstractTask;
 import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
@@ -99,6 +101,8 @@ import org.integratedmodelling.klab.rest.ResourceAdapterReference.OperationRefer
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceDataRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
+import org.integratedmodelling.klab.rest.SessionActivity;
+import org.integratedmodelling.klab.rest.SessionActivity.ResourceActivity;
 import org.integratedmodelling.klab.rest.TicketResponse;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.FileUtils;
@@ -1094,8 +1098,26 @@ public enum Resources implements IResourceService {
 	public IKlabData getResourceData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			IContextualizationScope context) {
 
-		boolean local = Urns.INSTANCE.isLocal(resource.getUrn());
 		Urn urn = new Urn(resource.getUrn(), urnParameters);
+		boolean local = Urns.INSTANCE.isLocal(resource.getUrn());
+		RuntimeException error = null;
+
+		SessionActivity.ResourceActivity descriptor = null;
+		AbstractTask<?> task = context.getMonitor().getIdentity().getParentIdentity(AbstractTask.class);
+		if (task != null && task.getActivity().getActivityDescriptor() != null) {
+			descriptor = task.getActivity().getActivityDescriptor().getResourceActivities().get(resource.getUrn());
+			if (descriptor == null) {
+				descriptor = new ResourceActivity();
+				descriptor.setUrn(urn.toString());
+				task.getActivity().getActivityDescriptor().getResourceActivities().put(resource.getUrn(), descriptor);
+			}
+		}
+
+		long start = System.currentTimeMillis();
+		if (descriptor != null) {
+			descriptor.setnCalls(descriptor.getnCalls() + 1);
+		}
+		
 		if (urn.isUniversal()) {
 			// use it locally only if we have the adapter.
 			local = getUrnAdapter(urn.getCatalog()) != null;
@@ -1107,33 +1129,85 @@ public enum Resources implements IResourceService {
 
 				IUrnAdapter adapter = getUrnAdapter(urn.getCatalog());
 				if (adapter == null) {
-					throw new KlabUnsupportedFeatureException(
+
+					error = new KlabUnsupportedFeatureException(
 							"adapter for resource of type " + resource.getAdapterType() + " not available");
+
+					if (descriptor != null) {
+						descriptor.setnErrors(descriptor.getnErrors() + 1);
+						descriptor.getErrors().add(ExceptionUtils.getStackTrace(error));
+					}
+
+					throw error;
 				}
 
 				IKlabData.Builder builder = new LocalDataBuilder((IRuntimeScope) context);
 				try {
 					adapter.getEncodedData(urn, builder, geometry, context);
-					return builder.build();
+					IKlabData ret = builder.build();
+					if (descriptor != null) {
+						long elapsed = System.currentTimeMillis() - start;
+						if (descriptor.getMinTimeMs() == 0 || descriptor.getMinTimeMs() > elapsed) {
+							descriptor.setMinTimeMs(elapsed);
+						}
+						if (descriptor.getMaxTimeMs() < elapsed) {
+							descriptor.setMaxTimeMs(elapsed);
+						}
+						descriptor.setTotalTimeMs(descriptor.getTotalTimeMs() + elapsed);
+					}
+					return ret;
 				} catch (Throwable e) {
 					// just return null later
 					context.getMonitor()
 							.error("could not extract data from " + resource.getUrn() + ": " + e.getMessage());
+
+					if (descriptor != null) {
+						descriptor.setnErrors(descriptor.getnErrors() + 1);
+						descriptor.getErrors().add(ExceptionUtils.getStackTrace(e));
+					}
+
 				}
 
 			} else {
 
 				IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
 				if (adapter == null) {
-					throw new KlabUnsupportedFeatureException(
+					
+					error = new KlabUnsupportedFeatureException(
 							"adapter for resource of type " + resource.getAdapterType() + " not available");
+					
+					if (descriptor != null) {
+						descriptor.setnErrors(descriptor.getnErrors() + 1);
+						descriptor.getErrors().add(ExceptionUtils.getStackTrace(error));
+					}
+
+					throw error;
 				}
 
 				IKlabData.Builder builder = new LocalDataBuilder((IRuntimeScope) context);
 				try {
 					adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
-					return builder.build();
+					IKlabData ret = builder.build();
+
+					if (descriptor != null) {
+						long elapsed = System.currentTimeMillis() - start;
+						if (descriptor.getMinTimeMs() == 0 || descriptor.getMinTimeMs() > elapsed) {
+							descriptor.setMinTimeMs(elapsed);
+						}
+						if (descriptor.getMaxTimeMs() < elapsed) {
+							descriptor.setMaxTimeMs(elapsed);
+						}
+						descriptor.setTotalTimeMs(descriptor.getTotalTimeMs() + elapsed);
+					}
+					
+					return ret;
+					
 				} catch (Throwable e) {
+
+					if (descriptor != null) {
+						descriptor.setnErrors(descriptor.getnErrors() + 1);
+						descriptor.getErrors().add(ExceptionUtils.getStackTrace(e));
+					}
 					Logging.INSTANCE.error(e);
 					// just return null later
 				}
@@ -1148,7 +1222,25 @@ public enum Resources implements IResourceService {
 				request.setGeometry(geometry.encode());
 				DecodingDataBuilder builder = new DecodingDataBuilder(
 						node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request, Map.class), context);
-				return builder.build();
+				IKlabData ret = builder.build();
+
+				if (descriptor != null) {
+					descriptor.getNodes().add(node.getName());
+					long elapsed = System.currentTimeMillis() - start;
+					if (descriptor.getMinTimeMs() == 0 || descriptor.getMinTimeMs() > elapsed) {
+						descriptor.setMinTimeMs(elapsed);
+					}
+					if (descriptor.getMaxTimeMs() < elapsed) {
+						descriptor.setMaxTimeMs(elapsed);
+					}
+					descriptor.setTotalTimeMs(descriptor.getTotalTimeMs() + elapsed);
+				}
+				return ret;
+			} else {
+				error = new KlabResourceAccessException("cannot find a node to resolve URN " + urn);
+				descriptor.setnErrors(descriptor.getnErrors() + 1);
+				descriptor.getErrors().add(ExceptionUtils.getStackTrace(error));
+				Logging.INSTANCE.error(error);
 			}
 		}
 
@@ -1295,7 +1387,7 @@ public enum Resources implements IResourceService {
 		}
 		throw new KlabResourceAccessException("unimplemented alignment of public and local resource catalogs");
 	}
-	
+
 	// @Override
 	public Builder createResourceBuilder() {
 		return new ResourceBuilder();
@@ -1551,7 +1643,7 @@ public enum Resources implements IResourceService {
 			ref.getExportCapabilities().putAll(Resources.INSTANCE.getResourceAdapter(adapter).getImporter()
 					.getExportCapabilities((IResource) null));
 			ref.setMultipleResources(resourceAdapters.get(adapter).getImporter().acceptsMultiple());
-			
+
 			for (Operation operation : resourceAdapters.get(adapter).getValidator().getAllowedOperations(null)) {
 				OperationReference op = new OperationReference();
 				op.setDescription(operation.getDescription());
@@ -1559,7 +1651,7 @@ public enum Resources implements IResourceService {
 				op.setRequiresConfirmation(operation.isShouldConfirm());
 				ref.getOperations().add(op);
 			}
-			
+
 			ret.add(ref);
 		}
 		for (String adapter : urnAdapters.keySet()) {
@@ -1738,7 +1830,7 @@ public enum Resources implements IResourceService {
 		if (!resource.getLocalPaths().isEmpty()) {
 			return true;
 		}
-		return ((Resource)resource).getPath().listFiles().length > 1;
+		return ((Resource) resource).getPath().listFiles().length > 1;
 	}
 
 	@Override

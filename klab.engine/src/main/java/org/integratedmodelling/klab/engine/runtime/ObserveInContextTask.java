@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.utils.Parameters;
 
 /**
@@ -60,7 +61,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 	}
 
 	public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios) {
-		this(context, urn, scenarios, null, null, context.getParentIdentity(Engine.class).getTaskExecutor());
+		this(context, urn, scenarios, null, null, context.getParentIdentity(Engine.class).getTaskExecutor(), null);
 	}
 
 	/**
@@ -78,11 +79,13 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 	 */
 	public ObserveInContextTask(Subject context, String urn, Collection<String> scenarios,
 			Collection<BiConsumer<ITaskIdentity, IArtifact>> observationListeners,
-			Collection<BiConsumer<ITaskIdentity, Throwable>> errorListeners, Executor executor) {
+			Collection<BiConsumer<ITaskIdentity, Throwable>> errorListeners, Executor executor,
+			SessionActivity activityDescriptor) {
 
 		this.context = context;
 		this.monitor = context.getMonitor().get(this);
 		this.session = context.getParentIdentity(Session.class);
+		this.activity.setActivityDescriptor(activityDescriptor);
 		this.taskDescription = "Observation of " + urn + " in " + context.getName();
 
 		session.touch();
@@ -134,7 +137,10 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 						dataflow.setDescription(taskDescription);
 
 						System.out.println(dataflow.getKdlCode());
-
+						if (activity.getActivityDescriptor() != null) {
+							activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
+						}
+						
 						IRuntimeScope ctx = ((Observation) context).getScope();
 						ctx.getContextualizationStrategy().add(dataflow);
 
