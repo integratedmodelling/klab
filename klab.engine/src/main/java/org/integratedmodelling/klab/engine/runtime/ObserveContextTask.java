@@ -6,12 +6,13 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -28,6 +29,7 @@ import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
 import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.utils.Parameters;
 
 /**
@@ -54,12 +56,12 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 	}
 
 	public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios) {
-		this(session, observer, scenarios, null, null, session.getParentIdentity(Engine.class).getTaskExecutor());
+		this(session, observer, scenarios, null, null, session.getParentIdentity(Engine.class).getTaskExecutor(), null);
 	}
 
 	/**
-	 * Listener consumers are called as things progress. The observation listener
-	 * is first called with null as a parameter when starting, then (if no error
+	 * Listener consumers are called as things progress. The observation listener is
+	 * first called with null as a parameter when starting, then (if no error
 	 * occurs) another time with the observation as argument. The observation may be
 	 * empty. If an exception is thrown, the error listener is called with the
 	 * exception as argument.
@@ -71,13 +73,16 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 	 * @param errorListener
 	 */
 	public ObserveContextTask(Session session, Observer observer, Collection<String> scenarios,
-			Consumer<IArtifact> observationListener, Consumer<Throwable> errorListener, Executor executor) {
+			Collection<BiConsumer<ITaskIdentity, IArtifact>> observationListeners,
+			Collection<BiConsumer<ITaskIdentity, Throwable>> errorListeners, Executor executor,
+			SessionActivity activityDescriptor) {
 
 		try {
 
 			this.monitor = (session.getMonitor()).get(this);
 			this.session = session;
 			this.taskDescription = "Observation of " + observer.getId();
+			this.activity.setActivityDescriptor(activityDescriptor);
 
 			session.touch();
 
@@ -95,8 +100,10 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 						 */
 						notifyStart();
 
-						if (observationListener != null) {
-							observationListener.accept(null);
+						if (observationListeners != null) {
+							for (BiConsumer<ITaskIdentity, IArtifact> observationListener : observationListeners) {
+								observationListener.accept((ITaskIdentity) this.task, null);
+							}
 						}
 
 						// TODO put all this logics in the resolver, call it from within Observations
@@ -109,6 +116,10 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 
 							dataflow.setDescription(taskDescription);
 
+							if (activity.getActivityDescriptor() != null) {
+								activity.getActivityDescriptor().setDataflowCode(dataflow.getKdlCode());
+							}
+							
 							/*
 							 * Instantiate a preliminary contextualization strategy as there is no context
 							 * yet.
@@ -155,16 +166,20 @@ public class ObserveContextTask extends AbstractTask<IArtifact> {
 
 						}
 
-						if (observationListener != null) {
-							observationListener.accept(ret);
+						if (observationListeners != null) {
+							for (BiConsumer<ITaskIdentity, IArtifact> observationListener : observationListeners) {
+								observationListener.accept((ITaskIdentity) this.task, ret);
+							}
 						}
 
 						notifyEnd();
 
 					} catch (Throwable e) {
 
-						if (errorListener != null) {
-							errorListener.accept(e);
+						if (errorListeners != null) {
+							for (BiConsumer<ITaskIdentity, Throwable> errorListener : errorListeners) {
+								errorListener.accept((ITaskIdentity) this.task, e);
+							}
 						}
 
 						throw notifyAbort(e);

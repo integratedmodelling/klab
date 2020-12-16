@@ -1,7 +1,11 @@
 package org.integratedmodelling.klab.rest;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.klab.rest.DataflowState.Status;
 
@@ -13,6 +17,90 @@ import org.integratedmodelling.klab.rest.DataflowState.Status;
  *
  */
 public class SessionActivity {
+
+	public static class ResourceActivity {
+
+		private String urn;
+		private long totalTimeMs;
+		private long minTimeMs;
+		private long maxTimeMs;
+		private Set<String> nodes = new LinkedHashSet<>();
+		private Set<String> errors = new LinkedHashSet<>();
+		private int nCalls;
+		private int nErrors;
+
+		public String getUrn() {
+			return urn;
+		}
+
+		public void setUrn(String urn) {
+			this.urn = urn;
+		}
+
+		public long getMinTimeMs() {
+			return minTimeMs;
+		}
+
+		/**
+		 * This in fact reports the total time for all successful resolutions in the
+		 * same activity. In order to obtain the average time per resolution, compute
+		 * getAverageTimeMs() / (nCalls() - nErrors()).
+		 * 
+		 * @return
+		 */
+		public long getTotalTimeMs() {
+			return totalTimeMs;
+		}
+
+		public void setTotalTimeMs(long totalTimeMs) {
+			this.totalTimeMs = totalTimeMs;
+		}
+
+		public int getnErrors() {
+			return nErrors;
+		}
+
+		public void setnErrors(int nErrors) {
+			this.nErrors = nErrors;
+		}
+
+		public void setMinTimeMs(long minTimeMs) {
+			this.minTimeMs = minTimeMs;
+		}
+
+		public long getMaxTimeMs() {
+			return maxTimeMs;
+		}
+
+		public void setMaxTimeMs(long maxTimeMs) {
+			this.maxTimeMs = maxTimeMs;
+		}
+
+		public Set<String> getNodes() {
+			return nodes;
+		}
+
+		public void setNodes(Set<String> nodes) {
+			this.nodes = nodes;
+		}
+
+		public Set<String> getErrors() {
+			return errors;
+		}
+
+		public void setErrors(Set<String> errors) {
+			this.errors = errors;
+		}
+
+		public int getnCalls() {
+			return nCalls;
+		}
+
+		public void setnCalls(int nCalls) {
+			this.nCalls = nCalls;
+		}
+
+	}
 
 	private String user;
 	private String sessionId;
@@ -27,6 +115,11 @@ public class SessionActivity {
 	private List<String> scenarios = new ArrayList<>();
 	private long datasize;
 	private long load;
+	private String stackTrace;
+	private Map<String, ResourceActivity> resourceActivities = new LinkedHashMap<>();
+	private Map<String, ResourceActivity> modelActivities = new LinkedHashMap<>();
+	private String parentActivityId;
+	private String activityId;
 
 	public String getUser() {
 		return user;
@@ -130,6 +223,46 @@ public class SessionActivity {
 
 	public void setApplicationLoaded(String applicationLoaded) {
 		this.applicationLoaded = applicationLoaded;
+	}
+
+	public String getStackTrace() {
+		return stackTrace;
+	}
+
+	public void setStackTrace(String stackTrace) {
+		this.stackTrace = stackTrace;
+	}
+
+	public Map<String, ResourceActivity> getResourceActivities() {
+		return resourceActivities;
+	}
+
+	public void setResourceActivities(Map<String, ResourceActivity> resourceActivities) {
+		this.resourceActivities = resourceActivities;
+	}
+
+	public String getActivityId() {
+		return activityId;
+	}
+
+	public void setActivityId(String activityId) {
+		this.activityId = activityId;
+	}
+
+	public String getParentActivityId() {
+		return parentActivityId;
+	}
+
+	public void setParentActivityId(String parentActivityId) {
+		this.parentActivityId = parentActivityId;
+	}
+
+	public Map<String, ResourceActivity> getModelActivities() {
+		return modelActivities;
+	}
+
+	public void setModelActivities(Map<String, ResourceActivity> modelActivities) {
+		this.modelActivities = modelActivities;
 	}
 
 }

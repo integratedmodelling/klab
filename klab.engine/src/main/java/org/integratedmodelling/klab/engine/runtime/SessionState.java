@@ -16,8 +16,9 @@ import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.Consumer;
+import java.util.function.BiConsumer;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.model.KimQuantity;
 import org.integratedmodelling.klab.Authentication;
@@ -26,6 +27,8 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.auth.ITaskIdentity;
+import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -61,6 +64,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
+import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ScaleReference;
@@ -114,6 +118,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	private Session session;
 	private List<SessionActivity> history = new ArrayList<>();
+	private Map<String, SessionActivity> historyByContext = new HashMap<>();
 	long startTime = System.currentTimeMillis();
 	private Set<String> scenarios = new HashSet<>();
 	private Map<IConcept, Collection<IConcept>> roles = new HashMap<>();
@@ -150,8 +155,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
 	 */
 	Timer extentTimer = new Timer();
 	private Object currentApplicationId;
+	private SessionActivity currentActivity;
 
 	public SessionState(Session session) {
+
 		this.session = session;
 		this.scaleOfInterest = new ScaleReference();
 
@@ -166,21 +173,21 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		this.scaleOfInterest.setStart(defaultTime.getStart().getMilliseconds());
 		this.scaleOfInterest.setEnd(defaultTime.getEnd().getMilliseconds());
 		this.scaleOfInterest.setTimeScale(defaultTime.getScaleRank());
-//		this.scaleOfInterest
-//				.setTimeGeometry(((org.integratedmodelling.klab.components.time.extents.Time) defaultTime).encode());
 	}
 
 	@Override
 	public Future<IArtifact> submit(String urn) {
-		return submit(urn, (observation) -> {
-			// TODO stats, history
-		}, (error) -> {
-			// TODO stats, history
-		});
+		return submit(urn, null, null);
 	}
 
-	public Future<IArtifact> submit(String urn, Consumer<IArtifact> observationListener,
-			Consumer<Throwable> errorListener) {
+	public Future<IArtifact> submit(String urn, BiConsumer<ITaskIdentity, IArtifact> observationListener,
+			BiConsumer<ITaskIdentity, Throwable> errorListener) {
+
+		final SessionActivity activity = new SessionActivity();
+
+		activity.setUrnObserved(urn);
+		activity.setUser(session.getParentIdentity(IUserIdentity.class).getUsername());
+		activity.setSessionId(session.getId());
 
 		IResolvable resolvable = null;
 		if (urn.contains(" ")) {
@@ -192,15 +199,83 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			}
 		}
 
+		if (this.currentActivity == null || resolvable instanceof Observer) {
+			this.currentActivity = activity;
+			history.add(activity);
+		} else if (this.currentActivity != null) {
+			activity.setParentActivityId(this.currentActivity.getActivityId());
+		}
+
+		List<BiConsumer<ITaskIdentity, IArtifact>> oListeners = new ArrayList<>();
+		List<BiConsumer<ITaskIdentity, Throwable>> eListeners = new ArrayList<>();
+
+		oListeners.add((task, observation) -> {
+
+			if (this.currentActivity != null) {
+				activity.setContextId(this.currentActivity.getContextId());
+			}
+			
+			if (observation == null) {
+				/*
+				 * task has started; record geometry (proxy to size). TODO tap into provenance
+				 * to report resources used and results.
+				 */
+				IGeometry geom = getGeometry();
+				activity.setStart(System.currentTimeMillis());
+				if (this.currentActivity.getGeometrySet() == null && geom != null) {
+					this.currentActivity.setGeometrySet(geom.encode());
+				}
+				activity.setActivityId(task.getId());
+
+			} else {
+				/*
+				 * activity ended successfully - TODO report actual computational load
+				 */
+				activity.setEnd(System.currentTimeMillis());
+				activity.setStatus(DataflowState.Status.FINISHED);
+				
+				if (activity.getActivityId().equals(this.currentActivity.getActivityId())) {
+					this.currentActivity.setContextId(observation.getId());
+					this.historyByContext.put(observation.getId(), activity);
+				} 
+				
+				for (ListenerWrapper listener : listeners.values()) {
+					listener.listener.historyChanged(this.currentActivity,
+							activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
+				}
+			}
+		});
+
+		eListeners.add((task, error) -> {
+
+			/*
+			 * activity ended with error - TODO report actual computational load
+			 */
+			activity.setEnd(System.currentTimeMillis());
+			activity.setStatus(DataflowState.Status.FINISHED);
+			activity.setStackTrace(ExceptionUtils.getStackTrace(error));
+
+			for (ListenerWrapper listener : listeners.values()) {
+				listener.listener.historyChanged(this.currentActivity,
+						activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
+			}
+
+		});
+
+		if (observationListener != null) {
+			oListeners.add(observationListener);
+		}
+		if (errorListener != null) {
+			eListeners.add(errorListener);
+		}
+
 		if (resolvable instanceof Observer) {
-			return new ObserveContextTask(this.session, (Observer) resolvable, scenarios, observationListener,
-					errorListener, executor);
+			return new ObserveContextTask(this.session, (Observer) resolvable, scenarios, oListeners, eListeners,
+					executor, activity);
 		}
 
 		if (this.context == null && !(resolvable instanceof IObserver)) {
 
-//			this.context = null;
-//
 			IGeometry geometry = getGeometry();
 
 			if (geometry == null) {
@@ -218,11 +293,15 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			 * goes into executor; next one won't exec before this is finished. Only call
 			 * the obs listener at the beginning of the contextualization.
 			 */
-			Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, (obs) -> {
-				if (obs == null) {
-					observationListener.accept(obs);
+			List<BiConsumer<ITaskIdentity, IArtifact>> ctxListeners = new ArrayList<>(oListeners);
+			ctxListeners.add((tsk, obs) -> {
+				if (obs == null && observationListener != null) {
+					observationListener.accept(tsk, obs);
 				}
-			}, errorListener, executor);
+			});
+
+			Future<IArtifact> task = new ObserveContextTask(this.session, observer, scenarios, ctxListeners, eListeners,
+					executor, activity);
 			try {
 				this.scaleOfInterest.setShape(null);
 				this.context = (ISubject) task.get();
@@ -234,8 +313,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		/**
 		 * Submit the actual resolvable
 		 */
-		return new ObserveInContextTask((Subject) this.context, urn, this.scenarios, observationListener, errorListener,
-				this.executor);
+		return new ObserveInContextTask((Subject) this.context, urn, this.scenarios, oListeners, eListeners,
+				this.executor, activity);
 	}
 
 	@Override
@@ -312,44 +391,35 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			this.lockTime.set(check(value, Boolean.class));
 			break;
 		case TIME_END_KEY:
-//			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setEnd(check(value, Long.class));
 			break;
 		case TIME_START_KEY:
-//			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setStart(check(value, Long.class));
 			break;
 		case TIME_TYPE_KEY:
-//			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setTimeType(value.toString());
 			break;
 		case TIME_RESOLUTION_MULTIPLIER_KEY:
-//			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setTimeResolutionMultiplier(check(value, Number.class).doubleValue());
 			break;
 		case TIME_RESOLUTION_UNIT_KEY:
-//			this.scaleOfInterest.setTimeGeometry(null);
 			Resolution res = org.integratedmodelling.klab.components.time.extents.Time
 					.resolution("1." + value.toString());
 			this.scaleOfInterest.setTimeUnit(res.getType());
 			break;
 		case TIME_RESOLUTION_KEY:
-//			this.scaleOfInterest.setTimeGeometry(null);
 			res = org.integratedmodelling.klab.components.time.extents.Time.resolution(value.toString());
 			this.scaleOfInterest.setTimeResolutionMultiplier(res.getMultiplier());
 			this.scaleOfInterest.setTimeUnit(res.getType());
 			break;
 		case TIME_YEAR_KEY:
-//			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest.setYear(check(value, Integer.class));
 			break;
 		case TIME_START_YEAR_KEY:
-//			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest
 					.setStart(new DateTime(check(value, Integer.class), 1, 1, 0, 0, 0, DateTimeZone.UTC).getMillis());
 			break;
 		case TIME_END_YEAR_KEY:
-//			this.scaleOfInterest.setTimeGeometry(null);
 			this.scaleOfInterest
 					.setEnd(new DateTime(check(value, Integer.class), 1, 1, 0, 0, 0, DateTimeZone.UTC).getMillis());
 			break;
@@ -469,6 +539,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		// roles and geocoding strategy remain as they are (? - application can choose
 		// by listening to event).
 		this.context = null;
+		this.currentActivity = null;
 		for (ListenerWrapper listener : listeners.values()) {
 			if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {
 				listener.listener.newContext(this.context);
@@ -522,23 +593,15 @@ public class SessionState extends Parameters<String> implements ISessionState {
 		this.scaleOfInterest.setSpaceResolution(extent.getSpaceResolution());
 		this.scaleOfInterest.setSpaceUnit(extent.getSpaceUnit());
 		this.scaleOfInterest.setSpaceResolutionDescription(extent.getResolutionDescription());
-		
+
 		this.scaleOfInterest.setTimeResolutionMultiplier(extent.getTimeResolutionMultiplier());
 		this.scaleOfInterest.setTimeUnit(extent.getTimeUnit());
 		this.scaleOfInterest.setStart(extent.getStart());
 		this.scaleOfInterest.setEnd(extent.getEnd());
-		
+
 		this.scaleOfInterest.setSpaceResolutionConverted(Units.INSTANCE.METERS
 				.convert(this.scaleOfInterest.getSpaceResolution(), Unit.create(this.scaleOfInterest.getSpaceUnit()))
 				.doubleValue());
-//		System.out.println("TODO - sent when user changes scale through explorer's default switcher" + extent + "?");
-//		this.spatialGridSize = Units.INSTANCE.METERS
-//				.convert(scaleRef.getSpaceResolutionConverted(), Unit.create(scaleRef.getSpaceUnit())).doubleValue();
-//		this.spatialGridUnits = scaleRef.getSpaceUnit();
-//		this.temporalResolution = Time
-//				.resolution(scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
-//		this.timeStart = scaleRef.getStart() == 0 ? null : Long.valueOf(scaleRef.getStart());
-//		this.timeEnd = scaleRef.getEnd() == 0 ? null : Long.valueOf(scaleRef.getEnd());
 
 		for (ListenerWrapper listener : listeners.values()) {
 			if (listener.applicationId == null || listener.applicationId.equals(this.currentApplicationId)) {

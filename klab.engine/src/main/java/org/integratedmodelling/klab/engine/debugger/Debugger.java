@@ -32,11 +32,15 @@ import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.ISessionState.Listener;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.KeyedStorage;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.rest.ScaleReference;
+import org.integratedmodelling.klab.rest.SessionActivity;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -56,6 +60,7 @@ public class Debugger implements BiConsumer<TextIO, ISession> {
 	private Cell cellFocus;
 	private ILocator prospectiveFocus;
 	private String id;
+	private String listenerId;
 	private Map<String, Debugger> catalog;
 	private Map<Integer, ObservedConcept> scopeCatalog = new HashMap<>();
 	private Map<String, IObservation> watches = new LinkedHashMap<>();
@@ -64,8 +69,33 @@ public class Debugger implements BiConsumer<TextIO, ISession> {
 		TextIO textIO = TextIoFactory.getTextIO();
 		this.catalog = catalog;
 		catalog.put(id, this);
-		accept(textIO, session);
 		this.id = id;
+		this.listenerId = session.getState().addListener(new Listener() {
+
+			@Override
+			public void scaleChanged(ScaleReference scale) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void newObservation(IObservation observation, ISubject context) {
+				// TODO Auto-generated method stub
+
+			}
+
+			@Override
+			public void newContext(ISubject context) {
+			}
+
+			@Override
+			public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
+				// TODO put away for inspection
+				System.out.println(
+						"GOT " + JsonUtils.printAsJson(currentActivity == null ? rootActivity : currentActivity));
+			}
+		});
+		accept(textIO, session);
 	}
 
 	public static interface Watcher {
@@ -114,8 +144,8 @@ public class Debugger implements BiConsumer<TextIO, ISession> {
 		this.session = session;
 		this.terminal = textIO.getTextTerminal();
 		if (this.terminal instanceof SwingTextTerminal) {
-			// still kills the engine when closed. What to do?
-			((SwingTextTerminal)this.terminal).getFrame().setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+			// still kills the engine when exiting. What to do?
+			((SwingTextTerminal) this.terminal).getFrame().setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 		}
 		terminal.println("k.LAB debugger " + Version.CURRENT);
 		terminal.println();
@@ -166,6 +196,7 @@ public class Debugger implements BiConsumer<TextIO, ISession> {
 //			terminal.resetToBookmark("MAIN");
 		}
 
+		session.getState().removeListener(listenerId);
 		catalog.remove(id);
 		textIO.dispose();
 	}

@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 
+### Fixed
+- Bug in resolving processes that would cause some changing states to not be found
+- Bug in resolving states with value operators from pre-existing observations that
+  did not have the operators.
+- Resolution of attributes in instantiator from compatible context states. Needs
+  overhaul to incorporate with dataflows - current implementation won't change in
+  time when states are dynamic and won't replicate when re-running dataflow.
+
 ## [0.10.0.235] -- 2020/12/8
 ### Added
 - Observables that contain abstract roles are expanded into the correspondent concrete

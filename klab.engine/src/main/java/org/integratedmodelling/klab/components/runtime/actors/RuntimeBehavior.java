@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.rest.ScaleReference;
+import org.integratedmodelling.klab.rest.SessionActivity;
 
 import akka.actor.typed.ActorRef;
 
@@ -87,6 +88,11 @@ public class RuntimeBehavior {
 							@Override
 							public void scaleChanged(ScaleReference scale) {
 							}
+
+							@Override
+							public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
+							}
+
 						}, scope.appId);
 			} else {
 
@@ -137,13 +143,13 @@ public class RuntimeBehavior {
 				fire(Status.WAITING, false);
 				identity.getParentIdentity(Session.class).getState().submit(
 						getUrnValue(KlabActor.evaluate(arguments.get(arguments.getUnnamedKeys().get(0)), scope)),
-						(observation) -> {
+						(task, observation) -> {
 							if (observation == null) {
 								fire(Status.STARTED, false);
 							} else {
 								fire(observation, false);
 							}
-						}, (exception) -> {
+						}, (task, exception) -> {
 							fire(Status.ABORTED, false);
 						});
 			}
@@ -288,6 +294,12 @@ public class RuntimeBehavior {
 							@Override
 							public void newObservation(IObservation observation, ISubject context) {
 							}
+
+							@Override
+							public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
+							}
+
+							
 						}, scope.appId);
 			} else {
 				// TODO set from a previously saved map

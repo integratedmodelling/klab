@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.util.List;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMess
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.ScaleReference;
+import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.utils.Pair;
 
 import akka.actor.typed.ActorRef;
@@ -145,7 +147,11 @@ public class ObjectBehavior {
 							// TODO Auto-generated method stub
 							
 						}
-						
+
+						@Override
+						public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
+						}
+
 					}, scope.appId);
 		}
 
