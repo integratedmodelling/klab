@@ -37,6 +37,7 @@ public interface IConfigurationService {
 	public static final int DEFAULT_HUB_PORT = 8284;
 	public static final int DEFAULT_NODE_PORT = 8287;
 	public static final int DEFAULT_LEVER_PORT = 8761;
+	public static final int DEFAULT_SEMANTIC_SERVER_PORT = 8301;
 
 	public static final String KLAB_LOG_FILE = "klab.log.file";
 	public static final String KLAB_OFFLINE = "klab.offline";
