@@ -30,13 +30,13 @@ import org.integratedmodelling.klab.api.data.DataType;
  */
 public interface ITable<T> {
 
-	/**
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	interface ObjectTable extends ITable<Object> {
-	}
+//	/**
+//	 * 
+//	 * @author Ferd
+//	 *
+//	 */
+//	interface ObjectTable extends ITable<Object> {
+//	}
 
 	interface Structure {
 

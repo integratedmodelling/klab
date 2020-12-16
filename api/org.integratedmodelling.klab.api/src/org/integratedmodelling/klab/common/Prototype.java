@@ -335,7 +335,7 @@ public class Prototype implements IPrototype {
 			}
 			break;
 		case VOID:
-			// shoulnd't happen
+			// shouldn't happen
 			break;
 		default:
 			break;

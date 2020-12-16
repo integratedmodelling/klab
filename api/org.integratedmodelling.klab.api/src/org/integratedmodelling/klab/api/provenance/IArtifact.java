@@ -138,8 +138,13 @@ public interface IArtifact extends IProvenance.Node, Iterable<IArtifact> {
 		VOID,
 
 		/**
-		 * Tables are supersets of maps so map literals are valid tables. A table is a
-		 * valid literal for an OBJECT input.
+		 * One map value guarantees functional correspondences between key and value.
+		 */
+		MAP,
+
+		/**
+		 * Tables are supersets of maps so map literals are valid tables, but tables
+		 * guarantee naming of columns and multiplicity.
 		 */
 		TABLE;
 
