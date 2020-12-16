@@ -88,7 +88,7 @@ ACTOR:
 	// process and event are the two endurants, for which contextualizers are only run at transitions
 	'process' |
 	// all the next are in quality scope; number type is handled internally
-	'number' | 'concept' | 'boolean' | 'text' | 'list' |
+	'number' | 'concept' | 'boolean' | 'text' | 'list' | 'table' | 'map' |
 	// specialized functions that produce extents
 	'extent' | 'spatialextent' | 'temporalextent' |
 	// only contracts for annotations

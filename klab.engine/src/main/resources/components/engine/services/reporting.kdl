@@ -28,7 +28,7 @@ annotation documented for models, definitions
     	 to using the @graph annotation when graphs must be reused or clutter the model statements."
 }
 
-annotation table for models
+annotation 'table' for models
 	"Specify documentation objects that summarize results as tables, graphs or other elements. The objects
 	 can be added to documentation using @insert(id). See the k.LAB documentation for the definition of rows and
 	 columns."

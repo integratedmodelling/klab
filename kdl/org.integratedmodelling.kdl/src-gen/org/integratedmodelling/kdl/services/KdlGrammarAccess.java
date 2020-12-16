@@ -1023,22 +1023,24 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cBooleanKeyword_6 = (Keyword)cAlternatives.eContents().get(6);
 		private final Keyword cTextKeyword_7 = (Keyword)cAlternatives.eContents().get(7);
 		private final Keyword cListKeyword_8 = (Keyword)cAlternatives.eContents().get(8);
-		private final Keyword cExtentKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
-		private final Keyword cSpatialextentKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
-		private final Keyword cTemporalextentKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
-		private final Keyword cAnnotationKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
-		private final Keyword cEnumKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
-		private final Keyword cRangeKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
-		private final Keyword cVoidKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
-		private final Keyword cPartitionKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
-		private final Keyword cResolveKeyword_17 = (Keyword)cAlternatives.eContents().get(17);
+		private final Keyword cTableKeyword_9 = (Keyword)cAlternatives.eContents().get(9);
+		private final Keyword cMapKeyword_10 = (Keyword)cAlternatives.eContents().get(10);
+		private final Keyword cExtentKeyword_11 = (Keyword)cAlternatives.eContents().get(11);
+		private final Keyword cSpatialextentKeyword_12 = (Keyword)cAlternatives.eContents().get(12);
+		private final Keyword cTemporalextentKeyword_13 = (Keyword)cAlternatives.eContents().get(13);
+		private final Keyword cAnnotationKeyword_14 = (Keyword)cAlternatives.eContents().get(14);
+		private final Keyword cEnumKeyword_15 = (Keyword)cAlternatives.eContents().get(15);
+		private final Keyword cRangeKeyword_16 = (Keyword)cAlternatives.eContents().get(16);
+		private final Keyword cVoidKeyword_17 = (Keyword)cAlternatives.eContents().get(17);
+		private final Keyword cPartitionKeyword_18 = (Keyword)cAlternatives.eContents().get(18);
+		private final Keyword cResolveKeyword_19 = (Keyword)cAlternatives.eContents().get(19);
 		
 		//ACTOR: // countable, so always a dataflow for direct object instantiation. Resolvers for single objects are inside the instantiation
 		//// actuator and void
 		//	'object' | 'event' | // any acceptable quality type, for declarations only
 		//	'value' | // process and event are the two endurants, for which contextualizers are only run at transitions
 		//	'process' | // all the next are in quality scope; number type is handled internally
-		//	'number' | 'concept' | 'boolean' | 'text' | 'list' | // specialized functions that produce extents
+		//	'number' | 'concept' | 'boolean' | 'text' | 'list' | 'table' | 'map' | // specialized functions that produce extents
 		//	'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations
 		//	'annotation' | // enum parameter, for prototypes only
 		//	'enum' | // range parameter, for prototypes only
@@ -1053,7 +1055,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//'object' | 'event' | // any acceptable quality type, for declarations only
 		//'value' | // process and event are the two endurants, for which contextualizers are only run at transitions
 		//'process' | // all the next are in quality scope; number type is handled internally
-		//'number' | 'concept' | 'boolean' | 'text' | 'list' | // specialized functions that produce extents
+		//'number' | 'concept' | 'boolean' | 'text' | 'list' | 'table' | 'map' | // specialized functions that produce extents
 		//'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations
 		//'annotation' | // enum parameter, for prototypes only
 		//'enum' | // range parameter, for prototypes only
@@ -1095,39 +1097,45 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 		//'list'
 		public Keyword getListKeyword_8() { return cListKeyword_8; }
 		
+		//'table'
+		public Keyword getTableKeyword_9() { return cTableKeyword_9; }
+		
+		//'map'
+		public Keyword getMapKeyword_10() { return cMapKeyword_10; }
+		
 		//// specialized functions that produce extents
 		//'extent'
-		public Keyword getExtentKeyword_9() { return cExtentKeyword_9; }
+		public Keyword getExtentKeyword_11() { return cExtentKeyword_11; }
 		
 		//'spatialextent'
-		public Keyword getSpatialextentKeyword_10() { return cSpatialextentKeyword_10; }
+		public Keyword getSpatialextentKeyword_12() { return cSpatialextentKeyword_12; }
 		
 		//'temporalextent'
-		public Keyword getTemporalextentKeyword_11() { return cTemporalextentKeyword_11; }
+		public Keyword getTemporalextentKeyword_13() { return cTemporalextentKeyword_13; }
 		
 		//// only contracts for annotations
 		//'annotation'
-		public Keyword getAnnotationKeyword_12() { return cAnnotationKeyword_12; }
+		public Keyword getAnnotationKeyword_14() { return cAnnotationKeyword_14; }
 		
 		//// enum parameter, for prototypes only
 		//'enum'
-		public Keyword getEnumKeyword_13() { return cEnumKeyword_13; }
+		public Keyword getEnumKeyword_15() { return cEnumKeyword_15; }
 		
 		//// range parameter, for prototypes only
 		//'range'
-		public Keyword getRangeKeyword_14() { return cRangeKeyword_14; }
+		public Keyword getRangeKeyword_16() { return cRangeKeyword_16; }
 		
 		//// only for command prototypes
 		//'void'
-		public Keyword getVoidKeyword_15() { return cVoidKeyword_15; }
+		public Keyword getVoidKeyword_17() { return cVoidKeyword_17; }
 		
 		//// partial contextualizers for their parents
 		//'partition'
-		public Keyword getPartitionKeyword_16() { return cPartitionKeyword_16; }
+		public Keyword getPartitionKeyword_18() { return cPartitionKeyword_18; }
 		
 		//// introduces a dataflow to resolve individual instances
 		//'resolve'
-		public Keyword getResolveKeyword_17() { return cResolveKeyword_17; }
+		public Keyword getResolveKeyword_19() { return cResolveKeyword_19; }
 	}
 	public class TARGETElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kdl.Kdl.TARGET");
@@ -3168,7 +3176,7 @@ public class KdlGrammarAccess extends AbstractGrammarElementFinder {
 	//	'object' | 'event' | // any acceptable quality type, for declarations only
 	//	'value' | // process and event are the two endurants, for which contextualizers are only run at transitions
 	//	'process' | // all the next are in quality scope; number type is handled internally
-	//	'number' | 'concept' | 'boolean' | 'text' | 'list' | // specialized functions that produce extents
+	//	'number' | 'concept' | 'boolean' | 'text' | 'list' | 'table' | 'map' | // specialized functions that produce extents
 	//	'extent' | 'spatialextent' | 'temporalextent' | // only contracts for annotations
 	//	'annotation' | // enum parameter, for prototypes only
 	//	'enum' | // range parameter, for prototypes only

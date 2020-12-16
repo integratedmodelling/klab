@@ -91,7 +91,7 @@ filter concept classify
 	label 'Classify'
 {
 	
-	value classification
+	import value classification
 		"A classification stated in k.IM or built from a trait, class or metadata property"
 
 	class org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver
@@ -194,7 +194,10 @@ filter value lookup
 	label 'Lookup table'
 {
 	
-	value table
+	import value artifact
+		"The artifact to filter through the lookup table"
+	
+	value 'table'
 		"A table stated in k.IM"
 
 	value arguments 
