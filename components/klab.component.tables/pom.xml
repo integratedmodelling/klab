@@ -12,6 +12,20 @@
 
 	<dependencies>
 
+		<!-- https://mvnrepository.com/artifact/org.eclipse.rdf4j/rdf4j-query -->
+		<dependency>
+			<groupId>org.eclipse.rdf4j</groupId>
+			<artifactId>rdf4j-query</artifactId>
+			<version>3.5.0</version>
+		</dependency>
+
+		<!-- SDMX -->
+		<dependency>
+			<groupId>it.bancaditalia.oss</groupId>
+			<artifactId>sdmx</artifactId>
+			<version>2.3.4</version>
+		</dependency>
+
 		<!-- CSV read -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
