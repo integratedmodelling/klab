@@ -1,0 +1,20 @@
+spring:
+  profiles:
+    default: true
+  application:
+    name: stat-service
+  cloud:
+    bus:
+      enabled: false
+    discovery:
+      enabled: false
+    consul:
+      enabled: false
+      config:
+        enabled: false
+    kubernetes:
+      enabled: false
+      discovery:
+        enabled: false
+      config:
+        enabled: false
