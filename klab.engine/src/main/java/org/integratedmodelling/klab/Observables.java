@@ -1114,19 +1114,27 @@ public enum Observables implements IObservableService {
 	 * observables with the role substituted by the concepts that incarnate it,
 	 * keeping the original roles as contextual roles in the resulting observables.
 	 * 
+	 * TODO this must also use role models (contextualized on demand) and use the
+	 * same mechanism to expand abstract identities.
+	 * 
 	 * @param observable
 	 * @param scope
 	 * @return
 	 */
 	public Collection<IObservable> expandRoles(IObservable observable, IResolutionScope scope) {
 		List<IObservable> ret = new ArrayList<>();
-		Set<IConcept> roles = new HashSet<>();
+		Set<IConcept> expand = new HashSet<>();
 		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
 			if (role.isAbstract()) {
-				roles.add(role);
+				expand.add(role);
 			}
 		}
-		if (roles.isEmpty()) {
+		for (IConcept identity : Traits.INSTANCE.getDirectTraits(observable.getType())) {
+			if (identity.isAbstract() && identity.is(Type.IDENTITY)) {
+				expand.add(identity);
+			}
+		}
+		if (expand.isEmpty()) {
 			ret.add(observable);
 		} else {
 			/*
@@ -1135,12 +1143,17 @@ public enum Observables implements IObservableService {
 			 * may require rethinking.
 			 */
 			Map<IConcept, Set<IConcept>> incarnated = new LinkedHashMap<>();
-			for (IConcept role : roles) {
-				Collection<IConcept> known = scope.getRoles().get(role);
-				if (known == null || known.isEmpty()) {
-					return ret;
+			for (IConcept role : expand) {
+				if (role.is(Type.ROLE)) {
+					Collection<IConcept> known = scope.getRoles().get(role);
+					if (known == null || known.isEmpty()) {
+						// TODO use model
+						return ret;
+					}
+					incarnated.put(role, new HashSet<>(known));
+				} else {
+					// identity: use model only
 				}
-				incarnated.put(role, new HashSet<>(known));
 			}
 
 			List<Set<IConcept>> concepts = new ArrayList<>(incarnated.values());
@@ -1159,7 +1172,7 @@ public enum Observables implements IObservableService {
 								"Abstract role substitution is only allowed for predicates at the moment");
 					}
 				}
-				
+
 				IObservable result = builder.buildObservable();
 				result.getContextualRoles().addAll(incarnated.keySet());
 				ret.add(result);
