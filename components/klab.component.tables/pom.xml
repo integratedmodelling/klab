@@ -8,7 +8,7 @@
 		<version>0.10.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>klab.component.tables</artifactId>
-	<description>Support for table data (CSV, Excel, and JDBC databases)</description>
+	<description>Support for tabular datasources (CSV/Excel, JDBC, SDMX, RDF/SPARQL and CDM:NetCDF/GRIB/OpenDAP)</description>
 
 	<dependencies>
 
@@ -44,6 +44,33 @@
 			<artifactId>poi-ooxml</artifactId>
 			<version>4.1.0</version>
 		</dependency>
+
+		<!-- NetCDF -->
+		<dependency>
+			<groupId>edu.ucar</groupId>
+			<artifactId>netcdf4</artifactId>
+			<version>5.0.0</version>
+		</dependency>
+
+		<!-- https://mvnrepository.com/artifact/org.opendap/opendap -->
+		<dependency>
+			<groupId>edu.ucar</groupId>
+			<artifactId>opendap</artifactId>
+			<version>5.0.0</version>
+		</dependency>
+		<dependency>
+			<groupId>edu.ucar</groupId>
+			<artifactId>grib</artifactId>
+			<version>5.0.0</version>
+		</dependency>
+		
+		<!-- https://mvnrepository.com/artifact/org.apache.httpcomponents/httpclient -->
+		<dependency>
+			<groupId>org.apache.httpcomponents</groupId>
+			<artifactId>httpclient</artifactId>
+			<version>4.5.2</version>
+		</dependency>
+
 
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>

@@ -9,24 +9,33 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.tables.TablesComponent;
 
 import com.google.common.collect.Lists;
 
 public class TableValidator implements IResourceValidator {
 
-    @Override
+	String subType;
+	
+    public TableValidator(String subtype) {
+    	this.subType = subtype;
+	}
+
+	@Override
     public Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return null;
+
+		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder();
+		TablesComponent.getTableInterpreter(this.subType).buildResource(userData, ret, monitor);
+        return ret;
     }
 
-    @Override
+	@Override
     public List<Operation> getAllowedOperations(IResource resource) {
         List<Operation> ret = new ArrayList<>();
         return ret;
@@ -43,7 +52,7 @@ public class TableValidator implements IResourceValidator {
         if (resource == null) {
             return false;
         }
-        return TableAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(resource));
+        return false; // TODO TableAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(resource));
     }
 
     @Override

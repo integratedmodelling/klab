@@ -1,0 +1,8 @@
+@klab 0.10.0
+@version 0.10.0
+
+annotation xls 
+	"The TABLE.XLS adapter ingest content from CSV spreadsheets, Excel and Access databases."
+	 label "Bridge to tabular datasources from spreadsheet and consumer database services"
+{
+}

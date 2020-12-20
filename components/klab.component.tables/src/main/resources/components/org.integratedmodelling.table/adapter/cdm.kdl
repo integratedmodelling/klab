@@ -1,0 +1,9 @@
+@klab 0.10.0
+@version 0.10.0
+
+annotation cdm 
+	"The TABLE.CDM adapter ingest content from Common Data Model resources such as NetCDF files, OpenDAP services and GRIB resources."
+	 label "Bridge to OpenDAP, NetCDF and GRIB datasources from CDM-compliant sources"
+{
+}
+

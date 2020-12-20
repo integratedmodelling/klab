@@ -129,7 +129,7 @@ public class Resource implements IResource {
 	 */
 
 	// support for granularity
-	private Map<IGeometry, IResource> granules = new LinkedHashMap<>();
+//	private Map<IGeometry, IResource> granules = new LinkedHashMap<>();
 
 	// folder where all the resource files were uploaded, only for the publisher
 	File uploadFolder = null;
@@ -537,14 +537,14 @@ public class Resource implements IResource {
 	}
 
 	@Override
-	public boolean isGranular() {
-		return granules.size() > 0;
+	public boolean isDynamic() {
+		return false; // TODO time geometry has size() > 1
 	}
 
-	@Override
-	public Map<IGeometry, IResource> getGranules() {
-		return granules;
-	}
+//	@Override
+//	public Map<IGeometry, IResource> getGranules() {
+//		return granules;
+//	}
 
 	@Override
 	public String getStatusMessage() {
@@ -559,7 +559,8 @@ public class Resource implements IResource {
 	}
 
 	@Override
-	public IResource localize(ITime time) {
+	public IResource contextualize(ITime time) {
+		// TODO
 		return this;
 	}
 

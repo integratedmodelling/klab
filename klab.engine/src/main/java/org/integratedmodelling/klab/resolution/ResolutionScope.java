@@ -263,7 +263,7 @@ public class ResolutionScope implements IResolutionScope {
 		resolverCache.putAll(modelScope.resolverCache);
 		
 		/*
-		 * change observable - NO must add a preresolved model for this same coverage.
+		 * change observable: add a preresolved model for this same coverage.
 		 */
 		if (modelScope.model.hasDistributedResources(Dimension.Type.TIME, coverage.asScale())) {
 			IObservable main = modelScope.model.getObservables().get(0);

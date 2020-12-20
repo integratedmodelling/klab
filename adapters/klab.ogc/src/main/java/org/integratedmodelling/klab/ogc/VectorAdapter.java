@@ -16,6 +16,8 @@
 package org.integratedmodelling.klab.ogc;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IPrototype;
@@ -84,11 +86,11 @@ public class VectorAdapter implements IFileResourceAdapter {
 	}
 
 	@Override
-	public IPrototype getResourceConfiguration() {
-		return new Prototype(
+	public Collection<IPrototype> getResourceConfiguration() {
+		return Collections.singleton(new Prototype(
 				Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/vector.kdl"))
 						.getActuators().iterator().next(),
-				null);
+				null));
 	}
 
 	/**

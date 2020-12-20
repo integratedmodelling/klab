@@ -426,14 +426,15 @@ public class MergedResource implements IResource {
 	}
 
 	@Override
-	public boolean isGranular() {
-		return resources.size() > 1;
+	public boolean isDynamic() {
+		return resources.size() > 1; // TODO also if there is one and it's dynamic || resources.size() > 0 &&
+										// resources.;
 	}
 
-	@Override
-	public Map<IGeometry, IResource> getGranules() {
-		return null;
-	}
+//	@Override
+//	public Map<IGeometry, IResource> getGranules() {
+//		return null;
+//	}
 
 	@Override
 	public boolean hasErrors() {
@@ -572,7 +573,7 @@ public class MergedResource implements IResource {
 	}
 
 	@Override
-	public IResource localize(ITime time) {
+	public IResource contextualize(ITime time) {
 
 		MergedResource ret = new MergedResource(this);
 

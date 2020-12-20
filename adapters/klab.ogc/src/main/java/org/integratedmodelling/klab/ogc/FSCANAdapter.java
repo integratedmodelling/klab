@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.ogc;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
@@ -87,11 +90,11 @@ public class FSCANAdapter implements IResourceAdapter {
 	}
 
 	@Override
-	public IPrototype getResourceConfiguration() {
-		return new Prototype(
+	public Collection<IPrototype> getResourceConfiguration() {
+		return Collections.singleton(new Prototype(
 				Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/fscan.kdl"))
 						.getActuators().iterator().next(),
-				null);
+				null));
 	}
 
 }

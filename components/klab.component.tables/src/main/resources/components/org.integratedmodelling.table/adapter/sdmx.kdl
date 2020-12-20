@@ -1,0 +1,28 @@
+@klab 0.10.0
+@version 0.10.0
+
+annotation sdmx 
+	"The TABLE.SDMX adapter ingest content from SDMX services and matches it to observation through codelist matching and
+	 joins to other resources."
+	 label "Bridge to tabular datasources from SDMX services"
+{
+	final text provider 
+		"The SDMX provider. Must be recognized by the adapter."
+
+	final text dataflow 
+		"The SDMX dataflow. Must be recognized by the provider."
+	
+	optional text query
+		"A query to restrict the dimensions of the results. If not passed, the entire dimensionality of the data will be used."
+		
+	optional text datadimensions
+		"If passed, the dimensions that compose the data table in the desired order. If not passed, all dimensions except
+         the contextualizing ones will be used."
+         
+    optional text space
+    	"The URN of a resource that will provide the spatial context. Either a single spatial object or a set of objects linked 
+    	through a join with an attribute, which must be specified in the URN. If the ID is different, specify the join attribute
+    	in the SDMX DSD after a semicolon, using the attribute name which can also be used as a parameter in an expression if 
+    	transformations are needed."
+		
+}

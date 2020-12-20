@@ -24,9 +24,9 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 
 /**
- * Used on a {@link IResourceAdapter resource adapter class} to declare a new resource type. The
- * information in this annotation is used to validate resources using this adapter before they are
- * processed by the adapter itself.
+ * Used on a {@link IResourceAdapter resource adapter class} to declare a new
+ * resource type. The information in this annotation is used to validate
+ * resources using this adapter before they are processed by the adapter itself.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
@@ -36,39 +36,48 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 @Target(ElementType.TYPE)
 public @interface ResourceAdapter {
 
-  /**
-   * ID of the component. Must be unique, please use unambiguous paths like package or project
-   * names.
-   * 
-   * @return component id
-   */
-  String type();
+	/**
+	 * ID of the component. Must be unique, please use unambiguous paths like
+	 * package or project names.
+	 * 
+	 * @return component id
+	 */
+	String type();
 
-  /**
-   * Version string
-   * 
-   * @return version string
-   */
-  String version();
+	/**
+	 * Version string
+	 * 
+	 * @return version string
+	 */
+	String version();
 
-  /**
-   * Any required type-specific parameters names can be added here. If the fields listed here are
-   * not present in the {@link IResource#getParameters() parameters} of a {@link IResource resource}
-   * with this type, the resource is invalid and cannot be used.
-   * 
-   * @return the required parameter names
-   * @deprecated superseded by KDL declaration of contract
-   */
-  String[] requires() default {};
+	/**
+	 * Subtypes enable the definition of adapter types with a common lineage that
+	 * are different enough to require different parameters.
+	 * 
+	 * @return
+	 */
+	String[] subtypes() default {};
 
-  /**
-   * Any optional type-specific parameters names can be added here. Same as {@link #requires()} but
-   * does not cause invalidation when not present. All parameters in a resource must be declared in
-   * the annotation.
-   * 
-   * @return the optional parameter names
-   * @deprecated superseded by KDL declaration of contract
-   */
-  String[] optional() default {};
+	/**
+	 * Any required type-specific parameters names can be added here. If the fields
+	 * listed here are not present in the {@link IResource#getParameters()
+	 * parameters} of a {@link IResource resource} with this type, the resource is
+	 * invalid and cannot be used.
+	 * 
+	 * @return the required parameter names
+	 * @deprecated superseded by KDL declaration of contract
+	 */
+	String[] requires() default {};
+
+	/**
+	 * Any optional type-specific parameters names can be added here. Same as
+	 * {@link #requires()} but does not cause invalidation when not present. All
+	 * parameters in a resource must be declared in the annotation.
+	 * 
+	 * @return the optional parameter names
+	 * @deprecated superseded by KDL declaration of contract
+	 */
+	String[] optional() default {};
 
 }

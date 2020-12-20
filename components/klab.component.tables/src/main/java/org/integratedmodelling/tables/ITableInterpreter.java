@@ -2,12 +2,14 @@ package org.integratedmodelling.tables;
 
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.Pair;
 
 public interface ITableInterpreter {
@@ -21,7 +23,8 @@ public interface ITableInterpreter {
 	 */
 	Pair<ITable.Structure, IGeometry> analyze(IResource resource); 
 
-
 	void encode(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
 			IContextualizationScope context);
+
+	void buildResource(IParameters<String> userData, IResource.Builder ret, IMonitor monitor);
 }

@@ -350,7 +350,7 @@ public class Model extends KimObject implements IModel {
 				this.resources.add(urnResource);
 
 				if (this.mergedResource != null) {
-					this.multipleTimes = this.mergedResource.isGranular();
+					this.multipleTimes = this.mergedResource.isDynamic();
 				}
 
 			} catch (Throwable t) {

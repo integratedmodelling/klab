@@ -11,10 +11,14 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public class TableEncoder implements IResourceEncoder {
 
-    @Override
+    public TableEncoder(String subtype) {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
     public boolean isOnline(IResource resource, IMonitor monitor) {
         // TODO Auto-generated method stub
-        return false;
+        return true;
     }
 
     @Override

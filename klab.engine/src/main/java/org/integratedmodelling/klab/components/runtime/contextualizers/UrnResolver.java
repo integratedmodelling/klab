@@ -60,7 +60,7 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 				&& overallScale.getTime() != null && !overallScale.getTime().isGeneric()
 				&& resource.getGeometry().getDimension(Dimension.Type.TIME).isGeneric()) {
 			// localize the resource if needed
-			res = res.localize(overallScale.getTime());
+			res = res.contextualize(overallScale.getTime());
 		}
 		this.localized = true;
 

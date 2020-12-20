@@ -15,6 +15,8 @@
  */
 package org.integratedmodelling.ml.adapters;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IPrototype;
@@ -71,11 +73,11 @@ public class WekaAdapter implements IFileResourceAdapter {
 	}
 
 	@Override
-	public IPrototype getResourceConfiguration() {
-		return new Prototype(Dataflows.INSTANCE
+	public Collection<IPrototype> getResourceConfiguration() {
+		return Collections.singleton(new Prototype(Dataflows.INSTANCE
 				.declare(getClass().getClassLoader()
 						.getResource("components/org.integratedmodelling.ml/adapter/weka.kdl"))
-				.getActuators().iterator().next(), null);
+				.getActuators().iterator().next(), null));
 	}
 
 	@Override

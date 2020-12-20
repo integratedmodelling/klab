@@ -8,7 +8,11 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class TablePublisher implements IResourcePublisher {
 
-    @Override
+    public TablePublisher(String subtype) {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
     public IResource publish(IResource localResource, IResourceCatalog catalog, IMonitor monitor) throws KlabException {
         // TODO Auto-generated method stub
         return null;

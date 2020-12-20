@@ -203,14 +203,14 @@ public class FutureResource implements IResource, Future<IResource> {
 	}
 
 	@Override
-	public boolean isGranular() {
-		return getDelegate(timeout).isGranular();
+	public boolean isDynamic() {
+		return getDelegate(timeout).isDynamic();
 	}
 
-	@Override
-	public Map<IGeometry, IResource> getGranules() {
-		return getDelegate(timeout).getGranules();
-	}
+//	@Override
+//	public Map<IGeometry, IResource> getGranules() {
+//		return getDelegate(timeout).getGranules();
+//	}
 
 	@Override
 	public String getStatusMessage() {
@@ -223,7 +223,7 @@ public class FutureResource implements IResource, Future<IResource> {
 	}
 
 	@Override
-	public IResource localize(ITime time) {
+	public IResource contextualize(ITime time) {
 		return this;
 	}
 

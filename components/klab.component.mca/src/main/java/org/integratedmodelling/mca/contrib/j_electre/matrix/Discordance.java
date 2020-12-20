@@ -52,7 +52,7 @@ public class Discordance {
 		}
 		return arrayDM;
 	}
-
+	
 	public static double[][] getDiscordanceMatrixEI_s(double c, double[][] array, double [] weights, double [] p, double[] q, double[] v, int k) {
 
 		double[][] arrayDMj = new double[array.length][array.length];

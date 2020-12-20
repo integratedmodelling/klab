@@ -1,6 +1,7 @@
 @klab 0.10.0
 @version 0.10.0
 
+@obsolete
 @xor(file, url)
 @and(latitude,longitude)
 @and(query, jdbc)

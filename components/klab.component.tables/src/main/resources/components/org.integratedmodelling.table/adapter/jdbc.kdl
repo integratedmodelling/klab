@@ -1,0 +1,9 @@
+@klab 0.10.0
+@version 0.10.0
+
+annotation jdbc 
+	"The TABLE.JDBC adapter ingest content from relational databases supporting SQL and JDBC adapters. Spatial extensions are supported for PostgreSQL and HSQLDB."
+	 label "Bridge to tabular datasources from relational databases"
+{
+}
+

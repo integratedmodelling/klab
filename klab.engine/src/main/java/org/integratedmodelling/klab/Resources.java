@@ -634,12 +634,17 @@ public enum Resources implements IResourceService {
 		 * are possible.
 		 */
 		Parameters<String> parameters = Parameters.create();
-		for (IPrototype.Argument argument : adapter.getResourceConfiguration().listArguments()) {
-			if (request.getParameters().containsKey(argument.getName())) {
-				String value = request.getParameters().get(argument.getName());
-				if (value != null && !value.trim().isEmpty()) {
-					parameters.put(argument.getName(), Utils.asPOD(value));
+		for (IPrototype prototype : adapter.getResourceConfiguration()) {
+			if (adapterType.equals(prototype.getName())) {
+				for (IPrototype.Argument argument : prototype.listArguments()) {
+					if (request.getParameters().containsKey(argument.getName())) {
+						String value = request.getParameters().get(argument.getName());
+						if (value != null && !value.trim().isEmpty()) {
+							parameters.put(argument.getName(), Utils.asPOD(value));
+						}
+					}
 				}
+				break;
 			}
 		}
 
@@ -1117,7 +1122,7 @@ public enum Resources implements IResourceService {
 		if (descriptor != null) {
 			descriptor.setnCalls(descriptor.getnCalls() + 1);
 		}
-		
+
 		if (urn.isUniversal()) {
 			// use it locally only if we have the adapter.
 			local = getUrnAdapter(urn.getCatalog()) != null;
@@ -1172,10 +1177,10 @@ public enum Resources implements IResourceService {
 
 				IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
 				if (adapter == null) {
-					
+
 					error = new KlabUnsupportedFeatureException(
 							"adapter for resource of type " + resource.getAdapterType() + " not available");
-					
+
 					if (descriptor != null) {
 						descriptor.setnErrors(descriptor.getnErrors() + 1);
 						descriptor.getErrors().add(ExceptionUtils.getStackTrace(error));
@@ -1199,9 +1204,9 @@ public enum Resources implements IResourceService {
 						}
 						descriptor.setTotalTimeMs(descriptor.getTotalTimeMs() + elapsed);
 					}
-					
+
 					return ret;
-					
+
 				} catch (Throwable e) {
 
 					if (descriptor != null) {
@@ -1633,26 +1638,30 @@ public enum Resources implements IResourceService {
 	public Collection<ResourceAdapterReference> describeResourceAdapters() {
 		List<ResourceAdapterReference> ret = new ArrayList<>();
 		for (String adapter : resourceAdapters.keySet()) {
-			ResourceAdapterReference ref = new ResourceAdapterReference();
-			ref.setName(adapter);
-			IPrototype configuration = resourceAdapters.get(adapter).getResourceConfiguration();
-			ref.setLabel(configuration.getLabel());
-			ref.setDescription(configuration.getDescription());
-			ref.setParameters(Extensions.INSTANCE.describePrototype(configuration));
-			ref.setFileBased(resourceAdapters.get(adapter) instanceof IFileResourceAdapter);
-			ref.getExportCapabilities().putAll(Resources.INSTANCE.getResourceAdapter(adapter).getImporter()
-					.getExportCapabilities((IResource) null));
-			ref.setMultipleResources(resourceAdapters.get(adapter).getImporter().acceptsMultiple());
+			
+			IResourceAdapter ad = getResourceAdapter(adapter);
+			
+			for (IPrototype configuration : ad.getResourceConfiguration()) {
+				ResourceAdapterReference ref = new ResourceAdapterReference();
+				ref.setName(configuration.getName());
+				ref.setLabel(configuration.getLabel());
+				ref.setDescription(configuration.getDescription());
+				ref.setParameters(Extensions.INSTANCE.describePrototype(configuration));
+				ref.setFileBased(ad instanceof IFileResourceAdapter);
+				ref.getExportCapabilities().putAll(ad.getImporter()
+						.getExportCapabilities((IResource) null));
+				ref.setMultipleResources(ad.getImporter().acceptsMultiple());
 
-			for (Operation operation : resourceAdapters.get(adapter).getValidator().getAllowedOperations(null)) {
-				OperationReference op = new OperationReference();
-				op.setDescription(operation.getDescription());
-				op.setName(operation.getName());
-				op.setRequiresConfirmation(operation.isShouldConfirm());
-				ref.getOperations().add(op);
+				for (Operation operation : ad.getValidator().getAllowedOperations(null)) {
+					OperationReference op = new OperationReference();
+					op.setDescription(operation.getDescription());
+					op.setName(operation.getName());
+					op.setRequiresConfirmation(operation.isShouldConfirm());
+					ref.getOperations().add(op);
+				}
+
+				ret.add(ref);
 			}
-
-			ret.add(ref);
 		}
 		for (String adapter : urnAdapters.keySet()) {
 			ResourceAdapterReference ref = new ResourceAdapterReference();
