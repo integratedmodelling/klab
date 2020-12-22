@@ -57,4 +57,11 @@ public class UserProfileController {
 		return new ResponseEntity<>(profile,HttpStatus.ACCEPTED);
 	}
 	
+	@GetMapping(value= API.HUB.USER_BASE_ID, params = "remote-login")
+	@PreAuthorize("authentication.getPrincipal() == #id")
+	public ResponseEntity<?> getFullUserProfile(@PathVariable String id) {
+		ProfileResource profile = userService.getRawUserProfile(id);
+		return new ResponseEntity<>(profile,HttpStatus.ACCEPTED);
+	}
+	
 }

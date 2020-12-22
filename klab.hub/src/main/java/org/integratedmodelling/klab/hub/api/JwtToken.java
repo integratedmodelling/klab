@@ -19,6 +19,7 @@ public class JwtToken {
 	private static final String JWT_CLAIM_KEY_PERMISSIONS = "perms";
 	private static final String ENGINE_AUDIENCE = "engine";
 	private static final int EXPIRATION_DAYS = 10;
+	private static final String JWT_CLAIM_KEY_ROLES = "roles";
 	
 
 	public String createEngineJwtToken(ProfileResource profile) {
@@ -36,6 +37,8 @@ public class JwtToken {
 		for (Role role : profile.getRoles()) {
 			roleStrings.add(role.toString());
 		}
+		
+		claims.setStringListClaim(JWT_CLAIM_KEY_ROLES, roleStrings);
 		
 		for(Group group: profile.getGroupsList()) {
 			roleStrings.add(group.getId());
