@@ -11,6 +11,8 @@ import org.integratedmodelling.klab.api.data.general.ITable.Structure;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.tables.TableInterpreter;
 import org.integratedmodelling.tables.TablesComponent;
@@ -46,7 +48,6 @@ import it.bancaditalia.oss.sdmx.exceptions.SdmxException;
  * space.join=im.geo:admin:boundaries.global:country#iso2&map=iso2(GEO)
  */
 public class SDMXInterpreter extends TableInterpreter {
-
 
 	@Override
 	public Type getType(IResource resource, IGeometry geometry) {
@@ -107,35 +108,47 @@ public class SDMXInterpreter extends TableInterpreter {
 	public void buildResource(IParameters<String> userData, IResource.Builder builder, IMonitor monitor) {
 
 		try {
-			List<Dimension> dimensions = SdmxClientHandler.getDimensions(userData.get("provider", String.class),
-					userData.get("dataflow", String.class));
+			
+			String provider = userData.get("provider", String.class);
+			String dataflow = userData.get("dataflow", String.class);
+			
+			List<Dimension> dimensions = SdmxClientHandler.getDimensions(provider, dataflow);
+
+			GeometryBuilder geometryBuilder = Geometry.builder();
 
 			if (dimensions != null && !dimensions.isEmpty()) {
-
+				
+				SDMXQuery query = null;
+				if (userData.containsKey("query")) {
+					query = new SDMXQuery(userData.get("query", String.class), dimensions);
+				}
+				
 				builder.withParameter("provider", userData.get("provider", String.class)).withParameter("dataflow",
 						userData.get("dataflow", String.class));
 				
 				for (Dimension dimension : dimensions) {
-					CodelistDescriptor descriptor = TablesComponent.getCodelistDescriptor(dimension.getCodeList().getFullIdentifier());
+					CodelistDescriptor descriptor = TablesComponent
+							.getCodelistDescriptor(dimension.getCodeList().getFullIdentifier());
 					if (descriptor == null) {
 						// attribute
 					} else {
+						// rebuild the codelist descriptor INSIDE the resource so it can be seen and
+						// edited if needed (will need actions on update)
+						String queryValue = query == null ? null : query.get(dimension.getName());
 						// may be contextual or categorical
-						// TODO build the codelist descriptor INSIDE the resource so it can be seen and edited
+						descriptor.setGeometry(geometryBuilder, queryValue);
+						// TODO recover queried value for dimension, if any is passed in "query" parameter
 						Map<String, String> localizedCodes = descriptor.localizeCodes(dimension.getName());
 						for (String key : localizedCodes.keySet()) {
-							
+							builder.withParameter(key, localizedCodes.get(key));
 						}
 					}
 				}
-				
-				
+
+				builder.withGeometry(geometryBuilder.build());
+
 			} else {
 				builder.addError("Dataflow is unknown or has no recognizable dimensions");
-			}
-
-			for (Dimension dimension : dimensions) {
-				
 			}
 
 		} catch (SdmxException e) {

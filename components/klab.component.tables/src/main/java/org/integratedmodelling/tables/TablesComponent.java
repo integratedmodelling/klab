@@ -5,11 +5,16 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.function.Function;
 
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.extensions.Component;
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.tables.adapter.cdm.CDMAdapter;
 import org.integratedmodelling.tables.adapter.cdm.CDMInterpreter;
@@ -59,24 +64,79 @@ public class TablesComponent {
 	 * attribute to the values of a dimension that adopts the codelist a specific
 	 * role in contextualization.
 	 * 
+	 * Codelist may bridge to:
+	 * <ul>
+	 * <li>T domain, S domain, (dimensionType != null);</li>
+	 * <li>worldview-bound classification (conceptSpace != null);</li>
+	 * <li>authority identifiers (authority != null);</li>
+	 * </ul>
+	 * 
+	 * In all situations, a transformation may be encoded to turn the value into
+	 * whatever is needed to match the code.
+	 * 
 	 * @author Ferd
 	 *
 	 */
 	public static class CodelistDescriptor {
 
 		private Properties properties;
+		private Map<String, String> fields = new HashMap<>();
+		private IAuthority authority = null;
+		private IConcept conceptSpace;
+		private Function<String, String> transformation = null;
 
 		public CodelistDescriptor(Properties props) {
 			this.properties = props;
+			parseDimension(props.getProperty("codelist.domain"));
+		}
+
+		private void parseDimension(String property) {
+			if (property != null) {
+				String[] pp = property.split(";");
+				switch (pp[0]) {
+				case "TIME":
+					this.dimensionType = Dimension.Type.TIME;
+					break;
+				case "SPACE":
+					this.dimensionType = Dimension.Type.SPACE;
+					break;
+				case "NUMEROSITY":
+					this.dimensionType = Dimension.Type.NUMEROSITY;
+					break;
+				}
+				for (int i = 1; i < pp.length; i++) {
+					if (pp[i].contains("=")) {
+						String[] ss = pp[i].split("=");
+						this.fields.put(ss[0], ss[1]);
+					} else {
+						this.fields.put(pp[i], "TRUE");
+					}
+				}
+			}
 		}
 
 		// if not null, the dimension with this codelist defines a property of the
 		// context
-		org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type dimensionType;
+		IGeometry.Dimension.Type dimensionType;
+
+		public void setGeometry(GeometryBuilder builder, String queriedValue) {
+			switch (this.dimensionType) {
+			case NUMEROSITY:
+				break;
+			case SPACE:
+				break;
+			case TIME:
+				break;
+			}
+		}
 
 		// if not null, the codelist descriptor maps to semantics within the worldview
 		// we represent
 		IConcept concept;
+
+		public IGeometry.Dimension.Type getExtent() {
+			return dimensionType;
+		}
 
 		public Map<String, String> localizeCodes(String name) {
 			Map<String, String> ret = new HashMap<>();
