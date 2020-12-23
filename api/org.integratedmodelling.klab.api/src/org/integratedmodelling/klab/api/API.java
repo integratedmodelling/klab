@@ -534,6 +534,13 @@ public interface API {
 		}
 
 	}
+	
+	public interface STATS {
+		public static final String API_BASE = "/api/v2";
+		
+		public static final String STATS_BASE = API_BASE + "/stats";
+		
+	}
 
 	/**
 	 * Retrieve the public key for this node

@@ -2,12 +2,17 @@ package klab.stats;
 
 import static org.junit.Assert.assertEquals;
 
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.rest.SessionReference;
+import org.integratedmodelling.klab.rest.StatsInstertResponse;
 import org.integratedmodelling.klab.stats.Application;
+import org.integratedmodelling.klab.stats.api.models.StatsInsertRequest;
 import org.integratedmodelling.klab.stats.services.HelloService;
+import org.integratedmodelling.klab.stats.services.MongoStatServiceImpl;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.mongodb.client.FindIterable;
@@ -18,7 +23,12 @@ import com.mongodb.client.result.InsertOneResult;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
+import org.springframework.boot.web.server.LocalServerPort;
+import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
+import org.springframework.http.ResponseEntity;
 
+@ContextConfiguration
 @ExtendWith(SpringExtension.class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT, classes = Application.class)
 public class MongoTestIntegrationTest {
@@ -29,8 +39,16 @@ public class MongoTestIntegrationTest {
     HelloService helloService;
     
     @Autowired
+    MongoStatServiceImpl service;
+    
+    @Autowired
     MongoClient mongo;
     
+    @Autowired
+    TestRestTemplate restTemplate;
+    
+    @LocalServerPort
+    protected int port;
 
     
     @DisplayName("Test You are Sane")
@@ -38,38 +56,11 @@ public class MongoTestIntegrationTest {
     public void testGet() {
         assertEquals("Hello JUnit 5", helloService.get());
     }
-
-
-    
-//    @DisplayName("given object to save"
-//            + " when save object using MongoDB template"
-//            + " then object is saved")
-//    @Test
-//    public void test() throws InstantiationException, IllegalAccessException {
-//    	KlabRestEntity objectToSave = new KlabRestEntity(new SessionReference());
-//    	objectToSave.setModel(new SessionReference());
-//        // when
-//        mongoTemplate.save(objectToSave, objectToSave.getMyType());
-//        KlabRestEntity objectToSave2 = new KlabRestEntity(new SessionActivity());
-//        mongoTemplate.save(objectToSave2, objectToSave.getMyType());
-//        
-//        // then
-//        Query query = new Query();
-//        List<KlabRestEntity> test = mongoTemplate.find(query, KlabRestEntity.class, SessionReference.class.getSimpleName());
-//
-//        Query query2= new Query(Criteria.where("model._class").is(SessionReference.class.getName()));
-//        test = mongoTemplate.find(query2, KlabRestEntity.class, SessionReference.class.getSimpleName());
-//        Object x = test.get(0).getModel();
-//        if(x instanceof SessionReference) {
-//        	SessionReference y = (SessionReference) x;
-//        	y.getAppUrns();
-//        }
-//        
-//    }
     
     
+    @DisplayName("Test That mongo codecs are correct")
     @Test
-    public void test1() throws InstantiationException, IllegalAccessException {
+    public void test_1() throws InstantiationException, IllegalAccessException {
     	MongoDatabase db = mongo.getDatabase("stats");
     	MongoCollection<SessionReference> sessions = db.getCollection("sessions", SessionReference.class);
     	
@@ -81,6 +72,30 @@ public class MongoTestIntegrationTest {
     		System.out.println(action.getId());
     	});
     	
+    }
+    
+    
+    @DisplayName("Test generic insert request")
+    @Test
+    public void test_2() throws InstantiationException, IllegalAccessException {
+    	SessionReference ref = new SessionReference();
+    	ref.setId("hereissomeid");
+    	StatsInsertRequest<SessionReference> request = new StatsInsertRequest<>(SessionReference.class);
+    	request.setModel(ref);
+    	StatsInstertResponse<?> response = service.insertRequest(request);
+    	assertEquals(request.getType(), response.getMyType());
+    }
+    
+    
+    @DisplayName("Test generic insert via post")
+    @Test
+    public void test_3() {
+    	SessionReference ref = new SessionReference();
+    	ref.setId("hereissomeid2");
+    	StatsInsertRequest<SessionReference> request = new StatsInsertRequest<>(SessionReference.class);
+    	request.setModel(ref);
+    	ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:" + port + API.STATS.STATS_BASE, request, String.class);
+    	response.toString();
     }
     
     
