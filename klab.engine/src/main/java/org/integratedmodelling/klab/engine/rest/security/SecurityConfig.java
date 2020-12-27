@@ -1,7 +1,12 @@
 package org.integratedmodelling.klab.engine.rest.security;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -14,7 +19,9 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetailsByNameServiceWrapper;
+import org.springframework.security.web.AuthenticationEntryPoint;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationProvider;
 import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.security.web.authentication.preauth.RequestHeaderAuthenticationFilter;
@@ -46,7 +53,17 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
       .and()
       .logout().permitAll() 
       .and()
-      .csrf().disable();
+      .csrf().disable()
+      .exceptionHandling().authenticationEntryPoint(new AuthenticationEntryPoint() {
+
+		@Override
+		public void commence(HttpServletRequest request, HttpServletResponse response,
+				AuthenticationException authException) throws IOException, ServletException {
+			// Pre-authenticated entry point called. Rejecting access
+	        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+		}
+    	  
+      });
   }
 
 	@Bean

@@ -34,7 +34,7 @@ public class Network implements ICommand {
 				String ret = "";
 				if (network != null) {
 					for (INodeIdentity node : network.getNodes()) {
-						ret += (ret.isEmpty() ? "" : "\n") + "   " + node.getName() + " at " + node.getUrls();
+						ret += (ret.isEmpty() ? "" : "\n") + "   " + node.getName() + " at " + node.getUrls() + node.getAdapters().toString();
 					}
 				}
 				return ret;

@@ -10,7 +10,7 @@ spring:
         instanceId: "${spring.application.name}-${HOSTNAME:${PID}}"
         health-check-path: ${server.servlet.context-path}/actuator/health
         health-check-interval: 15s
-      host: ${CONSUL_SERVER:127.0.0.1}
+      host: ${CONSUL_SERVER:192.168.250.210}
       port: 8500
       config:
         prefix: config

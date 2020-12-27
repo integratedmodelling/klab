@@ -1711,4 +1711,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	public void notifyNewObservation(IObservation object, ISubject context) {
 		globalState.notifyNewObservation(object, context);
 	}
+
+	public long getLastActivity() {
+		return lastActivity;
+	}
 }

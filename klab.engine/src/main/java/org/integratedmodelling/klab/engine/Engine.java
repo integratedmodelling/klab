@@ -110,7 +110,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 	/**
 	 * Check interval for session expiration in minutes. TODO configure.
 	 */
-	private long sessionCheckMinutes = 15l;
+	protected long sessionCheckMinutes = 15L;
 	private ScheduledFuture<?> sessionClosingTask;
 
 	public static class Monitor implements IMonitor {
@@ -468,7 +468,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 	 * @return true if the boot was successful, false otherwise. Exceptions are only
 	 *         thrown in case of bad usage (called before a certificate is read).
 	 */
-	private boolean boot(IEngineStartupOptions options) {
+	protected boolean boot(IEngineStartupOptions options) {
 
 		runJvmChecks();
 
@@ -618,7 +618,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 			/*
 			 * Schedule the session reaper
 			 */
-			this.sessionClosingTask = scheduler.scheduleAtFixedRate(() -> closeExpiredSessions(), 10,
+			this.sessionClosingTask = scheduler.scheduleAtFixedRate(() -> closeExpiredSessions(), 1,
 					sessionCheckMinutes, TimeUnit.MINUTES);
 
 			/*
@@ -666,7 +666,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 	protected void closeExpiredSessions() {
 		// TODO Auto-generated method stub
-		// Logging.INSTANCE.info("checking for expired sessions...");
+		Logging.INSTANCE.info("checking for expired sessions...");
 	}
 
 	private void runJvmChecks() {
