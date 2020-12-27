@@ -15,7 +15,7 @@ import org.integratedmodelling.tables.adapter.TableAdapter;
 
 import com.google.common.collect.Sets;
 
-@ResourceAdapter(type = "xls", version = Version.CURRENT)
+@ResourceAdapter(type = "xls", version = Version.CURRENT, canCreateEmpty = false, handlesFiles = true)
 public class XLSAdapter extends TableAdapter {
 
 	public static final String ID = "xls";

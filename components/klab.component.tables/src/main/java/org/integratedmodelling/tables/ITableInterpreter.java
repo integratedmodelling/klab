@@ -1,5 +1,6 @@
 package org.integratedmodelling.tables;
 
+import java.net.URL;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -27,4 +28,6 @@ public interface ITableInterpreter {
 			IContextualizationScope context);
 
 	void buildResource(IParameters<String> userData, IResource.Builder ret, IMonitor monitor);
+
+	boolean canHandle(URL resource, IParameters<String> parameters);
 }

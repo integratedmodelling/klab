@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.tables.adapter.TableAdapter;
 
-@ResourceAdapter(type = "cdm", version = Version.CURRENT)
+@ResourceAdapter(type = "cdm", version = Version.CURRENT, canCreateEmpty = true, handlesFiles = true)
 public class CDMAdapter extends TableAdapter {
 
 	public static final String ID = "cdm";

@@ -12,7 +12,10 @@ import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.tables.adapter.TableAdapter;
 
-@ResourceAdapter(type = "jdbc", version = Version.CURRENT)
+/**
+ * Only file type handled is Access through SQL
+ */
+@ResourceAdapter(type = "jdbc", version = Version.CURRENT, canCreateEmpty = true, handlesFiles = true)
 public class JDBCAdapter extends TableAdapter {
 
 	public static final String ID = "jdbc";

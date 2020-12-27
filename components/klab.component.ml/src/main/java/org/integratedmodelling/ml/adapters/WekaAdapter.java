@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
-import org.integratedmodelling.klab.api.data.adapters.IFileResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
@@ -34,8 +34,8 @@ import org.integratedmodelling.klab.kim.Prototype;
 
 import com.google.common.collect.Sets;
 
-@ResourceAdapter(type = "weka", version = Version.CURRENT)
-public class WekaAdapter implements IFileResourceAdapter {
+@ResourceAdapter(type = "weka", version = Version.CURRENT, canCreateEmpty = false, handlesFiles = false)
+public class WekaAdapter implements IResourceAdapter {
 
 	/**
 	 * All recognized primary file extensions.

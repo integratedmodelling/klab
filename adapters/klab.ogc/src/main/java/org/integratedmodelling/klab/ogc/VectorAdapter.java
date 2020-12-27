@@ -25,7 +25,7 @@ import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
-import org.integratedmodelling.klab.api.data.adapters.IFileResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
@@ -44,8 +44,8 @@ import com.google.common.collect.Sets;
  * The Class VectorAdapter.
  */
 @ResourceAdapter(type = VectorAdapter.ID, version = Version.CURRENT, requires = { "fileUrl" }, optional = { "computeUnion",
-		"computeHull", "filter", "nameAttribute", "sanitize" })
-public class VectorAdapter implements IFileResourceAdapter {
+		"computeHull", "filter", "nameAttribute", "sanitize" }, canCreateEmpty = false, handlesFiles = true)
+public class VectorAdapter implements IResourceAdapter {
 
 	public static final String ID = "vector";
 	

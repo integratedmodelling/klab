@@ -39,7 +39,7 @@ import org.integratedmodelling.klab.ogc.integration.Postgis;
  * @author Ferd
  *
  */
-@ResourceAdapter(type = FSCANAdapter.ID, version = Version.CURRENT)
+@ResourceAdapter(type = FSCANAdapter.ID, version = Version.CURRENT, canCreateEmpty = true, handlesFiles = false)
 public class FSCANAdapter implements IResourceAdapter {
 
 	public static final String ID = "fscan";

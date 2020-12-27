@@ -32,7 +32,6 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
-import org.integratedmodelling.klab.api.data.adapters.IFileResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
@@ -136,6 +135,13 @@ public enum Resources implements IResourceService {
 		long timestamp;
 		boolean online;
 	}
+	
+	class ResourceAdapterData {
+		IResourceAdapter adapter;
+		boolean canCreateEmpty;
+		boolean canDropFiles;
+		IPrototype prototype;
+	}
 
 	private Map<String, ResourceData> statusCache = Collections.synchronizedMap(new HashMap<>());
 	private IKimLoader loader = null;
@@ -146,7 +152,7 @@ public enum Resources implements IResourceService {
 	 */
 	private long RETRY_INTERVAL_MINUTES = 15;
 
-	Map<String, IResourceAdapter> resourceAdapters = Collections.synchronizedMap(new HashMap<>());
+	Map<String, ResourceAdapterData> resourceAdapters = Collections.synchronizedMap(new HashMap<>());
 	Map<String, IUrnAdapter> urnAdapters = Collections.synchronizedMap(new HashMap<>());
 
 	/**
@@ -239,7 +245,11 @@ public enum Resources implements IResourceService {
 	}
 
 	public Collection<IResourceAdapter> getResourceAdapters() {
-		return resourceAdapters.values();
+		List<IResourceAdapter> ret = new ArrayList<>();
+		for (ResourceAdapterData rd : resourceAdapters.values()) {
+			ret.add(rd.adapter);
+		}
+		return ret;
 	}
 
 	/*
@@ -403,7 +413,7 @@ public enum Resources implements IResourceService {
 	}
 
 	public IResourceAdapter getResourceAdapter(String id) {
-		return resourceAdapters.get(id);
+		return resourceAdapters.get(id).adapter;
 	}
 
 	public IUrnAdapter getUrnAdapter(String id) {
@@ -412,9 +422,9 @@ public enum Resources implements IResourceService {
 
 	public List<IResourceAdapter> getResourceAdapter(File resource, IParameters<String> parameters) {
 		List<IResourceAdapter> ret = new ArrayList<>();
-		for (IResourceAdapter adapter : resourceAdapters.values()) {
-			if (adapter.getValidator().canHandle(resource, parameters)) {
-				ret.add(adapter);
+		for (ResourceAdapterData adapter : resourceAdapters.values()) {
+			if (adapter.canDropFiles && adapter.adapter.getValidator().canHandle(resource, parameters)) {
+				ret.add(adapter.adapter);
 			}
 		}
 		return ret;
@@ -678,7 +688,7 @@ public enum Resources implements IResourceService {
 					adapterType = adapter.getName();
 				}
 			} else {
-				adapter = resourceAdapters.get(adapterType);
+				adapter = resourceAdapters.get(adapterType).adapter;
 			}
 
 			if (adapter != null) {
@@ -734,12 +744,12 @@ public enum Resources implements IResourceService {
 
 		/*
 		 * Resources with errors and files go in the catalog and become bright red
-		 * eyesores in k.IM
+		 * eyesores in the k.IM editor
 		 * 
 		 * FIXME these should only be errors that the user can do something about. Must
 		 * properly encode those as KlabResourceException.
 		 */
-		if (file != null || !resource.hasErrors()) {
+		if (/* file != null || */!resource.hasErrors()) {
 			localResourceCatalog.put(urn, resource);
 		}
 
@@ -781,10 +791,10 @@ public enum Resources implements IResourceService {
 		if (regex != null && !regex.equals("")) {
 			parameters.put(REGEX_ENTRY, regex);
 		}
-		for (IResourceAdapter adapter : resourceAdapters.values()) {
-			if ((adapterType == null || adapter.getName().equals(adapterType)) && adapter.getImporter() != null
-					&& adapter.getImporter().canHandle(source.toString(), parameters)) {
-				importers.add(adapter);
+		for (ResourceAdapterData adapter : resourceAdapters.values()) {
+			if ((adapterType == null || adapter.adapter.getName().equals(adapterType)) && adapter.adapter.getImporter() != null
+					&& adapter.adapter.getImporter().canHandle(source.toString(), parameters)) {
+				importers.add(adapter.adapter);
 			}
 		}
 
@@ -1357,8 +1367,12 @@ public enum Resources implements IResourceService {
 		urnAdapters.put(type, adapter);
 	}
 
-	public void registerResourceAdapter(String type, IResourceAdapter adapter) {
-		resourceAdapters.put(type, adapter);
+	public void registerResourceAdapter(String type, IResourceAdapter adapter, boolean canDropFiles, boolean canCreateEmpty) {
+		ResourceAdapterData data = new ResourceAdapterData();
+		data.adapter = adapter;
+		data.canCreateEmpty = canCreateEmpty;
+		data.canDropFiles = canDropFiles;
+		resourceAdapters.put(type, data);
 	}
 
 	/**
@@ -1639,20 +1653,21 @@ public enum Resources implements IResourceService {
 		List<ResourceAdapterReference> ret = new ArrayList<>();
 		for (String adapter : resourceAdapters.keySet()) {
 			
-			IResourceAdapter ad = getResourceAdapter(adapter);
+			ResourceAdapterData ad = resourceAdapters.get(adapter);
 			
-			for (IPrototype configuration : ad.getResourceConfiguration()) {
+			for (IPrototype configuration : ad.adapter.getResourceConfiguration()) {
 				ResourceAdapterReference ref = new ResourceAdapterReference();
 				ref.setName(configuration.getName());
 				ref.setLabel(configuration.getLabel());
 				ref.setDescription(configuration.getDescription());
 				ref.setParameters(Extensions.INSTANCE.describePrototype(configuration));
-				ref.setFileBased(ad instanceof IFileResourceAdapter);
-				ref.getExportCapabilities().putAll(ad.getImporter()
+				ref.setCanCreateEmpty(ad.canCreateEmpty);
+				ref.setAcceptsDrops(ad.canDropFiles);
+				ref.getExportCapabilities().putAll(ad.adapter.getImporter()
 						.getExportCapabilities((IResource) null));
-				ref.setMultipleResources(ad.getImporter().acceptsMultiple());
+				ref.setMultipleResources(ad.adapter.getImporter().acceptsMultiple());
 
-				for (Operation operation : ad.getValidator().getAllowedOperations(null)) {
+				for (Operation operation : ad.adapter.getValidator().getAllowedOperations(null)) {
 					OperationReference op = new OperationReference();
 					op.setDescription(operation.getDescription());
 					op.setName(operation.getName());
@@ -1670,7 +1685,8 @@ public enum Resources implements IResourceService {
 			ref.setLabel(adapter);
 			ref.setDescription(urnAdapter.getDescription());
 			ref.setUniversal(true);
-			ref.setFileBased(false);
+			ref.setCanCreateEmpty(false);
+			ref.setAcceptsDrops(false);
 			ref.setMultipleResources(false);
 			ret.add(ref);
 		}

@@ -10,30 +10,28 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 
 public abstract class TableAdapter implements IResourceAdapter {
 
-	private String subtype;
 
 	protected TableAdapter(String subtype) {
-		this.subtype = subtype;
 	}
 	
 	@Override
 	public IResourceValidator getValidator() {
-		return new TableValidator(subtype);
+		return new TableValidator();
 	}
 
 	@Override
 	public IResourcePublisher getPublisher() {
-		return new TablePublisher(subtype);
+		return new TablePublisher();
 	}
 
 	@Override
 	public IResourceEncoder getEncoder() {
-		return new TableEncoder(subtype);
+		return new TableEncoder();
 	}
 
 	@Override
 	public IResourceImporter getImporter() {
-		return new TableImporter(subtype);
+		return new TableImporter();
 	}
 
 	@Override

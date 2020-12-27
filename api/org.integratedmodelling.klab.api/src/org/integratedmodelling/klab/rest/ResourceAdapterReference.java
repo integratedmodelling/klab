@@ -42,12 +42,16 @@ public class ResourceAdapterReference {
 	private String description;
 	private String label;
 	private ServicePrototype parameters;
-	private boolean fileBased;
 	private boolean universal;
 	private Map<String, String> exportCapabilities = new HashMap<>();
 	private boolean multipleResources;
 	private List<OperationReference> operations = new ArrayList<>();
-
+	private boolean acceptsDrops;
+	private boolean canCreateEmpty;
+	
+	@Deprecated // unused - REMOVE when all nodes and engines are updated
+	private boolean fileBased;
+	
 	public ServicePrototype getParameters() {
 		return parameters;
 	}
@@ -80,14 +84,6 @@ public class ResourceAdapterReference {
 		this.label = label;
 	}
 
-	public boolean isFileBased() {
-		return fileBased;
-	}
-
-	public void setFileBased(boolean fileBased) {
-		this.fileBased = fileBased;
-	}
-
 	public Map<String, String> getExportCapabilities() {
 		return exportCapabilities;
 	}
@@ -118,5 +114,29 @@ public class ResourceAdapterReference {
 
 	public void setOperations(List<OperationReference> operations) {
 		this.operations = operations;
+	}
+
+	public boolean isAcceptsDrops() {
+		return acceptsDrops;
+	}
+
+	public void setAcceptsDrops(boolean acceptsDrops) {
+		this.acceptsDrops = acceptsDrops;
+	}
+
+	public boolean isCanCreateEmpty() {
+		return canCreateEmpty;
+	}
+
+	public void setCanCreateEmpty(boolean canCreateEmpty) {
+		this.canCreateEmpty = canCreateEmpty;
+	}
+
+	public boolean isFileBased() {
+		return fileBased;
+	}
+
+	public void setFileBased(boolean fileBased) {
+		this.fileBased = fileBased;
 	}
 }

@@ -16,7 +16,8 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.kim.Prototype;
 
-@ResourceAdapter(type = "cdm", version = Version.CURRENT)
+@Deprecated
+@ResourceAdapter(type = "cdm", version = Version.CURRENT, canCreateEmpty = true, handlesFiles = true)
 public class CDMAdapter implements IResourceAdapter {
 
 	@Override

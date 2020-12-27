@@ -44,7 +44,7 @@ import org.integratedmodelling.klab.raster.wcs.WcsValidator;
  * The Class WcsAdapter.
  */
 @ResourceAdapter(type = "wcs", version = Version.CURRENT, requires = { "serviceUrl", "wcsVersion", "wcsIdentifier" }, optional = {
-		"namespace" })
+		"namespace" }, canCreateEmpty = true, handlesFiles = false)
 public class WcsAdapter implements IResourceAdapter {
 
 	public static final String ID = "wcs";

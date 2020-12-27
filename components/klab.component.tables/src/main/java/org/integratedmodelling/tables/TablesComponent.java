@@ -59,12 +59,16 @@ public class TablesComponent {
 
 	public static final String ID = "org.integratedmodelling.table";
 
+	public static final String[] adapters = { CDMAdapter.ID, JDBCAdapter.ID, RDFAdapter.ID, SDMXAdapter.ID,
+			XLSAdapter.ID };
+
 	/**
-	 * Codelist descriptors built from resources (and potentially plug-ins) that
+	 * Encoding descriptors built from resources (and potentially plug-ins) that
 	 * attribute to the values of a dimension that adopts the codelist a specific
-	 * role in contextualization.
+	 * role in contextualization. Encodings may be tied to worldviews.
 	 * 
-	 * Codelist may bridge to:
+	 * Encodings may bridge to context dimensions or help decode content. The key
+	 * fields are:
 	 * <ul>
 	 * <li>T domain, S domain, (dimensionType != null);</li>
 	 * <li>worldview-bound classification (conceptSpace != null);</li>
@@ -77,17 +81,18 @@ public class TablesComponent {
 	 * @author Ferd
 	 *
 	 */
-	public static class CodelistDescriptor {
+	public static class Encoding {
 
 		private Properties properties;
 		private Map<String, String> fields = new HashMap<>();
 		private IAuthority authority = null;
 		private IConcept conceptSpace;
 		private Function<String, String> transformation = null;
+		private String worldview = null;
 
-		public CodelistDescriptor(Properties props) {
+		public Encoding(Properties props) {
 			this.properties = props;
-			parseDimension(props.getProperty("codelist.domain"));
+			parseDimension(props.getProperty("dimension.domain"));
 		}
 
 		private void parseDimension(String property) {
@@ -138,11 +143,11 @@ public class TablesComponent {
 			return dimensionType;
 		}
 
-		public Map<String, String> localizeCodes(String name) {
+		public Map<String, String> localizeEncoding(String name) {
 			Map<String, String> ret = new HashMap<>();
-			ret.put("codelist." + name + ".value", ".");
+			ret.put("dimension." + name + ".value", ".");
 			for (Object property : properties.keySet()) {
-				if (!"codelist.name".equals(property)) {
+				if (!"dimension.name".equals(property)) {
 					String rn = Path.getRemainder(property.toString(), ".");
 					ret.put(Path.getFirst(property.toString(), ".") + "." + name + "." + rn,
 							properties.getProperty(property.toString()));
@@ -151,21 +156,25 @@ public class TablesComponent {
 			return ret;
 		}
 
+		public boolean isDimension() {
+			return dimensionType != null;
+		}
+
 	}
 
-	static Map<String, CodelistDescriptor> codelistDescriptors = null;
+	static Map<String, Encoding> encodingDescriptors = null;
 
 	public TablesComponent() {
-		if (codelistDescriptors == null) {
-			codelistDescriptors = Collections.synchronizedMap(new HashMap<>());
+		if (encodingDescriptors == null) {
+			encodingDescriptors = Collections.synchronizedMap(new HashMap<>());
 			ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
 			try {
 				for (Resource res : patternResolver.getResources("components/" + ID + "/codes/*.properties")) {
 					try (InputStream input = res.getInputStream()) {
 						Properties props = new Properties();
 						props.load(input);
-						if (props.containsKey("codelist.name")) {
-							codelistDescriptors.put(props.getProperty("codelist.name"), new CodelistDescriptor(props));
+						if (props.containsKey("dimension.name")) {
+							encodingDescriptors.put(props.getProperty("dimension.name"), new Encoding(props));
 						}
 					}
 				}
@@ -175,8 +184,8 @@ public class TablesComponent {
 		}
 	}
 
-	public static CodelistDescriptor getCodelistDescriptor(String name) {
-		return codelistDescriptors.get(name);
+	public static Encoding getEncoding(String name) {
+		return encodingDescriptors.get(name);
 	}
 
 	public static ITableInterpreter getTableInterpreter(String type) {

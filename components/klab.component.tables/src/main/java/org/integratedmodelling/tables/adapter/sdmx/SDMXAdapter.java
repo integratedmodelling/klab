@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.tables.adapter.TableAdapter;
 
-@ResourceAdapter(type = "sdmx", version = Version.CURRENT)
+@ResourceAdapter(type = "sdmx", version = Version.CURRENT, canCreateEmpty = true, handlesFiles = false)
 public class SDMXAdapter extends TableAdapter {
 
 	public static final String ID = "sdmx";

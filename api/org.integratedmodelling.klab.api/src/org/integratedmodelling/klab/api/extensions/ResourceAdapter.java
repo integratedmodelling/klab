@@ -22,6 +22,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 
 /**
  * Used on a {@link IResourceAdapter resource adapter class} to declare a new
@@ -79,5 +80,24 @@ public @interface ResourceAdapter {
 	 * @deprecated superseded by KDL declaration of contract
 	 */
 	String[] optional() default {};
+
+	/**
+	 * If this is true, the adapter is a candidate to handle a dropped file in the
+	 * modeler. The final use of the adapter will depend on the result of calling
+	 * {@link IResourceValidator#canHandle(java.io.File, org.integratedmodelling.kim.api.IParameters)}
+	 * on the validator.
+	 * 
+	 * @return
+	 */
+	boolean handlesFiles();
+
+	/**
+	 * If this is true, a resource of the handled type can be created from scratch
+	 * by filling in a form. Otherwise it won't appear in the "New resource" adapter
+	 * list.
+	 * 
+	 * @return
+	 */
+	boolean canCreateEmpty();
 
 }

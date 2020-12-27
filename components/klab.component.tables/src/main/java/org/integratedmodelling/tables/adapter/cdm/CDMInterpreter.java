@@ -1,5 +1,6 @@
 package org.integratedmodelling.tables.adapter.cdm;
 
+import java.net.URL;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -39,6 +40,12 @@ public class CDMInterpreter extends TableInterpreter {
 			IMonitor monitor) {
 		// TODO Auto-generated method stub
 		
+	}
+
+	@Override
+	public boolean canHandle(URL resource, IParameters<String> parameters) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 

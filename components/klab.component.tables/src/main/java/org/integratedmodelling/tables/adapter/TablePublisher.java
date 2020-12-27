@@ -8,7 +8,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class TablePublisher implements IResourcePublisher {
 
-    public TablePublisher(String subtype) {
+    public TablePublisher() {
 		// TODO Auto-generated constructor stub
 	}
 

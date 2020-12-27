@@ -173,7 +173,7 @@ public class Resource implements IResource {
 		ResourceReference ret = new ResourceReference();
 
 		ret.setUrn(this.urn);
-		ret.setVersion(this.version.toString());
+		ret.setVersion(this.version == null ? null : this.version.toString());
 		ret.setGeometry(this.getGeometry() == null ? null : this.getGeometry().encode());
 		ret.setAdapterType(this.getAdapterType());
 		ret.setLocalPath(this.localPath);

@@ -19,7 +19,7 @@ import org.integratedmodelling.klab.utils.Triple;
 
 public class TableImporter implements IResourceImporter {
 
-    public TableImporter(String subtype) {
+    public TableImporter() {
 		// TODO Auto-generated constructor stub
 	}
 

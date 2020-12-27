@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 public class TableEncoder implements IResourceEncoder {
 
-    public TableEncoder(String subtype) {
+    public TableEncoder() {
 		// TODO Auto-generated constructor stub
 	}
 

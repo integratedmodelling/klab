@@ -1,5 +1,6 @@
 package org.integratedmodelling.tables.adapter.sdmx;
 
+import java.net.URL;
 import java.util.List;
 import java.util.Map;
 
@@ -16,7 +17,7 @@ import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.tables.TableInterpreter;
 import org.integratedmodelling.tables.TablesComponent;
-import org.integratedmodelling.tables.TablesComponent.CodelistDescriptor;
+import org.integratedmodelling.tables.TablesComponent.Encoding;
 
 import it.bancaditalia.oss.sdmx.api.Dimension;
 import it.bancaditalia.oss.sdmx.api.PortableTimeSeries;
@@ -108,37 +109,54 @@ public class SDMXInterpreter extends TableInterpreter {
 	public void buildResource(IParameters<String> userData, IResource.Builder builder, IMonitor monitor) {
 
 		try {
-			
+
 			String provider = userData.get("provider", String.class);
 			String dataflow = userData.get("dataflow", String.class);
-			
+
 			List<Dimension> dimensions = SdmxClientHandler.getDimensions(provider, dataflow);
 
 			GeometryBuilder geometryBuilder = Geometry.builder();
 
 			if (dimensions != null && !dimensions.isEmpty()) {
-				
+
 				SDMXQuery query = null;
 				if (userData.containsKey("query")) {
 					query = new SDMXQuery(userData.get("query", String.class), dimensions);
 				}
-				
+
 				builder.withParameter("provider", userData.get("provider", String.class)).withParameter("dataflow",
 						userData.get("dataflow", String.class));
-				
+
+				int dataDims = 0;
+
 				for (Dimension dimension : dimensions) {
-					CodelistDescriptor descriptor = TablesComponent
-							.getCodelistDescriptor(dimension.getCodeList().getFullIdentifier());
-					if (descriptor == null) {
-						// attribute
+					Encoding descriptor = TablesComponent.getEncoding(dimension.getCodeList().getFullIdentifier());
+					if (descriptor == null || !descriptor.isDimension()) {
+						// attribute dimension; can't have more than 2
+						dataDims++;
+						if (dataDims > 2) {
+							boolean locked = dimension.getCodeList().size() == 1;
+							if (!locked && query != null && query.containsKey(dimension.getName())) {
+								locked = query.getDimensionSize(dimension.getName()) == 1;
+							}
+							if (!locked) {
+								builder.addError(
+										"More than 2 non-contextual dimensions with multiple values: please restrict dimensionality using a query");
+								break;
+							}
+							
+							
+							
+						}
 					} else {
 						// rebuild the codelist descriptor INSIDE the resource so it can be seen and
 						// edited if needed (will need actions on update)
 						String queryValue = query == null ? null : query.get(dimension.getName());
 						// may be contextual or categorical
 						descriptor.setGeometry(geometryBuilder, queryValue);
-						// TODO recover queried value for dimension, if any is passed in "query" parameter
-						Map<String, String> localizedCodes = descriptor.localizeCodes(dimension.getName());
+						// TODO recover queried value for dimension, if any is passed in "query"
+						// parameter
+						Map<String, String> localizedCodes = descriptor.localizeEncoding(dimension.getName());
 						for (String key : localizedCodes.keySet()) {
 							builder.withParameter(key, localizedCodes.get(key));
 						}
@@ -155,6 +173,12 @@ public class SDMXInterpreter extends TableInterpreter {
 			builder.addError(e);
 		}
 
+	}
+
+	@Override
+	public boolean canHandle(URL resource, IParameters<String> parameters) {
+		// TODO Auto-generated method stub
+		return parameters.contains("dataflow") && parameters.contains("provider");
 	}
 
 }

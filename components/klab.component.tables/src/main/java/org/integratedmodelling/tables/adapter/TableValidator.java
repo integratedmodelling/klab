@@ -1,6 +1,7 @@
 package org.integratedmodelling.tables.adapter;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -15,23 +16,35 @@ import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler;
 import org.integratedmodelling.tables.TablesComponent;
+import org.integratedmodelling.tables.adapter.xls.XLSAdapter;
+import org.integratedmodelling.tables.adapter.xls.XLSInterpreter;
 
 import com.google.common.collect.Lists;
 
 public class TableValidator implements IResourceValidator {
 
-	String subType;
-	
-    public TableValidator(String subtype) {
-    	this.subType = subtype;
+	static public final String FILE_URL = "__source_url";
+
+	public TableValidator() {
 	}
 
 	@Override
     public Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
 
 		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder();
-		TablesComponent.getTableInterpreter(this.subType).buildResource(userData, ret, monitor);
+		
+		if (url != null) {
+			userData.put(FILE_URL, url);
+		}
+
+        for (String adapter : TablesComponent.adapters) {
+        	if (TablesComponent.getTableInterpreter(adapter).canHandle(url, userData)) {
+        		TablesComponent.getTableInterpreter(adapter).buildResource(userData, ret, monitor);
+        		break;
+        	}
+        }
         return ret;
     }
 
@@ -52,6 +65,17 @@ public class TableValidator implements IResourceValidator {
         if (resource == null) {
             return false;
         }
+        
+        for (String adapter : TablesComponent.adapters) {
+        	try {
+				if (TablesComponent.getTableInterpreter(adapter).canHandle(resource.toURI().toURL(), parameters)) {
+					return true;
+				}
+			} catch (MalformedURLException e) {
+				// move on
+			}
+        }
+        
         return false; // TODO TableAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(resource));
     }
 

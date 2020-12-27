@@ -5,6 +5,7 @@ import java.util.LinkedHashMap;
 import java.util.List;
 
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 import it.bancaditalia.oss.sdmx.api.Dimension;
 
@@ -51,6 +52,14 @@ public class SDMXQuery extends LinkedHashMap<String, String> {
 			this.put(dimension.getName(), parts.get(n++));
 		}
 
+	}
+
+	public int getDimensionSize(String name) {
+		String dim = this.get(name);
+		if (dim != null && !"*".equals(dim)) {
+			return StringUtil.countMatches(dim, "+") + 1;
+		}
+		return -1;
 	}
 
 }

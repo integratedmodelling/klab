@@ -276,7 +276,8 @@ public enum Extensions implements IExtensionService {
 		if (IResourceAdapter.class.isAssignableFrom(cls)) {
 			try {
 				IResourceAdapter adapter = (IResourceAdapter) cls.getDeclaredConstructor().newInstance();
-				Resources.INSTANCE.registerResourceAdapter(annotation.type(), adapter);
+				Resources.INSTANCE.registerResourceAdapter(annotation.type(), adapter, annotation.handlesFiles(),
+						annotation.canCreateEmpty());
 			} catch (InstantiationException | IllegalAccessException | IllegalArgumentException
 					| InvocationTargetException | NoSuchMethodException | SecurityException e) {
 				throw new KlabInternalErrorException(e);
@@ -315,12 +316,12 @@ public enum Extensions implements IExtensionService {
 		return ret;
 	}
 
-	public IExpression compileExpression(String expressionCode, String language, CompilerOption...compilerOptions) {
+	public IExpression compileExpression(String expressionCode, String language, CompilerOption... compilerOptions) {
 		return getLanguageProcessor(language).compile(expressionCode, null, compilerOptions);
 	}
 
 	public IExpression compileExpression(String expressionCode, IExpression.Context context, String language,
-			CompilerOption...compilerOptions) {
+			CompilerOption... compilerOptions) {
 		return getLanguageProcessor(language).compile(expressionCode, context, compilerOptions);
 	}
 
@@ -348,8 +349,8 @@ public enum Extensions implements IExtensionService {
 			}
 		} else if (condition.getExpression() != null) {
 			IExpression expression = getLanguageProcessor(DEFAULT_EXPRESSION_LANGUAGE).compile(
-					condition.getExpression().getCode(), context.getExpressionContext(), options(
-					condition.getExpression().isForcedScalar(), false));
+					condition.getExpression().getCode(), context.getExpressionContext(),
+					options(condition.getExpression().isForcedScalar(), false));
 			Object o = expression.eval(context, context);
 			if (o instanceof Boolean) {
 				return (Boolean) o;
@@ -509,7 +510,7 @@ public enum Extensions implements IExtensionService {
 		if (recontextualizeAsMaps) {
 			ret.add(CompilerOption.RecontextualizeAsMap);
 		}
-		
+
 		return ret.toArray(new CompilerOption[ret.size()]);
 	}
 
