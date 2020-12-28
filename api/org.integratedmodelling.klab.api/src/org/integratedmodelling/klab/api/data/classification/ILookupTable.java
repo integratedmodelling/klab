@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.api.data.classification;
 import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
@@ -23,7 +23,7 @@ public interface ILookupTable extends IDataKey {
 	 * 
 	 * @return a table. Never null.
 	 */
-	ITable<IClassifier> getTable();
+	IStructuredTable<IClassifier> getTable();
 
 	/**
 	 * The variables we look up. Their number corresponds to the columns in the

@@ -114,12 +114,12 @@ public class RasterValidator implements IResourceValidator {
 								+ userData.get("band", Integer.class) + " is requested");
 					}
 				}
-				
+
 				int band = userData.get("band", 0);
-				
+
 				/*
-				 * Nodata value for band. TODO make it a list, which requires moving to
-				 * top level or JSON will complain.
+				 * Nodata value for band. TODO make it a list, which requires moving to top
+				 * level or JSON will complain.
 				 */
 				SampleDimension sdim = coverage.getSampleDimension(band);
 				if (sdim.getNoDataValues() != null) {
@@ -174,16 +174,17 @@ public class RasterValidator implements IResourceValidator {
 		return FileUtils.getSidecarFiles(file, RasterAdapter.secondaryFileExtensions);
 	}
 
-    @Override
-    public List<Operation> getAllowedOperations(IResource resource) {
-        List<Operation> ret = new ArrayList<>();
-        return ret;
-    }
+	@Override
+	public List<Operation> getAllowedOperations(IResource resource) {
+		List<Operation> ret = new ArrayList<>();
+		return ret;
+	}
 
-    @Override
-    public IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog, IMonitor monitor) {
-        throw new KlabUnimplementedException("resource operations unimplemented");
-    }
+	@Override
+	public IResource performOperation(IResource resource, String operationName, IParameters<String> parameters,
+			IResourceCatalog catalog, IMonitor monitor) {
+		throw new KlabUnimplementedException("resource operations unimplemented");
+	}
 
 	@Override
 	public Map<String, Object> describeResource(IResource resource) {

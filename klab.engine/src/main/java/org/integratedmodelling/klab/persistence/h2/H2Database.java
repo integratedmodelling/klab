@@ -44,8 +44,8 @@ import org.h2gis.h2spatial.CreateSpatialExtension;
 import org.h2gis.utilities.SFSUtilities;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.api.data.general.ITable;
-import org.integratedmodelling.klab.api.data.general.ITable.Structure;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable.Structure;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
@@ -57,7 +57,7 @@ import org.integratedmodelling.klab.utils.Pair;
 /**
  * A wrapper to simplify the use of a H2 database. Can be used with formally
  * specified schemata for multiple tables (rather obsoleted in design) or with
- * newer {@link ITable} interface when the structure is simple. The kboxes use
+ * newer {@link IStructuredTable} interface when the structure is simple. The kboxes use
  * the old structure, so that will remain until we reimplement them.
  * 
  * @author Ferd

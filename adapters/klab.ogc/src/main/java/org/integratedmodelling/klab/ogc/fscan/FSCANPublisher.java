@@ -5,12 +5,14 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.utils.Parameters;
 
 public class FSCANPublisher implements IResourcePublisher {
 
 	@Override
 	public IResource publish(IResource localResource, IResourceCatalog catalog, IMonitor monitor) {
-		return new FSCANValidator().performOperation(localResource, "index", catalog, Klab.INSTANCE.getRootMonitor());
+		return new FSCANValidator().performOperation(localResource, "index", Parameters.create(), catalog,
+				Klab.INSTANCE.getRootMonitor());
 	}
 
 	@Override

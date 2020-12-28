@@ -102,10 +102,12 @@ public interface IResourceValidator {
 	 * 
 	 * @param resource
 	 * @param operationName
+	 * @param parameters
 	 * @param monitor
 	 * @return
 	 */
-	IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog, IMonitor monitor);
+	IResource performOperation(IResource resource, String operationName, IParameters<String> parameters,
+			IResourceCatalog catalog, IMonitor monitor);
 
 	/**
 	 * Check if the passed file and/or parameters can be validated by this

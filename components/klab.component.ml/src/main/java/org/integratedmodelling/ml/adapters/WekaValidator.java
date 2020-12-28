@@ -84,12 +84,13 @@ public class WekaValidator implements IResourceValidator {
 						true));
 			}
 		}
-		
+
 		return ret;
 	}
 
 	@Override
-	public IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog, IMonitor monitor) {
+	public IResource performOperation(IResource resource, String operationName, IParameters<String> parameters,
+			IResourceCatalog catalog, IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return resource;
 	}

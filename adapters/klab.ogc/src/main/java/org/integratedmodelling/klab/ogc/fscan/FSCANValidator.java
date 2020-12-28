@@ -63,8 +63,8 @@ public class FSCANValidator implements IResourceValidator {
 	}
 
 	@Override
-	public IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog,
-			IMonitor monitor) {
+	public IResource performOperation(IResource resource, String operationName, IParameters<String> parameters,
+			IResourceCatalog catalog, IMonitor monitor) {
 		switch (operationName) {
 		case "index":
 			new FSCANEncoder().indexShapes(resource, catalog);

@@ -140,6 +140,7 @@ import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -762,7 +763,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	}
 
 	@MessageHandler
-	private void handleResourceOperation(final ResourceOperationRequest request) {
+	private void handleResourceOperation(final ResourceOperationRequest request, IMessage message) {
 
 		final IResource resource = Resources.INSTANCE.resolveResource(request.getUrn());
 		if (resource == null) {
@@ -797,14 +798,15 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 					}
 				} else {
 					IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
-					res = adapter.getValidator().performOperation(resource, request.getOperation(),
+					res = adapter.getValidator().performOperation(resource, request.getOperation(), Parameters.create(request.getParameters()),
 							Resources.INSTANCE.getCatalog(resource), rmonitor);
 				}
 
 				response.setUrn(resource.getUrn());
 				response.setOperation(request.getOperation());
 				response.getNotifications().addAll(rmonitor.notifications);
-				monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceInformation, response);
+				monitor.send(Message.create(Session.this.getId(), IMessage.MessageClass.ResourceLifecycle,
+						IMessage.Type.ResourceInformation, response).inResponseTo(message));
 
 				/*
 				 * TODO if there are no errors or a non-standard operation was chosen, refresh

@@ -84,10 +84,7 @@ public class WcsValidator implements IResourceValidator {
 		}
 		IGeometry geometry = layer.getGeometry();
 
-		return new ResourceBuilder()
-				.withParameters(userData)
-				.withType(Type.NUMBER)
-				.withGeometry(geometry)
+		return new ResourceBuilder().withParameters(userData).withType(Type.NUMBER).withGeometry(geometry)
 				.withSpatialExtent(layer.getSpatialExtent());
 	}
 
@@ -101,17 +98,18 @@ public class WcsValidator implements IResourceValidator {
 	public Collection<File> getAllFilesForResource(File file) {
 		throw new IllegalStateException("the WCS adapter does not handle files");
 	}
-	
-    @Override
-    public List<Operation> getAllowedOperations(IResource resource) {
-        List<Operation> ret = new ArrayList<>();
-        return ret;
-    }
 
-    @Override
-    public IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog, IMonitor monitor) {
-        throw new KlabUnimplementedException("resource operations unimplemented");
-    }
+	@Override
+	public List<Operation> getAllowedOperations(IResource resource) {
+		List<Operation> ret = new ArrayList<>();
+		return ret;
+	}
+
+	@Override
+	public IResource performOperation(IResource resource, String operationName, IParameters<String> parameters,
+			IResourceCatalog catalog, IMonitor monitor) {
+		throw new KlabUnimplementedException("resource operations unimplemented");
+	}
 
 	@Override
 	public Map<String, Object> describeResource(IResource resource) {

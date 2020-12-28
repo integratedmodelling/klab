@@ -31,58 +31,64 @@ public class TableValidator implements IResourceValidator {
 	}
 
 	@Override
-    public Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
+	public Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
 
 		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder();
-		
+
 		if (url != null) {
 			userData.put(FILE_URL, url);
 		}
 
-        for (String adapter : TablesComponent.adapters) {
-        	if (TablesComponent.getTableInterpreter(adapter).canHandle(url, userData)) {
-        		TablesComponent.getTableInterpreter(adapter).buildResource(userData, ret, monitor);
-        		break;
-        	}
-        }
-        return ret;
-    }
+		for (String adapter : TablesComponent.adapters) {
+			if (TablesComponent.getTableInterpreter(adapter).canHandle(url, userData)) {
+				TablesComponent.getTableInterpreter(adapter).buildResource(userData, ret, monitor);
+				break;
+			}
+		}
+		return ret;
+	}
 
 	@Override
-    public List<Operation> getAllowedOperations(IResource resource) {
-        List<Operation> ret = new ArrayList<>();
-        return ret;
-    }
+	public List<Operation> getAllowedOperations(IResource resource) {
+		List<Operation> ret = new ArrayList<>();
+		return ret;
+	}
 
-    @Override
-    public IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog, IMonitor monitor) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+	@Override
+	public IResource performOperation(IResource resource, String operationName, IParameters<String> parameters,
+			IResourceCatalog catalog, IMonitor monitor) {
+		switch (operationName) {
+		case "categorize":
+			TablesComponent.getTableInterpreter(resource.getAdapterType()).categorize(resource, parameters);
+			break;
+		}
+		return null;
+	}
 
-    @Override
-    public boolean canHandle(File resource, IParameters<String> parameters) {
-        if (resource == null) {
-            return false;
-        }
-        
-        for (String adapter : TablesComponent.adapters) {
-        	try {
+	@Override
+	public boolean canHandle(File resource, IParameters<String> parameters) {
+		if (resource == null) {
+			return false;
+		}
+
+		for (String adapter : TablesComponent.adapters) {
+			try {
 				if (TablesComponent.getTableInterpreter(adapter).canHandle(resource.toURI().toURL(), parameters)) {
 					return true;
 				}
 			} catch (MalformedURLException e) {
 				// move on
 			}
-        }
-        
-        return false; // TODO TableAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(resource));
-    }
+		}
 
-    @Override
-    public Collection<File> getAllFilesForResource(File file) {
-        return Lists.newArrayList(file);
-    }
+		return false; // TODO
+						// TableAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(resource));
+	}
+
+	@Override
+	public Collection<File> getAllFilesForResource(File file) {
+		return Lists.newArrayList(file);
+	}
 
 	@Override
 	public Map<String, Object> describeResource(IResource resource) {

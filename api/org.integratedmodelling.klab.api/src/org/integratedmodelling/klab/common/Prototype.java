@@ -12,7 +12,7 @@ import java.util.logging.Level;
 
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
-import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.utils.CastUtils;
@@ -330,7 +330,7 @@ public class Prototype implements IPrototype {
 		case VALUE:
 			break;
 		case TABLE:
-			if (!(val instanceof Map || val instanceof ITable)) {
+			if (!(val instanceof Map || val instanceof IStructuredTable)) {
 				return null;
 			}
 			break;

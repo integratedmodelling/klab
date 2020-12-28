@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
-import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubjectiveState;
@@ -76,7 +76,7 @@ public class State extends Observation implements IState, IKeyHolder {
 	IDataStorage<?> storage;
 	IDataKey dataKey;
 	Map<IArtifact.Type, IStorage<?>> layers = new HashMap<>();
-	ITable<Number> table;
+	IStructuredTable<Number> table;
 
 	public static State newArchetype(Observable observable, Scale scale, IRuntimeScope context) {
 		return new State(observable, scale, context);
@@ -269,11 +269,11 @@ public class State extends Observation implements IState, IKeyHolder {
 	}
 
 	@Override
-	public ITable<Number> getTable() {
+	public IStructuredTable<Number> getTable() {
 		return table;
 	}
 
-	public void setTable(ITable<Number> table) {
+	public void setTable(IStructuredTable<Number> table) {
 		this.table = table;
 	}
 

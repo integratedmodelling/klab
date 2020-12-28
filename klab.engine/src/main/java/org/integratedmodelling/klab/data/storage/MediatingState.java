@@ -6,7 +6,7 @@ import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
-import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.data.mediation.ICurrency;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -167,7 +167,7 @@ public class MediatingState extends Observation implements IState {
 	}
 
 	@Override
-	public ITable<Number> getTable() {
+	public IStructuredTable<Number> getTable() {
 		// FIXME SHOULD MEDIATE THE DELEGATE NUMBERS
 		return delegate.getTable();
 	}

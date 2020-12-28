@@ -8,13 +8,12 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
-import org.integratedmodelling.klab.api.data.general.ITable.Structure;
+import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
-import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.tables.TableInterpreter;
 import org.integratedmodelling.tables.TablesComponent;
 import org.integratedmodelling.tables.TablesComponent.Encoding;
@@ -55,13 +54,7 @@ public class SDMXInterpreter extends TableInterpreter {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-	@Override
-	public Pair<Structure, IGeometry> analyze(IResource resource) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
+	
 	@Override
 	public void encode(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
 			IContextualizationScope context) {
@@ -179,6 +172,12 @@ public class SDMXInterpreter extends TableInterpreter {
 	public boolean canHandle(URL resource, IParameters<String> parameters) {
 		// TODO Auto-generated method stub
 		return parameters.contains("dataflow") && parameters.contains("provider");
+	}
+
+	@Override
+	public ITable<?> getTable(IResource resource, IGeometry geometry) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

@@ -30,7 +30,8 @@ public class CDMValidator implements IResourceValidator {
 	}
 
 	@Override
-	public IResource performOperation(IResource resource, String operationName, IResourceCatalog catalog,
+	public IResource performOperation(IResource resource, String operationName, IParameters<String> parameters,
+			IResourceCatalog catalog,
 			IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return null;

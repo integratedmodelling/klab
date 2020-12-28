@@ -5,15 +5,16 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
-import org.eclipse.core.filesystem.EFS;
-import org.eclipse.core.filesystem.IFileStore;
+import org.eclipse.core.resources.IFile;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -61,10 +62,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.swt.widgets.Tree;
 import org.eclipse.swt.widgets.TreeColumn;
 import org.eclipse.swt.widgets.TreeItem;
-import org.eclipse.ui.IWorkbenchPage;
-import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.ide.IDE;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
@@ -481,7 +479,7 @@ public class ResourceEditor extends ViewPart {
 		this.publishButton.setEnabled(this.isPublishable.getSelection() && !this.publishingNodes.isEmpty());
 
 		File rpath = getResourcePath(resource);
-		
+
 		if (rpath != null) {
 
 			this.categorizationsCombo.setEnabled(true);
@@ -496,6 +494,7 @@ public class ResourceEditor extends ViewPart {
 					}
 				}
 			}
+			this.categorizationsCombo.select(0);
 
 		}
 
@@ -1214,25 +1213,29 @@ public class ResourceEditor extends ViewPart {
 				}
 			}
 			WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
-					new NewCategorizationWizard(cats, (id, cat) -> openCategorization(id, cat)));
+					new NewCategorizationWizard(cats, (id, cat) -> {
+						openCategorization(id, cat);
+						categorizationsCombo.add(id);
+					}));
 			dialog.create();
 			dialog.open();
+		} else if (resource != null) {
+			openCategorization(text, null);
 		}
 	}
 
 	protected void openCategorization(String name, String category) {
-		System.out.println("XIO POCO");
+
 		if (resource != null) {
-			File rpath = getResourcePath(resource);
-			if (rpath != null) {
-				File pfile = new File(rpath + File.separator + "code_" + name + ".properties");
-				IFileStore fileStore = EFS.getLocalFileSystem().getStore(pfile.toURI());
-				IWorkbenchPage page = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage();
-				try {
-					IDE.openEditorOnFileStore(page, fileStore);
-				} catch (PartInitException e) {
-					// poh
-				}
+			if (category != null) {
+				// TODO must have it created by the engine if category != null
+				// send to engine and act as a response
+				executeOperationWait("categorize", "categorization", name, "dimension", category);
+				IFile file = Eclipse.INSTANCE.getResourceFile(resource, "code_" + name + ".properties");
+				Eclipse.INSTANCE.openFile(file, 0);
+			} else {
+				IFile file = Eclipse.INSTANCE.getResourceFile(resource, "code_" + name + ".properties");
+				Eclipse.INSTANCE.openFile(file, 0);
 			}
 		}
 	}
@@ -1264,6 +1267,43 @@ public class ResourceEditor extends ViewPart {
 				Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceOperation, request);
 			}
 		}
+	}
+
+	protected void executeOperation(String operation, String... parameters) {
+		if (resource != null && resource.getUrn() != null && selectedOperation != null) {
+			ResourceOperationRequest request = new ResourceOperationRequest();
+			request.setUrn(resource.getUrn());
+			request.setOperation(operation);
+			if (parameters != null) {
+				Map<String, String> params = new HashMap<>();
+				for (int i = 0; i < parameters.length; i++) {
+					params.put(parameters[i], parameters[++i]);
+				}
+				request.setParameters(params);
+			}
+			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceOperation, request);
+		}
+	}
+
+	protected IMessage executeOperationWait(String operation, String... parameters) {
+		if (resource != null && resource.getUrn() != null) {
+			ResourceOperationRequest request = new ResourceOperationRequest();
+			request.setUrn(resource.getUrn());
+			request.setOperation(operation);
+			if (parameters != null) {
+				Map<String, String> params = new HashMap<>();
+				for (int i = 0; i < parameters.length; i++) {
+					params.put(parameters[i], parameters[++i]);
+				}
+				request.setParameters(params);
+			}
+			try {
+				return Activator.ask(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceOperation, request)
+						.get();
+			} catch (Exception e) {
+			}
+		}
+		return null;
 	}
 
 	private void save() {

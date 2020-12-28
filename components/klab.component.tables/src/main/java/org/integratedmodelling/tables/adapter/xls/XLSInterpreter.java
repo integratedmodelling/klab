@@ -2,13 +2,13 @@ package org.integratedmodelling.tables.adapter.xls;
 
 import java.io.File;
 import java.io.FileInputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.csv.CSVFormat;
@@ -24,7 +24,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
-import org.integratedmodelling.klab.api.data.general.ITable.Structure;
+import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -33,7 +33,6 @@ import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;
-import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.URLUtils;
 import org.integratedmodelling.tables.TableInterpreter;
 import org.integratedmodelling.tables.adapter.TableValidator;
@@ -43,12 +42,6 @@ public class XLSInterpreter extends TableInterpreter {
 	@Override
 	public Type getType(IResource resource, IGeometry geometry) {
 
-		return null;
-	}
-
-	@Override
-	public Pair<Structure, IGeometry> analyze(IResource resource) {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
@@ -190,7 +183,10 @@ public class XLSInterpreter extends TableInterpreter {
 		builder.withParameter("rows.data", row);
 		builder.withParameter("columns.total", columnTypes.size());
 		builder.withParameter("columns.data", usable);
-		builder.withParameter("headers", checkHeaders);
+		builder.withParameter("headers.columns", checkHeaders);
+
+		// user can change this; if true, column 0 contains headers.
+		builder.withParameter("headers.rows", false);
 
 		// dimension is ROW, COLUMN, NONE
 		builder.withParameter("time.dimension", "NONE");
@@ -205,13 +201,13 @@ public class XLSInterpreter extends TableInterpreter {
 		builder.withParameter("space.filter", "");
 		// type can be JOIN, LATLON
 		builder.withParameter("space.type", "");
-		
+
 		builder.withGeometry(gbuilder.build());
 
 	}
 
 	private void setType(String header, String example, Map<String, Type> columnTypes) {
-	
+
 		if (columnTypes.get(header) == null) {
 			if (example != null && !example.trim().isEmpty()) {
 				Type type = getType(example);
@@ -259,4 +255,44 @@ public class XLSInterpreter extends TableInterpreter {
 		return XLSAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(resource.toString()));
 	}
 
+	@Override
+	public ITable<?> getTable(IResource resource, IGeometry geometry) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+}
+
+class CSVTable implements ITable<Object> {
+
+	@Override
+	public int[] getDimensions() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Object get(Object... locators) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public Map<Object, Object> asMap(Object... locators) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public List<Object> asList(Object... locators) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public ITable<Object> filter(Object... locators) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+	
 }

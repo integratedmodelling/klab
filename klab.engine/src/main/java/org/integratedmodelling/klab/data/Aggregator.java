@@ -215,7 +215,7 @@ public class Aggregator {
 		case MAX:
 			throw new KlabUnimplementedException("max aggregation still unsupported on stable aggregator");
 		case MEAN:
-			return count > 0 ? (sum/count) : null;
+			return count > 0 ? (sum / count) : null;
 		case MIN:
 			throw new KlabUnimplementedException("min aggregation still unsupported on stable aggregator");
 		case STD:
@@ -409,7 +409,9 @@ public class Aggregator {
 			// NO - depends on whether the unit is extensive too, and there may be a
 			// conversion factor
 //			if (observable.getType().is(Type.EXTENSIVE_PROPERTY) && this.unit)
-			return observable.getType().is(Type.EXTENSIVE_PROPERTY) ? Aggregation.SUM : Aggregation.MEAN;
+			return (observable.getType().is(Type.EXTENSIVE_PROPERTY) || observable.getType().is(Type.MONEY))
+					? Aggregation.SUM
+					: Aggregation.MEAN;
 		default:
 			break;
 		}

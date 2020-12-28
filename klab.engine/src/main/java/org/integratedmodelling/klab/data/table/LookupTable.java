@@ -16,7 +16,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
-import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -66,7 +66,7 @@ public class LookupTable implements ILookupTable {
 	}
 
 	@Override
-	public ITable<IClassifier> getTable() {
+	public IStructuredTable<IClassifier> getTable() {
 		return table;
 	}
 

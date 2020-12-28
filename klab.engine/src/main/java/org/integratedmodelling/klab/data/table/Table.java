@@ -11,10 +11,10 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
-import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.data.classification.Classifier;
 
-public class Table<T> implements ITable<T> {
+public class Table<T> implements IStructuredTable<T> {
 
 	private List<T[]> rows;
 	private List<String> columnHeaders = new ArrayList<>();
