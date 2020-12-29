@@ -272,8 +272,9 @@ public enum Eclipse {
 				IDE.openEditor(page, marker);
 				marker.delete();
 			} else {
-				if (!file.exists()) {
-		            try (OutputStream out = new FileOutputStream(file.getLocation().toFile())) {
+				File f = file.getLocation().toFile();
+				if (!f.exists()) {
+		            try (OutputStream out = new FileOutputStream(f)) {
 		            	// nothing
 		            } catch (Throwable t) {
 		            	// neither

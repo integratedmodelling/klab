@@ -878,9 +878,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 				} else if (request.getOperation() == CRUDOperation.UPDATE) {
 
-					resource = Resources.INSTANCE.getLocalResourceCatalog().removeDefinition(urn);
-					((Resource) resource).update(request);
-					Resources.INSTANCE.getLocalResourceCatalog().put(urn, resource);
+					resource = Resources.INSTANCE.updateResource(urn, request);
 					monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUpdated,
 							((Resource) resource).getReference());
 

@@ -7,10 +7,12 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -22,7 +24,9 @@ import org.apache.poi.ss.usermodel.Sheet;
 import org.apache.poi.ss.usermodel.Workbook;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
@@ -32,10 +36,14 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
+import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.URLUtils;
+import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.tables.TableInterpreter;
 import org.integratedmodelling.tables.adapter.TableValidator;
 
@@ -159,7 +167,8 @@ public class XLSInterpreter extends TableInterpreter {
 
 				int n = 0;
 				for (String value : record) {
-					setType(checkHeaders ? first.get(n) : ("c" + n), value, columnTypes);
+					String header = checkHeaders ? first.get(n).replaceAll("\\s+", "_").toLowerCase() : ("c" + n);
+					setType(header, value, columnTypes);
 					n++;
 				}
 
@@ -191,18 +200,12 @@ public class XLSInterpreter extends TableInterpreter {
 		builder.withParameter("headers.rows", false);
 
 		// dimension is ROW, COLUMN, NONE
-		builder.withParameter("time.dimension", "NONE");
-		// filter will select a column pattern or rows expressions
-		builder.withParameter("time.filter", "");
+		builder.withParameter("time.encoding", "");
 		// use unit understandable to x.RES as a time unit, e.g. YEAR
 		builder.withParameter("time.resolution", "");
 
 		// dimension should be only a column name or two for latlong
-		builder.withParameter("space.dimension", "NONE");
-		// filter selects columns, using expression on other columns
-		builder.withParameter("space.filter", "");
-		// type can be JOIN, LATLON
-		builder.withParameter("space.type", "");
+		builder.withParameter("space.encoding", "");
 
 		builder.withParameter("resource.type", "csv");
 		builder.withParameter("resource.file", MiscUtilities.getFileName(file));
@@ -300,19 +303,42 @@ class CSVTable implements ITable<Object> {
 	@Override
 	public List<Object> asList(Object... locators) {
 
+		Map<String, Attribute> attributes = new HashMap<>();
+
 		for (Attribute attr : resource.getAttributes()) {
+			attributes.put(attr.getName(), attr);
 		}
-		
+
+		if (locators == null || locators.length != 1) {
+			throw new KlabResourceAccessException("CSV: need one attribute to turn a table resource into a list");
+		}
+
+		Attribute attr = attributes.get(locators[0].toString());
+
+		if (attr == null) {
+			throw new KlabResourceAccessException("CSV: can't find attribute " + locators[0]);
+		}
+
+		int column = Integer
+				.parseInt(resource.getParameters().get("column." + locators[0].toString() + ".index", String.class));
+
+		boolean skipHeader = "true".equals(resource.getParameters().get("headers.columns").toString());
+
 		List<Object> ret = new ArrayList<>();
-		try (CSVParser parser = CSVParser.parse(
-				new File(resource.getLocalPath() + File.separator + resource.getParameters().get("resource.file")),
+		try (CSVParser parser = CSVParser.parse(((Resource) resource).getLocalFile("resource.file"),
 				Charset.defaultCharset(), CSVFormat.DEFAULT)) {
 
 			for (CSVRecord record : parser) {
 
+				if (skipHeader) {
+					skipHeader = false;
+					continue;
+				}
+
+				ret.add(Utils.asType(record.get(column), Utils.getClassForType(attr.getType())));
 			}
 		} catch (Exception e) {
-			
+			throw new KlabResourceAccessException(e);
 		}
 		return ret;
 	}

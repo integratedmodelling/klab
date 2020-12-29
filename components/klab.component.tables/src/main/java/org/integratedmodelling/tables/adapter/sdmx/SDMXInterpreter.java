@@ -54,7 +54,7 @@ public class SDMXInterpreter extends TableInterpreter {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 	@Override
 	public void encode(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
 			IContextualizationScope context) {
@@ -137,9 +137,7 @@ public class SDMXInterpreter extends TableInterpreter {
 										"More than 2 non-contextual dimensions with multiple values: please restrict dimensionality using a query");
 								break;
 							}
-							
-							
-							
+
 						}
 					} else {
 						// rebuild the codelist descriptor INSIDE the resource so it can be seen and
@@ -180,4 +178,11 @@ public class SDMXInterpreter extends TableInterpreter {
 		return null;
 	}
 
+	@Override
+	public IGeometry recomputeGeometry(IResource resource, Map<String, String> parameters) {
+
+		IGeometry ret = resource.getGeometry();
+
+		return ret;
+	}
 }

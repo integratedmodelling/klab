@@ -43,4 +43,6 @@ public interface ITableInterpreter {
 	 * @param parameters
 	 */
 	void categorize(IResource resource, IParameters<String> parameters);
+
+	IGeometry recomputeGeometry(IResource resource, Map<String, String> parameters);
 }

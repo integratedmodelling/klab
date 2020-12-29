@@ -39,8 +39,10 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.RasterAdapter;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.URLUtils;
@@ -192,4 +194,11 @@ public class RasterValidator implements IResourceValidator {
 		// TODO
 		return ret;
 	}
+	
+	@Override
+	public IResource update(IResource resource, ResourceCRUDRequest updateData) {
+		((Resource) resource).update(updateData);
+		return resource;
+	}
+
 }

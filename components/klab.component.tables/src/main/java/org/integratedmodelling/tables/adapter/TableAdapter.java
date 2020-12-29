@@ -10,13 +10,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 
 public abstract class TableAdapter implements IResourceAdapter {
 
-
-	protected TableAdapter(String subtype) {
-	}
-	
-	@Override
-	public IResourceValidator getValidator() {
-		return new TableValidator();
+	protected TableAdapter() {
 	}
 
 	@Override

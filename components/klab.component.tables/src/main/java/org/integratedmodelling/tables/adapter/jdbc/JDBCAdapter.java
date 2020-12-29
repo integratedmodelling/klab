@@ -8,9 +8,11 @@ import org.integratedmodelling.kdl.api.IKdlActuator;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.tables.adapter.TableAdapter;
+import org.integratedmodelling.tables.adapter.TableValidator;
 
 /**
  * Only file type handled is Access through SQL
@@ -19,12 +21,7 @@ import org.integratedmodelling.tables.adapter.TableAdapter;
 public class JDBCAdapter extends TableAdapter {
 
 	public static final String ID = "jdbc";
-
-	public JDBCAdapter() {
-		super(ID);
-		// TODO Auto-generated constructor stub
-	}
-
+	
 	@Override
 	public String getName() {
 		return ID;
@@ -40,4 +37,10 @@ public class JDBCAdapter extends TableAdapter {
 		}
 		return ret;
 	}
+	
+	@Override
+	public IResourceValidator getValidator() {
+		return new TableValidator(ID);
+	}
+
 }

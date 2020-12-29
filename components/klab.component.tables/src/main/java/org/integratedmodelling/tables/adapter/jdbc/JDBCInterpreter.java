@@ -46,4 +46,10 @@ public class JDBCInterpreter extends TableInterpreter {
 		// TODO Auto-generated method stub
 		return null;
 	}
+	
+	@Override
+	public IGeometry recomputeGeometry(IResource resource, Map<String, String> parameters) {
+		IGeometry ret = resource.getGeometry();
+		return ret;
+	}
 }

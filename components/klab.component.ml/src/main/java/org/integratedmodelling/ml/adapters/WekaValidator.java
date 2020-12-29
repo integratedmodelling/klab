@@ -11,12 +11,13 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.URLUtils;
@@ -140,4 +141,11 @@ public class WekaValidator implements IResourceValidator {
 		// TODO
 		return ret;
 	}
+	
+	@Override
+	public IResource update(IResource resource, ResourceCRUDRequest updateData) {
+		((Resource) resource).update(updateData);
+		return resource;
+	}
+
 }

@@ -273,6 +273,33 @@ public class Geometry implements IGeometry {
 		return makeGeometry(geometry, 0);
 	}
 
+	private static String encodeDimension(Dimension dim) {
+		String ret = "";
+		ret += dim.getType() == Type.SPACE ? (dim.isGeneric() ? "\u03c3" : (dim.isRegular() ? "S" : "s"))
+				: (dim.getType() == Type.TIME ? (dim.isGeneric() ? "\u03c4" : (dim.isRegular() ? "T" : "t"))
+						: /* TODO others */ "");
+		ret += dim.getDimensionality();
+		if (dim.shape() != null && !isUndefined(dim.shape())) {
+			ret += "(";
+			for (int i = 0; i < dim.shape().length; i++) {
+				ret += (i == 0 ? "" : ",") + (dim.shape()[i] == INFINITE_SIZE ? "\u221E" : ("" + dim.shape()[i]));
+			}
+			ret += ")";
+		}
+		if (!dim.getParameters().isEmpty()) {
+			ret += "{";
+			boolean first = true;
+			List<String> keys = new ArrayList<>(dim.getParameters().keySet());
+			Collections.sort(keys);
+			for (String key : keys) {
+				ret += (first ? "" : ",") + key + "=" + encodeVal(dim.getParameters().get(key));
+				first = false;
+			}
+			ret += "}";
+		}
+		return ret;
+	}
+	
 	/**
 	 * Create a geometry from a structured bean. Assumes time is there
 	 * 
@@ -410,28 +437,7 @@ public class Geometry implements IGeometry {
 
 		String ret = granularity == Granularity.MULTIPLE ? "#" : "";
 		for (Dimension dim : dims) {
-			ret += dim.getType() == Type.SPACE ? (dim.isGeneric() ? "\u03c3" : (dim.isRegular() ? "S" : "s"))
-					: (dim.getType() == Type.TIME ? (dim.isGeneric() ? "\u03c4" : (dim.isRegular() ? "T" : "t"))
-							: /* TODO others */ "");
-			ret += dim.getDimensionality();
-			if (dim.shape() != null && !isUndefined(dim.shape())) {
-				ret += "(";
-				for (int i = 0; i < dim.shape().length; i++) {
-					ret += (i == 0 ? "" : ",") + (dim.shape()[i] == INFINITE_SIZE ? "\u221E" : ("" + dim.shape()[i]));
-				}
-				ret += ")";
-			}
-			if (!dim.getParameters().isEmpty()) {
-				ret += "{";
-				boolean first = true;
-				List<String> keys = new ArrayList<>(dim.getParameters().keySet());
-				Collections.sort(keys);
-				for (String key : keys) {
-					ret += (first ? "" : ",") + key + "=" + encodeVal(dim.getParameters().get(key));
-					first = false;
-				}
-				ret += "}";
-			}
+			ret += encodeDimension(dim);
 		}
 		if (child != null) {
 			ret += "," + child.encode();
@@ -439,7 +445,7 @@ public class Geometry implements IGeometry {
 		return ret;
 	}
 
-	private boolean isUndefined(long[] shape) {
+	private static boolean isUndefined(long[] shape) {
 		for (long l : shape) {
 			if (l < 0) {
 				return true;
@@ -448,7 +454,7 @@ public class Geometry implements IGeometry {
 		return false;
 	}
 
-	private String encodeVal(Object val) {
+	private static String encodeVal(Object val) {
 		String ret = "";
 		if (val.getClass().isArray()) {
 			ret = "[";
@@ -543,6 +549,11 @@ public class Geometry implements IGeometry {
 		@Override
 		public long[] shape() {
 			return shape == null ? Utils.newArray(UNDEFINED, dimensionality) : shape;
+		}
+		
+		@Override
+		public String encode() {
+			return encodeDimension(this);
 		}
 
 //		@Override

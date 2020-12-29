@@ -27,17 +27,18 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
-import org.integratedmodelling.klab.api.data.adapters.IResourceValidator.Operation;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.data.resources.ResourceBuilder;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.WcsAdapter;
 import org.integratedmodelling.klab.raster.wcs.WCSService.WCSLayer;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 
 /**
  * The Class WcsValidator.
@@ -117,4 +118,11 @@ public class WcsValidator implements IResourceValidator {
 		// TODO
 		return ret;
 	}
+	
+	@Override
+	public IResource update(IResource resource, ResourceCRUDRequest updateData) {
+		((Resource) resource).update(updateData);
+		return resource;
+	}
+
 }

@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 
 /**
  * The Interface IResourceValidator.
@@ -83,6 +84,17 @@ public interface IResourceValidator {
 	 *         null.
 	 */
 	Builder validate(URL url, IParameters<String> userData, IMonitor monitor);
+
+	/**
+	 * Called to revalidate a resource after an update done from the resource
+	 * editor. Modification may concern the parameters or the geometry (for now only
+	 * the temporal aspects), passed in the bean. 
+	 * 
+	 * @param resource
+	 * @param updateData
+	 * @return
+	 */
+	IResource update(IResource resource, ResourceCRUDRequest updateData);
 
 	/**
 	 * Return all the operations allowed on this resource, or all operations if the

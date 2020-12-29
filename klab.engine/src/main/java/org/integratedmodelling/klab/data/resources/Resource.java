@@ -541,11 +541,6 @@ public class Resource implements IResource {
 		return false; // TODO time geometry has size() > 1
 	}
 
-//	@Override
-//	public Map<IGeometry, IResource> getGranules() {
-//		return granules;
-//	}
-
 	@Override
 	public String getStatusMessage() {
 		// TODO Auto-generated method stub
@@ -562,6 +557,10 @@ public class Resource implements IResource {
 	public IResource contextualize(ITime time) {
 		// TODO
 		return this;
+	}
+
+	public void setGeometry(IGeometry geometry) {
+		this.geometry = geometry;
 	}
 
 }

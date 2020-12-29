@@ -1939,4 +1939,13 @@ public enum Resources implements IResourceService {
 		return rootPath;
 	}
 
+	
+	public IResource updateResource(String urn, ResourceCRUDRequest request) {
+		
+		IResource resource = getLocalResourceCatalog().removeDefinition(urn);
+		resource = getResourceAdapter(resource.getAdapterType()).getValidator().update(resource, request);
+		Resources.INSTANCE.getLocalResourceCatalog().put(urn, resource);
+		return resource;
+	}
+
 }

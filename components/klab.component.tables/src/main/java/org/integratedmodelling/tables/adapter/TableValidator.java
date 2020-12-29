@@ -11,23 +11,25 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler;
+import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.tables.TablesComponent;
-import org.integratedmodelling.tables.adapter.xls.XLSAdapter;
-import org.integratedmodelling.tables.adapter.xls.XLSInterpreter;
 
 import com.google.common.collect.Lists;
 
 public class TableValidator implements IResourceValidator {
 
 	static public final String FILE_URL = "__source_url";
+	String id;
 
-	public TableValidator() {
+	public TableValidator(String id) {
+		this.id = id;
 	}
 
 	@Override
@@ -39,12 +41,10 @@ public class TableValidator implements IResourceValidator {
 			userData.put(FILE_URL, url);
 		}
 
-		for (String adapter : TablesComponent.adapters) {
-			if (TablesComponent.getTableInterpreter(adapter).canHandle(url, userData)) {
-				TablesComponent.getTableInterpreter(adapter).buildResource(userData, ret, monitor);
-				break;
-			}
+		if (TablesComponent.getTableInterpreter(id).canHandle(url, userData)) {
+			TablesComponent.getTableInterpreter(id).buildResource(userData, ret, monitor);
 		}
+
 		return ret;
 	}
 
@@ -67,18 +67,17 @@ public class TableValidator implements IResourceValidator {
 
 	@Override
 	public boolean canHandle(File resource, IParameters<String> parameters) {
+
 		if (resource == null) {
 			return false;
 		}
 
-		for (String adapter : TablesComponent.adapters) {
-			try {
-				if (TablesComponent.getTableInterpreter(adapter).canHandle(resource.toURI().toURL(), parameters)) {
-					return true;
-				}
-			} catch (MalformedURLException e) {
-				// move on
+		try {
+			if (TablesComponent.getTableInterpreter(id).canHandle(resource.toURI().toURL(), parameters)) {
+				return true;
 			}
+		} catch (MalformedURLException e) {
+			// move on
 		}
 
 		return false; // TODO
@@ -96,4 +95,18 @@ public class TableValidator implements IResourceValidator {
 		// TODO
 		return ret;
 	}
+	
+	@Override
+	public IResource update(IResource resource, ResourceCRUDRequest updateData) {
+		IGeometry geometry = null;
+		if (updateData.getParameters().containsKey("time.encoding") || updateData.getParameters().containsKey("space.encoding")) {
+			geometry = TablesComponent.getTableInterpreter(id).recomputeGeometry(resource, updateData.getParameters());
+		}
+		((Resource) resource).update(updateData);
+		if (geometry != null) {
+			((Resource)resource).setGeometry(geometry);
+		}
+		return resource;
+	}
+
 }

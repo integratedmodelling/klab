@@ -47,5 +47,11 @@ public class CDMInterpreter extends TableInterpreter {
 		return null;
 	}
 
+	@Override
+	public IGeometry recomputeGeometry(IResource resource, Map<String, String> parameters) {
+		IGeometry ret = resource.getGeometry();
+		return ret;
+	}
+
 
 }

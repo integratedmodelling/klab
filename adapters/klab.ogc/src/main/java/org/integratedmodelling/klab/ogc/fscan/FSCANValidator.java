@@ -4,11 +4,9 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Klab;
@@ -22,6 +20,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.ogc.FSCANAdapter;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.utils.Path;
 
 public class FSCANValidator implements IResourceValidator {
@@ -107,4 +106,11 @@ public class FSCANValidator implements IResourceValidator {
 
 		return ret;
 	}
+	
+	@Override
+	public IResource update(IResource resource, ResourceCRUDRequest updateData) {
+		((Resource) resource).update(updateData);
+		return resource;
+	}
+
 }

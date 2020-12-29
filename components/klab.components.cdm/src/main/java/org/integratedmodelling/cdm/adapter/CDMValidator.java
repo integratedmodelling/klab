@@ -14,6 +14,8 @@ import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 
 public class CDMValidator implements IResourceValidator {
 
@@ -54,6 +56,12 @@ public class CDMValidator implements IResourceValidator {
 		Map<String, Object> ret = new LinkedHashMap<>();
 		// TODO
 		return ret;
+	}
+
+	@Override
+	public IResource update(IResource resource, ResourceCRUDRequest updateData) {
+		((Resource) resource).update(updateData);
+		return resource;
 	}
 
 }
