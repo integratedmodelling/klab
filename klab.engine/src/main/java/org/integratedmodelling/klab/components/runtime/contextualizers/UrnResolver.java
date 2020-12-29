@@ -56,6 +56,8 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 		// choose the T-specific resource(s). TODO use a set of resources to fill in
 		// nodata (and potentially add up values over multiple temporal granularities).
 		IResource res = this.resource;
+		Map<String, String> parameters = urnParameters;
+		
 		if (!localized && resource.getGeometry().getDimension(Dimension.Type.TIME) != null
 				&& overallScale.getTime() != null && !overallScale.getTime().isGeneric()
 				&& resource.getGeometry().getDimension(Dimension.Type.TIME).isGeneric()) {
@@ -66,7 +68,7 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
 		if (this.resource instanceof MergedResource) {
 
-			List<IResource> resources = ((MergedResource) this.resource).contextualize(context.getScale(), observation);
+			List<Pair<IResource, Map<String,String>>> resources = ((MergedResource) this.resource).contextualize(context.getScale(), observation);
 			if (resources.isEmpty()) {
 				context.getMonitor()
 						.warn("resource " + this.resource.getUrn() + " could not be contextualized in this scale");
@@ -80,11 +82,12 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 						"Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
 			}
 
-			res = resources.get(0);
+			res = resources.get(0).getFirst();
+			parameters = resources.get(0).getSecond();
 		}
 
 		System.err.println("GETTING DATA FROM " + res.getUrn());
-		IKlabData data = Resources.INSTANCE.getResourceData(res, urnParameters, context.getScale(), context);
+		IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, context.getScale(), context);
 		System.err.println("DONE " + res.getUrn());
 		
 		if (data == null) {

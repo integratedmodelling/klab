@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -23,6 +24,7 @@ import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -202,6 +204,9 @@ public class XLSInterpreter extends TableInterpreter {
 		// type can be JOIN, LATLON
 		builder.withParameter("space.type", "");
 
+		builder.withParameter("resource.type", "csv");
+		builder.withParameter("resource.file", MiscUtilities.getFileName(file));
+
 		builder.withGeometry(gbuilder.build());
 
 	}
@@ -257,7 +262,9 @@ public class XLSInterpreter extends TableInterpreter {
 
 	@Override
 	public ITable<?> getTable(IResource resource, IGeometry geometry) {
-		// TODO Auto-generated method stub
+		if ("csv".equals(resource.getParameters().get("resource.type"))) {
+			return new CSVTable(resource);
+		}
 		return null;
 	}
 
@@ -265,10 +272,17 @@ public class XLSInterpreter extends TableInterpreter {
 
 class CSVTable implements ITable<Object> {
 
+	IResource resource;
+	CSVParser parser;
+
+	public CSVTable(IResource resource) {
+		this.resource = resource;
+	}
+
 	@Override
 	public int[] getDimensions() {
-		// TODO Auto-generated method stub
-		return null;
+		return new int[] { Integer.parseInt(resource.getParameters().get("rows.data").toString()),
+				Integer.parseInt(resource.getParameters().get("rows.data").toString()) };
 	}
 
 	@Override
@@ -285,8 +299,22 @@ class CSVTable implements ITable<Object> {
 
 	@Override
 	public List<Object> asList(Object... locators) {
-		// TODO Auto-generated method stub
-		return null;
+
+		for (Attribute attr : resource.getAttributes()) {
+		}
+		
+		List<Object> ret = new ArrayList<>();
+		try (CSVParser parser = CSVParser.parse(
+				new File(resource.getLocalPath() + File.separator + resource.getParameters().get("resource.file")),
+				Charset.defaultCharset(), CSVFormat.DEFAULT)) {
+
+			for (CSVRecord record : parser) {
+
+			}
+		} catch (Exception e) {
+			
+		}
+		return ret;
 	}
 
 	@Override
@@ -294,5 +322,5 @@ class CSVTable implements ITable<Object> {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
+
 }

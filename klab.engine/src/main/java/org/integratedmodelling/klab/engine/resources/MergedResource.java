@@ -1,8 +1,5 @@
 package org.integratedmodelling.klab.engine.resources;
 
-import java.text.DateFormat;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
@@ -11,12 +8,12 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
-import java.util.TimeZone;
 import java.util.TreeMap;
 
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -40,6 +37,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 
 /**
@@ -75,7 +73,7 @@ public class MergedResource implements IResource {
 		long start = -1;
 		long end = -1;
 		ICoverage coverage;
-		List<IResource> resources = new ArrayList<>();
+		List<Pair<IResource, Map<String, String>>> resources = new ArrayList<>();
 		public Resolution resolution;
 	}
 
@@ -129,7 +127,8 @@ public class MergedResource implements IResource {
 			this.urns.add(urn);
 			IResource resource = null;
 			IScale scale = null;
-
+			Urn uurn = new Urn(urn);
+			
 			resource = Resources.INSTANCE.resolveResource(urn);
 			if (resource == null) {
 				throw new KlabValidationException("URN " + urn + " does not specify a resource");
@@ -146,7 +145,7 @@ public class MergedResource implements IResource {
 				this.resolution = scale.getTime().getCoverageResolution();
 			}
 
-			getResourceSet(scale).resources.add(resource);
+			getResourceSet(scale).resources.add(new Pair<>(resource, uurn.getParameters()));
 
 		}
 
@@ -164,7 +163,8 @@ public class MergedResource implements IResource {
 			this.urns.add(urn);
 			IResource resource = null;
 			IScale scale = null;
-
+			Urn uurn = new Urn(urn);
+			
 			resource = Resources.INSTANCE.resolveResource(urn);
 			if (resource == null) {
 				throw new KlabValidationException("URN " + urn + " does not specify a resource");
@@ -181,7 +181,7 @@ public class MergedResource implements IResource {
 				this.resolution = scale.getTime().getCoverageResolution();
 			}
 
-			getResourceSet(scale).resources.add(resource);
+			getResourceSet(scale).resources.add(new Pair<>(resource, uurn.getParameters()));
 
 		}
 
@@ -489,7 +489,7 @@ public class MergedResource implements IResource {
 	 * @param scale
 	 * @return
 	 */
-	public List<IResource> contextualize(IScale scale, IArtifact artifact) {
+	public List<Pair<IResource, Map<String, String>>> contextualize(IScale scale, IArtifact artifact) {
 
 		long locator = -1;
 
@@ -527,7 +527,7 @@ public class MergedResource implements IResource {
 			locator = scale.getTime().getStart().getMilliseconds();
 		}
 
-		List<IResource> ret = new ArrayList<>();
+		List<Pair<IResource, Map<String, String>>> ret = new ArrayList<>();
 		if (scale.getTime() == null && resources.size() > 0) {
 			Entry<Long, ResourceSet> set = resources.floorEntry(-1L);
 			if (set != null) {
@@ -594,8 +594,8 @@ public class MergedResource implements IResource {
 	 */
 	public boolean isOnline() {
 		for (ResourceSet rs : resources.values()) {
-			for (IResource rr : rs.resources) {
-				if (!Resources.INSTANCE.isResourceOnline(rr)) {
+			for (Pair<IResource, Map<String, String>> rr : rs.resources) {
+				if (!Resources.INSTANCE.isResourceOnline(rr.getFirst())) {
 					return false;
 				}
 			}

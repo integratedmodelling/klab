@@ -9,7 +9,6 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
@@ -54,9 +53,10 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 
 		List<IObjectArtifact> ret = new ArrayList<>();
 		IResource res = this.resource;
+		Map<String, String> parameters = urnParameters;
 
 		if (this.resource instanceof MergedResource) {
-			List<IResource> resources = ((MergedResource) this.resource).contextualize(context.getScale(), context.getTargetArtifact());
+			List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource).contextualize(context.getScale(), context.getTargetArtifact());
 			if (resources.isEmpty()) {
 				context.getMonitor()
 						.warn("resource " + this.resource.getUrn() + " cannot be contextualized in this scale");
@@ -69,11 +69,12 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 						"Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
 			}
 			
-			res = resources.get(0);
+			res = resources.get(0).getFirst();
+			parameters = resources.get(0).getSecond();
 
 		}
 
-		IKlabData data = Resources.INSTANCE.getResourceData(res, urnParameters, context.getScale(), context);
+		IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, context.getScale(), context);
 		
 		if (data != null && data.getArtifact() != null) {
 			for (IArtifact artifact : data.getArtifact()) {
