@@ -364,7 +364,8 @@ public class Model extends KimObject implements IModel {
 
 		if (this.resources.size() > 0) {
 			for (IObservable o : observables) {
-				if (o != null && ((Observable) o).isFluidUnits()) {
+				// let counts w/o units through
+				if (o != null && ((Observable) o).isFluidUnits() && !o.is(Type.NUMEROSITY)) {
 					monitor.error(
 							"Observables with unspecified units are not allowed in models that produce data through resources",
 							o);

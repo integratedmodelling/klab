@@ -26,10 +26,6 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
  *
  */
 public abstract class TableInterpreter implements ITableInterpreter {
-
-	protected static class ScanningStrategy {
-
-	}
 	
 	IGeometry mergeGeometry(IResource resource, IResource distributing) {
 
@@ -85,9 +81,10 @@ public abstract class TableInterpreter implements ITableInterpreter {
 		}
 		
 		if (parameters.containsKey("time.encoding")) {
-			String[] parts = parameters.get("space.encoding").split(Pattern.quote("->"));
-			for (String part : parts) {
-
+			String[] parts = parameters.get("time.encoding").split(Pattern.quote("->"));
+			ScanStrategy strategy = new ScanStrategy(parts, parameters);
+			for (Object o : strategy.scan(getTable(resource, null))) {
+				
 			}
 		}
 		
