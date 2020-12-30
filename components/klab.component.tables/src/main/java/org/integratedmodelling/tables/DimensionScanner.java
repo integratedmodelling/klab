@@ -24,7 +24,7 @@ public class DimensionScanner<T> {
 		Iterable<Integer> getDimensionIndices();
 	}
 
-	public DimensionScanner(String[] definition, Map<String, String> urnParameters) {
+	public DimensionScanner(String[] definition, Map<String, String> urnParameters, Class<T> cls) {
 
 	}
 
