@@ -279,9 +279,9 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 								}
 							}
 						}
-//						if (value != null) {
+						if (valueCache != null) {
 							valueCache.putObject(value, locator.getSpace());
-//						}
+						}
 					});
 			// }
 		}

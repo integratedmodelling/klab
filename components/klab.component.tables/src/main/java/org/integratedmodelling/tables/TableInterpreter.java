@@ -82,10 +82,10 @@ public abstract class TableInterpreter implements ITableInterpreter {
 		
 		if (parameters.containsKey("time.encoding")) {
 			String[] parts = parameters.get("time.encoding").split(Pattern.quote("->"));
-			ScanStrategy strategy = new ScanStrategy(parts, parameters);
-			for (Object o : strategy.scan(getTable(resource, null))) {
-				
-			}
+			DimensionScanner strategy = new DimensionScanner(parts, parameters);
+//			for (Object o : strategy.scan(getTable(resource, null))) {
+//				
+//			}
 		}
 		
 		if (spaceEncoding != null || timeEncoding != null) {
