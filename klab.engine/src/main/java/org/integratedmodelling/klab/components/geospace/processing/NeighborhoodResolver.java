@@ -14,13 +14,12 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.Aggregation;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
-import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
@@ -29,6 +28,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.AggregationUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -50,7 +50,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 	private Boolean circular;
 	private Boolean skipEdges;
 
-	private int hCells;
+	private int hCells = -1;
 	private Grid grid;
 	Map<IState, String> stateIdentifiers = new HashMap<>();
 	private IContextualizationScope context;
@@ -58,6 +58,8 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 	IExpression selectExpression = null;
 	IExpression valueExpression = null;
 	LongAdder adder = new LongAdder();
+	private Pair<Integer, Integer>[][] offsetMask;
+	private int maskSize;
 
 	@Override
 	public Type getType() {
@@ -134,57 +136,62 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public IState resolve(IState target, IContextualizationScope context) throws KlabException {
 
 		this.context = context;
-		this.grid = Space.extractGrid(target);
-		if (grid == null) {
-			throw new KlabValidationException("Neighborhood aggregations must be computed on a grid extent");
-		}
 
-		if (this.radius != 0) {
-			this.radius = context.getScale().getSpace().getEnvelope().metersToDistance(this.radius);
-			hCells = (int) Math.ceil(this.radius / grid.getCellWidth());
-		} else if (this.cellradius != null) {
-			hCells = (int) Math.ceil(this.cellradius);
-		} else {
-			hCells = 1;
-		}
+		if (this.hCells < 0) {
 
-		if (hCells <= 0) {
-			context.getMonitor().warn("Neighborhood analysis: the neighborhood is too small: no action done");
-			return target;
-		}
+			this.grid = Space.extractGrid(target);
+			if (grid == null) {
+				throw new KlabValidationException("Neighborhood aggregations must be computed on a grid extent");
+			}
 
-		/*
-		 * build offset mask for quick addressing TODO can use kernels from JAI tools
-		 */
-		int maskSize = hCells * 2 + 1;
-		@SuppressWarnings("unchecked")
-		Pair<Integer, Integer>[][] offsetMask = new Pair[maskSize][maskSize];
-		int[] quadrant = new int[] { -1, 0, 1 };
-		for (int xq : quadrant) {
-			for (int yq : quadrant) {
-				for (int x = 0; x < hCells + 1; x++) {
-					for (int y = 0; y < hCells + 1; y++) {
-						boolean ok = true;
-						if (circular) {
-							ok = Math.sqrt(hCells - x + .1) + Math.sqrt(hCells - y + .1) > Math.sqrt(hCells + .1);
-						}
-						if (ok) {
-							int xofs = x * xq;
-							int yofs = y * yq;
-							offsetMask[xofs + hCells][yofs + hCells] = new Pair<>(yofs, xofs);
+			if (this.radius != 0) {
+				this.radius = context.getScale().getSpace().getEnvelope().metersToDistance(this.radius);
+				hCells = (int) Math.ceil(this.radius / grid.getCellWidth());
+			} else if (this.cellradius != null) {
+				hCells = (int) Math.ceil(this.cellradius);
+			} else {
+				hCells = 1;
+			}
+
+			if (hCells <= 0) {
+				context.getMonitor().warn("Neighborhood analysis: the neighborhood is too small: no action done");
+				return target;
+			}
+
+			/*
+			 * build offset mask for quick addressing TODO can use kernels from JAI tools
+			 */
+			this.maskSize = hCells * 2 + 1;
+			this.offsetMask = new Pair[maskSize][maskSize];
+			int[] quadrant = new int[] { -1, 0, 1 };
+			for (int xq : quadrant) {
+				for (int yq : quadrant) {
+					for (int x = 0; x < hCells + 1; x++) {
+						for (int y = 0; y < hCells + 1; y++) {
+							boolean ok = true;
+							if (circular) {
+								ok = Math.sqrt(hCells - x + .1) + Math.sqrt(hCells - y + .1) > Math.sqrt(hCells + .1);
+							}
+							if (ok) {
+								int xofs = x * xq;
+								int yofs = y * yq;
+								offsetMask[xofs + hCells][yofs + hCells] = new Pair<>(yofs, xofs);
+							}
 						}
 					}
 				}
 			}
+
 		}
-		List<IState> sourceStates = new ArrayList<>();
-		List<IState> selectStates = new ArrayList<>();
 
 		boolean isLinear = true;
+		ArrayList<IState> sourceStates = new ArrayList<>();
+		ArrayList<IState> selectStates = new ArrayList<>();
 
 		if (valueDescriptor != null) {
 			// check inputs and see if the expr is worth anything in this context
@@ -208,6 +215,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 			}
 
 			valueExpression = valueDescriptor.compile();
+
 		} else {
 			throw new KlabValidationException(
 					"An expression producing the value to aggregate must be provided as parameter 'aggregate'");
@@ -244,36 +252,37 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 					.info("No contextual references: building pre-loaded value cache for neighborhood analysis");
 
 			// working parallel version commented out
-			StreamSupport.stream(grid.spliterator(context.getMonitor()), true).forEach((locator) -> {
-				// for (Cell locator : grid) {
+			StreamSupport.stream(((Scale) context.getScale()).spliterator(context.getMonitor()), true)
+					.forEach((locator) -> {
+						// for (Cell locator : grid) {
 
-				Object value = null;
-				boolean evaluate = true;
+						Object value = null;
+						boolean evaluate = true;
 
-				// if (context.getMonitor().isInterrupted()) {
-				// break;
-				// }
+						// if (context.getMonitor().isInterrupted()) {
+						// break;
+						// }
 
-				if (selectExpression != null) {
-					if (!evalStates(selectExpression, selectStates, locator, Boolean.class)) {
-						evaluate = false;
-					}
-				}
-
-				if (evaluate) {
-					Object self = target.get(locator);
-					value = evalStates(valueExpression, sourceStates, locator, Object.class, "self", self);
-					if (value != null && valueCache == null) {
-						synchronized (NeighborhoodResolver.this) {
-							valueCache = (IDataStorage<?>) Klab.INSTANCE.getStorageProvider()
-									.createStorage(Utils.getArtifactType(value.getClass()), target.getScale(), context);
+						if (selectExpression != null) {
+							if (!evalStates(selectExpression, selectStates, locator, Boolean.class)) {
+								evaluate = false;
+							}
 						}
-					}
-				}
-				if (value != null) {
-					valueCache.putObject(value, locator);
-				}
-			});
+
+						if (evaluate) {
+							Object self = target.get(locator);
+							value = evalStates(valueExpression, sourceStates, locator, Object.class, "self", self);
+							if (value != null && valueCache == null) {
+								synchronized (NeighborhoodResolver.this) {
+									valueCache = (IDataStorage<?>) Klab.INSTANCE.getStorageProvider().createStorage(
+											Utils.getArtifactType(value.getClass()), target.getScale(), context);
+								}
+							}
+						}
+//						if (value != null) {
+							valueCache.putObject(value, locator.getSpace());
+//						}
+					});
 			// }
 		}
 
@@ -287,47 +296,52 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		context.getMonitor()
 				.info("Neighborhood analysis starting with a " + maskSize + "x" + maskSize + " neighborhood");
 
-		StreamSupport.stream(grid.spliterator(context.getMonitor()), true).forEach((locator) -> {
-			// for (Cell locator : grid) {
+		StreamSupport.stream(((Scale) context.getScale()).spliterator(context.getMonitor()), true)
+				.forEach((locator) -> {
+					// for (Cell locator : grid) {
 
-			// if (context.getMonitor().isInterrupted()) {
-			// break;
-			// }
+					// if (context.getMonitor().isInterrupted()) {
+					// break;
+					// }
 
-			List<Object> values = new ArrayList<>(maskSize * maskSize);
-			for (Cell cell : getNeighborhood(locator, offsetMask)) {
+					List<Object> values = new ArrayList<>(maskSize * maskSize);
+					for (Cell cell : getNeighborhood((Cell) locator.getSpace(), offsetMask)) {
 
-				Object value = null;
-				if (valueCache == null) {
+						IScale cellLocator = Scale.create(locator.getTime(), cell);
 
-					if (selectExpression != null) {
-						if (!evalStates(selectExpression, selectStates, cell, Boolean.class, "origin", locator)) {
-							continue;
+						Object value = null;
+						if (valueCache == null) {
+
+							if (selectExpression != null) {
+								if (!evalStates(selectExpression, selectStates, cellLocator, Boolean.class, "origin",
+										locator)) {
+									continue;
+								}
+							}
+
+							Object self = target.get(locator);
+							value = evalStates(valueExpression, sourceStates, cellLocator, Object.class, "origin",
+									locator, "self", self);
+						} else {
+							value = valueCache.get(cell);
+						}
+
+						if (!(value == null
+								|| (value instanceof Number && Double.isNaN(((Number) value).doubleValue())))) {
+							values.add(value);
 						}
 					}
 
-					Object self = target.get(locator);
-					value = evalStates(valueExpression, sourceStates, cell, Object.class, "origin", locator, "self",
-							self);
-				} else {
-					value = valueCache.get(cell);
-				}
+					target.set(locator, AggregationUtils.aggregate(values, aggregation, context.getMonitor()));
 
-				if (!(value == null || (value instanceof Number && Double.isNaN(((Number) value).doubleValue())))) {
-					values.add(value);
-				}
-			}
+					// long cells = adder.longValue();
+					// if (cells == 0 || (cells % 10000) == 0) {
+					// context.getMonitor().info(adder.sum() + " cells done...");
+					// }
+					//
+					// adder.add(1);
 
-			target.set(locator, AggregationUtils.aggregate(values, aggregation, context.getMonitor()));
-
-			// long cells = adder.longValue();
-			// if (cells == 0 || (cells % 10000) == 0) {
-			// context.getMonitor().info(adder.sum() + " cells done...");
-			// }
-			//
-			// adder.add(1);
-
-		});
+				});
 		// }
 		if (valueCache != null) {
 			try {
@@ -340,19 +354,19 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 		return target;
 	}
 
-	private <T> T evalStates(IExpression expression, List<IState> states, ILocator where, Class<? extends T> cls,
+	private <T> T evalStates(IExpression expression, List<IState> states, IScale where, Class<? extends T> cls,
 			Object... parms) {
 
 		Parameters<String> parameters = Parameters.create(parms);
-		parameters.put("space", where);
+		parameters.put("space", where.getSpace());
 		parameters.put("radius", radius);
 		parameters.put("cellradius", cellradius);
 
-		if (parameters.get("origin") instanceof Cell) {
-			parameters.put("origin", new ContributingCell(parameters.get("origin", Cell.class)));
+		if (parameters.get("origin") instanceof IScale) {
+			parameters.put("origin", new ContributingCell((Cell) parameters.get("origin", IScale.class).getSpace()));
 		}
-		if (where instanceof Cell) {
-			parameters.put("cell", new ContributingCell((Cell) where));
+		if (where.getSpace() instanceof Cell) {
+			parameters.put("cell", new ContributingCell((Cell) where.getSpace()));
 		}
 		for (IState state : states) {
 			Object o = state.get(where, Object.class);

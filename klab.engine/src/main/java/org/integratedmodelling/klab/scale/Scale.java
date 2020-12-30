@@ -373,7 +373,9 @@ public class Scale implements IScale {
 		Scale ret = new Scale();
 		if (extents != null) {
 			for (IExtent e : extents) {
-				ret.mergeExtent(e);
+				if (e != null) {
+					ret.mergeExtent(e);
+				}
 			}
 		}
 		return ret;

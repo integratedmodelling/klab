@@ -27,6 +27,10 @@ import org.integratedmodelling.klab.exceptions.KlabIOException;
  */
 public abstract class TableInterpreter implements ITableInterpreter {
 
+	protected static class ScanningStrategy {
+
+	}
+	
 	IGeometry mergeGeometry(IResource resource, IResource distributing) {
 
 		/*
