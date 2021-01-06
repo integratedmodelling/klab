@@ -2,12 +2,12 @@ package org.integratedmodelling.tables.adapter.xls;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -35,11 +35,11 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.GeometryBuilder;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.URLUtils;
 import org.integratedmodelling.klab.utils.Utils;
+import org.integratedmodelling.tables.AbstractTable;
 import org.integratedmodelling.tables.TableInterpreter;
 import org.integratedmodelling.tables.adapter.TableValidator;
 
@@ -140,7 +140,7 @@ public class XLSInterpreter extends TableInterpreter {
 		Map<String, Type> columnTypes = new LinkedHashMap<>();
 		boolean checkHeaders = false;
 
-		try (CSVParser parser = CSVParser.parse(file, Charset.defaultCharset(), CSVFormat.DEFAULT)) {
+		try (CSVParser parser = CSVTable.getParser(file, userData)) {
 
 			for (CSVRecord record : parser) {
 
@@ -191,16 +191,17 @@ public class XLSInterpreter extends TableInterpreter {
 		builder.withParameter("columns.total", columnTypes.size());
 		builder.withParameter("columns.data", usable);
 		builder.withParameter("headers.columns", checkHeaders);
-
-		// user can change this; if true, column 0 contains headers.
 		builder.withParameter("headers.rows", false);
 
-		// dimension is ROW, COLUMN, NONE
-		builder.withParameter("time.encoding", "");
-		// use unit understandable to x.RES as a time unit, e.g. YEAR
-		builder.withParameter("time.resolution", "");
+		builder.withParameter("format.encoding", "");
+		builder.withParameter("format.source", "DEFAULT");
+		builder.withParameter("format.nodata", "");
+		builder.withParameter("format.lineseparator", "");
+		builder.withParameter("format.delimiter", ",");
+		builder.withParameter("format.trimspaces", "false");
+		builder.withParameter("format.quote", "\"");
 
-		// dimension should be only a column name or two for latlong
+		builder.withParameter("time.encoding", "");
 		builder.withParameter("space.encoding", "");
 
 		builder.withParameter("resource.type", "csv");
@@ -269,80 +270,149 @@ public class XLSInterpreter extends TableInterpreter {
 
 }
 
-class CSVTable implements ITable<Object> {
+class CSVTable extends AbstractTable<Object> {
 
-	IResource resource;
-	CSVParser parser;
+	CSVParser parser_;
+	private boolean skipHeader;
+	private File file;
+
+	public static CSVParser getParser(File file, Map<String, Object> resourceParameters) {
+
+		String encoding = "UTF-8";
+		if (resourceParameters.containsKey("format.encoding")
+				&& !resourceParameters.get("format.encoding").toString().isEmpty()) {
+			encoding = resourceParameters.get("format.encoding").toString();
+		}
+		// TODO add nodata, source, separators, trim (boolean) - see CSVFormat
+		// asciidocs.
+		if (resourceParameters.containsKey("format.source")
+				&& !resourceParameters.get("format.source").toString().isEmpty()) {
+			// TODO
+		}
+		if (resourceParameters.containsKey("format.nodata")
+				&& !resourceParameters.get("format.nodata").toString().isEmpty()) {
+			// TODO
+		}
+		if (resourceParameters.containsKey("format.lineseparator")
+				&& !resourceParameters.get("format.lineseparator").toString().isEmpty()) {
+			// TODO
+		}
+		if (resourceParameters.containsKey("format.delimiter")
+				&& !resourceParameters.get("format.delimiter").toString().isEmpty()) {
+			// TODO
+		}
+		if (resourceParameters.containsKey("format.trimspaces")
+				&& !resourceParameters.get("format.trimspaces").toString().isEmpty()) {
+			// TODO
+		}
+		if (resourceParameters.containsKey("format.quote")
+				&& !resourceParameters.get("format.quote").toString().isEmpty()) {
+			// TODO
+		}
+
+		try {
+			return CSVParser.parse(file, Charset.forName(encoding), CSVFormat.DEFAULT);
+		} catch (IOException e) {
+			throw new KlabIOException(e);
+		}
+	}
 
 	public CSVTable(IResource resource) {
-		this.resource = resource;
+		super(resource, Object.class);
+		this.skipHeader = "true".equals(resource.getParameters().get("headers.columns").toString());
+		this.file = ((Resource)resource).getLocalFile("resource.file");
+	}
+	
+	private CSVTable(CSVTable table) {
+		super(table);
+		this.skipHeader = table.skipHeader;
+		this.file = table.file;
 	}
 
-	@Override
-	public int[] getDimensions() {
-		return new int[] { Integer.parseInt(resource.getParameters().get("rows.data").toString()),
-				Integer.parseInt(resource.getParameters().get("rows.data").toString()) };
-	}
-
-	@Override
-	public Object get(Object... locators) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public Map<Object, Object> asMap(Object... locators) {
-		// TODO Auto-generated method stub
-		return null;
-	}
-
-	@Override
-	public List<Object> asList(Object... locators) {
-
-		Map<String, Attribute> attributes = new HashMap<>();
-
-		for (Attribute attr : resource.getAttributes()) {
-			attributes.put(attr.getName(), attr);
+	public CSVParser getParser() {
+		if (parser_ == null) {
+			parser_ = getParser(this.file, this.resource.getParameters());
 		}
+		return parser_;
+	}
 
-		if (locators == null || locators.length != 1) {
-			throw new KlabResourceAccessException("CSV: need one attribute to turn a table resource into a list");
-		}
+	@Override
+	protected AbstractTable<Object> copy() {
+		return new CSVTable(this);
+	}
 
-		Attribute attr = attributes.get(locators[0].toString());
-
-		if (attr == null) {
-			throw new KlabResourceAccessException("CSV: can't find attribute " + locators[0]);
-		}
-
-		int column = Integer
-				.parseInt(resource.getParameters().get("column." + locators[0].toString() + ".index", String.class));
-
-		boolean skipHeader = "true".equals(resource.getParameters().get("headers.columns").toString());
+	@Override
+	public List<Object> getRowItems(Object rowLocator) {
 
 		List<Object> ret = new ArrayList<>();
-		try (CSVParser parser = CSVParser.parse(((Resource) resource).getLocalFile("resource.file"),
-				Charset.defaultCharset(), CSVFormat.DEFAULT)) {
-
-			for (CSVRecord record : parser) {
-
-				if (skipHeader) {
-					skipHeader = false;
-					continue;
-				}
-
-				ret.add(Utils.asType(record.get(column), Utils.getClassForType(attr.getType())));
+		if (rowLocator instanceof Integer) {
+			int rown = (Integer)rowLocator;
+			if (this.skipHeader) {
+				rown ++;
 			}
-		} catch (Exception e) {
-			throw new KlabResourceAccessException(e);
+			int line = 0;
+			for (CSVRecord row : getParser()) {
+				if (line == rown) {
+					for (int col = 0; col < row.size(); col++) {
+						Attribute attr = getColumnDescriptor(col);
+						String value = row.get(col);
+						if (value.trim().isEmpty()) {
+							value = null;
+						}
+						ret.add(Utils.asType(value, Utils.getClassForType(attr.getType())));
+					}
+					break;
+				}
+				line ++;
+			}
 		}
 		return ret;
 	}
 
 	@Override
-	public ITable<Object> filter(Object... locators) {
+	public List<Object> getColumnItems(Object columnLocator) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
+	@Override
+	public Object getItem(Object rowLocator, Object columnLocator) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+//	@Override
+//	public List<Object> asList(Object... locators) {
+//
+//		
+//		// TODO anzi TO REDO
+//		Attribute attr = getAttributes().get(locators[0].toString());
+//
+//		if (attr == null) {
+//			throw new KlabResourceAccessException("CSV: can't find attribute " + locators[0]);
+//		}
+//
+//		int column = Integer
+//				.parseInt(resource.getParameters().get("column." + locators[0].toString() + ".index", String.class));
+//
+//		boolean skipHeader = "true".equals(resource.getParameters().get("headers.columns").toString());
+//
+//		List<Object> ret = new ArrayList<>();
+//		try (CSVParser parser = CSVParser.parse(((Resource) resource).getLocalFile("resource.file"),
+//				Charset.defaultCharset(), CSVFormat.DEFAULT)) {
+//
+//			for (CSVRecord record : parser) {
+//
+//				if (skipHeader) {
+//					skipHeader = false;
+//					continue;
+//				}
+//
+//				ret.add(Utils.asType(record.get(column), Utils.getClassForType(attr.getType())));
+//			}
+//		} catch (Exception e) {
+//			throw new KlabResourceAccessException(e);
+//		}
+//		return ret;
+//	}
 }

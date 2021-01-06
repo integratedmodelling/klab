@@ -13,6 +13,10 @@ import java.util.Map;
  */
 public interface ITable<T> {
 
+	public enum Filter {
+		COLUMN_HEADER, ROW_HEADER, ATTRIBUTE_VALUE, INCLUDE_COLUMNS, EXCLUDE_COLUMNS, INCLUDE_ROWS, EXCLUDE_ROWS
+	};
+
 	int[] getDimensions();
 
 	/**
@@ -27,27 +31,31 @@ public interface ITable<T> {
 
 	/**
 	 * Typed version of get(), which should endeavor to make any meaningful
-	 * conversions as long as they are compatible with the storage.
+	 * conversions as long as they are compatible with the storage. This is affected
+	 * by any configured filters.
 	 * 
 	 * @param cls
 	 * @param locators
-	 * @return
+	 * @return <E>
+	 */
 	<E> E get(Class<E> cls, Object... locators);
 
 	/**
 	 * Return a map view of the table. Intended to subset the table based on the
-	 * passed objects and return either another table, a map or a list.
+	 * passed objects and return either another table, a map or a list. This is
+	 * affected by any configured filters.
 	 * 
 	 * @param <E>
 	 * @param cls
 	 * @param locators
 	 * @return
 	 */
-	Map<Object, T> asMap(Object... locators);
+	Map<Object, T> asMap(Object... columnLocators);
 
 	/**
 	 * Return a map view of the table. Intended to subset the table based on the
-	 * passed objects and return either another table, a map or a list.
+	 * passed objects and return either another table, a map or a list. This is
+	 * affected by any configured filters.
 	 * 
 	 * @param <E>
 	 * @param cls
@@ -57,14 +65,48 @@ public interface ITable<T> {
 	List<T> asList(Object... locators);
 
 	/**
-	 * Return a map view of the table. Intended to subset the table based on the
-	 * passed objects and return either another table, a map or a list.
+	 * Return a new table representing a filtered view of this one.
 	 * 
 	 * @param <E>
 	 * @param cls
 	 * @param locators
 	 * @return
 	 */
-	ITable<T> filter(Object... locators);
+	ITable<T> filter(Filter target, Object... locators);
+
+	/**
+	 * Return all the elements in a given row, disregarding any filters.
+	 * 
+	 * @param rowLocator either a row identifier or a 0-based index
+	 * @return
+	 */
+	List<T> getRowItems(Object rowLocator);
+
+	/**
+	 * Return all the elements in a given column, disregarding any filters.
+	 * 
+	 * @param columnLocator either a row identifier or a 0-based index
+	 * @return
+	 */
+	List<T> getColumnItems(Object columnLocator);
+
+	/**
+	 * Return the element at the given positions, disregarding any filters. Locators
+	 * should be indices or headers if specified and unique.
+	 * 
+	 * @param rowLocator
+	 * @param columnLocator
+	 * @return
+	 */
+	T getItem(Object rowLocator, Object columnLocator);
+
+	/**
+	 * Configure a collection to collect all row or column indices scanned in the
+	 * asList() call immediately succeeding this one. The indices collected 
+	 * 
+	 * @param indices
+	 * @return
+	 */
+	ITable<T> collectIndices(List<Integer> indices);
 
 }

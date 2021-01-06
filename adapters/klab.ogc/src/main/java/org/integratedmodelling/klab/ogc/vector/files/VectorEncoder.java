@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Urns;
@@ -200,7 +201,6 @@ public class VectorEncoder implements IResourceEncoder {
 		if (nameAttribute == null && attributes.get("NAME") != null) {
 			nameAttribute = "NAME";
 		}
-		
 
 		int n = 1;
 		FeatureIterator<SimpleFeature> it = fc.subCollection(bbfilter).features();
@@ -286,7 +286,7 @@ public class VectorEncoder implements IResourceEncoder {
 		}
 
 		it.close();
-		
+
 		if (rasterize) {
 			final Builder stateBuilder = builder;
 			rasterizer.finish((b, xy) -> {
@@ -320,6 +320,13 @@ public class VectorEncoder implements IResourceEncoder {
 		}
 
 		return true;
+	}
+
+	@Override
+	public IResource contextualize(IResource resource, IScale scale, IArtifact targetObservation,
+			Map<String, String> urnParameters, IContextualizationScope scope) {
+		// TODO Auto-generated method stub
+		return resource;
 	}
 
 }

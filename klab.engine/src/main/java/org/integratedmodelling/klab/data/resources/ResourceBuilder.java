@@ -64,6 +64,7 @@ public class ResourceBuilder implements IResource.Builder {
 	private IArtifact.Type type;
 	private String projectName;
 	private String localName;
+	private List<String> requiredUrns;
 
 	// for importers
 	private String resourceId;
@@ -93,6 +94,7 @@ public class ResourceBuilder implements IResource.Builder {
 		ret.spatialExtent = this.spatialExtent;
 		ret.attributes.addAll(this.attributes);
 		ret.inputs.addAll(this.dependencies);
+		ret.dependencies.addAll(this.requiredUrns);
 
 		return ret;
 	}
@@ -101,6 +103,12 @@ public class ResourceBuilder implements IResource.Builder {
 	@Override
 	public ResourceBuilder withMetadata(String key, Object value) {
 		metadata.put(key, value);
+		return this;
+	}
+	
+	@Override
+	public ResourceBuilder withDependency(String urn) {
+		requiredUrns.add(urn);
 		return this;
 	}
 

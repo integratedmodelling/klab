@@ -8,7 +8,6 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -53,17 +52,11 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 	@Override
 	public IArtifact resolve(IArtifact observation, IContextualizationScope context) {
 
-		// choose the T-specific resource(s). TODO use a set of resources to fill in
-		// nodata (and potentially add up values over multiple temporal granularities).
-		IResource res = this.resource;
+		/**
+		 * Contextualize the resource to the passed context and parameters.
+		 */
+		IResource res = this.resource.contextualize(overallScale, observation, urnParameters, context);
 		Map<String, String> parameters = urnParameters;
-		
-		if (!localized && resource.getGeometry().getDimension(Dimension.Type.TIME) != null
-				&& overallScale.getTime() != null && !overallScale.getTime().isGeneric()
-				&& resource.getGeometry().getDimension(Dimension.Type.TIME).isGeneric()) {
-			// localize the resource if needed
-			res = res.contextualize(overallScale.getTime());
-		}
 		this.localized = true;
 
 		if (this.resource instanceof MergedResource) {

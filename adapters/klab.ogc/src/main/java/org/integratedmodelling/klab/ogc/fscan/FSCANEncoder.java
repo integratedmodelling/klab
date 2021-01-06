@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
@@ -30,7 +31,6 @@ public class FSCANEncoder implements IResourceEncoder {
 	public static final String FEATURE_ID = "fscan.feature_id";
 	public static final String COLLECTION_ID = "fscan.collection_id";
 
-	
 	@Override
 	public boolean isOnline(IResource resource, IMonitor monitor) {
 		if (FSCANAdapter.isOnline()) {
@@ -127,6 +127,13 @@ public class FSCANEncoder implements IResourceEncoder {
 		Logging.INSTANCE.info("FSCAN indexing complete");
 
 		return ret;
+	}
+
+	@Override
+	public IResource contextualize(IResource resource, IScale scale, IArtifact targetObservation,
+			Map<String, String> urnParameters, IContextualizationScope scope) {
+		// TODO Auto-generated method stub
+		return resource;
 	}
 
 }

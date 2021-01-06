@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.tables.adapter.TableValidator;
 
 public interface ITableInterpreter {
 
@@ -29,8 +30,26 @@ public interface ITableInterpreter {
 	void encode(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
 			IContextualizationScope context);
 
+	/**
+	 * Build the first version of a resource from user input, using the userData as
+	 * a guide. If a file was dropped, the userData will be empty except for the
+	 * field {@link TableValidator.FILE_URL}.
+	 * 
+	 * @param userData
+	 * @param ret
+	 * @param monitor
+	 */
 	void buildResource(IParameters<String> userData, IResource.Builder ret, IMonitor monitor);
 
+	/**
+	 * When dropping a file, the first interpreter that responds true will be used
+	 * to define the interpreter and the adapter, so do this right (also mind the
+	 * sequence in TableComponent if ambiguities need to be resolved).
+	 * 
+	 * @param resource
+	 * @param parameters
+	 * @return
+	 */
 	boolean canHandle(URL resource, IParameters<String> parameters);
 
 	/**
@@ -44,5 +63,14 @@ public interface ITableInterpreter {
 	 */
 	void categorize(IResource resource, IParameters<String> parameters);
 
+	/**
+	 * Called when parameters include the {space|time}.encoding fields after user
+	 * editing of the resource data. Results should be cached if practical and
+	 * expensive to compute.
+	 * 
+	 * @param resource
+	 * @param parameters
+	 * @return
+	 */
 	IGeometry recomputeGeometry(IResource resource, Map<String, String> parameters);
 }

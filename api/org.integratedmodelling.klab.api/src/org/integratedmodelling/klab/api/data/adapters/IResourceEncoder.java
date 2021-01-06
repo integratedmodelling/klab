@@ -19,6 +19,8 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
@@ -44,6 +46,23 @@ public interface IResourceEncoder {
 	 * @return true if resource can be used at the moment of this call.
 	 */
 	boolean isOnline(IResource resource, IMonitor monitor);
+
+	/**
+	 * Ensure the resource is ready for contextualizing the target observation in
+	 * the passed scale and scope. Called at each getResourceData, which will be
+	 * called once per time extent. If needed, a copy of the resource may be
+	 * returned, tuned to the passed context information. If not needed, returning
+	 * the unmodified resource is the default answer. In no instance should the
+	 * original resource be modified.
+	 * 
+	 * @param resource
+	 * @param scale
+	 * @param targetObservation
+	 * @param scope
+	 * @return
+	 */
+	IResource contextualize(IResource resource, IScale scale, IArtifact targetObservation,
+			Map<String, String> urnParameters, IContextualizationScope scope);
 
 	/**
 	 * Build the resource data corresponding to the passed resource in the passed

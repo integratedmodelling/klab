@@ -653,11 +653,12 @@ public class Actuator implements IActuator {
 		 * This is what we get as the original content of self, which may be null or an
 		 * empty state, or contain the result of the previous computation, including
 		 * those that create state layers of a different type. This is the one to use as
-		 * INPUT for computations involving self.
+		 * INPUT for computations involving self. The contextualizer type may be null in
+		 * resources that adapt to the type requested in contextualization.
 		 */
 		IArtifact self = ret;
 
-		if (ret instanceof IState && contextualizer.getType().isState()) {
+		if (ret instanceof IState && contextualizer.getType() != null && contextualizer.getType().isState()) {
 			/*
 			 * Establish the container for the output: switch the storage in the state to
 			 * the type needed in the compute chain, creating a layer if necessary. This is

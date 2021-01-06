@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.time.extents.Time;
@@ -573,7 +574,7 @@ public class MergedResource implements IResource {
 	}
 
 	@Override
-	public IResource contextualize(ITime time) {
+	public IResource contextualize(IScale scale, IArtifact observation, Map<String, String> urnParameters, IContextualizationScope scope) {
 
 		MergedResource ret = new MergedResource(this);
 
@@ -581,7 +582,7 @@ public class MergedResource implements IResource {
 		 * if logical time, prepare to locate the closest resource after anchoring the
 		 * interval in the resources to the expected transitions.
 		 */
-		ret.resolutionTime = time;
+		ret.resolutionTime = scale.getTime();
 
 		return ret;
 	}
@@ -602,6 +603,11 @@ public class MergedResource implements IResource {
 		}
 		return true;
 
+	}
+
+	@Override
+	public List<String> getDependencies() {
+		return urns;
 	}
 
 }

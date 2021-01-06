@@ -135,7 +135,7 @@ public enum Resources implements IResourceService {
 		long timestamp;
 		boolean online;
 	}
-	
+
 	class ResourceAdapterData {
 		IResourceAdapter adapter;
 		boolean canCreateEmpty;
@@ -792,7 +792,8 @@ public enum Resources implements IResourceService {
 			parameters.put(REGEX_ENTRY, regex);
 		}
 		for (ResourceAdapterData adapter : resourceAdapters.values()) {
-			if ((adapterType == null || adapter.adapter.getName().equals(adapterType)) && adapter.adapter.getImporter() != null
+			if ((adapterType == null || adapter.adapter.getName().equals(adapterType))
+					&& adapter.adapter.getImporter() != null
 					&& adapter.adapter.getImporter().canHandle(source.toString(), parameters)) {
 				importers.add(adapter.adapter);
 			}
@@ -1367,7 +1368,8 @@ public enum Resources implements IResourceService {
 		urnAdapters.put(type, adapter);
 	}
 
-	public void registerResourceAdapter(String type, IResourceAdapter adapter, boolean canDropFiles, boolean canCreateEmpty) {
+	public void registerResourceAdapter(String type, IResourceAdapter adapter, boolean canDropFiles,
+			boolean canCreateEmpty) {
 		ResourceAdapterData data = new ResourceAdapterData();
 		data.adapter = adapter;
 		data.canCreateEmpty = canCreateEmpty;
@@ -1652,9 +1654,9 @@ public enum Resources implements IResourceService {
 	public Collection<ResourceAdapterReference> describeResourceAdapters() {
 		List<ResourceAdapterReference> ret = new ArrayList<>();
 		for (String adapter : resourceAdapters.keySet()) {
-			
+
 			ResourceAdapterData ad = resourceAdapters.get(adapter);
-			
+
 			for (IPrototype configuration : ad.adapter.getResourceConfiguration()) {
 				ResourceAdapterReference ref = new ResourceAdapterReference();
 				ref.setName(configuration.getName());
@@ -1663,8 +1665,7 @@ public enum Resources implements IResourceService {
 				ref.setParameters(Extensions.INSTANCE.describePrototype(configuration));
 				ref.setCanCreateEmpty(ad.canCreateEmpty);
 				ref.setAcceptsDrops(ad.canDropFiles);
-				ref.getExportCapabilities().putAll(ad.adapter.getImporter()
-						.getExportCapabilities((IResource) null));
+				ref.getExportCapabilities().putAll(ad.adapter.getImporter().getExportCapabilities((IResource) null));
 				ref.setMultipleResources(ad.adapter.getImporter().acceptsMultiple());
 
 				for (Operation operation : ad.adapter.getValidator().getAllowedOperations(null)) {
@@ -1939,11 +1940,10 @@ public enum Resources implements IResourceService {
 		return rootPath;
 	}
 
-	
 	public IResource updateResource(String urn, ResourceCRUDRequest request) {
-		
-		IResource resource = getLocalResourceCatalog().removeDefinition(urn);
-		resource = getResourceAdapter(resource.getAdapterType()).getValidator().update(resource, request);
+
+		IResource previous = getLocalResourceCatalog().get(urn);
+		IResource resource = getResourceAdapter(previous.getAdapterType()).getValidator().update(previous, request);
 		Resources.INSTANCE.getLocalResourceCatalog().put(urn, resource);
 		return resource;
 	}
