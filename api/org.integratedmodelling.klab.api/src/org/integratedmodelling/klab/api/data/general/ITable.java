@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.api.data.general;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.klab.api.data.IResource.Attribute;
+
 /**
  * Unstructured n-dimensional table, where objects are addressed by 1+ keys of
  * any type and views can be extracted as maps, lists or sub-tables.
@@ -14,7 +16,8 @@ import java.util.Map;
 public interface ITable<T> {
 
 	public enum Filter {
-		COLUMN_HEADER, ROW_HEADER, ATTRIBUTE_VALUE, INCLUDE_COLUMNS, EXCLUDE_COLUMNS, INCLUDE_ROWS, EXCLUDE_ROWS
+		COLUMN_HEADER, ROW_HEADER, ATTRIBUTE_VALUE, INCLUDE_COLUMNS, EXCLUDE_COLUMNS, INCLUDE_ROWS, EXCLUDE_ROWS,
+		NO_RESULTS, COLUMN_EXPRESSION, COLUMN_MATCH
 	};
 
 	int[] getDimensions();
@@ -102,11 +105,28 @@ public interface ITable<T> {
 
 	/**
 	 * Configure a collection to collect all row or column indices scanned in the
-	 * asList() call immediately succeeding this one. The indices collected 
+	 * asList() call immediately succeeding this one. The indices collected
 	 * 
 	 * @param indices
 	 * @return
 	 */
 	ITable<T> collectIndices(List<Integer> indices);
+
+	/**
+	 * Get column descriptor from column header (if no headers, 1-based "c<n>" can
+	 * be used).
+	 * 
+	 * @param columnName
+	 * @return
+	 */
+	Attribute getColumnDescriptor(String columnName);
+
+	/**
+	 * Get column descriptor based on 0-based index.
+	 * 
+	 * @param index
+	 * @return
+	 */
+	Attribute getColumnDescriptor(int index);
 
 }

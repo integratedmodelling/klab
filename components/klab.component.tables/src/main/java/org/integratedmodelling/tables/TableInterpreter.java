@@ -83,10 +83,10 @@ public abstract class TableInterpreter implements ITableInterpreter {
 
 			if (strategy == null) {
 
-				table = TableAdapter.getOriginalTable(resource);
+				table = TableAdapter.getOriginalTable(resource, false);
 				spaceEncoding = null;
 				String[] parts = parameters.get("space.encoding").split(Pattern.quote("->"));
-				strategy = new DimensionScanner<>(parts, IShape.class);
+				strategy = new DimensionScanner<>(resource, parts, IShape.class);
 				for (ISpace shape : strategy.scanExtents(table)) {
 					// AHA get each shape, perform a union of the bounding boxes for now. Maybe
 					// later use a
@@ -122,10 +122,10 @@ public abstract class TableInterpreter implements ITableInterpreter {
 
 				timeEncoding = null;
 				if (table == null) {
-					table = TableAdapter.getOriginalTable(resource);
+					table = TableAdapter.getOriginalTable(resource, false);
 				}
 				String[] parts = parameters.get("time.encoding").split(Pattern.quote("->"));
-				strategy = new DimensionScanner<>(parts, ITime.class);
+				strategy = new DimensionScanner<>(resource, parts, ITime.class);
 				long start = 0, end = 0;
 				ITime.Resolution resolution = null;
 				for (ITime time : strategy.scanExtents(table)) {

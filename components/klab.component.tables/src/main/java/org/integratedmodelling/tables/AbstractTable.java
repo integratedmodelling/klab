@@ -18,12 +18,16 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	class FilterDescriptor {
 
 		Filter filter;
-		Object[] locators;
+		List<Object> locators = new ArrayList<>();
 		Object matched = null;
 
 		FilterDescriptor(Filter filter, Object[] locators) {
 			this.filter = filter;
-			this.locators = locators;
+			if (locators != null) {
+				for (Object o : locators) {
+					this.locators.add(o);
+				}
+			}
 		}
 
 		boolean matches(Object o, int... location) {
@@ -32,11 +36,11 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			case ATTRIBUTE_VALUE:
 				break;
 			case COLUMN_HEADER:
-				if (locators != null && locators.length > 0 && locators[0] instanceof Pattern) {
+				if (locators != null && locators.size() > 0 && locators.get(0) instanceof Pattern) {
 					Attribute attr = getColumnDescriptor(location[1]);
 					if (attr != null) {
 						String cname = attr.getName();
-						Matcher matcher = ((Pattern) locators[0]).matcher(cname);
+						Matcher matcher = ((Pattern) locators.get(0)).matcher(cname);
 						if (matcher.matches()) {
 							if (matcher.groupCount() > 0) {
 								this.matched = matcher.group(1);
@@ -56,7 +60,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 				break;
 			case ROW_HEADER:
 				break;
-			default:
+			case NO_RESULTS:
 				break;
 			}
 
@@ -64,6 +68,9 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		}
 
 		Object filter(Object o) {
+			if (filter == Filter.NO_RESULTS) {
+				return null;
+			}
 			if (matched != null) {
 				o = matched;
 				this.matched = null;
@@ -79,7 +86,8 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	List<FilterDescriptor> filters = new ArrayList<>();
 	Class<? extends T> valueClass;
 	protected List<Integer> lastScannedIndices;
-
+	protected boolean empty = false;
+	
 	public AbstractTable(IResource resource, Class<? extends T> cls) {
 		this.resource = resource;
 		this.valueClass = cls;
@@ -91,6 +99,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		this.attributesByIndex_ = table.attributesByIndex_;
 		this.filters.addAll(table.filters);
 		this.valueClass = table.valueClass;
+		this.empty = table.empty;
 	}
 
 	private void validateFilters() {
@@ -104,13 +113,15 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	 * 
 	 * @return
 	 */
-	public Attribute getColumnDescriptors(String columnName) {
+	@Override
+	public Attribute getColumnDescriptor(String columnName) {
 		if (attributes_ == null) {
 			buildAttributeIndex();
 		}
 		return attributes_.get(columnName);
 	}
 
+	@Override
 	public Attribute getColumnDescriptor(int index) {
 		if (attributesByIndex_ == null) {
 			buildAttributeIndex();
@@ -211,9 +222,16 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	@Override
 	public ITable<T> filter(Filter target, Object... locators) {
 		AbstractTable<T> ret = copy();
+		if (target == Filter.NO_RESULTS) {
+			ret.empty = true;
+		}
 		ret.filters.add(new FilterDescriptor(target, locators));
 		validateFilters();
 		return ret;
+	}
+	
+	boolean isEmpty() {
+		return empty /* TODO also check that we have columns and rows */;
 	}
 
 	@Override
@@ -228,6 +246,4 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		return this;
 	}
 
-	
-	
 }

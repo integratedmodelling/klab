@@ -54,17 +54,25 @@ public abstract class TableAdapter implements IResourceAdapter {
 		return null;
 	}
 
-	public static ITable<?> getOriginalTable(IResource resource) {
+	public static ITable<?> getOriginalTable(IResource resource, boolean recomputeExtents) {
 		ITable<?> ret = runtimeData.get(resource.getUrn() + "_table", ITable.class);
 		if (ret == null) {
 			ret = TablesComponent.getTableInterpreter(resource.getAdapterType()).getTable(resource, null);
-			if (resource.getParameters().containsKey("space.encoding") && !runtimeData.containsKey(resource.getUrn() + "_space")) {
-				String[] parts = resource.getParameters().get("space.encoding").toString().split(Pattern.quote("->"));
-				runtimeData.put(resource.getUrn() + "_space", new DimensionScanner<IShape>(parts, IShape.class));
-			}
-			if (resource.getParameters().containsKey("time.encoding") && !runtimeData.containsKey(resource.getUrn() + "_time")) {
-				String[] parts = resource.getParameters().get("time.encoding").toString().split(Pattern.quote("->"));
-				runtimeData.put(resource.getUrn() + "_time", new DimensionScanner<ITime>(parts, ITime.class));
+			if (recomputeExtents) {
+				if (resource.getParameters().containsKey("space.encoding")
+						&& !runtimeData.containsKey(resource.getUrn() + "_space")) {
+					String[] parts = resource.getParameters().get("space.encoding").toString()
+							.split(Pattern.quote("->"));
+					runtimeData.put(resource.getUrn() + "_space",
+							new DimensionScanner<IShape>(resource, parts, IShape.class));
+				}
+				if (resource.getParameters().containsKey("time.encoding")
+						&& !runtimeData.containsKey(resource.getUrn() + "_time")) {
+					String[] parts = resource.getParameters().get("time.encoding").toString()
+							.split(Pattern.quote("->"));
+					runtimeData.put(resource.getUrn() + "_time",
+							new DimensionScanner<ITime>(resource, parts, ITime.class));
+				}
 			}
 			TableAdapter.runtimeData.put(resource.getUrn() + "_table", ret);
 		}

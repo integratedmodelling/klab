@@ -1,16 +1,25 @@
 package org.integratedmodelling.tables;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map.Entry;
 import java.util.NavigableMap;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.data.general.ITable.Filter;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.NumberUtils;
 
 /**
@@ -47,6 +56,18 @@ public class DimensionScanner<T> {
 	private ITable<?> table;
 
 	/*
+	 * extents matched through a table dimension will come from a column and be
+	 * matched backwards to the column, after going through the mappings.
+	 */
+	private IResource auxiliaryResource = null;
+	/*
+	 * mappings are listed in the order they come in the specifications, and will be
+	 * matched backwards from the resource to obtain the values to use for
+	 * filtering.
+	 */
+	private List<CodeMapping> mappings = new ArrayList<>();
+
+	/*
 	 * for temporal indexing
 	 */
 	NavigableMap<Long, Integer> temporalDimensions = null;
@@ -54,10 +75,13 @@ public class DimensionScanner<T> {
 	// result of encoding of the geometry, stored by the TableInterpreter.
 	public String encodedDimension = null;
 
-	public DimensionScanner(String[] definition, Class<T> cls) {
+	private String auxiliaryResourceUrn;
+
+	public DimensionScanner(IResource resource, String[] definition, Class<T> cls) {
 
 		this.extent = cls;
 		String[] ss = definition[0].split(":");
+
 		switch (ss[0]) {
 		case "COLUMN_HEADER":
 			this.dimension = Dimension.COLUMN;
@@ -79,6 +103,31 @@ public class DimensionScanner<T> {
 			// column
 			this.dimension = Dimension.COLUMN;
 			this.columnName = ss[0];
+		}
+
+		for (int i = 1; i < definition.length; i++) {
+			if (Urns.INSTANCE.isUrn(definition[i])) {
+				if (this.auxiliaryResource != null) {
+					throw new KlabValidationException(
+							"cannot have more than one auxiliary resource in a table encoding");
+				}
+				this.auxiliaryResource = Resources.INSTANCE.resolveResource(definition[i]);
+				this.auxiliaryResourceUrn = definition[i];
+				if (this.auxiliaryResource == null || !Resources.INSTANCE.isResourceOnline(this.auxiliaryResource)) {
+					throw new KlabValidationException("auxiliary resource in table encoding is unknown or offline");
+				}
+			} else {
+				/*
+				 * must be a code mapping
+				 */
+				File mapfile = ((Resource) resource).getLocalFile(definition[i] + ".properties");
+				if (mapfile == null || !mapfile.exists()) {
+					throw new KlabValidationException(
+							"code mapping " + definition[i] + " cannot be matched to a definition");
+
+				}
+				mappings.add(new CodeMapping(mapfile));
+			}
 		}
 
 	}
@@ -138,7 +187,7 @@ public class DimensionScanner<T> {
 		return null;
 	}
 
-	public ITable<?> contextualize(ITable<?> table, T extent) {
+	public ITable<?> contextualize(ITable<?> table, T extent, IContextualizationScope scope) {
 
 		if (ITime.class.isAssignableFrom(this.extent) && extent instanceof ITime) {
 
@@ -156,6 +205,28 @@ public class DimensionScanner<T> {
 			 * find the column(s) or row(s) covering the passed time and add a filter to the
 			 * table for that.
 			 */
+			Entry<Long, Integer> index = this.temporalDimensions
+					.floorEntry(((ITime) extent).getStart().getMilliseconds());
+
+			if (index == null) {
+
+				// no way
+				table = table.filter(Filter.NO_RESULTS);
+
+			} else {
+
+				/*
+				 * all columns with compatible values get in the filter.
+				 */
+				List<Integer> columns = new ArrayList<>();
+				columns.add(index.getValue());
+				for (Long other : this.temporalDimensions
+						.subMap(index.getKey(), false, ((ITime) extent).getEnd().getMilliseconds(), false).keySet()) {
+					columns.add(this.temporalDimensions.get(other));
+				}
+
+				table = table.filter(Filter.INCLUDE_COLUMNS, columns);
+			}
 
 		} else if (ISpace.class.isAssignableFrom(this.extent) && extent instanceof ISpace) {
 
@@ -164,6 +235,12 @@ public class DimensionScanner<T> {
 			 * classification -> resource means resource -> inverse classification -> column
 			 * filter (to add to any other in the table).
 			 */
+
+			if (auxiliaryResource != null) {
+				IKlabData contextData = Resources.INSTANCE.getResourceData(auxiliaryResourceUrn, scope.getScale(),
+						scope.getMonitor());
+				System.out.println("DIOZ");
+			}
 		}
 
 		return table;

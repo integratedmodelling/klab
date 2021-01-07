@@ -95,6 +95,19 @@ public enum Urns {
 		return ret;
 	}
 
+	public Map<String, String> parseParameters(String uu) {
+		Map<String, String> ret = new HashMap<>();
+		for (String s : uu.split("&")) {
+			if (s.contains("=")) {
+				String[] kv = s.split("=");
+				ret.put(kv[0], kv[1]);
+			} else {
+				ret.put(Urn.SINGLE_PARAMETER_KEY, s);
+			}
+		}
+		return ret;
+	}
+	
 	/**
 	 * Split off the fragment and return the parsed parameter map along with the
 	 * clean URN.
