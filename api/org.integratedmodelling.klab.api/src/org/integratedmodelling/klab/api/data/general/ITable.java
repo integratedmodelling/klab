@@ -15,10 +15,12 @@ import org.integratedmodelling.klab.api.data.IResource.Attribute;
  */
 public interface ITable<T> {
 
-	public enum Filter {
-		COLUMN_HEADER, ROW_HEADER, ATTRIBUTE_VALUE, INCLUDE_COLUMNS, EXCLUDE_COLUMNS, INCLUDE_ROWS, EXCLUDE_ROWS,
-		NO_RESULTS, COLUMN_EXPRESSION, COLUMN_MATCH
-	};
+	interface Filter {
+		public enum Type {
+			COLUMN_HEADER, ROW_HEADER, ATTRIBUTE_VALUE, INCLUDE_COLUMNS, EXCLUDE_COLUMNS, INCLUDE_ROWS, EXCLUDE_ROWS,
+			NO_RESULTS, COLUMN_EXPRESSION, COLUMN_MATCH
+		}
+	}
 
 	int[] getDimensions();
 
@@ -68,14 +70,26 @@ public interface ITable<T> {
 	List<T> asList(Object... locators);
 
 	/**
-	 * Return a new table representing a filtered view of this one.
+	 * Return a new table representing a filtered view of this one, creating a
+	 * filter based on the parameters.
 	 * 
 	 * @param <E>
 	 * @param cls
 	 * @param locators
 	 * @return
 	 */
-	ITable<T> filter(Filter target, Object... locators);
+	ITable<T> filter(Filter.Type target, Object... locators);
+
+	/**
+	 * Return a new table representing a filtered view of this one, using an
+	 * externally provided filter.
+	 * 
+	 * @param <E>
+	 * @param cls
+	 * @param locators
+	 * @return
+	 */
+	ITable<T> filter(Filter filter);
 
 	/**
 	 * Return all the elements in a given row, disregarding any filters.
@@ -128,5 +142,20 @@ public interface ITable<T> {
 	 * @return
 	 */
 	Attribute getColumnDescriptor(int index);
+
+	/**
+	 * Return an identical table with no filters.
+	 * 
+	 * @return
+	 */
+	ITable<?> resetFilters();
+
+	/**
+	 * True if the table, after filtering if any, has at least one row and column of
+	 * size() > 0.
+	 * 
+	 * @return
+	 */
+	boolean isEmpty();
 
 }

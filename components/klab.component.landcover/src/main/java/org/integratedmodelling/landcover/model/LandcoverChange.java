@@ -267,10 +267,10 @@ public class LandcoverChange {
 
 		// transition buffer for age and event detection
 		this.transitionStorage = (IStorage<String>) Klab.INSTANCE.getStorageProvider()
-				.createStorage(IArtifact.Type.TEXT, process.getScale().without(Dimension.Type.TIME), scope);
+				.createStorage(IArtifact.Type.TEXT, process.getScale().without(Dimension.Type.TIME));
 		// transition state for age and event detection
 		this.targetStorage = (IStorage<IConcept>) Klab.INSTANCE.getStorageProvider()
-				.createStorage(IArtifact.Type.CONCEPT, process.getScale().without(Dimension.Type.TIME), scope);
+				.createStorage(IArtifact.Type.CONCEPT, process.getScale().without(Dimension.Type.TIME));
 
 		/*
 		 * compute demand ratios. These don't change with iterations, only with time.

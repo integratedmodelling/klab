@@ -3,13 +3,18 @@ package org.integratedmodelling.klab.data.encoding;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
+import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Utils;
 
 /**
  * A builder that creates no objects but stores the scales and metadata it sees.
@@ -40,6 +45,8 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 		String name;
 		String artifactName;
 		boolean isState;
+		IDataStorage<?> storage = null;
+		
 	}
 
 	List<Descriptor> states = new ArrayList<>();
@@ -48,6 +55,8 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 	Descriptor current;
 	private int maxObjects = -1;
 	private VisitingDataBuilder parent;
+	private boolean keepStates;
+	private IGeometry geometry;
 
 	public VisitingDataBuilder() {
 	}
@@ -55,53 +64,33 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 	public VisitingDataBuilder(int maxObjectsToVisit) {
 		this.maxObjects = maxObjectsToVisit;
 	}
-
+	
 	public VisitingDataBuilder(VisitingDataBuilder visitingDataBuilder, Descriptor descriptor) {
 		this.maxObjects = visitingDataBuilder.maxObjects;
 		this.objects = visitingDataBuilder.objects;
 		this.states = visitingDataBuilder.states;
 		this.parent = visitingDataBuilder;
 		this.current = descriptor;
+		this.geometry = visitingDataBuilder.geometry;
+		this.keepStates = visitingDataBuilder.keepStates;
 	}
 
 	/**
-	 * Number of objects visited.
+	 * Set up to keep the data for states, which are otherwise discarded. We must
+	 * pass the scale here, as the builder normally does not keep it.
 	 * 
+	 * @param geometry
 	 * @return
 	 */
-//	@Deprecated // use the method in IKlabData, not the builder
-//	public int getObjectCount() {
-//		return objects.size();
-//	}
-//
-//	@Deprecated // use the method in IKlabData, not the builder
-//	public IScale getObjectScale(int n) {
-//		return (IScale)objects.get(n).scale;
-//	}
-//
-//	@Deprecated // use the method in IKlabData, not the builder
-//	public IMetadata getObjectMetadata(int n) {
-//		return objects.get(n).metadata;
-//	}
-//
-//	@Deprecated // use the method in IKlabData, not the builder
-//	public String getObjectName(int n) {
-//		return objects.get(n).name;
-//	}
-//
-//	@Deprecated // use the method in IKlabData, not the builder
-//	public int getStateCount() {
-//		return states.size();
-//	}
-//
-//	@Deprecated // use the method in IKlabData, not the builder
-//	public IMetadata getStateMetadata(int n) {
-//		return states.get(n).metadata;
-//	}
+	public VisitingDataBuilder keepStates(IGeometry geometry) {
+		this.keepStates = true;
+		this.geometry = geometry;
+		return this;
+	}
 
 	@Override
 	public Builder startState(String name) {
-		return new VisitingDataBuilder(this, new Descriptor(name, null, null, false));
+		return new VisitingDataBuilder(this, new Descriptor(name, null, this.geometry, false));
 	}
 
 	@Override
@@ -136,14 +125,20 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 	}
 
 	@Override
-	public IKlabData build() {
+	public VisitedData build() {
 		return new VisitedData(this);
 	}
 
 	@Override
 	public void add(Object value, ILocator offset) {
-		// TODO Auto-generated method stub
-		
+		if (keepStates && current != null) {
+			if (current.storage == null && value != null) {
+				current.storage = (IDataStorage<?>) Klab.INSTANCE.getStorageProvider().createStorage(
+						Utils.getArtifactType(value.getClass()),
+						current.scale instanceof IScale ? ((IScale) current.scale) : Scale.create(current.scale));
+			}
+			current.storage.putObject(value, offset);
+		}
 	}
 
 }

@@ -453,7 +453,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				ret = State.newArchetype((Observable) observable, (Scale) scale, scope);
 			} else {
 				IStorage<?> storage = Klab.INSTANCE.getStorageProvider().createStorage(observable.getArtifactType(),
-						scale, scope);
+						scale);
 				ret = new State((Observable) observable, (Scale) scale, scope, (IDataStorage<?>) storage);
 			}
 		} else if (observable.is(Type.CONFIGURATION)) {
@@ -519,7 +519,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 	@Override
 	public IState createState(IObservable observable, IArtifact.Type type, IScale scale,
 			IContextualizationScope context) {
-		IStorage<?> storage = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, context);
+		IStorage<?> storage = Klab.INSTANCE.getStorageProvider().createStorage(type, scale);
 		return new State((Observable) observable, (Scale) scale, (RuntimeScope) context, (IDataStorage<?>) storage);
 	}
 

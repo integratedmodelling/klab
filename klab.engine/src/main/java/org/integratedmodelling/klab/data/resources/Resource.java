@@ -227,6 +227,10 @@ public class Resource implements IResource {
 		return ret;
 	}
 
+	public Resource copy() {
+		return new Resource(getReference());
+	}
+	
 	Resource() {
 	}
 

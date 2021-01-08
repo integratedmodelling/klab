@@ -82,8 +82,8 @@ public interface IResourceEncoder {
 	 *                      should guarantee that the intersection with the
 	 *                      resource's geometry is not empty.
 	 * @param builder       a suitable builder to use to build the dataset
-	 * @param context       the context of computation
+	 * @param scope       the context of computation
 	 */
 	void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
-			IKlabData.Builder builder, IContextualizationScope context);
+			IKlabData.Builder builder, IContextualizationScope scope);
 }

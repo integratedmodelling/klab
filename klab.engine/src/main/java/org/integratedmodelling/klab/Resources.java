@@ -1200,7 +1200,7 @@ public enum Resources implements IResourceService {
 					throw error;
 				}
 
-				IKlabData.Builder builder = new LocalDataBuilder((IRuntimeScope) context);
+				IKlabData.Builder builder = new LocalDataBuilder(context);
 				try {
 					adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
 					IKlabData ret = builder.build();

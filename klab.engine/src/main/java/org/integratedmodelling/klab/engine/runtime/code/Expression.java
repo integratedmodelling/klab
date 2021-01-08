@@ -145,7 +145,7 @@ public abstract class Expression implements IExpression {
 		@Override
 		public String getTargetName() {
 			// TODO Auto-generated method stub
-			return null;
+			return "target";
 		}
 
 		@Override

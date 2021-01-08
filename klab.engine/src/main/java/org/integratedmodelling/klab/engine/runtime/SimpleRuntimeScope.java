@@ -448,7 +448,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
 		SimpleRuntimeScope ret = new SimpleRuntimeScope(this);
 		if (!resource.getType().isCountable()) {
-			IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(resource.getType(), getScale(), this);
+			IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(resource.getType(), getScale());
 			ret.target = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>) data);
 		} else {
 			ret.target = new ObservationGroup((Observable) observable, (Scale) scale, this, resource.getType());
@@ -671,7 +671,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		IConcept concept = OWL.INSTANCE.getNonsemanticPeer(name, type);
 		IObservable observable = Observable.promote(concept);
 
-		IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, this);
+		IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(type, scale);
 		IState ret = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>) data);
 
 		semantics.put(observable.getName(), observable);

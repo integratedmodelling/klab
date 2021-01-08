@@ -9,8 +9,10 @@ import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.data.general.ITable.Filter;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -18,9 +20,11 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.NumberUtils;
+import org.integratedmodelling.tables.AbstractTable.FilterDescriptor;
 
 /**
  * This matches a dimension in the table (according to specified encodings) to
@@ -71,6 +75,7 @@ public class DimensionScanner<T> {
 	 * for temporal indexing
 	 */
 	NavigableMap<Long, Integer> temporalDimensions = null;
+	IDataArtifact spatialContextualizer = null;
 
 	// result of encoding of the geometry, stored by the TableInterpreter.
 	public String encodedDimension = null;
@@ -120,7 +125,8 @@ public class DimensionScanner<T> {
 				/*
 				 * must be a code mapping
 				 */
-				File mapfile = ((Resource) resource).getLocalFile(definition[i] + ".properties");
+				File mapfile = new File(
+						((Resource) resource).getPath() + File.separator + "code_" + definition[i] + ".properties");
 				if (mapfile == null || !mapfile.exists()) {
 					throw new KlabValidationException(
 							"code mapping " + definition[i] + " cannot be matched to a definition");
@@ -159,7 +165,8 @@ public class DimensionScanner<T> {
 		if (dimensionHeaderMatch != null) {
 
 			int n = 0;
-			for (Object o : table.filter(Filter.COLUMN_HEADER, dimensionHeaderMatch).collectIndices(this.indices)
+			for (Object o : table.resetFilters().filter(Filter.Type.COLUMN_HEADER, dimensionHeaderMatch)
+					.collectIndices(this.indices)
 					.asList(dimension == Dimension.ROW ? -1 : 0, dimension == Dimension.ROW ? 0 : -1)) {
 				T extent = extractExtent(o);
 				if (extent != null) {
@@ -211,7 +218,7 @@ public class DimensionScanner<T> {
 			if (index == null) {
 
 				// no way
-				table = table.filter(Filter.NO_RESULTS);
+				table = table.filter(Filter.Type.NO_RESULTS);
 
 			} else {
 
@@ -224,8 +231,6 @@ public class DimensionScanner<T> {
 						.subMap(index.getKey(), false, ((ITime) extent).getEnd().getMilliseconds(), false).keySet()) {
 					columns.add(this.temporalDimensions.get(other));
 				}
-
-				table = table.filter(Filter.INCLUDE_COLUMNS, columns);
 			}
 
 		} else if (ISpace.class.isAssignableFrom(this.extent) && extent instanceof ISpace) {
@@ -237,13 +242,43 @@ public class DimensionScanner<T> {
 			 */
 
 			if (auxiliaryResource != null) {
-				IKlabData contextData = Resources.INSTANCE.getResourceData(auxiliaryResourceUrn, scope.getScale(),
+
+				VisitingDataBuilder builder = new VisitingDataBuilder().keepStates(scope.getScale());
+				IKlabData data = Resources.INSTANCE.getResourceData(auxiliaryResourceUrn, builder, scope.getScale(),
 						scope.getMonitor());
-				System.out.println("DIOZ");
+				this.spatialContextualizer = (IDataArtifact) data.getArtifact();
 			}
 		}
 
 		return table;
+	}
+
+	/**
+	 * Return the filter that will select dimensions corresponding to the passed
+	 * locator. Null means all dimensions OK.
+	 * 
+	 * @param table
+	 * @param locator
+	 * @return
+	 */
+	public Filter locate(ITable<?> table, ILocator locator) {
+
+		if (this.spatialContextualizer != null) {
+			Object value = this.spatialContextualizer.get(locator);
+			if (value == null) {
+				// return no-values filter
+				return FilterDescriptor.stop();
+			} else if (this.columnName != null) {
+				for (int i = mappings.size() - 1; i >= 0; i--) {
+					value = mappings.get(i).reverseMap(value);
+				}
+				return new FilterDescriptor(Filter.Type.COLUMN_MATCH, new Object[] { this.columnName, value });
+			}
+		} else if (ITime.class.isAssignableFrom(this.extent)) {
+			// TODO
+		}
+
+		return null;
 	}
 
 }

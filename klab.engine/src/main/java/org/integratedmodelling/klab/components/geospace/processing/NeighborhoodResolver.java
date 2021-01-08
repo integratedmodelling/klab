@@ -275,7 +275,7 @@ public class NeighborhoodResolver implements IResolver<IState>, IExpression {
 							if (value != null && valueCache == null) {
 								synchronized (NeighborhoodResolver.this) {
 									valueCache = (IDataStorage<?>) Klab.INSTANCE.getStorageProvider().createStorage(
-											Utils.getArtifactType(value.getClass()), target.getScale(), context);
+											Utils.getArtifactType(value.getClass()), target.getScale());
 								}
 							}
 						}

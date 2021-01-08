@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.data;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -229,6 +230,23 @@ public class Aggregator {
 		return null;
 	}
 
+	/**
+	 * Reentrant. Use with caution.
+	 * 
+	 * @param objects
+	 * @return
+	 */
+	public Object aggregate(Collection<?> objects) {
+		addenda.clear();
+		counts.clear();
+		sum = 0;
+		count = 0;
+		for (Object o : objects) {
+			add(o);
+		}
+		return aggregate();
+	}
+	
 	public Object aggregate(Object[] values, Aggregation aggregation, IMonitor monitor) {
 
 		if (aggregation == null) {

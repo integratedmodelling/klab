@@ -108,7 +108,7 @@ public class State extends Observation implements IState, IKeyHolder {
 
 		IStorage<?> layer = layers.get(type);
 		if (layer == null) {
-			layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale(), getScope());
+			layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale());
 			((IDataStorage<?>)layer).addContextualizationListener(new StateListener());
 			if (layer instanceof AbstractAdaptiveStorage) {
 				((AbstractAdaptiveStorage<?>)layer).setWatches(this.watches);

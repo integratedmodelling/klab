@@ -20,24 +20,30 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
- * Interface for a component. If exactly one component implementing this is available, the system
- * will use that. Otherwise the configuration must be able to establish which storage component to
- * use.
+ * Interface for a component. If exactly one component implementing this is
+ * available, the system will use that. Otherwise the configuration must be able
+ * to establish which storage component to use.
  *
  * @author ferdinando.villa
  * @version $Id: $Id
  */
 public interface IStorageProvider {
 
-  /**
-   * Create appropriate storage for the passed observable and scale. The storage must be able to
-   * promote itself to probabilistic if a distribution is ever passed.
-   *
-   * @param observable a {@link org.integratedmodelling.klab.api.knowledge.IObservable} object.
-   * @param scale a {@link org.integratedmodelling.klab.api.observations.scale.IScale} object.
-   * @param context a {@link org.integratedmodelling.klab.api.runtime.IContextualizationScope} object.
-   * @return a {@link org.integratedmodelling.klab.api.data.artifacts.IDataArtifact} object.
-   */
-  IStorage<?> createStorage(IArtifact.Type type, IScale scale, IContextualizationScope context);
+	/**
+	 * Create appropriate storage for the passed observable and scale. The storage
+	 * must be able to promote itself to probabilistic if a distribution is ever
+	 * passed.
+	 *
+	 * @param observable a
+	 *                   {@link org.integratedmodelling.klab.api.knowledge.IObservable}
+	 *                   object.
+	 * @param scale      a
+	 *                   {@link org.integratedmodelling.klab.api.observations.scale.IScale}
+	 *                   object.
+	 * @return a
+	 *         {@link org.integratedmodelling.klab.api.data.artifacts.IDataArtifact}
+	 *         object.
+	 */
+	IStorage<?> createStorage(IArtifact.Type type, IScale scale);
 
 }

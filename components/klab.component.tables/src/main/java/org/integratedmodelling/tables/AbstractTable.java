@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -15,13 +16,19 @@ import org.integratedmodelling.klab.utils.Utils;
 
 public abstract class AbstractTable<T> implements ITable<T> {
 
-	class FilterDescriptor {
+	static class FilterDescriptor implements Filter {
 
-		Filter filter;
+		Filter.Type filter;
 		List<Object> locators = new ArrayList<>();
 		Object matched = null;
 
-		FilterDescriptor(Filter filter, Object[] locators) {
+		
+		static FilterDescriptor stop() {
+			return new FilterDescriptor(Filter.Type.NO_RESULTS, null);
+		}
+		
+		
+		public FilterDescriptor(Filter.Type filter, Object[] locators) {
 			this.filter = filter;
 			if (locators != null) {
 				for (Object o : locators) {
@@ -30,14 +37,14 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			}
 		}
 
-		boolean matches(Object o, int... location) {
+		boolean matches(AbstractTable<?> table, Object o, int... location) {
 
 			switch (filter) {
 			case ATTRIBUTE_VALUE:
 				break;
 			case COLUMN_HEADER:
 				if (locators != null && locators.size() > 0 && locators.get(0) instanceof Pattern) {
-					Attribute attr = getColumnDescriptor(location[1]);
+					Attribute attr = table.getColumnDescriptor(location[1]);
 					if (attr != null) {
 						String cname = attr.getName();
 						Matcher matcher = ((Pattern) locators.get(0)).matcher(cname);
@@ -62,13 +69,17 @@ public abstract class AbstractTable<T> implements ITable<T> {
 				break;
 			case NO_RESULTS:
 				break;
+			case COLUMN_EXPRESSION:
+				break;
+			case COLUMN_MATCH:
+				break;
 			}
 
 			return false;
 		}
 
 		Object filter(Object o) {
-			if (filter == Filter.NO_RESULTS) {
+			if (filter == Filter.Type.NO_RESULTS) {
 				return null;
 			}
 			if (matched != null) {
@@ -83,10 +94,16 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	protected IResource resource;
 	Map<String, Attribute> attributes_ = null;
 	Map<Integer, Attribute> attributesByIndex_ = null;
-	List<FilterDescriptor> filters = new ArrayList<>();
+	List<Filter> filters = new ArrayList<>();
 	Class<? extends T> valueClass;
 	protected List<Integer> lastScannedIndices;
 	protected boolean empty = false;
+	
+	/*
+	 * these are only set as a result of filtering
+	 */
+	Set<Integer> filteredRows;
+	Set<Integer> filteredColumns;
 	
 	public AbstractTable(IResource resource, Class<? extends T> cls) {
 		this.resource = resource;
@@ -157,6 +174,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<T> asList(Object... locators) {
 
@@ -179,14 +197,18 @@ public abstract class AbstractTable<T> implements ITable<T> {
 
 		List<T> ret = new ArrayList<>();
 
+		if (empty) {
+			return ret;
+		}
+		
 		if (col < 0) {
-			// take all rows for a given column
+			// take all rows items for a given column
 			int i = 0;
 			for (Object o : getRowItems(row)) {
 				boolean ok = true;
-				for (FilterDescriptor f : filters) {
-					if (ok && f.matches(o, row, i)) {
-						o = f.filter(o);
+				for (Filter f : filters) {
+					if (ok && ((FilterDescriptor)f).matches(this, o, row, i)) {
+						o = ((FilterDescriptor)f).filter(o);
 					} else {
 						ok = false;
 						break;
@@ -220,9 +242,9 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	}
 
 	@Override
-	public ITable<T> filter(Filter target, Object... locators) {
+	public ITable<T> filter(Filter.Type target, Object... locators) {
 		AbstractTable<T> ret = copy();
-		if (target == Filter.NO_RESULTS) {
+		if (target == Filter.Type.NO_RESULTS) {
 			ret.empty = true;
 		}
 		ret.filters.add(new FilterDescriptor(target, locators));
@@ -230,7 +252,24 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		return ret;
 	}
 	
-	boolean isEmpty() {
+	@Override
+	public ITable<T> filter(Filter filter) {
+		AbstractTable<T> ret = copy();
+		ret.filters.add(filter);
+		validateFilters();
+		return ret;
+	}
+	
+	
+	@Override
+	public ITable<T> resetFilters() {
+		AbstractTable<T> ret = copy();
+		ret.filters.clear();
+		return ret;
+	}
+	
+	@Override
+	public boolean isEmpty() {
 		return empty /* TODO also check that we have columns and rows */;
 	}
 
@@ -245,5 +284,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		this.lastScannedIndices = indices;
 		return this;
 	}
+	
+	
 
 }

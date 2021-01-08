@@ -161,8 +161,8 @@ public class VectorEncoder implements IResourceEncoder {
 		 * moment - the scale will be that of contextualization, not the geometry for
 		 * the actuator, which may depend on context.
 		 */
-		boolean rasterize = context.getTargetSemantics() != null
-				&& (context.getTargetSemantics().is(Type.QUALITY) || context.getTargetSemantics().is(Type.TRAIT))
+		boolean rasterize = (idRequested != null || (context.getTargetSemantics() != null
+				&& (context.getTargetSemantics().is(Type.QUALITY) || context.getTargetSemantics().is(Type.TRAIT))))
 				&& requestScale.getSpace() instanceof Space && ((Space) requestScale.getSpace()).getGrid() != null;
 
 		if (resource.getParameters().contains("filter")) {

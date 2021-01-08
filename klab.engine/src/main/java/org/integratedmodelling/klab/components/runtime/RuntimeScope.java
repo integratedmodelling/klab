@@ -1826,7 +1826,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		IConcept concept = OWL.INSTANCE.getNonsemanticPeer(name, type);
 		IObservable observable = Observable.promote(concept);
 
-		IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(type, scale, this);
+		IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(type, scale);
 		IState ret = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>) data);
 
 		semantics.put(observable.getName(), observable);
