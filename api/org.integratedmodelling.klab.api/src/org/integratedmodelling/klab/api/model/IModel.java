@@ -264,6 +264,6 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * @return true if there is more than one resource and the annotated resources
 	 *         represent several extents in the passed dimension.
 	 */
-	boolean hasDistributedResources(Type dimension, IScale scale);
+	boolean changesIn(Type dimension, IScale scale);
 
 }

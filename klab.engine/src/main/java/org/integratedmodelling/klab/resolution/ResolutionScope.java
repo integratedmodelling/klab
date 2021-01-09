@@ -265,7 +265,7 @@ public class ResolutionScope implements IResolutionScope {
 		/*
 		 * change observable: add a preresolved model for this same coverage.
 		 */
-		if (modelScope.model.hasDistributedResources(Dimension.Type.TIME, coverage.asScale())) {
+		if (modelScope.model.changesIn(Dimension.Type.TIME, coverage.asScale())) {
 			IObservable main = modelScope.model.getObservables().get(0);
 			if (!main.is(Type.CHANGE)) {
 				/*

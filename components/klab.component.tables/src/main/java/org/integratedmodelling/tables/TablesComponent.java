@@ -1,17 +1,21 @@
 package org.integratedmodelling.tables;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.function.Function;
 
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.extensions.Component;
+import org.integratedmodelling.klab.api.extensions.component.Initialize;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.common.GeometryBuilder;
@@ -26,6 +30,9 @@ import org.integratedmodelling.tables.adapter.sdmx.SDMXAdapter;
 import org.integratedmodelling.tables.adapter.sdmx.SDMXInterpreter;
 import org.integratedmodelling.tables.adapter.xls.XLSAdapter;
 import org.integratedmodelling.tables.adapter.xls.XLSInterpreter;
+import org.mapdb.DB;
+import org.mapdb.DBMaker;
+import org.mapdb.Serializer;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.core.io.support.ResourcePatternResolver;
@@ -51,6 +58,9 @@ import org.springframework.core.io.support.ResourcePatternResolver;
  * the component's local space, which are initialized from the contents in
  * resources.
  * 
+ * All tables that come in textual form, including Excel and CSV, are pre-cached
+ * into a MapDB-backed list of lists.
+ * 
  * @author Ferd
  *
  */
@@ -61,6 +71,10 @@ public class TablesComponent {
 
 	public static final String[] adapters = { CDMAdapter.ID, JDBCAdapter.ID, RDFAdapter.ID, SDMXAdapter.ID,
 			XLSAdapter.ID };
+	
+	// MapDB-backed storage
+	static DB db;
+	static Map<String, List<List<Object>>> dataMap;
 
 	/**
 	 * Encoding descriptors built from resources (and potentially plug-ins) that
@@ -187,6 +201,26 @@ public class TablesComponent {
 	public static Encoding getEncoding(String name) {
 		return encodingDescriptors.get(name);
 	}
+	
+	@Initialize
+	public boolean initialize() {
+		if (db == null) {
+
+//			File dpath = Configuration.INSTANCE.getDataPath(ID);
+//			dpath.mkdirs();
+//
+//			/**
+//			 * Use transactions. Memory mapping for now disabled as f'ing Win makes it
+//			 * almost impossible to use correctly.
+//			 */
+//			db = DBMaker.fileDB(new File(dpath + File.separator + "tabledata.dat")).transactionEnable()
+//					/* .fileMmapEnable() */.closeOnJvmShutdown().make();
+//
+//			dataMap = db.treeMap("datamap", Serializer.STRING, Serializer.DOUBLE_ARRAY).createOrOpen();
+		}
+		return true;
+	}
+	
 
 	public static ITableInterpreter getTableInterpreter(String type) {
 

@@ -242,7 +242,7 @@ public class Aggregator {
 		sum = 0;
 		count = 0;
 		for (Object o : objects) {
-			add(o);
+			add(o, null, null);
 		}
 		return aggregate();
 	}

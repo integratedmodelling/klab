@@ -276,6 +276,9 @@ class CSVTable extends AbstractTable<Object> {
 	private boolean skipHeader;
 	private File file;
 
+	// TODO use mapDB
+	List<List<Object>> table_ = null;
+	
 	public static CSVParser getParser(File file, Map<String, Object> resourceParameters) {
 
 		String encoding = "UTF-8";
@@ -317,24 +320,38 @@ class CSVTable extends AbstractTable<Object> {
 		}
 	}
 
+	private List<List<Object>> getTable() {
+		if (table_ == null) {
+			table_ = new ArrayList<>();
+			for (CSVRecord row : getParser(this.file, this.resource.getParameters())) {
+				List<Object> items = new ArrayList<>();
+				for (int i = 0; i < row.size(); i++) {
+					items.add(row.get(i));
+				}
+				table_.add(items);
+			}
+		}
+		return table_;
+	}
+	
 	public CSVTable(IResource resource) {
 		super(resource, Object.class);
 		this.skipHeader = "true".equals(resource.getParameters().get("headers.columns").toString());
-		this.file = ((Resource)resource).getLocalFile("resource.file");
+		this.file = ((Resource) resource).getLocalFile("resource.file");
 	}
-	
+
 	private CSVTable(CSVTable table) {
 		super(table);
 		this.skipHeader = table.skipHeader;
 		this.file = table.file;
 	}
 
-	public CSVParser getParser() {
-		if (parser_ == null) {
-			parser_ = getParser(this.file, this.resource.getParameters());
-		}
-		return parser_;
-	}
+//	public CSVParser getParser() {
+//		if (parser_ == null) {
+//			parser_ = getParser(this.file, this.resource.getParameters());
+//		} 
+//		return parser_;
+//	}
 
 	@Override
 	protected AbstractTable<Object> copy() {
@@ -346,24 +363,24 @@ class CSVTable extends AbstractTable<Object> {
 
 		List<Object> ret = new ArrayList<>();
 		if (rowLocator instanceof Integer) {
-			int rown = (Integer)rowLocator;
+			int rown = (Integer) rowLocator;
 			if (this.skipHeader) {
-				rown ++;
+				rown++;
 			}
 			int line = 0;
-			for (CSVRecord row : getParser()) {
+			for (List<Object> row : getTable()) {
 				if (line == rown) {
 					for (int col = 0; col < row.size(); col++) {
 						Attribute attr = getColumnDescriptor(col);
-						String value = row.get(col);
-						if (value.trim().isEmpty()) {
+						Object value = row.get(col);
+						if (value == null || value.toString().trim().isEmpty()) {
 							value = null;
 						}
 						ret.add(Utils.asType(value, Utils.getClassForType(attr.getType())));
 					}
 					break;
 				}
-				line ++;
+				line++;
 			}
 		}
 		return ret;
@@ -377,42 +394,21 @@ class CSVTable extends AbstractTable<Object> {
 
 	@Override
 	public Object getItem(Object rowLocator, Object columnLocator) {
-		// TODO Auto-generated method stub
+
+		int columnIndex = columnLocator instanceof Integer ? (Integer) columnLocator : -1;
+		if (columnIndex < 0) {
+			Attribute attr = this.getColumnDescriptor(columnLocator.toString());
+			if (attr != null) {
+				columnIndex = attr.getIndex();
+			}
+		}
+		if (columnIndex >= 0) {
+			List<Object> row = getRowItems(rowLocator);
+			return row == null || row.isEmpty() ? null : row.get(columnIndex);
+		}
+
 		return null;
+
 	}
 
-//	@Override
-//	public List<Object> asList(Object... locators) {
-//
-//		
-//		// TODO anzi TO REDO
-//		Attribute attr = getAttributes().get(locators[0].toString());
-//
-//		if (attr == null) {
-//			throw new KlabResourceAccessException("CSV: can't find attribute " + locators[0]);
-//		}
-//
-//		int column = Integer
-//				.parseInt(resource.getParameters().get("column." + locators[0].toString() + ".index", String.class));
-//
-//		boolean skipHeader = "true".equals(resource.getParameters().get("headers.columns").toString());
-//
-//		List<Object> ret = new ArrayList<>();
-//		try (CSVParser parser = CSVParser.parse(((Resource) resource).getLocalFile("resource.file"),
-//				Charset.defaultCharset(), CSVFormat.DEFAULT)) {
-//
-//			for (CSVRecord record : parser) {
-//
-//				if (skipHeader) {
-//					skipHeader = false;
-//					continue;
-//				}
-//
-//				ret.add(Utils.asType(record.get(column), Utils.getClassForType(attr.getType())));
-//			}
-//		} catch (Exception e) {
-//			throw new KlabResourceAccessException(e);
-//		}
-//		return ret;
-//	}
 }

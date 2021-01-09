@@ -20,6 +20,10 @@ public interface ITable<T> {
 			COLUMN_HEADER, ROW_HEADER, ATTRIBUTE_VALUE, INCLUDE_COLUMNS, EXCLUDE_COLUMNS, INCLUDE_ROWS, EXCLUDE_ROWS,
 			NO_RESULTS, COLUMN_EXPRESSION, COLUMN_MATCH
 		}
+		
+		Type getType();
+		
+		List<Object> getArguments();
 	}
 
 	int[] getDimensions();
@@ -60,7 +64,7 @@ public interface ITable<T> {
 	/**
 	 * Return a map view of the table. Intended to subset the table based on the
 	 * passed objects and return either another table, a map or a list. This is
-	 * affected by any configured filters.
+	 * affected by any configured filters if the locators aren't passed.
 	 * 
 	 * @param <E>
 	 * @param cls
@@ -157,5 +161,11 @@ public interface ITable<T> {
 	 * @return
 	 */
 	boolean isEmpty();
+
+	/**
+	 * 
+	 * @return
+	 */
+	List<Filter> getFilters();
 
 }

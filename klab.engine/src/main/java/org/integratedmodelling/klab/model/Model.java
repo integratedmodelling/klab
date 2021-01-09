@@ -51,6 +51,7 @@ import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.ExtentDistribution;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
@@ -92,7 +93,7 @@ public class Model extends KimObject implements IModel {
 	private boolean learning;
 	private IObservable archetype;
 	private Set<IConcept> requiredRoles = null;
-	
+
 	/*
 	 * the geometry implicitly declared for the project, gathered from the resources
 	 * and the services used in it. Does not include the explicit contextualization
@@ -782,7 +783,9 @@ public class Model extends KimObject implements IModel {
 	 * Create a model for the changed values from a resolver or instantiator of the
 	 * passed observable, resolved by the merged resource that has been already
 	 * checked for coverage of the temporal scope. The resulting model will have the
-	 * resource and all the computations from the original one.
+	 * resource and all the computations from the original one. If we pass a null
+	 * merged resource, we use the original one instead, as it's been established to
+	 * be able to handle time changes.
 	 * 
 	 * @param mainObservable
 	 * @param resource
@@ -803,13 +806,16 @@ public class Model extends KimObject implements IModel {
 		this.contextualization = new Contextualization(null, this);
 		this.observables.add(changeObservable);
 		this.coverage = scope.getScale();
-		this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(changeObservable, resource));
-		for (int i = 1; i < ((Model) originalModel).getComputation().size(); i++) {
+
+		if (resource != null) {
+			this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(changeObservable, resource));
+		}
+		for (int i = (resource == null ? 0 : 1); i < ((Model) originalModel).getComputation().size(); i++) {
 			ComputableResource computation = (ComputableResource) ((Model) originalModel).getComputation().get(i);
 			this.resources.add(((Model) originalModel).validate(computation.copy(), scope.getMonitor()));
 		}
 	}
-	
+
 	public Model(IObservable mainObservable, String resolvedChangingObservationName, ResolutionScope scope) {
 		super(null);
 		this.derived = true;
@@ -818,7 +824,8 @@ public class Model extends KimObject implements IModel {
 		this.contextualization = new Contextualization(null, this);
 		this.observables.add(mainObservable);
 		this.coverage = scope.getScale();
-		this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(mainObservable, resolvedChangingObservationName));
+		this.resources.add(
+				Klab.INSTANCE.getRuntimeProvider().getChangeResolver(mainObservable, resolvedChangingObservationName));
 	}
 
 	public Model(IViewModel view) {
@@ -892,6 +899,11 @@ public class Model extends KimObject implements IModel {
 				// store geometry from resource, to be merged with model's when coverage is
 				// asked for
 				this.resourceCoverage = Scale.create(res.getGeometry());
+
+				if (this.resourceCoverage.getTime() != null
+						&& this.resourceCoverage.getTime().getTimeType() == ITime.Type.GRID) {
+					this.multipleTimes = true;
+				}
 
 				// if resource is local, make the namespace unpublishable
 				if (Urns.INSTANCE.isLocal(resource.getUrn())) {
@@ -1452,7 +1464,7 @@ public class Model extends KimObject implements IModel {
 	}
 
 	@Override
-	public boolean hasDistributedResources(Dimension.Type dimension, IScale scale) {
+	public boolean changesIn(Dimension.Type dimension, IScale scale) {
 		if (dimension == Dimension.Type.TIME) {
 			// TODO handle scale
 			return multipleTimes;

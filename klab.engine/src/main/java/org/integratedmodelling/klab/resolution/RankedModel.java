@@ -366,8 +366,8 @@ public class RankedModel extends Model implements IRankedModel {
 	}
 
 	@Override
-	public boolean hasDistributedResources(Type dimension, IScale scale) {
-		return delegate.hasDistributedResources(dimension, scale);
+	public boolean changesIn(Type dimension, IScale scale) {
+		return delegate.changesIn(dimension, scale);
 	}
 
 	@Override

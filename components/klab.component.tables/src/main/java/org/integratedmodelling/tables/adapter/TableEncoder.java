@@ -1,7 +1,6 @@
 package org.integratedmodelling.tables.adapter;
 
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -20,6 +19,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.tables.AbstractTable;
 import org.integratedmodelling.tables.DimensionScanner;
 
 public class TableEncoder implements IResourceEncoder {
@@ -39,11 +39,12 @@ public class TableEncoder implements IResourceEncoder {
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			Builder builder, IContextualizationScope scope) {
 
+		System.out.println("ENCODING " + resource.getUrn());
+		
 		ITable<?> table = (ITable<?>) ((Resource) resource).getRuntimeData().get("table");
 		if (table != null) {
 
-			DimensionScanner<ITime> time = (DimensionScanner<ITime>) ((Resource) resource).getRuntimeData()
-					.get("time");
+			DimensionScanner<ITime> time = (DimensionScanner<ITime>) ((Resource) resource).getRuntimeData().get("time");
 			DimensionScanner<ISpace> space = (DimensionScanner<ISpace>) ((Resource) resource).getRuntimeData()
 					.get("space");
 
@@ -54,38 +55,38 @@ public class TableEncoder implements IResourceEncoder {
 					table = table.filter(timeFilter);
 				}
 			}
-			
+
 			Map<Filter, Object> valueCache = new HashMap<>();
 			Aggregator aggregator = new Aggregator(scope.getTargetSemantics(), scope.getMonitor(), true);
 
+			for (Filter filter : table.getFilters()) {
+				System.out.println("FILTER " + filter);
+			}
+			
 			for (ILocator locator : scope.getScale()) {
 
 				Object value = null;
 				if (!table.isEmpty()) {
 
 					ITable<?> t = table;
-					
+
 					if (space != null) {
-						
+
 						Filter filter = space.locate(table, locator);
 
+						/*
+						 * cache the spatial filter only as the others don't change
+						 */
 						if (valueCache.containsKey(filter)) {
-
+							value = valueCache.get(filter);
 						} else {
-
 							if (filter != null) {
 								t = t.filter(filter);
-								List<?> lval = t.asList();
-								if (!lval.isEmpty()) {
-									value = lval.size() == 1 ? lval.get(0) : aggregator.aggregate(lval);
-								}
 							}
-
+							value = ((AbstractTable<?>) t).get(aggregator);
 							valueCache.put(filter, value);
-
 						}
 					}
-
 				}
 
 				builder.add(value, locator);
@@ -93,7 +94,6 @@ public class TableEncoder implements IResourceEncoder {
 
 		}
 
-		System.out.println("ZIO POP");
 	}
 
 	@SuppressWarnings("unchecked")
@@ -126,12 +126,15 @@ public class TableEncoder implements IResourceEncoder {
 	private ITable<?> setFilters(IResource resource, ITable<?> originalTable, Map<String, String> urnParameters) {
 
 		ITable<?> ret = originalTable;
+		/*
+		 * The filter is an expression
+		 */
 		if (resource.getParameters().containsKey("filter")) {
 			ret = ret.filter(Filter.Type.COLUMN_EXPRESSION, resource.getParameters().get("filter").toString());
 		}
 		for (String parm : urnParameters.keySet()) {
 			if (originalTable.getColumnDescriptor(parm) != null) {
-				ret = ret.filter(Filter.Type.COLUMN_MATCH, parm, urnParameters.get(parm));
+				ret = ret.filter(Filter.Type.ATTRIBUTE_VALUE, parm, urnParameters.get(parm));
 			}
 		}
 

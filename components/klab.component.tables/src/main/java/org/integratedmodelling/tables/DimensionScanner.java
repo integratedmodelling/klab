@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.data.general.ITable.Filter;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -208,31 +209,6 @@ public class DimensionScanner<T> {
 				}
 			}
 
-			/*
-			 * find the column(s) or row(s) covering the passed time and add a filter to the
-			 * table for that.
-			 */
-			Entry<Long, Integer> index = this.temporalDimensions
-					.floorEntry(((ITime) extent).getStart().getMilliseconds());
-
-			if (index == null) {
-
-				// no way
-				table = table.filter(Filter.Type.NO_RESULTS);
-
-			} else {
-
-				/*
-				 * all columns with compatible values get in the filter.
-				 */
-				List<Integer> columns = new ArrayList<>();
-				columns.add(index.getValue());
-				for (Long other : this.temporalDimensions
-						.subMap(index.getKey(), false, ((ITime) extent).getEnd().getMilliseconds(), false).keySet()) {
-					columns.add(this.temporalDimensions.get(other));
-				}
-			}
-
 		} else if (ISpace.class.isAssignableFrom(this.extent) && extent instanceof ISpace) {
 
 			/*
@@ -272,10 +248,43 @@ public class DimensionScanner<T> {
 				for (int i = mappings.size() - 1; i >= 0; i--) {
 					value = mappings.get(i).reverseMap(value);
 				}
-				return new FilterDescriptor(Filter.Type.COLUMN_MATCH, new Object[] { this.columnName, value });
+				return new FilterDescriptor(Filter.Type.ATTRIBUTE_VALUE, new Object[] { this.columnName, value });
 			}
 		} else if (ITime.class.isAssignableFrom(this.extent)) {
-			// TODO
+
+			ITime time = locator instanceof ITime ? (ITime) locator
+					: (locator instanceof IScale ? ((IScale) locator).getTime() : null);
+
+			if (time != null) {
+
+				/*
+				 * find the column(s) or row(s) covering the passed time and add a filter to the
+				 * table for that.
+				 */
+				Entry<Long, Integer> index = this.temporalDimensions.floorEntry(time.getStart().getMilliseconds());
+
+				if (index == null) {
+
+					// no way
+					return FilterDescriptor.stop();
+
+				} else {
+
+					/*
+					 * all row or columns with compatible values get in the filter.
+					 */
+					List<Integer> indices = new ArrayList<>();
+					indices.add(index.getValue());
+					for (Long other : this.temporalDimensions
+							.subMap(index.getKey(), false, time.getEnd().getMilliseconds(), false).keySet()) {
+						indices.add(this.temporalDimensions.get(other));
+					}
+
+					return new FilterDescriptor(
+							this.dimension == Dimension.COLUMN ? Filter.Type.INCLUDE_COLUMNS : Filter.Type.INCLUDE_ROWS,
+							new Object[] { indices });
+				}
+			}
 		}
 
 		return null;
