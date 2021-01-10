@@ -39,7 +39,7 @@ public class TableEncoder implements IResourceEncoder {
 	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
 			Builder builder, IContextualizationScope scope) {
 
-		System.out.println("ENCODING " + resource.getUrn());
+//		System.out.println("ENCODING " + resource.getUrn());
 		
 		ITable<?> table = (ITable<?>) ((Resource) resource).getRuntimeData().get("table");
 		if (table != null) {
@@ -65,6 +65,10 @@ public class TableEncoder implements IResourceEncoder {
 			
 			for (ILocator locator : scope.getScale()) {
 
+				if (scope.getMonitor().isInterrupted()) {
+					return;
+				}
+				
 				Object value = null;
 				if (!table.isEmpty()) {
 
@@ -81,9 +85,11 @@ public class TableEncoder implements IResourceEncoder {
 							value = valueCache.get(filter);
 						} else {
 							if (filter != null) {
+								System.out.println("   NEW SPATIAL FILTER " + filter);
 								t = t.filter(filter);
 							}
 							value = ((AbstractTable<?>) t).get(aggregator);
+							System.out.println("       aggregated value = " + value);
 							valueCache.put(filter, value);
 						}
 					}
@@ -108,10 +114,10 @@ public class TableEncoder implements IResourceEncoder {
 				DimensionScanner.class);
 
 		if (time != null) {
-			table = time.contextualize(table, scale.getTime(), scope);
+			time = time.contextualize(table, scale.getTime(), scope);
 		}
 		if (space != null) {
-			table = space.contextualize(table, scale.getSpace(), scope);
+			space = space.contextualize(table, scale.getSpace(), scope);
 		}
 
 		IResource ret = ((Resource) resource).copy();

@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.data.general.ITable.Filter;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.time.extents.Time;
@@ -83,6 +84,22 @@ public class DimensionScanner<T> {
 
 	private String auxiliaryResourceUrn;
 
+	private DimensionScanner(DimensionScanner<T> other) {
+		this.temporalDimensions = other.temporalDimensions;
+		this.dimension = other.dimension;
+		this.dimensionHeaderMatch = other.dimensionHeaderMatch;
+		this.mappings.addAll(other.mappings);
+		this.auxiliaryResource = other.auxiliaryResource;
+		this.spatialContextualizer = other.spatialContextualizer;
+		this.table = other.table;
+		this.extent = other.extent;
+		this.extents = other.extents;
+		this.indices = other.indices;
+		this.rowName = other.rowName;
+		this.columnName = other.columnName;
+		this.auxiliaryResourceUrn = other.auxiliaryResourceUrn;
+	}
+	
 	public DimensionScanner(IResource resource, String[] definition, Class<T> cls) {
 
 		this.extent = cls;
@@ -136,7 +153,6 @@ public class DimensionScanner<T> {
 				mappings.add(new CodeMapping(mapfile));
 			}
 		}
-
 	}
 
 	public Iterable<T> scanExtents(ITable<?> table) {
@@ -195,8 +211,10 @@ public class DimensionScanner<T> {
 		return null;
 	}
 
-	public ITable<?> contextualize(ITable<?> table, T extent, IContextualizationScope scope) {
+	public DimensionScanner<T> contextualize(ITable<?> table, T extent, IContextualizationScope scope) {
 
+		DimensionScanner<T> ret = this;
+		
 		if (ITime.class.isAssignableFrom(this.extent) && extent instanceof ITime) {
 
 			if (temporalDimensions == null) {
@@ -217,16 +235,22 @@ public class DimensionScanner<T> {
 			 * filter (to add to any other in the table).
 			 */
 
-			if (auxiliaryResource != null) {
+			ret = this.copy();
+			
+			if (auxiliaryResource != null && spatialContextualizer == null) {
 
 				VisitingDataBuilder builder = new VisitingDataBuilder().keepStates(scope.getScale());
 				IKlabData data = Resources.INSTANCE.getResourceData(auxiliaryResourceUrn, builder, scope.getScale(),
 						scope.getMonitor());
-				this.spatialContextualizer = (IDataArtifact) data.getArtifact();
+				ret.spatialContextualizer = (IDataArtifact) data.getArtifact();
 			}
 		}
 
-		return table;
+		return ret;
+	}
+
+	private DimensionScanner<T> copy() {
+		return new DimensionScanner<>(this);
 	}
 
 	/**
@@ -257,6 +281,10 @@ public class DimensionScanner<T> {
 
 			if (time != null) {
 
+				if (time.getTimeType() == ITime.Type.INITIALIZATION) {
+					time = Time.getPreviousExtent(time);
+				}
+				
 				/*
 				 * find the column(s) or row(s) covering the passed time and add a filter to the
 				 * table for that.

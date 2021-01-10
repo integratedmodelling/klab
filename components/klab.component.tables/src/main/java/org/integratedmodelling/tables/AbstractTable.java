@@ -230,6 +230,10 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		int row = -1;
 		int col = -1;
 
+		if (this.lastScannedIndices != null) {
+			this.lastScannedIndices.clear();
+		}
+		
 		if (locators != null) {
 			if (locators.length == 2) {
 				row = getIndex(locators[0], 0);

@@ -122,6 +122,7 @@ public class NewNamespace extends WizardPage {
         fd_btnPrivateNamespace.left = new FormAttachment(0, 160);
         btnPrivateNamespace.setLayoutData(fd_btnPrivateNamespace);
         btnPrivateNamespace.setText("Private namespace");
+        btnPrivateNamespace.setSelection(true);
 
     }
 

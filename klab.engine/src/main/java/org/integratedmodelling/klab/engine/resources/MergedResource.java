@@ -84,7 +84,7 @@ public class MergedResource implements IResource {
 	 */
 	private NavigableMap<Long, ResourceSet> resources = new TreeMap<>();
 
-	private ITime resolutionTime;
+//	private ITime resolutionTime;
 
 	public MergedResource(MergedResource other) {
 		this.id = other.id;
@@ -494,42 +494,30 @@ public class MergedResource implements IResource {
 
 		long locator = -1;
 
-		if (logicalTime && resolutionTime != null) {
-
-			// TODO anchor the locator to the resolution time
-			switch (this.resolution.getType()) {
-			case CENTURY:
-				break;
-			case DAY:
-				break;
-			case DECADE:
-				break;
-			case HOUR:
-				break;
-			case MILLENNIUM:
-				break;
-			case MILLISECOND:
-				break;
-			case MINUTE:
-				break;
-			case MONTH:
-				break;
-			case SECOND:
-				break;
-			case WEEK:
-				break;
-			case YEAR:
-				break;
-			default:
-				break;
-
+		/*
+		 * if (logicalTime && resolutionTime != null) {
+		 * 
+		 * // TODO anchor the locator to the resolution time switch
+		 * (this.resolution.getType()) { case CENTURY: break; case DAY: break; case
+		 * DECADE: break; case HOUR: break; case MILLENNIUM: break; case MILLISECOND:
+		 * break; case MINUTE: break; case MONTH: break; case SECOND: break; case WEEK:
+		 * break; case YEAR: break; default: break;
+		 * 
+		 * } } else
+		 */ 
+		
+		ITime resolutionTime = scale.getTime();
+		
+		if (resolutionTime != null && resolutionTime.getStart() != null) {
+			if (resolutionTime.getTimeType() == ITime.Type.INITIALIZATION) {
+				// shouldn't happen, but just in case.
+				resolutionTime = Time.getPreviousExtent(resolutionTime);
 			}
-		} else if (scale.getTime() != null && scale.getTime().getStart() != null) {
-			locator = scale.getTime().getStart().getMilliseconds();
+			locator = resolutionTime.getStart().getMilliseconds();
 		}
 
 		List<Pair<IResource, Map<String, String>>> ret = new ArrayList<>();
-		if (scale.getTime() == null && resources.size() > 0) {
+		if (resolutionTime == null && resources.size() > 0) {
 			Entry<Long, ResourceSet> set = resources.floorEntry(-1L);
 			if (set != null) {
 				ret.addAll(set.getValue().resources);
@@ -577,13 +565,13 @@ public class MergedResource implements IResource {
 	public IResource contextualize(IScale scale, IArtifact observation, Map<String, String> urnParameters, IContextualizationScope scope) {
 
 		MergedResource ret = new MergedResource(this);
-
-		/*
-		 * if logical time, prepare to locate the closest resource after anchoring the
-		 * interval in the resources to the expected transitions.
-		 */
-		ret.resolutionTime = scale.getTime();
-
+//
+//		/*
+//		 * if logical time, prepare to locate the closest resource after anchoring the
+//		 * interval in the resources to the expected transitions.
+//		 */
+//		ret.resolutionTime = scale.getTime();
+//
 		return ret;
 	}
 
