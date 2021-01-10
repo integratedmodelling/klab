@@ -20,6 +20,7 @@ import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.rest.AttributeReference;
+import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Utils;
 
 public abstract class AbstractTable<T> implements ITable<T> {
@@ -412,6 +413,16 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			return true;
 		}
 		
+		if (object1 instanceof Number && object2 instanceof String) {
+			try {
+				if (NumberUtils.equal(((Number)object1).doubleValue(), Double.parseDouble((String)object2))) {
+					return true;
+				}
+			} catch (Throwable t) {
+				// just return false
+			}
+		}
+		
 		/*
 		 * TODO check for classifier and/or numeric match
 		 */
@@ -432,6 +443,15 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	private int getIndex(Object object, int dimension) {
 		if (object instanceof Integer) {
 			return (Integer) object;
+		} 
+		else if (dimension == 1) {
+			/*
+			 * column descriptor
+			 */
+			Attribute attribute = getColumnDescriptor(object.toString());
+			if (attribute != null) {
+				return attribute.getIndex();
+			}
 		}
 		// TODO
 		return -1;

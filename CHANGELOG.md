@@ -8,7 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
 ## Unreleased
-
+### Added
+- Initial, partial implementation of multiple table adapters with (so far) CSV support
+  and conventions for time/space contextualization and filtering.
 ### Fixed
 - Bug in resolving processes that would cause some changing states to not be found
 - Bug in resolving states with value operators from pre-existing observations that

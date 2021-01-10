@@ -279,7 +279,7 @@ public class DimensionScanner<T> {
 			ITime time = locator instanceof ITime ? (ITime) locator
 					: (locator instanceof IScale ? ((IScale) locator).getTime() : null);
 
-			if (time != null) {
+			if (time != null && this.temporalDimensions != null) {
 
 				if (time.getTimeType() == ITime.Type.INITIALIZATION) {
 					time = Time.getPreviousExtent(time);

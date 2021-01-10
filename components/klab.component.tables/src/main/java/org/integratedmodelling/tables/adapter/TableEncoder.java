@@ -1,11 +1,14 @@
 package org.integratedmodelling.tables.adapter;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.general.ITable;
@@ -40,6 +43,23 @@ public class TableEncoder implements IResourceEncoder {
 			Builder builder, IContextualizationScope scope) {
 
 //		System.out.println("ENCODING " + resource.getUrn());
+		boolean ignoreTime = false;
+		boolean ignoreSpace = false;
+		if (urnParameters.containsKey("ignore")) {
+			String[] ss = urnParameters.get("ignore").split(",");
+			for (String s : ss) {
+				if ("time".equals(s.toLowerCase())) {
+					ignoreTime = true;
+				} else if ("space".equals(s.toLowerCase())) {
+					ignoreSpace = true;
+				}
+			}
+		}
+
+		if (ignoreTime && scope.getScale().getTime() != null && scope.getScale().getTime().getTimeType() != ITime.Type.INITIALIZATION) {
+			// just don't move.
+			return;
+		}
 		
 		ITable<?> table = (ITable<?>) ((Resource) resource).getRuntimeData().get("table");
 		if (table != null) {
@@ -48,8 +68,7 @@ public class TableEncoder implements IResourceEncoder {
 			DimensionScanner<ISpace> space = (DimensionScanner<ISpace>) ((Resource) resource).getRuntimeData()
 					.get("space");
 
-			if (time != null) {
-				// TODO implement this
+			if (time != null && !ignoreTime) {
 				Filter timeFilter = time.locate(table, geometry);
 				if (timeFilter != null) {
 					table = table.filter(timeFilter);
@@ -74,7 +93,7 @@ public class TableEncoder implements IResourceEncoder {
 
 					ITable<?> t = table;
 
-					if (space != null) {
+					if (space != null && !ignoreSpace) {
 
 						Filter filter = space.locate(table, locator);
 
@@ -107,16 +126,29 @@ public class TableEncoder implements IResourceEncoder {
 	public IResource contextualize(IResource resource, IScale scale, IArtifact targetObservation,
 			Map<String, String> urnParameters, IContextualizationScope scope) {
 
+		boolean ignoreTime = false;
+		boolean ignoreSpace = false;
+		if (urnParameters.containsKey("ignore")) {
+			String[] ss = urnParameters.get("ignore").split(",");
+			for (String s : ss) {
+				if ("time".equals(s.toLowerCase())) {
+					ignoreTime = true;
+				} else if ("space".equals(s.toLowerCase())) {
+					ignoreSpace = true;
+				}
+			}
+		}
+		
 		ITable<?> table = setFilters(resource, TableAdapter.getOriginalTable(resource, true), urnParameters);
 		DimensionScanner<IExtent> space = TableAdapter.runtimeData.get(resource.getUrn() + "_space",
 				DimensionScanner.class);
 		DimensionScanner<IExtent> time = TableAdapter.runtimeData.get(resource.getUrn() + "_time",
 				DimensionScanner.class);
 
-		if (time != null) {
+		if (time != null && !ignoreTime) {
 			time = time.contextualize(table, scale.getTime(), scope);
 		}
-		if (space != null) {
+		if (space != null && !ignoreSpace) {
 			space = space.contextualize(table, scale.getSpace(), scope);
 		}
 
@@ -139,6 +171,14 @@ public class TableEncoder implements IResourceEncoder {
 			ret = ret.filter(Filter.Type.COLUMN_EXPRESSION, resource.getParameters().get("filter").toString());
 		}
 		for (String parm : urnParameters.keySet()) {
+			if (Urn.SINGLE_PARAMETER_KEY.equals(parm)) {
+				Attribute attribute = originalTable.getColumnDescriptor(urnParameters.get(parm));
+				if (attribute != null) {
+					ret = ret.filter(Filter.Type.INCLUDE_COLUMNS, Collections.singleton(attribute.getIndex()));
+					// if not there, continue on to filtering
+					continue;
+				}
+			} 
 			if (originalTable.getColumnDescriptor(parm) != null) {
 				ret = ret.filter(Filter.Type.ATTRIBUTE_VALUE, parm, urnParameters.get(parm));
 			}

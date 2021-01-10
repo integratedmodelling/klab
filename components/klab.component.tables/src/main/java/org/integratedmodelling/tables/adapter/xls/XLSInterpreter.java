@@ -278,7 +278,7 @@ class CSVTable extends AbstractTable<Object> {
 
 	// TODO use mapDB
 	List<List<Object>> table_ = null;
-	
+
 	public static CSVParser getParser(File file, Map<String, Object> resourceParameters) {
 
 		String encoding = "UTF-8";
@@ -333,7 +333,7 @@ class CSVTable extends AbstractTable<Object> {
 		}
 		return table_;
 	}
-	
+
 	public CSVTable(IResource resource) {
 		super(resource, Object.class);
 		this.skipHeader = "true".equals(resource.getParameters().get("headers.columns").toString());
@@ -388,8 +388,29 @@ class CSVTable extends AbstractTable<Object> {
 
 	@Override
 	public List<Object> getColumnItems(Object columnLocator) {
-		// TODO Auto-generated method stub
-		return null;
+
+		List<Object> ret = new ArrayList<>();
+		Attribute attr = null;
+		int column = columnLocator instanceof Integer ? (Integer) columnLocator : -1;
+		if (column >= 0) {
+			attr = getColumnDescriptor(columnLocator.toString());
+			if (attr != null) {
+				column = attr.getIndex();
+			}
+			if (column >= 0) {
+				if (attr == null) {
+					attr = getColumnDescriptor(column);
+					for (List<Object> row : getTable()) {
+						Object value = row.get(column);
+						if (value == null || value.toString().trim().isEmpty()) {
+							value = null;
+						}
+						ret.add(Utils.asType(value, Utils.getClassForType(attr.getType())));
+					}
+				}
+			}
+		}
+		return ret;
 	}
 
 	@Override
