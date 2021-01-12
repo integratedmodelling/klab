@@ -162,6 +162,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	private Map<String, IKnowledgeView> views;
 	private Map<String, IKnowledgeView> viewsByUrn;
 
+	Map<IConcept, Collection<IConcept>> concreteIdentities = new HashMap<>();
+	
 	// cache for IS operator in groovy expressions, both for proper subsumption and
 	// correlations such as "adopts role/trait"
 	private LoadingCache<String, Boolean> reasonerCache;
@@ -282,6 +284,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.viewsByUrn = context.viewsByUrn;
 		this.reasonerCache = context.reasonerCache;
 		this.relatedReasonerCache = context.relatedReasonerCache;
+		this.concreteIdentities.putAll(context.concreteIdentities);
 	}
 
 	@Override
@@ -2059,6 +2062,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public void setConcreteIdentities(IConcept abstractIdentity, List<IConcept> concreteIdentities) {
+		this.concreteIdentities.put(abstractIdentity, concreteIdentities);
 	}
 
 }

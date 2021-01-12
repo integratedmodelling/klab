@@ -1,7 +1,10 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import java.util.Collections;
+import java.util.List;
+
 import org.eclipse.emf.ecore.EObject;
-import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
@@ -12,6 +15,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class LiteralCharacterizingResolver implements IResolver<IArtifact>, IProcessor, IExpression {
@@ -45,9 +49,9 @@ public class LiteralCharacterizingResolver implements IResolver<IArtifact>, IPro
 
 		static final public String FUNCTION_ID = "klab.runtime.characterize";
 
-		Object value;
+		IConcept value;
 
-		public LiteralFunction(Object value) {
+		public LiteralFunction(IConcept value) {
 			super((EObject) null, null);
 			this.value = value;
 			setName(FUNCTION_ID);
@@ -75,7 +79,11 @@ public class LiteralCharacterizingResolver implements IResolver<IArtifact>, IPro
 
 	@Override
 	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
-		// TODO Auto-generated method stub
+
+		IConcept toResolve = context.getTargetSemantics().getType();
+		List<IConcept> traits = this.value.is(IKimConcept.Type.INTERSECTION) ? Collections.singletonList(this.value)
+				: this.value.getOperands();
+		((IRuntimeScope)context).setConcreteIdentities(toResolve, traits);
 		return ret;
 	}
 }

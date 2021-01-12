@@ -809,4 +809,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		return null;
 	}
 
+	@Override
+	public void setConcreteIdentities(IConcept abstractIdentity, List<IConcept> concreteIdentities) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

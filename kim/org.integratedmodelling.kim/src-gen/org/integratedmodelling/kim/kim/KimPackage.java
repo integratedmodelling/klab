@@ -4013,13 +4013,22 @@ public interface KimPackage extends EPackage
   int VALUE__FUNCTION = 3;
 
   /**
+   * The feature id for the '<em><b>Date</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__DATE = 4;
+
+  /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__LITERAL = 4;
+  int VALUE__LITERAL = 5;
 
   /**
    * The feature id for the '<em><b>Expr</b></em>' attribute.
@@ -4028,7 +4037,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__EXPR = 5;
+  int VALUE__EXPR = 6;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -4037,7 +4046,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__ID = 6;
+  int VALUE__ID = 7;
 
   /**
    * The feature id for the '<em><b>Table</b></em>' containment reference.
@@ -4046,16 +4055,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__TABLE = 7;
-
-  /**
-   * The feature id for the '<em><b>Date</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int VALUE__DATE = 8;
+  int VALUE__TABLE = 8;
 
   /**
    * The feature id for the '<em><b>Quantity</b></em>' containment reference.
@@ -8830,6 +8830,17 @@ public interface KimPackage extends EPackage
   EReference getValue_Function();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getDate <em>Date</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Date</em>'.
+   * @see org.integratedmodelling.kim.kim.Value#getDate()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Date();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getLiteral <em>Literal</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -8872,17 +8883,6 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getValue_Table();
-
-  /**
-   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getDate <em>Date</em>}'.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the meta object for the containment reference '<em>Date</em>'.
-   * @see org.integratedmodelling.kim.kim.Value#getDate()
-   * @see #getValue()
-   * @generated
-   */
-  EReference getValue_Date();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Value#getQuantity <em>Quantity</em>}'.
@@ -12657,6 +12657,14 @@ public interface KimPackage extends EPackage
     EReference VALUE__FUNCTION = eINSTANCE.getValue_Function();
 
     /**
+     * The meta object literal for the '<em><b>Date</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__DATE = eINSTANCE.getValue_Date();
+
+    /**
      * The meta object literal for the '<em><b>Literal</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -12687,14 +12695,6 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference VALUE__TABLE = eINSTANCE.getValue_Table();
-
-    /**
-     * The meta object literal for the '<em><b>Date</b></em>' containment reference feature.
-     * <!-- begin-user-doc -->
-     * <!-- end-user-doc -->
-     * @generated
-     */
-    EReference VALUE__DATE = eINSTANCE.getValue_Date();
 
     /**
      * The meta object literal for the '<em><b>Quantity</b></em>' containment reference feature.

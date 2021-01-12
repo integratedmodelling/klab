@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.engine.runtime.api;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -459,5 +460,14 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 * @return
 	 */
 	String getArtifactName(IArtifact previous);
+
+	/**
+	 * Resolve an abstract identity with one or more concrete ones, so that abstract
+	 * dependencies can be expanded properly.
+	 * 
+	 * @param toResolve
+	 * @param traits
+	 */
+	void setConcreteIdentities(IConcept abstractIdentity, List<IConcept> concreteIdentities);
 
 }

@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.api.runtime;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimConcept;

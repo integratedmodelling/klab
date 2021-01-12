@@ -745,4 +745,10 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 		return null;
 	}
 
+	@Override
+	public void setConcreteIdentities(IConcept abstractIdentity, List<IConcept> concreteIdentities) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }

@@ -809,11 +809,11 @@ ValueWithIdAndConcept returns Value:
 	map=Map |
 	concept=SimpleObservableSemantics |
 	function=Function |
+	date=Date |
 	literal=Literal |
 	expr=EXPR |
 	id=(PathName|LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
 	table=LookupTable |
-	date=Date |
 	quantity=Quantity |
 	op=REL_OPERATOR expression=Number | 
 	null?='unknown';

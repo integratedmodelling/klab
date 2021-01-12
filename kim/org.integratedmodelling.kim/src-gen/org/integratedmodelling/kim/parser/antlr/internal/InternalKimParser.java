@@ -39651,14 +39651,14 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
 
     // $ANTLR start "ruleValueWithIdAndConcept"
-    // InternalKim.g:14717:1: ruleValueWithIdAndConcept returns [EObject current=null] : ( ( (lv_list_0_0= ruleList ) ) | ( (lv_map_1_0= ruleMap ) ) | ( (lv_concept_2_0= ruleSimpleObservableSemantics ) ) | ( (lv_function_3_0= ruleFunction ) ) | ( (lv_literal_4_0= ruleLiteral ) ) | ( (lv_expr_5_0= RULE_EXPR ) ) | ( ( (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_table_7_0= ruleLookupTable ) ) | ( (lv_date_8_0= ruleDate ) ) | ( (lv_quantity_9_0= ruleQuantity ) ) | ( ( (lv_op_10_0= ruleREL_OPERATOR ) ) ( (lv_expression_11_0= ruleNumber ) ) ) | ( (lv_null_12_0= 'unknown' ) ) ) ;
+    // InternalKim.g:14717:1: ruleValueWithIdAndConcept returns [EObject current=null] : ( ( (lv_list_0_0= ruleList ) ) | ( (lv_map_1_0= ruleMap ) ) | ( (lv_concept_2_0= ruleSimpleObservableSemantics ) ) | ( (lv_function_3_0= ruleFunction ) ) | ( (lv_date_4_0= ruleDate ) ) | ( (lv_literal_5_0= ruleLiteral ) ) | ( (lv_expr_6_0= RULE_EXPR ) ) | ( ( (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_table_8_0= ruleLookupTable ) ) | ( (lv_quantity_9_0= ruleQuantity ) ) | ( ( (lv_op_10_0= ruleREL_OPERATOR ) ) ( (lv_expression_11_0= ruleNumber ) ) ) | ( (lv_null_12_0= 'unknown' ) ) ) ;
     public final EObject ruleValueWithIdAndConcept() throws RecognitionException {
         EObject current = null;
 
-        Token lv_expr_5_0=null;
-        Token lv_id_6_2=null;
-        Token lv_id_6_3=null;
-        Token lv_id_6_4=null;
+        Token lv_expr_6_0=null;
+        Token lv_id_7_2=null;
+        Token lv_id_7_3=null;
+        Token lv_id_7_4=null;
         Token lv_null_12_0=null;
         EObject lv_list_0_0 = null;
 
@@ -39668,13 +39668,13 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
         EObject lv_function_3_0 = null;
 
-        EObject lv_literal_4_0 = null;
+        EObject lv_date_4_0 = null;
 
-        AntlrDatatypeRuleToken lv_id_6_1 = null;
+        EObject lv_literal_5_0 = null;
 
-        EObject lv_table_7_0 = null;
+        AntlrDatatypeRuleToken lv_id_7_1 = null;
 
-        EObject lv_date_8_0 = null;
+        EObject lv_table_8_0 = null;
 
         EObject lv_quantity_9_0 = null;
 
@@ -39687,10 +39687,10 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	enterRule();
 
         try {
-            // InternalKim.g:14723:2: ( ( ( (lv_list_0_0= ruleList ) ) | ( (lv_map_1_0= ruleMap ) ) | ( (lv_concept_2_0= ruleSimpleObservableSemantics ) ) | ( (lv_function_3_0= ruleFunction ) ) | ( (lv_literal_4_0= ruleLiteral ) ) | ( (lv_expr_5_0= RULE_EXPR ) ) | ( ( (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_table_7_0= ruleLookupTable ) ) | ( (lv_date_8_0= ruleDate ) ) | ( (lv_quantity_9_0= ruleQuantity ) ) | ( ( (lv_op_10_0= ruleREL_OPERATOR ) ) ( (lv_expression_11_0= ruleNumber ) ) ) | ( (lv_null_12_0= 'unknown' ) ) ) )
-            // InternalKim.g:14724:2: ( ( (lv_list_0_0= ruleList ) ) | ( (lv_map_1_0= ruleMap ) ) | ( (lv_concept_2_0= ruleSimpleObservableSemantics ) ) | ( (lv_function_3_0= ruleFunction ) ) | ( (lv_literal_4_0= ruleLiteral ) ) | ( (lv_expr_5_0= RULE_EXPR ) ) | ( ( (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_table_7_0= ruleLookupTable ) ) | ( (lv_date_8_0= ruleDate ) ) | ( (lv_quantity_9_0= ruleQuantity ) ) | ( ( (lv_op_10_0= ruleREL_OPERATOR ) ) ( (lv_expression_11_0= ruleNumber ) ) ) | ( (lv_null_12_0= 'unknown' ) ) )
+            // InternalKim.g:14723:2: ( ( ( (lv_list_0_0= ruleList ) ) | ( (lv_map_1_0= ruleMap ) ) | ( (lv_concept_2_0= ruleSimpleObservableSemantics ) ) | ( (lv_function_3_0= ruleFunction ) ) | ( (lv_date_4_0= ruleDate ) ) | ( (lv_literal_5_0= ruleLiteral ) ) | ( (lv_expr_6_0= RULE_EXPR ) ) | ( ( (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_table_8_0= ruleLookupTable ) ) | ( (lv_quantity_9_0= ruleQuantity ) ) | ( ( (lv_op_10_0= ruleREL_OPERATOR ) ) ( (lv_expression_11_0= ruleNumber ) ) ) | ( (lv_null_12_0= 'unknown' ) ) ) )
+            // InternalKim.g:14724:2: ( ( (lv_list_0_0= ruleList ) ) | ( (lv_map_1_0= ruleMap ) ) | ( (lv_concept_2_0= ruleSimpleObservableSemantics ) ) | ( (lv_function_3_0= ruleFunction ) ) | ( (lv_date_4_0= ruleDate ) ) | ( (lv_literal_5_0= ruleLiteral ) ) | ( (lv_expr_6_0= RULE_EXPR ) ) | ( ( (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_table_8_0= ruleLookupTable ) ) | ( (lv_quantity_9_0= ruleQuantity ) ) | ( ( (lv_op_10_0= ruleREL_OPERATOR ) ) ( (lv_expression_11_0= ruleNumber ) ) ) | ( (lv_null_12_0= 'unknown' ) ) )
             {
-            // InternalKim.g:14724:2: ( ( (lv_list_0_0= ruleList ) ) | ( (lv_map_1_0= ruleMap ) ) | ( (lv_concept_2_0= ruleSimpleObservableSemantics ) ) | ( (lv_function_3_0= ruleFunction ) ) | ( (lv_literal_4_0= ruleLiteral ) ) | ( (lv_expr_5_0= RULE_EXPR ) ) | ( ( (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_table_7_0= ruleLookupTable ) ) | ( (lv_date_8_0= ruleDate ) ) | ( (lv_quantity_9_0= ruleQuantity ) ) | ( ( (lv_op_10_0= ruleREL_OPERATOR ) ) ( (lv_expression_11_0= ruleNumber ) ) ) | ( (lv_null_12_0= 'unknown' ) ) )
+            // InternalKim.g:14724:2: ( ( (lv_list_0_0= ruleList ) ) | ( (lv_map_1_0= ruleMap ) ) | ( (lv_concept_2_0= ruleSimpleObservableSemantics ) ) | ( (lv_function_3_0= ruleFunction ) ) | ( (lv_date_4_0= ruleDate ) ) | ( (lv_literal_5_0= ruleLiteral ) ) | ( (lv_expr_6_0= RULE_EXPR ) ) | ( ( (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_table_8_0= ruleLookupTable ) ) | ( (lv_quantity_9_0= ruleQuantity ) ) | ( ( (lv_op_10_0= ruleREL_OPERATOR ) ) ( (lv_expression_11_0= ruleNumber ) ) ) | ( (lv_null_12_0= 'unknown' ) ) )
             int alt315=12;
             alt315 = dfa315.predict(input);
             switch (alt315) {
@@ -39859,21 +39859,21 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 5 :
-                    // InternalKim.g:14805:3: ( (lv_literal_4_0= ruleLiteral ) )
+                    // InternalKim.g:14805:3: ( (lv_date_4_0= ruleDate ) )
                     {
-                    // InternalKim.g:14805:3: ( (lv_literal_4_0= ruleLiteral ) )
-                    // InternalKim.g:14806:4: (lv_literal_4_0= ruleLiteral )
+                    // InternalKim.g:14805:3: ( (lv_date_4_0= ruleDate ) )
+                    // InternalKim.g:14806:4: (lv_date_4_0= ruleDate )
                     {
-                    // InternalKim.g:14806:4: (lv_literal_4_0= ruleLiteral )
-                    // InternalKim.g:14807:5: lv_literal_4_0= ruleLiteral
+                    // InternalKim.g:14806:4: (lv_date_4_0= ruleDate )
+                    // InternalKim.g:14807:5: lv_date_4_0= ruleDate
                     {
                     if ( state.backtracking==0 ) {
 
-                      					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getLiteralLiteralParserRuleCall_4_0());
+                      					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getDateDateParserRuleCall_4_0());
                       				
                     }
                     pushFollow(FOLLOW_2);
-                    lv_literal_4_0=ruleLiteral();
+                    lv_date_4_0=ruleDate();
 
                     state._fsp--;
                     if (state.failed) return current;
@@ -39884,9 +39884,9 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					}
                       					set(
                       						current,
-                      						"literal",
-                      						lv_literal_4_0,
-                      						"org.integratedmodelling.kim.Kim.Literal");
+                      						"date",
+                      						lv_date_4_0,
+                      						"org.integratedmodelling.kim.Kim.Date");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -39900,30 +39900,35 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 6 :
-                    // InternalKim.g:14825:3: ( (lv_expr_5_0= RULE_EXPR ) )
+                    // InternalKim.g:14825:3: ( (lv_literal_5_0= ruleLiteral ) )
                     {
-                    // InternalKim.g:14825:3: ( (lv_expr_5_0= RULE_EXPR ) )
-                    // InternalKim.g:14826:4: (lv_expr_5_0= RULE_EXPR )
+                    // InternalKim.g:14825:3: ( (lv_literal_5_0= ruleLiteral ) )
+                    // InternalKim.g:14826:4: (lv_literal_5_0= ruleLiteral )
                     {
-                    // InternalKim.g:14826:4: (lv_expr_5_0= RULE_EXPR )
-                    // InternalKim.g:14827:5: lv_expr_5_0= RULE_EXPR
+                    // InternalKim.g:14826:4: (lv_literal_5_0= ruleLiteral )
+                    // InternalKim.g:14827:5: lv_literal_5_0= ruleLiteral
                     {
-                    lv_expr_5_0=(Token)match(input,RULE_EXPR,FOLLOW_2); if (state.failed) return current;
                     if ( state.backtracking==0 ) {
 
-                      					newLeafNode(lv_expr_5_0, grammarAccess.getValueWithIdAndConceptAccess().getExprEXPRTerminalRuleCall_5_0());
+                      					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getLiteralLiteralParserRuleCall_5_0());
                       				
                     }
+                    pushFollow(FOLLOW_2);
+                    lv_literal_5_0=ruleLiteral();
+
+                    state._fsp--;
+                    if (state.failed) return current;
                     if ( state.backtracking==0 ) {
 
                       					if (current==null) {
-                      						current = createModelElement(grammarAccess.getValueWithIdAndConceptRule());
+                      						current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
                       					}
-                      					setWithLastConsumed(
+                      					set(
                       						current,
-                      						"expr",
-                      						lv_expr_5_0,
-                      						"org.integratedmodelling.kim.Kim.EXPR");
+                      						"literal",
+                      						lv_literal_5_0,
+                      						"org.integratedmodelling.kim.Kim.Literal");
+                      					afterParserOrEnumRuleCall();
                       				
                     }
 
@@ -39936,25 +39941,61 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                     }
                     break;
                 case 7 :
-                    // InternalKim.g:14844:3: ( ( (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID ) ) )
+                    // InternalKim.g:14845:3: ( (lv_expr_6_0= RULE_EXPR ) )
                     {
-                    // InternalKim.g:14844:3: ( ( (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID ) ) )
-                    // InternalKim.g:14845:4: ( (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID ) )
+                    // InternalKim.g:14845:3: ( (lv_expr_6_0= RULE_EXPR ) )
+                    // InternalKim.g:14846:4: (lv_expr_6_0= RULE_EXPR )
                     {
-                    // InternalKim.g:14845:4: ( (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID ) )
-                    // InternalKim.g:14846:5: (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID )
+                    // InternalKim.g:14846:4: (lv_expr_6_0= RULE_EXPR )
+                    // InternalKim.g:14847:5: lv_expr_6_0= RULE_EXPR
                     {
-                    // InternalKim.g:14846:5: (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID )
+                    lv_expr_6_0=(Token)match(input,RULE_EXPR,FOLLOW_2); if (state.failed) return current;
+                    if ( state.backtracking==0 ) {
+
+                      					newLeafNode(lv_expr_6_0, grammarAccess.getValueWithIdAndConceptAccess().getExprEXPRTerminalRuleCall_6_0());
+                      				
+                    }
+                    if ( state.backtracking==0 ) {
+
+                      					if (current==null) {
+                      						current = createModelElement(grammarAccess.getValueWithIdAndConceptRule());
+                      					}
+                      					setWithLastConsumed(
+                      						current,
+                      						"expr",
+                      						lv_expr_6_0,
+                      						"org.integratedmodelling.kim.Kim.EXPR");
+                      				
+                    }
+
+                    }
+
+
+                    }
+
+
+                    }
+                    break;
+                case 8 :
+                    // InternalKim.g:14864:3: ( ( (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID ) ) )
+                    {
+                    // InternalKim.g:14864:3: ( ( (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID ) ) )
+                    // InternalKim.g:14865:4: ( (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID ) )
+                    {
+                    // InternalKim.g:14865:4: ( (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID ) )
+                    // InternalKim.g:14866:5: (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID )
+                    {
+                    // InternalKim.g:14866:5: (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID )
                     int alt314=4;
                     switch ( input.LA(1) ) {
                     case RULE_LOWERCASE_ID:
                         {
                         int LA314_1 = input.LA(2);
 
-                        if ( (synpred565_InternalKim()) ) {
+                        if ( (synpred566_InternalKim()) ) {
                             alt314=1;
                         }
-                        else if ( (synpred566_InternalKim()) ) {
+                        else if ( (synpred567_InternalKim()) ) {
                             alt314=2;
                         }
                         else {
@@ -39970,10 +40011,10 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         {
                         int LA314_2 = input.LA(2);
 
-                        if ( (synpred565_InternalKim()) ) {
+                        if ( (synpred566_InternalKim()) ) {
                             alt314=1;
                         }
-                        else if ( (synpred567_InternalKim()) ) {
+                        else if ( (synpred568_InternalKim()) ) {
                             alt314=3;
                         }
                         else {
@@ -40005,15 +40046,15 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
                     switch (alt314) {
                         case 1 :
-                            // InternalKim.g:14847:6: lv_id_6_1= rulePathName
+                            // InternalKim.g:14867:6: lv_id_7_1= rulePathName
                             {
                             if ( state.backtracking==0 ) {
 
-                              						newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getIdPathNameParserRuleCall_6_0_0());
+                              						newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getIdPathNameParserRuleCall_7_0_0());
                               					
                             }
                             pushFollow(FOLLOW_2);
-                            lv_id_6_1=rulePathName();
+                            lv_id_7_1=rulePathName();
 
                             state._fsp--;
                             if (state.failed) return current;
@@ -40025,7 +40066,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               						set(
                               							current,
                               							"id",
-                              							lv_id_6_1,
+                              							lv_id_7_1,
                               							"org.integratedmodelling.kim.Kim.PathName");
                               						afterParserOrEnumRuleCall();
                               					
@@ -40034,12 +40075,12 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 2 :
-                            // InternalKim.g:14863:6: lv_id_6_2= RULE_LOWERCASE_ID
+                            // InternalKim.g:14883:6: lv_id_7_2= RULE_LOWERCASE_ID
                             {
-                            lv_id_6_2=(Token)match(input,RULE_LOWERCASE_ID,FOLLOW_2); if (state.failed) return current;
+                            lv_id_7_2=(Token)match(input,RULE_LOWERCASE_ID,FOLLOW_2); if (state.failed) return current;
                             if ( state.backtracking==0 ) {
 
-                              						newLeafNode(lv_id_6_2, grammarAccess.getValueWithIdAndConceptAccess().getIdLOWERCASE_IDTerminalRuleCall_6_0_1());
+                              						newLeafNode(lv_id_7_2, grammarAccess.getValueWithIdAndConceptAccess().getIdLOWERCASE_IDTerminalRuleCall_7_0_1());
                               					
                             }
                             if ( state.backtracking==0 ) {
@@ -40050,7 +40091,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               						setWithLastConsumed(
                               							current,
                               							"id",
-                              							lv_id_6_2,
+                              							lv_id_7_2,
                               							"org.integratedmodelling.kim.Kim.LOWERCASE_ID");
                               					
                             }
@@ -40058,12 +40099,12 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 3 :
-                            // InternalKim.g:14878:6: lv_id_6_3= RULE_UPPERCASE_ID
+                            // InternalKim.g:14898:6: lv_id_7_3= RULE_UPPERCASE_ID
                             {
-                            lv_id_6_3=(Token)match(input,RULE_UPPERCASE_ID,FOLLOW_2); if (state.failed) return current;
+                            lv_id_7_3=(Token)match(input,RULE_UPPERCASE_ID,FOLLOW_2); if (state.failed) return current;
                             if ( state.backtracking==0 ) {
 
-                              						newLeafNode(lv_id_6_3, grammarAccess.getValueWithIdAndConceptAccess().getIdUPPERCASE_IDTerminalRuleCall_6_0_2());
+                              						newLeafNode(lv_id_7_3, grammarAccess.getValueWithIdAndConceptAccess().getIdUPPERCASE_IDTerminalRuleCall_7_0_2());
                               					
                             }
                             if ( state.backtracking==0 ) {
@@ -40074,7 +40115,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               						setWithLastConsumed(
                               							current,
                               							"id",
-                              							lv_id_6_3,
+                              							lv_id_7_3,
                               							"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
                               					
                             }
@@ -40082,12 +40123,12 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                             }
                             break;
                         case 4 :
-                            // InternalKim.g:14893:6: lv_id_6_4= RULE_CAMELCASE_ID
+                            // InternalKim.g:14913:6: lv_id_7_4= RULE_CAMELCASE_ID
                             {
-                            lv_id_6_4=(Token)match(input,RULE_CAMELCASE_ID,FOLLOW_2); if (state.failed) return current;
+                            lv_id_7_4=(Token)match(input,RULE_CAMELCASE_ID,FOLLOW_2); if (state.failed) return current;
                             if ( state.backtracking==0 ) {
 
-                              						newLeafNode(lv_id_6_4, grammarAccess.getValueWithIdAndConceptAccess().getIdCAMELCASE_IDTerminalRuleCall_6_0_3());
+                              						newLeafNode(lv_id_7_4, grammarAccess.getValueWithIdAndConceptAccess().getIdCAMELCASE_IDTerminalRuleCall_7_0_3());
                               					
                             }
                             if ( state.backtracking==0 ) {
@@ -40098,7 +40139,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                               						setWithLastConsumed(
                               							current,
                               							"id",
-                              							lv_id_6_4,
+                              							lv_id_7_4,
                               							"org.integratedmodelling.kim.Kim.CAMELCASE_ID");
                               					
                             }
@@ -40117,22 +40158,22 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
                     }
                     break;
-                case 8 :
-                    // InternalKim.g:14911:3: ( (lv_table_7_0= ruleLookupTable ) )
+                case 9 :
+                    // InternalKim.g:14931:3: ( (lv_table_8_0= ruleLookupTable ) )
                     {
-                    // InternalKim.g:14911:3: ( (lv_table_7_0= ruleLookupTable ) )
-                    // InternalKim.g:14912:4: (lv_table_7_0= ruleLookupTable )
+                    // InternalKim.g:14931:3: ( (lv_table_8_0= ruleLookupTable ) )
+                    // InternalKim.g:14932:4: (lv_table_8_0= ruleLookupTable )
                     {
-                    // InternalKim.g:14912:4: (lv_table_7_0= ruleLookupTable )
-                    // InternalKim.g:14913:5: lv_table_7_0= ruleLookupTable
+                    // InternalKim.g:14932:4: (lv_table_8_0= ruleLookupTable )
+                    // InternalKim.g:14933:5: lv_table_8_0= ruleLookupTable
                     {
                     if ( state.backtracking==0 ) {
 
-                      					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getTableLookupTableParserRuleCall_7_0());
+                      					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getTableLookupTableParserRuleCall_8_0());
                       				
                     }
                     pushFollow(FOLLOW_2);
-                    lv_table_7_0=ruleLookupTable();
+                    lv_table_8_0=ruleLookupTable();
 
                     state._fsp--;
                     if (state.failed) return current;
@@ -40144,49 +40185,8 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                       					set(
                       						current,
                       						"table",
-                      						lv_table_7_0,
+                      						lv_table_8_0,
                       						"org.integratedmodelling.kim.Kim.LookupTable");
-                      					afterParserOrEnumRuleCall();
-                      				
-                    }
-
-                    }
-
-
-                    }
-
-
-                    }
-                    break;
-                case 9 :
-                    // InternalKim.g:14931:3: ( (lv_date_8_0= ruleDate ) )
-                    {
-                    // InternalKim.g:14931:3: ( (lv_date_8_0= ruleDate ) )
-                    // InternalKim.g:14932:4: (lv_date_8_0= ruleDate )
-                    {
-                    // InternalKim.g:14932:4: (lv_date_8_0= ruleDate )
-                    // InternalKim.g:14933:5: lv_date_8_0= ruleDate
-                    {
-                    if ( state.backtracking==0 ) {
-
-                      					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getDateDateParserRuleCall_8_0());
-                      				
-                    }
-                    pushFollow(FOLLOW_2);
-                    lv_date_8_0=ruleDate();
-
-                    state._fsp--;
-                    if (state.failed) return current;
-                    if ( state.backtracking==0 ) {
-
-                      					if (current==null) {
-                      						current = createModelElementForParent(grammarAccess.getValueWithIdAndConceptRule());
-                      					}
-                      					set(
-                      						current,
-                      						"date",
-                      						lv_date_8_0,
-                      						"org.integratedmodelling.kim.Kim.Date");
                       					afterParserOrEnumRuleCall();
                       				
                     }
@@ -62277,25 +62277,25 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
     // $ANTLR start synpred563_InternalKim
     public final void synpred563_InternalKim_fragment() throws RecognitionException {   
-        EObject lv_literal_4_0 = null;
+        EObject lv_date_4_0 = null;
 
 
-        // InternalKim.g:14805:3: ( ( (lv_literal_4_0= ruleLiteral ) ) )
-        // InternalKim.g:14805:3: ( (lv_literal_4_0= ruleLiteral ) )
+        // InternalKim.g:14805:3: ( ( (lv_date_4_0= ruleDate ) ) )
+        // InternalKim.g:14805:3: ( (lv_date_4_0= ruleDate ) )
         {
-        // InternalKim.g:14805:3: ( (lv_literal_4_0= ruleLiteral ) )
-        // InternalKim.g:14806:4: (lv_literal_4_0= ruleLiteral )
+        // InternalKim.g:14805:3: ( (lv_date_4_0= ruleDate ) )
+        // InternalKim.g:14806:4: (lv_date_4_0= ruleDate )
         {
-        // InternalKim.g:14806:4: (lv_literal_4_0= ruleLiteral )
-        // InternalKim.g:14807:5: lv_literal_4_0= ruleLiteral
+        // InternalKim.g:14806:4: (lv_date_4_0= ruleDate )
+        // InternalKim.g:14807:5: lv_date_4_0= ruleDate
         {
         if ( state.backtracking==0 ) {
 
-          					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getLiteralLiteralParserRuleCall_4_0());
+          					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getDateDateParserRuleCall_4_0());
           				
         }
         pushFollow(FOLLOW_2);
-        lv_literal_4_0=ruleLiteral();
+        lv_date_4_0=ruleDate();
 
         state._fsp--;
         if (state.failed) return ;
@@ -62310,37 +62310,59 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     }
     // $ANTLR end synpred563_InternalKim
 
-    // $ANTLR start synpred565_InternalKim
-    public final void synpred565_InternalKim_fragment() throws RecognitionException {   
-        AntlrDatatypeRuleToken lv_id_6_1 = null;
+    // $ANTLR start synpred564_InternalKim
+    public final void synpred564_InternalKim_fragment() throws RecognitionException {   
+        EObject lv_literal_5_0 = null;
 
 
-        // InternalKim.g:14847:6: (lv_id_6_1= rulePathName )
-        // InternalKim.g:14847:6: lv_id_6_1= rulePathName
+        // InternalKim.g:14825:3: ( ( (lv_literal_5_0= ruleLiteral ) ) )
+        // InternalKim.g:14825:3: ( (lv_literal_5_0= ruleLiteral ) )
+        {
+        // InternalKim.g:14825:3: ( (lv_literal_5_0= ruleLiteral ) )
+        // InternalKim.g:14826:4: (lv_literal_5_0= ruleLiteral )
+        {
+        // InternalKim.g:14826:4: (lv_literal_5_0= ruleLiteral )
+        // InternalKim.g:14827:5: lv_literal_5_0= ruleLiteral
         {
         if ( state.backtracking==0 ) {
 
-          						newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getIdPathNameParserRuleCall_6_0_0());
-          					
+          					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getLiteralLiteralParserRuleCall_5_0());
+          				
         }
         pushFollow(FOLLOW_2);
-        lv_id_6_1=rulePathName();
+        lv_literal_5_0=ruleLiteral();
 
         state._fsp--;
         if (state.failed) return ;
 
         }
+
+
+        }
+
+
+        }
     }
-    // $ANTLR end synpred565_InternalKim
+    // $ANTLR end synpred564_InternalKim
 
     // $ANTLR start synpred566_InternalKim
     public final void synpred566_InternalKim_fragment() throws RecognitionException {   
-        Token lv_id_6_2=null;
+        AntlrDatatypeRuleToken lv_id_7_1 = null;
 
-        // InternalKim.g:14863:6: (lv_id_6_2= RULE_LOWERCASE_ID )
-        // InternalKim.g:14863:6: lv_id_6_2= RULE_LOWERCASE_ID
+
+        // InternalKim.g:14867:6: (lv_id_7_1= rulePathName )
+        // InternalKim.g:14867:6: lv_id_7_1= rulePathName
         {
-        lv_id_6_2=(Token)match(input,RULE_LOWERCASE_ID,FOLLOW_2); if (state.failed) return ;
+        if ( state.backtracking==0 ) {
+
+          						newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getIdPathNameParserRuleCall_7_0_0());
+          					
+        }
+        pushFollow(FOLLOW_2);
+        lv_id_7_1=rulePathName();
+
+        state._fsp--;
+        if (state.failed) return ;
 
         }
     }
@@ -62348,12 +62370,12 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
     // $ANTLR start synpred567_InternalKim
     public final void synpred567_InternalKim_fragment() throws RecognitionException {   
-        Token lv_id_6_3=null;
+        Token lv_id_7_2=null;
 
-        // InternalKim.g:14878:6: (lv_id_6_3= RULE_UPPERCASE_ID )
-        // InternalKim.g:14878:6: lv_id_6_3= RULE_UPPERCASE_ID
+        // InternalKim.g:14883:6: (lv_id_7_2= RULE_LOWERCASE_ID )
+        // InternalKim.g:14883:6: lv_id_7_2= RULE_LOWERCASE_ID
         {
-        lv_id_6_3=(Token)match(input,RULE_UPPERCASE_ID,FOLLOW_2); if (state.failed) return ;
+        lv_id_7_2=(Token)match(input,RULE_LOWERCASE_ID,FOLLOW_2); if (state.failed) return ;
 
         }
     }
@@ -62361,32 +62383,45 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
     // $ANTLR start synpred568_InternalKim
     public final void synpred568_InternalKim_fragment() throws RecognitionException {   
-        Token lv_id_6_2=null;
-        Token lv_id_6_3=null;
-        Token lv_id_6_4=null;
-        AntlrDatatypeRuleToken lv_id_6_1 = null;
+        Token lv_id_7_3=null;
+
+        // InternalKim.g:14898:6: (lv_id_7_3= RULE_UPPERCASE_ID )
+        // InternalKim.g:14898:6: lv_id_7_3= RULE_UPPERCASE_ID
+        {
+        lv_id_7_3=(Token)match(input,RULE_UPPERCASE_ID,FOLLOW_2); if (state.failed) return ;
+
+        }
+    }
+    // $ANTLR end synpred568_InternalKim
+
+    // $ANTLR start synpred569_InternalKim
+    public final void synpred569_InternalKim_fragment() throws RecognitionException {   
+        Token lv_id_7_2=null;
+        Token lv_id_7_3=null;
+        Token lv_id_7_4=null;
+        AntlrDatatypeRuleToken lv_id_7_1 = null;
 
 
-        // InternalKim.g:14844:3: ( ( ( (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID ) ) ) )
-        // InternalKim.g:14844:3: ( ( (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID ) ) )
+        // InternalKim.g:14864:3: ( ( ( (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID ) ) ) )
+        // InternalKim.g:14864:3: ( ( (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID ) ) )
         {
-        // InternalKim.g:14844:3: ( ( (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID ) ) )
-        // InternalKim.g:14845:4: ( (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID ) )
+        // InternalKim.g:14864:3: ( ( (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID ) ) )
+        // InternalKim.g:14865:4: ( (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID ) )
         {
-        // InternalKim.g:14845:4: ( (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID ) )
-        // InternalKim.g:14846:5: (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID )
+        // InternalKim.g:14865:4: ( (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID ) )
+        // InternalKim.g:14866:5: (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID )
         {
-        // InternalKim.g:14846:5: (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID )
+        // InternalKim.g:14866:5: (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID )
         int alt623=4;
         switch ( input.LA(1) ) {
         case RULE_LOWERCASE_ID:
             {
             int LA623_1 = input.LA(2);
 
-            if ( (synpred565_InternalKim()) ) {
+            if ( (synpred566_InternalKim()) ) {
                 alt623=1;
             }
-            else if ( (synpred566_InternalKim()) ) {
+            else if ( (synpred567_InternalKim()) ) {
                 alt623=2;
             }
             else {
@@ -62402,10 +62437,10 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             {
             int LA623_2 = input.LA(2);
 
-            if ( (synpred565_InternalKim()) ) {
+            if ( (synpred566_InternalKim()) ) {
                 alt623=1;
             }
-            else if ( (synpred567_InternalKim()) ) {
+            else if ( (synpred568_InternalKim()) ) {
                 alt623=3;
             }
             else {
@@ -62437,10 +62472,10 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
         switch (alt623) {
             case 1 :
-                // InternalKim.g:14847:6: lv_id_6_1= rulePathName
+                // InternalKim.g:14867:6: lv_id_7_1= rulePathName
                 {
                 pushFollow(FOLLOW_2);
-                lv_id_6_1=rulePathName();
+                lv_id_7_1=rulePathName();
 
                 state._fsp--;
                 if (state.failed) return ;
@@ -62448,23 +62483,23 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                 }
                 break;
             case 2 :
-                // InternalKim.g:14863:6: lv_id_6_2= RULE_LOWERCASE_ID
+                // InternalKim.g:14883:6: lv_id_7_2= RULE_LOWERCASE_ID
                 {
-                lv_id_6_2=(Token)match(input,RULE_LOWERCASE_ID,FOLLOW_2); if (state.failed) return ;
+                lv_id_7_2=(Token)match(input,RULE_LOWERCASE_ID,FOLLOW_2); if (state.failed) return ;
 
                 }
                 break;
             case 3 :
-                // InternalKim.g:14878:6: lv_id_6_3= RULE_UPPERCASE_ID
+                // InternalKim.g:14898:6: lv_id_7_3= RULE_UPPERCASE_ID
                 {
-                lv_id_6_3=(Token)match(input,RULE_UPPERCASE_ID,FOLLOW_2); if (state.failed) return ;
+                lv_id_7_3=(Token)match(input,RULE_UPPERCASE_ID,FOLLOW_2); if (state.failed) return ;
 
                 }
                 break;
             case 4 :
-                // InternalKim.g:14893:6: lv_id_6_4= RULE_CAMELCASE_ID
+                // InternalKim.g:14913:6: lv_id_7_4= RULE_CAMELCASE_ID
                 {
-                lv_id_6_4=(Token)match(input,RULE_CAMELCASE_ID,FOLLOW_2); if (state.failed) return ;
+                lv_id_7_4=(Token)match(input,RULE_CAMELCASE_ID,FOLLOW_2); if (state.failed) return ;
 
                 }
                 break;
@@ -62480,42 +62515,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
         }
     }
-    // $ANTLR end synpred568_InternalKim
-
-    // $ANTLR start synpred570_InternalKim
-    public final void synpred570_InternalKim_fragment() throws RecognitionException {   
-        EObject lv_date_8_0 = null;
-
-
-        // InternalKim.g:14931:3: ( ( (lv_date_8_0= ruleDate ) ) )
-        // InternalKim.g:14931:3: ( (lv_date_8_0= ruleDate ) )
-        {
-        // InternalKim.g:14931:3: ( (lv_date_8_0= ruleDate ) )
-        // InternalKim.g:14932:4: (lv_date_8_0= ruleDate )
-        {
-        // InternalKim.g:14932:4: (lv_date_8_0= ruleDate )
-        // InternalKim.g:14933:5: lv_date_8_0= ruleDate
-        {
-        if ( state.backtracking==0 ) {
-
-          					newCompositeNode(grammarAccess.getValueWithIdAndConceptAccess().getDateDateParserRuleCall_8_0());
-          				
-        }
-        pushFollow(FOLLOW_2);
-        lv_date_8_0=ruleDate();
-
-        state._fsp--;
-        if (state.failed) return ;
-
-        }
-
-
-        }
-
-
-        }
-    }
-    // $ANTLR end synpred570_InternalKim
+    // $ANTLR end synpred569_InternalKim
 
     // $ANTLR start synpred571_InternalKim
     public final void synpred571_InternalKim_fragment() throws RecognitionException {   
@@ -65808,11 +65808,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
-    public final boolean synpred565_InternalKim() {
+    public final boolean synpred564_InternalKim() {
         state.backtracking++;
         int start = input.mark();
         try {
-            synpred565_InternalKim_fragment(); // can never throw exception
+            synpred564_InternalKim_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -66368,6 +66368,20 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         state.failed=false;
         return success;
     }
+    public final boolean synpred569_InternalKim() {
+        state.backtracking++;
+        int start = input.mark();
+        try {
+            synpred569_InternalKim_fragment(); // can never throw exception
+        } catch (RecognitionException re) {
+            System.err.println("impossible: "+re);
+        }
+        boolean success = !state.failed;
+        input.rewind(start);
+        state.backtracking--;
+        state.failed=false;
+        return success;
+    }
     public final boolean synpred7_InternalKim() {
         state.backtracking++;
         int start = input.mark();
@@ -66597,20 +66611,6 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         int start = input.mark();
         try {
             synpred478_InternalKim_fragment(); // can never throw exception
-        } catch (RecognitionException re) {
-            System.err.println("impossible: "+re);
-        }
-        boolean success = !state.failed;
-        input.rewind(start);
-        state.backtracking--;
-        state.failed=false;
-        return success;
-    }
-    public final boolean synpred570_InternalKim() {
-        state.backtracking++;
-        int start = input.mark();
-        try {
-            synpred570_InternalKim_fragment(); // can never throw exception
         } catch (RecognitionException re) {
             System.err.println("impossible: "+re);
         }
@@ -68078,7 +68078,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     static final String dfa_34s = "\1\4\1\uffff\2\12\1\44\2\uffff\3\152\3\uffff\1\44\3\12\2\uffff\2\4\1\uffff\2\4\1\44\2\12\1\44\1\0\3\152\1\0";
     static final String dfa_35s = "\1\u00fc\1\uffff\2\12\1\u00ff\2\uffff\3\155\3\uffff\1\u00ff\1\12\2\u00fc\2\uffff\1\16\1\13\1\uffff\1\u00fc\1\16\1\u00ff\2\12\1\152\1\0\3\155\1\0";
     static final String dfa_36s = "\1\uffff\1\1\3\uffff\1\4\1\5\3\uffff\1\7\1\10\1\11\4\uffff\1\2\1\3\2\uffff\1\6\13\uffff";
-    static final String dfa_37s = "\34\uffff\1\1\3\uffff\1\0}>";
+    static final String dfa_37s = "\34\uffff\1\0\3\uffff\1\1}>";
     static final String[] dfa_38s = {
             "\1\10\1\7\1\5\2\uffff\1\6\1\4\1\11\1\uffff\1\6\16\uffff\2\1\10\uffff\1\6\1\uffff\1\14\10\uffff\1\13\32\uffff\4\12\2\uffff\1\12\2\uffff\1\12\56\uffff\2\6\7\uffff\2\6\1\uffff\6\6\1\uffff\15\6\127\uffff\1\2\1\3",
             "",
@@ -68144,21 +68144,6 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA49_32 = input.LA(1);
-
-                         
-                        int index49_32 = input.index();
-                        input.rewind();
-                        s = -1;
-                        if ( (synpred79_InternalKim()) ) {s = 6;}
-
-                        else if ( (synpred81_InternalKim()) ) {s = 21;}
-
-                         
-                        input.seek(index49_32);
-                        if ( s>=0 ) return s;
-                        break;
-                    case 1 : 
                         int LA49_28 = input.LA(1);
 
                          
@@ -68173,6 +68158,21 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         input.seek(index49_28);
                         if ( s>=0 ) return s;
                         break;
+                    case 1 : 
+                        int LA49_32 = input.LA(1);
+
+                         
+                        int index49_32 = input.index();
+                        input.rewind();
+                        s = -1;
+                        if ( (synpred79_InternalKim()) ) {s = 6;}
+
+                        else if ( (synpred81_InternalKim()) ) {s = 21;}
+
+                         
+                        input.seek(index49_32);
+                        if ( s>=0 ) return s;
+                        break;
             }
             if (state.backtracking>0) {state.failed=true; return -1;}
             NoViableAltException nvae =
@@ -68182,23 +68182,23 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         }
     }
     static final String dfa_39s = "\13\uffff";
-    static final String dfa_40s = "\1\uffff\1\4\3\uffff\2\7\1\11\3\uffff";
-    static final String dfa_41s = "\1\4\1\152\1\uffff\1\4\1\uffff\2\4\1\0\1\4\1\uffff\1\0";
-    static final String dfa_42s = "\1\13\1\155\1\uffff\1\u00fc\1\uffff\2\u00fc\1\0\1\u00fc\1\uffff\1\0";
-    static final String dfa_43s = "\2\uffff\1\2\1\uffff\1\1\4\uffff\1\1\1\uffff";
-    static final String dfa_44s = "\12\uffff\1\0}>";
+    static final String dfa_40s = "\1\uffff\1\4\3\uffff\2\10\1\uffff\1\12\2\uffff";
+    static final String dfa_41s = "\1\4\1\152\1\uffff\1\4\1\uffff\3\4\2\0\1\uffff";
+    static final String dfa_42s = "\1\13\1\155\1\uffff\1\u00fc\1\uffff\3\u00fc\2\0\1\uffff";
+    static final String dfa_43s = "\2\uffff\1\2\1\uffff\1\1\5\uffff\1\1";
+    static final String dfa_44s = "\11\uffff\1\0\1\uffff}>";
     static final String[] dfa_45s = {
             "\1\1\1\2\5\uffff\1\2",
             "\1\3\2\uffff\1\2",
             "",
             "\1\5\2\4\1\uffff\3\4\1\6\1\uffff\1\4\1\2\15\uffff\2\4\10\uffff\1\4\12\uffff\2\4\31\uffff\4\4\2\uffff\2\4\1\uffff\1\4\33\uffff\1\4\4\uffff\1\4\15\uffff\2\4\7\uffff\2\4\1\uffff\6\4\1\uffff\15\4\64\uffff\1\4\42\uffff\2\4",
             "",
-            "\3\4\2\uffff\3\4\1\uffff\1\4\15\uffff\3\4\10\uffff\1\4\1\uffff\1\4\10\uffff\1\4\32\uffff\4\4\2\uffff\1\4\2\uffff\1\4\24\uffff\1\10\2\uffff\1\4\26\uffff\2\4\6\uffff\3\4\1\uffff\6\4\1\uffff\15\4\127\uffff\2\4",
-            "\3\4\2\uffff\3\4\1\uffff\1\4\15\uffff\3\4\10\uffff\1\4\1\uffff\1\4\10\uffff\1\4\32\uffff\4\4\2\uffff\1\4\2\uffff\1\4\24\uffff\1\10\2\uffff\1\4\26\uffff\2\4\6\uffff\3\4\1\uffff\6\4\1\uffff\15\4\127\uffff\2\4",
+            "\3\4\2\uffff\3\4\1\uffff\1\4\15\uffff\3\4\10\uffff\1\4\1\uffff\1\4\10\uffff\1\4\32\uffff\4\4\2\uffff\1\4\2\uffff\1\4\24\uffff\1\7\2\uffff\1\4\26\uffff\2\4\6\uffff\3\4\1\uffff\6\4\1\uffff\15\4\127\uffff\2\4",
+            "\3\4\2\uffff\3\4\1\uffff\1\4\15\uffff\3\4\10\uffff\1\4\1\uffff\1\4\10\uffff\1\4\32\uffff\4\4\2\uffff\1\4\2\uffff\1\4\24\uffff\1\7\2\uffff\1\4\26\uffff\2\4\6\uffff\3\4\1\uffff\6\4\1\uffff\15\4\127\uffff\2\4",
+            "\3\2\1\uffff\1\2\1\11\2\2\1\uffff\1\2\16\uffff\2\2\10\uffff\1\2\12\uffff\2\2\31\uffff\4\2\2\uffff\2\2\1\uffff\1\2\33\uffff\1\2\4\uffff\1\2\15\uffff\2\2\7\uffff\2\2\1\uffff\6\2\1\uffff\15\2\64\uffff\1\2\42\uffff\2\2",
             "\1\uffff",
-            "\3\2\1\uffff\1\2\1\12\2\2\1\uffff\1\2\16\uffff\2\2\10\uffff\1\2\12\uffff\2\2\31\uffff\4\2\2\uffff\2\2\1\uffff\1\2\33\uffff\1\2\4\uffff\1\2\15\uffff\2\2\7\uffff\2\2\1\uffff\6\2\1\uffff\15\2\64\uffff\1\2\42\uffff\2\2",
-            "",
-            "\1\uffff"
+            "\1\uffff",
+            ""
     };
 
     static final short[] dfa_39 = DFA.unpackEncodedString(dfa_39s);
@@ -68230,18 +68230,18 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
         	int _s = s;
             switch ( s ) {
                     case 0 : 
-                        int LA48_10 = input.LA(1);
+                        int LA48_9 = input.LA(1);
 
                          
-                        int index48_10 = input.index();
+                        int index48_9 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred80_InternalKim()) ) {s = 9;}
+                        if ( (synpred80_InternalKim()) ) {s = 4;}
 
                         else if ( (true) ) {s = 2;}
 
                          
-                        input.seek(index48_10);
+                        input.seek(index48_9);
                         if ( s>=0 ) return s;
                         break;
             }
@@ -70800,7 +70800,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     static final String dfa_154s = "\1\uffff\1\4\64\uffff\2\1\14\2\1\3";
     static final String dfa_155s = "\1\0\6\uffff\1\1\34\uffff\1\2\1\3\1\4\5\uffff\1\5\1\6\1\7\1\10\1\11\1\12\23\uffff}>";
     static final String[] dfa_156s = {
-            "\3\1\1\uffff\2\1\1\46\1\1\1\uffff\1\1\15\uffff\3\1\10\uffff\1\1\1\uffff\2\1\6\uffff\1\66\2\1\4\uffff\1\76\24\uffff\1\54\1\61\1\60\1\55\1\70\1\71\1\56\1\7\1\72\1\57\1\73\1\74\1\75\1\77\27\uffff\1\1\1\67\3\uffff\1\1\1\100\1\101\1\102\1\103\11\uffff\2\1\6\uffff\3\1\1\uffff\6\1\1\uffff\15\1\64\uffff\1\1\42\uffff\1\44\1\45",
+            "\3\1\1\uffff\2\1\1\44\1\1\1\uffff\1\1\15\uffff\3\1\10\uffff\1\1\1\uffff\2\1\6\uffff\1\66\2\1\4\uffff\1\76\24\uffff\1\54\1\61\1\60\1\55\1\70\1\71\1\56\1\7\1\72\1\57\1\73\1\74\1\75\1\77\27\uffff\1\1\1\67\3\uffff\1\1\1\100\1\101\1\102\1\103\11\uffff\2\1\6\uffff\3\1\1\uffff\6\1\1\uffff\15\1\64\uffff\1\1\42\uffff\1\45\1\46",
             "",
             "",
             "",
@@ -70910,11 +70910,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
                         else if ( (LA162_0==83) ) {s = 7;}
 
-                        else if ( (LA162_0==251) ) {s = 36;}
+                        else if ( (LA162_0==RULE_INT) ) {s = 36;}
 
-                        else if ( (LA162_0==252) ) {s = 37;}
+                        else if ( (LA162_0==251) ) {s = 37;}
 
-                        else if ( (LA162_0==RULE_INT) ) {s = 38;}
+                        else if ( (LA162_0==252) ) {s = 38;}
 
                         else if ( (LA162_0==76) ) {s = 44;}
 
@@ -77629,7 +77629,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     static final String dfa_275s = "\61\uffff\1\2\1\uffff\1\1";
     static final String dfa_276s = "\1\uffff\1\0\1\1\1\2\1\3\1\4\1\5\1\6\1\7\1\10\1\11\1\12\1\13\1\14\1\15\1\16\1\17\1\20\1\21\1\22\1\23\1\24\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\1\42\1\43\1\44\1\45\1\46\1\47\1\50\1\51\1\52\1\53\1\54\1\55\1\56\1\57\3\uffff}>";
     static final String[] dfa_277s = {
-            "\1\13\1\11\1\45\1\uffff\1\50\1\12\1\44\1\14\1\uffff\1\10\15\uffff\1\61\1\46\1\47\10\uffff\1\1\2\uffff\1\61\7\uffff\1\60\1\51\31\uffff\1\52\1\57\1\56\1\53\2\uffff\1\54\1\5\1\uffff\1\55\33\uffff\1\3\4\uffff\1\4\15\uffff\1\15\1\16\7\uffff\1\6\1\7\1\uffff\1\17\1\20\1\21\1\22\1\23\1\24\1\uffff\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\64\uffff\1\2\42\uffff\1\42\1\43",
+            "\1\13\1\11\1\45\1\uffff\1\50\1\12\1\42\1\14\1\uffff\1\10\15\uffff\1\61\1\46\1\47\10\uffff\1\1\2\uffff\1\61\7\uffff\1\60\1\51\31\uffff\1\52\1\57\1\56\1\53\2\uffff\1\54\1\5\1\uffff\1\55\33\uffff\1\3\4\uffff\1\4\15\uffff\1\15\1\16\7\uffff\1\6\1\7\1\uffff\1\17\1\20\1\21\1\22\1\23\1\24\1\uffff\1\25\1\26\1\27\1\30\1\31\1\32\1\33\1\34\1\35\1\36\1\37\1\40\1\41\64\uffff\1\2\42\uffff\1\43\1\44",
             "\1\uffff",
             "\1\uffff",
             "\1\uffff",
@@ -78619,10 +78619,10 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
     }
     static final String dfa_301s = "\1\4\1\0\7\uffff\4\0\25\uffff\3\0\21\uffff";
     static final String dfa_302s = "\1\u00fc\1\0\7\uffff\4\0\25\uffff\3\0\21\uffff";
-    static final String dfa_303s = "\2\uffff\1\2\1\3\41\uffff\1\5\2\uffff\1\6\1\10\1\13\5\uffff\1\14\1\1\1\4\1\7\1\12\1\11";
+    static final String dfa_303s = "\2\uffff\1\2\1\3\41\uffff\1\6\2\uffff\1\7\1\11\1\13\5\uffff\1\14\1\1\1\4\1\10\1\5\1\12";
     static final String dfa_304s = "\1\uffff\1\0\7\uffff\1\1\1\2\1\3\1\4\25\uffff\1\5\1\6\1\7\21\uffff}>";
     static final String[] dfa_305s = {
-            "\1\13\1\11\1\45\1\uffff\1\50\1\12\1\44\1\14\1\uffff\1\3\16\uffff\2\45\10\uffff\1\1\12\uffff\1\60\1\51\31\uffff\4\52\2\uffff\1\52\1\3\1\uffff\1\52\33\uffff\1\3\4\uffff\1\3\15\uffff\2\3\7\uffff\2\3\1\uffff\6\3\1\uffff\15\3\64\uffff\1\2\42\uffff\1\42\1\43",
+            "\1\13\1\11\1\45\1\uffff\1\50\1\12\1\42\1\14\1\uffff\1\3\16\uffff\2\45\10\uffff\1\1\12\uffff\1\60\1\51\31\uffff\4\52\2\uffff\1\52\1\3\1\uffff\1\52\33\uffff\1\3\4\uffff\1\3\15\uffff\2\3\7\uffff\2\3\1\uffff\6\3\1\uffff\15\3\64\uffff\1\2\42\uffff\1\43\1\44",
             "\1\uffff",
             "",
             "",
@@ -78697,7 +78697,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
             this.transition = dfa_305;
         }
         public String getDescription() {
-            return "14724:2: ( ( (lv_list_0_0= ruleList ) ) | ( (lv_map_1_0= ruleMap ) ) | ( (lv_concept_2_0= ruleSimpleObservableSemantics ) ) | ( (lv_function_3_0= ruleFunction ) ) | ( (lv_literal_4_0= ruleLiteral ) ) | ( (lv_expr_5_0= RULE_EXPR ) ) | ( ( (lv_id_6_1= rulePathName | lv_id_6_2= RULE_LOWERCASE_ID | lv_id_6_3= RULE_UPPERCASE_ID | lv_id_6_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_table_7_0= ruleLookupTable ) ) | ( (lv_date_8_0= ruleDate ) ) | ( (lv_quantity_9_0= ruleQuantity ) ) | ( ( (lv_op_10_0= ruleREL_OPERATOR ) ) ( (lv_expression_11_0= ruleNumber ) ) ) | ( (lv_null_12_0= 'unknown' ) ) )";
+            return "14724:2: ( ( (lv_list_0_0= ruleList ) ) | ( (lv_map_1_0= ruleMap ) ) | ( (lv_concept_2_0= ruleSimpleObservableSemantics ) ) | ( (lv_function_3_0= ruleFunction ) ) | ( (lv_date_4_0= ruleDate ) ) | ( (lv_literal_5_0= ruleLiteral ) ) | ( (lv_expr_6_0= RULE_EXPR ) ) | ( ( (lv_id_7_1= rulePathName | lv_id_7_2= RULE_LOWERCASE_ID | lv_id_7_3= RULE_UPPERCASE_ID | lv_id_7_4= RULE_CAMELCASE_ID ) ) ) | ( (lv_table_8_0= ruleLookupTable ) ) | ( (lv_quantity_9_0= ruleQuantity ) ) | ( ( (lv_op_10_0= ruleREL_OPERATOR ) ) ( (lv_expression_11_0= ruleNumber ) ) ) | ( (lv_null_12_0= 'unknown' ) ) )";
         }
         public int specialStateTransition(int s, IntStream _input) throws NoViableAltException {
             TokenStream input = (TokenStream)_input;
@@ -78729,7 +78729,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
                         else if ( (synpred562_InternalKim()) ) {s = 50;}
 
-                        else if ( (synpred568_InternalKim()) ) {s = 51;}
+                        else if ( (synpred569_InternalKim()) ) {s = 51;}
 
                          
                         input.seek(index315_9);
@@ -78744,7 +78744,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         s = -1;
                         if ( (synpred561_InternalKim()) ) {s = 3;}
 
-                        else if ( (synpred568_InternalKim()) ) {s = 51;}
+                        else if ( (synpred569_InternalKim()) ) {s = 51;}
 
                          
                         input.seek(index315_10);
@@ -78761,7 +78761,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
                         else if ( (synpred562_InternalKim()) ) {s = 50;}
 
-                        else if ( (synpred568_InternalKim()) ) {s = 51;}
+                        else if ( (synpred569_InternalKim()) ) {s = 51;}
 
                          
                         input.seek(index315_11);
@@ -78778,7 +78778,7 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
 
                         else if ( (synpred562_InternalKim()) ) {s = 50;}
 
-                        else if ( (synpred568_InternalKim()) ) {s = 51;}
+                        else if ( (synpred569_InternalKim()) ) {s = 51;}
 
                          
                         input.seek(index315_12);
@@ -78791,9 +78791,11 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         int index315_34 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred563_InternalKim()) ) {s = 37;}
+                        if ( (synpred563_InternalKim()) ) {s = 52;}
 
-                        else if ( (synpred571_InternalKim()) ) {s = 52;}
+                        else if ( (synpred564_InternalKim()) ) {s = 37;}
+
+                        else if ( (synpred571_InternalKim()) ) {s = 53;}
 
                          
                         input.seek(index315_34);
@@ -78806,9 +78808,9 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         int index315_35 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred563_InternalKim()) ) {s = 37;}
+                        if ( (synpred564_InternalKim()) ) {s = 37;}
 
-                        else if ( (synpred571_InternalKim()) ) {s = 52;}
+                        else if ( (synpred571_InternalKim()) ) {s = 53;}
 
                          
                         input.seek(index315_35);
@@ -78821,11 +78823,9 @@ public class InternalKimParser extends AbstractInternalAntlrParser {
                         int index315_36 = input.index();
                         input.rewind();
                         s = -1;
-                        if ( (synpred563_InternalKim()) ) {s = 37;}
+                        if ( (synpred564_InternalKim()) ) {s = 37;}
 
-                        else if ( (synpred570_InternalKim()) ) {s = 53;}
-
-                        else if ( (synpred571_InternalKim()) ) {s = 52;}
+                        else if ( (synpred571_InternalKim()) ) {s = 53;}
 
                          
                         input.seek(index315_36);

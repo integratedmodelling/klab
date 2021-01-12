@@ -129,7 +129,7 @@ public class MergedResource implements IResource {
 			IResource resource = null;
 			IScale scale = null;
 			Urn uurn = new Urn(urn);
-			
+
 			resource = Resources.INSTANCE.resolveResource(urn);
 			if (resource == null) {
 				throw new KlabValidationException("URN " + urn + " does not specify a resource");
@@ -165,7 +165,7 @@ public class MergedResource implements IResource {
 			IResource resource = null;
 			IScale scale = null;
 			Urn uurn = new Urn(urn);
-			
+
 			resource = Resources.INSTANCE.resolveResource(urn);
 			if (resource == null) {
 				throw new KlabValidationException("URN " + urn + " does not specify a resource");
@@ -504,10 +504,10 @@ public class MergedResource implements IResource {
 		 * break; case YEAR: break; default: break;
 		 * 
 		 * } } else
-		 */ 
-		
+		 */
+
 		ITime resolutionTime = scale.getTime();
-		
+
 		if (resolutionTime != null && resolutionTime.getStart() != null) {
 			if (resolutionTime.getTimeType() == ITime.Type.INITIALIZATION) {
 				// shouldn't happen, but just in case.
@@ -523,7 +523,9 @@ public class MergedResource implements IResource {
 				ret.addAll(set.getValue().resources);
 			}
 		} else {
-			Entry<Long, ResourceSet> set = resources.floorEntry(locator);
+			Entry<Long, ResourceSet> set = scale.getTime().is(ITime.Type.INITIALIZATION)
+					? resources.ceilingEntry(locator)
+					: resources.floorEntry(locator);
 			if (set != null) {
 
 				boolean ok = true;
@@ -562,7 +564,8 @@ public class MergedResource implements IResource {
 	}
 
 	@Override
-	public IResource contextualize(IScale scale, IArtifact observation, Map<String, String> urnParameters, IContextualizationScope scope) {
+	public IResource contextualize(IScale scale, IArtifact observation, Map<String, String> urnParameters,
+			IContextualizationScope scope) {
 
 		MergedResource ret = new MergedResource(this);
 //
