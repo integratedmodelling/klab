@@ -43,6 +43,7 @@ import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
@@ -290,6 +291,13 @@ public class VectorValidator implements IResourceValidator {
 	public IResource update(IResource resource, ResourceCRUDRequest updateData) {
 		((Resource) resource).update(updateData);
 		return resource;
+	}
+
+	@Override
+	public boolean isObservationAllowed(IResource resource, Map<String, String> urnParameters,
+			Description description) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

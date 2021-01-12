@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
@@ -95,18 +96,32 @@ public class TableValidator implements IResourceValidator {
 		// TODO
 		return ret;
 	}
-	
+
 	@Override
 	public IResource update(IResource resource, ResourceCRUDRequest updateData) {
 		IGeometry geometry = null;
-		if (updateData.getParameters().containsKey("time.encoding") || updateData.getParameters().containsKey("space.encoding")) {
+		if (updateData.getParameters().containsKey("time.encoding")
+				|| updateData.getParameters().containsKey("space.encoding")) {
 			geometry = TablesComponent.getTableInterpreter(id).recomputeGeometry(resource, updateData.getParameters());
 		}
 		((Resource) resource).update(updateData);
 		if (geometry != null) {
-			((Resource)resource).setGeometry(geometry);
+			((Resource) resource).setGeometry(geometry);
 		}
 		return resource;
+	}
+
+	@Override
+	public boolean isObservationAllowed(IResource resource, Map<String, String> urnParameters,
+			Description description) {
+		if (description == Description.CHARACTERIZATION && urnParameters.containsKey("collect")) {
+			/*
+			 * TODO check if the collected attribute is conceptual (through an admitted code
+			 * mapping)
+			 */
+			return true;
+		}
+		return false;
 	}
 
 }

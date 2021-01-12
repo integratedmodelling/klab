@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
@@ -120,7 +121,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 					}
 
 					if (resolvable == null) {
-						throw new IllegalArgumentException("URN " + urn + " does not represent a resolvable entity");
+						throw new KlabIllegalArgumentException("URN " + urn + " does not represent a resolvable entity");
 					}
 
 					/*

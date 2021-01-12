@@ -2416,30 +2416,36 @@ rule__ModelBodyStatement__Alternatives_1_0
 	)
 	|
 	(
-		{ before(grammarAccess.getModelBodyStatementAccess().getBooleanAssignment_1_0_2()); }
-		(rule__ModelBodyStatement__BooleanAssignment_1_0_2)
-		{ after(grammarAccess.getModelBodyStatementAccess().getBooleanAssignment_1_0_2()); }
+		{ before(grammarAccess.getModelBodyStatementAccess().getConceptAssignment_1_0_2()); }
+		(rule__ModelBodyStatement__ConceptAssignment_1_0_2)
+		{ after(grammarAccess.getModelBodyStatementAccess().getConceptAssignment_1_0_2()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getModelBodyStatementAccess().getBooleanAssignment_1_0_3()); }
+		(rule__ModelBodyStatement__BooleanAssignment_1_0_3)
+		{ after(grammarAccess.getModelBodyStatementAccess().getBooleanAssignment_1_0_3()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__ModelBodyStatement__BooleanAlternatives_1_0_2_0
+rule__ModelBodyStatement__BooleanAlternatives_1_0_3_0
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getModelBodyStatementAccess().getBooleanTrueKeyword_1_0_2_0_0()); }
+		{ before(grammarAccess.getModelBodyStatementAccess().getBooleanTrueKeyword_1_0_3_0_0()); }
 		'true'
-		{ after(grammarAccess.getModelBodyStatementAccess().getBooleanTrueKeyword_1_0_2_0_0()); }
+		{ after(grammarAccess.getModelBodyStatementAccess().getBooleanTrueKeyword_1_0_3_0_0()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getModelBodyStatementAccess().getBooleanFalseKeyword_1_0_2_0_1()); }
+		{ before(grammarAccess.getModelBodyStatementAccess().getBooleanFalseKeyword_1_0_3_0_1()); }
 		'false'
-		{ after(grammarAccess.getModelBodyStatementAccess().getBooleanFalseKeyword_1_0_2_0_1()); }
+		{ after(grammarAccess.getModelBodyStatementAccess().getBooleanFalseKeyword_1_0_3_0_1()); }
 	)
 ;
 finally {
@@ -36225,15 +36231,30 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__ModelBodyStatement__BooleanAssignment_1_0_2
+rule__ModelBodyStatement__ConceptAssignment_1_0_2
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getModelBodyStatementAccess().getBooleanAlternatives_1_0_2_0()); }
-		(rule__ModelBodyStatement__BooleanAlternatives_1_0_2_0)
-		{ after(grammarAccess.getModelBodyStatementAccess().getBooleanAlternatives_1_0_2_0()); }
+		{ before(grammarAccess.getModelBodyStatementAccess().getConceptConceptDeclarationParserRuleCall_1_0_2_0()); }
+		ruleConceptDeclaration
+		{ after(grammarAccess.getModelBodyStatementAccess().getConceptConceptDeclarationParserRuleCall_1_0_2_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__ModelBodyStatement__BooleanAssignment_1_0_3
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getModelBodyStatementAccess().getBooleanAlternatives_1_0_3_0()); }
+		(rule__ModelBodyStatement__BooleanAlternatives_1_0_3_0)
+		{ after(grammarAccess.getModelBodyStatementAccess().getBooleanAlternatives_1_0_3_0()); }
 	)
 ;
 finally {

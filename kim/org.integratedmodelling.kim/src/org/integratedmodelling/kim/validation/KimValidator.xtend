@@ -719,6 +719,8 @@ class KimValidator extends AbstractKimValidator {
 					descriptor.inlineValue = Boolean.parseBoolean(model.getBoolean())
 				} else if (model.number !== null) {
 					descriptor.inlineValue = Kim.INSTANCE.parseNumber(model.number)
+				} else if (model.concept !== null) {
+					descriptor.inlineValue = Kim.INSTANCE.declareConcept(model.concept)
 				}
 
 				// the rest

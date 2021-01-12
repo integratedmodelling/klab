@@ -61,9 +61,11 @@ import org.integratedmodelling.klab.components.runtime.contextualizers.Conversio
 import org.integratedmodelling.klab.components.runtime.contextualizers.DereifyingStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ExpressionResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.KnowledgeViewResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralCharacterizingResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.LookupStateResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ObjectClassificationResolver;
+import org.integratedmodelling.klab.components.runtime.contextualizers.UrnCharacterizer;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnInstantiator;
 import org.integratedmodelling.klab.components.runtime.contextualizers.UrnResolver;
 import org.integratedmodelling.klab.components.runtime.contextualizers.ValueOperatorResolver;
@@ -268,7 +270,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				ret = ((KimServiceCall) resource.getServiceCall()).copy();
 			}
 		} else if (resource.getUrn() != null) {
-			if (resource.getComputationMode() == Mode.INSTANTIATION) {
+			if (observable.getDescriptionType() == Description.CHARACTERIZATION) {
+				ret = UrnCharacterizer.getServiceCall(resource.getUrn());
+			} else if (resource.getComputationMode() == Mode.INSTANTIATION) {
 				if (observable.getDescriptionType() == Description.INSTANTIATION) {
 					ret = UrnInstantiator.getServiceCall(resource.getUrn(), resource.getCondition(),
 							resource.isNegated());
@@ -284,8 +288,13 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 		} else if (resource.getExpression() != null) {
 			ret = ExpressionResolver.getServiceCall(resource, observable);
 		} else if (resource.getLiteral() != null) {
-			ret = LiteralStateResolver.getServiceCall(resource.getLiteral(), resource.getCondition(),
-					resource.isNegated());
+			if (resource.getLiteral() instanceof IConcept
+					&& observable.getDescriptionType() == Description.CHARACTERIZATION) {
+				ret = LiteralCharacterizingResolver.getServiceCall((IConcept) resource.getLiteral());
+			} else {
+				ret = LiteralStateResolver.getServiceCall(resource.getLiteral(), resource.getCondition(),
+						resource.isNegated());
+			}
 		} else if (resource.getConversion() != null) {
 			try {
 				ret = ConversionResolver.getServiceCall(resource.getConversion());

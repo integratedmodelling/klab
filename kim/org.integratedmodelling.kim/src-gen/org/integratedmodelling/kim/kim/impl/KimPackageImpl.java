@@ -854,9 +854,9 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getModelBodyStatement_Boolean()
+  public EReference getModelBodyStatement_Concept()
   {
-    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(3);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -865,7 +865,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
-  public EAttribute getModelBodyStatement_Name()
+  public EAttribute getModelBodyStatement_Boolean()
   {
     return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(4);
   }
@@ -876,9 +876,20 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EAttribute getModelBodyStatement_Name()
+  {
+    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(5);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getModelBodyStatement_Observables()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(5);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(6);
   }
 
   /**
@@ -889,7 +900,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getModelBodyStatement_Docstring()
   {
-    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(6);
+    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(7);
   }
 
   /**
@@ -900,7 +911,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getModelBodyStatement_Dependencies()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(7);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(8);
   }
 
   /**
@@ -911,7 +922,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getModelBodyStatement_Contextualizers()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(8);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(9);
   }
 
   /**
@@ -922,7 +933,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getModelBodyStatement_Discretization()
   {
-    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(9);
+    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(10);
   }
 
   /**
@@ -933,7 +944,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getModelBodyStatement_Classification()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(10);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(11);
   }
 
   /**
@@ -944,7 +955,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getModelBodyStatement_ClassificationProperty()
   {
-    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(11);
+    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(12);
   }
 
   /**
@@ -955,7 +966,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getModelBodyStatement_LookupTableArgs()
   {
-    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(12);
+    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(13);
   }
 
   /**
@@ -966,7 +977,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getModelBodyStatement_LookupTable()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(13);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(14);
   }
 
   /**
@@ -977,7 +988,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getModelBodyStatement_LookupTableId()
   {
-    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(14);
+    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(15);
   }
 
   /**
@@ -988,7 +999,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getModelBodyStatement_Actions()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(15);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(16);
   }
 
   /**
@@ -999,7 +1010,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getModelBodyStatement_Metadata()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(16);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(17);
   }
 
   /**
@@ -5477,6 +5488,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEAttribute(modelBodyStatementEClass, MODEL_BODY_STATEMENT__INSTANTIATOR);
     createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__URNS);
     createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__NUMBER);
+    createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__CONCEPT);
     createEAttribute(modelBodyStatementEClass, MODEL_BODY_STATEMENT__BOOLEAN);
     createEAttribute(modelBodyStatementEClass, MODEL_BODY_STATEMENT__NAME);
     createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__OBSERVABLES);
@@ -6009,6 +6021,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEAttribute(getModelBodyStatement_Instantiator(), ecorePackage.getEBoolean(), "instantiator", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModelBodyStatement_Urns(), this.getUrn(), null, "urns", null, 0, -1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModelBodyStatement_Number(), this.getNumber(), null, "number", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getModelBodyStatement_Concept(), this.getConceptDeclaration(), null, "concept", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getModelBodyStatement_Boolean(), ecorePackage.getEString(), "boolean", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getModelBodyStatement_Name(), ecorePackage.getEString(), "name", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModelBodyStatement_Observables(), this.getObservableSemantics(), null, "observables", null, 0, -1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

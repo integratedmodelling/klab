@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 
@@ -88,7 +89,7 @@ public interface IResourceValidator {
 	/**
 	 * Called to revalidate a resource after an update done from the resource
 	 * editor. Modification may concern the parameters or the geometry (for now only
-	 * the temporal aspects), passed in the bean. 
+	 * the temporal aspects), passed in the bean.
 	 * 
 	 * @param resource
 	 * @param updateData
@@ -105,6 +106,18 @@ public interface IResourceValidator {
 	 * @return all allowed operations
 	 */
 	List<Operation> getAllowedOperations(IResource resource);
+
+	/**
+	 * Called in certain situations to assess if the resource can support the passed
+	 * observation type with the given parameters. For now used only to check if
+	 * resources can produce an individual concept to characterize a context,
+	 * 
+	 * @param resource
+	 * @param urnParameters
+	 * @param description
+	 * @return
+	 */
+	boolean isObservationAllowed(IResource resource, Map<String, String> urnParameters, Description description);
 
 	/**
 	 * Perform the passed operation on a resource, returning the modifier resource

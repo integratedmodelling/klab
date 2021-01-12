@@ -7,10 +7,12 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Optional;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimModel;
@@ -32,9 +34,11 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Roles;
 import org.integratedmodelling.klab.Types;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.data.mediation.IUnit.UnitContextualization;
@@ -53,6 +57,7 @@ import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -360,7 +365,17 @@ public class Model extends KimObject implements IModel {
 			}
 
 		} else if (model.getInlineValue().isPresent()) {
-			this.resources.add(validate(new ComputableResource(model.getInlineValue()), monitor));
+			Optional<Object> o = Optional.of(model.getInlineValue().get());
+			if (model.getInlineValue().get() instanceof IKimConcept) {
+				IConcept c = Concepts.INSTANCE.declare((IKimConcept) model.getInlineValue().get());
+				if (c == null) {
+					monitor.error("Concept literal " + model.getInlineValue().get() + " is unknown", o);
+					setErrors(true);
+				} else {
+					o = Optional.of(c);
+				}
+			}
+			this.resources.add(validate(new ComputableResource(o), monitor));
 		}
 
 		if (this.resources.size() > 0) {
@@ -558,6 +573,31 @@ public class Model extends KimObject implements IModel {
 			IPrototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
 			if (prototype != null && prototype.isFilter()) {
 				return true;
+			}
+
+		} else if (getMainObservable() != null
+				&& getMainObservable().getDescriptionType() == Description.CHARACTERIZATION) {
+			if (resource.getLiteral() instanceof IConcept) {
+				
+				/*
+				 * characterizers using a literal are filters
+				 */
+				return true;
+				
+			} else if (resource.getUrn() != null) {
+
+				/*
+				 * May be a filter if the resource produces a concept with these parameters
+				 */
+				IResource res = Resources.INSTANCE.resolveResource(resource.getUrn());
+				if (res != null) {
+					IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(res.getAdapterType());
+					if (adapter != null) {
+						Urn urn = new Urn(resource.getUrn());
+						return adapter.getValidator().isObservationAllowed(res, urn.getParameters(), getMainObservable().getDescriptionType());
+					}
+				}
+
 			}
 		}
 		return false;

@@ -23,6 +23,7 @@ import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kim.kim.ActionSpecification;
 import org.integratedmodelling.kim.kim.Classification;
+import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.Map;
@@ -43,6 +44,7 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#isInstantiator <em>Instantiator</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getUrns <em>Urns</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getNumber <em>Number</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getBoolean <em>Boolean</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getObservables <em>Observables</em>}</li>
@@ -102,6 +104,16 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @ordered
    */
   protected org.integratedmodelling.kim.kim.Number number;
+
+  /**
+   * The cached value of the '{@link #getConcept() <em>Concept</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getConcept()
+   * @generated
+   * @ordered
+   */
+  protected ConceptDeclaration concept;
 
   /**
    * The default value of the '{@link #getBoolean() <em>Boolean</em>}' attribute.
@@ -412,6 +424,56 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__NUMBER, newNumber, newNumber));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ConceptDeclaration getConcept()
+  {
+    return concept;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetConcept(ConceptDeclaration newConcept, NotificationChain msgs)
+  {
+    ConceptDeclaration oldConcept = concept;
+    concept = newConcept;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__CONCEPT, oldConcept, newConcept);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setConcept(ConceptDeclaration newConcept)
+  {
+    if (newConcept != concept)
+    {
+      NotificationChain msgs = null;
+      if (concept != null)
+        msgs = ((InternalEObject)concept).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL_BODY_STATEMENT__CONCEPT, null, msgs);
+      if (newConcept != null)
+        msgs = ((InternalEObject)newConcept).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.MODEL_BODY_STATEMENT__CONCEPT, null, msgs);
+      msgs = basicSetConcept(newConcept, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__CONCEPT, newConcept, newConcept));
   }
 
   /**
@@ -803,6 +865,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return ((InternalEList<?>)getUrns()).basicRemove(otherEnd, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:
         return basicSetNumber(null, msgs);
+      case KimPackage.MODEL_BODY_STATEMENT__CONCEPT:
+        return basicSetConcept(null, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__OBSERVABLES:
         return ((InternalEList<?>)getObservables()).basicRemove(otherEnd, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__DEPENDENCIES:
@@ -837,6 +901,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return getUrns();
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:
         return getNumber();
+      case KimPackage.MODEL_BODY_STATEMENT__CONCEPT:
+        return getConcept();
       case KimPackage.MODEL_BODY_STATEMENT__BOOLEAN:
         return getBoolean();
       case KimPackage.MODEL_BODY_STATEMENT__NAME:
@@ -889,6 +955,9 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return;
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:
         setNumber((org.integratedmodelling.kim.kim.Number)newValue);
+        return;
+      case KimPackage.MODEL_BODY_STATEMENT__CONCEPT:
+        setConcept((ConceptDeclaration)newValue);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__BOOLEAN:
         setBoolean((String)newValue);
@@ -960,6 +1029,9 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:
         setNumber((org.integratedmodelling.kim.kim.Number)null);
         return;
+      case KimPackage.MODEL_BODY_STATEMENT__CONCEPT:
+        setConcept((ConceptDeclaration)null);
+        return;
       case KimPackage.MODEL_BODY_STATEMENT__BOOLEAN:
         setBoolean(BOOLEAN_EDEFAULT);
         return;
@@ -1022,6 +1094,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return urns != null && !urns.isEmpty();
       case KimPackage.MODEL_BODY_STATEMENT__NUMBER:
         return number != null;
+      case KimPackage.MODEL_BODY_STATEMENT__CONCEPT:
+        return concept != null;
       case KimPackage.MODEL_BODY_STATEMENT__BOOLEAN:
         return BOOLEAN_EDEFAULT == null ? boolean_ != null : !BOOLEAN_EDEFAULT.equals(boolean_);
       case KimPackage.MODEL_BODY_STATEMENT__NAME:

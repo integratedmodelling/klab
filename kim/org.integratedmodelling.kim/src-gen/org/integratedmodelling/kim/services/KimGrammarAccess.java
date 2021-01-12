@@ -353,10 +353,12 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cUrnsUrnParserRuleCall_1_0_0_1_1_0 = (RuleCall)cUrnsAssignment_1_0_0_1_1.eContents().get(0);
 		private final Assignment cNumberAssignment_1_0_1 = (Assignment)cAlternatives_1_0.eContents().get(1);
 		private final RuleCall cNumberNumberParserRuleCall_1_0_1_0 = (RuleCall)cNumberAssignment_1_0_1.eContents().get(0);
-		private final Assignment cBooleanAssignment_1_0_2 = (Assignment)cAlternatives_1_0.eContents().get(2);
-		private final Alternatives cBooleanAlternatives_1_0_2_0 = (Alternatives)cBooleanAssignment_1_0_2.eContents().get(0);
-		private final Keyword cBooleanTrueKeyword_1_0_2_0_0 = (Keyword)cBooleanAlternatives_1_0_2_0.eContents().get(0);
-		private final Keyword cBooleanFalseKeyword_1_0_2_0_1 = (Keyword)cBooleanAlternatives_1_0_2_0.eContents().get(1);
+		private final Assignment cConceptAssignment_1_0_2 = (Assignment)cAlternatives_1_0.eContents().get(2);
+		private final RuleCall cConceptConceptDeclarationParserRuleCall_1_0_2_0 = (RuleCall)cConceptAssignment_1_0_2.eContents().get(0);
+		private final Assignment cBooleanAssignment_1_0_3 = (Assignment)cAlternatives_1_0.eContents().get(3);
+		private final Alternatives cBooleanAlternatives_1_0_3_0 = (Alternatives)cBooleanAssignment_1_0_3.eContents().get(0);
+		private final Keyword cBooleanTrueKeyword_1_0_3_0_0 = (Keyword)cBooleanAlternatives_1_0_3_0.eContents().get(0);
+		private final Keyword cBooleanFalseKeyword_1_0_3_0_1 = (Keyword)cBooleanAlternatives_1_0_3_0.eContents().get(1);
 		private final Keyword cAsKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
 		private final Alternatives cAlternatives_2 = (Alternatives)cGroup.eContents().get(2);
 		private final Assignment cNameAssignment_2_0 = (Assignment)cAlternatives_2.eContents().get(0);
@@ -432,7 +434,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cMetadataMapParserRuleCall_9_1_0 = (RuleCall)cMetadataAssignment_9_1.eContents().get(0);
 		
 		//ModelBodyStatement:
-		//	instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | number=Number | boolean=('true' | 'false'))
+		//	instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | number=Number | concept=ConceptDeclaration | boolean=('true' |
+		//	'false'))
 		//	'as')? (name=LOWERCASE_ID | observables+=AnnotatedObservableSemantics (','
 		//	observables+=AnnotatedObservableSemantics)*) docstring=STRING? ('observing' dependencies+=Dependency (','
 		//	dependencies+=Dependency)*)? ('using' /*  | merging?='merging')*/ contextualizers+=ValueExecution (','
@@ -443,14 +446,14 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	actions+=ActionSpecification* ('metadata' metadata=Map)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | number=Number | boolean=('true' | 'false')) 'as')?
-		//(name=LOWERCASE_ID | observables+=AnnotatedObservableSemantics (',' observables+=AnnotatedObservableSemantics)*)
-		//docstring=STRING? ('observing' dependencies+=Dependency (',' dependencies+=Dependency)*)? ('using'
-		///*  | merging?='merging')*/ contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)? (('classified' |
-		//discretization?='discretized') ('into' classification=Classification | 'according' 'to'
-		//classificationProperty=PropertyId))? ('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (','
-		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')? 'into' (lookupTable=Table | lookupTableId=UPPERCASE_ID))?
-		//actions+=ActionSpecification* ('metadata' metadata=Map)?
+		//instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | number=Number | concept=ConceptDeclaration | boolean=('true' |
+		//'false')) 'as')? (name=LOWERCASE_ID | observables+=AnnotatedObservableSemantics (','
+		//observables+=AnnotatedObservableSemantics)*) docstring=STRING? ('observing' dependencies+=Dependency (','
+		//dependencies+=Dependency)*)? ('using' /*  | merging?='merging')*/ contextualizers+=ValueExecution (','
+		//contextualizers+=ValueExecution)*)? (('classified' | discretization?='discretized') ('into'
+		//classification=Classification | 'according' 'to' classificationProperty=PropertyId))? ('lookup' ('('
+		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')? 'into'
+		//(lookupTable=Table | lookupTableId=UPPERCASE_ID))? actions+=ActionSpecification* ('metadata' metadata=Map)?
 		public Group getGroup() { return cGroup; }
 		
 		//instantiator?='each'?
@@ -459,10 +462,10 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//'each'
 		public Keyword getInstantiatorEachKeyword_0_0() { return cInstantiatorEachKeyword_0_0; }
 		
-		//((urns+=Urn (',' urns+=Urn)* | number=Number | boolean=('true' | 'false')) 'as')?
+		//((urns+=Urn (',' urns+=Urn)* | number=Number | concept=ConceptDeclaration | boolean=('true' | 'false')) 'as')?
 		public Group getGroup_1() { return cGroup_1; }
 		
-		//(urns+=Urn (',' urns+=Urn)* | number=Number | boolean=('true' | 'false'))
+		//(urns+=Urn (',' urns+=Urn)* | number=Number | concept=ConceptDeclaration | boolean=('true' | 'false'))
 		public Alternatives getAlternatives_1_0() { return cAlternatives_1_0; }
 		
 		//urns+=Urn (',' urns+=Urn)*
@@ -492,17 +495,23 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Number
 		public RuleCall getNumberNumberParserRuleCall_1_0_1_0() { return cNumberNumberParserRuleCall_1_0_1_0; }
 		
+		//concept=ConceptDeclaration
+		public Assignment getConceptAssignment_1_0_2() { return cConceptAssignment_1_0_2; }
+		
+		//ConceptDeclaration
+		public RuleCall getConceptConceptDeclarationParserRuleCall_1_0_2_0() { return cConceptConceptDeclarationParserRuleCall_1_0_2_0; }
+		
 		//boolean=('true' | 'false')
-		public Assignment getBooleanAssignment_1_0_2() { return cBooleanAssignment_1_0_2; }
+		public Assignment getBooleanAssignment_1_0_3() { return cBooleanAssignment_1_0_3; }
 		
 		//('true' | 'false')
-		public Alternatives getBooleanAlternatives_1_0_2_0() { return cBooleanAlternatives_1_0_2_0; }
+		public Alternatives getBooleanAlternatives_1_0_3_0() { return cBooleanAlternatives_1_0_3_0; }
 		
 		//'true'
-		public Keyword getBooleanTrueKeyword_1_0_2_0_0() { return cBooleanTrueKeyword_1_0_2_0_0; }
+		public Keyword getBooleanTrueKeyword_1_0_3_0_0() { return cBooleanTrueKeyword_1_0_3_0_0; }
 		
 		//'false'
-		public Keyword getBooleanFalseKeyword_1_0_2_0_1() { return cBooleanFalseKeyword_1_0_2_0_1; }
+		public Keyword getBooleanFalseKeyword_1_0_3_0_1() { return cBooleanFalseKeyword_1_0_3_0_1; }
 		
 		//'as'
 		public Keyword getAsKeyword_1_1() { return cAsKeyword_1_1; }
@@ -11110,7 +11119,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ModelBodyStatement:
-	//	instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | number=Number | boolean=('true' | 'false'))
+	//	instantiator?='each'? ((urns+=Urn (',' urns+=Urn)* | number=Number | concept=ConceptDeclaration | boolean=('true' |
+	//	'false'))
 	//	'as')? (name=LOWERCASE_ID | observables+=AnnotatedObservableSemantics (','
 	//	observables+=AnnotatedObservableSemantics)*) docstring=STRING? ('observing' dependencies+=Dependency (','
 	//	dependencies+=Dependency)*)? ('using' /*  | merging?='merging')*/ contextualizers+=ValueExecution (','

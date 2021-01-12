@@ -868,7 +868,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				// the changing target to
 				// known computations that require it.
 
-			} else if (ret.artifactType != Type.NOTHING) {
+			} else if (ret.artifactType != Type.NOTHING && ret.artifactType != Type.TRAIT) {
 				ret.target = ret.createTarget((Actuator) actuator, actuator.getDataflow().getResolutionScale(), scope,
 						rootSubject);
 			}

@@ -15,6 +15,8 @@ import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
 import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -1232,6 +1234,11 @@ public class ResourceEditor extends ViewPart {
 				// send to engine and act as a response
 				executeOperationWait("categorize", "categorization", name, "dimension", category);
 				IFile file = Eclipse.INSTANCE.getResourceFile(resource, "code_" + name + ".properties");
+				try {
+					file.getProject().refreshLocal(IFolder.DEPTH_INFINITE, null);
+				} catch (CoreException e) {
+					Eclipse.INSTANCE.handleException(e);
+				}
 				Eclipse.INSTANCE.openFile(file, 0);
 			} else {
 				IFile file = Eclipse.INSTANCE.getResourceFile(resource, "code_" + name + ".properties");

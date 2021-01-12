@@ -94,8 +94,9 @@ public class ResourceBuilder implements IResource.Builder {
 		ret.spatialExtent = this.spatialExtent;
 		ret.attributes.addAll(this.attributes);
 		ret.inputs.addAll(this.dependencies);
-		ret.dependencies.addAll(this.requiredUrns);
-
+		if (this.requiredUrns != null) {
+			ret.dependencies.addAll(this.requiredUrns);
+		}
 		return ret;
 	}
 

@@ -42,6 +42,16 @@ export value literal
 	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver
 }
 
+filter concept characterize
+	"Return a characterizing resolver that will characterize the context with literal identities"
+	 label '$val'
+{
+	object val
+		"The concept to characterize with"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralCharacterizingResolver
+}
+
 export value resourcechange
 	"Return a process resolver that will set values of the changing observable to the appropriate
 	 temporal state of a temporally distributed multi-resource"

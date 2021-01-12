@@ -169,22 +169,42 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	long lastJoin = System.currentTimeMillis();
 	boolean isDefault = false;
 	Set<String> relayIdentities = new HashSet<>();
-//	SpatialExtent regionOfInterest = null;
 	ActorRef<KlabMessage> actor;
 	private SessionState globalState = new SessionState(this);
 	private View view;
-//	Map<String, ISession.ObservationListener> observationListeners = Collections.synchronizedMap(new LinkedHashMap<>());
-//	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
-//	ITime timeOfInterest = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 
-//	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
-//
-//	public interface ROIListener {
-//
-//		public void onChange(SpatialExtent extent);
-//
-//	}
+	// tracks the setting of the actor so we can avoid the ask pattern
+	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
+	/**
+	 * A scheduler to periodically collect observation and task garbage
+	 */
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
+	/*
+	 * Tasks created in this session, managed as task/script start and end. Content
+	 * may be a IScript or a ITask.
+	 */
+	Map<String, Future<?>> tasks = Collections.synchronizedMap(new HashMap<>());
+
+	/*
+	 * The contexts for all root observations built in this session, up to the
+	 * configured number, most recent first. Synchronized.
+	 */
+	Deque<IRuntimeScope> observationContexts = new LinkedBlockingDeque<>(
+			Configuration.INSTANCE.getMaxLiveObservationContextsPerSession());
+
+	/*
+	 * Support for incremental search from the front-end. Synchronized because
+	 * searches can take arbitrary time although in most cases they will be fast.
+	 */
+	private Map<String, Pair<IIndexingService.Context, List<Match>>> searchContexts = Collections
+			.synchronizedMap(new HashMap<>());
+
+
+	private AtomicBoolean interactive = new AtomicBoolean(false);
+	private AtomicLong lastNetworkCheck = new AtomicLong(0);
+	
+	
 	// a simple monitor that will only compile all notifications into a list to be
 	// sent back to clients
 	class ReportingMonitor implements IMonitor {
@@ -248,54 +268,6 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	}
 
-	// tracks the setting of the actor so we can avoid the ask pattern
-	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
-	/**
-	 * A scheduler to periodically collect observation and task garbage
-	 */
-	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-	/*
-	 * Tasks created in this session, managed as task/script start and end. Content
-	 * may be a IScript or a ITask.
-	 */
-	Map<String, Future<?>> tasks = Collections.synchronizedMap(new HashMap<>());
-
-	/*
-	 * The contexts for all root observations built in this session, up to the
-	 * configured number, most recent first. Synchronized.
-	 */
-	Deque<IRuntimeScope> observationContexts = new LinkedBlockingDeque<>(
-			Configuration.INSTANCE.getMaxLiveObservationContextsPerSession());
-
-	/*
-	 * Support for incremental search from the front-end. Synchronized because
-	 * searches can take arbitrary time although in most cases they will be fast.
-	 */
-	private Map<String, Pair<IIndexingService.Context, List<Match>>> searchContexts = Collections
-			.synchronizedMap(new HashMap<>());
-
-	/**
-	 * These are defined every time the ROI is set unless space or time are locked,
-	 * in which case they will only be set if null.
-	 */
-//	private Double spatialGridSize = null;
-//	private String spatialGridUnits = null;
-//	private Resolution temporalResolution;
-//	private Long timeStart = null;
-//	private Long timeEnd = null;
-
-	private AtomicBoolean interactive = new AtomicBoolean(false);
-//	/*
-//	 * Space and time locking defines behavior at context reset: if context is reset
-//	 * and resolution is locked, we keep the user-defined resolution (defining it
-//	 * from the current at the moment of locking if the user res is null).
-//	 */
-//	private AtomicBoolean lockSpace = new AtomicBoolean(false);
-//	private AtomicBoolean lockTime = new AtomicBoolean(false);
-	private AtomicLong lastNetworkCheck = new AtomicLong(0);
-
-	private String regionNameOfInterest = "Region of interest";
 
 	public interface Listener {
 
@@ -350,124 +322,6 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		}
 		this.closed = true;
 	}
-
-//	@Override
-//	public Future<ISubject> observe(String urn, String... scenarios) {
-//		return observe(urn, CollectionUtils.arrayToList(scenarios), null, null);
-//	}
-
-//	/**
-//	 * Listener consumers are called as things progress. The observation listener
-//	 * is first called with null as a parameter when starting, then (if no error
-//	 * occurs) another time with the observation as argument. The observation may be
-//	 * empty. If an exception is thrown, the error listener is called with the
-//	 * exception as argument.
-//	 * 
-//	 * @param urn
-//	 * @param scenarios
-//	 * @param observationListener
-//	 * @param errorListener
-//	 * @return
-//	 */
-//	public Future<ISubject> observe(String urn, Collection<String> scenarios, Consumer<IArtifact> observationListener,
-//			Consumer<Throwable> errorListener) {
-//
-//		touch();
-//
-//		Object object = null;
-//
-//		if (urn.contains(" ")) {
-//			// can only be a declaration
-//			object = Observables.INSTANCE.declare(urn);
-//		} else {
-//			object = Resources.INSTANCE.getModelObject(urn);
-//		}
-//
-//		if (object == null) {
-//			// check for URN and launch a viewer task if so.
-//			IResource resource = Resources.INSTANCE.resolveResource(urn);
-//			if (resource != null) {
-//				return new UrnContextualizationTask(this, urn);
-//			} else {
-//				throw new KlabContextualizationException("cannot resolve URN " + urn);
-//			}
-//		}
-//
-//		if (!(object instanceof Observer)) {
-//
-//			if (regionOfInterest != null && (object instanceof KimObject || object instanceof IObservable)) {
-//
-//				INamespace namespace = object instanceof KimObject ? ((KimObject) object).getNamespace()
-//						: Namespaces.INSTANCE.getNamespace(((IObservable) object).getType().getNamespace());
-//				/*
-//				 * gridsize is defined if ROI is.
-//				 */
-//				SpatialExtent roi = new SpatialExtent(regionOfInterest);
-//				roi.setGridResolution(this.spatialGridSize);
-//				roi.setGridUnit(this.spatialGridUnits);
-//
-//				/*
-//				 * see if an application has defined a temporal context through the global state
-//				 */
-//				ITime time = getConfiguredTime();
-//
-//				if (time == null) {
-//					if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
-//						/*
-//						 * ACHTUNG if the time is PHYSICAL, states won't initialize properly (with the
-//						 * first timeslice @0)!
-//						 */
-//						time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
-//								this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
-//								new TimeInstant(this.timeEnd), null);
-//					} else {
-//						time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
-//					}
-//				}
-//
-//				Observer observer = Observations.INSTANCE.makeROIObserver(roi, time, (Namespace) namespace,
-//						this.regionNameOfInterest, monitor);
-//				this.regionNameOfInterest = observer.getName();
-//				try {
-//					ISubject subject = new ObserveContextTask(this, observer, scenarios)
-//							.get();
-//					if (subject != null) {
-//						/*
-//						 * the inner task gets lost - should not matter as this is simply handling an
-//						 * asynchronous UI action.
-//						 */
-//						subject.observe(urn);
-//						return ConcurrentUtils.constantFuture(subject);
-//					}
-//				} catch (InterruptedException | ExecutionException e) {
-//					monitor.error(e);
-//					return null;
-//				}
-//			}
-//
-//			throw new KlabContextualizationException("Cannot observe " + urn + ": unknown or no context established");
-//		}
-//
-//		return new ObserveContextTask(this, (Observer) object, scenarios, observationListener, errorListener);
-//	}
-
-//	private ITime getConfiguredTime() {
-//		
-//		if (this.globalState.containsAnyKey("startyear", "endyear", "year", "timestep", "start", "end", "step")) {
-//
-//			Object start = Utils.asType(this.globalState.getAny("startyear", "start"), Integer.class);
-//			Object end = Utils.asType(this.globalState.getAny("endyear", "end"), Integer.class);
-//			Object step = this.globalState.getAny("timestep", "step");
-//			Object year = Utils.asType(this.globalState.get("year"), Integer.class);
-//
-//			Parameters<String> parameters = Parameters.createNotNull("start", start, "end", end, "step", step, "year",
-//					year);
-//
-//			return (this.timeOfInterest = (ITime) (new org.integratedmodelling.klab.components.time.services.Time())
-//					.eval(parameters, null));
-//		}
-//		return null;
-//	}
 
 	public String toString() {
 		// TODO add user
@@ -581,32 +435,6 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		}
 		return false;
 	}
-//
-//	public Collection<ObservationListener> getObservationListeners() {
-//		return observationListeners.values();
-//	}
-//
-//	@Override
-//	public String addObservationListener(ISession.ObservationListener listener) {
-//		String ret = NameGenerator.newName();
-//		observationListeners.put(ret, listener);
-//		return ret;
-//	}
-//
-//	@Override
-//	public void removeObservationListener(String listenerId) {
-//		observationListeners.remove(listenerId);
-//	}
-
-//	public String addROIListener(ROIListener listener) {
-//		String ret = NameGenerator.newName();
-//		roiListeners.put(ret, listener);
-//		return ret;
-//	}
-//
-//	public void removeROIListener(String listenerId) {
-//		roiListeners.remove(listenerId);
-//	}
 
 	/**
 	 * Register a task. It may be a ITask or a IScript, which only have the Future
@@ -1509,13 +1337,6 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	@MessageHandler(type = IMessage.Type.ScaleDefined)
 	private void handleScaleChangeRequest(ScaleReference scaleRef) {
 		this.globalState.register(scaleRef);
-//		this.spatialGridSize = Units.INSTANCE.METERS
-//				.convert(scaleRef.getSpaceResolutionConverted(), Unit.create(scaleRef.getSpaceUnit())).doubleValue();
-//		this.spatialGridUnits = scaleRef.getSpaceUnit();
-//		this.temporalResolution = Time
-//				.resolution(scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
-//		this.timeStart = scaleRef.getStart() == 0 ? null : Long.valueOf(scaleRef.getStart());
-//		this.timeEnd = scaleRef.getEnd() == 0 ? null : Long.valueOf(scaleRef.getEnd());
 	}
 
 	@MessageHandler

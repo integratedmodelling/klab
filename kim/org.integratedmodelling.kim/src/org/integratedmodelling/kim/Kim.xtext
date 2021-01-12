@@ -41,6 +41,7 @@ ModelBodyStatement:
 			(
 				(urns+=Urn (',' urns+=Urn)*) | 
 				number=Number | 
+				concept=ConceptDeclaration |
 				boolean=('true' | 'false') //| 
 			)
 			 'as'
