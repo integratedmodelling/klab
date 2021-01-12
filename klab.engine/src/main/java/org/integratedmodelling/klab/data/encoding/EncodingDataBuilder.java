@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
@@ -32,6 +33,7 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 	KlabData.State.Builder stateBuilder = null;
 	KlabData.Object.Builder objectBuilder = null;
 	EncodingDataBuilder parent = null;
+	private IConcept semantics;
 
 	public EncodingDataBuilder() {
 	}
@@ -218,5 +220,11 @@ public class EncodingDataBuilder implements IKlabData.Builder {
 				this.stateBuilder.setTabledata((int) index, getTableValue((String) value, this.builder));
 			}
 		}
+	}
+	
+	@Override
+	public Builder withSemantics(IConcept semantics) {
+		this.semantics = semantics;
+		return this;
 	}
 }

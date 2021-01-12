@@ -181,6 +181,7 @@ public class XLSInterpreter extends TableInterpreter {
 			if (type != null) {
 				builder.withAttribute(key, type, false, true);
 				builder.withParameter("column." + key + ".index", n);
+				builder.withParameter("column." + key + ".mapping", "");
 				usable++;
 			}
 			n++;

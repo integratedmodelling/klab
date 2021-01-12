@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -48,6 +49,7 @@ public class LocalData implements IKlabData {
 	IArtifact object;
 	List<INotification> notifications = new ArrayList<>();
 	boolean error = false;
+	IConcept semantics = null;
 
 	static Set<String> reservedFields = null;
 
@@ -72,8 +74,10 @@ public class LocalData implements IKlabData {
 			}
 			notifications.add(notification);
 		}
+		if (builder.semantics != null) {
+			this.semantics = builder.semantics;
+		}
 	}
-	
 
 	/**
 	 * Dumb version that produces artifacts directly and does not use a scope to
@@ -259,7 +263,7 @@ public class LocalData implements IKlabData {
 			}
 
 		}
-		
+
 		if (data.containsKey("notifications")) {
 			// TODO send them over to the monitor
 			for (Object o : (List<?>) data.get("notification")) {
@@ -359,6 +363,11 @@ public class LocalData implements IKlabData {
 			}
 		}
 		return null;
+	}
+
+	@Override
+	public IConcept getSemantics() {
+		return semantics;
 	}
 
 }

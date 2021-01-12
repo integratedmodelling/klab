@@ -6,6 +6,7 @@ import java.util.logging.Level;
 
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -22,6 +23,7 @@ public class VisitedData implements IKlabData {
 	ObjectArtifact object = null;
 	List<INotification> notifications = new ArrayList<>();
 	boolean errors = false;
+	IConcept semantics;
 
 	public VisitedData(VisitingDataBuilder builder) {
 
@@ -95,6 +97,11 @@ public class VisitedData implements IKlabData {
 	@Override
 	public IMetadata getObjectMetadata(int i) {
 		return object == null ? null : object.getGroupMember(i).getMetadata();
+	}
+
+	@Override
+	public IConcept getSemantics() {
+		return semantics;
 	}
 
 }

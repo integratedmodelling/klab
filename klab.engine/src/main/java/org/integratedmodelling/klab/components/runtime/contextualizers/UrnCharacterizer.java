@@ -1,19 +1,25 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Urns;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -54,7 +60,13 @@ public class UrnCharacterizer implements IResolver<IArtifact>, IProcessor, IExpr
 
 	@Override
 	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
-		// TODO Auto-generated method stub
+
+		IKlabData data = Resources.INSTANCE.getResourceData(resource, urnParameters, context.getScale(), context);
+		IConcept concept = data.getSemantics();
+		IConcept toResolve = context.getTargetSemantics().getType();
+		List<IConcept> traits = concept.is(IKimConcept.Type.INTERSECTION) ? Collections.singletonList(concept)
+				: concept.getOperands();
+		((IRuntimeScope)context).setConcreteIdentities(toResolve, traits);
 		return ret;
 	}
 }

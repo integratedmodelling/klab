@@ -7,6 +7,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -42,6 +43,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	String objectName;
 	IGeometry scale;
 	LocalDataBuilder parent;
+	IConcept semantics;
 
 	public LocalDataBuilder(IContextualizationScope context) {
 		this.context = context;
@@ -169,5 +171,11 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	@Override
 	public IKlabData build() {
 		return new LocalData(this);
+	}
+	
+	@Override
+	public Builder withSemantics(IConcept semantics) {
+		this.semantics = semantics;
+		return this;
 	}
 }
