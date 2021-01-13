@@ -4,7 +4,12 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
@@ -16,14 +21,15 @@ import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.resolution.ICoverage;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
@@ -49,6 +55,8 @@ import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
+
+import com.google.common.collect.Sets;
 
 /**
  * The resolver provides methods to find the observation strategy for any
@@ -162,7 +170,7 @@ public class Resolver {
 				} else {
 					coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
 				}
-				
+
 				if (coverage.isEmpty()) {
 					break;
 				}
@@ -586,7 +594,10 @@ public class Resolver {
 
 	/**
 	 * Resolve a model's dependencies. Final coverage is the AND of the resolved
-	 * dependencies.
+	 * dependencies. If the model is abstract (and not resolving the abstract traits
+	 * itself), we resolve the abstract traits and then resolve all the models
+	 * resulting from the combination of them in OR mode.
+	 * 
 	 * 
 	 * @param model
 	 * @param parentScope
@@ -595,8 +606,15 @@ public class Resolver {
 	 */
 	private ResolutionScope resolve(Model model, ResolutionScope parentScope) throws KlabException {
 
-		ResolutionScope ret = parentScope.getChildScope(model);
+		if (model.getObservables().get(0).getDescriptionType() != Description.CHARACTERIZATION && model.isAbstract()) {
+			System.out.println("ZIO POLLO");
+			for (Model concrete : resolveAbstractModel(model, parentScope)) {
 
+			}
+			// return the ORed resolution
+		}
+
+		ResolutionScope ret = parentScope.getChildScope(model);
 		Coverage coverage = new Coverage(ret.getCoverage());
 
 		/*
@@ -635,6 +653,37 @@ public class Resolver {
 		}
 
 		ret.setCoverage(coverage);
+
+		return ret;
+	}
+
+	private Collection<Model> resolveAbstractModel(Model model, ResolutionScope parentScope) {
+
+		List<Model> ret = new ArrayList<>();
+		Map<IConcept, Set<IConcept>> incarnated = new LinkedHashMap<>();
+		for (IConcept trait : model.getAbstractTraits()) {
+			/*
+			 * resolve to one or more concrete traits, set them into incarnated with trait
+			 * as key; if any is unresolved, we can't run, so return empty list which will
+			 * resolve to empty.
+			 */
+		}
+
+		/*
+		 * ensure the scope incarnates all of the existing abstract roles. If not, we
+		 * produce no observables. We match roles by equality, not by inference, which
+		 * may require rethinking.
+		 */
+		List<Set<IConcept>> concepts = new ArrayList<>(incarnated.values());
+		for (List<IConcept> incarnation : Sets.cartesianProduct(concepts)) {
+			int i = 0;
+			Map<IConcept, IConcept> resolvedTraits = new HashMap<>();
+			for (IConcept orole : incarnated.keySet()) {
+				IConcept peer = incarnation.get(i++);
+				resolvedTraits.put(peer, orole);
+			}
+			ret.add(Model.concretize(model, resolvedTraits, parentScope.getMonitor()));
+		}
 
 		return ret;
 	}

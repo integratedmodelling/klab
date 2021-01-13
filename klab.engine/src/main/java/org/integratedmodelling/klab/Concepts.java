@@ -20,6 +20,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -27,8 +28,12 @@ import java.util.regex.Pattern;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
+import org.integratedmodelling.kim.api.IKimModel;
+import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObservable;
+import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.ValueOperator;
+import org.integratedmodelling.kim.model.DefaultVisitor;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.klab.api.knowledge.IAuthority.Identity;
@@ -59,6 +64,8 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Path;
 import org.springframework.util.StringUtils;
 
+import com.google.common.collect.Sets;
+
 /**
  * The Enum Concepts.
  */
@@ -67,7 +74,7 @@ public enum Concepts implements IConceptService {
 	INSTANCE;
 
 	private Set<String> authorityOntologyIds = Collections.synchronizedSet(new HashSet<>());
-	
+
 	private Concepts() {
 		Services.INSTANCE.registerService(this, IConceptService.class);
 	}
@@ -88,7 +95,7 @@ public enum Concepts implements IConceptService {
 		String definition = concept.getDefinition();
 		if (ontology == null || definition == null) {
 			IKimObservable obs = Kim.INSTANCE.declare(concept.getName());
-			return obs == null ? null : (KimConcept)obs.getMain();
+			return obs == null ? null : (KimConcept) obs.getMain();
 		}
 		return declare(definition);
 	}
@@ -96,14 +103,15 @@ public enum Concepts implements IConceptService {
 	@Override
 	public KimConcept declare(String declaration) {
 		/*
-		 * declarations that are pure semantic types for internal ontologies are possible
-		 * with authority and core concepts. Check first if it's a semantic type with a 
-		 * namespace that matches either of these; if so, override the parser as the 
-		 * concepts are not k.IM-specified.
+		 * declarations that are pure semantic types for internal ontologies are
+		 * possible with authority and core concepts. Check first if it's a semantic
+		 * type with a namespace that matches either of these; if so, override the
+		 * parser as the concepts are not k.IM-specified.
 		 */
 		if (SemanticType.validate(declaration)) {
 			SemanticType st = SemanticType.create(declaration);
-			if (CoreOntology.CORE_ONTOLOGY_NAME.equals(st.getNamespace()) || authorityOntologyIds.contains(st.getNamespace())) {
+			if (CoreOntology.CORE_ONTOLOGY_NAME.equals(st.getNamespace())
+					|| authorityOntologyIds.contains(st.getNamespace())) {
 				return new KimConcept(declaration);
 			}
 		}
@@ -364,6 +372,55 @@ public enum Concepts implements IConceptService {
 		return false;
 	}
 
+	/**
+	 * Collect all the conceptual components of a concept that match the passed
+	 * types, visiting all concepts referenced by the type. Can be used to obtain
+	 * everything that is abstract, traits, roles etc., in terms of the original
+	 * declaration.
+	 * 
+	 * @param observable
+	 * @param types
+	 * @return
+	 */
+	public Set<IConcept> collectComponents(IConcept observable, Set<Type> types) {
+		Set<IConcept> ret = new HashSet<>();
+		IKimConcept peer = declare(observable.getDefinition());
+		peer.visit(new DefaultVisitor() {
+			@Override
+			public void visitReference(String conceptName, EnumSet<Type> type, IKimConcept validParent) {
+				IConcept cn = c(conceptName);
+				if (cn != null && Sets.intersection(type, types).size() == types.size()) {
+					ret.add(cn);
+				}
+			}
+		});
+		return ret;
+	}
+
+	/**
+	 * Replace a set of components with another. Uses search/replace on the textual
+	 * declaration without validation, so must be used with care. Used internally
+	 * only to concretize abstract traits. Won't work if the keys or the values for
+	 * replacement are K-based compound concepts.
+	 * 
+	 * @param original
+	 * @param replacements
+	 * @return
+	 */
+	public IConcept replaceComponent(IConcept original, Map<IConcept, IConcept> replacements) {
+
+		String declaration = original.getDefinition();
+		for (IConcept key : replacements.keySet()) {
+			String rep = replacements.get(key).toString();
+			if (rep.contains(" ")) {
+				rep = "(" + rep + ")";
+			}
+			declaration = declaration.replace(key.toString(), rep);
+		}
+		
+		return declare(declare(declaration));
+	}
+
 	@Override
 	public int compareSpecificity(IConcept c1, IConcept c2, boolean useBaseTrait) {
 
@@ -532,7 +589,7 @@ public enum Concepts implements IConceptService {
 	}
 
 	public Concept getAuthorityConcept(Identity identity) {
-		
+
 		if (identity == null) {
 			return null;
 		}
@@ -542,17 +599,17 @@ public enum Concepts implements IConceptService {
 				return null;
 			}
 		}
-		
+
 		String oid = Path.getFirst(identity.getAuthorityName(), ".").toLowerCase();
 		boolean isNew = OWL.INSTANCE.getOntology(oid) == null;
 		Ontology ontology = OWL.INSTANCE.requireOntology(oid, OWL.INTERNAL_ONTOLOGY_PREFIX);
-		
+
 		if (isNew) {
 			ontology.setInternal(true);
 			Reasoner.INSTANCE.addOntology(ontology);
 			authorityOntologyIds.add(oid);
 		}
-		
+
 		Concept ret = ontology.getConcept(identity.getConceptName());
 		if (ret == null) {
 

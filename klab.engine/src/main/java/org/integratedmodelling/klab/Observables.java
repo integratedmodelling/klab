@@ -1122,6 +1122,7 @@ public enum Observables implements IObservableService {
 	 * @return
 	 */
 	public Collection<IObservable> expandRoles(IObservable observable, IResolutionScope scope) {
+
 		List<IObservable> ret = new ArrayList<>();
 		Set<IConcept> expand = new HashSet<>();
 		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {

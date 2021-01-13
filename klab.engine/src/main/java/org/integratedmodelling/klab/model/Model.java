@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -83,6 +84,8 @@ import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 
+import com.google.common.collect.Sets;
+
 public class Model extends KimObject implements IModel {
 
 	private String id;
@@ -97,7 +100,8 @@ public class Model extends KimObject implements IModel {
 	private boolean inactive;
 	private boolean learning;
 	private IObservable archetype;
-	private Set<IConcept> requiredRoles = null;
+	private Set<IConcept> requiredTraits = null;
+	private Set<IConcept> abstractTraits_ = null;
 
 	/*
 	 * the geometry implicitly declared for the project, gathered from the resources
@@ -143,6 +147,10 @@ public class Model extends KimObject implements IModel {
 	 */
 	public static Model create(IKimModel model, Namespace namespace, IMonitor monitor) {
 		return new Model(model, namespace, monitor);
+	}
+
+	public static Model concretize(IModel model, Map<IConcept, IConcept> resolvedTraits, IMonitor monitor) {
+		return null;
 	}
 
 	private Model(IKimModel model, Namespace namespace, IMonitor monitor) {
@@ -578,12 +586,12 @@ public class Model extends KimObject implements IModel {
 		} else if (getMainObservable() != null
 				&& getMainObservable().getDescriptionType() == Description.CHARACTERIZATION) {
 			if (resource.getLiteral() instanceof IConcept) {
-				
+
 				/*
 				 * characterizers using a literal are filters
 				 */
 				return true;
-				
+
 			} else if (resource.getUrn() != null) {
 
 				/*
@@ -594,7 +602,8 @@ public class Model extends KimObject implements IModel {
 					IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(res.getAdapterType());
 					if (adapter != null) {
 						Urn urn = new Urn(resource.getUrn());
-						return adapter.getValidator().isObservationAllowed(res, urn.getParameters(), getMainObservable().getDescriptionType());
+						return adapter.getValidator().isObservationAllowed(res, urn.getParameters(),
+								getMainObservable().getDescriptionType());
 					}
 				}
 
@@ -1528,14 +1537,14 @@ public class Model extends KimObject implements IModel {
 	}
 
 	@Override
-	public Collection<IConcept> getRequiredRoles() {
-		if (this.requiredRoles == null) {
-			this.requiredRoles = new HashSet<>();
+	public Collection<IConcept> getRequiredTraits() {
+		if (this.requiredTraits == null) {
+			this.requiredTraits = new HashSet<>();
 			for (IObservable observable : observables) {
 				if (observable != null) {
 					for (IConcept role : Roles.INSTANCE.getRoles(observable.getType())) {
 						if (role.isAbstract()) {
-							this.requiredRoles.add(role);
+							this.requiredTraits.add(role);
 						}
 					}
 				}
@@ -1545,14 +1554,47 @@ public class Model extends KimObject implements IModel {
 					if (observable != null) {
 						for (IConcept role : Roles.INSTANCE.getRoles(observable.getType())) {
 							if (role.isAbstract()) {
-								this.requiredRoles.add(role);
+								this.requiredTraits.add(role);
 							}
 						}
 					}
 				}
 			}
 		}
-		return this.requiredRoles;
+		return this.requiredTraits;
+	}
+
+	@Override
+	public boolean isAbstract() {
+		return !getAbstractTraits().isEmpty();
+	}
+
+	@Override
+	public Collection<IConcept> getAbstractTraits() {
+		if (abstractTraits_ == null) {
+			abstractTraits_ = new HashSet<>();
+			for (IObservable observable : observables) {
+				if (observable != null && observable.getType() != null && !observable.isGeneric()) {
+					for (IConcept c : Concepts.INSTANCE.collectComponents(observable.getType(),
+							EnumSet.of(IKimConcept.Type.ABSTRACT))) {
+						if (c.is(IKimConcept.Type.IDENTITY) || c.is(IKimConcept.Type.ROLE)) {
+							abstractTraits_.add(c);
+						}
+					}
+				}
+			}
+			for (IObservable observable : dependencies) {
+				if (observable != null && observable.getType() != null && !observable.isGeneric()) {
+					for (IConcept c : Concepts.INSTANCE.collectComponents(observable.getType(),
+							EnumSet.of(IKimConcept.Type.ABSTRACT))) {
+						if (c.is(IKimConcept.Type.IDENTITY) || c.is(IKimConcept.Type.ROLE)) {
+							abstractTraits_.add(c);
+						}
+					}
+				}
+			}
+		}
+		return abstractTraits_;
 	}
 
 }

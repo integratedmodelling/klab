@@ -5,6 +5,7 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.cli.ICommand;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -46,6 +47,13 @@ public class Info implements ICommand {
 				ret += "\nDependencies:";
 				for (IObservable obs : model.getDependencies()) {
 					ret += "\n" + describeObservable(obs, "   ");
+				}
+				
+				if (model.isAbstract()) {
+					ret += "\nAbstract in:";
+					for (IConcept c : model.getAbstractTraits()) {
+						ret += "\n   " + c.getDefinition();
+					}
 				}
 
 			} else {

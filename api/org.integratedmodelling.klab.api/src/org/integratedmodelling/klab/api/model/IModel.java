@@ -243,14 +243,44 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 
 	/**
 	 * If the result collection isn't empty, the model can only be used to resolve
-	 * its observable if all the returned roles are assigned in the resolution
+	 * its observable if all the returned traits are assigned in the resolution
 	 * scope. This corresponds to having any dependency or observable defined in
 	 * terms of a non-generic ("any") abstract role, which will be redefined to its
-	 * concrete counterpart(s) before resolution.
+	 * concrete counterpart(s) before resolution. This does <i>not</i> involve the
+	 * determination of abstract status described by {@link #isAbstract()} and
+	 * {@link #getAbstractTraits()}: models with required traits can be resolved as
+	 * they are (and their dependencies will be concretized during resolution,
+	 * including potentially being removed). Models with abstract traits must be
+	 * reincarnated for each combination of traits before resolving.
 	 * 
 	 * @return
 	 */
-	Collection<IConcept> getRequiredRoles();
+	Collection<IConcept> getRequiredTraits();
+
+	/**
+	 * An abstract model uses abstract traits in dependencies or observables, so it
+	 * can only be run after resolving all of those to their concrete incarnations.
+	 * This is done on a model-wide basis, so it does not involve generic
+	 * dependencies ('any') which are resolved <i>after</i> picking the model for
+	 * resolution. If a model is abstract, the traits it's abstract in (which
+	 * currently can only be roles or identities) are returned by
+	 * {@link #getAbstractTraits()}, and a different model must be produced for each
+	 * combination of these traits that can be resolved in the context. Such traits
+	 * can be produced by explicit setting (only for roles) or by running
+	 * characterizing models.
+	 * 
+	 * @return
+	 */
+	boolean isAbstract();
+
+	/**
+	 * Non-empty if {@link #isAbstract()} is true. The mechanics of producing models
+	 * with these incarnated to their concrete counterparts is left to the
+	 * implementation.
+	 * 
+	 * @return
+	 */
+	Collection<IConcept> getAbstractTraits();
 
 	/**
 	 * True if the model annotates >1 resources that represent different extents in
