@@ -61,12 +61,15 @@ public class UrnCharacterizer implements IResolver<IArtifact>, IProcessor, IExpr
 	@Override
 	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
 
-		IKlabData data = Resources.INSTANCE.getResourceData(resource, urnParameters, context.getScale(), context);
+		IResource res = this.resource.contextualize(context.getScale(), context.getTargetArtifact(), urnParameters,
+				context);
+
+		IKlabData data = Resources.INSTANCE.getResourceData(res, urnParameters, context.getScale(), context);
 		IConcept concept = data.getSemantics();
 		IConcept toResolve = context.getTargetSemantics().getType();
 		List<IConcept> traits = concept.is(IKimConcept.Type.INTERSECTION) ? Collections.singletonList(concept)
 				: concept.getOperands();
-		((IRuntimeScope)context).setConcreteIdentities(toResolve, traits);
+		((IRuntimeScope) context).setConcreteIdentities(toResolve, traits);
 		return ret;
 	}
 }

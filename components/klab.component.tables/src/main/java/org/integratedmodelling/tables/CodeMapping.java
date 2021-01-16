@@ -8,10 +8,14 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.collections4.BidiMap;
 import org.apache.commons.collections4.bidimap.DualTreeBidiMap;
+import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.utils.Utils;
 
 /**
  * Maps the values in a table (as strings) to other values, in either direction.
@@ -30,11 +34,15 @@ public class CodeMapping {
 	private IArtifact.Type type = null;
 	private String worldview = null;
 	private IConcept rootConcept = null;
+	private IAuthority authority;
 
 	public CodeMapping(File propertiesFile) {
 		try (InputStream input = new FileInputStream(propertiesFile)) {
 			properties.load(input);
 			this.worldview = properties.getProperty("worldview");
+			if (properties.containsKey("authority")) {
+				this.authority = Authorities.INSTANCE.getAuthority(properties.getProperty("authority"));
+			}
 			String t = properties.getProperty("type");
 			if (t != null) {
 				this.type = IArtifact.Type.valueOf(t.toUpperCase());
@@ -63,7 +71,18 @@ public class CodeMapping {
 	}
 
 	public Object map(Object value) {
-		return value == null ? null : mappings.get(value.toString());
+		Object ret = value == null ? null : mappings.get(value.toString());
+		if (ret != null) {
+			if (this.authority != null) {
+				ret = this.authority.getIdentity(ret.toString(), null);
+			} else if (rootConcept != null && this.type == Type.CONCEPT) {
+				ret = Concepts.c(ret.toString());
+				// TODO error if unknown?
+			} else if (this.type != null) {
+				ret = Utils.asType(ret, Utils.getClassForType(this.type));
+			}
+		}
+		return ret;
 	}
 
 	public Object reverseMap(Object value) {

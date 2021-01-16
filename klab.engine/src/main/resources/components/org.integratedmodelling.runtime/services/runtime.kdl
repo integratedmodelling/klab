@@ -42,7 +42,7 @@ export value literal
 	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver
 }
 
-filter concept characterize
+filter concept resolvetrait
 	"Return a characterizing resolver that will characterize the context with literal identities"
 	 label '$val'
 {
@@ -50,6 +50,16 @@ filter concept characterize
 		"The concept to characterize with"
 				
 	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralCharacterizingResolver
+}
+
+filter concept characterize
+	"Return a characterizing resolver that will characterize the context with literal identities"
+	 label 'Characterize'
+{
+	text urn
+		"The URN of a resource capable of producing semantics"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.UrnCharacterizer
 }
 
 export value resourcechange

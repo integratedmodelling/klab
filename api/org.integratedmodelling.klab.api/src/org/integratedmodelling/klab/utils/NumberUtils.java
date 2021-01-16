@@ -22,6 +22,7 @@
 package org.integratedmodelling.klab.utils;
 
 import java.util.ArrayList;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -348,6 +349,15 @@ public class NumberUtils {
 		}
 		return ret;
 	}
+	
+	public static int[] intArrayFromCollection(List<Number> vals) {
+		int[] ret = new int[vals.size()];
+		int i = 0;
+		for (Number d : vals) {
+			ret[i++] = d.intValue();
+		}
+		return ret;
+	}
 
 	/**
 	 * Index of largest number in double array
@@ -421,6 +431,20 @@ public class NumberUtils {
 		long[] ret = new long[vals.length];
 		for (int i = 0; i < vals.length; i++) {
 			ret[i] = vals[i];
+		}
+		return ret;
+	}
+
+	/**
+	 * Create the ordered enumeration of all values from 0 to n (excluded).
+	 * 
+	 * @param n
+	 * @return
+	 */
+	public static LinkedHashSet<Integer> enumerateAsSet(int n) {
+		LinkedHashSet<Integer> ret = new LinkedHashSet<>();
+		for (int i = 0; i < n; i++) {
+			ret.add(i);
 		}
 		return ret;
 	}

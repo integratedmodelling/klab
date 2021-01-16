@@ -20,7 +20,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 
 public class LiteralCharacterizingResolver implements IResolver<IArtifact>, IProcessor, IExpression {
 
-	static final public String FUNCTION_ID = "klab.runtime.characterize";
+	static final public String FUNCTION_ID = "klab.runtime.resolvetrait";
 
 	IConcept value;
 
@@ -47,7 +47,7 @@ public class LiteralCharacterizingResolver implements IResolver<IArtifact>, IPro
 	 */
 	public static class LiteralFunction extends KimServiceCall {
 
-		static final public String FUNCTION_ID = "klab.runtime.characterize";
+		static final public String FUNCTION_ID = "klab.runtime.resolvetrait";
 
 		IConcept value;
 

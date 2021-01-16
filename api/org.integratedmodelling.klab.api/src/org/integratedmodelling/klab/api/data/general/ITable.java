@@ -8,22 +8,31 @@ import org.integratedmodelling.klab.api.data.IResource.Attribute;
 /**
  * Unstructured n-dimensional table, where objects are addressed by 1+ keys of
  * any type and views can be extracted as maps, lists or sub-tables.
+ * <p>
+ * A table is an iterable of iterables, which may be in turn be iterate
+ * iterables if the table is a hypertable with dimensions > 2. For now we assume
+ * that the dimension is always 2, i.e. the implementation won't cover the
+ * generic datacube.
  * 
  * @author Ferd
  *
  * @param <T>
  */
-public interface ITable<T> {
+public interface ITable<T> extends Iterable<Iterable<?>> {
 
 	interface Filter {
 		public enum Type {
 			COLUMN_HEADER, ROW_HEADER, ATTRIBUTE_VALUE, INCLUDE_COLUMNS, EXCLUDE_COLUMNS, INCLUDE_ROWS, EXCLUDE_ROWS,
-			NO_RESULTS, COLUMN_EXPRESSION, COLUMN_MATCH
+			NO_RESULTS, COLUMN_EXPRESSION, COLUMN_MATCH, ROW_MATCH
 		}
-		
+
 		Type getType();
-		
+
 		List<Object> getArguments();
+
+		String getSignature();
+
+		int getDimension();
 	}
 
 	int[] getDimensions();
@@ -31,7 +40,9 @@ public interface ITable<T> {
 	/**
 	 * Get a single value from the table, passing enough locators to uniquely
 	 * identify one. Locators may be indices, keys, expressions or anything else
-	 * supported by the table implementation.
+	 * supported by the table implementation. The implementation must be able to
+	 * recognize both individual locators or arrays of them passed as a single
+	 * argument.
 	 * 
 	 * @param locators
 	 * @return

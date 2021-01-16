@@ -2,9 +2,11 @@ package org.integratedmodelling.tables;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 import java.util.NavigableMap;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.regex.Pattern;
 
@@ -15,10 +17,10 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.data.general.ITable.Filter;
+import org.integratedmodelling.klab.api.data.general.ITable.Filter.Type;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.time.extents.Time;
@@ -27,6 +29,7 @@ import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.tables.AbstractTable.FilterDescriptor;
+import org.integratedmodelling.tables.DimensionScanner.Dimension;
 
 /**
  * This matches a dimension in the table (according to specified encodings) to
@@ -60,6 +63,7 @@ public class DimensionScanner<T> {
 	private List<Integer> indices = null;
 	private List<T> extents = null;
 	private ITable<?> table;
+	private Filter filter = null;
 
 	/*
 	 * extents matched through a table dimension will come from a column and be
@@ -99,7 +103,7 @@ public class DimensionScanner<T> {
 		this.columnName = other.columnName;
 		this.auxiliaryResourceUrn = other.auxiliaryResourceUrn;
 	}
-	
+
 	public DimensionScanner(IResource resource, String[] definition, Class<T> cls) {
 
 		this.extent = cls;
@@ -214,7 +218,7 @@ public class DimensionScanner<T> {
 	public DimensionScanner<T> contextualize(ITable<?> table, T extent, IContextualizationScope scope) {
 
 		DimensionScanner<T> ret = this;
-		
+
 		if (ITime.class.isAssignableFrom(this.extent) && extent instanceof ITime) {
 
 			if (temporalDimensions == null) {
@@ -236,7 +240,7 @@ public class DimensionScanner<T> {
 			 */
 
 			ret = this.copy();
-			
+
 			if (auxiliaryResource != null && spatialContextualizer == null) {
 
 				VisitingDataBuilder builder = new VisitingDataBuilder().keepStates(scope.getScale());
@@ -284,7 +288,7 @@ public class DimensionScanner<T> {
 				if (time.getTimeType() == ITime.Type.INITIALIZATION) {
 					time = Time.getPreviousExtent(time);
 				}
-				
+
 				/*
 				 * find the column(s) or row(s) covering the passed time and add a filter to the
 				 * table for that.
@@ -316,6 +320,57 @@ public class DimensionScanner<T> {
 		}
 
 		return null;
+	}
+
+	/**
+	 * Return a table filtered to only return rows and columns that match this
+	 * dimension.
+	 * 
+	 * @param table2
+	 * @return
+	 */
+	public ITable<?> subset(ITable<?> table, IScale scale) {
+
+		if (ISpace.class.isAssignableFrom(this.extent)) {
+			if (this.spatialContextualizer != null && this.filter == null) {
+				/*
+				 * build a filter for the represented classes in the column
+				 */
+				Set<Object> values = new HashSet<>();
+				Set<Object> origin = new HashSet<>();
+				for (ILocator locator : scale) {
+					Object value = this.spatialContextualizer.get(locator);
+					if (value != null) {
+						origin.add(value);
+					}
+				}
+
+				if (origin.isEmpty()) {
+					this.filter = FilterDescriptor.stop();
+				} else {
+					for (Object o : origin) {
+						for (int i = mappings.size() - 1; i >= 0; i--) {
+							o = mappings.get(i).reverseMap(o);
+						}
+						if (o != null) {
+							values.add(o);
+						}
+					}
+					if (this.dimension == Dimension.COLUMN) {
+						this.filter = new FilterDescriptor(Type.COLUMN_MATCH, new Object[] { this.columnName, values });
+					} else if (this.dimension == Dimension.ROW) {
+						this.filter = new FilterDescriptor(Type.ROW_MATCH, new Object[] { this.rowName, values });
+					}
+				}
+			}
+		} else if (ITime.class.isAssignableFrom(this.extent)) {
+		}
+
+		if (this.filter != null) {
+			table = table.filter(this.filter);
+		}
+
+		return table;
 	}
 
 }

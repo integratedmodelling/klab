@@ -28,10 +28,7 @@ import java.util.regex.Pattern;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
-import org.integratedmodelling.kim.api.IKimModel;
-import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimObservable;
-import org.integratedmodelling.kim.api.IKimObserver;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.kim.model.DefaultVisitor;
 import org.integratedmodelling.kim.model.Kim;
@@ -417,7 +414,7 @@ public enum Concepts implements IConceptService {
 			}
 			declaration = declaration.replace(key.toString(), rep);
 		}
-		
+
 		return declare(declare(declaration));
 	}
 
@@ -656,6 +653,24 @@ public enum Concepts implements IConceptService {
 		}
 
 		return ret;
+	}
+
+	public IConcept or(Collection<IConcept> concepts) {
+		/*
+		 * TODO validate the types and choose the ontology more intelligently
+		 * TODO add the definition 
+		 */
+		return OWL.INSTANCE.getUnion(concepts, concepts.iterator().next().getOntology(),
+				((Concept) concepts.iterator().next()).getTypeSet());
+	}
+	
+	public IConcept and(Collection<IConcept> concepts) {
+		/*
+		 * TODO validate the types and choose the ontology more intelligently
+		 * TODO add the definition
+		 */
+		return OWL.INSTANCE.getIntersection(concepts, concepts.iterator().next().getOntology(),
+				((Concept) concepts.iterator().next()).getTypeSet());
 	}
 
 }

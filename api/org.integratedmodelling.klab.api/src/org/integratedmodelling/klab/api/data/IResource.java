@@ -580,7 +580,9 @@ public interface IResource extends IProvenance.Node, Serializable {
 	 * @param artifact      the contextualized artifact (including semantics if an
 	 *                      instance of {@link IObservation}). This can be used to
 	 *                      determine the type of aggregation needed and the
-	 *                      resource type if still undefined.
+	 *                      resource type if still undefined. May be null when the
+	 *                      observation is a characterization and the resource type
+	 *                      is void.
 	 * @param urnParameters
 	 * @param scope
 	 * 

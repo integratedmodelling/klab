@@ -1,7 +1,9 @@
 package org.integratedmodelling.tables;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -17,8 +19,10 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.data.Aggregator;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Utils;
@@ -30,6 +34,9 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		Filter.Type filter;
 		List<Object> locators = new ArrayList<>();
 		Object matched = null;
+		// the dimension this filter selects upon
+		int dimension = -1; // special filter
+		String signature;
 
 		static FilterDescriptor stop() {
 			return new FilterDescriptor(Filter.Type.NO_RESULTS, null);
@@ -41,6 +48,40 @@ public abstract class AbstractTable<T> implements ITable<T> {
 				for (Object o : locators) {
 					this.locators.add(o);
 				}
+			}
+			switch (filter) {
+			case ATTRIBUTE_VALUE:
+				this.dimension = 0;
+				break;
+			case COLUMN_EXPRESSION:
+				this.dimension = 1;
+				break;
+			case COLUMN_HEADER:
+				this.dimension = 0;
+				break;
+			case COLUMN_MATCH:
+				this.dimension = 0;
+				break;
+			case EXCLUDE_COLUMNS:
+				this.dimension = 1;
+				break;
+			case EXCLUDE_ROWS:
+				this.dimension = 0;
+				break;
+			case INCLUDE_COLUMNS:
+				this.dimension = 1;
+				break;
+			case INCLUDE_ROWS:
+				this.dimension = 0;
+				break;
+			case NO_RESULTS:
+				break;
+			case ROW_HEADER:
+				this.dimension = 0;
+				break;
+			case ROW_MATCH:
+				this.dimension = 0;
+				break;
 			}
 		}
 
@@ -59,7 +100,8 @@ public abstract class AbstractTable<T> implements ITable<T> {
 							if (matcher.groupCount() > 0) {
 								this.matched = matcher.group(1);
 							}
-							System.out.println("MATCHED " + cname + " with value " + this.matched + " and INDEX = " + attr.getIndex());
+							System.out.println("MATCHED " + cname + " with value " + this.matched + " and INDEX = "
+									+ attr.getIndex());
 							return true;
 						}
 					}
@@ -80,6 +122,22 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			case COLUMN_EXPRESSION:
 				break;
 			case COLUMN_MATCH:
+				for (int i = 0; i < locators.size(); i++) {
+					Object key = locators.get(i);
+					Object val = locators.get(++i);
+					if (!(val instanceof Collection)) {
+						val = Collections.singleton(val);
+					}
+					for (Object value : (Collection<?>) val) {
+						// TODO match. These are in OR so the first match exits.
+						if (true) {
+							return true;
+						}
+					}
+					return false;
+				}
+				break;
+			case ROW_MATCH:
 				break;
 			}
 
@@ -106,7 +164,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		public List<Object> getArguments() {
 			return locators;
 		}
-		
+
 		@Override
 		public String toString() {
 			return "FilterDescriptor [filter=" + filter + ", locators=" + locators + "]";
@@ -140,6 +198,19 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			return true;
 		}
 
+		@Override
+		public String getSignature() {
+			if (this.signature == null) {
+				this.signature = "" + dimension + " F:" + filter + " L:" + locators;
+			}
+			return this.signature;
+		}
+
+		@Override
+		public int getDimension() {
+			return this.dimension;
+		}
+
 	}
 
 	protected IResource resource;
@@ -149,6 +220,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	Class<? extends T> valueClass;
 	protected List<Integer> lastScannedIndices;
 	protected boolean empty = false;
+	Map<String, CodeMapping> mappings = new HashMap<>();
 
 	public AbstractTable(IResource resource, Class<? extends T> cls) {
 		this.resource = resource;
@@ -167,7 +239,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	private void validateFilters() {
 		// TODO
 	}
-	
+
 	@Override
 	public List<Filter> getFilters() {
 		return filters;
@@ -202,8 +274,16 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		for (Attribute a : resource.getAttributes()) {
 			this.attributes_.put(a.getName(), a);
 			int index = Integer.parseInt(resource.getParameters().get("column." + a.getName() + ".index").toString());
-			((AttributeReference)a).setIndex(index);
+			((AttributeReference) a).setIndex(index);
 			attributesByIndex_.put(index, a);
+			Object mapping = resource.getParameters().get("column." + a.getName() + ".mapping");
+			if (mapping != null) {
+				File mapfile = new File(
+						((Resource) resource).getPath() + File.separator + "code_" + mapping + ".properties");
+				if (mapfile.exists()) {
+					mappings.put(a.getName(), new CodeMapping(mapfile));
+				}
+			}
 		}
 	}
 
@@ -234,7 +314,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		if (this.lastScannedIndices != null) {
 			this.lastScannedIndices.clear();
 		}
-		
+
 		if (locators != null) {
 			if (locators.length == 2) {
 				row = getIndex(locators[0], 0);
@@ -303,55 +383,53 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		 * TODO if all dimensions are 1, just return the only element we have.
 		 */
 
+		Set<Integer> filteredColumns = new LinkedHashSet<>();
+		Set<Integer> filteredRows = new LinkedHashSet<>();
 
-			Set<Integer> filteredColumns = new LinkedHashSet<>();
-			Set<Integer> filteredRows = new LinkedHashSet<>();
+		Map<String, Object> attributeFilters = new HashMap<>();
+		IExpression filterExpression = null;
 
-			Map<String, Object> attributeFilters = new HashMap<>();
-			IExpression filterExpression = null;
+		for (Filter filter : this.filters) {
+			switch (filter.getType()) {
+			case ATTRIBUTE_VALUE:
+				for (int i = 0; i < filter.getArguments().size(); i++) {
+					attributeFilters.put(filter.getArguments().get(i).toString(), filter.getArguments().get(++i));
+				}
+				break;
+			case COLUMN_EXPRESSION:
+				// TODO store in filter to avoid recompiling each time
+				filterExpression = Extensions.INSTANCE.compileExpression(filter.getArguments().get(0).toString(),
+						Extensions.DEFAULT_EXPRESSION_LANGUAGE, CompilerOption.ForcedScalar,
+						CompilerOption.IgnoreContext);
+				break;
+			case COLUMN_MATCH:
+				break;
+			case EXCLUDE_COLUMNS:
+				break;
+			case EXCLUDE_ROWS:
+				break;
+			case INCLUDE_COLUMNS:
+				addIndices(filteredColumns, filter.getArguments());
+				break;
+			case INCLUDE_ROWS:
+				addIndices(filteredRows, filter.getArguments());
+				break;
+			case COLUMN_HEADER:
+			case ROW_HEADER:
+				break;
+			case NO_RESULTS:
+				return null;
+			}
+		}
 
-			for (Filter filter : this.filters) {
-				switch (filter.getType()) {
-				case ATTRIBUTE_VALUE:
-					for (int i = 0; i < filter.getArguments().size(); i++) {
-						attributeFilters.put(filter.getArguments().get(i).toString(), filter.getArguments().get(++i));
-					}
-					break;
-				case COLUMN_EXPRESSION:
-					//  TODO store in filter to avoid recompiling each time
-					filterExpression = Extensions.INSTANCE.compileExpression(filter.getArguments().get(0).toString(),
-							Extensions.DEFAULT_EXPRESSION_LANGUAGE, CompilerOption.ForcedScalar,
-							CompilerOption.IgnoreContext);
-					break;
-				case COLUMN_MATCH:
-					break;
-				case EXCLUDE_COLUMNS:
-					break;
-				case EXCLUDE_ROWS:
-					break;
-				case INCLUDE_COLUMNS:
-					addIndices(filteredColumns, filter.getArguments());
-					break;
-				case INCLUDE_ROWS:
-					addIndices(filteredRows, filter.getArguments());
-					break;
-				case COLUMN_HEADER:
-				case ROW_HEADER:
-					break;
-				case NO_RESULTS:
-					return null;
+		if (!attributeFilters.isEmpty() || filterExpression != null) {
+			for (int i = 0; i < getDimensions()[0]; i++) {
+				List<?> row = getRowItems(i);
+				if (matches(row, attributeFilters, filterExpression)) {
+					filteredRows.add(i);
 				}
 			}
-
-			if (!attributeFilters.isEmpty() || filterExpression != null) {
-				for (int i = 0; i < getDimensions()[0]; i++) {
-					List<?> row = getRowItems(i);
-					if (matches(row, attributeFilters, filterExpression)) {
-						filteredRows.add(i);
-					}
-				}
-			}
-
+		}
 
 		/*
 		 * TODO this implies that a filter must exist - without filters, no items will
@@ -374,7 +452,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			}
 
 			System.out.println("GOT " + ret);
-			
+
 			return ret.isEmpty() ? null : (ret.size() == 1 ? ret.get(0) : (aggregator.aggregate(ret)));
 		}
 
@@ -386,7 +464,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		if (row.size() != attributes_.size()) {
 			return false;
 		}
-		
+
 		boolean ok = true;
 		if (attributeFilters != null) {
 			for (String attribute : attributeFilters.keySet()) {
@@ -400,7 +478,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		if (ok && filterExpression != null) {
 			// TODO
 		}
-		
+
 		return ok;
 	}
 
@@ -408,25 +486,25 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		if (object1 == null || object2 == null) {
 			return object1 == null && object2 == null;
 		}
-		
+
 		if (object1.equals(object2) || object1.toString().equals(object2.toString())) {
 			return true;
 		}
-		
+
 		if (object1 instanceof Number && object2 instanceof String) {
 			try {
-				if (NumberUtils.equal(((Number)object1).doubleValue(), Double.parseDouble((String)object2))) {
+				if (NumberUtils.equal(((Number) object1).doubleValue(), Double.parseDouble((String) object2))) {
 					return true;
 				}
 			} catch (Throwable t) {
 				// just return false
 			}
 		}
-		
+
 		/*
 		 * TODO check for classifier and/or numeric match
 		 */
-		
+
 		return false;
 	}
 
@@ -443,8 +521,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	private int getIndex(Object object, int dimension) {
 		if (object instanceof Integer) {
 			return (Integer) object;
-		} 
-		else if (dimension == 1) {
+		} else if (dimension == 1) {
 			/*
 			 * column descriptor
 			 */
@@ -490,7 +567,55 @@ public abstract class AbstractTable<T> implements ITable<T> {
 
 	@Override
 	public <E> E get(Class<E> cls, Object... locators) {
-		// TODO Auto-generated method stub
+
+		boolean scanRows = false;
+		boolean scanColumns = false;
+		Attribute column = null;
+		int row = -1;
+		int col = -1;
+
+		/*
+		 * TODO support indexing by row name/attribute too, with same mechanism as for
+		 * integers
+		 */
+		if (locators != null) {
+			for (Object locator : locators) {
+				if (locator instanceof Attribute) {
+					scanColumns = true;
+					column = (Attribute) locator;
+				} else if (locator instanceof String && getColumnDescriptor(locator.toString()) != null) {
+					scanColumns = true;
+					column = getColumnDescriptor(locator.toString());
+				} else if (locator instanceof Integer) {
+					if (scanRows) {
+						scanColumns = true;
+						col = (Integer) locator;
+					} else {
+						scanRows = true;
+						row = (Integer) locator;
+					}
+				}
+			}
+		}
+
+		if (column != null && col < 0) {
+			col = column.getIndex();
+		}
+
+		boolean singleValue = col >= 0 && row >= 0;
+
+		if (singleValue) {
+
+		} else if (scanColumns) {
+
+		} else if (scanRows) {
+
+		} else {
+			// TODO return the entire table as a value, list, map or table, according to
+			// what is left after filtering
+			throw new KlabUnimplementedException("table: return values with multiple dimensions are still unsupported");
+		}
+
 		return null;
 	}
 

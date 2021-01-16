@@ -52,11 +52,13 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 			throws KlabException {
 
 		List<IObjectArtifact> ret = new ArrayList<>();
-		IResource res = this.resource;
+		IResource res = this.resource.contextualize(context.getScale(), context.getTargetArtifact(), urnParameters,
+				context);
 		Map<String, String> parameters = urnParameters;
 
 		if (this.resource instanceof MergedResource) {
-			List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource).contextualize(context.getScale(), context.getTargetArtifact());
+			List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
+					.contextualize(context.getScale(), context.getTargetArtifact());
 			if (resources.isEmpty()) {
 				context.getMonitor()
 						.warn("resource " + this.resource.getUrn() + " cannot be contextualized in this scale");
@@ -68,14 +70,14 @@ public class UrnInstantiator implements IExpression, IInstantiator {
 				context.getMonitor().warn(
 						"Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
 			}
-			
+
 			res = resources.get(0).getFirst();
 			parameters = resources.get(0).getSecond();
 
 		}
 
 		IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, context.getScale(), context);
-		
+
 		if (data != null && data.getArtifact() != null) {
 			for (IArtifact artifact : data.getArtifact()) {
 				if (artifact instanceof IObjectArtifact) {

@@ -2,8 +2,12 @@ package org.integratedmodelling.tables.adapter;
 
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -13,6 +17,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.data.general.ITable.Filter;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
@@ -24,6 +29,7 @@ import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.tables.AbstractTable;
 import org.integratedmodelling.tables.DimensionScanner;
+import org.integratedmodelling.tables.TableCache;
 
 public class TableEncoder implements IResourceEncoder {
 
@@ -62,9 +68,16 @@ public class TableEncoder implements IResourceEncoder {
 			return;
 		}
 
-		ITable<?> table = (ITable<?>) ((Resource) resource).getRuntimeData().get("table");
+		ITable<?> table = getTable(resource);
 		if (table != null) {
 
+			TableCache cache = new TableCache(resource);
+			
+			if (cache.isEmpty()) {
+				scope.getMonitor().info("building table cache for " + resource.getUrn());
+				cache.reset(table);
+			}
+			
 			Attribute collectSemantics = urnParameters.containsKey("collect")
 					? table.getColumnDescriptor(urnParameters.get("collect"))
 					: null;
@@ -72,6 +85,40 @@ public class TableEncoder implements IResourceEncoder {
 			DimensionScanner<ITime> time = (DimensionScanner<ITime>) ((Resource) resource).getRuntimeData().get("time");
 			DimensionScanner<ISpace> space = (DimensionScanner<ISpace>) ((Resource) resource).getRuntimeData()
 					.get("space");
+
+			/*
+			 * if collect=something, we collect the values of the specified attribute in the
+			 * filtered space and time corresponding to the context. They must specify one
+			 * or more compatible concepts, which we OR if >1, and set into the semantics
+			 * field of the builder.
+			 */
+			if (collectSemantics != null) {
+
+				Set<IConcept> collection = new HashSet<>();
+				if (time != null && !ignoreTime) {
+					table = time.subset(table, scope.getScale());
+				}
+				if (space != null && !ignoreSpace) {
+					table = space.subset(table, scope.getScale());
+				}
+
+				/*
+				 * scan each row and ask t/s if it applies; if so, collect the value in the
+				 * passed collection
+				 */
+				for (Object value : table.get(List.class, collectSemantics)) {
+					if (value instanceof IConcept) {
+						collection.add((IConcept) value);
+					}
+				}
+
+				if (collection.size() == 1) {
+					builder = builder.withSemantics(collection.iterator().next());
+				} else if (collection.size() > 1) {
+					builder = builder.withSemantics(Concepts.INSTANCE.or(collection));
+				}
+
+			}
 
 			if (time != null && !ignoreTime) {
 				Filter timeFilter = time.locate(table, geometry);
@@ -81,7 +128,7 @@ public class TableEncoder implements IResourceEncoder {
 			}
 
 			// TODO cache the indices for the slow-moving filters
-			
+
 			Map<Filter, Object> valueCache = new HashMap<>();
 			Aggregator aggregator = new Aggregator(scope.getTargetSemantics(), scope.getMonitor(), true);
 
@@ -89,50 +136,64 @@ public class TableEncoder implements IResourceEncoder {
 				System.out.println("FILTER " + filter);
 			}
 
-			if (collectSemantics != null) {
-				
-				// TODO
+			/**
+			 * Otherwise, we just scan the space (time has been filtered upstream) and
+			 * collect the values corresponding to the remaining filtering in the table.
+			 */
+			for (ILocator locator : scope.getScale()) {
 
-			} else {
-				
-				for (ILocator locator : scope.getScale()) {
+				if (scope.getMonitor().isInterrupted()) {
+					return;
+				}
 
-					if (scope.getMonitor().isInterrupted()) {
-						return;
-					}
+				Object value = null;
+				if (!table.isEmpty()) {
 
-					Object value = null;
-					if (!table.isEmpty()) {
+					ITable<?> t = table;
 
-						ITable<?> t = table;
+					if (space != null && !ignoreSpace) {
 
-						if (space != null && !ignoreSpace) {
+						Filter filter = space.locate(table, locator);
 
-							Filter filter = space.locate(table, locator);
-
-							/*
-							 * cache the spatial filter only as the others don't change
-							 */
-							if (valueCache.containsKey(filter)) {
-								value = valueCache.get(filter);
-							} else {
-								if (filter != null) {
-									System.out.println("   NEW SPATIAL FILTER " + filter);
-									t = t.filter(filter);
-								}
-								value = ((AbstractTable<?>) t).get(aggregator);
-								System.out.println("       aggregated value = " + value);
-								valueCache.put(filter, value);
+						/*
+						 * cache the spatial filter only as the others don't change
+						 */
+						if (valueCache.containsKey(filter)) {
+							value = valueCache.get(filter);
+						} else {
+							if (filter != null) {
+								System.out.println("   NEW SPATIAL FILTER " + filter);
+								t = t.filter(filter);
 							}
+							value = ((AbstractTable<?>) t).get(aggregator);
+							System.out.println("       aggregated value = " + value);
+							valueCache.put(filter, value);
 						}
 					}
-
-					builder.add(value, locator);
 				}
+
+				builder.add(value, locator);
 			}
 
 		}
 
+	}
+
+	@SuppressWarnings("unchecked")
+	private ITable<?> getTable(IResource resource) {
+		ITable<?> ret = (ITable<?>) ((Resource) resource).getRuntimeData().get("table");
+
+		if (ret == null) {
+			ret = setFilters(resource, TableAdapter.getOriginalTable(resource, true), null);
+			DimensionScanner<IExtent> space = TableAdapter.runtimeData.get(resource.getUrn() + "_space",
+					DimensionScanner.class);
+			DimensionScanner<IExtent> time = TableAdapter.runtimeData.get(resource.getUrn() + "_time",
+					DimensionScanner.class);
+			((Resource) resource).getRuntimeData().put("table", ret);
+			((Resource) resource).getRuntimeData().put("space", space);
+			((Resource) resource).getRuntimeData().put("time", time);
+		}
+		return ret;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -184,17 +245,19 @@ public class TableEncoder implements IResourceEncoder {
 		if (resource.getParameters().containsKey("filter")) {
 			ret = ret.filter(Filter.Type.COLUMN_EXPRESSION, resource.getParameters().get("filter").toString());
 		}
-		for (String parm : urnParameters.keySet()) {
-			if (Urn.SINGLE_PARAMETER_KEY.equals(parm)) {
-				Attribute attribute = originalTable.getColumnDescriptor(urnParameters.get(parm));
-				if (attribute != null) {
-					ret = ret.filter(Filter.Type.INCLUDE_COLUMNS, Collections.singleton(attribute.getIndex()));
-					// if not there, continue on to filtering
-					continue;
+		if (urnParameters != null) {
+			for (String parm : urnParameters.keySet()) {
+				if (Urn.SINGLE_PARAMETER_KEY.equals(parm)) {
+					Attribute attribute = originalTable.getColumnDescriptor(urnParameters.get(parm));
+					if (attribute != null) {
+						ret = ret.filter(Filter.Type.INCLUDE_COLUMNS, Collections.singleton(attribute.getIndex()));
+						// if not there, continue on to filtering
+						continue;
+					}
 				}
-			}
-			if (originalTable.getColumnDescriptor(parm) != null) {
-				ret = ret.filter(Filter.Type.ATTRIBUTE_VALUE, parm, urnParameters.get(parm));
+				if (originalTable.getColumnDescriptor(parm) != null) {
+					ret = ret.filter(Filter.Type.ATTRIBUTE_VALUE, parm, urnParameters.get(parm));
+				}
 			}
 		}
 

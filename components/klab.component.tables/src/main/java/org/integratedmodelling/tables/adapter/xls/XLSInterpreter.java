@@ -347,13 +347,6 @@ class CSVTable extends AbstractTable<Object> {
 		this.file = table.file;
 	}
 
-//	public CSVParser getParser() {
-//		if (parser_ == null) {
-//			parser_ = getParser(this.file, this.resource.getParameters());
-//		} 
-//		return parser_;
-//	}
-
 	@Override
 	protected AbstractTable<Object> copy() {
 		return new CSVTable(this);
@@ -431,6 +424,51 @@ class CSVTable extends AbstractTable<Object> {
 
 		return null;
 
+	}
+
+	@Override
+	public Iterator<Iterable<?>> iterator() {
+
+		return new Iterator<Iterable<?>>() {
+			
+			CSVParser parser_ = getParser(file, resource.getParameters());
+			Iterator<CSVRecord> delegate = null;
+			boolean skipped = false;
+			
+			@Override
+			public boolean hasNext() {
+				if (!skipped) {
+					skipped = true;
+					delegate = parser_.iterator();
+					if (skipHeader && delegate.hasNext()) {
+						delegate.next();
+					}
+				}
+				boolean ret = delegate.hasNext();
+				
+				if (!ret) {
+					try {
+						parser_.close();
+					} catch (IOException e) {
+						throw new KlabIOException(e);
+					}
+				}
+				
+				return ret;
+			}
+
+			@Override
+			public Iterable<?> next() {
+				if (!skipped) {
+					skipped = true;
+					delegate = parser_.iterator();
+					if (skipHeader && delegate.hasNext()) {
+						delegate.next();
+					}
+				}
+				return delegate.next();
+			}
+		};
 	}
 
 }

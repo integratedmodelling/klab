@@ -102,6 +102,63 @@ public class Utils {
 		return ret;
 	}
 
+	public static int[] getIntArrayFromLongArray(long[] data) {
+
+		if (data == null) {
+			return null;
+		}
+		int[] ints = new int[data.length];
+
+		for (int i = 0; i < data.length; i++) {
+			ints[i] = (int) data[i];
+		}
+		return ints;
+	}
+
+	public static long[] getLongArrayFromIntArray(int[] data) {
+
+		if (data == null) {
+			return null;
+		}
+		long[] longs = new long[data.length];
+
+		for (int i = 0; i < data.length; i++) {
+			longs[i] = data[i];
+		}
+		return longs;
+	}
+
+	public static long[] getLongArrayFromFloatArray(float[] data) {
+
+		if (data == null) {
+			return null;
+		}
+		long[] longs = new long[data.length];
+
+		for (int i = 0; i < data.length; i++) {
+			longs[i] = (long) data[i];
+		}
+		return longs;
+	}
+
+	public static long[] getLongArrayFromNumberList(List<?> data) {
+
+		if (data == null) {
+			return null;
+		}
+		long[] longs = new long[data.size()];
+
+		int i = 0;
+		for (Object number : data) {
+			if (number == null) {
+				longs[i++] = 0;
+			} else {
+				longs[i++] = ((Number) number).longValue();
+			}
+		}
+		return longs;
+	}
+
 	public static boolean isPOD(Object value) {
 		if (value instanceof Class<?>) {
 			return Number.class.isAssignableFrom((Class<?>) value) || String.class.isAssignableFrom((Class<?>) value)

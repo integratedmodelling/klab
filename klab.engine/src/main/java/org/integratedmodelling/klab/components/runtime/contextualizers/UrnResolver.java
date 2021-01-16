@@ -28,8 +28,8 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 
 	private IResource resource;
 	private Map<String, String> urnParameters;
-	private boolean localized = false;
-	private IScale overallScale;
+//	private boolean localized = false;
+//	private IScale overallScale;
 
 	// don't remove - only used as expression
 	public UrnResolver() {
@@ -42,7 +42,7 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 			throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or offline");
 		}
 		this.urnParameters = call.getSecond();
-		this.overallScale = overallContext.getContextObservation().getScale();
+//		this.overallScale = overallContext.getContextObservation().getScale();
 	}
 
 	public static IServiceCall getServiceCall(String urn, IContextualizable condition, boolean conditionNegated) {
@@ -55,9 +55,9 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
 		/**
 		 * Contextualize the resource to the passed context and parameters.
 		 */
-		IResource res = this.resource.contextualize(overallScale, observation, urnParameters, context);
+		IResource res = this.resource.contextualize(context.getScale(), observation, urnParameters, context);
 		Map<String, String> parameters = urnParameters;
-		this.localized = true;
+//		this.localized = true;
 
 		if (this.resource instanceof MergedResource) {
 
