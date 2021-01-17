@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -60,7 +61,7 @@ public class TableValidator implements IResourceValidator {
 			IResourceCatalog catalog, IMonitor monitor) {
 		switch (operationName) {
 		case "categorize":
-			TablesComponent.getTableInterpreter(resource.getAdapterType()).categorize(resource, parameters);
+			TablesComponent.getTableInterpreter(resource.getAdapterType()).categorize(resource, parameters, monitor);
 			break;
 		}
 		return null;
@@ -102,7 +103,8 @@ public class TableValidator implements IResourceValidator {
 		IGeometry geometry = null;
 		if (updateData.getParameters().containsKey("time.encoding")
 				|| updateData.getParameters().containsKey("space.encoding")) {
-			geometry = TablesComponent.getTableInterpreter(id).recomputeGeometry(resource, updateData.getParameters());
+			geometry = TablesComponent.getTableInterpreter(id).recomputeGeometry(resource, updateData.getParameters(),
+					Klab.INSTANCE.getRootMonitor());
 		}
 		((Resource) resource).update(updateData);
 		if (geometry != null) {

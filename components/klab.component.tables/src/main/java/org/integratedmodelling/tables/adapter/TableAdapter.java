@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.tables.DimensionScanner;
 import org.integratedmodelling.tables.TablesComponent;
@@ -54,10 +55,10 @@ public abstract class TableAdapter implements IResourceAdapter {
 		return null;
 	}
 
-	public static ITable<?> getOriginalTable(IResource resource, boolean recomputeExtents) {
+	public static ITable<?> getOriginalTable(IResource resource, boolean recomputeExtents, IMonitor monitor) {
 		ITable<?> ret = runtimeData.get(resource.getUrn() + "_table", ITable.class);
 		if (ret == null) {
-			ret = TablesComponent.getTableInterpreter(resource.getAdapterType()).getTable(resource, null);
+			ret = TablesComponent.getTableInterpreter(resource.getAdapterType()).getTable(resource, null, monitor);
 			if (recomputeExtents) {
 				if (resource.getParameters().containsKey("space.encoding")
 						&& !runtimeData.containsKey(resource.getUrn() + "_space")) {

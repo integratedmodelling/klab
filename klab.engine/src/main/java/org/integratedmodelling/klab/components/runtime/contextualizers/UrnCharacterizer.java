@@ -65,11 +65,13 @@ public class UrnCharacterizer implements IResolver<IArtifact>, IProcessor, IExpr
 				context);
 
 		IKlabData data = Resources.INSTANCE.getResourceData(res, urnParameters, context.getScale(), context);
-		IConcept concept = data.getSemantics();
-		IConcept toResolve = context.getTargetSemantics().getType();
-		List<IConcept> traits = concept.is(IKimConcept.Type.INTERSECTION) ? Collections.singletonList(concept)
-				: concept.getOperands();
-		((IRuntimeScope) context).setConcreteIdentities(toResolve, traits);
+		if (data != null) {
+			IConcept concept = data.getSemantics();
+			IConcept toResolve = context.getTargetSemantics().getType();
+			List<IConcept> traits = concept.is(IKimConcept.Type.INTERSECTION) ? Collections.singletonList(concept)
+					: concept.getOperands();
+			((IRuntimeScope) context).setConcreteIdentities(toResolve, traits);
+		}
 		return ret;
 	}
 }

@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -12,17 +13,22 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Utils;
@@ -221,10 +227,15 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	protected List<Integer> lastScannedIndices;
 	protected boolean empty = false;
 	Map<String, CodeMapping> mappings = new HashMap<>();
+	private TableCache cache_ = null;
+	IMonitor monitor;
 
-	public AbstractTable(IResource resource, Class<? extends T> cls) {
+	public AbstractTable(IResource resource, Class<? extends T> cls, IMonitor monitor) {
 		this.resource = resource;
 		this.valueClass = cls;
+		buildAttributeIndex();
+		this.cache_ = new TableCache(resource, attributes_);
+		this.monitor = monitor;
 	}
 
 	protected AbstractTable(AbstractTable<T> table) {
@@ -234,6 +245,17 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		this.filters.addAll(table.filters);
 		this.valueClass = table.valueClass;
 		this.empty = table.empty;
+		this.cache_ = table.cache_;
+		this.monitor = table.monitor;
+		this.mappings.putAll(table.mappings);
+	}
+
+	public TableCache getCache() {
+		if (cache_.isEmpty()) {
+			monitor.info("building table cache for " + resource.getUrn());
+			cache_.reset(this);
+		}
+		return cache_;
 	}
 
 	private void validateFilters() {
@@ -277,11 +299,17 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			((AttributeReference) a).setIndex(index);
 			attributesByIndex_.put(index, a);
 			Object mapping = resource.getParameters().get("column." + a.getName() + ".mapping");
-			if (mapping != null) {
+			// TODO allow for a chain of mappings separated by ->
+			if (mapping != null && !mapping.toString().trim().isEmpty()) {
 				File mapfile = new File(
 						((Resource) resource).getPath() + File.separator + "code_" + mapping + ".properties");
 				if (mapfile.exists()) {
-					mappings.put(a.getName(), new CodeMapping(mapfile));
+					CodeMapping m = new CodeMapping(mapfile);
+					mappings.put(a.getName(), m);
+					if (m.getType() != null) {
+						((AttributeReference) a).setType(m.getType());
+					}
+
 				}
 			}
 		}
@@ -337,6 +365,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 
 		if (col < 0) {
 			// take all rows items for a given column
+			// FIXME use cache!
 			int i = 0;
 			for (Object o : getRowItems(row)) {
 				boolean ok = true;
@@ -482,7 +511,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		return ok;
 	}
 
-	private boolean checkEquals(Object object1, Object object2) {
+	public static boolean checkEquals(Object object1, Object object2) {
 		if (object1 == null || object2 == null) {
 			return object1 == null && object2 == null;
 		}
@@ -565,14 +594,22 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		return empty /* TODO also check that we have columns and rows */;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <E> E get(Class<E> cls, Object... locators) {
 
 		boolean scanRows = false;
-		boolean scanColumns = false;
-		Attribute column = null;
+		List<Attribute> columns = new ArrayList<>();
 		int row = -1;
-		int col = -1;
+		List<Integer> cols = new ArrayList<>();
+		Object ret = null;
+
+		// single-valued list output
+		final int LIST = 0;
+		// map c1 -> c2 output
+		final int MAP = 1;
+		// list of iterables with multiple columns values output
+		final int ALIST = 2;
 
 		/*
 		 * TODO support indexing by row name/attribute too, with same mechanism as for
@@ -581,15 +618,14 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		if (locators != null) {
 			for (Object locator : locators) {
 				if (locator instanceof Attribute) {
-					scanColumns = true;
-					column = (Attribute) locator;
+					columns.add((Attribute) locator);
+					cols.add(((Attribute) locator).getIndex());
 				} else if (locator instanceof String && getColumnDescriptor(locator.toString()) != null) {
-					scanColumns = true;
-					column = getColumnDescriptor(locator.toString());
+					columns.add(getColumnDescriptor(locator.toString()));
+					cols.add(columns.get(columns.size() - 1).getIndex());
 				} else if (locator instanceof Integer) {
 					if (scanRows) {
-						scanColumns = true;
-						col = (Integer) locator;
+						cols.add((Integer) locator);
 					} else {
 						scanRows = true;
 						row = (Integer) locator;
@@ -598,22 +634,118 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			}
 		}
 
-		if (column != null && col < 0) {
-			col = column.getIndex();
-		}
-
-		boolean singleValue = col >= 0 && row >= 0;
+		boolean singleValue = cols.size() > 0 && row >= 0;
 
 		if (singleValue) {
 
-		} else if (scanColumns) {
+		} else if (columns.size() > 0) {
 
+			int restype = -1;
+
+			/**
+			 * columns not empty and row = -1
+			 * 
+			 * Return type should be list if 1 column, table or map otherwise. If map,
+			 * should be 2 columns and the first will be used as key. This requires two
+			 * steps in scanDimension, one that returns the dimensionality of the result,
+			 * another that scans it.
+			 */
+			if (List.class.isAssignableFrom(cls) && cols.size() == 1) {
+				restype = LIST;
+			} else if (Map.class.isAssignableFrom(cls) && cols.size() == 2) {
+				restype = MAP;
+			} else if (List.class.isAssignableFrom(cls) && cols.size() > 1) {
+				restype = ALIST;
+			} else {
+				throw new KlabValidationException("table get() called with inconsistent arguments");
+			}
+
+			switch (restype) {
+			case LIST:
+			case ALIST:
+				ret = new ArrayList<Object>();
+				break;
+			case MAP:
+				ret = new LinkedHashMap<Object, Object>();
+				break;
+			}
+
+			for (int rowIndex : getCache().scanDimension(0, this.filters)) {
+				switch (restype) {
+				case LIST:
+					String value = getCache().getObject(rowIndex, cols.get(0));
+					((List<Object>) ret).add(getValue(value, columns.get(0)));
+					break;
+				case MAP:
+					String key = getCache().getObject(rowIndex, cols.get(0));
+					value = getCache().getObject(rowIndex, cols.get(1));
+					((Map<Object, Object>) ret).put(getValue(key, columns.get(0)), getValue(value, columns.get(1)));
+					break;
+				case ALIST:
+					List<Object> rval = new ArrayList<>();
+					for (int c = 0; c < cols.size(); c++) {
+						value = getCache().getObject(rowIndex, cols.get(c));
+						rval.add(getValue(value, columns.get(c)));
+					}
+					((List<Object>) ret).add(rval);
+					break;
+				}
+			}
 		} else if (scanRows) {
 
 		} else {
 			// TODO return the entire table as a value, list, map or table, according to
 			// what is left after filtering
 			throw new KlabUnimplementedException("table: return values with multiple dimensions are still unsupported");
+		}
+
+		return (E) ret;
+	}
+
+	public Object getValue(Object value, Attribute attribute) {
+
+		if (mappings.containsKey(attribute.getName())) {
+			value = value == null ? mappings.get(attribute.getName()).map("null")
+					: mappings.get(attribute.getName()).map(value);
+		}
+
+		if (value == null) {
+			return value;
+		}
+		if (attribute.getType() == Type.CONCEPT) {
+			if (value instanceof IConcept) {
+				return value;
+			} else {
+				value = Concepts.INSTANCE.getConcept(value.toString());
+			}
+		} else {
+
+			switch (attribute.getType()) {
+			case BOOLEAN:
+				if (!(value instanceof Boolean)) {
+					return "true".equals(value.toString().toLowerCase());
+				}
+			case LIST:
+				return value instanceof List ? (List<?>) value : null;
+			case MAP:
+				return value instanceof Map ? (Map<?, ?>) value : null;
+			case NUMBER:
+				if (value instanceof Number) {
+					return value;
+				} else
+					return NumberUtils.fromString(value.toString());
+			case OBJECT:
+				break;
+			case PROCESS:
+				break;
+			case TEXT:
+				return value.toString();
+			case VALUE:
+				return value;
+			default:
+				break;
+
+			}
 		}
 
 		return null;

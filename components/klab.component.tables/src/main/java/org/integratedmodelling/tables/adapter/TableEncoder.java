@@ -68,16 +68,9 @@ public class TableEncoder implements IResourceEncoder {
 			return;
 		}
 
-		ITable<?> table = getTable(resource);
+		ITable<?> table = getTable(resource, scope.getMonitor());
 		if (table != null) {
 
-			TableCache cache = new TableCache(resource);
-			
-			if (cache.isEmpty()) {
-				scope.getMonitor().info("building table cache for " + resource.getUrn());
-				cache.reset(table);
-			}
-			
 			Attribute collectSemantics = urnParameters.containsKey("collect")
 					? table.getColumnDescriptor(urnParameters.get("collect"))
 					: null;
@@ -118,6 +111,8 @@ public class TableEncoder implements IResourceEncoder {
 					builder = builder.withSemantics(Concepts.INSTANCE.or(collection));
 				}
 
+				return;
+				
 			}
 
 			if (time != null && !ignoreTime) {
@@ -180,11 +175,11 @@ public class TableEncoder implements IResourceEncoder {
 	}
 
 	@SuppressWarnings("unchecked")
-	private ITable<?> getTable(IResource resource) {
+	private ITable<?> getTable(IResource resource, IMonitor monitor) {
 		ITable<?> ret = (ITable<?>) ((Resource) resource).getRuntimeData().get("table");
 
 		if (ret == null) {
-			ret = setFilters(resource, TableAdapter.getOriginalTable(resource, true), null);
+			ret = setFilters(resource, TableAdapter.getOriginalTable(resource, true, monitor), null);
 			DimensionScanner<IExtent> space = TableAdapter.runtimeData.get(resource.getUrn() + "_space",
 					DimensionScanner.class);
 			DimensionScanner<IExtent> time = TableAdapter.runtimeData.get(resource.getUrn() + "_time",
@@ -214,7 +209,8 @@ public class TableEncoder implements IResourceEncoder {
 			}
 		}
 
-		ITable<?> table = setFilters(resource, TableAdapter.getOriginalTable(resource, true), urnParameters);
+		ITable<?> table = setFilters(resource, TableAdapter.getOriginalTable(resource, true, scope.getMonitor()),
+				urnParameters);
 		DimensionScanner<IExtent> space = TableAdapter.runtimeData.get(resource.getUrn() + "_space",
 				DimensionScanner.class);
 		DimensionScanner<IExtent> time = TableAdapter.runtimeData.get(resource.getUrn() + "_time",

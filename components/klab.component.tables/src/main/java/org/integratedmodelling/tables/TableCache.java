@@ -2,7 +2,6 @@ package org.integratedmodelling.tables;
 
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -12,11 +11,11 @@ import java.util.Set;
 
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.data.general.ITable.Filter;
-import org.integratedmodelling.klab.utils.MultidimensionalCursor;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.utils.NumberUtils;
-import org.integratedmodelling.klab.utils.Utils;
 import org.mapdb.DB;
 import org.mapdb.DBMaker;
 import org.mapdb.Serializer;
@@ -41,8 +40,12 @@ public class TableCache {
 	private Map<int[], String> dataCache;
 	private Map<String, int[]> filterCache;
 	private Map<String, String> properties;
+	private IResource resource;
+	private Map<String, Attribute> attributes;
 
-	public TableCache(IResource resource) {
+	public TableCache(IResource resource, Map<String, Attribute> attributes) {
+		this.resource = resource;
+		this.attributes = attributes;
 		db = DBMaker.fileDB(
 				Configuration.INSTANCE.getDataPath("tables") + File.separator + sanitize(resource.getUrn()) + ".db")
 				/* .fileMmapEnable() */.transactionEnable().make();
@@ -67,13 +70,15 @@ public class TableCache {
 	}
 
 	public String getObject(int... locators) {
-		return null;
+		return dataCache.get(locators);
 	}
 
 	/**
 	 * Pass all the filters for a table and return the filter indices along the
 	 * passed dimension. Filters that haven't been seen before will be precomputed
 	 * and cached. Resetting the table will remove all caches.
+	 * <p>
+	 * FIXME pretty expensive strategy if there's a lot of rows.
 	 * 
 	 * @param dimensionIndex
 	 * @param filters
@@ -116,6 +121,42 @@ public class TableCache {
 			case COLUMN_HEADER:
 				break;
 			case COLUMN_MATCH:
+				// first locator must be a column indicator
+				int col = filter.getArguments().get(0) instanceof Number
+						? ((Number) filter.getArguments().get(0)).intValue()
+						: -1;
+				if (col < 0) {
+					Attribute attr = null;
+					if (filter.getArguments().get(0) instanceof String) {
+						attr = attributes.get(filter.getArguments().get(0).toString());
+					} else if (filter.getArguments().get(0) instanceof Attribute) {
+						attr = (Attribute)filter.getArguments().get(0);
+					}
+					if (attr != null) {
+						col = attr.getIndex();
+					}
+				}
+				
+				if (col < 0) {
+					throw new KlabIllegalStateException("table: column filter does not specify a valid column");
+				}
+				
+				List<Object> match = new ArrayList<>();
+				if (filter.getArguments().get(1) instanceof Collection) {
+					match.addAll((Collection<?>)filter.getArguments().get(1));
+				} else {
+					match.add(filter.getArguments().get(1));
+				}
+				for (int i = 0; i < dimensions[0]; i++) {
+					Object object1 = dataCache.get(new int[] {i, col});
+					for (Object object2 : match) {
+						if (AbstractTable.checkEquals(object1, object2)) {
+							indices.add(i);
+							break;
+						}
+					}
+				}
+				
 				break;
 			case EXCLUDE_COLUMNS:
 				break;
@@ -132,8 +173,10 @@ public class TableCache {
 			case ROW_MATCH:
 				break;
 			}
+			
 			ret = NumberUtils.intArrayFromCollection(indices);
 			filterCache.put(filter.getSignature(), ret);
+			db.commit();
 		}
 
 		Set<Integer> rset = new HashSet<>();
@@ -158,7 +201,7 @@ public class TableCache {
 				dataCache.put(new int[] { row, col }, value.toString());
 				col++;
 			}
-			row ++;
+			row++;
 		}
 		db.commit();
 	}

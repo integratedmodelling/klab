@@ -448,4 +448,15 @@ public class NumberUtils {
 		}
 		return ret;
 	}
+
+	public static Number fromString(String value) {
+		if (encodesInteger(value)) {
+			return Integer.parseInt(value);
+		} else if (encodesLong(value)) {
+			return Long.parseLong(value);
+		} else if (encodesDouble(value)) {
+			return Double.parseDouble(value);
+		}
+		return Double.NaN;
+	}
 }

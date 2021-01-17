@@ -173,13 +173,13 @@ public class SDMXInterpreter extends TableInterpreter {
 	}
 
 	@Override
-	public ITable<?> getTable(IResource resource, IGeometry geometry) {
+	public ITable<?> getTable(IResource resource, IGeometry geometry, IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public IGeometry recomputeGeometry(IResource resource, Map<String, String> parameters) {
+	public IGeometry recomputeGeometry(IResource resource, Map<String, String> parameters, IMonitor monitor) {
 
 		IGeometry ret = resource.getGeometry();
 

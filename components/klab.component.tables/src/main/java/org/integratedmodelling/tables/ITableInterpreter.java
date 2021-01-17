@@ -25,7 +25,7 @@ public interface ITableInterpreter {
 	 * @param geometry
 	 * @return
 	 */
-	ITable<?> getTable(IResource resource, IGeometry geometry);
+	ITable<?> getTable(IResource resource, IGeometry geometry, IMonitor monitor);
 
 	void encode(IResource resource, Map<String, String> urnParameters, IGeometry geometry, Builder builder,
 			IContextualizationScope context);
@@ -61,7 +61,7 @@ public interface ITableInterpreter {
 	 * @param resource
 	 * @param parameters
 	 */
-	void categorize(IResource resource, IParameters<String> parameters);
+	void categorize(IResource resource, IParameters<String> parameters, IMonitor monitor);
 
 	/**
 	 * Called when parameters include the {space|time}.encoding fields after user
@@ -72,5 +72,5 @@ public interface ITableInterpreter {
 	 * @param parameters
 	 * @return
 	 */
-	IGeometry recomputeGeometry(IResource resource, Map<String, String> parameters);
+	IGeometry recomputeGeometry(IResource resource, Map<String, String> parameters, IMonitor monitor);
 }

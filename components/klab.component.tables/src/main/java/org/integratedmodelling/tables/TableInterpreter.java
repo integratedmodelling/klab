@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.components.time.extents.Time;
@@ -44,9 +45,9 @@ public abstract class TableInterpreter implements ITableInterpreter {
 	}
 
 	@Override
-	public void categorize(IResource resource, IParameters<String> parameters) {
+	public void categorize(IResource resource, IParameters<String> parameters, IMonitor monitor) {
 		// TODO Auto-generated method stub
-		ITable<?> table = this.getTable(resource, null);
+		ITable<?> table = this.getTable(resource, null, monitor);
 		Set<Object> categories = new LinkedHashSet<>();
 		for (Object o : table.asList(parameters.get("dimension"))) {
 			categories.add(o);
@@ -64,7 +65,7 @@ public abstract class TableInterpreter implements ITableInterpreter {
 	}	
 	
 	@Override
-	public IGeometry recomputeGeometry(IResource resource, Map<String, String> parameters) {
+	public IGeometry recomputeGeometry(IResource resource, Map<String, String> parameters, IMonitor monitor) {
 
 		IGeometry ret = resource.getGeometry();
 
@@ -83,7 +84,7 @@ public abstract class TableInterpreter implements ITableInterpreter {
 
 			if (strategy == null) {
 
-				table = TableAdapter.getOriginalTable(resource, false);
+				table = TableAdapter.getOriginalTable(resource, false, monitor);
 				spaceEncoding = null;
 				String[] parts = parameters.get("space.encoding").split(Pattern.quote("->"));
 				strategy = new DimensionScanner<>(resource, parts, IShape.class);
@@ -122,7 +123,7 @@ public abstract class TableInterpreter implements ITableInterpreter {
 
 				timeEncoding = null;
 				if (table == null) {
-					table = TableAdapter.getOriginalTable(resource, false);
+					table = TableAdapter.getOriginalTable(resource, false, monitor);
 				}
 				String[] parts = parameters.get("time.encoding").split(Pattern.quote("->"));
 				strategy = new DimensionScanner<>(resource, parts, ITime.class);

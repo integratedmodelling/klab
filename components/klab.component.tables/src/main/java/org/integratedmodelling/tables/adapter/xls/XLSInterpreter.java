@@ -262,9 +262,9 @@ public class XLSInterpreter extends TableInterpreter {
 	}
 
 	@Override
-	public ITable<?> getTable(IResource resource, IGeometry geometry) {
+	public ITable<?> getTable(IResource resource, IGeometry geometry, IMonitor monitor) {
 		if ("csv".equals(resource.getParameters().get("resource.type"))) {
-			return new CSVTable(resource);
+			return new CSVTable(resource, monitor);
 		}
 		return null;
 	}
@@ -335,8 +335,8 @@ class CSVTable extends AbstractTable<Object> {
 		return table_;
 	}
 
-	public CSVTable(IResource resource) {
-		super(resource, Object.class);
+	public CSVTable(IResource resource, IMonitor monitor) {
+		super(resource, Object.class, monitor);
 		this.skipHeader = "true".equals(resource.getParameters().get("headers.columns").toString());
 		this.file = ((Resource) resource).getLocalFile("resource.file");
 	}
@@ -370,7 +370,7 @@ class CSVTable extends AbstractTable<Object> {
 						if (value == null || value.toString().trim().isEmpty()) {
 							value = null;
 						}
-						ret.add(Utils.asType(value, Utils.getClassForType(attr.getType())));
+						ret.add(getValue(value, attr));
 					}
 					break;
 				}
@@ -399,7 +399,7 @@ class CSVTable extends AbstractTable<Object> {
 						if (value == null || value.toString().trim().isEmpty()) {
 							value = null;
 						}
-						ret.add(Utils.asType(value, Utils.getClassForType(attr.getType())));
+						ret.add(getValue(value, attr));
 					}
 				}
 			}
