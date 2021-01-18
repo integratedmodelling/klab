@@ -62,6 +62,7 @@ import org.integratedmodelling.klab.ide.navigator.model.beans.ERuntimeObject;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
 import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.DataflowReference;
+import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.ObservationType;
@@ -949,7 +950,12 @@ public class RuntimeView extends ViewPart {
 //							.setImage(ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/worldgrey24.png"));
 //				}
 				engineStatusLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_GREEN));
-				engineStatusLabel.setText("User " + capabilities.getOwner().getId() + " logged in");
+				IdentityReference owner = capabilities.getOwner();
+				if(owner !=null) {
+					engineStatusLabel.setText("User " + owner.getId() + " logged in");
+				} else {
+				    engineStatusLabel.setText("Running in anonymous mode");
+				}
 			});
 			break;
 		default:
