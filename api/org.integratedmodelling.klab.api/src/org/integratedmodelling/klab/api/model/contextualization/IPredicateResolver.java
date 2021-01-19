@@ -21,6 +21,6 @@ public interface IPredicateResolver<T extends IDirectObservation> extends IConte
 	 * @param observation
 	 * @param context
 	 */
-	boolean resolve(IConcept predicate, T observation, IContextualizationScope context);
+	boolean resolve(IConcept predicate, T observation, IContextualizationScope scope);
 
 }

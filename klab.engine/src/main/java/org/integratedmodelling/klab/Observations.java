@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
@@ -53,6 +54,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
+import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
@@ -144,6 +146,11 @@ public enum Observations implements IObservationService {
 	 */
 	public StateSummary getStateSummary(IState state, ILocator locator) {
 
+		// TODO index by time signature or state timestamp
+		// FIXME review all this - this gets CELLS in locators when used in Groovy state expressions! 
+		// JUST INDEX BY TIME.START or -1 and set this in the state.
+		locator = getTemporalLocator(state, locator);
+		
 		StateSummary ret = null;
 		Map<String, StateSummary> cached = summaryCache.get(locator);
 		if (cached != null && cached.containsKey(state.getId())
@@ -166,44 +173,55 @@ public enum Observations implements IObservationService {
 
 		long ndata = 0;
 		long nndat = 0;
-		long tdata = 0;
 
 		ret.setStateTimestamp(((Observation) state).getTimestamp());
 		double min, max;
 
-		List<Integer> dataKey = state.getDataKey() != null
-				? state.getDataKey().getAllValues().stream().map(dk -> dk.getFirst()).collect(Collectors.toList())
-				: null;
+//		List<Integer> dataKey = state.getDataKey() != null
+//				? state.getDataKey().getAllValues().stream().map(dk -> dk.getFirst()).collect(Collectors.toList())
+//				: null;
 		boolean isBoolean = state.getType() == IArtifact.Type.BOOLEAN;
 
-		if (dataKey != null || isBoolean) {
+		if (state.getDataKey() != null || isBoolean) {
+
 			min = Double.MIN_VALUE;
 			max = Double.MAX_VALUE;
 			ret.setDegenerate(false);
 			ret.setNodataPercentage(0);
-			ret.setValueCount(isBoolean ? 2 : dataKey.size());
+			ret.setValueCount(isBoolean ? 2 : state.getDataKey().size());
 			ret.setMean(Double.NaN);
 			ret.setVariance(Double.NaN);
 			ret.setStandardDeviation(Double.NaN);
 			ret.setSingleValued(false);
-		} else {
-			SummaryStatistics statistics = new SummaryStatistics();
 
-			for (Iterator<Number> it = state.iterator(locator, Number.class); it.hasNext();) {
-				tdata++;
-				Number d = it.next();
-				if (d != null) {
-					ndata++;
-					statistics.addValue(d.doubleValue());
-				} else {
-					nndat++;
+		} else {
+
+			SummaryStatistics statistics = null;
+//			if (state instanceof State && ((State) state).getStorage() instanceof AbstractAdaptiveStorage) {
+//				((AbstractAdaptiveStorage<?>) ((State) state).getStorage()).getStatistics(locator);
+//			}
+
+			if (statistics == null) {
+
+				statistics = new SummaryStatistics();
+
+				for (ILocator ll : locator) {
+					Object o = state.get(ll);
+					if (o instanceof Number) {
+						ndata++;
+						statistics.addValue(((Number) o).doubleValue());
+					} else {
+						nndat++;
+					}
 				}
 			}
+
 			min = statistics.getMin();
 			max = statistics.getMax();
+
 			ret.setDegenerate(
 					ndata == 0 || !Double.isFinite(statistics.getMax()) || !Double.isFinite(statistics.getMax()));
-			ret.setNodataPercentage((double) nndat / (double) tdata);
+			ret.setNodataPercentage((double) nndat / (double) (ndata + nndat));
 			ret.setRange(Arrays.asList(statistics.getMin(), statistics.getMax()));
 			ret.setValueCount(ndata + nndat);
 			ret.setMean(statistics.getMean());
@@ -212,28 +230,47 @@ public enum Observations implements IObservationService {
 			ret.setSingleValued(statistics.getMax() == statistics.getMin());
 			ret.setSum(statistics.getSum());
 		}
+
 		ret.setRange(Arrays.asList(min, max));
 
 		if (ret.getNodataPercentage() < 1) {
-			Builder histogram = Histogram.builder(min, max, isBoolean ? 2 : (dataKey == null ? 10 : dataKey.size()));
 
-			for (Iterator<Number> it = state.iterator(locator, Number.class); it.hasNext();) {
-				Number d = it.next();
-				if (d != null) {
-					if (isBoolean) {
-						histogram.addToIndex(d.intValue());
-					}
-					if (dataKey != null) {
-						histogram.addToIndex(dataKey.indexOf(d));
+			Builder histogram = Histogram.builder(min, max, isBoolean ? 2 : (state.getDataKey() == null ? 10 : state.getDataKey().size()));
+
+			for (ILocator ll : locator) {
+				Object o = state.get(ll);
+				if (o instanceof Number) {
+					if (state.getDataKey() != null) {
+						histogram.addToIndex(state.getDataKey().reverseLookup(o));
 					} else {
-						histogram.add(d.doubleValue());
+						histogram.add(((Number)o).doubleValue());
 					}
+				} else if (o instanceof Boolean) {
+					histogram.addToIndex((Boolean) o ? 1 : 0);
+				} else if (o != null && state.getDataKey() != null) {
+					histogram.addToIndex(state.getDataKey().reverseLookup(o));
 				}
 			}
 			ret.setHistogram(histogram.build());
 		}
 
 		return ret;
+	}
+
+	private IScale getTemporalLocator(IState state, ILocator locator) {
+
+		List<IExtent> extents = new ArrayList<>();
+		if (locator instanceof IScale && ((IScale) locator).getTime() != null) {
+			extents.add(((IScale) locator).getTime());
+		} else if (locator instanceof ITime) {
+			extents.add((ITime) locator);
+		}
+
+		if (state.getScale().getSpace() != null) {
+			extents.add(state.getScale().getSpace());
+		}
+
+		return Scale.create(extents);
 	}
 
 	/*

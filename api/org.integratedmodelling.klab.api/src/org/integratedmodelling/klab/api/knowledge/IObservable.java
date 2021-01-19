@@ -585,4 +585,14 @@ public interface IObservable extends ISemantic, IResolvable {
 	 */
 	boolean resolves(IObservable other, IObservable context);
 
+	/**
+	 * Return any abstract identity or role that are set in this observable, and
+	 * will need to be resolved to concrete ones before the observable can be
+	 * resolved. This will return an empty set if the observable is generic, as that
+	 * is handled differently.
+	 * 
+	 * @return
+	 */
+	Collection<IConcept> getAbstractPredicates();
+
 }

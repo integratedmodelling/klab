@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -46,8 +47,8 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 
 	Descriptor expressionDescriptor;
 	Descriptor conditionDescriptor;
-	IExpression expression = null;
-	IExpression condition = null;
+	ILanguageExpression expression = null;
+	ILanguageExpression condition = null;
 	Map<String, Object> additionalParameters = null;
 	boolean isScalar;
 	IContextualizable resource = null;
@@ -168,12 +169,12 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 	}
 
 	@Override
-	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
+	public IArtifact resolve(IArtifact ret, IContextualizationScope scope) throws KlabException {
 
-		IParameters<String> parameters = context;
-		if (additionalParameters != null || !context.getVariables().isEmpty()) {
+		IParameters<String> parameters = scope;
+		if (additionalParameters != null || !scope.getVariables().isEmpty()) {
 			parameters = new Parameters<String>();
-			parameters.putAll(context);
+			parameters.putAll(scope);
 			parameters.putAll(additionalParameters);
 		}
 
@@ -184,17 +185,17 @@ public class ExpressionResolver implements IResolver<IArtifact>, IExpression {
 			}
 		}
 		
-		for (String key : context.getVariables().keySet()) {
-			parameters.put(key, context.getVariables().get(key).getValue(parameters, context));
+		for (String key : scope.getVariables().keySet()) {
+			parameters.put(key, scope.getVariables().get(key).getValue(parameters, scope));
 		}
 		
 		boolean ok = true;
 		if (condition != null) {
-			Object cond = condition.eval(parameters, context);
+			Object cond = condition.eval(parameters, scope);
 			ok = cond instanceof Boolean && ((Boolean) cond);
 		}
 		if (ok) {
-			Object o = expression.eval(parameters, context);
+			Object o = expression/* .override("self", ret) */.eval(parameters, scope);
 			if (o instanceof IDataArtifact) {
 				ret = (IDataArtifact) o;
 			} else if (Utils.isPOD(o) && ret instanceof State) {

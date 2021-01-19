@@ -1108,80 +1108,81 @@ public enum Observables implements IObservableService {
 		return true;
 	}
 
-	/**
-	 * If the passed observable references one or more abstract role, find the
-	 * correspondent concepts in the resolution scope and return the expanded set of
-	 * observables with the role substituted by the concepts that incarnate it,
-	 * keeping the original roles as contextual roles in the resulting observables.
-	 * 
-	 * TODO this must also use role models (contextualized on demand) and use the
-	 * same mechanism to expand abstract identities.
-	 * 
-	 * @param observable
-	 * @param scope
-	 * @return
-	 */
-	public Collection<IObservable> expandRoles(IObservable observable, IResolutionScope scope) {
-
-		List<IObservable> ret = new ArrayList<>();
-		Set<IConcept> expand = new HashSet<>();
-		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
-			if (role.isAbstract()) {
-				expand.add(role);
-			}
-		}
-		for (IConcept identity : Traits.INSTANCE.getDirectTraits(observable.getType())) {
-			if (identity.isAbstract() && identity.is(Type.IDENTITY)) {
-				expand.add(identity);
-			}
-		}
-		if (expand.isEmpty()) {
-			ret.add(observable);
-		} else {
-			/*
-			 * ensure the scope incarnates all of the existing abstract roles. If not, we
-			 * produce no observables. We match roles by equality, not by inference, which
-			 * may require rethinking.
-			 */
-			Map<IConcept, Set<IConcept>> incarnated = new LinkedHashMap<>();
-			for (IConcept role : expand) {
-				if (role.is(Type.ROLE)) {
-					Collection<IConcept> known = scope.getRoles().get(role);
-					if (known == null || known.isEmpty()) {
-						// TODO use model
-						return ret;
-					}
-					incarnated.put(role, new HashSet<>(known));
-				} else {
-					// identity: use model only
-				}
-			}
-
-			List<Set<IConcept>> concepts = new ArrayList<>(incarnated.values());
-			for (List<IConcept> incarnation : Sets.cartesianProduct(concepts)) {
-				Builder builder = observable.getBuilder(scope.getMonitor());
-				int i = 0;
-				for (IConcept orole : incarnated.keySet()) {
-					builder = builder.without(orole);
-					IConcept peer = incarnation.get(i++);
-					if (peer.is(Type.ROLE)) {
-						builder = builder.withRole(peer);
-					} else if (peer.is(Type.TRAIT)) {
-						builder = builder.withTrait(peer);
-					} else {
-						throw new KlabUnsupportedFeatureException(
-								"Abstract role substitution is only allowed for predicates at the moment");
-					}
-				}
-
-				IObservable result = builder.buildObservable();
-				result.getContextualRoles().addAll(incarnated.keySet());
-				ret.add(result);
-			}
-
-		}
-		return ret;
-	}
+//	/**
+//	 * If the passed observable references one or more abstract role, find the
+//	 * correspondent concepts in the resolution scope and return the expanded set of
+//	 * observables with the role substituted by the concepts that incarnate it,
+//	 * keeping the original roles as contextual roles in the resulting observables.
+//	 * 
+//	 * TODO this must also use role models (contextualized on demand) and use the
+//	 * same mechanism to expand abstract identities.
+//	 * 
+//	 * @param observable
+//	 * @param scope
+//	 * @deprecated bring into resolver
+//	 * @return
+//	 */
+//	public Collection<IObservable> expandRoles(IObservable observable, IResolutionScope scope) {
+//
+//		List<IObservable> ret = new ArrayList<>();
+//		Set<IConcept> expand = new HashSet<>();
+//		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
+//			if (role.isAbstract()) {
+//				expand.add(role);
+//			}
+//		}
+//		for (IConcept identity : Traits.INSTANCE.getDirectTraits(observable.getType())) {
+//			if (identity.isAbstract() && identity.is(Type.IDENTITY)) {
+//				expand.add(identity);
+//			}
+//		}
+//		if (expand.isEmpty()) {
+//			ret.add(observable);
+//		} else {
+//			/*
+//			 * ensure the scope incarnates all of the existing abstract roles. If not, we
+//			 * produce no observables. We match roles by equality, not by inference, which
+//			 * may require rethinking.
+//			 */
+//			Map<IConcept, Set<IConcept>> incarnated = new LinkedHashMap<>();
+//			for (IConcept role : expand) {
+//				if (role.is(Type.ROLE)) {
+//					Collection<IConcept> known = scope.getRoles().get(role);
+//					if (known == null || known.isEmpty()) {
+//						// TODO use model
+//						return ret;
+//					}
+//					incarnated.put(role, new HashSet<>(known));
+//				} else {
+//					// identity: use model only
+//				}
+//			}
+//
+//			List<Set<IConcept>> concepts = new ArrayList<>(incarnated.values());
+//			for (List<IConcept> incarnation : Sets.cartesianProduct(concepts)) {
+//				Builder builder = observable.getBuilder(scope.getMonitor());
+//				int i = 0;
+//				for (IConcept orole : incarnated.keySet()) {
+//					builder = builder.without(orole);
+//					IConcept peer = incarnation.get(i++);
+//					if (peer.is(Type.ROLE)) {
+//						builder = builder.withRole(peer);
+//					} else if (peer.is(Type.TRAIT)) {
+//						builder = builder.withTrait(peer);
+//					} else {
+//						throw new KlabUnsupportedFeatureException(
+//								"Abstract role substitution is only allowed for predicates at the moment");
+//					}
+//				}
+//
+//				IObservable result = builder.buildObservable();
+//				result.getContextualRoles().addAll(incarnated.keySet());
+//				ret.add(result);
+//			}
+//
+//		}
+//		return ret;
+//	}
 
 	/**
 	 * AARGH all to compare concepts by definition and not by identity

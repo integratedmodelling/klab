@@ -30,7 +30,7 @@ public interface IPredicateClassifier<T extends IDirectObservation> extends ICon
 	 * @return true if classification should proceed.
 	 */
 	public boolean initialize(IObjectArtifact observations, IConcept abstractPredicate, IConcept targetPredicate,
-			IContextualizationScope context);
+			IContextualizationScope scope);
 
 	/**
 	 * Classify an individual observation.
@@ -42,6 +42,6 @@ public interface IPredicateClassifier<T extends IDirectObservation> extends ICon
 	 *         observation will get. Null will cause attribution and resolution to
 	 *         be canceled for this object.
 	 */
-	public IConcept classify(IConcept abstractPredicate, T observation, IContextualizationScope context);
+	public IConcept classify(IConcept abstractPredicate, T observation, IContextualizationScope scope);
 
 }

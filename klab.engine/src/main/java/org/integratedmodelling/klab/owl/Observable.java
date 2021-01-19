@@ -2,11 +2,15 @@ package org.integratedmodelling.klab.owl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -104,6 +108,11 @@ public class Observable implements IObservable {
 	// an instantiator dereification
 	private String dereifiedAttribute;
 
+	// kept in the observables generated after resolution of abstract predicates to
+	// remember the lineage and
+	// enable scoping for downstream resolutions.
+	private Map<IConcept, IConcept> resolvedPredicates = new HashMap<>();
+
 	/*
 	 * this is only for debugging
 	 */
@@ -158,6 +167,26 @@ public class Observable implements IObservable {
 		return ret;
 	}
 
+	/**
+	 * Return an observable that has all the abstract predicates contained in the
+	 * passed map substituted by the correspondent concrete ones.
+	 * 
+	 * @param observable
+	 * @param resolved
+	 * @return
+	 */
+	public static IObservable concretize(IObservable observable, Map<IConcept, IConcept> resolved) {
+
+		Collection<IConcept> abs = observable.getAbstractPredicates();
+		if (abs.isEmpty() || resolved.keySet().containsAll(abs)) {
+			return observable;
+		}
+
+		Observable ret = new Observable((Observable)observable);
+		ret.observable = (Concept) Concepts.INSTANCE.replaceComponent(ret.observable, resolved);
+		return ret;
+	}
+
 	public Observable(Observable observable) {
 		this.observable = observable.observable;
 		this.name = observable.name;
@@ -183,6 +212,7 @@ public class Observable implements IObservable {
 		this.resolution = observable.resolution;
 		this.contextualRoles.addAll(observable.contextualRoles);
 		this.dereifiedAttribute = observable.dereifiedAttribute;
+		this.resolvedPredicates.putAll(observable.resolvedPredicates);
 	}
 
 	public Observable withoutModel() {
@@ -807,7 +837,30 @@ public class Observable implements IObservable {
 	@Override
 	public boolean resolves(IObservable other, IObservable context) {
 		return getType().resolves(other.getType(), context == null ? null : context.getType())
-				&& CollectionUtils.isEqualCollection(this.valueOperators, ((Observable)other).valueOperators);
+				&& CollectionUtils.isEqualCollection(this.valueOperators, ((Observable) other).valueOperators);
+	}
+
+	@Override
+	public Collection<IConcept> getAbstractPredicates() {
+		Set<IConcept> ret = new HashSet<>();
+		if (getType() != null && !isGeneric()) {
+			for (IConcept c : Concepts.INSTANCE.collectComponents(getType(), EnumSet.of(IKimConcept.Type.ABSTRACT))) {
+				if (c.is(IKimConcept.Type.IDENTITY) || c.is(IKimConcept.Type.ROLE)) {
+					ret.add(c);
+				}
+			}
+		}
+		return ret;
+	}
+
+	/**
+	 * If the observable results from resolving another with abstract predicates,
+	 * return the mapping of abstract -> concrete made by the resolver.
+	 * 
+	 * @return
+	 */
+	public Map<IConcept, IConcept> getResolvedPredicates() {
+		return resolvedPredicates;
 	}
 
 }

@@ -677,7 +677,7 @@ public class Actuator implements IActuator {
 			 * parallelization instead of hard-coding a loop here.
 			 */
 			IArtifact result = Klab.INSTANCE.getRuntimeProvider().distributeComputation((IStateResolver) contextualizer,
-					(IObservation)ret, resource, addParameters(ctx, self, resource), scale);
+					(IObservation) ret, resource, addParameters(ctx, self, resource), scale);
 
 			if (result != ret) {
 				ctx.swapArtifact(ret, result);
@@ -685,7 +685,7 @@ public class Actuator implements IActuator {
 			ret = result;
 
 			if (this.model != null && ret instanceof Observation) {
-				if (scale.getTime() != null && scale.getTime().is(ITime.Type.INITIALIZATION)){
+				if (scale.getTime() != null && scale.getTime().is(ITime.Type.INITIALIZATION)) {
 					Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, ctx);
 				}
 				/*
@@ -703,7 +703,8 @@ public class Actuator implements IActuator {
 			}
 			ret = result;
 
-			if (this.model != null && ret instanceof Observation && scale.getTime() != null && scale.getTime().is(ITime.Type.INITIALIZATION)) {
+			if (this.model != null && ret instanceof Observation && scale.getTime() != null
+					&& scale.getTime().is(ITime.Type.INITIALIZATION)) {
 				Actors.INSTANCE.instrument(this.model.getAnnotations(), (Observation) ret, ctx);
 			}
 
@@ -776,23 +777,29 @@ public class Actuator implements IActuator {
 					}
 
 					/*
-					 * tell the scope to notify internal listeners (for actors and the like)
+					 * tell the scope to notify internal listeners (for actors and the like). Null
+					 * object happens when contextualization wasn't successful because of resource
+					 * error or other runtime condition.
 					 */
-					ctx.notifyListeners((IObservation) object);
+					if (object != null) {
 
-					/*
-					 * notify end of contextualization if we're subscribed to the parent
-					 */
-					if (ctx.getWatchedObservationIds().contains(ret.getId())) {
+						ctx.notifyListeners((IObservation) object);
 
-						((Observation) object).setContextualized(true);
+						/*
+						 * notify end of contextualization if we're subscribed to the parent
+						 */
+						if (ctx.getWatchedObservationIds().contains(ret.getId())) {
 
-						ObservationChange change = ((Observation) object)
-								.createChangeEvent(ObservationChange.Type.ContextualizationCompleted);
-						change.setNewSize(ctx.getChildArtifactsOf(object).size());
-						change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation) object));
-						session.getMonitor().send(Message.create(session.getId(),
-								IMessage.MessageClass.ObservationLifecycle, IMessage.Type.ModifiedObservation, change));
+							((Observation) object).setContextualized(true);
+
+							ObservationChange change = ((Observation) object)
+									.createChangeEvent(ObservationChange.Type.ContextualizationCompleted);
+							change.setNewSize(ctx.getChildArtifactsOf(object).size());
+							change.setExportFormats(Observations.INSTANCE.getExportFormats((IObservation) object));
+							session.getMonitor()
+									.send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
+											IMessage.Type.ModifiedObservation, change));
+						}
 					}
 
 					/*
@@ -902,7 +909,8 @@ public class Actuator implements IActuator {
 	private IRuntimeScope addParameters(IRuntimeScope ctx, IArtifact self, IContextualizable resource) {
 
 		IRuntimeScope ret = ctx.copy();
-		if (self instanceof IProcess && resource.getTargetId() != null && ctx.getArtifact(resource.getTargetId()) != null) {
+		if (self instanceof IProcess && resource.getTargetId() != null
+				&& ctx.getArtifact(resource.getTargetId()) != null) {
 			self = ctx.getArtifact(resource.getTargetId());
 		}
 		if (self != null) {

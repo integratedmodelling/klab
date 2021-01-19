@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -70,7 +71,13 @@ public class UrnCharacterizer implements IResolver<IArtifact>, IProcessor, IExpr
 			IConcept toResolve = context.getTargetSemantics().getType();
 			List<IConcept> traits = concept.is(IKimConcept.Type.INTERSECTION) ? Collections.singletonList(concept)
 					: concept.getOperands();
-			((IRuntimeScope) context).setConcreteIdentities(toResolve, traits);
+			if (ret instanceof IDirectObservation) {
+				for (IConcept predicate : traits) {
+					((IRuntimeScope)context).newPredicate((IDirectObservation)ret, predicate);
+				}
+			} else {
+				((IRuntimeScope) context).setConcreteIdentities(toResolve, traits);
+			}
 		}
 		return ret;
 	}

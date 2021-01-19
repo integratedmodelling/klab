@@ -35,6 +35,6 @@ public interface IStateResolver extends IContextualizer {
    * @return the computed value at the locator
    * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
-  Object resolve(IObservable observable, IContextualizationScope context) throws KlabException;
+  Object resolve(IObservable observable, IContextualizationScope scope) throws KlabException;
 
 }

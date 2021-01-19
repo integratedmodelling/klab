@@ -110,7 +110,7 @@ abstract class Observation<T extends IObservation> extends Wrapper<T> {
         }
         return null;
     }
-
+	
     def getMetadata() {
         return unwrap().metadata;
     }

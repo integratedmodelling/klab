@@ -523,9 +523,19 @@ public class MergedResource implements IResource {
 				ret.addAll(set.getValue().resources);
 			}
 		} else {
+
 			Entry<Long, ResourceSet> set = scale.getTime().is(ITime.Type.INITIALIZATION)
 					? resources.ceilingEntry(locator)
 					: resources.floorEntry(locator);
+
+			/*
+			 * lenient check for unsuccessful initialization
+			 */
+			if (set == null && scale.getTime().is(ITime.Type.INITIALIZATION)) {
+				locator = resolutionTime.getEnd().getMilliseconds();
+				set = resources.floorEntry(locator);
+			}
+
 			if (set != null) {
 
 				boolean ok = true;

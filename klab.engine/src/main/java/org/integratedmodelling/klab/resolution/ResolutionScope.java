@@ -120,7 +120,7 @@ public class ResolutionScope implements IResolutionScope {
 	private Model model;
 	private Observer observer;
 	private Map<IConcept, Collection<IConcept>> roles = new HashMap<>();
-	
+
 	/*
 	 * When an artifact is here, it's from the context and will be turned into an
 	 * 'input' actuator in the dataflow. Scopes resolved with an artifact have a
@@ -222,6 +222,12 @@ public class ResolutionScope implements IResolutionScope {
 	 */
 	private Coverage coverage;
 
+	/**
+	 * Any abstract predicates that have been resolved upstream will be stored here
+	 * and propagate to downstream resolutions.
+	 */
+	private Map<IConcept, IConcept> resolvedPredicates = new HashMap<>();
+
 	/*
 	 * Cached resolvers for specific observables in the current scale. Will be
 	 * reassessed (by the kbox) to match them to the scale of an instance created by
@@ -261,7 +267,7 @@ public class ResolutionScope implements IResolutionScope {
 		addResolvedScope(new ObservedConcept(observable, mode), modelScope);
 
 		resolverCache.putAll(modelScope.resolverCache);
-		
+
 		/*
 		 * change observable: add a preresolved model for this same coverage.
 		 */
@@ -428,6 +434,7 @@ public class ResolutionScope implements IResolutionScope {
 		this.occurrent = other.occurrent;
 		this.previousResolution.addAll(other.previousResolution);
 		this.roles.putAll(other.roles);
+		this.resolvedPredicates.putAll(other.resolvedPredicates);
 		if (copyResolution) {
 			this.observable = other.observable;
 			this.model = other.model;
@@ -1469,6 +1476,11 @@ public class ResolutionScope implements IResolutionScope {
 	@Override
 	public Map<IConcept, Collection<IConcept>> getRoles() {
 		return this.roles;
+	}
+
+	@Override
+	public Map<IConcept, IConcept> getResolvedPredicates() {
+		return resolvedPredicates;
 	}
 
 }

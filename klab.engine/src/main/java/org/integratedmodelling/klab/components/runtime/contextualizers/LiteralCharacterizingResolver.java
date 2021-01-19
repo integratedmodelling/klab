@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -83,7 +84,13 @@ public class LiteralCharacterizingResolver implements IResolver<IArtifact>, IPro
 		IConcept toResolve = context.getTargetSemantics().getType();
 		List<IConcept> traits = this.value.is(IKimConcept.Type.INTERSECTION) ? Collections.singletonList(this.value)
 				: this.value.getOperands();
-		((IRuntimeScope)context).setConcreteIdentities(toResolve, traits);
+		if (ret instanceof IDirectObservation) {
+			for (IConcept predicate : traits) {
+				((IRuntimeScope) context).newPredicate((IDirectObservation) ret, predicate);
+			}
+		} else {
+			((IRuntimeScope) context).setConcreteIdentities(toResolve, traits);
+		}
 		return ret;
 	}
 }

@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -47,9 +48,11 @@ import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
+import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
 import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Coverage;
@@ -157,31 +160,31 @@ public class Resolver {
 		ResolutionScope ret = null;
 		if (resolvable instanceof Observable) {
 
-			Coverage coverage = null;
-			parentScope.setOriginalScope(
-					((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
-
-			for (IObservable observable : Observables.INSTANCE.expandRoles((IObservable) resolvable, parentScope)) {
-				ResolutionScope mscope = resolve((Observable) observable, parentScope,
-						observable.getDescriptionType().getResolutionMode());
-				if (ret == null) {
-					ret = mscope;
-					coverage = mscope.getCoverage();
-				} else {
-					coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
-				}
-
-				if (coverage.isEmpty()) {
-					break;
-				}
-			}
-
-			ret.setCoverage(coverage);
-//
+//			Coverage coverage = null;
 //			parentScope.setOriginalScope(
 //					((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
-//			ret = resolve((Observable) resolvable, parentScope,
-//					((Observable) resolvable).getDescriptionType().getResolutionMode());
+
+//			for (IObservable observable : resolveAbstractPredicates((IObservable) resolvable, parentScope)) {
+//				ResolutionScope mscope = resolve((Observable) observable, parentScope,
+//						observable.getDescriptionType().getResolutionMode());
+//				if (ret == null) {
+//					ret = mscope;
+//					coverage = mscope.getCoverage();
+//				} else {
+//					coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
+//				}
+//
+//				if (coverage.isEmpty()) {
+//					break;
+//				}
+//			}
+//
+//			ret.setCoverage(coverage);
+//
+			parentScope.setOriginalScope(
+					((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
+			ret = resolve((Observable) resolvable, parentScope,
+					((Observable) resolvable).getDescriptionType().getResolutionMode());
 
 		} else if (resolvable instanceof Model) {
 			parentScope.setOriginalScope(Scope.MODEL);
@@ -242,6 +245,104 @@ public class Resolver {
 		}
 
 		return parentScope.empty();
+	}
+
+	/**
+	 * If the passed observable has any abstract traits (for now only roles and
+	 * identities), resolve them from either the scope or the model space, then
+	 * return all the matching concrete observables. If no concrete role can be
+	 * found, return an empty list without error; if no concrete identity can be
+	 * found, return null to signal that resolution can't continue.
+	 * <p>
+	 * The resolved predicate map is stored in each observable so that it can be set
+	 * into the scope when resolving each one.
+	 * 
+	 * @param observable
+	 * @param scope
+	 * @return
+	 */
+	private Collection<IObservable> resolveAbstractPredicates(IObservable observable, ResolutionScope scope) {
+
+		List<IObservable> ret = new ArrayList<>();
+
+		/**
+		 * Any pre-resolved predicate is substituted right away and doesn't enter the
+		 * resolution.
+		 */
+		observable = Observable.concretize(observable, scope.getResolvedPredicates());
+
+		/*
+		 * find the remaining abstract predicates
+		 */
+		Collection<IConcept> expand = observable.getAbstractPredicates();
+
+		if (expand.isEmpty()) {
+			ret.add(observable);
+		} else {
+
+			Map<IConcept, Set<IConcept>> incarnated = new LinkedHashMap<>();
+			for (IConcept role : expand) {
+
+				if (role.is(Type.ROLE)) {
+					Collection<IConcept> known = scope.getRoles().get(role);
+					if (known == null || known.isEmpty()) {
+						continue;
+					}
+					incarnated.put(role, new HashSet<>(known));
+				}
+			}
+
+			for (IConcept predicate : expand) {
+				if (!incarnated.containsKey(predicate)) {
+					/*
+					 * resolve in current scope: keep the inherency from the original concept
+					 */
+					IObservable.Builder builder = new ObservableBuilder(predicate, scope.getMonitor());
+					if (observable.getInherent() != null) {
+						builder = builder.of(observable.getInherent());
+					}
+					Observable pobs = (Observable) builder.buildObservable();
+					ResolutionScope oscope = scope.getChildScope(pobs, Mode.RESOLUTION);
+					// this accepts empty resolutions, so check that we have values in the resulting
+					// scope.
+					if (resolveConcrete(pobs, oscope, Mode.RESOLUTION).getCoverage().isComplete()) {
+						System.out.println("ZPORR");
+						// compile and run the dataflow for this branch to obtain the traits.
+					}
+				}
+			}
+
+			List<Set<IConcept>> concepts = new ArrayList<>(incarnated.values());
+			for (List<IConcept> incarnation : Sets.cartesianProduct(concepts)) {
+
+				Map<IConcept, IConcept> resolved = new HashMap<>();
+				int i = 0;
+				for (IConcept orole : incarnated.keySet()) {
+					resolved.put(orole, incarnation.get(i++));
+				}
+
+				Builder builder = observable.getBuilder(scope.getMonitor());
+				i = 0;
+				for (IConcept orole : incarnated.keySet()) {
+					builder = builder.without(orole);
+					IConcept peer = incarnation.get(i++);
+					if (peer.is(Type.ROLE)) {
+						builder = builder.withRole(peer);
+					} else if (peer.is(Type.TRAIT)) {
+						builder = builder.withTrait(peer);
+					} else {
+						throw new KlabUnsupportedFeatureException(
+								"Abstract role substitution is only allowed for predicates at the moment");
+					}
+				}
+
+				IObservable result = builder.buildObservable();
+				result.getContextualRoles().addAll(incarnated.keySet());
+				ret.add(result);
+			}
+
+		}
+		return ret;
 	}
 
 	/**
@@ -317,6 +418,37 @@ public class Resolver {
 		return ret;
 	}
 
+	private ResolutionScope resolve(Observable resolvable, ResolutionScope parentScope, Mode mode) {
+
+		Coverage coverage = null;
+		ResolutionScope ret = null;
+
+		for (IObservable observable : resolveAbstractPredicates((IObservable) resolvable, parentScope)) {
+
+			ResolutionScope mscope = resolveConcrete((Observable) observable, parentScope, mode);
+
+			if (ret == null) {
+				ret = mscope;
+				coverage = mscope.getCoverage();
+			} else {
+				coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
+			}
+
+			if (coverage.isEmpty()) {
+				break;
+			}
+		}
+
+		if (ret == null) {
+			// empty result set from resolveAbstractPredicates: no results
+			return parentScope.empty();
+		}
+
+		ret.setCoverage(coverage);
+
+		return ret;
+	}
+
 	/**
 	 * Resolve an observable in a context by accepting as many models as necessary
 	 * to resolve its observation or instantiate the target observations. Final
@@ -335,7 +467,7 @@ public class Resolver {
 	 *         scope with no children, with empty coverage if the observable is
 	 *         mandatory, or the passed scope's coverage if it's optional.
 	 */
-	private ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode) {
+	private ResolutionScope resolveConcrete(Observable observable, ResolutionScope parentScope, Mode mode) {
 
 		/*
 		 * Check first if we need to redistribute the observable, in which case we only
@@ -373,7 +505,7 @@ public class Resolver {
 			 * Distribute the observable over the observation of its context. We don't know
 			 * what the context observation will produce
 			 */
-			ResolutionScope ret = resolve(deferTo, parentScope, Mode.INSTANTIATION);
+			ResolutionScope ret = resolveConcrete(deferTo, parentScope, Mode.INSTANTIATION);
 			if (ret.getCoverage().isRelevant()) {
 				ResolutionScope deferred = ret.getChildScope(deferredObservable, mode);
 				deferred.setDeferred(true);
@@ -606,14 +738,6 @@ public class Resolver {
 	 */
 	private ResolutionScope resolve(Model model, ResolutionScope parentScope) throws KlabException {
 
-		if (model.getObservables().get(0).getDescriptionType() != Description.CHARACTERIZATION && model.isAbstract()) {
-			System.out.println("ZIO POLLO");
-			for (Model concrete : resolveAbstractModel(model, parentScope)) {
-
-			}
-			// return the ORed resolution
-		}
-
 		ResolutionScope ret = parentScope.getChildScope(model);
 		Coverage coverage = new Coverage(ret.getCoverage());
 
@@ -643,7 +767,7 @@ public class Resolver {
 		for (ObservationStrategy strategy : strategies) {
 			// ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though) - still,
 			// should be resolving a CandidateObservable
-			ResolutionScope mscope = resolve(strategy.getObservables().get(0), ret, strategy.getMode());
+			ResolutionScope mscope = resolveConcrete(strategy.getObservables().get(0), ret, strategy.getMode());
 			coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
 			if (coverage.isEmpty()) {
 				parentScope.getMonitor().info("discarding first choice " + model.getId() + " due to missing dependency "
@@ -657,36 +781,36 @@ public class Resolver {
 		return ret;
 	}
 
-	private Collection<Model> resolveAbstractModel(Model model, ResolutionScope parentScope) {
-
-		List<Model> ret = new ArrayList<>();
-		Map<IConcept, Set<IConcept>> incarnated = new LinkedHashMap<>();
-		for (IConcept trait : model.getAbstractTraits()) {
-			/*
-			 * resolve to one or more concrete traits, set them into incarnated with trait
-			 * as key; if any is unresolved, we can't run, so return empty list which will
-			 * resolve to empty.
-			 */
-		}
-
-		/*
-		 * ensure the scope incarnates all of the existing abstract roles. If not, we
-		 * produce no observables. We match roles by equality, not by inference, which
-		 * may require rethinking.
-		 */
-		List<Set<IConcept>> concepts = new ArrayList<>(incarnated.values());
-		for (List<IConcept> incarnation : Sets.cartesianProduct(concepts)) {
-			int i = 0;
-			Map<IConcept, IConcept> resolvedTraits = new HashMap<>();
-			for (IConcept orole : incarnated.keySet()) {
-				IConcept peer = incarnation.get(i++);
-				resolvedTraits.put(peer, orole);
-			}
-			ret.add(Model.concretize(model, resolvedTraits, parentScope.getMonitor()));
-		}
-
-		return ret;
-	}
+//	private Collection<Model> resolveAbstractModel(Model model, ResolutionScope parentScope) {
+//
+//		List<Model> ret = new ArrayList<>();
+//		Map<IConcept, Set<IConcept>> incarnated = new LinkedHashMap<>();
+//		for (IConcept trait : model.getAbstractTraits()) {
+//			/*
+//			 * resolve to one or more concrete traits, set them into incarnated with trait
+//			 * as key; if any is unresolved, we can't run, so return empty list which will
+//			 * resolve to empty.
+//			 */
+//		}
+//
+//		/*
+//		 * ensure the scope incarnates all of the existing abstract roles. If not, we
+//		 * produce no observables. We match roles by equality, not by inference, which
+//		 * may require rethinking.
+//		 */
+//		List<Set<IConcept>> concepts = new ArrayList<>(incarnated.values());
+//		for (List<IConcept> incarnation : Sets.cartesianProduct(concepts)) {
+//			int i = 0;
+//			Map<IConcept, IConcept> resolvedTraits = new HashMap<>();
+//			for (IConcept orole : incarnated.keySet()) {
+//				IConcept peer = incarnation.get(i++);
+//				resolvedTraits.put(peer, orole);
+//			}
+//			ret.add(Model.concretize(model, resolvedTraits, parentScope.getMonitor()));
+//		}
+//
+//		return ret;
+//	}
 
 	/**
 	 * Retrieve an appropriately configured model prioritizer for the passed scope.

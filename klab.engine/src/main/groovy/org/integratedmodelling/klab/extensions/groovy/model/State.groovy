@@ -14,8 +14,8 @@ class State extends Observation<IState> {
 	// only used to tag a state for reduction when transformed
 	IConcept dataReduction = null;
 //	ILocator timePointer = ITime.INITIALIZATION;
-	@Deprecated
-	StateSummary summary;
+//	@Deprecated
+//	StateSummary summary;
 
 	State(IState obs, Binding binding) {
 		super(obs, binding);
@@ -30,11 +30,7 @@ class State extends Observation<IState> {
 	}
 
 	private StateSummary getStateSummary() {
-		if (summary == null) {
-			// FIXME is initialization() OK? 
-			summary = Observations.INSTANCE.getStateSummary(unwrap(), unwrap().getScale().initialization());
-		}
-		return summary;
+		return Observations.INSTANCE.getStateSummary(unwrap(), getScope().getScale());
 	}
 
 	/**
@@ -46,7 +42,7 @@ class State extends Observation<IState> {
 		if (unwrap().type == IArtifact.Type.NUMBER) {
 			def summary = getStateSummary();
 			if (!summary.isDegenerate()) {
-				for (ILocator locator : unwrap().getScale()) {
+				for (ILocator locator : getScope().getScale()) {
 					Double d = unwrap().get(locator, Double.class);
 					if (d != null && !Double.isNaN(d)) {
 						d = summary.getRange().get(1) - d + summary.getRange().get(0);
@@ -62,7 +58,7 @@ class State extends Observation<IState> {
 		if (unwrap().type == IArtifact.Type.NUMBER) {
 			def summary = getStateSummary();
 			if (!summary.isDegenerate()) {
-				for (ILocator locator : unwrap().getScale()) {
+				for (ILocator locator : getScope().getScale()) {
 					Double d = unwrap().get(locator, Double.class);
 					if (d != null && !Double.isNaN(d)) {
 						d = (d - summary.getRange().get(0)) / (summary.getRange().get(1) - summary.getRange().get(0));

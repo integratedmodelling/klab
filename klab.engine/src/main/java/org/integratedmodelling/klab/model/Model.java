@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -83,8 +82,6 @@ import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
-
-import com.google.common.collect.Sets;
 
 public class Model extends KimObject implements IModel {
 
@@ -1574,22 +1571,14 @@ public class Model extends KimObject implements IModel {
 		if (abstractTraits_ == null) {
 			abstractTraits_ = new HashSet<>();
 			for (IObservable observable : observables) {
-				if (observable != null && observable.getType() != null && !observable.isGeneric()) {
-					for (IConcept c : Concepts.INSTANCE.collectComponents(observable.getType(),
-							EnumSet.of(IKimConcept.Type.ABSTRACT))) {
-						if (c.is(IKimConcept.Type.IDENTITY) || c.is(IKimConcept.Type.ROLE)) {
-							abstractTraits_.add(c);
-						}
-					}
+				if (observable != null) {
+					abstractTraits_.addAll(observable.getAbstractPredicates());
 				}
 			}
 			for (IObservable observable : dependencies) {
 				if (observable != null && observable.getType() != null && !observable.isGeneric()) {
-					for (IConcept c : Concepts.INSTANCE.collectComponents(observable.getType(),
-							EnumSet.of(IKimConcept.Type.ABSTRACT))) {
-						if (c.is(IKimConcept.Type.IDENTITY) || c.is(IKimConcept.Type.ROLE)) {
-							abstractTraits_.add(c);
-						}
+					if (observable != null) {
+						abstractTraits_.addAll(observable.getAbstractPredicates());
 					}
 				}
 			}
