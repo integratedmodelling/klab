@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.model.Annotation;
@@ -114,6 +115,13 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	// dependency structure, shared along the entire hierarchy
 	Graph<ObservedConcept, DefaultEdge> dependencies;
+
+	/**
+	 * This is available for inspection after dataflow.run() in case the dataflow is
+	 * only run for side effects on the scope. This happens, for example, during
+	 * in-resolution characterization of abstract identities.
+	 */
+	IRuntimeScope runtimeScope = null;
 
 	class AnnotationParameterValue {
 
@@ -314,7 +322,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 		Dataflow rootDataflow = null;
 		boolean added = false;
-		if (parentComputation == null) {
+		if (parentComputation == null && ret != null) {
 			rootDataflow = this;
 			((RuntimeScope) ((Observation) ret).getScope()).setDataflow(this);
 		} else if (ret != null) {
@@ -791,6 +799,14 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
 	public Set<ObservedConcept> getImplicitlyChangingObservables() {
 		return resolutionScope.getImplicitlyChangingObservables();
+	}
+	
+	public IRuntimeScope getRuntimeScope() {
+		return this.runtimeScope;
+	}
+
+	public void setRuntimeScope(IRuntimeScope runtimeScope) {
+		this.runtimeScope = runtimeScope;
 	}
 
 }

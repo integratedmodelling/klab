@@ -315,8 +315,10 @@ public class Resolver {
 						dataflow.setDescription("Resolution of abstract predicate " + predicate.getDefinition());
 						dataflow.run(oscope.getCoverage().copy(), oscope.getMonitor());
 						/*
-						 * TODO where the huck is the scope?
+						 * TODO get the traits from the scope, add to set
+						 * TODO 
 						 */
+						System.out.println(dataflow.getRuntimeScope().getConcreteIdentities());
 					}
 				}
 			}
@@ -329,7 +331,13 @@ public class Resolver {
 				for (IConcept orole : incarnated.keySet()) {
 					resolved.put(orole, incarnation.get(i++));
 				}
-
+				
+				/*
+				 * create all observables with substitutions; store the substitutions in 
+				 * them so that the scope can be filled in when resolving their models
+				 */
+				
+				// this goes away
 				Builder builder = observable.getBuilder(scope.getMonitor());
 				i = 0;
 				for (IConcept orole : incarnated.keySet()) {

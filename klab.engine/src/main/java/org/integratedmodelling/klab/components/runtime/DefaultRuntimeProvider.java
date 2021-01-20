@@ -131,7 +131,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			public IArtifact call() throws Exception {
 
 				IDirectObservation context = scope.getContext();
-				IRuntimeScope runtimeContext = null;
+				IRuntimeScope runtimeScope = null;
 				Actuator initializer = (Actuator) dataflow.getActuators().get(0);
 				boolean switchContext = context != null && initializer.getObservable().getType().is(Type.COUNTABLE)
 						&& scope.getMode() == Mode.RESOLUTION;
@@ -147,17 +147,22 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 
 				if (switchContext) {
 					// new catalog, new scale, context subject is in the scope, network remains
-					runtimeContext = ((Observation) context).getScope().createContext(actuatorScale, initializer,
+					runtimeScope = ((Observation) context).getScope().createContext(actuatorScale, initializer,
 							dataflow, scope, monitor);
 				} else if (context == null) {
 					// new context
-					runtimeContext = createRuntimeContext(initializer, scope, actuatorScale, monitor);
+					runtimeScope = createRuntimeContext(initializer, scope, actuatorScale, monitor);
 				} else {
 					// instantiating or resolving states: stay in context
-					runtimeContext = ((Subject) context).getScope().createChild(actuatorScale, initializer, scope,
+					runtimeScope = ((Subject) context).getScope().createChild(actuatorScale, initializer, scope,
 							monitor);
 				}
 
+				/*
+				 * for posterity, needed in some situations
+				 */
+				((Dataflow)dataflow).setRuntimeScope(runtimeScope);
+				
 				IActuator firstActuator = null;
 
 				for (IActuator actuator : dataflow.getActuators()) {
@@ -182,9 +187,9 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 							return null;
 						}
 
-						IRuntimeScope ctx = runtimeContext;
+						IRuntimeScope ctx = runtimeScope;
 						if (active != firstActuator) {
-							ctx = runtimeContext.createChild(actuatorScale, active, scope, monitor)
+							ctx = runtimeScope.createChild(actuatorScale, active, scope, monitor)
 									.locate(initializationScale, monitor);
 						}
 
@@ -214,20 +219,20 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				/*
 				 * auto-start the scheduler if transitions have been registered.
 				 */
-				if (((Dataflow) dataflow).isPrimary() && runtimeContext.getScheduler() != null
-						&& !runtimeContext.getScheduler().isEmpty() && !monitor.isInterrupted()) {
+				if (((Dataflow) dataflow).isPrimary() && runtimeScope.getScheduler() != null
+						&& !runtimeScope.getScheduler().isEmpty() && !monitor.isInterrupted()) {
 					ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity())
 							.createChild("Temporal contextualization");
 					try {
 						((AbstractTask<?>) subtask).notifyStart();
-						runtimeContext.getScheduler().run(dataflow, subtask.getMonitor());
+						runtimeScope.getScheduler().run(dataflow, subtask.getMonitor());
 						((AbstractTask<?>) subtask).notifyEnd();
 					} catch (Throwable e) {
 						throw ((AbstractTask<?>) subtask).notifyAbort(e);
 					}
 				}
 
-				return runtimeContext.getTargetArtifact();
+				return runtimeScope.getTargetArtifact();
 			}
 		};
 
