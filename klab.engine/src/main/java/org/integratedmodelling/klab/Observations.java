@@ -95,7 +95,7 @@ public enum Observations implements IObservationService {
 	public static final String PRESENT_LABEL = "Present";
 	public static final String NOT_PRESENT_LABEL = "Not present";
 
-	Map<ILocator, Map<String, StateSummary>> summaryCache = new HashMap<>();
+	Map<Long, Map<String, StateSummary>> summaryCache = new HashMap<>();
 
 	private Observations() {
 		Services.INSTANCE.registerService(this, IObservationService.class);
@@ -149,18 +149,24 @@ public enum Observations implements IObservationService {
 		// TODO index by time signature or state timestamp
 		// FIXME review all this - this gets CELLS in locators when used in Groovy state expressions! 
 		// JUST INDEX BY TIME.START or -1 and set this in the state.
-		locator = getTemporalLocator(state, locator);
+		
+		long time = -1;
+		if (locator instanceof IScale && ((IScale)locator).getTime() != null) {
+			time = ((IScale)locator).getTime().getStart().getMilliseconds();
+		} else if (locator instanceof ITime) {
+			time = ((ITime)locator).getStart().getMilliseconds();
+		}
 		
 		StateSummary ret = null;
-		Map<String, StateSummary> cached = summaryCache.get(locator);
+		Map<String, StateSummary> cached = summaryCache.get(time);
 		if (cached != null && cached.containsKey(state.getId())
 				&& cached.get(state.getId()).getStateTimestamp() == ((Observation) state).getTimestamp()) {
 			ret = cached.get(state.getId());
 		} else {
-			ret = computeStateSummary(state, locator);
+			ret = computeStateSummary(state, getTemporalLocator(state, locator));
 			if (cached == null) {
 				cached = new HashMap<>();
-				summaryCache.put(locator, cached);
+				summaryCache.put(time, cached);
 			}
 			cached.put(state.getId(), ret);
 		}

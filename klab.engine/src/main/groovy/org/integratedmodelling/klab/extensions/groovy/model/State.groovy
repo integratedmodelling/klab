@@ -13,9 +13,7 @@ class State extends Observation<IState> {
 
 	// only used to tag a state for reduction when transformed
 	IConcept dataReduction = null;
-//	ILocator timePointer = ITime.INITIALIZATION;
-//	@Deprecated
-//	StateSummary summary;
+	Map<String, Double> reductions = new HashMap<>();
 
 	State(IState obs, Binding binding) {
 		super(obs, binding);
@@ -28,7 +26,7 @@ class State extends Observation<IState> {
 	String toString() {
 		return unwrap().toString();
 	}
-
+	
 	private StateSummary getStateSummary() {
 		return Observations.INSTANCE.getStateSummary(unwrap(), getScope().getScale());
 	}
@@ -265,34 +263,54 @@ class State extends Observation<IState> {
 	}
 
 	def getSum() {
+		long idx = getTimeIndex();
+		if (reductions.containsKey("sum_" + idx)) {
+			return reductions.get("sum_" + idx);
+		}
 		double t = Double.NaN;
 		if (unwrap().getType() == IArtifact.Type.NUMBER) {
 			t = getStateSummary().getSum()
 		}
+		reductions.put("sum_" + idx, t);
 		return t;
 	}
 
 	def getAvg() {
+		long idx = getTimeIndex();
+		if (reductions.containsKey("avg_" + idx)) {
+			return reductions.get("avg_" + idx);
+		}
 		double t = Double.NaN;
 		if (unwrap().getType() == IArtifact.Type.NUMBER) {
 			t = getStateSummary().getMean()
 		}
+		reductions.put("avg_" + idx, t);
 		return t;
 	}
 
 	def getMin() {
+		long idx = getTimeIndex();
+		if (reductions.containsKey("min_" + idx)) {
+			return reductions.get("min_" + idx);
+		}
 		double t = Double.NaN;
 		if (unwrap().getType() == IArtifact.Type.NUMBER) {
 			t = getStateSummary().getRange().get(0)
 		}
+		reductions.put("min_" + idx, t);
 		return t;
 	}
 
 	def getMax() {
+		long idx = getTimeIndex();
+		if (reductions.containsKey("max_" + idx)) {
+			return reductions.get("max_" + idx);
+		}
 		double t = Double.NaN;
 		if (unwrap().getType() == IArtifact.Type.NUMBER) {
 			t = getStateSummary().getRange().get(1)
 		}
+		reductions.put("max_" + idx, t);
 		return t;
 	}
 

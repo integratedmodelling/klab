@@ -14,23 +14,23 @@ import org.integratedmodelling.klab.engine.runtime.code.groovy.Wrapper
 
 abstract class Observation<T extends IObservation> extends Wrapper<T> {
 
-    String name;
-    IModel model;
+	String name;
+	IModel model;
 
-    def Observation(IObservation observation, Binding binding) {
-        super(observation, binding);
-        if (binding.hasVariable("_model")) {
-            this.model = binding.getVariable("_model");
-        }
-    }
+	def Observation(IObservation observation, Binding binding) {
+		super(observation, binding);
+		if (binding.hasVariable("_model")) {
+			this.model = binding.getVariable("_model");
+		}
+	}
 
-    def Observation(String id, Binding binding) {
-        super(id, binding);
-        if (binding.hasVariable("_model")) {
-            this.model = binding.getVariable("_model");
-        }
-    }
-	
+	def Observation(String id, Binding binding) {
+		super(id, binding);
+		if (binding.hasVariable("_model")) {
+			this.model = binding.getVariable("_model");
+		}
+	}
+
 	protected IScale getTransitionScale() {
 		ITime scopeTime = getScope().getScale().getTime();
 		org.integratedmodelling.klab.scale.Scale ret = (org.integratedmodelling.klab.scale.Scale)unwrap().getScale();
@@ -40,9 +40,16 @@ abstract class Observation<T extends IObservation> extends Wrapper<T> {
 		return ret;
 	}
 
-    
+	protected long getTimeIndex() {
+		long time = -1;
+		if (getScope() != null && getScope().getScale() instanceof IScale && getScope().getScale().getTime() != null) {
+			time = getScope().getScale().getTime().getStart().getMilliseconds();
+		}
+		return time;
+	}
+
 	def isa(Object o) {
-		
+
 		if (o instanceof Concept) {
 			o = ((Concept)o).concept;
 		}
@@ -58,74 +65,74 @@ abstract class Observation<T extends IObservation> extends Wrapper<T> {
 		}
 		return unwrap().getObservable().getType().is(c);
 	}
-	
-	
-    def size() {
-        // gimmick to be able to call size() on a selection even if it results in one observation.
-        return 1;
-    }
 
-    def named(String name) {
-        this.name = name;
-    }
 
-    def getName() {
-        return name;
-    }
+	def size() {
+		// gimmick to be able to call size() on a selection even if it results in one observation.
+		return 1;
+	}
 
-    def getObservable() {
-        return new Concept(unwrap().observable.type, binding);
-    }
+	def named(String name) {
+		this.name = name;
+	}
 
-    def getObserver() {
-        return new DirectObservation(unwrap().observable.observer, binding);
-    }
+	def getName() {
+		return name;
+	}
 
-    def getId() {
-        return unwrap().id;
-    }
+	def getObservable() {
+		return new Concept(unwrap().observable.type, binding);
+	}
 
-    def getSpace() {
-        return unwrap().scale.space == null ? null : new Space(unwrap().scale.space, binding);
-    }
+	def getObserver() {
+		return new DirectObservation(unwrap().observable.observer, binding);
+	}
 
-    def getTime() {
-        return unwrap().scale.time == null ? null : new Time(unwrap().scale.time, binding);
-    }
+	def getId() {
+		return unwrap().id;
+	}
 
-    def getScale() {
-        return new Scale(unwrap().getScale(), binding);
-    }
+	def getSpace() {
+		return unwrap().scale.space == null ? null : new Space(unwrap().scale.space, binding);
+	}
 
-    def isSibling(Observation o) {
-        unwrap().context != null &&
-                unwrap().context != null &&
-                o.unwrap().context == unwrap().context;
-    }
+	def getTime() {
+		return unwrap().scale.time == null ? null : new Time(unwrap().scale.time, binding);
+	}
 
-    IMonitor getMonitor() {
-        Object o = binding.getVariable("_monitor");
-        if (o instanceof IMonitor) {
-            return ((IMonitor)o);
-        }
-        return null;
-    }
-	
-    def getMetadata() {
-        return unwrap().metadata;
-    }
+	def getScale() {
+		return new Scale(unwrap().getScale(), binding);
+	}
 
-    def getContext() {
-        return new DirectObservation(unwrap().context, binding);
-    }
+	def isSibling(Observation o) {
+		unwrap().context != null &&
+				unwrap().context != null &&
+				o.unwrap().context == unwrap().context;
+	}
 
-    /**
-     * Used to force non-scalar usage when we need the object as is and
-     * we have scalar usage in the same expression.
-     * 
-     * @return
-     */
-    def getSelf() {
-        return this;
-    }
+	IMonitor getMonitor() {
+		Object o = binding.getVariable("_monitor");
+		if (o instanceof IMonitor) {
+			return ((IMonitor)o);
+		}
+		return null;
+	}
+
+	def getMetadata() {
+		return unwrap().metadata;
+	}
+
+	def getContext() {
+		return new DirectObservation(unwrap().context, binding);
+	}
+
+	/**
+	 * Used to force non-scalar usage when we need the object as is and
+	 * we have scalar usage in the same expression.
+	 * 
+	 * @return
+	 */
+	def getSelf() {
+		return this;
+	}
 }
