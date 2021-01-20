@@ -8120,11 +8120,12 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.IdentityRequirement");
 		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
 		private final Group cGroup_0 = (Group)cAlternatives.eContents().get(0);
-		private final Alternatives cAlternatives_0_0 = (Alternatives)cGroup_0.eContents().get(0);
-		private final Keyword cIdentityKeyword_0_0_0 = (Keyword)cAlternatives_0_0.eContents().get(0);
-		private final Keyword cAttributeKeyword_0_0_1 = (Keyword)cAlternatives_0_0.eContents().get(1);
-		private final Keyword cRealmKeyword_0_0_2 = (Keyword)cAlternatives_0_0.eContents().get(2);
-		private final Keyword cExtentKeyword_0_0_3 = (Keyword)cAlternatives_0_0.eContents().get(3);
+		private final Assignment cTypeAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
+		private final Alternatives cTypeAlternatives_0_0_0 = (Alternatives)cTypeAssignment_0_0.eContents().get(0);
+		private final Keyword cTypeIdentityKeyword_0_0_0_0 = (Keyword)cTypeAlternatives_0_0_0.eContents().get(0);
+		private final Keyword cTypeAttributeKeyword_0_0_0_1 = (Keyword)cTypeAlternatives_0_0_0.eContents().get(1);
+		private final Keyword cTypeRealmKeyword_0_0_0_2 = (Keyword)cTypeAlternatives_0_0_0.eContents().get(2);
+		private final Keyword cTypeExtentKeyword_0_0_0_3 = (Keyword)cTypeAlternatives_0_0_0.eContents().get(3);
 		private final Assignment cIdentitiesAssignment_0_1 = (Assignment)cGroup_0.eContents().get(1);
 		private final RuleCall cIdentitiesConceptDeclarationParserRuleCall_0_1_0 = (RuleCall)cIdentitiesAssignment_0_1.eContents().get(0);
 		private final Group cGroup_0_2 = (Group)cGroup_0.eContents().get(2);
@@ -8139,32 +8140,36 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cAuthorityUPPERCASE_PATHTerminalRuleCall_1_1_0_1 = (RuleCall)cAuthorityAlternatives_1_1_0.eContents().get(1);
 		
 		//IdentityRequirement:
-		//	('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (',' identities+=ConceptDeclaration)*
-		//	|
+		//	type=('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (','
+		//	identities+=ConceptDeclaration)* |
 		//	'authority' authority=(UPPERCASE_ID | UPPERCASE_PATH);
 		@Override public ParserRule getRule() { return rule; }
 		
-		//('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (',' identities+=ConceptDeclaration)* |
-		//'authority' authority=(UPPERCASE_ID | UPPERCASE_PATH)
+		//type=('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (','
+		//identities+=ConceptDeclaration)* | 'authority' authority=(UPPERCASE_ID | UPPERCASE_PATH)
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
-		//('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (',' identities+=ConceptDeclaration)*
+		//type=('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (','
+		//identities+=ConceptDeclaration)*
 		public Group getGroup_0() { return cGroup_0; }
 		
+		//type=('identity' | 'attribute' | 'realm' | 'extent')
+		public Assignment getTypeAssignment_0_0() { return cTypeAssignment_0_0; }
+		
 		//('identity' | 'attribute' | 'realm' | 'extent')
-		public Alternatives getAlternatives_0_0() { return cAlternatives_0_0; }
+		public Alternatives getTypeAlternatives_0_0_0() { return cTypeAlternatives_0_0_0; }
 		
 		//'identity'
-		public Keyword getIdentityKeyword_0_0_0() { return cIdentityKeyword_0_0_0; }
+		public Keyword getTypeIdentityKeyword_0_0_0_0() { return cTypeIdentityKeyword_0_0_0_0; }
 		
 		//'attribute'
-		public Keyword getAttributeKeyword_0_0_1() { return cAttributeKeyword_0_0_1; }
+		public Keyword getTypeAttributeKeyword_0_0_0_1() { return cTypeAttributeKeyword_0_0_0_1; }
 		
 		//'realm'
-		public Keyword getRealmKeyword_0_0_2() { return cRealmKeyword_0_0_2; }
+		public Keyword getTypeRealmKeyword_0_0_0_2() { return cTypeRealmKeyword_0_0_0_2; }
 		
 		//'extent'
-		public Keyword getExtentKeyword_0_0_3() { return cExtentKeyword_0_0_3; }
+		public Keyword getTypeExtentKeyword_0_0_0_3() { return cTypeExtentKeyword_0_0_0_3; }
 		
 		//identities+=ConceptDeclaration
 		public Assignment getIdentitiesAssignment_0_1() { return cIdentitiesAssignment_0_1; }
@@ -11826,8 +11831,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//IdentityRequirement:
-	//	('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (',' identities+=ConceptDeclaration)*
-	//	|
+	//	type=('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (','
+	//	identities+=ConceptDeclaration)* |
 	//	'authority' authority=(UPPERCASE_ID | UPPERCASE_PATH);
 	public IdentityRequirementElements getIdentityRequirementAccess() {
 		return pIdentityRequirement;

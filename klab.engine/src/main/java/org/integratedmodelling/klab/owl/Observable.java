@@ -182,7 +182,7 @@ public class Observable implements IObservable {
 			return observable;
 		}
 
-		Observable ret = new Observable((Observable)observable);
+		Observable ret = new Observable((Observable) observable);
 		ret.observable = (Concept) Concepts.INSTANCE.replaceComponent(ret.observable, resolved);
 		return ret;
 	}
@@ -845,8 +845,12 @@ public class Observable implements IObservable {
 		Set<IConcept> ret = new HashSet<>();
 		if (getType() != null && !isGeneric()) {
 			for (IConcept c : Concepts.INSTANCE.collectComponents(getType(), EnumSet.of(IKimConcept.Type.ABSTRACT))) {
-				if (c.is(IKimConcept.Type.IDENTITY) || c.is(IKimConcept.Type.ROLE)) {
+				if (c.is(IKimConcept.Type.ROLE)) {
 					ret.add(c);
+				} else if (c.is(IKimConcept.Type.IDENTITY)) {
+					if (Observables.INSTANCE.getRequiredIdentities(getType()).contains(c)) {
+						ret.add(c);
+					}
 				}
 			}
 		}

@@ -262,13 +262,17 @@ public class ObservationStrategy {
 				ret.add(new ObservationStrategy((Observable) observable, mode));
 				// next if should never be necessary as it's not legal to use direct context
 				// except in an output
+				/*
+				 * TODO/CHECK - removed all changes as it messes up characterizations 
+				 */
 			} else if (Observables.INSTANCE.getDirectContextType(observable.getType()) == null) {
-				ret.add(new ObservationStrategy((Observable) observable, mode));
-				observable = observable.getBuilder(scope.getMonitor()).without(ObservableRole.INHERENT).within(inherent)
-						.buildObservable();
-				ObservationStrategy alternative = new ObservationStrategy((Observable) observable, mode);
-				alternative.setResolve(true);
-				ret.add(alternative);
+//				ret.add(new ObservationStrategy((Observable) observable, mode));
+//				observable = observable.getBuilder(scope.getMonitor()).without(ObservableRole.INHERENT).within(inherent)
+//						.buildObservable();
+//				ObservationStrategy alternative = new ObservationStrategy((Observable) observable, mode);
+//				alternative.setResolve(true);
+//				ret.add(alternative);
+				ret.add(new ObservationStrategy(target, mode, strategy));
 			}
 		} else if (!operators.isEmpty()) {
 

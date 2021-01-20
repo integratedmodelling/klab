@@ -13742,32 +13742,60 @@ ruleIdentityRequirement returns [EObject current=null]
 	(
 		(
 			(
-				otherlv_0='identity'
-				{
-					newLeafNode(otherlv_0, grammarAccess.getIdentityRequirementAccess().getIdentityKeyword_0_0_0());
-				}
-				    |
-				otherlv_1='attribute'
-				{
-					newLeafNode(otherlv_1, grammarAccess.getIdentityRequirementAccess().getAttributeKeyword_0_0_1());
-				}
-				    |
-				otherlv_2='realm'
-				{
-					newLeafNode(otherlv_2, grammarAccess.getIdentityRequirementAccess().getRealmKeyword_0_0_2());
-				}
-				    |
-				otherlv_3='extent'
-				{
-					newLeafNode(otherlv_3, grammarAccess.getIdentityRequirementAccess().getExtentKeyword_0_0_3());
-				}
+				(
+					(
+						lv_type_0_1='identity'
+						{
+							newLeafNode(lv_type_0_1, grammarAccess.getIdentityRequirementAccess().getTypeIdentityKeyword_0_0_0_0());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getIdentityRequirementRule());
+							}
+							setWithLastConsumed($current, "type", lv_type_0_1, null);
+						}
+						    |
+						lv_type_0_2='attribute'
+						{
+							newLeafNode(lv_type_0_2, grammarAccess.getIdentityRequirementAccess().getTypeAttributeKeyword_0_0_0_1());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getIdentityRequirementRule());
+							}
+							setWithLastConsumed($current, "type", lv_type_0_2, null);
+						}
+						    |
+						lv_type_0_3='realm'
+						{
+							newLeafNode(lv_type_0_3, grammarAccess.getIdentityRequirementAccess().getTypeRealmKeyword_0_0_0_2());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getIdentityRequirementRule());
+							}
+							setWithLastConsumed($current, "type", lv_type_0_3, null);
+						}
+						    |
+						lv_type_0_4='extent'
+						{
+							newLeafNode(lv_type_0_4, grammarAccess.getIdentityRequirementAccess().getTypeExtentKeyword_0_0_0_3());
+						}
+						{
+							if ($current==null) {
+								$current = createModelElement(grammarAccess.getIdentityRequirementRule());
+							}
+							setWithLastConsumed($current, "type", lv_type_0_4, null);
+						}
+					)
+				)
 			)
 			(
 				(
 					{
 						newCompositeNode(grammarAccess.getIdentityRequirementAccess().getIdentitiesConceptDeclarationParserRuleCall_0_1_0());
 					}
-					lv_identities_4_0=ruleConceptDeclaration
+					lv_identities_1_0=ruleConceptDeclaration
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getIdentityRequirementRule());
@@ -13775,23 +13803,23 @@ ruleIdentityRequirement returns [EObject current=null]
 						add(
 							$current,
 							"identities",
-							lv_identities_4_0,
+							lv_identities_1_0,
 							"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 						afterParserOrEnumRuleCall();
 					}
 				)
 			)
 			(
-				otherlv_5=','
+				otherlv_2=','
 				{
-					newLeafNode(otherlv_5, grammarAccess.getIdentityRequirementAccess().getCommaKeyword_0_2_0());
+					newLeafNode(otherlv_2, grammarAccess.getIdentityRequirementAccess().getCommaKeyword_0_2_0());
 				}
 				(
 					(
 						{
 							newCompositeNode(grammarAccess.getIdentityRequirementAccess().getIdentitiesConceptDeclarationParserRuleCall_0_2_1_0());
 						}
-						lv_identities_6_0=ruleConceptDeclaration
+						lv_identities_3_0=ruleConceptDeclaration
 						{
 							if ($current==null) {
 								$current = createModelElementForParent(grammarAccess.getIdentityRequirementRule());
@@ -13799,7 +13827,7 @@ ruleIdentityRequirement returns [EObject current=null]
 							add(
 								$current,
 								"identities",
-								lv_identities_6_0,
+								lv_identities_3_0,
 								"org.integratedmodelling.kim.Kim.ConceptDeclaration");
 							afterParserOrEnumRuleCall();
 						}
@@ -13809,16 +13837,16 @@ ruleIdentityRequirement returns [EObject current=null]
 		)
 		    |
 		(
-			otherlv_7='authority'
+			otherlv_4='authority'
 			{
-				newLeafNode(otherlv_7, grammarAccess.getIdentityRequirementAccess().getAuthorityKeyword_1_0());
+				newLeafNode(otherlv_4, grammarAccess.getIdentityRequirementAccess().getAuthorityKeyword_1_0());
 			}
 			(
 				(
 					(
-						lv_authority_8_1=RULE_UPPERCASE_ID
+						lv_authority_5_1=RULE_UPPERCASE_ID
 						{
-							newLeafNode(lv_authority_8_1, grammarAccess.getIdentityRequirementAccess().getAuthorityUPPERCASE_IDTerminalRuleCall_1_1_0_0());
+							newLeafNode(lv_authority_5_1, grammarAccess.getIdentityRequirementAccess().getAuthorityUPPERCASE_IDTerminalRuleCall_1_1_0_0());
 						}
 						{
 							if ($current==null) {
@@ -13827,13 +13855,13 @@ ruleIdentityRequirement returns [EObject current=null]
 							setWithLastConsumed(
 								$current,
 								"authority",
-								lv_authority_8_1,
+								lv_authority_5_1,
 								"org.integratedmodelling.kim.Kim.UPPERCASE_ID");
 						}
 						    |
-						lv_authority_8_2=RULE_UPPERCASE_PATH
+						lv_authority_5_2=RULE_UPPERCASE_PATH
 						{
-							newLeafNode(lv_authority_8_2, grammarAccess.getIdentityRequirementAccess().getAuthorityUPPERCASE_PATHTerminalRuleCall_1_1_0_1());
+							newLeafNode(lv_authority_5_2, grammarAccess.getIdentityRequirementAccess().getAuthorityUPPERCASE_PATHTerminalRuleCall_1_1_0_1());
 						}
 						{
 							if ($current==null) {
@@ -13842,7 +13870,7 @@ ruleIdentityRequirement returns [EObject current=null]
 							setWithLastConsumed(
 								$current,
 								"authority",
-								lv_authority_8_2,
+								lv_authority_5_2,
 								"org.integratedmodelling.kim.Kim.UPPERCASE_PATH");
 						}
 					)

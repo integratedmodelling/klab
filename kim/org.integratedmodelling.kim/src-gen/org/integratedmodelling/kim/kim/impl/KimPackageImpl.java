@@ -4396,9 +4396,20 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EAttribute getIdentityRequirement_Type()
+  {
+    return (EAttribute)identityRequirementEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getIdentityRequirement_Identities()
   {
-    return (EReference)identityRequirementEClass.getEStructuralFeatures().get(0);
+    return (EReference)identityRequirementEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -4409,7 +4420,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EAttribute getIdentityRequirement_Authority()
   {
-    return (EAttribute)identityRequirementEClass.getEStructuralFeatures().get(1);
+    return (EAttribute)identityRequirementEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -5842,6 +5853,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(applicableTargetEClass, APPLICABLE_TARGET__LINK_TO);
 
     identityRequirementEClass = createEClass(IDENTITY_REQUIREMENT);
+    createEAttribute(identityRequirementEClass, IDENTITY_REQUIREMENT__TYPE);
     createEReference(identityRequirementEClass, IDENTITY_REQUIREMENT__IDENTITIES);
     createEAttribute(identityRequirementEClass, IDENTITY_REQUIREMENT__AUTHORITY);
 
@@ -6375,6 +6387,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getApplicableTarget_LinkTo(), this.getConceptDeclaration(), null, "linkTo", null, 0, 1, ApplicableTarget.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(identityRequirementEClass, IdentityRequirement.class, "IdentityRequirement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getIdentityRequirement_Type(), ecorePackage.getEString(), "type", null, 0, 1, IdentityRequirement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getIdentityRequirement_Identities(), this.getConceptDeclaration(), null, "identities", null, 0, -1, IdentityRequirement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getIdentityRequirement_Authority(), ecorePackage.getEString(), "authority", null, 0, 1, IdentityRequirement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 

@@ -32,6 +32,7 @@ import org.integratedmodelling.kim.kim.KimPackage;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.IdentityRequirementImpl#getType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.IdentityRequirementImpl#getIdentities <em>Identities</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.IdentityRequirementImpl#getAuthority <em>Authority</em>}</li>
  * </ul>
@@ -40,6 +41,26 @@ import org.integratedmodelling.kim.kim.KimPackage;
  */
 public class IdentityRequirementImpl extends MinimalEObjectImpl.Container implements IdentityRequirement
 {
+  /**
+   * The default value of the '{@link #getType() <em>Type</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getType()
+   * @generated
+   * @ordered
+   */
+  protected static final String TYPE_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getType() <em>Type</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getType()
+   * @generated
+   * @ordered
+   */
+  protected String type = TYPE_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getIdentities() <em>Identities</em>}' containment reference list.
    * <!-- begin-user-doc -->
@@ -89,6 +110,31 @@ public class IdentityRequirementImpl extends MinimalEObjectImpl.Container implem
   protected EClass eStaticClass()
   {
     return KimPackage.Literals.IDENTITY_REQUIREMENT;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getType()
+  {
+    return type;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setType(String newType)
+  {
+    String oldType = type;
+    type = newType;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.IDENTITY_REQUIREMENT__TYPE, oldType, type));
   }
 
   /**
@@ -157,6 +203,8 @@ public class IdentityRequirementImpl extends MinimalEObjectImpl.Container implem
   {
     switch (featureID)
     {
+      case KimPackage.IDENTITY_REQUIREMENT__TYPE:
+        return getType();
       case KimPackage.IDENTITY_REQUIREMENT__IDENTITIES:
         return getIdentities();
       case KimPackage.IDENTITY_REQUIREMENT__AUTHORITY:
@@ -176,6 +224,9 @@ public class IdentityRequirementImpl extends MinimalEObjectImpl.Container implem
   {
     switch (featureID)
     {
+      case KimPackage.IDENTITY_REQUIREMENT__TYPE:
+        setType((String)newValue);
+        return;
       case KimPackage.IDENTITY_REQUIREMENT__IDENTITIES:
         getIdentities().clear();
         getIdentities().addAll((Collection<? extends ConceptDeclaration>)newValue);
@@ -197,6 +248,9 @@ public class IdentityRequirementImpl extends MinimalEObjectImpl.Container implem
   {
     switch (featureID)
     {
+      case KimPackage.IDENTITY_REQUIREMENT__TYPE:
+        setType(TYPE_EDEFAULT);
+        return;
       case KimPackage.IDENTITY_REQUIREMENT__IDENTITIES:
         getIdentities().clear();
         return;
@@ -217,6 +271,8 @@ public class IdentityRequirementImpl extends MinimalEObjectImpl.Container implem
   {
     switch (featureID)
     {
+      case KimPackage.IDENTITY_REQUIREMENT__TYPE:
+        return TYPE_EDEFAULT == null ? type != null : !TYPE_EDEFAULT.equals(type);
       case KimPackage.IDENTITY_REQUIREMENT__IDENTITIES:
         return identities != null && !identities.isEmpty();
       case KimPackage.IDENTITY_REQUIREMENT__AUTHORITY:
@@ -236,7 +292,9 @@ public class IdentityRequirementImpl extends MinimalEObjectImpl.Container implem
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (authority: ");
+    result.append(" (type: ");
+    result.append(type);
+    result.append(", authority: ");
     result.append(authority);
     result.append(')');
     return result.toString();

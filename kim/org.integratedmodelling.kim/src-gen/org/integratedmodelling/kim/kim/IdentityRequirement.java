@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kim.kim.IdentityRequirement#getType <em>Type</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.IdentityRequirement#getIdentities <em>Identities</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.IdentityRequirement#getAuthority <em>Authority</em>}</li>
  * </ul>
@@ -27,6 +28,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface IdentityRequirement extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Type</em>' attribute.
+   * @see #setType(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getIdentityRequirement_Type()
+   * @model
+   * @generated
+   */
+  String getType();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.IdentityRequirement#getType <em>Type</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Type</em>' attribute.
+   * @see #getType()
+   * @generated
+   */
+  void setType(String value);
+
   /**
    * Returns the value of the '<em><b>Identities</b></em>' containment reference list.
    * The list contents are of type {@link org.integratedmodelling.kim.kim.ConceptDeclaration}.

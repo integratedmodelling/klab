@@ -406,6 +406,10 @@ public enum Concepts implements IConceptService {
 	 */
 	public IConcept replaceComponent(IConcept original, Map<IConcept, IConcept> replacements) {
 
+		if (replacements.isEmpty()) {
+			return original;
+		}
+		
 		String declaration = original.getDefinition();
 		for (IConcept key : replacements.keySet()) {
 			String rep = replacements.get(key).toString();

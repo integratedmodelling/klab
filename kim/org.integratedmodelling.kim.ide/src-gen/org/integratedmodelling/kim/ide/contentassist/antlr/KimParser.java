@@ -170,7 +170,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPropertyStatementAccess().getAlternatives_1_1_0_1_1(), "rule__PropertyStatement__Alternatives_1_1_0_1_1");
 			builder.put(grammarAccess.getChildConceptAccess().getAlternatives(), "rule__ChildConcept__Alternatives");
 			builder.put(grammarAccess.getIdentityRequirementAccess().getAlternatives(), "rule__IdentityRequirement__Alternatives");
-			builder.put(grammarAccess.getIdentityRequirementAccess().getAlternatives_0_0(), "rule__IdentityRequirement__Alternatives_0_0");
+			builder.put(grammarAccess.getIdentityRequirementAccess().getTypeAlternatives_0_0_0(), "rule__IdentityRequirement__TypeAlternatives_0_0_0");
 			builder.put(grammarAccess.getIdentityRequirementAccess().getAuthorityAlternatives_1_1_0(), "rule__IdentityRequirement__AuthorityAlternatives_1_1_0");
 			builder.put(grammarAccess.getLiteralAccess().getAlternatives(), "rule__Literal__Alternatives");
 			builder.put(grammarAccess.getLiteralAccess().getBooleanAlternatives_3_0(), "rule__Literal__BooleanAlternatives_3_0");
@@ -1090,6 +1090,7 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getApplicableTargetAccess().getLinkToAssignment_1_3(), "rule__ApplicableTarget__LinkToAssignment_1_3");
 			builder.put(grammarAccess.getChildConceptAccess().getAbstractAssignment_0_0(), "rule__ChildConcept__AbstractAssignment_0_0");
 			builder.put(grammarAccess.getChildConceptAccess().getNameAssignment_0_1(), "rule__ChildConcept__NameAssignment_0_1");
+			builder.put(grammarAccess.getIdentityRequirementAccess().getTypeAssignment_0_0(), "rule__IdentityRequirement__TypeAssignment_0_0");
 			builder.put(grammarAccess.getIdentityRequirementAccess().getIdentitiesAssignment_0_1(), "rule__IdentityRequirement__IdentitiesAssignment_0_1");
 			builder.put(grammarAccess.getIdentityRequirementAccess().getIdentitiesAssignment_0_2_1(), "rule__IdentityRequirement__IdentitiesAssignment_0_2_1");
 			builder.put(grammarAccess.getIdentityRequirementAccess().getAuthorityAssignment_1_1(), "rule__IdentityRequirement__AuthorityAssignment_1_1");
