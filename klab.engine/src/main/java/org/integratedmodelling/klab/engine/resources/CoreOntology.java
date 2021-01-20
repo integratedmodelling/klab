@@ -133,6 +133,7 @@ public class CoreOntology extends AbstractWorkspace {
 		public static final String PROPORTIONAL_QUALITY_PROPERTY = "observation:proportionalQuality";
 		public static final String INVERSELY_PROPORTIONAL_QUALITY_PROPERTY = "observation:inverselyProportionalQuality";
 		public static final String CLASSIFIES_QUALITY_PROPERTY = "observation:classifiesQuality";
+		public static final String REQUIRES_IDENTITY_PROPERTY = "observation:requiresIdentity";
 		public static final String DISCRETIZES_QUALITY_PROPERTY = "observation:discretizesQuality";
 		public static final String MARKS_QUALITY_PROPERTY = "observation:marksQuality";
 		public static final String LIMITED_BY_PROPERTY = "observation:limitedBy";

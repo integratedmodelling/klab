@@ -723,7 +723,7 @@ ChildConcept returns ConceptStatementBody:
 	'(' ConceptStatementBody ')';
 	
 IdentityRequirement:
-	('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (',' identities+=ConceptDeclaration)* |
+	type=('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (',' identities+=ConceptDeclaration)* |
 	 'authority' authority=(UPPERCASE_ID|UPPERCASE_PATH)
 	;
 

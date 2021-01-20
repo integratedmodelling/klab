@@ -29,7 +29,6 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IPrioritizer;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -57,6 +56,7 @@ import org.integratedmodelling.klab.resolution.ResolutionScope.Link;
 import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 
 import com.google.common.collect.Sets;
@@ -302,12 +302,21 @@ public class Resolver {
 						builder = builder.of(observable.getInherent());
 					}
 					Observable pobs = (Observable) builder.buildObservable();
-					ResolutionScope oscope = scope.getChildScope(pobs, Mode.RESOLUTION);
+					ResolutionScope rscope = ResolutionScope.create(scope.getMonitor(), scope.getScale());
+
+					// FIXME this is more correct but produces no resolution graph, for reasons I don't understand.
+//					ResolutionScope rscope = ResolutionScope.create((Subject)scope.getContext(), scope.getMonitor(), scope.getScenarios());
+
 					// this accepts empty resolutions, so check that we have values in the resulting
 					// scope.
-					if (resolveConcrete(pobs, oscope, Mode.RESOLUTION).getCoverage().isComplete()) {
-						System.out.println("ZPORR");
-						// compile and run the dataflow for this branch to obtain the traits.
+					ResolutionScope oscope = resolveConcrete(pobs, rscope, Mode.RESOLUTION);
+					if (oscope.getCoverage().isComplete()) {
+						Dataflow dataflow = Dataflows.INSTANCE.compile(NameGenerator.shortUUID(), oscope, null);
+						dataflow.setDescription("Resolution of abstract predicate " + predicate.getDefinition());
+						dataflow.run(oscope.getCoverage().copy(), oscope.getMonitor());
+						/*
+						 * TODO where the huck is the scope?
+						 */
 					}
 				}
 			}
@@ -767,7 +776,7 @@ public class Resolver {
 		for (ObservationStrategy strategy : strategies) {
 			// ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though) - still,
 			// should be resolving a CandidateObservable
-			ResolutionScope mscope = resolveConcrete(strategy.getObservables().get(0), ret, strategy.getMode());
+			ResolutionScope mscope = resolve(strategy.getObservables().get(0), ret, strategy.getMode());
 			coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
 			if (coverage.isEmpty()) {
 				parentScope.getMonitor().info("discarding first choice " + model.getId() + " due to missing dependency "

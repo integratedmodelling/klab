@@ -142,7 +142,7 @@ public class DataflowCompiler {
 
 			modelCatalog.clear();
 			Node node = compileActuator(root, scope.getMode(), resolutionGraph,
-					this.context == null ? null : this.context.getScale(), monitor);
+					this.context == null ? (Scale)scope.getScale() : this.context.getScale(), monitor);
 			node.root = true;
 
 			Actuator actuator = node.getActuatorTree(ret, monitor, new HashSet<>(), 0);

@@ -3581,13 +3581,22 @@ public interface KimPackage extends EPackage
   int IDENTITY_REQUIREMENT = 37;
 
   /**
+   * The feature id for the '<em><b>Type</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int IDENTITY_REQUIREMENT__TYPE = 0;
+
+  /**
    * The feature id for the '<em><b>Identities</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int IDENTITY_REQUIREMENT__IDENTITIES = 0;
+  int IDENTITY_REQUIREMENT__IDENTITIES = 1;
 
   /**
    * The feature id for the '<em><b>Authority</b></em>' attribute.
@@ -3596,7 +3605,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IDENTITY_REQUIREMENT__AUTHORITY = 1;
+  int IDENTITY_REQUIREMENT__AUTHORITY = 2;
 
   /**
    * The number of structural features of the '<em>Identity Requirement</em>' class.
@@ -3605,7 +3614,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int IDENTITY_REQUIREMENT_FEATURE_COUNT = 2;
+  int IDENTITY_REQUIREMENT_FEATURE_COUNT = 3;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.AnnotationImpl <em>Annotation</em>}' class.
@@ -8421,6 +8430,17 @@ public interface KimPackage extends EPackage
   EClass getIdentityRequirement();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.IdentityRequirement#getType <em>Type</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Type</em>'.
+   * @see org.integratedmodelling.kim.kim.IdentityRequirement#getType()
+   * @see #getIdentityRequirement()
+   * @generated
+   */
+  EAttribute getIdentityRequirement_Type();
+
+  /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.IdentityRequirement#getIdentities <em>Identities</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -12333,6 +12353,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EClass IDENTITY_REQUIREMENT = eINSTANCE.getIdentityRequirement();
+
+    /**
+     * The meta object literal for the '<em><b>Type</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute IDENTITY_REQUIREMENT__TYPE = eINSTANCE.getIdentityRequirement_Type();
 
     /**
      * The meta object literal for the '<em><b>Identities</b></em>' containment reference list feature.

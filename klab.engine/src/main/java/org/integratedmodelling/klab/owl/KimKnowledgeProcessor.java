@@ -276,6 +276,15 @@ public enum KimKnowledgeProcessor {
 			}
 			OWL.INSTANCE.restrictSome(main, Concepts.p(NS.AFFECTS_PROPERTY), quality, namespace.getOntology());
 		}
+		
+		for (IKimConcept required : ((KimConceptStatement) concept).getRequiredIdentities()) {
+			IConcept quality = declare(required, namespace.getOntology(), monitor);
+			if (quality == null) {
+				monitor.error("required " + required.getName() + " does not identify known concepts", required);
+				return null;
+			}
+			OWL.INSTANCE.restrictSome(main, Concepts.p(NS.REQUIRES_IDENTITY_PROPERTY), quality, namespace.getOntology());
+		}
 
 		for (IKimConcept affected : ((KimConceptStatement) concept).getObservablesCreated()) {
 			IConcept quality = declare(affected, namespace.getOntology(), monitor);

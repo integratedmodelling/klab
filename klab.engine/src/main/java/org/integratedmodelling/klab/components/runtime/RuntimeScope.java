@@ -227,6 +227,14 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 */
 		this.contextualizationStrategy = monitor.getIdentity().getParentIdentity(AbstractTask.class)
 				.getContextualizationStrategy();
+		
+		if (this.contextualizationStrategy == null) {
+			/*
+			 * happens when a characterizer is contextualized during resolution, before anything
+			 * has happened yet. We throw this away after we're done.
+			 */
+			this.contextualizationStrategy = new ContextualizationStrategy();
+		}
 
 		// store and set up for further resolutions
 		this.resolutionScope = (ResolutionScope) scope;
@@ -1166,7 +1174,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 				}
 			}
 
-			if (preexisting == null) {
+			if (preexisting == null && observation != null) {
 
 				// transmit all annotations and any interpretation keys to the artifact
 				actuator.notifyNewObservation(observation);

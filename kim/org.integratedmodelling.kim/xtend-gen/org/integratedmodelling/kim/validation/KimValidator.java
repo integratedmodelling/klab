@@ -719,7 +719,8 @@ public class KimValidator extends AbstractKimValidator {
             this.error("Dependency has undefined semantics", KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, KimValidator.BAD_OBSERVABLE);
             ok = false;
           } else {
-            if ((((!definition.is(IKimConcept.Type.OBSERVABLE)) && (!definition.is(IKimConcept.Type.TRAIT))) && (!(definition.is(IKimConcept.Type.ROLE) && observable.isGeneric())))) {
+            if ((((!definition.is(IKimConcept.Type.OBSERVABLE)) && (!definition.is(IKimConcept.Type.TRAIT))) && 
+              (!(definition.is(IKimConcept.Type.ROLE) && observable.isGeneric())))) {
               boolean _not = (!(definition.is(IKimConcept.Type.ROLE) && definition.is(IKimConcept.Type.ABSTRACT)));
               if (_not) {
                 this.error("Models can only describe observables or traits", 
@@ -2592,8 +2593,33 @@ public class KimValidator extends AbstractKimValidator {
     boolean _tripleNotEquals_3 = (_definedAuthority != null);
     if (_tripleNotEquals_3) {
     }
+    int i_3 = 0;
     EList<IdentityRequirement> _requirements = concept.getRequirements();
     for (final IdentityRequirement requirement : _requirements) {
+      {
+        String _authority_1 = requirement.getAuthority();
+        boolean _tripleNotEquals_4 = (_authority_1 != null);
+        if (_tripleNotEquals_4) {
+        } else {
+          EList<ConceptDeclaration> _identities = requirement.getIdentities();
+          for (final ConceptDeclaration identity : _identities) {
+            {
+              KimConcept iden = Kim.INSTANCE.declareConcept(identity);
+              String _type = requirement.getType();
+              boolean _equals = Objects.equal(_type, "identity");
+              if (_equals) {
+                boolean _contains_1 = iden.getType().contains(IKimConcept.Type.IDENTITY);
+                boolean _not_3 = (!_contains_1);
+                if (_not_3) {
+                  this.error("The concept required is not an identity", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__REQUIREMENTS, i_3);
+                }
+                ret.getRequiredIdentities().add(iden);
+              }
+            }
+          }
+        }
+        i_3++;
+      }
     }
     ConceptDeclaration _describedQuality = concept.getDescribedQuality();
     boolean _tripleNotEquals_4 = (_describedQuality != null);
@@ -2734,7 +2760,7 @@ public class KimValidator extends AbstractKimValidator {
         this.error("only observables can have roles.", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__ROLES);
         ok = false;
       } else {
-        int i_3 = 0;
+        i_3 = 0;
         ArrayList<KimConcept> targets = Lists.<KimConcept>newArrayList();
         EList<ConceptDeclaration> _targetObservables = concept.getTargetObservables();
         for (final ConceptDeclaration t : _targetObservables) {
@@ -2807,7 +2833,7 @@ public class KimValidator extends AbstractKimValidator {
           KimPackage.Literals.CONCEPT_STATEMENT_BODY__CONFERRED_TRAITS);
         ok = false;
       } else {
-        int i_4 = 0;
+        i_3 = 0;
         EList<ConceptDeclaration> _conferredTraits = concept.getConferredTraits();
         for (final ConceptDeclaration decl : _conferredTraits) {
           {
@@ -2816,11 +2842,11 @@ public class KimValidator extends AbstractKimValidator {
             boolean _not_7 = (!_is);
             if (_not_7) {
               this.error("only traits can be conferred by processes or events", concept, 
-                KimPackage.Literals.CONCEPT_STATEMENT_BODY__CONFERRED_TRAITS, i_4);
+                KimPackage.Literals.CONCEPT_STATEMENT_BODY__CONFERRED_TRAITS, i_3);
             } else {
               ret.getTraitsConferred().add(trait_2);
             }
-            i_4++;
+            i_3++;
           }
         }
       }
@@ -2866,7 +2892,7 @@ public class KimValidator extends AbstractKimValidator {
           KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES);
         ok = false;
       } else {
-        int i_5 = 0;
+        i_3 = 0;
         EList<ConceptDeclaration> _creates = concept.getCreates();
         for (final ConceptDeclaration decl_1 : _creates) {
           {
@@ -2875,11 +2901,11 @@ public class KimValidator extends AbstractKimValidator {
             boolean _not_7 = (!_is);
             if (_not_7) {
               this.error("only observable types can be created by processes or events", concept, 
-                KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i_5);
+                KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES, i_3);
             } else {
               ret.getObservablesCreated().add(countable_1);
             }
-            i_5++;
+            i_3++;
           }
         }
       }
@@ -2901,18 +2927,18 @@ public class KimValidator extends AbstractKimValidator {
           KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS);
         ok = false;
       } else {
-        for (int i_6 = 0; (i_6 < concept.getDomains().size()); i_6++) {
+        for (i_3 = 0; (i_3 < concept.getDomains().size()); i_3++) {
           {
-            KimConcept domain = Kim.INSTANCE.declareConcept(concept.getDomains().get(i_6));
-            KimConcept range = Kim.INSTANCE.declareConcept(concept.getRanges().get(i_6));
+            KimConcept domain = Kim.INSTANCE.declareConcept(concept.getDomains().get(i_3));
+            KimConcept range = Kim.INSTANCE.declareConcept(concept.getRanges().get(i_3));
             if (((!domain.getType().contains(IKimConcept.Type.SUBJECT)) && (!domain.getType().contains(IKimConcept.Type.AGENT)))) {
               this.error("relationship can only link subjects or agents", concept, 
-                KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS, i_6);
+                KimPackage.Literals.CONCEPT_STATEMENT_BODY__DOMAINS, i_3);
               ok = false;
             }
             if (((!range.getType().contains(IKimConcept.Type.SUBJECT)) && (!range.getType().contains(IKimConcept.Type.AGENT)))) {
               this.error("relationship can only link subjects or agents", concept, 
-                KimPackage.Literals.CONCEPT_STATEMENT_BODY__RANGES, i_6);
+                KimPackage.Literals.CONCEPT_STATEMENT_BODY__RANGES, i_3);
               ok = false;
             }
             KimConceptStatement.ApplicableConceptImpl link = new KimConceptStatement.ApplicableConceptImpl();
@@ -2945,7 +2971,7 @@ public class KimValidator extends AbstractKimValidator {
           KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED);
         ok = false;
       } else {
-        int i_6 = 0;
+        i_3 = 0;
         EList<ConceptDeclaration> _qualitiesAffected = concept.getQualitiesAffected();
         for (final ConceptDeclaration decl_2 : _qualitiesAffected) {
           {
@@ -2954,11 +2980,11 @@ public class KimValidator extends AbstractKimValidator {
             boolean _not_10 = (!_is);
             if (_not_10) {
               this.error("only quality types can be affected by a process", concept, 
-                KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED, i_6);
+                KimPackage.Literals.CONCEPT_STATEMENT_BODY__QUALITIES_AFFECTED, i_3);
             } else {
               ret.getQualitiesAffected().add(quality);
             }
-            i_6++;
+            i_3++;
           }
         }
       }

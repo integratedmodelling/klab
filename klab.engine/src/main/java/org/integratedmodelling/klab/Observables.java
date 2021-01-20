@@ -327,6 +327,16 @@ public enum Observables implements IObservableService {
 		return OWL.INSTANCE.getRestrictedClasses(configuration, Concepts.p(getDescriptionProperty(type)));
 	}
 
+	public Collection<IConcept> getRequiredIdentities(IConcept observable) {
+		Set<IConcept> ret = new HashSet<>();
+		for (IConcept c : OWL.INSTANCE.getRestrictedClasses(observable, Concepts.p(NS.REQUIRES_IDENTITY_PROPERTY))) {
+			if (!Concepts.INSTANCE.isInternal(c)) {
+				ret.add(c);
+			}
+		}
+		return ret;
+	}
+	
 	/**
 	 * Get all qualities affected by a process
 	 * 
@@ -933,6 +943,14 @@ public enum Observables implements IObservableService {
 			ret += "\nAffects:\n";
 			for (IConcept quality : affected) {
 				ret += "    " + quality.getDefinition() + "\n";
+			}
+		}
+		
+		Collection<IConcept> required = Observables.INSTANCE.getRequiredIdentities(concept.getType());
+		if (!required.isEmpty()) {
+			ret += "\nRequired identities:\n";
+			for (IConcept identity : required) {
+				ret += "    " + identity.getDefinition() + "\n";
 			}
 		}
 

@@ -590,6 +590,11 @@ public interface IObservable extends ISemantic, IResolvable {
 	 * will need to be resolved to concrete ones before the observable can be
 	 * resolved. This will return an empty set if the observable is generic, as that
 	 * is handled differently.
+	 * <p>
+	 * For now abstract roles are always returned, and abstract identities are
+	 * returned only if they are required by the observable ('requires identity
+	 * ....'). This prevents unwanted resolutions of abstract predicates that may be
+	 * used as tags only: the "need" for identification must be explicitly stated.
 	 * 
 	 * @return
 	 */
