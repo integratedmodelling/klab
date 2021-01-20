@@ -470,4 +470,11 @@ public interface IRuntimeScope extends IContextualizationScope {
 	 */
 	void setConcreteIdentities(IConcept abstractIdentity, List<IConcept> concreteIdentities);
 
+	/**
+	 * Get the concrete identities already known to the scope.
+	 * 
+	 * @return
+	 */
+	Map<IConcept, Collection<IConcept>> getConcreteIdentities();
+
 }

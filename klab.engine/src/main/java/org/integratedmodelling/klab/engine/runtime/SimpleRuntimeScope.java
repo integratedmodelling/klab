@@ -815,4 +815,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		
 	}
 
+	@Override
+	public Map<IConcept, Collection<IConcept>> getConcreteIdentities() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
