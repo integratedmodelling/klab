@@ -512,7 +512,16 @@ public enum Observables implements IObservableService {
 	@Override
 	public IConcept getCoreObservable(IConcept c) {
 		String def = c.getMetadata().get(NS.CORE_OBSERVABLE_PROPERTY, String.class);
-		return def == null ? c : Concepts.c(def);
+		IConcept ret = c;
+		while (def != null) {
+			ret = Concepts.c(def);
+			if (ret.getMetadata().get(NS.CORE_OBSERVABLE_PROPERTY) != null && !ret.getDefinition().equals(def)) {
+				def = ret.getMetadata().get(NS.CORE_OBSERVABLE_PROPERTY, String.class);
+			} else {
+				break;
+			}
+		}
+		return ret;
 	}
 
 	@Override

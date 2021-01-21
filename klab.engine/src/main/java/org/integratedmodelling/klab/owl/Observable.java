@@ -51,6 +51,8 @@ import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
+import com.google.common.collect.Sets;
+
 /**
  * Equality ignores differences of name, value, optional and generic status.
  * 
@@ -177,13 +179,26 @@ public class Observable implements IObservable {
 	 */
 	public static IObservable concretize(IObservable observable, Map<IConcept, IConcept> resolved) {
 
-		Collection<IConcept> abs = observable.getAbstractPredicates();
-		if (abs.isEmpty() || resolved.keySet().containsAll(abs)) {
+		if (resolved.isEmpty()) {
 			return observable;
 		}
 
-		Observable ret = new Observable((Observable) observable);
-		ret.observable = (Concept) Concepts.INSTANCE.replaceComponent(ret.observable, resolved);
+		Collection<IConcept> abs = observable.getAbstractPredicates();
+		if (abs.isEmpty()) {
+			return observable;
+		}
+
+		IObservable ret = replaceComponent((Observable) observable, resolved);
+		
+		for (IConcept key : resolved.keySet()) {
+			if (abs.contains(key)) {
+				((Observable)ret).resolvedPredicates.put(key, resolved.get(key));
+			}
+			if (key.is(Type.ROLE)) {
+				ret.getContextualRoles().add(key);
+			}
+		}
+		
 		return ret;
 	}
 
@@ -213,6 +228,24 @@ public class Observable implements IObservable {
 		this.contextualRoles.addAll(observable.contextualRoles);
 		this.dereifiedAttribute = observable.dereifiedAttribute;
 		this.resolvedPredicates.putAll(observable.resolvedPredicates);
+	}
+
+	public static IObservable replaceComponent(Observable original, Map<IConcept, IConcept> replacements) {
+
+		if (replacements.isEmpty()) {
+			return original;
+		}
+
+		String declaration = original.getDefinition();
+		for (IConcept key : replacements.keySet()) {
+			String rep = replacements.get(key).getDefinition();
+			if (rep.contains(" ")) {
+				rep = "(" + rep + ")";
+			}
+			declaration = declaration.replace(key.toString(), rep);
+		}
+
+		return Observables.INSTANCE.declare(declaration);
 	}
 
 	public Observable withoutModel() {

@@ -2613,6 +2613,11 @@ public class KimValidator extends AbstractKimValidator {
                 if (_not_3) {
                   this.error("The concept required is not an identity", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__REQUIREMENTS, i_3);
                 }
+                boolean _contains_2 = iden.getType().contains(IKimConcept.Type.ABSTRACT);
+                boolean _not_4 = (!_contains_2);
+                if (_not_4) {
+                  this.error("Required identities must be abstract", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__REQUIREMENTS, i_3);
+                }
                 ret.getRequiredIdentities().add(iden);
               }
             }
