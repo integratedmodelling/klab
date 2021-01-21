@@ -47,6 +47,7 @@ import org.integratedmodelling.klab.api.resolution.IResolutionScope.Mode;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
+import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.persistence.h2.H2Database;
 import org.integratedmodelling.klab.persistence.h2.H2Kbox;
@@ -323,16 +324,21 @@ public abstract class ObservableKbox extends H2Kbox {
 		 * is weeded out of all incompatible or unrepresented concepts later.
 		 */
 		for (IConcept candidate : getCandidates(main, mode)) {
-			
-//			System.out.println(candidate.getDefinition());
-			
-			if (candidate.getSemanticDistance(observable.getType(), context) >= 0) {
+
+			/*
+			 * let an abstract model resolve a concrete observable if the abstract traits are
+			 * in the resolved predicates for the observable.
+			 */
+			if (((Concept) candidate).getSemanticDistance(observable.getType(), context, true,
+					((Observable) observable).getResolvedPredicates()) >= 0) {
 				long id = getConceptId(candidate);
 				if (id >= 0) {
 					ret.add(id);
 				}
 			}
 		}
+
+		System.out.println("Go ciapat " + ret);
 
 		return ret;
 	}

@@ -666,10 +666,27 @@ public class Concept extends Knowledge implements IConcept {
 
 	@Override
 	public int getSemanticDistance(IConcept concept, IConcept context) {
-		return getSemanticDistance(concept, context, true);
+		return getSemanticDistance(concept, context, true, null);
 	}
 
-	public int getSemanticDistance(IConcept concept, IConcept context, boolean compareInherency) {
+	/**
+	 * The workhorse of semantic distance computation can also consider any
+	 * predicates that were abstract in the lineage of the passed concept (i.e. the
+	 * concept is the result of a query with the abstract predicates, which has been
+	 * contextualized to incarnate them into the passed correspondence with concrete
+	 * counterparts). In that case, and only in that case, the distance between a
+	 * concrete candidate and one that contains its predicates in the abstract form
+	 * can be positive, i.e. a concept with abstract predicates can resolve one with
+	 * concrete subclasses as long as the lineage contains its resolution.
+	 * 
+	 * @param concept
+	 * @param context
+	 * @param compareInherency
+	 * @param resolvedAbstractPredicates
+	 * @return
+	 */
+	public int getSemanticDistance(IConcept concept, IConcept context, boolean compareInherency,
+			Map<IConcept, IConcept> resolvedAbstractPredicates) {
 
 		int distance = 0;
 
@@ -709,29 +726,41 @@ public class Concept extends Knowledge implements IConcept {
 
 		// should have all the same traits - additional traits are allowed only
 		// in contextual types
+		Set<IConcept> acceptedTraits = new HashSet<>();
 		for (IConcept t : Traits.INSTANCE.getTraits(this)) {
-			boolean ok = Traits.INSTANCE.hasTrait(concept, t);
-			if (!ok) {
-				return -50;
+			if (t.isAbstract() && resolvedAbstractPredicates != null && resolvedAbstractPredicates.containsKey(t)) {
+				distance += Concepts.INSTANCE.getAssertedDistance(resolvedAbstractPredicates.get(t), t);
+				acceptedTraits.add(resolvedAbstractPredicates.get(t));
+			} else {
+				boolean ok = Traits.INSTANCE.hasTrait(concept, t);
+				if (!ok) {
+					return -50;
+				}
 			}
 		}
 
 		for (IConcept t : Traits.INSTANCE.getTraits(concept)) {
-			if (!Traits.INSTANCE.hasTrait(this, t)) {
+			if (!acceptedTraits.contains(t) && !Traits.INSTANCE.hasTrait(this, t)) {
 				return -50;
 			}
 		}
 
 		// same with roles.
+		Set<IConcept> acceptedRoles = new HashSet<>();
 		for (IConcept t : Roles.INSTANCE.getRoles(this)) {
-			boolean ok = Roles.INSTANCE.hasRole(concept, t);
-			if (!ok) {
-				return -50;
+			if (t.isAbstract() && resolvedAbstractPredicates != null && resolvedAbstractPredicates.containsKey(t)) {
+				distance += Concepts.INSTANCE.getAssertedDistance(resolvedAbstractPredicates.get(t), t);
+				acceptedRoles.add(resolvedAbstractPredicates.get(t));
+			} else {
+				boolean ok = Roles.INSTANCE.hasRole(concept, t);
+				if (!ok) {
+					return -50;
+				}
 			}
 		}
-		
+
 		for (IConcept t : Roles.INSTANCE.getRoles(concept)) {
-			if (!Roles.INSTANCE.hasRole(this, t)) {
+			if (!acceptedRoles.contains(t) && !Roles.INSTANCE.hasRole(this, t)) {
 				return -50;
 			}
 		}
@@ -753,6 +782,26 @@ public class Concept extends Knowledge implements IConcept {
 			distance += component;
 
 			/*
+			 * any EXPLICIT inherency must be the same in both.
+			 */
+			IConcept ourExplicitInherent = Observables.INSTANCE.getDirectInherentType(this);
+			IConcept itsExplicitInherent = Observables.INSTANCE.getDirectInherentType(concept);
+
+			if (ourExplicitInherent != null || itsExplicitInherent != null) {
+				if (ourExplicitInherent != null && itsExplicitInherent != null) {
+					component = getDistance(ourExplicitInherent, itsExplicitInherent, true);
+
+					if (component < 0) {
+						double d = ((double) component / 10.0);
+						return -1 * (int) (d > 10 ? d : 10);
+					}
+					distance += component;
+				} else {
+					return -50;
+				}
+			}
+
+			/*
 			 * inherency must be same (theirs is ours) unless our inherent type is abstract
 			 */
 			IConcept ourInherent = Observables.INSTANCE.getInherency(this);
@@ -769,7 +818,7 @@ public class Concept extends Knowledge implements IConcept {
 					component = getDistance(context, itsInherent, false);
 				} else {
 					component = getDistance(itsInherent, ourInherent, false);
-				} 
+				}
 
 				if (component < 0) {
 					double d = ((double) component / 10.0);

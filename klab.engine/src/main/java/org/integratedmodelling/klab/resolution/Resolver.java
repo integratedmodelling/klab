@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -292,6 +293,7 @@ public class Resolver {
 				}
 			}
 
+			boolean done = false;
 			for (IConcept predicate : expand) {
 				if (!incarnated.containsKey(predicate)) {
 					/*
@@ -304,23 +306,41 @@ public class Resolver {
 					Observable pobs = (Observable) builder.buildObservable();
 					ResolutionScope rscope = ResolutionScope.create(scope.getMonitor(), scope.getScale());
 
-					// FIXME this is more correct but produces no resolution graph, for reasons I don't understand.
+					// FIXME this is more correct but produces no resolution graph, for reasons I
+					// don't understand.
 //					ResolutionScope rscope = ResolutionScope.create((Subject)scope.getContext(), scope.getMonitor(), scope.getScenarios());
 
 					// this accepts empty resolutions, so check that we have values in the resulting
 					// scope.
 					ResolutionScope oscope = resolveConcrete(pobs, rscope, Mode.RESOLUTION);
 					if (oscope.getCoverage().isComplete()) {
+
+						done = true;
+
 						Dataflow dataflow = Dataflows.INSTANCE.compile(NameGenerator.shortUUID(), oscope, null);
 						dataflow.setDescription("Resolution of abstract predicate " + predicate.getDefinition());
 						dataflow.run(oscope.getCoverage().copy(), oscope.getMonitor());
 						/*
-						 * TODO get the traits from the scope, add to set
-						 * TODO 
+						 * TODO get the traits from the scope, add to set TODO
 						 */
-						System.out.println(dataflow.getRuntimeScope().getConcreteIdentities());
+						Collection<IConcept> predicates = dataflow.getRuntimeScope().getConcreteIdentities()
+								.get(pobs.getType());
+						if (predicates != null && !predicates.isEmpty()) {
+							incarnated.put(predicate, new HashSet<>(predicates));
+						} else if (predicate.is(Type.IDENTITY)) {
+							/*
+							 * not being able to incarnate a required identity stops resolution; not being
+							 * able to incarnate a role does not.
+							 */
+							return null;
+						}
 					}
 				}
+			}
+
+			if (done) {
+				scope.getMonitor()
+						.info("Abstract observable " + observable.getType().getDefinition() + " was resolved to:");
 			}
 
 			List<Set<IConcept>> concepts = new ArrayList<>(incarnated.values());
@@ -331,30 +351,8 @@ public class Resolver {
 				for (IConcept orole : incarnated.keySet()) {
 					resolved.put(orole, incarnation.get(i++));
 				}
-				
-				/*
-				 * create all observables with substitutions; store the substitutions in 
-				 * them so that the scope can be filled in when resolving their models
-				 */
-				
-				// this goes away
-				Builder builder = observable.getBuilder(scope.getMonitor());
-				i = 0;
-				for (IConcept orole : incarnated.keySet()) {
-					builder = builder.without(orole);
-					IConcept peer = incarnation.get(i++);
-					if (peer.is(Type.ROLE)) {
-						builder = builder.withRole(peer);
-					} else if (peer.is(Type.TRAIT)) {
-						builder = builder.withTrait(peer);
-					} else {
-						throw new KlabUnsupportedFeatureException(
-								"Abstract role substitution is only allowed for predicates at the moment");
-					}
-				}
-
-				IObservable result = builder.buildObservable();
-				result.getContextualRoles().addAll(incarnated.keySet());
+				IObservable result = Observable.concretize(observable, resolved);
+				scope.getMonitor().info("   " + result.getType().getDefinition());
 				ret.add(result);
 			}
 
@@ -440,7 +438,16 @@ public class Resolver {
 		Coverage coverage = null;
 		ResolutionScope ret = null;
 
-		for (IObservable observable : resolveAbstractPredicates((IObservable) resolvable, parentScope)) {
+		Collection<IObservable> observables = resolveAbstractPredicates((IObservable) resolvable, parentScope);
+
+		if (observables == null) {
+			/*
+			 * crucial identities were not resolved; stop resolution.
+			 */
+			return parentScope.empty();
+		}
+
+		for (IObservable observable : observables) {
 
 			ResolutionScope mscope = resolveConcrete((Observable) observable, parentScope, mode);
 
@@ -457,8 +464,12 @@ public class Resolver {
 		}
 
 		if (ret == null) {
-			// empty result set from resolveAbstractPredicates: no results
-			return parentScope.empty();
+			/*
+			 * no resolution but we can accept it as we didn't get a null from
+			 * resolveAbstractPredicates
+			 */
+			parentScope.acceptEmpty();
+			return parentScope;
 		}
 
 		ret.setCoverage(coverage);
@@ -797,37 +808,6 @@ public class Resolver {
 
 		return ret;
 	}
-
-//	private Collection<Model> resolveAbstractModel(Model model, ResolutionScope parentScope) {
-//
-//		List<Model> ret = new ArrayList<>();
-//		Map<IConcept, Set<IConcept>> incarnated = new LinkedHashMap<>();
-//		for (IConcept trait : model.getAbstractTraits()) {
-//			/*
-//			 * resolve to one or more concrete traits, set them into incarnated with trait
-//			 * as key; if any is unresolved, we can't run, so return empty list which will
-//			 * resolve to empty.
-//			 */
-//		}
-//
-//		/*
-//		 * ensure the scope incarnates all of the existing abstract roles. If not, we
-//		 * produce no observables. We match roles by equality, not by inference, which
-//		 * may require rethinking.
-//		 */
-//		List<Set<IConcept>> concepts = new ArrayList<>(incarnated.values());
-//		for (List<IConcept> incarnation : Sets.cartesianProduct(concepts)) {
-//			int i = 0;
-//			Map<IConcept, IConcept> resolvedTraits = new HashMap<>();
-//			for (IConcept orole : incarnated.keySet()) {
-//				IConcept peer = incarnation.get(i++);
-//				resolvedTraits.put(peer, orole);
-//			}
-//			ret.add(Model.concretize(model, resolvedTraits, parentScope.getMonitor()));
-//		}
-//
-//		return ret;
-//	}
 
 	/**
 	 * Retrieve an appropriately configured model prioritizer for the passed scope.

@@ -479,6 +479,7 @@ public class ResolutionScope implements IResolutionScope {
 		ret.observable = observable;
 		ret.mode = mode;
 		ret.resolverCache.putAll(this.resolverCache);
+		ret.resolvedPredicates.putAll(observable.getResolvedPredicates());
 
 		/*
 		 * check if we already can resolve this (directly or indirectly), and if so, set

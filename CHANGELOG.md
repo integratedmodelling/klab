@@ -9,6 +9,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Abstract roles and (some) identities in observables are resolved to concrete during
+  resolution. While roles can be pre-set in the session by explicit user action, both
+  roles and identities that are not already resolved will now lookup a characterizing
+  model that outputs the union of concrete predicates for their abstract observable.
+  The dynamics of resolution only looks at abstract roles and those abstract identities
+  that are required for the observable (defined through "requires identity" in the
+  semantics). Identities that are not required for the observable are left in the
+  observable unmodified.
 - Initial, partial implementation of multiple table adapters with (so far) CSV support
   and conventions for time/space contextualization and filtering.
 ### Fixed
