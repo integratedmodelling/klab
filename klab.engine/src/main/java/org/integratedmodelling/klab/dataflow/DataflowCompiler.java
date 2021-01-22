@@ -46,6 +46,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
+import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
@@ -74,7 +75,6 @@ public class DataflowCompiler {
 	private Set<IObservable> mergedCatalog = new HashSet<>();
 
 	Graph<IResolvable, ResolutionEdge> resolutionGraph = new DefaultDirectedGraph<>(ResolutionEdge.class);
-	Map<Model, ModelD> modelCatalog = new HashMap<>();
 
 	/*
 	 * add any true actuator so that we can find it given a reference. Needed to
@@ -140,9 +140,10 @@ public class DataflowCompiler {
 
 		for (IResolvable root : getRootResolvables(resolutionGraph)) {
 
-			modelCatalog.clear();
+			resetModelCatalog();
 			Node node = compileActuator(root, scope.getMode(), resolutionGraph,
-					this.context == null ? (Scale)scope.getScale() : this.context.getScale(), monitor);
+					this.context == null ? (Scale) scope.getScale() : this.context.getScale(), new HashMap<>(),
+					monitor);
 			node.root = true;
 
 			Actuator actuator = node.getActuatorTree(ret, monitor, new HashSet<>(), 0);
@@ -241,21 +242,66 @@ public class DataflowCompiler {
 		Coverage coverage;
 		// if true, model is resolved by partitions, even if there is just one
 		boolean hasPartitions = false;
+		// the specific concretization of traits we're being used for. Null unless the
+		// model is part of the
+		// resolution of a concretized abstract observable. This makes each descriptor
+		// different even if it references
+		// the same model.
+		Map<IConcept, IConcept> concreteTraits;
 
-		public ModelD(Model model, boolean hasPartitions) {
+		public ModelD(Model model, boolean hasPartitions, Map<IConcept, IConcept> concreteTraits) {
 			this.model = model;
 			this.hasPartitions = hasPartitions;
+			this.concreteTraits = new HashMap<>(concreteTraits);
 		}
 
+		/*
+		 * this constructor is only for use as key in modelCatalog
+		 */
+		ModelD(Model model, Map<IConcept, IConcept> concreteTraits) {
+			this.model = model;
+			this.concreteTraits = new HashMap<>(concreteTraits);
+		}
+
+		/*
+		 * ACHTUNG if this is changed, the modelCatalog implementation must take it into
+		 * account.
+		 */
 		@Override
 		public int hashCode() {
-			return model.hashCode();
+			final int prime = 31;
+			int result = 1;
+			result = prime * result + ((concreteTraits == null) ? 0 : concreteTraits.hashCode());
+			result = prime * result + ((model == null) ? 0 : model.hashCode());
+			return result;
 		}
 
+		/*
+		 * ACHTUNG if this is changed, the modelCatalog implementation must take it into
+		 * account.
+		 */
 		@Override
 		public boolean equals(Object obj) {
-			return obj instanceof ModelD && model.equals(((ModelD) obj).model);
+			if (this == obj)
+				return true;
+			if (obj == null)
+				return false;
+			if (getClass() != obj.getClass())
+				return false;
+			ModelD other = (ModelD) obj;
+			if (concreteTraits == null) {
+				if (other.concreteTraits != null)
+					return false;
+			} else if (!concreteTraits.equals(other.concreteTraits))
+				return false;
+			if (model == null) {
+				if (other.model != null)
+					return false;
+			} else if (!model.equals(other.model))
+				return false;
+			return true;
 		}
+
 	}
 
 	/**
@@ -344,7 +390,8 @@ public class DataflowCompiler {
 			String attributeId = null;
 			if (!models.isEmpty()) {
 				modelObservable = models.iterator().next().model.getObservables().get(0);
-				if (!modelObservable.getType().resolves(this.observable.getType(), getDataflowContext())) {
+				// FIXME this must use the observable for the abstract predicates
+				if (!modelObservable.resolves(this.observable, getDataflowContext())) {
 
 					/**
 					 * may be an attribute, in which case we already have the observation, nothing
@@ -368,7 +415,7 @@ public class DataflowCompiler {
 						/*
 						 * Resolve the secondary output as the primary target of the actuator.
 						 */
-						
+
 					} else if (!generated.contains(models.iterator().next())) {
 
 						/**
@@ -463,10 +510,18 @@ public class DataflowCompiler {
 			if (models.size() == 1 && !this.hasPartitions) {
 
 				ModelD theModel = models.iterator().next();
-				ret.setReferenceName(theModel.model.getObservables().get(0).getName());
-				defineActuator(ret,
-						root ? observable.getName() : theModel.model.getLocalNameFor(observable, getDataflowContext(), monitor),
-						theModel, generated);
+				String referenceName = theModel.model.getObservables().get(0).getName();
+				/*
+				 * if we're incarnating traits, we may have a different observable altogether.
+				 * Must switch to the observable name to avoid this actuator being interpreted
+				 * as a reference.
+				 */
+				if (!observable.getResolvedPredicates().isEmpty()
+						&& !theModel.model.getObservables().get(0).getType().equals(observable.getType())) {
+					referenceName = observable.getName();
+				}
+				ret.setReferenceName(referenceName);
+				defineActuator(ret, theModel, generated);
 
 			} else if (this.hasPartitions) {
 
@@ -489,12 +544,13 @@ public class DataflowCompiler {
 
 					// rename and set the target name as partitioned. Number is the priority if
 					// known.
-					String name = modelDesc.model.getLocalNameFor(observable, getDataflowContext(), monitor) + "_" + index;
+					String name = modelDesc.model.getLocalNameFor(observable, getDataflowContext(), monitor) + "_"
+							+ index;
 					partial.setPartitionedTarget(ret.getName());
 					partial.setName(name);
 					partial.setObservable(observable);
 					partial.setType(ret.getType());
-					defineActuator(partial, name, modelDesc, generated);
+					defineActuator(partial, modelDesc, generated);
 
 					// no reference partials as our final result is the merged artifact
 					if (partial.isReference()) {
@@ -584,7 +640,7 @@ public class DataflowCompiler {
 			}
 		}
 
-		private void defineActuator(Actuator ret, String name, ModelD theModel, Set<ModelD> generated) {
+		private void defineActuator(Actuator ret, ModelD theModel, Set<ModelD> generated) {
 
 			Model model = theModel.model;
 			ret.setModel(model);
@@ -622,6 +678,10 @@ public class DataflowCompiler {
 			if (ret == null) {
 				// no actuator needed: observation was predefined
 				return ret;
+			}
+
+			if (ret.isReference()) {
+				System.out.println("IOC");
 			}
 
 			if (!ret.isReference()) {
@@ -759,7 +819,8 @@ public class DataflowCompiler {
 
 					Model model = md.model;
 
-					modelObservable = model.getCompatibleOutput(ret.getObservable(), getDataflowContext(), scope.getMonitor());
+					modelObservable = model.getCompatibleOutput(ret.getObservable(), getDataflowContext(),
+							scope.getMonitor());
 					if (modelObservable == null) {
 						continue;
 					}
@@ -859,14 +920,7 @@ public class DataflowCompiler {
 
 				@Override
 				public int compare(DataflowCompiler.Node o1, DataflowCompiler.Node o2) {
-//					if (o1.observable.getFilteredObservable() != null
-//							&& o2.observable.getFilteredObservable() == null) {
-//						return 1;
-//					}
-//					if (o1.observable.getFilteredObservable() == null
-//							&& o2.observable.getFilteredObservable() != null) {
-//						return -1;
-//					}
+
 					if (o2.models.isEmpty() && o1.models.isEmpty()) {
 						return 0;
 					}
@@ -894,7 +948,8 @@ public class DataflowCompiler {
 	 * import.
 	 */
 	private Node compileActuator(IResolvable resolvable, IResolutionScope.Mode mode,
-			Graph<IResolvable, ResolutionEdge> graph, Scale scale, IMonitor monitor) {
+			Graph<IResolvable, ResolutionEdge> graph, Scale scale, Map<IConcept, IConcept> resolvedPredicates,
+			IMonitor monitor) {
 
 		Node ret = new Node(resolvable, mode);
 
@@ -903,6 +958,11 @@ public class DataflowCompiler {
 		}
 
 		ret.scale = scale;
+
+		if (resolvable instanceof Observable) {
+			resolvedPredicates = new HashMap<>(resolvedPredicates);
+			resolvedPredicates.putAll(((Observable) resolvable).getResolvedPredicates());
+		}
 
 		/*
 		 * go through models
@@ -954,7 +1014,7 @@ public class DataflowCompiler {
 
 				for (ResolutionEdge o : graph.incomingEdgesOf(source)) {
 					ret.children.add(compileActuator(graph.getEdgeSource(o), o.mode, graph,
-							o.coverage == null ? scale : o.coverage, monitor));
+							o.coverage == null ? scale : o.coverage, resolvedPredicates, monitor));
 				}
 
 			} else if (source instanceof Model) {
@@ -969,11 +1029,10 @@ public class DataflowCompiler {
 					compatibleOutput = new Observable(compatibleOutput);
 				}
 
-				ModelD md = compileModel(model, /* d.indirectAdapters, */ d.isPartition && honorPartitions);
+				ModelD md = compileModel(model, d.isPartition && honorPartitions, resolvedPredicates);
 				for (ResolutionEdge o : graph.incomingEdgesOf(model)) {
-					System.out.println("RESOLVING " + graph.getEdgeSource(o) + " -> " + graph.getEdgeTarget(o));
 					ret.children.add(compileActuator(graph.getEdgeSource(o), o.mode, graph,
-							o.coverage == null ? scale : o.coverage, monitor));
+							o.coverage == null ? scale : o.coverage, resolvedPredicates, monitor));
 				}
 
 				if (md.hasPartitions) {
@@ -1078,17 +1137,18 @@ public class DataflowCompiler {
 	}
 
 	/**
-	 * Must create different descriptor for different indirect usages.
+	 * Must create different descriptor for different indirect usages and
+	 * concretizations.
 	 * 
 	 * @param model
 	 * @param indirectAdapters
 	 * @return
 	 */
-	ModelD compileModel(Model model, boolean hasPartitions) {
-		ModelD ret = modelCatalog.get(model);
+	ModelD compileModel(Model model, boolean hasPartitions, Map<IConcept, IConcept> concreteTraits) {
+		ModelD ret = getModelDescriptor(model, concreteTraits);
 		if (ret == null) {
-			ret = new ModelD(model, hasPartitions);
-			modelCatalog.put(model, ret);
+			ret = new ModelD(model, hasPartitions, concreteTraits);
+			addModelToCatalog(model, concreteTraits, ret);
 		}
 		ret.useCount++;
 		return ret;
@@ -1157,7 +1217,8 @@ public class DataflowCompiler {
 	public List<IContextualizable> computeMediators(Observable from, Observable to, IScale scale) {
 
 		if (OWL.INSTANCE.isSemantic(from)) {
-			if (to.getType().getSemanticDistance(from.getType()) < 0) {
+			if (((Concept) from.getType()).getSemanticDistance(to.getType(), null, false,
+					to.getResolvedPredicates()) < 0) {
 				throw new IllegalArgumentException(
 						"cannot compute mediators from an observable to another that does not resolve it: " + from
 								+ " can not mediate to " + to);
@@ -1188,6 +1249,28 @@ public class DataflowCompiler {
 		}
 
 		return ret;
+	}
+
+	/*
+	 * model catalog to check which models have been output already. Bit weird as we
+	 * use ModelD as both key and value, because we need to distinguish descriptors
+	 * that represent different concretizations of the same abstract model, but we
+	 * store ModelD values that are created by the compiler, as they hold more
+	 * information than what is used to check equality.
+	 */
+
+	private Map<ModelD, ModelD> modelCatalog = new HashMap<>();
+
+	private void addModelToCatalog(Model model, Map<IConcept, IConcept> concreteTraits, ModelD ret) {
+		modelCatalog.put(new ModelD(model, concreteTraits), ret);
+	}
+
+	private void resetModelCatalog() {
+		modelCatalog.clear();
+	}
+
+	private ModelD getModelDescriptor(Model model, Map<IConcept, IConcept> concreteTraits) {
+		return modelCatalog.get(new ModelD(model, concreteTraits));
 	}
 
 }

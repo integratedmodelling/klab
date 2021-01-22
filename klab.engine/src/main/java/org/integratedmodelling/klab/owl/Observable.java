@@ -51,8 +51,6 @@ import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
-import com.google.common.collect.Sets;
-
 /**
  * Equality ignores differences of name, value, optional and generic status.
  * 
@@ -868,8 +866,8 @@ public class Observable implements IObservable {
 	}
 
 	@Override
-	public boolean resolves(IObservable other, IObservable context) {
-		return getType().resolves(other.getType(), context == null ? null : context.getType())
+	public boolean resolves(IObservable other, IConcept context) {
+		return ((Concept)getType()).resolves(other.getType(), context, ((Observable)other).resolvedPredicates)
 				&& CollectionUtils.isEqualCollection(this.valueOperators, ((Observable) other).valueOperators);
 	}
 

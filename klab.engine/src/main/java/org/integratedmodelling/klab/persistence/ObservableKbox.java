@@ -337,9 +337,7 @@ public abstract class ObservableKbox extends H2Kbox {
 				}
 			}
 		}
-
-		System.out.println("Go ciapat " + ret);
-
+		
 		return ret;
 	}
 

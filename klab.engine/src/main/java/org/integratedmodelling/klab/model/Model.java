@@ -1357,13 +1357,13 @@ public class Model extends KimObject implements IModel {
 	 */
 	public Observable getCompatibleOutput(Observable observable, IConcept context, IMonitor monitor) {
 		for (IObservable output : observables) {
-			if (output.getType().resolves(observable.getType(), context)) {
+			if (output.resolves(observable, context)) {
 				return (Observable) output;
 			}
 		}
 		for (String key : attributeObservables.keySet()) {
 			IObservable output = attributeObservables.get(key);
-			if (output.getType().resolves(observable.getType(), context)) {
+			if (output.resolves(observable, context)) {
 				return (Observable) output.getBuilder(monitor).of(getMainObservable().getType())
 						.withDereifiedAttribute(key).buildObservable();
 			}
