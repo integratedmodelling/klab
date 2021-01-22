@@ -338,4 +338,8 @@ public class Offset implements ILocator {
 		return coverage;
 	}
 
+	public void set(int spaceDimension, long offset) {
+		pos[spaceDimension] = offset;
+	}
+
 }

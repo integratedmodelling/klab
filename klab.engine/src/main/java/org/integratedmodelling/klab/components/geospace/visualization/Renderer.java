@@ -4,10 +4,13 @@ import java.awt.Color;
 import java.awt.Font;
 import java.awt.FontMetrics;
 import java.awt.Graphics2D;
+import java.awt.Point;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -46,6 +49,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
+import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
@@ -118,31 +122,41 @@ public enum Renderer {
 
 		ISpace space = state.getSpace();
 		IGrid grid = ((Space) state.getSpace()).getGrid();
-//		IDataStorage<?> storage = ((State)state).getStorage();
-		
-		
-		StateSummary stateSummary = Observations.INSTANCE.getStateSummary(state, state.getScale());
-//		Observations.INSTANCE.isNodata(o)
-		System.out.println(stateSummary);
-		
-		WrapperRI ri = new WrapperRI(new StateRaster(state));
-        double west = grid.getWest();
-        double south = grid.getSouth();
-        double east = grid.getEast();
-        double north = grid.getNorth();
-        CoordinateReferenceSystem crs = ((Projection) grid.getProjection()).getCoordinateReferenceSystem();
-        Envelope2D writeEnvelope = new Envelope2D(crs, west, south, east - west, north - south);
-        GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
 
-        GridCoverage2D coverage = factory.create("stateraster", ri, writeEnvelope);
-        
+//		long t0 = System.currentTimeMillis();
+
+		int width = (int) grid.getXCells();
+		int height = (int) grid.getYCells();
+		ComponentSampleModel sm = new ComponentSampleModel(DataBuffer.TYPE_FLOAT, width, height, 1, width, new int[] { 0 });
+		DataBuffer db = new ReadonlyStateFloatBuffer(state, locator, null, width * height);
+		Raster raster = Raster.createRaster(sm, db, null);
+		
+		FloatRasterWrapper ri = new FloatRasterWrapper(raster);
+		double west = grid.getWest();
+		double south = grid.getSouth();
+		double east = grid.getEast();
+		double north = grid.getNorth();
+		CoordinateReferenceSystem crs = ((Projection) grid.getProjection()).getCoordinateReferenceSystem();
+		Envelope2D writeEnvelope = new Envelope2D(crs, west, south, east - west, north - south);
+		GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
+		
+		GridCoverage2D coverage = factory.create("stateraster", ri, writeEnvelope);
+
+//		long t1 = System.currentTimeMillis();
+//
+//		System.out.println("CONVERSION 1: " + (t1 - t0));
+//		t1 = System.currentTimeMillis();
+//
+//		GridCoverage2D coverageConverted = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT,
+//				Float.NaN, false);
+//
+//		long t2 = System.currentTimeMillis();
+//		System.out.println("CONVERSION 2: " + (t2 - t1));
 
 		// https://github.com/geotools/geotools/blob/master/modules/library/render/src/test/java/org/geotools/renderer/lite/GridCoverageRendererTest.java
 		try {
 
 			Viewport vport = new Viewport(viewport[0], viewport.length == 1 ? viewport[0] : viewport[1]);
-//			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT,
-//					Float.NaN, false);
 			IEnvelope envelope = space.getEnvelope();
 			IProjection projection = space.getProjection();
 			int[] imagesize = vport.getSize(grid.getXCells(), grid.getYCells());
@@ -184,7 +198,7 @@ public enum Renderer {
 		if (summary.isDegenerate()) {
 			return new Pair<>(null, NO_DATA_MESSAGE);
 		}
-		
+
 		boolean stateIsBoolean = state.getType() == IArtifact.Type.BOOLEAN;
 
 		if (NumberUtils.equal(summary.getRange().get(0), summary.getRange().get(1))) {
@@ -282,7 +296,7 @@ public enum Renderer {
 
 					Map<?, ?> vals = annotation.getDeclared("values", Map.class);
 					List<Pair<Object, Color>> svals = new ArrayList<>();
-					Map<Integer, Pair<Object, Color>> mvals = new HashMap<Integer, Pair<Object, Color>> ();
+					Map<Integer, Pair<Object, Color>> mvals = new HashMap<Integer, Pair<Object, Color>>();
 					Class<?> type = null;
 					boolean hasDataKey = state.getDataKey() != null;
 					boolean isBoolean = false;
@@ -290,7 +304,7 @@ public enum Renderer {
 
 						if (type == null) {
 							type = o.getClass();
-							isBoolean = Boolean.class.isAssignableFrom(type); 
+							isBoolean = Boolean.class.isAssignableFrom(type);
 						} else if (!type.equals(o.getClass())) {
 							throw new IllegalArgumentException(
 									"color keys must be of the same type in a colormap specification");
@@ -300,10 +314,10 @@ public enum Renderer {
 						 * accept everything but don't add keys that are not in the data.
 						 */
 						if (isBoolean) {
-							svals.add(new Pair<>(((Boolean)o) ? 1.0 : 0.0, parseColor(vals.get(o))));
+							svals.add(new Pair<>(((Boolean) o) ? 1.0 : 0.0, parseColor(vals.get(o))));
 						} else if (hasDataKey) {
 							int valueIndex = state.getDataKey().reverseLookup(o);
-							if ( valueIndex >= 0) {
+							if (valueIndex >= 0) {
 								mvals.put(valueIndex, new Pair<>(o, parseColor(vals.get(o))));
 							}
 						} else {
@@ -311,12 +325,12 @@ public enum Renderer {
 						}
 					}
 					if (mvals.size() > 0) {
-						for (Pair<Integer,String> data : state.getDataKey().getAllValues()) {
+						for (Pair<Integer, String> data : state.getDataKey().getAllValues()) {
 							Pair<Object, Color> p = mvals.get(data.getFirst());
 							if (p == null) {
 								Object o = state.getDataKey().lookup(data.getFirst());
 								p = new Pair<Object, Color>(o, Color.GRAY);
-								System.err.println("Value "+ data.getSecond() +" is not present in colormap");
+								System.err.println("Value " + data.getSecond() + " is not present in colormap");
 							}
 							svals.add(p);
 						}
@@ -353,7 +367,8 @@ public enum Renderer {
 						} else if (pair.getFirst() instanceof Boolean) {
 							values[i] = ((Boolean) pair.getFirst()) ? 1 : 0;
 							labels[i] = state.getObservable().getName() + " "
-									+ ((Boolean) pair.getFirst() ? Observations.PRESENT_LABEL : Observations.NOT_PRESENT_LABEL);
+									+ ((Boolean) pair.getFirst() ? Observations.PRESENT_LABEL
+											: Observations.NOT_PRESENT_LABEL);
 						}
 
 						colors[i] = pair.getSecond();
@@ -393,11 +408,11 @@ public enum Renderer {
 			if (stateIsBoolean) {
 				colormapType = ColorMap.TYPE_VALUES;
 				Color[] jetcolors = jet(1.0f);
-				
+
 				colors = new Color[] { jetcolors[0], jetcolors[255] };
 				values = new double[] { 0.0, 1.0 };
 				labels = new String[] { Observations.NOT_PRESENT_LABEL, Observations.PRESENT_LABEL };
-				
+
 			} else if (state.getDataKey() == null) {
 				colors = jet(1.0f);
 			} else {
@@ -473,7 +488,7 @@ public enum Renderer {
 					i++;
 				}
 			}
-			
+
 			// ensure there are no zero values remaining if the datakey isn't fully present
 			// could use lists for less code, I just hate having to turn Double into double
 			if (i < state.getDataKey().size()) {
