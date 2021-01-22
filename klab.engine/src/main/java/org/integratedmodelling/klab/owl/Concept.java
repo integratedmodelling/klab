@@ -658,6 +658,10 @@ public class Concept extends Knowledge implements IConcept {
 	public boolean resolves(IConcept concept, IConcept context) {
 		return getSemanticDistance(concept, context) >= 0;
 	}
+	
+	public boolean resolves(IConcept concept, IConcept context, Map<IConcept, IConcept> resolvedPredicates) {
+		return getSemanticDistance(concept, context, true, resolvedPredicates) >= 0;
+	}
 
 	@Override
 	public int getSemanticDistance(IConcept concept) {

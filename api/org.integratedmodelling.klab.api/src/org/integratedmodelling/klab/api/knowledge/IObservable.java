@@ -583,7 +583,7 @@ public interface IObservable extends ISemantic, IResolvable {
 	 * @param context
 	 * @return
 	 */
-	boolean resolves(IObservable other, IObservable context);
+	boolean resolves(IObservable other, IConcept context);
 
 	/**
 	 * Return any abstract identity or role that are set in this observable, and

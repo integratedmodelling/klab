@@ -95,7 +95,7 @@ public abstract class DirectObservation extends Observation implements IDirectOb
 		for (IArtifact child : getScope().getChildArtifactsOf(this)) {
 			// TODO should we use resolvesStrictly, which doesn't admit a non-equal observable concept?
 			if (child instanceof IObservation && ((IObservation) child).getObservable()
-					.resolves(changing == null ? observable : Observable.promote(changing), getObservable())) {
+					.resolves(changing == null ? observable : Observable.promote(changing), getObservable().getType())) {
 				if (changing != null) {
 					return child instanceof Observation && ((Observation)child).isDynamic() ? (IObservation)child : null;
 				}
