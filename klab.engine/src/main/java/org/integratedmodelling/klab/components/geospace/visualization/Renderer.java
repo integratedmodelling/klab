@@ -21,8 +21,11 @@ import javax.imageio.ImageIO;
 
 import org.geotools.brewer.color.BrewerPalette;
 import org.geotools.brewer.color.ColorBrewer;
+import org.geotools.coverage.CoverageFactoryFinder;
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.coverage.grid.GridCoverageFactory;
 import org.geotools.factory.CommonFactoryFinder;
+import org.geotools.geometry.Envelope2D;
 import org.geotools.renderer.lite.RendererUtilities;
 import org.geotools.renderer.lite.gridcoverage2d.GridCoverageRenderer;
 import org.geotools.styling.ColorMap;
@@ -46,6 +49,8 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.runtime.observations.State;
+import org.integratedmodelling.klab.engine.runtime.api.IDataStorage;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.rest.Colormap;
 import org.integratedmodelling.klab.rest.StateSummary;
@@ -55,9 +60,12 @@ import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.Triple;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 import org.opengis.style.ContrastMethod;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
+
+import com.sun.media.jai.iterator.WrapperRI;
 
 /**
  * Rendering functions for raster coverages and possibly more. Uses Geotools'
@@ -110,13 +118,31 @@ public enum Renderer {
 
 		ISpace space = state.getSpace();
 		IGrid grid = ((Space) state.getSpace()).getGrid();
+//		IDataStorage<?> storage = ((State)state).getStorage();
+		
+		
+		StateSummary stateSummary = Observations.INSTANCE.getStateSummary(state, state.getScale());
+//		Observations.INSTANCE.isNodata(o)
+		System.out.println(stateSummary);
+		
+		WrapperRI ri = new WrapperRI(new StateRaster(state));
+        double west = grid.getWest();
+        double south = grid.getSouth();
+        double east = grid.getEast();
+        double north = grid.getNorth();
+        CoordinateReferenceSystem crs = ((Projection) grid.getProjection()).getCoordinateReferenceSystem();
+        Envelope2D writeEnvelope = new Envelope2D(crs, west, south, east - west, north - south);
+        GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
+
+        GridCoverage2D coverage = factory.create("stateraster", ri, writeEnvelope);
+        
 
 		// https://github.com/geotools/geotools/blob/master/modules/library/render/src/test/java/org/geotools/renderer/lite/GridCoverageRendererTest.java
 		try {
 
 			Viewport vport = new Viewport(viewport[0], viewport.length == 1 ? viewport[0] : viewport[1]);
-			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT,
-					Float.NaN, false);
+//			GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT,
+//					Float.NaN, false);
 			IEnvelope envelope = space.getEnvelope();
 			IProjection projection = space.getProjection();
 			int[] imagesize = vport.getSize(grid.getXCells(), grid.getYCells());
