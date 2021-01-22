@@ -48,8 +48,6 @@ public class ReadonlyStateFloatBuffer extends DataBuffer {
 
 	public float[] getData(int bank) {
 		if (data == null) {
-			System.out.println("getData");
-
 			float[] dataArray = new float[height * width];
 			int index = 0;
 			for (int r = 0; r < height; r++) {
@@ -77,8 +75,6 @@ public class ReadonlyStateFloatBuffer extends DataBuffer {
 
 	public float[][] getBankData() {
 		if (bankData == null) {
-			System.out.println("getBankData");
-
 			Offset ofs = locator.as(Offset.class);
 
 			float[][] dataMatrix = new float[height][width];

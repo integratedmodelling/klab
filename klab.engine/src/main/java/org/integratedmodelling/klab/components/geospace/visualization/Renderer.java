@@ -143,8 +143,8 @@ public enum Renderer {
 		GridCoverage2D coverage = factory.create("stateraster", ri, writeEnvelope);
 
 //		long t1 = System.currentTimeMillis();
-//
 //		System.out.println("CONVERSION 1: " + (t1 - t0));
+//
 //		t1 = System.currentTimeMillis();
 //
 //		GridCoverage2D coverageConverted = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT,
