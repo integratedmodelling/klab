@@ -112,14 +112,6 @@ public enum Renderer {
 
 		GridCoverage2D coverage = GeotoolsUtils.INSTANCE.wrapStateInFloatCoverage(state, locator, Float.NaN, null);
 
-//		t1 = System.currentTimeMillis();
-//
-//		GridCoverage2D coverageConverted = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT,
-//				Float.NaN, false);
-//
-//		long t2 = System.currentTimeMillis();
-//		System.out.println("CONVERSION 2: " + (t2 - t1));
-
 		// https://github.com/geotools/geotools/blob/master/modules/library/render/src/test/java/org/geotools/renderer/lite/GridCoverageRendererTest.java
 		try {
 

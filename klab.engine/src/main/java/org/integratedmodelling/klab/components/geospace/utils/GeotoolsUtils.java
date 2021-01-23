@@ -61,6 +61,14 @@ public enum GeotoolsUtils {
             Function<Object, Object> transformation ) {
 
 //        long t0 = System.currentTimeMillis();
+//
+//        GridCoverage2D coverageConverted = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT,
+//                Float.NaN, false);
+//
+//        long t1 = System.currentTimeMillis();
+//        System.out.println("CONVERSION 1: " + (t1 - t0));
+
+        long t2 = System.currentTimeMillis();
 
         IGrid grid = ((Space) state.getSpace()).getGrid();
         int width = (int) grid.getXCells();
@@ -80,8 +88,8 @@ public enum GeotoolsUtils {
 
         GridCoverage2D coverage = factory.create("stateraster", ri, writeEnvelope);
 
-//        long t1 = System.currentTimeMillis();
-//        System.out.println("CONVERSION 1: " + (t1 - t0));
+        long t3 = System.currentTimeMillis();
+        System.out.println("CONVERSION 2: " + (t3 - t2));
 
         return coverage;
     }
