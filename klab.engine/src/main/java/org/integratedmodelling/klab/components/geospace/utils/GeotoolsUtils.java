@@ -1,7 +1,9 @@
 package org.integratedmodelling.klab.components.geospace.utils;
 
 import java.awt.Color;
+import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
+import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.WritableRaster;
 import java.util.HashMap;
@@ -13,10 +15,11 @@ import javax.media.jai.iterator.RandomIter;
 import javax.media.jai.iterator.RandomIterFactory;
 
 import org.geotools.coverage.Category;
+import org.geotools.coverage.CoverageFactoryFinder;
 import org.geotools.coverage.GridSampleDimension;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
-import org.geotools.styling.ColorMap;
+import org.geotools.geometry.Envelope2D;
 import org.geotools.styling.ColorMapEntry;
 import org.geotools.styling.RasterSymbolizer;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -27,12 +30,16 @@ import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
+import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
+import org.integratedmodelling.klab.components.geospace.visualization.raster.FloatRasterWrapper;
+import org.integratedmodelling.klab.components.geospace.visualization.raster.ReadonlyStateFloatBuffer;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.opengis.filter.expression.Literal;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public enum GeotoolsUtils {
 
@@ -40,6 +47,44 @@ public enum GeotoolsUtils {
 
 	Map<IConcept, Integer> conceptMap = new HashMap<>();
 	GridCoverageFactory rasterFactory = new GridCoverageFactory();
+	
+    /**
+     * Create a {@link GridCoverage2D} that wraps a {@link IState} object.
+     * 
+     * @param state the {@link IState} object to get the data from.
+     * @param locator the {@link ILocator} object to get the data index from.
+     * @param noDataValue optional novalue.
+     * @param transformation optional data transformation object.
+     * @return the wrapped {@link GridCoverage2D}.
+     */
+    public GridCoverage2D wrapStateInFloatCoverage( IState state, ILocator locator, Float noDataValue,
+            Function<Object, Object> transformation ) {
+
+//        long t0 = System.currentTimeMillis();
+
+        IGrid grid = ((Space) state.getSpace()).getGrid();
+        int width = (int) grid.getXCells();
+        int height = (int) grid.getYCells();
+        ComponentSampleModel sm = new ComponentSampleModel(DataBuffer.TYPE_FLOAT, width, height, 1, width, new int[]{0});
+        DataBuffer db = new ReadonlyStateFloatBuffer(state, locator, null, width * height, noDataValue);
+        Raster raster = Raster.createRaster(sm, db, null);
+
+        FloatRasterWrapper ri = new FloatRasterWrapper(raster);
+        double west = grid.getWest();
+        double south = grid.getSouth();
+        double east = grid.getEast();
+        double north = grid.getNorth();
+        CoordinateReferenceSystem crs = ((Projection) grid.getProjection()).getCoordinateReferenceSystem();
+        Envelope2D writeEnvelope = new Envelope2D(crs, west, south, east - west, north - south);
+        GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
+
+        GridCoverage2D coverage = factory.create("stateraster", ri, writeEnvelope);
+
+//        long t1 = System.currentTimeMillis();
+//        System.out.println("CONVERSION 1: " + (t1 - t0));
+
+        return coverage;
+    }
 
 	public GridCoverage2D stateToCoverage(IState state, ILocator locator, boolean addKey) {
 		return stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT, Float.NaN, addKey);
