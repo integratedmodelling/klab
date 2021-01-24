@@ -162,8 +162,20 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	private Map<String, IKnowledgeView> views;
 	private Map<String, IKnowledgeView> viewsByUrn;
 
+	/**
+	 * This is used by characterizing models to report the result of
+	 * characterization during their own contextualization, which happens during
+	 * <em>resolution</em> of dependencies with abstract predicates.
+	 */
 	Map<IConcept, Collection<IConcept>> concreteIdentities;
-	
+
+	/**
+	 * This is used during <em>contextualization</em> of previously characterized
+	 * abstract dependencies, mapping each abstract predicate to its specific
+	 * incarnation in the scope.
+	 */
+	Map<IConcept, IConcept> resolvedPredicates = new HashMap<>();
+
 	// cache for IS operator in groovy expressions, both for proper subsumption and
 	// correlations such as "adopts role/trait"
 	private LoadingCache<String, Boolean> reasonerCache;
@@ -228,11 +240,11 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		 */
 		this.contextualizationStrategy = monitor.getIdentity().getParentIdentity(AbstractTask.class)
 				.getContextualizationStrategy();
-		
+
 		if (this.contextualizationStrategy == null) {
 			/*
-			 * happens when a characterizer is contextualized during resolution, before anything
-			 * has happened yet. We throw this away after we're done.
+			 * happens when a characterizer is contextualized during resolution, before
+			 * anything has happened yet. We throw this away after we're done.
 			 */
 			this.contextualizationStrategy = new ContextualizationStrategy();
 		}
@@ -294,6 +306,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.reasonerCache = context.reasonerCache;
 		this.relatedReasonerCache = context.relatedReasonerCache;
 		this.concreteIdentities = context.concreteIdentities;
+		this.resolvedPredicates.putAll(context.resolvedPredicates);
 	}
 
 	@Override
@@ -315,6 +328,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			ret.contextSubject = rootSubject;
 		}
 
+		ret.resolvedPredicates.putAll(((Observable)indirectTarget).getResolvedPredicates());
+		
 		/*
 		 * if not within a partition, the target has been created by the upstream
 		 * createChild(... Actuator ...), so we just set it from the catalog.
@@ -811,6 +826,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 			ret.semantics.put(id, ((Actuator) a).getObservable());
 		}
 
+		if (actuator.getObservable() != null) {
+			ret.resolvedPredicates.putAll(actuator.getObservable().getResolvedPredicates());
+		}
+		
 		/*
 		 * if we're subsetting the scale, finish up the partial scale we're using and
 		 * set the computation to use it.
@@ -2077,10 +2096,16 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	public void setConcreteIdentities(IConcept abstractIdentity, List<IConcept> concreteIdentities) {
 		this.concreteIdentities.put(abstractIdentity, concreteIdentities);
 	}
-	
+
 	@Override
 	public Map<IConcept, Collection<IConcept>> getConcreteIdentities() {
 		return this.concreteIdentities;
+	}
+
+	@Override
+	public IConcept localizePredicate(IConcept predicate) {
+		IConcept ret = resolvedPredicates.get(predicate);
+		return ret == null ? predicate : ret;
 	}
 
 }

@@ -504,6 +504,23 @@ public interface IContextualizationScope extends IParameters<String> {
 	IParameters<String> localize(ILocator locator);
 
 	/**
+	 * This will return the same predicate or its localized version if the scope is
+	 * contextualizing an observable that started abstract and was resolved to a
+	 * concrete one contextually. In the current implementation this can only apply
+	 * to roles and identities stated as abstract as part of observable expressions.
+	 * <p>
+	 * For example if a dependency like
+	 * <code>agriculture:CropType agriculture:Yield</code> was resolved, the scope
+	 * of execution of each incarnation will return, e.g.,
+	 * <code>agriculture:Apple</code> when
+	 * <code>localizePredicate(Concepts.c("agriculture:CropType"))</code> is called.
+	 * 
+	 * @param predicate
+	 * @return
+	 */
+	IConcept localizePredicate(IConcept predicate);
+
+	/**
 	 * Create an expression context to compile an expression with all local names
 	 * matched to their observables.
 	 * 

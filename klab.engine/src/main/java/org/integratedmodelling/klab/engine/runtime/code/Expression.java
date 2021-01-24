@@ -273,6 +273,12 @@ public abstract class Expression implements IExpression {
 			// TODO Auto-generated method stub
 			return this;
 		}
+
+		@Override
+		public IConcept localizePredicate(IConcept predicate) {
+			// TODO Auto-generated method stub
+			return predicate;
+		}
 	}
 
 	public static IContextualizationScope emptyContext(IMonitor monitor) {

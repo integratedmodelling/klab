@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
  * Unstructured n-dimensional table, where objects are addressed by 1+ keys of
@@ -22,7 +23,8 @@ public interface ITable<T> extends Iterable<Iterable<?>> {
 
 	interface Filter {
 		public enum Type {
-			COLUMN_HEADER, ROW_HEADER, ATTRIBUTE_VALUE, INCLUDE_COLUMNS, EXCLUDE_COLUMNS, INCLUDE_ROWS, EXCLUDE_ROWS,
+			COLUMN_HEADER, ROW_HEADER/* , ATTRIBUTE_VALUE */, INCLUDE_COLUMNS/* , EXCLUDE_COLUMNS */,
+			INCLUDE_ROWS/* , EXCLUDE_ROWS */,
 			NO_RESULTS, COLUMN_EXPRESSION, COLUMN_MATCH, ROW_MATCH
 		}
 
@@ -33,44 +35,48 @@ public interface ITable<T> extends Iterable<Iterable<?>> {
 		String getSignature();
 
 		int getDimension();
+
+		/**
+		 * Return the same filter or a new one if the scope contains information that
+		 * can localize it. For now this applies to concrete predicates when the filter
+		 * may check an abstract one, but it may also do parameter substitution and the
+		 * like.
+		 * 
+		 * @param scope
+		 * @return
+		 */
+		Filter contextualize(IContextualizationScope scope);
+
+		/**
+		 * If true, the filter implies queries on the table and its results should be
+		 * cached for speed for as long as the underlying table doesn't change.
+		 * 
+		 * @return
+		 */
+		boolean isCached();
 	}
 
-	int[] getDimensions();
-
 	/**
-	 * Get a single value from the table, passing enough locators to uniquely
-	 * identify one. Locators may be indices, keys, expressions or anything else
-	 * supported by the table implementation. The implementation must be able to
-	 * recognize both individual locators or arrays of them passed as a single
-	 * argument.
+	 * The table dimensions. Could be >2 in length for a generic datacube, although
+	 * at the moment not everything is ready for that kind of use and individual
+	 * adapter may expect dimensionality <= 2.
 	 * 
-	 * @param locators
 	 * @return
 	 */
-	T get(Object... locators);
+	int[] getDimensions();
 
 	/**
 	 * Typed version of get(), which should endeavor to make any meaningful
 	 * conversions as long as they are compatible with the storage. This is affected
-	 * by any configured filters.
+	 * by any configured filters. If an aggregator is passed as a locator, it should
+	 * be used to aggregate any multiple values.
 	 * 
 	 * @param cls
+	 * @param scope    the scope to translate contextual filters. May be null.
 	 * @param locators
 	 * @return <E>
 	 */
-	<E> E get(Class<E> cls, Object... locators);
-
-	/**
-	 * Return a map view of the table. Intended to subset the table based on the
-	 * passed objects and return either another table, a map or a list. This is
-	 * affected by any configured filters.
-	 * 
-	 * @param <E>
-	 * @param cls
-	 * @param locators
-	 * @return
-	 */
-	Map<Object, T> asMap(Object... columnLocators);
+	<E> E get(Class<E> cls, IContextualizationScope scope, Object... locators);
 
 	/**
 	 * Return a map view of the table. Intended to subset the table based on the
@@ -178,5 +184,15 @@ public interface ITable<T> extends Iterable<Iterable<?>> {
 	 * @return
 	 */
 	List<Filter> getFilters();
+
+	/**
+	 * Contextualize all filters and any other info so that the returned table fits
+	 * the passed context. This will be called when contextualizing, expecting one
+	 * value from get() with an aggregator after that.
+	 * 
+	 * @param scope
+	 * @return
+	 */
+	ITable<T> contextualize(IContextualizationScope scope);
 
 }

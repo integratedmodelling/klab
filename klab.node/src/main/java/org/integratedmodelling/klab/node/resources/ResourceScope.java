@@ -718,7 +718,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public void addView(IKnowledgeView view) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
@@ -732,7 +732,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 		// TODO Auto-generated method stub
 		return this;
 	}
-	
+
 	@Override
 	public IParameters<String> localize(ILocator locator) {
 		// TODO Auto-generated method stub
@@ -748,13 +748,19 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public void setConcreteIdentities(IConcept abstractIdentity, List<IConcept> concreteIdentities) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public Map<IConcept, Collection<IConcept>> getConcreteIdentities() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public IConcept localizePredicate(IConcept predicate) {
+		// TODO Auto-generated method stub
+		return predicate;
 	}
 
 }

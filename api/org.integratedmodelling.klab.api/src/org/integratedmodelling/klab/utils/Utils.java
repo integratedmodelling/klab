@@ -8,6 +8,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -564,6 +565,34 @@ public class Utils {
 		StringWriter writer = new StringWriter();
 		prop.list(new PrintWriter(writer));
 		return writer.getBuffer().toString();
+	}
+
+	/**
+	 * Flatten any collections in the source collection and accumulate values after
+	 * conversion to T in the destination collection.
+	 * 
+	 * @param arguments
+	 * @param indices
+	 * @param class1
+	 */
+	public static <T> void collectValues(Collection<?> source, Collection<? extends T> destination, Class<T> class1) {
+		for (Object o : source) {
+			if (o instanceof Collection) {
+				collectValues((Collection<?>)o, destination, class1);
+			} else {
+				destination.add(asType(o, class1));
+			}
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	public static <E> E emptyValue(Class<E> cls) {
+		if (cls.isAssignableFrom(Collection.class)) {
+			return (E)new ArrayList<Object>();
+		} else if (cls.isAssignableFrom(Map.class)) {
+			return (E)new HashMap<Object, Object>();
+		} 
+		return null;
 	}
 
 }

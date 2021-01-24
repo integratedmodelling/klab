@@ -22,6 +22,7 @@
 package org.integratedmodelling.klab.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -341,7 +342,7 @@ public class NumberUtils {
 		return ret;
 	}
 
-	public static long[] longArrayFromCollection(List<Number> vals) {
+	public static long[] longArrayFromCollection(Collection<? extends Number> vals) {
 		long[] ret = new long[vals.size()];
 		int i = 0;
 		for (Number d : vals) {
@@ -350,7 +351,7 @@ public class NumberUtils {
 		return ret;
 	}
 	
-	public static int[] intArrayFromCollection(List<Number> vals) {
+	public static int[] intArrayFromCollection(Collection<? extends Number> vals) {
 		int[] ret = new int[vals.size()];
 		int i = 0;
 		for (Number d : vals) {
