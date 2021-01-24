@@ -509,7 +509,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 		for (String key : artifacts.keySet()) {
 			IArtifact artifact = artifacts.get(key);
 			if (artifact != null && artifact instanceof IObservation
-					&& ((Observable) ((IObservation) artifact).getObservable()).resolvesStrictly((Observable) observable)) {
+					&& ((Observable) ((IObservation) artifact).getObservable())
+							.resolvesStrictly((Observable) observable)) {
 				return new Pair<>(key, artifact);
 			}
 		}
@@ -812,13 +813,19 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 	@Override
 	public void setConcreteIdentities(IConcept abstractIdentity, List<IConcept> concreteIdentities) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	@Override
 	public Map<IConcept, Collection<IConcept>> getConcreteIdentities() {
 		// TODO Auto-generated method stub
 		return null;
+	}
+
+	@Override
+	public IConcept localizePredicate(IConcept predicate) {
+		// TODO Auto-generated method stub
+		return predicate;
 	}
 
 }

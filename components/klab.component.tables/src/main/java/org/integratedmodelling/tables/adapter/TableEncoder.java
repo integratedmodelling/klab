@@ -27,9 +27,7 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.data.resources.Resource;
-import org.integratedmodelling.tables.AbstractTable;
 import org.integratedmodelling.tables.DimensionScanner;
-import org.integratedmodelling.tables.TableCache;
 
 public class TableEncoder implements IResourceEncoder {
 
@@ -99,7 +97,7 @@ public class TableEncoder implements IResourceEncoder {
 				 * scan each row and ask t/s if it applies; if so, collect the value in the
 				 * passed collection
 				 */
-				for (Object value : table.get(List.class, collectSemantics)) {
+				for (Object value : table.get(List.class, scope, collectSemantics)) {
 					if (value instanceof IConcept) {
 						collection.add((IConcept) value);
 					}
@@ -112,8 +110,15 @@ public class TableEncoder implements IResourceEncoder {
 				}
 
 				return;
-				
+
 			}
+
+			/**
+			 * First pass: contextualize for the scope, which may redefine some filters. We
+			 * leave space/time filters out of this for now, although they could be more
+			 * elegantly included in this step.
+			 */
+			table = table.contextualize(scope);
 
 			if (time != null && !ignoreTime) {
 				Filter timeFilter = time.locate(table, geometry);
@@ -160,7 +165,11 @@ public class TableEncoder implements IResourceEncoder {
 								System.out.println("   NEW SPATIAL FILTER " + filter);
 								t = t.filter(filter);
 							}
-							value = ((AbstractTable<?>) t).get(aggregator);
+							/*
+							 * this takes all matching values, aggregating if needed using the aggregator
+							 * that fits the semantics.
+							 */
+							value = t.get(Object.class, scope, aggregator);
 							System.out.println("       aggregated value = " + value);
 							valueCache.put(filter, value);
 						}
@@ -252,12 +261,18 @@ public class TableEncoder implements IResourceEncoder {
 					}
 				}
 				if (originalTable.getColumnDescriptor(parm) != null) {
-					ret = ret.filter(Filter.Type.ATTRIBUTE_VALUE, parm, urnParameters.get(parm));
+					ret = ret.filter(Filter.Type.COLUMN_MATCH, parm,
+							processFilter(originalTable.getColumnDescriptor(parm), urnParameters.get(parm)));
 				}
 			}
 		}
 
 		return ret;
+	}
+
+	private Object processFilter(Attribute columnDescriptor, String filterSpecs) {
+
+		return filterSpecs;
 	}
 
 }

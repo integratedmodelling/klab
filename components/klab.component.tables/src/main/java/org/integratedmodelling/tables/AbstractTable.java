@@ -13,6 +13,7 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -22,12 +23,12 @@ import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
-import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.utils.NumberUtils;
@@ -35,7 +36,7 @@ import org.integratedmodelling.klab.utils.Utils;
 
 public abstract class AbstractTable<T> implements ITable<T> {
 
-	static class FilterDescriptor implements Filter {
+	class FilterDescriptor implements Filter {
 
 		Filter.Type filter;
 		List<Object> locators = new ArrayList<>();
@@ -43,10 +44,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		// the dimension this filter selects upon
 		int dimension = -1; // special filter
 		String signature;
-
-		static FilterDescriptor stop() {
-			return new FilterDescriptor(Filter.Type.NO_RESULTS, null);
-		}
+		boolean cached = false;
 
 		public FilterDescriptor(Filter.Type filter, Object[] locators) {
 			this.filter = filter;
@@ -56,23 +54,16 @@ public abstract class AbstractTable<T> implements ITable<T> {
 				}
 			}
 			switch (filter) {
-			case ATTRIBUTE_VALUE:
-				this.dimension = 0;
-				break;
 			case COLUMN_EXPRESSION:
 				this.dimension = 1;
+				this.cached = true;
 				break;
 			case COLUMN_HEADER:
 				this.dimension = 0;
 				break;
 			case COLUMN_MATCH:
 				this.dimension = 0;
-				break;
-			case EXCLUDE_COLUMNS:
-				this.dimension = 1;
-				break;
-			case EXCLUDE_ROWS:
-				this.dimension = 0;
+				this.cached = true;
 				break;
 			case INCLUDE_COLUMNS:
 				this.dimension = 1;
@@ -84,18 +75,68 @@ public abstract class AbstractTable<T> implements ITable<T> {
 				break;
 			case ROW_HEADER:
 				this.dimension = 0;
+				this.cached = true;
 				break;
 			case ROW_MATCH:
+				this.cached = true;
 				this.dimension = 0;
 				break;
 			}
+
+			validate();
+		}
+
+		void validate() {
+			switch (filter) {
+			case COLUMN_EXPRESSION:
+				break;
+			case COLUMN_HEADER:
+				break;
+			case COLUMN_MATCH:
+				/*
+				 * preprocess the attributes
+				 */
+				List<Object> values = new ArrayList<>();
+				for (int i = 0; i < this.locators.size(); i++) {
+
+					String key = this.locators.get(i).toString();
+					Attribute a = getColumnDescriptor(key);
+					Object v = i < this.locators.size() - 1 ? this.locators.get(++i) : null;
+					if (a != null) {
+						v = convertValue(v, a);
+					}
+
+					values.add(key);
+					values.add(v);
+				}
+				this.locators.clear();
+				this.locators.addAll(values);
+
+				break;
+
+			case INCLUDE_COLUMNS:
+				break;
+			case INCLUDE_ROWS:
+				break;
+			case NO_RESULTS:
+				break;
+			case ROW_HEADER:
+				break;
+			case ROW_MATCH:
+				break;
+			default:
+				break;
+
+			}
+		}
+
+		public boolean isCached() {
+			return cached;
 		}
 
 		boolean matches(AbstractTable<?> table, Object o, int... location) {
 
 			switch (filter) {
-			case ATTRIBUTE_VALUE:
-				break;
 			case COLUMN_HEADER:
 				if (locators != null && locators.size() > 0 && locators.get(0) instanceof Pattern) {
 					Attribute attr = table.getColumnDescriptor(location[1]);
@@ -112,10 +153,6 @@ public abstract class AbstractTable<T> implements ITable<T> {
 						}
 					}
 				}
-				break;
-			case EXCLUDE_COLUMNS:
-				break;
-			case EXCLUDE_ROWS:
 				break;
 			case INCLUDE_COLUMNS:
 				break;
@@ -185,6 +222,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			return result;
 		}
 
+		@SuppressWarnings("unchecked")
 		@Override
 		public boolean equals(Object obj) {
 			if (this == obj)
@@ -217,6 +255,20 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			return this.dimension;
 		}
 
+		@Override
+		public Filter contextualize(IContextualizationScope scope) {
+			List<Object> args = new ArrayList<>();
+			boolean changed = false;
+			for (Object o : this.locators) {
+				if (o instanceof IConcept && ((IConcept) o).is(IKimConcept.Type.PREDICATE)) {
+					o = scope.localizePredicate((IConcept) o);
+					changed = true;
+				}
+				args.add(o);
+			}
+			return changed ? new FilterDescriptor(this.filter, args.toArray()) : this;
+		}
+
 	}
 
 	protected IResource resource;
@@ -226,7 +278,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	Class<? extends T> valueClass;
 	protected List<Integer> lastScannedIndices;
 	protected boolean empty = false;
-	Map<String, CodeMapping> mappings = new HashMap<>();
+	Map<String, List<CodeMapping>> mappings = new HashMap<>();
 	private TableCache cache_ = null;
 	IMonitor monitor;
 
@@ -234,7 +286,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		this.resource = resource;
 		this.valueClass = cls;
 		buildAttributeIndex();
-		this.cache_ = new TableCache(resource, attributes_);
+		this.cache_ = new TableCache(resource, this, attributes_);
 		this.monitor = monitor;
 	}
 
@@ -248,6 +300,10 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		this.cache_ = table.cache_;
 		this.monitor = table.monitor;
 		this.mappings.putAll(table.mappings);
+	}
+
+	public FilterDescriptor stop() {
+		return new FilterDescriptor(Filter.Type.NO_RESULTS, null);
 	}
 
 	public TableCache getCache() {
@@ -301,38 +357,33 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			Object mapping = resource.getParameters().get("column." + a.getName() + ".mapping");
 			// TODO allow for a chain of mappings separated by ->
 			if (mapping != null && !mapping.toString().trim().isEmpty()) {
-				File mapfile = new File(
-						((Resource) resource).getPath() + File.separator + "code_" + mapping + ".properties");
-				if (mapfile.exists()) {
-					CodeMapping m = new CodeMapping(mapfile);
-					mappings.put(a.getName(), m);
-					if (m.getType() != null) {
-						((AttributeReference) a).setType(m.getType());
-					}
 
+				String[] mapchain = mapping.toString().trim().split(Pattern.quote("->"));
+				List<CodeMapping> chain = new ArrayList<>();
+				for (String mapid : mapchain) {
+					File mapfile = new File(
+							((Resource) resource).getPath() + File.separator + "code_" + mapid + ".properties");
+					if (mapfile.exists()) {
+						CodeMapping m = new CodeMapping(mapfile);
+						chain.add(m);
+						if (m.getType() != null) {
+							((AttributeReference) a).setType(m.getType());
+						}
+					}
 				}
+				mappings.put(a.getName(), chain);
 			}
 		}
+
 	}
 
 	@Override
 	public int[] getDimensions() {
 		return new int[] { Integer.parseInt(resource.getParameters().get("rows.data").toString()),
-				Integer.parseInt(resource.getParameters().get("rows.data").toString()) };
+				Integer.parseInt(resource.getParameters().get("columns.data").toString()) };
 	}
 
-	@Override
-	public T get(Object... locators) {
-
-		return null;
-	}
-
-	@Override
-	public Map<Object, T> asMap(Object... locators) {
-
-		return null;
-	}
-
+	@SuppressWarnings("unchecked")
 	@Override
 	public List<T> asList(Object... locators) {
 
@@ -404,9 +455,11 @@ public abstract class AbstractTable<T> implements ITable<T> {
 	 * 
 	 * @param aggregator may be null, but an exception will be thrown if aggregation
 	 *                   is needed.
+	 * @param scope      the scope of contextualization, used to localize abstract
+	 *                   concept matches. Can be null.
 	 * @return
 	 */
-	public Object get(Aggregator aggregator) {
+	public Object get(Aggregator aggregator, IContextualizationScope scope) {
 
 		/*
 		 * TODO if all dimensions are 1, just return the only element we have.
@@ -419,12 +472,8 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		IExpression filterExpression = null;
 
 		for (Filter filter : this.filters) {
+
 			switch (filter.getType()) {
-			case ATTRIBUTE_VALUE:
-				for (int i = 0; i < filter.getArguments().size(); i++) {
-					attributeFilters.put(filter.getArguments().get(i).toString(), filter.getArguments().get(++i));
-				}
-				break;
 			case COLUMN_EXPRESSION:
 				// TODO store in filter to avoid recompiling each time
 				filterExpression = Extensions.INSTANCE.compileExpression(filter.getArguments().get(0).toString(),
@@ -432,10 +481,9 @@ public abstract class AbstractTable<T> implements ITable<T> {
 						CompilerOption.IgnoreContext);
 				break;
 			case COLUMN_MATCH:
-				break;
-			case EXCLUDE_COLUMNS:
-				break;
-			case EXCLUDE_ROWS:
+				for (int i = 0; i < filter.getArguments().size(); i++) {
+					attributeFilters.put(filter.getArguments().get(i).toString(), filter.getArguments().get(++i));
+				}
 				break;
 			case INCLUDE_COLUMNS:
 				addIndices(filteredColumns, filter.getArguments());
@@ -448,13 +496,17 @@ public abstract class AbstractTable<T> implements ITable<T> {
 				break;
 			case NO_RESULTS:
 				return null;
+			case ROW_MATCH:
+				break;
+			default:
+				break;
 			}
 		}
 
 		if (!attributeFilters.isEmpty() || filterExpression != null) {
 			for (int i = 0; i < getDimensions()[0]; i++) {
 				List<?> row = getRowItems(i);
-				if (matches(row, attributeFilters, filterExpression)) {
+				if (matches(row, attributeFilters, filterExpression, scope)) {
 					filteredRows.add(i);
 				}
 			}
@@ -488,7 +540,8 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		return null;
 	}
 
-	private boolean matches(List<?> row, Map<String, Object> attributeFilters, IExpression filterExpression) {
+	private boolean matches(List<?> row, Map<String, Object> attributeFilters, IExpression filterExpression,
+			IContextualizationScope scope) {
 
 		if (row.size() != attributes_.size()) {
 			return false;
@@ -498,7 +551,8 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		if (attributeFilters != null) {
 			for (String attribute : attributeFilters.keySet()) {
 				Attribute attr = getColumnDescriptor(attribute);
-				if (attr == null || !checkEquals(row.get(attr.getIndex()), attributeFilters.get(attribute))) {
+				if (attr == null
+						|| !checkEquals(row.get(attr.getIndex()), attributeFilters.get(attribute), attr, scope)) {
 					ok = false;
 					break;
 				}
@@ -511,7 +565,9 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		return ok;
 	}
 
-	public static boolean checkEquals(Object object1, Object object2) {
+	public static boolean checkEquals(Object object1, Object object2, Attribute attribute,
+			IContextualizationScope scope) {
+
 		if (object1 == null || object2 == null) {
 			return object1 == null && object2 == null;
 		}
@@ -596,7 +652,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public <E> E get(Class<E> cls, Object... locators) {
+	public <E> E get(Class<E> cls, IContextualizationScope scope, Object... locators) {
 
 		boolean scanRows = false;
 		List<Attribute> columns = new ArrayList<>();
@@ -611,13 +667,18 @@ public abstract class AbstractTable<T> implements ITable<T> {
 		// list of iterables with multiple columns values output
 		final int ALIST = 2;
 
+		// if set, aggregate everything before return unless it's just one value
+		Aggregator aggregator = null;
+
 		/*
 		 * TODO support indexing by row name/attribute too, with same mechanism as for
 		 * integers
 		 */
 		if (locators != null) {
 			for (Object locator : locators) {
-				if (locator instanceof Attribute) {
+				if (locator instanceof Aggregator) {
+					aggregator = (Aggregator) locator;
+				} else if (locator instanceof Attribute) {
 					columns.add((Attribute) locator);
 					cols.add(((Attribute) locator).getIndex());
 				} else if (locator instanceof String && getColumnDescriptor(locator.toString()) != null) {
@@ -634,11 +695,19 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			}
 		}
 
+		List<Filter> located = new ArrayList<>();
+		if (!cols.isEmpty()) {
+			located.add(newFilter(Filter.Type.INCLUDE_COLUMNS, new Object[] { cols }));
+		}
+		if (row >= 0) {
+			located.add(newFilter(Filter.Type.INCLUDE_ROWS, new Object[] { row }));
+		}
+
 		boolean singleValue = cols.size() > 0 && row >= 0;
 
 		if (singleValue) {
 
-		} else if (columns.size() > 0) {
+		} else/* if (columns.size() > 0) */ {
 
 			int restype = -1;
 
@@ -650,7 +719,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			 * steps in scanDimension, one that returns the dimensionality of the result,
 			 * another that scans it.
 			 */
-			if (List.class.isAssignableFrom(cls) && cols.size() == 1) {
+			if (aggregator != null || (List.class.isAssignableFrom(cls) && cols.size() == 1)) {
 				restype = LIST;
 			} else if (Map.class.isAssignableFrom(cls) && cols.size() == 2) {
 				restype = MAP;
@@ -670,48 +739,90 @@ public abstract class AbstractTable<T> implements ITable<T> {
 				break;
 			}
 
-			for (int rowIndex : getCache().scanDimension(0, this.filters)) {
-				switch (restype) {
-				case LIST:
-					String value = getCache().getObject(rowIndex, cols.get(0));
-					((List<Object>) ret).add(getValue(value, columns.get(0)));
-					break;
-				case MAP:
-					String key = getCache().getObject(rowIndex, cols.get(0));
-					value = getCache().getObject(rowIndex, cols.get(1));
-					((Map<Object, Object>) ret).put(getValue(key, columns.get(0)), getValue(value, columns.get(1)));
-					break;
-				case ALIST:
-					List<Object> rval = new ArrayList<>();
-					for (int c = 0; c < cols.size(); c++) {
-						value = getCache().getObject(rowIndex, cols.get(c));
-						rval.add(getValue(value, columns.get(c)));
+			Collection<Integer> rowIterable = getCache().scanDimension(0, this.filters, scope, located);
+			Collection<Integer> colIterable = getCache().scanDimension(1, this.filters, scope, located);
+
+			if (rowIterable.size() * colIterable.size() == 0) {
+				return aggregator == null ? Utils.emptyValue(cls) : null;
+			}
+
+			for (int rowIndex : rowIterable) {
+				for (int colIndex : colIterable) {
+					switch (restype) {
+					case LIST:
+						String value = getCache().getObject(rowIndex, colIndex);
+						((List<Object>) ret).add(getValue(value, getColumnDescriptor(colIndex)));
+						break;
+					// TODO build a list of arrays, turn into a map if requested
+//					case MAP:
+//						String key = getCache().getObject(rowIndex, cols.get(0));
+//						value = getCache().getObject(rowIndex, cols.get(1));
+//						((Map<Object, Object>) ret).put(getValue(key, columns.get(0)), getValue(value, columns.get(1)));
+//						break;
+//					case ALIST:
+//						List<Object> rval = new ArrayList<>();
+//						for (int c = 0; c < cols.size(); c++) {
+//							value = getCache().getObject(rowIndex, cols.get(c));
+//							rval.add(getValue(value, columns.get(c)));
+//						}
+//						((List<Object>) ret).add(rval);
+//						break;
 					}
-					((List<Object>) ret).add(rval);
-					break;
 				}
 			}
-		} else if (scanRows) {
+		}
 
-		} else {
-			// TODO return the entire table as a value, list, map or table, according to
-			// what is left after filtering
-			throw new KlabUnimplementedException("table: return values with multiple dimensions are still unsupported");
+		if (ret instanceof List && aggregator != null) {
+			return (E) aggregator.aggregate((List<?>) ret);
 		}
 
 		return (E) ret;
 	}
 
-	public Object getValue(Object value, Attribute attribute) {
+	/**
+	 * Return a value from the table after going through all the mappings that are
+	 * defined for the correspondent attribute.
+	 * 
+	 * @param value
+	 * @param attribute
+	 * @return
+	 */
+	public Object mapValue(Object value, Attribute attribute) {
 
 		if (mappings.containsKey(attribute.getName())) {
-			value = value == null ? mappings.get(attribute.getName()).map("null")
-					: mappings.get(attribute.getName()).map(value);
+			for (CodeMapping cmap : mappings.get(attribute.getName())) {
+				value = value == null ? cmap.map("null") : cmap.map(value);
+			}
 		}
 
-		if (value == null) {
+		return value;
+	}
+
+	/**
+	 * Map a table value if necessary, then convert it to the specified type.
+	 * 
+	 * @param value
+	 * @param attribute
+	 * @return
+	 */
+	public Object getValue(Object value, Attribute attribute) {
+		return convertValue(mapValue(value, attribute), attribute);
+	}
+
+	/**
+	 * Convert a value to the type specified by the attribute. The value must have
+	 * been mapped if mappings exist.
+	 * 
+	 * @param value
+	 * @param attribute
+	 * @return
+	 */
+	private Object convertValue(Object value, Attribute attribute) {
+
+		if (value == null || value instanceof Collection || value.getClass().isArray()) {
 			return value;
 		}
+		
 		if (attribute.getType() == Type.CONCEPT) {
 			if (value instanceof IConcept) {
 				return value;
@@ -748,13 +859,27 @@ public abstract class AbstractTable<T> implements ITable<T> {
 			}
 		}
 
-		return null;
+		return value;
 	}
 
 	@Override
 	public ITable<T> collectIndices(List<Integer> indices) {
 		this.lastScannedIndices = indices;
 		return this;
+	}
+
+	@Override
+	public ITable<T> contextualize(IContextualizationScope scope) {
+		AbstractTable<T> ret = copy();
+		ret.filters.clear();
+		for (Filter filter : this.filters) {
+			ret.filters.add(filter.contextualize(scope));
+		}
+		return ret;
+	}
+
+	public Filter newFilter(Filter.Type filter, Object[] objects) {
+		return new FilterDescriptor(filter, objects);
 	}
 
 }

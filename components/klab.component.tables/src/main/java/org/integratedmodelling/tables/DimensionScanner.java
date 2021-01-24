@@ -271,12 +271,12 @@ public class DimensionScanner<T> {
 			Object value = this.spatialContextualizer.get(locator);
 			if (value == null) {
 				// return no-values filter
-				return FilterDescriptor.stop();
+				return ((AbstractTable<?>)table).stop();
 			} else if (this.columnName != null) {
 				for (int i = mappings.size() - 1; i >= 0; i--) {
 					value = mappings.get(i).reverseMap(value);
 				}
-				return new FilterDescriptor(Filter.Type.ATTRIBUTE_VALUE, new Object[] { this.columnName, value });
+				return ((AbstractTable<?>)table).newFilter(Filter.Type.COLUMN_MATCH, new Object[] { this.columnName, value });
 			}
 		} else if (ITime.class.isAssignableFrom(this.extent)) {
 
@@ -298,7 +298,7 @@ public class DimensionScanner<T> {
 				if (index == null) {
 
 					// no way
-					return FilterDescriptor.stop();
+					return ((AbstractTable<?>)table).stop();
 
 				} else {
 
@@ -312,7 +312,7 @@ public class DimensionScanner<T> {
 						indices.add(this.temporalDimensions.get(other));
 					}
 
-					return new FilterDescriptor(
+					return ((AbstractTable<?>)table).newFilter(
 							this.dimension == Dimension.COLUMN ? Filter.Type.INCLUDE_COLUMNS : Filter.Type.INCLUDE_ROWS,
 							new Object[] { indices });
 				}
@@ -346,7 +346,7 @@ public class DimensionScanner<T> {
 				}
 
 				if (origin.isEmpty()) {
-					this.filter = FilterDescriptor.stop();
+					this.filter = ((AbstractTable<?>)table).stop();
 				} else {
 					for (Object o : origin) {
 						for (int i = mappings.size() - 1; i >= 0; i--) {
@@ -357,9 +357,9 @@ public class DimensionScanner<T> {
 						}
 					}
 					if (this.dimension == Dimension.COLUMN) {
-						this.filter = new FilterDescriptor(Type.COLUMN_MATCH, new Object[] { this.columnName, values });
+						this.filter = ((AbstractTable<?>)table).newFilter(Type.COLUMN_MATCH, new Object[] { this.columnName, values });
 					} else if (this.dimension == Dimension.ROW) {
-						this.filter = new FilterDescriptor(Type.ROW_MATCH, new Object[] { this.rowName, values });
+						this.filter = ((AbstractTable<?>)table).newFilter(Type.ROW_MATCH, new Object[] { this.rowName, values });
 					}
 				}
 			}
