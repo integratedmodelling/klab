@@ -4,7 +4,6 @@ import java.awt.image.DataBuffer;
 import java.util.function.Function;
 
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.common.Offset;
@@ -117,19 +116,19 @@ public class ReadonlyStateFloatBuffer extends DataBuffer {
     }
 
     public float getElemFloat( int i ) {
-        return (float) getValue(i, state, transformation);
+        return getValue(i, state, transformation);
     }
 
     public float getElemFloat( int bank, int i ) {
-        return (float) getValue(i, state, transformation);
+        return getValue(i, state, transformation);
     }
 
     public double getElemDouble( int i ) {
-        return (double) getValue(i, state, transformation);
+        return getValue(i, state, transformation);
     }
 
     public double getElemDouble( int bank, int i ) {
-        return (double) getValue(i, state, transformation);
+        return getValue(i, state, transformation);
     }
 
     public void setElem( int i, int val ) {
@@ -160,34 +159,21 @@ public class ReadonlyStateFloatBuffer extends DataBuffer {
         throw new RuntimeException("The buffer is readonly.");
     }
 
-    // TODO if this works add methods to avoid autoboxing
-    public Object getValue( int index, IState state, Function<Object, Object> transformation ) {
+    private float getValue( int index, IState state, Function<Object, Object> transformation ) {
         int y = (int) (index / width);
         int x = index % width;
         return getValue(x, y, state, transformation);
     }
 
-    public Object getValue( int x, int y, IState state, Function<Object, Object> transformation ) {
+    private float getValue( int x, int y, IState state, Function<Object, Object> transformation ) {
         long spaceOffset = grid.getOffset(x, y);
         Offset off = new Offset(state.getScale(), new long[]{0, spaceOffset});
         Object o = state.get(off);
-        if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
-            return noDataValue;
-        } else if (o instanceof Number) {
+        if (o instanceof Number) {
             if (transformation != null) {
                 o = transformation.apply(o);
             }
             return ((Number) o).floatValue();
-        } else if (o instanceof Boolean) {
-            if (transformation != null) {
-                o = transformation.apply(o);
-            }
-            return (float) (((Boolean) o) ? 1. : 0.);
-        } else if (o instanceof IConcept) {
-            if (transformation != null) {
-                o = transformation.apply(o);
-            }
-            return (float) state.getDataKey().reverseLookup((IConcept) o);
         }
         return noDataValue;
     }

@@ -91,64 +91,61 @@ public enum Renderer {
 		}
 	}
 
-	/**
-	 * Render a given state to an image within a specified viewport using settings
-	 * from annotations or defaults.
-	 * 
-	 * @param state
-	 * @param locator   must specify a full spatial slice
-	 * @param imageFile
-	 * @param viewport
-	 */
-	public BufferedImage render(IState state, ILocator locator, int[] viewport) {
+    /**
+     * Render a given state to an image within a specified viewport using settings
+     * from annotations or defaults.
+     * 
+     * @param state
+     * @param locator   must specify a full spatial slice
+     * @param imageFile
+     * @param viewport
+     */
+    public BufferedImage render( IState state, ILocator locator, int[] viewport ) {
 
-		if (state.getSpace() == null
-				|| !(state.getSpace() instanceof Space && ((Space) state.getSpace()).getGrid() != null)) {
-			throw new IllegalArgumentException("cannot render a state as a map unless its space is gridded");
-		}
+        if (state.getSpace() == null || !(state.getSpace() instanceof Space && ((Space) state.getSpace()).getGrid() != null)) {
+            throw new IllegalArgumentException("cannot render a state as a map unless its space is gridded");
+        }
 
-		ISpace space = state.getSpace();
-		IGrid grid = ((Space) state.getSpace()).getGrid();
+        ISpace space = state.getSpace();
+        IGrid grid = ((Space) state.getSpace()).getGrid();
 
-		GridCoverage2D coverage = GeotoolsUtils.INSTANCE.wrapStateInFloatCoverage(state, locator, Float.NaN, null);
+        try {
+            GridCoverage2D coverage = GeotoolsUtils.INSTANCE.wrapStateInFloatCoverage(state, locator, Float.NaN, null);
 
-		// https://github.com/geotools/geotools/blob/master/modules/library/render/src/test/java/org/geotools/renderer/lite/GridCoverageRendererTest.java
-		try {
+            // https://github.com/geotools/geotools/blob/master/modules/library/render/src/test/java/org/geotools/renderer/lite/GridCoverageRendererTest.java
 
-			Viewport vport = new Viewport(viewport[0], viewport.length == 1 ? viewport[0] : viewport[1]);
-			IEnvelope envelope = space.getEnvelope();
-			IProjection projection = space.getProjection();
-			int[] imagesize = vport.getSize(grid.getXCells(), grid.getYCells());
-			Rectangle screenSize = new Rectangle(imagesize[0], imagesize[1]);
-			AffineTransform w2s = RendererUtilities.worldToScreenTransform(((Envelope) envelope).getJTSEnvelope(),
-					screenSize);
-			GridCoverageRenderer renderer = new GridCoverageRenderer(
-					((Projection) projection).getCoordinateReferenceSystem(), ((Envelope) envelope).getJTSEnvelope(),
-					screenSize, w2s);
-			Pair<RasterSymbolizer, String> rasterSymbolizer = getRasterSymbolizer(state, locator);
-			Rectangle imageBounds = new Rectangle(imagesize[0], imagesize[1]);
-			BufferedImage image = new BufferedImage(imagesize[0], imagesize[1], BufferedImage.TYPE_INT_ARGB);
-			Graphics2D gr = image.createGraphics();
-			gr.setPaint(new Color(0f, 0f, 0f, 0f));
-			gr.fill(imageBounds);
-			if (rasterSymbolizer.getFirst() != null) {
-				renderer.paint(gr, coverage, rasterSymbolizer.getFirst());
-			} else {
-				String s = rasterSymbolizer.getSecond();
-				Font f = new Font("SansSerif", Font.BOLD, 172);
-				gr.setColor(s.equals(NO_DATA_MESSAGE) ? Color.red : Color.white);
-				gr.setFont(f);
-				FontMetrics fm = gr.getFontMetrics();
-				int x = (imagesize[0] - fm.stringWidth(s)) / 2;
-				int y = (fm.getAscent() + (imagesize[1] - (fm.getAscent() + fm.getDescent())) / 2);
-				gr.drawString(s, x, y);
-			}
-			return image;
+            Viewport vport = new Viewport(viewport[0], viewport.length == 1 ? viewport[0] : viewport[1]);
+            IEnvelope envelope = space.getEnvelope();
+            IProjection projection = space.getProjection();
+            int[] imagesize = vport.getSize(grid.getXCells(), grid.getYCells());
+            Rectangle screenSize = new Rectangle(imagesize[0], imagesize[1]);
+            AffineTransform w2s = RendererUtilities.worldToScreenTransform(((Envelope) envelope).getJTSEnvelope(), screenSize);
+            GridCoverageRenderer renderer = new GridCoverageRenderer(((Projection) projection).getCoordinateReferenceSystem(),
+                    ((Envelope) envelope).getJTSEnvelope(), screenSize, w2s);
+            Pair<RasterSymbolizer, String> rasterSymbolizer = getRasterSymbolizer(state, locator);
+            Rectangle imageBounds = new Rectangle(imagesize[0], imagesize[1]);
+            BufferedImage image = new BufferedImage(imagesize[0], imagesize[1], BufferedImage.TYPE_INT_ARGB);
+            Graphics2D gr = image.createGraphics();
+            gr.setPaint(new Color(0f, 0f, 0f, 0f));
+            gr.fill(imageBounds);
+            if (rasterSymbolizer.getFirst() != null) {
+                renderer.paint(gr, coverage, rasterSymbolizer.getFirst());
+            } else {
+                String s = rasterSymbolizer.getSecond();
+                Font f = new Font("SansSerif", Font.BOLD, 172);
+                gr.setColor(s.equals(NO_DATA_MESSAGE) ? Color.red : Color.white);
+                gr.setFont(f);
+                FontMetrics fm = gr.getFontMetrics();
+                int x = (imagesize[0] - fm.stringWidth(s)) / 2;
+                int y = (fm.getAscent() + (imagesize[1] - (fm.getAscent() + fm.getDescent())) / 2);
+                gr.drawString(s, x, y);
+            }
+            return image;
 
-		} catch (Exception e) {
-			throw new KlabInternalErrorException(e);
-		}
-	}
+        } catch (Exception e) {
+            throw new KlabInternalErrorException(e);
+        }
+    }
 
 	public Pair<RasterSymbolizer, String> getRasterSymbolizer(IState state, ILocator locator) {
 
