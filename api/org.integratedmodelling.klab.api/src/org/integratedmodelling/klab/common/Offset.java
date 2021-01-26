@@ -338,4 +338,18 @@ public class Offset implements ILocator {
 		return coverage;
 	}
 
+	/**
+	 * Allow setting of the offset at a given spaceDimension.
+	 * 
+	 * <p>This allows for example to use one single offset object 
+	 * to loop through a complete state object at a given time 
+	 * by just changing, for example, the space index.
+	 * 
+	 * @param spaceDimension the dimension at which to set the offset.
+	 * @param offset the new offset for the object.
+	 */
+	public void set(int spaceDimension, long offset) {
+		pos[spaceDimension] = offset;
+	}
+
 }
