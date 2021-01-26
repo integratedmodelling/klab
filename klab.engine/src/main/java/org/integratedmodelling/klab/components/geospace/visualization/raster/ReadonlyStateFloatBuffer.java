@@ -3,7 +3,9 @@ package org.integratedmodelling.klab.components.geospace.visualization.raster;
 import java.awt.image.DataBuffer;
 import java.util.function.Function;
 
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.common.Offset;
@@ -83,11 +85,21 @@ public class ReadonlyStateFloatBuffer extends DataBuffer {
                 for( int c = 0; c < width; c++ ) {
                     ofs.set(spaceDimension, grid.getOffset(c, r));
                     Object o = state.get(ofs);
-                    if (o instanceof Number) {
+                    if (o instanceof Number && !Observations.INSTANCE.isNodata(o)) {
                         if (transformation != null) {
                             o = transformation.apply(o);
                         }
                         dataArray[index] = ((Number) o).floatValue();
+                    } else if (o instanceof Boolean) {
+                        if (transformation != null) {
+                            o = transformation.apply(o);
+                        }
+                        dataArray[index] = (float) (((Boolean) o) ? 1. : 0.);
+                    } else if (o instanceof IConcept) {
+                        if (transformation != null) {
+                            o = transformation.apply(o);
+                        }
+                        dataArray[index] = (float) state.getDataKey().reverseLookup((IConcept) o);
                     } else {
                         dataArray[index] = noDataValue;
                     }
@@ -169,11 +181,21 @@ public class ReadonlyStateFloatBuffer extends DataBuffer {
         long spaceOffset = grid.getOffset(x, y);
         Offset off = new Offset(state.getScale(), new long[]{0, spaceOffset});
         Object o = state.get(off);
-        if (o instanceof Number) {
+        if (o instanceof Number && !Observations.INSTANCE.isNodata(o)) {
             if (transformation != null) {
                 o = transformation.apply(o);
             }
             return ((Number) o).floatValue();
+        } else if (o instanceof Boolean) {
+            if (transformation != null) {
+                o = transformation.apply(o);
+            }
+            return (float) (((Boolean) o) ? 1. : 0.);
+        } else if (o instanceof IConcept) {
+            if (transformation != null) {
+                o = transformation.apply(o);
+            }
+            return (float) state.getDataKey().reverseLookup((IConcept) o);
         }
         return noDataValue;
     }
