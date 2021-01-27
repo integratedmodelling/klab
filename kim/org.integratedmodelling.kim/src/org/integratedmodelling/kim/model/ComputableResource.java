@@ -15,15 +15,16 @@ import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimClassification;
-import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimLookupTable;
+import org.integratedmodelling.kim.api.IKimLookupTable.Argument;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.kim.kim.Classification;
 import org.integratedmodelling.kim.kim.ComputableValue;
+import org.integratedmodelling.kim.kim.LookupTableArgument;
 import org.integratedmodelling.kim.kim.Table;
 import org.integratedmodelling.kim.kim.Value;
 import org.integratedmodelling.kim.kim.ValueAssignment;
@@ -242,7 +243,7 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 		this.setPostProcessor(true);
 	}
 
-	public ComputableResource(Table lookupTable, List<String> lookupTableArgs, IKimStatement parent) {
+	public ComputableResource(Table lookupTable, List<LookupTableArgument> lookupTableArgs, IKimStatement parent) {
 
 		super(lookupTable, parent);
 		setCode(lookupTable);
@@ -438,8 +439,10 @@ public class ComputableResource extends KimStatement implements IContextualizabl
 					}
 				}
 			} else if (getLookupTable() != null) {
-				for (String arg : lookupTable.getArguments()) {
-					requiredResourceNames.add(new Pair<>(arg, IArtifact.Type.VALUE));
+				for (Argument arg : lookupTable.getArguments()) {
+					if (arg.id != null) {
+						requiredResourceNames.add(new Pair<>(arg.id, IArtifact.Type.VALUE));
+					}
 				}
 			} else if (getUrn() != null) {
 				Validator validator = Kim.INSTANCE.getValidator();

@@ -636,7 +636,8 @@ class KimValidator extends AbstractKimValidator {
 				var checkFound = false
 				for (arg : model.lookupTableArgs) {
 
-					if (arg != "?" && arg != "*") {
+					if (arg.id !== null) {
+					if (arg.id != "?" && arg.id != "*") {
 						var found = false
 						for (dependency : dependencies) {
 							// TODO dependency.name returns too many nulls to check effectively
@@ -649,13 +650,14 @@ class KimValidator extends AbstractKimValidator {
 //						error('Argument ' + arg + ' is unknown within this model',
 //								 KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, BAD_TABLE_FORMAT)
 						}
-					} else if (arg == "?") {
+					} else if (arg.id == "?") {
 						if (checkFound) {
 							error("Only one '?' is allowed in the argument list, to mark the result column",
 								KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, BAD_TABLE_FORMAT)
 							ok = false
 						}
 						checkFound = true
+					}
 					}
 					o++
 				}

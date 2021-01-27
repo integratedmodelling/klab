@@ -40,9 +40,9 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_2(), "rule__ModelBodyStatement__Alternatives_2");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_6_0(), "rule__ModelBodyStatement__Alternatives_6_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_6_1(), "rule__ModelBodyStatement__Alternatives_6_1");
-			builder.put(grammarAccess.getModelBodyStatementAccess().getLookupTableArgsAlternatives_7_1_1_0(), "rule__ModelBodyStatement__LookupTableArgsAlternatives_7_1_1_0");
-			builder.put(grammarAccess.getModelBodyStatementAccess().getLookupTableArgsAlternatives_7_1_2_1_0(), "rule__ModelBodyStatement__LookupTableArgsAlternatives_7_1_2_1_0");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getAlternatives_7_3(), "rule__ModelBodyStatement__Alternatives_7_3");
+			builder.put(grammarAccess.getLookupTableArgumentAccess().getAlternatives(), "rule__LookupTableArgument__Alternatives");
+			builder.put(grammarAccess.getLookupTableArgumentAccess().getIdAlternatives_0_0(), "rule__LookupTableArgument__IdAlternatives_0_0");
 			builder.put(grammarAccess.getClassifierAccess().getAlternatives_1(), "rule__Classifier__Alternatives_1");
 			builder.put(grammarAccess.getClassifierAccess().getAlternatives_1_1_0(), "rule__Classifier__Alternatives_1_1_0");
 			builder.put(grammarAccess.getClassifierRHSAccess().getAlternatives(), "rule__ClassifierRHS__Alternatives");
@@ -639,6 +639,8 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getModelBodyStatementAccess().getLookupTableIdAssignment_7_3_1(), "rule__ModelBodyStatement__LookupTableIdAssignment_7_3_1");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getActionsAssignment_8(), "rule__ModelBodyStatement__ActionsAssignment_8");
 			builder.put(grammarAccess.getModelBodyStatementAccess().getMetadataAssignment_9_1(), "rule__ModelBodyStatement__MetadataAssignment_9_1");
+			builder.put(grammarAccess.getLookupTableArgumentAccess().getIdAssignment_0(), "rule__LookupTableArgument__IdAssignment_0");
+			builder.put(grammarAccess.getLookupTableArgumentAccess().getConceptAssignment_1(), "rule__LookupTableArgument__ConceptAssignment_1");
 			builder.put(grammarAccess.getClassificationAccess().getClassifiersAssignment_0(), "rule__Classification__ClassifiersAssignment_0");
 			builder.put(grammarAccess.getClassificationAccess().getClassifiersAssignment_1_1(), "rule__Classification__ClassifiersAssignment_1_1");
 			builder.put(grammarAccess.getClassifierAccess().getDeclarationAssignment_0(), "rule__Classifier__DeclarationAssignment_0");

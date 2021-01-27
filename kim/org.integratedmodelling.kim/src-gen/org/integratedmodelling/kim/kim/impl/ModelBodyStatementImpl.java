@@ -17,7 +17,6 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
-import org.eclipse.emf.ecore.util.EDataTypeEList;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
@@ -26,6 +25,7 @@ import org.integratedmodelling.kim.kim.Classification;
 import org.integratedmodelling.kim.kim.ConceptDeclaration;
 import org.integratedmodelling.kim.kim.Dependency;
 import org.integratedmodelling.kim.kim.KimPackage;
+import org.integratedmodelling.kim.kim.LookupTableArgument;
 import org.integratedmodelling.kim.kim.Map;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
 import org.integratedmodelling.kim.kim.ObservableSemantics;
@@ -256,14 +256,14 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
   protected String classificationProperty = CLASSIFICATION_PROPERTY_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getLookupTableArgs() <em>Lookup Table Args</em>}' attribute list.
+   * The cached value of the '{@link #getLookupTableArgs() <em>Lookup Table Args</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @see #getLookupTableArgs()
    * @generated
    * @ordered
    */
-  protected EList<String> lookupTableArgs;
+  protected EList<LookupTableArgument> lookupTableArgs;
 
   /**
    * The cached value of the '{@link #getLookupTable() <em>Lookup Table</em>}' containment reference.
@@ -702,11 +702,11 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @generated
    */
   @Override
-  public EList<String> getLookupTableArgs()
+  public EList<LookupTableArgument> getLookupTableArgs()
   {
     if (lookupTableArgs == null)
     {
-      lookupTableArgs = new EDataTypeEList<String>(String.class, this, KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS);
+      lookupTableArgs = new EObjectContainmentEList<LookupTableArgument>(LookupTableArgument.class, this, KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS);
     }
     return lookupTableArgs;
   }
@@ -875,6 +875,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return ((InternalEList<?>)getContextualizers()).basicRemove(otherEnd, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__CLASSIFICATION:
         return basicSetClassification(null, msgs);
+      case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS:
+        return ((InternalEList<?>)getLookupTableArgs()).basicRemove(otherEnd, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE:
         return basicSetLookupTable(null, msgs);
       case KimPackage.MODEL_BODY_STATEMENT__ACTIONS:
@@ -991,7 +993,7 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return;
       case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS:
         getLookupTableArgs().clear();
-        getLookupTableArgs().addAll((Collection<? extends String>)newValue);
+        getLookupTableArgs().addAll((Collection<? extends LookupTableArgument>)newValue);
         return;
       case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE:
         setLookupTable((Table)newValue);
@@ -1151,8 +1153,6 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
     result.append(discretization);
     result.append(", classificationProperty: ");
     result.append(classificationProperty);
-    result.append(", lookupTableArgs: ");
-    result.append(lookupTableArgs);
     result.append(", lookupTableId: ");
     result.append(lookupTableId);
     result.append(')');

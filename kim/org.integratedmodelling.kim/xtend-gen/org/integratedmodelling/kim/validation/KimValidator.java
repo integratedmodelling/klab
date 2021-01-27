@@ -54,6 +54,7 @@ import org.integratedmodelling.kim.kim.IdentityRequirement;
 import org.integratedmodelling.kim.kim.Import;
 import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.List;
+import org.integratedmodelling.kim.kim.LookupTableArgument;
 import org.integratedmodelling.kim.kim.Map;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.kim.ModelBodyStatement;
@@ -805,14 +806,14 @@ public class KimValidator extends AbstractKimValidator {
             KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID, KimValidator.BAD_TABLE_FORMAT);
           ok = false;
         } else {
-          EList<String> _lookupTableArgs = model.getLookupTableArgs();
+          EList<LookupTableArgument> _lookupTableArgs = model.getLookupTableArgs();
           KimLookupTable _kimLookupTable = new KimLookupTable(((IKimTable) tobj), _lookupTableArgs, null);
           table = _kimLookupTable;
         }
       } else {
         Table _lookupTable = model.getLookupTable();
         KimTable _kimTable = new KimTable(_lookupTable, null);
-        EList<String> _lookupTableArgs_1 = model.getLookupTableArgs();
+        EList<LookupTableArgument> _lookupTableArgs_1 = model.getLookupTableArgs();
         KimLookupTable _kimLookupTable_1 = new KimLookupTable(_kimTable, _lookupTableArgs_1, null);
         table = _kimLookupTable_1;
       }
@@ -834,27 +835,32 @@ public class KimValidator extends AbstractKimValidator {
         }
         int o = 0;
         boolean checkFound = false;
-        EList<String> _lookupTableArgs_2 = model.getLookupTableArgs();
-        for (final String arg : _lookupTableArgs_2) {
+        EList<LookupTableArgument> _lookupTableArgs_2 = model.getLookupTableArgs();
+        for (final LookupTableArgument arg : _lookupTableArgs_2) {
           {
-            if (((!Objects.equal(arg, "?")) && (!Objects.equal(arg, "*")))) {
-              boolean found = false;
-              for (final KimObservable dependency : dependencies) {
-                if (((dependency.getName() != null) && Objects.equal(dependency.getName(), arg))) {
-                  found = true;
+            String _id = arg.getId();
+            boolean _tripleNotEquals_3 = (_id != null);
+            if (_tripleNotEquals_3) {
+              if (((!Objects.equal(arg.getId(), "?")) && (!Objects.equal(arg.getId(), "*")))) {
+                boolean found = false;
+                for (final KimObservable dependency : dependencies) {
+                  if (((dependency.getName() != null) && Objects.equal(dependency.getName(), arg))) {
+                    found = true;
+                  }
                 }
-              }
-              if ((!found)) {
-              }
-            } else {
-              boolean _equals = Objects.equal(arg, "?");
-              if (_equals) {
-                if (checkFound) {
-                  this.error("Only one \'?\' is allowed in the argument list, to mark the result column", 
-                    KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, KimValidator.BAD_TABLE_FORMAT);
-                  ok = false;
+                if ((!found)) {
                 }
-                checkFound = true;
+              } else {
+                String _id_1 = arg.getId();
+                boolean _equals = Objects.equal(_id_1, "?");
+                if (_equals) {
+                  if (checkFound) {
+                    this.error("Only one \'?\' is allowed in the argument list, to mark the result column", 
+                      KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, KimValidator.BAD_TABLE_FORMAT);
+                    ok = false;
+                  }
+                  checkFound = true;
+                }
               }
             }
             o++;
@@ -986,7 +992,7 @@ public class KimValidator extends AbstractKimValidator {
         if (_tripleNotEquals_7) {
           java.util.List<IContextualizable> _contextualization_2 = descriptor.getContextualization();
           Table _lookupTable_2 = model.getLookupTable();
-          EList<String> _lookupTableArgs_3 = model.getLookupTableArgs();
+          EList<LookupTableArgument> _lookupTableArgs_3 = model.getLookupTableArgs();
           ComputableResource _computableResource_2 = new ComputableResource(_lookupTable_2, _lookupTableArgs_3, descriptor);
           _contextualization_2.add(_computableResource_2);
         }
@@ -994,7 +1000,7 @@ public class KimValidator extends AbstractKimValidator {
         boolean _tripleNotEquals_8 = (_lookupTableId_2 != null);
         if (_tripleNotEquals_8) {
           Object tobj_1 = ns_1.getSymbolTable().get(model.getLookupTableId());
-          EList<String> _lookupTableArgs_4 = model.getLookupTableArgs();
+          EList<LookupTableArgument> _lookupTableArgs_4 = model.getLookupTableArgs();
           KimLookupTable table_1 = new KimLookupTable(((IKimTable) tobj_1), _lookupTableArgs_4, null);
           java.util.List<IContextualizable> _contextualization_3 = descriptor.getContextualization();
           ComputableResource _computableResource_3 = new ComputableResource(table_1, descriptor);

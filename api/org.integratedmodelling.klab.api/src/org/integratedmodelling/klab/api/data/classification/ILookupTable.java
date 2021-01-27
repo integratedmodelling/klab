@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
@@ -18,6 +19,21 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 public interface ILookupTable extends IDataKey {
 
 	/**
+	 * Each argument to be matched can be an id (pointing to a dependency name) or a
+	 * concept that is matched to the concrete incarnation of an abstract predicate
+	 * resolved in the model.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	interface Argument {
+
+		String getId();
+
+		IConcept getConcept();
+	}
+
+	/**
 	 * The table we use for lookup. Classifiers are the most general content type
 	 * for it.
 	 * 
@@ -28,11 +44,13 @@ public interface ILookupTable extends IDataKey {
 	/**
 	 * The variables we look up. Their number corresponds to the columns in the
 	 * table; the special values "?" and "*" denote the search column and any
-	 * ignored column.
+	 * ignored column. If a concept, it must be an abstract predicate known to the
+	 * containing model, and the scope of contextualization must contain its
+	 * resolution to a concrete one, which is then passed to the table for matching.
 	 * 
 	 * @return vars the list of lookup arguments
 	 */
-	List<String> getArguments();
+	List<Argument> getArguments();
 
 	/**
 	 * Lookup an object in the search column by matching the other search fields
@@ -45,7 +63,7 @@ public interface ILookupTable extends IDataKey {
 	Object lookup(IParameters<String> parameters, IContextualizationScope context);
 
 	/**
-	 * The artifact type for the results in the lookup column, which must be 
+	 * The artifact type for the results in the lookup column, which must be
 	 * uniform.
 	 * 
 	 * @return

@@ -408,17 +408,11 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final Group cGroup_7_1 = (Group)cGroup_7.eContents().get(1);
 		private final Keyword cLeftParenthesisKeyword_7_1_0 = (Keyword)cGroup_7_1.eContents().get(0);
 		private final Assignment cLookupTableArgsAssignment_7_1_1 = (Assignment)cGroup_7_1.eContents().get(1);
-		private final Alternatives cLookupTableArgsAlternatives_7_1_1_0 = (Alternatives)cLookupTableArgsAssignment_7_1_1.eContents().get(0);
-		private final RuleCall cLookupTableArgsLOWERCASE_IDTerminalRuleCall_7_1_1_0_0 = (RuleCall)cLookupTableArgsAlternatives_7_1_1_0.eContents().get(0);
-		private final Keyword cLookupTableArgsQuestionMarkKeyword_7_1_1_0_1 = (Keyword)cLookupTableArgsAlternatives_7_1_1_0.eContents().get(1);
-		private final Keyword cLookupTableArgsAsteriskKeyword_7_1_1_0_2 = (Keyword)cLookupTableArgsAlternatives_7_1_1_0.eContents().get(2);
+		private final RuleCall cLookupTableArgsLookupTableArgumentParserRuleCall_7_1_1_0 = (RuleCall)cLookupTableArgsAssignment_7_1_1.eContents().get(0);
 		private final Group cGroup_7_1_2 = (Group)cGroup_7_1.eContents().get(2);
 		private final Keyword cCommaKeyword_7_1_2_0 = (Keyword)cGroup_7_1_2.eContents().get(0);
 		private final Assignment cLookupTableArgsAssignment_7_1_2_1 = (Assignment)cGroup_7_1_2.eContents().get(1);
-		private final Alternatives cLookupTableArgsAlternatives_7_1_2_1_0 = (Alternatives)cLookupTableArgsAssignment_7_1_2_1.eContents().get(0);
-		private final RuleCall cLookupTableArgsLOWERCASE_IDTerminalRuleCall_7_1_2_1_0_0 = (RuleCall)cLookupTableArgsAlternatives_7_1_2_1_0.eContents().get(0);
-		private final Keyword cLookupTableArgsQuestionMarkKeyword_7_1_2_1_0_1 = (Keyword)cLookupTableArgsAlternatives_7_1_2_1_0.eContents().get(1);
-		private final Keyword cLookupTableArgsAsteriskKeyword_7_1_2_1_0_2 = (Keyword)cLookupTableArgsAlternatives_7_1_2_1_0.eContents().get(2);
+		private final RuleCall cLookupTableArgsLookupTableArgumentParserRuleCall_7_1_2_1_0 = (RuleCall)cLookupTableArgsAssignment_7_1_2_1.eContents().get(0);
 		private final Keyword cRightParenthesisKeyword_7_1_3 = (Keyword)cGroup_7_1.eContents().get(3);
 		private final Keyword cIntoKeyword_7_2 = (Keyword)cGroup_7.eContents().get(2);
 		private final Alternatives cAlternatives_7_3 = (Alternatives)cGroup_7.eContents().get(3);
@@ -441,7 +435,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//	dependencies+=Dependency)*)? ('using' /*  | merging?='merging')*/ contextualizers+=ValueExecution (','
 		//	contextualizers+=ValueExecution)*)? (('classified' | discretization?='discretized') ('into'
 		//	classification=Classification | 'according' 'to' classificationProperty=PropertyId))? ('lookup' ('('
-		//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
+		//	lookupTableArgs+=LookupTableArgument (',' lookupTableArgs+=LookupTableArgument)* ')')?
 		//	'into' (lookupTable=Table | lookupTableId=UPPERCASE_ID))?
 		//	actions+=ActionSpecification* ('metadata' metadata=Map)?;
 		@Override public ParserRule getRule() { return rule; }
@@ -452,8 +446,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//dependencies+=Dependency)*)? ('using' /*  | merging?='merging')*/ contextualizers+=ValueExecution (','
 		//contextualizers+=ValueExecution)*)? (('classified' | discretization?='discretized') ('into'
 		//classification=Classification | 'according' 'to' classificationProperty=PropertyId))? ('lookup' ('('
-		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')? 'into'
-		//(lookupTable=Table | lookupTableId=UPPERCASE_ID))? actions+=ActionSpecification* ('metadata' metadata=Map)?
+		//lookupTableArgs+=LookupTableArgument (',' lookupTableArgs+=LookupTableArgument)* ')')? 'into' (lookupTable=Table |
+		//lookupTableId=UPPERCASE_ID))? actions+=ActionSpecification* ('metadata' metadata=Map)?
 		public Group getGroup() { return cGroup; }
 		
 		//instantiator?='each'?
@@ -646,54 +640,36 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//PropertyId
 		public RuleCall getClassificationPropertyPropertyIdParserRuleCall_6_1_1_2_0() { return cClassificationPropertyPropertyIdParserRuleCall_6_1_1_2_0; }
 		
-		//('lookup' ('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
-		//'into' (lookupTable=Table | lookupTableId=UPPERCASE_ID))?
+		//('lookup' ('(' lookupTableArgs+=LookupTableArgument (',' lookupTableArgs+=LookupTableArgument)* ')')? 'into'
+		//(lookupTable=Table | lookupTableId=UPPERCASE_ID))?
 		public Group getGroup_7() { return cGroup_7; }
 		
 		//'lookup'
 		public Keyword getLookupKeyword_7_0() { return cLookupKeyword_7_0; }
 		
-		//('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
+		//('(' lookupTableArgs+=LookupTableArgument (',' lookupTableArgs+=LookupTableArgument)* ')')?
 		public Group getGroup_7_1() { return cGroup_7_1; }
 		
 		//'('
 		public Keyword getLeftParenthesisKeyword_7_1_0() { return cLeftParenthesisKeyword_7_1_0; }
 		
-		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*')
+		//lookupTableArgs+=LookupTableArgument
 		public Assignment getLookupTableArgsAssignment_7_1_1() { return cLookupTableArgsAssignment_7_1_1; }
 		
-		//(LOWERCASE_ID | '?' | '*')
-		public Alternatives getLookupTableArgsAlternatives_7_1_1_0() { return cLookupTableArgsAlternatives_7_1_1_0; }
+		//LookupTableArgument
+		public RuleCall getLookupTableArgsLookupTableArgumentParserRuleCall_7_1_1_0() { return cLookupTableArgsLookupTableArgumentParserRuleCall_7_1_1_0; }
 		
-		//LOWERCASE_ID
-		public RuleCall getLookupTableArgsLOWERCASE_IDTerminalRuleCall_7_1_1_0_0() { return cLookupTableArgsLOWERCASE_IDTerminalRuleCall_7_1_1_0_0; }
-		
-		//'?'
-		public Keyword getLookupTableArgsQuestionMarkKeyword_7_1_1_0_1() { return cLookupTableArgsQuestionMarkKeyword_7_1_1_0_1; }
-		
-		//'*'
-		public Keyword getLookupTableArgsAsteriskKeyword_7_1_1_0_2() { return cLookupTableArgsAsteriskKeyword_7_1_1_0_2; }
-		
-		//(',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))*
+		//(',' lookupTableArgs+=LookupTableArgument)*
 		public Group getGroup_7_1_2() { return cGroup_7_1_2; }
 		
 		//','
 		public Keyword getCommaKeyword_7_1_2_0() { return cCommaKeyword_7_1_2_0; }
 		
-		//lookupTableArgs+=(LOWERCASE_ID | '?' | '*')
+		//lookupTableArgs+=LookupTableArgument
 		public Assignment getLookupTableArgsAssignment_7_1_2_1() { return cLookupTableArgsAssignment_7_1_2_1; }
 		
-		//(LOWERCASE_ID | '?' | '*')
-		public Alternatives getLookupTableArgsAlternatives_7_1_2_1_0() { return cLookupTableArgsAlternatives_7_1_2_1_0; }
-		
-		//LOWERCASE_ID
-		public RuleCall getLookupTableArgsLOWERCASE_IDTerminalRuleCall_7_1_2_1_0_0() { return cLookupTableArgsLOWERCASE_IDTerminalRuleCall_7_1_2_1_0_0; }
-		
-		//'?'
-		public Keyword getLookupTableArgsQuestionMarkKeyword_7_1_2_1_0_1() { return cLookupTableArgsQuestionMarkKeyword_7_1_2_1_0_1; }
-		
-		//'*'
-		public Keyword getLookupTableArgsAsteriskKeyword_7_1_2_1_0_2() { return cLookupTableArgsAsteriskKeyword_7_1_2_1_0_2; }
+		//LookupTableArgument
+		public RuleCall getLookupTableArgsLookupTableArgumentParserRuleCall_7_1_2_1_0() { return cLookupTableArgsLookupTableArgumentParserRuleCall_7_1_2_1_0; }
 		
 		//')'
 		public Keyword getRightParenthesisKeyword_7_1_3() { return cRightParenthesisKeyword_7_1_3; }
@@ -733,6 +709,45 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//Map
 		public RuleCall getMetadataMapParserRuleCall_9_1_0() { return cMetadataMapParserRuleCall_9_1_0; }
+	}
+	public class LookupTableArgumentElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.LookupTableArgument");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Assignment cIdAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final Alternatives cIdAlternatives_0_0 = (Alternatives)cIdAssignment_0.eContents().get(0);
+		private final RuleCall cIdLOWERCASE_IDTerminalRuleCall_0_0_0 = (RuleCall)cIdAlternatives_0_0.eContents().get(0);
+		private final Keyword cIdQuestionMarkKeyword_0_0_1 = (Keyword)cIdAlternatives_0_0.eContents().get(1);
+		private final Keyword cIdAsteriskKeyword_0_0_2 = (Keyword)cIdAlternatives_0_0.eContents().get(2);
+		private final Assignment cConceptAssignment_1 = (Assignment)cAlternatives.eContents().get(1);
+		private final RuleCall cConceptConceptDeclarationParserRuleCall_1_0 = (RuleCall)cConceptAssignment_1.eContents().get(0);
+		
+		//LookupTableArgument:
+		//	id=(LOWERCASE_ID | '?' | '*') | concept=ConceptDeclaration;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//id=(LOWERCASE_ID | '?' | '*') | concept=ConceptDeclaration
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//id=(LOWERCASE_ID | '?' | '*')
+		public Assignment getIdAssignment_0() { return cIdAssignment_0; }
+		
+		//(LOWERCASE_ID | '?' | '*')
+		public Alternatives getIdAlternatives_0_0() { return cIdAlternatives_0_0; }
+		
+		//LOWERCASE_ID
+		public RuleCall getIdLOWERCASE_IDTerminalRuleCall_0_0_0() { return cIdLOWERCASE_IDTerminalRuleCall_0_0_0; }
+		
+		//'?'
+		public Keyword getIdQuestionMarkKeyword_0_0_1() { return cIdQuestionMarkKeyword_0_0_1; }
+		
+		//'*'
+		public Keyword getIdAsteriskKeyword_0_0_2() { return cIdAsteriskKeyword_0_0_2; }
+		
+		//concept=ConceptDeclaration
+		public Assignment getConceptAssignment_1() { return cConceptAssignment_1; }
+		
+		//ConceptDeclaration
+		public RuleCall getConceptConceptDeclarationParserRuleCall_1_0() { return cConceptConceptDeclarationParserRuleCall_1_0; }
 	}
 	public class ClassificationElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kim.Kim.Classification");
@@ -10825,6 +10840,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	private final DefineStatementElements pDefineStatement;
 	private final DefinitionBodyElements pDefinitionBody;
 	private final ModelBodyStatementElements pModelBodyStatement;
+	private final LookupTableArgumentElements pLookupTableArgument;
 	private final ClassificationElements pClassification;
 	private final ClassifierElements pClassifier;
 	private final ClassifierRHSElements pClassifierRHS;
@@ -10939,6 +10955,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		this.pDefineStatement = new DefineStatementElements();
 		this.pDefinitionBody = new DefinitionBodyElements();
 		this.pModelBodyStatement = new ModelBodyStatementElements();
+		this.pLookupTableArgument = new LookupTableArgumentElements();
 		this.pClassification = new ClassificationElements();
 		this.pClassifier = new ClassifierElements();
 		this.pClassifierRHS = new ClassifierRHSElements();
@@ -11131,7 +11148,7 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	//	dependencies+=Dependency)*)? ('using' /*  | merging?='merging')*/ contextualizers+=ValueExecution (','
 	//	contextualizers+=ValueExecution)*)? (('classified' | discretization?='discretized') ('into'
 	//	classification=Classification | 'according' 'to' classificationProperty=PropertyId))? ('lookup' ('('
-	//	lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?
+	//	lookupTableArgs+=LookupTableArgument (',' lookupTableArgs+=LookupTableArgument)* ')')?
 	//	'into' (lookupTable=Table | lookupTableId=UPPERCASE_ID))?
 	//	actions+=ActionSpecification* ('metadata' metadata=Map)?;
 	public ModelBodyStatementElements getModelBodyStatementAccess() {
@@ -11140,6 +11157,16 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	
 	public ParserRule getModelBodyStatementRule() {
 		return getModelBodyStatementAccess().getRule();
+	}
+	
+	//LookupTableArgument:
+	//	id=(LOWERCASE_ID | '?' | '*') | concept=ConceptDeclaration;
+	public LookupTableArgumentElements getLookupTableArgumentAccess() {
+		return pLookupTableArgument;
+	}
+	
+	public ParserRule getLookupTableArgumentRule() {
+		return getLookupTableArgumentAccess().getRule();
 	}
 	
 	//Classification:

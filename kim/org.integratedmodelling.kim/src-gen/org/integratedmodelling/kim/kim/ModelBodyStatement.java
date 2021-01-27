@@ -290,16 +290,16 @@ public interface ModelBodyStatement extends EObject
   void setClassificationProperty(String value);
 
   /**
-   * Returns the value of the '<em><b>Lookup Table Args</b></em>' attribute list.
-   * The list contents are of type {@link java.lang.String}.
+   * Returns the value of the '<em><b>Lookup Table Args</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kim.kim.LookupTableArgument}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Lookup Table Args</em>' attribute list.
+   * @return the value of the '<em>Lookup Table Args</em>' containment reference list.
    * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_LookupTableArgs()
-   * @model unique="false"
+   * @model containment="true"
    * @generated
    */
-  EList<String> getLookupTableArgs();
+  EList<LookupTableArgument> getLookupTableArgs();
 
   /**
    * Returns the value of the '<em><b>Lookup Table</b></em>' containment reference.
