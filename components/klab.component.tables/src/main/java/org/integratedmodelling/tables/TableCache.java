@@ -3,7 +3,6 @@ package org.integratedmodelling.tables;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -72,7 +71,7 @@ public class TableCache {
 		properties.clear();
 		loadData(table);
 	}
-
+	
 	public String getObject(int... locators) {
 		return dataCache.get(locators);
 	}
