@@ -2,6 +2,7 @@ package org.integratedmodelling.kim.api;
 
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * A IKimConcept is the declaration of a concept, i.e. a semantic expression
@@ -15,555 +16,556 @@ import java.util.List;
  */
 public interface IKimConcept extends IKimStatement {
 
-	enum Expression {
-		SINGLETON, UNION, INTERSECTION
-	}
+    enum Expression {
+        SINGLETON, UNION, INTERSECTION
+    }
 
-	/**
-	 * Fundamental concept types for rapid classification.
-	 * 
-	 * @author ferdinando.villa
-	 *
-	 */
-	enum Type {
-		/**
-		 * 
-		 */
-		OBSERVABLE,
-		/**
-		 * Predicates are traits, roles and domains.
-		 */
-		PREDICATE,
-		/**
-		 * 
-		 */
-		QUALITY,
-		/**
-		 * 
-		 */
-		PROCESS,
-		/**
-		 * 
-		 */
-		SUBJECT,
-		/**
-		 * 
-		 */
-		EVENT,
-		/**
-		 * 
-		 */
-		RELATIONSHIP,
-		/**
-		 * 
-		 */
-		EXTENSIVE_PROPERTY,
-		/**
-		 * 
-		 */
-		INTENSIVE_PROPERTY,
-		/**
-		 * 
-		 */
-		TRAIT,
-		/**
-		 * 
-		 */
-		IDENTITY,
-		/**
-		 * 
-		 */
-		ATTRIBUTE,
-		/**
-		 * 
-		 */
-		REALM,
-		/**
-		 * 
-		 */
-		SUBJECTIVE,
-		/**
-		 * 
-		 */
-		INTERNAL,
-		/**
-		 * 
-		 */
-		ROLE,
-		/**
-		 * 
-		 */
-		DENIABLE,
-		/**
-		 * 
-		 */
-		CONFIGURATION,
-		/**
-		 * 
-		 */
-		ABSTRACT,
-		/**
-		 * 
-		 */
-		NOTHING,
-		/**
-		 * 
-		 */
-		ORDERING,
-		/**
-		 * 
-		 */
-		CLASS,
-		/**
-		 * 
-		 */
-		QUANTITY,
-		/**
-		 * 
-		 */
-		DOMAIN,
-		/**
-		 * 
-		 */
-		ENERGY,
-		/**
-		 * 
-		 */
-		ENTROPY,
-		/**
-		 * 
-		 */
-		LENGTH,
-		/**
-		 * 
-		 */
-		MASS,
-		/**
-		 * 
-		 */
-		VOLUME,
-		/**
-		 * 
-		 */
-		WEIGHT,
-		/**
-		 * 
-		 */
-		MONEY,
-		/**
-		 * 
-		 */
-		DURATION,
-		/**
-		 * 
-		 */
-		AREA,
-		/**
-		 * 
-		 */
-		ACCELERATION,
-		/**
-		 * 
-		 */
-		PRIORITY,
-		/**
-		 * 
-		 */
-		ELECTRIC_POTENTIAL,
-		/**
-		 * 
-		 */
-		CHARGE,
-		/**
-		 * 
-		 */
-		RESISTANCE,
-		/**
-		 * 
-		 */
-		RESISTIVITY,
-		/**
-		 * 
-		 */
-		PRESSURE,
-		/**
-		 * 
-		 */
-		ANGLE,
-		/**
-		 * 
-		 */
-		VELOCITY,
-		/**
-		 * 
-		 */
-		TEMPERATURE,
-		/**
-		 * 
-		 */
-		VISCOSITY,
-		/**
-		 * 
-		 */
-		AGENT,
-		/**
-		 * 
-		 */
-		FUNCTIONAL,
-		/**
-		 * 
-		 */
-		STRUCTURAL,
-		/**
-		 * 
-		 */
-		BIDIRECTIONAL,
-		/**
-		 * 
-		 */
-		UNIDIRECTIONAL,
-		/**
-		 * 
-		 */
-		DELIBERATIVE,
-		/**
-		 * 
-		 */
-		INTERACTIVE,
-		/**
-		 * 
-		 */
-		REACTIVE,
-		/**
-		 * 
-		 */
-		DIRECT_OBSERVABLE,
-		/**
-		 * 
-		 */
-		COUNTABLE,
-		/**
-		 * 
-		 */
-		UNCERTAINTY,
-		/**
-		 * 
-		 */
-		PROBABILITY,
-		/**
-		 * 
-		 */
-		PROPORTION,
-		/**
-		 * 
-		 */
-		PERCENTAGE,
-		/**
-		 * 
-		 */
-		NUMEROSITY,
-		/**
-		 * 
-		 */
-		DISTANCE,
-		/**
-		 * 
-		 */
-		RATIO,
-		/**
-		 * 
-		 */
-		VALUE,
-		/**
-		 * 
-		 */
-		OCCURRENCE,
-		/**
-		 * 
-		 */
-		PRESENCE,
-		/**
-		 * 
-		 */
-		EXTENT,
-		/**
-		 * 
-		 */
-		MACRO,
-		/**
-		 * 
-		 */
-		AMOUNT,
-		/**
-		 * 
-		 */
-		OBSERVABILITY,
-		/**
-		 * Only for concept peers of non-semantic types: this should never appear in a
-		 * declared concept
-		 */
-		CATEGORY,
-		/**
-		 * 
-		 */
-		MAGNITUDE,
-		/**
-		 * A quality that can be quantified numerically
-		 */
-		QUANTIFIABLE,
-		/**
-		 * Reserved for unions built from declarations
-		 */
-		UNION,
-		/**
-		 * Reserved for intersections built from declarations
-		 */
-		INTERSECTION,
-		/**
-		 * Specifier for values; affects validation of currencies
-		 */
-		MONETARY,
-		/**
-		 * Makes an attribute a rescaling transformation, which does not preserve
-		 * observation semantics
-		 */
-		RESCALING,
-		/**
-		 * A process that defines the change of its inherent quality.
-		 */
-		CHANGE,
-		/**
-		 * A quality that describes the speed of change of its inherent quality.
-		 */
-		RATE,
-		/**
-		 * An event that results from a change of value in the inherent quality.
-		 */
-		CHANGED,
-		/**
-		 * Concept that have the syntax of authority references (with the uppercase
-		 * namespace) get this type even if not recognized by an online authority (in
-		 * which case they won't have the IDENTITY type but will still have this, so
-		 * that the syntactic validation won't fail).
-		 */
-		AUTHORITY_IDENTITY;
+    /**
+     * Fundamental concept types for rapid classification.
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    enum Type {
+        /**
+         * 
+         */
+        OBSERVABLE,
+        /**
+         * Predicates are traits, roles and domains.
+         */
+        PREDICATE,
+        /**
+         * 
+         */
+        QUALITY,
+        /**
+         * 
+         */
+        PROCESS,
+        /**
+         * 
+         */
+        SUBJECT,
+        /**
+         * 
+         */
+        EVENT,
+        /**
+         * 
+         */
+        RELATIONSHIP,
+        /**
+         * 
+         */
+        EXTENSIVE_PROPERTY,
+        /**
+         * 
+         */
+        INTENSIVE_PROPERTY,
+        /**
+         * 
+         */
+        TRAIT,
+        /**
+         * 
+         */
+        IDENTITY,
+        /**
+         * 
+         */
+        ATTRIBUTE,
+        /**
+         * 
+         */
+        REALM,
+        /**
+         * 
+         */
+        SUBJECTIVE,
+        /**
+         * 
+         */
+        INTERNAL,
+        /**
+         * 
+         */
+        ROLE,
+        /**
+         * 
+         */
+        DENIABLE,
+        /**
+         * 
+         */
+        CONFIGURATION,
+        /**
+         * 
+         */
+        ABSTRACT,
+        /**
+         * 
+         */
+        NOTHING,
+        /**
+         * 
+         */
+        ORDERING,
+        /**
+         * 
+         */
+        CLASS,
+        /**
+         * 
+         */
+        QUANTITY,
+        /**
+         * 
+         */
+        DOMAIN,
+        /**
+         * 
+         */
+        ENERGY,
+        /**
+         * 
+         */
+        ENTROPY,
+        /**
+         * 
+         */
+        LENGTH,
+        /**
+         * 
+         */
+        MASS,
+        /**
+         * 
+         */
+        VOLUME,
+        /**
+         * 
+         */
+        WEIGHT,
+        /**
+         * 
+         */
+        MONEY,
+        /**
+         * 
+         */
+        DURATION,
+        /**
+         * 
+         */
+        AREA,
+        /**
+         * 
+         */
+        ACCELERATION,
+        /**
+         * 
+         */
+        PRIORITY,
+        /**
+         * 
+         */
+        ELECTRIC_POTENTIAL,
+        /**
+         * 
+         */
+        CHARGE,
+        /**
+         * 
+         */
+        RESISTANCE,
+        /**
+         * 
+         */
+        RESISTIVITY,
+        /**
+         * 
+         */
+        PRESSURE,
+        /**
+         * 
+         */
+        ANGLE,
+        /**
+         * 
+         */
+        VELOCITY,
+        /**
+         * 
+         */
+        TEMPERATURE,
+        /**
+         * 
+         */
+        VISCOSITY,
+        /**
+         * 
+         */
+        AGENT,
+        /**
+         * 
+         */
+        FUNCTIONAL,
+        /**
+         * 
+         */
+        STRUCTURAL,
+        /**
+         * 
+         */
+        BIDIRECTIONAL,
+        /**
+         * 
+         */
+        UNIDIRECTIONAL,
+        /**
+         * 
+         */
+        DELIBERATIVE,
+        /**
+         * 
+         */
+        INTERACTIVE,
+        /**
+         * 
+         */
+        REACTIVE,
+        /**
+         * 
+         */
+        DIRECT_OBSERVABLE,
+        /**
+         * 
+         */
+        COUNTABLE,
+        /**
+         * 
+         */
+        UNCERTAINTY,
+        /**
+         * 
+         */
+        PROBABILITY,
+        /**
+         * 
+         */
+        PROPORTION,
+        /**
+         * 
+         */
+        PERCENTAGE,
+        /**
+         * 
+         */
+        NUMEROSITY,
+        /**
+         * 
+         */
+        DISTANCE,
+        /**
+         * 
+         */
+        RATIO,
+        /**
+         * 
+         */
+        VALUE,
+        /**
+         * 
+         */
+        OCCURRENCE,
+        /**
+         * 
+         */
+        PRESENCE,
+        /**
+         * 
+         */
+        EXTENT,
+        /**
+         * 
+         */
+        MACRO,
+        /**
+         * 
+         */
+        AMOUNT,
+        /**
+         * 
+         */
+        OBSERVABILITY,
+        /**
+         * Only for concept peers of non-semantic types: this should never appear in a
+         * declared concept
+         */
+        CATEGORY,
+        /**
+         * 
+         */
+        MAGNITUDE,
+        /**
+         * A quality that can be quantified numerically
+         */
+        QUANTIFIABLE,
+        /**
+         * Reserved for unions built from declarations
+         */
+        UNION,
+        /**
+         * Reserved for intersections built from declarations
+         */
+        INTERSECTION,
+        /**
+         * Specifier for values; affects validation of currencies
+         */
+        MONETARY,
+        /**
+         * Makes an attribute a rescaling transformation, which does not preserve
+         * observation semantics
+         */
+        RESCALING,
+        /**
+         * A process that defines the change of its inherent quality.
+         */
+        CHANGE,
+        /**
+         * A quality that describes the speed of change of its inherent quality.
+         */
+        RATE,
+        /**
+         * An event that results from a change of value in the inherent quality.
+         */
+        CHANGED,
+        /**
+         * Concept that have the syntax of authority references (with the uppercase
+         * namespace) get this type even if not recognized by an online authority (in
+         * which case they won't have the IDENTITY type but will still have this, so
+         * that the syntactic validation won't fail).
+         */
+        AUTHORITY_IDENTITY;
 
-		boolean isNumeric() {
-			return IKimConcept.CONTINUOUS_QUALITY_TYPES.contains(this);
-		}
+        boolean isNumeric() {
+            return IKimConcept.CONTINUOUS_QUALITY_TYPES.contains(this);
+        }
 
-	}
+    }
 
-	/**
-	 * Roles of each component of an observable, to ease modifications (e.g. in
-	 * builders) and inspect specific clauses.
-	 */
-	public enum ObservableRole {
-		TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT, TEMPORAL_INHERENT
-	}
+    /**
+     * Roles of each component of an observable, to ease modifications (e.g. in
+     * builders) and inspect specific clauses.
+     */
+    public enum ObservableRole {
+        TRAIT, ROLE, CONTEXT, INHERENT, ADJACENT, CAUSED, CAUSANT, COMPRESENT, GOAL, COOCCURRENT, TEMPORAL_INHERENT
+    }
 
-	/**
-	 * All declarable concept bits set. Each observable AND this must yield a set of
-	 * size 1.
-	 */
-	public static final EnumSet<Type> DECLARABLE_TYPES = EnumSet.of(Type.QUALITY, Type.SUBJECT, Type.AGENT, Type.EVENT,
-			Type.CONFIGURATION, Type.DOMAIN, Type.RELATIONSHIP, Type.EXTENT, Type.PROCESS, Type.ATTRIBUTE, Type.REALM,
-			Type.IDENTITY, Type.ROLE);
+    /**
+     * All declarable concept bits set. Each observable AND this must yield a set of
+     * size 1.
+     */
+    public static final EnumSet<Type> DECLARABLE_TYPES = EnumSet.of(Type.QUALITY, Type.SUBJECT, Type.AGENT, Type.EVENT,
+            Type.CONFIGURATION, Type.DOMAIN, Type.RELATIONSHIP, Type.EXTENT, Type.PROCESS, Type.ATTRIBUTE, Type.REALM,
+            Type.IDENTITY, Type.ROLE);
 
-	/**
-	 * Qualities that are naturally inherent and should not be allowed to have
-	 * explicit inherency but just context.
-	 */
-	public static final EnumSet<Type> INHERENT_QUALITIES = EnumSet.of(Type.PROPORTION, Type.PROBABILITY, Type.DISTANCE,
-			Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.UNCERTAINTY, Type.NUMEROSITY, Type.OBSERVABILITY, Type.RATE);
+    /**
+     * Qualities that are naturally inherent and should not be allowed to have
+     * explicit inherency but just context.
+     */
+    public static final EnumSet<Type> INHERENT_QUALITIES = EnumSet.of(Type.PROPORTION, Type.PROBABILITY, Type.DISTANCE,
+            Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.UNCERTAINTY, Type.NUMEROSITY, Type.OBSERVABILITY, Type.RATE);
 
-	/**
-	 * All quality type bits sets (not QUALITY itself). Each quality AND this must
-	 * yield a set of size 1.
-	 */
-	public static final EnumSet<Type> QUALITY_TYPES = EnumSet.of(Type.CLASS, Type.QUANTITY, Type.ENERGY, Type.ENTROPY,
-			Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION,
-			Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE,
-			Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION,
-			Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT,
-			Type.RATE);
+    public static final Set<Type> OPERATOR_TYPES = EnumSet.of(Type.CHANGE, Type.NUMEROSITY, Type.DISTANCE,
+            /* FIXME MISSING: LEVEL */ Type.MAGNITUDE, Type.OBSERVABILITY, Type.OCCURRENCE, Type.PRESENCE, Type.PROBABILITY,
+            Type.PROPORTION, Type.RATIO, Type.CLASS, Type.UNCERTAINTY, Type.VALUE);
 
-	/**
-	 * All quality type bits sets including QUALITY itself. Each quality AND this
-	 * must yield a set of size 0.
-	 */
-	public static final EnumSet<Type> ALL_QUALITY_TYPES = EnumSet.of(Type.CLASS, Type.QUALITY, Type.QUANTITY,
-			Type.ENERGY, Type.ENTROPY, Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION,
-			Type.AREA, Type.ACCELERATION, Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE,
-			Type.RESISTIVITY, Type.PRESSURE, Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY,
-			Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION, Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE,
-			Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT, Type.RATE);
+    /**
+     * All quality type bits sets (not QUALITY itself). Each quality AND this must
+     * yield a set of size 1.
+     */
+    public static final EnumSet<Type> QUALITY_TYPES = EnumSet.of(Type.CLASS, Type.QUANTITY, Type.ENERGY, Type.ENTROPY,
+            Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION,
+            Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE, Type.ANGLE,
+            Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION, Type.PROBABILITY,
+            Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT, Type.RATE);
 
-	/**
-	 * All qualities that are expressed through a continuous numeric state.
-	 */
-	public static final EnumSet<Type> CONTINUOUS_QUALITY_TYPES = EnumSet.of(Type.QUANTITY, Type.ENERGY, Type.ENTROPY,
-			Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION,
-			Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE,
-			Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION,
-			Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT,
-			Type.MAGNITUDE, Type.RATE);
+    /**
+     * All quality type bits sets including QUALITY itself. Each quality AND this
+     * must yield a set of size 0.
+     */
+    public static final EnumSet<Type> ALL_QUALITY_TYPES = EnumSet.of(Type.CLASS, Type.QUALITY, Type.QUANTITY, Type.ENERGY,
+            Type.ENTROPY, Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA,
+            Type.ACCELERATION, Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY,
+            Type.PRESSURE, Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO,
+            Type.PROPORTION, Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE,
+            Type.AMOUNT, Type.RATE);
 
-	/**
-	 * All direct observables
-	 */
-	public final static EnumSet<Type> DIRECT_OBSERVABLE_TYPES = EnumSet.of(Type.DIRECT_OBSERVABLE, Type.SUBJECT,
-			Type.AGENT, Type.EVENT, Type.RELATIONSHIP, Type.PROCESS, Type.CONFIGURATION, Type.COUNTABLE,
-			/* FIXME ??? */Type.ABSTRACT);
+    /**
+     * All qualities that are expressed through a continuous numeric state.
+     */
+    public static final EnumSet<Type> CONTINUOUS_QUALITY_TYPES = EnumSet.of(Type.QUANTITY, Type.ENERGY, Type.ENTROPY, Type.LENGTH,
+            Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION, Type.PRIORITY,
+            Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE, Type.ANGLE, Type.VELOCITY,
+            Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION, Type.PROBABILITY, Type.NUMEROSITY,
+            Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT, Type.MAGNITUDE, Type.RATE);
 
-	/**
-	 * All base observables
-	 */
-	public final static EnumSet<Type> BASE_OBSERVABLE_TYPES = EnumSet.of(Type.SUBJECT, Type.EVENT, Type.RELATIONSHIP,
-			Type.PROCESS, Type.QUALITY, Type.AGENT);
+    /**
+     * All direct observables
+     */
+    public final static EnumSet<Type> DIRECT_OBSERVABLE_TYPES = EnumSet.of(Type.DIRECT_OBSERVABLE, Type.SUBJECT, Type.AGENT,
+            Type.EVENT, Type.RELATIONSHIP, Type.PROCESS, Type.CONFIGURATION, Type.COUNTABLE, /* FIXME ??? */Type.ABSTRACT);
 
-	/**
-	 * Everything we can write a model for
-	 */
-	public final static EnumSet<Type> BASE_MODELABLE_TYPES = EnumSet.of(Type.SUBJECT, Type.EVENT, Type.RELATIONSHIP,
-			Type.PROCESS, Type.QUALITY, Type.AGENT, Type.TRAIT, Type.CONFIGURATION);
+    /**
+     * All base observables
+     */
+    public final static EnumSet<Type> BASE_OBSERVABLE_TYPES = EnumSet.of(Type.SUBJECT, Type.EVENT, Type.RELATIONSHIP,
+            Type.PROCESS, Type.QUALITY, Type.AGENT);
 
-	/**
-	 * All trait type bits set (not TRAIT itself). Each trait AND this must yield a
-	 * set of size 1.
-	 */
-	public static final EnumSet<Type> TRAIT_TYPES = EnumSet.of(Type.ATTRIBUTE, Type.REALM, Type.IDENTITY);
+    /**
+     * Everything we can write a model for
+     */
+    public final static EnumSet<Type> BASE_MODELABLE_TYPES = EnumSet.of(Type.SUBJECT, Type.EVENT, Type.RELATIONSHIP, Type.PROCESS,
+            Type.QUALITY, Type.AGENT, Type.TRAIT, Type.CONFIGURATION);
 
-	/**
-	 * All trait type bits set (including TRAIT itself). Each trait AND this must
-	 * yield a set of size 1.
-	 */
-	public static final EnumSet<Type> ALL_TRAIT_TYPES = EnumSet.of(Type.ATTRIBUTE, Type.REALM, Type.IDENTITY,
-			Type.TRAIT, Type.OBSERVABILITY);
+    /**
+     * All trait type bits set (not TRAIT itself). Each trait AND this must yield a
+     * set of size 1.
+     */
+    public static final EnumSet<Type> TRAIT_TYPES = EnumSet.of(Type.ATTRIBUTE, Type.REALM, Type.IDENTITY);
 
-	/**
-	 * A leaf declaration contains a name (e.g. 'elevation:Geography'); all others
-	 * do not. When the name is not null, there still may be a negation or a
-	 * semantic operator.
-	 * 
-	 * @return the concept name or null.
-	 */
-	String getName();
+    /**
+     * All trait type bits set (including TRAIT itself). Each trait AND this must
+     * yield a set of size 1.
+     */
+    public static final EnumSet<Type> ALL_TRAIT_TYPES = EnumSet.of(Type.ATTRIBUTE, Type.REALM, Type.IDENTITY, Type.TRAIT,
+            Type.OBSERVABILITY);
 
-	/**
-	 * The type contains all declared attributes for the concept. An empty type
-	 * denotes an inconsistent concept. The k.IM validator ensures that any
-	 * non-empty types are internally consistent.
-	 * 
-	 * @return the set of types
-	 */
-	EnumSet<Type> getType();
+    /**
+     * A leaf declaration contains a name (e.g. 'elevation:Geography'); all others
+     * do not. When the name is not null, there still may be a negation or a
+     * semantic operator.
+     * 
+     * @return the concept name or null.
+     */
+    String getName();
 
-	/**
-	 * The main observable, which must be unique. This is null in a leaf
-	 * declaration, where {@link #getName()} returns a non-null value.
-	 * 
-	 * @return the main observable
-	 */
-	IKimConcept getObservable();
+    /**
+     * The type contains all declared attributes for the concept. An empty type
+     * denotes an inconsistent concept. The k.IM validator ensures that any
+     * non-empty types are internally consistent.
+     * 
+     * @return the set of types
+     */
+    EnumSet<Type> getType();
 
-	IKimConcept getContext();
+    /**
+     * The main observable, which must be unique. This is null in a leaf
+     * declaration, where {@link #getName()} returns a non-null value.
+     * 
+     * @return the main observable
+     */
+    IKimConcept getObservable();
 
-	IKimConcept getInherent();
+    IKimConcept getContext();
 
-	IKimConcept getMotivation();
+    IKimConcept getInherent();
 
-	IKimConcept getCausant();
+    IKimConcept getMotivation();
 
-	IKimConcept getCaused();
+    IKimConcept getCausant();
 
-	IKimConcept getCompresent();
+    IKimConcept getCaused();
 
-	IKimConcept getComparisonConcept();
+    IKimConcept getCompresent();
 
-	String getAuthorityTerm();
+    IKimConcept getComparisonConcept();
 
-	String getAuthority();
+    String getAuthorityTerm();
 
-	UnarySemanticOperator getSemanticModifier();
+    String getAuthority();
 
-	IKimConcept getRelationshipSource();
+    UnarySemanticOperator getSemanticModifier();
 
-	IKimConcept getRelationshipTarget();
+    IKimConcept getRelationshipSource();
 
-	List<IKimConcept> getTraits();
+    IKimConcept getRelationshipTarget();
 
-	List<IKimConcept> getRoles();
+    List<IKimConcept> getTraits();
 
-	boolean isTemplate();
+    List<IKimConcept> getRoles();
 
-	boolean isNegated();
+    boolean isTemplate();
 
-	String getDefinition();
+    boolean isNegated();
 
-	boolean is(Type type);
+    String getDefinition();
 
-	/**
-	 * 
-	 * @param visitor
-	 */
-	void visit(Visitor visitor);
+    boolean is(Type type);
 
-	/**
-	 * If {@link #getExpressionType()} returns anything other than
-	 * {@link Expression#SINGLETON}, the operands are other declarations this is
-	 * part of a union or intersection with.
-	 * 
-	 * @return the operands
-	 */
-	List<IKimConcept> getOperands();
+    /**
+     * 
+     * @param visitor
+     */
+    void visit(Visitor visitor);
 
-	/**
-	 * Type of expression. If anything other than {@link Expression#SINGLETON},
-	 * {@link #getOperands()} will return a non-empty list.
-	 * 
-	 * @return the expression type
-	 */
-	Expression getExpressionType();
+    /**
+     * If {@link #getExpressionType()} returns anything other than
+     * {@link Expression#SINGLETON}, the operands are other declarations this is
+     * part of a union or intersection with.
+     * 
+     * @return the operands
+     */
+    List<IKimConcept> getOperands();
 
-	/**
-	 * Get the fundamental type of this concept - one of the concrete trait or
-	 * observable types, including configuration and extent.
-	 * 
-	 * @return
-	 */
-	Type getFundamentalType();
+    /**
+     * Type of expression. If anything other than {@link Expression#SINGLETON},
+     * {@link #getOperands()} will return a non-empty list.
+     * 
+     * @return the expression type
+     */
+    Expression getExpressionType();
 
-	/**
-	 * Get the 'co-occurrent' (during) event type if any.
-	 * 
-	 * @return
-	 */
-	IKimConcept getCooccurrent();
+    /**
+     * Get the fundamental type of this concept - one of the concrete trait or
+     * observable types, including configuration and extent.
+     * 
+     * @return
+     */
+    Type getFundamentalType();
 
-	/**
-	 * Get the concept that this is stated to be adjacent to if any.
-	 * 
-	 * @return
-	 */
-	IKimConcept getAdjacent();
+    /**
+     * Get the 'co-occurrent' (during) event type if any.
+     * 
+     * @return
+     */
+    IKimConcept getCooccurrent();
 
-	/**
-	 * Return a string suitable for naming a k.IM object after this concept.
-	 * 
-	 * @return
-	 */
-	String getCodeName();
+    /**
+     * Get the concept that this is stated to be adjacent to if any.
+     * 
+     * @return
+     */
+    IKimConcept getAdjacent();
 
-	ObservableRole getDistributedInherent();
+    /**
+     * Return a string suitable for naming a k.IM object after this concept.
+     * 
+     * @return
+     */
+    String getCodeName();
 
-	boolean isTraitObservable();
+    ObservableRole getDistributedInherent();
 
-	/**
-	 * Return any temporal inherency for this occurrent ('during each').
-	 * 
-	 * @return
-	 */
-	IKimConcept getTemporalInherent();
+    boolean isTraitObservable();
+
+    /**
+     * Return any temporal inherency for this occurrent ('during each').
+     * 
+     * @return
+     */
+    IKimConcept getTemporalInherent();
 
 }

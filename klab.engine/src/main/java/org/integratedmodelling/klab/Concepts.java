@@ -62,6 +62,7 @@ import org.integratedmodelling.klab.utils.Path;
 import org.springframework.util.StringUtils;
 
 import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
 
 /**
  * The Enum Concepts.
@@ -676,5 +677,27 @@ public enum Concepts implements IConceptService {
 		return OWL.INSTANCE.getIntersection(concepts, concepts.iterator().next().getOntology(),
 				((Concept) concepts.iterator().next()).getTypeSet());
 	}
+	
+
+    /**
+     * Split all the unary operator chain from an observable and return the operators
+     * applied in sequence and the naked concept that the last operator was applied to.
+     * 
+     * @return
+     */
+    public Pair<IConcept, List<IKimConcept.Type>> splitOperators(IConcept concept) {
+
+        IConcept cret = concept;
+        List<Type> types = new ArrayList<>();
+        Set<Type> type = Sets.intersection(((Concept)concept).getTypeSet(), IKimConcept.OPERATOR_TYPES);
+
+        while (type.size() > 0) {
+            types.add(type.iterator().next());
+            cret = Observables.INSTANCE.getDescribedType(cret);
+            type = Sets.intersection(((Concept)cret).getTypeSet(), IKimConcept.OPERATOR_TYPES);
+        }
+        
+        return new Pair<>(cret, types);
+    }
 
 }

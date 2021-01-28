@@ -2097,10 +2097,22 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 		this.concreteIdentities.put(abstractIdentity, concreteIdentities);
 	}
 
-	@Override
-	public Map<IConcept, Collection<IConcept>> getConcreteIdentities() {
-		return this.concreteIdentities;
-	}
+
+    @Override
+    public Collection<IConcept> getConcreteIdentities(IConcept predicate) {
+        for (IConcept p : concreteIdentities.keySet()) {
+            if (p.is(predicate)) {
+                return concreteIdentities.get(p);
+            }
+        }
+        return null;
+    }
+
+	
+//	@Override
+//	public Map<IConcept, Collection<IConcept>> getConcreteIdentities() {
+//		return this.concreteIdentities;
+//	}
 
 	@Override
 	public IConcept localizePredicate(IConcept predicate) {

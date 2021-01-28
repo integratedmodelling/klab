@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.groovy.util.Maps;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Observables;
@@ -323,7 +324,7 @@ public abstract class ObservableKbox extends H2Kbox {
 		 * requires generic matching ('any' dependencies). The initial set of candidates
 		 * is weeded out of all incompatible or unrepresented concepts later.
 		 */
-		for (IConcept candidate : getCandidates(main, mode)) {
+		for (IConcept candidate : getCandidates(main, mode, ((Observable)observable).getResolvedPredicates())) {
 
 			/*
 			 * let an abstract model resolve a concrete observable if the abstract traits are
@@ -341,10 +342,10 @@ public abstract class ObservableKbox extends H2Kbox {
 		return ret;
 	}
 
-	private Set<IConcept> getCandidates(IConcept concept, IResolutionScope.Mode mode) {
+	private Set<IConcept> getCandidates(IConcept concept, IResolutionScope.Mode mode, Map<IConcept, IConcept> resolvedPredicates) {
 
 		Set<IConcept> ret = new HashSet<>();
-		for (IConcept main : getAcceptableParents(concept)) {
+		for (IConcept main : getAcceptableParents(concept, resolvedPredicates)) {
 			Set<String> defs = coreTypeHash.get(main.getDefinition());
 			if (defs != null) {
 				for (String def : defs) {
@@ -370,9 +371,11 @@ public abstract class ObservableKbox extends H2Kbox {
 	 * observable is a predicate.
 	 * 
 	 * @param concept
+	 * @param resolvedPredicates 
 	 * @return
 	 */
-	private List<IConcept> getAcceptableParents(IConcept concept) {
+	private List<IConcept> getAcceptableParents(IConcept concept, Map<IConcept, IConcept> resolvedPredicates) {
+	    
 		List<IConcept> ret = new ArrayList<>();
 		ret.add(concept);
 		if (concept.is(Type.TRAIT) || concept.is(Type.ROLE)) {
@@ -388,6 +391,15 @@ public abstract class ObservableKbox extends H2Kbox {
 				}
 			}
 		}
+		
+		if (resolvedPredicates != null && !resolvedPredicates.isEmpty()) {
+		    List<IConcept> rabs = new ArrayList<>();
+		    for (IConcept r : ret ) {
+		        rabs.add(Concepts.INSTANCE.replaceComponent(r, Maps.inverse(resolvedPredicates)));
+		    }
+		    ret.addAll(rabs);
+		}
+		
 		return ret;
 	}
 
