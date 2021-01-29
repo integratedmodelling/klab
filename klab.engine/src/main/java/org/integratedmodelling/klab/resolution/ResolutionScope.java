@@ -351,14 +351,15 @@ public class ResolutionScope implements IResolutionScope {
      * Get a root scope with the scale of an existing subject used as a context for
      * the next observations.
      * 
-     * @param observer
+     * @param contextSubject
      * @param monitor
      * @param scenarios
      * @return a root scope
      * @throws KlabException
      */
-    public static ResolutionScope create(Subject observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
-        return new ResolutionScope(observer, monitor, scenarios);
+    public static ResolutionScope create(Subject contextSubject, IMonitor monitor, Collection<String> scenarios)
+            throws KlabException {
+        return new ResolutionScope(contextSubject, monitor, scenarios);
     }
 
     private ResolutionScope( IMonitor monitor ) throws KlabException {
@@ -371,9 +372,7 @@ public class ResolutionScope implements IResolutionScope {
         this.context = contextSubject;
         this.scenarios.addAll(scenarios);
         this.roles.putAll(monitor.getIdentity().getParentIdentity(ISession.class).getState().getRoles());
-        this.resolutionNamespace = null;// This causes a mess with predicates and it's wrong - it
-                                        // should only be set if there's an observer.
-                                        // contextSubject.getNamespace();
+        this.resolutionNamespace = contextSubject.getNamespace();
         this.monitor = monitor;
         this.occurrent = contextSubject.getScope().isOccurrent() || this.coverage.isTemporallyDistributed();
     }
@@ -1476,6 +1475,13 @@ public class ResolutionScope implements IResolutionScope {
         return resolvedPredicates;
     }
 
+    /**
+     * Establish the model and namespace of resolution programmatically. Used only when
+     * resolving attributes manually within a resolution.
+     * 
+     * @param model
+     * @return
+     */
     public ResolutionScope withModel(Model model) {
         this.model = model;
         if (model != null) {

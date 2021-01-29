@@ -83,7 +83,7 @@ public class Resolver {
         this.parentDataflow = parentDataflow;
     }
 
-    public static Resolver create( Dataflow parentDataflow ) {
+    public static Resolver create(Dataflow parentDataflow) {
         return new Resolver(parentDataflow);
     }
 
@@ -98,7 +98,7 @@ public class Resolver {
      * @return a dataflow to compute the artifact identified by the urn.
      * @throws KlabException
      */
-    public IDataflow<IArtifact> resolve( String urn, ISession session, String[] scenarios ) throws KlabException {
+    public IDataflow<IArtifact> resolve(String urn, ISession session, String[] scenarios) throws KlabException {
 
         IKimObject object = Resources.INSTANCE.getModelObject(urn);
         if (!(object instanceof Observer)) {
@@ -124,7 +124,7 @@ public class Resolver {
      * @return a dataflow, possibly empty.
      * @throws KlabException
      */
-    public IDataflow<IArtifact> resolve( String urn, ISubject context, String[] scenarios ) throws KlabException {
+    public IDataflow<IArtifact> resolve(String urn, ISubject context, String[] scenarios) throws KlabException {
 
         IMonitor monitor = context.getMonitor();
         IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn, context.getScale());
@@ -155,7 +155,7 @@ public class Resolver {
      * @return the resolved scope
      * @throws KlabException
      */
-    public ResolutionScope resolve( IResolvable resolvable, ResolutionScope parentScope ) throws KlabException {
+    public ResolutionScope resolve(IResolvable resolvable, ResolutionScope parentScope) throws KlabException {
 
         ResolutionScope ret = null;
         if (resolvable instanceof Observable) {
@@ -201,7 +201,7 @@ public class Resolver {
                  * visit the scope (building a list of ResolvedObservable for all qualities that
                  * may change) and resolve their change in parent scope
                  */
-                for( ObservedConcept observable : parentScope.getResolved(Type.QUALITY) ) {
+                for(ObservedConcept observable : parentScope.getResolved(Type.QUALITY)) {
 
                     if (observable.getObservable().getValueOperators().size() > 0) {
                         // these are mere transformations and we don't need their change.
@@ -258,7 +258,7 @@ public class Resolver {
      * @param scope
      * @return
      */
-    private Collection<IObservable> resolveAbstractPredicates( IObservable observable, ResolutionScope scope ) {
+    private Collection<IObservable> resolveAbstractPredicates(IObservable observable, ResolutionScope scope) {
 
         List<IObservable> ret = new ArrayList<>();
 
@@ -278,7 +278,7 @@ public class Resolver {
         } else {
 
             Map<IConcept, Set<IConcept>> incarnated = new LinkedHashMap<>();
-            for( IConcept role : expand ) {
+            for(IConcept role : expand) {
 
                 if (role.is(Type.ROLE)) {
                     Collection<IConcept> known = scope.getRoles().get(role);
@@ -290,7 +290,7 @@ public class Resolver {
             }
 
             boolean done = false;
-            for( IConcept predicate : expand ) {
+            for(IConcept predicate : expand) {
                 if (!incarnated.containsKey(predicate)) {
                     /*
                      * resolve in current scope: keep the inherency from the original concept
@@ -343,11 +343,11 @@ public class Resolver {
             }
 
             List<Set<IConcept>> concepts = new ArrayList<>(incarnated.values());
-            for( List<IConcept> incarnation : Sets.cartesianProduct(concepts) ) {
+            for(List<IConcept> incarnation : Sets.cartesianProduct(concepts)) {
 
                 Map<IConcept, IConcept> resolved = new HashMap<>();
                 int i = 0;
-                for( IConcept orole : incarnated.keySet() ) {
+                for(IConcept orole : incarnated.keySet()) {
                     resolved.put(orole, incarnation.get(i++));
                 }
                 IObservable result = Observable.concretize(observable, resolved);
@@ -369,7 +369,7 @@ public class Resolver {
      * @return the scope, with the new subject in it.
      * @throws KlabException
      */
-    public ResolutionScope resolve( Observer observer, IMonitor monitor, Collection<String> scenarios ) throws KlabException {
+    public ResolutionScope resolve(Observer observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
 
         ResolutionScope ret = ResolutionScope.create(observer, monitor, scenarios);
         if (resolve(observer.getObservable(), ret, Mode.RESOLUTION).getCoverage().isRelevant()) {
@@ -391,7 +391,7 @@ public class Resolver {
      * @return the merged scope
      * @throws KlabException
      */
-    public ResolutionScope resolve( Observable observable, ResolutionScope parentScope, Mode mode, IScale scale, IModel model )
+    public ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Mode mode, IScale scale, IModel model)
             throws KlabException {
         // TODO support model
         return resolve(observable, parentScope.getChildScope(observable, mode, (Scale) scale, model), mode);
@@ -408,8 +408,8 @@ public class Resolver {
      * @return the merged scope
      * @throws KlabException
      */
-    public ResolutionScope resolve( Observable observable, ResolutionScope parentScope, Subject source, Subject target,
-            IScale scale, IModel upstreamModel ) throws KlabException {
+    public ResolutionScope resolve(Observable observable, ResolutionScope parentScope, Subject source, Subject target,
+            IScale scale, IModel upstreamModel) throws KlabException {
         return resolve(observable, parentScope.getChildScope(observable, (Scale) scale, source, target, upstreamModel),
                 Mode.RESOLUTION);
     }
@@ -422,7 +422,7 @@ public class Resolver {
      * @return the merged scope
      * @throws KlabException
      */
-    private ResolutionScope resolve( Observer observer, ResolutionScope parentScope ) throws KlabException {
+    private ResolutionScope resolve(Observer observer, ResolutionScope parentScope) throws KlabException {
 
         ResolutionScope ret = resolve(observer.getObservable(), parentScope.getChildScope(observer), Mode.RESOLUTION);
         if (ret.getCoverage().isRelevant()) {
@@ -431,7 +431,7 @@ public class Resolver {
         return ret;
     }
 
-    private ResolutionScope resolve( Observable resolvable, ResolutionScope parentScope, Mode mode ) {
+    private ResolutionScope resolve(Observable resolvable, ResolutionScope parentScope, Mode mode) {
 
         Coverage coverage = null;
         ResolutionScope ret = null;
@@ -445,7 +445,7 @@ public class Resolver {
             return parentScope.empty();
         }
 
-        for( IObservable observable : observables ) {
+        for(IObservable observable : observables) {
 
             ResolutionScope mscope = resolveConcrete((Observable) observable, parentScope, mode);
 
@@ -493,7 +493,7 @@ public class Resolver {
      *         scope with no children, with empty coverage if the observable is
      *         mandatory, or the passed scope's coverage if it's optional.
      */
-    private ResolutionScope resolveConcrete( Observable observable, ResolutionScope parentScope, Mode mode ) {
+    private ResolutionScope resolveConcrete(Observable observable, ResolutionScope parentScope, Mode mode) {
 
         /*
          * Check first if we need to redistribute the observable, in which case we only
@@ -629,7 +629,7 @@ public class Resolver {
                 List<ObservationStrategy> candidates = ObservationStrategy.computeStrategies(observable, ret, ret.getMode());
                 boolean done = false;
                 int order = 0;
-                for( ObservationStrategy strategy : candidates ) {
+                for(ObservationStrategy strategy : candidates) {
 
                     if (strategy.isResolve()) {
                         // resolve again from scratch. No computations or anything.
@@ -656,7 +656,7 @@ public class Resolver {
                          */
                         List<Link> links = new ArrayList<>();
 
-                        for( IRankedModel model : candidateModels ) {
+                        for(IRankedModel model : candidateModels) {
 
                             ResolutionScope mscope = resolve((RankedModel) model, ret);
 
@@ -694,7 +694,7 @@ public class Resolver {
                         }
 
                         if (links.size() > 1) {
-                            for( Link link : links ) {
+                            for(Link link : links) {
                                 link.withPartition(true);
                             }
                         }
@@ -756,7 +756,7 @@ public class Resolver {
      * @return the merged scope, or an empty one.
      * @throws KlabException
      */
-    private ResolutionScope resolve( Model model, ResolutionScope parentScope ) throws KlabException {
+    private ResolutionScope resolve(Model model, ResolutionScope parentScope) throws KlabException {
 
         ResolutionScope ret = parentScope.getChildScope(model);
         Coverage coverage = new Coverage(ret.getCoverage());
@@ -783,7 +783,7 @@ public class Resolver {
 
         // use the reasoner to infer any missing dependency from the semantics
         List<ObservationStrategy> strategies = ObservationStrategy.computeDependencies(parentScope.getObservable(), model, ret);
-        for( ObservationStrategy strategy : strategies ) {
+        for(ObservationStrategy strategy : strategies) {
             // ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though) - still,
             // should be resolving a CandidateObservable
             ResolutionScope mscope = resolve(strategy.getObservables().get(0), ret, strategy.getMode());
@@ -806,7 +806,7 @@ public class Resolver {
      * @param context
      * @return a prioritizer for this model
      */
-    public static IPrioritizer<ModelReference> getPrioritizer( ResolutionScope context ) {
+    public static IPrioritizer<ModelReference> getPrioritizer(ResolutionScope context) {
         return new Prioritizer(context);
     }
 

@@ -2,12 +2,11 @@ package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.Collection;
 import java.util.Map;
-import java.util.function.BiConsumer;
 
-import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IIndividual;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
+import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
 import org.integratedmodelling.klab.api.observations.IEvent;
 import org.integratedmodelling.klab.api.observations.IProcess;
@@ -15,7 +14,6 @@ import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ITask;
-import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.ObserveInContextTask;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.owl.Observable;
@@ -24,6 +22,8 @@ import org.integratedmodelling.klab.utils.CollectionUtils;
 
 public class Subject extends CountableObservation implements ISubject {
 
+    INamespace resolutionNamespace;
+    
 	public Subject(String name, Observable observable, Scale scale, IRuntimeScope context) {
 		super(name, observable, scale, context);
 	}

@@ -113,7 +113,11 @@ public enum Concepts implements IConceptService {
 				return new KimConcept(declaration);
 			}
 		}
-		return (KimConcept) Observables.INSTANCE.parseDeclaration(declaration).getMain();
+		IKimObservable ret = Observables.INSTANCE.parseDeclaration(declaration);
+		if (ret != null) {
+		    return (KimConcept)ret.getMain();
+		}
+		return null;
 	}
 
 	@Override
@@ -693,7 +697,12 @@ public enum Concepts implements IConceptService {
 
         while (type.size() > 0) {
             types.add(type.iterator().next());
-            cret = Observables.INSTANCE.getDescribedType(cret);
+            IConcept ccret = Observables.INSTANCE.getDescribedType(cret);
+            if (ccret == null) {
+                break;
+            } else {
+                cret = ccret;
+            }
             type = Sets.intersection(((Concept)cret).getTypeSet(), IKimConcept.OPERATOR_TYPES);
         }
         

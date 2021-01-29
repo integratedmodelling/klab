@@ -80,6 +80,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private boolean isTrivial = true;
 	private boolean distributedInherency = false;
 	private KimConcept declaration;
+	private boolean axiomsAdded = false;
 
 	// this gets set to true if a finished declaration is set using
 	// withDeclaration() and the
@@ -1815,6 +1816,8 @@ public class ObservableBuilder implements IObservable.Builder {
 
 		ontology.define(axioms);
 		ret = ontology.getConcept(conceptId);
+		
+		this.axiomsAdded = true;
 
 		/*
 		 * restrictions
@@ -1884,15 +1887,15 @@ public class ObservableBuilder implements IObservable.Builder {
 		return id;
 	}
 
-	private static boolean rolesAreFundamental(Collection<IConcept> roles) {
-		for (IConcept c : roles) {
-			if (Resources.INSTANCE.getWorldview() != null
-					&& !c.getNamespace().equals(Resources.INSTANCE.getWorldview().getName())) {
-				return false;
-			}
-		}
-		return true;
-	}
+//	private static boolean rolesAreFundamental(Collection<IConcept> roles) {
+//		for (IConcept c : roles) {
+//			if (Resources.INSTANCE.getWorldview() != null
+//					&& !c.getNamespace().equals(Resources.INSTANCE.getWorldview().getName())) {
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
 
 	private boolean isTrivial() {
 		return isTrivial;
@@ -2025,5 +2028,10 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.dereifiedAttribute = dereifiedAttribute;
 		return this;
 	}
+
+    @Override
+    public boolean axiomsAdded() {
+        return this.axiomsAdded;
+    }
 
 }
