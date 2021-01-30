@@ -12,6 +12,7 @@ import org.eclipse.emf.ecore.InternalEObject;
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 
+import org.integratedmodelling.kactors.kactors.Constructor;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
 import org.integratedmodelling.kactors.kactors.List;
 import org.integratedmodelling.kactors.kactors.Literal;
@@ -44,6 +45,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getQuantity <em>Quantity</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getConstructor <em>Constructor</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getMetadata <em>Metadata</em>}</li>
  * </ul>
  *
@@ -240,6 +242,16 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected Quantity quantity;
+
+  /**
+   * The cached value of the '{@link #getConstructor() <em>Constructor</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getConstructor()
+   * @generated
+   * @ordered
+   */
+  protected Constructor constructor;
 
   /**
    * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
@@ -778,6 +790,56 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
+  public Constructor getConstructor()
+  {
+    return constructor;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetConstructor(Constructor newConstructor, NotificationChain msgs)
+  {
+    Constructor oldConstructor = constructor;
+    constructor = newConstructor;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__CONSTRUCTOR, oldConstructor, newConstructor);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setConstructor(Constructor newConstructor)
+  {
+    if (newConstructor != constructor)
+    {
+      NotificationChain msgs = null;
+      if (constructor != null)
+        msgs = ((InternalEObject)constructor).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__CONSTRUCTOR, null, msgs);
+      if (newConstructor != null)
+        msgs = ((InternalEObject)newConstructor).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__CONSTRUCTOR, null, msgs);
+      msgs = basicSetConstructor(newConstructor, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__CONSTRUCTOR, newConstructor, newConstructor));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Metadata getMetadata()
   {
     return metadata;
@@ -846,6 +908,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return basicSetTable(null, msgs);
       case KactorsPackage.VALUE__QUANTITY:
         return basicSetQuantity(null, msgs);
+      case KactorsPackage.VALUE__CONSTRUCTOR:
+        return basicSetConstructor(null, msgs);
       case KactorsPackage.VALUE__METADATA:
         return basicSetMetadata(null, msgs);
     }
@@ -888,6 +952,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getTable();
       case KactorsPackage.VALUE__QUANTITY:
         return getQuantity();
+      case KactorsPackage.VALUE__CONSTRUCTOR:
+        return getConstructor();
       case KactorsPackage.VALUE__METADATA:
         return getMetadata();
     }
@@ -942,6 +1008,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KactorsPackage.VALUE__QUANTITY:
         setQuantity((Quantity)newValue);
+        return;
+      case KactorsPackage.VALUE__CONSTRUCTOR:
+        setConstructor((Constructor)newValue);
         return;
       case KactorsPackage.VALUE__METADATA:
         setMetadata((Metadata)newValue);
@@ -999,6 +1068,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__QUANTITY:
         setQuantity((Quantity)null);
         return;
+      case KactorsPackage.VALUE__CONSTRUCTOR:
+        setConstructor((Constructor)null);
+        return;
       case KactorsPackage.VALUE__METADATA:
         setMetadata((Metadata)null);
         return;
@@ -1042,6 +1114,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return table != null;
       case KactorsPackage.VALUE__QUANTITY:
         return quantity != null;
+      case KactorsPackage.VALUE__CONSTRUCTOR:
+        return constructor != null;
       case KactorsPackage.VALUE__METADATA:
         return metadata != null;
     }
