@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,7 +23,6 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -48,7 +46,6 @@ import org.integratedmodelling.klab.dataflow.Dataflow;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
-import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Observable;
@@ -63,23 +60,21 @@ import org.integratedmodelling.klab.utils.Pair;
 import com.google.common.collect.Sets;
 
 /**
- * The resolver provides methods to find the observation strategy for any
- * {@link IResolvable} object. All state during resolution is held in the
- * associate {@link IResolutionScope}.
+ * The resolver provides methods to find the observation strategy for any {@link IResolvable}
+ * object. All state during resolution is held in the associate {@link IResolutionScope}.
  * <p>
- * At the moment this does not correspond to any official API, although it is a
- * fundamental component. We should expose methods that return dataflows
- * directly, instead of coverages and scopes that are independently compiled
- * into dataflows. At that point this should become a IResolutionService.
+ * At the moment this does not correspond to any official API, although it is a fundamental
+ * component. We should expose methods that return dataflows directly, instead of coverages and
+ * scopes that are independently compiled into dataflows. At that point this should become a
+ * IResolutionService.
  * 
  * @author ferdinando.villa
- *
  */
 public class Resolver {
 
     private Dataflow parentDataflow;
 
-    private Resolver( Dataflow parentDataflow ) {
+    private Resolver(Dataflow parentDataflow) {
         this.parentDataflow = parentDataflow;
     }
 
@@ -88,8 +83,7 @@ public class Resolver {
     }
 
     /**
-     * Implements the
-     * {@link IObservationService#resolve(String, ISession, String[])} method,
+     * Implements the {@link IObservationService#resolve(String, ISession, String[])} method,
      * exposed by {@link Observations}.
      * 
      * @param urn
@@ -114,8 +108,7 @@ public class Resolver {
     }
 
     /**
-     * Implements the
-     * {@link IObservationService#resolve(String, ISubject, String[])} method,
+     * Implements the {@link IObservationService#resolve(String, ISubject, String[])} method,
      * exposed by {@link Observations}.
      * 
      * @param urn
@@ -145,10 +138,10 @@ public class Resolver {
     }
 
     /**
-     * Root-level resolver: resolve the passed object in the passed parent scope,
-     * using the resolution strategy appropriate for the type. If the first
-     * resolution determines that the context occurs, determine which observables
-     * may change and make further passes to resolve their change as well.
+     * Root-level resolver: resolve the passed object in the passed parent scope, using the
+     * resolution strategy appropriate for the type. If the first resolution determines that the
+     * context occurs, determine which observables may change and make further passes to resolve
+     * their change as well.
      * 
      * @param resolvable
      * @param parentScope
@@ -160,27 +153,29 @@ public class Resolver {
         ResolutionScope ret = null;
         if (resolvable instanceof Observable) {
 
-//			Coverage coverage = null;
-//			parentScope.setOriginalScope(
-//					((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
+            // Coverage coverage = null;
+            // parentScope.setOriginalScope(
+            // ((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE :
+            // Scope.MODEL);
 
-//			for (IObservable observable : resolveAbstractPredicates((IObservable) resolvable, parentScope)) {
-//				ResolutionScope mscope = resolve((Observable) observable, parentScope,
-//						observable.getDescriptionType().getResolutionMode());
-//				if (ret == null) {
-//					ret = mscope;
-//					coverage = mscope.getCoverage();
-//				} else {
-//					coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
-//				}
-//
-//				if (coverage.isEmpty()) {
-//					break;
-//				}
-//			}
-//
-//			ret.setCoverage(coverage);
-//
+            // for (IObservable observable : resolveAbstractPredicates((IObservable) resolvable,
+            // parentScope)) {
+            // ResolutionScope mscope = resolve((Observable) observable, parentScope,
+            // observable.getDescriptionType().getResolutionMode());
+            // if (ret == null) {
+            // ret = mscope;
+            // coverage = mscope.getCoverage();
+            // } else {
+            // coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
+            // }
+            //
+            // if (coverage.isEmpty()) {
+            // break;
+            // }
+            // }
+            //
+            // ret.setCoverage(coverage);
+            //
             parentScope.setOriginalScope(((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
             ret = resolve((Observable) resolvable, parentScope,
                     ((Observable) resolvable).getDescriptionType().getResolutionMode());
@@ -198,10 +193,10 @@ public class Resolver {
             if (ret.isOccurrent()) {
 
                 /*
-                 * visit the scope (building a list of ResolvedObservable for all qualities that
-                 * may change) and resolve their change in parent scope
+                 * visit the scope (building a list of ResolvedObservable for all qualities that may
+                 * change) and resolve their change in parent scope
                  */
-                for(ObservedConcept observable : parentScope.getResolved(Type.QUALITY)) {
+                for (ObservedConcept observable : parentScope.getResolved(Type.QUALITY)) {
 
                     if (observable.getObservable().getValueOperators().size() > 0) {
                         // these are mere transformations and we don't need their change.
@@ -245,14 +240,13 @@ public class Resolver {
     }
 
     /**
-     * If the passed observable has any abstract traits (for now only roles and
-     * identities), resolve them from either the scope or the model space, then
-     * return all the matching concrete observables. If no concrete role can be
-     * found, return an empty list without error; if no concrete identity can be
-     * found, return null to signal that resolution can't continue.
+     * If the passed observable has any abstract traits (for now only roles and identities), resolve
+     * them from either the scope or the model space, then return all the matching concrete
+     * observables. If no concrete role can be found, return an empty list without error; if no
+     * concrete identity can be found, return null to signal that resolution can't continue.
      * <p>
-     * The resolved predicate map is stored in each observable so that it can be set
-     * into the scope when resolving each one.
+     * The resolved predicate map is stored in each observable so that it can be set into the scope
+     * when resolving each one.
      * 
      * @param observable
      * @param scope
@@ -263,8 +257,7 @@ public class Resolver {
         List<IObservable> ret = new ArrayList<>();
 
         /**
-         * Any pre-resolved predicate is substituted right away and doesn't enter the
-         * resolution.
+         * Any pre-resolved predicate is substituted right away and doesn't enter the resolution.
          */
         observable = Observable.concretize(observable, scope.getResolvedPredicates());
 
@@ -278,7 +271,7 @@ public class Resolver {
         } else {
 
             Map<IConcept, Set<IConcept>> incarnated = new LinkedHashMap<>();
-            for(IConcept role : expand) {
+            for (IConcept role : expand) {
 
                 if (role.is(Type.ROLE)) {
                     Collection<IConcept> known = scope.getRoles().get(role);
@@ -290,7 +283,7 @@ public class Resolver {
             }
 
             boolean done = false;
-            for(IConcept predicate : expand) {
+            for (IConcept predicate : expand) {
                 if (!incarnated.containsKey(predicate)) {
                     /*
                      * resolve in current scope: keep the inherency from the original concept
@@ -302,8 +295,9 @@ public class Resolver {
                     Observable pobs = (Observable) builder.buildObservable();
 
                     /*
-                     * Create a new scope to avoid leaving a trace in the main resolution trunk (the main scope is still unresolved) but set it to 
-                     * the current context and model so that scale, context and resolution namespace are there.
+                     * Create a new scope to avoid leaving a trace in the main resolution trunk (the
+                     * main scope is still unresolved) but set it to the current context and model
+                     * so that scale, context and resolution namespace are there.
                      */
                     ResolutionScope rscope = ResolutionScope
                             .create((Subject) scope.getContext(), scope.getMonitor(), scope.getScenarios())
@@ -311,7 +305,7 @@ public class Resolver {
 
                     // this accepts empty resolutions, so check that we have values in the resulting
                     // scope.
-                    ResolutionScope oscope = resolveConcrete(pobs, rscope, Mode.RESOLUTION);
+                    ResolutionScope oscope = resolveConcrete(pobs, rscope, pobs.getResolvedPredicates(), Mode.RESOLUTION);
                     if (oscope.getCoverage().isComplete()) {
 
                         done = true;
@@ -320,7 +314,8 @@ public class Resolver {
                         dataflow.setDescription("Resolution of abstract predicate " + predicate.getDefinition());
                         dataflow.run(oscope.getCoverage().copy(), oscope.getMonitor());
                         /*
-                         * Get the traits from the scope, add to set. Scope is only created if resolution succeeds, so check.
+                         * Get the traits from the scope, add to set. Scope is only created if
+                         * resolution succeeds, so check.
                          */
                         Collection<IConcept> predicates = dataflow.getRuntimeScope() == null
                                 ? null
@@ -329,8 +324,8 @@ public class Resolver {
                             incarnated.put(predicate, new HashSet<>(predicates));
                         } else if (predicate.is(Type.IDENTITY)) {
                             /*
-                             * not being able to incarnate a required identity stops resolution; not being
-                             * able to incarnate a role does not.
+                             * not being able to incarnate a required identity stops resolution; not
+                             * being able to incarnate a role does not.
                              */
                             return null;
                         }
@@ -343,11 +338,11 @@ public class Resolver {
             }
 
             List<Set<IConcept>> concepts = new ArrayList<>(incarnated.values());
-            for(List<IConcept> incarnation : Sets.cartesianProduct(concepts)) {
+            for (List<IConcept> incarnation : Sets.cartesianProduct(concepts)) {
 
                 Map<IConcept, IConcept> resolved = new HashMap<>();
                 int i = 0;
-                for(IConcept orole : incarnated.keySet()) {
+                for (IConcept orole : incarnated.keySet()) {
                     resolved.put(orole, incarnation.get(i++));
                 }
                 IObservable result = Observable.concretize(observable, resolved);
@@ -360,8 +355,8 @@ public class Resolver {
     }
 
     /**
-     * Resolve a root observer to an acknowledged observation tree. This being an
-     * acknowledgement, coverage will always be 100% unless errors happen.
+     * Resolve a root observer to an acknowledged observation tree. This being an acknowledgement,
+     * coverage will always be 100% unless errors happen.
      * 
      * @param observer
      * @param monitor
@@ -379,15 +374,14 @@ public class Resolver {
     }
 
     /**
-     * Resolve an observer in a previously existing context using passed mode and
-     * scale.
+     * Resolve an observer in a previously existing context using passed mode and scale.
      *
      * @param observable
      * @param parentScope
      * @param mode
      * @param scale
-     * @param model       the model that has started the resolution - usually the
-     *                    instantiator for the object being resolved.
+     * @param model the model that has started the resolution - usually the instantiator for the
+     *        object being resolved.
      * @return the merged scope
      * @throws KlabException
      */
@@ -398,8 +392,7 @@ public class Resolver {
     }
 
     /**
-     * Resolve a relationship observable between two known subjects using passed
-     * scale
+     * Resolve a relationship observable between two known subjects using passed scale
      * 
      * @param observable
      * @param parentScope
@@ -445,9 +438,10 @@ public class Resolver {
             return parentScope.empty();
         }
 
-        for(IObservable observable : observables) {
+        for (IObservable observable : observables) {
 
-            ResolutionScope mscope = resolveConcrete((Observable) observable, parentScope, mode);
+            ResolutionScope mscope = resolveConcrete((Observable) observable, parentScope,
+                    ((Observable) observable).getResolvedPredicates(), mode);
 
             if (ret == null) {
                 ret = mscope;
@@ -476,29 +470,26 @@ public class Resolver {
     }
 
     /**
-     * Resolve an observable in a context by accepting as many models as necessary
-     * to resolve its observation or instantiate the target observations. Final
-     * coverage is the OR of the coverage of all models found; lookup of models
-     * stops when coverage is complete.
-     * <p>
-     * TODO: if observable reference name is already known for a different
-     * observable, must change it. When that is done, remove the correspondent
-     * logics in DataflowCompiler.
+     * Resolve an observable in a context by accepting as many models as necessary to resolve its
+     * observation or instantiate the target observations. Final coverage is the OR of the coverage
+     * of all models found; lookup of models stops when coverage is complete.
      * 
      * @param observable
      * @param parentScope
+     * @param resolvedPredicates
      * @param mode
-     * @return the scope with any child scopes for the models and the coverage of
-     *         the resolved observable. If resolution is unsuccessful, return a
-     *         scope with no children, with empty coverage if the observable is
-     *         mandatory, or the passed scope's coverage if it's optional.
+     * @return the scope with any child scopes for the models and the coverage of the resolved
+     *         observable. If resolution is unsuccessful, return a scope with no children, with
+     *         empty coverage if the observable is mandatory, or the passed scope's coverage if it's
+     *         optional.
      */
-    private ResolutionScope resolveConcrete(Observable observable, ResolutionScope parentScope, Mode mode) {
+    private ResolutionScope resolveConcrete(Observable observable, ResolutionScope parentScope,
+            Map<IConcept, IConcept> resolvedPredicates, Mode mode) {
 
         /*
-         * Check first if we need to redistribute the observable, in which case we only
-         * resolve the distribution context and we leave it to the runtime context to
-         * finish the job, as we do with the resolution of the individual instances.
+         * Check first if we need to redistribute the observable, in which case we only resolve the
+         * distribution context and we leave it to the runtime context to finish the job, as we do
+         * with the resolution of the individual instances.
          */
         Observable deferTo = parentScope.getDeferredObservableFor(observable);
 
@@ -507,9 +498,9 @@ public class Resolver {
             Observable deferredObservable = observable;
 
             /*
-             * The observable loses the context if it's explicit and becomes inherent. (X
-             * within Y in context Z becomes X of Y). The deferred observable does not need
-             * the context so it goes back to being just X.
+             * The observable loses the context if it's explicit and becomes inherent. (X within Y
+             * in context Z becomes X of Y). The deferred observable does not need the context so it
+             * goes back to being just X.
              */
             if (Observables.INSTANCE.getDirectContextType(observable.getType()) != null) {
 
@@ -528,10 +519,10 @@ public class Resolver {
             }
 
             /*
-             * Distribute the observable over the observation of its context. We don't know
-             * what the context observation will produce
+             * Distribute the observable over the observation of its context. We don't know what the
+             * context observation will produce.
              */
-            ResolutionScope ret = resolveConcrete(deferTo, parentScope, Mode.INSTANTIATION);
+            ResolutionScope ret = resolveConcrete(deferTo, parentScope, deferTo.getResolvedPredicates(), Mode.INSTANTIATION);
             if (ret.getCoverage().isRelevant()) {
                 ResolutionScope deferred = ret.getChildScope(deferredObservable, mode);
                 deferred.setDeferred(true);
@@ -547,20 +538,19 @@ public class Resolver {
         }
 
         /**
-         * The result scope will have non-empty coverage if we have resolved this
-         * observable upstream.
+         * The result scope will have non-empty coverage if we have resolved this observable
+         * upstream.
          */
         ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
         /*
-         * ensure the reference name represents unique semantics across the resolution
-         * tree
+         * ensure the reference name represents unique semantics across the resolution tree
          */
         observable = parentScope.disambiguateObservable(observable);
 
         /*
-         * pre-resolved artifacts contain a number, concept, boolean, expression or
-         * function. Those with a symbol aren't allowed as dependencies.
+         * pre-resolved artifacts contain a number, concept, boolean, expression or function. Those
+         * with a symbol aren't allowed as dependencies.
          */
         if (((Observable) observable).isResolved()) {
             ret.setInlineValue(observable.getValue());
@@ -569,24 +559,22 @@ public class Resolver {
         }
 
         /*
-         * detach a new coverage for partial matches, to be reset in the scope after
-         * resolution.
+         * detach a new coverage for partial matches, to be reset in the scope after resolution.
          */
         Coverage coverage = new Coverage(ret.getCoverage());
 
         /**
-         * If we're resolving something that has been resolved before (i.e. not
-         * resolving a countable, which only happens before it is created), get the
-         * artifact as is and return it accepted for the dataflow to compile an import
-         * actuator.
+         * If we're resolving something that has been resolved before (i.e. not resolving a
+         * countable, which only happens before it is created), get the artifact as is and return it
+         * accepted for the dataflow to compile an import actuator.
          */
         Pair<String, IArtifact> previousArtifact = null;
         boolean tryPrevious = ret.getContext() != null && (!observable.is(Type.COUNTABLE) || mode == Mode.INSTANTIATION);
 
         if (tryPrevious) {
             /*
-             * look in the catalog. This will have accurate coverage but not necessarily
-             * every observation (those coming from attributes will be missing).
+             * look in the catalog. This will have accurate coverage but not necessarily every
+             * observation (those coming from attributes will be missing).
              */
             previousArtifact = ((DirectObservation) ret.getContext()).getScope().findArtifact(observable);
             if (previousArtifact == null) {
@@ -629,7 +617,7 @@ public class Resolver {
                 List<ObservationStrategy> candidates = ObservationStrategy.computeStrategies(observable, ret, ret.getMode());
                 boolean done = false;
                 int order = 0;
-                for(ObservationStrategy strategy : candidates) {
+                for (ObservationStrategy strategy : candidates) {
 
                     if (strategy.isResolve()) {
                         // resolve again from scratch. No computations or anything.
@@ -642,9 +630,9 @@ public class Resolver {
                         double percentCovered = 0;
 
                         /*
-                         * If we have a complex candidate, just build a convenience model and resolve
-                         * that instead of branching through a forest of possibilities. Otherwise search
-                         * the kbox and network for candidates.
+                         * If we have a complex candidate, just build a convenience model and
+                         * resolve that instead of branching through a forest of possibilities.
+                         * Otherwise search the kbox and network for candidates.
                          */
                         List<IRankedModel> candidateModels = strategy.isTrivial()
                                 ? Models.INSTANCE.resolve(strategy.getObservables().get(0),
@@ -656,9 +644,11 @@ public class Resolver {
                          */
                         List<Link> links = new ArrayList<>();
 
-                        for(IRankedModel model : candidateModels) {
+                        for (IRankedModel model : candidateModels) {
 
-                            ResolutionScope mscope = resolve((RankedModel) model, ret);
+                            model = concretizeModel(model, resolvedPredicates, parentScope.getMonitor());
+
+                            ResolutionScope mscope = resolve(model, ret);
 
                             if (mscope.getCoverage().isRelevant()) {
 
@@ -680,9 +670,10 @@ public class Resolver {
                                                 + NumberFormat.getPercentInstance().format(coverageDelta)
                                                 + (wasZero ? "" : " more") + " of " + observable);
                                 /*
-                                 * Link to dataflow and specify the order of computation and whether this is a
-                                 * partition of the context. The actual scale of computation for the model will
-                                 * be established by the dataflow compiler.
+                                 * Link to dataflow and specify the order of computation and whether
+                                 * this is a partition of the context. The actual scale of
+                                 * computation for the model will be established by the dataflow
+                                 * compiler.
                                  */
                                 links.add(ret.link(mscope).withOrder(order++));
                             }
@@ -694,7 +685,7 @@ public class Resolver {
                         }
 
                         if (links.size() > 1) {
-                            for(Link link : links) {
+                            for (Link link : links) {
                                 link.withPartition(true);
                             }
                         }
@@ -734,9 +725,9 @@ public class Resolver {
             }
 
             /*
-             * empty strategy is OK for optional dependencies and resolved subjects. The
-             * latter are never resolved unless there has been an implicit instantiation
-             * from an instantiator, so a dataflow that creates them is generated.
+             * empty strategy is OK for optional dependencies and resolved subjects. The latter are
+             * never resolved unless there has been an implicit instantiation from an instantiator,
+             * so a dataflow that creates them is generated.
              */
             ret.acceptEmpty();
         }
@@ -744,12 +735,23 @@ public class Resolver {
         return ret;
     }
 
+    /*
+     * check if there is an intersection between the resolved predicates in the scope and the
+     * predicates referenced in the model. If so, produce a concrete instance of the model
+     * specialized for the predicates.
+     */
+    private IRankedModel concretizeModel(IRankedModel model, Map<IConcept, IConcept> resolvedPredicates, IMonitor monitor) {
+        IModel m = Model.concretize(model, resolvedPredicates, monitor);
+        if (!model.getId().equals(m.getId())) {
+            return RankedModel.create(model, m);
+        }
+        return model;
+    }
+
     /**
-     * Resolve a model's dependencies. Final coverage is the AND of the resolved
-     * dependencies. If the model is abstract (and not resolving the abstract traits
-     * itself), we resolve the abstract traits and then resolve all the models
-     * resulting from the combination of them in OR mode.
-     * 
+     * Resolve a model's dependencies. Final coverage is the AND of the resolved dependencies. If
+     * the model is abstract (and not resolving the abstract traits itself), we resolve the abstract
+     * traits and then resolve all the models resulting from the combination of them in OR mode.
      * 
      * @param model
      * @param parentScope
@@ -767,10 +769,10 @@ public class Resolver {
         if (coverage.getCoverage() == 0) {
             if (parentScope.getOriginalScope() == Scope.MODEL) {
                 /*
-                 * we have explicitly asked to resolve a model outside of the coverage, which
-                 * can only happen if a model is observed directly as the kbox won't return it.
-                 * In this case, warn and force the coverage to full so that resolution can
-                 * continue at the modeler's risk.
+                 * we have explicitly asked to resolve a model outside of the coverage, which can
+                 * only happen if a model is observed directly as the kbox won't return it. In this
+                 * case, warn and force the coverage to full so that resolution can continue at the
+                 * modeler's risk.
                  */
                 parentScope.getMonitor()
                         .warn("Model " + model.getName() + " is being observed outside its coverage! Expect problems.");
@@ -783,7 +785,7 @@ public class Resolver {
 
         // use the reasoner to infer any missing dependency from the semantics
         List<ObservationStrategy> strategies = ObservationStrategy.computeDependencies(parentScope.getObservable(), model, ret);
-        for(ObservationStrategy strategy : strategies) {
+        for (ObservationStrategy strategy : strategies) {
             // ACHTUNG TODO OBSERVABLE CAN BE MULTIPLE (probably not here though) - still,
             // should be resolving a CandidateObservable
             ResolutionScope mscope = resolve(strategy.getObservables().get(0), ret, strategy.getMode());

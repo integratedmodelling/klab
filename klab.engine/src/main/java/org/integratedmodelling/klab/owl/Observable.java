@@ -55,7 +55,6 @@ import org.integratedmodelling.klab.utils.Range;
  * Equality ignores differences of name, value, optional and generic status.
  * 
  * @author ferdinando.villa
- *
  */
 public class Observable implements IObservable {
 
@@ -80,19 +79,26 @@ public class Observable implements IObservable {
     private Resolution resolution;
     private Set<IConcept> contextualRoles = new HashSet<>();
 
+    /**
+     * FIXME there are now three names (name, reference name and stated name) which is clearly too
+     * many. The reference name is supposed to be the stated name ('named') but is created from the
+     * observable if not existing and possibly modified during resolution for disambiguation, so
+     * there is currently no way to keep the 'named' unaltered if it needs to be inspected later.
+     * This is guaranteed unmodifiable and null if no 'named' clause was there.
+     */
+    private String statedName;
+
     /*
-     * Target predicate is a concrete predicate that may be added to the observable
-     * that classifies its abstract base predicate, so that any outputs that do not
-     * have the exact target predicate after classification can be marked as
-     * irrelevant to the observation and hidden.
+     * Target predicate is a concrete predicate that may be added to the observable that classifies
+     * its abstract base predicate, so that any outputs that do not have the exact target predicate
+     * after classification can be marked as irrelevant to the observation and hidden.
      */
     private IConcept targetPredicate;
 
     /**
-     * This and the next support situations in which the observable contains a
-     * pre-resolved model, such as when models (including non-semantic ones) are
-     * used as dependencies. It's a convenient implementation trick for now, so it
-     * does not affect the public API.
+     * This and the next support situations in which the observable contains a pre-resolved model,
+     * such as when models (including non-semantic ones) are used as dependencies. It's a convenient
+     * implementation trick for now, so it does not affect the public API.
      */
     transient IModel resolvedModel;
     private String modelReference;
@@ -120,28 +126,28 @@ public class Observable implements IObservable {
     private boolean mustContextualize;
     private boolean global;
 
-    Observable( Concept concept ) {
+    Observable(Concept concept ) {
         this.observable = concept;
     }
 
-    public static Observable promote( IConceptDefinition concept ) {
+    public static Observable promote(IConceptDefinition concept) {
         return promote(concept.getConcept());
     }
 
-    public static Observable promote( IModel model ) {
+    public static Observable promote(IModel model) {
         Observable ret = new Observable((Observable) model.getObservables().get(0));
         ret.resolvedModel = model;
         return ret;
     }
 
     /**
-     * The observable for a view is for now the only instance of a void observable
-     * as the view is a non-semantic artifact.
+     * The observable for a view is for now the only instance of a void observable as the view is a
+     * non-semantic artifact.
      * 
      * @param view
      * @return
      */
-    public static Observable promote( IViewModel view ) {
+    public static Observable promote(IViewModel view) {
         Observable ret = new Observable(Concepts.c(NS.CORE_VOID));
         ret.generic = false;
         ret.declaration = NS.CORE_VOID;
@@ -150,7 +156,7 @@ public class Observable implements IObservable {
         return ret;
     }
 
-    public static Observable promote( IConcept concept ) {
+    public static Observable promote(IConcept concept) {
 
         Observable ret = new Observable((Concept) concept);
 
@@ -168,14 +174,14 @@ public class Observable implements IObservable {
     }
 
     /**
-     * Return an observable that has all the abstract predicates contained in the
-     * passed map substituted by the correspondent concrete ones.
+     * Return an observable that has all the abstract predicates contained in the passed map
+     * substituted by the correspondent concrete ones.
      * 
      * @param observable
      * @param resolved
      * @return
      */
-    public static IObservable concretize( IObservable observable, Map<IConcept, IConcept> resolved ) {
+    public static IObservable concretize(IObservable observable, Map<IConcept, IConcept> resolved) {
 
         if (resolved.isEmpty()) {
             return observable;
@@ -188,7 +194,7 @@ public class Observable implements IObservable {
 
         IObservable ret = replaceComponent((Observable) observable, resolved);
 
-        for( IConcept key : resolved.keySet() ) {
+        for (IConcept key : resolved.keySet()) {
             if (abs.contains(key)) {
                 ((Observable) ret).resolvedPredicates.put(key, resolved.get(key));
             }
@@ -200,7 +206,7 @@ public class Observable implements IObservable {
         return ret;
     }
 
-    public Observable( Observable observable ) {
+    public Observable(Observable observable ) {
         this.observable = observable.observable;
         this.name = observable.name;
         this.referenceName = observable.referenceName;
@@ -223,19 +229,20 @@ public class Observable implements IObservable {
         this.active = observable.active;
         this.temporalInherent = observable.temporalInherent;
         this.resolution = observable.resolution;
+        this.statedName = observable.statedName;
         this.contextualRoles.addAll(observable.contextualRoles);
         this.dereifiedAttribute = observable.dereifiedAttribute;
         this.resolvedPredicates.putAll(observable.resolvedPredicates);
     }
 
-    public static IObservable replaceComponent( Observable original, Map<IConcept, IConcept> replacements ) {
+    public static IObservable replaceComponent(Observable original, Map<IConcept, IConcept> replacements) {
 
         if (replacements.isEmpty()) {
             return original;
         }
 
         String declaration = original.getDefinition();
-        for( IConcept key : replacements.keySet() ) {
+        for (IConcept key : replacements.keySet()) {
             String rep = replacements.get(key).getDefinition();
             if (rep.contains(" ")) {
                 rep = "(" + rep + ")";
@@ -286,48 +293,47 @@ public class Observable implements IObservable {
         return isAbstract;
     }
 
-    public void setName( String name ) {
+    public void setName(String name) {
         this.name = name;
     }
 
     /**
-     * "Fluent" setName for special circumstances. Use with caution and only OUTSIDE
-     * of resolution.
+     * "Fluent" setName for special circumstances. Use with caution and only OUTSIDE of resolution.
      * 
      * @param name
      * @return
      */
-    public Observable named( String name ) {
+    public Observable named(String name) {
         this.name = name;
         return this;
     }
 
-    public void setDeclaration( String declaration ) {
+    public void setDeclaration(String declaration) {
         this.declaration = declaration.trim();
     }
 
-    public void setAbstract( boolean isAbstract ) {
+    public void setAbstract(boolean isAbstract) {
         this.isAbstract = isAbstract;
     }
 
-    public void setRange( Range range ) {
+    public void setRange(Range range) {
         this.range = range;
     }
 
-    public void setUnit( Unit unit ) {
+    public void setUnit(Unit unit) {
         this.unit = unit;
         if (this.unit != null && this.is(Type.NUMEROSITY)) {
             this.unit = (Unit) Unit.unitless().divide(this.unit);
         }
     }
 
-    public Observable withResolvedModel( IModel model ) {
+    public Observable withResolvedModel(IModel model) {
         Observable ret = new Observable(this);
         ret.resolvedModel = model;
         return ret;
     }
 
-    public void setCurrency( Currency currency ) {
+    public void setCurrency(Currency currency) {
         this.currency = currency;
     }
 
@@ -350,7 +356,7 @@ public class Observable implements IObservable {
         return declaration;
     }
 
-    public void setValue( Object value ) {
+    public void setValue(Object value) {
         this.value = value;
     }
 
@@ -384,11 +390,11 @@ public class Observable implements IObservable {
         return optional;
     }
 
-    public void setOptional( boolean optional ) {
+    public void setOptional(boolean optional) {
         this.optional = optional;
     }
 
-    public void setObservationType( IActivity.Description observationType ) {
+    public void setObservationType(IActivity.Description observationType) {
         this.observationType = observationType;
     }
 
@@ -396,7 +402,7 @@ public class Observable implements IObservable {
         return generic;
     }
 
-    public void setGeneric( boolean generic ) {
+    public void setGeneric(boolean generic) {
         this.generic = generic;
     }
 
@@ -405,13 +411,13 @@ public class Observable implements IObservable {
     }
 
     /**
-     * Checks for equality of 'actual' meaning, i.e. equal observables and observers
-     * besides name and mediators.
+     * Checks for equality of 'actual' meaning, i.e. equal observables and observers besides name
+     * and mediators.
      * 
      * @param obj
      * @return
      */
-    public boolean resolvesStrictly( Observable obj ) {
+    public boolean resolvesStrictly(Observable obj) {
 
         if (observer == null) {
             if (obj.observer != null) {
@@ -424,8 +430,8 @@ public class Observable implements IObservable {
         boolean conceptsAreEqual = this.observable.getDefinition().equals(obj.observable.getDefinition());
 
         /*
-         * TODO check: operators are only allowed at the receiving end. We should also
-         * allow the same operators and operands as us in the provider.
+         * TODO check: operators are only allowed at the receiving end. We should also allow the
+         * same operators and operands as us in the provider.
          */
         return conceptsAreEqual && CollectionUtils.isEqualCollection(this.valueOperators, obj.valueOperators);
     }
@@ -447,7 +453,7 @@ public class Observable implements IObservable {
      * Equality checks semantics, mediators and operators but not names.
      */
     @Override
-    public boolean equals( Object obj ) {
+    public boolean equals(Object obj) {
         if (this == obj)
             return true;
         if (obj == null)
@@ -488,7 +494,7 @@ public class Observable implements IObservable {
         return true;
     }
 
-    public void setModelReference( String modelReference ) {
+    public void setModelReference(String modelReference) {
         this.modelReference = modelReference;
     }
 
@@ -530,11 +536,11 @@ public class Observable implements IObservable {
     }
 
     @Override
-    public Builder getBuilder( IMonitor monitor ) {
+    public Builder getBuilder(IMonitor monitor) {
         return new ObservableBuilder(this, monitor);
     }
 
-    public static Observable promote( IConcept operand, Observable observable2 ) {
+    public static Observable promote(IConcept operand, Observable observable2) {
         // TODO promote, then copy units and other observation semantics from the passed
         // observable
         throw new KlabUnimplementedException("copy semantics from other observable");
@@ -551,7 +557,7 @@ public class Observable implements IObservable {
         return observer;
     }
 
-    public void setObserver( ISubject observer ) {
+    public void setObserver(ISubject observer) {
         this.observer = observer;
     }
 
@@ -561,7 +567,7 @@ public class Observable implements IObservable {
      * @param observer
      * @return
      */
-    public IObservable subjectify( IDirectObservation observer ) {
+    public IObservable subjectify(IDirectObservation observer) {
         Observable ret = new Observable(this);
         ret.observer = observer;
         ret.observerId = observer.getId();
@@ -572,14 +578,14 @@ public class Observable implements IObservable {
         return observerId;
     }
 
-    public void setObserverId( String observerId, ISession session ) {
+    public void setObserverId(String observerId, ISession session) {
         this.observerId = observerId;
         this.sessionId = session.getId();
     }
 
     /**
-     * Return this same observable after assigning the passed pre-observed value to
-     * it. Used to create states:
+     * Return this same observable after assigning the passed pre-observed value to it. Used to
+     * create states:
      * 
      * <pre>
      * state = subject.observe(Observable.promote(concept).withValue(3));
@@ -588,7 +594,7 @@ public class Observable implements IObservable {
      * @param value
      * @return
      */
-    public Observable withValue( Object value ) {
+    public Observable withValue(Object value) {
         this.value = value;
         return this;
     }
@@ -599,18 +605,17 @@ public class Observable implements IObservable {
     }
 
     /**
-     * Annotations that may have interactive parameters changed can be retrieved
-     * using this one, which will find the modifications in the context and produce
-     * copies with modified values.
+     * Annotations that may have interactive parameters changed can be retrieved using this one,
+     * which will find the modifications in the context and produce copies with modified values.
      * 
      * @param context
      * @return
      */
-    public List<IAnnotation> getAnnotations( IRuntimeScope context ) {
+    public List<IAnnotation> getAnnotations(IRuntimeScope context) {
         Dataflow dataflow = (Dataflow) context.getDataflow();
         if (dataflow != null) {
             List<IAnnotation> ret = new ArrayList<>();
-            for( IAnnotation annotation : this.annotations ) {
+            for (IAnnotation annotation : this.annotations) {
                 ret.add(dataflow.parameterizeAnnotation(annotation));
             }
             return ret;
@@ -618,7 +623,7 @@ public class Observable implements IObservable {
         return this.annotations;
     }
 
-    public void addAnnotation( Annotation annotation ) {
+    public void addAnnotation(Annotation annotation) {
         this.annotations.add(annotation);
     }
 
@@ -628,7 +633,7 @@ public class Observable implements IObservable {
     }
 
     @Override
-    public boolean is( ISemantic semantics ) {
+    public boolean is(ISemantic semantics) {
         IConcept c = semantics.getType();
         return getType() == null ? false : getType().is(c);
     }
@@ -640,11 +645,11 @@ public class Observable implements IObservable {
     }
 
     @Override
-    public boolean is( Type type ) {
+    public boolean is(Type type) {
         return getType() == null ? false : getType().is(type);
     }
 
-    public void setUrl( String uri ) {
+    public void setUrl(String uri) {
         this.url = uri;
     }
 
@@ -658,18 +663,17 @@ public class Observable implements IObservable {
      * @param chosenUnit
      * @return
      */
-    public Observable withUnit( IUnit unit ) {
+    public Observable withUnit(IUnit unit) {
         this.unit = (Unit) unit;
         return this;
     }
 
     /**
-     * An observable with fluid units is one that needs units where the user has
-     * chosen to not declare them. These are treated specially during resolution,
-     * where units will be attributed based on the dependencies but will also be
-     * matched across sibling dependencies to ensure comparability. Observables not
-     * coming from a declaration may still have no units (with semantics that
-     * require them) and fluidUnits = false.
+     * An observable with fluid units is one that needs units where the user has chosen to not
+     * declare them. These are treated specially during resolution, where units will be attributed
+     * based on the dependencies but will also be matched across sibling dependencies to ensure
+     * comparability. Observables not coming from a declaration may still have no units (with
+     * semantics that require them) and fluidUnits = false.
      * 
      * @return
      */
@@ -677,11 +681,11 @@ public class Observable implements IObservable {
         return fluidUnits;
     }
 
-    public void setFluidUnits( boolean fluidUnits ) {
+    public void setFluidUnits(boolean fluidUnits) {
         this.fluidUnits = fluidUnits;
     }
 
-    public void setOriginatingModelId( String modelId ) {
+    public void setOriginatingModelId(String modelId) {
         this.originatingModelId = modelId;
     }
 
@@ -689,7 +693,7 @@ public class Observable implements IObservable {
         return this.originatingModelId;
     }
 
-    public Observable withCurrency( ICurrency currency ) {
+    public Observable withCurrency(ICurrency currency) {
         this.currency = (Currency) currency;
         return this;
     }
@@ -697,11 +701,11 @@ public class Observable implements IObservable {
     public boolean hasResolvableTraits() {
 
         /*
-         * only resolve rescaling attributes for qualities, where attributes transform
-         * values. For direct observations, resolve everything.
+         * only resolve rescaling attributes for qualities, where attributes transform values. For
+         * direct observations, resolve everything.
          */
         if (observable.is(Type.OBSERVABLE)) {
-            for( IConcept c : Traits.INSTANCE.getDirectTraits(observable) ) {
+            for (IConcept c : Traits.INSTANCE.getDirectTraits(observable)) {
                 if (!c.is(Type.ABSTRACT)) {
                     if (is(Type.QUALITY) && !c.is(Type.RESCALING)) {
                         continue;
@@ -710,7 +714,7 @@ public class Observable implements IObservable {
                 }
             }
             if (!is(Type.QUALITY)) {
-                for( IConcept c : Roles.INSTANCE.getDirectRoles(observable) ) {
+                for (IConcept c : Roles.INSTANCE.getDirectRoles(observable)) {
                     if (!c.is(Type.ABSTRACT)) {
                         return true;
                     }
@@ -721,16 +725,15 @@ public class Observable implements IObservable {
     }
 
     /**
-     * Find the first resolvable trait and return it along with a new observable
-     * without it. Get traits first so that roles can be resolved with the full
-     * trait set resolved.
+     * Find the first resolvable trait and return it along with a new observable without it. Get
+     * traits first so that roles can be resolved with the full trait set resolved.
      * 
      * @return
      */
-    public Pair<IConcept, Observable> popResolvableTrait( IMonitor monitor ) {
+    public Pair<IConcept, Observable> popResolvableTrait(IMonitor monitor) {
         IConcept resolvable = null;
         if (observable.is(Type.OBSERVABLE)) {
-            for( IConcept c : Traits.INSTANCE.getDirectTraits(observable) ) {
+            for (IConcept c : Traits.INSTANCE.getDirectTraits(observable)) {
                 if (!c.is(Type.ABSTRACT)) {
                     if (is(Type.QUALITY) && !c.is(Type.RESCALING)) {
                         continue;
@@ -741,7 +744,7 @@ public class Observable implements IObservable {
             }
             if (!is(Type.QUALITY)) {
                 if (resolvable /* still */ == null) {
-                    for( IConcept c : Roles.INSTANCE.getDirectRoles(observable) ) {
+                    for (IConcept c : Roles.INSTANCE.getDirectRoles(observable)) {
                         if (!c.is(Type.ABSTRACT)) {
                             resolvable = c;
                             break;
@@ -756,7 +759,7 @@ public class Observable implements IObservable {
                 : new Pair<>(resolvable, (Observable) getBuilder(monitor).without(resolvable).buildObservable());
     }
 
-    public void setReferenceName( String name ) {
+    public void setReferenceName(String name) {
         this.referenceName = name;
     }
 
@@ -770,7 +773,7 @@ public class Observable implements IObservable {
         return this.valueOperators;
     }
 
-    public void setTargetPredicate( IConcept targetPredicate ) {
+    public void setTargetPredicate(IConcept targetPredicate) {
         this.targetPredicate = targetPredicate;
     }
 
@@ -778,28 +781,27 @@ public class Observable implements IObservable {
         return this.targetPredicate;
     }
 
-    public void setMustContextualizeAtResolution( boolean b ) {
+    public void setMustContextualizeAtResolution(boolean b) {
         this.mustContextualize = b;
     }
 
     /**
-     * Return true only when the observable is a dependency of an instantiator,
-     * which is resolved within the context of resolution. In these situations the
-     * context for the observable cannot be resolved at model parsing, so it must be
-     * done when used.
+     * Return true only when the observable is a dependency of an instantiator, which is resolved
+     * within the context of resolution. In these situations the context for the observable cannot
+     * be resolved at model parsing, so it must be done when used.
      * 
-     * @return true if observable needs context but the model cannot establish which
-     *         context at declaration time.
+     * @return true if observable needs context but the model cannot establish which context at
+     *         declaration time.
      */
     public boolean mustContextualizeAtResolution() {
         return mustContextualize;
     }
 
-    public void setAnnotations( List<IAnnotation> list ) {
+    public void setAnnotations(List<IAnnotation> list) {
         this.annotations = list;
     }
 
-    public void setDistributedInherency( boolean b ) {
+    public void setDistributedInherency(boolean b) {
         this.distributedInherency = b;
     }
 
@@ -821,7 +823,7 @@ public class Observable implements IObservable {
         return active;
     }
 
-    public void setActive( boolean active ) {
+    public void setActive(boolean active) {
         this.active = active;
     }
 
@@ -829,7 +831,7 @@ public class Observable implements IObservable {
         return temporalInherent;
     }
 
-    public void setTemporalInherent( IConcept temporalInherent ) {
+    public void setTemporalInherent(IConcept temporalInherent) {
         this.temporalInherent = temporalInherent;
     }
 
@@ -838,7 +840,7 @@ public class Observable implements IObservable {
         return this.global;
     }
 
-    public void setGlobal( boolean global ) {
+    public void setGlobal(boolean global) {
         this.global = global;
     }
 
@@ -847,11 +849,11 @@ public class Observable implements IObservable {
         return this.resolution;
     }
 
-    public void setResolution( Resolution resolution ) {
+    public void setResolution(Resolution resolution) {
         this.resolution = resolution;
     }
 
-    public IObservable withRole( IConcept role ) {
+    public IObservable withRole(IConcept role) {
         this.contextualRoles.add(role);
         return this;
     }
@@ -860,19 +862,19 @@ public class Observable implements IObservable {
         return this.dereifiedAttribute;
     }
 
-    public void setDereifiedAttribute( String dereifiedAttribute ) {
+    public void setDereifiedAttribute(String dereifiedAttribute) {
         this.dereifiedAttribute = dereifiedAttribute;
     }
 
     @Override
-    public boolean resolves( IObservable other, IConcept context ) {
+    public boolean resolves(IObservable other, IConcept context) {
         return ((Concept) getType()).resolves(other.getType(), context, ((Observable) other).resolvedPredicates)
                 && CollectionUtils.isEqualCollection(this.valueOperators, ((Observable) other).valueOperators);
     }
 
     @Override
     public Collection<IConcept> getAbstractPredicates() {
-        
+
         Set<IConcept> ret = new HashSet<>();
 
         if (getType() != null && !isGeneric()) {
@@ -886,7 +888,7 @@ public class Observable implements IObservable {
                 target = defined;
             }
 
-            for( IConcept c : Concepts.INSTANCE.collectComponents(target, EnumSet.of(IKimConcept.Type.ABSTRACT)) ) {
+            for (IConcept c : Concepts.INSTANCE.collectComponents(target, EnumSet.of(IKimConcept.Type.ABSTRACT))) {
                 if (c.is(IKimConcept.Type.ROLE)) {
                     ret.add(c);
                 } else if (c.is(IKimConcept.Type.IDENTITY)) {
@@ -900,13 +902,22 @@ public class Observable implements IObservable {
     }
 
     /**
-     * If the observable results from resolving another with abstract predicates,
-     * return the mapping of abstract -> concrete made by the resolver.
+     * If the observable results from resolving another with abstract predicates, return the mapping
+     * of abstract -> concrete made by the resolver.
      * 
      * @return
      */
     public Map<IConcept, IConcept> getResolvedPredicates() {
         return resolvedPredicates;
+    }
+
+    @Override
+    public String getStatedName() {
+        return statedName;
+    }
+
+    public void setStatedName(String statedName) {
+        this.statedName = statedName;
     }
 
 }

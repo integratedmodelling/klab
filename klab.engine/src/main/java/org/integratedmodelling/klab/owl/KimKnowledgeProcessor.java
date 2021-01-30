@@ -315,10 +315,11 @@ public enum KimKnowledgeProcessor {
             Observable observable = new Observable(nsmain);
             observable.setModelReference(concept.getModelReference());
             observable.setName(concept.getFormalName());
+            observable.setStatedName(concept.getFormalName());
             observable.setReferenceName(concept.getFormalName());
             return observable;
         }
-
+        
         Concept main = declareInternal(concept.getMain(), (Ontology) declarationOntology, monitor);
 
         if (main == null) {
@@ -370,6 +371,7 @@ public enum KimKnowledgeProcessor {
         ret.setGeneric(concept.isGeneric());
         ret.setGlobal(concept.isGlobal());
         ret.setReferenceName(concept.getMain().getCodeName().replace("-", "_"));
+        ret.setStatedName(concept.getFormalName());
 
         if (concept.isExclusive()) {
             ret.setResolution(Resolution.Only);

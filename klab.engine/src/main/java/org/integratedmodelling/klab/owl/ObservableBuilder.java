@@ -67,6 +67,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IConcept targetPredicate;
 	private IConcept temporalInherent;
 	private boolean mustContextualize = false;
+	private String statedName;
 
 	private List<IConcept> traits = new ArrayList<>();
 	private List<IConcept> roles = new ArrayList<>();
@@ -140,7 +141,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
 		this.mustContextualize = observable.mustContextualizeAtResolution();
 		this.temporalInherent = observable.getTemporalInherent();
-
+		this.statedName = observable.getStatedName();
 		this.annotations.addAll(observable.getAnnotations());
 
 		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
@@ -183,6 +184,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.mustContextualize = other.mustContextualize;
 		this.annotations.addAll(other.annotations);
 		this.temporalInherent = other.temporalInherent;
+		this.statedName = other.statedName;
 
 		checkTrivial();
 	}
@@ -1969,7 +1971,8 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (name != null) {
 			ret.setName(name);
 		}
-
+		
+		ret.setStatedName(this.statedName);
 		ret.setTargetPredicate(targetPredicate);
 		ret.setOptional(this.optional);
 		ret.setMustContextualizeAtResolution(mustContextualize);

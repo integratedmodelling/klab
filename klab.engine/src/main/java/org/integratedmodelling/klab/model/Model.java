@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.model;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -74,6 +75,7 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.ObservationStrategy;
@@ -82,6 +84,8 @@ import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
+import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Utils;
 
 public class Model extends KimObject implements IModel {
 
@@ -101,9 +105,9 @@ public class Model extends KimObject implements IModel {
     private Set<IConcept> abstractTraits_ = null;
 
     /*
-     * the geometry implicitly declared for the project, gathered from the resources
-     * and the services used in it. Does not include the explicit contextualization
-     * (over space/time) that must be compatible with it at validation.
+     * the geometry implicitly declared for the project, gathered from the resources and the
+     * services used in it. Does not include the explicit contextualization (over space/time) that
+     * must be compatible with it at validation.
      */
     private IGeometry geometry;
     // saved at resource read, to be intersected with own coverage when requested
@@ -113,8 +117,8 @@ public class Model extends KimObject implements IModel {
     private Scale coverage;
 
     /*
-     * if true, the model is a derived model resulting from observable inference,
-     * which disables some further resolutions.
+     * if true, the model is a derived model resulting from observable inference, which disables
+     * some further resolutions.
      */
     private boolean derived = false;
 
@@ -136,7 +140,6 @@ public class Model extends KimObject implements IModel {
     }
 
     /**
-     * 
      * @param model
      * @param namespace
      * @param monitor
@@ -146,11 +149,82 @@ public class Model extends KimObject implements IModel {
         return new Model(model, namespace, monitor);
     }
 
-    public static Model concretize(IModel model, Map<IConcept, IConcept> resolvedTraits, IMonitor monitor) {
-        return null;
+    /**
+     * If the model has abstract predicates that intersects those coming in, return a new instance
+     * of the model concretized to the values in the passed map. Otherwise preserve the
+     * implementation of the incoming model, including any ranks so that they can become part of the
+     * provenance records. FIXME May have to re-wrap the concretized model into a copy of the ranked
+     * wrapper.
+     * 
+     * @param candidate
+     * @param resolvedTraits
+     * @param monitor
+     * @return
+     */
+    public static IModel concretize(IModel candidate, Map<IConcept, IConcept> resolvedTraits, IMonitor monitor) {
+
+        if (resolvedTraits.isEmpty()) {
+            return candidate;
+        }
+
+        // TODO this is pretty messy and dangerous. Improve the API (and remove the delegate/Model
+        // inheritance for the ranked model) when the world starts spinning at a reasonable speed.
+        IModel model = candidate;
+        if (model instanceof RankedModel) {
+            model = ((RankedModel) model).getDelegate();
+        }
+
+        boolean needConcretization = false;
+        for (IConcept predicate : model.getAbstractTraits()) {
+            for (IConcept resolved : resolvedTraits.keySet()) {
+                if (predicate.is(resolved)) {
+                    needConcretization = true;
+                    break;
+                }
+            }
+            if (needConcretization) {
+                break;
+            }
+        }
+
+        return needConcretization ? new Model((Model) model, resolvedTraits, monitor) : candidate;
     }
 
-    private Model( IKimModel model, Namespace namespace, IMonitor monitor ) {
+    private Model(Model model, Map<IConcept, IConcept> resolvedPredicates, IMonitor monitor ) {
+
+        /*
+         * easier to recreate from the statement, then fix observables and resources. Any "named"
+         * clause in the observables must be preserved for internal reference.
+         */
+        this(model.getStatement(), model.namespace, monitor);
+
+        /*
+         * new name will include the predicates to differentiate.
+         */
+        List<String> preds = new ArrayList<>();
+        for (IConcept p : resolvedPredicates.values()) {
+            preds.add(Concepts.INSTANCE.getCodeName(p));
+        }
+        /*
+         * ensure consistency by sorting - this may be overkill. Need a specialized name to be
+         * correctly handled in dataflow compilation.
+         */
+        Collections.sort(preds);
+        
+        this.id = this.id + "_" + Utils.join(preds, "_");
+        this.observables.clear();
+        this.dependencies.clear();
+
+        for (IObservable observable : model.observables) {
+            this.observables.add(Observable.concretize(observable, resolvedPredicates));
+        }
+        for (IObservable dependency : model.dependencies) {
+            this.dependencies.add(Observable.concretize(dependency, resolvedPredicates));
+        }
+
+    }
+
+    private Model(IKimModel model, Namespace namespace, IMonitor monitor ) {
 
         super(model);
 
@@ -168,7 +242,7 @@ public class Model extends KimObject implements IModel {
         boolean explicitContext = false;
         boolean first = true;
 
-        for(IKimObservable observable : model.getObservables()) {
+        for (IKimObservable observable : model.getObservables()) {
 
             Observable obs = Observables.INSTANCE.declare(observable, monitor);
 
@@ -191,7 +265,7 @@ public class Model extends KimObject implements IModel {
             }
         }
 
-        for(IKimObservable dependency : model.getDependencies()) {
+        for (IKimObservable dependency : model.getDependencies()) {
             Observable dep = Observables.INSTANCE.declare(dependency, monitor);
             dependencies.add(dep);
         }
@@ -218,7 +292,7 @@ public class Model extends KimObject implements IModel {
 
             modelContext = Observables.INSTANCE.getDirectContextType(getObservables().get(0).getType());
 
-            for(IObservable dependency : dependencies) {
+            for (IObservable dependency : dependencies) {
                 if ((hasArchetype = Annotations.INSTANCE.hasAnnotation(dependency, IModel.ARCHETYPE_ANNOTATION))) {
                     archetype = dependency;
                     break;
@@ -227,19 +301,19 @@ public class Model extends KimObject implements IModel {
 
             if (modelContext != null && archetype.is(Type.COUNTABLE) && archetype.is(modelContext)) {
                 /*
-                 * if the model's archetype is the contextual observable in an explicit
-                 * 'within', the primary output becomes "of" it and the learning will be done
-                 * within each object and applied to the rest of the context. All predictors
-                 * become optional in the context and remain as indication of what to look for
-                 * in the archetype. This is assessed early so that we don't precontextualize
-                 * the dependencies in this case.
+                 * if the model's archetype is the contextual observable in an explicit 'within',
+                 * the primary output becomes "of" it and the learning will be done within each
+                 * object and applied to the rest of the context. All predictors become optional in
+                 * the context and remain as indication of what to look for in the archetype. This
+                 * is assessed early so that we don't precontextualize the dependencies in this
+                 * case.
                  */
                 learnsWithinArchetype = true;
             }
         }
 
         int i = 0;
-        for(IObservable dependency : dependencies) {
+        for (IObservable dependency : dependencies) {
             if (context != null) {
                 if (this.instantiator || learnsWithinArchetype) {
 
@@ -262,10 +336,9 @@ public class Model extends KimObject implements IModel {
         }
 
         /*
-         * if this is a learning model without an archetype, add it as the dependency
-         * with the annotation and add the core "predicted" attribute to the output.
-         * 
-         * TODO check behavior with distributed observables
+         * if this is a learning model without an archetype, add it as the dependency with the
+         * annotation and add the core "predicted" attribute to the output. TODO check behavior with
+         * distributed observables
          */
         if (isLearning() && getMainObservable() != null) {
 
@@ -294,16 +367,15 @@ public class Model extends KimObject implements IModel {
             } else if (learnsWithinArchetype) {
 
                 /*
-                 * switch observable; deactivate the predictors unless the @distribute
-                 * annotation requires the model to compute the value over the entire context.
-                 * No further action as these are only run explicitly so the resolution
-                 * mechanism for the inherent observable in ObservationStrategy won't be
-                 * triggered.
+                 * switch observable; deactivate the predictors unless the @distribute annotation
+                 * requires the model to compute the value over the entire context. No further
+                 * action as these are only run explicitly so the resolution mechanism for the
+                 * inherent observable in ObservationStrategy won't be triggered.
                  */
                 IObservable inherent = getObservables().get(0).getBuilder(monitor).without(ObservableRole.CONTEXT)
                         .of(modelContext).buildObservable();
                 this.observables.set(0, inherent);
-                for(i = 1; i < dependencies.size(); i++) {
+                for (i = 1; i < dependencies.size(); i++) {
                     if (Annotations.INSTANCE.hasAnnotation(dependencies.get(i), IModel.PREDICTOR_ANNOTATION)) {
                         if (!distributesLearning) {
                             ((Observable) dependencies.get(i)).setActive(false);
@@ -320,7 +392,7 @@ public class Model extends KimObject implements IModel {
             /*
              * Any change that isn't explicitly output should be added
              */
-            for(int oo = 0; i < observables.size(); i++) {
+            for (int oo = 0; i < observables.size(); i++) {
                 IObservable obs = observables.get(oo);
                 if (obs != null && obs.is(Type.CHANGE)) {
                     changed.add(Observables.INSTANCE.getDescribedType(obs.getType()));
@@ -331,7 +403,7 @@ public class Model extends KimObject implements IModel {
              * Add change in any secondary qualities that are affected by the process.
              */
             List<IObservable> toAdd = new ArrayList<>();
-            for(int oo = 1; i < observables.size(); i++) {
+            for (int oo = 1; i < observables.size(); i++) {
                 IObservable obs = observables.get(oo);
                 if (obs != null && obs.is(Type.QUALITY) && !changed.contains(obs.getType())) {
                     if (Observables.INSTANCE.isAffectedBy(obs, getMainObservable())) {
@@ -380,7 +452,7 @@ public class Model extends KimObject implements IModel {
         }
 
         if (this.resources.size() > 0) {
-            for(IObservable o : observables) {
+            for (IObservable o : observables) {
                 // let counts w/o units through
                 if (o != null && ((Observable) o).isFluidUnits() && !o.is(Type.NUMEROSITY)) {
                     monitor.error(
@@ -394,7 +466,7 @@ public class Model extends KimObject implements IModel {
         /*
          * all resources after 'using' or further classification/lookup transformations
          */
-        for(IContextualizable resource : model.getContextualization()) {
+        for (IContextualizable resource : model.getContextualization()) {
             try {
                 this.resources.add(validate((ComputableResource) resource, monitor));
             } catch (Throwable e) {
@@ -408,8 +480,8 @@ public class Model extends KimObject implements IModel {
         /*
          * post-process the actions so that any accessory variable is tagged as such
          */
-        for(IAction action : this.contextualization) {
-            for(IContextualizable ct : action.getComputation()) {
+        for (IAction action : this.contextualization) {
+            for (IContextualizable ct : action.getComputation()) {
                 if (ct.getTargetId() != null) {
                     if (isKnownDependency(ct.getTargetId())) {
                         monitor.error("Cannot target an action to dependency " + ct.getTargetId()
@@ -422,8 +494,8 @@ public class Model extends KimObject implements IModel {
         }
 
         /*
-         * validate typechain, units and final result vs. observable artifact type -
-         * AFTER the behavior has been processed!
+         * validate typechain, units and final result vs. observable artifact type - AFTER the
+         * behavior has been processed!
          */
         validateTypechain(monitor);
 
@@ -434,15 +506,14 @@ public class Model extends KimObject implements IModel {
         /*
          * validate all actions
          */
-        for(IAction action : this.contextualization) {
+        for (IAction action : this.contextualization) {
             validateAction(action, monitor);
         }
 
         /*
-         * TODO validate final output of typechain vs. observable and mode
-         * 
-         * Update: casts are now inserted, although any illegal type chain should be a
-         * compile error, or at least a warning if the cast is unlikely.
+         * TODO validate final output of typechain vs. observable and mode Update: casts are now
+         * inserted, although any illegal type chain should be a compile error, or at least a
+         * warning if the cast is unlikely.
          */
 
         if (model.getMetadata() != null) {
@@ -456,7 +527,7 @@ public class Model extends KimObject implements IModel {
     }
 
     public boolean isKnownDependency(String targetId) {
-        for(IObservable observable : dependencies) {
+        for (IObservable observable : dependencies) {
             if (observable == null) {
                 // only in error
                 continue;
@@ -470,7 +541,7 @@ public class Model extends KimObject implements IModel {
 
     public boolean isKnownObservable(String targetId) {
 
-        for(IObservable observable : observables) {
+        for (IObservable observable : observables) {
             if (targetId.equals(observable.getName())) {
                 return true;
             }
@@ -499,23 +570,23 @@ public class Model extends KimObject implements IModel {
         Map<String, IArtifact.Type> typechain = new HashMap<>();
 
         /*
-         * start from a scalar geometry after merging any @intensive annotations. Gather
-         * the model's annotations by passing the first observable.
+         * start from a scalar geometry after merging any @intensive annotations. Gather the model's
+         * annotations by passing the first observable.
          */
         this.geometry = Geometry.scalar();
         Map<ExtentDimension, ExtentDistribution> modelConstraints = getExtentConstraints(this.getObservables().get(0), monitor);
-        for(Entry<ExtentDimension, ExtentDistribution> entry : modelConstraints.entrySet()) {
+        for (Entry<ExtentDimension, ExtentDistribution> entry : modelConstraints.entrySet()) {
             if (entry.getValue() == ExtentDistribution.INTENSIVE) {
                 mergeGeometry(Geometry.distributedIn(entry.getKey()), monitor);
             }
         }
 
         /*
-         * FIXME instantiators require the OUTPUTS to match the collapsed geometry of
-         * EACH output artifact, not that of the context.
+         * FIXME instantiators require the OUTPUTS to match the collapsed geometry of EACH output
+         * artifact, not that of the context.
          */
 
-        for(IContextualizable resource : resources) {
+        for (IContextualizable resource : resources) {
 
             if (this.observables.get(0).getDescriptionType() == IActivity.Description.CHARACTERIZATION
                     || this.observables.get(0).getDescriptionType() == IActivity.Description.CLASSIFICATION) {
@@ -547,12 +618,12 @@ public class Model extends KimObject implements IModel {
             geometry = Geometry.scalar();
         }
 
-        for(IObservable observable : CollectionUtils.join(observables, dependencies)) {
+        for (IObservable observable : CollectionUtils.join(observables, dependencies)) {
             validateUnits(observable, monitor);
         }
 
         // check final type of observable against typechain
-        for(IObservable observable : observables) {
+        for (IObservable observable : observables) {
             if (typechain.containsKey(observable.getName())) {
                 IArtifact.Type required = observable.getArtifactType();
                 if (required == IArtifact.Type.OBJECT && !this.isInstantiator()) {
@@ -613,8 +684,8 @@ public class Model extends KimObject implements IModel {
 
         if (!Units.INSTANCE.needsUnits(observable) && observable.getUnit() != null) {
             /*
-             * this is pretty much guaranteed to result from rescaling, as the validator
-             * should prevent any other situation.
+             * this is pretty much guaranteed to result from rescaling, as the validator should
+             * prevent any other situation.
              */
             monitor.error("Observable " + observable.getName() + " should not have units", observable);
             setErrors(true);
@@ -670,7 +741,7 @@ public class Model extends KimObject implements IModel {
             /*
              * if it's one of the others, add the extents, warn appropriately and return
              */
-            for(IUnit unit : contextualization.getCandidateUnits()) {
+            for (IUnit unit : contextualization.getCandidateUnits()) {
                 if (statedUnit.isCompatible(unit)) {
                     statedUnit.getAggregatedDimensions().putAll(unit.getAggregatedDimensions());
                     monitor.warn("This observable's unit implies " + unit.getAggregatedDimensions() + " aggregation over a "
@@ -707,9 +778,8 @@ public class Model extends KimObject implements IModel {
         boolean isModel = observable.equals(this.getObservables().get(0));
 
         /*
-         * model annotations act as default unless there are specific annotations on
-         * each observable. If so, they completely replace the annotation set (there is
-         * no inheritance).
+         * model annotations act as default unless there are specific annotations on each
+         * observable. If so, they completely replace the annotation set (there is no inheritance).
          */
         Collection<IAnnotation> annotations = filterAnnotations(
                 isModel ? Annotations.INSTANCE.collectAnnotations(this) : Annotations.INSTANCE.collectAnnotations(observable));
@@ -717,9 +787,9 @@ public class Model extends KimObject implements IModel {
             annotations = filterAnnotations(Annotations.INSTANCE.collectAnnotations(this));
         }
 
-        for(IAnnotation annotation : annotations) {
+        for (IAnnotation annotation : annotations) {
 
-            for(Object o : annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, List.class)) {
+            for (Object o : annotation.get(IServiceCall.DEFAULT_PARAMETER_NAME, List.class)) {
                 switch(o.toString()) {
                 case "space":
                 case "area":
@@ -766,7 +836,7 @@ public class Model extends KimObject implements IModel {
 
     private Collection<IAnnotation> filterAnnotations(Collection<IAnnotation> object) {
         List<IAnnotation> ret = new ArrayList<>();
-        for(IAnnotation annotation : object) {
+        for (IAnnotation annotation : object) {
             if ("intensive".equals(annotation.getName()) || "extensive".equals(annotation.getName())) {
                 ret.add(annotation);
             }
@@ -792,15 +862,14 @@ public class Model extends KimObject implements IModel {
     }
 
     /**
-     * Used to resolve a derived strategy for the main observable through
-     * observation of the candidate observables and execution of the associated
-     * computational strategy.
+     * Used to resolve a derived strategy for the main observable through observation of the
+     * candidate observables and execution of the associated computational strategy.
      * 
      * @param mainObservable
      * @param candidateObservable
      * @param scope
      */
-    public Model( Observable mainObservable, ObservationStrategy candidateObservable, ResolutionScope scope ) {
+    public Model(Observable mainObservable, ObservationStrategy candidateObservable, ResolutionScope scope ) {
         super(null);
         this.derived = true;
         this.id = mainObservable.getName() + "_derived";
@@ -818,18 +887,17 @@ public class Model extends KimObject implements IModel {
     }
 
     /**
-     * Create a model for the changed values from a resolver or instantiator of the
-     * passed observable, resolved by the merged resource that has been already
-     * checked for coverage of the temporal scope. The resulting model will have the
-     * resource and all the computations from the original one. If we pass a null
-     * merged resource, we use the original one instead, as it's been established to
-     * be able to handle time changes.
+     * Create a model for the changed values from a resolver or instantiator of the passed
+     * observable, resolved by the merged resource that has been already checked for coverage of the
+     * temporal scope. The resulting model will have the resource and all the computations from the
+     * original one. If we pass a null merged resource, we use the original one instead, as it's
+     * been established to be able to handle time changes.
      * 
      * @param mainObservable
      * @param resource
      * @param scope
      */
-    public Model( IObservable mainObservable, MergedResource resource, IModel originalModel, ResolutionScope scope ) {
+    public Model(IObservable mainObservable, MergedResource resource, IModel originalModel, ResolutionScope scope ) {
         super(null);
         if (originalModel instanceof RankedModel) {
             // computables must be validated by the original model. This is pretty ugly of
@@ -848,13 +916,13 @@ public class Model extends KimObject implements IModel {
         if (resource != null) {
             this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(changeObservable, resource));
         }
-        for(int i = (resource == null ? 0 : 1); i < ((Model) originalModel).getComputation().size(); i++) {
+        for (int i = (resource == null ? 0 : 1); i < ((Model) originalModel).getComputation().size(); i++) {
             ComputableResource computation = (ComputableResource) ((Model) originalModel).getComputation().get(i);
             this.resources.add(((Model) originalModel).validate(computation.copy(), scope.getMonitor()));
         }
     }
 
-    public Model( IObservable mainObservable, String resolvedChangingObservationName, ResolutionScope scope ) {
+    public Model(IObservable mainObservable, String resolvedChangingObservationName, ResolutionScope scope ) {
         super(null);
         this.derived = true;
         this.id = mainObservable.getName() + "_resolved_change";
@@ -865,7 +933,7 @@ public class Model extends KimObject implements IModel {
         this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(mainObservable, resolvedChangingObservationName));
     }
 
-    public Model( IViewModel view ) {
+    public Model(IViewModel view ) {
         super(null);
         // Observable is the void concept (non-semantic artifact); all the independent
         // observables in the view as dependencies, the view compilation as code
@@ -880,13 +948,11 @@ public class Model extends KimObject implements IModel {
     }
 
     /**
-     * Validate URNs, tables, classifications, inline values against network,
-     * observables etc. Called in sequence so it should maintain the chain of
-     * processing and validate each step, until the final type that should be
-     * validated by the upstream constructor.
+     * Validate URNs, tables, classifications, inline values against network, observables etc.
+     * Called in sequence so it should maintain the chain of processing and validate each step,
+     * until the final type that should be validated by the upstream constructor.
      * <p>
-     * Functions should validate all required parameters vs. outputs and
-     * dependencies
+     * Functions should validate all required parameters vs. outputs and dependencies
      * 
      * @param resource
      * @return
@@ -903,9 +969,9 @@ public class Model extends KimObject implements IModel {
             Classification classification = new Classification(resource.getClassification());
 
             /*
-             * TODO validate that all concepts are children of the described concept in the
-             * main observable (if TYPE) - URGENTLY because the team is already mixing
-             * landcover with mayonnaise and motorcycles
+             * TODO validate that all concepts are children of the described concept in the main
+             * observable (if TYPE) - URGENTLY because the team is already mixing landcover with
+             * mayonnaise and motorcycles
              */
 
             resource.setValidatedResource(classification);
@@ -949,7 +1015,7 @@ public class Model extends KimObject implements IModel {
         } else if (resource.getServiceCall() != null) {
             IPrototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
             if (prototype != null) {
-                for(Argument argument : prototype.listArguments()) {
+                for (Argument argument : prototype.listArguments()) {
                     if (argument.isArtifact()) {
                         IObservable dependency = findDependency(argument.getName());
                         if (dependency == null && !argument.isOptional()) {
@@ -974,26 +1040,18 @@ public class Model extends KimObject implements IModel {
             }
         } /*
            * TODO bring this back as a merged geometry for the merging resource else if
-           * (resource.getMergedUrns() != null) {
-           * 
-           * // intersect resource coverage Scale rscale = null; for (String murn :
-           * resource.getMergedUrns()) { if (murn.contains(":")) { IResource res =
-           * Resources.INSTANCE.resolveResource(murn); if (res == null) { //
+           * (resource.getMergedUrns() != null) { // intersect resource coverage Scale rscale =
+           * null; for (String murn : resource.getMergedUrns()) { if (murn.contains(":")) {
+           * IResource res = Resources.INSTANCE.resolveResource(murn); if (res == null) { //
            * monitor.send(new CompileNo); this.setInactive(true); } else { rscale =
            * Scale.create(res.getGeometry()); } } else { IKimObject obj =
-           * Resources.INSTANCE.getModelObject(murn); if (obj instanceof Model) { rscale =
-           * ((Model) obj).getCoverage(monitor); } }
-           * 
-           * if (rscale != null) { if (this.resourceCoverage == null) {
-           * this.resourceCoverage = rscale; } else { this.resourceCoverage =
-           * this.resourceCoverage.merge(rscale, LogicalConnector.INTERSECTION); } } else
-           * { monitor.error("unknown resource or model " + murn +
-           * " in merging statement", getStatement()); } }
-           * 
-           * // set it in the resource so we have it
-           * resource.setMergedGeometry(this.resourceCoverage.getGeometry());
-           * 
-           * }
+           * Resources.INSTANCE.getModelObject(murn); if (obj instanceof Model) { rscale = ((Model)
+           * obj).getCoverage(monitor); } } if (rscale != null) { if (this.resourceCoverage == null)
+           * { this.resourceCoverage = rscale; } else { this.resourceCoverage =
+           * this.resourceCoverage.merge(rscale, LogicalConnector.INTERSECTION); } } else {
+           * monitor.error("unknown resource or model " + murn + " in merging statement",
+           * getStatement()); } } // set it in the resource so we have it
+           * resource.setMergedGeometry(this.resourceCoverage.getGeometry()); }
            */
 
         return resource;
@@ -1006,7 +1064,7 @@ public class Model extends KimObject implements IModel {
      * @return
      */
     public IObservable findDependency(String name) {
-        for(IObservable dependency : dependencies) {
+        for (IObservable dependency : dependencies) {
             if (dependency.getName().equals(name)) {
                 return dependency;
             }
@@ -1021,7 +1079,7 @@ public class Model extends KimObject implements IModel {
      * @return
      */
     public IObservable findDependency(IConcept concept) {
-        for(IObservable dependency : dependencies) {
+        for (IObservable dependency : dependencies) {
             if (dependency.getType().getSemanticDistance(concept) == 0) {
                 return dependency;
             }
@@ -1036,7 +1094,7 @@ public class Model extends KimObject implements IModel {
      * @return
      */
     public IObservable findDependency(IObservable concept) {
-        for(IObservable dependency : dependencies) {
+        for (IObservable dependency : dependencies) {
             if (((Observable) concept).resolvesStrictly((Observable) dependency)) {
                 return dependency;
             }
@@ -1051,7 +1109,7 @@ public class Model extends KimObject implements IModel {
      * @return
      */
     public IObservable findOutput(IObservable concept) {
-        for(IObservable observable : observables) {
+        for (IObservable observable : observables) {
             if (((Observable) concept).resolvesStrictly((Observable) observable)) {
                 return observable;
             }
@@ -1066,7 +1124,7 @@ public class Model extends KimObject implements IModel {
      * @return
      */
     public IObservable findOutput(IConcept concept) {
-        for(IObservable output : observables) {
+        for (IObservable output : observables) {
             if (output.getType().getSemanticDistance(concept) == 0) {
                 return output;
             }
@@ -1075,7 +1133,6 @@ public class Model extends KimObject implements IModel {
     }
 
     /**
-     * 
      * @param action
      * @param monitor
      */
@@ -1106,9 +1163,9 @@ public class Model extends KimObject implements IModel {
         }
         obs = getCompatibleInput((Observable) observable);
         /**
-         * The observable's local name is returned in case we don't have it; this
-         * happens when an indirect observable is used to resolve a different one. If we
-         * returned null here, the resulting actuator will have a null name.
+         * The observable's local name is returned in case we don't have it; this happens when an
+         * indirect observable is used to resolve a different one. If we returned null here, the
+         * resulting actuator will have a null name.
          */
         return obs == null ? observable.getName() : obs.getName();
     }
@@ -1126,7 +1183,7 @@ public class Model extends KimObject implements IModel {
             return false;
         }
 
-        for(IContextualizable resource : resources) {
+        for (IContextualizable resource : resources) {
             // TODO TODO this is a temp fix to make the tests run.
             if (!resource.getInputs().isEmpty()) {
                 return false;
@@ -1159,7 +1216,7 @@ public class Model extends KimObject implements IModel {
         long now = System.currentTimeMillis();
         if ((now - this.lastResourceCheck) > Configuration.INSTANCE.getResourceRecheckIntervalMs()) {
             this.available = true;
-            for(IResource resource : resourcesUsed) {
+            for (IResource resource : resourcesUsed) {
                 if (!Resources.INSTANCE.isResourceOnline(resource)) {
                     this.available = false;
                     break;
@@ -1175,11 +1232,11 @@ public class Model extends KimObject implements IModel {
         List<IDocumentation> ret = new ArrayList<>();
 
         /*
-         * TODO collect docs from tables and the like. Use scan annotations on the
-         * syntactic peers. Annotations.INSTANCE.collectAnnotations(model)
+         * TODO collect docs from tables and the like. Use scan annotations on the syntactic peers.
+         * Annotations.INSTANCE.collectAnnotations(model)
          */
 
-        for(IAnnotation annotation : getAnnotations()) {
+        for (IAnnotation annotation : getAnnotations()) {
             if (annotation.getName().equals(IDocumentationService.DOCUMENTED_ANNOTATION_ID)) {
                 String docId = annotation.get("value", String.class);
                 if (docId == null) {
@@ -1241,8 +1298,8 @@ public class Model extends KimObject implements IModel {
     }
 
     /**
-     * Build and return the scale, if any, specified for the model (possibly along
-     * with any constraints in the namespace it contains).
+     * Build and return the scale, if any, specified for the model (possibly along with any
+     * constraints in the namespace it contains).
      * 
      * @param monitor
      * @return a new scale, possibly empty, never null.
@@ -1258,12 +1315,12 @@ public class Model extends KimObject implements IModel {
                 Collection<IExtent> extents = new ArrayList<>();
                 if (contextualization != null) {
                     extents.addAll(contextualization.getExtents(monitor));
-                    for(IExtent extent : extents) {
+                    for (IExtent extent : extents) {
                         dims.add(extent.getType());
                     }
                 }
 
-                for(IAnnotation annotation : getAnnotations()) {
+                for (IAnnotation annotation : getAnnotations()) {
                     if ("space".equals(annotation.getName())) {
                         if (dims.contains(Dimension.Type.SPACE)) {
                             monitor.error("cannot specify spatial extent in more than one way");
@@ -1296,9 +1353,8 @@ public class Model extends KimObject implements IModel {
     }
 
     /**
-     * Return all the computational steps required to compute the model. If there
-     * are annotations that define parameters (possibly interactive), add them to
-     * the computables.
+     * Return all the computational steps required to compute the model. If there are annotations
+     * that define parameters (possibly interactive), add them to the computables.
      * 
      * @param transition the transition to be computed
      * @return the indirectAdapters for the model at the transition
@@ -1307,23 +1363,23 @@ public class Model extends KimObject implements IModel {
     public List<IContextualizable> getComputation() {
 
         List<IAnnotation> parameters = new ArrayList<>();
-        for(IAnnotation annotation : getAnnotations()) {
+        for (IAnnotation annotation : getAnnotations()) {
             if (annotation.getName().equals("parameter")) {
                 parameters.add(annotation);
             }
         }
 
         List<IContextualizable> ret = new ArrayList<>();
-        for(IContextualizable resource : resources) {
+        for (IContextualizable resource : resources) {
             ComputableResource res = ((ComputableResource) resource).copy();
             if (parameters.size() > 0) {
                 res.addParameters(parameters);
             }
             ret.add(res);
         }
-        for(Trigger trigger : Trigger.values()) {
-            for(IAction action : contextualization.getActions(trigger)) {
-                for(IContextualizable resource : action.getComputation()) {
+        for (Trigger trigger : Trigger.values()) {
+            for (IAction action : contextualization.getActions(trigger)) {
+                for (IContextualizable resource : action.getComputation()) {
                     ComputableResource res = ((ComputableResource) resource).copy();
                     if (parameters.size() > 0) {
                         res.addParameters(parameters);
@@ -1336,22 +1392,19 @@ public class Model extends KimObject implements IModel {
     }
 
     /**
-     * Get the output that can satisfy this observable, possibly with mediation. If
-     * we are matching a dereified output of an instantiator, give it back its
-     * inherency before returning it.
+     * Get the output that can satisfy this observable, possibly with mediation. If we are matching
+     * a dereified output of an instantiator, give it back its inherency before returning it.
      * 
      * @param observable
-     * 
-     * 
      * @return an existing output observable or null
      */
     public Observable getCompatibleOutput(Observable observable, IConcept context, IMonitor monitor) {
-        for(IObservable output : observables) {
+        for (IObservable output : observables) {
             if (output.resolves(observable, context)) {
                 return (Observable) output;
             }
         }
-        for(String key : attributeObservables.keySet()) {
+        for (String key : attributeObservables.keySet()) {
             IObservable output = attributeObservables.get(key);
             if (output.resolves(observable, context)) {
                 return (Observable) output.getBuilder(monitor).of(getMainObservable().getType()).withDereifiedAttribute(key)
@@ -1360,11 +1413,12 @@ public class Model extends KimObject implements IModel {
         }
 
         /*
-         * predicate observables are mandatorily contextualized during resolution but the query may not contain the context 
-         * inherency, so we can be lenient and check the mere observable using is() rather than resolves().
+         * predicate observables are mandatorily contextualized during resolution but the query may
+         * not contain the context inherency, so we can be lenient and check the mere observable
+         * using is() rather than resolves().
          */
         if (observable.getType().is(Type.PREDICATE)) {
-            for(IObservable output : observables) {
+            for (IObservable output : observables) {
                 if (output.getType().is(observable.getType())) {
                     return (Observable) output;
                 }
@@ -1381,7 +1435,7 @@ public class Model extends KimObject implements IModel {
      * @return an existing output observable or null
      */
     public Observable getCompatibleInput(Observable observable) {
-        for(IObservable input : dependencies) {
+        for (IObservable input : dependencies) {
             if (input.getType().getSemanticDistance(observable.getType()) >= 0) {
                 return (Observable) input;
             }
@@ -1445,7 +1499,7 @@ public class Model extends KimObject implements IModel {
     public List<IObservable> getArchetypes() {
 
         List<IObservable> ret = new ArrayList<>();
-        for(IObservable dependency : getDependencies()) {
+        for (IObservable dependency : getDependencies()) {
             if (Annotations.INSTANCE.hasAnnotation(dependency, IModel.ARCHETYPE_ANNOTATION)) {
                 ret.add(dependency);
             }
@@ -1461,7 +1515,7 @@ public class Model extends KimObject implements IModel {
     public List<IObservable> getPredictors() {
 
         List<IObservable> ret = new ArrayList<>();
-        for(IObservable dependency : getDependencies()) {
+        for (IObservable dependency : getDependencies()) {
             if (Annotations.INSTANCE.hasAnnotation(dependency, IModel.PREDICTOR_ANNOTATION)) {
                 ret.add(dependency);
             }
@@ -1470,9 +1524,8 @@ public class Model extends KimObject implements IModel {
     }
 
     /**
-     * The observation strategy implemented by this model. This will always be
-     * DIRECT unless the model comes from a derived observation, in which case it
-     * may also be FILTERING or DEREIFYING.
+     * The observation strategy implemented by this model. This will always be DIRECT unless the
+     * model comes from a derived observation, in which case it may also be FILTERING or DEREIFYING.
      * 
      * @return
      */
@@ -1481,9 +1534,8 @@ public class Model extends KimObject implements IModel {
     }
 
     /**
-     * True if the model is a learning model for a quality that is learned within a
-     * countable. In this case, the dependencies will only serve to define the
-     * predictors.
+     * True if the model is a learning model for a quality that is learned within a countable. In
+     * this case, the dependencies will only serve to define the predictors.
      * 
      * @return
      */
@@ -1492,8 +1544,8 @@ public class Model extends KimObject implements IModel {
     }
 
     /**
-     * If there's an archetype, return it. Does not handle well the situation where
-     * there could be > 1.
+     * If there's an archetype, return it. Does not handle well the situation where there could be >
+     * 1.
      * 
      * @return
      */
@@ -1502,8 +1554,8 @@ public class Model extends KimObject implements IModel {
     }
 
     /**
-     * Model learns within an archetype but then builds a state for the entire
-     * context with the learned quality.
+     * Model learns within an archetype but then builds a state for the entire context with the
+     * learned quality.
      * 
      * @return
      */
@@ -1526,8 +1578,8 @@ public class Model extends KimObject implements IModel {
     }
 
     /**
-     * View models are only created on observation with the specific constructor and
-     * this method is non-API.
+     * View models are only created on observation with the specific constructor and this method is
+     * non-API.
      * 
      * @return
      */
@@ -1539,19 +1591,19 @@ public class Model extends KimObject implements IModel {
     public Collection<IConcept> getRequiredTraits() {
         if (this.requiredTraits == null) {
             this.requiredTraits = new HashSet<>();
-            for(IObservable observable : observables) {
+            for (IObservable observable : observables) {
                 if (observable != null) {
-                    for(IConcept role : Roles.INSTANCE.getRoles(observable.getType())) {
+                    for (IConcept role : Roles.INSTANCE.getRoles(observable.getType())) {
                         if (role.isAbstract()) {
                             this.requiredTraits.add(role);
                         }
                     }
                 }
             }
-            for(IObservable observable : dependencies) {
+            for (IObservable observable : dependencies) {
                 if (observable != null) {
                     if (observable != null) {
-                        for(IConcept role : Roles.INSTANCE.getRoles(observable.getType())) {
+                        for (IConcept role : Roles.INSTANCE.getRoles(observable.getType())) {
                             if (role.isAbstract()) {
                                 this.requiredTraits.add(role);
                             }
@@ -1572,12 +1624,12 @@ public class Model extends KimObject implements IModel {
     public Collection<IConcept> getAbstractTraits() {
         if (abstractTraits_ == null) {
             abstractTraits_ = new HashSet<>();
-            for(IObservable observable : observables) {
+            for (IObservable observable : observables) {
                 if (observable != null) {
                     abstractTraits_.addAll(observable.getAbstractPredicates());
                 }
             }
-            for(IObservable observable : dependencies) {
+            for (IObservable observable : dependencies) {
                 if (observable != null && observable.getType() != null && !observable.isGeneric()) {
                     if (observable != null) {
                         abstractTraits_.addAll(observable.getAbstractPredicates());
