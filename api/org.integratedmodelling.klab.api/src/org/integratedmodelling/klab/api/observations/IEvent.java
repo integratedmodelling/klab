@@ -21,6 +21,6 @@ package org.integratedmodelling.klab.api.observations;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface IEvent extends ICountableObservation {
+public interface IEvent extends IDirectObservation {
 
 }

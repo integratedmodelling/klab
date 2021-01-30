@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -140,7 +141,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 		if (parent.observation == null) {
 			parent.observation = this.observation;
 		} else if (context instanceof IRuntimeScope) {
-			if (!(parent.observation instanceof ObservationGroup)) {
+			if (!(parent.observation instanceof IObservationGroup)) {
 				IObservation obs = parent.observation;
 				parent.observation = new ObservationGroup((Observable) ((IRuntimeScope)context).getTargetSemantics(),
 						(Scale) context.getScale(), (IRuntimeScope)context, ((IRuntimeScope)context).getTargetSemantics().getArtifactType());

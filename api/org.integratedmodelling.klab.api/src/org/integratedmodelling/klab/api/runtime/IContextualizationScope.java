@@ -357,7 +357,7 @@ public interface IContextualizationScope extends IParameters<String> {
 	 * While any k.LAB-aware implementation will receive a
 	 * {@link org.integratedmodelling.klab.api.observations.scale.IScale} instead of
 	 * a {@link org.integratedmodelling.klab.api.data.IGeometry} and return a
-	 * {@link org.integratedmodelling.klab.api.observations.ICountableObservation}
+	 * {@link org.integratedmodelling.klab.api.observations.IObservationGroup}
 	 * rather than just
 	 * {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact}, we
 	 * keep the basic, non-semantic types in the signature for consistency with

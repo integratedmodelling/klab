@@ -45,6 +45,7 @@ import org.integratedmodelling.klab.api.knowledge.IViewModel.Schedule;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -61,7 +62,6 @@ import org.integratedmodelling.klab.components.runtime.observations.ObservationG
 import org.integratedmodelling.klab.components.time.extents.Time;
 import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
-import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -1004,7 +1004,7 @@ public class TableCompiler {
 		 * @param group
 		 * @return
 		 */
-		public Collection<Dimension> propagateFilteredObservable(ObservationGroup group) {
+		public Collection<Dimension> propagateFilteredObservable(IObservationGroup group) {
 			List<Dimension> ret = new ArrayList<>();
 			int i = 0;
 			for (IArtifact artifact : group) {
@@ -1167,12 +1167,12 @@ public class TableCompiler {
 						if (group == null) {
 							continue;
 						}
-						if (!(group instanceof ObservationGroup)) {
+						if (!(group instanceof IObservationGroup)) {
 							throw new KlabValidationException(
 									"cannot aggregate by a direct artifact that does not resolve to an observation group");
 						}
 
-						originalDims.addAll(dim.propagateFilteredObservable((ObservationGroup) group));
+						originalDims.addAll(dim.propagateFilteredObservable((IObservationGroup) group));
 
 						// continue to catch error
 					}

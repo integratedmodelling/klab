@@ -19,6 +19,7 @@ import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -156,7 +157,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 			sources.addAll(context.getObservations(sourceConcept));
 		} else {
 			IArtifact src = context.getArtifact(sourceArtifact);
-			if (src instanceof ObservationGroup) {
+			if (src instanceof IObservationGroup) {
 				for (IArtifact a : src) {
 					sources.add((IObservation) a);
 				}
@@ -168,7 +169,7 @@ public class ConfigurableRelationshipInstantiator implements IExpression, IInsta
 			targets.addAll(context.getObservations(targetConcept));
 		} else {
 			IArtifact src = context.getArtifact(targetArtifact);
-			if (src instanceof ObservationGroup) {
+			if (src instanceof IObservationGroup) {
 				for (IArtifact a : src) {
 					targets.add((IObservation) a);
 				}

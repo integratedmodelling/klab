@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IProcess;
@@ -200,7 +201,7 @@ public class Scheduler implements IScheduler {
 						for (IObservation observation : changed) {
 
 							ret.add(new ObservedConcept(observation.getObservable(),
-									observation instanceof ObservationGroup ? Mode.INSTANTIATION : Mode.RESOLUTION));
+									observation instanceof IObservationGroup ? Mode.INSTANTIATION : Mode.RESOLUTION));
 
 							IObservation parent = scope.getParentArtifactOf(observation);
 							if (parent != null && scope.getWatchedObservationIds().contains(parent.getId())) {
@@ -288,7 +289,7 @@ public class Scheduler implements IScheduler {
 					 * localized scope (either using a cached dataset or from scratch) and be
 					 * notified as they appear.
 					 */
-					if (target instanceof ObservationGroup && target.getObservable().is(IKimConcept.Type.EVENT)) {
+					if (target instanceof IObservationGroup && target.getObservable().is(IKimConcept.Type.EVENT)) {
 						// TODO
 					}
 
@@ -1017,7 +1018,7 @@ public class Scheduler implements IScheduler {
 			 * localized scope (either using a cached dataset or from scratch) and be
 			 * notified as they appear.
 			 */
-			if (target instanceof ObservationGroup && target.getObservable().is(IKimConcept.Type.EVENT)) {
+			if (target instanceof IObservationGroup && target.getObservable().is(IKimConcept.Type.EVENT)) {
 				// TODO
 			}
 

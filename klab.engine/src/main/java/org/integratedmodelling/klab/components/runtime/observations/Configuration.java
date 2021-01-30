@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.components.runtime.RuntimeScope;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.scale.Scale;
 
-public class Configuration extends CountableObservation implements IConfiguration {
+public class Configuration extends DirectObservation implements IConfiguration {
 
 	private Collection<IObservation> targets;
 

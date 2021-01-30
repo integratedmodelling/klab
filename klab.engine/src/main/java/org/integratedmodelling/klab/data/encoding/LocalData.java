@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -251,7 +252,7 @@ public class LocalData implements IKlabData {
 				if (this.object == null) {
 					this.object = (IObservation) output;
 				} else {
-					if (!(this.object instanceof ObservationGroup)) {
+					if (!(this.object instanceof IObservationGroup)) {
 						IObservation obs = (IObservation) this.object;
 						this.object = new ObservationGroup((Observable) context.getTargetSemantics(),
 								(Scale) context.getScale(), context, context.getTargetSemantics().getArtifactType());

@@ -15,6 +15,7 @@ import org.apache.commons.collections.IteratorUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimAction.Trigger;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
@@ -37,12 +38,14 @@ import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -1672,6 +1675,22 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 	@Override
 	public <T extends IArtifact> T getArtifact(IConcept concept, Class<T> cls) {
 
+	    if (IObservationGroup.class.isAssignableFrom(cls)) {
+	        
+	        /*
+	         * must search base subject class and filter by predicates if any.
+	         */
+	        Builder builder = Observable.promote(concept).getBuilder(monitor).without(ObservableRole.TRAIT, ObservableRole.ROLE);
+	        Pair<IConcept, Collection<IConcept>> query = new Pair<>(builder.buildConcept(), builder.getRemoved());
+	       
+	        for (IArtifact artifact : catalog.values()) {
+	            if (artifact instanceof ObservationGroup
+	                    && (cached_is(((ObservationGroup) artifact).getObservable().getType(), query.getFirst()))) {
+	                return (T)((ObservationGroup)artifact).queryPredicates(query.getSecond());
+	            }
+	        }
+	    }
+	    
 		Set<IArtifact> ret = new HashSet<>();
 		for (IArtifact artifact : catalog.values()) {
 			if (artifact instanceof IObservation
