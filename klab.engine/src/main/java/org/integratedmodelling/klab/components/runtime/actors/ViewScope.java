@@ -49,6 +49,11 @@ class ViewScope {
 
 	public ViewScope getChild(ConcurrentGroup group) {
 
+	    if (this.currentComponent == null) {
+	        // not an app with a view
+	        return null;
+	    }
+	    
 		ViewComponent parent = this.currentComponent;
 		ViewComponent ret = new ViewComponent();
 		ret.setIdentity(identityId);

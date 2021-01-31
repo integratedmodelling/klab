@@ -12,7 +12,7 @@ public class KActorsAssignment extends KActorsStatement implements Assignment {
 	public KActorsAssignment(org.integratedmodelling.kactors.kactors.Assignment assignment,
 			KActorCodeStatement parent) {
 		super(assignment, parent, Type.ASSIGNMENT);
-		if (value != null) {
+		if (assignment.getValue() != null) {
 			// only happens when saving screwed-up syntax, which everyone will do.
 			this.value = new KActorsValue(assignment.getValue(), this);
 		}

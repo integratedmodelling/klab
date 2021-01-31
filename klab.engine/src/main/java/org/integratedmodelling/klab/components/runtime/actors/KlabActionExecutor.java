@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.runtime.actors;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
@@ -141,6 +142,8 @@ public abstract class KlabActionExecutor {
 		case ANYVALUE:
 		case EMPTY:
 			break;
+        case OBJECT:
+            return Actors.INSTANCE.createJavaObject(arg.getConstructor(), scope, identity);
 		case ANYTRUE:
 			return true;
 		case ERROR:
