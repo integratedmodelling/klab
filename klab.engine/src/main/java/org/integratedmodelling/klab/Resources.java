@@ -1031,7 +1031,7 @@ public enum Resources implements IResourceService {
 						"adapter for resource of type " + resource.getAdapterType() + " not available");
 			}
 			adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), resource.getGeometry(), builder,
-					Expression.emptyContext(monitor));
+					Expression.emptyContext(resource.getGeometry(), monitor));
 		} else {
 			throw new KlabInternalErrorException(
 					"getResourceData(): this call can only be used to access local resources");

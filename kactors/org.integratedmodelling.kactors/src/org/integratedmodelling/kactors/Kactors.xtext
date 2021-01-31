@@ -165,8 +165,8 @@ Value:
 	tree=Tree |
 	empty?='empty' |
 	argvalue=ARGVALUE |
-	literal=Literal |
 	urn=UrnId | 
+	literal=Literal |
 	id=PathName |
 	list=List |
 	map=Map |

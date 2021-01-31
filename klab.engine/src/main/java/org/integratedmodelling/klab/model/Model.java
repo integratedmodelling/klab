@@ -872,7 +872,21 @@ public class Model extends KimObject implements IModel {
     public Model(Observable mainObservable, ObservationStrategy candidateObservable, ResolutionScope scope ) {
         super(null);
         this.derived = true;
-        this.id = mainObservable.getName() + "_derived";
+
+        /*
+         * differentiate the name if there are resolved predicates
+         */
+        String preds = "";
+        List<String> pdescs = new ArrayList<>();
+        for (IConcept c : mainObservable.getResolvedPredicates().values()) {
+            pdescs.add(Concepts.INSTANCE.getCodeName(c));
+        }
+        Collections.sort(pdescs);
+        for (String s : pdescs) {
+            preds += (preds.isEmpty() ? "" : "_") + s;
+        }
+        
+        this.id = mainObservable.getName() + (preds.isEmpty() ? "" : ("_" + preds)) + "_derived";
         this.namespace = scope.getResolutionNamespace();
         this.contextualization = new Contextualization(null, this);
         this.observables.add(mainObservable);

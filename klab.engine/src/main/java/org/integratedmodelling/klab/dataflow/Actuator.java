@@ -1567,6 +1567,10 @@ public class Actuator implements IActuator {
         return this;
     }
 
+    public ObservedConcept getObservedConcept() {
+        return new ObservedConcept(this.observable, this.mode);
+    }
+    
     @Override
     public IScale mergeScale(IScale scale, IMonitor monitor) {
 

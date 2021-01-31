@@ -87,7 +87,7 @@ public class DataflowCompiler {
 	 * index the original observables as they come out of models that compute them,
 	 * using the name of the actuator that does the job.
 	 */
-	Map<String, Observable> sources = new HashMap<>();
+	Map<ObservedConcept, Observable> sources = new HashMap<>();
 
 	static class ResolutionEdge {
 
@@ -127,9 +127,9 @@ public class DataflowCompiler {
 
 	public Dataflow compile(IMonitor monitor) {
 
-		if (!System.getProperty("visualize", "false").equals("false") && resolutionGraph.vertexSet().size() > 1) {
+//		if (!System.getProperty("visualize", "false").equals("false") && resolutionGraph.vertexSet().size() > 1) {
 			Graphs.show(resolutionGraph, "Resolution graph");
-		}
+//		}
 
 		Dataflow ret = new Dataflow(monitor.getIdentity().getParentIdentity(ISession.class), parentDataflow);
 
@@ -163,9 +163,9 @@ public class DataflowCompiler {
 			 * Any mediators still needed between the root observable and the source node
 			 * are added at the end of the final computation.
 			 */
-			if (sources.containsKey(actuator.getName()) && root instanceof Observable
+			if (sources.containsKey(actuator.getObservedConcept()) && root instanceof Observable
 					&& ((Observable) root).getType().is(IKimConcept.Type.QUALITY)) {
-				for (IContextualizable mediator : computeMediators(sources.get(actuator.getName()), node.observable,
+				for (IContextualizable mediator : computeMediators(sources.get(actuator.getObservedConcept()), node.observable,
 						node.scale)) {
 					actuator.addComputation(mediator);
 				}
@@ -371,7 +371,7 @@ public class DataflowCompiler {
 
 				this.resolvedArtifact = (ResolvedArtifact) resolvable;
 				this.observable = (Observable) resolvedArtifact.getObservable();
-				sources.put(this.resolvedArtifact.getArtifactId(),
+				sources.put(new ObservedConcept(this.resolvedArtifact.getObservable()),
 						(Observable) this.resolvedArtifact.getArtifact().getObservable());
 			}
 		}
@@ -679,11 +679,7 @@ public class DataflowCompiler {
 				// no actuator needed: observation was predefined
 				return ret;
 			}
-
-			if (ret.isReference()) {
-				System.out.println("IOC");
-			}
-
+			
 			if (!ret.isReference()) {
 
 				/*
@@ -780,8 +776,8 @@ public class DataflowCompiler {
 
 						ret.getActuators().add(achild);
 						recordUnits(achild, chosenUnits);
-						if (sources.containsKey(achild.getName())) {
-							for (IContextualizable mediator : computeMediators(sources.get(achild.getName()),
+						if (sources.containsKey(achild.getObservedConcept())) {
+							for (IContextualizable mediator : computeMediators(sources.get(achild.getObservedConcept()),
 									achild.getObservable(), scale)) {
 								ret.addMediation(mediator, achild);
 							}
@@ -878,8 +874,8 @@ public class DataflowCompiler {
 			 * Record the source in the catalog only after any fluid units have been
 			 * resolved.
 			 */
-			if (modelObservable != null && !sources.containsKey(ret.getName())) {
-				sources.put(ret.getName(), modelObservable);
+			if (modelObservable != null && !sources.containsKey(ret.getObservedConcept())) {
+				sources.put(ret.getObservedConcept(), modelObservable);
 			}
 
 		}
@@ -1009,7 +1005,7 @@ public class DataflowCompiler {
 			if (source instanceof ResolvedArtifact) {
 
 				ret.resolvedArtifact = (ResolvedArtifact) source;
-				sources.put(ret.resolvedArtifact.getArtifactId(),
+				sources.put(new ObservedConcept(ret.resolvedArtifact.getObservable()),
 						new Observable((Observable) ret.resolvedArtifact.getArtifact().getObservable()));
 
 				for (ResolutionEdge o : graph.incomingEdgesOf(source)) {

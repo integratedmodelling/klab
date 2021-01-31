@@ -95,6 +95,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
     private Map<String, ActorRef<KlabMessage>> receivers = Collections.synchronizedMap(new HashMap<>());
     private Map<String, List<ActorRef<KlabMessage>>> childInstances = Collections.synchronizedMap(new HashMap<>());
     private Map<String, Object> symbolTable = Collections.synchronizedMap(new HashMap<>());
+    // Java objects created by calling a constructor in set statements. Messages will be sent using reflection.
+    private Map<String, Object> javaReactors = Collections.synchronizedMap(new HashMap<>());
     private List<ActorRef<KlabMessage>> componentActors = Collections.synchronizedList(new ArrayList<>());
 
     /*
@@ -251,7 +253,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                 ret.symbolTable.put("$", value);
                 if (value instanceof Collection) {
                     int n = 1;
-                    for (Object o : ((Collection< ? >) value)) {
+                    for (Object o : ((Collection<?>) value)) {
                         ret.symbolTable.put("$" + (n++), o);
                     }
                 }
@@ -331,15 +333,28 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             return ret;
         }
 
+        /**
+         * Copy of scope with specialized variable value in symbol table.
+         * 
+         * @param variable
+         * @param value
+         * @return
+         */
+        public Scope withValue(String variable, Object value) {
+            Scope ret = new Scope(this);
+            ret.symbolTable.put(variable, value);
+            return ret;
+        }
+
         public Scope getChild(ConcurrentGroup code) {
             Scope ret = new Scope(this);
-            if (!initializing) {
+            if (!initializing && this.viewScope != null) {
                 ret.viewScope = this.viewScope.getChild(code);
             }
             return ret;
         }
 
-        public Map<String, Object> getSymbols(IActorIdentity< ? > identity) {
+        public Map<String, Object> getSymbols(IActorIdentity<?> identity) {
             Map<String, Object> ret = new HashMap<>();
             ret.putAll(identity.getState());
             if (globalSymbols != null) {
@@ -749,8 +764,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
     }
 
     private void executeFor(For code, Scope scope) {
-        // TODO Auto-generated method stub
-        System.out.println("HOLA");
+        for (Object o : Actors.INSTANCE.getIterable(code.getIterable(), scope, identity)) {
+            // TODO handle break action - needs a statement, then separate the scope and check for
+            // break at each iteration
+            execute(code.getBody(), scope.withValue(code.getVariable(), o));
+        }
     }
 
     private void executeFire(FireValue code, Scope scope) {
@@ -806,11 +824,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                 throw new KlabUnimplementedException("klab actor state setting is unimplemented");
             }
         } else if (((KActorsValue) code.getValue()).getConstructor() != null) {
-            
+
             Object o = evaluateInScope((KActorsValue) code.getValue(), scope);
-            // TODO add to list of reactors
+            this.javaReactors.put(code.getVariable(), o);
             this.symbolTable.put(code.getVariable(), o);
-            
+
         } else {
             // set goes into the actor's symbol table, only parameters can override it.
             this.symbolTable.put(code.getVariable(), evaluateInScope((KActorsValue) code.getValue(), scope));
@@ -828,7 +846,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         return evaluateInScope(arg, scope, this.identity);
     }
 
-    public static Object evaluateInScope(KActorsValue arg, Scope scope, IActorIdentity< ? > identity) {
+    public static Object evaluateInScope(KActorsValue arg, Scope scope, IActorIdentity<?> identity) {
         switch(arg.getType()) {
         case ANYTHING:
         case ANYVALUE:
@@ -875,8 +893,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             break;
         case LIST:
             List<Object> ret = new ArrayList<>();
-            for (Object o : (Collection<?>)arg.getValue()) {
-                ret.add(o instanceof KActorsValue ? evaluateInScope((KActorsValue)o, scope, identity) : o);
+            for (Object o : (Collection<?>) arg.getValue()) {
+                ret.add(o instanceof KActorsValue ? evaluateInScope((KActorsValue) o, scope, identity) : o);
             }
             return ret;
         case TREE:
@@ -1008,7 +1026,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         KlabActionExecutor executor = actionCache.get(executorId);
 
         if (executor == null) {
-            Class< ? extends KlabActionExecutor> actionClass = Actors.INSTANCE.getActionClass(messageName);
+            Class<? extends KlabActionExecutor> actionClass = Actors.INSTANCE.getActionClass(messageName);
             if (actionClass != null) {
 
                 executor = Actors.INSTANCE.getSystemAction(messageName, this.getIdentity(), code.getArguments(),

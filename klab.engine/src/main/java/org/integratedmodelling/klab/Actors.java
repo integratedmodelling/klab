@@ -12,6 +12,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -22,6 +23,7 @@ import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
+import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
@@ -35,9 +37,12 @@ import org.integratedmodelling.kim.model.KimExpression;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IActorsService;
+import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.common.mediation.Currency;
 import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.common.mediation.Unit;
@@ -47,7 +52,9 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMess
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage.Semaphore;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetActionExecutor;
+import org.integratedmodelling.klab.components.runtime.artifacts.ObjectArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
+import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -897,5 +904,95 @@ public enum Actors implements IActorsService {
         }
 
         return ret;
+    }
+
+    @SuppressWarnings("unchecked")
+    public Iterable<Object> getIterable(IKActorsValue iterable, Scope scope, IActorIdentity<?> identity) {
+        switch (iterable.getType()) {
+        case ANYTHING:
+            break;
+        case ANYTRUE:
+            break;
+        case ANYVALUE:
+            break;
+        case EMPTY:
+            break;
+        case CONSTANT:
+        case DATE:
+        case CLASS:
+        case BOOLEAN:
+        case ERROR:
+        case EXPRESSION:
+        case NUMBER:
+        case IDENTIFIER:
+        case OBSERVABLE:
+        case STRING:
+            if (Urns.INSTANCE.isUrn(iterable.getValue().toString())) {
+                return iterateResource(iterable.getValue().toString(), scope.getMonitor());
+            }
+            return Collections.singletonList(KlabActor.evaluateInScope((KActorsValue)iterable, scope, identity));
+        case OBJECT:
+        case LIST:
+        case SET:
+            Object o = KlabActor.evaluateInScope((KActorsValue)iterable, scope, identity);
+            if (o instanceof Iterable) {
+                return (Iterable<Object>)o;
+            } else {
+                return Collections.singletonList(o);
+            }
+        case MAP:
+            break;
+        case NODATA:
+            return Collections.singletonList(null);
+        case NUMBERED_PATTERN:
+            break;
+        case OBSERVATION:
+            return (Iterable<Object>)KlabActor.evaluateInScope((KActorsValue)iterable, scope, identity);
+        case QUANTITY:
+            break;
+        case RANGE:
+            // TODO iterate the range
+            break;
+        case TABLE:
+            break;
+        case TREE:
+            break;
+        case TYPE:
+            break;
+        case URN:
+            return iterateResource(iterable.getValue().toString(), scope.getMonitor());
+        default:
+            break;
+        
+        }
+        return new ArrayList<>();
+    }
+
+    private Iterable<Object> iterateResource(String urn, IMonitor monitor) {
+
+        VisitingDataBuilder builder = new VisitingDataBuilder(1);
+        IKlabData data = Resources.INSTANCE.getResourceData(urn, builder, monitor);
+        return data.getObjectCount() == 0 ? new ArrayList<>() : new Iterable<Object>() {
+
+            @Override
+            public Iterator<Object> iterator() {
+
+                return new Iterator<Object>(){
+
+                    int n = 0;
+                    
+                    @Override
+                    public boolean hasNext() {
+                        return n < data.getObjectCount();
+                    }
+
+                    @Override
+                    public Object next() {
+                        return new ObjectArtifact(data.getObjectName(n), data.getObjectScale(n), data.getObjectMetadata(n));
+                    }
+                };
+            }
+            
+        };
     }
 }
