@@ -7,6 +7,7 @@ import java.awt.Graphics2D;
 import java.awt.Rectangle;
 import java.awt.geom.AffineTransform;
 import java.awt.image.BufferedImage;
+import java.awt.image.DataBuffer;
 import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
@@ -110,7 +111,10 @@ public enum Renderer {
         IGrid grid = ((Space) state.getSpace()).getGrid();
 
         try {
-            GridCoverage2D coverage = GeotoolsUtils.INSTANCE.wrapStateInFloatCoverage(state, locator, Float.NaN, null);
+            // TODO bring this back after debugging - for now removes temporal differentiation and produces images beyond boundaries 
+//            GridCoverage2D coverage = GeotoolsUtils.INSTANCE.wrapStateInFloatCoverage(state, locator, Float.NaN, null);
+            GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT,
+                    -                   Float.NaN, false);
 
             // https://github.com/geotools/geotools/blob/master/modules/library/render/src/test/java/org/geotools/renderer/lite/GridCoverageRendererTest.java
 

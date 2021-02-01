@@ -399,16 +399,7 @@ public enum Concepts implements IConceptService {
 		return ret;
 	}
 
-	/**
-	 * Replace a set of components with another. Uses search/replace on the textual
-	 * declaration without validation, so must be used with care. Used internally
-	 * only to concretize abstract traits. Won't work if the keys or the values for
-	 * replacement are K-based compound concepts.
-	 * 
-	 * @param original
-	 * @param replacements
-	 * @return
-	 */
+	@Override
 	public IConcept replaceComponent(IConcept original, Map<IConcept, IConcept> replacements) {
 
 		if (replacements.isEmpty()) {

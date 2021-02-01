@@ -16,6 +16,7 @@ import java.util.Properties;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 
 public class Utils {
 
@@ -367,7 +368,7 @@ public class Utils {
 			}
 		}
 
-		throw new IllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());
+		throw new KlabIllegalArgumentException("cannot interpret value " + ret + " as a " + cls.getCanonicalName());
 	}
 
 	/**
@@ -445,7 +446,7 @@ public class Utils {
 		default:
 			break;
 		}
-		throw new IllegalArgumentException("type " + type + " has no Java class equivalent");
+		throw new KlabIllegalArgumentException("type " + type + " has no Java class equivalent");
 	}
 
 	/**
@@ -457,7 +458,7 @@ public class Utils {
 	public static int log2int(int x) {
 		int y, v;
 		if (x <= 0) {
-			throw new IllegalArgumentException("" + x + " <= 0");
+			throw new KlabIllegalArgumentException("" + x + " <= 0");
 		}
 		v = x;
 		y = -1;

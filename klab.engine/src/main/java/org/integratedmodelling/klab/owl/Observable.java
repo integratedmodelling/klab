@@ -901,12 +901,7 @@ public class Observable implements IObservable {
         return ret;
     }
 
-    /**
-     * If the observable results from resolving another with abstract predicates, return the mapping
-     * of abstract -> concrete made by the resolver.
-     * 
-     * @return
-     */
+    @Override
     public Map<IConcept, IConcept> getResolvedPredicates() {
         return resolvedPredicates;
     }

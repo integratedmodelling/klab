@@ -10,6 +10,7 @@ package org.integratedmodelling.klab.api.knowledge;
 
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
@@ -26,6 +27,7 @@ import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.services.IConceptService;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
@@ -576,5 +578,16 @@ public interface IObservable extends ISemantic, IResolvable {
      * @return
      */
     Collection<IConcept> getAbstractPredicates();
+
+    /**
+     * If the observable results from resolving another with abstract predicates, return the mapping
+     * of abstract -> concrete made by the resolver. This enables reconstructing the original
+     * abstract observable by replacing the concept after translating it
+     * ({@link IConceptService#replaceComponent(IConcept, Map)}) using the reverse mapping of the
+     * result.
+     * 
+     * @return
+     */
+    Map<IConcept, IConcept> getResolvedPredicates();
 
 }
