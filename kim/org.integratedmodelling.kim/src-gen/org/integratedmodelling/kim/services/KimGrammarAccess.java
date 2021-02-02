@@ -4660,12 +4660,13 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cMainConceptParserRuleCall_0_0 = (RuleCall)cMainAssignment_0.eContents().get(0);
 		private final UnorderedGroup cUnorderedGroup_1 = (UnorderedGroup)cGroup.eContents().get(1);
 		private final Group cGroup_1_0 = (Group)cUnorderedGroup_1.eContents().get(0);
-		private final Keyword cOfKeyword_1_0_0 = (Keyword)cGroup_1_0.eContents().get(0);
-		private final Group cGroup_1_0_1 = (Group)cGroup_1_0.eContents().get(1);
-		private final Assignment cDistributedOfInherencyAssignment_1_0_1_0 = (Assignment)cGroup_1_0_1.eContents().get(0);
-		private final Keyword cDistributedOfInherencyEachKeyword_1_0_1_0_0 = (Keyword)cDistributedOfInherencyAssignment_1_0_1_0.eContents().get(0);
-		private final Assignment cInherencyAssignment_1_0_1_1 = (Assignment)cGroup_1_0_1.eContents().get(1);
-		private final RuleCall cInherencySimpleConceptDeclarationParserRuleCall_1_0_1_1_0 = (RuleCall)cInherencyAssignment_1_0_1_1.eContents().get(0);
+		private final Group cGroup_1_0_0 = (Group)cGroup_1_0.eContents().get(0);
+		private final Keyword cOfKeyword_1_0_0_0 = (Keyword)cGroup_1_0_0.eContents().get(0);
+		private final Group cGroup_1_0_0_1 = (Group)cGroup_1_0_0.eContents().get(1);
+		private final Assignment cDistributedOfInherencyAssignment_1_0_0_1_0 = (Assignment)cGroup_1_0_0_1.eContents().get(0);
+		private final Keyword cDistributedOfInherencyEachKeyword_1_0_0_1_0_0 = (Keyword)cDistributedOfInherencyAssignment_1_0_0_1_0.eContents().get(0);
+		private final Assignment cInherencyAssignment_1_0_0_1_1 = (Assignment)cGroup_1_0_0_1.eContents().get(1);
+		private final RuleCall cInherencySimpleConceptDeclarationParserRuleCall_1_0_0_1_1_0 = (RuleCall)cInherencyAssignment_1_0_0_1_1.eContents().get(0);
 		private final Group cGroup_1_1 = (Group)cUnorderedGroup_1.eContents().get(1);
 		private final Keyword cForKeyword_1_1_0 = (Keyword)cGroup_1_1.eContents().get(0);
 		private final Group cGroup_1_1_1 = (Group)cGroup_1_1.eContents().get(1);
@@ -4723,24 +4724,27 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cRelationshipTargetSimpleConceptDeclarationParserRuleCall_1_10_3_0 = (RuleCall)cRelationshipTargetAssignment_1_10_3.eContents().get(0);
 		
 		//ConceptDeclaration:
-		//	main+=Concept+ (('of' (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration))? & ('for'
-		//	(distributedForInherency?='each'? motivation=SimpleConceptDeclaration))? & ('with'
-		//	compresent=SimpleConceptDeclaration)? & ('caused' 'by' causant=SimpleConceptDeclaration)? & ('adjacent' 'to'
-		//	adjacent=SimpleConceptDeclaration)? & ('contained' 'in' container=SimpleConceptDeclaration)? & ('containing'
-		//	contained=SimpleConceptDeclaration)? & ('causing' caused=SimpleConceptDeclaration)? & ('during'
-		//	(distributedTemporalInherency?='each'? during=SimpleConceptDeclaration))? & ('within'
-		//	(distributedWithinInherency?='each'? context=SimpleConceptDeclaration))? & ('linking'
-		//	relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?)?;
+		//	main+=Concept+ (=>
+		//	// primary inherency (when secondary is given using 'within')
+		//	('of' (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration))? & ('for' (distributedForInherency?='each'?
+		//	motivation=SimpleConceptDeclaration))? & ('with' compresent=SimpleConceptDeclaration)? & ('caused' 'by'
+		//	causant=SimpleConceptDeclaration)? & ('adjacent' 'to' adjacent=SimpleConceptDeclaration)? & ('contained' 'in'
+		//	container=SimpleConceptDeclaration)? & ('containing' contained=SimpleConceptDeclaration)? & ('causing'
+		//	caused=SimpleConceptDeclaration)? & ('during' (distributedTemporalInherency?='each'?
+		//	during=SimpleConceptDeclaration))? & ('within' (distributedWithinInherency?='each'?
+		//	context=SimpleConceptDeclaration))? & ('linking' relationshipSource=SimpleConceptDeclaration 'to'
+		//	relationshipTarget=SimpleConceptDeclaration)?)?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//main+=Concept+ (('of' (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration))? & ('for'
-		//(distributedForInherency?='each'? motivation=SimpleConceptDeclaration))? & ('with'
-		//compresent=SimpleConceptDeclaration)? & ('caused' 'by' causant=SimpleConceptDeclaration)? & ('adjacent' 'to'
-		//adjacent=SimpleConceptDeclaration)? & ('contained' 'in' container=SimpleConceptDeclaration)? & ('containing'
-		//contained=SimpleConceptDeclaration)? & ('causing' caused=SimpleConceptDeclaration)? & ('during'
-		//(distributedTemporalInherency?='each'? during=SimpleConceptDeclaration))? & ('within'
-		//(distributedWithinInherency?='each'? context=SimpleConceptDeclaration))? & ('linking'
-		//relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?)?
+		//main+=Concept+ (=> // primary inherency (when secondary is given using 'within')
+		//('of' (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration))? & ('for' (distributedForInherency?='each'?
+		//motivation=SimpleConceptDeclaration))? & ('with' compresent=SimpleConceptDeclaration)? & ('caused' 'by'
+		//causant=SimpleConceptDeclaration)? & ('adjacent' 'to' adjacent=SimpleConceptDeclaration)? & ('contained' 'in'
+		//container=SimpleConceptDeclaration)? & ('containing' contained=SimpleConceptDeclaration)? & ('causing'
+		//caused=SimpleConceptDeclaration)? & ('during' (distributedTemporalInherency?='each'?
+		//during=SimpleConceptDeclaration))? & ('within' (distributedWithinInherency?='each'?
+		//context=SimpleConceptDeclaration))? & ('linking' relationshipSource=SimpleConceptDeclaration 'to'
+		//relationshipTarget=SimpleConceptDeclaration)?)?
 		public Group getGroup() { return cGroup; }
 		
 		//main+=Concept+
@@ -4749,7 +4753,8 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//Concept
 		public RuleCall getMainConceptParserRuleCall_0_0() { return cMainConceptParserRuleCall_0_0; }
 		
-		//(('of' (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration))? & ('for' (distributedForInherency?='each'?
+		//(=> // primary inherency (when secondary is given using 'within')
+		//('of' (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration))? & ('for' (distributedForInherency?='each'?
 		//motivation=SimpleConceptDeclaration))? & ('with' compresent=SimpleConceptDeclaration)? & ('caused' 'by'
 		//causant=SimpleConceptDeclaration)? & ('adjacent' 'to' adjacent=SimpleConceptDeclaration)? & ('contained' 'in'
 		//container=SimpleConceptDeclaration)? & ('containing' contained=SimpleConceptDeclaration)? & ('causing'
@@ -4759,26 +4764,30 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 		//relationshipTarget=SimpleConceptDeclaration)?)?
 		public UnorderedGroup getUnorderedGroup_1() { return cUnorderedGroup_1; }
 		
+		//=> // primary inherency (when secondary is given using 'within')
 		//('of' (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration))?
 		public Group getGroup_1_0() { return cGroup_1_0; }
 		
+		//('of' (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration))
+		public Group getGroup_1_0_0() { return cGroup_1_0_0; }
+		
 		//'of'
-		public Keyword getOfKeyword_1_0_0() { return cOfKeyword_1_0_0; }
+		public Keyword getOfKeyword_1_0_0_0() { return cOfKeyword_1_0_0_0; }
 		
 		//(distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)
-		public Group getGroup_1_0_1() { return cGroup_1_0_1; }
+		public Group getGroup_1_0_0_1() { return cGroup_1_0_0_1; }
 		
 		//distributedOfInherency?='each'?
-		public Assignment getDistributedOfInherencyAssignment_1_0_1_0() { return cDistributedOfInherencyAssignment_1_0_1_0; }
+		public Assignment getDistributedOfInherencyAssignment_1_0_0_1_0() { return cDistributedOfInherencyAssignment_1_0_0_1_0; }
 		
 		//'each'
-		public Keyword getDistributedOfInherencyEachKeyword_1_0_1_0_0() { return cDistributedOfInherencyEachKeyword_1_0_1_0_0; }
+		public Keyword getDistributedOfInherencyEachKeyword_1_0_0_1_0_0() { return cDistributedOfInherencyEachKeyword_1_0_0_1_0_0; }
 		
 		//inherency=SimpleConceptDeclaration
-		public Assignment getInherencyAssignment_1_0_1_1() { return cInherencyAssignment_1_0_1_1; }
+		public Assignment getInherencyAssignment_1_0_0_1_1() { return cInherencyAssignment_1_0_0_1_1; }
 		
 		//SimpleConceptDeclaration
-		public RuleCall getInherencySimpleConceptDeclarationParserRuleCall_1_0_1_1_0() { return cInherencySimpleConceptDeclarationParserRuleCall_1_0_1_1_0; }
+		public RuleCall getInherencySimpleConceptDeclarationParserRuleCall_1_0_0_1_1_0() { return cInherencySimpleConceptDeclarationParserRuleCall_1_0_0_1_1_0; }
 		
 		//('for' (distributedForInherency?='each'? motivation=SimpleConceptDeclaration))?
 		public Group getGroup_1_1() { return cGroup_1_1; }
@@ -11606,14 +11615,16 @@ public class KimGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ConceptDeclaration:
-	//	main+=Concept+ (('of' (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration))? & ('for'
-	//	(distributedForInherency?='each'? motivation=SimpleConceptDeclaration))? & ('with'
-	//	compresent=SimpleConceptDeclaration)? & ('caused' 'by' causant=SimpleConceptDeclaration)? & ('adjacent' 'to'
-	//	adjacent=SimpleConceptDeclaration)? & ('contained' 'in' container=SimpleConceptDeclaration)? & ('containing'
-	//	contained=SimpleConceptDeclaration)? & ('causing' caused=SimpleConceptDeclaration)? & ('during'
-	//	(distributedTemporalInherency?='each'? during=SimpleConceptDeclaration))? & ('within'
-	//	(distributedWithinInherency?='each'? context=SimpleConceptDeclaration))? & ('linking'
-	//	relationshipSource=SimpleConceptDeclaration 'to' relationshipTarget=SimpleConceptDeclaration)?)?;
+	//	main+=Concept+ (=>
+	//	// primary inherency (when secondary is given using 'within')
+	//	('of' (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration))? & ('for' (distributedForInherency?='each'?
+	//	motivation=SimpleConceptDeclaration))? & ('with' compresent=SimpleConceptDeclaration)? & ('caused' 'by'
+	//	causant=SimpleConceptDeclaration)? & ('adjacent' 'to' adjacent=SimpleConceptDeclaration)? & ('contained' 'in'
+	//	container=SimpleConceptDeclaration)? & ('containing' contained=SimpleConceptDeclaration)? & ('causing'
+	//	caused=SimpleConceptDeclaration)? & ('during' (distributedTemporalInherency?='each'?
+	//	during=SimpleConceptDeclaration))? & ('within' (distributedWithinInherency?='each'?
+	//	context=SimpleConceptDeclaration))? & ('linking' relationshipSource=SimpleConceptDeclaration 'to'
+	//	relationshipTarget=SimpleConceptDeclaration)?)?;
 	public ConceptDeclarationElements getConceptDeclarationAccess() {
 		return pConceptDeclaration;
 	}

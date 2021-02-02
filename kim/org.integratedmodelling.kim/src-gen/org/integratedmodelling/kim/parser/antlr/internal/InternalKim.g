@@ -7998,42 +7998,44 @@ ruleConceptDeclaration returns [EObject current=null]
 					{
 						getUnorderedGroupHelper().select(grammarAccess.getConceptDeclarationAccess().getUnorderedGroup_1(), 0);
 					}
-								({true}?=>(otherlv_2='of'
-								{
-									newLeafNode(otherlv_2, grammarAccess.getConceptDeclarationAccess().getOfKeyword_1_0_0());
-								}
-								(
+								({true}?=>((
+									otherlv_2='of'
+									{
+										newLeafNode(otherlv_2, grammarAccess.getConceptDeclarationAccess().getOfKeyword_1_0_0_0());
+									}
 									(
 										(
-											lv_distributedOfInherency_3_0='each'
-											{
-												newLeafNode(lv_distributedOfInherency_3_0, grammarAccess.getConceptDeclarationAccess().getDistributedOfInherencyEachKeyword_1_0_1_0_0());
-											}
-											{
-												if ($current==null) {
-													$current = createModelElement(grammarAccess.getConceptDeclarationRule());
+											(
+												lv_distributedOfInherency_3_0='each'
+												{
+													newLeafNode(lv_distributedOfInherency_3_0, grammarAccess.getConceptDeclarationAccess().getDistributedOfInherencyEachKeyword_1_0_0_1_0_0());
 												}
-												setWithLastConsumed($current, "distributedOfInherency", true, "each");
-											}
-										)
-									)?
-									(
+												{
+													if ($current==null) {
+														$current = createModelElement(grammarAccess.getConceptDeclarationRule());
+													}
+													setWithLastConsumed($current, "distributedOfInherency", true, "each");
+												}
+											)
+										)?
 										(
-											{
-												newCompositeNode(grammarAccess.getConceptDeclarationAccess().getInherencySimpleConceptDeclarationParserRuleCall_1_0_1_1_0());
-											}
-											lv_inherency_4_0=ruleSimpleConceptDeclaration
-											{
-												if ($current==null) {
-													$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+											(
+												{
+													newCompositeNode(grammarAccess.getConceptDeclarationAccess().getInherencySimpleConceptDeclarationParserRuleCall_1_0_0_1_1_0());
 												}
-												set(
-													$current,
-													"inherency",
-													lv_inherency_4_0,
-													"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
-												afterParserOrEnumRuleCall();
-											}
+												lv_inherency_4_0=ruleSimpleConceptDeclaration
+												{
+													if ($current==null) {
+														$current = createModelElementForParent(grammarAccess.getConceptDeclarationRule());
+													}
+													set(
+														$current,
+														"inherency",
+														lv_inherency_4_0,
+														"org.integratedmodelling.kim.Kim.SimpleConceptDeclaration");
+													afterParserOrEnumRuleCall();
+												}
+											)
 										)
 									)
 								)

@@ -409,7 +409,7 @@ ConceptDeclaration:
 	
 	main+=Concept+ 
 		// binary semantic operators; also 'as', 'by' and 'follows' handled in other rules
-		(
+		(=>
 			// primary inherency (when secondary is given using 'within')
 			('of' ((distributedOfInherency?='each')? inherency=SimpleConceptDeclaration))? &
 			// purpose (achievement event created from target)

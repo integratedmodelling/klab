@@ -503,7 +503,7 @@ public class Actuator implements IActuator {
             return ret;
         }
 
-        if (ret != null) {
+        if (ret != null && ctx.getTargetArtifact() != null) {
             if (!ctx.getTargetArtifact().equals(ret)) {
 
                 /*

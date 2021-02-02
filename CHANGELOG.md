@@ -9,6 +9,19 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- k.Actors now handles for loops and construction of/interaction with Java objects by calling
+  their constructors at "set" statements and their methods as messages directed to them,
+  using reflection. Groovy-like property getting (and setting at construction with keyed
+  arguments) is also available on them. Only Java objects from a particular package can
+  be created now, because of the security risk of allowing arbitrary Java classes to be
+  used (which could be relaxed on local engines).
+- New klab.data.aggregate contextualizer to merge states after they have been contextualized
+  from an abstract dependency. Syntactic support for klab.data.merge to be used for 
+  subjects and other countables, with the option of removing the original observations from
+  the context.
+- Table compiler now aggregates from multiple states when the classifier uses an abstract
+  predicate, expanding and matching each concrete incarnation of it represented in the
+  context. 
 - Abstract roles and (some) identities in observables are resolved to concrete during
   resolution. While roles can be pre-set in the session by explicit user action, both
   roles and identities that are not already resolved will now lookup a characterizing
@@ -16,7 +29,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   The dynamics of resolution only looks at abstract roles and those abstract identities
   that are required for the observable (defined through "requires identity" in the
   semantics). Identities that are not required for the observable are left in the
-  observable unmodified.
+  observable unmodified. IRuntimeContext::findArtifact now can find multiple states
+  and match predicates from their abstract incarnations, returning observation groups
+  also for states (not added to the context).
 - Initial, partial implementation of multiple table adapters with (so far) CSV support
   and conventions for time/space contextualization and filtering.
 ### Fixed

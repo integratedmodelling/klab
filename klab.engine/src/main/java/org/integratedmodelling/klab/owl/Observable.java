@@ -118,6 +118,8 @@ public class Observable implements IObservable {
     // remember the lineage and
     // enable scoping for downstream resolutions.
     private Map<IConcept, IConcept> resolvedPredicates = new HashMap<>();
+    // keep these here for speed after computing them in case of repeated resolutions.
+    private Set<IConcept> abstractPredicates_;
 
     /*
      * this is only for debugging
@@ -126,7 +128,7 @@ public class Observable implements IObservable {
     private boolean mustContextualize;
     private boolean global;
 
-    Observable(Concept concept ) {
+    Observable(Concept concept) {
         this.observable = concept;
     }
 
@@ -206,7 +208,7 @@ public class Observable implements IObservable {
         return ret;
     }
 
-    public Observable(Observable observable ) {
+    public Observable(Observable observable) {
         this.observable = observable.observable;
         this.name = observable.name;
         this.referenceName = observable.referenceName;
@@ -290,7 +292,7 @@ public class Observable implements IObservable {
 
     @Override
     public boolean isAbstract() {
-        return isAbstract;
+        return isAbstract || !getAbstractPredicates().isEmpty();
     }
 
     public void setName(String name) {
@@ -871,34 +873,38 @@ public class Observable implements IObservable {
         return ((Concept) getType()).resolves(other.getType(), context, ((Observable) other).resolvedPredicates)
                 && CollectionUtils.isEqualCollection(this.valueOperators, ((Observable) other).valueOperators);
     }
-
+    
     @Override
     public Collection<IConcept> getAbstractPredicates() {
 
-        Set<IConcept> ret = new HashSet<>();
+        if (this.abstractPredicates_ == null) {
 
-        if (getType() != null && !isGeneric()) {
+            this.abstractPredicates_ = new HashSet<>();
 
-            /*
-             * remove operators if any
-             */
-            IConcept target = getType();
-            IConcept defined = Observables.INSTANCE.getDescribedType(target);
-            if (defined != null) {
-                target = defined;
-            }
+            if (getType() != null && !isGeneric()) {
 
-            for (IConcept c : Concepts.INSTANCE.collectComponents(target, EnumSet.of(IKimConcept.Type.ABSTRACT))) {
-                if (c.is(IKimConcept.Type.ROLE)) {
-                    ret.add(c);
-                } else if (c.is(IKimConcept.Type.IDENTITY)) {
-                    if (Observables.INSTANCE.getRequiredIdentities(target).contains(c)) {
-                        ret.add(c);
+                /*
+                 * remove operators if any
+                 */
+                IConcept target = getType();
+                IConcept defined = Observables.INSTANCE.getDescribedType(target);
+                if (defined != null) {
+                    target = defined;
+                }
+
+                for (IConcept c : Concepts.INSTANCE.collectComponents(target, EnumSet.of(IKimConcept.Type.ABSTRACT))) {
+                    if (c.is(IKimConcept.Type.ROLE)) {
+                        this.abstractPredicates_.add(c);
+                    } else if (c.is(IKimConcept.Type.IDENTITY)) {
+                        if (Observables.INSTANCE.getRequiredIdentities(target).contains(c)) {
+                            this.abstractPredicates_.add(c);
+                        }
                     }
                 }
             }
         }
-        return ret;
+
+        return this.abstractPredicates_;
     }
 
     @Override

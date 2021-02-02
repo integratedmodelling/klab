@@ -391,7 +391,8 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getDependencyAccess().getGroup_1_1_1(), "rule__Dependency__Group_1_1_1__0");
 			builder.put(grammarAccess.getConceptDeclarationAccess().getGroup(), "rule__ConceptDeclaration__Group__0");
 			builder.put(grammarAccess.getConceptDeclarationAccess().getGroup_1_0(), "rule__ConceptDeclaration__Group_1_0__0");
-			builder.put(grammarAccess.getConceptDeclarationAccess().getGroup_1_0_1(), "rule__ConceptDeclaration__Group_1_0_1__0");
+			builder.put(grammarAccess.getConceptDeclarationAccess().getGroup_1_0_0(), "rule__ConceptDeclaration__Group_1_0_0__0");
+			builder.put(grammarAccess.getConceptDeclarationAccess().getGroup_1_0_0_1(), "rule__ConceptDeclaration__Group_1_0_0_1__0");
 			builder.put(grammarAccess.getConceptDeclarationAccess().getGroup_1_1(), "rule__ConceptDeclaration__Group_1_1__0");
 			builder.put(grammarAccess.getConceptDeclarationAccess().getGroup_1_1_1(), "rule__ConceptDeclaration__Group_1_1_1__0");
 			builder.put(grammarAccess.getConceptDeclarationAccess().getGroup_1_2(), "rule__ConceptDeclaration__Group_1_2__0");
@@ -877,8 +878,8 @@ public class KimParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getDependencyAccess().getOptionalAssignment_1_1_0_4_0(), "rule__Dependency__OptionalAssignment_1_1_0_4_0");
 			builder.put(grammarAccess.getDependencyAccess().getNameAssignment_1_1_1_1(), "rule__Dependency__NameAssignment_1_1_1_1");
 			builder.put(grammarAccess.getConceptDeclarationAccess().getMainAssignment_0(), "rule__ConceptDeclaration__MainAssignment_0");
-			builder.put(grammarAccess.getConceptDeclarationAccess().getDistributedOfInherencyAssignment_1_0_1_0(), "rule__ConceptDeclaration__DistributedOfInherencyAssignment_1_0_1_0");
-			builder.put(grammarAccess.getConceptDeclarationAccess().getInherencyAssignment_1_0_1_1(), "rule__ConceptDeclaration__InherencyAssignment_1_0_1_1");
+			builder.put(grammarAccess.getConceptDeclarationAccess().getDistributedOfInherencyAssignment_1_0_0_1_0(), "rule__ConceptDeclaration__DistributedOfInherencyAssignment_1_0_0_1_0");
+			builder.put(grammarAccess.getConceptDeclarationAccess().getInherencyAssignment_1_0_0_1_1(), "rule__ConceptDeclaration__InherencyAssignment_1_0_0_1_1");
 			builder.put(grammarAccess.getConceptDeclarationAccess().getDistributedForInherencyAssignment_1_1_1_0(), "rule__ConceptDeclaration__DistributedForInherencyAssignment_1_1_1_0");
 			builder.put(grammarAccess.getConceptDeclarationAccess().getMotivationAssignment_1_1_1_1(), "rule__ConceptDeclaration__MotivationAssignment_1_1_1_1");
 			builder.put(grammarAccess.getConceptDeclarationAccess().getCompresentAssignment_1_2_1(), "rule__ConceptDeclaration__CompresentAssignment_1_2_1");
