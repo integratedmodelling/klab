@@ -52,6 +52,7 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMess
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage.Semaphore;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetActionExecutor;
+import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifact;
 import org.integratedmodelling.klab.components.runtime.artifacts.ObjectArtifact;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
@@ -963,7 +964,6 @@ public enum Actors implements IActorsService {
             return iterateResource(iterable.getValue().toString(), scope.getMonitor());
         default:
             break;
-        
         }
         return new ArrayList<>();
     }
@@ -988,7 +988,8 @@ public enum Actors implements IActorsService {
 
                     @Override
                     public Object next() {
-                        return new ObjectArtifact(data.getObjectName(n), data.getObjectScale(n), data.getObjectMetadata(n));
+                        // wrap into an Artifact wrapper for reference inside k.Actors
+                        return new Artifact(new ObjectArtifact(data.getObjectName(n), data.getObjectScale(n), data.getObjectMetadata(n)));
                     }
                 };
             }
