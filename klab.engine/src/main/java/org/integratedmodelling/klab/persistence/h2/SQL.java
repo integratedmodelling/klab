@@ -33,7 +33,10 @@ import java.util.Map;
 
 import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.utils.Escape;
 
 import com.vividsolutions.jts.geom.Geometry;
 
@@ -45,63 +48,84 @@ import com.vividsolutions.jts.geom.Geometry;
  */
 public class SQL {
 
-	public static Map<DataType, String> sqlTypes = Collections.synchronizedMap(new HashMap<>());
-	static {
-		sqlTypes.put(DataType.FLOAT, "FLOAT");
-		sqlTypes.put(DataType.DOUBLE, "DOUBLE");
-		sqlTypes.put(DataType.LONG, "LONG");
-		sqlTypes.put(DataType.SHAPE, "GEOMETRY");
-		sqlTypes.put(DataType.TEXT, "VARCHAR");
-	}
+    public static Map<DataType, String> sqlTypes = Collections.synchronizedMap(new HashMap<>());
+    static {
+        sqlTypes.put(DataType.FLOAT, "FLOAT");
+        sqlTypes.put(DataType.DOUBLE, "DOUBLE");
+        sqlTypes.put(DataType.LONG, "LONG");
+        sqlTypes.put(DataType.SHAPE, "GEOMETRY");
+        sqlTypes.put(DataType.TEXT, "VARCHAR");
+    }
 
-	public static String wrapPOD(Object o) {
+    public static String getType( IArtifact.Type type ) {
 
-		if (o instanceof ISpace) {
-			o = ((Shape)((ISpace)o).getShape()).getStandardizedGeometry();
-		}
-		
-		if (o instanceof Geometry) {
-			return "'" + o + "'";
-		}
-		
-		return o instanceof String ? ("'" + o + "'") : (o == null ? "NULL" : o.toString());
-	}
+        switch( type ) {
+        case BOOLEAN:
+            return "BOOLEAN";
+        case NUMBER:
+            return "DOUBLE";
+        default:
+            break;
+        }
 
-	/**
-	 * Passed to some SQL kboxes' query() to ease handling of statements and
-	 * connections.
-	 * 
-	 * @author ferdinando.villa
-	 *
-	 */
-	public static interface ResultHandler {
+        return "VARCHAR";
+    }
 
-		void onRow(ResultSet rs);
+    public static String wrapPOD( Object o ) {
 
-		/**
-		 * Passed the number of result AFTER all rows (if any) have been processed with
-		 * onRow.
-		 * 
-		 * @param nres
-		 */
-		void nResults(int nres);
+        if (o instanceof ISpace) {
+            o = ((Shape) ((ISpace) o).getShape()).getStandardizedGeometry();
+        }
 
-	}
+        if (o instanceof Geometry) {
+            return "'" + o + "'";
+        }
 
-	/**
-	 * For code tightness when we don't want nResults.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	public abstract static class SimpleResultHandler implements ResultHandler {
+        return o instanceof String ? ("'" + o + "'") : (o == null ? "NULL" : o.toString());
+    }
 
-		@Override
-		public void nResults(int nres) {
-			// TODO Auto-generated method stub
+    /**
+     * Passed to some SQL kboxes' query() to ease handling of statements and
+     * connections.
+     * 
+     * @author ferdinando.villa
+     *
+     */
+    public static interface ResultHandler {
 
-		}
+        void onRow( ResultSet rs );
 
-	}
+        /**
+         * Passed the number of result AFTER all rows (if any) have been processed with
+         * onRow.
+         * 
+         * @param nres
+         */
+        void nResults( int nres );
+
+    }
+
+    /**
+     * For code tightness when we don't want nResults.
+     * 
+     * @author Ferd
+     *
+     */
+    public abstract static class SimpleResultHandler implements ResultHandler {
+
+        @Override
+        public void nResults( int nres ) {
+            // TODO Auto-generated method stub
+
+        }
+
+    }
+
+    public static String wrapPOD(Object value, Type type) {
+        if (value == null) {
+            return "NULL";
+        }
+        return type == Type.TEXT ? "'" + Escape.forSQL(value.toString()) + "'" : value.toString(); 
+    }
 
 }
