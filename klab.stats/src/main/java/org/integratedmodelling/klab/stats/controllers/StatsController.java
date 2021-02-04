@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
+import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
@@ -12,13 +14,18 @@ import javax.servlet.http.HttpServletRequest;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.rest.StatsInstertResponse;
+import org.integratedmodelling.klab.stats.api.models.StatsFindPageRequest;
+import org.integratedmodelling.klab.stats.api.models.StatsFindPageResponse;
 import org.integratedmodelling.klab.stats.api.models.StatsInsertRequest;
 import org.integratedmodelling.klab.stats.services.StatsService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonMappingException;
@@ -34,12 +41,11 @@ public class StatsController {
 	@Autowired
 	private ObjectMapper mapper;
 	
+	TypeFactory factory = TypeFactory.defaultInstance();
+	
 	@PostMapping(API.STATS.STATS_BASE)
-	StatsInstertResponse<?> handleRequest(HttpServletRequest request) throws JsonParseException, JsonMappingException, IOException, ClassNotFoundException {
-		mapper.enable(DeserializationFeature.UNWRAP_ROOT_VALUE);
+	StatsInstertResponse<?> handleRequest(HttpServletRequest request) throws IOException {
 		InputStream body = request.getInputStream();
-		ObjectMapper mapper = new ObjectMapper();
-		
 	    String text = new BufferedReader(
 	    	      new InputStreamReader(body, StandardCharsets.UTF_8))
 	    	        .lines()
@@ -48,7 +54,7 @@ public class StatsController {
 	    Map<String, Object> jsonMap = mapper.readValue(text, Map.class);
 	    	        
 		String type = (String) jsonMap.get("type");
-		TypeFactory factory = TypeFactory.defaultInstance();
+		
 		
 		JavaType typeC = mapper
 				.getTypeFactory()
@@ -56,4 +62,28 @@ public class StatsController {
 		
 		return service.insertRequest(mapper.readValue(text, typeC));
 	}
+
+	//  StatsFindPageResponse<?> handleFindRequest(@RequestParam(value = API.STATS.PARAMETERS.TYPE, required=true) String type,
+	//  @RequestParam(value = API.STATS.PARAMETERS.PAGE, required = false) int page,
+	//  @RequestParam(value = API.STATS.PARAMETERS.LIMIT, required = false) int limit)
+	
+	@GetMapping(API.STATS.STATS_BASE)
+	StatsFindPageResponse<?> handleFindRequest(HttpServletRequest request) throws IOException {
+	    
+	    Enumeration<String> parameterNames = request.getParameterNames();
+	    Map<String, String> map = new HashMap<>();
+	    while(parameterNames.hasMoreElements()) {
+	        String paramName = parameterNames.nextElement();
+	        map.put(paramName, request.getParameter(paramName));
+	    }
+
+	    JavaType typeC = mapper
+	            .getTypeFactory()
+	            .constructParametricType(StatsFindPageRequest.class, factory.constructFromCanonical(map.get(API.STATS.PARAMETERS.TYPE)));
+	    
+	    
+	    return service.findRequest(mapper.readValue(mapper.writeValueAsString(map) , typeC));
+	    
+	}
+	
 }

@@ -1,9 +1,7 @@
 package org.integratedmodelling.klab.stats.api.models;
 
-public class StatsInsertRequest<M> {
+public class StatsInsertRequest<M>  extends StatsBaseRequest<M>{
 	
-    private Class<M> type;
-    
     public StatsInsertRequest() {
     }
     

@@ -25,7 +25,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
-import org.springframework.boot.web.servlet.context.ServletWebServerApplicationContext;
 import org.springframework.http.ResponseEntity;
 
 @ContextConfiguration
@@ -97,6 +96,15 @@ public class MongoTestIntegrationTest {
     	ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:" + port + API.STATS.STATS_BASE, request, String.class);
     	response.toString();
     }
+    
+    @DisplayName("Test get with type")
+    @Test
+    public void test_4() {
+        ResponseEntity<String> response = restTemplate
+                .getForEntity("http://localhost:" + port + API.STATS.STATS_BASE + "?type=" + SessionReference.class.getCanonicalName(), String.class);
+        response.getBody().toString();
+        System.out.println(response.getBody().toString());
+    }    
     
     
 

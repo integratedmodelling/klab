@@ -1,46 +1,46 @@
-//package org.integratedmodelling.klab.stats.config;
-//  
-//import java.io.IOException;
-//import java.util.ArrayList;
-//import java.util.LinkedList;
-//import java.util.List;
-//
-//import org.bson.codecs.pojo.ClassModel;
-//import org.integratedmodelling.klab.stats.api.models.StatsInsertRequest;
-//import org.reflections.Reflections;
-//import org.reflections.scanners.ResourcesScanner;
-//import org.reflections.scanners.SubTypesScanner;
-//import org.reflections.util.ClasspathHelper;
-//import org.reflections.util.ConfigurationBuilder;
-//import org.reflections.util.FilterBuilder;
-//import org.springframework.context.annotation.Bean;
-//import org.springframework.context.annotation.Configuration;
-//
-//import com.fasterxml.jackson.core.JsonParser;
-//import com.fasterxml.jackson.core.JsonProcessingException;
-//import com.fasterxml.jackson.core.TreeNode;
-//import com.fasterxml.jackson.databind.DeserializationContext;
-//import com.fasterxml.jackson.databind.DeserializationFeature;
-//import com.fasterxml.jackson.databind.JsonNode;
-//import com.fasterxml.jackson.databind.MapperFeature;
-//import com.fasterxml.jackson.databind.ObjectMapper;
-//import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
-//import com.fasterxml.jackson.databind.module.SimpleModule;
-//
-//@Configuration public class ObjectMapperConfig {
-//  
-//	@Bean
-//	public ObjectMapper objectMapper() { 
-//		ObjectMapper mapper = new ObjectMapper();
-//		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
-//		mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true);
-//		//mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.  OBJECT_AND_NON_CONCRETE);
-//		mapper.registerModules(getModules());
-//		return mapper;
-//	}
-//  
-//  
-//  
+package org.integratedmodelling.klab.stats.config;
+  
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
+
+import org.bson.codecs.pojo.ClassModel;
+import org.integratedmodelling.klab.stats.api.models.StatsInsertRequest;
+import org.reflections.Reflections;
+import org.reflections.scanners.ResourcesScanner;
+import org.reflections.scanners.SubTypesScanner;
+import org.reflections.util.ClasspathHelper;
+import org.reflections.util.ConfigurationBuilder;
+import org.reflections.util.FilterBuilder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
+
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.TreeNode;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.DeserializationFeature;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.MapperFeature;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.deser.std.StdDeserializer;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
+@Configuration public class ObjectMapperConfig {
+  
+	@Bean
+	public ObjectMapper objectMapper() { 
+		ObjectMapper mapper = new ObjectMapper();
+		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		//mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true);
+		//mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.  OBJECT_AND_NON_CONCRETE);
+		//mapper.registerModules(getModules());
+		return mapper;
+	}
+  
+  
+  
 //  public SimpleModule[] getModules() {
 //		List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
 //		classLoadersList.add(ClasspathHelper.contextClassLoader());
@@ -97,5 +97,5 @@
 //	  }
 //	  
 //  }
-// 
-//}
+ 
+}

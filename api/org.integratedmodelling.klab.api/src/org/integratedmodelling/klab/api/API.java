@@ -540,6 +540,15 @@ public interface API {
 		
 		public static final String STATS_BASE = API_BASE + "/stats";
 		
+		public interface PARAMETERS {
+		    public static final String TYPE = "type";
+		    
+            public static final String PAGE = "page";
+            
+            public static final String LIMIT = "limit";
+            
+		}
+		
 	}
 
 	/**
