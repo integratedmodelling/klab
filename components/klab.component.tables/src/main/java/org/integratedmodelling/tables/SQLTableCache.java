@@ -1,15 +1,13 @@
 package org.integratedmodelling.tables;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
-import java.util.LinkedHashSet;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
-
-import javax.annotation.Nullable;
 
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
@@ -18,10 +16,9 @@ import org.integratedmodelling.klab.api.data.general.ITable.Filter;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.persistence.h2.H2Database;
+import org.integratedmodelling.klab.persistence.h2.H2Database.DBIterator;
 import org.integratedmodelling.klab.persistence.h2.SQL;
-import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Utils;
 
 /**
@@ -48,33 +45,6 @@ public class SQLTableCache {
         if (database == null) {
             database = H2Database.createPersistent(dbname);
         }
-
-        // verify or create table
-        if (database.hasTable("data")) {
-
-            // TODO verify
-
-        } else {
-
-            String sql = "CREATE TABLE data (\n   oid LONG";
-            for (Attribute column : getSortedAttributes()) {
-                sql += ",\n   " + column.getName() + " " + SQL.getType(column.getType());
-                if (getWidth(column) > 0) {
-                    sql += "(" + getWidth(column) + ")";
-                }
-            }
-
-            sql += ");\nCREATE INDEX oid_index ON data(oid);";
-            for (Attribute column : getSortedAttributes()) {
-                if (isIndexed(column)) {
-                    sql += "\nCREATE " + (column.getType() == IArtifact.Type.SPATIALEXTENT ? "SPATIAL" : "") + " INDEX "
-                            + column.getName() + "_index ON data (" + column.getName() + ");";
-                }
-            }
-
-            database.execute(sql);
-        }
-
     }
 
     public List<Attribute> getSortedAttributes() {
@@ -93,6 +63,26 @@ public class SQLTableCache {
         return this.sortedAttributes_;
     }
 
+    private void createStructure() {
+
+        String sql = "CREATE TABLE data (\n   oid LONG";
+        for (Attribute column : getSortedAttributes()) {
+            sql += ",\n   " + column.getName() + " " + SQL.getType(column.getType());
+            if (getWidth(column) > 0) {
+                sql += "(" + getWidth(column) + ")";
+            }
+        }
+
+        sql += ");\nCREATE INDEX oid_index ON data(oid);";
+        for (Attribute column : getSortedAttributes()) {
+            if (isIndexed(column)) {
+                sql += "\nCREATE " + (column.getType() == IArtifact.Type.SPATIALEXTENT ? "SPATIAL" : "") + " INDEX "
+                        + column.getName() + "_index ON data (" + column.getName() + ");";
+            }
+        }
+
+        database.execute(sql);
+    }
     /**
      * True if the resource attributes request indexing for the specified column.
      * 
@@ -120,7 +110,7 @@ public class SQLTableCache {
     }
 
     public boolean isEmpty() {
-        return database.hasTable("data");
+        return !database.hasTable("data");
     }
 
     private String sanitize(String urn) {
@@ -129,6 +119,7 @@ public class SQLTableCache {
 
     public void reset(ITable<?> table) {
         database.execute("DROP TABLE data;");
+        createStructure();
         loadData(table);
     }
 
@@ -136,7 +127,7 @@ public class SQLTableCache {
         return null; // dataCache.get(locators);
     }
 
-    private void loadData(ITable<?> table) {
+    public void loadData(ITable<?> table) {
 
         // this.properties.put("dimensions", NumberUtils.toString(table.getDimensions()));
         int row = 0;
@@ -153,10 +144,6 @@ public class SQLTableCache {
         }
     }
 
-    public static void main(String[] args) {
-
-    }
-
     /**
      * Pass a set of filters and return a list of results - either a singleton, a list or a list of
      * lists according to the dimensionality of the result. Lists of lists can be nested as needed
@@ -166,138 +153,127 @@ public class SQLTableCache {
      * @param filters
      * @return
      */
-    public List<Object> scan(Collection<Filter> filters, IContextualizationScope scope) {
+    public List<Object> scan(AbstractTable<?> table, Collection<Filter> filters, IContextualizationScope scope) {
 
-        // LinkedHashSet<Integer> ret = new LinkedHashSet<>();
-        // int done = 0;
-        // for (Filter filter : filters) {
-        // if (filter.getDimension() == dimensionIndex) {
-        // ret = matchFilter(filter, dimensions, dimensionIndex, scope, ret);
-        // done++;
-        // if (ret.isEmpty()) {
-        // break;
-        // }
-        // }
-        // }
-        // if ((!ret.isEmpty() || done == 0) && additionalFilters != null) {
-        // for (Filter filter : additionalFilters) {
-        // if (filter.getDimension() == dimensionIndex) {
-        // ret = matchFilter(filter, dimensions, dimensionIndex, scope, ret);
-        // done++;
-        // if (ret.isEmpty()) {
-        // break;
-        // }
-        // }
-        // }
-        // }
-        //
-        // if (done == 0) {
-        // // no filters for this dimension, we want them all
-        // ret = NumberUtils.enumerateAsSet(dimensions[dimensionIndex]);
-        // }
-        //
-        // return ret;
+        String fields = "";
+        String where = "";
 
-        return null;
-    }
+        Set<String> searchedColumns = new HashSet<>();
+        List<String> retrieved = new ArrayList<>();
 
-    /**
-     * If the filter is known, retain or remove any indices that the filter admits or excludes from
-     * the passed set, then return the modified set. Handle the caching of the filter results for
-     * the table as it is stored.
-     * 
-     * @param filter
-     * @param ret
-     * @return
-     */
-    private LinkedHashSet<Integer> matchFilter(Filter filter, int[] dimensions, int dimension, IContextualizationScope scope,
-            Set<Integer> indicesSoFar) {
+        for (Filter filter : filters) {
+            switch(filter.getType()) {
+            case COLUMN_EXPRESSION:
+                break;
+            case COLUMN_HEADER:
+                break;
+            case COLUMN_MATCH:
 
-        LinkedHashSet<Integer> ret = new LinkedHashSet<>(indicesSoFar);
-        // int[] cached = filter.isCached() ? filterCache.get(filter.getSignature()) : null;
-        LinkedHashSet<Integer> indices = new LinkedHashSet<>();
+                for (int i = 0; i < filter.getArguments().size(); i++) {
 
-        // if (cached == null) {
+                    int col = filter.getArguments().get(i) instanceof Number
+                            ? ((Number) filter.getArguments().get(i)).intValue()
+                            : -1;
+                    Attribute attribute = null;
+                    if (col < 0) {
+                        if (filter.getArguments().get(i) instanceof String) {
+                            attribute = table.getColumnDescriptor(filter.getArguments().get(i).toString());
+                        } else if (filter.getArguments().get(i) instanceof Attribute) {
+                            attribute = (Attribute) filter.getArguments().get(i);
+                        }
+                    } else {
+                        attribute = table.getColumnDescriptor(col);
+                    }
 
-        switch(filter.getType()) {
-        case COLUMN_EXPRESSION:
-            break;
-        case COLUMN_HEADER:
-            break;
-        case COLUMN_MATCH:
-
-            // first locator must be a column indicator
-            int col = filter.getArguments().get(0) instanceof Number ? ((Number) filter.getArguments().get(0)).intValue() : -1;
-            Attribute attr = null;
-            if (col < 0) {
-                if (filter.getArguments().get(0) instanceof String) {
-                    // attr = attributes.get(filter.getArguments().get(0).toString());
-                } else if (filter.getArguments().get(0) instanceof Attribute) {
-                    attr = (Attribute) filter.getArguments().get(0);
+                    Object value = filter.getArguments().get(++i);
+                    if (attribute != null) {
+                        value = table.unmapValue(value, attribute);
+                        searchedColumns.add(attribute.getName());
+                        where += (where.isEmpty() ? "(" : " AND (") + getCondition(attribute.getName(), value) + ")";
+                    }
                 }
-                if (attr != null) {
-                    col = attr.getIndex();
+
+                break;
+            case INCLUDE_COLUMNS:
+
+                List<Integer> indices = new ArrayList<>();
+                Utils.collectValues(filter.getArguments(), indices, Integer.class);
+                for (Integer index : indices) {
+                    Attribute attribute = table.getColumnDescriptor(index);
+                    if (attribute != null) {
+                        fields += (fields.isEmpty() ? "" : ", ") + attribute.getName();
+                        retrieved.add(attribute.getName());
+                    }
                 }
+                break;
+            case INCLUDE_ROWS:
+                break;
+            case NO_RESULTS:
+                break;
+            case ROW_HEADER:
+                break;
+            case ROW_MATCH:
+                break;
+            default:
+                break;
             }
-
-            if (col < 0) {
-                throw new KlabIllegalStateException("table: column filter does not specify a valid column");
-            }
-
-            List<Object> match = new ArrayList<>();
-            if (filter.getArguments().get(1) instanceof Collection) {
-                match.addAll((Collection<?>) filter.getArguments().get(1));
-            } else {
-                match.add(filter.getArguments().get(1));
-            }
-            for (int i = 0; i < dimensions[0]; i++) {
-                // Object object1 = dataCache.get(new int[]{i, col});
-                // for (Object object2 : match) {
-                // if (AbstractTable.checkEquals(table.mapValue(object1, attr), object2, attr,
-                // scope)) {
-                // indices.add(i);
-                // break;
-                // }
-                // }
-            }
-
-            break;
-        case INCLUDE_COLUMNS:
-
-            Utils.collectValues(filter.getArguments(), indices, Integer.class);
-
-            break;
-        case INCLUDE_ROWS:
-            break;
-        case NO_RESULTS:
-            break;
-        case ROW_HEADER:
-            break;
-        case ROW_MATCH:
-            break;
         }
 
-        // save to avoid repeating
-        if (filter.isCached()) {
-            // cached = NumberUtils.intArrayFromCollection(indices);
-            // filterCache.put(filter.getSignature(), cached);
-            // db.commit();
+        if (fields.isEmpty()) {
+            fields = "*";
+            for (Attribute attr : getSortedAttributes()) {
+                retrieved.add(attr.getName());
+            }
         }
 
-        // } else {
-        // for (int n : cached) {
-        // indices.add(n);
-        // }
-        // }
+        /*
+         * ensure all the columns we're searching are indexed
+         */
+        for (String searched : searchedColumns) {
+            if (!retrieved.contains(searched) && !"*".equals(fields)) {
+                fields += ", " + searched;
+            }
+            database.execute("CREATE INDEX IF NOT EXISTS " + searched + "_index ON data(" + searched + ");");
+        }
 
-        if (ret.isEmpty()) {
-            ret.addAll(indices);
-        } else {
-            // starting out: if we return empty, we stop
-            ret.retainAll(indices);
+        List<Object> ret = new ArrayList<>();
+
+        String query = "SELECT " + fields + " FROM data" + (where.isEmpty() ? "" : (" WHERE " + where)) + ";";
+
+        System.out.println(query);
+
+        try (DBIterator result = database.query(query)) {
+            while(result.hasNext()) {
+                try {
+                    if (retrieved.size() == 1) {
+                        ret.add(table.mapValue(result.result.getObject(1), table.getColumnDescriptor(retrieved.get(0))));
+                    } else if (retrieved.size() > 1) {
+                        List<Object> row = new ArrayList<>();
+                        for (int i = 0; i < retrieved.size(); i++) {
+                            row.add(table.mapValue(result.result.getObject(i + 1), table.getColumnDescriptor(retrieved.get(i))));
+                        }
+                        ret.add(row);
+                    }
+                    result.advance();
+                } catch (SQLException e) {
+                    // TODO shouldn't happen
+                }
+            }
         }
 
         return ret;
-
     }
+
+    private String getCondition(String field, Object value) {
+
+        if (value instanceof Collection) {
+            String ret = "";
+            for (Object o : ((Collection<?>) value)) {
+                ret += (ret.isEmpty() ? "(" : " OR (") + getCondition(field, o) + ")";
+            }
+            return ret;
+        }
+        return field + " = " + SQL.wrapPOD(value);
+    }
+
 }

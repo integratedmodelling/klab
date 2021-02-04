@@ -122,10 +122,22 @@ public class SQL {
     }
 
     public static String wrapPOD(Object value, Type type) {
-        if (value == null) {
+        if (value == null || value.toString().trim().isEmpty()) {
             return "NULL";
         }
-        return type == Type.TEXT ? "'" + Escape.forSQL(value.toString()) + "'" : value.toString(); 
+        switch (type) {
+        case BOOLEAN:
+            try {
+                return Boolean.parseBoolean(value.toString()) ? "TRUE" : "FALSE";
+            } catch (Throwable t) {
+                return "1".equals(value.toString()) ? "TRUE" : "FALSE";
+            }
+        case NUMBER:
+            return value.toString();
+        default:
+            break;
+        }
+        return "'" + Escape.forSQL(value.toString()) + "'"; 
     }
 
 }

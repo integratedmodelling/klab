@@ -27,58 +27,60 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class UrnCharacterizer implements IResolver<IArtifact>, IProcessor, IExpression {
 
-	public final static String FUNCTION_ID = "klab.runtime.characterize";
+    public final static String FUNCTION_ID = "klab.runtime.characterize";
 
-	private IResource resource;
-	private Map<String, String> urnParameters;
+    private IResource resource;
+    private Map<String, String> urnParameters;
 
-	// don't remove - only used as expression
-	public UrnCharacterizer() {
-	}
+    // don't remove - only used as expression
+    public UrnCharacterizer() {
+    }
 
-	public UrnCharacterizer(String urn) {
-		Pair<String, Map<String, String>> call = Urns.INSTANCE.resolveParameters(urn);
-		this.resource = Resources.INSTANCE.resolveResource(urn);
-		if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
-			throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or unknown");
-		}
-		this.urnParameters = call.getSecond();
-	}
+    public UrnCharacterizer(String urn) {
+        Pair<String, Map<String, String>> call = Urns.INSTANCE.resolveParameters(urn);
+        this.resource = Resources.INSTANCE.resolveResource(urn);
+        if (this.resource == null || !Resources.INSTANCE.isResourceOnline(this.resource)) {
+            throw new KlabResourceNotFoundException("resource with URN " + urn + " is unavailable or unknown");
+        }
+        this.urnParameters = call.getSecond();
+    }
 
-	public static IServiceCall getServiceCall(String urn) {
-		return KimServiceCall.create(FUNCTION_ID, "urn", urn);
-	}
+    public static IServiceCall getServiceCall(String urn) {
+        return KimServiceCall.create(FUNCTION_ID, "urn", urn);
+    }
 
-	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		return new UrnCharacterizer(parameters.get("urn", String.class));
-	}
+    @Override
+    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+        return new UrnCharacterizer(parameters.get("urn", String.class));
+    }
 
-	@Override
-	public Type getType() {
-		return Type.VOID;
-	}
+    @Override
+    public Type getType() {
+        return Type.VOID;
+    }
 
-	@Override
-	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
+    @Override
+    public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
 
-		IResource res = this.resource.contextualize(context.getScale(), context.getTargetArtifact(), urnParameters,
-				context);
+        IResource res = this.resource.contextualize(context.getScale(), context.getTargetArtifact(), urnParameters, context);
 
-		IKlabData data = Resources.INSTANCE.getResourceData(res, urnParameters, context.getScale(), context);
-		if (data != null) {
-			IConcept concept = data.getSemantics();
-			IConcept toResolve = context.getTargetSemantics().getType();
-			List<IConcept> traits = concept.is(IKimConcept.Type.INTERSECTION) ? Collections.singletonList(concept)
-					: concept.getOperands();
-			if (ret instanceof IDirectObservation) {
-				for (IConcept predicate : traits) {
-					((IRuntimeScope)context).newPredicate((IDirectObservation)ret, predicate);
-				}
-			} else {
-				((IRuntimeScope) context).setConcreteIdentities(toResolve, traits);
-			}
-		}
-		return ret;
-	}
+        IKlabData data = Resources.INSTANCE.getResourceData(res, urnParameters, context.getScale(), context);
+        if (data != null) {
+            IConcept concept = data.getSemantics();
+            if (concept != null) {
+                IConcept toResolve = context.getTargetSemantics().getType();
+                List<IConcept> traits = concept.is(IKimConcept.Type.INTERSECTION)
+                        ? Collections.singletonList(concept)
+                        : concept.getOperands();
+                if (ret instanceof IDirectObservation) {
+                    for (IConcept predicate : traits) {
+                        ((IRuntimeScope) context).newPredicate((IDirectObservation) ret, predicate);
+                    }
+                } else {
+                    ((IRuntimeScope) context).setConcreteIdentities(toResolve, traits);
+                }
+            }
+        }
+        return ret;
+    }
 }
