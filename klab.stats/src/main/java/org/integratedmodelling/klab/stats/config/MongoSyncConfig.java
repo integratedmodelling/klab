@@ -33,18 +33,16 @@ import org.bson.codecs.pojo.Conventions;
 
 @Configuration
 public class MongoSyncConfig {
-
-  @Bean(destroyMethod="shutdown")
-  public MongoServer mongoServer() {
-	  
-	  MemoryBackend backend = (MemoryBackend) new MemoryBackend().version(ServerVersion.MONGO_3_6);
-  	
-	  MongoServer mongoServer = new MongoServer(backend);
     
-	  mongoServer.bind("localhost", 27017);
+    @Bean(destroyMethod="shutdown")
+    public MongoServer mongoServer() {
     
-	  return mongoServer;
-  }
+        MemoryBackend backend = (MemoryBackend) new MemoryBackend().version(ServerVersion.MONGO_3_6);
+        MongoServer mongoServer = new MongoServer(backend);
+        mongoServer.bind("localhost", 27017);
+        return mongoServer;
+        
+    }
   
 	@Bean(destroyMethod="close")
 	public MongoClient mongoClient(MongoServer mongoServer) {

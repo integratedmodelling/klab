@@ -7,7 +7,11 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -59,9 +63,10 @@ public class StatsController {
 	    	        .lines()
 	    	        .collect(Collectors.joining("\n"));
 	    
-	    Map<String, Object> model = mapper.readValue(text, Map.class);
-	    
-	    map.put("m", model);
+	    Map<String, Object> model = mapper.readValue(text, Map.class);	    
+		Map<String, Object> cleanBoy = replaceKeysWithDot(model);
+		
+		map.put("m", cleanBoy);
 		
 		JavaType typeC = mapper
 				.getTypeFactory()
@@ -93,4 +98,16 @@ public class StatsController {
 	    
 	}
 	
+	public Map<String, Object> replaceKeysWithDot(Map<String, Object> model) {
+	    for(String s : model.keySet()) {
+	        if(s.contains(".")) {
+	            model.put(s.replace(".", "#"), model.remove((s)));
+	        } 
+	        
+	        if(model.get(s) instanceof LinkedHashMap) {
+	            model.replace(s, replaceKeysWithDot((Map<String, Object>) model.get(s)));
+	        }
+	    }
+	    return model;
+	}
 }

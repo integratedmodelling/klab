@@ -2,15 +2,20 @@ package org.integratedmodelling.klab.engine.services;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.http.client.utils.URIBuilder;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.KlabUser;
@@ -23,6 +28,8 @@ import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.RemoteUserAuthenticationRequest;
+import org.integratedmodelling.klab.rest.ScaleReference;
+import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -192,6 +199,47 @@ public class HubUserService implements RemoteUserService {
 		user.getGroups().addAll(groups);
 		
 		Session session = getSession(user);
+		
+		session.getState().addListener(new ISessionState.Listener() {
+
+            @Override
+            public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
+                String url = null;
+                try {
+                    URIBuilder urlBuilder;
+                    urlBuilder = new URIBuilder("http://localhost:" + 8080);
+                    urlBuilder.setPath(API.STATS.STATS_BASE);
+                    urlBuilder.addParameter(API.STATS.PARAMETERS.TYPE, rootActivity.getClass().getCanonicalName());
+                    
+                    url = urlBuilder.build().toString();
+                } catch (URISyntaxException e) {
+                    // TODO Auto-generated catch block
+                    e.printStackTrace();
+                }
+                
+                restTemplate.postForLocation(url, rootActivity);
+                
+            }
+
+            @Override
+            public void scaleChanged(ScaleReference scale) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void newContext(ISubject context) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void newObservation(IObservation observation, ISubject context) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+        });
 		
 		publisher.login(profile, session);
 
