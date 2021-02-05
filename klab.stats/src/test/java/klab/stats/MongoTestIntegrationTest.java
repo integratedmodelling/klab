@@ -2,6 +2,9 @@ package klab.stats;
 
 import static org.junit.Assert.assertEquals;
 
+import java.net.URISyntaxException;
+
+import org.apache.http.client.utils.URIBuilder;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.rest.SessionReference;
 import org.integratedmodelling.klab.rest.StatsInstertResponse;
@@ -88,12 +91,19 @@ public class MongoTestIntegrationTest {
     
     @DisplayName("Test generic insert via post")
     @Test
-    public void test_3() {
+    public void test_3() throws URISyntaxException {
     	SessionReference ref = new SessionReference();
     	ref.setId("hereissomeid2");
-    	StatsInsertRequest<SessionReference> request = new StatsInsertRequest<>(SessionReference.class);
-    	request.setModel(ref);
-    	ResponseEntity<String> response = restTemplate.postForEntity("http://localhost:" + port + API.STATS.STATS_BASE, request, String.class);
+    	//StatsInsertRequest<SessionReference> request = new StatsInsertRequest<>(SessionReference.class);
+    	//request.setModel(ref);
+    	
+    	URIBuilder urlBuilder = new URIBuilder("http://localhost:" + port);
+    	urlBuilder.setPath(API.STATS.STATS_BASE);
+    	urlBuilder.addParameter(API.STATS.PARAMETERS.TYPE, ref.getClass().getCanonicalName());
+    	
+    	String url = urlBuilder.build().toString();
+    	
+    	ResponseEntity<String> response = restTemplate.postForEntity(url, ref, String.class);
     	response.toString();
     }
     

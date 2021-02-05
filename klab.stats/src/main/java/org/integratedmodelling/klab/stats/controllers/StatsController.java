@@ -45,27 +45,34 @@ public class StatsController {
 	
 	@PostMapping(API.STATS.STATS_BASE)
 	StatsInstertResponse<?> handleRequest(HttpServletRequest request) throws IOException {
+
+	    Enumeration<String> parameterNames = request.getParameterNames();
+        Map<String, Object> map = new HashMap<>();
+        while(parameterNames.hasMoreElements()) {
+            String paramName = parameterNames.nextElement();
+            map.put(paramName, request.getParameter(paramName));
+        }
+
 		InputStream body = request.getInputStream();
 	    String text = new BufferedReader(
 	    	      new InputStreamReader(body, StandardCharsets.UTF_8))
 	    	        .lines()
 	    	        .collect(Collectors.joining("\n"));
 	    
-	    Map<String, Object> jsonMap = mapper.readValue(text, Map.class);
-	    	        
-		String type = (String) jsonMap.get("type");
-		
+	    Map<String, Object> model = mapper.readValue(text, Map.class);
+	    
+	    map.put("m", model);
 		
 		JavaType typeC = mapper
 				.getTypeFactory()
-				.constructParametricType(StatsInsertRequest.class, factory.constructFromCanonical(type));
+				.constructParametricType(StatsInsertRequest.class, factory.constructFromCanonical(map.get(API.STATS.PARAMETERS.TYPE).toString()));
 		
-		return service.insertRequest(mapper.readValue(text, typeC));
+		mapper.writeValueAsString(map);
+		
+		return service.insertRequest(mapper.readValue(mapper.writeValueAsString(map), typeC));
+		
 	}
-
-	//  StatsFindPageResponse<?> handleFindRequest(@RequestParam(value = API.STATS.PARAMETERS.TYPE, required=true) String type,
-	//  @RequestParam(value = API.STATS.PARAMETERS.PAGE, required = false) int page,
-	//  @RequestParam(value = API.STATS.PARAMETERS.LIMIT, required = false) int limit)
+	
 	
 	@GetMapping(API.STATS.STATS_BASE)
 	StatsFindPageResponse<?> handleFindRequest(HttpServletRequest request) throws IOException {

@@ -33,6 +33,7 @@ import com.fasterxml.jackson.databind.module.SimpleModule;
 	public ObjectMapper objectMapper() { 
 		ObjectMapper mapper = new ObjectMapper();
 		mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+		mapper.enable(DeserializationFeature.ACCEPT_EMPTY_STRING_AS_NULL_OBJECT);
 		//mapper.configure(MapperFeature.DEFAULT_VIEW_INCLUSION, true);
 		//mapper.enableDefaultTyping(ObjectMapper.DefaultTyping.  OBJECT_AND_NON_CONCRETE);
 		//mapper.registerModules(getModules());
