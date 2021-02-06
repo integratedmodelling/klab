@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -909,7 +910,7 @@ public enum Actors implements IActorsService {
 
     @SuppressWarnings("unchecked")
     public Iterable<Object> getIterable(IKActorsValue iterable, Scope scope, IActorIdentity<?> identity) {
-        switch (iterable.getType()) {
+        switch(iterable.getType()) {
         case ANYTHING:
             break;
         case ANYTRUE:
@@ -925,19 +926,19 @@ public enum Actors implements IActorsService {
         case ERROR:
         case EXPRESSION:
         case NUMBER:
-        case IDENTIFIER:
         case OBSERVABLE:
         case STRING:
             if (Urns.INSTANCE.isUrn(iterable.getValue().toString())) {
                 return iterateResource(iterable.getValue().toString(), scope.getMonitor());
             }
-            return Collections.singletonList(KlabActor.evaluateInScope((KActorsValue)iterable, scope, identity));
+            return Collections.singletonList(KlabActor.evaluateInScope((KActorsValue) iterable, scope, identity));
         case OBJECT:
+        case IDENTIFIER:
         case LIST:
         case SET:
-            Object o = KlabActor.evaluateInScope((KActorsValue)iterable, scope, identity);
+            Object o = KlabActor.evaluateInScope((KActorsValue) iterable, scope, identity);
             if (o instanceof Iterable) {
-                return (Iterable<Object>)o;
+                return (Iterable<Object>) o;
             } else {
                 return Collections.singletonList(o);
             }
@@ -948,7 +949,7 @@ public enum Actors implements IActorsService {
         case NUMBERED_PATTERN:
             break;
         case OBSERVATION:
-            return (Iterable<Object>)KlabActor.evaluateInScope((KActorsValue)iterable, scope, identity);
+            return (Iterable<Object>) KlabActor.evaluateInScope((KActorsValue) iterable, scope, identity);
         case QUANTITY:
             break;
         case RANGE:
@@ -972,7 +973,7 @@ public enum Actors implements IActorsService {
 
         VisitingDataBuilder builder = new VisitingDataBuilder(1);
         IKlabData data = Resources.INSTANCE.getResourceData(urn, builder, monitor);
-        return data.getObjectCount() == 0 ? new ArrayList<>() : new Iterable<Object>() {
+        return data.getObjectCount() == 0 ? new ArrayList<>() : new Iterable<Object>(){
 
             @Override
             public Iterator<Object> iterator() {
@@ -980,7 +981,7 @@ public enum Actors implements IActorsService {
                 return new Iterator<Object>(){
 
                     int n = 0;
-                    
+
                     @Override
                     public boolean hasNext() {
                         return n < data.getObjectCount();
@@ -989,11 +990,71 @@ public enum Actors implements IActorsService {
                     @Override
                     public Object next() {
                         // wrap into an Artifact wrapper for reference inside k.Actors
-                        return new Artifact(new ObjectArtifact(data.getObjectName(n), data.getObjectScale(n), data.getObjectMetadata(n)));
+                        Object ret = new Artifact(
+                                new ObjectArtifact(data.getObjectName(n), data.getObjectScale(n), data.getObjectMetadata(n)));
+                        n++;
+                        return ret;
                     }
                 };
             }
-            
+
         };
+    }
+
+    /**
+     * Invoke a method based on parameters from a call to a Java reactor inside the k.Actors code.
+     * 
+     * @param reactor
+     * @param arguments
+     * @param scope
+     */
+    public void invokeReactorMethod(Object reactor, String methodName, IParameters<String> arguments, Scope scope, IActorIdentity<?> identity) {
+
+        List<Object> jargs = new ArrayList<>();
+        Map<String, Object> kargs = null;
+        for (Object v : arguments.getUnnamedArguments()) {
+            jargs.add(v instanceof KActorsValue ? KlabActor.evaluateInScope((KActorsValue)v, scope, identity) : v);
+        }
+        for (String k : arguments.keySet()) {
+            if (kargs == null) {
+                kargs = new HashMap<>();
+            }
+            Object v = arguments.get(k);
+            kargs.put(k, v instanceof KActorsValue ? KlabActor.evaluateInScope((KActorsValue)v, scope, identity) : v);
+        }
+        if (kargs != null) {
+            jargs.add(kargs);
+        }
+        
+        Class<?>[] clss = new Class[jargs.size()];
+        
+        int i = 0;
+        for (Object jarg : jargs) {
+            clss[i++] = jarg == null ? Object.class : jarg.getClass();
+        }
+        
+        Method method = null;
+        try {
+            method = reactor.getClass().getMethod(methodName, clss);
+        } catch (NoSuchMethodException e) {
+            // ok, we dont'have it.
+        }
+
+        if (method != null) {
+                try {
+                    method.invoke(reactor, jargs.toArray());
+                } catch (Throwable e) {
+                    scope.getMonitor().error(e);
+                }
+        } else {
+            if (scope != null) {
+                scope.getMonitor().warn(
+                        "k.Actors: cannot find a " + methodName + " method to invoke on object");
+            } else {
+                Logging.INSTANCE.warn(
+                        "k.Actors: cannot find a " + methodName + " method to invoke on object");
+            }
+        }
+
     }
 }

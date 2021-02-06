@@ -6,6 +6,7 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.extensions.ILanguageExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -34,17 +35,18 @@ public class ObjectExpression {
 	private IParameters<String> parameters = Parameters.create();
 	private ILanguageExpression expression = null;
 	private boolean first = false;
+	CompilerOption[] compilerOptions;
 
-	public ObjectExpression(IKimExpression expression, IRuntimeScope scope) {
-		this(expression, scope, false);
+	public ObjectExpression(IKimExpression expression, IRuntimeScope scope, CompilerOption... options) {
+		this(expression, scope, false, options);
 	}
 
-	public ObjectExpression(IKimExpression expression, IRuntimeScope overallScope, boolean forceScalar) {
+	public ObjectExpression(IKimExpression expression, IRuntimeScope overallScope, boolean forceScalar, CompilerOption... options) {
 		boolean scalar = forceScalar || expression.isForcedScalar();
 		this.descriptor = Extensions.INSTANCE
 				.getLanguageProcessor(expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
 						: expression.getLanguage())
-				.describe(expression.getCode(), overallScope.getExpressionContext(), Extensions.options(scalar, false));
+				.describe(expression.getCode(), overallScope.getExpressionContext(), Extensions.options(scalar, false, options));
 		this.expression = this.descriptor.compile();
 	}
 

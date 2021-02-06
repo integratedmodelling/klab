@@ -17,8 +17,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getTree <em>Tree</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#isEmpty <em>Empty</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getArgvalue <em>Argvalue</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getUrn <em>Urn</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getMap <em>Map</em>}</li>
@@ -104,28 +104,6 @@ public interface Value extends EObject
   void setArgvalue(String value);
 
   /**
-   * Returns the value of the '<em><b>Literal</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Literal</em>' containment reference.
-   * @see #setLiteral(Literal)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Literal()
-   * @model containment="true"
-   * @generated
-   */
-  Literal getLiteral();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getLiteral <em>Literal</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Literal</em>' containment reference.
-   * @see #getLiteral()
-   * @generated
-   */
-  void setLiteral(Literal value);
-
-  /**
    * Returns the value of the '<em><b>Urn</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -146,6 +124,28 @@ public interface Value extends EObject
    * @generated
    */
   void setUrn(String value);
+
+  /**
+   * Returns the value of the '<em><b>Literal</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Literal</em>' containment reference.
+   * @see #setLiteral(Literal)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Literal()
+   * @model containment="true"
+   * @generated
+   */
+  Literal getLiteral();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getLiteral <em>Literal</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Literal</em>' containment reference.
+   * @see #getLiteral()
+   * @generated
+   */
+  void setLiteral(Literal value);
 
   /**
    * Returns the value of the '<em><b>Id</b></em>' attribute.

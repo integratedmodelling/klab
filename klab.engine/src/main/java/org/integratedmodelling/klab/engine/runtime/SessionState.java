@@ -19,7 +19,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.BiConsumer;
 
 import org.apache.commons.lang3.exception.ExceptionUtils;
-import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.model.KimQuantity;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Observables;
@@ -30,6 +29,7 @@ import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.auth.ITaskIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.IQuantity;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
@@ -357,7 +357,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			}
 			break;
 		case SPACE_RESOLUTION_KEY:
-			IKimQuantity q = KimQuantity.parse(value.toString());
+			IQuantity q = value instanceof IQuantity ? (IQuantity)value : KimQuantity.parse(value.toString());
 			this.scaleOfInterest.setSpaceResolution(q.getValue().doubleValue());
 			this.scaleOfInterest.setSpaceUnit(q.getUnit());
 			this.scaleOfInterest.setSpaceResolutionConverted(

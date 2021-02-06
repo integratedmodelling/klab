@@ -35,8 +35,8 @@ import org.integratedmodelling.kactors.kactors.Value;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTree <em>Tree</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#isEmpty <em>Empty</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getArgvalue <em>Argvalue</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getUrn <em>Urn</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getMap <em>Map</em>}</li>
@@ -104,16 +104,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected String argvalue = ARGVALUE_EDEFAULT;
 
   /**
-   * The cached value of the '{@link #getLiteral() <em>Literal</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getLiteral()
-   * @generated
-   * @ordered
-   */
-  protected Literal literal;
-
-  /**
    * The default value of the '{@link #getUrn() <em>Urn</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -132,6 +122,16 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected String urn = URN_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getLiteral() <em>Literal</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLiteral()
+   * @generated
+   * @ordered
+   */
+  protected Literal literal;
 
   /**
    * The default value of the '{@link #getId() <em>Id</em>}' attribute.
@@ -390,6 +390,31 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
+  public String getUrn()
+  {
+    return urn;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setUrn(String newUrn)
+  {
+    String oldUrn = urn;
+    urn = newUrn;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__URN, oldUrn, urn));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Literal getLiteral()
   {
     return literal;
@@ -432,31 +457,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__LITERAL, newLiteral, newLiteral));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public String getUrn()
-  {
-    return urn;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setUrn(String newUrn)
-  {
-    String oldUrn = urn;
-    urn = newUrn;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__URN, oldUrn, urn));
   }
 
   /**
@@ -932,10 +932,10 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return isEmpty();
       case KactorsPackage.VALUE__ARGVALUE:
         return getArgvalue();
-      case KactorsPackage.VALUE__LITERAL:
-        return getLiteral();
       case KactorsPackage.VALUE__URN:
         return getUrn();
+      case KactorsPackage.VALUE__LITERAL:
+        return getLiteral();
       case KactorsPackage.VALUE__ID:
         return getId();
       case KactorsPackage.VALUE__LIST:
@@ -979,11 +979,11 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__ARGVALUE:
         setArgvalue((String)newValue);
         return;
-      case KactorsPackage.VALUE__LITERAL:
-        setLiteral((Literal)newValue);
-        return;
       case KactorsPackage.VALUE__URN:
         setUrn((String)newValue);
+        return;
+      case KactorsPackage.VALUE__LITERAL:
+        setLiteral((Literal)newValue);
         return;
       case KactorsPackage.VALUE__ID:
         setId((String)newValue);
@@ -1038,11 +1038,11 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__ARGVALUE:
         setArgvalue(ARGVALUE_EDEFAULT);
         return;
-      case KactorsPackage.VALUE__LITERAL:
-        setLiteral((Literal)null);
-        return;
       case KactorsPackage.VALUE__URN:
         setUrn(URN_EDEFAULT);
+        return;
+      case KactorsPackage.VALUE__LITERAL:
+        setLiteral((Literal)null);
         return;
       case KactorsPackage.VALUE__ID:
         setId(ID_EDEFAULT);
@@ -1094,10 +1094,10 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return empty != EMPTY_EDEFAULT;
       case KactorsPackage.VALUE__ARGVALUE:
         return ARGVALUE_EDEFAULT == null ? argvalue != null : !ARGVALUE_EDEFAULT.equals(argvalue);
-      case KactorsPackage.VALUE__LITERAL:
-        return literal != null;
       case KactorsPackage.VALUE__URN:
         return URN_EDEFAULT == null ? urn != null : !URN_EDEFAULT.equals(urn);
+      case KactorsPackage.VALUE__LITERAL:
+        return literal != null;
       case KactorsPackage.VALUE__ID:
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KactorsPackage.VALUE__LIST:

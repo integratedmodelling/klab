@@ -38,8 +38,9 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isDesktop <em>Desktop</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isWeb <em>Web</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isApp <em>App</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isTask <em>Task</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isTest <em>Test</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isScript <em>Script</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isTask <em>Task</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isComponent <em>Component</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isUser <em>User</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#isLibrary <em>Library</em>}</li>
@@ -168,26 +169,6 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
   protected boolean app = APP_EDEFAULT;
 
   /**
-   * The default value of the '{@link #isTask() <em>Task</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isTask()
-   * @generated
-   * @ordered
-   */
-  protected static final boolean TASK_EDEFAULT = false;
-
-  /**
-   * The cached value of the '{@link #isTask() <em>Task</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #isTask()
-   * @generated
-   * @ordered
-   */
-  protected boolean task = TASK_EDEFAULT;
-
-  /**
    * The default value of the '{@link #isTest() <em>Test</em>}' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -206,6 +187,46 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @ordered
    */
   protected boolean test = TEST_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isScript() <em>Script</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isScript()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean SCRIPT_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isScript() <em>Script</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isScript()
+   * @generated
+   * @ordered
+   */
+  protected boolean script = SCRIPT_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isTask() <em>Task</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isTask()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean TASK_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isTask() <em>Task</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isTask()
+   * @generated
+   * @ordered
+   */
+  protected boolean task = TASK_EDEFAULT;
 
   /**
    * The default value of the '{@link #isComponent() <em>Component</em>}' attribute.
@@ -709,31 +730,6 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
-  public boolean isTask()
-  {
-    return task;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setTask(boolean newTask)
-  {
-    boolean oldTask = task;
-    task = newTask;
-    if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__TASK, oldTask, task));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
   public boolean isTest()
   {
     return test;
@@ -751,6 +747,56 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     test = newTest;
     if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__TEST, oldTest, test));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isScript()
+  {
+    return script;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setScript(boolean newScript)
+  {
+    boolean oldScript = script;
+    script = newScript;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__SCRIPT, oldScript, script));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isTask()
+  {
+    return task;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setTask(boolean newTask)
+  {
+    boolean oldTask = task;
+    task = newTask;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__TASK, oldTask, task));
   }
 
   /**
@@ -1427,10 +1473,12 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return isWeb();
       case KactorsPackage.PREAMBLE__APP:
         return isApp();
-      case KactorsPackage.PREAMBLE__TASK:
-        return isTask();
       case KactorsPackage.PREAMBLE__TEST:
         return isTest();
+      case KactorsPackage.PREAMBLE__SCRIPT:
+        return isScript();
+      case KactorsPackage.PREAMBLE__TASK:
+        return isTask();
       case KactorsPackage.PREAMBLE__COMPONENT:
         return isComponent();
       case KactorsPackage.PREAMBLE__USER:
@@ -1503,11 +1551,14 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__APP:
         setApp((Boolean)newValue);
         return;
-      case KactorsPackage.PREAMBLE__TASK:
-        setTask((Boolean)newValue);
-        return;
       case KactorsPackage.PREAMBLE__TEST:
         setTest((Boolean)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__SCRIPT:
+        setScript((Boolean)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__TASK:
+        setTask((Boolean)newValue);
         return;
       case KactorsPackage.PREAMBLE__COMPONENT:
         setComponent((Boolean)newValue);
@@ -1603,11 +1654,14 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__APP:
         setApp(APP_EDEFAULT);
         return;
-      case KactorsPackage.PREAMBLE__TASK:
-        setTask(TASK_EDEFAULT);
-        return;
       case KactorsPackage.PREAMBLE__TEST:
         setTest(TEST_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__SCRIPT:
+        setScript(SCRIPT_EDEFAULT);
+        return;
+      case KactorsPackage.PREAMBLE__TASK:
+        setTask(TASK_EDEFAULT);
         return;
       case KactorsPackage.PREAMBLE__COMPONENT:
         setComponent(COMPONENT_EDEFAULT);
@@ -1696,10 +1750,12 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return web != WEB_EDEFAULT;
       case KactorsPackage.PREAMBLE__APP:
         return app != APP_EDEFAULT;
-      case KactorsPackage.PREAMBLE__TASK:
-        return task != TASK_EDEFAULT;
       case KactorsPackage.PREAMBLE__TEST:
         return test != TEST_EDEFAULT;
+      case KactorsPackage.PREAMBLE__SCRIPT:
+        return script != SCRIPT_EDEFAULT;
+      case KactorsPackage.PREAMBLE__TASK:
+        return task != TASK_EDEFAULT;
       case KactorsPackage.PREAMBLE__COMPONENT:
         return component != COMPONENT_EDEFAULT;
       case KactorsPackage.PREAMBLE__USER:
@@ -1767,10 +1823,12 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     result.append(web);
     result.append(", app: ");
     result.append(app);
-    result.append(", task: ");
-    result.append(task);
     result.append(", test: ");
     result.append(test);
+    result.append(", script: ");
+    result.append(script);
+    result.append(", task: ");
+    result.append(task);
     result.append(", component: ");
     result.append(component);
     result.append(", user: ");

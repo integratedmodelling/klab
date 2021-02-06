@@ -162,7 +162,7 @@ public enum Observations implements IObservationService {
                 && cached.get(state.getId()).getStateTimestamp() == ((Observation) state).getTimestamp()) {
             ret = cached.get(state.getId());
         } else {
-            ret = computeStateSummary(state, getTemporalLocator(state, locator));
+            ret = computeStateSummary(state, getTemporalLocator(state, locator == null ? state.getScale() : locator));
             if (cached == null) {
                 cached = new HashMap<>();
                 summaryCache.put(time, cached);

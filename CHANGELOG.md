@@ -9,12 +9,17 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
-- k.Actors now handles for loops and construction of/interaction with Java objects by calling
+- Improve concurrency logics for k.Actors: init/main code is run in a separate thread to
+  avoid hogging the actor's mailbox; a semaphore (handled by the engine) can be passed
+  in the scope; synchronization is now handled (must test more thoroughly) and a new
+  behavior type ('script') is dedicated to sequential scripts and forces sequential
+  execution throughout (same for 'test'). 
+- k.Actors now handles 'for' loops and construction of/interaction with Java objects by calling
   their constructors at "set" statements and their methods as messages directed to them,
   using reflection. Groovy-like property getting (and setting at construction with keyed
   arguments) is also available on them. Only Java objects from a particular package can
   be created now, because of the security risk of allowing arbitrary Java classes to be
-  used (which could be relaxed on local engines).
+  used (this could be relaxed on local engines).
 - New klab.data.aggregate contextualizer to merge states after they have been contextualized
   from an abstract dependency. Syntactic support for klab.data.merge to be used for 
   subjects and other countables, with the option of removing the original observations from

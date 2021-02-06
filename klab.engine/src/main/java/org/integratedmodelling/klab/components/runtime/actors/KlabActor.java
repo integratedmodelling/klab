@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
@@ -60,6 +61,7 @@ import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.utils.Utils;
 
 import akka.actor.typed.ActorRef;
 import akka.actor.typed.Behavior;
@@ -95,7 +97,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
     private Map<String, ActorRef<KlabMessage>> receivers = Collections.synchronizedMap(new HashMap<>());
     private Map<String, List<ActorRef<KlabMessage>>> childInstances = Collections.synchronizedMap(new HashMap<>());
     private Map<String, Object> symbolTable = Collections.synchronizedMap(new HashMap<>());
-    // Java objects created by calling a constructor in set statements. Messages will be sent using reflection.
+    // Java objects created by calling a constructor in set statements. Messages will be sent using
+    // reflection.
     private Map<String, Object> javaReactors = Collections.synchronizedMap(new HashMap<>());
     private List<ActorRef<KlabMessage>> componentActors = Collections.synchronizedList(new ArrayList<>());
 
@@ -138,12 +141,18 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         // executed upon a match.
         Scope scope;
 
-        public void match(Object value) {
+        public void match(Object value, List<Semaphore> semaphores) {
 
             for (Pair<Match, IKActorsStatement> match : matches) {
                 if (match.getFirst().matches(value, scope)) {
                     execute(match.getSecond(), scope.withMatch(match.getFirst(), value));
                     break;
+                }
+            }
+
+            if (semaphores != null) {
+                for (Semaphore semaphore : semaphores) {
+                    Actors.INSTANCE.expire(semaphore);
                 }
             }
         }
@@ -233,6 +242,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         ViewScope viewScope;
         ActorRef<KlabMessage> sender;
         private boolean initializing;
+        Semaphore semaphore = null;
 
         public Scope(IActorIdentity<KlabMessage> identity, String appId, IRuntimeScope scope) {
             this.runtimeScope = scope;
@@ -273,6 +283,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             this.identity = scope.identity;
             this.viewScope = scope.viewScope;
             this.appId = scope.appId;
+            this.semaphore = scope.semaphore;
         }
 
         public String toString() {
@@ -282,6 +293,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         public Scope synchronous() {
             Scope ret = new Scope(this);
             ret.synchronous = true;
+            return ret;
+        }
+
+        public Scope concurrent() {
+            Scope ret = new Scope(this);
+            ret.synchronous = false;
             return ret;
         }
 
@@ -370,10 +387,27 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             return ret;
         }
 
-    }
+        public void waitForGreen() {
 
-    protected void waitForCompletion(KlabMessage message) {
+            if (semaphore != null) {
+                while(!Actors.INSTANCE.expired(semaphore)) {
+                    try {
+                        Thread.sleep(50);
+                    } catch (InterruptedException e) {
+                        return;
+                    }
+                }
+            }
+        }
 
+        public Scope fence(boolean synchronize) {
+            Scope ret = this;
+            if (synchronize) {
+                ret = new Scope(this);
+                ret.semaphore = Actors.INSTANCE.createSemaphore(Semaphore.Type.FIRE);
+            }
+            return ret;
+        }
     }
 
     protected IActorIdentity<KlabMessage> getIdentity() {
@@ -490,7 +524,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                     KlabActionExecutor executor = actionCache.get(message.action.getComponent().getId());
                     actions.match(executor instanceof KlabWidgetActionExecutor
                             ? ((KlabWidgetActionExecutor) executor).getFiredValue(message.action)
-                            : getActionValue(message.action));
+                            : getActionValue(message.action), message.getSemaphores(Semaphore.Type.FIRE));
                 }
             } else if (message.action.getComponent().getActorPath() != null) {
 
@@ -785,7 +819,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
              * this should happen when a non-main action executes the fire. Must be checked first.
              * Fire may happen if the action firing is called again, so don't remove the listener.
              */
-            scope.sender.tell(new Fire(scope.listenerId, code.getValue().getValue(), false, scope.appId));
+            scope.sender.tell(new Fire(scope.listenerId, code.getValue().getValue(), false, scope.appId, scope.semaphore));
 
         } else if (parentActor != null) {
 
@@ -870,10 +904,16 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         case EXPRESSION:
 
             if (arg.getData() == null) {
-                arg.setData(new ObjectExpression((IKimExpression) arg.getValue(), scope.runtimeScope));
+                arg.setData(
+                        new ObjectExpression((IKimExpression) arg.getValue(), scope.runtimeScope, CompilerOption.WrapParameters));
             }
-            return ((ObjectExpression) arg.getData()).eval(scope.runtimeScope, identity,
-                    Parameters.create(scope.getSymbols(identity)));
+            try {
+                return ((ObjectExpression) arg.getData()).eval(scope.runtimeScope, identity,
+                        Parameters.create(scope.getSymbols(identity)));
+            } catch (Throwable t) {
+                scope.getMonitor().error(t);
+                return null;
+            }
 
         case BOOLEAN:
         case CLASS:
@@ -928,7 +968,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
         Long notifyId = scope.listenerId;
 
+        boolean synchronize = false;
+
         if (code.getActions().size() > 0) {
+
+            synchronize = scope.synchronous;
 
             notifyId = nextId.incrementAndGet();
             MatchActions actions = new MatchActions(scope);
@@ -954,6 +998,22 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         if (!"self".equals(receiverName)) {
 
             /*
+             * Check first if the recipient is a Java peer and in that case, use reflection to send
+             * it the message and return.
+             */
+            if (this.javaReactors.containsKey(receiverName)
+                    || (scope.symbolTable.containsKey(receiverName) && !Utils.isPOD(scope.symbolTable.get(receiverName)))) {
+                Object reactor = this.javaReactors.get(receiverName);
+                if (reactor == null) {
+                    reactor = scope.symbolTable.containsKey(receiverName);
+                }
+                if (reactor != null) {
+                    Actors.INSTANCE.invokeReactorMethod(reactor, messageName, code.getArguments(), scope, this.identity);
+                }
+                return;
+            }
+
+            /*
              * Check if the name corresponds to the tag of an executor created using new. If so, the
              * actor (or component) has priority over a possible actor of the same name or a
              * variable containing an actor.
@@ -962,6 +1022,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                 KActorsMessage m = new KActorsMessage(getContext().getSelf(), messageName, code.getCallId(), code.getArguments(),
                         scope.withNotifyId(notifyId), appId);
                 this.localActionExecutors.get(receiverName).onMessage(m, scope);
+                scope.waitForGreen();
                 return;
             }
 
@@ -997,6 +1058,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                 recipient = identity.getParentIdentity(EngineUser.class).getActor();
             }
 
+            if (synchronize) {
+                scope.runtimeScope.getMonitor()
+                        .warn("External actor calls are being made within a synchronous scope: this should "
+                                + " never happen. The synchronization is being ignored.");
+            }
+
             recipient.tell(new KActorsMessage(getContext().getSelf(), messageName, code.getCallId(), code.getArguments(),
                     scope.withNotifyId(notifyId), appId));
 
@@ -1008,7 +1075,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
          * If we get here, the message is directed to self and it may specify an executor or a
          * k.Actors behavior action. A coded action takes preference over a system behavior
          * executor.
+         * 
+         * Now we're in the appropriate scope for synchronous execution if we have actions after
+         * fire.
          */
+        scope = scope.fence(synchronize);
+
         Action actionCode = behavior.getAction(messageName);
         if (actionCode != null) {
             run(actionCode, scope.withNotifyId(notifyId));
@@ -1081,6 +1153,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             executor.run(scope.withNotifyId(notifyId).withSender(getContext().getSelf(), appId));
         }
 
+        /*
+         * if the scope was not synchronous, or there were no actions after a fire, this does
+         * nothing.
+         */
+        scope.waitForGreen();
+
     }
 
     /*
@@ -1104,7 +1182,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         if (message.listenerId != null) {
             MatchActions actions = componentFireListeners.get(message.listenerId);
             if (actions != null) {
-                actions.match(message.value);
+                actions.match(message.value, /* TODO CHECK */ null);
             }
         }
         return Behaviors.same();
@@ -1121,7 +1199,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             if (message.listenerId != null) {
                 MatchActions actions = listeners.get(message.listenerId);
                 if (actions != null) {
-                    actions.match(message.value);
+                    actions.match(message.value, message.semaphore == null ? null : Collections.singletonList(message.semaphore));
                     if (message.finalize) {
                         listeners.remove(message.listenerId);
                     }
@@ -1137,6 +1215,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         message.scope.globalSymbols = this.symbolTable;
 
         if (message.forwardApplicationId != null) {
+
             /*
              * spawn another actor and load the behavior in it.
              */
@@ -1146,73 +1225,97 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             child.tell(message.direct());
 
         } else {
-
-            boolean rootView = message.scope.viewScope.layout == null;
-
             /*
-             * preload system actors. We don't add "self" which should be factored out by the
-             * interpreter.
+             * start running anything that starts automatically in a thread and exit, otherwise we
+             * won't be able to run any other message to this actor until execution has finished.
              */
-            if (!receivers.containsKey("user")) {
-                // these three are the same. TODO check
-                receivers.put("session", identity.getParentIdentity(Session.class).getActor());
-                receivers.put("view", identity.getParentIdentity(Session.class).getActor());
-                receivers.put("system", identity.getParentIdentity(Session.class).getActor());
-                // user actor
-                receivers.put("user", identity.getParentIdentity(EngineUser.class).getActor());
-                // TODO modeler actor - which can create and modify projects and code
-            }
-
-            this.behavior = Actors.INSTANCE.getBehavior(message.behavior);
-            this.listeners.clear();
-            this.actionBindings.clear();
-            this.actionCache.clear();
-            this.childActorPath = message.childActorPath;
-            if (message.applicationId != null) {
-                // this only happens when we're spawning a component from a top application
-                // using new; in that case, the appId is communicated here and the appId in
-                // the message (which does not come from an application action) is null. This
-                // ensures that all component actors have the same appId.
-                this.appId = message.applicationId;
-            }
-            /*
-             * Init action called no matter what and before the behavior is set; the onLoad callback
-             * intervenes afterwards. Do not create UI (use raw scope).
-             */
-            for (IBehavior.Action action : this.behavior.getActions("init", "@init")) {
-                run(action, message.scope.forInit());
-            }
-
-            /*
-             * run any main actions. This is the only action that may create a UI.
-             */
-            for (IBehavior.Action action : this.behavior.getActions("main", "@main")) {
-                Scope scope = message.scope.getChild(this.appId, action);
-                if (message.arguments != null) {
-                    scope.symbolTable.putAll(message.arguments);
-                }
-                run(action, scope);
-            }
-
-            /*
-             * send the view AFTER running main and collecting all components that generate views.
-             */
-            if (rootView && message.scope.viewScope.layout != null) {
-                System.out.println(Actors.INSTANCE.dumpView(message.scope.viewScope.layout));
-                this.identity.setLayout(message.scope.viewScope.layout);
-                this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
-                        message.scope.viewScope.layout);
-            }
-        }
-
-        /*
-         * move on, you waiters
-         */
-        for (Semaphore semaphore : message.getSemaphores(Semaphore.Type.LOAD)) {
-            Actors.INSTANCE.expire(semaphore);
+            runBehavior(message);
         }
 
         return Behaviors.same();
+    }
+
+    private void runBehavior(final Load message) {
+
+        new Thread(){
+
+            @Override
+            public void run() {
+                boolean rootView = message.scope.viewScope.layout == null;
+
+                /*
+                 * preload system actors. We don't add "self" which should be factored out by the
+                 * interpreter.
+                 */
+                if (!receivers.containsKey("user")) {
+                    // these three are the same. TODO check
+                    receivers.put("session", identity.getParentIdentity(Session.class).getActor());
+                    receivers.put("view", identity.getParentIdentity(Session.class).getActor());
+                    receivers.put("system", identity.getParentIdentity(Session.class).getActor());
+                    // user actor
+                    receivers.put("user", identity.getParentIdentity(EngineUser.class).getActor());
+                    // TODO modeler actor - which can create and modify projects and code
+                }
+
+                KlabActor.this.behavior = Actors.INSTANCE.getBehavior(message.behavior);
+                KlabActor.this.listeners.clear();
+                KlabActor.this.actionBindings.clear();
+                KlabActor.this.actionCache.clear();
+                KlabActor.this.childActorPath = message.childActorPath;
+
+                if (message.applicationId != null) {
+                    // this only happens when we're spawning a component from a top application
+                    // using new; in that case, the appId is communicated here and the appId in
+                    // the message (which does not come from an application action) is null. This
+                    // ensures that all component actors have the same appId.
+                    KlabActor.this.appId = message.applicationId;
+                }
+                /*
+                 * Init action called no matter what and before the behavior is set; the onLoad
+                 * callback intervenes afterwards. Do not create UI (use raw scope).
+                 */
+                for (IBehavior.Action action : KlabActor.this.behavior.getActions("init", "@init")) {
+                    Scope initScope = message.scope.forInit();
+                    if (behavior.getDestination() == Type.SCRIPT || behavior.getDestination() == Type.UNITTEST) {
+                        initScope = initScope.synchronous();
+                    }
+                    KlabActor.this.run(action, initScope);
+                }
+
+                /*
+                 * run any main actions. This is the only action that may create a UI.
+                 */
+                for (IBehavior.Action action : KlabActor.this.behavior.getActions("main", "@main")) {
+                    Scope scope = message.scope.getChild(KlabActor.this.appId, action);
+                    if (behavior.getDestination() == Type.SCRIPT || behavior.getDestination() == Type.UNITTEST) {
+                        scope = scope.synchronous();
+                    }
+                    if (message.arguments != null) {
+                        scope.symbolTable.putAll(message.arguments);
+                    }
+                    KlabActor.this.run(action, scope);
+                }
+
+                /*
+                 * send the view AFTER running main and collecting all components that generate
+                 * views.
+                 */
+                if (rootView && message.scope.viewScope.layout != null) {
+                    System.out.println(Actors.INSTANCE.dumpView(message.scope.viewScope.layout));
+                    KlabActor.this.identity.setLayout(message.scope.viewScope.layout);
+                    KlabActor.this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
+                            message.scope.viewScope.layout);
+                }
+                /*
+                 * move on, you waiters
+                 */
+                for (Semaphore semaphore : message.getSemaphores(Semaphore.Type.LOAD)) {
+                    Actors.INSTANCE.expire(semaphore);
+                }
+
+            }
+
+        }.start();
     }
 
     /**

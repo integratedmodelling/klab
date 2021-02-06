@@ -15,24 +15,33 @@ import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.data.IQuantity;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITimePeriod;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
+import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifact;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.engine.runtime.SessionState;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
+import org.integratedmodelling.klab.scale.Scale;
 
 import akka.actor.typed.ActorRef;
 
@@ -102,12 +111,61 @@ public class RuntimeBehavior {
                     } catch (Throwable e) {
                         fail();
                     }
+                } else {
+
+                    /*
+                     * TODO may have an Artifact wrapping an object artifact, a Scale, a Space
+                     * extent/shape, an Envelope, and possibly a IKimQuantity for resolution, plus
+                     * the same for time.
+                     */
+                    IObjectArtifact artifact = null;
+                    IQuantity spaceResolution = null;
+                    IQuantity timeResolution = null;
+                    ITimePeriod time = null;
+                    IObservable observable = null;
+                    // more: shapes, time res, time spans, etc
+                    for (Object o : arguments.getUnnamedArguments()) {
+                        if (o instanceof KActorsValue) {
+                            o = evaluateInContext((KActorsValue) o, scope);
+                        }
+                        if (o instanceof Artifact) {
+                            artifact = ((Artifact) o).getObjectArtifact();
+                        } else if (o instanceof IQuantity) {
+                            if (Units.INSTANCE.METERS.isCompatible(Unit.create(((IQuantity) o).getUnit()))) {
+                                spaceResolution = (IQuantity) o;
+                            } else if (Units.INSTANCE.SECONDS.isCompatible(Unit.create(((IQuantity) o).getUnit()))) {
+                                timeResolution = (IQuantity) o;
+                            } // TODO
+                        } else if (o instanceof IObservable) {
+                            observable = (IObservable) o;
+                        }
+
+                        // TODO date, year - these should be keyed values
+                    }
+
+                    if (artifact != null) {
+                        IScale scale = Scale.create(artifact.getGeometry());
+                        session.getState().resetContext();
+                        if (scale.getSpace() != null) {
+                            session.getState().setShape(scale.getSpace().getShape());
+                        }
+                        if (spaceResolution != null) {
+                            session.getState().put(SessionState.SPACE_RESOLUTION_KEY, spaceResolution);
+                        }
+                    }
+
+                    if (observable != null) {
+                        try {
+                            Future<IArtifact> future = ((Session) identity).getState().submit(observable.getDefinition());
+                            fire(future.get(), true);
+                        } catch (Throwable e) {
+                            fail();
+                        }
+                    } else {
+                        
+                    }
+
                 }
-                /*
-                 * TODO may have an Artifact wrapping an object artifact, a Scale, a Space
-                 * extent/shape, an Envelope, and possibly a IKimQuantity for resolution, plus the
-                 * same for time.
-                 */
             }
         }
 
