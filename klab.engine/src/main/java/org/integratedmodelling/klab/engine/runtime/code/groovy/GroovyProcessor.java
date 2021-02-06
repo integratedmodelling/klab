@@ -33,14 +33,15 @@ public enum GroovyProcessor implements ILanguageProcessor {
 		private List<KimNotification> errors;
 		private boolean forcedScalar;
 		private Map<String, Set<String>> mapIdentifiers;
+		private Set<CompilerOption> options;
 		private IExpression.Context context;
 		
 		GroovyDescriptor(String expression, IExpression.Context context, boolean contextual, CompilerOption... options) {
 
-			Set<CompilerOption> opts = Sets.newHashSet(options == null ? new CompilerOption[] {} : options);
+			this.options = Sets.newHashSet(options == null ? new CompilerOption[] {} : options);
 			
 			// we may force the context to be ignored through options
-			contextual = contextual && !opts.contains(CompilerOption.IgnoreContext);
+			contextual = contextual && !this.options.contains(CompilerOption.IgnoreContext);
 			
 			/*
 			 * Context should most definitely be nullable
@@ -54,7 +55,7 @@ public enum GroovyProcessor implements ILanguageProcessor {
 			IScale scale = context == null ? null : context.getScale();
 
 			GroovyExpressionPreprocessor processor = new GroovyExpressionPreprocessor(namespace, knownIdentifiers,
-					scale, context, contextual, opts);
+					scale, context, contextual, this.options);
 
 			this.processedCode = processor.process(expression);
 			this.identifiers = processor.getIdentifiers();
@@ -63,12 +64,17 @@ public enum GroovyProcessor implements ILanguageProcessor {
 			this.contextualizers = processor.getContextualizers();
 			this.mapIdentifiers = processor.getMapIdentifiers();
 			this.errors = processor.getErrors();
-			this.forcedScalar = opts.contains(CompilerOption.ForcedScalar);
+			this.forcedScalar = this.options.contains(CompilerOption.ForcedScalar);
 		}
 
 		@Override
 		public Collection<String> getIdentifiers() {
 			return identifiers;
+		}
+		
+		@Override
+		public Collection<CompilerOption> getOptions() {
+		    return options;
 		}
 
 		@Override

@@ -16,8 +16,11 @@ Preamble: {Preamble}
 	(
 		(   
 			((public?='public')? (mobile?='mobile' |  desktop?='desktop' | web?='web')? app?='app') | 
-			task?='task' |
+			// scripts and test cases run in synchronous mode
 			test?='testcase' | 
+			script?='script' |
+			// ? syn with script? remove?
+			task?='task' |
 			component?='component' | 
 			user?='user' | 
 			library?=('trait'|'library') |

@@ -409,10 +409,10 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -440,10 +440,10 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
@@ -906,8 +906,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         (
 	 *             (
 	 *                 (public?='public'? (mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app') | 
-	 *                 task?='task' | 
 	 *                 test?='testcase' | 
+	 *                 script?='script' | 
+	 *                 task?='task' | 
 	 *                 component?='component' | 
 	 *                 user?='user' | 
 	 *                 library?='trait' | 
@@ -1273,8 +1274,8 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         tree=Tree | 
 	 *         empty?='empty' | 
 	 *         argvalue=ARGVALUE | 
-	 *         literal=Literal | 
 	 *         urn=UrnId | 
+	 *         literal=Literal | 
 	 *         id=PathName | 
 	 *         list=List | 
 	 *         map=Map | 

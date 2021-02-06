@@ -1,6 +1,10 @@
 package org.integratedmodelling.klab.components.runtime.actors.extensions;
 
+import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+
+import groovy.lang.GroovyObjectSupport;
 
 /**
  * Wrapper for artifacts 
@@ -8,7 +12,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
  * @author Ferd
  *
  */
-public class Artifact {
+public class Artifact extends GroovyObjectSupport {
 
     IArtifact artifact;
     
@@ -20,6 +24,7 @@ public class Artifact {
         this.artifact.getMetadata().put(key, value);
     }
 
+    @Override
     public Object getProperty(String key) {
        switch (key) {
            default:
@@ -27,4 +32,13 @@ public class Artifact {
        }
        return artifact.getMetadata().get(key);
     }
+
+    public IObjectArtifact getObjectArtifact() {
+        return artifact instanceof IObjectArtifact ? (IObjectArtifact)artifact : null;
+    }
+
+    public IDataArtifact getDataArtifact() {
+        return artifact instanceof IDataArtifact ? (IDataArtifact)artifact : null;
+    }
+
 }

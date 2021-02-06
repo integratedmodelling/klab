@@ -283,12 +283,14 @@ public class SystemBehavior {
 		boolean finalize;
 		Long listenerId;
 		String appId;
+		Semaphore semaphore;
 
-		public Fire(Long listenerId, Object firedValue, boolean isFinal, String appId) {
+		public Fire(Long listenerId, Object firedValue, boolean isFinal, String appId, Semaphore semaphore) {
 			this.value = firedValue;
 			this.finalize = isFinal;
 			this.listenerId = listenerId;
 			this.appId = appId;
+			this.semaphore = semaphore;
 		}
 
 		@Override
@@ -298,7 +300,7 @@ public class SystemBehavior {
 
 		@Override
 		public Fire direct() {
-			return new Fire(listenerId, value, finalize, null);
+			return new Fire(listenerId, value, finalize, null, semaphore);
 		}
 
 	}

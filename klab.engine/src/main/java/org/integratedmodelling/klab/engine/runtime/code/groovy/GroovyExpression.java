@@ -126,7 +126,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 		this.sclass = shell.parseToClass(code);
 	}
 
-	public Object eval(IParameters<String> parameters, IContextualizationScope scope) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope scope) {
 
 		if (isTrue) {
 			return true;
@@ -191,6 +191,8 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 						// use cache to minimize the allocation of Groovy peers, which seems to be very
 						// costly.
 						value = getConceptPeer((IConcept) value, binding);
+					} else if (descriptor.getOptions().contains(CompilerOption.WrapParameters) && mustWrap(value)) {
+					    value =  Wrapper.wrap(value, key, binding);
 					}
 					binding.setVariable(key, value);
 				}

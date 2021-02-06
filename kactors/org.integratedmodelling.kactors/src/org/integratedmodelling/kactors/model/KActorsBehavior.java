@@ -99,6 +99,8 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 			this.type = Type.COMPONENT;
 		} else if (preamble.isTask()) {
 			this.type = Type.TASK;
+		} else if (preamble.isScript()) {
+		    this.type = Type.SCRIPT;
 		}
 
 		if (preamble.isDesktop()) {

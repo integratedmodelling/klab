@@ -501,7 +501,7 @@ public enum Extensions implements IExtensionService {
 	}
 
 	// facilitates calling when options are true/false flags. Not very nice.
-	public static CompilerOption[] options(boolean scalar, boolean recontextualizeAsMaps) {
+	public static CompilerOption[] options(boolean scalar, boolean recontextualizeAsMaps, CompilerOption... options) {
 
 		List<CompilerOption> ret = new ArrayList<>();
 		if (scalar) {
@@ -509,6 +509,11 @@ public enum Extensions implements IExtensionService {
 		}
 		if (recontextualizeAsMaps) {
 			ret.add(CompilerOption.RecontextualizeAsMap);
+		}
+		if (options != null) {
+		    for (CompilerOption o : options) {
+		        ret.add(o);
+		    }
 		}
 
 		return ret.toArray(new CompilerOption[ret.size()]);

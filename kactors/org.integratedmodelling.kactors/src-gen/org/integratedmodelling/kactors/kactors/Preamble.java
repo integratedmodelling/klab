@@ -21,8 +21,9 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isDesktop <em>Desktop</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isWeb <em>Web</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isApp <em>App</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isTask <em>Task</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isTest <em>Test</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isScript <em>Script</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isTask <em>Task</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isComponent <em>Component</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isUser <em>User</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#isLibrary <em>Library</em>}</li>
@@ -163,28 +164,6 @@ public interface Preamble extends EObject
   void setApp(boolean value);
 
   /**
-   * Returns the value of the '<em><b>Task</b></em>' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Task</em>' attribute.
-   * @see #setTask(boolean)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Task()
-   * @model
-   * @generated
-   */
-  boolean isTask();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isTask <em>Task</em>}' attribute.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Task</em>' attribute.
-   * @see #isTask()
-   * @generated
-   */
-  void setTask(boolean value);
-
-  /**
    * Returns the value of the '<em><b>Test</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -205,6 +184,50 @@ public interface Preamble extends EObject
    * @generated
    */
   void setTest(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Script</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Script</em>' attribute.
+   * @see #setScript(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Script()
+   * @model
+   * @generated
+   */
+  boolean isScript();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isScript <em>Script</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Script</em>' attribute.
+   * @see #isScript()
+   * @generated
+   */
+  void setScript(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Task</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Task</em>' attribute.
+   * @see #setTask(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Task()
+   * @model
+   * @generated
+   */
+  boolean isTask();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#isTask <em>Task</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Task</em>' attribute.
+   * @see #isTask()
+   * @generated
+   */
+  void setTask(boolean value);
 
   /**
    * Returns the value of the '<em><b>Component</b></em>' attribute.
