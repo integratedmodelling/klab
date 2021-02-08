@@ -6,6 +6,7 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -23,6 +24,7 @@ public class DecodingDataBuilder implements IKlabData.Builder {
 
 	IContextualizationScope context;
 	private Map<?, ?> data;
+	IConcept semantics;
 
 	public DecodingDataBuilder(Map<?, ?> data, IContextualizationScope context) {
 		this.data = data;
@@ -77,5 +79,11 @@ public class DecodingDataBuilder implements IKlabData.Builder {
 	@Override
 	public void add(Object value, ILocator offset) {
 		throw new IllegalStateException("modifying methods should not be called on a decoding builder");
+	}
+
+	@Override
+	public Builder withSemantics(IConcept semantics) {
+		this.semantics = semantics;
+		return this;
 	}
 }

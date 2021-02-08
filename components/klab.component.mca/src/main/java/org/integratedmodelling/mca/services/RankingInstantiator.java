@@ -7,17 +7,16 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.model.contextualization.IProcessor;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
-import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.mca.MCAComponent;
@@ -61,7 +60,7 @@ public class RankingInstantiator implements IInstantiator, IProcessor, IExpressi
 		}
 
 		// must be a group
-		if (!(target instanceof ObservationGroup)) {
+		if (!(target instanceof IObservationGroup)) {
 			context.getMonitor()
 					.warn("MCA ranking cannot be performed on an artifact that is not a group of objects. Exiting.");
 			return null;

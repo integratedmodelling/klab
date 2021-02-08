@@ -10,6 +10,7 @@ public class AttributeReference implements IResource.Attribute {
     private boolean key;
     private boolean optional;
     private String exampleValue;
+    private int index;
     
     @Override
     public String getName() {
@@ -59,6 +60,14 @@ public class AttributeReference implements IResource.Attribute {
 
 	public void setExampleValue(String exampleValue) {
 		this.exampleValue = exampleValue;
+	}
+
+	public int getIndex() {
+		return index;
+	}
+
+	public void setIndex(int index) {
+		this.index = index;
 	}
 
 }

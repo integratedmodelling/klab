@@ -2,7 +2,10 @@ package org.integratedmodelling.tables.adapter;
 
 import java.io.File;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
@@ -16,7 +19,11 @@ import org.integratedmodelling.klab.utils.Triple;
 
 public class TableImporter implements IResourceImporter {
 
-    @Override
+    public TableImporter() {
+		// TODO Auto-generated constructor stub
+	}
+
+	@Override
     public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
         // TODO Auto-generated method stub
         return null;
@@ -42,8 +49,8 @@ public class TableImporter implements IResourceImporter {
 
     @Override
     public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
-        // TODO Auto-generated method stub
-        return null;
+    	List<Triple<String, String, String>> ret = new ArrayList<>();
+    	return ret;
     }
 
     @Override
@@ -54,8 +61,8 @@ public class TableImporter implements IResourceImporter {
 
     @Override
     public Map<String, String> getExportCapabilities(IResource resource) {
-        // TODO Auto-generated method stub
-        return null;
+        Map<String, String> ret = new LinkedHashMap<>();
+        return ret;
     }
 
     @Override

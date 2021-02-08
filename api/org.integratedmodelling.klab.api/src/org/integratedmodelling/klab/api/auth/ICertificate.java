@@ -85,6 +85,7 @@ public interface ICertificate {
 
 	public static final String DEFAULT_ENGINE_CERTIFICATE_FILENAME = "klab.cert";
 	public static final String DEFAULT_NODE_CERTIFICATE_FILENAME = "node.cert";
+	public static final String DEFAULT_SEMANTIC_SERVER_CERTIFICATE_FILENAME = "semantic.cert";
 	public static final String DEFAULT_HUB_CERTIFICATE_FILENAME = "hub.cert";
 	public static final String DEFAULT_LEVER_CERTIFICATE_FILENAME = "lever.cert";
 

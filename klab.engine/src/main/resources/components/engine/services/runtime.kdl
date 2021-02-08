@@ -143,6 +143,10 @@ annotation test for observers
 		"A list of the concepts or objects to observe in the context after it is resolved."
 		default ()
 		
+	optional value roles
+		"A map of role -> observable|(observables) to load in the session before the test is
+		 run."
+		
 	optional list assertions
 		"A list of functions or Groovy code fragments returning a boolean, to execute on the resulting
          context (identified by the 'context' variable) after all observations are made. Any

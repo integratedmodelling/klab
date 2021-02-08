@@ -16,8 +16,11 @@ Preamble: {Preamble}
 	(
 		(   
 			((public?='public')? (mobile?='mobile' |  desktop?='desktop' | web?='web')? app?='app') | 
-			task?='task' |
+			// scripts and test cases run in synchronous mode
 			test?='testcase' | 
+			script?='script' |
+			// ? syn with script? remove?
+			task?='task' |
 			component?='component' | 
 			user?='user' | 
 			library?=('trait'|'library') |
@@ -119,7 +122,7 @@ NextStatement returns Statement:
 ;
 
 Assignment:
-	'set' (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=Value
+	'set' (recipient=LOWERCASE_ID '.')? variable=LOWERCASE_ID value=ValueWithConstructor
 ;
 
 IfStatement:
@@ -160,8 +163,27 @@ Actions:
 	'(' statements=StatementList ')' 
 ;
 
+
 Value:
 	tree=Tree |
+	empty?='empty' |
+	argvalue=ARGVALUE |
+	urn=UrnId | 
+	literal=Literal |
+	id=PathName |
+	list=List |
+	map=Map |
+	constant=UPPERCASE_ID |
+	observable=Observable | 
+	expression=EXPR |
+	table=LookupTable |
+	quantity=Quantity
+	;
+
+ValueWithConstructor returns Value:
+	constructor=Constructor |
+	tree=Tree |
+	empty?='empty' |
 	argvalue=ARGVALUE |
 	literal=Literal |
 	urn=UrnId | 
@@ -174,6 +196,10 @@ Value:
 	table=LookupTable |
 	quantity=Quantity
 	;
+
+Constructor:
+	(path=QuotablePathName '.')? classid=CAMELCASE_ID ('(' (parameters=ParameterList)? ')')?
+;
 
 ValueWithMetadata returns Value:
 	(tree=Tree |

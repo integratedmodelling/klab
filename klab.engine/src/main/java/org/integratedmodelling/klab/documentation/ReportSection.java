@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider.Item;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -187,7 +187,7 @@ public class ReportSection extends Parameters<String> implements Section {
      */
     public void table(Object[] args, IDocumentation documentation, IContextualizationScope context) {
 
-        ITable<?> table = getTable(args[0].toString());
+        IStructuredTable<?> table = getTable(args[0].toString());
         if (table != null) {
             report.setReferenceType(args[1].toString(), RefType.TABLE);
             body.append("\n\n");
@@ -230,10 +230,10 @@ public class ReportSection extends Parameters<String> implements Section {
         
     }
 
-    private ITable<?> getTable(String id) {
+    private IStructuredTable<?> getTable(String id) {
         Object object = Resources.INSTANCE.getSymbol(id);
-        if (object instanceof ITable) {
-            return (ITable<?>) object;
+        if (object instanceof IStructuredTable) {
+            return (IStructuredTable<?>) object;
         }
         return null;
     }

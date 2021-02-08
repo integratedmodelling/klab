@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -298,7 +299,7 @@ public class WekaEncoder implements IResourceEncoder {
 		}
 
 //		Set<String> sperma = new HashSet<>();
-		
+
 		/*
 		 * proceed to inference
 		 */
@@ -310,8 +311,7 @@ public class WekaEncoder implements IResourceEncoder {
 //					System.out.println(instance + " -> " + Arrays.toString((double[])result));
 //					sperma.add(instance.toString());
 //				}
-				setValue(locator, result, builder, resource,
-						instances.getDatakey("predicted"));
+				setValue(locator, result, builder, resource, instances.getDatakey("predicted"));
 			}
 		}
 	}
@@ -362,6 +362,13 @@ public class WekaEncoder implements IResourceEncoder {
 			}
 
 		}
+	}
+
+	@Override
+	public IResource contextualize(IResource resource, IScale scale, IArtifact targetObservation,
+			Map<String, String> urnParameters, IContextualizationScope scope) {
+		// TODO Auto-generated method stub
+		return resource;
 	}
 
 }

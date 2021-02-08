@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.geospace.geocoding;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
@@ -31,8 +32,7 @@ public class ResourceGeocodingService extends GeocodingService {
 				IShape ret = geometry instanceof IScale ? ((IScale) geometry).getSpace().getShape()
 						: Scale.create(geometry).getSpace().getShape();
 				if (ret != null) {
-					ret.getMetadata().put(IMetadata.DC_DESCRIPTION,
-							ret.getMetadata().get(IMetadata.DC_NAME, String.class));
+					ret.getMetadata().put(IMetadata.DC_DESCRIPTION, ((IObjectArtifact)data.getArtifact()).getName());
 					return ret;
 				}
 			}

@@ -1,14 +1,12 @@
 package org.integratedmodelling.klab.components.runtime.observations;
 
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.api.actors.IBehavior;
@@ -20,6 +18,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -27,6 +26,8 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMess
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Load;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.debugger.Debugger;
+import org.integratedmodelling.klab.engine.debugger.Debugger.Watcher;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.ViewImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -61,7 +62,8 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	// observed. Should eventually
 	// come from provenance.
 	private boolean main;
-	// only kept updated in the root observation; in others, 0 is expected default and 
+	// only kept updated in the root observation; in others, 0 is expected default
+	// and
 	// the implementations redefine getLastUpdate() to report correctly
 	private long lastUpdate = 0;
 	// separately kept time of creation and exit, using timestamp if non-temporal
@@ -72,6 +74,17 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	// just for clients
 	private boolean contextualized;
 	private View view;
+
+	/*
+	 * If this is not null, the observation is being recontextualized by a dataflow
+	 * successive to the one that produced its change, and the getLastUpdate()
+	 * method should respond a time relative to that instead of the very last one.
+	 * 
+	 * FIXME this is a potentially dangerous approach but using a wrapper destroys
+	 * the referential integrity of the context. Should externalize this info within
+	 * the scheduler.
+	 */
+	protected ITime replayingTime = null;
 
 	/*
 	 * Any modification that needs to be reported to clients is recorded here
@@ -85,6 +98,12 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	// tracks the setting of the actor so we can avoid the ask pattern
 	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
+
+	/*
+	 * these are for debugging. Watches in the root observation monitor the entire
+	 * context.
+	 */
+	protected Map<String, Debugger.Watcher> watches = new HashMap<>();
 
 	protected Observation(Observation other) {
 		super(other);
@@ -109,6 +128,20 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 		return "local:observation:" + getParentIdentity(Session.class).getId() + ":" + getId();
 	}
 
+	public Collection<Watcher> getWatches() {
+		return watches.values();
+	}
+
+	public String addWatch(Watcher watch) {
+		String id = NameGenerator.shortUUID();
+		this.watches.put(id, watch);
+		return id;
+	}
+
+	public void removeWatch(String id) {
+		this.watches.remove(id);
+	}
+
 	public static IObservation empty(IObservable observable, IContextualizationScope context) {
 		return ((IRuntimeScope) context).getObservationGroup(observable, context.getScale());
 	}
@@ -126,6 +159,10 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 
 	protected void reportChange(ObservationChange change) {
 		this.changeset.add(change);
+	}
+
+	public void setReplayingTime(ITime time) {
+		this.replayingTime = time;
 	}
 
 	protected void touch() {
@@ -455,19 +492,17 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	public long[] getUpdateTimestamps() {
 		return Utils.toLongArray(updateTimestamps);
 	}
-	
+
 	@Override
 	public IParameters<String> getState() {
 		return globalState;
 	}
 
-//	@Override
-//	public void setStateChangeListener(String name, BiConsumer<String, Object> listener) {
-//		this.stateChangeListeners.put(name, listener);
-//	}
-//
-//	@Override
-//	public void removeStateChangeListener(String name) {
-//		this.stateChangeListeners.remove(name);
-//	}
+	/**
+	 * Debug output with as much detail as possible on the internal structure.
+	 * 
+	 * @return
+	 */
+	public abstract String dump();
+
 }

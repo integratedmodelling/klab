@@ -23,6 +23,7 @@ import org.integratedmodelling.kim.api.IKimStatement.Scope;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.Kim.Notifier;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
@@ -267,7 +268,7 @@ public enum Models implements IModelService {
 
 	/**
 	 * Create a new model for the change in the passed observable, based on the
-	 * changing data resolved by the passed merged resource. Used to pre-fill the
+	 * changing data resolved by the a dynamic resource. Used to pre-fill the
 	 * kbox catalog when a merged resource covering the period of occurrence has
 	 * resolved the unchanging observable.
 	 * 
@@ -277,9 +278,9 @@ public enum Models implements IModelService {
 	 */
 	public IRankedModel createChangeModel(IObservable unchangedObservable, IModel model, ResolutionScope scope) {
 		MergedResource resource = ((org.integratedmodelling.klab.model.Model) model).getMergedResource();
-		if (resource == null) {
+		if (resource == null && !model.changesIn(Dimension.Type.TIME, scope.getScale())) {
 			throw new KlabIllegalArgumentException(
-					"Cannot create a merged resource change model from a model that does not contain merged resources");
+					"Cannot create a merged resource change model from a model that does not contain dynamic resources");
 		}
 		org.integratedmodelling.klab.model.Model inner = new org.integratedmodelling.klab.model.Model(
 				unchangedObservable, resource, model, scope);

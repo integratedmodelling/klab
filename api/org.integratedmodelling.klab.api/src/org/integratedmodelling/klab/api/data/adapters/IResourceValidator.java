@@ -17,11 +17,16 @@ import java.io.File;
 import java.net.URL;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 
 /**
  * The Interface IResourceValidator.
@@ -82,6 +87,17 @@ public interface IResourceValidator {
 	Builder validate(URL url, IParameters<String> userData, IMonitor monitor);
 
 	/**
+	 * Called to revalidate a resource after an update done from the resource
+	 * editor. Modification may concern the parameters or the geometry (for now only
+	 * the temporal aspects), passed in the bean.
+	 * 
+	 * @param resource
+	 * @param updateData
+	 * @return
+	 */
+	IResource update(IResource resource, ResourceCRUDRequest updateData);
+
+	/**
 	 * Return all the operations allowed on this resource, or all operations if the
 	 * resource is null. If a resource is passed, the result must not include any
 	 * operations already performed whose results are irreversible.
@@ -92,6 +108,18 @@ public interface IResourceValidator {
 	List<Operation> getAllowedOperations(IResource resource);
 
 	/**
+	 * Called in certain situations to assess if the resource can support the passed
+	 * observation type with the given parameters. For now used only to check if
+	 * resources can produce an individual concept to characterize a context,
+	 * 
+	 * @param resource
+	 * @param urnParameters
+	 * @param description
+	 * @return
+	 */
+	boolean isObservationAllowed(IResource resource, Map<String, String> urnParameters, Description description);
+
+	/**
 	 * Perform the passed operation on a resource, returning the modifier resource
 	 * when finished. May run long so should be called in a separate thread.
 	 * Anything including errors, success etc should be reported through the
@@ -99,10 +127,12 @@ public interface IResourceValidator {
 	 * 
 	 * @param resource
 	 * @param operationName
+	 * @param parameters
 	 * @param monitor
 	 * @return
 	 */
-	IResource performOperation(IResource resource, String operationName, IMonitor monitor);
+	IResource performOperation(IResource resource, String operationName, IParameters<String> parameters,
+			IResourceCatalog catalog, IMonitor monitor);
 
 	/**
 	 * Check if the passed file and/or parameters can be validated by this
@@ -123,5 +153,16 @@ public interface IResourceValidator {
 	 * @return all relevant files for the resource.
 	 */
 	Collection<File> getAllFilesForResource(File file);
+
+	/**
+	 * Return a map with all known and useful details about this resource,
+	 * particularly those related to the internal storage built to support it.
+	 * Called by the {@link API.NODE.RESOURCE} INFO endpoint to report about the
+	 * status of a resource in a remote node.
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	Map<? extends String, ? extends Object> describeResource(IResource resource);
 
 }

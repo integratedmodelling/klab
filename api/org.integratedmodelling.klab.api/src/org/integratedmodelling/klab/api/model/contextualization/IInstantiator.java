@@ -39,6 +39,6 @@ public interface IInstantiator extends IContextualizer {
    * @return a list of observations, possibly empty but never null.
    * @throws org.integratedmodelling.klab.exceptions.KlabException
    */
-  List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope context) throws KlabException;
+  List<IObjectArtifact> instantiate(IObservable semantics, IContextualizationScope scope) throws KlabException;
 
 }

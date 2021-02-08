@@ -287,7 +287,7 @@ class KimValidator extends AbstractKimValidator {
 			}
 		}
 	}
-	
+
 	@Check
 	def checkTable(Table table) {
 		var ncols = -1;
@@ -538,10 +538,15 @@ class KimValidator extends AbstractKimValidator {
 					error('Dependency has undefined semantics', KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES,
 						i, BAD_OBSERVABLE)
 					ok = false
-				} else if (!definition.is(Type.OBSERVABLE) && !definition.is(Type.TRAIT) && !(definition.is(Type.ROLE) && observable.generic)) {
-					error('Models can only describe observables or traits',
-						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
-					ok = false
+				} else if (!definition.is(Type.OBSERVABLE) && !definition.is(Type.TRAIT) &&
+					!(definition.is(Type.ROLE) && observable.generic)) {
+					if (!(definition.is(Type.ROLE) && definition.is(Type.ABSTRACT))) {
+						// special case: define a dependency in terms of an abstract role that must be resolved contextually. This
+						// makes the model generic in that role.
+						error('Models can only describe observables or traits',
+							KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
+						ok = false
+					}
 				} else if (observable.main.distributedInherent !== null) {
 					error("Distributed inherency (of each, for each, within each) are only allowed as main observables",
 						KimPackage.Literals.MODEL_BODY_STATEMENT__DEPENDENCIES, i, BAD_OBSERVABLE)
@@ -631,7 +636,8 @@ class KimValidator extends AbstractKimValidator {
 				var checkFound = false
 				for (arg : model.lookupTableArgs) {
 
-					if (arg != "?" && arg != "*") {
+					if (arg.id !== null) {
+					if (arg.id != "?" && arg.id != "*") {
 						var found = false
 						for (dependency : dependencies) {
 							// TODO dependency.name returns too many nulls to check effectively
@@ -644,13 +650,14 @@ class KimValidator extends AbstractKimValidator {
 //						error('Argument ' + arg + ' is unknown within this model',
 //								 KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, BAD_TABLE_FORMAT)
 						}
-					} else if (arg == "?") {
+					} else if (arg.id == "?") {
 						if (checkFound) {
 							error("Only one '?' is allowed in the argument list, to mark the result column",
 								KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, BAD_TABLE_FORMAT)
 							ok = false
 						}
 						checkFound = true
+					}
 					}
 					o++
 				}
@@ -715,6 +722,8 @@ class KimValidator extends AbstractKimValidator {
 					descriptor.inlineValue = Boolean.parseBoolean(model.getBoolean())
 				} else if (model.number !== null) {
 					descriptor.inlineValue = Kim.INSTANCE.parseNumber(model.number)
+				} else if (model.concept !== null) {
+					descriptor.inlineValue = Kim.INSTANCE.declareConcept(model.concept)
 				}
 
 				// the rest
@@ -1612,13 +1621,13 @@ class KimValidator extends AbstractKimValidator {
 							KimPackage.CONCEPT__CONCEPT)
 					}
 					operator.add(Type.CHANGE)
-				}  else if (concept.isRate) {
+				} else if (concept.isRate) {
 					if (!flags.contains(Type.QUALITY)) {
 						error("Change rates can only be defined for qualities", concept.concept, null,
 							KimPackage.CONCEPT__CONCEPT)
 					}
 					operator.add(Type.RATE)
-				}  else if (concept.isChanged) {
+				} else if (concept.isChanged) {
 					if (!flags.contains(Type.QUALITY)) {
 						error("Change events can only be defined for qualities", concept.concept, null,
 							KimPackage.CONCEPT__CONCEPT)
@@ -2051,9 +2060,28 @@ class KimValidator extends AbstractKimValidator {
 //			ret.authorityDefined
 //			concept.definedAuthority
 		}
-
+	
+		var i = 0
 		for (requirement : concept.requirements) {
-			// TODO IdentityRequirementList
+			if (requirement.authority !== null) {
+				// TODO
+			} else {
+				for (identity : requirement.identities) {
+					var iden = Kim.INSTANCE.declareConcept(identity)
+					if (requirement.type == "identity") {
+						if (!iden.type.contains(Type.IDENTITY)) {
+							error("The concept required is not an identity",
+								concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__REQUIREMENTS, i)
+						}
+						if (!iden.type.contains(Type.ABSTRACT)) {
+							error("Required identities must be abstract",
+								concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__REQUIREMENTS, i)
+						}
+						ret.requiredIdentities.add(iden);
+					} // else ... TODO the others
+				}
+			}
+			i++
 		}
 
 		if (concept.describedQuality !== null) {
@@ -2174,7 +2202,7 @@ class KimValidator extends AbstractKimValidator {
 			} else {
 
 				// get all the targets
-				var i = 0;
+				i = 0;
 				var targets = Lists.newArrayList()
 				for (t : concept.targetObservables) {
 					var target = Kim.INSTANCE.declareConcept(t)
@@ -2237,7 +2265,7 @@ class KimValidator extends AbstractKimValidator {
 					KimPackage.Literals.CONCEPT_STATEMENT_BODY__CONFERRED_TRAITS)
 				ok = false
 			} else {
-				var i = 0
+				i = 0
 				for (decl : concept.conferredTraits) {
 					var trait = Kim.INSTANCE.declareConcept(decl)
 					if (!trait.is(Type.TRAIT)) {
@@ -2286,7 +2314,7 @@ class KimValidator extends AbstractKimValidator {
 					KimPackage.Literals.CONCEPT_STATEMENT_BODY__CREATES)
 				ok = false
 			} else {
-				var i = 0
+				i = 0
 				for (decl : concept.creates) {
 					var countable = Kim.INSTANCE.declareConcept(decl)
 					if (!countable.is(Type.OBSERVABLE)) {
@@ -2313,7 +2341,7 @@ class KimValidator extends AbstractKimValidator {
 				ok = false
 			} else {
 				// for relationships; moves in parallel with concept.ranges
-				for (var i = 0; i < concept.domains.size; i++) {
+				for (i = 0; i < concept.domains.size; i++) {
 					var domain = Kim.INSTANCE.declareConcept(concept.domains.get(i))
 					var range = Kim.INSTANCE.declareConcept(concept.ranges.get(i))
 					if (!domain.type.contains(Type.SUBJECT) && !domain.type.contains(Type.AGENT)) {
@@ -2351,7 +2379,7 @@ class KimValidator extends AbstractKimValidator {
 				ok = false
 			} else {
 				// TODO process affects quality; deliberative agents can affect states of subject types.
-				var i = 0
+				i = 0
 				for (decl : concept.qualitiesAffected) {
 					var quality = Kim.INSTANCE.declareConcept(decl)
 					if (!quality.is(Type.QUALITY)) {

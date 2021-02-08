@@ -70,9 +70,16 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 
 	}
 
+	/**
+	 * for variable in iterable (body)
+	 * @author Ferd
+	 *
+	 */
 	public interface For extends IKActorsStatement {
-
-		// TODO
+	    
+	    String getVariable();
+	    
+	    IKActorsValue getIterable();
 
 		IKActorsStatement getBody();
 

@@ -6,7 +6,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.components.runtime.RuntimeScope;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.extensions.groovy.model.DirectObservation;
 import org.integratedmodelling.klab.extensions.groovy.model.Relationship;
 import org.integratedmodelling.klab.extensions.groovy.model.Scale;
@@ -40,8 +40,8 @@ public class Wrapper<T> {
         return unwrapped == null ? (T) this.binding.getVariables().get(jID) : unwrapped;
     }
     
-    public RuntimeScope getScope() {
-    	return (RuntimeScope) this.binding.getVariable("_c");
+    public IRuntimeScope getScope() {
+    	return (IRuntimeScope) this.binding.getVariable("_c");
     }
 
     /**

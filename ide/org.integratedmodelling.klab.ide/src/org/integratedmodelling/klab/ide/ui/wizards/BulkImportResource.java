@@ -233,7 +233,7 @@ public class BulkImportResource extends WizardPage {
 		lblNewLabel_1.setText("URL or folder");
 		combo.add(NO_CHOICE);
 		for (ResourceAdapterReference adapter : Activator.klab().getResourceAdapters()) {
-			if (!adapter.isFileBased()) {
+			if (adapter.isCanCreateEmpty()) {
 				combo.add(adapter.getName() + (adapter.getLabel() == null ? "" : (" - " + adapter.getLabel())));
 			}
 		}

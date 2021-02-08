@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.runtime;
 
+import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
@@ -35,15 +36,15 @@ public interface IScheduler {
 		TIME_SYNCHRONOUS
 	}
 
-	/**
-	 * Start scheduling.
-	 */
-	void start(IMonitor monitor);
-
-	/**
-	 * Stop the scheduler.
-	 */
-	void stop();
+//	/**
+//	 * Start scheduling.
+//	 */
+//	void start(IMonitor monitor);
+//
+//	/**
+//	 * Stop the scheduler.
+//	 */
+//	void stop();
 
 	/**
 	 * Get the synchronicity mode. The default mode should be SYNCHRONOUS or
@@ -56,7 +57,7 @@ public interface IScheduler {
 	/**
 	 * Start, run to completion (if possible) and return.
 	 */
-	void run(IMonitor monitor);
+	void run(IDataflow<?> dataflow, IMonitor monitor);
 
 	/**
 	 * Return true if nothing has been scheduled.

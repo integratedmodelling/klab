@@ -15,9 +15,10 @@ import org.eclipse.emf.ecore.EObject;
  * </p>
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getTree <em>Tree</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#isEmpty <em>Empty</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getArgvalue <em>Argvalue</em>}</li>
- *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getUrn <em>Urn</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getList <em>List</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getMap <em>Map</em>}</li>
@@ -26,6 +27,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getQuantity <em>Quantity</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getConstructor <em>Constructor</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getMetadata <em>Metadata</em>}</li>
  * </ul>
  *
@@ -58,6 +60,28 @@ public interface Value extends EObject
   void setTree(Tree value);
 
   /**
+   * Returns the value of the '<em><b>Empty</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Empty</em>' attribute.
+   * @see #setEmpty(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Empty()
+   * @model
+   * @generated
+   */
+  boolean isEmpty();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#isEmpty <em>Empty</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Empty</em>' attribute.
+   * @see #isEmpty()
+   * @generated
+   */
+  void setEmpty(boolean value);
+
+  /**
    * Returns the value of the '<em><b>Argvalue</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -80,28 +104,6 @@ public interface Value extends EObject
   void setArgvalue(String value);
 
   /**
-   * Returns the value of the '<em><b>Literal</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Literal</em>' containment reference.
-   * @see #setLiteral(Literal)
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Literal()
-   * @model containment="true"
-   * @generated
-   */
-  Literal getLiteral();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getLiteral <em>Literal</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Literal</em>' containment reference.
-   * @see #getLiteral()
-   * @generated
-   */
-  void setLiteral(Literal value);
-
-  /**
    * Returns the value of the '<em><b>Urn</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -122,6 +124,28 @@ public interface Value extends EObject
    * @generated
    */
   void setUrn(String value);
+
+  /**
+   * Returns the value of the '<em><b>Literal</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Literal</em>' containment reference.
+   * @see #setLiteral(Literal)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Literal()
+   * @model containment="true"
+   * @generated
+   */
+  Literal getLiteral();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getLiteral <em>Literal</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Literal</em>' containment reference.
+   * @see #getLiteral()
+   * @generated
+   */
+  void setLiteral(Literal value);
 
   /**
    * Returns the value of the '<em><b>Id</b></em>' attribute.
@@ -298,6 +322,28 @@ public interface Value extends EObject
    * @generated
    */
   void setQuantity(Quantity value);
+
+  /**
+   * Returns the value of the '<em><b>Constructor</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Constructor</em>' containment reference.
+   * @see #setConstructor(Constructor)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Constructor()
+   * @model containment="true"
+   * @generated
+   */
+  Constructor getConstructor();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getConstructor <em>Constructor</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Constructor</em>' containment reference.
+   * @see #getConstructor()
+   * @generated
+   */
+  void setConstructor(Constructor value);
 
   /**
    * Returns the value of the '<em><b>Metadata</b></em>' containment reference.

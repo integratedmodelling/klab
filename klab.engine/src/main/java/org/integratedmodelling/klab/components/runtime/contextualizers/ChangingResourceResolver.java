@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.contextualizers;
 
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class ChangingResourceResolver implements IResolver<IArtifact>, IExpression {
 
@@ -54,7 +56,8 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
 	@Override
 	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
 
-		List<IResource> resources = ((MergedResource) this.resource).contextualize(context.getScale(), ret);
+		List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
+				.contextualize(context.getScale(), ret);
 		if (resources.isEmpty()) {
 			// this can happen when the resource can't add anything to the artifact.
 			return ret;
@@ -69,11 +72,10 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
 					"Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
 		}
 
-		IResource res = resources.get(0);
-		Urn urn = new Urn(res.getUrn());
+		IResource res = resources.get(0).getFirst();
 
 		System.err.println("GETTING DATA FROM " + res.getUrn());
-		IKlabData data = Resources.INSTANCE.getResourceData(res, urn.getParameters(), context.getScale(), context);
+		IKlabData data = Resources.INSTANCE.getResourceData(res, resources.get(0).getSecond(), context.getScale(), context);
 		System.err.println("DONE " + res.getUrn());
 
 		if (data == null) {

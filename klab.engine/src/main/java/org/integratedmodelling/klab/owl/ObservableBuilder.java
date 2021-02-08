@@ -67,6 +67,7 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IConcept targetPredicate;
 	private IConcept temporalInherent;
 	private boolean mustContextualize = false;
+	private String statedName;
 
 	private List<IConcept> traits = new ArrayList<>();
 	private List<IConcept> roles = new ArrayList<>();
@@ -76,10 +77,11 @@ public class ObservableBuilder implements IObservable.Builder {
 	private IUnit unit;
 	private ICurrency currency;
 	private List<IAnnotation> annotations = new ArrayList<>();
-
+	private String dereifiedAttribute;
 	private boolean isTrivial = true;
 	private boolean distributedInherency = false;
 	private KimConcept declaration;
+	private boolean axiomsAdded = false;
 
 	// this gets set to true if a finished declaration is set using
 	// withDeclaration() and the
@@ -139,7 +141,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.declaration = Concepts.INSTANCE.getDeclaration(observable.getType());
 		this.mustContextualize = observable.mustContextualizeAtResolution();
 		this.temporalInherent = observable.getTemporalInherent();
-
+		this.statedName = observable.getStatedName();
 		this.annotations.addAll(observable.getAnnotations());
 
 		for (IConcept role : Roles.INSTANCE.getDirectRoles(observable.getType())) {
@@ -182,6 +184,7 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.mustContextualize = other.mustContextualize;
 		this.annotations.addAll(other.annotations);
 		this.temporalInherent = other.temporalInherent;
+		this.statedName = other.statedName;
 
 		checkTrivial();
 	}
@@ -368,7 +371,8 @@ public class ObservableBuilder implements IObservable.Builder {
 				reset(makeUncertainty(argument, true));
 				break;
 			case VALUE:
-				reset(makeValue(argument, this.comparison, true));
+			case MONETARY_VALUE:
+				reset(makeValue(argument, this.comparison, true, type == UnarySemanticOperator.MONETARY_VALUE));
 				break;
 			case OBSERVABILITY:
 				reset(makeObservability(argument, true));
@@ -466,7 +470,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			Pair<Collection<IConcept>, Collection<IConcept>> rdelta = Concepts.INSTANCE.copyWithout(ret.roles, concept);
 			ret.roles = new ArrayList<>(rdelta.getFirst());
 			ret.removed.addAll(rdelta.getSecond());
-			for (int i = 0; i < tdelta.getSecond().size(); i++) {
+			for (int i = 0; i < rdelta.getSecond().size(); i++) {
 				removedRoles.add(ObservableRole.ROLE);
 			}
 			if (ret.context != null && ret.context.equals(concept)) {
@@ -1357,11 +1361,13 @@ public class ObservableBuilder implements IObservable.Builder {
 		return ontology.getConcept(conceptId);
 	}
 
-	public Concept makeValue(IConcept concept, IConcept comparison, boolean addDefinition) {
+	public Concept makeValue(IConcept concept, IConcept comparison, boolean addDefinition, boolean monetary) {
 
-		String cName = "ValueOf" + getCleanId(concept) + (comparison == null ? "" : ("Vs" + getCleanId(comparison)));
+		String cName = (monetary ? "MonetaryValueOf" : "ValueOf") + getCleanId(concept)
+				+ (comparison == null ? "" : ("Vs" + getCleanId(comparison)));
 
-		String definition = UnarySemanticOperator.VALUE.declaration[0] + " (" + concept.getDefinition() + ")"
+		String definition = (monetary ? UnarySemanticOperator.MONETARY_VALUE.declaration[0]
+				: UnarySemanticOperator.VALUE.declaration[0]) + " (" + concept.getDefinition() + ")"
 				+ (comparison == null ? ""
 						: (UnarySemanticOperator.VALUE.declaration[1] + " (" + comparison.getDefinition() + ")"));
 
@@ -1372,11 +1378,12 @@ public class ObservableBuilder implements IObservable.Builder {
 
 			conceptId = ontology.createIdForDefinition(definition);
 
-			EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.VALUE.name());
+			EnumSet<Type> newType = Kim.INSTANCE.getType(
+					monetary ? UnarySemanticOperator.MONETARY_VALUE.name() : UnarySemanticOperator.VALUE.name());
 
 			ArrayList<IAxiom> ax = new ArrayList<>();
 			ax.add(Axiom.ClassAssertion(conceptId, newType));
-			ax.add(Axiom.SubClass(NS.CORE_VALUE, conceptId));
+			ax.add(Axiom.SubClass(monetary ? NS.CORE_MONETARY_VALUE : NS.CORE_VALUE, conceptId));
 			ax.add(Axiom.AnnotationAssertion(conceptId, NS.BASE_DECLARATION, "true"));
 			ax.add(Axiom.AnnotationAssertion(conceptId, "rdfs:label", cName));
 			if (addDefinition) {
@@ -1778,9 +1785,9 @@ public class ObservableBuilder implements IObservable.Builder {
 			cId += "As" + roleIds;
 			// only add role names to user description if roles are not from the
 			// root of the worldview
-			if (!rolesAreFundamental(roles)) {
-				cDs = roleIds + Concepts.INSTANCE.getDisplayName(main);
-			}
+//			if (!rolesAreFundamental(roles)) {
+			cDs = roleIds + Concepts.INSTANCE.getDisplayName(main);
+//			}
 		}
 
 //		if (distributedInherency) {
@@ -1811,6 +1818,8 @@ public class ObservableBuilder implements IObservable.Builder {
 
 		ontology.define(axioms);
 		ret = ontology.getConcept(conceptId);
+		
+		this.axiomsAdded = true;
 
 		/*
 		 * restrictions
@@ -1880,15 +1889,15 @@ public class ObservableBuilder implements IObservable.Builder {
 		return id;
 	}
 
-	private static boolean rolesAreFundamental(Collection<IConcept> roles) {
-		for (IConcept c : roles) {
-			if (Resources.INSTANCE.getWorldview() != null
-					&& !c.getNamespace().equals(Resources.INSTANCE.getWorldview().getName())) {
-				return false;
-			}
-		}
-		return true;
-	}
+//	private static boolean rolesAreFundamental(Collection<IConcept> roles) {
+//		for (IConcept c : roles) {
+//			if (Resources.INSTANCE.getWorldview() != null
+//					&& !c.getNamespace().equals(Resources.INSTANCE.getWorldview().getName())) {
+//				return false;
+//			}
+//		}
+//		return true;
+//	}
 
 	private boolean isTrivial() {
 		return isTrivial;
@@ -1943,7 +1952,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
 				ret.setDeclaration(ret.getDeclaration() + " (" + ((Observable) valueOperand).getDeclaration() + ")");
 				if (name == null) {
-					ret.setName(ret.getName() + "_" + ((Observable) valueOperand).getName());
+					ret.setName(ret.getName() + "_" + Observables.INSTANCE.getDisplayName((Observable) valueOperand));
 				}
 			} else {
 
@@ -1962,13 +1971,15 @@ public class ObservableBuilder implements IObservable.Builder {
 		if (name != null) {
 			ret.setName(name);
 		}
-
+		
+		ret.setStatedName(this.statedName);
 		ret.setTargetPredicate(targetPredicate);
 		ret.setOptional(this.optional);
 		ret.setMustContextualizeAtResolution(mustContextualize);
 		ret.getAnnotations().addAll(annotations);
 		ret.setDistributedInherency(distributedInherency);
 		ret.setTemporalInherent(temporalInherent);
+		ret.setDereifiedAttribute(this.dereifiedAttribute);
 
 		return ret;
 	}
@@ -2014,5 +2025,16 @@ public class ObservableBuilder implements IObservable.Builder {
 		this.targetPredicate = targetPredicate;
 		return this;
 	}
+
+	@Override
+	public Builder withDereifiedAttribute(String dereifiedAttribute) {
+		this.dereifiedAttribute = dereifiedAttribute;
+		return this;
+	}
+
+    @Override
+    public boolean axiomsAdded() {
+        return this.axiomsAdded;
+    }
 
 }

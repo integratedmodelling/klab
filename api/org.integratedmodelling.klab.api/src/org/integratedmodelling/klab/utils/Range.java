@@ -553,7 +553,7 @@ public class Range implements IValueMediator {
 			leftExclusion = other.lowerBound - lowerBound;
 		}
 		double rightExclusion = 0;
-		if (upperBound != Double.POSITIVE_INFINITY && other.upperBound < upperBound) {
+		if (upperBound != Double.POSITIVE_INFINITY && upperBound < other.upperBound) {
 			rightExclusion = upperBound - other.upperBound;
 		}
 

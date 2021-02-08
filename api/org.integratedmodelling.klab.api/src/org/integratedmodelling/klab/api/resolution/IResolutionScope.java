@@ -211,4 +211,15 @@ public interface IResolutionScope {
 	 */
 	Map<IConcept, Collection<IConcept>> getRoles();
 
+	/**
+	 * When abstract predicates in observables are resolved, the resolved mappings
+	 * are stored here so that they can be propagated downstream during resolution.
+	 * This stores predicates that have been already defined, possibly because a
+	 * previous scope had non-empty getRoles(): if this contains values, these
+	 * should be used instead of looked for in either the scope or the model space.
+	 * 
+	 * @return
+	 */
+	Map<IConcept, IConcept> getResolvedPredicates();
+
 }

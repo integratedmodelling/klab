@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -91,7 +92,7 @@ public class WekaInstances {
 	 */
 	private List<IObservable> predictors = null;
 	private IState distributedArchetype = null;
-	private List<ObservationGroup> archetypes = new ArrayList<>();
+	private List<IObservationGroup> archetypes = new ArrayList<>();
 	private boolean requiresDiscretization = false;
 	private Instances rawInstances, instances;
 	private ArrayList<Attribute> attributes;
@@ -429,10 +430,10 @@ public class WekaInstances {
 							}
 						}
 
-					} else if (!(artifact instanceof ObservationGroup)) {
+					} else if (!(artifact instanceof IObservationGroup)) {
 						throw new IllegalArgumentException("Weka: missing archetype or archetype is not countable");
 					} else {
-						this.archetypes.add((ObservationGroup) artifact);
+						this.archetypes.add((IObservationGroup) artifact);
 					}
 
 					if (arch.containsKey("min")) {
@@ -443,7 +444,7 @@ public class WekaInstances {
 					}
 					if (arch.containsKey("weight")) {
 						this.weightObservable = arch.get("weight", IConcept.class);
-						attributeWeights.put(((ObservationGroup) artifact).getObservable().getName(), 1.0);
+						attributeWeights.put(((IObservationGroup) artifact).getObservable().getName(), 1.0);
 					}
 
 					Ranges rng = new Ranges();
@@ -775,7 +776,7 @@ public class WekaInstances {
 			}
 		}
 
-		for (ObservationGroup archetype : archetypes) {
+		for (IObservationGroup archetype : archetypes) {
 
 			/*
 			 * remove the inherency to check for the predicted state in case we are training

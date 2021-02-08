@@ -5,8 +5,10 @@ import java.awt.datatransfer.Clipboard;
 import java.awt.datatransfer.StringSelection;
 import java.io.BufferedWriter;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -83,6 +85,7 @@ import org.integratedmodelling.klab.ide.navigator.model.ENamespace;
 import org.integratedmodelling.klab.ide.navigator.model.EProject;
 import org.integratedmodelling.klab.rest.CompileNotificationReference;
 import org.integratedmodelling.klab.rest.NamespaceCompilationResult;
+import org.integratedmodelling.klab.rest.ResourceReference;
 
 public enum Eclipse {
 
@@ -120,6 +123,22 @@ public enum Eclipse {
 		MessageConsole myConsole = findConsole(KLAB_CONSOLE_ID);
 		MessageConsoleStream out = myConsole.newMessageStream();
 		out.println(string);
+	}
+
+	public IFolder getResourceFolder(ResourceReference resource) {
+		String path = resource.getLocalPath();
+		String project = org.integratedmodelling.klab.utils.Path.getFirst(path, "/");
+		return ResourcesPlugin.getWorkspace().getRoot().getProject(project).getFolder(IKimProject.RESOURCE_FOLDER)
+				.getFolder(org.integratedmodelling.klab.utils.Path.getLast(path, '/'));
+	}
+
+	public IFile getResourceFile(ResourceReference resource, String filename) {
+		String path = resource.getLocalPath();
+		String project = org.integratedmodelling.klab.utils.Path.getFirst(path, "/");
+		IFolder folder = ResourcesPlugin.getWorkspace().getRoot().getProject(project)
+				.getFolder(IKimProject.RESOURCE_FOLDER)
+				.getFolder(org.integratedmodelling.klab.utils.Path.getLast(path, '/'));
+		return folder.getFile(filename);
 	}
 
 	/**
@@ -253,6 +272,14 @@ public enum Eclipse {
 				IDE.openEditor(page, marker);
 				marker.delete();
 			} else {
+				File f = file.getLocation().toFile();
+				if (!f.exists()) {
+		            try (OutputStream out = new FileOutputStream(f)) {
+		            	// nothing
+		            } catch (Throwable t) {
+		            	// neither
+		            }
+				}
 				IDE.openEditor(page, file);
 			}
 		} catch (Exception e) {

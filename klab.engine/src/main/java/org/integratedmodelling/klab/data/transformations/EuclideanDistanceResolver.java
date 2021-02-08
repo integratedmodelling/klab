@@ -62,7 +62,7 @@ public class EuclideanDistanceResolver implements IResolver<IState>, IExpression
 		Set<IState> targets = extractStates("target", catalog, context);
 		Set<IState> sources = extractStates("source", catalog, context);
 		Object weight = parameters.get("weights");
-		
+
 		for (ILocator locator : context.getScale()) {
 
 			switch (parameters.get("indicator", "distance")) {
@@ -73,23 +73,21 @@ public class EuclideanDistanceResolver implements IResolver<IState>, IExpression
 				for (IState state : sources) {
 					Object value = state.get(locator);
 					if (value instanceof Number) {
-						double w = 0.25;
+						double w = 1.0/(double)sources.size();
 						if (weight instanceof Number) {
 							w = ((Number) weight).doubleValue();
 						} else if (weight instanceof Map) {
-							// TODO look up the role in the map and get the weight
+							// TODO look up the observable in the map and get the weight; cache the search
+							// based on observable name for later reference
 						}
-						double factor = w * (((Number)value).doubleValue() * ((Number)value).doubleValue());
+						double factor = w * (((Number) value).doubleValue() * ((Number) value).doubleValue());
 						sum = Double.isNaN(sum) ? factor : (sum + factor);
 					}
-					
+
 				}
-				
-				if (!Double.isNaN(sum)) {
-					// TODO check the excrement factor
-					ret.set(locator, 1.0 - (1.0 + Math.sqrt(sum)));
-				}
-				
+
+				ret.set(locator, Double.isNaN(sum) ? null : (1.0 / (1.0 + Math.sqrt(sum))));
+
 				break;
 			}
 		}
@@ -98,7 +96,8 @@ public class EuclideanDistanceResolver implements IResolver<IState>, IExpression
 
 	}
 
-	private Set<IState> extractStates(String string, Map<ObservedConcept, IObservation> catalog, IContextualizationScope scope) {
+	private Set<IState> extractStates(String string, Map<ObservedConcept, IObservation> catalog,
+			IContextualizationScope scope) {
 		Set<IState> ret = new HashSet<>();
 		Object o = parameters.get(string);
 		if (o != null) {
@@ -111,14 +110,15 @@ public class EuclideanDistanceResolver implements IResolver<IState>, IExpression
 		return ret;
 	}
 
-	private Set<IState> extractState(Object o, Map<ObservedConcept, IObservation> catalog, IContextualizationScope scope) {
+	private Set<IState> extractState(Object o, Map<ObservedConcept, IObservation> catalog,
+			IContextualizationScope scope) {
 		Set<IState> ret = new HashSet<>();
 		if (o instanceof IKimConcept) {
 			IConcept concept = Concepts.INSTANCE.declare((IKimConcept) o);
 			if (concept.is(IKimConcept.Type.ROLE)) {
 				for (ObservedConcept key : catalog.keySet()) {
 					for (IConcept role : key.getObservable().getContextualRoles()) {
-						if (((RuntimeScope)scope).cached_is(role, concept) && catalog.get(key) instanceof IState) {
+						if (((RuntimeScope) scope).cached_is(role, concept) && catalog.get(key) instanceof IState) {
 							ret.add((IState) catalog.get(key));
 						}
 					}

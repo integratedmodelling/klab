@@ -3,9 +3,11 @@ package org.integratedmodelling.kim.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IKimTable;
+import org.integratedmodelling.kim.kim.LookupTableArgument;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 
@@ -13,24 +15,37 @@ public class KimLookupTable extends KimStatement implements IKimLookupTable {
 
     private static final long serialVersionUID = -8962809767778643579L;
 
-    List<String> arguments = new ArrayList<>();
+    List<Argument> arguments = new ArrayList<>();
     IKimTable table;
     int searchColumn = -1;
     IArtifact.Type lookupType;
     String error;
     
-	public KimLookupTable(IKimTable table, List<String> arguments, IKimStatement parent) {
+	public KimLookupTable(IKimTable table, List<LookupTableArgument> arguments, IKimStatement parent) {
         super(((KimStatement)table).getEObject(), parent);
         this.table = table;
-        this.arguments.addAll(arguments);
+        boolean haveSearch = false;
+        for (LookupTableArgument arg : arguments) {
+        	Argument a = new Argument();
+        	if (arg.getId() != null) {
+        		a.id = arg.getId();
+        		if ("?".equals(arg.getId())) {
+        		    haveSearch = true;
+        		}
+        	} else if (arg.getConcept() != null) {
+        		a.concept = Kim.INSTANCE.declareConcept(arg.getConcept());
+        	}
+            this.arguments.add(a);
+        }
         int ncols = -1;
-        boolean haveSearch = arguments.contains("?");
         // pad any needed argument with the most likely implied
         while (arguments.size() < ncols) {
-        	arguments.add((ncols == 2 && arguments.size() == 1 && !haveSearch) ? "?" : "*");
+        	Argument arg = new Argument();
+        	arg.id = (ncols == 2 && arguments.size() == 1 && !haveSearch) ? "?" : "*";
+        	this.arguments.add(arg);
         }
         for (int i = 0; i < arguments.size(); i++) {
-        	if (arguments.get(i).equals("?")) {
+        	if ("?".equals(arguments.get(i).getId())) {
         		searchColumn = i;
         		break;
         	}
@@ -58,7 +73,7 @@ public class KimLookupTable extends KimStatement implements IKimLookupTable {
 	}
 	
 	@Override
-	public List<String> getArguments() {
+	public List<Argument> getArguments() {
 		return arguments;
 	}
 

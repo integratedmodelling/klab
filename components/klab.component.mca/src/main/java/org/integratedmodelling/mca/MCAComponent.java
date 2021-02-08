@@ -18,6 +18,7 @@ import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -180,7 +181,7 @@ public class MCAComponent {
 		for (IObservable observable : context.getModel().getDependencies()) {
 			if (getAnnotation(observable, ALTERNATIVE_ANNOTATION_ID) != null) {
 				alternativesArtifact = context.getArtifact(observable.getName());
-				if (alternativesArtifact == null || !(alternativesArtifact instanceof ObservationGroup)
+				if (alternativesArtifact == null || !(alternativesArtifact instanceof IObservationGroup)
 						|| alternativesArtifact.groupSize() < 2) {
 					context.getMonitor()
 							.warn("MCA: alternatives must be object artifacts with at least two observations");

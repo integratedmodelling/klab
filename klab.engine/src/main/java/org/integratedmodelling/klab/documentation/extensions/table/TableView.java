@@ -34,21 +34,30 @@ public class TableView implements ITableView {
 
 	// just a string for now, but we need an object-oriented API w/o COW pattern.
 	class Cell {
-		public Cell(boolean b, boolean rowScope) {
-			this.header = b;
-			this.rowScope = rowScope;
-		}
 
 		boolean header;
 		boolean rowScope;
 		String contents;
 		Set<Style> style;
+		int span = 1;
+
+		public Cell(boolean b, boolean rowScope) {
+			this.header = b;
+			this.rowScope = rowScope;
+		}
+
+		public Cell(boolean b, boolean rowScope, int span) {
+			this.header = b;
+			this.rowScope = rowScope;
+			this.span = span;
+		}
+
 
 		public String getHtmlContents() {
 			if (contents == null) {
-				return (header ? "<th" + (rowScope ? " scope=\"row\"" : "") + "></th>" : "<td></td>");
+				return (header ? "<th" + (span > 1 ? (" colspan=\"" + span + "\"") : "") + (rowScope ? " scope=\"row\"" : "") + "></th>" : "<td></td>");
 			}
-			return (header ? ("<th" + (rowScope ? " scope=\"ro\"" : "")) : "<td") + getStyle(style) + ">"
+			return (header ? ("<th" + (span > 1 ? (" colspan=\"" + span + "\"") : "") + (rowScope ? " scope=\"ro\"" : "")) : "<td") + getStyle(style) + ">"
 					+ Escape.forHTML(contents.toString()) + (header ? "</th>" : "</td>");
 		}
 
@@ -134,6 +143,9 @@ public class TableView implements ITableView {
 			ret.append("</table>\n");
 		}
 		ret.append("</div>");
+		
+//		System.out.println(ret);
+		
 		return ret.toString();
 	}
 
@@ -241,4 +253,12 @@ public class TableView implements ITableView {
 		return id;
 	}
 
+	@Override
+	public int newHeaderCell(int row, int colSpan, boolean rowScope) {
+		int id = cells.size() + 1;
+		Container rw = containers.get(row);
+		this.cells.put(id, new Cell(true, rowScope, colSpan));
+		rw.children.add(id);
+		return id;
+	}
 }

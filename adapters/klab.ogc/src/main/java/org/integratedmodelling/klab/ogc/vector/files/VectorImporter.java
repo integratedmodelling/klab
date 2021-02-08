@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -78,9 +79,9 @@ public class VectorImporter extends AbstractFilesetImporter {
     @Override
     public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
         List<Triple<String, String, String>> ret = new ArrayList<>();
-        if (observation instanceof ObservationGroup) {
-            observation = ((ObservationGroup) observation).groupSize() > 0
-                    ? (IObservation) ((ObservationGroup) observation).iterator().next()
+        if (observation instanceof IObservationGroup) {
+            observation = ((IObservationGroup) observation).groupSize() > 0
+                    ? (IObservation) ((IObservationGroup) observation).iterator().next()
                     : null;
         }
         if (observation instanceof IDirectObservation) {
@@ -96,8 +97,8 @@ public class VectorImporter extends AbstractFilesetImporter {
 
         if (format.equals("shp")) {
 
-            IObservation first = observation instanceof ObservationGroup
-                    ? (IObservation) ((ObservationGroup) observation).iterator().next()
+            IObservation first = observation instanceof IObservationGroup
+                    ? (IObservation) ((IObservationGroup) observation).iterator().next()
                     : observation;
 
             SimpleFeatureTypeBuilder builder = new SimpleFeatureTypeBuilder();
@@ -168,8 +169,8 @@ public class VectorImporter extends AbstractFilesetImporter {
             SimpleFeatureBuilder featureBuilder = new SimpleFeatureBuilder(type);
 
             Iterable<IArtifact> observations = null;
-            if (observation instanceof ObservationGroup) {
-                observations = ((ObservationGroup) observation);
+            if (observation instanceof IObservationGroup) {
+                observations = ((IObservationGroup) observation);
             } else {
                 observations = new ArrayList<IArtifact>();
                 ((ArrayList<IArtifact>) observations).add(observation);

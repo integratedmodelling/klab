@@ -26,10 +26,9 @@ import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IStorageProvider;
-import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -108,27 +107,34 @@ public interface IRuntimeProvider {
 	 * Distribute the computation of the passed state resolver over the passed
 	 * scale.
 	 *
-	 * @param resolver the state contextualizer, which will be called as many times
-	 *                 as scale.size().
-	 * @param data     the data being computed (receiver of results). According to
-	 *                 the context of computation it may or may not contain
-	 *                 initialized values.
-	 * @param context  the context before distribution - i.e., all states in it will
-	 *                 be whole states and need to be contextualized to each extent
-	 *                 before computation happens (the resolver expects individual
-	 *                 values at each call). The current version of the target
-	 *                 artifact will be set in it as 'self' if it exists.
-	 * @param scale    the scale, already set to the geometry needed for this
-	 *                 computation so that all of its states are computed.
+	 * @param resolver   the state contextualizer, which will be called as many
+	 *                   times as scale.size().
+	 * @param mainTarget the observation being computed. This may be a state if the
+	 *                   computation is resolving one, but also a process where the
+	 *                   specific contextualizable targets a state. According to the
+	 *                   context of computation, the state may or may not contain
+	 *                   initialized values.
+	 * @param resource   the computation to be distributed, which has generated the
+	 *                   resolver. This is passed because in case the main target is
+	 *                   a process, it should be used to retrieve the state that is
+	 *                   the ultimate target of the computation.
+	 * @param context    the context before distribution - i.e., all states in it
+	 *                   will be whole states and need to be contextualized to each
+	 *                   extent before computation happens (the resolver expects
+	 *                   individual values at each call). The current version of the
+	 *                   target artifact will be set in it as 'self' if it exists.
+	 * @param scale      the scale, already set to the geometry needed for this
+	 *                   computation so that all of its states are computed.
 	 * 
-	 * @return the computed result - return the same object passed as data whenever
-	 *         possible. If a different one is collected, the original one will be
-	 *         garbage collected.
+	 * @return the computed result - return the same object passed as main target
+	 *         whenever possible. If a different one is collected, the original one
+	 *         will be garbage collected. If the passed observation is a process
+	 *         (change), return the process, not the resource target state.
 	 * 
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	IDataArtifact distributeComputation(IStateResolver resolver, IState data, IContextualizationScope context,
-			ILocator locator) throws KlabException;
+	IObservation distributeComputation(IStateResolver resolver, IObservation mainTarget, IContextualizable resource,
+			IContextualizationScope context, ILocator locator) throws KlabException;
 
 	/**
 	 * The "empty" observation must contain the observable and the scale. It is
@@ -239,6 +245,17 @@ public interface IRuntimeProvider {
 	 * @return
 	 */
 	IContextualizable getChangeResolver(IObservable changeObservable, IResource mergedResource);
+
+	/**
+	 * Return a no-op computation whose only purpose is to "replay" an existing,
+	 * dynamic observation which already contains changes as a changing resource, to
+	 * fit a context where the change must be played out anew.
+	 * 
+	 * @param changeObservable
+	 * @param changingObservation
+	 * @return
+	 */
+	IContextualizable getChangeResolver(IObservable changeObservable, String changingObservationName);
 
 	/*
 	 * Called on a computation returned by getComputation() to change the target ID

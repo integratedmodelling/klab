@@ -29,6 +29,9 @@ filter object ranking
 	 to define the criteria."
 	 label 'MCA ranking'
 {
+	optional import object artifact 
+		"The artifact to filter"
+	
 	optional text method 
 		"The MCA method used to rank alternatives. One of Topsis|Electre{1|1s|1v|2|3|4|Tri|TriMe}. Only Electre3/4 can run
 		 without additional parameters. Default is Electre3. NOTE: currently forcing Evamix, others still unimplemented."

@@ -185,9 +185,6 @@ public class Coverage extends Scale implements ICoverage {
 
 		Scale coverage = (Scale) other;
 		List<Pair<IExtent, Double>> newcoverages = new ArrayList<>();
-//		if (coverage.getExtentCount() != getExtentCount()) {
-//			throw new IllegalArgumentException("cannot merge a coverage with a scale with different dimensions");
-//		}
 
 		// flag gain for extents to recompute it; save previous and put it back after
 		double pgain = this.gain;

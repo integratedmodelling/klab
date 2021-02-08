@@ -1,245 +1,198 @@
-/*
- * This file is part of k.LAB.
- * 
- * k.LAB is free software: you can redistribute it and/or modify
- * it under the terms of the Affero GNU General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
- *
- * A copy of the GNU Affero General Public License is distributed in the root
- * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
- * see <http://www.gnu.org/licenses/>.
- * 
- * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
- * in author tags. All rights reserved.
- */
 package org.integratedmodelling.klab.api.data.general;
 
 import java.util.List;
 import java.util.Map;
 
-import org.integratedmodelling.klab.api.data.DataType;
+import org.integratedmodelling.klab.api.data.IResource.Attribute;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 
 /**
- * Unified table interface for both in-memory and persistent tables read from
- * disk or initialized in k.IM. Works as a regular table and has lookup
- * functions.
- *
+ * Unstructured n-dimensional table, where objects are addressed by 1+ keys of
+ * any type and views can be extracted as maps, lists or sub-tables.
+ * <p>
+ * A table is an iterable of iterables, which may be in turn be iterate
+ * iterables if the table is a hypertable with dimensions > 2. For now we assume
+ * that the dimension is always 2, i.e. the implementation won't cover the
+ * generic datacube.
+ * 
  * @author Ferd
- * @version $Id: $Id
+ *
+ * @param <T>
  */
-public interface ITable<T> {
+public interface ITable<T> extends Iterable<Iterable<?>> {
 
-	/**
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	interface ObjectTable extends ITable<Object> {
-	}
-
-	interface Structure {
-
-		public interface Field {
-
-			String getName();
-
-			DataType getDataType();
-
-			int getWidth();
-
-			boolean isIndex();
-
+	interface Filter {
+		public enum Type {
+			COLUMN_HEADER, ROW_HEADER/* , ATTRIBUTE_VALUE */, INCLUDE_COLUMNS/* , EXCLUDE_COLUMNS */,
+			INCLUDE_ROWS/* , EXCLUDE_ROWS */,
+			NO_RESULTS, COLUMN_EXPRESSION, COLUMN_MATCH, ROW_MATCH
 		}
-		
-		String getName();
+
+		Type getType();
+
+		List<Object> getArguments();
+
+		String getSignature();
+
+		int getDimension();
 
 		/**
-		 * Define a column. The optional parameters can be used for further
-		 * specification.
+		 * Return the same filter or a new one if the scope contains information that
+		 * can localize it. For now this applies to concrete predicates when the filter
+		 * may check an abstract one, but it may also do parameter substitution and the
+		 * like.
 		 * 
-		 * @param name
-		 * @param type
-		 * @param parameters a Boolean will be interpreted as whether to build an index
-		 *                   or not. An integer is a lenght field used for varchars or the
-		 *                   like.
+		 * @param scope
 		 * @return
 		 */
-		Structure column(String name, DataType type, Object... parameters);
-		
-		int getColumnCount();
-
-		List<Field> getColumns();
-
-	}
-
-	interface Builder<T> extends Structure {
-
-		Structure deleteIfInconsistent();
-
-		ITable<T> build();
-
-	}
-
-	interface Row<T> {
+		Filter contextualize(IContextualizationScope scope);
 
 		/**
-		 * Row name is "#n" unless the table has been initialized with explicit row
-		 * names.
+		 * If true, the filter implies queries on the table and its results should be
+		 * cached for speed for as long as the underlying table doesn't change.
 		 * 
 		 * @return
 		 */
-		String getName();
-
-		/**
-		 * @return number of rows with values in column.
-		 */
-		int getValueCount();
-
-		/**
-		 * @return all values.
-		 */
-		Iterable<T> getValues();
-
-		/**
-		 * Get the value as a suitable subclass of T, throwing unchecked exceptions if
-		 * called with wrong arguments.
-		 * 
-		 * @param <K>
-		 * @param index
-		 * @param cls
-		 * @return
-		 */
-		<K extends T> K getValue(int index, Class<K> cls);
-
-		/**
-		 * Get the value as a suitable subclass of T, throwing unchecked exceptions if
-		 * called with wrong arguments.
-		 * 
-		 * @param <K>
-		 * @param index
-		 * @param cls
-		 * @return
-		 */
-		<K extends T> K getValue(String columnName, Class<K> cls);
-
-	}
-
-	interface Column<T> {
-
-		/**
-		 * Column name is "$n" unless the table has been initialized with explicit
-		 * column names.
-		 * 
-		 * @return
-		 */
-		String getName();
-
-		/**
-		 * @return number of rows with values in column.
-		 */
-		int getValueCount();
-
-		/**
-		 * @return all values.
-		 */
-		Iterable<T> getValues();
-
-		/**
-		 * Get the value as a suitable subclass of T, throwing unchecked exceptions if
-		 * called with wrong arguments.
-		 * 
-		 * @param <K>
-		 * @param index
-		 * @param cls
-		 * @return
-		 */
-		<K extends T> K getValue(long index, Class<K> cls);
-
+		boolean isCached();
 	}
 
 	/**
-	 * Table name. E.g. a sheet name in Excel. Tables with no asserted names should
-	 * have a sensible placeholder here.
-	 *
-	 * @return the table name.
-	 */
-	String getName();
-
-	/**
-	 * Number of rows.
-	 * 
-	 * @return the number of rows
-	 */
-	int getRowCount();
-
-	/**
-	 * Number of columns.
-	 * 
-	 * @return the number of columns
-	 */
-	int getColumnCount();
-
-	/**
-	 * The columns themselves.
+	 * The table dimensions. Could be >2 in length for a generic datacube, although
+	 * at the moment not everything is ready for that kind of use and individual
+	 * adapter may expect dimensionality <= 2.
 	 * 
 	 * @return
 	 */
-	List<Column<T>> getColumns();
+	int[] getDimensions();
 
 	/**
-	 * Return a map between the values in one column and the values in another. This
-	 * is meant to be persisted and cached appropriately - meaning it will be slow
-	 * the first time a specific mapping is asked for, and very fast afterwards
-	 * unless the file changes, and in normal situations it should not even load the
-	 * file at all. It should be implemented so that very large data tables can be
-	 * handled efficiently.
-	 *
-	 * @param keyColumnName   a {@link java.lang.String} object.
-	 * @param valueColumnName a {@link java.lang.String} object.
-	 * @return a map between values and names in matching columns.
-	 * @throws org.integratedmodelling.klab.exceptions.KlabIOException
-	 */
-	Map<String, T> map(int keyColumnIndex, int valueColumnIndex);
-
-	/**
-	 * Get the row as a keyed map, assuming the table has headers. If not, names
-	 * such as "$n" are used.
+	 * Typed version of get(), which should endeavor to make any meaningful
+	 * conversions as long as they are compatible with the storage. This is affected
+	 * by any configured filters. If an aggregator is passed as a locator, it should
+	 * be used to aggregate any multiple values.
 	 * 
-	 * @param rowIndex
-	 * @return the row as a map
+	 * @param cls
+	 * @param scope    the scope to translate contextual filters. May be null.
+	 * @param locators
+	 * @return <E>
 	 */
-	Map<String, T> getRowAsMap(int rowIndex);
+	<E> E get(Class<E> cls, IContextualizationScope scope, Object... locators);
 
 	/**
-	 * Get the contents of indexed row.
+	 * Return a map view of the table. Intended to subset the table based on the
+	 * passed objects and return either another table, a map or a list. This is
+	 * affected by any configured filters if the locators aren't passed.
 	 * 
-	 * @param rowIndex
-	 * @return row data
+	 * @param <E>
+	 * @param cls
+	 * @param locators
+	 * @return
 	 */
-	T[] getRow(int rowIndex);
+	List<T> asList(Object... locators);
 
 	/**
-	 * This may return a list of header names or a list of variables like "$1" if
-	 * headers were not defined.
+	 * Return a new table representing a filtered view of this one, creating a
+	 * filter based on the parameters.
 	 * 
-	 * @return headers. Never null.
+	 * @param <E>
+	 * @param cls
+	 * @param locators
+	 * @return
 	 */
-	List<String> getColumnHeaders();
+	ITable<T> filter(Filter.Type target, Object... locators);
 
 	/**
-	 * This may return a list of header names or a list of variables like "row1" if
-	 * headers were not defined.
+	 * Return a new table representing a filtered view of this one, using an
+	 * externally provided filter.
 	 * 
-	 * @return headers. Never null.
+	 * @param <E>
+	 * @param cls
+	 * @param locators
+	 * @return
 	 */
-	List<String> getRowHeaders();
+	ITable<T> filter(Filter filter);
 
 	/**
-	 * Return all rows as a list.
+	 * Return all the elements in a given row, disregarding any filters.
+	 * 
+	 * @param rowLocator either a row identifier or a 0-based index
+	 * @return
+	 */
+	List<T> getRowItems(Object rowLocator);
+
+	/**
+	 * Return all the elements in a given column, disregarding any filters.
+	 * 
+	 * @param columnLocator either a row identifier or a 0-based index
+	 * @return
+	 */
+	List<T> getColumnItems(Object columnLocator);
+
+	/**
+	 * Return the element at the given positions, disregarding any filters. Locators
+	 * should be indices or headers if specified and unique.
+	 * 
+	 * @param rowLocator
+	 * @param columnLocator
+	 * @return
+	 */
+	T getItem(Object rowLocator, Object columnLocator);
+
+	/**
+	 * Configure a collection to collect all row or column indices scanned in the
+	 * asList() call immediately succeeding this one. The indices collected
+	 * 
+	 * @param indices
+	 * @return
+	 */
+	ITable<T> collectIndices(List<Integer> indices);
+
+	/**
+	 * Get column descriptor from column header (if no headers, 1-based "c<n>" can
+	 * be used).
+	 * 
+	 * @param columnName
+	 * @return
+	 */
+	Attribute getColumnDescriptor(String columnName);
+
+	/**
+	 * Get column descriptor based on 0-based index.
+	 * 
+	 * @param index
+	 * @return
+	 */
+	Attribute getColumnDescriptor(int index);
+
+	/**
+	 * Return an identical table with no filters.
 	 * 
 	 * @return
 	 */
-	List<T[]> getRows();
+	ITable<?> resetFilters();
+
+	/**
+	 * True if the table, after filtering if any, has at least one row and column of
+	 * size() > 0.
+	 * 
+	 * @return
+	 */
+	boolean isEmpty();
+
+	/**
+	 * 
+	 * @return
+	 */
+	List<Filter> getFilters();
+
+	/**
+	 * Contextualize all filters and any other info so that the returned table fits
+	 * the passed context. This will be called when contextualizing, expecting one
+	 * value from get() with an aggregator after that.
+	 * 
+	 * @param scope
+	 * @return
+	 */
+	ITable<T> contextualize(IContextualizationScope scope);
 
 }

@@ -25,7 +25,8 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
@@ -79,6 +80,15 @@ public interface IResource extends IProvenance.Node, Serializable {
 	 * @return the resource's URN.
 	 */
 	String getUrn();
+
+	/**
+	 * Some resources may depend on others to provide context or joined attributes.
+	 * These must factor in when checking online status. The URNs of any dependent
+	 * resources are returned here.
+	 * 
+	 * @return the URNs of any resource this depends on.
+	 */
+	List<String> getDependencies();
 
 	/**
 	 * Get the geometry associated with the resource, without fetching the entire
@@ -214,6 +224,16 @@ public interface IResource extends IProvenance.Node, Serializable {
 		 * @return
 		 */
 		boolean isOptional();
+
+		/**
+		 * Return a numeric index into the resource when appropriate. This only applies
+		 * to some resources that have indexed attributes, so it shouldn't be relied
+		 * upon unless in one of those. If the resource isn't indexing its attribute,
+		 * this should return -1 for all attributes.
+		 * 
+		 * @return
+		 */
+		int getIndex();
 	}
 
 	/**
@@ -453,6 +473,14 @@ public interface IResource extends IProvenance.Node, Serializable {
 		 */
 		Builder withOutput(String name, Type type);
 
+		/**
+		 * Add a URN that the result will depend on.
+		 * 
+		 * @param urn
+		 * @return
+		 */
+		Builder withDependency(String urn);
+
 	}
 
 	/**
@@ -464,24 +492,17 @@ public interface IResource extends IProvenance.Node, Serializable {
 	long getResourceTimestamp();
 
 	/**
-	 * Granular resources have an overall geometry and a set of sub-resources
-	 * indexed by their respective sub-geometry. These are returned by
-	 * {@link #getGranules()}, which is empty if {@link #isGranular()} returns
-	 * false. This can happen when a resources uses multiple others on demand,
-	 * possibly through a generating template.
+	 * Granular resources have an overall geometry and can produce a set of
+	 * sub-resources indexable to cover different periods of time. Returning true
+	 * will mean that contextualize() will return potentially different resources
+	 * when called at contextualization, and that the resource is capable of
+	 * representing change in general. If so, the scale of contextualization should
+	 * be merged with the resource's geometry and the dynamic nature of the result
+	 * should decide whether change can be represented by it.
 	 * 
 	 * @return
 	 */
-	boolean isGranular();
-
-	/**
-	 * The resource sub-geometries, non-empty only if {@link #isGranular()} returns
-	 * true.
-	 * 
-	 * @return the sub-geometries indexed by geometry. Should use a map that
-	 *         preserves geometry order to optimize scanning.
-	 */
-	Map<IGeometry, IResource> getGranules();
+	boolean isDynamic();
 
 	/**
 	 * True if there is any error notification for this resource. Should always be
@@ -537,23 +558,38 @@ public interface IResource extends IProvenance.Node, Serializable {
 	String getLocalProjectName();
 
 	/**
-	 * A resource that is temporal and has generic time may need to be localized to
-	 * a specific time before it can be contextualized. This method should return
-	 * the same resource it's called on, unless structural changes need to be made
-	 * before the normal contextualization can take place, operated by
+	 * A resource that handles multiple time periods and/or disjoint spatial
+	 * contexts may need to be contextualized explicitly before use. This method
+	 * should return the same resource it's called on, unless structural changes
+	 * need to be made before the normal contextualization can take place, operated
+	 * by
 	 * {@link IResourceService#getResourceData(IResource, Map, IGeometry, IContextualizationScope)}.
 	 * <p>
-	 * This is only called if the resource's geometry has generic time and the
-	 * context of use has specific time.
+	 * If the contextualization ends up requiring more than one "slice", a resource
+	 * merger capable of aggregating appropriately should be returned; otherwise,
+	 * the most suitable sub-resource or self should be returned. The function is
+	 * called on all resources before use in each uniform time period, handling both
+	 * state and change in state when the resource is dynamic over the
+	 * contextualized time.
 	 * <p>
-	 * FIXME change to contextualize(); pass the semantics to check if merging is
-	 * needed; if so, return a resource merger with aggregation, otherwise return
-	 * latest (if multiple) or self. Make this mandatory to call.
+	 * Resources that have flexible typing (getType() returns null) should at this
+	 * point have enough information to return the appropriate type, adapting to the
+	 * passed observation.
 	 * 
-	 * @param time
+	 * @param scale         the scale of contextualization
+	 * @param artifact      the contextualized artifact (including semantics if an
+	 *                      instance of {@link IObservation}). This can be used to
+	 *                      determine the type of aggregation needed and the
+	 *                      resource type if still undefined. May be null when the
+	 *                      observation is a characterization and the resource type
+	 *                      is void.
+	 * @param urnParameters
+	 * @param scope
+	 * 
 	 * @return this or another resource that can deal with the passed overall
-	 *         temporal context.
+	 *         context.
 	 */
-	IResource localize(ITime time);
+	IResource contextualize(IScale scale, IArtifact artifact, Map<String, String> urnParameters,
+			IContextualizationScope scope);
 
 }

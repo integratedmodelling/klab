@@ -8,16 +8,16 @@
 
 annotation demand for dependencies
 	"Tags a numeric dependency to be used to provide the proportion of demand 
-	for one or more land cover types.
+	for one or more land cover types."
 {
-	optional value 'value'
+	optional value 'value' 
 		"The land cover type(s) that this dependency provides demand for."
 		label 'Land cover type'
 }
 
 annotation resistance for dependencies
 	"Tags a numeric dependency to be used to provide the resistance 
-	for one or more land cover types.
+	for one or more land cover types."
 {
 	optional value 'value'
 		"The land cover type(s) that this dependency provides resistance for."

@@ -16,6 +16,7 @@ import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Concept;
 import org.integratedmodelling.kactors.kactors.ConceptDeclaration;
+import org.integratedmodelling.kactors.kactors.Constructor;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
@@ -265,6 +266,13 @@ public class KactorsSwitch<T> extends Switch<T>
       {
         Value value = (Value)theEObject;
         T result = caseValue(value);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.CONSTRUCTOR:
+      {
+        Constructor constructor = (Constructor)theEObject;
+        T result = caseConstructor(constructor);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -800,6 +808,22 @@ public class KactorsSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseValue(Value object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Constructor</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Constructor</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseConstructor(Constructor object)
   {
     return null;
   }

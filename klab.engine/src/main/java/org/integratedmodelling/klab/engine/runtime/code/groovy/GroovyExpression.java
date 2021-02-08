@@ -126,7 +126,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 		this.sclass = shell.parseToClass(code);
 	}
 
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+	public Object eval(IParameters<String> parameters, IContextualizationScope scope) {
 
 		if (isTrue) {
 			return true;
@@ -146,7 +146,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 			// problems).
 			if (initialized.get() == null || !initialized.get()) {
 				initialize(new HashMap<>(), new HashMap<>());
-				setupBindings(context, parameters);
+				setupBindings(scope, parameters);
 				firstTime = true;
 			}
 
@@ -191,19 +191,21 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 						// use cache to minimize the allocation of Groovy peers, which seems to be very
 						// costly.
 						value = getConceptPeer((IConcept) value, binding);
+					} else if (descriptor.getOptions().contains(CompilerOption.WrapParameters) && mustWrap(value)) {
+					    value =  Wrapper.wrap(value, key, binding);
 					}
 					binding.setVariable(key, value);
 				}
 
 				/*
-				 * use the current context and monitor
+				 * use the current scope and monitor
 				 */
-				binding.setVariable("_c", context);
-				binding.setVariable("_monitor", context.getMonitor());
+				binding.setVariable("_c", scope);
+				binding.setVariable("_monitor", scope.getMonitor());
 
-				IRuntimeScope scope = (IRuntimeScope) context;
-				if (scope.getScale() != null && scope.getScale().getTime() != null) {
-					binding.setVariable("_jtime", scope.getScale().getTime());
+				IRuntimeScope rscope = (IRuntimeScope) scope;
+				if (rscope.getScale() != null && rscope.getScale().getTime() != null) {
+					binding.setVariable("_jtime", rscope.getScale().getTime());
 				}
 
 				for (String v : defineIfAbsent) {
@@ -216,7 +218,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 			} catch (MissingPropertyException e) {
 				String property = e.getProperty();
 				if (!defineIfAbsent.contains(property)) {
-					context.getMonitor().warn("variable " + property
+					scope.getMonitor().warn("variable " + property
 							+ " undefined. Defining as numeric no-data (NaN) for subsequent evaluations.");
 					defineIfAbsent.add(property);
 				}
@@ -226,7 +228,7 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 		} else if (object != null) {
 			return object;
 		} else if (functionCall != null) {
-			return Extensions.INSTANCE.callFunction(functionCall, context);
+			return Extensions.INSTANCE.callFunction(functionCall, scope);
 		}
 		return null;
 	}

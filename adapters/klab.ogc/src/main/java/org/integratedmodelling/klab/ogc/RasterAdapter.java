@@ -15,6 +15,8 @@
  */
 package org.integratedmodelling.klab.ogc;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IPrototype;
@@ -22,7 +24,7 @@ import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
-import org.integratedmodelling.klab.api.data.adapters.IFileResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
@@ -48,8 +50,8 @@ import com.google.common.collect.Sets;
  * Store range and percent nodata when validating?
  */
 @ResourceAdapter(type = "raster", version = Version.CURRENT, requires = { "fileUrl" }, optional = { "band",
-		"interpolation", "nodata", "bandmixer" })
-public class RasterAdapter implements IFileResourceAdapter {
+		"interpolation", "nodata", "bandmixer" }, canCreateEmpty = false, handlesFiles = true)
+public class RasterAdapter implements IResourceAdapter {
 
 	/**
 	 * All recognized primary file extensions.
@@ -98,11 +100,11 @@ public class RasterAdapter implements IFileResourceAdapter {
 	}
 
 	@Override
-	public IPrototype getResourceConfiguration() {
-		return new Prototype(
+	public Collection<IPrototype> getResourceConfiguration() {
+		return Collections.singleton(new Prototype(
 				Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/raster.kdl"))
 						.getActuators().iterator().next(),
-				null);
+				null));
 	}
 
 	@Override

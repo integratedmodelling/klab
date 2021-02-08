@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.ISubjectiveObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
@@ -24,7 +25,7 @@ import org.integratedmodelling.klab.scale.Scale;
  * @author ferdinando.villa
  *
  */
-public class ObservationGroupView extends CountableObservation implements ISubjectiveObservation {
+public class ObservationGroupView extends CountableObservation implements IObservationGroup, ISubjectiveObservation {
 	
 	private IArtifact.Type atype;
 	private ObservationGroup original;

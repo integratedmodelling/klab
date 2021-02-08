@@ -16,7 +16,7 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.classification.IClassifier;
 import org.integratedmodelling.klab.api.data.classification.ILookupTable;
-import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
@@ -25,8 +25,25 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class LookupTable implements ILookupTable {
 
+	class ArgImpl implements Argument {
+
+		String id;
+		IConcept concept;
+
+		@Override
+		public String getId() {
+			return id;
+		}
+
+		@Override
+		public IConcept getConcept() {
+			return concept;
+		}
+
+	}
+
 	Table<IClassifier> table;
-	List<String> variables;
+	List<Argument> variables = new ArrayList<>();
 	IArtifact.Type type;
 	int searchIndex;
 
@@ -35,15 +52,24 @@ public class LookupTable implements ILookupTable {
 
 	class RowProxy {
 		int row;
+
 		RowProxy(int row) {
 			this.row = row;
 		}
 	}
-	
+
 	public LookupTable(IKimLookupTable lookupTable) {
 
 		this.table = Table.create(lookupTable.getTable());
-		this.variables = lookupTable.getArguments();
+		for (IKimLookupTable.Argument a : lookupTable.getArguments()) {
+			ArgImpl aa = new ArgImpl();
+			if (a.id != null) {
+				aa.id = a.id;
+			} else if (a.concept != null) {
+				aa.concept = Concepts.INSTANCE.declare(a.concept);
+			}
+			this.variables.add(aa);
+		}
 		this.searchIndex = lookupTable.getLookupColumnIndex();
 		this.type = lookupTable.getLookupType();
 
@@ -66,13 +92,13 @@ public class LookupTable implements ILookupTable {
 	}
 
 	@Override
-	public ITable<IClassifier> getTable() {
+	public IStructuredTable<IClassifier> getTable() {
 		return table;
 	}
 
 	@Override
 	public int reverseLookup(Object value) {
-		Integer ret = key.get(value); 
+		Integer ret = key.get(value);
 		return ret == null ? -1 : ret;
 	}
 
@@ -110,7 +136,7 @@ public class LookupTable implements ILookupTable {
 	}
 
 	@Override
-	public List<String> getArguments() {
+	public List<Argument> getArguments() {
 		return variables;
 	}
 
@@ -121,10 +147,11 @@ public class LookupTable implements ILookupTable {
 		Object[] values = new Object[variables.size()];
 
 		for (int i = 0; i < variables.size(); i++) {
-			if (i == searchIndex || variables.get(i).charAt(0) == '*') {
+			if (i == searchIndex || (variables.get(i).getId() != null && variables.get(i).getId().charAt(0) == '*')) {
 				continue;
 			}
-			values[i] = parameters.get(variables.get(i));
+			values[i] = variables.get(i).getId() != null ? parameters.get(variables.get(i).getId())
+					: context.localizePredicate(variables.get(i).getConcept());
 			s.append("|");
 			s.append(values[i] == null ? "null" : values[i].toString());
 		}
@@ -138,7 +165,8 @@ public class LookupTable implements ILookupTable {
 			for (IClassifier[] row : table.getRows()) {
 				boolean ok = true;
 				for (int i = 0; i < variables.size(); i++) {
-					if (i == searchIndex || variables.get(i).charAt(0) == '*') {
+					if (i == searchIndex
+							|| (variables.get(i).getId() != null && variables.get(i).getId().charAt(0) == '*')) {
 						continue;
 					}
 					if (!row[i].classify(values[i], context)) {
@@ -153,13 +181,13 @@ public class LookupTable implements ILookupTable {
 					ret = row[searchIndex].asValue(context);
 					break;
 				}
-				rind ++;
+				rind++;
 			}
 
 			cache.put(key, ret == null ? Optional.empty() : (storeProxy ? new RowProxy(rind) : ret));
 
 		} else if (ret instanceof RowProxy) {
-			ret = table.getRows().get(((RowProxy)ret).row)[searchIndex].asValue(context);
+			ret = table.getRows().get(((RowProxy) ret).row)[searchIndex].asValue(context);
 		} else {
 			ret = ret instanceof Optional ? null : ret;
 		}
@@ -204,8 +232,8 @@ public class LookupTable implements ILookupTable {
 		if (!(value instanceof IConcept)) {
 			throw new IllegalArgumentException("a table can only serve as a datakey for concepts");
 		}
-		if (!this.key.containsKey((IConcept)value)) {
-			this.key.put((IConcept)value, this.key.size());
+		if (!this.key.containsKey((IConcept) value)) {
+			this.key.put((IConcept) value, this.key.size());
 		}
 	}
 }

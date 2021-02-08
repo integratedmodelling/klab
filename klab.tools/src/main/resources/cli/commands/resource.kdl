@@ -59,7 +59,11 @@ void delete
 
 void info
 	"Print useful information and k.IM bindings for a resource."
-{
+{	
+
+	optional text node
+		"A node name to delete resources."
+	
 	class org.integratedmodelling.klab.clitool.console.commands.resources.Info
 }
 

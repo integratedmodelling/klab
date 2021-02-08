@@ -11,7 +11,7 @@ import java.util.function.Function;
 
 import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.data.general.IPersistentTable;
-import org.integratedmodelling.klab.api.data.general.ITable.Structure.Field;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable.Structure.Field;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.table.Table.StructureImpl;
 import org.integratedmodelling.klab.persistence.h2.H2Database;

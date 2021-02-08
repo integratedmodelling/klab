@@ -1,9 +1,12 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
 import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
@@ -148,6 +151,12 @@ public class Envelope implements IEnvelope {
 		return Shape.create(this);
 	}
 
+	public ISpace asGrid(double resolution, String unit) {
+		return (unit == null || resolution <= 0) ? Shape.create(this)
+				: Space.create(Shape.create(this),
+						Units.INSTANCE.METERS.convert(resolution, Unit.create(unit)).doubleValue());
+	}
+
 	public Geometry asJTSGeometry() {
 		return Shape.makeCell(this.envelope.getMinX(), this.envelope.getMinY(), this.envelope.getMaxX(),
 				this.envelope.getMaxY());
@@ -180,7 +189,7 @@ public class Envelope implements IEnvelope {
 		} catch (TransformException | FactoryException e) {
 			throw new KlabValidationException(e);
 		}
-		ret.projection = (Projection)projection;
+		ret.projection = (Projection) projection;
 		return ret;
 	}
 
@@ -234,7 +243,7 @@ public class Envelope implements IEnvelope {
 		if (gridRounded > 2000) {
 			gridRounded = (((gridRounded) + 500) / 1000);
 			unit = "km";
-			gridRounded *= 1000;
+//			gridRounded *= 1000;
 		} else if (gridRounded < roundTo) {
 			gridRounded = roundTo;
 			unit = "m";
@@ -306,9 +315,9 @@ public class Envelope implements IEnvelope {
 	@Override
 	public IEnvelope grow(double factor) {
 		if (factor != 1) {
-			double xgrow = ((getWidth()*factor) - getWidth())/2.0;
-			double ygrow = ((getHeight()*factor) - getHeight())/2.0;
-			return create(getMinX()-xgrow, getMaxX()+xgrow, getMinY()-ygrow, getMaxY()+ygrow, getProjection());
+			double xgrow = ((getWidth() * factor) - getWidth()) / 2.0;
+			double ygrow = ((getHeight() * factor) - getHeight()) / 2.0;
+			return create(getMinX() - xgrow, getMaxX() + xgrow, getMinY() - ygrow, getMaxY() + ygrow, getProjection());
 		}
 		return this;
 	}

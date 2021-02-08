@@ -16,11 +16,12 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -152,24 +153,24 @@ public class FutureResource implements IResource, Future<IResource> {
 		return getDelegate(timeout).getType();
 	}
 
-    @Override
-    public String getLocalName() {
-        return getDelegate(timeout).getLocalName();
-    }
+	@Override
+	public String getLocalName() {
+		return getDelegate(timeout).getLocalName();
+	}
 
 	@Override
 	public String getLocalProjectName() {
 		return getDelegate(timeout).getLocalProjectName();
 	}
 
-    @Override
-    public Collection<Attribute> getAttributes() {
-        return getDelegate(timeout).getAttributes();
-    }
+	@Override
+	public Collection<Attribute> getAttributes() {
+		return getDelegate(timeout).getAttributes();
+	}
 
 	@Override
 	public Collection<Attribute> getInputs() {
-		return  getDelegate(timeout).getInputs();
+		return getDelegate(timeout).getInputs();
 	}
 
 	@Override
@@ -177,10 +178,10 @@ public class FutureResource implements IResource, Future<IResource> {
 		return getDelegate(timeout).getExports();
 	}
 
-    @Override
-    public Collection<Attribute> getOutputs() {
-        return getDelegate(timeout).getOutputs();
-    }
+	@Override
+	public Collection<Attribute> getOutputs() {
+		return getDelegate(timeout).getOutputs();
+	}
 
 	@Override
 	public String getId() {
@@ -203,14 +204,14 @@ public class FutureResource implements IResource, Future<IResource> {
 	}
 
 	@Override
-	public boolean isGranular() {
-		return getDelegate(timeout).isGranular();
+	public boolean isDynamic() {
+		return getDelegate(timeout).isDynamic();
 	}
 
-	@Override
-	public Map<IGeometry, IResource> getGranules() {
-		return getDelegate(timeout).getGranules();
-	}
+//	@Override
+//	public Map<IGeometry, IResource> getGranules() {
+//		return getDelegate(timeout).getGranules();
+//	}
 
 	@Override
 	public String getStatusMessage() {
@@ -223,8 +224,15 @@ public class FutureResource implements IResource, Future<IResource> {
 	}
 
 	@Override
-	public IResource localize(ITime time) {
+	public IResource contextualize(IScale scale, IArtifact observation, Map<String, String> urnParameters,
+			IContextualizationScope scope) {
 		return this;
+	}
+
+	@Override
+	public List<String> getDependencies() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

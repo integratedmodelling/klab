@@ -39,6 +39,7 @@ import org.integratedmodelling.kim.kim.KimPackage;
 import org.integratedmodelling.kim.kim.List;
 import org.integratedmodelling.kim.kim.Literal;
 import org.integratedmodelling.kim.kim.LookupTable;
+import org.integratedmodelling.kim.kim.LookupTableArgument;
 import org.integratedmodelling.kim.kim.Map;
 import org.integratedmodelling.kim.kim.MapEntry;
 import org.integratedmodelling.kim.kim.Model;
@@ -167,6 +168,13 @@ public class KimSwitch<T> extends Switch<T>
       {
         ModelBodyStatement modelBodyStatement = (ModelBodyStatement)theEObject;
         T result = caseModelBodyStatement(modelBodyStatement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KimPackage.LOOKUP_TABLE_ARGUMENT:
+      {
+        LookupTableArgument lookupTableArgument = (LookupTableArgument)theEObject;
+        T result = caseLookupTableArgument(lookupTableArgument);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -609,6 +617,22 @@ public class KimSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseModelBodyStatement(ModelBodyStatement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Lookup Table Argument</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Lookup Table Argument</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseLookupTableArgument(LookupTableArgument object)
   {
     return null;
   }

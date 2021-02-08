@@ -42,7 +42,7 @@ import org.apache.commons.math3.analysis.interpolation.SplineInterpolator;
 import org.apache.commons.math3.analysis.interpolation.UnivariateInterpolator;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Time;
-import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpatial;
@@ -533,20 +533,20 @@ public class WeatherStation implements ISpatial {
 		this._type = "RAW";
 		this._source = "USER";
 
-		List<ITable<Object>> tableset = new ArrayList<>(); // TableFactory.open(file);
+		List<IStructuredTable<Object>> tableset = new ArrayList<>(); // TableFactory.open(file);
 
 		if (tableset == null || tableset.size() < 1) {
 			throw new KlabException("cannot open content as a table");
 		}
 
-		for (ITable<Object> table : tableset) {
+		for (IStructuredTable<Object> table : tableset) {
 
-			ITable.Column<Object> vNames = null, vValues = null;
-			ITable.Column<Object> date = null;
-			List<ITable.Column<Object>> vars = new ArrayList<>();
+			IStructuredTable.Column<Object> vNames = null, vValues = null;
+			IStructuredTable.Column<Object> date = null;
+			List<IStructuredTable.Column<Object>> vars = new ArrayList<>();
 			int mandatory = 0;
 
-			for (ITable.Column<Object> column : table.getColumns()) {
+			for (IStructuredTable.Column<Object> column : table.getColumns()) {
 
 				switch (column.getName()) {
 				case "VARIABLES":
@@ -680,7 +680,7 @@ public class WeatherStation implements ISpatial {
 
 				yearDay = dm.getDayOfYear();
 
-				for (ITable.Column<Object> dc : vars) {
+				for (IStructuredTable.Column<Object> dc : vars) {
 
 					Object vl = dc.getValue(i, Object.class);
 					if (vl == null || vl.toString().trim().isEmpty()) {

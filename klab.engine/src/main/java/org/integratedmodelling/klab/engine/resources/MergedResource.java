@@ -13,6 +13,7 @@ import java.util.TreeMap;
 import org.integratedmodelling.kim.api.IKimModel;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -26,6 +27,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
 import org.integratedmodelling.klab.api.resolution.ICoverage;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.time.extents.Time;
@@ -36,6 +38,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Coverage;
 import org.integratedmodelling.klab.scale.Scale;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 
 /**
@@ -71,7 +74,7 @@ public class MergedResource implements IResource {
 		long start = -1;
 		long end = -1;
 		ICoverage coverage;
-		List<IResource> resources = new ArrayList<>();
+		List<Pair<IResource, Map<String, String>>> resources = new ArrayList<>();
 		public Resolution resolution;
 	}
 
@@ -81,7 +84,7 @@ public class MergedResource implements IResource {
 	 */
 	private NavigableMap<Long, ResourceSet> resources = new TreeMap<>();
 
-	private ITime resolutionTime;
+//	private ITime resolutionTime;
 
 	public MergedResource(MergedResource other) {
 		this.id = other.id;
@@ -125,6 +128,7 @@ public class MergedResource implements IResource {
 			this.urns.add(urn);
 			IResource resource = null;
 			IScale scale = null;
+			Urn uurn = new Urn(urn);
 
 			resource = Resources.INSTANCE.resolveResource(urn);
 			if (resource == null) {
@@ -142,7 +146,7 @@ public class MergedResource implements IResource {
 				this.resolution = scale.getTime().getCoverageResolution();
 			}
 
-			getResourceSet(scale).resources.add(resource);
+			getResourceSet(scale).resources.add(new Pair<>(resource, uurn.getParameters()));
 
 		}
 
@@ -160,6 +164,7 @@ public class MergedResource implements IResource {
 			this.urns.add(urn);
 			IResource resource = null;
 			IScale scale = null;
+			Urn uurn = new Urn(urn);
 
 			resource = Resources.INSTANCE.resolveResource(urn);
 			if (resource == null) {
@@ -177,7 +182,7 @@ public class MergedResource implements IResource {
 				this.resolution = scale.getTime().getCoverageResolution();
 			}
 
-			getResourceSet(scale).resources.add(resource);
+			getResourceSet(scale).resources.add(new Pair<>(resource, uurn.getParameters()));
 
 		}
 
@@ -422,14 +427,15 @@ public class MergedResource implements IResource {
 	}
 
 	@Override
-	public boolean isGranular() {
-		return resources.size() > 1;
+	public boolean isDynamic() {
+		return resources.size() > 1; // TODO also if there is one and it's dynamic || resources.size() > 0 &&
+										// resources.;
 	}
 
-	@Override
-	public Map<IGeometry, IResource> getGranules() {
-		return null;
-	}
+//	@Override
+//	public Map<IGeometry, IResource> getGranules() {
+//		return null;
+//	}
 
 	@Override
 	public boolean hasErrors() {
@@ -484,52 +490,52 @@ public class MergedResource implements IResource {
 	 * @param scale
 	 * @return
 	 */
-	public List<IResource> contextualize(IScale scale, IArtifact artifact) {
+	public List<Pair<IResource, Map<String, String>>> contextualize(IScale scale, IArtifact artifact) {
 
 		long locator = -1;
 
-		if (logicalTime && resolutionTime != null) {
+		/*
+		 * if (logicalTime && resolutionTime != null) {
+		 * 
+		 * // TODO anchor the locator to the resolution time switch
+		 * (this.resolution.getType()) { case CENTURY: break; case DAY: break; case
+		 * DECADE: break; case HOUR: break; case MILLENNIUM: break; case MILLISECOND:
+		 * break; case MINUTE: break; case MONTH: break; case SECOND: break; case WEEK:
+		 * break; case YEAR: break; default: break;
+		 * 
+		 * } } else
+		 */
 
-			// TODO anchor the locator to the resolution time
-			switch (this.resolution.getType()) {
-			case CENTURY:
-				break;
-			case DAY:
-				break;
-			case DECADE:
-				break;
-			case HOUR:
-				break;
-			case MILLENNIUM:
-				break;
-			case MILLISECOND:
-				break;
-			case MINUTE:
-				break;
-			case MONTH:
-				break;
-			case SECOND:
-				break;
-			case WEEK:
-				break;
-			case YEAR:
-				break;
-			default:
-				break;
+		ITime resolutionTime = scale.getTime();
 
+		if (resolutionTime != null && resolutionTime.getStart() != null) {
+			if (resolutionTime.getTimeType() == ITime.Type.INITIALIZATION) {
+				// shouldn't happen, but just in case.
+				resolutionTime = Time.getPreviousExtent(resolutionTime);
 			}
-		} else if (scale.getTime() != null && scale.getTime().getStart() != null) {
-			locator = scale.getTime().getStart().getMilliseconds();
+			locator = resolutionTime.getStart().getMilliseconds();
 		}
 
-		List<IResource> ret = new ArrayList<>();
-		if (scale.getTime() == null && resources.size() > 0) {
+		List<Pair<IResource, Map<String, String>>> ret = new ArrayList<>();
+		if (resolutionTime == null && resources.size() > 0) {
 			Entry<Long, ResourceSet> set = resources.floorEntry(-1L);
 			if (set != null) {
 				ret.addAll(set.getValue().resources);
 			}
 		} else {
-			Entry<Long, ResourceSet> set = resources.floorEntry(locator);
+
+			Entry<Long, ResourceSet> set = scale.getTime().is(ITime.Type.INITIALIZATION)
+					? resources.ceilingEntry(locator)
+					: resources.floorEntry(locator);
+
+			/*
+			 * lenient check for unsuccessful initialization
+			 */
+			if (set == null && scale.getTime().is(ITime.Type.INITIALIZATION)) {
+				locator = resolutionTime.getEnd().getMilliseconds();
+				set = resources.floorEntry(locator);
+			}
+
 			if (set != null) {
 
 				boolean ok = true;
@@ -539,7 +545,7 @@ public class MergedResource implements IResource {
 					 * anything
 					 */
 					long seen = artifact.getLastUpdate();
-					if (seen >= set.getKey()) {
+					if (seen > set.getKey()) {
 						ok = false;
 					}
 				}
@@ -568,16 +574,17 @@ public class MergedResource implements IResource {
 	}
 
 	@Override
-	public IResource localize(ITime time) {
+	public IResource contextualize(IScale scale, IArtifact observation, Map<String, String> urnParameters,
+			IContextualizationScope scope) {
 
 		MergedResource ret = new MergedResource(this);
-
-		/*
-		 * if logical time, prepare to locate the closest resource after anchoring the
-		 * interval in the resources to the expected transitions.
-		 */
-		ret.resolutionTime = time;
-
+//
+//		/*
+//		 * if logical time, prepare to locate the closest resource after anchoring the
+//		 * interval in the resources to the expected transitions.
+//		 */
+//		ret.resolutionTime = scale.getTime();
+//
 		return ret;
 	}
 
@@ -589,14 +596,19 @@ public class MergedResource implements IResource {
 	 */
 	public boolean isOnline() {
 		for (ResourceSet rs : resources.values()) {
-			for (IResource rr : rs.resources) {
-				if (!Resources.INSTANCE.isResourceOnline(rr)) {
+			for (Pair<IResource, Map<String, String>> rr : rs.resources) {
+				if (!Resources.INSTANCE.isResourceOnline(rr.getFirst())) {
 					return false;
 				}
 			}
 		}
 		return true;
 
+	}
+
+	@Override
+	public List<String> getDependencies() {
+		return urns;
 	}
 
 }

@@ -10,27 +10,19 @@
 	<artifactId>cloud</artifactId>
 	<build>
 		<plugins>
-			<!-- <plugin> <groupId>org.springframework.boot</groupId> <artifactId>spring-boot-maven-plugin</artifactId> 
-				<version>${spring-boot-version}</version> <configuration> <fork>true</fork> 
-				<mainClass>org.integratedmodelling.klab.k.Main</mainClass> </configuration> 
-				<executions> <execution> <goals> <goal>repackage</goal> </goals> </execution> 
-				</executions> </plugin> -->
 			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-dependency-plugin</artifactId>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+				<version>${spring-boot-version}</version>
+				<configuration>
+					<fork>true</fork>
+					<mainClass>org.integratedmodelling.klab.engine.EngineApplication</mainClass>
+				</configuration>
 				<executions>
 					<execution>
-						<id>copy-dependencies</id>
-						<phase>prepare-package</phase>
 						<goals>
-							<goal>copy-dependencies</goal>
+							<goal>repackage</goal>
 						</goals>
-						<configuration>
-							<outputDirectory>${project.build.directory}/lib</outputDirectory>
-							<overWriteReleases>false</overWriteReleases>
-							<overWriteSnapshots>false</overWriteSnapshots>
-							<overWriteIfNewer>true</overWriteIfNewer>
-						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -48,6 +40,7 @@
 	    </dependencies>
 	</dependencyManagement>
 	<dependencies>
+		
 		<dependency>
 			<groupId>com.fasterxml.jackson.datatype</groupId>
 			<artifactId>jackson-datatype-joda</artifactId>
@@ -63,12 +56,32 @@
 
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.authority.gbif</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.authority.iupac</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.authority.wrb</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.component.landcover</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.components.cdm</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.random</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
 		<dependency>
@@ -91,11 +104,7 @@
 			<artifactId>klab.tools</artifactId>
 			<version>0.10.0-SNAPSHOT</version>
 		</dependency>
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>klab.ogc</artifactId>
-			<version>${klab.version}</version>
-		</dependency>
+		
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.engine</artifactId>
@@ -106,11 +115,13 @@
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>
 			<artifactId>org.eclipse.xtext.testing</artifactId>
 			<version>${xtextVersion}</version>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-consul-discovery</artifactId>

@@ -1937,58 +1937,70 @@ ruleACTOR returns [AntlrDatatypeRuleToken current=new AntlrDatatypeRuleToken()]
 			newLeafNode(kw, grammarAccess.getACTORAccess().getListKeyword_8());
 		}
 		    |
+		kw='table'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getACTORAccess().getTableKeyword_9());
+		}
+		    |
+		kw='map'
+		{
+			$current.merge(kw);
+			newLeafNode(kw, grammarAccess.getACTORAccess().getMapKeyword_10());
+		}
+		    |
 		kw='extent'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getExtentKeyword_9());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getExtentKeyword_11());
 		}
 		    |
 		kw='spatialextent'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getSpatialextentKeyword_10());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getSpatialextentKeyword_12());
 		}
 		    |
 		kw='temporalextent'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getTemporalextentKeyword_11());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getTemporalextentKeyword_13());
 		}
 		    |
 		kw='annotation'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getAnnotationKeyword_12());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getAnnotationKeyword_14());
 		}
 		    |
 		kw='enum'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getEnumKeyword_13());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getEnumKeyword_15());
 		}
 		    |
 		kw='range'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getRangeKeyword_14());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getRangeKeyword_16());
 		}
 		    |
 		kw='void'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getVoidKeyword_15());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getVoidKeyword_17());
 		}
 		    |
 		kw='partition'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getPartitionKeyword_16());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getPartitionKeyword_18());
 		}
 		    |
 		kw='resolve'
 		{
 			$current.merge(kw);
-			newLeafNode(kw, grammarAccess.getACTORAccess().getResolveKeyword_17());
+			newLeafNode(kw, grammarAccess.getACTORAccess().getResolveKeyword_19());
 		}
 	)
 ;

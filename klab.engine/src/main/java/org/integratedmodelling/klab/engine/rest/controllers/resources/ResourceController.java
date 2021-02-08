@@ -19,13 +19,12 @@ import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
-import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.rest.controllers.engine.EngineSessionController;
 import org.integratedmodelling.klab.engine.runtime.ObserveContextTask;
@@ -118,9 +117,9 @@ public class ResourceController {
 			Pair<IArtifact, IArtifact> data = Resources.INSTANCE.resolveResourceToArtifact(resource.getUrn(),
 					session.getMonitor(), true, Worldview.getGeoregionConcept(), Worldview.getGeoregionConcept());
 
-			ISubject ret = data.getSecond() instanceof ObservationGroup
-					&& ((ObservationGroup) data.getSecond()).groupSize() > 0
-							? (ISubject) ((ObservationGroup) data.getSecond()).iterator().next()
+			ISubject ret = data.getSecond() instanceof IObservationGroup
+					&& ((IObservationGroup) data.getSecond()).groupSize() > 0
+							? (ISubject) ((IObservationGroup) data.getSecond()).iterator().next()
 							: (ISubject) data.getFirst();
 
 			IScale scale = Scale.create(session.getState().getGeometry());

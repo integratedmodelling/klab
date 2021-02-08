@@ -27,28 +27,29 @@ import org.integratedmodelling.klab.exceptions.KlabException;
  *
  * @author ferdinando.villa
  * @version $Id: $Id
- * @param <T>
- *            the observation type resolved
+ * @param <T> the observation type resolved (can also be a predicate in
+ *            characterization)
  */
 public abstract interface IResolver<T extends IArtifact> extends IContextualizer {
-	
+
 	/**
 	 * Called once per temporal transition for the scale and the geometry of the
 	 * observation being resolved.
 	 *
-	 * @param ret
-	 *            the target observation being resolved, which should hold the
-	 *            output
-	 * @param context
-	 *            the runtime context of the computation. If we have incompatible
-	 *            previous values for the outputs, these will available as 'self'
-	 *            (retrievable as <code>context.get("self", T.class)</code> and may
-	 *            or may not be the same object as ret. In case, its
-	 *            {@link IArtifact#getType() type} can be checked.
+	 * @param ret   the target observation being resolved, which should hold the
+	 *              output. In some situation (resolution of abstract predicates
+	 *              into concrete ones during resolution of models) <em>this may be
+	 *              null</em>: in that case, the resolution is context-wide and
+	 *              should be stored in the scope to inform downstream resolutions.
+	 * @param scope the runtime scope of the computation. If we have incompatible
+	 *              previous values for the outputs, these will available as 'self'
+	 *              (retrievable as <code>context.get("self", T.class)</code> and
+	 *              may or may not be the same object as ret. In case, its
+	 *              {@link IArtifact#getType() type} can be checked.
 	 * @return the final observation - either the same passed as ret (usual case) or
 	 *         a new one if any mediation was necessary.
 	 * @throws org.integratedmodelling.klab.exceptions.KlabException
 	 */
-	T resolve(T ret, IContextualizationScope context) throws KlabException;
+	T resolve(T ret, IContextualizationScope scope) throws KlabException;
 
 }

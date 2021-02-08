@@ -41,6 +41,7 @@ ModelBodyStatement:
 			(
 				(urns+=Urn (',' urns+=Urn)*) | 
 				number=Number | 
+				concept=ConceptDeclaration |
 				boolean=('true' | 'false') //| 
 			)
 			 'as'
@@ -56,12 +57,17 @@ ModelBodyStatement:
 		 (('classified' | discretization?='discretized') (('into' classification=Classification) | ('according' 'to' classificationProperty=PropertyId)))?
 	     // arg ? means result field, arg * means ignore column. If not given, will match self in the first column and result in last, ignoring anything in between
 		 ('lookup' 
-		 	('(' lookupTableArgs+=(LOWERCASE_ID | '?' | '*') (',' lookupTableArgs+=(LOWERCASE_ID | '?' | '*'))* ')')?  
+		 	('(' lookupTableArgs+=LookupTableArgument (',' lookupTableArgs+=LookupTableArgument)* ')')?  
 		 	'into' 
 		 		(lookupTable=Table | lookupTableId=UPPERCASE_ID)
 		 )?
 		 actions+=ActionSpecification*
 		 ('metadata' metadata=Map)? 
+;
+
+LookupTableArgument:
+	id=(LOWERCASE_ID | '?' | '*') |
+	concept=ConceptDeclaration
 ;
 
 Classification:
@@ -225,7 +231,7 @@ VALUE_OPERATOR:
 	'<'|
 	'where'|
 	'=='|
-	'='|
+	'='| 'only'|
 	'without'|
 	'!='|
 	'plus'|
@@ -403,7 +409,7 @@ ConceptDeclaration:
 	
 	main+=Concept+ 
 		// binary semantic operators; also 'as', 'by' and 'follows' handled in other rules
-		(
+		(=>
 			// primary inherency (when secondary is given using 'within')
 			('of' ((distributedOfInherency?='each')? inherency=SimpleConceptDeclaration))? &
 			// purpose (achievement event created from target)
@@ -722,7 +728,7 @@ ChildConcept returns ConceptStatementBody:
 	'(' ConceptStatementBody ')';
 	
 IdentityRequirement:
-	('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (',' identities+=ConceptDeclaration)* |
+	type=('identity' | 'attribute' | 'realm' | 'extent') identities+=ConceptDeclaration (',' identities+=ConceptDeclaration)* |
 	 'authority' authority=(UPPERCASE_ID|UPPERCASE_PATH)
 	;
 
@@ -781,7 +787,7 @@ Map:
 ;
 
 MapEntry:
-	// must remove 'in (...)' from classifiers to avoid conflict with observable units, which are more needed.
+	// must remove 'in (...)' from classifiers to avoid conflict with observable units, which are more necessary.
 	classifier=ClassifierRHSWithIdNoSet ':' value=ValueWithIdAndConcept
 ;
 
@@ -808,11 +814,11 @@ ValueWithIdAndConcept returns Value:
 	map=Map |
 	concept=SimpleObservableSemantics |
 	function=Function |
+	date=Date |
 	literal=Literal |
 	expr=EXPR |
 	id=(PathName|LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
 	table=LookupTable |
-	date=Date |
 	quantity=Quantity |
 	op=REL_OPERATOR expression=Number | 
 	null?='unknown';

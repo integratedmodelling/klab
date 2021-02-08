@@ -40,7 +40,7 @@ public interface IResourcePublisher {
 	 * IResource with a valid URN, ready for storage in the public resource catalog.
 	 *
 	 * @param localResource the local resource
-	 * @param catalog the resource catalog
+	 * @param catalog       the resource catalog
 	 * @param monitor       for notifications and identity retrieval
 	 * @return a new resource. If errors happen, throw an exception; if the function
 	 *         returns, the resource must be valid.
@@ -48,4 +48,14 @@ public interface IResourcePublisher {
 	 */
 	public IResource publish(IResource localResource, IResourceCatalog catalog, IMonitor monitor);
 
+	/**
+	 * Called to clear up storage when the resource is deleted. Should return true
+	 * if deletion is successful and doesn't need to be attempted again.
+	 * 
+	 * @param resource
+	 * @param catalog
+	 * @param monitor
+	 * @return
+	 */
+	public boolean unpublish(IResource resource, IMonitor monitor);
 }

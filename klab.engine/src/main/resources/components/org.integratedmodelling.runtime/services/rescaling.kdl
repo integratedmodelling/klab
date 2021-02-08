@@ -9,7 +9,7 @@ filter extent space
 	value convert 
 		"Specify the conversion, using either a direct value, a URN or a map to define transformations."
 		
-	class org.integratedmodelling.klab.data.transformations.SpatialRescalingTransformation
+	class org.integratedmodelling.klab.data.transformations.SpatialRescalingResolver
 }
 
 filter extent time 
@@ -19,5 +19,5 @@ filter extent time
 	value convert 
 		"Specify the conversion, using either a direct value, a URN or a map to define transformations."
 		
-	class org.integratedmodelling.klab.data.transformations.TemporalRescalingTransformation
+	class org.integratedmodelling.klab.data.transformations.TemporalRescalingResolver
 }

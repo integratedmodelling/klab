@@ -21,8 +21,9 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/desktop"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/web"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/app"/>
-      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/task"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/test"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/script"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/task"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/component"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/user"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Preamble/library"/>
@@ -143,9 +144,10 @@
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Value">
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/tree"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/empty"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/argvalue"/>
-      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/literal"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/urn"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/literal"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/id"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/list"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/map"/>
@@ -154,7 +156,13 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Value/expression"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/table"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/quantity"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/constructor"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Value/metadata"/>
+    </genClasses>
+    <genClasses ecoreClass="Kactors.ecore#//Constructor">
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Constructor/path"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Constructor/classid"/>
+      <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Constructor/parameters"/>
     </genClasses>
     <genClasses ecoreClass="Kactors.ecore#//Match">
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Match/id"/>

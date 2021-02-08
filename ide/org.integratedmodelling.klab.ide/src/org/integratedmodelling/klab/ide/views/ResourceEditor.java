@@ -1,16 +1,22 @@
 package org.integratedmodelling.klab.ide.views;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
 import java.util.logging.Level;
 
+import org.eclipse.core.resources.IFile;
+import org.eclipse.core.resources.IFolder;
+import org.eclipse.core.runtime.CoreException;
 import org.eclipse.jface.action.IMenuManager;
 import org.eclipse.jface.action.IToolBarManager;
 import org.eclipse.jface.layout.TableColumnLayout;
@@ -24,6 +30,7 @@ import org.eclipse.jface.viewers.TableViewer;
 import org.eclipse.jface.viewers.TableViewerColumn;
 import org.eclipse.jface.viewers.TreeViewer;
 import org.eclipse.jface.viewers.TreeViewerColumn;
+import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.custom.SashForm;
 import org.eclipse.swt.custom.ScrolledComposite;
@@ -61,6 +68,8 @@ import org.eclipse.ui.PlatformUI;
 import org.eclipse.ui.part.ViewPart;
 import org.eclipse.wb.swt.ResourceManager;
 import org.eclipse.wb.swt.SWTResourceManager;
+import org.integratedmodelling.kim.api.IKimProject;
+import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
@@ -71,7 +80,9 @@ import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigatorActions;
 import org.integratedmodelling.klab.ide.ui.TimeEditor;
 import org.integratedmodelling.klab.ide.ui.WorldWidget;
+import org.integratedmodelling.klab.ide.ui.wizards.NewCategorizationWizard;
 import org.integratedmodelling.klab.ide.utils.Eclipse;
+import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.Notification;
 import org.integratedmodelling.klab.rest.ResourceAdapterReference;
@@ -80,6 +91,7 @@ import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceOperationRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.rest.ServicePrototype.Argument;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.StringUtil;
 import org.integratedmodelling.klab.utils.UrlValidator;
@@ -138,6 +150,8 @@ public class ResourceEditor extends ViewPart {
 	private Combo categorizationsCombo;
 
 	private Combo actionChooser;
+
+	private Button btnEdit;
 
 	public static class AttributeContentProvider implements IStructuredContentProvider {
 
@@ -439,7 +453,7 @@ public class ResourceEditor extends ViewPart {
 		for (OperationReference operation : this.adapter.getOperations()) {
 			this.actionChooser.add(operation.getDescription());
 		}
-		
+
 		this.title.setText(this.metadata.containsKey(IMetadata.DC_TITLE) ? this.metadata.get(IMetadata.DC_TITLE) : "");
 		this.keywords.setText(
 				this.metadata.containsKey(IMetadata.IM_KEYWORDS) ? this.metadata.get(IMetadata.IM_KEYWORDS) : "");
@@ -466,8 +480,41 @@ public class ResourceEditor extends ViewPart {
 
 		this.publishButton.setEnabled(this.isPublishable.getSelection() && !this.publishingNodes.isEmpty());
 
+		File rpath = getResourcePath(resource);
+
+		if (rpath != null) {
+
+			this.categorizationsCombo.setEnabled(true);
+			this.btnEdit.setEnabled(true);
+			this.categorizationsCombo.removeAll();
+			this.categorizationsCombo.add("New");
+			for (File file : rpath.listFiles()) {
+				if (file.toString().endsWith(".properties")) {
+					String ff = MiscUtilities.getFileBaseName(file);
+					if (ff.startsWith("code_")) {
+						this.categorizationsCombo.add(ff.substring(5));
+					}
+				}
+			}
+			this.categorizationsCombo.select(0);
+
+		}
+
 		setDirty(false);
 
+	}
+
+	private File getResourcePath(ResourceReference resource) {
+		String path = resource.getLocalPath();
+		String project = Path.getFirst(path, "/");
+		IKimProject prj = Kim.INSTANCE.getProject(project);
+		if (project != null) {
+			File ret = new File(prj.getRoot() + File.separator + Path.getRemainder(resource.getLocalPath(), "/"));
+			if (ret.exists()) {
+				return ret;
+			}
+		}
+		return null;
 	}
 
 	private boolean hasErrors(ResourceReference resource) {
@@ -1089,12 +1136,22 @@ public class ResourceEditor extends ViewPart {
 		GridData gd_categorizationsCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
 		gd_categorizationsCombo.widthHint = 76;
 		categorizationsCombo.setLayoutData(gd_categorizationsCombo);
-		categorizationsCombo.setItems(new String[] { "New..." });
+//		categorizationsCombo.add("New");
+//		for (String cat : getCategorizations()) {
+//			categorizationsCombo.add(cat);
+//		}
 		categorizationsCombo.setBounds(0, 0, 91, 23);
-		categorizationsCombo.select(0);
+		categorizationsCombo.setEnabled(false);
 
-		Button btnEdit = new Button(composite_4, SWT.NONE);
+		this.btnEdit = new Button(composite_4, SWT.NONE);
 		btnEdit.setText("Edit...");
+		btnEdit.setEnabled(false);
+		btnEdit.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseDown(MouseEvent e) {
+				editCategorization(categorizationsCombo.getText());
+			}
+		});
 		new Label(composite_4, SWT.NONE);
 
 		messageLabel = new Label(composite, SWT.NONE);
@@ -1148,6 +1205,48 @@ public class ResourceEditor extends ViewPart {
 		setDirty(false);
 	}
 
+	protected void editCategorization(String text) {
+
+		if ("New".equals(text)) {
+			List<String> cats = new ArrayList<>();
+			if (resource != null) {
+				for (AttributeReference attribute : resource.getAttributes()) {
+					cats.add(attribute.getName());
+				}
+			}
+			WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),
+					new NewCategorizationWizard(cats, (id, cat) -> {
+						openCategorization(id, cat);
+						categorizationsCombo.add(id);
+					}));
+			dialog.create();
+			dialog.open();
+		} else if (resource != null) {
+			openCategorization(text, null);
+		}
+	}
+
+	protected void openCategorization(String name, String category) {
+
+		if (resource != null) {
+			if (category != null) {
+				// TODO must have it created by the engine if category != null
+				// send to engine and act as a response
+				executeOperationWait("categorize", "categorization", name, "dimension", category);
+				IFile file = Eclipse.INSTANCE.getResourceFile(resource, "code_" + name + ".properties");
+				try {
+					file.getProject().refreshLocal(IFolder.DEPTH_INFINITE, null);
+				} catch (CoreException e) {
+					Eclipse.INSTANCE.handleException(e);
+				}
+				Eclipse.INSTANCE.openFile(file, 0);
+			} else {
+				IFile file = Eclipse.INSTANCE.getResourceFile(resource, "code_" + name + ".properties");
+				Eclipse.INSTANCE.openFile(file, 0);
+			}
+		}
+	}
+
 	protected void publish() {
 		if (dirty) {
 			save();
@@ -1159,7 +1258,7 @@ public class ResourceEditor extends ViewPart {
 		if (resource != null && resource.getUrn() != null && selectedOperation != null) {
 			ResourceOperationRequest request = new ResourceOperationRequest();
 			for (OperationReference operation : adapter.getOperations()) {
-				if (operation.getDescription().equals(selectedOperation)) { 
+				if (operation.getDescription().equals(selectedOperation)) {
 					selectedOperation = operation.getName();
 					if (operation.isRequiresConfirmation()) {
 						if (!Eclipse.INSTANCE.confirm("Confirm execution of " + operation.getName() + " operation?")) {
@@ -1175,6 +1274,43 @@ public class ResourceEditor extends ViewPart {
 				Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceOperation, request);
 			}
 		}
+	}
+
+	protected void executeOperation(String operation, String... parameters) {
+		if (resource != null && resource.getUrn() != null && selectedOperation != null) {
+			ResourceOperationRequest request = new ResourceOperationRequest();
+			request.setUrn(resource.getUrn());
+			request.setOperation(operation);
+			if (parameters != null) {
+				Map<String, String> params = new HashMap<>();
+				for (int i = 0; i < parameters.length; i++) {
+					params.put(parameters[i], parameters[++i]);
+				}
+				request.setParameters(params);
+			}
+			Activator.post(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceOperation, request);
+		}
+	}
+
+	protected IMessage executeOperationWait(String operation, String... parameters) {
+		if (resource != null && resource.getUrn() != null) {
+			ResourceOperationRequest request = new ResourceOperationRequest();
+			request.setUrn(resource.getUrn());
+			request.setOperation(operation);
+			if (parameters != null) {
+				Map<String, String> params = new HashMap<>();
+				for (int i = 0; i < parameters.length; i++) {
+					params.put(parameters[i], parameters[++i]);
+				}
+				request.setParameters(params);
+			}
+			try {
+				return Activator.ask(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceOperation, request)
+						.get();
+			} catch (Exception e) {
+			}
+		}
+		return null;
 	}
 
 	private void save() {

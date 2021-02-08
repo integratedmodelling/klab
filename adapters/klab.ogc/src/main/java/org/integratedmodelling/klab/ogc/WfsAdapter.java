@@ -16,6 +16,7 @@
 package org.integratedmodelling.klab.ogc;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
@@ -53,7 +54,10 @@ import org.integratedmodelling.klab.ogc.vector.wfs.WfsValidator;
                 // TODO check out
                 // http://docs.geotools.org/latest/userguide/library/data/wfs-ng.html
                 // TODO find a way to provide documentation for all these options
-                "wfsVersion", "bufferSize", "serverType", "timeoutSeconds", "filter", "computeShape", "sanitize" })
+                "wfsVersion", "bufferSize", "serverType", "timeoutSeconds", "filter", "computeShape", "sanitize" },
+        canCreateEmpty = true,
+        handlesFiles = false
+        )
 public class WfsAdapter implements IResourceAdapter {
 
     static Map<String, WFSDataStore> dataStores = new HashMap<>();
@@ -142,11 +146,11 @@ public class WfsAdapter implements IResourceAdapter {
     }
 
     @Override
-    public IPrototype getResourceConfiguration() {
-        return new Prototype(
+    public Collection<IPrototype> getResourceConfiguration() {
+        return Collections.singleton(new Prototype(
                 Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/wfs.kdl"))
                         .getActuators().iterator().next(),
-                null);
+                null));
     }
 
 	@Override

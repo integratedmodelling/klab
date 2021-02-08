@@ -20,6 +20,7 @@ import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Concept;
 import org.integratedmodelling.kactors.kactors.ConceptDeclaration;
+import org.integratedmodelling.kactors.kactors.Constructor;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
@@ -137,6 +138,7 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.FOR_STATEMENT: return createForStatement();
       case KactorsPackage.ACTIONS: return createActions();
       case KactorsPackage.VALUE: return createValue();
+      case KactorsPackage.CONSTRUCTOR: return createConstructor();
       case KactorsPackage.MATCH: return createMatch();
       case KactorsPackage.LIST: return createList();
       case KactorsPackage.LIST_ELEMENT: return createListElement();
@@ -454,6 +456,18 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     ValueImpl value = new ValueImpl();
     return value;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Constructor createConstructor()
+  {
+    ConstructorImpl constructor = new ConstructorImpl();
+    return constructor;
   }
 
   /**

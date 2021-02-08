@@ -22,6 +22,8 @@
 package org.integratedmodelling.klab.utils;
 
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.regex.Pattern;
 
@@ -340,11 +342,20 @@ public class NumberUtils {
 		return ret;
 	}
 
-	public static long[] longArrayFromCollection(List<Number> vals) {
+	public static long[] longArrayFromCollection(Collection<? extends Number> vals) {
 		long[] ret = new long[vals.size()];
 		int i = 0;
 		for (Number d : vals) {
 			ret[i++] = d.longValue();
+		}
+		return ret;
+	}
+	
+	public static int[] intArrayFromCollection(Collection<? extends Number> vals) {
+		int[] ret = new int[vals.size()];
+		int i = 0;
+		for (Number d : vals) {
+			ret[i++] = d.intValue();
 		}
 		return ret;
 	}
@@ -423,5 +434,30 @@ public class NumberUtils {
 			ret[i] = vals[i];
 		}
 		return ret;
+	}
+
+	/**
+	 * Create the ordered enumeration of all values from 0 to n (excluded).
+	 * 
+	 * @param n
+	 * @return
+	 */
+	public static LinkedHashSet<Integer> enumerateAsSet(int n) {
+		LinkedHashSet<Integer> ret = new LinkedHashSet<>();
+		for (int i = 0; i < n; i++) {
+			ret.add(i);
+		}
+		return ret;
+	}
+
+	public static Number fromString(String value) {
+		if (encodesInteger(value)) {
+			return Integer.parseInt(value);
+		} else if (encodesLong(value)) {
+			return Long.parseLong(value);
+		} else if (encodesDouble(value)) {
+			return Double.parseDouble(value);
+		}
+		return Double.NaN;
 	}
 }

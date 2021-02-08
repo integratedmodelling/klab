@@ -27,7 +27,7 @@ export number classifier
 	class org.integratedmodelling.geoprocessing.morphology.GeomorphonResolver
 }
 
-@constraint(xor(surface, chm))
+//@constraint(xor(surface, chm))
 export object findmaxima
 	"Find relative maxima in a surface and extract them as points of polygons according to semantics. 
 	 Optionally parameterizable for tree extraction with vegetation-specific options. Will optionally

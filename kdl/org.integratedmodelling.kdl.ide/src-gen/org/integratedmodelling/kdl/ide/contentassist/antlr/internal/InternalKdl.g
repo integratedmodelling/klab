@@ -1285,57 +1285,69 @@ rule__ACTOR__Alternatives
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getExtentKeyword_9()); }
+		{ before(grammarAccess.getACTORAccess().getTableKeyword_9()); }
+		'table'
+		{ after(grammarAccess.getACTORAccess().getTableKeyword_9()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getACTORAccess().getMapKeyword_10()); }
+		'map'
+		{ after(grammarAccess.getACTORAccess().getMapKeyword_10()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getACTORAccess().getExtentKeyword_11()); }
 		'extent'
-		{ after(grammarAccess.getACTORAccess().getExtentKeyword_9()); }
+		{ after(grammarAccess.getACTORAccess().getExtentKeyword_11()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getSpatialextentKeyword_10()); }
+		{ before(grammarAccess.getACTORAccess().getSpatialextentKeyword_12()); }
 		'spatialextent'
-		{ after(grammarAccess.getACTORAccess().getSpatialextentKeyword_10()); }
+		{ after(grammarAccess.getACTORAccess().getSpatialextentKeyword_12()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getTemporalextentKeyword_11()); }
+		{ before(grammarAccess.getACTORAccess().getTemporalextentKeyword_13()); }
 		'temporalextent'
-		{ after(grammarAccess.getACTORAccess().getTemporalextentKeyword_11()); }
+		{ after(grammarAccess.getACTORAccess().getTemporalextentKeyword_13()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getAnnotationKeyword_12()); }
+		{ before(grammarAccess.getACTORAccess().getAnnotationKeyword_14()); }
 		'annotation'
-		{ after(grammarAccess.getACTORAccess().getAnnotationKeyword_12()); }
+		{ after(grammarAccess.getACTORAccess().getAnnotationKeyword_14()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getEnumKeyword_13()); }
+		{ before(grammarAccess.getACTORAccess().getEnumKeyword_15()); }
 		'enum'
-		{ after(grammarAccess.getACTORAccess().getEnumKeyword_13()); }
+		{ after(grammarAccess.getACTORAccess().getEnumKeyword_15()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getRangeKeyword_14()); }
+		{ before(grammarAccess.getACTORAccess().getRangeKeyword_16()); }
 		'range'
-		{ after(grammarAccess.getACTORAccess().getRangeKeyword_14()); }
+		{ after(grammarAccess.getACTORAccess().getRangeKeyword_16()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getVoidKeyword_15()); }
+		{ before(grammarAccess.getACTORAccess().getVoidKeyword_17()); }
 		'void'
-		{ after(grammarAccess.getACTORAccess().getVoidKeyword_15()); }
+		{ after(grammarAccess.getACTORAccess().getVoidKeyword_17()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getPartitionKeyword_16()); }
+		{ before(grammarAccess.getACTORAccess().getPartitionKeyword_18()); }
 		'partition'
-		{ after(grammarAccess.getACTORAccess().getPartitionKeyword_16()); }
+		{ after(grammarAccess.getACTORAccess().getPartitionKeyword_18()); }
 	)
 	|
 	(
-		{ before(grammarAccess.getACTORAccess().getResolveKeyword_17()); }
+		{ before(grammarAccess.getACTORAccess().getResolveKeyword_19()); }
 		'resolve'
-		{ after(grammarAccess.getACTORAccess().getResolveKeyword_17()); }
+		{ after(grammarAccess.getACTORAccess().getResolveKeyword_19()); }
 	)
 ;
 finally {

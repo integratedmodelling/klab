@@ -79,7 +79,6 @@ public interface IModelService {
 		 */
 		int getPriority();
 
-
 	}
 
 	/**

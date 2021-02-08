@@ -1,0 +1,26 @@
+/**
+ * This file defines the contract for all commands recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace context
+
+void info
+	"Print the structure of the current context with detail about data and time slices currently in states."
+{	
+	class org.integratedmodelling.klab.clitool.console.commands.context.Info
+}
+
+void history
+	"Print the history collected through observations in the entire session."
+{	
+	class org.integratedmodelling.klab.clitool.console.commands.context.History
+}
+
+void submit
+	"Submit a URN to the current context for observation."
+{	
+	class org.integratedmodelling.klab.clitool.console.commands.context.Submit
+}

@@ -6,7 +6,12 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 public interface IKimLookupTable extends IKimStatement {
 
-	/**
+    public static class Argument {
+    	public String id;
+    	public IKimConcept concept;
+    }
+
+    /**
 	 * Return the type of the result column, which must be uniform.
 	 * 
 	 * @return
@@ -19,7 +24,7 @@ public interface IKimLookupTable extends IKimStatement {
 	 * 
 	 * @return
 	 */
-	List<String> getArguments();
+	List<Argument> getArguments();
 
 	IKimTable getTable();
 

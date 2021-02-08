@@ -15,7 +15,7 @@
  */
 package org.integratedmodelling.klab.api.data.adapters;
 
-import java.io.File;
+import java.util.Collection;
 
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -101,11 +101,12 @@ public interface IResourceAdapter {
 	IResourceCalculator getCalculator(IResource resource);
 
 	/**
-	 * Return a prototype describing all the user-modifiable parameters that can be
-	 * understood in resources using this adapter.
+	 * Return a prototype per adapter, describing all the user-modifiable parameters
+	 * that can be understood in resources using this adapter. More than one
+	 * prototype may be returned by adapters that have sub-types.
 	 * 
 	 * @return
 	 */
-	IPrototype getResourceConfiguration();
+	Collection<IPrototype> getResourceConfiguration();
 
 }

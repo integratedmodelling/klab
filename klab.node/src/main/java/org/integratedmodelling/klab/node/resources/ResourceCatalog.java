@@ -26,12 +26,12 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
-import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabResourceAccessException;
 import org.integratedmodelling.klab.node.auth.EngineAuthorization;
 import org.integratedmodelling.klab.node.auth.NodeAuthenticationManager;
@@ -42,6 +42,7 @@ import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.klab.utils.ZipUtils;
 
 import com.google.common.html.types.SafeUrl;
@@ -181,6 +182,9 @@ public class ResourceCatalog implements IResourceCatalog {
 		if (importProperties.exists()) {
 			try (InputStream in = new FileInputStream(importProperties)) {
 				importSettings.load(in);
+				Logging.INSTANCE.info("resource metadata imported from publish.properties:\n"
+						+ Utils.propertiesToString(importSettings));
+				
 			} catch (Throwable t) {
 				throw new KlabIOException(t);
 			}
@@ -212,6 +216,9 @@ public class ResourceCatalog implements IResourceCatalog {
 		reference.setVersion("1.0.0");
 		reference.getMetadata().put(IMetadata.DC_DATE_AVAILABLE, "" + new Date().getTime());
 		reference.getMetadata().put(IMetadata.DC_CONTRIBUTOR, user.getUsername());
+		for (Object key : importSettings.keySet()) {
+			reference.getMetadata().put(key.toString(), importSettings.get(key).toString());
+		}
 
 		String catalog = getCatalogName(reference, importSettings);
 		String namespace = getNamespace(reference, importSettings);
@@ -292,7 +299,7 @@ public class ResourceCatalog implements IResourceCatalog {
 			} catch (IOException e) {
 				Logging.INSTANCE.error(e);
 			}
-			throw new IllegalStateException(
+			throw new KlabIllegalStateException(
 					"cannot import resource " + reference.getUrn() + ": adapter is not recognized or cannot publish");
 		}
 

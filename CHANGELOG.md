@@ -9,11 +9,105 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Improve concurrency logics for k.Actors: init/main code is run in a separate thread to
+  avoid hogging the actor's mailbox; a semaphore (handled by the engine) can be passed
+  in the scope; synchronization is now handled (must test more thoroughly) and a new
+  behavior type ('script') is dedicated to sequential scripts and forces sequential
+  execution throughout (same for 'test'). 
+- k.Actors now handles 'for' loops and construction of/interaction with Java objects by calling
+  their constructors at "set" statements and their methods as messages directed to them,
+  using reflection. Groovy-like property getting (and setting at construction with keyed
+  arguments) is also available on them. Only Java objects from a particular package can
+  be created now, because of the security risk of allowing arbitrary Java classes to be
+  used (this could be relaxed on local engines).
+- New klab.data.aggregate contextualizer to merge states after they have been contextualized
+  from an abstract dependency. Syntactic support for klab.data.merge to be used for 
+  subjects and other countables, with the option of removing the original observations from
+  the context.
+- Table compiler now aggregates from multiple states when the classifier uses an abstract
+  predicate, expanding and matching each concrete incarnation of it represented in the
+  context. 
+- Abstract roles and (some) identities in observables are resolved to concrete during
+  resolution. While roles can be pre-set in the session by explicit user action, both
+  roles and identities that are not already resolved will now lookup a characterizing
+  model that outputs the union of concrete predicates for their abstract observable.
+  The dynamics of resolution only looks at abstract roles and those abstract identities
+  that are required for the observable (defined through "requires identity" in the
+  semantics). Identities that are not required for the observable are left in the
+  observable unmodified. IRuntimeContext::findArtifact now can find multiple states
+  and match predicates from their abstract incarnations, returning observation groups
+  also for states (not added to the context).
+- Initial, partial implementation of multiple table adapters with (so far) CSV support
+  and conventions for time/space contextualization and filtering.
+### Fixed
+- Bug in resolving processes that would cause some changing states to not be found
+- Bug in resolving states with value operators from pre-existing observations that
+  did not have the operators.
+- Resolution of attributes in instantiator from compatible context states. Needs
+  overhaul to incorporate with dataflows - current implementation won't change in
+  time when states are dynamic and won't replicate when re-running dataflow.
+
+## [0.10.0.235] -- 2020/12/8
+### Added
+- Observables that contain abstract roles are expanded into the correspondent concrete
+  observables after substituting the role's incarnation(s) in the context of resolution before
+  resolving. The expansion is limited to (concrete) predicates for now, as part of
+  observables.
+### Fixed
+- Monetary value declarations are now handled properly.
+- Three-way communication of resolutions in time and space now more reliable.
+- Temporal prioritization with disjoint extents now disregards specificity and
+  takes temporal distance into consideration.
+
+## [0.10.0.234] -- 2020/12/4
+### Fixed
+- Incorporate various fixes in apps UI behavior
+- Temporal contextualization now behaves correctly when changing states from 
+  previous resolutions have dependencies in the current one.
+
+## [0.10.0.233] -- 2020/12/1
+
+### Added
+- Add the first raw implementation of a context debugger to inspect and watch
+  values and value expressions. Can be started from the CLI or the Modeler.
+### Changed
+- Add column/row grouping and group-based requirements to tables to remove
+  entire groups when some columns aren't represented.
+- Context setting from either manual drawing or OSM retrieval is now uniform with
+  the rest and makes "proposals" that become the context at the first observation,
+  rather than setting the context right away.
+### Fixed
+- Various issues in temporal resolution and contextualization
+
+## [0.10.0.232] -- 2020/11/21
+### Added
+- Streamline and modularize the geocoding services so that more can be
+  added easily. Implement the standard bounding box naming and add 
+  administrative and watershed selection based on FSCAN node-provided
+  services.
+- Parameter "invert" for normalizing and standardizing contextualizers.
+- FSCAN adapter indexes multiple vector sources and provides fast reaction to
+  queries for the smallest polygon that fits the bounding box, plus the ability
+  of extracting features based on the level implied by the current scale.  
+- Stubs for SDMX component.
+- Extensive testing and improvements in k.Actors and the handling of UI components
+  through it, with full-duplex interaction with the new session state.
+- Handling of roles is now understood and implemented. Roles used in 
+  observable declarations are handled like regular attributes, while roles
+  implied by observables or stated by users as part of session state are used
+  in the relevant branch of resolution. Dependencies for "any <role>" will be
+  expanded to imply all observables currently incarnating that role. Implications
+  are unimplemented for now, but session-defined roles are working. 
+- Session state now elevated to API and managing all details of interaction with
+  clients, including submission of observables that are queued for contextualization
+  so that the level of concurrency within sessions can be controlled. Session 
+  state is set up to collect history beans and for saving/restoring info, including
+  the current state of application views.
 - Annotation syntax now admits unnamed parameters in coexistence with named 
   ones.
-- Documentation can insert extensions either using independent annotations or by
-  listing their definitions in the @documented annotation. Implementing table
-  extensions and their definition; stubs for graph extensions.
+- Implemented "knowledge views" as resolvable void artifacts declared with a
+  configurable, typed define statement. Table view implemented and functional,
+  with extensive testing needed due to extensive complexity.
 - Values in k.IM now admit entire observables and relational operators on numbers, 
   resolved to ranges.
 - Change models are automatically resolved for all qualities that may be affected by
@@ -172,6 +266,7 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
   enhancement of vector/raster public resources to WFS/WCS ones.
 ### Fixed
 - Several fixes in unit validation.
+- Testing and fixes in use of "where" value operator.
 
 ## [0.10.0.222] -- 2020/02/01
 ### Added

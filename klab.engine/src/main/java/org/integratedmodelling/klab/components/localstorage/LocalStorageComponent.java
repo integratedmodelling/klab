@@ -61,7 +61,7 @@ public class LocalStorageComponent implements IStorageProvider {
 	}
 
 	@Override
-	public IStorage<?> createStorage(IArtifact.Type type, IScale scale, IContextualizationScope context) {
+	public IStorage<?> createStorage(IArtifact.Type type, IScale scale) {
 
 		switch (stype) {
 		case ADAPTIVE_MEMORY:

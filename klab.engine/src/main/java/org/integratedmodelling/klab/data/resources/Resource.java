@@ -18,6 +18,8 @@ package org.integratedmodelling.klab.data.resources;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -28,16 +30,20 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Services;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IProject;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IRuntimeProvider;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.api.services.IResourceService;
@@ -109,6 +115,7 @@ public class Resource implements IResource {
 	private Map<String, String> exports = new LinkedHashMap<>();
 	// for display in resource descriptors
 	SpatialExtent spatialExtent;
+	List<String> dependencies = new ArrayList<>();
 
 	/*
 	 * This is an absolute location only defined in node (public) resources.
@@ -128,8 +135,7 @@ public class Resource implements IResource {
 	 * 01-12 day: 01-31
 	 */
 
-	// support for granularity
-	private Map<IGeometry, IResource> granules = new LinkedHashMap<>();
+	private Map<String, Object> runtimeData = Collections.synchronizedMap(new HashMap<>());
 
 	// folder where all the resource files were uploaded, only for the publisher
 	File uploadFolder = null;
@@ -173,7 +179,7 @@ public class Resource implements IResource {
 		ResourceReference ret = new ResourceReference();
 
 		ret.setUrn(this.urn);
-		ret.setVersion(this.version.toString());
+		ret.setVersion(this.version == null ? null : this.version.toString());
 		ret.setGeometry(this.getGeometry() == null ? null : this.getGeometry().encode());
 		ret.setAdapterType(this.getAdapterType());
 		ret.setLocalPath(this.localPath);
@@ -221,6 +227,10 @@ public class Resource implements IResource {
 		return ret;
 	}
 
+	public Resource copy() {
+		return new Resource(getReference());
+	}
+	
 	Resource() {
 	}
 
@@ -476,8 +486,9 @@ public class Resource implements IResource {
 				}
 			} else {
 				/*
-				 * node resource
+				 * node resource, simpler because getLocalPath is set up for that
 				 */
+				return new File(getLocalPath() + File.separator + this.parameters.get(parameter));
 			}
 		}
 		return null;
@@ -536,13 +547,9 @@ public class Resource implements IResource {
 	}
 
 	@Override
-	public boolean isGranular() {
-		return granules.size() > 0;
-	}
-
-	@Override
-	public Map<IGeometry, IResource> getGranules() {
-		return granules;
+	public boolean isDynamic() {
+		return false; // TODO time geometry has size() > 1 or is a grid. May be superseded by
+						// contextualize().
 	}
 
 	@Override
@@ -558,8 +565,39 @@ public class Resource implements IResource {
 	}
 
 	@Override
-	public IResource localize(ITime time) {
+	public IResource contextualize(IScale scale, IArtifact observation, Map<String, String> urnParameters,
+			IContextualizationScope scope) {
+		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(this.adapterType);
+		if (adapter != null) {
+			IResourceEncoder encoder = adapter.getEncoder();
+			if (encoder != null) {
+				return encoder.contextualize(this, scale, observation, urnParameters, scope);
+			}
+		}
 		return this;
+	}
+
+	public void setGeometry(IGeometry geometry) {
+		this.geometry = geometry;
+	}
+
+	@Override
+	public List<String> getDependencies() {
+		return dependencies;
+	}
+
+	/**
+	 * Runtime data for resources that need to cache stuff at contextualization. The
+	 * objects in the map may be persisted but the contents won't be part of the
+	 * resource definition, so each adapter must find its own strategy if persistent
+	 * info needs to be swapped to/from disk. The storage also won't be
+	 * automatically added to any copy of the resource (i.e. if that is needed,
+	 * {@link IResourceEncoder#contextualize(IResource, IScale, IArtifact, Map, IContextualizationScope)}
+	 * must copy the data) and won't be part of the ResourceReference bean used in
+	 * the catalog.
+	 */
+	public Map<String, Object> getRuntimeData() {
+		return runtimeData;
 	}
 
 }

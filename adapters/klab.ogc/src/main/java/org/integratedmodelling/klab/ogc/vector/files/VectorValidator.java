@@ -21,6 +21,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -39,15 +40,19 @@ import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.ogc.VectorAdapter;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.StringUtils;
@@ -107,7 +112,7 @@ public class VectorValidator implements IResourceValidator {
 
 	protected void validateCollection(FeatureSource<SimpleFeatureType, SimpleFeature> source, Builder ret,
 			IParameters<String> userData, boolean swapLatlonAxes, IMonitor monitor) throws IOException {
-		
+
 		Filter filter = Filter.INCLUDE;
 		FeatureCollection<SimpleFeatureType, SimpleFeature> collection = source.getFeatures(filter);
 		String geomName = source.getSchema().getGeometryDescriptor().getName().toString();
@@ -115,15 +120,15 @@ public class VectorValidator implements IResourceValidator {
 		ReferencedEnvelope envelope = source.getBounds();
 		CoordinateReferenceSystem crs = collection.getSchema().getCoordinateReferenceSystem();
 		swapLatlonAxes = swapLatlonAxes && crs != null && crs.equals(DefaultGeographicCRS.WGS84);
-		
+
 		if (envelope == null) {
 			// we only do this when importing, so let's go through them
 			envelope = collection.getBounds();
 		}
-        if (envelope.getCoordinateReferenceSystem() == null) {
-            ret.addError("vector resource is unprojected");
-            return;
-        }
+		if (envelope.getCoordinateReferenceSystem() == null) {
+			ret.addError("vector resource is unprojected");
+			return;
+		}
 
 		/**
 		 * Description and other info go in metadata
@@ -137,7 +142,7 @@ public class VectorValidator implements IResourceValidator {
 		if (source.getInfo().getKeywords() != null && !source.getInfo().getKeywords().isEmpty()) {
 			ret.withMetadata(IMetadata.IM_KEYWORDS, StringUtils.join(source.getInfo().getKeywords(), ","));
 		}
-		
+
 		ret.withSpatialExtent(Envelope.create(envelope, swapLatlonAxes).asShape().getExtentDescriptor());
 
 		Map<String, Class<?>> attributeTypes = new HashMap<>();
@@ -152,7 +157,7 @@ public class VectorValidator implements IResourceValidator {
 						shapeDimension = 1;
 					} else if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Polygonal.class)) {
 						shapeDimension = 2;
-					}  else if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Puntal.class)) {
+					} else if (Arrays.contains(ad.getType().getBinding().getInterfaces(), Puntal.class)) {
 						shapeDimension = 0;
 					} else {
 						ret.addError("cannot establish geometry dimensionality for vector resource");
@@ -163,7 +168,8 @@ public class VectorValidator implements IResourceValidator {
 			} else {
 				// store attribute ID and type
 				attributeTypes.put(ad.getName().toString(), ad.getType().getBinding());
-				ret.withAttribute(ad.getName().toString(), Utils.getArtifactType(ad.getType().getBinding()), false, true);
+				ret.withAttribute(ad.getName().toString(), Utils.getArtifactType(ad.getType().getBinding()), false,
+						true);
 			}
 		}
 
@@ -225,7 +231,9 @@ public class VectorValidator implements IResourceValidator {
 				}
 
 			} catch (Throwable e) {
-				ret.addError("Coverage projection failed reprojection test (check Bursa-Wolfe parameters): EPSG code reported is " + crsCode);
+				ret.addError(
+						"Coverage projection failed reprojection test (check Bursa-Wolfe parameters): EPSG code reported is "
+								+ crsCode);
 			}
 		}
 		if (!ret.hasErrors()) {
@@ -259,16 +267,37 @@ public class VectorValidator implements IResourceValidator {
 	public Collection<File> getAllFilesForResource(File file) {
 		return FileUtils.getSidecarFiles(file, VectorAdapter.secondaryFileExtensions);
 	}
-	
-    @Override
-    public List<Operation> getAllowedOperations(IResource resource) {
-        List<Operation> ret = new ArrayList<>();
-        return ret;
-    }
 
-    @Override
-    public IResource performOperation(IResource resource, String operationName, IMonitor monitor) {
-        throw new KlabUnimplementedException("resource operations unimplemented");
-    }
+	@Override
+	public List<Operation> getAllowedOperations(IResource resource) {
+		List<Operation> ret = new ArrayList<>();
+		return ret;
+	}
+
+	@Override
+	public IResource performOperation(IResource resource, String operationName, IParameters<String> parameters,
+			IResourceCatalog catalog, IMonitor monitor) {
+		throw new KlabUnimplementedException("resource operations unimplemented");
+	}
+
+	@Override
+	public Map<String, Object> describeResource(IResource resource) {
+		Map<String, Object> ret = new LinkedHashMap<>();
+		// TODO
+		return ret;
+	}
+
+	@Override
+	public IResource update(IResource resource, ResourceCRUDRequest updateData) {
+		((Resource) resource).update(updateData);
+		return resource;
+	}
+
+	@Override
+	public boolean isObservationAllowed(IResource resource, Map<String, String> urnParameters,
+			Description description) {
+		// TODO Auto-generated method stub
+		return false;
+	}
 
 }

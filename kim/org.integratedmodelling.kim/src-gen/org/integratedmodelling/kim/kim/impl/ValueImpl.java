@@ -37,11 +37,11 @@ import org.integratedmodelling.kim.kim.Value;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getMap <em>Map</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getFunction <em>Function</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getDate <em>Date</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getExpr <em>Expr</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getTable <em>Table</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getDate <em>Date</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getQuantity <em>Quantity</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getOp <em>Op</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ValueImpl#getExpression <em>Expression</em>}</li>
@@ -92,6 +92,16 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected Function function;
+
+  /**
+   * The cached value of the '{@link #getDate() <em>Date</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getDate()
+   * @generated
+   * @ordered
+   */
+  protected Date date;
 
   /**
    * The cached value of the '{@link #getLiteral() <em>Literal</em>}' containment reference.
@@ -152,16 +162,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected LookupTable table;
-
-  /**
-   * The cached value of the '{@link #getDate() <em>Date</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see #getDate()
-   * @generated
-   * @ordered
-   */
-  protected Date date;
 
   /**
    * The cached value of the '{@link #getQuantity() <em>Quantity</em>}' containment reference.
@@ -460,6 +460,56 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
+  public Date getDate()
+  {
+    return date;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetDate(Date newDate, NotificationChain msgs)
+  {
+    Date oldDate = date;
+    date = newDate;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__DATE, oldDate, newDate);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setDate(Date newDate)
+  {
+    if (newDate != date)
+    {
+      NotificationChain msgs = null;
+      if (date != null)
+        msgs = ((InternalEObject)date).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__DATE, null, msgs);
+      if (newDate != null)
+        msgs = ((InternalEObject)newDate).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__DATE, null, msgs);
+      msgs = basicSetDate(newDate, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__DATE, newDate, newDate));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Literal getLiteral()
   {
     return literal;
@@ -602,56 +652,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__TABLE, newTable, newTable));
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public Date getDate()
-  {
-    return date;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  public NotificationChain basicSetDate(Date newDate, NotificationChain msgs)
-  {
-    Date oldDate = date;
-    date = newDate;
-    if (eNotificationRequired())
-    {
-      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__DATE, oldDate, newDate);
-      if (msgs == null) msgs = notification; else msgs.add(notification);
-    }
-    return msgs;
-  }
-
-  /**
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   */
-  @Override
-  public void setDate(Date newDate)
-  {
-    if (newDate != date)
-    {
-      NotificationChain msgs = null;
-      if (date != null)
-        msgs = ((InternalEObject)date).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__DATE, null, msgs);
-      if (newDate != null)
-        msgs = ((InternalEObject)newDate).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.VALUE__DATE, null, msgs);
-      msgs = basicSetDate(newDate, msgs);
-      if (msgs != null) msgs.dispatch();
-    }
-    else if (eNotificationRequired())
-      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.VALUE__DATE, newDate, newDate));
   }
 
   /**
@@ -872,12 +872,12 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return basicSetConcept(null, msgs);
       case KimPackage.VALUE__FUNCTION:
         return basicSetFunction(null, msgs);
+      case KimPackage.VALUE__DATE:
+        return basicSetDate(null, msgs);
       case KimPackage.VALUE__LITERAL:
         return basicSetLiteral(null, msgs);
       case KimPackage.VALUE__TABLE:
         return basicSetTable(null, msgs);
-      case KimPackage.VALUE__DATE:
-        return basicSetDate(null, msgs);
       case KimPackage.VALUE__QUANTITY:
         return basicSetQuantity(null, msgs);
       case KimPackage.VALUE__OP:
@@ -906,6 +906,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getConcept();
       case KimPackage.VALUE__FUNCTION:
         return getFunction();
+      case KimPackage.VALUE__DATE:
+        return getDate();
       case KimPackage.VALUE__LITERAL:
         return getLiteral();
       case KimPackage.VALUE__EXPR:
@@ -914,8 +916,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getId();
       case KimPackage.VALUE__TABLE:
         return getTable();
-      case KimPackage.VALUE__DATE:
-        return getDate();
       case KimPackage.VALUE__QUANTITY:
         return getQuantity();
       case KimPackage.VALUE__OP:
@@ -952,6 +952,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KimPackage.VALUE__FUNCTION:
         setFunction((Function)newValue);
         return;
+      case KimPackage.VALUE__DATE:
+        setDate((Date)newValue);
+        return;
       case KimPackage.VALUE__LITERAL:
         setLiteral((Literal)newValue);
         return;
@@ -963,9 +966,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KimPackage.VALUE__TABLE:
         setTable((LookupTable)newValue);
-        return;
-      case KimPackage.VALUE__DATE:
-        setDate((Date)newValue);
         return;
       case KimPackage.VALUE__QUANTITY:
         setQuantity((Quantity)newValue);
@@ -1008,6 +1008,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KimPackage.VALUE__FUNCTION:
         setFunction((Function)null);
         return;
+      case KimPackage.VALUE__DATE:
+        setDate((Date)null);
+        return;
       case KimPackage.VALUE__LITERAL:
         setLiteral((Literal)null);
         return;
@@ -1019,9 +1022,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KimPackage.VALUE__TABLE:
         setTable((LookupTable)null);
-        return;
-      case KimPackage.VALUE__DATE:
-        setDate((Date)null);
         return;
       case KimPackage.VALUE__QUANTITY:
         setQuantity((Quantity)null);
@@ -1060,6 +1060,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return concept != null;
       case KimPackage.VALUE__FUNCTION:
         return function != null;
+      case KimPackage.VALUE__DATE:
+        return date != null;
       case KimPackage.VALUE__LITERAL:
         return literal != null;
       case KimPackage.VALUE__EXPR:
@@ -1068,8 +1070,6 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KimPackage.VALUE__TABLE:
         return table != null;
-      case KimPackage.VALUE__DATE:
-        return date != null;
       case KimPackage.VALUE__QUANTITY:
         return quantity != null;
       case KimPackage.VALUE__OP:

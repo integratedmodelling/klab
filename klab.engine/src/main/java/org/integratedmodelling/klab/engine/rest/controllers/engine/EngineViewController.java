@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
+import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.ObservationReference;
 import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
@@ -281,13 +282,13 @@ public class EngineViewController {
 			} else if (format == GeometryType.SCALAR) {
 
 				Object value = ((IState) obs).get(loc);
-				String descr = value instanceof Number
-						? NumberFormat.getInstance().format(((Number) value).doubleValue())
-						: (value instanceof IConcept ? Concepts.INSTANCE.getDisplayLabel(((IConcept) value))
-								: (value instanceof Boolean
-										? ((Boolean) value ? Observations.PRESENT_LABEL
-												: Observations.NOT_PRESENT_LABEL)
-										: "No data"));
+				String descr = Observations.INSTANCE.describeValue(value);
+
+				/**
+				 * If we're debugging, communicate the point of interest and the current focus.
+				 * This will only have an effect if the debugger is on.
+				 */
+				Debug.INSTANCE.locate(loc, obs, value);
 
 				if (obs.getObservable().getUnit() != null) {
 					descr += " " + ((Unit) obs.getObservable().getUnit()).toUTFString();

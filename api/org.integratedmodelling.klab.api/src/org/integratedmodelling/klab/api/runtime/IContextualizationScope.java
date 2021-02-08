@@ -16,10 +16,12 @@
 package org.integratedmodelling.klab.api.runtime;
 
 import java.util.Collection;
+import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -355,7 +357,7 @@ public interface IContextualizationScope extends IParameters<String> {
 	 * While any k.LAB-aware implementation will receive a
 	 * {@link org.integratedmodelling.klab.api.observations.scale.IScale} instead of
 	 * a {@link org.integratedmodelling.klab.api.data.IGeometry} and return a
-	 * {@link org.integratedmodelling.klab.api.observations.ICountableObservation}
+	 * {@link org.integratedmodelling.klab.api.observations.IObservationGroup}
 	 * rather than just
 	 * {@link org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact}, we
 	 * keep the basic, non-semantic types in the signature for consistency with
@@ -490,6 +492,33 @@ public interface IContextualizationScope extends IParameters<String> {
 	 * @return the symbol table, never null.
 	 */
 	Map<String, IVariable> getVariables();
+
+	/**
+	 * Return a context (or a simpler parameter map) with localized values of all
+	 * the states at the specified locator, suitable to evaluate point expressions.
+	 * Any additional model variables should also be added.
+	 * 
+	 * @param locator
+	 * @return
+	 */
+	IParameters<String> localize(ILocator locator);
+
+	/**
+	 * This will return the same predicate or its localized version if the scope is
+	 * contextualizing an observable that started abstract and was resolved to a
+	 * concrete one contextually. In the current implementation this can only apply
+	 * to roles and identities stated as abstract as part of observable expressions.
+	 * <p>
+	 * For example if a dependency like
+	 * <code>agriculture:CropType agriculture:Yield</code> was resolved, the scope
+	 * of execution of each incarnation will return, e.g.,
+	 * <code>agriculture:Apple</code> when
+	 * <code>localizePredicate(Concepts.c("agriculture:CropType"))</code> is called.
+	 * 
+	 * @param predicate
+	 * @return
+	 */
+	IConcept localizePredicate(IConcept predicate);
 
 	/**
 	 * Create an expression context to compile an expression with all local names

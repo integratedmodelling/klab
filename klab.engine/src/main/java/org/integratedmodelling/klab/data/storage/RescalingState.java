@@ -10,7 +10,7 @@ import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
-import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -357,7 +357,7 @@ public class RescalingState extends Observation implements IState {
 	}
 
 	@Override
-	public ITable<Number> getTable() {
+	public IStructuredTable<Number> getTable() {
 		// FIXME this should be recomputed from the values
 		return null;
 	}
@@ -414,6 +414,12 @@ public class RescalingState extends Observation implements IState {
 		if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
 			setDynamic(true);
 		}
+	}
+
+	@Override
+	public String dump() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

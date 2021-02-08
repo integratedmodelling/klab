@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Years;
 
 public class Time implements IExpression {
@@ -49,7 +50,7 @@ public class Time implements IExpression {
 		}
 
 		if (parameters.contains("year")) {
-			DateTime begin = new DateTime(parameters.get("year", Number.class).intValue(), 1, 1, 0, 0, 0, 0);
+			DateTime begin = new DateTime(parameters.get("year", Number.class).intValue(), 1, 1, 0, 0, 0, 0, DateTimeZone.UTC);
 			start = new TimeInstant(begin);
 			end = new TimeInstant(begin.plus(Years.ONE));
 		} else {

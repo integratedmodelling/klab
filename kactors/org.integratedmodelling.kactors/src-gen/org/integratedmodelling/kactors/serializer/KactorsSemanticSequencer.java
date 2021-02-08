@@ -22,6 +22,7 @@ import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Concept;
 import org.integratedmodelling.kactors.kactors.ConceptDeclaration;
+import org.integratedmodelling.kactors.kactors.Constructor;
 import org.integratedmodelling.kactors.kactors.Currency;
 import org.integratedmodelling.kactors.kactors.Date;
 import org.integratedmodelling.kactors.kactors.Definition;
@@ -119,6 +120,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 					return; 
 				}
 				else break;
+			case KactorsPackage.CONSTRUCTOR:
+				sequence_Constructor(context, (Constructor) semanticObject); 
+				return; 
 			case KactorsPackage.CURRENCY:
 				sequence_Currency(context, (Currency) semanticObject); 
 				return; 
@@ -241,7 +245,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				sequence_UnitElement(context, (UnitElement) semanticObject); 
 				return; 
 			case KactorsPackage.VALUE:
-				if (rule == grammarAccess.getValueWithMetadataWithoutTreeRule()) {
+				if (rule == grammarAccess.getValueWithConstructorRule()) {
+					sequence_ValueWithConstructor(context, (Value) semanticObject); 
+					return; 
+				}
+				else if (rule == grammarAccess.getValueWithMetadataWithoutTreeRule()) {
 					sequence_ValueWithMetadataWithoutTree(context, (Value) semanticObject); 
 					return; 
 				}
@@ -322,7 +330,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     Assignment returns Assignment
 	 *
 	 * Constraint:
-	 *     (recipient=LOWERCASE_ID? variable=LOWERCASE_ID value=Value)
+	 *     (recipient=LOWERCASE_ID? variable=LOWERCASE_ID value=ValueWithConstructor)
 	 */
 	protected void sequence_Assignment(ISerializationContext context, Assignment semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -400,11 +408,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)?
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -431,11 +439,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)?
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
@@ -486,6 +494,18 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     )
 	 */
 	protected void sequence_Concept(ISerializationContext context, Concept semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Constructor returns Constructor
+	 *
+	 * Constraint:
+	 *     (path=QuotablePathName? classid=CAMELCASE_ID parameters=ParameterList?)
+	 */
+	protected void sequence_Constructor(ISerializationContext context, Constructor semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -886,8 +906,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         (
 	 *             (
 	 *                 (public?='public'? (mobile?='mobile' | desktop?='desktop' | web?='web')? app?='app') | 
-	 *                 task?='task' | 
 	 *                 test?='testcase' | 
+	 *                 script?='script' | 
+	 *                 task?='task' | 
 	 *                 component?='component' | 
 	 *                 user?='user' | 
 	 *                 library?='trait' | 
@@ -1142,6 +1163,33 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	
 	/**
 	 * Contexts:
+	 *     ValueWithConstructor returns Value
+	 *
+	 * Constraint:
+	 *     (
+	 *         constructor=Constructor | 
+	 *         tree=Tree | 
+	 *         empty?='empty' | 
+	 *         argvalue=ARGVALUE | 
+	 *         literal=Literal | 
+	 *         urn=UrnId | 
+	 *         id=PathName | 
+	 *         list=List | 
+	 *         map=Map | 
+	 *         constant=UPPERCASE_ID | 
+	 *         observable=Observable | 
+	 *         expression=EXPR | 
+	 *         table=LookupTable | 
+	 *         quantity=Quantity
+	 *     )
+	 */
+	protected void sequence_ValueWithConstructor(ISerializationContext context, Value semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
 	 *     ValueWithMetadataWithoutTree returns Value
 	 *
 	 * Constraint:
@@ -1224,9 +1272,10 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 * Constraint:
 	 *     (
 	 *         tree=Tree | 
+	 *         empty?='empty' | 
 	 *         argvalue=ARGVALUE | 
-	 *         literal=Literal | 
 	 *         urn=UrnId | 
+	 *         literal=Literal | 
 	 *         id=PathName | 
 	 *         list=List | 
 	 *         map=Map | 

@@ -757,12 +757,14 @@ public enum Units implements IUnitService {
 		}
 
 		Set<ExtentDimension> implied = new HashSet<>(aggregatable);
-		for (ExtentDimension ed : constraints.keySet()) {
-			aggregatable.add(ed);
-			if (constraints.get(ed) == ExtentDistribution.EXTENSIVE) {
-				implied.remove(ed);
-			} else {
-				implied.add(ed);
+		if (constraints != null) {
+			for (ExtentDimension ed : constraints.keySet()) {
+				aggregatable.add(ed);
+				if (constraints.get(ed) == ExtentDistribution.EXTENSIVE) {
+					implied.remove(ed);
+				} else {
+					implied.add(ed);
+				}
 			}
 		}
 

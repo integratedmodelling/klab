@@ -72,16 +72,17 @@ public enum Geocoder {
 	private Geocoder() {
 		services.put(DEFAULT_GEOCODING_STRATEGY, new OSMNamesGeocodingService(0.75));
 		services.put(ADMIN_GEOCODING_STRATEGY,
-				new ResourceGeocodingService("local:ferdinando.villa:scratch:administrative", 0.5));
+				new ResourceGeocodingService("im.geo:gadm:administrative:boundaries", 0.5));
+//		new ResourceGeocodingService("local:ferdinando.villa:scratch:administrative", 0.5));
 		services.put(WATERSHED_GEOCODING_STRATEGY,
 				new ResourceGeocodingService("local:ferdinando.villa:scratch:watershed", 0.5));
-		services.put(RANDOM_GEOCODING_STRATEGY, new RandomGeocodingService(0.5));
+//		services.put(RANDOM_GEOCODING_STRATEGY, new RandomGeocodingService(0.5));
 		// TODO other services
 	}
 
 	// TODO this should be configurable. Also we must provide all this machinery as
 	// a remote resource using its own OSM mirror.
-	public static final String[] OVERPASS_URLS = { "http://150.241.222.1/overpass/api/interpreter",
+	public static final String[] OVERPASS_URLS = { "https://knowledge.integratedmodelling.org/overpass/api/interpreter",
 			"http://overpass-api.de/api/interpreter" };
 
 	public List<Location> lookup(String query) {

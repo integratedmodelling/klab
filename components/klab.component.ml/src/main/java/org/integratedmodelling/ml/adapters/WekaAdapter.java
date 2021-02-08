@@ -15,6 +15,8 @@
  */
 package org.integratedmodelling.ml.adapters;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IPrototype;
@@ -22,7 +24,7 @@ import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
-import org.integratedmodelling.klab.api.data.adapters.IFileResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
@@ -32,8 +34,8 @@ import org.integratedmodelling.klab.kim.Prototype;
 
 import com.google.common.collect.Sets;
 
-@ResourceAdapter(type = "weka", version = Version.CURRENT)
-public class WekaAdapter implements IFileResourceAdapter {
+@ResourceAdapter(type = "weka", version = Version.CURRENT, canCreateEmpty = false, handlesFiles = false)
+public class WekaAdapter implements IResourceAdapter {
 
 	/**
 	 * All recognized primary file extensions.
@@ -71,11 +73,11 @@ public class WekaAdapter implements IFileResourceAdapter {
 	}
 
 	@Override
-	public IPrototype getResourceConfiguration() {
-		return new Prototype(Dataflows.INSTANCE
+	public Collection<IPrototype> getResourceConfiguration() {
+		return Collections.singleton(new Prototype(Dataflows.INSTANCE
 				.declare(getClass().getClassLoader()
 						.getResource("components/org.integratedmodelling.ml/adapter/weka.kdl"))
-				.getActuators().iterator().next(), null);
+				.getActuators().iterator().next(), null));
 	}
 
 	@Override

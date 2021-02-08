@@ -213,6 +213,15 @@ public interface KactorsFactory extends EFactory
   Value createValue();
 
   /**
+   * Returns a new object of class '<em>Constructor</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Constructor</em>'.
+   * @generated
+   */
+  Constructor createConstructor();
+
+  /**
    * Returns a new object of class '<em>Match</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

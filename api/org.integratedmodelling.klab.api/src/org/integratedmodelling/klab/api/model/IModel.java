@@ -30,6 +30,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.resolution.IComputationProvider;
 import org.integratedmodelling.klab.api.resolution.IResolvable;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
  * A Model is a statement that produces a computed observation. It has at least
@@ -128,13 +129,14 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * @param observable a
 	 *                   {@link org.integratedmodelling.klab.api.knowledge.IObservable}
 	 *                   object.
-	 * @param the        context of the observation, or null
+	 * @param context    of the observation, or null
+	 * @param monitor
 	 * @return the name with which the passed observable (or one compatible with it)
 	 *         is known in this model. If the observable isn't found in the model,
 	 *         this method should return the passed observable's local name, not
 	 *         null.
 	 */
-	String getLocalNameFor(IObservable observable, IConcept context);
+	String getLocalNameFor(IObservable observable, IConcept context, IMonitor monitor);
 
 	/**
 	 * Return true if this model can be computed on its own and has associated data.
@@ -240,6 +242,47 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	IGeometry getGeometry();
 
 	/**
+	 * If the result collection isn't empty, the model can only be used to resolve
+	 * its observable if all the returned traits are assigned in the resolution
+	 * scope. This corresponds to having any dependency or observable defined in
+	 * terms of a non-generic ("any") abstract role, which will be redefined to its
+	 * concrete counterpart(s) before resolution. This does <i>not</i> involve the
+	 * determination of abstract status described by {@link #isAbstract()} and
+	 * {@link #getAbstractTraits()}: models with required traits can be resolved as
+	 * they are (and their dependencies will be concretized during resolution,
+	 * including potentially being removed). Models with abstract traits must be
+	 * reincarnated for each combination of traits before resolving.
+	 * 
+	 * @return
+	 */
+	Collection<IConcept> getRequiredTraits();
+
+	/**
+	 * An abstract model uses abstract traits in dependencies or observables, so it
+	 * can only be run after resolving all of those to their concrete incarnations.
+	 * This is done on a model-wide basis, so it does not involve generic
+	 * dependencies ('any') which are resolved <i>after</i> picking the model for
+	 * resolution. If a model is abstract, the traits it's abstract in (which
+	 * currently can only be roles or identities) are returned by
+	 * {@link #getAbstractTraits()}, and a different model must be produced for each
+	 * combination of these traits that can be resolved in the context. Such traits
+	 * can be produced by explicit setting (only for roles) or by running
+	 * characterizing models.
+	 * 
+	 * @return
+	 */
+	boolean isAbstract();
+
+	/**
+	 * Non-empty if {@link #isAbstract()} is true. The mechanics of producing models
+	 * with these incarnated to their concrete counterparts is left to the
+	 * implementation.
+	 * 
+	 * @return
+	 */
+	Collection<IConcept> getAbstractTraits();
+
+	/**
 	 * True if the model annotates >1 resources that represent different extents in
 	 * the passed dimension. If the dimension is time, returning true makes this
 	 * model also handle change after it has been accepted to resolve its
@@ -251,6 +294,6 @@ public interface IModel extends IActiveKimObject, INamespaceQualified, IResolvab
 	 * @return true if there is more than one resource and the annotated resources
 	 *         represent several extents in the passed dimension.
 	 */
-	boolean hasDistributedResources(Type dimension, IScale scale);
+	boolean changesIn(Type dimension, IScale scale);
 
 }

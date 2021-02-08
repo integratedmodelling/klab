@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.ogc;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
@@ -16,6 +19,7 @@ import org.integratedmodelling.klab.ogc.fscan.FSCANEncoder;
 import org.integratedmodelling.klab.ogc.fscan.FSCANImporter;
 import org.integratedmodelling.klab.ogc.fscan.FSCANPublisher;
 import org.integratedmodelling.klab.ogc.fscan.FSCANValidator;
+import org.integratedmodelling.klab.ogc.integration.Postgis;
 
 /**
  * Specialized vector adapter that merges one or more vector sources (limited to
@@ -35,11 +39,26 @@ import org.integratedmodelling.klab.ogc.fscan.FSCANValidator;
  * @author Ferd
  *
  */
-@ResourceAdapter(type = FSCANAdapter.ID, version = Version.CURRENT)
+@ResourceAdapter(type = FSCANAdapter.ID, version = Version.CURRENT, canCreateEmpty = true, handlesFiles = false)
 public class FSCANAdapter implements IResourceAdapter {
 
 	public static final String ID = "fscan";
 
+	private static Postgis postgis;
+
+	public static Postgis getPostgis() {
+		if (Postgis.isEnabled()) {
+			postgis = Postgis.create();
+			postgis.isOnline();
+		}
+		return postgis;
+	}
+	
+	public static boolean isOnline() {
+		return getPostgis() != null && getPostgis().isOnline();
+	}
+	
+	
 	@Override
 	public String getName() {
 		return ID;
@@ -71,11 +90,11 @@ public class FSCANAdapter implements IResourceAdapter {
 	}
 
 	@Override
-	public IPrototype getResourceConfiguration() {
-		return new Prototype(
+	public Collection<IPrototype> getResourceConfiguration() {
+		return Collections.singleton(new Prototype(
 				Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/fscan.kdl"))
 						.getActuators().iterator().next(),
-				null);
+				null));
 	}
 
 }

@@ -79,6 +79,15 @@ public interface KimFactory extends EFactory
   ModelBodyStatement createModelBodyStatement();
 
   /**
+   * Returns a new object of class '<em>Lookup Table Argument</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Lookup Table Argument</em>'.
+   * @generated
+   */
+  LookupTableArgument createLookupTableArgument();
+
+  /**
    * Returns a new object of class '<em>Classification</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->

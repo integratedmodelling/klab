@@ -6,6 +6,10 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Consumer;
 
+import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.utils.Triple;
@@ -17,6 +21,15 @@ public enum Debug {
 
 	Map<Long, Triple<Long, String, Consumer<Period>>> timers = Collections.synchronizedMap(new HashMap<>());
 	AtomicLong timerIDs = new AtomicLong(0L);
+	private volatile Map<String, Debugger> debuggers = new HashMap<>();
+	
+	public boolean isDebug() {
+		return Configuration.INSTANCE.getProperty("debug", null) != null;
+	}
+	
+	public boolean isDebugging() {
+		return debuggers.size() > 0;
+	}
 
 	public void summarize(Object object) {
 		if (object instanceof RescalingState) {
@@ -58,5 +71,14 @@ public enum Debug {
 			}
 		}
 	}
+	
+	public void locate(ILocator locator, IObservation observation, Object value) {
+		for (Debugger debugger : debuggers.values()) {
+			debugger.focus(locator, observation);
+		}
+	}
 
+	public void newDebugger(ISession session) {
+		Debugger.create(session, debuggers);
+	}
 }

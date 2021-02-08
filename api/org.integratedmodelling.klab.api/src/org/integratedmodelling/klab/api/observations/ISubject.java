@@ -34,7 +34,7 @@ import org.integratedmodelling.klab.api.runtime.ITask;
  * @author ferdinando.villa
  * @version $Id: $Id
  */
-public interface ISubject extends ICountableObservation {
+public interface ISubject extends IDirectObservation {
 
   /**
    * <p>

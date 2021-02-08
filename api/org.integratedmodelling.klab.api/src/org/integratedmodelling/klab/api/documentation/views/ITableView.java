@@ -42,8 +42,6 @@ public interface ITableView extends IDocumentationView {
 	 */
 	int footer(int table);
 
-//	int newColumn(int table);
-
 	/**
 	 * 
 	 * @return
@@ -60,6 +58,8 @@ public interface ITableView extends IDocumentationView {
 	int newCell(int row);
 
 	int newHeaderCell(int row, boolean rowScope);
+
+	int newHeaderCell(int row, int colSpan, boolean rowScope);
 
 	int newCell(int row, int colSpan, int rowSpan);
 

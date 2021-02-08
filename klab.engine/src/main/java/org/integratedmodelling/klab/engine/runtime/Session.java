@@ -9,18 +9,15 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 import java.util.logging.Level;
 
@@ -64,8 +61,6 @@ import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime.Resolution;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.IScript;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -77,7 +72,6 @@ import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.auth.EngineUser;
-import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
@@ -86,19 +80,17 @@ import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMess
 import org.integratedmodelling.klab.components.runtime.actors.SessionActor;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
-import org.integratedmodelling.klab.components.time.extents.Time;
-import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.ElementType;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.Engine.Monitor;
+import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
-import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityResolutionRequest;
@@ -106,6 +98,7 @@ import org.integratedmodelling.klab.rest.ContextualizationRequest;
 import org.integratedmodelling.klab.rest.DataflowDetail;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.DocumentationReference;
+import org.integratedmodelling.klab.rest.EngineAction;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.GroupReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
@@ -147,6 +140,7 @@ import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -175,22 +169,42 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	long lastJoin = System.currentTimeMillis();
 	boolean isDefault = false;
 	Set<String> relayIdentities = new HashSet<>();
-//	SpatialExtent regionOfInterest = null;
 	ActorRef<KlabMessage> actor;
 	private SessionState globalState = new SessionState(this);
 	private View view;
-//	Map<String, ISession.ObservationListener> observationListeners = Collections.synchronizedMap(new LinkedHashMap<>());
-//	private Map<String, BiConsumer<String, Object>> stateChangeListeners = Collections.synchronizedMap(new HashMap<>());
-//	ITime timeOfInterest = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
 
-//	Map<String, ROIListener> roiListeners = Collections.synchronizedMap(new LinkedHashMap<>());
-//
-//	public interface ROIListener {
-//
-//		public void onChange(SpatialExtent extent);
-//
-//	}
+	// tracks the setting of the actor so we can avoid the ask pattern
+	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
+	/**
+	 * A scheduler to periodically collect observation and task garbage
+	 */
+	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
+	/*
+	 * Tasks created in this session, managed as task/script start and end. Content
+	 * may be a IScript or a ITask.
+	 */
+	Map<String, Future<?>> tasks = Collections.synchronizedMap(new HashMap<>());
+
+	/*
+	 * The contexts for all root observations built in this session, up to the
+	 * configured number, most recent first. Synchronized.
+	 */
+	Deque<IRuntimeScope> observationContexts = new LinkedBlockingDeque<>(
+			Configuration.INSTANCE.getMaxLiveObservationContextsPerSession());
+
+	/*
+	 * Support for incremental search from the front-end. Synchronized because
+	 * searches can take arbitrary time although in most cases they will be fast.
+	 */
+	private Map<String, Pair<IIndexingService.Context, List<Match>>> searchContexts = Collections
+			.synchronizedMap(new HashMap<>());
+
+
+	private AtomicBoolean interactive = new AtomicBoolean(false);
+	private AtomicLong lastNetworkCheck = new AtomicLong(0);
+	
+	
 	// a simple monitor that will only compile all notifications into a list to be
 	// sent back to clients
 	class ReportingMonitor implements IMonitor {
@@ -254,54 +268,6 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	}
 
-	// tracks the setting of the actor so we can avoid the ask pattern
-	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
-	/**
-	 * A scheduler to periodically collect observation and task garbage
-	 */
-	private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
-
-	/*
-	 * Tasks created in this session, managed as task/script start and end. Content
-	 * may be a IScript or a ITask.
-	 */
-	Map<String, Future<?>> tasks = Collections.synchronizedMap(new HashMap<>());
-
-	/*
-	 * The contexts for all root observations built in this session, up to the
-	 * configured number, most recent first. Synchronized.
-	 */
-	Deque<IRuntimeScope> observationContexts = new LinkedBlockingDeque<>(
-			Configuration.INSTANCE.getMaxLiveObservationContextsPerSession());
-
-	/*
-	 * Support for incremental search from the front-end. Synchronized because
-	 * searches can take arbitrary time although in most cases they will be fast.
-	 */
-	private Map<String, Pair<IIndexingService.Context, List<Match>>> searchContexts = Collections
-			.synchronizedMap(new HashMap<>());
-
-	/**
-	 * These are defined every time the ROI is set unless space or time are locked,
-	 * in which case they will only be set if null.
-	 */
-	private Double spatialGridSize = null;
-	private String spatialGridUnits = null;
-	private Resolution temporalResolution;
-	private Long timeStart = null;
-	private Long timeEnd = null;
-
-	private AtomicBoolean interactive = new AtomicBoolean(false);
-//	/*
-//	 * Space and time locking defines behavior at context reset: if context is reset
-//	 * and resolution is locked, we keep the user-defined resolution (defining it
-//	 * from the current at the moment of locking if the user res is null).
-//	 */
-//	private AtomicBoolean lockSpace = new AtomicBoolean(false);
-//	private AtomicBoolean lockTime = new AtomicBoolean(false);
-	private AtomicLong lastNetworkCheck = new AtomicLong(0);
-
-	private String regionNameOfInterest = "Region of interest";
 
 	public interface Listener {
 
@@ -356,124 +322,6 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		}
 		this.closed = true;
 	}
-
-//	@Override
-//	public Future<ISubject> observe(String urn, String... scenarios) {
-//		return observe(urn, CollectionUtils.arrayToList(scenarios), null, null);
-//	}
-
-//	/**
-//	 * Listener consumers are called as things progress. The observation listener
-//	 * is first called with null as a parameter when starting, then (if no error
-//	 * occurs) another time with the observation as argument. The observation may be
-//	 * empty. If an exception is thrown, the error listener is called with the
-//	 * exception as argument.
-//	 * 
-//	 * @param urn
-//	 * @param scenarios
-//	 * @param observationListener
-//	 * @param errorListener
-//	 * @return
-//	 */
-//	public Future<ISubject> observe(String urn, Collection<String> scenarios, Consumer<IArtifact> observationListener,
-//			Consumer<Throwable> errorListener) {
-//
-//		touch();
-//
-//		Object object = null;
-//
-//		if (urn.contains(" ")) {
-//			// can only be a declaration
-//			object = Observables.INSTANCE.declare(urn);
-//		} else {
-//			object = Resources.INSTANCE.getModelObject(urn);
-//		}
-//
-//		if (object == null) {
-//			// check for URN and launch a viewer task if so.
-//			IResource resource = Resources.INSTANCE.resolveResource(urn);
-//			if (resource != null) {
-//				return new UrnContextualizationTask(this, urn);
-//			} else {
-//				throw new KlabContextualizationException("cannot resolve URN " + urn);
-//			}
-//		}
-//
-//		if (!(object instanceof Observer)) {
-//
-//			if (regionOfInterest != null && (object instanceof KimObject || object instanceof IObservable)) {
-//
-//				INamespace namespace = object instanceof KimObject ? ((KimObject) object).getNamespace()
-//						: Namespaces.INSTANCE.getNamespace(((IObservable) object).getType().getNamespace());
-//				/*
-//				 * gridsize is defined if ROI is.
-//				 */
-//				SpatialExtent roi = new SpatialExtent(regionOfInterest);
-//				roi.setGridResolution(this.spatialGridSize);
-//				roi.setGridUnit(this.spatialGridUnits);
-//
-//				/*
-//				 * see if an application has defined a temporal context through the global state
-//				 */
-//				ITime time = getConfiguredTime();
-//
-//				if (time == null) {
-//					if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
-//						/*
-//						 * ACHTUNG if the time is PHYSICAL, states won't initialize properly (with the
-//						 * first timeslice @0)!
-//						 */
-//						time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
-//								this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
-//								new TimeInstant(this.timeEnd), null);
-//					} else {
-//						time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
-//					}
-//				}
-//
-//				Observer observer = Observations.INSTANCE.makeROIObserver(roi, time, (Namespace) namespace,
-//						this.regionNameOfInterest, monitor);
-//				this.regionNameOfInterest = observer.getName();
-//				try {
-//					ISubject subject = new ObserveContextTask(this, observer, scenarios)
-//							.get();
-//					if (subject != null) {
-//						/*
-//						 * the inner task gets lost - should not matter as this is simply handling an
-//						 * asynchronous UI action.
-//						 */
-//						subject.observe(urn);
-//						return ConcurrentUtils.constantFuture(subject);
-//					}
-//				} catch (InterruptedException | ExecutionException e) {
-//					monitor.error(e);
-//					return null;
-//				}
-//			}
-//
-//			throw new KlabContextualizationException("Cannot observe " + urn + ": unknown or no context established");
-//		}
-//
-//		return new ObserveContextTask(this, (Observer) object, scenarios, observationListener, errorListener);
-//	}
-
-//	private ITime getConfiguredTime() {
-//		
-//		if (this.globalState.containsAnyKey("startyear", "endyear", "year", "timestep", "start", "end", "step")) {
-//
-//			Object start = Utils.asType(this.globalState.getAny("startyear", "start"), Integer.class);
-//			Object end = Utils.asType(this.globalState.getAny("endyear", "end"), Integer.class);
-//			Object step = this.globalState.getAny("timestep", "step");
-//			Object year = Utils.asType(this.globalState.get("year"), Integer.class);
-//
-//			Parameters<String> parameters = Parameters.createNotNull("start", start, "end", end, "step", step, "year",
-//					year);
-//
-//			return (this.timeOfInterest = (ITime) (new org.integratedmodelling.klab.components.time.services.Time())
-//					.eval(parameters, null));
-//		}
-//		return null;
-//	}
 
 	public String toString() {
 		// TODO add user
@@ -587,32 +435,6 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		}
 		return false;
 	}
-//
-//	public Collection<ObservationListener> getObservationListeners() {
-//		return observationListeners.values();
-//	}
-//
-//	@Override
-//	public String addObservationListener(ISession.ObservationListener listener) {
-//		String ret = NameGenerator.newName();
-//		observationListeners.put(ret, listener);
-//		return ret;
-//	}
-//
-//	@Override
-//	public void removeObservationListener(String listenerId) {
-//		observationListeners.remove(listenerId);
-//	}
-
-//	public String addROIListener(ROIListener listener) {
-//		String ret = NameGenerator.newName();
-//		roiListeners.put(ret, listener);
-//		return ret;
-//	}
-//
-//	public void removeROIListener(String listenerId) {
-//		roiListeners.remove(listenerId);
-//	}
 
 	/**
 	 * Register a task. It may be a ITask or a IScript, which only have the Future
@@ -709,35 +531,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	@MessageHandler(type = IMessage.Type.FeatureAdded)
 	private void handleFeatureAdded(final SpatialLocation location) {
-
-		/*
-		 * TODO this moves the context: must do through the state, not here.
-		 */
-
-		if (location.getContextId() == null) {
-			ITime time = ((SessionState) getState()).getTimeOfInterest();
-			if (time == null) {
-				if (this.temporalResolution != null && this.timeStart != null && this.timeEnd != null) {
-					time = Time.create(ITime.Type.LOGICAL, this.temporalResolution.getType(),
-							this.temporalResolution.getMultiplier(), new TimeInstant(this.timeStart),
-							new TimeInstant(this.timeEnd), null);
-				} else {
-					time = org.integratedmodelling.klab.Time.INSTANCE.getGenericCurrentExtent(Resolution.Type.YEAR);
-				}
-			}
-			Shape shape = Shape.create("EPSG:4326 " + location.getWktShape());
-			Observer observer = Observations.INSTANCE.makeROIObserver(shape, time, null, this.regionNameOfInterest,
-					monitor);
-			this.regionNameOfInterest = observer.getName();
-
-			try {
-				new ObserveContextTask(this, observer, new ArrayList<>()).get();
-			} catch (InterruptedException | ExecutionException e) {
-				monitor.error(e);
-			}
-		} else {
-			// TODO do something with the shape - must involve user to define semantics
-		}
+		this.globalState.setShape((location.getWktShape() == null || location.getWktShape().isEmpty()) ? null
+				: Shape.create("EPSG:4326 " + location.getWktShape()));
 	}
 
 	@MessageHandler
@@ -796,7 +591,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	}
 
 	@MessageHandler
-	private void handleResourceOperation(final ResourceOperationRequest request) {
+	private void handleResourceOperation(final ResourceOperationRequest request, IMessage message) {
 
 		final IResource resource = Resources.INSTANCE.resolveResource(request.getUrn());
 		if (resource == null) {
@@ -831,13 +626,15 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 					}
 				} else {
 					IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
-					res = adapter.getValidator().performOperation(resource, request.getOperation(), rmonitor);
+					res = adapter.getValidator().performOperation(resource, request.getOperation(), Parameters.create(request.getParameters()),
+							Resources.INSTANCE.getCatalog(resource), rmonitor);
 				}
 
 				response.setUrn(resource.getUrn());
 				response.setOperation(request.getOperation());
 				response.getNotifications().addAll(rmonitor.notifications);
-				monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceInformation, response);
+				monitor.send(Message.create(Session.this.getId(), IMessage.MessageClass.ResourceLifecycle,
+						IMessage.Type.ResourceInformation, response).inResponseTo(message));
 
 				/*
 				 * TODO if there are no errors or a non-standard operation was chosen, refresh
@@ -909,9 +706,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 				} else if (request.getOperation() == CRUDOperation.UPDATE) {
 
-					resource = Resources.INSTANCE.getLocalResourceCatalog().removeDefinition(urn);
-					((Resource) resource).update(request);
-					Resources.INSTANCE.getLocalResourceCatalog().put(urn, resource);
+					resource = Resources.INSTANCE.updateResource(urn, request);
 					monitor.send(IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUpdated,
 							((Resource) resource).getReference());
 
@@ -1013,7 +808,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 		if (action.getMatchId().startsWith("klab:")) {
 			// TODO/FIXME: use a more robust test
-			getState().submit(action.getMatchId());
+			getState().submitGeolocation(action.getMatchId());
 			return;
 		}
 
@@ -1439,6 +1234,17 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		}
 	}
 
+	@MessageHandler
+	private void handleEngineCommand(EngineAction message) {
+
+		switch (message.getRequest()) {
+		case "debugger":
+			Debug.INSTANCE.newDebugger(this);
+			break;
+		}
+
+	}
+
 	@MessageHandler(type = IMessage.Type.ResetContext)
 	private void handleResetContextRequest(String dummy) {
 
@@ -1531,13 +1337,6 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	@MessageHandler(type = IMessage.Type.ScaleDefined)
 	private void handleScaleChangeRequest(ScaleReference scaleRef) {
 		this.globalState.register(scaleRef);
-		this.spatialGridSize = Units.INSTANCE.METERS
-				.convert(scaleRef.getSpaceResolutionConverted(), Unit.create(scaleRef.getSpaceUnit())).doubleValue();
-		this.spatialGridUnits = scaleRef.getSpaceUnit();
-		this.temporalResolution = Time
-				.resolution(scaleRef.getTimeResolutionMultiplier() + "." + scaleRef.getTimeUnit());
-		this.timeStart = scaleRef.getStart() == 0 ? null : Long.valueOf(scaleRef.getStart());
-		this.timeEnd = scaleRef.getEnd() == 0 ? null : Long.valueOf(scaleRef.getEnd());
 	}
 
 	@MessageHandler
@@ -1732,5 +1531,9 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 	public void notifyNewObservation(IObservation object, ISubject context) {
 		globalState.notifyNewObservation(object, context);
+	}
+
+	public long getLastActivity() {
+		return lastActivity;
 	}
 }

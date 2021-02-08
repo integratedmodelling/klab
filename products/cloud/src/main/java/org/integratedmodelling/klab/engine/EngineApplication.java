@@ -16,9 +16,6 @@ import org.springframework.http.converter.HttpMessageConverter;
 import org.springframework.http.converter.json.MappingJackson2HttpMessageConverter;
 import org.springframework.web.client.RestTemplate;
 
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
 
 /**
  * A Cloud-driven k.LAB Engine.
@@ -31,38 +28,35 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 @ComponentScan
 public class EngineApplication {
 	
-		private ConfigurableApplicationContext context;
-		
-		@Bean
-		public RestTemplate restTemplate() {
-		   final RestTemplate restTemplate = new RestTemplate();
-
-		   List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
-		   MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
-		   converter.setSupportedMediaTypes(Collections.singletonList(MediaType.APPLICATION_JSON));
-		   messageConverters.add(converter);
-		   restTemplate.setMessageConverters(messageConverters);
-
-		   return restTemplate;
-		}
-		
-		
-		public void run(String[] args) {
-			context = new SpringApplicationBuilder(EngineApplication.class)
-		            .listeners(new EngineRunner()).run();
-		}
-		
-
-		@PreDestroy
-		public void shutdown() {
-		}
-		
-		
-		
-		public static void main(String args[]) {
-			new EngineApplication().run(args);
-		}
-		
+	private ConfigurableApplicationContext context;
+	
+	@Bean
+	public RestTemplate restTemplate() {
+		final RestTemplate restTemplate = new RestTemplate();
+		List<HttpMessageConverter<?>> messageConverters = new ArrayList<>();
+		MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
+		converter.setSupportedMediaTypes(Collections.singletonList(MediaType.APPLICATION_JSON));
+		messageConverters.add(converter);
+		restTemplate.setMessageConverters(messageConverters);
+		return restTemplate;
+	}
+	
+	
+	public void run(String[] args) {
+		context = new SpringApplicationBuilder(EngineApplication.class)
+				.listeners(new EngineRunner()).run();
+	}
+	
+	
+	@PreDestroy
+	public void shutdown() {
+	}
+	
+	
+	
+	public static void main(String args[]) {
+		new EngineApplication().run(args);
+	}
 
 
 }

@@ -133,7 +133,7 @@ public enum Annotations implements IAnnotationService {
 			prototypes.put(prototype.getName(), prototype);
 			if (prototype.getType() != IArtifact.Type.ANNOTATION) {
 				throw new KlabInternalErrorException(
-						"annotation prototype for " + prototype.getName() + " does not specify an annotation");
+						"annotation prototype for " + prototype.getName() + " does not specify an annotation in " + manifest);
 			} else if (prototype.getExecutorClass() != null) {
 				try {
 					Object handler = prototype.getExecutorClass().getDeclaredConstructor().newInstance();

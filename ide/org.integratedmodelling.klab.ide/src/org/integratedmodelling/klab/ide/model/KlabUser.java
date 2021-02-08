@@ -13,9 +13,11 @@ public class KlabUser {
 	}
 
 	public KlabUser(IdentityReference owner) {
-		this.email = owner.getEmail();
-		this.username = owner.getId();
-		this.online = true;
+		if( owner != null ) {
+			this.email = owner.getEmail();
+			this.username = owner.getId();
+			this.online = true;
+		}
 	}
 
 	public String getUsername() {

@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IActivity;
 import org.integratedmodelling.klab.api.provenance.IAgent;
 import org.integratedmodelling.klab.api.provenance.IProvenance;
+import org.integratedmodelling.klab.rest.SessionActivity;
 
 /**
  * One of the concrete activities (Description) in the ODO observation ontology:
@@ -29,11 +30,8 @@ public class Activity implements IActivity {
 	private long end;
 	private Type type = Type.Creation;
 	private ITime schedulerTime;
-
-//	public Activity() {
-//		// TODO Auto-generated constructor stub
-//	}
-
+	private SessionActivity activityDescriptor;
+	
 	// TODO add provenance
 	public Activity(String token) {
 		this.id = token;
@@ -109,6 +107,14 @@ public class Activity implements IActivity {
 
 	public void setSchedulerTime(ITime schedulerTime) {
 		this.schedulerTime = schedulerTime;
+	}
+
+	public SessionActivity getActivityDescriptor() {
+		return activityDescriptor;
+	}
+
+	public void setActivityDescriptor(SessionActivity activityDescriptor) {
+		this.activityDescriptor = activityDescriptor;
 	}
 
 }

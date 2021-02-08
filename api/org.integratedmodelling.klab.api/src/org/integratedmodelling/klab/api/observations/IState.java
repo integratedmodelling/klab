@@ -20,7 +20,7 @@ import java.util.Iterator;
 import org.integratedmodelling.kim.api.IValueMediator;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
-import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 
 /**
@@ -82,7 +82,7 @@ public interface IState extends IObservation, IDataArtifact {
 	 * 
 	 * @return the aggregation table, or null if not applicable.
 	 */
-	ITable<Number> getTable();
+	IStructuredTable<Number> getTable();
 	
 	@Override
 	ISubjectiveState reinterpret(IDirectObservation observer);

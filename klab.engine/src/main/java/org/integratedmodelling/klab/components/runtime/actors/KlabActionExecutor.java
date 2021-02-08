@@ -1,9 +1,13 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import org.integratedmodelling.kactors.model.KActorsQuantity;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.model.KimQuantity;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
@@ -111,12 +115,12 @@ public abstract class KlabActionExecutor {
 	
 	public void fire(Object value, boolean isFinal) {
 		if (scope.listenerId != null) {
-			this.sender.tell(new Fire(scope.listenerId, value, isFinal, scope.appId));
+			this.sender.tell(new Fire(scope.listenerId, value, isFinal, scope.appId, scope.semaphore));
 		}
 	}
 
 	public void fail(Object... args) {
-		if (args != null && scope != null) {
+	    if (args != null && scope != null) {
 			scope.runtimeScope.getMonitor().error(args);
 		}
 		fire(false, true);
@@ -141,6 +145,8 @@ public abstract class KlabActionExecutor {
 		case ANYVALUE:
 		case EMPTY:
 			break;
+        case OBJECT:
+            return Actors.INSTANCE.createJavaObject(arg.getConstructor(), scope, identity);
 		case ANYTRUE:
 			return true;
 		case ERROR:
@@ -155,7 +161,7 @@ public abstract class KlabActionExecutor {
 		case EXPRESSION:
 
 			if (this.expression == null) {
-				this.expression = new ObjectExpression((IKimExpression) arg.getValue(), scope.runtimeScope);
+				this.expression = new ObjectExpression((IKimExpression) arg.getValue(), scope.runtimeScope, CompilerOption.WrapParameters);
 			}
 			return this.expression.eval(scope.runtimeScope, identity, Parameters.create(scope.symbolTable));
 
@@ -166,6 +172,7 @@ public abstract class KlabActionExecutor {
 		case RANGE:
 		case STRING:
 		case OBSERVABLE:
+        case QUANTITY:
 			return arg.getValue();
 		case OBSERVATION:
 			// TODO
@@ -184,8 +191,6 @@ public abstract class KlabActionExecutor {
 		case NODATA:
 			return null;
 //			return Observables.INSTANCE.declare(arg.getValue().toString());
-		case QUANTITY:
-			break;
 		case REGEXP:
 			break;
 		case TABLE:
@@ -199,7 +204,7 @@ public abstract class KlabActionExecutor {
 		case CONSTANT:
 			break;
 		}
-		return null;
+		return arg.getValue();
 	}
 
 	protected <T> T evaluateArgument(String argument, Scope scope, T defaultValue) {

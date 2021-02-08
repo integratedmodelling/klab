@@ -8,9 +8,11 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.DataUtilities;
@@ -233,8 +235,42 @@ public class Postgis {
 	private PublishedResource publishRaster(File resource, Urn urn) {
 		// TODO Auto-generated method stub
 		String name = urn.getNamespace() + "_" + urn.getResourceId();
-
 		return null;
+	}
+
+	/**
+	 * Report on the number of stored shapes associated with this resource.
+	 * 
+	 * @param urn
+	 * @return
+	 */
+	public Map<String, Object> describeContents(Urn urn) {
+
+		Map<String, Object> ret = new LinkedHashMap<>();
+		String table = urn.getNamespace() + "_" + urn.getResourceId();
+		table = table.replaceAll("\\.", "_").toLowerCase();
+		String smTableName = table + "_sm";
+
+		ret.put("simplified_table_name", smTableName);
+
+		try (Connection con = DriverManager.getConnection(this.pgurl,
+				Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+				Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+				Statement st = con.createStatement()) {
+
+			ResultSet rs = st.executeQuery("SELECT COUNT('gid'), level FROM " + smTableName + " GROUP BY level");
+			long n = 0;
+			while (rs.next()) {
+				ret.put("simplified_count_level_" + rs.getObject(2), rs.getLong(1));
+				n += rs.getLong(1);
+			}
+			ret.put("total_shapes", n);
+
+		} catch (Throwable t) {
+			ret.put("error during query", ExceptionUtils.getStackTrace(t));
+		}
+
+		return ret;
 	}
 
 	/**
@@ -269,8 +305,8 @@ public class Postgis {
 
 		WKBReader wkb = new WKBReader();
 
-		System.out.println(chooseShape);
-		
+//		System.out.println(chooseShape);
+
 		try {
 			try (Connection con = DriverManager.getConnection(this.pgurl,
 					Configuration.INSTANCE.getServiceProperty("postgres", "user"),
@@ -288,7 +324,7 @@ public class Postgis {
 					String sourceTable = rs.getString(2);
 					String shapeName = rs.getString(3);
 					int level = rs.getInt(5);
-					
+
 					PGobject thegeom = (PGobject) rs.getObject(4);
 					Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
 					Shape shape = Shape.create(geometry, Projection.getLatLon());
@@ -448,7 +484,7 @@ public class Postgis {
 					if (!shape.getJTSGeometry().isValid()) {
 						continue;
 					}
-					
+
 					long gid = rs.getLong("fid");
 
 					parameters.clear();
@@ -457,10 +493,10 @@ public class Postgis {
 							parameters.put(attribute.name, rs.getObject(attribute.name));
 						}
 					}
-					
+
 					parameters.put("ID", "" + gid);
 					parameters.put("LEVEL", level + "");
-					
+
 					Object name = null;
 					try {
 						name = nameCalculator.eval(parameters, scope);
@@ -486,10 +522,11 @@ public class Postgis {
 					if (!simplified.getJTSGeometry().isValid()) {
 						continue;
 					}
-					
+
 					String sql_nd = "INSERT INTO \"" + table_simplified + "\" VALUES (" + gid + ", " + shape_area
 							+ ", '" + Escape.forSQL(name.toString()) + "', '" + published.name + "', " + level + ", "
-							+ rank + ", ST_MakeValid(ST_Multi(ST_GeomFromText('" + simplified.getJTSGeometry().buffer(0) + "', 4326))));";
+							+ rank + ", ST_MakeValid(ST_Multi(ST_GeomFromText('" + simplified.getJTSGeometry().buffer(0)
+							+ "', 4326))));";
 
 //					ist.execute(sql_bb);
 					ist.execute(sql_nd);

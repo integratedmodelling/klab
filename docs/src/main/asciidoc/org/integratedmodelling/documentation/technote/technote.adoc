@@ -8,24 +8,24 @@ Ferdinando Villa, Ph.D.
 :numbered:
 
 
-*Integrated modeling* is a practice meant to maximize the value of scientific information by ensuring its  _modularity_, _reusability_, _interoperability_ and _traceability_ throughout the scientific process. The k.LAB software, discussed here, is a full-stack solution for integrated modelling, supporting the production, curation, linking and deployment of scientific artifacts such as datasets, modular model components and distributed computational services. The purpose of k.LAB is to ensure -- by _design_ rather than intention -- that the pool of such artifacts constitutes a _knowledge commons_, actuated through the full realization of the _linked data_ paradigm [REF] and the use of semantics to automate a wide range of modeling tasks that were previously only performable by experts and on an ad-hoc basis.
+*Integrated modeling* is a practice meant to maximize the value of scientific information by ensuring its  _modularity_, _reusability_, _interoperability_ and _traceability_ throughout the scientific process. The k.LAB software, discussed here, is a full-stack solution for integrated modelling, supporting the production, curation, linking and deployment of scientific artifacts such as datasets, modular model components and distributed computational services. The purpose of k.LAB is to ensure -- by _design_ rather than intention -- that the pool of such artifacts constitutes a _knowledge commons_, actuated through the full realization of the _linked data_ paradigm [REF] augmented with semantics and powered by machine reasoning. This design enables automation of a wide range of modeling tasks that were previously only performable by experts and on an ad-hoc basis.
 
 The central service in the k.LAB modeling API receives as input a logical query of the form `observe` _concept_ `in` _context_ (e.g., `observe` _change in land cover type_ `in` _Colombia, 2015-2020_, slightly paraphrased from k.LAB's near-natural query formalism) and, in response, assembles, documents, initializes and runs a computation (called a _dataflow_) that produces the  *observation* of the concept that best fits the context, based on the integration of data and model components available in the k.LAB network. The observation output by the API request and the dataflow assembled to generate it are themselves scientific artifacts -- automatically augmented with provenance records and user-readable documentation -- that can be exported or curated for sharing through the same or any other service. Artificial intelligence, driven by both semantics (_machine reasoning_) and the analysis of previous outcomes (_machine learning_), satisfies the request using a shared, communally owned and curated knowledge base (the _worldview_, a set of ontologies) and the resource pool available at any given moment on the k.LAB network, by ranking, selecting, adapting, and connecting data and model components made available by independent and uncoordinated providers.
 
 ## Architecture of the k.LAB platform
 
-The open source k.LAB software stack includes five components that support the creation, maintenance and use of a distributed _semantic web platform_ where scientific information can be stored, published, curated and connected. The platform directly addresses the four FAIR goals (Findable, Accessible, Interoperable and Reusable), to which it adds a _reactivity_ dimension that enables knowledge to also be _deployed_ in an _"internet of observations"_, creating _live_ artifacts that can change and improve as new information appears on the network. 
+The open source k.LAB software stack includes five components that support the creation, maintenance and use of a distributed _semantic web platform_ where scientific information can be stored, published, curated and connected. The platform directly addresses the four FAIR goals (Findable, Accessible, Interoperable and Reusable), to which it adds a _reactivity_ dimension that enables knowledge to also be _deployed_ in an _"internet of observations"_, creating _live_ artifacts that can change and improve as new information appears on the network.
 
 * *Server* components (*k.Node*) are deployed by certified _partners_ to publish resources and semantic content (*k.Server*) and/or provide semantic modeling services (*k.Engine*) to online users. One k.Node instance is installed at a partner site, where it can be configured (through its administration interface) to spawn as many k.Server and/or k.Engine instances as desired, using Docker/Kubernetes technology. Published content includes both static data and dynamic computations; it may be hosted natively on k.Servers or linked from external data services (e.g. OGC, OpenDAP), or from computational services (e.g. OpenCPU). The k.Server containers managed automatically by k.Node can be configured to host dedicated instances of Geoserver, PostgreSQL, Hyrax or other services that are transparently managed through server adapters, eliminating the need for alphabetization on behalf of node administrators.
 * *Client* components are used by contributors (*k.Modeler*, an Integrated Development Environment (IDE) for semantic modeling) to develop, validate and publish resources and semantic content, and by end users (*k.Explorer*) to access modeling services with novel intuitiveness and transparency. The k.LAB engine, a server-side component, can also be run at the client side in a local configuration, so that new content can be developed and tested in a sandboxed environment before publishing, with full access to public resources. Such client use is supported and facilitated by a small, downloadable https://integratedmodelling.org/get_started[control center application] that removes the complexities linked to installing, upgrading, starting and stopping the engine or the IDE. The k.LAB distributed paradigm supports and enforces a model where information remains under the ownership of its authoritative sources while maximizing its availability and interoperability, compatibly with both public and commercial services thanks to careful attribution and to state-of-the-art encryption, access control and security.
 
-An additional server component, *k.Hub*, manages authentication and organizes node access for engines. The k.LAB platform is created by deploying k.Nodes at partner sites. The Integrated Modeling Partnership manages a set of nodes and a main hub, and releases site certificates that enable nodes to be connected to form the platform. The site certificate commits the node to a worldview and specifies its connection to a hub. Partners that need to manage users locally may also deploy and connect a hub, although this is not normally required except in large deployments. 
+An additional server component, *k.Hub*, manages authentication and organizes node access for engines. The k.LAB platform is created by deploying k.Nodes at partner sites. The Integrated Modeling Partnership manages a set of nodes and a main hub, and releases site certificates that enable nodes to be connected to form the platform. The site certificate commits the node to a worldview and specifies its connection to a hub. Partners that need to manage users locally may also deploy and connect a hub, although this is not normally required except in large deployments.
 
 The set of active, connected nodes at a given time forms what can be seen collectively as a distributed _container_, where scientific knowledge is found in three distinct layers:
 
 The *resource layer* deals with _resources_, i.e. stored, curated content that is not explicitly semantic. Resource content may be static (data or data services) or dynamic (equations, programs or computational services that may state required inputs by name and data type). Resources are identified by unique Uniform Resource Names (URNs). They are imported or created, validated and tested locally at a provider's end, after which they can be documented, published on k.Servers, and curated remotely. Each resource can be automatically mirrored and can be resolved by any server. Resources have no semantics associated: each has a URN, a _data type_, a _contract_ for use (needed inputs, provided outputs, options and attributes), a set of ISO-compliant metadata including mandatory credits and access details, and a _geometry_ defining the mathematical aspects of their spatial and/or temporal topologies. End users of k.LAB do not normally deal with resources directly, all interaction with them being mediated through the semantic layer.
 
-The *semantic layer* deals with semantic resources exist at the "conceptual"  level (models, concepts), at the "physical" level (semantically annotated observations, "live" within a session) and can be exported back to resources for publication and curation. In the semantic layer, links are made between resources and their meaning: by adopting a representational - principles of orthogonality and parsimony ... The *k.IM language*, a  language optimized for semantic annotation... , is central to the semantic layer and ensures...
+The *semantic layer* deals with semantic resources that exist at the "conceptual"  level (models, concepts), at the "physical" level (semantically annotated observations, "live" within a session) and can be exported back to resources for publication and curation. In the semantic layer, links are made between resources and their meaning: by adopting a representational - principles of orthogonality and parsimony ... The *k.IM language*, a  language optimized for semantic annotation... , is central to the semantic layer and ensures...
 
 The *reactivity layer* connects _behaviors_ to any artifacts created during a k.LAB session, enabling individual-based modeling, interactive, reactive and distributed real-time simulations. It relies on the *k.Actors language* for behavior specification. _Actors_ that can receive a behavior include not only observations (agent-based modeling) but also sessions and users: behaviors bound to sessions provide an _application framework_ for both interactive and non-interactive applications that can be coded quickly and concisely and run indifferently on a desktop or online. Behaviors specified in k.Actors are mapped to the http://akka.io[Akka] framework to create interactive, distributed simulations and applications that operate using IoT technology both locally and remotely.
 
@@ -33,9 +33,9 @@ The *reactivity layer* connects _behaviors_ to any artifacts created during a k.
 
 ### The resource layer
 
-The resource layer is where data and models provided by the community are published, curated and accessed. Resources consist of anything that can be linked to semantics: thus, not only datasets and databases but also model components, equations, entire computational services (such as a climate model runnable through an API) or, in the simplest cases, even single numbers. Each resource is identified by a unique, stable Uniform Resource Name (URN) which is assigned upon _publishing_, which also establishes a set of editable access permissions. In addition to the URN, each resource has a _type_ and a _geometry_. Interoperability at the resource level is guaranteed by _adapters_, software plugins that can be added to the system to bridge data formats or service APIs to the uniform k.LAB resource model. 
+The resource layer is where data and models provided by the community are published, curated and accessed. Resources consist of anything that can be linked to semantics: thus, not only datasets and databases but also model components, equations, entire computational services (such as a climate model runnable through an API) or, in the simplest cases, even single numbers. Each resource is identified by a unique, stable Uniform Resource Name (URN) which is assigned upon _publishing_, which also establishes a set of editable access permissions. In addition to the URN, each resource has a _type_ and a _geometry_. Interoperability at the resource level is guaranteed by _adapters_, software plugins that can be added to the system to bridge data formats or service APIs to the uniform k.LAB resource model.
 
-#### Lifecycle. 
+#### Lifecycle.
 
 Ensuring safety, documentation and validation.
 
@@ -49,7 +49,7 @@ Search and discover API (no semantics: by metadata, author etc)
 
 In k.LAB, ontologies are the semantic foundation that enables inference, assembly and validation of correct, distributed computations. In other applications of ontologies in data science and modeling, ontologies are used primarily for semantic tagging, as logically enhanced vocabularies whose URIs are added to metadata; the complex semantic underpinnings needed to automatically and safely adapt and assemble computations from multiple sources and components have remained understudied and undeveloped. Semantic specification in k.LAB is considerably more articulated than in the comparatively free-form worldviews incarnated in efforts such as SWEET or ENVO. In order to enable such _interoperability through reasoning_ while keeping the annotation activity simple enough to be learned and performed by non-knowledge engineers, we have developed a specialized language (k.IM) that validates easily readable, English-like logical statements and turns them into the correspondent formal axioms, with much greater ease and economy compared to using "raw" ontology concepts and restrictions (for example in OWL).
 
-The k.IM syntax embodies and enforces consistency of the statements with a core observation ontology, which establishes the phenomenological basis and the assembly rules for concepts representing the core categories of _observables_ [subjects, qualities, processes, events, relationships] of which scientific observations can be made, and of _predicates_ [attributes, roles, identities, realms] that further specify these observations. 
+The k.IM syntax embodies and enforces consistency of the statements with a core observation ontology, which establishes the phenomenological basis and the assembly rules for concepts representing the core categories of _observables_ [subjects, qualities, processes, events, relationships] of which scientific observations can be made, and of _predicates_ [attributes, roles, identities, realms] that further specify these observations.
 
 [NEEDS EXAMPLES HERE] Consider the examples of ..
 
@@ -68,8 +68,8 @@ Two levels: the worldview (shared and synchronized, based on certificate) and mo
 
 Concept declaration: k.IM embodies the core observation ontology and hides it behind English-like constructions that remain readable to non-initiated.
 
-Concept use: extends the common "one concept, one artifact" paradigm of other semantic annotation approaches by using the same linguistic (English-like) constructs to compose logical expressions (_observables_) that encode complex concepts without the need to artificially extend the ontology and creating new, countless conventions beyond rules of composition. The resulting observables preserve semantics for all their components (including attributes, identities, roles and the like) and capture the inner structure of the observation process so that the AI engine can find the best strategy to compute their observations. 
-One worldview is shared by a network of connected k.LAB nodes, hubs and engines, and the commitment to a specific worldview is stored with the certificate that enables nodes, engines and users to connect to the network. COMES WITH THE CERTIFICATE. While many worldviews can ,,,, is communally owned 
+Concept use: extends the common "one concept, one artifact" paradigm of other semantic annotation approaches by using the same linguistic (English-like) constructs to compose logical expressions (_observables_) that encode complex concepts without the need to artificially extend the ontology and creating new, countless conventions beyond rules of composition. The resulting observables preserve semantics for all their components (including attributes, identities, roles and the like) and capture the inner structure of the observation process so that the AI engine can find the best strategy to compute their observations.
+One worldview is shared by a network of connected k.LAB nodes, hubs and engines, and the commitment to a specific worldview is stored with the certificate that enables nodes, engines and users to connect to the network. COMES WITH THE CERTIFICATE. While many worldviews can ,,,, is communally owned
 (ontologies rigorously ONLY about the meaning, never the representation, metadata or distribution)
 
 Semantic servers (a forthcoming k.LAB component) and curated observables will further limit the ambiguity, hopefully leading to content developers being able to quickly home in on the semantics that guarantees the highest return for investment in terms of linking and interoperability of every new contribution.
@@ -99,7 +99,7 @@ Operations here are _resolution_ of the concept in the context (producing a self
 
 The k.IM language used to specify the worldview also has the `model` construct that allowa.....
 
-EXAMPLES OF MODELS 
+EXAMPLES OF MODELS
 
 ### Contextualization
 
@@ -109,19 +109,19 @@ Automated resolution of OCCURRENTS and INHERENTS - change propagation - observat
 
 #### Learning models
 
-Machine learning integrated in the 
+Machine learning integrated in the
 
 #### Authorities
 
 ### The reactivity layer
 
-The reactivity layer provides _behaviors_ to any of the agents living in the semantic layer. These include not only any observation created through contextualization, but also sessions, users, and the partners themselves. Behaviors are specified in the `k.Actors` language and can be bound explicitly or through bindings specified by models. 
+The reactivity layer provides _behaviors_ to any of the agents living in the semantic layer. These include not only any observation created through contextualization, but also sessions, users, and the partners themselves. Behaviors are specified in the `k.Actors` language and can be bound explicitly or through bindings specified by models.
 
 This _reactive modelling_ is a novel extension that sees the products of a modelling session not only as knowledge for direct perusal or curation, but also as “live” agents that can react to events and talk to each other through the network – a sort of “internet of things” that connects scientific observations, sensors and models instead of appliances and devices. In the terms of the k.LAB technology, this is accomplished directly by binding the results of a k.LAB session (scientific observations “living” in a networked server) to a behavior that enables them to react to events, coming from users or from other observations. This enables building:
-1.	Distributed simulations where authoritative sites provide state-of-the-art modelling of specific phenomena (say climate or human migration) and other researchers can simply connect to those contexts to simulate related observables in the most reliable incarnations (in simulated time or in real time). 
+1.	Distributed simulations where authoritative sites provide state-of-the-art modelling of specific phenomena (say climate or human migration) and other researchers can simply connect to those contexts to simulate related observables in the most reliable incarnations (in simulated time or in real time).
 2.	A much easier definition of scenarios for predictive modeling, as changing the frame of reference for a simulation becomes a matter of switching the URL of a context with that of another, ideally provided by institutions with the relevant expertise.
 3.	The ability of easily sketching and connect ad-hoc applications by using the same techniques to bind users and sessions to behaviors, which can implement specific bottom-lines and interfaces tailored to communities, languages and problem areas.
-From a technical perspective, this innovation can be reached by using well-established actor system theory and by incorporating actor framework into the k.LAB software. A specialized language (k.Actors) can be used to specify behaviors in a very simple and intuitive way, building on the integration with the semantic language already used in k.LAB and on existing IOT technologies (Akka Actors). 
+From a technical perspective, this innovation can be reached by using well-established actor system theory and by incorporating actor framework into the k.LAB software. A specialized language (k.Actors) can be used to specify behaviors in a very simple and intuitive way, building on the integration with the semantic language already used in k.LAB and on existing IOT technologies (Akka Actors).
 
 ## Creating a k.LAB semantic network
 
@@ -135,7 +135,7 @@ From a technical perspective, this innovation can be reached by using well-estab
 ### Content fruition
 
 #### End users
- 
+
 #### Modelers and content developers
 
 ### Access and security
@@ -154,7 +154,7 @@ From a technical perspective, this innovation can be reached by using well-estab
 
 #### Resource Adapters
 
-... List of adapters existing and in development 
+... List of adapters existing and in development
 
 #### Engine components
 
@@ -166,32 +166,30 @@ From a technical perspective, this innovation can be reached by using well-estab
 == Resources
 
 [bibliography]
-.Software 
-- [[[taoup]]] Eric Steven Raymond. 'The Art of Unix
-  Programming'. Addison-Wesley. ISBN 0-13-142901-9.
-- [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
-  'DocBook - The Definitive Guide'. O'Reilly & Associates. 1999.
-  ISBN 1-56592-580-7.
-  
-.Articles 
-- [[[taoup]]] Eric Steven Raymond. 'The Art of Unix
-  Programming'. Addison-Wesley. ISBN 0-13-142901-9.
-- [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
-  'DocBook - The Definitive Guide'. O'Reilly & Associates. 1999.
-  ISBN 1-56592-580-7.
-  
-.Web sites 
-- [[[taoup]]] Eric Steven Raymond. 'The Art of Unix
-  Programming'. Addison-Wesley. ISBN 0-13-142901-9.
-- [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
-  'DocBook - The Definitive Guide'. O'Reilly & Associates. 1999.
-  ISBN 1-56592-580-7.
-  
-.Application projects 
+.Software
 - [[[taoup]]] Eric Steven Raymond. 'The Art of Unix
   Programming'. Addison-Wesley. ISBN 0-13-142901-9.
 - [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
   'DocBook - The Definitive Guide'. O'Reilly & Associates. 1999.
   ISBN 1-56592-580-7.
 
+.Articles
+- [[[taoup]]] Eric Steven Raymond. 'The Art of Unix
+  Programming'. Addison-Wesley. ISBN 0-13-142901-9.
+- [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
+  'DocBook - The Definitive Guide'. O'Reilly & Associates. 1999.
+  ISBN 1-56592-580-7.
 
+.Web sites
+- [[[taoup]]] Eric Steven Raymond. 'The Art of Unix
+  Programming'. Addison-Wesley. ISBN 0-13-142901-9.
+- [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
+  'DocBook - The Definitive Guide'. O'Reilly & Associates. 1999.
+  ISBN 1-56592-580-7.
+
+.Application projects
+- [[[taoup]]] Eric Steven Raymond. 'The Art of Unix
+  Programming'. Addison-Wesley. ISBN 0-13-142901-9.
+- [[[walsh-muellner]]] Norman Walsh & Leonard Muellner.
+  'DocBook - The Definitive Guide'. O'Reilly & Associates. 1999.
+  ISBN 1-56592-580-7.

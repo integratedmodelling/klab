@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -132,6 +133,17 @@ public interface IKlabData {
 		Builder withMetadata(String property, Object object);
 
 		/**
+		 * Semantics is given only once per resolution and may be the only output if the
+		 * observation is a characterization. The result is one concept, which may be an
+		 * OR of several related ones (which also enforces proper return values due to
+		 * union validation).
+		 * 
+		 * @param semantics
+		 * @return
+		 */
+		Builder withSemantics(IConcept semantics);
+
+		/**
 		 * Add a notification to the result. Notifications are global, i.e. they refer
 		 * to all artifacts built.
 		 * 
@@ -216,5 +228,14 @@ public interface IKlabData {
 	 * @return
 	 */
 	IMetadata getObjectMetadata(int i);
+
+	/**
+	 * Normally null, unless the resource is a characterizer that classifies an
+	 * object or a resolves an abstract trait or role into one or more (in OR)
+	 * concrete ones. The results are worldview-bound.
+	 * 
+	 * @return
+	 */
+	IConcept getSemantics();
 
 }

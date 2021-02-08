@@ -48,6 +48,9 @@ public class ObservedConcept {
 		if (!observable.getValueOperators().isEmpty()) {
 			this.valueOperators = observable.getValueOperators();
 		}
+		if (observable.is(Type.ROLE)) {
+			((Observable)observable).setGeneric(true);
+		}
 		this.mode = mode;
 		this.conceptDeclaration = observable.getType().getDefinition();
 	}

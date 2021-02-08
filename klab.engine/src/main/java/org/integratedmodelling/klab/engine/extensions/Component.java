@@ -161,6 +161,7 @@ public class Component implements IComponent {
 		} catch (KlabException e) {
 			throw new KlabValidationException(e);
 		} catch (Throwable e) {
+//			Logging.INSTANCE.error("error loading component manifest " + name + ": " + e.getMessage());
 			// ignore others - means resource path isn't there. These are inside the
 			// components so
 			// should be safe enough, although it would be nicer to have a simple way to

@@ -21,6 +21,7 @@
  *******************************************************************************/
 package org.integratedmodelling.klab.persistence.h2;
 
+import java.io.Closeable;
 import java.io.File;
 import java.net.MalformedURLException;
 import java.sql.Connection;
@@ -35,7 +36,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.function.Function;
 
 import javax.sql.PooledConnection;
 
@@ -44,8 +44,7 @@ import org.h2gis.h2spatial.CreateSpatialExtension;
 import org.h2gis.utilities.SFSUtilities;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
-import org.integratedmodelling.klab.api.data.general.ITable;
-import org.integratedmodelling.klab.api.data.general.ITable.Structure;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
@@ -57,7 +56,7 @@ import org.integratedmodelling.klab.utils.Pair;
 /**
  * A wrapper to simplify the use of a H2 database. Can be used with formally
  * specified schemata for multiple tables (rather obsoleted in design) or with
- * newer {@link ITable} interface when the structure is simple. The kboxes use
+ * newer {@link IStructuredTable} interface when the structure is simple. The kboxes use
  * the old structure, so that will remain until we reimplement them.
  * 
  * @author Ferd
@@ -410,7 +409,7 @@ public class H2Database {
 		}
 	}
 	
-	public class DBIterator {
+	public class DBIterator implements Closeable {
 
 		public ResultSet result;
 		public boolean finished;
@@ -424,18 +423,20 @@ public class H2Database {
 			try {
 				this.finished = !res.first();
 			} catch (SQLException e) {
-				finish();
+				close();
 			}
 		}
 				
-		public void finish() {
+		public void close() {
 
 			try {
 				if (result != null) {
 					result.close();
+					result = null;
 				}
 				if (stmt != null) {
 					stmt.close();
+					stmt = null;
 				}
 				if (connection != null) {
 					// connection.close();
@@ -446,14 +447,14 @@ public class H2Database {
 		}
 
 		public boolean hasNext() {
-			return finished;
+			return !finished;
 		}
 		
 		public void advance() {
 			try {
 				this.finished = !result.next();
 			} catch (SQLException e) {
-				finish();
+				close();
 			}
 		}
 		

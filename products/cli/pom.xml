@@ -46,7 +46,7 @@
 			<version>2.0.1.RELEASE</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.authority.gbif</artifactId>
@@ -67,6 +67,12 @@
 			<artifactId>klab.component.landcover</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.integratedmodelling</groupId>
+			<artifactId>klab.component.tables</artifactId>
+			<version>${klab.version}</version>
+		</dependency>
+		<!-- TODO remove - superceded by table adapter -->
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.components.cdm</artifactId>

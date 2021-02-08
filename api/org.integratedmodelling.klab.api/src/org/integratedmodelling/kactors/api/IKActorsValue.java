@@ -19,6 +19,11 @@ public interface IKActorsValue extends IKActorsCodeStatement {
 	public enum Type {
 		REGEXP, NUMBER, BOOLEAN, STRING, OBSERVABLE, IDENTIFIER, EXPRESSION, LIST, SET, CLASS, ANYVALUE, ANYTHING,
 		NODATA, RANGE, MAP, TABLE, TREE, QUANTITY, DATE, TYPE, NUMBERED_PATTERN, URN, 
+		
+		/**
+		 * Object is a Java object whose constructor is referenced in a set expression.
+		 */
+		OBJECT,
 		/**
 		 * An action that raises an exception will match this.
 		 */

@@ -57,6 +57,8 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.StringUtils;
 import org.integratedmodelling.landcover.model.LandcoverTransitionTable.TransitionRule;
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
 import org.joda.time.Period;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
@@ -265,10 +267,10 @@ public class LandcoverChange {
 
 		// transition buffer for age and event detection
 		this.transitionStorage = (IStorage<String>) Klab.INSTANCE.getStorageProvider()
-				.createStorage(IArtifact.Type.TEXT, process.getScale().without(Dimension.Type.TIME), scope);
+				.createStorage(IArtifact.Type.TEXT, process.getScale().without(Dimension.Type.TIME));
 		// transition state for age and event detection
 		this.targetStorage = (IStorage<IConcept>) Klab.INSTANCE.getStorageProvider()
-				.createStorage(IArtifact.Type.CONCEPT, process.getScale().without(Dimension.Type.TIME), scope);
+				.createStorage(IArtifact.Type.CONCEPT, process.getScale().without(Dimension.Type.TIME));
 
 		/*
 		 * compute demand ratios. These don't change with iterations, only with time.
@@ -1184,7 +1186,9 @@ public class LandcoverChange {
 						IKimClassifier value = row[2];
 
 						if (time instanceof IKimDate) {
-							factor.timepoint = ((IKimDate) time).getDate().getTime();
+							IKimDate date = (IKimDate) time;
+							factor.timepoint = new DateTime(date.getYear(), date.getMonth(), date.getDay(),
+									date.getHour(), date.getMin(), date.getSec(), DateTimeZone.UTC).getMillis();
 						}
 
 						if (value.getNumberMatch() != null) {

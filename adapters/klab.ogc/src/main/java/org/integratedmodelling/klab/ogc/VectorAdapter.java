@@ -16,6 +16,8 @@
 package org.integratedmodelling.klab.ogc;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Set;
 
 import org.integratedmodelling.kim.api.IPrototype;
@@ -23,7 +25,7 @@ import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResourceCalculator;
-import org.integratedmodelling.klab.api.data.adapters.IFileResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.adapters.IResourcePublisher;
@@ -42,8 +44,8 @@ import com.google.common.collect.Sets;
  * The Class VectorAdapter.
  */
 @ResourceAdapter(type = VectorAdapter.ID, version = Version.CURRENT, requires = { "fileUrl" }, optional = { "computeUnion",
-		"computeHull", "filter", "nameAttribute", "sanitize" })
-public class VectorAdapter implements IFileResourceAdapter {
+		"computeHull", "filter", "nameAttribute", "sanitize" }, canCreateEmpty = false, handlesFiles = true)
+public class VectorAdapter implements IResourceAdapter {
 
 	public static final String ID = "vector";
 	
@@ -84,11 +86,11 @@ public class VectorAdapter implements IFileResourceAdapter {
 	}
 
 	@Override
-	public IPrototype getResourceConfiguration() {
-		return new Prototype(
+	public Collection<IPrototype> getResourceConfiguration() {
+		return Collections.singleton(new Prototype(
 				Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/vector.kdl"))
 						.getActuators().iterator().next(),
-				null);
+				null));
 	}
 
 	/**

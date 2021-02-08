@@ -42,6 +42,26 @@ export value literal
 	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralStateResolver
 }
 
+filter concept resolvetrait
+	"Return a characterizing resolver that will characterize the context with literal identities"
+	 label '$val'
+{
+	object val
+		"The concept to characterize with"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.LiteralCharacterizingResolver
+}
+
+filter concept characterize
+	"Return a characterizing resolver that will characterize the context with literal identities"
+	 label 'Characterize'
+{
+	text urn
+		"The URN of a resource capable of producing semantics"
+				
+	class org.integratedmodelling.klab.components.runtime.contextualizers.UrnCharacterizer
+}
+
 export value resourcechange
 	"Return a process resolver that will set values of the changing observable to the appropriate
 	 temporal state of a temporally distributed multi-resource"
@@ -55,6 +75,18 @@ export value resourcechange
 		"A list of URNs to be merged and used to resolve the changing observable"
 
 	class org.integratedmodelling.klab.components.runtime.contextualizers.ChangingResourceResolver
+}
+
+export value replay
+	"Return a process resolver that will replay the change already built into a pre-contextualized
+	 observation, so that any dependencies may react during a successive resolution."
+	 label 'Extract time'
+{				
+
+	import value artifact 
+		"The definition of the change concept that this is resolving"
+
+	class org.integratedmodelling.klab.components.runtime.contextualizers.ContextReplayResolver
 }
 
 filter number convert
@@ -79,7 +111,7 @@ filter concept classify
 	label 'Classify'
 {
 	
-	value classification
+	import value classification
 		"A classification stated in k.IM or built from a trait, class or metadata property"
 
 	class org.integratedmodelling.klab.components.runtime.contextualizers.ClassifyingStateResolver
@@ -182,7 +214,10 @@ filter value lookup
 	label 'Lookup table'
 {
 	
-	value table
+	import value artifact
+		"The artifact to filter through the lookup table"
+	
+	value 'table'
 		"A table stated in k.IM"
 
 	value arguments 

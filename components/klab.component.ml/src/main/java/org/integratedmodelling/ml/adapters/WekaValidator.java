@@ -4,16 +4,21 @@ import java.io.File;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.data.IResourceCatalog;
 import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
+import org.integratedmodelling.klab.api.provenance.IActivity.Description;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
 import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.URLUtils;
@@ -81,12 +86,13 @@ public class WekaValidator implements IResourceValidator {
 						true));
 			}
 		}
-		
+
 		return ret;
 	}
 
 	@Override
-	public IResource performOperation(IResource resource, String operationName, IMonitor monitor) {
+	public IResource performOperation(IResource resource, String operationName, IParameters<String> parameters,
+			IResourceCatalog catalog, IMonitor monitor) {
 		// TODO Auto-generated method stub
 		return resource;
 	}
@@ -128,6 +134,26 @@ public class WekaValidator implements IResourceValidator {
 		}
 
 		return classifier != null && classifier.getClassifier() != null;
+	}
+
+	@Override
+	public Map<String, Object> describeResource(IResource resource) {
+		Map<String, Object> ret = new LinkedHashMap<>();
+		// TODO
+		return ret;
+	}
+	
+	@Override
+	public IResource update(IResource resource, ResourceCRUDRequest updateData) {
+		((Resource) resource).update(updateData);
+		return resource;
+	}
+
+	@Override
+	public boolean isObservationAllowed(IResource resource, Map<String, String> urnParameters,
+			Description description) {
+		// TODO Auto-generated method stub
+		return false;
 	}
 
 }

@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
-import org.integratedmodelling.klab.api.data.general.ITable;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -114,7 +114,7 @@ public class SubjectiveState extends Observation implements ISubjectiveState {
         return current.at(locator);
     }
 
-    public ITable<Number> getTable() {
+    public IStructuredTable<Number> getTable() {
         return current.getTable();
     }
 
@@ -270,6 +270,12 @@ public class SubjectiveState extends Observation implements ISubjectiveState {
 		if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
 			setDynamic(true);
 		}
+	}
+
+	@Override
+	public String dump() {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

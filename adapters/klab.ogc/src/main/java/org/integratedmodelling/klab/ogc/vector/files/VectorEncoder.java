@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Urns;
@@ -128,9 +129,12 @@ public class VectorEncoder implements IResourceEncoder {
 				: true;
 
 		Map<String, Class<?>> attributes = new HashMap<>();
+		Map<String, String> attributeNames = new HashMap<>();
+
 		for (AttributeDescriptor ad : source.getSchema().getAttributeDescriptors()) {
 			if (!ad.getLocalName().equals(geomName)) {
 				attributes.put(ad.getLocalName(), ad.getType().getBinding());
+				attributeNames.put(ad.getLocalName().toLowerCase(), ad.getLocalName());
 				if (idRequested == null && (urnParameters.containsKey(ad.getLocalName().toLowerCase())
 						|| urnParameters.containsKey(ad.getLocalName().toUpperCase()))) {
 					try {
@@ -157,8 +161,8 @@ public class VectorEncoder implements IResourceEncoder {
 		 * moment - the scale will be that of contextualization, not the geometry for
 		 * the actuator, which may depend on context.
 		 */
-		boolean rasterize = context.getTargetSemantics() != null
-				&& (context.getTargetSemantics().is(Type.QUALITY) || context.getTargetSemantics().is(Type.TRAIT))
+		boolean rasterize = (idRequested != null || (context.getTargetSemantics() != null
+				&& (context.getTargetSemantics().is(Type.QUALITY) || context.getTargetSemantics().is(Type.TRAIT))))
 				&& requestScale.getSpace() instanceof Space && ((Space) requestScale.getSpace()).getGrid() != null;
 
 		if (resource.getParameters().contains("filter")) {
@@ -230,12 +234,9 @@ public class VectorEncoder implements IResourceEncoder {
 					Object value = Boolean.TRUE;
 
 					if (idRequested != null) {
-						value = feature.getAttribute(idRequested);
-						if (value == null) {
-							value = feature.getAttribute(idRequested.toUpperCase());
-						}
-						if (value == null) {
-							value = feature.getAttribute(idRequested.toLowerCase());
+						String attrName = attributeNames.get(idRequested);
+						if (attrName != null) {
+							value = feature.getAttribute(attrName);
 						}
 					}
 
@@ -319,6 +320,13 @@ public class VectorEncoder implements IResourceEncoder {
 		}
 
 		return true;
+	}
+
+	@Override
+	public IResource contextualize(IResource resource, IScale scale, IArtifact targetObservation,
+			Map<String, String> urnParameters, IContextualizationScope scope) {
+		// TODO Auto-generated method stub
+		return resource;
 	}
 
 }

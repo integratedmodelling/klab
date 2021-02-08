@@ -238,6 +238,13 @@ public interface IGeometry extends Serializable, ILocator {
 		 */
 		ExtentDimension getExtentDimension();
 
+		/**
+		 * Return the parseable string encoding of the dimension.
+		 * 
+		 * @return
+		 */
+		String encode();
+
 	}
 
 	/**

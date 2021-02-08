@@ -74,18 +74,18 @@ public class NewNamespace extends WizardPage {
 
         text = new Text(container, SWT.BORDER);
         FormData fd_text = new FormData();
-        fd_text.left = new FormAttachment(0, 159);
+        fd_text.right = new FormAttachment(100, -84);
         text.setLayoutData(fd_text);
 
         combo = new Combo(container, SWT.READ_ONLY);
-        fd_text.right = new FormAttachment(combo, 0, SWT.RIGHT);
         FormData fd_combo = new FormData();
+        fd_combo.left = new FormAttachment(text, 0, SWT.LEFT);
         fd_combo.right = new FormAttachment(100, -84);
-        fd_combo.left = new FormAttachment(lblNewLabel, 29);
         fd_combo.top = new FormAttachment(lblNewLabel, -3, SWT.TOP);
         combo.setLayoutData(fd_combo);
 
         Label lblNewLabel_1 = new Label(container, SWT.NONE);
+        fd_text.left = new FormAttachment(lblNewLabel_1, 5);
         fd_text.top = new FormAttachment(lblNewLabel_1, -3, SWT.TOP);
         lblNewLabel_1.setForeground(SWTResourceManager.getColor(SWT.COLOR_RED));
         FormData fd_lblNewLabel_1 = new FormData();
@@ -122,6 +122,7 @@ public class NewNamespace extends WizardPage {
         fd_btnPrivateNamespace.left = new FormAttachment(0, 160);
         btnPrivateNamespace.setLayoutData(fd_btnPrivateNamespace);
         btnPrivateNamespace.setText("Private namespace");
+        btnPrivateNamespace.setSelection(true);
 
     }
 

@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Urn;
@@ -80,11 +81,11 @@ public enum Urns {
 	 * @return
 	 */
 	public String changeLocalProject(String urn, String projectName) {
-		
+
 		if (!isLocal(urn)) {
 			throw new IllegalArgumentException("cannot change project name in non-local URN " + urn);
 		}
-		int fieldIndex = urn.startsWith(LOCAL_URN_PREFIX) ? 4 : 2; 
+		int fieldIndex = urn.startsWith(LOCAL_URN_PREFIX) ? 4 : 2;
 		String ret = "";
 		int i = 0;
 		for (String field : urn.split(":")) {
@@ -94,33 +95,57 @@ public enum Urns {
 		return ret;
 	}
 
+	public Map<String, String> parseParameters(String uu) {
+		Map<String, String> ret = new HashMap<>();
+		for (String s : uu.split("&")) {
+			if (s.contains("=")) {
+				String[] kv = s.split("=");
+				ret.put(kv[0], kv[1]);
+			} else {
+				ret.put(Urn.SINGLE_PARAMETER_KEY, s);
+			}
+		}
+		return ret;
+	}
+	
 	/**
-	 * Split off the fragment and return the parsed parameter map along with the 
+	 * Split off the fragment and return the parsed parameter map along with the
 	 * clean URN.
 	 * 
 	 * @param urn
 	 * @return
 	 */
-    public Pair<String, Map<String,String>> resolveParameters(String urn) {
-        Map<String,String> parameters = new HashMap<>();
-        String clean = urn;
-        if (urn.contains("#")) {
-            String[] uu = urn.split("#");
-            clean = uu[0];
-            for (String s : uu[1].split("&")) {
-                if (s.contains("=")) {
-                    String[] kv = s.split("=");
-                    parameters.put(kv[0], kv[1]);
-                } else {
-                    parameters.put(Urn.SINGLE_PARAMETER_KEY, s);
-                }
-            }
-        }
-        return new Pair<>(clean, parameters);
-    }
+	public Pair<String, Map<String, String>> resolveParameters(String urn) {
+		Map<String, String> parameters = new HashMap<>();
+		String clean = urn;
+		if (urn.contains("#")) {
+			String[] uu = urn.split("#");
+			clean = uu[0];
+			for (String s : uu[1].split("&")) {
+				if (s.contains("=")) {
+					String[] kv = s.split("=");
+					parameters.put(kv[0], kv[1]);
+				} else {
+					parameters.put(Urn.SINGLE_PARAMETER_KEY, s);
+				}
+			}
+		}
+		return new Pair<>(clean, parameters);
+	}
 
 	public boolean isUrn(String urn) {
 		return StringUtil.countMatches(urn, ":") > 2;
+	}
+
+	public String applyParameters(String urn, Map<String, String> urnParameters) {
+		String ret = urn;
+		if (urnParameters != null && !urnParameters.isEmpty()) {
+			boolean first = true;
+			for (Entry<String, String> entry : urnParameters.entrySet()) {
+				ret += (first ? "#" : "&") + entry.getKey() + "=" + entry.getValue();
+			}
+		}
+		return ret;
 	}
 
 }

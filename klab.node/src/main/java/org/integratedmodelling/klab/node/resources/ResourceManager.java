@@ -5,12 +5,15 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.Timer;
 import java.util.TimerTask;
 
+import org.apache.commons.lang3.exception.ExceptionUtils;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
@@ -175,11 +178,14 @@ public class ResourceManager {
 		String originalUrn = null;
 		File resourcePath = null;
 		if (uploadArchive != null) {
+			Logging.INSTANCE.info("unpacking resource archive from " + uploadArchive);
 			Pair<File, String> unpacked = catalog.unpackArchive(uploadArchive);
 			resourcePath = unpacked.getFirst();
 			originalUrn = unpacked.getSecond();
+			Logging.INSTANCE.info("resource archive unpacked into  " + resourcePath + " for " + originalUrn);
 		} else {
 			originalUrn = resourceReference.getUrn();
+			Logging.INSTANCE.info("publishing logical resource " + originalUrn + " from posted descriptor");
 		}
 
 		final ITicket ret = ticketService.open(ITicket.Type.ResourcePublication, "resource", originalUrn, "user",
@@ -206,8 +212,8 @@ public class ResourceManager {
 					}
 					ret.resolve("urn", resource.getUrn());
 				} catch (Throwable t) {
-					Logging.INSTANCE
-							.error("exception when publishing " + resourceReference.getUrn() + ": " + t.getMessage());
+					Logging.INSTANCE.error("exception when publishing " + resourceReference.getUrn() + ": "
+							+ ExceptionUtils.getStackTrace(t));
 					ret.error("Publishing failed with exception: " + t.getMessage());
 				}
 			}
@@ -312,6 +318,23 @@ public class ResourceManager {
 		// TODO Auto-generated method stub
 		return null;
 
+	}
+
+	/**
+	 * Return information about the resource, using the adapter to report on the
+	 * internal details. For now just use a map instead of a specialized bean.
+	 * 
+	 * @param resource
+	 * @return
+	 */
+	public Map<String, Object> getResourceInfo(IResource resource) {
+		Map<String, Object> ret = new LinkedHashMap<>();
+		ret.put("urn", resource.getUrn());
+		ret.put("online", this.getOnlineResources().contains(resource.getUrn()));
+		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
+		ret.put("adapter", adapter == null ? "UNKNOWN" : adapter.getName());
+		ret.putAll(adapter.getValidator().describeResource(resource));
+		return ret;
 	}
 
 }

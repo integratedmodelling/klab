@@ -1,5 +1,8 @@
 package org.integratedmodelling.cdm.adapter;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Dataflows;
 import org.integratedmodelling.klab.Version;
@@ -13,7 +16,8 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceValidator;
 import org.integratedmodelling.klab.api.extensions.ResourceAdapter;
 import org.integratedmodelling.klab.kim.Prototype;
 
-@ResourceAdapter(type = "cdm", version = Version.CURRENT)
+@Deprecated
+@ResourceAdapter(type = "cdm", version = Version.CURRENT, canCreateEmpty = true, handlesFiles = true)
 public class CDMAdapter implements IResourceAdapter {
 
 	@Override
@@ -42,11 +46,11 @@ public class CDMAdapter implements IResourceAdapter {
 	}
 
 	@Override
-	public IPrototype getResourceConfiguration() {
-		return new Prototype(Dataflows.INSTANCE
+	public Collection<IPrototype> getResourceConfiguration() {
+		return Collections.singleton(new Prototype(Dataflows.INSTANCE
 				.declare(getClass().getClassLoader()
 						.getResource("components/org.integratedmodelling.cdm/adapter/cdm.kdl"))
-				.getActuators().iterator().next(), null);
+				.getActuators().iterator().next(), null));
 	}
 
 	@Override

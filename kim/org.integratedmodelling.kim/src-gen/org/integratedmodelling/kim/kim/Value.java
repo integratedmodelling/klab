@@ -19,11 +19,11 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getMap <em>Map</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getConcept <em>Concept</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getFunction <em>Function</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Value#getDate <em>Date</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getLiteral <em>Literal</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getExpr <em>Expr</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getTable <em>Table</em>}</li>
- *   <li>{@link org.integratedmodelling.kim.kim.Value#getDate <em>Date</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getQuantity <em>Quantity</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getOp <em>Op</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Value#getExpression <em>Expression</em>}</li>
@@ -126,6 +126,28 @@ public interface Value extends EObject
   void setFunction(Function value);
 
   /**
+   * Returns the value of the '<em><b>Date</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Date</em>' containment reference.
+   * @see #setDate(Date)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getValue_Date()
+   * @model containment="true"
+   * @generated
+   */
+  Date getDate();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Value#getDate <em>Date</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Date</em>' containment reference.
+   * @see #getDate()
+   * @generated
+   */
+  void setDate(Date value);
+
+  /**
    * Returns the value of the '<em><b>Literal</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -212,28 +234,6 @@ public interface Value extends EObject
    * @generated
    */
   void setTable(LookupTable value);
-
-  /**
-   * Returns the value of the '<em><b>Date</b></em>' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @return the value of the '<em>Date</em>' containment reference.
-   * @see #setDate(Date)
-   * @see org.integratedmodelling.kim.kim.KimPackage#getValue_Date()
-   * @model containment="true"
-   * @generated
-   */
-  Date getDate();
-
-  /**
-   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Value#getDate <em>Date</em>}' containment reference.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @param value the new value of the '<em>Date</em>' containment reference.
-   * @see #getDate()
-   * @generated
-   */
-  void setDate(Date value);
 
   /**
    * Returns the value of the '<em><b>Quantity</b></em>' containment reference.

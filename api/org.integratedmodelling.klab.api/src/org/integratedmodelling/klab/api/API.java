@@ -158,6 +158,47 @@ public interface API {
 
 	}
 
+	/**
+	 * API for the monitor server, which gathers and serves statistical information
+	 * from engines to inform machine learning for the future resolver and help the
+	 * semantic server in validating data. It also records data to inform suggested
+	 * observables for a user query.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static interface MONITOR {
+
+		/**
+		 * Submit anonymized successful query data including its context, time elapsed
+		 * in resolution and contextualization, groups, computation and load metrics for
+		 * indexing and analysis.
+		 * 
+		 * PUT
+		 */
+		public static final String SUBMIT = "/monitor/submit";
+
+		/**
+		 * Request suggestions for queries in context matching a query string and user
+		 * permissions, sorted by match score and (increasing) computational load.
+		 * 
+		 * GET
+		 */
+		public static final String SUGGESTIONS = "/monitor/suggest";
+
+	}
+
+	/**
+	 * API for the semantic server, which assists users in semantic annotation and
+	 * semantic model validation of model structure and model output.
+	 * 
+	 * @author Ferd
+	 *
+	 */
+	public static interface KNOWLEDGE {
+
+	}
+
 	public static interface HUB {
 
 		/**
@@ -347,27 +388,6 @@ public interface API {
 			public static final String HAS_GROUP = "has-group";
 		}
 
-		public static interface INDEXING {
-
-			/**
-			 * Submit anonymized successful query data including its context, time elapsed
-			 * in resolution and contextualization, groups, computation and load metrics for
-			 * indexing and analysis.
-			 * 
-			 * PUT
-			 */
-			public static final String SUBMIT = "/indexing/submit";
-
-			/**
-			 * Request suggestions for queries in context matching a query string and user
-			 * permissions, sorted by match score and (increasing) computational load.
-			 * 
-			 * POST
-			 */
-			public static final String SUGGESTIONS = "/indexing/suggestions";
-
-		}
-
 	}
 
 	public static interface NODE {
@@ -502,6 +522,14 @@ public interface API {
 			 * GET
 			 */
 			public static final String LIST = "/resource/list";
+
+			/**
+			 * List detailed information about the passed resource, including the online
+			 * status and anything related to the associated storage.
+			 * 
+			 * GET
+			 */
+			public static final String INFO = "/resource/info/" + P_URN;
 
 		}
 

@@ -20,6 +20,7 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.regex.Pattern;
@@ -29,6 +30,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.ValueOperator;
+import org.integratedmodelling.kim.model.DefaultVisitor;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimConcept;
 import org.integratedmodelling.klab.api.knowledge.IAuthority.Identity;
@@ -59,6 +61,9 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Path;
 import org.springframework.util.StringUtils;
 
+import com.google.common.collect.Sets;
+import com.google.common.collect.Sets.SetView;
+
 /**
  * The Enum Concepts.
  */
@@ -67,7 +72,7 @@ public enum Concepts implements IConceptService {
 	INSTANCE;
 
 	private Set<String> authorityOntologyIds = Collections.synchronizedSet(new HashSet<>());
-	
+
 	private Concepts() {
 		Services.INSTANCE.registerService(this, IConceptService.class);
 	}
@@ -88,7 +93,7 @@ public enum Concepts implements IConceptService {
 		String definition = concept.getDefinition();
 		if (ontology == null || definition == null) {
 			IKimObservable obs = Kim.INSTANCE.declare(concept.getName());
-			return obs == null ? null : (KimConcept)obs.getMain();
+			return obs == null ? null : (KimConcept) obs.getMain();
 		}
 		return declare(definition);
 	}
@@ -96,18 +101,23 @@ public enum Concepts implements IConceptService {
 	@Override
 	public KimConcept declare(String declaration) {
 		/*
-		 * declarations that are pure semantic types for internal ontologies are possible
-		 * with authority and core concepts. Check first if it's a semantic type with a 
-		 * namespace that matches either of these; if so, override the parser as the 
-		 * concepts are not k.IM-specified.
+		 * declarations that are pure semantic types for internal ontologies are
+		 * possible with authority and core concepts. Check first if it's a semantic
+		 * type with a namespace that matches either of these; if so, override the
+		 * parser as the concepts are not k.IM-specified.
 		 */
 		if (SemanticType.validate(declaration)) {
 			SemanticType st = SemanticType.create(declaration);
-			if (CoreOntology.CORE_ONTOLOGY_NAME.equals(st.getNamespace()) || authorityOntologyIds.contains(st.getNamespace())) {
+			if (CoreOntology.CORE_ONTOLOGY_NAME.equals(st.getNamespace())
+					|| authorityOntologyIds.contains(st.getNamespace())) {
 				return new KimConcept(declaration);
 			}
 		}
-		return (KimConcept) Observables.INSTANCE.parseDeclaration(declaration).getMain();
+		IKimObservable ret = Observables.INSTANCE.parseDeclaration(declaration);
+		if (ret != null) {
+		    return (KimConcept)ret.getMain();
+		}
+		return null;
 	}
 
 	@Override
@@ -364,6 +374,50 @@ public enum Concepts implements IConceptService {
 		return false;
 	}
 
+	/**
+	 * Collect all the conceptual components of a concept that match the passed
+	 * types, visiting all concepts referenced by the type. Can be used to obtain
+	 * everything that is abstract, traits, roles etc., in terms of the original
+	 * declaration.
+	 * 
+	 * @param observable
+	 * @param types
+	 * @return
+	 */
+	public Set<IConcept> collectComponents(IConcept observable, Set<Type> types) {
+		Set<IConcept> ret = new HashSet<>();
+		IKimConcept peer = declare(observable.getDefinition());
+		peer.visit(new DefaultVisitor() {
+			@Override
+			public void visitReference(String conceptName, EnumSet<Type> type, IKimConcept validParent) {
+				IConcept cn = c(conceptName);
+				if (cn != null && Sets.intersection(type, types).size() == types.size()) {
+					ret.add(cn);
+				}
+			}
+		});
+		return ret;
+	}
+
+	@Override
+	public IConcept replaceComponent(IConcept original, Map<IConcept, IConcept> replacements) {
+
+		if (replacements.isEmpty()) {
+			return original;
+		}
+		
+		String declaration = original.getDefinition();
+		for (IConcept key : replacements.keySet()) {
+			String rep = replacements.get(key).toString();
+			if (rep.contains(" ")) {
+				rep = "(" + rep + ")";
+			}
+			declaration = declaration.replace(key.toString(), rep);
+		}
+
+		return declare(declare(declaration));
+	}
+
 	@Override
 	public int compareSpecificity(IConcept c1, IConcept c2, boolean useBaseTrait) {
 
@@ -532,7 +586,7 @@ public enum Concepts implements IConceptService {
 	}
 
 	public Concept getAuthorityConcept(Identity identity) {
-		
+
 		if (identity == null) {
 			return null;
 		}
@@ -542,17 +596,17 @@ public enum Concepts implements IConceptService {
 				return null;
 			}
 		}
-		
+
 		String oid = Path.getFirst(identity.getAuthorityName(), ".").toLowerCase();
 		boolean isNew = OWL.INSTANCE.getOntology(oid) == null;
 		Ontology ontology = OWL.INSTANCE.requireOntology(oid, OWL.INTERNAL_ONTOLOGY_PREFIX);
-		
+
 		if (isNew) {
 			ontology.setInternal(true);
 			Reasoner.INSTANCE.addOntology(ontology);
 			authorityOntologyIds.add(oid);
 		}
-		
+
 		Concept ret = ontology.getConcept(identity.getConceptName());
 		if (ret == null) {
 
@@ -600,5 +654,50 @@ public enum Concepts implements IConceptService {
 
 		return ret;
 	}
+
+	public IConcept or(Collection<IConcept> concepts) {
+		/*
+		 * TODO validate the types and choose the ontology more intelligently
+		 * TODO add the definition 
+		 */
+		return OWL.INSTANCE.getUnion(concepts, concepts.iterator().next().getOntology(),
+				((Concept) concepts.iterator().next()).getTypeSet());
+	}
+	
+	public IConcept and(Collection<IConcept> concepts) {
+		/*
+		 * TODO validate the types and choose the ontology more intelligently
+		 * TODO add the definition
+		 */
+		return OWL.INSTANCE.getIntersection(concepts, concepts.iterator().next().getOntology(),
+				((Concept) concepts.iterator().next()).getTypeSet());
+	}
+	
+
+    /**
+     * Split all the unary operator chain from an observable and return the operators
+     * applied in sequence and the naked concept that the last operator was applied to.
+     * 
+     * @return
+     */
+    public Pair<IConcept, List<IKimConcept.Type>> splitOperators(IConcept concept) {
+
+        IConcept cret = concept;
+        List<Type> types = new ArrayList<>();
+        Set<Type> type = Sets.intersection(((Concept)concept).getTypeSet(), IKimConcept.OPERATOR_TYPES);
+
+        while (type.size() > 0) {
+            types.add(type.iterator().next());
+            IConcept ccret = Observables.INSTANCE.getDescribedType(cret);
+            if (ccret == null) {
+                break;
+            } else {
+                cret = ccret;
+            }
+            type = Sets.intersection(((Concept)cret).getTypeSet(), IKimConcept.OPERATOR_TYPES);
+        }
+        
+        return new Pair<>(cret, types);
+    }
 
 }

@@ -16,6 +16,8 @@
 package org.integratedmodelling.klab.ogc;
 
 import java.io.File;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -42,7 +44,7 @@ import org.integratedmodelling.klab.raster.wcs.WcsValidator;
  * The Class WcsAdapter.
  */
 @ResourceAdapter(type = "wcs", version = Version.CURRENT, requires = { "serviceUrl", "wcsVersion", "wcsIdentifier" }, optional = {
-		"namespace" })
+		"namespace" }, canCreateEmpty = true, handlesFiles = false)
 public class WcsAdapter implements IResourceAdapter {
 
 	public static final String ID = "wcs";
@@ -114,11 +116,11 @@ public class WcsAdapter implements IResourceAdapter {
 	}
 	
 	@Override
-	public IPrototype getResourceConfiguration() {
-		return new Prototype(
+	public Collection<IPrototype> getResourceConfiguration() {
+		return Collections.singleton(new Prototype(
 				Dataflows.INSTANCE.declare(getClass().getClassLoader().getResource("ogc/prototypes/wcs.kdl"))
 						.getActuators().iterator().next(),
-				null);
+				null));
 	}
 
 	@Override

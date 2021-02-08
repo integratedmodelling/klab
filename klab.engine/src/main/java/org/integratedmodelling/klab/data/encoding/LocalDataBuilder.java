@@ -7,10 +7,13 @@ import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.INotification;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.data.Metadata;
@@ -33,7 +36,7 @@ public class LocalDataBuilder implements IKlabData.Builder {
 
 	IState state = null;
 	IObservation observation = null;
-	IRuntimeScope context = null;
+	IContextualizationScope context = null;
 	long offset = 0;
 	List<INotification> notifications = new ArrayList<>();
 	Metadata metadata = new Metadata();
@@ -41,8 +44,9 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	String objectName;
 	IGeometry scale;
 	LocalDataBuilder parent;
+	IConcept semantics;
 
-	public LocalDataBuilder(IRuntimeScope context) {
+	public LocalDataBuilder(IContextualizationScope context) {
 		this.context = context;
 		this.observable = context.getTargetSemantics();
 		if (context.getTargetArtifact() instanceof IState) {
@@ -136,11 +140,11 @@ public class LocalDataBuilder implements IKlabData.Builder {
 		// }
 		if (parent.observation == null) {
 			parent.observation = this.observation;
-		} else {
-			if (!(parent.observation instanceof ObservationGroup)) {
+		} else if (context instanceof IRuntimeScope) {
+			if (!(parent.observation instanceof IObservationGroup)) {
 				IObservation obs = parent.observation;
-				parent.observation = new ObservationGroup((Observable) context.getTargetSemantics(),
-						(Scale) context.getScale(), context, context.getTargetSemantics().getArtifactType());
+				parent.observation = new ObservationGroup((Observable) ((IRuntimeScope)context).getTargetSemantics(),
+						(Scale) context.getScale(), (IRuntimeScope)context, ((IRuntimeScope)context).getTargetSemantics().getArtifactType());
 				((ObservationGroup) parent.observation).chain(obs);
 			}
 			((Artifact) parent.observation).chain(this.observation);
@@ -168,5 +172,11 @@ public class LocalDataBuilder implements IKlabData.Builder {
 	@Override
 	public IKlabData build() {
 		return new LocalData(this);
+	}
+	
+	@Override
+	public Builder withSemantics(IConcept semantics) {
+		this.semantics = semantics;
+		return this;
 	}
 }
