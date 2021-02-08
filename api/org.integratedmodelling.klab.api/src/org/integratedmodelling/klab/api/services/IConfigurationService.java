@@ -94,6 +94,11 @@ public interface IConfigurationService {
 	 */
 	public static final String KLAB_SHOWTIMES_PROPERTY = "klab.showtimes";
 
+	/**
+	 * If defined and set to <code>true</code>, then the region context will be extended assure 
+	 * square grid cells.
+	 */
+	public static final String KLAB_GRID_CONSTRAINT = "klab.grid.forceSquarecells";
 	
 
 	/**

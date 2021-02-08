@@ -7,9 +7,7 @@ import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
-import org.geotools.geometry.DirectPosition2D;
 import org.geotools.referencing.GeodeticCalculator;
-import org.geotools.referencing.crs.DefaultGeographicCRS;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Configuration;
@@ -32,6 +30,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.Subgrid;
@@ -42,9 +41,7 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
-import org.opengis.geometry.DirectPosition;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
-import org.opengis.referencing.operation.TransformException;
 
 /**
  * 
@@ -242,6 +239,17 @@ public class Grid extends Area implements IGrid {
 		return "<GRID [" + xCells + "," + yCells + "] " + envelope + ">";
 	}
 	
+	
+    /**
+     * Adjust the envelope if necessary. 
+     * 
+     * Depending on the requested resolution and the configuration, this can change the envelope
+     * or just adapt the resolution to best fit the region context.
+     * 
+     * @param shape the shape to take the envelope from.
+     * @param squareRes the resolution to use.
+     * @throws KlabException
+     */
     private void adjustEnvelope( Shape shape, double squareRes ) throws KlabException {
         Envelope env = shape.getEnvelope();
         Projection prj = shape.getProjection();
@@ -252,29 +260,12 @@ public class Grid extends Area implements IGrid {
         double minY = env.getMinY();
         double maxY = env.getMaxY();
         if (doForceSquareCells()) {
-
             if (prj.isMeters()) {
-                long origCellsX = (long) ((maxX - minX) / squareRes);
-                long origCellsY = (long) ((maxY - minY) / squareRes);
                 double newMaxX = minX + (Math.ceil((maxX - minX) / squareRes) * squareRes);
                 double newMaxY = minY + (Math.ceil((maxY - minY) / squareRes) * squareRes);
                 double cellsX = (newMaxX - minX) / squareRes;
                 double cellsY = (newMaxY - minY) / squareRes;
-                System.out.println("************ PRE *******************");
-                System.out.println("Envelope: " + env);
-                System.out.println("Requested resolution: " + squareRes);
-                System.out.println("Cells X: " + origCellsX);
-                System.out.println("Cells Y: " + origCellsY);
-                System.out.println("Res X: " + ((maxX - minX) / origCellsX));
-                System.out.println("Res Y: " + ((maxY - minY) / origCellsY));
                 this.envelope = Envelope.create(minX, newMaxX, minY, newMaxY, prj);
-                System.out.println("************ POST *******************");
-                System.out.println("Envelope post: " + this.envelope);
-                System.out.println("Cells x: " + cellsX);
-                System.out.println("Cells y: " + cellsY);
-                System.out.println("Res X: " + ((newMaxX - minX) / cellsX));
-                System.out.println("Res Y: " + ((newMaxY - minY) / cellsY));
-
                 this.xCells = (long) cellsX;
                 this.yCells = (long) cellsY;
                 this.cellWidth = squareRes;
@@ -322,7 +313,6 @@ public class Grid extends Area implements IGrid {
                 x = (long) Math.ceil(width / squareRes);
                 y = (long) Math.ceil(height / squareRes);
             } else {
-                // get height and width in meters
                 GeodeticCalculator gc = new GeodeticCalculator(crs);
                 gc.setStartingGeographicPoint(minX, minY);
                 gc.setDestinationGeographicPoint(maxX, minY);
@@ -339,7 +329,7 @@ public class Grid extends Area implements IGrid {
     }
 
     private static boolean doForceSquareCells() {
-        String constraint = Configuration.INSTANCE.getProperty("grid.constraints.squarecells", "false");
+        String constraint = Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_GRID_CONSTRAINT, "false");
         return Boolean.parseBoolean(constraint);
     }
 
