@@ -15,12 +15,12 @@ import org.reflections.scanners.SubTypesScanner;
 import org.reflections.util.ClasspathHelper;
 import org.reflections.util.ConfigurationBuilder;
 import org.reflections.util.FilterBuilder;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
+import org.springframework.core.annotation.Order;
 
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
@@ -36,18 +36,22 @@ import org.bson.codecs.pojo.Convention;
 import org.bson.codecs.pojo.Conventions;
 
 @Configuration
-@Profile("production")
-public class MongoSyncConfig {
+@Profile("development")
+public class MongoSyncConfigDev {
     
-    @Value("${mongo.hostname}")
-    private String HOSTNAME;
-
-    @Value("${mongo.port}")
-    private int PORT;
+    @Bean(destroyMethod="shutdown")
+    public MongoServer mongoServer() {
+    
+        MemoryBackend backend = (MemoryBackend) new MemoryBackend().version(ServerVersion.MONGO_3_6);
+        MongoServer mongoServer = new MongoServer(backend);
+        mongoServer.bind("localhost", 27017);
+        return mongoServer;
+        
+    }
     
 	@Bean(destroyMethod="close")
-	public MongoClient mongoClient() {
-	    ConnectionString connectionString = new ConnectionString("mongodb://" + HOSTNAME + ":" + PORT);
+	public MongoClient mongoClient(MongoServer mongoServer) {
+	    ConnectionString connectionString = new ConnectionString("mongodb://localhost:27017");
 	    CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().conventions(asList(Conventions.ANNOTATION_CONVENTION)).register(getClassModels()).automatic(true).build());
 	    //CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().conventions(asList(Conventions.ANNOTATION_CONVENTION)).register("org.integratedmodelling.klab.rest").automatic(true).build());
 	    CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);

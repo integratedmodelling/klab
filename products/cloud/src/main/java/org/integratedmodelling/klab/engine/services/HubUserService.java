@@ -218,13 +218,12 @@ public class HubUserService implements RemoteUserService {
                 }
                 
                 restTemplate.postForLocation(url, rootActivity);
+                //restTemplate.postForLocation(url, currentActivity);
                 
             }
 
             @Override
             public void scaleChanged(ScaleReference scale) {
-                // TODO Auto-generated method stub
-                
             }
 
             @Override

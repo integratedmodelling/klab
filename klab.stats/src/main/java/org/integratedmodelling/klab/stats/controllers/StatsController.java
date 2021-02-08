@@ -10,8 +10,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
@@ -25,14 +23,9 @@ import org.integratedmodelling.klab.stats.services.StatsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.type.TypeFactory;
 
@@ -98,16 +91,31 @@ public class StatsController {
 	    
 	}
 	
-	public Map<String, Object> replaceKeysWithDot(Map<String, Object> model) {
-	    for(String s : model.keySet()) {
-	        if(s.contains(".")) {
-	            model.put(s.replace(".", "#"), model.remove((s)));
-	        } 
+	private Map<String, Object> replaceKeysWithDot(Map<String, Object> model) {
+	    HashMap<String, Object> ret = new HashMap<>();
+	    
+	    for(Iterator<String> iterator = model.keySet().iterator(); iterator.hasNext();) {
 	        
-	        if(model.get(s) instanceof LinkedHashMap) {
-	            model.replace(s, replaceKeysWithDot((Map<String, Object>) model.get(s)));
+	        String key = iterator.next();
+	        String replacement = key.replace(".", "__");
+	        
+	        if( (!key.contains(".")) && !(model.get(key) instanceof LinkedHashMap)) {         
+	            ret.put(key, model.get(key));
+	        } else {
+	            
+	            if(model.get(key) instanceof LinkedHashMap) {
+	                Object next = model.get(key);
+	                Map<String, Object> nextCleaned = replaceKeysWithDot((Map<String, Object>) next);
+	                if(key.contains(".")) {
+	                    ret.put(replacement, nextCleaned);
+	                } else {
+	                    ret.put(key, nextCleaned);
+	                }
+	            } else {
+	                ret.put(replacement, model.get(key));
+	            }
 	        }
 	    }
-	    return model;
+	    return ret;
 	}
 }

@@ -18,3 +18,7 @@ spring:
         enabled: false
       config:
         enabled: false
+        
+mongo:
+   hostname: "localhost"
+   port: 27017
