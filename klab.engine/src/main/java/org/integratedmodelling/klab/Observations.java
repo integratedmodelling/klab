@@ -450,7 +450,7 @@ public enum Observations implements IObservationService {
                 ret.getMetadata().put("Grid size",
                         grid.getCellCount() + " (" + grid.getXCells() + " x " + grid.getYCells() + ") cells");
                 ret.getMetadata().put("Cell size", NumberFormat.getInstance().format(grid.getCell(0).getStandardizedWidth())
-                        + " x " + NumberFormat.getInstance().format(grid.getCell(0).getStandardizedWidth()) + " m");
+                        + " x " + NumberFormat.getInstance().format(grid.getCell(0).getStandardizedHeight()) + " m");
             }
 
             /*

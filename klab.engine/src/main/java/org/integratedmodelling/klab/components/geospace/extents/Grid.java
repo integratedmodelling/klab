@@ -1,13 +1,16 @@
 package org.integratedmodelling.klab.components.geospace.extents;
 
+import java.awt.geom.Point2D;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Spliterator;
 import java.util.function.Consumer;
 
+import org.geotools.referencing.GeodeticCalculator;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
@@ -27,6 +30,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.Subgrid;
@@ -37,6 +41,7 @@ import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.MultidimensionalCursor;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
+import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 /**
  * 
@@ -153,7 +158,7 @@ public class Grid extends Area implements IGrid {
 				(2 * (n - 2) + 2 * (m - 2)) * 5 + // connections in edge cells
 				(4 * 3)); // connections in corner cells
 	}
-
+	
 	public static Grid create(Shape shape, double resolutionInMeters) throws KlabException {
 		return new Grid(shape, resolutionInMeters);
 	}
@@ -188,7 +193,7 @@ public class Grid extends Area implements IGrid {
 	private Grid(Shape shape, double resolutionInMeters) throws KlabException {
 		super(shape);
 		this.linearResolutionMeters = resolutionInMeters;
-		setAdjustedEnvelope(shape, resolutionInMeters);
+		adjustEnvelope(shape, resolutionInMeters);
 		mask = createMask(shape);
 	}
 
@@ -233,6 +238,100 @@ public class Grid extends Area implements IGrid {
 	public String toString() {
 		return "<GRID [" + xCells + "," + yCells + "] " + envelope + ">";
 	}
+	
+	
+    /**
+     * Adjust the envelope if necessary. 
+     * 
+     * Depending on the requested resolution and the configuration, this can change the envelope
+     * or just adapt the resolution to best fit the region context.
+     * 
+     * @param shape the shape to take the envelope from.
+     * @param squareRes the resolution to use.
+     * @throws KlabException
+     */
+    private void adjustEnvelope( Shape shape, double squareRes ) throws KlabException {
+        Envelope env = shape.getEnvelope();
+        Projection prj = shape.getProjection();
+        CoordinateReferenceSystem crs = prj.crs;
+
+        double minX = env.getMinX();
+        double maxX = env.getMaxX();
+        double minY = env.getMinY();
+        double maxY = env.getMaxY();
+        if (doForceSquareCells()) {
+            if (prj.isMeters()) {
+                double newMaxX = minX + (Math.ceil((maxX - minX) / squareRes) * squareRes);
+                double newMaxY = minY + (Math.ceil((maxY - minY) / squareRes) * squareRes);
+                double cellsX = (newMaxX - minX) / squareRes;
+                double cellsY = (newMaxY - minY) / squareRes;
+                this.envelope = Envelope.create(minX, newMaxX, minY, newMaxY, prj);
+                this.xCells = (long) cellsX;
+                this.yCells = (long) cellsY;
+                this.cellWidth = squareRes;
+                this.cellHeight = squareRes;
+            } else {
+                GeodeticCalculator gc = new GeodeticCalculator(crs);
+                gc.setStartingGeographicPoint(minX, minY);
+                gc.setDestinationGeographicPoint(maxX, minY);
+                double width = gc.getOrthodromicDistance();
+                gc = new GeodeticCalculator(crs);
+                gc.setStartingGeographicPoint(minX, minY);
+                gc.setDestinationGeographicPoint(minX, maxY);
+                double height = gc.getOrthodromicDistance();
+
+                double restX = width % squareRes;
+                double restY = height % squareRes;
+
+                double newWidth = width - restX + squareRes;
+                double newHeight = height - restY + squareRes;
+
+                gc = new GeodeticCalculator(crs);
+                gc.setStartingGeographicPoint(minX, minY);
+                gc.setDirection(0.0, newHeight);
+                Point2D destY = gc.getDestinationGeographicPoint();
+                double newMaxY = destY.getY();
+
+                gc = new GeodeticCalculator(crs);
+                gc.setStartingGeographicPoint(minX, minY);
+                gc.setDirection(90.0, newWidth);
+                Point2D destX = gc.getDestinationGeographicPoint();
+                double newMaxX = destX.getX();
+
+                this.envelope = Envelope.create(minX, newMaxX, minY, newMaxY, prj);
+                this.xCells = (long) (newWidth / squareRes);
+                this.yCells = (long) (newHeight / squareRes);
+                this.cellWidth = (newMaxX - minX) / this.xCells;
+                this.cellHeight = (newMaxY - minY) / this.yCells;
+            }
+
+        } else {
+            long x = 0, y = 0;
+            if (shape.getProjection().isMeters()) {
+                double height = env.getHeight();
+                double width = env.getWidth();
+                x = (long) Math.ceil(width / squareRes);
+                y = (long) Math.ceil(height / squareRes);
+            } else {
+                GeodeticCalculator gc = new GeodeticCalculator(crs);
+                gc.setStartingGeographicPoint(minX, minY);
+                gc.setDestinationGeographicPoint(maxX, minY);
+                double width = gc.getOrthodromicDistance();
+                gc = new GeodeticCalculator(crs);
+                gc.setStartingGeographicPoint(minX, minY);
+                gc.setDestinationGeographicPoint(minX, maxY);
+                double height = gc.getOrthodromicDistance();
+                x = (long) Math.ceil(width / squareRes);
+                y = (long) Math.ceil(height / squareRes);
+            }
+            this.setResolution(x, y);
+        }
+    }
+
+    private static boolean doForceSquareCells() {
+        String constraint = Configuration.INSTANCE.getProperty(IConfigurationService.KLAB_GRID_CONSTRAINT, "false");
+        return Boolean.parseBoolean(constraint);
+    }
 
 	public Grid copy() {
 		return create(getShape().copy(), getXCells(), getYCells());
@@ -1127,94 +1226,6 @@ public class Grid extends Area implements IGrid {
 			break;
 		}
 		return null;
-	}
-
-	/**
-	 * Set the envelope from shape.
-	 * 
-	 * @param shape      could be in any CRS.
-	 * @param squareSize should be in meters
-	 * @throws KlabException
-	 */
-	private void setAdjustedEnvelope(Shape shape, double squareSize) throws KlabException {
-		long x = 0, y = 0;
-		// double dx = 0, dy = 0;
-		Envelope env = shape.getEnvelope();
-
-		// Case one: both CRS and square size are in meters.
-		if (shape.getProjection().isMeters()) {
-
-			double height = env.getHeight();
-			double width = env.getWidth();
-
-			x = (long) Math.ceil(width / squareSize);
-			y = (long) Math.ceil(height / squareSize);
-
-			// dx = (x * squareSize) - width;
-			// dy = (y * squareSize) - height;
-
-			// ReferencedEnvelope envelop_ = new ReferencedEnvelope(env.getMinX() - dx,
-			// env.getMaxX() + dx,
-			// env.getMinY() - dy, env.getMaxY() + dy,
-			// shape.getProjection().getCoordinateReferenceSystem());
-
-			// After doing the calculations in the original CRS,
-			// shape and envelope is transformed to default.
-
-			// this.shape = shape.transform(Projection.getDefault());
-			// try {
-			// this.envelope = Envelope
-			// .create(envelop_.transform(Projection.getDefault().getCoordinateReferenceSystem(),
-			// true));
-			// } catch (Exception e) {
-			// // shouldn't happen
-			// throw new KlabValidationException(e);
-			// }
-			// this.projection = Projection.getDefault();
-
-		}
-		// Case 2: CRS uses degrees
-		else {
-			// get height and width in meters
-			double height = Projection.distance(env.getMinY(), env.getMinX(), env.getMaxY(), env.getMinX());
-			double width = Projection.distance(env.getMinY(), env.getMinX(), env.getMinY(), env.getMaxX());
-			x = (long) Math.ceil(width / squareSize);
-			y = (long) Math.ceil(height / squareSize);
-
-			// Here I tried to adjust further dx and dy based on the size of the
-			// grid cell
-			// at the center of the Grid. Possibly not right either, so I left
-			// it out.
-			// double centralX = (env.getMaxX() + env.getMinX())/2;
-			// double stepX = (env.getMaxX() - env.getMinX())/x;
-			//
-			// double centralY = (env.getMaxY() + env.getMinY())/2;
-			// double stepY = (env.getMaxY() - env.getMinY())/x;
-			//
-			// double actualStepWidth = Grid.haversine(centralY,centralX,
-			// centralY,centralX+stepX);
-			//
-			// double actualStepHeight = Grid.haversine(centralY, centralX,
-			// centralY+stepY,centralX);
-			// dx = stepX * (squareSize/actualStepWidth) / 2;
-			// dy = stepY * (squareSize/actualStepHeight) / 2;
-
-		}
-
-		// if (!this.projection.equals(Projection.getDefault())) {
-		// this.shape = this.shape.transform(Projection.getDefault());
-		// try {
-		// this.envelope = this.envelope.transform(Projection.getDefault(), true);
-		// } catch (Exception e) {
-		// // TODO: Shouldn't happen
-		// e.printStackTrace();
-		// }
-		// this.projection = Projection.getDefault();
-		// }
-
-		this.setResolution(x, y);
-
-		// activationLayer = Rasterizer.createMask(shape, this);
 	}
 
 	@Override
