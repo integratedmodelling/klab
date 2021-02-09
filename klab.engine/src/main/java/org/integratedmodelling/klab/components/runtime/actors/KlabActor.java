@@ -803,6 +803,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             // break at each iteration
             execute(code.getBody(), scope.withValue(code.getVariable(), o));
         }
+        System.out.println("Done looping");
     }
 
     private void executeFire(FireValue code, Scope scope) {

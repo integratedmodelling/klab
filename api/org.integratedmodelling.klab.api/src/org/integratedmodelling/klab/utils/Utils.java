@@ -595,7 +595,7 @@ public class Utils {
         return null;
     }
 
-    public static String join(List<?> list, String separator) {
+    public static String join(Iterable<?> list, String separator) {
         StringBuffer ret = new StringBuffer(256);
         boolean first = true;
         for (Object o : list) {
