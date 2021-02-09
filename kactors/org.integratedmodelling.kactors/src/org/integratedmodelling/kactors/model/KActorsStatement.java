@@ -20,6 +20,10 @@ public abstract class KActorsStatement extends KActorCodeStatement implements IK
 		this.type = type;
 	}
 
+    public String toString() {
+        return type + " statement: " + resource + ": " + firstLine;
+    }
+
 	public static KActorsStatement create(StatementBody statementBody, KActorCodeStatement parent) {
 		KActorsStatement ret = null;
 		if (statementBody.getGroup() != null) {

@@ -15,6 +15,7 @@ import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.model.KimQuantity;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
@@ -23,6 +24,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -31,6 +33,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimePeriod;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
+import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
@@ -144,9 +147,17 @@ public class RuntimeBehavior {
                     }
 
                     if (artifact != null) {
-                        IScale scale = Scale.create(artifact.getGeometry());
+                        
+                        IScale scale = spaceResolution == null
+                                ? Scale.create(artifact.getGeometry())
+                                : Scale.create(artifact.getGeometry(), spaceResolution);
+                                
                         session.getState().resetContext();
                         if (scale.getSpace() != null) {
+                            // avoid geocoding
+                            if (!scale.getSpace().getShape().getMetadata().containsKey(IMetadata.DC_DESCRIPTION)) {
+                                scale.getSpace().getShape().getMetadata().put(IMetadata.DC_DESCRIPTION, artifact.getName());
+                            }
                             session.getState().setShape(scale.getSpace().getShape());
                         }
                         if (spaceResolution != null) {
@@ -157,12 +168,13 @@ public class RuntimeBehavior {
                     if (observable != null) {
                         try {
                             Future<IArtifact> future = ((Session) identity).getState().submit(observable.getDefinition());
-                            fire(future.get(), true);
+                            IArtifact result = future.get();
+                            fire(result, true);
                         } catch (Throwable e) {
                             fail();
                         }
                     } else {
-                        
+
                     }
 
                 }

@@ -366,6 +366,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			this.scaleOfInterest.setSpaceResolutionDescription(
 					NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
 							+ this.scaleOfInterest.getSpaceUnit());
+			break;
 		case SPACE_RESOLUTION_MULTIPLIER_KEY:
 			this.scaleOfInterest.setSpaceResolution(check(value, Number.class).doubleValue());
 			this.scaleOfInterest.setSpaceResolutionConverted(

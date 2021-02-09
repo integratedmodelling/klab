@@ -83,7 +83,7 @@ public class KActorCodeStatement implements IKActorsCodeStatement {
     EObject getEStatement() {
     	return this.eObject;
     }
-
+    
 	/**
      * Create a dummy statement uniquely to carry the line numbers for a compile notification.
      * 

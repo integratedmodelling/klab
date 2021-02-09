@@ -671,20 +671,6 @@ public enum Observations implements IObservationService {
         return ret;
     }
 
-    // public Observer makeROIObserver(final SpatialExtent regionOfInterest, ITime time, Namespace
-    // namespace, String currentName,
-    // IMonitor monitor) {
-    // final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
-    // Session session = monitor.getIdentity().getParentIdentity(Session.class);
-    // observable.setName(Geocoder.INSTANCE.geocode(regionOfInterest, session == null ? null :
-    // session.getGeocodingStrategy(), currentName, monitor));
-    // observable.setOptional(true);
-    // if (namespace == null) {
-    // namespace = Namespaces.INSTANCE.getNamespace(observable.getNamespace());
-    // }
-    // return new Observer(regionOfInterest, time, observable, (Namespace) namespace);
-    // }
-    //
     public Observer makeROIObserver(final Shape shape, ITime time, Namespace namespace, String currentName, IMonitor monitor) {
         final Observable observable = Observable.promote(Worldview.getGeoregionConcept());
         Session session = monitor.getIdentity().getParentIdentity(Session.class);

@@ -291,15 +291,16 @@ public enum Actors implements IActorsService {
                     value = Observables.INSTANCE.declare(value.toString());
                     break;
                 case QUANTITY:
-                    if (value instanceof KActorsQuantity) {
-                        if (((KActorsQuantity) value).getUnit() != null) {
-                            value = Quantity.create(((KActorsQuantity) value).getValue(),
-                                    Unit.create(((KActorsQuantity) value).getUnit()));
-                        } else if (((KActorsQuantity) value).getCurrency() != null) {
-                            value = Quantity.create(((KActorsQuantity) value).getValue(),
-                                    Currency.create(((KActorsQuantity) value).getCurrency()));
-                        }
-                    }
+                    // NO - leave it as is, implementing the syntactic peer.
+//                    if (value instanceof KActorsQuantity) {
+//                        if (((KActorsQuantity) value).getUnit() != null) {
+//                            value = Quantity.create(((KActorsQuantity) value).getValue(),
+//                                    Unit.create(((KActorsQuantity) value).getUnit()));
+//                        } else if (((KActorsQuantity) value).getCurrency() != null) {
+//                            value = Quantity.create(((KActorsQuantity) value).getValue(),
+//                                    Currency.create(((KActorsQuantity) value).getCurrency()));
+//                        }
+//                    }
                     break;
                 case RANGE:
                     break;
@@ -749,6 +750,11 @@ public enum Actors implements IActorsService {
         public long getId() {
             return id;
         }
+        
+        @Override
+        public String toString() {
+            return type + "-" + id;
+        }
 
     }
 
@@ -770,6 +776,8 @@ public enum Actors implements IActorsService {
         final long id = semaphoreId.incrementAndGet();
         ids.add(id);
 
+        System.out.println("NUOVO SEMAFORO " + id);
+
         return new SemaphoreImpl(type, id);
     }
 
@@ -780,9 +788,13 @@ public enum Actors implements IActorsService {
      * @param semaphor
      */
     public void expire(Semaphore semaphore) {
+
+        System.out.println("SCHIATTO ER SEMAFORO " + ((SemaphoreImpl)semaphore).id);
+
         Set<Long> ids = this.semaphores.get(semaphore.getType());
         if (ids != null) {
             ids.remove(((SemaphoreImpl) semaphore).getId());
+            System.out.println("   SCHIATTATO ER SEMAFORO " + ((SemaphoreImpl)semaphore).id);
         }
     }
 
@@ -1029,7 +1041,7 @@ public enum Actors implements IActorsService {
         for (Object v : arguments.getUnnamedArguments()) {
             jargs.add(v instanceof KActorsValue ? KlabActor.evaluateInScope((KActorsValue) v, scope, identity) : v);
         }
-        for (String k : arguments.keySet()) {
+        for (String k : arguments.getNamedKeys()) {
             if (kargs == null) {
                 kargs = new HashMap<>();
             }

@@ -1,10 +1,8 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import org.integratedmodelling.kactors.model.KActorsQuantity;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.model.KimQuantity;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
@@ -115,6 +113,7 @@ public abstract class KlabActionExecutor {
 	
 	public void fire(Object value, boolean isFinal) {
 		if (scope.listenerId != null) {
+		    System.out.println("  AHO IO SPARO EH - COR SEMAFORO " + (scope.semaphore == null ? "NULLLO" : scope.semaphore));
 			this.sender.tell(new Fire(scope.listenerId, value, isFinal, scope.appId, scope.semaphore));
 		}
 	}

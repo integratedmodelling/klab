@@ -37,7 +37,6 @@ import org.integratedmodelling.klab.components.geospace.visualization.raster.Flo
 import org.integratedmodelling.klab.components.geospace.visualization.raster.ReadonlyStateFloatBuffer;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
-import org.integratedmodelling.klab.utils.Range;
 import org.opengis.filter.expression.Literal;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
@@ -240,36 +239,36 @@ public enum GeotoolsUtils {
 		}
 	}
 
-	public Range getRange(IState state) {
-
-		Range ret = new Range();
-
-		Space space = (Space) state.getScale().getSpace();
-		if (space == null || space.getGrid() != null) {
-			throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
-		}
-		Grid grid = (Grid) space.getGrid();
-
-		/*
-		 * TODO raster should be pre-filled with a chosen nodata value TODO use
-		 * activation layer
-		 */
-		// IGrid.Mask act = space.requireActivationLayer(true);
-
-		for (Cell cell : grid) {
-			Object o = state.get(cell);
-			if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
-				// screw it
-			} else if (o instanceof Number) {
-				ret.adapt(((Number) o).doubleValue());
-			} else if (o instanceof Boolean) {
-				ret.adapt(((Boolean) o) ? 1. : 0.);
-			} else if (o instanceof IConcept) {
-				ret.adapt((double) state.getDataKey().reverseLookup((IConcept) o));
-			}
-		}
-
-		return ret;
-	}
+//	public Range getRange(IState state) {
+//
+//		Range ret = new Range();
+//
+//		Space space = (Space) state.getScale().getSpace();
+//		if (space == null || space.getGrid() != null) {
+//			throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
+//		}
+//		Grid grid = (Grid) space.getGrid();
+//
+//		/*
+//		 * TODO raster should be pre-filled with a chosen nodata value TODO use
+//		 * activation layer
+//		 */
+//		// IGrid.Mask act = space.requireActivationLayer(true);
+//
+//		for (Cell cell : grid) {
+//			Object o = state.get(cell);
+//			if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
+//				// screw it
+//			} else if (o instanceof Number) {
+//				ret.adapt(((Number) o).doubleValue());
+//			} else if (o instanceof Boolean) {
+//				ret.adapt(((Boolean) o) ? 1. : 0.);
+//			} else if (o instanceof IConcept) {
+//				ret.adapt((double) state.getDataKey().reverseLookup((IConcept) o));
+//			}
+//		}
+//
+//		return ret;
+//	}
 
 }
