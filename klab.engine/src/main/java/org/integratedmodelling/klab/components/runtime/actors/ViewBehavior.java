@@ -273,7 +273,7 @@ public class ViewBehavior {
 			message.setContent(this.evaluateArgument(0, scope, "Confirm"));
 			message.getAttributes().putAll(getMetadata(arguments, scope));
 			session.getMonitor().post((msg) -> {
-				fire(msg.getPayload(ViewAction.class).isBooleanValue(), true);
+				fire(msg.getPayload(ViewAction.class).isBooleanValue(), true, scope.semaphore);
 			}, IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, message);
 		}
 	}

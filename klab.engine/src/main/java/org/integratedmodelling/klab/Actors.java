@@ -775,9 +775,6 @@ public enum Actors implements IActorsService {
 
         final long id = semaphoreId.incrementAndGet();
         ids.add(id);
-
-        System.out.println("NUOVO SEMAFORO " + id);
-
         return new SemaphoreImpl(type, id);
     }
 
@@ -788,13 +785,9 @@ public enum Actors implements IActorsService {
      * @param semaphor
      */
     public void expire(Semaphore semaphore) {
-
-        System.out.println("SCHIATTO ER SEMAFORO " + ((SemaphoreImpl)semaphore).id);
-
         Set<Long> ids = this.semaphores.get(semaphore.getType());
         if (ids != null) {
             ids.remove(((SemaphoreImpl) semaphore).getId());
-            System.out.println("   SCHIATTATO ER SEMAFORO " + ((SemaphoreImpl)semaphore).id);
         }
     }
 

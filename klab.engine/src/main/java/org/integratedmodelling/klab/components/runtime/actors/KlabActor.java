@@ -391,7 +391,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                         Thread.sleep(50);
                         cnt++;
                         if (cnt % 100 == 0) {
-                            System.out.println("DIO FINFERLO DUE ORE CHE ASPETTO STO SEMAFORO");
+                            System.out.println("DIO FINFERLO DUE ORE CHE ASPETTO STO SEMAFORO " + semaphore);
                         }
                     } catch (InterruptedException e) {
                         return;
@@ -1212,8 +1212,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                     }
                 }
             }
-
-            System.out.println("   HAN SPARATO COR SEMAFORO " + (message.semaphore == null ? "NULLLO" : message.semaphore));
 
             if (message.semaphore != null) {
                 Actors.INSTANCE.expire(message.semaphore);
