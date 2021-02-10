@@ -1,6 +1,7 @@
 package klab.stats;
 
-import static org.junit.Assert.assertEquals;
+import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.is;
 
 import java.net.URISyntaxException;
 
@@ -56,7 +57,7 @@ public class MongoTestIntegrationTest {
     @DisplayName("Test You are Sane")
     @Test
     public void testGet() {
-        assertEquals("Hello JUnit 5", helloService.get());
+        assertThat("Hello JUnit 5", is(helloService.get()));
     }
     
     
@@ -85,7 +86,7 @@ public class MongoTestIntegrationTest {
     	StatsInsertRequest<SessionReference> request = new StatsInsertRequest<>(SessionReference.class);
     	request.setModel(ref);
     	StatsInstertResponse<?> response = service.insertRequest(request);
-    	assertEquals(request.getType(), response.getMyType());
+    	assertThat(request.getType().toGenericString(), is(response.getMyType().toGenericString()));
     }
     
     
