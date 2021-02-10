@@ -454,7 +454,7 @@ public enum Resources implements IResourceService {
 
 	@Override
 	public IResource resolveResource(String urns) {
-
+	    
 		IResource ret = null;
 		Urn urn = new Urn(urns);
 

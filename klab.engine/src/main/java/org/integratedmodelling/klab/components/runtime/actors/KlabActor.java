@@ -59,6 +59,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
+import org.integratedmodelling.klab.utils.MapUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
@@ -142,11 +143,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         // executed upon a match.
         Scope scope;
 
-        public void match(Object value) {
+        public void match(Object value, Map<String, Object> scopeVars) {
 
             for (Pair<Match, IKActorsStatement> match : matches) {
                 if (match.getFirst().matches(value, scope)) {
-                    execute(match.getSecond(), scope.withMatch(match.getFirst(), value));
+                    execute(match.getSecond(), scope.withMatch(match.getFirst(), value, scopeVars));
                     break;
                 }
             }
@@ -246,8 +247,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             this.viewScope = new ViewScope(this);
         }
 
-        public Scope withMatch(Match match, Object value) {
+        public Scope withMatch(Match match, Object value, Map<String, Object> vars) {
+
             Scope ret = new Scope(this);
+            
+            ret.symbolTable.putAll(vars);
+            
             /*
              * if we have identifiers either as key or in list key, match them to the values.
              * Otherwise match to $, $1, ... #n
@@ -524,7 +529,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                     KlabActionExecutor executor = actionCache.get(message.action.getComponent().getId());
                     actions.match(executor instanceof KlabWidgetActionExecutor
                             ? ((KlabWidgetActionExecutor) executor).getFiredValue(message.action)
-                            : getActionValue(message.action));
+                            : getActionValue(message.action), message.scope);
                 }
             } else if (message.action.getComponent().getActorPath() != null) {
 
@@ -826,7 +831,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
              * this should happen when a non-main action executes the fire. Must be checked first.
              * Fire may happen if the action firing is called again, so don't remove the listener.
              */
-            scope.sender.tell(new Fire(scope.listenerId, code.getValue().getValue(), false, scope.appId, scope.semaphore));
+            scope.sender.tell(new Fire(scope.listenerId, code.getValue().getValue(), false, scope.appId, scope.semaphore,
+                    scope.getSymbols(this.identity)));
 
         } else if (parentActor != null) {
 
@@ -1185,11 +1191,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         return Behaviors.same();
     }
 
+    @SuppressWarnings("unchecked")
     protected Behavior<KlabMessage> handleComponentFireMessage(ComponentFire message) {
         if (message.listenerId != null) {
             MatchActions actions = componentFireListeners.get(message.listenerId);
             if (actions != null) {
-                actions.match(message.value);
+                actions.match(message.value, MapUtils.EMPTY_MAP);
             }
         }
         return Behaviors.same();
@@ -1206,10 +1213,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             if (message.listenerId != null) {
                 MatchActions actions = listeners.get(message.listenerId);
                 if (actions != null) {
-                    actions.match(message.value);
-                    if (message.finalize) {
-                        listeners.remove(message.listenerId);
-                    }
+                    actions.match(message.value, message.scopeVars);
+                    // if (message.finalize) {
+                    // listeners.remove(message.listenerId);
+                    // }
                 }
             }
 

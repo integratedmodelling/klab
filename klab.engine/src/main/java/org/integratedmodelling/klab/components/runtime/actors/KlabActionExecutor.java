@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.util.Map;
+
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
@@ -17,6 +19,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.code.ObjectExpression;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.ViewComponent;
+import org.integratedmodelling.klab.utils.MapUtils;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 
@@ -113,12 +116,13 @@ public abstract class KlabActionExecutor {
 
     }
 
-    public void fire(Object value, boolean isFinal, Semaphore semaphore) {
+    public void fire(Object value, boolean isFinal, Semaphore semaphore, Map<String, Object> scopeVars) {
         if (scope.listenerId != null) {
-            this.sender.tell(new Fire(scope.listenerId, value, isFinal, scope.appId, semaphore));
+            this.sender.tell(new Fire(scope.listenerId, value, isFinal, scope.appId, semaphore, scopeVars));
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void fail(Object... args) {
         Semaphore semaphore = null;
         if (args != null) {
@@ -131,7 +135,7 @@ public abstract class KlabActionExecutor {
                 scope.runtimeScope.getMonitor().error(args);
             }
         }
-        fire(false, true, semaphore);
+        fire(false, true, semaphore, MapUtils.EMPTY_MAP);
     }
 
     protected Object evaluateArgument(String argument, Scope scope) {
