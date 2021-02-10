@@ -22,9 +22,25 @@
                 <artifactId>jib-maven-plugin</artifactId>
                 <version>2.7.1</version>
                 <configuration>
+                    <from>
+        				 <image>openjdk:8u282-jre-slim-buster</image>
+      				</from>
                     <to>
                         <image>registry.integratedmodelling.org/stat-server/</image>
+                        <tags>
+                        	<tag>development</tag>
+				      		<tag>latest</tag>
+				    	</tags>
+				    	<auth>
+				    		<username>${server.username}</username>
+				    		<password>${server.password}</password>
+            			</auth>
                     </to>
+                    <container>
+                    	<ports>
+                    		<port>8082</port>
+                    	</ports>
+    				</container>
                 </configuration>
             </plugin>
         </plugins>
