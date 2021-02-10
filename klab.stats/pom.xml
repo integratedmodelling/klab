@@ -32,8 +32,8 @@
 				      		<tag>latest</tag>
 				    	</tags>
 				    	<auth>
-				    		<username>${server.username}</username>
-				    		<password>${server.password}</password>
+				    		<username>${env.username}</username>
+				    		<password>${env.password}</password>
             			</auth>
                     </to>
                     <container>
