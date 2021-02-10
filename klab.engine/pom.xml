@@ -27,6 +27,14 @@
 	<build>
 		<pluginManagement>
 			<plugins>
+		  		<plugin>
+		  			<groupId>com.google.cloud.tools</groupId>
+		  			<artifactId>jib-maven-plugin</artifactId>
+		  			<configuration>
+		  				<!-- we don't want jib to execute on this module -->
+		  				<skip>true</skip>
+		  			</configuration>
+		      	</plugin>
 				<!-- <plugin> <artifactId>kotlin-maven-plugin</artifactId> <groupId>org.jetbrains.kotlin</groupId> 
 					<version>${kotlin.version}</version> <executions> <execution> <id>compile</id> 
 					<goals> <goal>compile</goal> </goals> <configuration> <sourceDirs> <sourceDir>${project.basedir}/src/main/java</sourceDir> 
