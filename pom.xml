@@ -66,6 +66,7 @@
 		<module>kim</module>
 		<module>kactors</module>
 		<module>klab.engine</module>
+		<module>klab.stats</module>
 		<module>adapters</module>
 		<module>klab.modeler</module>
 		<module>client</module>
