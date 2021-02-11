@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -61,6 +62,9 @@ public class HubUserService implements RemoteUserService {
 
 	@Autowired
 	UserEventPublisher publisher;
+	
+	@Value( "${stats.server.url}" )
+	private String statsServerUrl;
 	
 	/*
 	 * Generates a response entity a url to the session generated after succesful
@@ -207,7 +211,7 @@ public class HubUserService implements RemoteUserService {
                 String url = null;
                 try {
                     URIBuilder urlBuilder;
-                    urlBuilder = new URIBuilder("http://localhost:" + 8080);
+                    urlBuilder = new URIBuilder(statsServerUrl);
                     urlBuilder.setPath(API.STATS.STATS_BASE);
                     urlBuilder.addParameter(API.STATS.PARAMETERS.TYPE, rootActivity.getClass().getCanonicalName());
                     

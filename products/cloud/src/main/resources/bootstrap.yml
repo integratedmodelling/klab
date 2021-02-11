@@ -19,3 +19,7 @@ spring:
         profileSeparator: '::'
         format: yaml
         data-key: data
+        
+stats:
+  server:
+    url: "http://localhost:8080"
