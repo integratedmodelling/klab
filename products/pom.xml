@@ -22,7 +22,7 @@
   			<artifactId>jib-maven-plugin</artifactId>
   			<configuration>
   				<!-- we don't want jib to execute on this module -->
-  				<skip>true</skip>
+  				<skip>false</skip>
   			</configuration>
       	</plugin>
     </plugins>

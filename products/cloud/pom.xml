@@ -26,6 +26,26 @@
 					</execution>
 				</executions>
 			</plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <configuration>
+                    <from>
+        				 <image>openjdk:8u282-jre-slim-buster</image>
+      				</from>
+                    <to>
+                        <image>registry.integratedmodelling.org/engine-server</image>
+                        <tags>
+                        	<tag>development</tag>
+				      		<tag>latest</tag>
+				    	</tags>
+				    	<auth>
+				    		<username>${env.username}</username>
+				    		<password>${env.password}</password>
+            			</auth>
+                    </to>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 	<dependencyManagement>

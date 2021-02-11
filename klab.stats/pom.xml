@@ -10,7 +10,7 @@
 	</parent>
 	<artifactId>klab.stats</artifactId>
 	<name>k.LAB Stats</name>
-	<description>k.LAB authentication and collaboration server hub</description>
+	<description>k.LAB Stats Collection Server</description>
 	<build>
         <plugins>
             <plugin>
