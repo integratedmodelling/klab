@@ -9,7 +9,7 @@ public class EngineAuthenticationResponse {
 	private AuthenticatedIdentity userData;
 	private HubReference hub;
 	private List<NodeReference> nodes = new ArrayList<>();
-	private ArrayList<String> warnings;
+	private ArrayList<HubNotificationMessage> messages;
 
 	public AuthenticatedIdentity getUserData() {
 		return userData;
@@ -46,12 +46,12 @@ public class EngineAuthenticationResponse {
 		this.nodes.addAll(nodes);
 	}
 	
-	public ArrayList<String> getWarnings() {
-		return warnings;
+	public ArrayList<HubNotificationMessage> getMessages() {
+		return messages;
 	}
 
-	public void setWarnings(ArrayList<String> warnings) {
-		this.warnings = warnings;
+	public void setMessages(ArrayList<HubNotificationMessage> warnings) {
+		this.messages = warnings;
 	}
 
 	@Override

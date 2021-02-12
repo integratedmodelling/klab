@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.utils.IPUtils;
@@ -65,13 +66,18 @@ public class EngineAuthResponeFactory {
 			String cipher, LicenseConfiguration config) throws NoSuchProviderException, IOException, PGPException {
 		Properties engineProperties = PropertiesFactory.fromProfile(profile, config).getProperties();
 		Properties cipherProperties = new CipherProperties().getCipherProperties(config, cipher);
-		ArrayList<String> warnings = new ArrayList<String>();
+		ArrayList<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
 		
 		DateTime expires = DateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
                 DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
-		if(expires.isAfter(DateTime.now().plusDays(30))) {
-			warnings.add("License set to expire on: " + expires.toString());
+		
+		
+		if(!expires.isAfter(DateTime.now().plusDays(30))) {
+		    HubNotificationMessage msg = new HubNotificationMessage(HubNotificationMessage.WARNING.EXPIRING_CERTIFICATE, 
+		            "License set to expire on: " + expires.toString());
+		    messages.add(msg);
 		}
+		
 		
 		if (expires.isAfterNow()) {
 			engineProperties.remove(KlabCertificate.KEY_EXPIRATION);
@@ -85,21 +91,36 @@ public class EngineAuthResponeFactory {
 	    		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engine.getGroups(),
 	    				DateTime.now().plusDays(90).toString(), engine.getId());
 	    		
-	    		ArrayList<String> expired = profile.checkGroupEntries();
+	    		ArrayList<String> expired = profile.expiredGroupEntries();
+	    		ArrayList<String> expiring = profile.expiredGroupEntries();
+	    		
 	    		if(!expired.isEmpty()) {
-	    			warnings.add("Following group(s) expired: " + expired.toString());
+	    		    expired.forEach(grp -> {
+	    		        messages.add(new HubNotificationMessage(HubNotificationMessage.ERROR.EXPIRED_GROUP,
+	    		                "The group " + grp + "has expired."));
+	    		    });
 	    		}
+	    		
+	            if(!expiring.isEmpty()) {
+	                expiring.forEach(grp -> {
+	                    messages.add(new HubNotificationMessage(HubNotificationMessage.WARNING.EXPIRING_GROUP,
+	                            "The group " + grp + "is expiring."));
+	                 });
+	            }
 	    		
 	    		Logging.INSTANCE.info("Remote Engine Run on hub with User: " + engine.getUsername());
 	    		HubReference hub = new GenerateHubReference().execute();
 	    		EngineAuthenticationResponse resp = new EngineAuthenticationResponse(authenticatedIdentity, hub,
 	    				NetworkManager.INSTANCE.getNodes(engine.getGroups()));
-	    		if (!warnings.isEmpty()) {
-	    			resp.setWarnings(warnings);
+	    		
+	    		if (!messages.isEmpty()) {
+	    			resp.setMessages(messages);
 	    		}
+	    		
 	    		return resp;
 	        }
 		} else {
+		    //should we send an email?
 			throw new LicenseExpiredException(profile.getUsername());
 		}
 		return null;
