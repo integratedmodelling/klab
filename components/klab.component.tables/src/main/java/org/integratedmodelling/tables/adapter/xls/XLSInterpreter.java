@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.utils.URLUtils;
 import org.integratedmodelling.klab.utils.Utils;
 import org.integratedmodelling.tables.AbstractTable;
 import org.integratedmodelling.tables.TableInterpreter;
+import org.integratedmodelling.tables.adapter.TableAdapter;
 import org.integratedmodelling.tables.adapter.TableValidator;
 
 public class XLSInterpreter extends TableInterpreter {
@@ -210,6 +211,13 @@ public class XLSInterpreter extends TableInterpreter {
 		builder.withParameter("resource.type", "csv");
 		builder.withParameter("resource.file", MiscUtilities.getFileName(file));
 
+		if (checkHeaders) {
+		    /*
+		     * add column headers to the list of categorizables
+		     */
+		    builder.withCategorizable(TableAdapter.COLUMN_HEADER_CATEGORIZABLE);
+		}
+		
 		builder.withGeometry(gbuilder.build());
 
 	}

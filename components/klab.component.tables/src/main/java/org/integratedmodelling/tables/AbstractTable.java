@@ -34,6 +34,7 @@ import org.integratedmodelling.klab.rest.AttributeReference;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Utils;
+import org.integratedmodelling.tables.adapter.TableAdapter;
 
 public abstract class AbstractTable<T> implements ITable<T> {
 
@@ -347,6 +348,13 @@ public abstract class AbstractTable<T> implements ITable<T> {
         return attributesByIndex_.get(index);
     }
 
+    public Collection<Attribute> getColumnDescriptors() {
+        if (attributesByIndex_ == null) {
+            buildAttributeIndex();
+        }
+        return attributesByIndex_.values();
+    }
+
     private void buildAttributeIndex() {
         attributes_ = new HashMap<>();
         attributesByIndex_ = new HashMap<>();
@@ -399,6 +407,13 @@ public abstract class AbstractTable<T> implements ITable<T> {
                 row = getIndex(locators[0], 0);
                 col = getIndex(locators[1], 1);
             } else if (locators.length == 1) {
+                if (TableAdapter.COLUMN_HEADER_CATEGORIZABLE.equals(locators[0].toString())) {
+                    List<T> ret = new ArrayList<>();
+                    for (int n = 0; n < getColumnDescriptors().size(); n++) {
+                        ret.add((T) getColumnDescriptor(n).getName());
+                    }
+                    return ret;
+                }
                 col = getIndex(locators[0], 1);
             }
         }

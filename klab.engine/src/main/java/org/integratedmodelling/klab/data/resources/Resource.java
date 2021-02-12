@@ -109,6 +109,7 @@ public class Resource implements IResource {
 	List<Attribute> attributes = new ArrayList<>();
 	List<Attribute> inputs = new ArrayList<>();
 	List<Attribute> outputs = new ArrayList<>();
+	List<String> categorizables = new ArrayList<>();
 	String projectName;
 	String localName;
 	// copied from adapter at creation
@@ -154,6 +155,7 @@ public class Resource implements IResource {
 		this.localName = reference.getLocalName();
 		this.spatialExtent = reference.getSpatialExtent();
 		this.attributes.addAll(reference.getAttributes());
+		this.categorizables.addAll(reference.getCategorizables());
 		this.exports.putAll(reference.getExportFormats());
 
 		for (ResourceReference ref : reference.getHistory()) {
@@ -188,6 +190,7 @@ public class Resource implements IResource {
 		ret.setProjectName(this.projectName);
 		ret.setLocalName(getLocalName());
 		ret.setType(this.type);
+		ret.getCategorizables().addAll(this.categorizables);
 		ret.setSpatialExtent(spatialExtent);
 		ret.getExportFormats().putAll(this.getExports());
 
@@ -599,5 +602,10 @@ public class Resource implements IResource {
 	public Map<String, Object> getRuntimeData() {
 		return runtimeData;
 	}
+
+    @Override
+    public Collection<String> getCategorizables() {
+        return this.categorizables;
+    }
 
 }

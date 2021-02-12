@@ -70,6 +70,7 @@ public class ResourceReference {
     private SpatialExtent spatialExtent;
     private List<AttributeReference> dependencies = null;
     private List<AttributeReference> outputs = null;
+    private List<String> categorizables = new ArrayList<>();
 
     public List<AttributeReference> getOutputs() {
         return outputs;
@@ -104,6 +105,7 @@ public class ResourceReference {
         this.dependencies = other.dependencies == null ? null : new ArrayList<>(other.dependencies);
         this.outputs = other.outputs == null ? null : new ArrayList<>(other.outputs);
         this.exportFormats.putAll(other.exportFormats);
+        this.categorizables.addAll(other.categorizables);
     }
 
     public String getUrn() {
@@ -248,6 +250,14 @@ public class ResourceReference {
 
     public void setExportFormats(Map<String, String> exportFormats) {
         this.exportFormats = exportFormats;
+    }
+
+    public List<String> getCategorizables() {
+        return categorizables;
+    }
+
+    public void setCategorizables(List<String> categorizables) {
+        this.categorizables = categorizables;
     }
 
 }

@@ -23,6 +23,8 @@ import org.integratedmodelling.tables.TablesComponent;
 
 public abstract class TableAdapter implements IResourceAdapter {
 
+    public static final String COLUMN_HEADER_CATEGORIZABLE = "Column header";
+    
 	/**
 	 * Storage for stuff that is too expensive to recompute at each resource use.
 	 * Should be linked to resource URN and URN only. Individual resources can store

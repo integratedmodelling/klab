@@ -65,6 +65,7 @@ public class ResourceBuilder implements IResource.Builder {
 	private String projectName;
 	private String localName;
 	private List<String> requiredUrns;
+	private List<String> categorizables = new ArrayList<>();
 
 	// for importers
 	private String resourceId;
@@ -94,6 +95,7 @@ public class ResourceBuilder implements IResource.Builder {
 		ret.spatialExtent = this.spatialExtent;
 		ret.attributes.addAll(this.attributes);
 		ret.inputs.addAll(this.dependencies);
+		ret.categorizables.addAll(this.categorizables);
 		if (this.requiredUrns != null) {
 			ret.dependencies.addAll(this.requiredUrns);
 		}
@@ -220,6 +222,12 @@ public class ResourceBuilder implements IResource.Builder {
 	@Override
 	public Collection<File> getImportedFiles() {
 		return importedFiles;
+	}
+	
+	@Override
+	public Builder withCategorizable(String id) {
+	    this.categorizables.add(id);
+	    return this;
 	}
 
 	@Override
