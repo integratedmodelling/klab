@@ -34,9 +34,9 @@
         				 <image>openjdk:8u282-buster</image>
       				</from>
                     <to>
-                        <image>registry.integratedmodelling.org/engine-server</image>
+                        <image>${env.registry}/engine-server</image>
                         <tags>
-                        	<tag>development</tag>
+                        	<tag>${env.engine-tag}</tag>
 				      		<tag>latest</tag>
 				    	</tags>
 				    	<auth>

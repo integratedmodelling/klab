@@ -13,14 +13,26 @@
 	<description>k.LAB authentication and collaboration server hub</description>
 	<build>
 		<plugins>
-	  		<plugin>
-	  			<groupId>com.google.cloud.tools</groupId>
-	  			<artifactId>jib-maven-plugin</artifactId>
-	  			<configuration>
-	  				<!-- we don't want jib to execute on this module -->
-	  				<skip>true</skip>
-	  			</configuration>
-	      	</plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <configuration>
+                    <from>
+        				 <image>openjdk:8u282-buster</image>
+      				</from>
+                    <to>
+                        <image>${env.registry}/hub-server</image>
+                        <tags>
+                        	<tag>${env.hub-tag}</tag>
+				      		<tag>latest</tag>
+				    	</tags>
+				    	<auth>
+				    		<username>${env.username}</username>
+				    		<password>${env.password}</password>
+            			</auth>
+                    </to>
+                </configuration>
+            </plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>

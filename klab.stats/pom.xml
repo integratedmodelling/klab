@@ -26,9 +26,9 @@
         				 <image>openjdk:8u282-buster</image>
       				</from>
                     <to>
-                        <image>registry.integratedmodelling.org/stat-server</image>
+                        <image>${env.registry}/stat-server</image>
                         <tags>
-                        	<tag>development</tag>
+                        	<tag>${env.stat-tag}</tag>
 				      		<tag>latest</tag>
 				    	</tags>
 				    	<auth>
