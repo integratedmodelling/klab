@@ -1,5 +1,6 @@
 package org.integratedmodelling.tables.adapter;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -8,7 +9,9 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
@@ -30,6 +33,9 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.owl.Observable;
+import org.integratedmodelling.klab.utils.SemanticType;
 import org.integratedmodelling.tables.AbstractTable;
 import org.integratedmodelling.tables.CodeMapping;
 import org.integratedmodelling.tables.DimensionScanner;
@@ -74,9 +80,62 @@ public class TableEncoder implements IResourceEncoder {
         ITable<?> table = getTable(resource, scope.getMonitor());
         if (table != null) {
 
-            Attribute collectSemantics = urnParameters.containsKey("collect")
-                    ? table.getColumnDescriptor(urnParameters.get("collect"))
-                    : null;
+            /*
+             * collect attributes to scan: either an attribute, which we map to the values of a
+             * column, or the keyword "header" which makes us scan all attributes, collect that map
+             * to concepts, and check by applying any condition in the contextualized values.
+             */
+            List<Attribute> scannedAttributes = new ArrayList<>();
+
+            String collected = urnParameters.get("collect");
+            String collectCondition = null;
+            List<CodeMapping> collectedMappings = new ArrayList<>();
+            Map<String, IConcept> collectedAttributeToConcept = new HashMap<>();
+
+            if (collected != null) {
+
+                if (collected.contains(":")) {
+                    String[] cc = collected.split(Pattern.quote(":"));
+                    collected = cc[0];
+                    if (cc.length > 1 && !cc[1].isEmpty()) {
+                        collectCondition = cc[1];
+                    }
+                }
+                if (collected.contains("->")) {
+                    String[] cc = collected.split(Pattern.quote("->"));
+                    collected = cc[0];
+                    for (int i = 1; i < cc.length; i++) {
+                        CodeMapping cm = ((AbstractTable<?>) table).getMapping(cc[i]);
+                        if (cm == null) {
+                            throw new KlabValidationException("table resource refers to non-existent mapping " + cc[i]);
+                        }
+                        collectedMappings.add(cm);
+                    }
+                }
+
+                if ("header".equals(collected)) {
+
+                    for (Attribute attr : resource.getAttributes()) {
+                        Object attrName = attr.getName();
+                        for (CodeMapping m : collectedMappings) {
+                            attrName = m.map(attrName);
+                        }
+                        if (attrName instanceof IConcept) {
+                            scannedAttributes.add(attr);
+                            collectedAttributeToConcept.put(attr.getName(), (IConcept) attrName);
+                        }
+                    }
+
+                } else {
+                    Object str = urnParameters.get("collect");
+                    Attribute attr = str == null ? null : table.getColumnDescriptor(str.toString());
+                    if (attr == null) {
+                        throw new KlabValidationException("table resource refers to non-existent attribute " + collected);
+                    }
+                    scannedAttributes.add(attr);
+                }
+
+            }
 
             DimensionScanner<ITime> time = (DimensionScanner<ITime>) ((Resource) resource).getRuntimeData().get("time");
             DimensionScanner<ISpace> space = (DimensionScanner<ISpace>) ((Resource) resource).getRuntimeData().get("space");
@@ -87,7 +146,7 @@ public class TableEncoder implements IResourceEncoder {
              * compatible concepts, which we OR if >1, and set into the semantics field of the
              * builder.
              */
-            if (collectSemantics != null) {
+            if (scannedAttributes.size() > 0) {
 
                 Set<IConcept> collection = new HashSet<>();
                 if (time != null && !ignoreTime) {
@@ -101,9 +160,37 @@ public class TableEncoder implements IResourceEncoder {
                  * scan each row and ask t/s if it applies; if so, collect the value in the passed
                  * collection
                  */
-                for (Object value : table.get(List.class, scope, collectSemantics)) {
-                    if (value instanceof IConcept) {
-                        collection.add((IConcept) value);
+                if (scannedAttributes.size() == 1) {
+                    for (Object value : table.get(List.class, scope, scannedAttributes.get(0))) {
+                        if (value instanceof IConcept) {
+                            collection.add((IConcept) value);
+                        }
+                    }
+                } else {
+                    for (Attribute attribute : scannedAttributes) {
+
+                        /*
+                         * scan all the attributes and collect the mapped concept value
+                         */
+                        for (Object value : table.get(List.class, scope, attribute)) {
+                            if (Observations.INSTANCE.isData(value)) {
+                                boolean ok = true;
+                                /*
+                                 * poor man's expression logics for now. Later: turn into
+                                 * expressions
+                                 */
+                                if (collectCondition != null) {
+                                    if (collectCondition.startsWith(">")) {
+                                        Double min = Double.parseDouble(collectCondition.substring(1));
+                                        ok = value instanceof Number && ((Number) value).doubleValue() > min;
+                                    }
+                                }
+                                if (ok) {
+                                    collection.add(collectedAttributeToConcept.get(attribute.getName()));
+                                    break;
+                                }
+                            }
+                        }
                     }
                 }
 
@@ -115,7 +202,7 @@ public class TableEncoder implements IResourceEncoder {
 
                 return;
 
-            }
+            } 
 
             /**
              * First pass: contextualize for the scope, which may redefine some filters. We leave
@@ -132,24 +219,41 @@ public class TableEncoder implements IResourceEncoder {
             }
 
             /*
-             * if we asked for a specific column in the value attribute, map it first if needed, then filter
+             * if we asked for a specific column in the value attribute, map it first if needed,
+             * then filter
              */
             if (urnParameters.containsKey(Urn.SINGLE_PARAMETER_KEY)) {
-                
+
                 String[] columnId = urnParameters.get(Urn.SINGLE_PARAMETER_KEY).split(Pattern.quote("->"));
                 Object column = columnId[0];
+
+                if (SemanticType.validate(column.toString()) && scope.getTargetSemantics() != null) {
+                    /*
+                     * check if this is an abstract identity or role and if so, translate to
+                     * whatever the observable incarnates it to.
+                     */
+                    IConcept predicate = Concepts.c(column.toString());
+                    if (predicate != null && predicate.isAbstract()
+                            && (predicate.is(IKimConcept.Type.ROLE) || predicate.is(IKimConcept.Type.IDENTITY))) {
+                        IConcept c = ((Observable) scope.getTargetSemantics()).getPredicate(predicate);
+                        if (c != null) {
+                            column = c.getDefinition();
+                        }
+                    }
+                }
+
                 for (int i = 1; i < columnId.length; i++) {
-                    CodeMapping map = ((AbstractTable<?>)table).getMapping(columnId[i]);
+                    CodeMapping map = ((AbstractTable<?>) table).getMapping(columnId[i]);
                     if (map == null) {
                         throw new KlabIllegalArgumentException("table resource does not include a codelist named " + columnId[i]);
                     }
                     column = map.reverseMap(column);
                 }
-                
+
                 if (column == null || table.getColumnDescriptor(column.toString()) == null) {
                     throw new KlabIllegalArgumentException("table resource does not include a column named " + column);
                 }
-                
+
                 table = table.filter(Type.INCLUDE_COLUMNS, table.getColumnDescriptor(column.toString()).getIndex());
             }
 
