@@ -19,6 +19,8 @@ import org.joda.time.Minutes;
 import org.joda.time.Months;
 import org.joda.time.Seconds;
 import org.joda.time.Years;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 public enum Time implements ITimeService {
 
@@ -103,6 +105,14 @@ public enum Time implements ITimeService {
         YEARLY
     }
 
+    public boolean isTimePattern(String string) {
+        try {
+            DateTimeFormat.forPattern(string);
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
+        return true;
+    }    
     /**
      * Return true if the passed day/year is a time point at the specified frequency. Use
      * the end of the month and Sunday for week.

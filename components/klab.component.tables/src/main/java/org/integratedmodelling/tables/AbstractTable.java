@@ -14,7 +14,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.kim.api.IKimConcept;
-import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Attribute;
@@ -22,7 +21,6 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Aggregator;
@@ -280,15 +278,16 @@ public abstract class AbstractTable<T> implements ITable<T> {
     Class<? extends T> valueClass;
     protected List<Integer> lastScannedIndices;
     protected boolean empty = false;
-    Map<String, List<CodeMapping>> mappings = new HashMap<>();
-    private SQLTableCache cacche_ = null;
+    Map<String, List<CodeMapping>> mappings = Collections.synchronizedMap(new HashMap<>());
+    private SQLTableCache cache_ = null;
     IMonitor monitor;
+    private Map<String, CodeMapping> mappingCatalog = Collections.synchronizedMap(new HashMap<>());
 
     public AbstractTable(IResource resource, Class<? extends T> cls, IMonitor monitor) {
         this.resource = resource;
         this.valueClass = cls;
         buildAttributeIndex();
-        this.cacche_ = new SQLTableCache(resource);
+        this.cache_ = new SQLTableCache(resource);
         this.monitor = monitor;
     }
 
@@ -299,7 +298,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
         this.filters.addAll(table.filters);
         this.valueClass = table.valueClass;
         this.empty = table.empty;
-        this.cacche_ = table.cacche_;
+        this.cache_ = table.cache_;
         this.monitor = table.monitor;
         this.mappings.putAll(table.mappings);
     }
@@ -309,11 +308,11 @@ public abstract class AbstractTable<T> implements ITable<T> {
     }
 
     public SQLTableCache getCache() {
-        if (cacche_.isEmpty()) {
+        if (cache_.isEmpty()) {
             monitor.info("building table cache for " + resource.getUrn());
-            cacche_.reset(this);
+            cache_.reset(this);
         }
-        return cacche_;
+        return cache_;
     }
 
     private void validateFilters() {
@@ -370,13 +369,14 @@ public abstract class AbstractTable<T> implements ITable<T> {
                 String[] mapchain = mapping.toString().trim().split(Pattern.quote("->"));
                 List<CodeMapping> chain = new ArrayList<>();
                 for (String mapid : mapchain) {
-                    File mapfile = new File(((Resource) resource).getPath() + File.separator + "code_" + mapid + ".properties");
-                    if (mapfile.exists()) {
-                        CodeMapping m = new CodeMapping(mapfile);
-                        chain.add(m);
-                        if (m.getType() != null) {
-                            ((AttributeReference) a).setType(m.getType());
-                        }
+                    CodeMapping map = getMapping(mapid);
+                    if (map == null) {
+                        throw new KlabValidationException("no mapping named " + mapid + " is defined for table");
+                    }
+
+                    chain.add(map);
+                    if (map.getType() != null) {
+                        ((AttributeReference) a).setType(map.getType());
                     }
                 }
                 mappings.put(a.getName(), chain);
@@ -851,6 +851,18 @@ public abstract class AbstractTable<T> implements ITable<T> {
 
     public Filter newFilter(Filter.Type filter, Object[] objects) {
         return new FilterDescriptor(filter, objects);
+    }
+
+    public CodeMapping getMapping(String string) {
+        CodeMapping ret = this.mappingCatalog.get(string);
+        if (ret == null) {
+            File mapfile = new File(((Resource) resource).getPath() + File.separator + "code_" + string + ".properties");
+            if (mapfile.exists()) {
+                ret = new CodeMapping(mapfile);
+                this.mappingCatalog.put(string, ret);
+            }
+        }
+        return ret;
     }
 
 }

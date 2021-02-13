@@ -102,7 +102,7 @@ public class SQLTableCache {
      * @return
      */
     public int getWidth(Attribute attribute) {
-        Integer ret = Integer.parseInt(resource.getParameters().get("column." + attribute.getName() + ".searchable", "-1"));
+        Integer ret = Integer.parseInt(resource.getParameters().get("column." + attribute.getName() + ".size", "-1"));
         if (ret < 0 && attribute.getType() == Type.TEXT) {
             return 1024;
         }
@@ -118,7 +118,7 @@ public class SQLTableCache {
     }
 
     public void reset(ITable<?> table) {
-        database.execute("DROP TABLE data;");
+        database.execute("DROP TABLE IF EXISTS data;");
         createStructure();
         loadData(table);
     }

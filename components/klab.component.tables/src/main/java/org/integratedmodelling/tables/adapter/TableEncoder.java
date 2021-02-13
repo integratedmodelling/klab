@@ -6,6 +6,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
 
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Urn;
@@ -17,6 +18,7 @@ import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.data.general.ITable;
 import org.integratedmodelling.klab.api.data.general.ITable.Filter;
+import org.integratedmodelling.klab.api.data.general.ITable.Filter.Type;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -27,8 +29,10 @@ import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.data.Aggregator;
 import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.tables.AbstractTable;
+import org.integratedmodelling.tables.CodeMapping;
 import org.integratedmodelling.tables.DimensionScanner;
-import org.integratedmodelling.tables.SQLTableCache;
 
 public class TableEncoder implements IResourceEncoder {
 
@@ -127,13 +131,35 @@ public class TableEncoder implements IResourceEncoder {
                 }
             }
 
-            // TODO cache the indices for the slow-moving filters
+            /*
+             * if we asked for a specific column in the value attribute, map it first if needed, then filter
+             */
+            if (urnParameters.containsKey(Urn.SINGLE_PARAMETER_KEY)) {
+                
+                String[] columnId = urnParameters.get(Urn.SINGLE_PARAMETER_KEY).split(Pattern.quote("->"));
+                Object column = columnId[0];
+                for (int i = 1; i < columnId.length; i++) {
+                    CodeMapping map = ((AbstractTable<?>)table).getMapping(columnId[i]);
+                    if (map == null) {
+                        throw new KlabIllegalArgumentException("table resource does not include a codelist named " + columnId[i]);
+                    }
+                    column = map.reverseMap(column);
+                }
+                
+                if (column == null || table.getColumnDescriptor(column.toString()) == null) {
+                    throw new KlabIllegalArgumentException("table resource does not include a column named " + column);
+                }
+                
+                table = table.filter(Type.INCLUDE_COLUMNS, table.getColumnDescriptor(column.toString()).getIndex());
+            }
 
             Map<Filter, Object> valueCache = new HashMap<>();
             Aggregator aggregator = new Aggregator(scope.getTargetSemantics(), scope.getMonitor(), true);
 
             for (Filter filter : table.getFilters()) {
-                System.out.println("FILTER " + filter);
+                if (filter.getType() == Type.NO_RESULTS) {
+                    return;
+                }
             }
 
             /**
