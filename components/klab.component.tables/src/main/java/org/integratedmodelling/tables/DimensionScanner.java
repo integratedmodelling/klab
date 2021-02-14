@@ -166,7 +166,7 @@ public class DimensionScanner<T> {
                         throw new KlabValidationException("code mapping " + definition[i] + " cannot be matched to a definition");
 
                     }
-                    mappings.add(new CodeMapping(mapfile));
+                    mappings.add(new CodeMapping(definition[i], mapfile));
                 }
             }
         }

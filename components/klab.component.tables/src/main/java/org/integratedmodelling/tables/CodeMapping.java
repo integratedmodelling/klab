@@ -46,13 +46,16 @@ public class CodeMapping {
     // we either encode the mapping in a file or use the logic encoded in the next fields
     private Mapping mapping = Mapping.CODELIST;
     private String mappingKey;
+    private String name;
     
     public CodeMapping(Mapping type, String value) {
         this.mapping = type;
         this.mappingKey = value;
+        this.name = type + ": " + value;
     }
 
-    public CodeMapping(File propertiesFile) {
+    public CodeMapping(String name, File propertiesFile) {
+        this.name = name;
         try (InputStream input = new FileInputStream(propertiesFile)) {
             properties.load(input);
             this.worldview = properties.getProperty("worldview");
@@ -147,6 +150,10 @@ public class CodeMapping {
 
     public IArtifact.Type getType() {
         return type;
+    }
+
+    public String getDescription() {
+        return this.name;
     }
 
 }

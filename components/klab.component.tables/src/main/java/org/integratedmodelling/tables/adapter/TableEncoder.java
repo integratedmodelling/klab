@@ -202,7 +202,7 @@ public class TableEncoder implements IResourceEncoder {
 
                 return;
 
-            } 
+            }
 
             /**
              * First pass: contextualize for the scope, which may redefine some filters. We leave
@@ -221,6 +221,10 @@ public class TableEncoder implements IResourceEncoder {
             /*
              * if we asked for a specific column in the value attribute, map it first if needed,
              * then filter
+             * 
+             * TODO this should be <-, i.e. the mapping should always follow the arrows - worried
+             * that it makes it impossible to understand (it probably already is though). Correctly
+             * it should probably say header->headerToCrop:<concept> to define what to match.
              */
             if (urnParameters.containsKey(Urn.SINGLE_PARAMETER_KEY)) {
 
@@ -247,10 +251,15 @@ public class TableEncoder implements IResourceEncoder {
                     if (map == null) {
                         throw new KlabIllegalArgumentException("table resource does not include a codelist named " + columnId[i]);
                     }
-                    column = map.reverseMap(column);
+                    Object mapped = map.reverseMap(column);
+                    if (mapped == null) {
+                        scope.getMonitor().warn("Cannot map value " + column + " using mapping " + map.getDescription());
+                        return;
+                    }
+                    column = mapped;
                 }
 
-                if (column == null || table.getColumnDescriptor(column.toString()) == null) {
+                if (table.getColumnDescriptor(column.toString()) == null) {
                     throw new KlabIllegalArgumentException("table resource does not include a column named " + column);
                 }
 

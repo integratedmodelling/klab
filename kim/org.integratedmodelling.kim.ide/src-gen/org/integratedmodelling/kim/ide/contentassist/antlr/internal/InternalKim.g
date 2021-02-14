@@ -4209,9 +4209,9 @@ rule__ValueOperator__Alternatives_0_1
 	)
 	|
 	(
-		{ before(grammarAccess.getValueOperatorAccess().getGroup_0_1_2()); }
-		(rule__ValueOperator__Group_0_1_2__0)
-		{ after(grammarAccess.getValueOperatorAccess().getGroup_0_1_2()); }
+		{ before(grammarAccess.getValueOperatorAccess().getComparisonConceptAssignment_0_1_2()); }
+		(rule__ValueOperator__ComparisonConceptAssignment_0_1_2)
+		{ after(grammarAccess.getValueOperatorAccess().getComparisonConceptAssignment_0_1_2()); }
 	)
 	|
 	(
@@ -17576,114 +17576,6 @@ rule__ValueOperator__Group_0_0_1__1__Impl
 	{ before(grammarAccess.getValueOperatorAccess().getToKeyword_0_0_1_1()); }
 	'to'
 	{ after(grammarAccess.getValueOperatorAccess().getToKeyword_0_0_1_1()); }
-)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-
-rule__ValueOperator__Group_0_1_2__0
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	rule__ValueOperator__Group_0_1_2__0__Impl
-	rule__ValueOperator__Group_0_1_2__1
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__ValueOperator__Group_0_1_2__0__Impl
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-(
-	{ before(grammarAccess.getValueOperatorAccess().getComparisonConceptAssignment_0_1_2_0()); }
-	(rule__ValueOperator__ComparisonConceptAssignment_0_1_2_0)
-	{ after(grammarAccess.getValueOperatorAccess().getComparisonConceptAssignment_0_1_2_0()); }
-)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__ValueOperator__Group_0_1_2__1
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	rule__ValueOperator__Group_0_1_2__1__Impl
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__ValueOperator__Group_0_1_2__1__Impl
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-(
-	{ before(grammarAccess.getValueOperatorAccess().getGroup_0_1_2_1()); }
-	(rule__ValueOperator__Group_0_1_2_1__0)*
-	{ after(grammarAccess.getValueOperatorAccess().getGroup_0_1_2_1()); }
-)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-
-rule__ValueOperator__Group_0_1_2_1__0
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	rule__ValueOperator__Group_0_1_2_1__0__Impl
-	rule__ValueOperator__Group_0_1_2_1__1
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__ValueOperator__Group_0_1_2_1__0__Impl
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-(
-	{ before(grammarAccess.getValueOperatorAccess().getCommaKeyword_0_1_2_1_0()); }
-	','
-	{ after(grammarAccess.getValueOperatorAccess().getCommaKeyword_0_1_2_1_0()); }
-)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__ValueOperator__Group_0_1_2_1__1
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	rule__ValueOperator__Group_0_1_2_1__1__Impl
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__ValueOperator__Group_0_1_2_1__1__Impl
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-(
-	{ before(grammarAccess.getValueOperatorAccess().getComparisonConceptAssignment_0_1_2_1_1()); }
-	(rule__ValueOperator__ComparisonConceptAssignment_0_1_2_1_1)
-	{ after(grammarAccess.getValueOperatorAccess().getComparisonConceptAssignment_0_1_2_1_1()); }
 )
 ;
 finally {
@@ -39695,30 +39587,15 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__ValueOperator__ComparisonConceptAssignment_0_1_2_0
+rule__ValueOperator__ComparisonConceptAssignment_0_1_2
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getValueOperatorAccess().getComparisonConceptConceptDeclarationParserRuleCall_0_1_2_0_0()); }
+		{ before(grammarAccess.getValueOperatorAccess().getComparisonConceptConceptDeclarationParserRuleCall_0_1_2_0()); }
 		ruleConceptDeclaration
-		{ after(grammarAccess.getValueOperatorAccess().getComparisonConceptConceptDeclarationParserRuleCall_0_1_2_0_0()); }
-	)
-;
-finally {
-	restoreStackSize(stackSize);
-}
-
-rule__ValueOperator__ComparisonConceptAssignment_0_1_2_1_1
-	@init {
-		int stackSize = keepStackSize();
-	}
-:
-	(
-		{ before(grammarAccess.getValueOperatorAccess().getComparisonConceptConceptDeclarationParserRuleCall_0_1_2_1_1_0()); }
-		ruleConceptDeclaration
-		{ after(grammarAccess.getValueOperatorAccess().getComparisonConceptConceptDeclarationParserRuleCall_0_1_2_1_1_0()); }
+		{ after(grammarAccess.getValueOperatorAccess().getComparisonConceptConceptDeclarationParserRuleCall_0_1_2_0()); }
 	)
 ;
 finally {

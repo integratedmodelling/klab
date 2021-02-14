@@ -858,7 +858,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
         if (ret == null) {
             File mapfile = new File(((Resource) resource).getPath() + File.separator + "code_" + string + ".properties");
             if (mapfile.exists()) {
-                ret = new CodeMapping(mapfile);
+                ret = new CodeMapping(string, mapfile);
                 this.mappingCatalog.put(string, ret);
             }
         }
