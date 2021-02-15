@@ -87,7 +87,7 @@ public class AggregatingResolver implements IResolver<IState>, IExpression, IPro
                 for (IState s : states) {
                     Object value = s.get(locator);
                     if (!ignoreNodata || Observations.INSTANCE.isData(value)) {
-                        aggregator.add(value);
+                        aggregator.add(value, ret.getObservable(), locator);
                     }
                 }
                 ret.set(locator, aggregator.aggregate());

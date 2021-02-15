@@ -210,7 +210,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 					cell.phaseHash.put(phase.getKey(), new Aggregator(observable, scope.getMonitor(), true));
 				}
 
-				cell.phaseHash.get(phase.getKey()).add(value);
+				cell.phaseHash.get(phase.getKey()).add(value, observable, locator);
 
 				/*
 				 * this is held to feed references in computations that happen at each cycle,
@@ -642,7 +642,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 			 * Create an aggregator w/o semantics according to the computation type, which
 			 * is guaranteed consistent.
 			 */
-			Aggregator aggregator = new Aggregator(cell.computationType.getAggregation());
+			Aggregator aggregator = new Aggregator(cell.computationType.getAggregation(), scope.getScale());
 
 			/*
 			 * scan the OTHER dimension and add the computedValue of all cells that have
@@ -653,7 +653,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 					Cell target = cells[i][cell.row.index];
 					if (target != null
 							&& (cell.computationType == null || cell.computationType == cell.column.computationType)) {
-						aggregator.add(target.computedValue == null ? 0 : target.computedValue);
+						aggregator.add(target.computedValue == null ? 0 : target.computedValue, null);
 					}
 				}
 			} else {
@@ -661,7 +661,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 					Cell target = cells[cell.column.index][i];
 					if (target != null
 							&& (cell.computationType == null || cell.computationType == cell.row.computationType)) {
-						aggregator.add(target.computedValue == null ? 0 : target.computedValue);
+						aggregator.add(target.computedValue == null ? 0 : target.computedValue, null);
 					}
 				}
 			}

@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -12,16 +13,16 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
+import org.integratedmodelling.klab.Units.AggregationData;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.mediation.IUnit;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.scale.ExtentDimension;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
-import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.utils.Triple;
 
 /**
@@ -29,10 +30,16 @@ import org.integratedmodelling.klab.utils.Triple;
  * handling the translation of context in case of extensive units with differently scaled inputs and
  * outputs.
  * 
+ * An aggregator object must only be used within <em>one</em> contextualization: it will cache
+ * conversion factors if the target is extensive and the aggregation dimensions are regular
+ * topologies, so switching the same aggregator to a different scale will silently produce wrong
+ * results. It is not thread safe.
+ * 
  * @author Ferd
  */
 public class Aggregator {
 
+    @Deprecated
     private List<Triple<Object, IObservable, ILocator>> addenda = new ArrayList<>();
     private IObservable observable;
     private Aggregation aggregation;
@@ -42,10 +49,25 @@ public class Aggregator {
     int spatialDimensionality = 0;
 
     /*
+     * these enable passing null as locator to add() as long as the space is regular. The aggregator
+     * should not be used across time for time-varying extents in that case.
+     */
+    IScale scale = null;
+    ILocator referenceLocator;
+
+    /**
+     * Cache stable aggregation strategies by observable definition
+     */
+    private Map<String, AggregationData> strategy = Collections.synchronizedMap(new HashMap<>());
+
+    /*
      * if true, we don't expect different observables or units, and we just accumulate values right
      * away without mediation. Set to false by the default semantic aggregator. For now values with
      * mediation require an enormity of RAM and GC on large extents.
+     * 
+     * TODO remove, should always be stable
      */
+    @Deprecated
     boolean stable = true;
 
     /*
@@ -58,15 +80,14 @@ public class Aggregator {
     IUnit unit; // destination unit
 
     public Aggregator(IObservable destinationObservable, IMonitor monitor) {
-        this(destinationObservable, monitor, false);
+        this(destinationObservable, monitor, true);
     }
 
-    public Aggregator(IObservable destinationObservable, IMonitor monitor, boolean stable) {
+    public Aggregator(IObservable destinationObservable, IMonitor monitor, @Deprecated boolean stable) {
         this.observable = destinationObservable;
-        this.aggregation = getAggregation(destinationObservable);
         this.monitor = monitor;
         this.unit = this.observable.getUnit();
-        this.stable = stable;
+//        this.stable = stable;
         if (this.unit == null && this.observable.getCurrency() != null) {
             this.unit = this.observable.getCurrency().getUnit();
             this.temporalDimensionality = Units.INSTANCE.getTemporalDimensionality(this.unit);
@@ -74,108 +95,76 @@ public class Aggregator {
         }
     }
 
+    public Aggregator(IScale scale) {
+        this(null, scale);
+    }
+    
     /**
-     * Use this constructor when the semantics is no concern.
+     * Use this constructor when the semantics is no concern. A scale must be passed and the
+     * aggregator will reject {@link #add(Object, ILocator)} if the scale is not regular and the
+     * locator is null. The aggregation can also be null, in which case the appropriate one for
+     * the observable will be used.
      * 
      * @param aggregation
+     * @param scale
      */
-    public Aggregator(Aggregation aggregation) {
+    public Aggregator(Aggregation aggregation, IScale scale) {
         this.aggregation = aggregation;
+        this.scale = scale;
     }
 
-    public void add(Object value) {
-        addenda.add(new Triple<>(value, null, null));
+    /**
+     * Add a single value. If the aggregator has been created with a scale and the scale has a
+     * regular space, the locator can be null and the first subdivision, or the entire scale, will
+     * be used as a reference.
+     * 
+     * @param value
+     * @param locator
+     */
+    public void add(Object value, ILocator locator) {
+        if (locator == null && this.referenceLocator == null) {
+            if (scale == null || (scale.getSpace() != null && scale.isSpatiallyDistributed() && !scale.getSpace().isRegular())) {
+                throw new KlabIllegalArgumentException(
+                        "internal: aggregation: cannot aggregate with a null locator if the space is irregular or the scale is unknown");
+            }
+            this.referenceLocator = scale.isSpatiallyDistributed() ? scale.iterator().next() : scale;
+        }
+        add(value, this.observable, locator == null ? this.referenceLocator : locator);
     }
 
     public void add(Object value, IObservable observable, ILocator locator) {
 
         if (Observations.INSTANCE.isData(value)) {
 
-            if (stable) {
-                if (value instanceof Number) {
-                    sum += ((Number) value).doubleValue();
-                    count++;
+            if (value instanceof Number) {
+                AggregationData ad = getAggregationData(observable, locator);
+                if (this.aggregation == null) {
+                    this.aggregation = ad.aggregation;
+                }
+                double dval = ((Number) value).doubleValue() * ad.conversionFactor;
+                sum += dval;
+                count++;
+            } else {
+                Integer cnt = counts.get(value);
+                if (cnt == null) {
+                    counts.put(value, 1);
                 } else {
-                    Integer cnt = counts.get(value);
-                    if (cnt == null) {
-                        counts.put(value, 1);
-                    } else {
-                        counts.put(value, cnt + 1);
-                    }
-                }
-                return;
-            }
-
-            /*
-             * TODO if the destination observable is inherent to the same type of the source
-             * observable, the aggregation follows the same rules as without inherency! 
-             * 
-             * TODO all
-             * these checks and their results (aggregation type and conversion factor) must be
-             * cached by definition of target type so that they can be performed only once.
-             */
-
-            if (this.aggregation == Aggregation.SUM && value instanceof Number && locator instanceof IScale) {
-
-                double nval = ((Number) value).doubleValue();
-                IScale incomingScale = (IScale) locator;
-
-                /*
-                 * adapt value
-                 */
-                if (observable.getUnit() != null && this.unit != null) {
-
-                    int incomingSpatialDimensionality = Units.INSTANCE.getSpatialDimensionality(observable.getUnit());
-                    int incomingTemporalDimensionality = Units.INSTANCE.getTemporalDimensionality(observable.getUnit());
-
-                    List<ExtentDimension> distribution = new ArrayList<>();
-                    if (incomingSpatialDimensionality >= 2 && spatialDimensionality == 0 && incomingScale.getSpace() != null) {
-
-                        /*
-                         * aggregate over the spatial coverage of original locator
-                         */
-                        if (incomingSpatialDimensionality == 2) {
-                            IUnit arealUnit = Units.INSTANCE.getArealExtentUnit(observable.getUnit());
-                            nval *= incomingScale.getSpace().getShape().getArea(arealUnit);
-                        } else if (incomingSpatialDimensionality == 3) {
-                            // TODO not equipped yet
-                            throw new KlabUnsupportedFeatureException("volumetric extents are still unsupported");
-                            // IUnit volumeUnit =
-                            // Units.INSTANCE.getVolumeExtentUnit(observable.getUnit());
-                            // double factor =
-                            // incomingScale.getSpace().getShape().getVolume(volumeUnit);
-                            // nval *= factor;
-                        }
-
-                        distribution.add(ExtentDimension.spatial(incomingSpatialDimensionality));
-                    }
-                    if (incomingTemporalDimensionality >= 2 && temporalDimensionality == 0 && incomingScale.getTime() != null) {
-
-                        /*
-                         * adjust for temporal coverage
-                         */
-                        IUnit temporalUnit = Units.INSTANCE.getTimeExtentUnit(observable.getUnit());
-                        nval *= incomingScale.getTime().getLength(temporalUnit);
-                        distribution.add(ExtentDimension.TEMPORAL);
-                    }
-
-                    /*
-                     * transform value w.r.t. base units if needed
-                     */
-                    IUnit baseUnit = observable.getUnit();
-                    if (distribution.size() > 0) {
-                        baseUnit = Units.INSTANCE.removeExtents(baseUnit, distribution);
-                    }
-
-                    value = this.unit.convert(nval, baseUnit);
-
-                } else if (observable.getCurrency() != null && this.unit != null) {
-
+                    counts.put(value, cnt + 1);
                 }
             }
-
-            addenda.add(new Triple<>(value, observable, locator));
+            return;
         }
+    }
+
+    private AggregationData getAggregationData(IObservable observable, ILocator locator) {
+        AggregationData ret = strategy.get(observable.getDefinition());
+        if (ret == null) {
+            ret = Units.INSTANCE.getAggregationData(observable, (IScale) locator);
+            if (ret.stable) {
+                strategy.put(observable.getDefinition(), ret);
+            }
+        }
+        return ret;
     }
 
     public void reset() {
@@ -184,7 +173,7 @@ public class Aggregator {
         count = 0;
         counts.clear();
     }
-    
+
     /**
      * Perform the final aggregation.
      * 
@@ -257,7 +246,7 @@ public class Aggregator {
         sum = 0;
         count = 0;
         for (Object o : objects) {
-            add(o, null, null);
+            add(o, this.observable, null);
         }
         return aggregate();
     }

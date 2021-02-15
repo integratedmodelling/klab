@@ -1,17 +1,15 @@
 /*
  * This file is part of k.LAB.
  * 
- * k.LAB is free software: you can redistribute it and/or modify
- * it under the terms of the Affero GNU General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * k.LAB is free software: you can redistribute it and/or modify it under the terms of the Affero
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * A copy of the GNU Affero General Public License is distributed in the root
- * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
- * see <http://www.gnu.org/licenses/>.
+ * A copy of the GNU Affero General Public License is distributed in the root directory of the k.LAB
+ * distribution (LICENSE.txt). If this cannot be found see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
- * in author tags. All rights reserved.
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned in author tags. All
+ * rights reserved.
  */
 package org.integratedmodelling.klab.raster.files;
 
@@ -41,6 +39,7 @@ import org.geotools.factory.Hints;
 import org.geotools.gce.geotiff.GeoTiffFormat;
 import org.geotools.geometry.jts.ReferencedEnvelope;
 import org.geotools.referencing.CRS;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
@@ -69,243 +68,262 @@ import org.integratedmodelling.klab.utils.NumberUtils;
 import org.opengis.coverage.grid.GridCoverage;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
+import groovy.lang.Binding;
+import groovy.lang.GroovyShell;
+import groovy.lang.Script;
+import groovy.util.Eval;
+
 /**
- * The {@code RasterEncoder} adapts a raster resource (file-based) to a passed
- * geometry and returns the correspondent IKlabData.
+ * The {@code RasterEncoder} adapts a raster resource (file-based) to a passed geometry and returns
+ * the correspondent IKlabData.
  */
 public class RasterEncoder implements IResourceEncoder {
 
-	@Override
-	public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
-			IKlabData.Builder builder, IContextualizationScope context) {
-		encodeFromCoverage(resource, urnParameters, getCoverage(resource, geometry), geometry, builder, context);
-	}
+    @Override
+    public void getEncodedData(IResource resource, Map<String, String> urnParameters, IGeometry geometry,
+            IKlabData.Builder builder, IContextualizationScope context) {
+        encodeFromCoverage(resource, urnParameters, getCoverage(resource, geometry), geometry, builder, context);
+    }
 
-	/**
-	 * Take a Geotools coverage and do the rest. Separated so that WCS can use it as
-	 * is.
-	 * 
-	 * TODO use URN parameters
-	 * 
-	 * @param resource
-	 * @param coverage
-	 * @param geometry
-	 * @param builder
-	 * @param context
-	 */
-	public void encodeFromCoverage(IResource resource, Map<String, String> urnParameters, GridCoverage coverage,
-			IGeometry geometry, IKlabData.Builder builder, IContextualizationScope context) {
+    /**
+     * Take a Geotools coverage and do the rest. Separated so that WCS can use it as is.
+     * 
+     * TODO use URN parameters
+     * 
+     * @param resource
+     * @param coverage
+     * @param geometry
+     * @param builder
+     * @param context
+     */
+    public void encodeFromCoverage(IResource resource, Map<String, String> urnParameters, GridCoverage coverage,
+            IGeometry geometry, IKlabData.Builder builder, IContextualizationScope context) {
 
-		/*
-		 * Set the data from the transformed coverage
-		 */
-		RenderedImage image = coverage.getRenderedImage();
-		RandomIter iterator = RandomIterFactory.create(image, null);
-		Dimension space = geometry.getDimension(Type.SPACE);
-		int band = resource.getParameters().get("band", 0);
-		Set<Double> nodata = getNodata(resource, coverage, band);
+        /*
+         * Set the data from the transformed coverage
+         */
+        RenderedImage image = coverage.getRenderedImage();
+        RandomIter iterator = RandomIterFactory.create(image, null);
+        Dimension space = geometry.getDimension(Type.SPACE);
+        int band = resource.getParameters().get("band", 0);
+        Set<Double> nodata = getNodata(resource, coverage, band);
+        GroovyShell shell = null;
+        Binding binding = null;
+        Script transformation = null;
 
-		/*
-		 * TODO support band mixer if set in resource
-		 */
+        if (resource.getParameters().get("transform") != null
+                && !resource.getParameters().get("transform").toString().trim().isEmpty()) {
+            binding = new Binding();
+            shell = new GroovyShell(binding);
+            transformation = shell.parse(resource.getParameters().get("transform").toString());
+        }
 
-		/*
-		 * if so configured, cache the transformed coverage for the space dimension
-		 * signature
-		 * 
-		 * TODO use different methods for non-doubles TODO support multi-band
-		 * expressions
-		 */
+        /*
+         * TODO support band mixer if set in resource
+         */
 
-		builder = builder.startState(((IRuntimeScope) context).getTargetName());
+        /*
+         * if so configured, cache the transformed coverage for the space dimension signature
+         * 
+         * TODO use different methods for non-doubles TODO support multi-band expressions
+         */
 
-		for (long ofs = 0; ofs < space.size(); ofs++) {
+        builder = builder.startState(((IRuntimeScope) context).getTargetName());
 
-			long[] xy = Grid.getXYCoordinates(ofs, space.shape()[0], space.shape()[1]);
-			double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], band);
+        for (long ofs = 0; ofs < space.size(); ofs++) {
 
-			// this is cheeky but will catch most of the nodata and
-			// none of the good data
-			// FIXME see if this is really necessary
-			if (value < -1.0E35 || value > 1.0E35) {
-				value = Double.NaN;
-			}
+            long[] xy = Grid.getXYCoordinates(ofs, space.shape()[0], space.shape()[1]);
+            double value = iterator.getSampleDouble((int) xy[0], (int) xy[1], band);
 
-			for (double nd : nodata) {
-				if (NumberUtils.equal(value, nd)) {
-					value = Double.NaN;
-					break;
-				}
-			}
+            // this is cheeky but will catch most of the nodata and
+            // none of the good data
+            // FIXME see if this is really necessary
+            if (value < -1.0E35 || value > 1.0E35) {
+                value = Double.NaN;
+            }
 
-			// if (!Double.isNaN(value)) {
-			// System.out.println("Setting " + Arrays.toString(xy) + " to " + value + " (ofs
-			// = " + ofs + ")");
-			// }
+            for (double nd : nodata) {
+                if (NumberUtils.equal(value, nd)) {
+                    value = Double.NaN;
+                    break;
+                }
+            }
 
-			builder.add(value);
-		}
-		builder = builder.finishState();
-	}
+            // if (!Double.isNaN(value)) {
+            // System.out.println("Setting " + Arrays.toString(xy) + " to " + value + " (ofs
+            // = " + ofs + ")");
+            // }
 
-	private Set<Double> getNodata(IResource resource, GridCoverage coverage, int band) {
-		Set<Double> ret = new HashSet<>();
-		if (resource.getParameters().contains("nodata")) {
-			ret.add(resource.getParameters().get("nodata", Double.class));
-		}
-		return ret;
-	}
+            if (transformation != null && Observations.INSTANCE.isData(value)) {
+                binding.setVariable("self", value);
+                Object o = transformation.run();
+                if (o instanceof Number) {
+                    value = ((Number) o).doubleValue();
+                } else {
+                    value = Double.NaN;
+                }
+            }
 
-	private CoordinateReferenceSystem getCrs(IGeometry geometry) {
+            builder.add(value);
+        }
+        builder = builder.finishState();
+    }
 
-		if (geometry instanceof Scale) {
-			ISpace space = ((Scale) geometry).getSpace();
-			return ((Projection) space.getProjection()).getCoordinateReferenceSystem();
-		}
+    private Set<Double> getNodata(IResource resource, GridCoverage coverage, int band) {
+        Set<Double> ret = new HashSet<>();
+        if (resource.getParameters().contains("nodata")) {
+            ret.add(resource.getParameters().get("nodata", Double.class));
+        }
+        return ret;
+    }
 
-		Dimension space = geometry.getDimension(Type.SPACE);
-		String epsg = space.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
-		if (epsg != null) {
-			try {
-				return CRS.decode(epsg);
-			} catch (Exception e) {
-				// fall back to later exception
-			}
-		}
+    private CoordinateReferenceSystem getCrs(IGeometry geometry) {
 
-		throw new KlabInternalErrorException("raster encoder: cannot create projection from geometry");
-	}
+        if (geometry instanceof Scale) {
+            ISpace space = ((Scale) geometry).getSpace();
+            return ((Projection) space.getProjection()).getCoordinateReferenceSystem();
+        }
 
-	private Interpolation getInterpolation(IMetadata metadata) {
+        Dimension space = geometry.getDimension(Type.SPACE);
+        String epsg = space.getParameters().get(Geometry.PARAMETER_SPACE_PROJECTION, String.class);
+        if (epsg != null) {
+            try {
+                return CRS.decode(epsg);
+            } catch (Exception e) {
+                // fall back to later exception
+            }
+        }
 
-		String method = metadata.get(RasterAdapter.INTERPOLATION_TYPE_FIELD, String.class);
-		if (method != null) {
-			if (method.equals("bilinear")) {
-				return new InterpolationBilinear();
-			} else if (method.equals("nearest")) {
-				return new InterpolationNearest();
-			} else if (method.equals("bicubic")) {
-				// TODO CHECK BITS
-				return new InterpolationBicubic(8);
-			} else if (method.equals("bicubic2")) {
-				// TODO CHECK BITS
-				return new InterpolationBicubic2(8);
-			}
-		}
-		return new InterpolationNearest();
-	}
+        throw new KlabInternalErrorException("raster encoder: cannot create projection from geometry");
+    }
 
-	private ReferencedEnvelope getEnvelope(IGeometry geometry, CoordinateReferenceSystem crs) {
-		if (geometry instanceof Scale) {
-			ISpace space = ((Scale) geometry).getSpace();
-			return ((Envelope) space.getEnvelope()).getJTSEnvelope();
-		}
-		return null;
-	}
+    private Interpolation getInterpolation(IMetadata metadata) {
 
-	private GridGeometry2D getGridGeometry(IGeometry geometry, ReferencedEnvelope envelope) {
+        String method = metadata.get(RasterAdapter.INTERPOLATION_TYPE_FIELD, String.class);
+        if (method != null) {
+            if (method.equals("bilinear")) {
+                return new InterpolationBilinear();
+            } else if (method.equals("nearest")) {
+                return new InterpolationNearest();
+            } else if (method.equals("bicubic")) {
+                // TODO CHECK BITS
+                return new InterpolationBicubic(8);
+            } else if (method.equals("bicubic2")) {
+                // TODO CHECK BITS
+                return new InterpolationBicubic2(8);
+            }
+        }
+        return new InterpolationNearest();
+    }
 
-		Dimension space = geometry.getDimension(Type.SPACE);
-		if (space.shape().length != 2 || !space.isRegular()) {
-			throw new KlabInternalErrorException(
-					"raster encoder: cannot create grid for raster projection: shape is not a grid");
-		}
-		GeneralGridEnvelope gridRange = new GeneralGridEnvelope(new int[] { 0, 0 },
-				new int[] { (int) space.shape()[0], (int) space.shape()[1] }, false);
+    private ReferencedEnvelope getEnvelope(IGeometry geometry, CoordinateReferenceSystem crs) {
+        if (geometry instanceof Scale) {
+            ISpace space = ((Scale) geometry).getSpace();
+            return ((Envelope) space.getEnvelope()).getJTSEnvelope();
+        }
+        return null;
+    }
 
-		return new GridGeometry2D(gridRange, envelope);
-	}
+    private GridGeometry2D getGridGeometry(IGeometry geometry, ReferencedEnvelope envelope) {
 
-	/**
-	 * Coverages with caching. We keep a configurable total of coverages in memory
-	 * using the session cache, including their transformations indexed by geometry.
-	 * 
-	 * @param resource
-	 * @return a coverage for the untransformed data. Never null
-	 */
-	private GridCoverage getCoverage(IResource resource, IGeometry geometry) {
+        Dimension space = geometry.getDimension(Type.SPACE);
+        if (space.shape().length != 2 || !space.isRegular()) {
+            throw new KlabInternalErrorException("raster encoder: cannot create grid for raster projection: shape is not a grid");
+        }
+        GeneralGridEnvelope gridRange = new GeneralGridEnvelope(new int[]{0, 0},
+                new int[]{(int) space.shape()[0], (int) space.shape()[1]}, false);
 
-		GridCoverage coverage = getOriginalCoverage(resource);
+        return new GridGeometry2D(gridRange, envelope);
+    }
 
-		// TODO if we have it in the cache for the principal file + space signature,
-		// return that
+    /**
+     * Coverages with caching. We keep a configurable total of coverages in memory using the session
+     * cache, including their transformations indexed by geometry.
+     * 
+     * @param resource
+     * @return a coverage for the untransformed data. Never null
+     */
+    private GridCoverage getCoverage(IResource resource, IGeometry geometry) {
 
-		/*
-		 * build the needed Geotools context and the interpolation method
-		 */
-		CoordinateReferenceSystem crs = getCrs(geometry);
-		ReferencedEnvelope envelope = getEnvelope(geometry, crs);
-		GridGeometry2D gridGeometry = getGridGeometry(geometry, envelope);
-		Interpolation interpolation = getInterpolation(resource.getMetadata());
+        GridCoverage coverage = getOriginalCoverage(resource);
 
-		/*
-		 * subset first
-		 */
-		GridCoverage transformedCoverage = (GridCoverage) Operations.DEFAULT.resample(coverage, envelope,
-				interpolation);
+        // TODO if we have it in the cache for the principal file + space signature,
+        // return that
 
-		/*
-		 * then resample
-		 */
-		transformedCoverage = (GridCoverage) Operations.DEFAULT.resample(transformedCoverage, crs, gridGeometry,
-				interpolation);
+        /*
+         * build the needed Geotools context and the interpolation method
+         */
+        CoordinateReferenceSystem crs = getCrs(geometry);
+        ReferencedEnvelope envelope = getEnvelope(geometry, crs);
+        GridGeometry2D gridGeometry = getGridGeometry(geometry, envelope);
+        Interpolation interpolation = getInterpolation(resource.getMetadata());
 
-		return transformedCoverage;
-	}
+        /*
+         * subset first
+         */
+        GridCoverage transformedCoverage = (GridCoverage) Operations.DEFAULT.resample(coverage, envelope, interpolation);
 
-	private GridCoverage getOriginalCoverage(IResource resource) {
+        /*
+         * then resample
+         */
+        transformedCoverage = (GridCoverage) Operations.DEFAULT.resample(transformedCoverage, crs, gridGeometry, interpolation);
 
-		File mainFile = null;
-		File rootPath = Resources.INSTANCE.getFilesystemLocation(resource);
+        return transformedCoverage;
+    }
 
-		for (String path : resource.getLocalPaths()) {
-			if (RasterAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
-				mainFile = new File(rootPath + File.separator + path);
-				if (mainFile.exists() && mainFile.canRead()) {
-					break;
-				}
-			}
-		}
+    private GridCoverage getOriginalCoverage(IResource resource) {
 
-		if (mainFile == null) {
-			throw new KlabResourceNotFoundException("raster resource " + resource.getUrn() + " cannot be accessed");
-		}
+        File mainFile = null;
+        File rootPath = Resources.INSTANCE.getFilesystemLocation(resource);
 
-		return readCoverage(mainFile);
-	}
+        for (String path : resource.getLocalPaths()) {
+            if (RasterAdapter.fileExtensions.contains(MiscUtilities.getFileExtension(path))) {
+                mainFile = new File(rootPath + File.separator + path);
+                if (mainFile.exists() && mainFile.canRead()) {
+                    break;
+                }
+            }
+        }
 
-	public GridCoverage readCoverage(File mainFile) {
+        if (mainFile == null) {
+            throw new KlabResourceNotFoundException("raster resource " + resource.getUrn() + " cannot be accessed");
+        }
 
-		GridCoverage2D ret = null;
-		AbstractGridFormat format = GridFormatFinder.findFormat(mainFile);
-		// this is a bit hackey but does make more geotiffs work
-		Hints hints = new Hints();
-		if (format instanceof GeoTiffFormat) {
-			hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
-		}
-		GridCoverage2DReader reader = format.getReader(mainFile, hints);
-		try {
-			ret = reader.read(null);
-		} catch (IOException e) {
-			throw new KlabIOException(e);
-		}
+        return readCoverage(mainFile);
+    }
 
-		// TODO caching?
+    public GridCoverage readCoverage(File mainFile) {
 
-		return ret;
-	}
+        GridCoverage2D ret = null;
+        AbstractGridFormat format = GridFormatFinder.findFormat(mainFile);
+        // this is a bit hackey but does make more geotiffs work
+        Hints hints = new Hints();
+        if (format instanceof GeoTiffFormat) {
+            hints = new Hints(Hints.FORCE_LONGITUDE_FIRST_AXIS_ORDER, Boolean.TRUE);
+        }
+        GridCoverage2DReader reader = format.getReader(mainFile, hints);
+        try {
+            ret = reader.read(null);
+        } catch (IOException e) {
+            throw new KlabIOException(e);
+        }
 
-	@Override
-	public boolean isOnline(IResource resource, IMonitor monitor) {
-		return true;// NetUtilities.urlResponds(resource.getParameters().get("serviceUrl",
-					// String.class));
-	}
+        // TODO caching?
 
-	@Override
-	public IResource contextualize(IResource resource, IScale scale, IArtifact targetObservation,
-			Map<String, String> urnParameters, IContextualizationScope scope) {
-		// TODO Auto-generated method stub
-		return resource;
-	}
+        return ret;
+    }
+
+    @Override
+    public boolean isOnline(IResource resource, IMonitor monitor) {
+        return true;// NetUtilities.urlResponds(resource.getParameters().get("serviceUrl",
+                    // String.class));
+    }
+
+    @Override
+    public IResource contextualize(IResource resource, IScale scale, IArtifact targetObservation,
+            Map<String, String> urnParameters, IContextualizationScope scope) {
+        // TODO Auto-generated method stub
+        return resource;
+    }
 
 }
