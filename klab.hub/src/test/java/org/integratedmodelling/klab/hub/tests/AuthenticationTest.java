@@ -9,6 +9,8 @@ import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.ICertificate;
@@ -21,6 +23,7 @@ import org.integratedmodelling.klab.hub.users.controllers.UserAuthenticationCont
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.HubNotificationMessage;
+import org.integratedmodelling.klab.rest.HubNotificationMessage.Type;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
@@ -143,27 +146,22 @@ public class AuthenticationTest extends ApplicationCheck {
 		ResponseEntity<EngineAuthenticationResponse> engineAuth = 
 				restTemplate.exchange(authUri, HttpMethod.POST, authRequestEntity, EngineAuthenticationResponse.class);
 		
-		ArrayList<HubNotificationMessage> warnings = new ArrayList<>();
-		ArrayList<HubNotificationMessage> errors = new ArrayList<>();
-		ArrayList<HubNotificationMessage> info = new ArrayList<>();
+		ArrayList<HubNotificationMessage> messages = engineAuth.getBody().getMessages();
 		
-		engineAuth.getBody().getMessages().forEach(msg -> {
-//		    for(WARNING type: HubNotificationMessage.WARNING.values()) {
-//		        if(type.name().equals(msg.getType())) {
-//		            warnings.add(msg);
-//		        }
-//		    }
-//            for(ERROR type: HubNotificationMessage.ERROR.values()) {
-//                if(type.name().equals(msg.getType())) {
-//                    errors.add(msg);
-//                }
-//            }
-//            for(INFO type: HubNotificationMessage.INFO.values()) {
-//                if(type.name().equals(msg.getType())) {
-//                    info.add(msg);
-//                }
-//            }
-		});
+		List<HubNotificationMessage> errors = messages.
+		        stream()
+		        .filter(msg -> msg.getType().equals(Type.ERROR))
+		        .collect(Collectors.toList());		
+        
+		List<HubNotificationMessage> warnings = messages.
+                stream()
+                .filter(msg -> msg.getType().equals(Type.WARNING))
+                .collect(Collectors.toList());
+        
+		List<HubNotificationMessage> infos = messages.
+                stream()
+                .filter(msg -> msg.getType().equals(Type.INFO))
+                .collect(Collectors.toList());
 		
 		Assert.assertEquals(200, engineAuth.getStatusCodeValue());
 	}
