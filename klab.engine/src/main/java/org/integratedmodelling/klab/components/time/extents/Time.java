@@ -266,7 +266,7 @@ public class Time extends Extent implements ITime {
 			}
 		}
 	}
-
+	
 	public static Time create(ITime.Type type, Resolution.Type resolutionType, double resolutionMultiplier,
 			ITimeInstant start, ITimeInstant end, ITimeDuration period) {
 		return create(type, resolutionType, resolutionMultiplier, start, end, period, null, null, null);

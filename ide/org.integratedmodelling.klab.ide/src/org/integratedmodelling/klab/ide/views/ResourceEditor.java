@@ -1210,6 +1210,9 @@ public class ResourceEditor extends ViewPart {
 		if ("New".equals(text)) {
 			List<String> cats = new ArrayList<>();
 			if (resource != null) {
+			    for (String id : resource.getCategorizables()) {
+			        cats.add(id);
+			    }
 				for (AttributeReference attribute : resource.getAttributes()) {
 					cats.add(attribute.getName());
 				}

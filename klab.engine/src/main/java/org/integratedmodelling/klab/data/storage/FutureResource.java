@@ -235,4 +235,9 @@ public class FutureResource implements IResource, Future<IResource> {
 		return null;
 	}
 
+    @Override
+    public Collection<String> getCategorizables() {
+        return getDelegate(timeout).getCategorizables();
+    }
+
 }

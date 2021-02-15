@@ -7098,62 +7098,35 @@ ruleValueOperator returns [EObject current=null]
 				    |
 				(
 					(
-						(
-							{
-								newCompositeNode(grammarAccess.getValueOperatorAccess().getComparisonConceptConceptDeclarationParserRuleCall_0_1_2_0_0());
-							}
-							lv_comparisonConcept_5_0=ruleConceptDeclaration
-							{
-								if ($current==null) {
-									$current = createModelElementForParent(grammarAccess.getValueOperatorRule());
-								}
-								add(
-									$current,
-									"comparisonConcept",
-									lv_comparisonConcept_5_0,
-									"org.integratedmodelling.kim.Kim.ConceptDeclaration");
-								afterParserOrEnumRuleCall();
-							}
-						)
-					)
-					(
-						otherlv_6=','
 						{
-							newLeafNode(otherlv_6, grammarAccess.getValueOperatorAccess().getCommaKeyword_0_1_2_1_0());
+							newCompositeNode(grammarAccess.getValueOperatorAccess().getComparisonConceptConceptDeclarationParserRuleCall_0_1_2_0());
 						}
-						(
-							(
-								{
-									newCompositeNode(grammarAccess.getValueOperatorAccess().getComparisonConceptConceptDeclarationParserRuleCall_0_1_2_1_1_0());
-								}
-								lv_comparisonConcept_7_0=ruleConceptDeclaration
-								{
-									if ($current==null) {
-										$current = createModelElementForParent(grammarAccess.getValueOperatorRule());
-									}
-									add(
-										$current,
-										"comparisonConcept",
-										lv_comparisonConcept_7_0,
-										"org.integratedmodelling.kim.Kim.ConceptDeclaration");
-									afterParserOrEnumRuleCall();
-								}
-							)
-						)
-					)*
+						lv_comparisonConcept_5_0=ruleConceptDeclaration
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getValueOperatorRule());
+							}
+							add(
+								$current,
+								"comparisonConcept",
+								lv_comparisonConcept_5_0,
+								"org.integratedmodelling.kim.Kim.ConceptDeclaration");
+							afterParserOrEnumRuleCall();
+						}
+					)
 				)
 				    |
 				(
-					otherlv_8='('
+					otherlv_6='('
 					{
-						newLeafNode(otherlv_8, grammarAccess.getValueOperatorAccess().getLeftParenthesisKeyword_0_1_3_0());
+						newLeafNode(otherlv_6, grammarAccess.getValueOperatorAccess().getLeftParenthesisKeyword_0_1_3_0());
 					}
 					(
 						(
 							{
 								newCompositeNode(grammarAccess.getValueOperatorAccess().getComparisonObservableObservableSemanticsParserRuleCall_0_1_3_1_0());
 							}
-							lv_comparisonObservable_9_0=ruleObservableSemantics
+							lv_comparisonObservable_7_0=ruleObservableSemantics
 							{
 								if ($current==null) {
 									$current = createModelElementForParent(grammarAccess.getValueOperatorRule());
@@ -7161,15 +7134,15 @@ ruleValueOperator returns [EObject current=null]
 								set(
 									$current,
 									"comparisonObservable",
-									lv_comparisonObservable_9_0,
+									lv_comparisonObservable_7_0,
 									"org.integratedmodelling.kim.Kim.ObservableSemantics");
 								afterParserOrEnumRuleCall();
 							}
 						)
 					)
-					otherlv_10=')'
+					otherlv_8=')'
 					{
-						newLeafNode(otherlv_10, grammarAccess.getValueOperatorAccess().getRightParenthesisKeyword_0_1_3_2());
+						newLeafNode(otherlv_8, grammarAccess.getValueOperatorAccess().getRightParenthesisKeyword_0_1_3_2());
 					}
 				)
 			)
@@ -7177,45 +7150,45 @@ ruleValueOperator returns [EObject current=null]
 		    |
 		(
 			(
-				lv_total_11_0='total'
+				lv_total_9_0='total'
 				{
-					newLeafNode(lv_total_11_0, grammarAccess.getValueOperatorAccess().getTotalTotalKeyword_1_0());
+					newLeafNode(lv_total_9_0, grammarAccess.getValueOperatorAccess().getTotalTotalKeyword_1_0());
 				}
 				{
 					if ($current==null) {
 						$current = createModelElement(grammarAccess.getValueOperatorRule());
 					}
-					setWithLastConsumed($current, "total", lv_total_11_0, "total");
+					setWithLastConsumed($current, "total", lv_total_9_0, "total");
 				}
 			)
 		)
 		    |
 		(
 			(
-				lv_averaged_12_0='averaged'
+				lv_averaged_10_0='averaged'
 				{
-					newLeafNode(lv_averaged_12_0, grammarAccess.getValueOperatorAccess().getAveragedAveragedKeyword_2_0());
+					newLeafNode(lv_averaged_10_0, grammarAccess.getValueOperatorAccess().getAveragedAveragedKeyword_2_0());
 				}
 				{
 					if ($current==null) {
 						$current = createModelElement(grammarAccess.getValueOperatorRule());
 					}
-					setWithLastConsumed($current, "averaged", lv_averaged_12_0, "averaged");
+					setWithLastConsumed($current, "averaged", lv_averaged_10_0, "averaged");
 				}
 			)
 		)
 		    |
 		(
 			(
-				lv_summed_13_0='summed'
+				lv_summed_11_0='summed'
 				{
-					newLeafNode(lv_summed_13_0, grammarAccess.getValueOperatorAccess().getSummedSummedKeyword_3_0());
+					newLeafNode(lv_summed_11_0, grammarAccess.getValueOperatorAccess().getSummedSummedKeyword_3_0());
 				}
 				{
 					if ($current==null) {
 						$current = createModelElement(grammarAccess.getValueOperatorRule());
 					}
-					setWithLastConsumed($current, "summed", lv_summed_13_0, "summed");
+					setWithLastConsumed($current, "summed", lv_summed_11_0, "summed");
 				}
 			)
 		)

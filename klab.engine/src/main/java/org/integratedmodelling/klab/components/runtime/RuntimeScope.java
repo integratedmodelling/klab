@@ -404,6 +404,18 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         if (ret == null) {
             ret = this.viewsByUrn.get(localName);
         }
+        if (ret == null) {
+            /*
+             * Leniently lookup each observation based on observable name. This solves a couple NPEs
+             * with nested value operators, but shouldn't really be needed as those are the bugs,
+             * not this.
+             */
+            for (IArtifact o : catalog.values()) {
+                if (o instanceof IObservation && ((IObservation) o).getObservable().getName().equals(localName)) {
+                    return o;
+                }
+            }
+        }
         return ret;
     }
 
