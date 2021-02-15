@@ -17,8 +17,8 @@ import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
 import org.integratedmodelling.klab.hub.exception.LicenseConfigDoestNotExists;
 import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
-import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
+import org.integratedmodelling.klab.hub.network.NodeNetworkManager;
 import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
@@ -144,7 +144,7 @@ public class EngineAuthResponeFactory {
 	    		Logging.INSTANCE.info("Remote Engine Run on hub with User: " + engine.getUsername());
 	    		HubReference hub = new GenerateHubReference().execute();
 	    		EngineAuthenticationResponse resp = new EngineAuthenticationResponse(authenticatedIdentity, hub,
-	    				NetworkManager.INSTANCE.getNodes(engine.getGroups()));
+	    				NodeNetworkManager.INSTANCE.getNodeReferences());
 	    		
 	    		if (!messages.isEmpty()) {
 	    			resp.setMessages(messages);
@@ -191,7 +191,7 @@ public class EngineAuthResponeFactory {
 		Logging.INSTANCE.info("Local Engine Run on hub with User: " + engine.getUsername());
 		HubReference hub = new GenerateHubReference().execute();
 		return new EngineAuthenticationResponse(authenticatedIdentity, hub,
-				NetworkManager.INSTANCE.getNodes(engine.getGroups()));
+				NodeNetworkManager.INSTANCE.getNodeReferences());
 	}
 	
 	private EngineUser localEngineUser(ProfileResource profile, Set<Group> groups) {

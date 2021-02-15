@@ -1,12 +1,13 @@
 package org.integratedmodelling.klab.hub;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.LinkedHashMap;
 import java.util.Map;
-import java.util.Properties;
+import java.util.stream.StreamSupport;
 
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Logo;
 import org.integratedmodelling.klab.Version;
@@ -19,18 +20,15 @@ import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.hub.authentication.HubAuthenticationManager;
 import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
-import org.integratedmodelling.klab.hub.listeners.LicenseStartupReady;
+import org.integratedmodelling.klab.hub.listeners.HubReady;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.utils.FileCatalog;
 import org.springframework.boot.SpringApplication;
 import org.springframework.context.ConfigurableApplicationContext;
+import org.springframework.core.env.ConfigurableEnvironment;
+import org.springframework.core.env.EnumerablePropertySource;
 import org.springframework.core.env.Environment;
-import org.yaml.snakeyaml.Yaml;
-import org.yaml.snakeyaml.error.YAMLException;
-
-import com.google.gson.Gson;
-import com.google.gson.GsonBuilder;
-import com.google.gson.JsonObject;
+import org.springframework.core.env.MutablePropertySources;
 
 /**
  * This will start a hub at http://localhost:8284/klab with the default security
@@ -72,7 +70,7 @@ public class Hub {
 	}
 
 	public static Hub start(IHubStartupOptions options) {
-		if(!cloudEnabled()) {
+		if(!options.isCloudConfig()) {
 			ICertificate certificate = null;
 
 			if (options.getCertificateResource() != null) {
@@ -92,6 +90,8 @@ public class Hub {
 			if (!ret.boot(options)) {
 				throw new KlabException("hub failed to start");
 			}
+			
+			
 
 			return ret;
 		} else {
@@ -117,13 +117,11 @@ public class Hub {
 			app.setDefaultProperties(props);
 			this.context = app.run(options.getArguments());	
 			
-			LicenseStartupReady event = new LicenseStartupReady(new Object());
-			HubEventPublisher<LicenseStartupReady> eventAPublisher= (HubEventPublisher<LicenseStartupReady>) context.getBean("hubEventPublisher");
-			eventAPublisher.publish(event);
-			
 			System.out.println("\n" + Logo.HUB_BANNER);
 			System.out.println(
 					"\nStartup successful: " + "k.LAB hub server" + " v" + Version.CURRENT + " on " + new Date());
+			
+			applicationStarted();
 			
 		} catch (Throwable e) {
 			Logging.INSTANCE.error(e);
@@ -137,22 +135,17 @@ public class Hub {
 			SpringApplication app = new SpringApplication(HubApplication.class);
 			this.context = app.run();
 			Environment environment = this.context.getEnvironment();
-			this.certificate = getCertFromEnv(environment);
+			String certString = environment.getProperty("klab.certificate");
+			this.certificate = KlabCertificate.createFromString(certString);
+			setPropertiesFromEnvironment(environment);
 			this.owner = HubAuthenticationManager.INSTANCE.authenticate(new HubStartupOptions(), certificate);
 			
-			/*
-			 * LicenseStartupPublisher eventAPublisher =
-			 * (LicenseStartupPublisher)context.getBean("licenseStartupPublisher");
-			 * eventAPublisher.publish(new LicenseStartupReady(new Object()));
-			 */
-			
-			LicenseStartupReady event = new LicenseStartupReady(new Object());
-			HubEventPublisher<LicenseStartupReady> eventAPublisher= (HubEventPublisher<LicenseStartupReady>) context.getBean("hubEventPublisher");
-			eventAPublisher.publish(event);
 			
 			System.out.println("\n" + Logo.HUB_BANNER);
 			System.out.println(
 					"\nStartup successful: " + "k.LAB hub server" + " v" + Version.CURRENT + " on " + new Date());
+			
+			applicationStarted();
 			
 		} catch (Throwable e) {
 			Logging.INSTANCE.error(e);
@@ -161,53 +154,29 @@ public class Hub {
 		return true;
 	}
 	
-	private static boolean cloudEnabled( ) {
-		try {
-			Yaml yaml = new Yaml();
-			Object loadedYaml = yaml.load(Hub.class.getClassLoader().getResourceAsStream("bootstrap.yml"));
-			return cloundConfingEnabledd(loadedYaml);
-		} catch (YAMLException|NullPointerException e) {
-			Logging.INSTANCE.info("Cloud configration not enabled");
-			return false;
-		}	
+	private static void setPropertiesFromEnvironment(Environment environment) {
+		MutablePropertySources propSrcs =  ((ConfigurableEnvironment) environment).getPropertySources();
+		StreamSupport.stream(propSrcs.spliterator(), false)
+		        .filter(ps -> ps instanceof EnumerablePropertySource)
+		        .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
+		        .flatMap(Arrays::<String>stream)
+		        .forEach(propName -> Configuration.INSTANCE.getProperties().setProperty(propName, environment.getProperty(propName)));
+		Configuration.INSTANCE.save();
+		return;
 	}
 	
-	private static boolean cloundConfingEnabledd(Object yml) {
-		Gson gson = new GsonBuilder().setPrettyPrinting().create();
-		String json = gson.toJson(yml,LinkedHashMap.class);
-		JsonObject jsonObject = new Gson().fromJson(json, JsonObject.class);
-		jsonObject = new Gson().fromJson(jsonObject.get("spring"), JsonObject.class);
-		jsonObject = new Gson().fromJson(jsonObject.get("cloud"), JsonObject.class);
-		jsonObject = new Gson().fromJson(jsonObject.get("consul"), JsonObject.class);
-		jsonObject = new Gson().fromJson(jsonObject.get("config"), JsonObject.class);
-		if (jsonObject.get("enabled").getAsBoolean()) {
-			Logging.INSTANCE.info("Cloud configration enabled");
-			return true;
-		} else {
-			return false;
-		}
-	}
 	
-	//We should use the method from the node to do this.  Much simpler does not require additional methods ICertificate
-	private KlabCertificate getCertFromEnv(Environment env) {
-		Properties props = new Properties();
-		props.setProperty(KlabCertificate.KEY_CERTIFICATE_TYPE,
-				env.getProperty(KlabCertificate.KEY_CERTIFICATE_TYPE));
-		props.setProperty(KlabCertificate.KEY_CERTIFICATE_LEVEL, 
-				env.getProperty(KlabCertificate.KEY_CERTIFICATE_LEVEL));
-		props.setProperty(KlabCertificate.KEY_HUBNAME, 
-				env.getProperty(KlabCertificate.KEY_HUBNAME));
-		props.setProperty(KlabCertificate.KEY_PARTNER_NAME, 
-				env.getProperty(KlabCertificate.KEY_PARTNER_NAME));
-		props.setProperty(KlabCertificate.KEY_PARTNER_EMAIL, 
-				env.getProperty(KlabCertificate.KEY_PARTNER_EMAIL));
-		props.setProperty(KlabCertificate.KEY_URL, 
-				env.getProperty(KlabCertificate.KEY_URL));
-		props.setProperty(KlabCertificate.KEY_SIGNATURE, 
-				env.getProperty(KlabCertificate.KEY_SIGNATURE));
-		props.setProperty(KlabCertificate.KEY_CERTIFICATE, 
-				env.getProperty("klab.pgpKey"));
-		return KlabCertificate.createFromProperties(props);
+	/*
+	 * This is here because we can not catch the regular spring application events
+	 * and the result is creating a custom event.  This will trigger beans that need to be
+	 * run after the instances and spring app context have completed.  This order is slightly
+	 * confused depending on the boot.  Cloud config expects 
+	 */
+	@SuppressWarnings("unchecked")
+	private void applicationStarted() {
+		HubReady event = new HubReady(new Object());
+		HubEventPublisher<HubReady> eventAPublisher = (HubEventPublisher<HubReady> )context.getBean("hubEventPublisher");
+		eventAPublisher.publish(event);
 	}
 
 	public void stop() {
