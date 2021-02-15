@@ -8,6 +8,8 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.ArrayList;
+
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
@@ -18,12 +20,14 @@ import org.integratedmodelling.klab.hub.listeners.LicenseStartupReady;
 import org.integratedmodelling.klab.hub.users.controllers.UserAuthenticationController;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
+import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.http.HttpEntity;
@@ -138,6 +142,29 @@ public class AuthenticationTest extends ApplicationCheck {
 		URI authUri = new URI(authUrl);
 		ResponseEntity<EngineAuthenticationResponse> engineAuth = 
 				restTemplate.exchange(authUri, HttpMethod.POST, authRequestEntity, EngineAuthenticationResponse.class);
+		
+		ArrayList<HubNotificationMessage> warnings = new ArrayList<>();
+		ArrayList<HubNotificationMessage> errors = new ArrayList<>();
+		ArrayList<HubNotificationMessage> info = new ArrayList<>();
+		
+		engineAuth.getBody().getMessages().forEach(msg -> {
+//		    for(WARNING type: HubNotificationMessage.WARNING.values()) {
+//		        if(type.name().equals(msg.getType())) {
+//		            warnings.add(msg);
+//		        }
+//		    }
+//            for(ERROR type: HubNotificationMessage.ERROR.values()) {
+//                if(type.name().equals(msg.getType())) {
+//                    errors.add(msg);
+//                }
+//            }
+//            for(INFO type: HubNotificationMessage.INFO.values()) {
+//                if(type.name().equals(msg.getType())) {
+//                    info.add(msg);
+//                }
+//            }
+		});
+		
 		Assert.assertEquals(200, engineAuth.getStatusCodeValue());
 	}
 	

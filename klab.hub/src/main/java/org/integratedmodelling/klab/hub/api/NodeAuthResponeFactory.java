@@ -21,6 +21,7 @@ import org.integratedmodelling.klab.hub.commands.GetINodeIdentity;
 import org.integratedmodelling.klab.hub.commands.GetNodeAuthenticatedIdentity;
 import org.integratedmodelling.klab.hub.commands.GetNodesGroups;
 import org.integratedmodelling.klab.hub.exception.CertificateCipherExcepetion;
+import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.network.NetworkManager;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
@@ -34,28 +35,36 @@ import org.integratedmodelling.klab.utils.IPUtils;
 import org.joda.time.DateTime;
 
 public class NodeAuthResponeFactory {
+    
+    private NodeService nodeService;
+    private MongoGroupRepository groupRepository;
+    private LicenseConfigService configService;
+
+    public NodeAuthResponeFactory(NodeService nodeService,
+            MongoGroupRepository groupRepository,
+            LicenseConfigService configService) {
+        this.nodeService = nodeService;
+        this.groupRepository = groupRepository;
+        this.configService = configService;
+    }
 	
-	public NodeAuthenticationResponse getRespone(
-			NodeAuthenticationRequest request,
-			String ip,
-			LicenseConfiguration config, 
-			NodeService nodeService, 
-			MongoGroupRepository groupRepo) {
+	public NodeAuthenticationResponse getRespone(NodeAuthenticationRequest request,String ip) {
 		
 		switch (request.getLevel()) {
 		case TEST:
 			if (IPUtils.isLocal(ip)) {
-				return local(request, groupRepo);
+				return local(request);
 			} else {
 				break;	
 			}
 		default:
 			if (IPUtils.isLocalhost(ip)) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
-				return local(request, groupRepo);
+				return local(request);
 			} else {
 				MongoNode node = nodeService.getByName(request.getName());
 				Set<Group> groups = new GetNodesGroups(node).execute();
+				LicenseConfiguration config = configService.getConfigByKey(request.getKey());
 				NodeAuthenticationResponse response = process(request.getCertificate(),node, groups, config);
 				if(response.getUserData() != null) {
 		    		node.setLastConnection();
@@ -102,7 +111,7 @@ public class NodeAuthResponeFactory {
         }
 	}
 	
-	private NodeAuthenticationResponse local(NodeAuthenticationRequest request, MongoGroupRepository groupRepository) {
+	private NodeAuthenticationResponse local(NodeAuthenticationRequest request) {
 		DateTime now = DateTime.now();
 		DateTime tomorrow = now.plusDays(90);
 		Hub hub = Authentication.INSTANCE.getAuthenticatedIdentity(Hub.class);

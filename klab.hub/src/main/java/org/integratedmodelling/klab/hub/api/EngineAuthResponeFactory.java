@@ -101,8 +101,14 @@ public class EngineAuthResponeFactory {
                 DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
 		
 		if(!expires.isAfter(DateTime.now().plusDays(30))) {
-		    HubNotificationMessage msg = new HubNotificationMessage(HubNotificationMessage.WARNING.EXPIRING_CERTIFICATE, 
-		            "License set to expire on: " + expires.toString());
+		    
+		    HubNotificationMessage msg = HubNotificationMessage.MessageClass
+		            .EXPIRING_CERTIFICATE.build("License set to expire on: " + expires.toString());
+		    
+		            //EXPIRING_CERTIFICATE.get( "License set to expire on: " + expires.toString());
+//		    HubNotificationMessage msg = new HubNotificationMessage.
+//		            new HubNotificationMessage(HubNotificationMessage.WARNING.EXPIRING_CERTIFICATE, 
+//		           );
 		    messages.add(msg);
 		}
 		
@@ -119,19 +125,19 @@ public class EngineAuthResponeFactory {
 	    				DateTime.now().plusDays(90).toString(), engine.getId());
 	    		
 	    		ArrayList<String> expired = profile.expiredGroupEntries();
-	    		ArrayList<String> expiring = profile.expiredGroupEntries();
+	    		ArrayList<String> expiring = profile.expiringGroupEntries();
 	    		
 	    		if(!expired.isEmpty()) {
 	    		    expired.forEach(grp -> {
-	    		        messages.add(new HubNotificationMessage(HubNotificationMessage.ERROR.EXPIRED_GROUP,
-	    		                "The group " + grp + "has expired."));
+	    		        messages.add(
+	    		                HubNotificationMessage.MessageClass.EXPIRED_GROUP.build("The group " + grp + " has expired."));
 	    		    });
 	    		}
 	    		
 	            if(!expiring.isEmpty()) {
 	                expiring.forEach(grp -> {
-	                    messages.add(new HubNotificationMessage(HubNotificationMessage.WARNING.EXPIRING_GROUP,
-	                            "The group " + grp + "is expiring."));
+	                    messages.add(
+	                            HubNotificationMessage.MessageClass.EXPIRING_GROUP.build("The group " + grp + " is expiring."));
 	                 });
 	            }
 	    		

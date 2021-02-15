@@ -51,7 +51,7 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 
     private UserProfileService userProfileService;
 
-    private LicenseConfigService configService;
+    private LicenseGenerator licenseGenerator;
 	
 	@Autowired
 	EngineLicenseController(UserProfileService userProfileService,
@@ -60,18 +60,17 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 		    EmailManager emailManager,
 		    UserAuthTokenService authTokenService) {
 	    this.authFactory = new EngineAuthResponeFactory(userProfileService, groupRepository, configService, authTokenService);
+	    this.licenseGenerator = new LicenseGenerator(configService);
 		this.userProfileService = userProfileService;
-		this.configService = configService;
 		this.emailManager = emailManager;
 	}
 	
 	@GetMapping(value= API.HUB.USER_BASE_ID, params = "certificate")
 	@PreAuthorize("authentication.getPrincipal() == #id")
 	public void generateCertFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
+	    
 		ProfileResource profile = userProfileService.getCurrentUserProfile();
-		LicenseConfiguration configuration = configService.getDefaultConfig();
-		Properties engineProperties = PropertiesFactory.fromProfile(profile, configuration).getProperties();
-		byte[] certFileContent = new LicenseGenerator(configuration, engineProperties).generate();
+		byte[] certFileContent = licenseGenerator.generate(profile, null);
 		String certFileString = String.format("attachment; filename=%s", KlabCertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);
 		response.setHeader("Content-disposition", certFileString);
 		response.setContentType("text/plain;charset=utf-8");
