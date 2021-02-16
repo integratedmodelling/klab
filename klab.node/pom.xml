@@ -29,6 +29,9 @@
 				    		<password>${env.password}</password>
             			</auth>
                     </to>
+                    <container>
+                    	<user>node:node</user>
+                    </container>
                 </configuration>
             </plugin>
 			<plugin>
