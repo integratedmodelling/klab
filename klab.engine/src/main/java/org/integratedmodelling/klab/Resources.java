@@ -413,7 +413,7 @@ public enum Resources implements IResourceService {
 	}
 
 	public IResourceAdapter getResourceAdapter(String id) {
-		return resourceAdapters.get(id).adapter;
+		return resourceAdapters.containsKey(id) ? resourceAdapters.get(id).adapter : null;
 	}
 
 	public IUrnAdapter getUrnAdapter(String id) {
