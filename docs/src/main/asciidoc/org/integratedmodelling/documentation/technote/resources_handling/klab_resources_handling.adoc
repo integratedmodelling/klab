@@ -1,0 +1,495 @@
+= k.LAB resources handling
+The k.LAB team
+v1.0, 2021-02-12
+:doctype: article
+:description: Chat about resources handling with Villa
+:kl: k.LAB
+:kmod: k.Modeler
+:kact: k.Actors
+:keng: k.LAB Engine
+:kim: k.IM
+:ked: k.LAB Resourced Editor
+:pex: Project Explorer
+:encoding: utf-8
+:lang: en
+:toc: left
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+:numbered:
+:experimental:
+:reproducible:
+:icons: font
+:listing-caption: Listing
+:sectnums:
+:autofit-option:
+:mdash: &#8212;
+:language: asciidoc
+ifdef::backend-pdf[]
+:title-logo-image: image:logo.png[align=center]
+:source-highlighter: rouge
+//:rouge-style: github
+//:source-highlighter: pygments
+//:pygments-style: tango
+endif::[]
+:stem:
+
+<<<
+
+== Introduction
+
+The **Resources layer** or the _first layer_ of {kl} is the **NON** semantic layer in which we find what most novice users would identify as a resource: a dataset or data services. 
+But in {kl} models can be and are one of the most important resource. Actually, anything that takes and input and produces outputs that can be defined "tangible". These outputs might be for example numbers or categories. We could see this as the black&white world.
+
+In the second layer, the semantic layer, the resources are coupled with concepts creating a world of knowledge that the first layer can't provide. And this is where the world get's its color.
+
+This document looks into resources handling at two levels:
+
+* the user perspective: using {kl} to access resources, manage, add or remove them
+* the developer perspective: discussing the classes used to manage resources in the {keng}
+
+To allow for better readability the developer's angle is inserted, where possible, as subsectin to the handled chapter.
+
+This document assumes that the reader is already acquainted with the {kmod} application user interface and that the application is set to visualize the {kl} perspective.
+
+=== Example project
+
+In the following sections an example project named **im.docexample** is used, which has been created using the default parameters of the project creation wizard.
+
+Each {kl} project contains a resources node in its tree:
+
+image::imgs/01_resources_tree.png[scaledwidth=40%, width=40%, align="center"]
+
+Adding a file resource (ex. shapefile or geotiff) is as simple as dragging a file from the filesystem explorer.
+
+Let's for example add a naturalearth world shapefile to the example resources by dragging it onto the Resources tree node. The resource is instantly imported and appears in the tree:
+
+image::imgs/02_resources_tree.png[scaledwidth=60%, width=60%, align="center"]
+
+The import process follows a validation procedure to assure that the resource can be used inside klab (ex. projection is checked).
+
+== The Resource Editor
+
+{kmod} features a **Resource Editor** that allows the user to manage supported resource types. Once the resource is in the tree, on selection that editor opens, showcasing three tabs, the default one being the Resource data tab:
+
+image::imgs/03_resource_editor.png[scaledwidth=70%, width=70%, align="center"]
+
+If the validation procedure errors, the Publishable checkbox won't be ticked and the _Why not_ textfield will report an error.
+
+[NOTE]
+====
+Importing for example an imagery geotiff raster the same way as with the shapefile, the editor reports an issue, and the URN is coloured red:
+
+image::imgs/04_import_error.png[scaledwidth=100%, width=100%, align="center"]
+====
+
+The editor exposes important information about the resource:
+
+* URN
+* attributes
+* geometry information
+* adapter attributes
+
+**A resource also has a type.** The type is currently not visible in the editor. The type depends on the resource adapter and can change depending on the use context. In the case of a shapefile the type is **OBJECT**. If we'ld instead consider a WCS raster service, then the type would be a **NUMBER**.
+
+TIP: The type of the Artifact is defined in the class **IArtifact**footnote:[org.integratedmodelling.klab.api.provenance.IArtifact].
+
+=== URN and local name
+[#REF_URNS]
+
+Each resource has a local and global identifier. The local name, which is derived from the original resource. In case of a shapefile it is the file name. The local name can be used as identifier in scripts inside the project.
+The URN (which can be obtained by right clicking on the resource through _copy URN_) id the global identifier and is the suggested way to reference resources in {kim} scripts.
+
+
+URNs are made of 4 pieces:
+
+* the node
+* the catalog (a logical space on the node defined by specification/domain, as for ex. hydrology)
+* the namespace
+* the id
+
+When a resouce is created as local, to fill in the above pieces {kl} uses:
+
+* the string 'local' to highlight the local origin
+* the name of the user that created it as the catalog item
+* the project name as namespace
+* the file name (if file based)
+
+A **local** resource's URN might for example look as follows:
+
+----
+local:moovida:im.docexample:ne_10m_admin_1_states_provinces
+----
+
+Once published, the URN of a resource will reflect the above described specification.
+
+NOTE: One important note related to the node part in the URN: even if the resource will forever carry its originating node name inside the URN's DNA, this doesn't mean that it can't  be exposed by other nodes. {kl}'s mirroring API allows to distribute resources on nodes that gave their availablility. 
+
+More information about URNs can be found in the section _<<REF_RESOURCEMANAGEMENT, about URNs and resources management>>_. 
+
+=== Attributes
+[#REF_ATTRIBUTES]
+
+Depending on the type of resource, the object can have attributes, inputs or outputs. A shapefile based resource, which is of type OBJECT, has an attribute table as the one in teh above example:
+
+image::imgs/05_attributes.png[scaledwidth=70%, width=70%, align="center"]
+
+If the resource is a model, it will have the **inputs** and **outputs** tabs filled instead of attributes tab. 
+
+[NOTE]
+====
+The attributes, inputs and outputs, that are defined by a name and type, are the connection piece between the resources and the semantic level. These can be referenced in the models using the name to create the connection to the concepts in the semantic world.. 
+====
+
+
+=== Geometry information
+
+Under the map view in light gray, a small text describes the geometry of the resource. For the example shapefile it states:
+
+----
+#s2(4594){bbox=[-179.99999999999991 180.0 -89.99999999999994 83.63410065300008],proj=EPSG:4326}
+----
+
+Defining:
+
+* a resource that contains several objects (defined by the presence of the **#**)
+* irregular spatial bidimensional geometry (defined by the lowercase **s2**)
+* the data bounding box
+* the projection
+
+=== Adapter attributes
+[#REF_ADAPTERATTRIBUTES]
+
+The adapter properties view lists the parameters of the currently used adapter. In the discussed test case the used adapter is the **VECTOR** adapter:
+
+image::imgs/09_adapter_table.png[scaledwidth=80%, width=80%, align="center"]
+
+One notable parameter is the filter parameter, which can be used to exclude part of the resource, if necessary. The procedure is as simple as inserting a CQL (https://docs.geoserver.org/latest/en/user/tutorials/cql/cql_tutorial.html[Common Query Language]) based on the object's attributes (ex. _adm1_code=SOMECODE_).
+
+=== Publishing a resource
+
+Resources are created at first as local and can be used inside the project that contains them. The obvious lifecycle of a resource is to be published and made available across nodes that are interested in exposing it. 
+
+The publish button in the {ked} helps the user in the publishing process with a dedicated wizard:
+
+image::imgs/10_publish_dialog.png[scaledwidth=70%, width=70%, align="center"]
+
+[CAUTION]
+====
+Publishing is the moment in which the user will need to have very clear ideas about the resource and its whereabouts. **Once published a resource should not be changed** anymore, since changes in existing resources might break models that depend on them.
+
+In future {kl} will feature a peer review procedure to add a level of control to the resources publishing workflow.
+====
+
+The publishing dialog also allows to choose finer granularity for resource permissions. By default a resource is visible only to the user that created it. The _Publish_ checkbox allows to make it globally visible. Finally, it is possible to make resources visible only to certain users and groups (comma separated list) or exclude groups/users.
+
+Before publishing, the metadata tab should be filled in with relevant metadata:
+
+image::imgs/11_publish_metadata.png[scaledwidth=80%, width=80%, align="center"]
+
+WARNING: Many users believe that information such as time and spatial context are part of the metadata. This is bad practice since they are part of the semantic and have their own place in {kl}.
+
+
+== Adding resources 
+
+In cases in which the resource is not file based and drag'n'drop can't be exploited, the new resource wizard can be launched by right clicking on the resources node and selecting the **New resource...** action. The wizard allows to define an id for the resource and select one fo the possible adapter types:
+
+image::imgs/06_new_resource.png[scaledwidth=80%, width=80%, align="center"]
+
+Once the adapter has been chosen, its parameters need to be defined. The following image shows the example of the mandatory (red) and optional parameters of a WFS adapter:
+
+image::imgs/07_new_resource_wfs.png[scaledwidth=80%, width=80%, align="center"]
+
+=== Behind the scenes
+
+How things are handled behind the scenes can be understood when leaving the safety of the {kl} perspective by switching to the **{pex}** perspective:
+
+image::imgs/08_project_explorer.png[scaledwidth=80%, width=80%, align="center"]
+
+While the {kl} prespective shows a logical view of the resources, the {pex} show a physical view of the resources, as they are persisted on the storage.
+
+CAUTION: File based resources are copied in the resources folder when imported, being it few bytes or many gigabytes. The user should be aware of ramifications when importing datasets.
+
+Looking into the **resources** folder we will find a folder for each created resource. Each resource also presents a **resource.json** file, which contains all information {kl} needs to know about. The resource json file is text based and it is simple to read the basic information from it and see where they are used in the {ked} user interface:
+
+[source,json]
+----
+{
+  "urn" : "local:moovida:im.docexample:ne_10m_admin_1_states_provinces",
+  "version" : "0.0.1",
+  "adapterType" : "vector",
+  "localPath" : "im.docexample/resources/ne_10m_admin_1_states_provinces.v0.0.1",
+  "geometry" : "#s2(4594){bbox=[-179.99999999999991 180.0 -89.99999999999994 83.63410065300008],proj=EPSG:4326}",
+  "projectName" : "im.docexample",
+  "localName" : "ne_10m_admin_1_states_provinces.shp",
+  "type" : "OBJECT",
+  "resourceTimestamp" : 1613125478144,
+  "metadata" : {
+    "im:keywords" : "features,ne_10m_admin_1_states_provinces",
+    "dc:title" : "ne_10m_admin_1_states_provinces"
+  },
+  "parameters" : { },
+  "localPaths" : [ "im.docexample/resources/ne_10m_admin_1_states_provinces.v0.0.1/ne_10m_admin_1_states_provinces.shx", "im.docexample/resources/ne_10m_admin_1_states_provinces.v0.0.1/ne_10m_admin_1_states_provinces.dbf", "im.docexample/resources/ne_10m_admin_1_states_provinces.v0.0.1/ne_10m_admin_1_states_provinces.prj", "im.docexample/resources/ne_10m_admin_1_states_provinces.v0.0.1/ne_10m_admin_1_states_provinces.shp" ],
+  "history" : [ ],
+  "notifications" : [ ],
+  "attributes" : [ {
+    "name" : "featurecla",
+    "type" : "TEXT",
+    "key" : false,
+    "optional" : true,
+    "exampleValue" : null,
+    "index" : 0
+  }, 
+  ...
+  
+  ...
+  
+  ...
+  {
+    "name" : "ne_id",
+    "type" : "NUMBER",
+    "key" : false,
+    "optional" : true,
+    "exampleValue" : null,
+    "index" : 0
+  } ],
+  "spatialExtent" : {
+    "east" : 180.0,
+    "west" : -179.99999999999991,
+    "north" : 83.63410065300008,
+    "south" : -89.99999999999994,
+    "gridResolution" : null,
+    "gridUnit" : null
+  },
+  "dependencies" : null,
+  "outputs" : null,
+  "exportFormats" : {
+    "shp" : "ESRI shapefile"
+  }
+}
+
+----
+
+
+== A quick dive into {kl}s resources management
+[#REF_RESOURCEMANAGEMENT]
+
+=== URNs
+
+URNs are handled in the class **Urns**footnote:[org.integratedmodelling.klab.common.Urns].
+
+The class is basically and utility class that allows the developer to manage URNs.
+
+One important information developers should be aware of, is the one expressed by the first attributes of the class:
+
+[source,java]
+----
+	final public static String KLAB_URN_PREFIX = "urn:klab:";
+	final public static String LOCAL_URN_PREFIX = "urn:klab:local:";
+	final public static String VOID_URN_PREFIX = "urn:klab:void:";
+	final public static String LOCAL_FILE_PREFIX = "file:";
+----
+
+{kl} URNs are build following offical URN Specifications. As such all {kl} URNs begin with the **urn:klab** prefix. It is only to enhance readability that inside the {kim} and {kact} editors shortcuts omitting the prefix can be used.
+
+Another information that the URN class (in conjunction with the Resources class, explained later) makes clear are the tree levels of URN visibility:
+
+* local
+* global
+* universal
+
+=== Resolving URNs to resources
+
+URN resolution is handled inside the singleton **Resources**footnote:[org.integratedmodelling.klab.Resources].
+
+While the instance of Resources can be accessed directly, it is a service (IResourceService) and as such it can be accessed throughout the system also from components that do not have directly imported the package of the implementation.
+
+[source,java]
+----
+IResourceService service = Services.INSTANCE.getService(IResourceService.class)
+----
+
+Resource resolution is done by passing the URN to the **resolveResource** method. If the URN can be properly resolved, an IResource object is returned. 
+
+=== IResources
+
+In the IResource interface we find farious methods, whose functionality can be tracked back to the {ked} user interface (this should now sound obvious, since it represents the resource object). The methods are quite selfexplicatory and have a javadoc that describes them. Some of these are worth to be described to for better understanding without the need to access the source code:
+
+* _getDependencies()_: resources can depend on other resources. If that is the case, the method will return a list of the URNs of said dependencies.
+* _getGeometry()_: the resource's geometry. Geometries are quite complex in {kl}and can cover different extents (cover also time, not just space) and have different dimensions. Interested developers should head to the javadoc of the IGeometry interface to dive in the internals of geometries. It is important to understand that the the scale (**IScale**footnote:[org.integratedmodelling.klab.api.observations.scale.IScale]) is the semantic version of the geometry. As such it is possible to create a scale from a geometry or vice versa. It is in the scale where the geometry finds a place in which space and time are understood through semantics, while at mere IGeometry level it represents a topologhy and that's it.
+* _getVersion()_: each resource has a versioning system. Local resources don't obey to said system. But once a resource is published, a version 0.0.1 is attributed to it. At every change a version update is done. 
+* _getHistory()_: each resource also contains a list of its history. The list contains all resources the current resource transitioned through in history, each with its own version.
+* _getParameters()_: a resource can have parameters. Part of them can be created by the adapter that took care of a resource (the ones seen in section about <<REF_ADAPTERATTRIBUTES, adapter attributes>>). 
+*  _getAttributes(), getInputs(), getOutputs()_: resources that produce objects can have a set of attributes, modeling resources can have inputs and outputs. These are visualized in the {ked} as shown in the <<REF_ATTRIBUTES, attributes>> section.
+* _getAdapterType()_: the adapter type that is in charge of the resource.
+
+It is important to note that resource objects are mandatorily created using the resource builderfootnote:[org.integratedmodelling.klab.api.data.IResource.Builder].
+
+=== The resource adapter
+
+Once a resource is imported into {kmod}, as it is done when dragging a file onto the resources node, the **importResource** method ot the resource service is called.
+
+The first step in there is the choice of the adapter (**IResourceAdapter**) that can handle the resource:
+
+[source,java]
+----
+IResourceAdapter adapter = null;
+if (adapterType == null) {
+    List<IResourceAdapter> adapters = getResourceAdapter(file, parameters);
+    if (adapters.size() > 0) {
+        adapter = adapters.get(0);
+        adapterType = adapter.getName();
+    }
+} else {
+    adapter = resourceAdapters.get(adapterType).adapter;
+}
+----
+
+Once the adapter is defined a set of tooling objects are available from its API: for example a validator, an encoder, a publisher.
+
+To create a new resource adapter it is necessary to create an object that implements the IResourceAdapter interface but also its subobjects, as IResourceValidator, IResourcePublisher and IResourceEncoder.
+
+The adapters are discovered by the system from the annotation (ex. in the raster adapter):
+
+[source,java]
+----
+@ResourceAdapter(type = "raster", version = Version.CURRENT, 
+    requires = { "fileUrl" },
+    optional = { "band", "interpolation", "nodata", "bandmixer" }, 
+    canCreateEmpty = false, handlesFiles = true)
+public class RasterAdapter implements IResourceAdapter {
+ //   ...
+}
+----
+
+The IResourceValidator interface guides the developer in the implementation of the main validator functionalities:
+
+* canHandle: the first and fastest check that defines if the adapted is able to handle the given resource.
+* validate: implements the validation logic starting from a URL and userdata. Successfull validation results in returning a builder object used to then create the resource.
+* update: a method that allows the resource to be saved as the result of user changes
+* performOperation: if the resource allows to perform operations on the resource, it should be implemented. Operations are then made available to the user in the {ked} in the combobox below the <<REF_ATTRIBUTES, attributes table>>.
+
+The **RasterValidator** class is a good startig point for developers that want to understand how the resource is created using the builder object. In the validate methods it is simple to track how spatial extent is defined, the projection is set or for example the geometry is defined:
+
+[source,java]
+----
+Geometry geometry = Geometry.create("S2")
+    .withBoundingBox(
+        envelope.getMinimum(0), 
+        envelope.getMaximum(0), 
+        envelope.getMinimum(1),
+        envelope.getMaximum(1)
+    )
+    .withProjection(crsCode)
+    .withSpatialShape(
+        (long) grid.getGridRange().getSpan(0), 
+        (long) grid.getGridRange().getSpan(1)
+    );
+builderObj.withGeometry(geometry);
+----
+
+=== Universal resources
+
+In the <<REF_URNS,section about URNs>> local and global URNs have been discussed. A third type of resource is available: universal resources.
+
+A universal resource is basically a service. It is not created on top of a particular node and hence doesn't base on the availability of a node. It is created implementing the universal protocol using the **IUrnAdapter** interface. One example is the **RandomAdapter**footnote:[org.integratedmodelling.random.adapters.RandomAdapter] that is able to handle URNs that start with: **klab:random:...**.
+
+Basically universal resources can be accessed using the **klab:...** prefix. This means that there is one reserved node named klab and it can be used to address universal resources.
+
+The weather adapterfootnote:[org.integratedmodelling.weather.adapters.WeatherAdapter] is probably the most important example of universal resource. It was created as as such mainly because it is a resource that is handled internally in the {kl} system and do not come directly from external sources. That is due to the fact that a lot of preprocessing needs to be done to address data validation as well as synchronization with several datasources (ex. NOAA) needs to occurr. The data are then saved in an internal database and made available as internal service. The {kl} weather resource can be accessed through the **klab:weather:...** prefix.
+
+Universal klab resources can be served by different nodes the same way as it happens for other global resources. It is clear that while a random adapter resource - being very simple - can be run from any node, a weather adapter that would take months only to build the initial database will be accepted only on dedicated nodes. For that exacty reason only one node, **im.weather**, currently handles _klab:weather_ resources.
+
+=== Contextualizing a resource
+
+When a resource need to be contextualized, the **getResourceData** method of the **Resources** class is used.
+
+There are various versions of the method that allow to iterate over the resource using a given scale (i.e. defined steps in sapce and time) or to simply iterate over the whole resource without a particular notion of scale.
+
+[CAUTION]
+====
+At the current time the IResourceService doesn't provide the getResourceData methods, but might soon do that to expose them also in the service object. 
+
+This can be particularly useful for components that do not have access to the engine, but need to validate other resources they concurr with.
+====
+
+The first step towards contextualization is to check whether the resource is local, global or universal. 
+
+After a first simple URN check the resource is investigated on being local, global or universal (in which case it could still be local, since the universal resource could reside on the local node):
+
+[source,java]
+----
+boolean local = Urns.INSTANCE.isLocal(resource.getUrn());
+
+...
+
+if (urn.isUniversal()) {
+    local = getUrnAdapter(urn.getCatalog()) != null;
+}
+----
+
+If it is local but also universal, then the adapter is retrieved directly from the catalog and used directly to build the data object (IKlabData):
+
+[source,java]
+----
+IUrnAdapter adapter = getUrnAdapter(urn.getCatalog());
+...
+IKlabData.Builder builder = new LocalDataBuilder((IRuntimeScope) context);
+
+...
+
+adapter.getEncodedData(urn, builder, geometry, context);
+IKlabData ret = builder.build();
+----
+
+If the resource is not local, then the workflow is uniform for global and universal resources, starting by finding the node, choosing the one with less load between the ones available. Then a REST request is prepared and sent to the node using a builder that create the data that are retrieved from the resource:
+
+[source,java]
+----
+INodeIdentity node = Network.INSTANCE.getNodeForResource(urn);
+
+...
+
+DecodingDataBuilder builder = new DecodingDataBuilder(
+        node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request, Map.class), context);
+IKlabData ret = builder.build();
+----
+
+
+Generally speaking, if the resource is local, a **LocalDataBuilder** is used and passed to the encoder of the adapter. The encoder is the component that takes the resource and the scale and fills in all the necessary pieces of the data builder:
+
+[source,java]
+----
+IResourceAdapter adapter = getResourceAdapter(resource.getAdapterType());
+
+...
+
+IKlabData.Builder builder = new LocalDataBuilder(context);
+adapter.getEncoder().getEncodedData(resource, urnParameters, geometry, builder, context);
+IKlabData ret = builder.build();
+----
+
+
+[NOTE]
+====
+If the case of a raster resource for example the encoder would take the geometry and create a subset, reproject and apply any necessary transform, then it would extract each x/y cell and pass them to the builder. Once the build method is called a **non-semantic** artifact is created. 
+
+The non-semantic artifact, depending on the used builder, could be promoted to the semantic world. For example, when a model is run, the context passed to the LocalDataBuilder could provide an empty state (IState). The builder would then add information of the artifact to the state.
+====
+
+If instead the resource is public (aka global), a **DecodingDataBuilder** is used. It basically followes the same logic as the local builder, but using network protocols to retrieve the necessary pieces (using https://en.wikipedia.org/wiki/Protocol_Buffers[protobuf] for the serialization).
+
+[source,java]
+----
+DecodingDataBuilder builder = new DecodingDataBuilder(
+        node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request, Map.class), context);
+IKlabData ret = builder.build();
+----
+
+== Links, footnotes and resources
+
+=== Footnotes
+
+
+
+Minute 47.01
