@@ -23,7 +23,7 @@
                     <to>
                         <image>${env.REGISTRY}/hub-server</image>
                         <tags>
-                        	<tag>${env.hub-tag}</tag>
+                        	<tag>${env.HUB_TAG}</tag>
 				      		<tag>latest</tag>
 				    	</tags>
 				    	<auth>
