@@ -66,8 +66,8 @@ ModelBodyStatement:
 ;
 
 LookupTableArgument:
-	id=(LOWERCASE_ID | '?' | '*') |
-	concept=ConceptDeclaration
+	(key=('column'|'row'))? id=(LOWERCASE_ID | '?' | '*') |
+	(key=('column'|'row'))? concept=ConceptDeclaration
 ;
 
 Classification:
