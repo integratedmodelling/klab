@@ -21,14 +21,14 @@
         				 <image>openjdk:8u282-buster</image>
       				</from>
                     <to>
-                        <image>${env.registry}/hub-server</image>
+                        <image>${env.REGISTRY}/hub-server</image>
                         <tags>
                         	<tag>${env.hub-tag}</tag>
 				      		<tag>latest</tag>
 				    	</tags>
 				    	<auth>
-				    		<username>${env.username}</username>
-				    		<password>${env.password}</password>
+				    		<username>${env.USERNAME}</username>
+				    		<password>${env.PASSWORD}</password>
             			</auth>
                     </to>
                 </configuration>

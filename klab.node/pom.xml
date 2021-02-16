@@ -19,14 +19,14 @@
         				 <image>openjdk:8u282-buster</image>
       				</from>
                     <to>
-                        <image>${env.registry}/node-server</image>
+                        <image>${env.REGISTRY}/node-server</image>
                         <tags>
-                        	<tag>${env.node-tag}</tag>
+                        	<tag>${env.NODE_TAG}</tag>
 				      		<tag>latest</tag>
 				    	</tags>
 				    	<auth>
-				    		<username>${env.username}</username>
-				    		<password>${env.password}</password>
+				    		<username>${env.USERNAME}</username>
+				    		<password>${env.PASSWORD}</password>
             			</auth>
                     </to>
                     <container>

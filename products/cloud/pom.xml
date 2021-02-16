@@ -34,14 +34,14 @@
         				 <image>openjdk:8u282-buster</image>
       				</from>
                     <to>
-                        <image>${env.registry}/engine-server</image>
+                        <image>${env.REGISTRY}/engine-server</image>
                         <tags>
-                        	<tag>${env.engine-tag}</tag>
+                        	<tag>${env.ENGINE_TAG}</tag>
 				      		<tag>latest</tag>
 				    	</tags>
 				    	<auth>
-				    		<username>${env.username}</username>
-				    		<password>${env.password}</password>
+				    		<username>${env.USERNAME}</username>
+				    		<password>${env.PASSWORD}</password>
             			</auth>
                     </to>
                 </configuration>
