@@ -313,7 +313,15 @@ public enum Network implements INetworkService {
 	private Collection<INodeIdentity> getNodesWithAdapter(String adapter) {
 		List<INodeIdentity> ret = new ArrayList<>();
 		for (INodeIdentity node : onlineNodes.values()) {
-			if (node.getAdapters().contains(adapter)) {
+		    if (node.getAdapters().contains(adapter)) {
+		        /*
+		         * FIXME FIXME FIXME
+		         * Temporary hack to prevent non-setup nodes to serve the weather adapter, which shouldn't
+		         * happen but does.
+		         */
+			    if ("weather".equals(adapter) && !"im.weather".equals(node.getName())) {
+			        continue;
+			    }
 				ret.add(node);
 			}
 		}

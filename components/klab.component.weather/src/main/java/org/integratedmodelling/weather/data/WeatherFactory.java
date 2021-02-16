@@ -115,6 +115,7 @@ public enum WeatherFactory {
 				}, (station) -> {
 					return station.getId();
 				});
+		checkStorage();
 	}
 
 	public static void checkStorage() {
@@ -486,7 +487,7 @@ public enum WeatherFactory {
 	}
 
 	public static void main(String[] args) throws Exception {
-		INSTANCE.setupCRUStations();
+		INSTANCE.setupGHCNDStations();
 	}
 
 	public long getStationsCount() {
