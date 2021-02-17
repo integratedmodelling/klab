@@ -347,6 +347,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	@Override
 	public Object put(String key, Object value) {
+	    
 		switch (key) {
 		case GEOCODING_STRATEGY_KEY:
 			setGeocodingStrategy(value == null ? null : value.toString());

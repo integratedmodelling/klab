@@ -308,6 +308,10 @@ public abstract class AbstractTable<T> implements ITable<T> {
     }
 
     public SQLTableCache getCache() {
+        /*
+         * TODO! FIXME! add properties with a timestamp for the source to ensure we rebuild the
+         * cache if the source data have changed.
+         */
         if (cache_.isEmpty()) {
             monitor.info("building table cache for " + resource.getUrn());
             cache_.reset(this);

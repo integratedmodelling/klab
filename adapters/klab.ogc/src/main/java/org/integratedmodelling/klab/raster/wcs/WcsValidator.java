@@ -1,17 +1,15 @@
 /*
  * This file is part of k.LAB.
  * 
- * k.LAB is free software: you can redistribute it and/or modify
- * it under the terms of the Affero GNU General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * k.LAB is free software: you can redistribute it and/or modify it under the terms of the Affero
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * A copy of the GNU Affero General Public License is distributed in the root
- * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
- * see <http://www.gnu.org/licenses/>.
+ * A copy of the GNU Affero General Public License is distributed in the root directory of the k.LAB
+ * distribution (LICENSE.txt). If this cannot be found see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
- * in author tags. All rights reserved.
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned in author tags. All
+ * rights reserved.
  */
 package org.integratedmodelling.klab.raster.wcs;
 
@@ -46,91 +44,89 @@ import org.integratedmodelling.klab.rest.ResourceCRUDRequest;
  */
 public class WcsValidator implements IResourceValidator {
 
-	@Override
-	public Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
+    @Override
+    public Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
 
-		if (!canHandle(null, userData)) {
-			throw new IllegalArgumentException("WCS specifications are invalid or incomplete");
-		}
+        if (!canHandle(null, userData)) {
+            throw new IllegalArgumentException("WCS specifications are invalid or incomplete");
+        }
 
-		int band = userData.get("band", 0);
+        int band = userData.get("band", 0);
 
-		WCSService service = WcsAdapter.getService(userData.get("serviceUrl", String.class),
-				Version.create(userData.get("wcsVersion", String.class)));
+        WCSService service = WcsAdapter.getService(userData.get("serviceUrl", String.class),
+                Version.create(userData.get("wcsVersion", String.class)));
 
-		String layerId = userData.get("wcsIdentifier", String.class);
-		if (service.TRANSLATE_DOUBLEUNDERSCORE_TO_NAMESPACE_SEPARATOR) {
-			layerId = layerId.replaceAll(":", "__");
-		}
+        String layerId = userData.get("wcsIdentifier", String.class);
+        if (service.TRANSLATE_DOUBLEUNDERSCORE_TO_NAMESPACE_SEPARATOR) {
+            layerId = layerId.replaceAll(":", "__");
+        }
 
-		WCSLayer layer = service.getLayer(layerId);
-		if (layer == null) {
-			throw new KlabResourceNotFoundException(
-					"WCS layer " + userData.get("wcsIdentifier") + " not found on server");
-		}
+        WCSLayer layer = service.getLayer(layerId);
+        if (layer == null) {
+            throw new KlabResourceNotFoundException("WCS layer " + userData.get("wcsIdentifier") + " not found on server");
+        }
 
-		/*
-		 * Substitute user identifier with official one from layer, validating the layer
-		 * at the same time.
-		 */
-		String identifier = layer.getIdentifier();
+        /*
+         * Substitute user identifier with official one from layer, validating the layer at the same
+         * time.
+         */
+        String identifier = layer.getIdentifier();
 
-		if (layer.isError()) {
-			throw new KlabResourceNotFoundException(
-					"WCS layer " + userData.get("wcsIdentifier") + " is available but has errors");
-		}
+        if (layer.isError()) {
+            throw new KlabResourceNotFoundException(
+                    "WCS layer " + userData.get("wcsIdentifier") + " is available but has errors");
+        }
 
-		userData.put("wcsIdentifier", identifier);
-		if (!layer.getNodata(band).isEmpty()) {
-			userData.put("nodata", layer.getNodata(band).iterator().next());
-		}
-		IGeometry geometry = layer.getGeometry();
+        userData.put("wcsIdentifier", identifier);
+        if (!layer.getNodata(band).isEmpty()) {
+            userData.put("nodata", layer.getNodata(band).iterator().next());
+        }
+        IGeometry geometry = layer.getGeometry();
 
-		return new ResourceBuilder().withParameters(userData).withType(Type.NUMBER).withGeometry(geometry)
-				.withSpatialExtent(layer.getSpatialExtent());
-	}
+        return new ResourceBuilder().withParameters(userData).withParameter("transform", "").withType(Type.NUMBER)
+                .withGeometry(geometry).withSpatialExtent(layer.getSpatialExtent());
+    }
 
-	@Override
-	public boolean canHandle(File resource, IParameters<String> parameters) {
-		return resource == null && parameters.contains("wcsVersion") && parameters.contains("serviceUrl")
-				&& parameters.contains("wcsIdentifier");
-	}
+    @Override
+    public boolean canHandle(File resource, IParameters<String> parameters) {
+        return resource == null && parameters.contains("wcsVersion") && parameters.contains("serviceUrl")
+                && parameters.contains("wcsIdentifier");
+    }
 
-	@Override
-	public Collection<File> getAllFilesForResource(File file) {
-		throw new IllegalStateException("the WCS adapter does not handle files");
-	}
+    @Override
+    public Collection<File> getAllFilesForResource(File file) {
+        throw new IllegalStateException("the WCS adapter does not handle files");
+    }
 
-	@Override
-	public List<Operation> getAllowedOperations(IResource resource) {
-		List<Operation> ret = new ArrayList<>();
-		return ret;
-	}
+    @Override
+    public List<Operation> getAllowedOperations(IResource resource) {
+        List<Operation> ret = new ArrayList<>();
+        return ret;
+    }
 
-	@Override
-	public IResource performOperation(IResource resource, String operationName, IParameters<String> parameters,
-			IResourceCatalog catalog, IMonitor monitor) {
-		throw new KlabUnimplementedException("resource operations unimplemented");
-	}
+    @Override
+    public IResource performOperation(IResource resource, String operationName, IParameters<String> parameters,
+            IResourceCatalog catalog, IMonitor monitor) {
+        throw new KlabUnimplementedException("resource operations unimplemented");
+    }
 
-	@Override
-	public Map<String, Object> describeResource(IResource resource) {
-		Map<String, Object> ret = new LinkedHashMap<>();
-		// TODO
-		return ret;
-	}
-	
-	@Override
-	public IResource update(IResource resource, ResourceCRUDRequest updateData) {
-		((Resource) resource).update(updateData);
-		return resource;
-	}
+    @Override
+    public Map<String, Object> describeResource(IResource resource) {
+        Map<String, Object> ret = new LinkedHashMap<>();
+        // TODO
+        return ret;
+    }
 
-	@Override
-	public boolean isObservationAllowed(IResource resource, Map<String, String> urnParameters,
-			Description description) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public IResource update(IResource resource, ResourceCRUDRequest updateData) {
+        ((Resource) resource).update(updateData);
+        return resource;
+    }
+
+    @Override
+    public boolean isObservationAllowed(IResource resource, Map<String, String> urnParameters, Description description) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

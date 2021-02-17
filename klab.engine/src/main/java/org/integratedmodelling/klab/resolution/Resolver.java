@@ -187,7 +187,7 @@ public class Resolver {
                         continue;
                     }
 
-                    ret.getMonitor().info("Resolution scope is occurrent: resolving additional observable "
+                    ret.getMonitor().debug("Resolution scope is occurrent: resolving additional observable "
                             + Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
                     ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(ret), Mode.RESOLUTION);
