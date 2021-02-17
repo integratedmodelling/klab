@@ -16,7 +16,7 @@
                 <artifactId>jib-maven-plugin</artifactId>
                 <configuration>
                     <from>
-						<image>${env.REGISTRY}/{env.BASE_CONTAINER}</image>
+						<image>${env.REGISTRY}/${env.BASE_CONTAINER}</image>
       				</from>
                     <to>
                         <image>${env.REGISTRY}/node-server</image>
