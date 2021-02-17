@@ -1,5 +1,5 @@
-<project
-	xmlns="http://maven.apache.org/POM/4.0.0"
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
 	<modelVersion>4.0.0</modelVersion>
@@ -13,26 +13,39 @@
 	<description>k.LAB authentication and collaboration server hub</description>
 	<build>
 		<plugins>
-            <plugin>
-                <groupId>com.google.cloud.tools</groupId>
-                <artifactId>jib-maven-plugin</artifactId>
-                <configuration>
-                    <from>
-        				 <image>openjdk:8u282-buster</image>
-      				</from>
-                    <to>
-                        <image>${env.REGISTRY}/hub-server</image>
-                        <tags>
-                        	<tag>${env.HUB_TAG}</tag>
-				      		<tag>latest</tag>
-				    	</tags>
-				    	<auth>
-				    		<username>${env.USERNAME}</username>
-				    		<password>${env.PASSWORD}</password>
-            			</auth>
-                    </to>
-                </configuration>
-            </plugin>
+			<plugin>
+				<groupId>com.google.cloud.tools</groupId>
+				<artifactId>jib-maven-plugin</artifactId>
+				<configuration>
+					<from>
+						<image>${env.REGISTRY}/{env.BASE_CONTAINER}</image>
+					</from>
+					<to>
+						<image>${env.REGISTRY}/hub-server</image>
+						<tags>
+							<tag>${env.HUB_TAG}</tag>
+							<tag>latest</tag>
+						</tags>
+						<auth>
+							<username>${env.USERNAME}</username>
+							<password>${env.PASSWORD}</password>
+						</auth>
+					</to>
+					<container>
+						<user>klab:klab</user>
+						<jvmFlags>
+						</jvmFlags>
+						<mainClass>org.integratedmodelling.klab.hub.HubApplication</mainClass>
+						<args>
+						</args>
+						<ports>
+							<port>8287</port>
+						</ports>
+						<labels>
+						</labels>
+					</container>
+				</configuration>
+			</plugin>
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
@@ -52,22 +65,23 @@
 		</plugins>
 	</build>
 	<dependencyManagement>
-	    <dependencies>
-	        <dependency>
-	            <groupId>org.springframework.cloud</groupId>
-	            <artifactId>spring-cloud-dependencies</artifactId>
-	            <version>Finchley.SR4</version>
-	            <type>pom</type>
-	            <scope>import</scope>
-	        </dependency>
-	    </dependencies>
+		<dependencies>
+			<dependency>
+				<groupId>org.springframework.cloud</groupId>
+				<artifactId>spring-cloud-dependencies</artifactId>
+				<version>Finchley.SR4</version>
+				<type>pom</type>
+				<scope>import</scope>
+			</dependency>
+		</dependencies>
 	</dependencyManagement>
 	<dependencies>
-	    <!-- This is critical as other version build but throw errors 1.23 is minimum with our springboot -->
+		<!-- This is critical as other version build but throw errors 1.23 is minimum 
+			with our springboot -->
 		<dependency>
-		    <groupId>org.yaml</groupId>
-		    <artifactId>snakeyaml</artifactId>
-		    <version>1.23</version>           
+			<groupId>org.yaml</groupId>
+			<artifactId>snakeyaml</artifactId>
+			<version>1.23</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
@@ -79,28 +93,28 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.github.docker-java/docker-java -->
 		<dependency>
-		    <groupId>com.github.docker-java</groupId>
-		    <artifactId>docker-java</artifactId>
-		    <version>3.1.5</version>
-		</dependency>			
+			<groupId>com.github.docker-java</groupId>
+			<artifactId>docker-java</artifactId>
+			<version>3.1.5</version>
+		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on -->
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcpkix-jdk15on</artifactId>
-			 <version>1.64</version>
+			<version>1.64</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcprov-jdk15on -->
 		<dependency>
 			<groupId>org.bouncycastle</groupId>
 			<artifactId>bcprov-jdk15on</artifactId>
-			 <version>1.64</version>
+			<version>1.64</version>
 		</dependency>
 		<!-- GPG generation -->
-	    <dependency>
-	      <groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>
-	      <artifactId>bouncy-gpg</artifactId>
-	      <version>2.2.0</version>
-	    </dependency>
+		<dependency>
+			<groupId>name.neuhalfen.projects.crypto.bouncycastle.openpgp</groupId>
+			<artifactId>bouncy-gpg</artifactId>
+			<version>2.2.0</version>
+		</dependency>
 		<!-- JWT token generation -->
 		<dependency>
 			<groupId>org.bitbucket.b_c</groupId>
@@ -109,10 +123,10 @@
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
 		<dependency>
-		    <groupId>org.springframework.boot</groupId>
-		    <artifactId>spring-boot-starter-test</artifactId>
-		    <version>2.0.1.RELEASE</version>
-		    <scope>test</scope>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<version>2.0.1.RELEASE</version>
+			<scope>test</scope>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-mongodb -->
 		<dependency>
@@ -179,33 +193,33 @@
 			<version>1.0.34</version>
 		</dependency>
 		<dependency>
-		    <groupId>de.bwaldvogel</groupId>
-		    <artifactId>mongo-java-server</artifactId>
-		    <version>1.34.0</version>
+			<groupId>de.bwaldvogel</groupId>
+			<artifactId>mongo-java-server</artifactId>
+			<version>1.34.0</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/cz.jirutka.spring/unboundid-spring -->
 		<dependency>
-		    <groupId>cz.jirutka.spring</groupId>
-		    <artifactId>unboundid-spring</artifactId>
-		    <version>1.0</version>
+			<groupId>cz.jirutka.spring</groupId>
+			<artifactId>unboundid-spring</artifactId>
+			<version>1.0</version>
 		</dependency>
 		<dependency>
-            <groupId>org.springframework.security</groupId>
-            <artifactId>spring-security-test</artifactId>
-            <version>${spring-version}</version>
-        </dependency>
-        <!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
+			<groupId>org.springframework.security</groupId>
+			<artifactId>spring-security-test</artifactId>
+			<version>${spring-version}</version>
+		</dependency>
+		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
 		<dependency>
-		    <groupId>org.hibernate</groupId>
-		    <artifactId>hibernate-validator</artifactId>
-		    <version>6.0.7.Final</version>
+			<groupId>org.hibernate</groupId>
+			<artifactId>hibernate-validator</artifactId>
+			<version>6.0.7.Final</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/com.icegreen/greenmail -->
 		<dependency>
-		    <groupId>com.icegreen</groupId>
-		    <artifactId>greenmail</artifactId>
-		    <version>1.5.12</version>
-		    <scope>test</scope>
+			<groupId>com.icegreen</groupId>
+			<artifactId>greenmail</artifactId>
+			<version>1.5.12</version>
+			<scope>test</scope>
 		</dependency>
 	</dependencies>
 </project>
