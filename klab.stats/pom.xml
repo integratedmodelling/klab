@@ -40,6 +40,19 @@
 				    		<password>${env.PASSWORD}</password>
             			</auth>
                     </to>
+					<container>
+						<user>klab:klab</user>
+						<jvmFlags>
+						</jvmFlags>
+						<mainClass>org.integratedmodelling.klab.stats.Application</mainClass>
+						<args>
+						</args>
+						<ports>
+							<port>8080</port>
+						</ports>
+						<labels>
+						</labels>
+					</container>
                 </configuration>
             </plugin>
         </plugins>
