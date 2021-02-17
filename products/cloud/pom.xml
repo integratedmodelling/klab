@@ -32,6 +32,10 @@
                 <configuration>
                     <from>
 						<image>${env.REGISTRY}/${env.BASE_CONTAINER}</image>
+        				 <auth>
+				    		<username>${env.USERNAME}</username>
+				    		<password>${env.PASSWORD}</password>
+            			</auth>
       				</from>
                     <to>
                         <image>${env.REGISTRY}/engine-server</image>
