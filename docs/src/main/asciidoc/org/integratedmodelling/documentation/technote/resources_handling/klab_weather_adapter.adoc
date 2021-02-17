@@ -1,0 +1,224 @@
+= The Weather Adapter
+A field guide about k.LAB's weather resource.
+v1.0, 2021-02-16
+:doctype: article
+:description: Chat about the weather adapter with Villa
+:kl: k.LAB
+:kmod: k.Modeler
+:kact: k.Actors
+:keng: k.LAB Engine
+:kim: k.IM
+:ked: k.LAB Resourced Editor
+:pex: Project Explorer
+:encoding: utf-8
+:lang: en
+:title-page:
+:toc: left
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+:numbered:
+:experimental:
+:reproducible:
+:icons: font
+:listing-caption: Listing
+:sectnums:
+:autofit-option:
+:mdash: &#8212;
+:language: asciidoc
+ifdef::backend-pdf[]
+:title-logo-image: image:imgs/KLAB_LOGO.png[align=center]
+:source-highlighter: rouge
+//:rouge-style: github
+//:source-highlighter: pygments
+//:pygments-style: tango
+endif::[]
+:stem:
+
+<<<
+
+== Introduction
+
+The weather adapter is a universal resources adapter that does some heavy lifting to preprocess data from various sources and whose objective is to make them available as global coverage weather stations.
+
+It is currently the only adapter available to handle meterological data at fine temporal scale (daily). 
+
+NOTE: Resources like yearly precipitations are handled in {kl} via datasets, i.e. data type resources.
+
+At the time of writing weather data are aggregated from https://www1.ncdc.noaa.gov[NOAA] and https://crudata.uea.ac.uk/[CRU]. The NOAA database has global coverage and counts over 100000 stations. For all stations subscribed to the service, the dataset is updated on a daily basis. Of all the registered stations many are no longer active and the distribution density varies, with better coverage in developed countries. Sadly, also European coverage is not at its best, mostly because different countries often use different _standard_ and are not compatible with the service of NOAA. To be able to include more European stations for better coverage, the adapter would need to be extended to include the special cases of data sources. 
+CRU is a netcdf formatted dataset of monthly data with global coverage of half degree from 1900 to today. Being of lower quality than the NOAA dataset it is meant to be a fallback dataset to fill gaps when necessary. 
+
+The NOAA datasets are downscaled when requested at a wider scale than the daily interval. In this case, depending on the data type, sum, averaging or interpolation occurrs. For CRU datasets, when requested at an interval less than the monthly, an upscaling is requred. In that case a method named LPJ (Dieter & Gerten 2002) is used to produce daily data.
+
+The source code of the adapter component resides in the **klab.component.weather** plugin of the klab project.
+
+This document assumes as prior knowledge the document **"k.LAB resources handling"**.
+
+
+
+== The modeller perspective
+
+The simplest way to exlain the use of a resource, is by guiding the user through a selfcontained example. When available, generally user should have a look at the test cases section of a project:
+
+image::imgs/13_testcases_node.png[scaledwidth=50%, width=50%, align="center"]
+
+Testcases are the essence of selfcontainment as they are supposed to work no matter what.
+
+The _tests.weather.stations.simple_ testcase can be broken into pieces for better understanding:
+
+The following kim script features a testcase that sets a polygon region as context and then uses the weather node (more on it soon).
+
+* set the worldview to use
++
+--
+[source,java,linenums]
+----
+worldview im;
+----
+--
+* define the testcase and set the resource to observe. Note the **infrastructure:WeatherStation** is defined later
++
+--
+[source,java,linenums]
+----
+@test(
+    name = "tests.weather.stations.simple",
+    description  = "",
+    observations = ("infrastructure:WeatherStation"),
+    assertions = ()
+)
+----
+--
+* set the context inside which processing occurrs. In this case the context is just spatial (no time description) and set using a well known text representation of a polygon
++
+--
+[source,java,linenums]
+----
+observe earth:Region named sdata_simple
+	over space(shape="EPSG:4326 POLYGON((33.796 -7.086, 35.946 -7.086, 35.946 -9.41, 33.796 -9.41, 33.796 -7.086))", grid="1 km")
+;
+----
+--
+* the instantiator model instantiates all the station
++
+--
+[source,java,linenums]
+----
+model each "klab:weather:stations:all#prec,tavg"
+	as earth:Site with infrastructure:WeatherStation,
+    prec as earth:PrecipitationVolume in mm,
+	  tavg as earth:AtmosphericTemperature in Celsius;
+----
+--
+** the URN shows that the **klab:weather** adapter is used and in there the **stations** are modelled. From each station then the precipitation and average temperature is requested. 
++
+--
+NOTE: the URN in this case needs to be between quotes, because otherwise _tavg_ after the comma would be seen as an own URN.
+--
+** the WeatherStation itself is not semantically interesting, it is just a tool and its attributes are not the meterological data, but for example brand and consumed electricity. If you contextualize the WeatherStation semantically then it is as Site that supplies precipitation and temperature. The **with** keyword defines that the concept of the WeatherStation is a part of the infrastructure, but the attributes that are the output are the attributes if the site and are made acceptable by this semantic contextualization.
+** the above syntax can be read as: the adapter instantiates a site for each weather station and that one has precipitation and temperatur attributes. 
+
+#TODO: THE ABOVE NEEDS TO BE REVIEWED, NOT EVEN SURE IF THE TESTCASE WORKS AND THE EXAMPLE WITH WEATHER DOES USE "as earth:Site with infrastructure:WeatherStation".#
+
+== Relevant source code passages
+
+=== Loading the component 
+
+The component entrypoint resides in the WeatherComponentfootnote:[org.integratedmodelling.weather.WeatherComponent] class and is defined as such by being annotated with the **@Component** annotation, which also defines the name (identifier) of the component. 
+
+The component performs some lifecycle operations to:
+
+* initialize: first setup of the data structures in dedicated https://mapdb.org[MapDB] database structures.
+* setup:  setup and building of the updated weather database. 
+* update: perfomrs data maintainance to gather new data.
++
+--
+CAUTION: at the time of writing the maintainance feature is non functional. To update the weather database it is necessary to rebuild it from scratch.
+--
+
+Once the component has performed the setup operations, the WeatherAdapterfootnote:[org.integratedmodelling.weather.adapters.WeatherAdapter] is registered. The weather adapter is a service made available as universal resource and as such implements the IUrnAdapterfootnote:[org.integratedmodelling.klab.api.data.adapters.IUrnAdapter] interface. 
+
+The urnadapters do not need particular validation as the **IResourceAdapter**s. Notable public methods are:
+
+* isOnline: to check whether the service referenced by the supplied URN parameter is available. Possible services are identified by the enumeration:
++
+--
+[source,java,linenums]
+----
+public enum Services {
+    /**
+    * Return weather stations with their data for the requested spatio/temporal ctx
+    */
+    stations,
+    /**
+    * Return interpolated weather data for the requested variables and context
+    */
+    data,
+    /**
+    * Return individual storm events for the context
+    */
+    storms
+}
+----
+--
+* getType (and conceptually the same applies to getGeometry): which returns the type based on the service referenced by the URN. Also i this case the code explains the types for each service at a glance:
++
+--
+[source,java,linenums]
+----
+switch (Services.valueOf(urn.getNamespace())) {
+case data:
+    return Type.NUMBER;
+case storms:
+    return Type.EVENT;
+case stations:
+    return Type.OBJECT;
+default:
+    break;
+}
+----
+--
+* getResource: since there is no json to load the resource from, the adapter has to build the resource on its own.
+
+Arguably the most important method is the **getEncodedData** method. Using the same APi as the IResourceAdapter, it is used to retrieve data using the data builder and a given scale and context. Depending on the called service type (data, stations or events) it will then fill in the right pieces of the builder for a correct {kl} data object preparation.
+
+
+=== Get encoded data
+
+There are two options to get data from the weather stations (assuming we are not considering the storm data, which is a different kind of dataset). The first is using the **data** identifier. In this case the method **getInterpolatedData** is called and the data are retrieved from the weather server as interpolated raster. This might look like the best way to proceed but needs a word of caution: a serverside interpolation can be demanding depending on the region size and resolution, both in interpolation preprocessing load as well as network load to gather the data from the network. Also, weather data are one of the examples of data that contain holes due to station inactivity and timeouts. Depending on the domain, it might not be the best idea to get a raster that was created based on assumtions to fill holes.
+
+The suggested way for getting data is therefore passing through the stations identifier and hence calling **getStations**, which collects the stations in the current spatio-temporal context and sends them back from the weather service together with their data. Models that accept the data will have to adapt them based on the usecase, but will benefit of a lower network load and the possibility to choose the proper interpolation algorithm.
+
+The class that is currently used to produce rasters (in the engine) from the weather stations and their data (on the nodes) is the WeatherResolverfootnote:[org.integratedmodelling.geoprocessing.weather.WeatherResolver]. It uses the ThiessenInterpolatorfootnote:[org.integratedmodelling.geoprocessing.weather.interpolation.ThiessenInterpolator] class to build gridcoverages.
+
+NOTE: Currently getInterpolatedData is not implemented at the moment. This could be in future the right method to retrieve datasets at a temporal scale between the yearly (handled via data resources) and daily (handled via the stations approach of the adapter).
+
+=== Get data from the station
+
+The WeatherStationfootnote:[org.integratedmodelling.weather.data.WeatherStation] class takes care of retrieving the data of a station and filling in the blanks in case of nodata when possible or invalidating them to allow the system to make a better choice.
+
+This is important given {kl}'s nature. If a model queries a weather station in a context, but the best spatial choice returns a dataset full of novalue holes, the system should be able to make a better choice and return that, since there is no possibility to reiterate asking for example for a user input. This is what WeatherStation takes care of.
+
+As already stated the WeatherStation bases on two datasets, NOAA and CRU. The class that takes care of the database for these sources is the WeatherFactoryfootnote:[org.integratedmodelling.weather.data.WeatherFactory]. It has methods for setting up both NOAA and CRU datasets (setupGHCNDStations and setupCRUStations). On initialization it creates the necessary https://mapdb.org[MapDB] database structure, download the datasets and preprocesses them, before finally populating the database. the setup methods can be safely called on a repeated basis to trigger data update. The methods check the persistent data and compares them with the available date from the service and only processes new data when necessary.
+
+In places in which the NOAA dataset doesn't supply a usable station, a fallback dataset is used, the CRU. CRU is meant to be a fallback, since it uses a workaround to fit in the weather stations processing flow. 
+
+Practically speaking the CRU dataset is processed by the CRUReaderfootnote:[org.integratedmodelling.weather.data.CRUReader] class from its raster format into stations format and imagines that the station resides at every cell center. The dataset is therefore converted from raster to station-with-data format and saved into the database the same way as NOAA data are. Clearly the source is well known and the two datasets should never get mixed up.
+
+When data are requested inside a context, the WeatherFactory's **within** method takes care of evaluating which dataset is the better choice.
+
+=== Running data update methods
+
+Running the WeatherFactory setup methods is delegated to the component. The WeatherComponent for example has methods annotated to:
+
+* **@Initialize**: run every time the system is re-initialized. Here the storage is checked and structures are created by calling:
++
+--
+WeatherFactory.checkStorage();
+--
+* **@Setup(asynchronous = true)**: run the first time the adapter is loaded. It is possible to choose whether the method needs to be run in asynchronous mode or not. This is where the big initial WeatherFactory setup occurrs:
++
+--
+WeatherEvents.INSTANCE.setup();
+--
+* **@Maintain(intervalMinutes = 60 * 24 * 3)**: run in cycle at a given inteval in minutes. This is where the stations setup (hence update) can be called.
