@@ -98,7 +98,10 @@ public enum Configuration implements IConfigurationService {
 	public String getProperty(String property, String defaultValue) {
 		String ret = System.getProperty(property);
 		if (ret == null) {
-			ret = getProperties().getProperty(property);
+		    ret = System.getenv(property);
+		    if (ret == null) {
+		        ret = getProperties().getProperty(property);
+		    }
 		}
 		return ret == null ? defaultValue : ret;
 	}
