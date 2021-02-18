@@ -130,7 +130,7 @@ The component performs some lifecycle operations to:
 
 * initialize: first setup of the data structures in dedicated https://mapdb.org[MapDB] database structures.
 * setup:  setup and building of the updated weather database. 
-* update: perfomrs data maintainance to gather new data.
+* update: performs data maintainance to gather new data.
 +
 --
 CAUTION: at the time of writing the maintainance feature is non functional. To update the weather database it is necessary to rebuild it from scratch.
@@ -197,7 +197,7 @@ NOTE: Currently getInterpolatedData is not implemented at the moment. This could
 
 The WeatherStationfootnote:[org.integratedmodelling.weather.data.WeatherStation] class takes care of retrieving the data of a station and filling in the blanks in case of nodata when possible or invalidating them to allow the system to make a better choice.
 
-This is important given {kl}'s nature. If a model queries a weather station in a context, but the best spatial choice returns a dataset full of novalue holes, the system should be able to make a better choice and return that, since there is no possibility to reiterate asking for example for a user input. This is what WeatherStation takes care of.
+This is important given {kl}'s nature. If a model queries a weather station in a context, but the best spatial choice returns a dataset full of novalue holes, the system should be able to make a better choice and return that, since there is no possibility to reiterate asking the user to start again with different assumptions. This is what WeatherStation takes care of.
 
 As already stated the WeatherStation bases on two datasets, NOAA and CRU. The class that takes care of the database for these sources is the WeatherFactoryfootnote:[org.integratedmodelling.weather.data.WeatherFactory]. It has methods for setting up both NOAA and CRU datasets (setupGHCNDStations and setupCRUStations). On initialization it creates the necessary https://mapdb.org[MapDB] database structure, download the datasets and preprocesses them, before finally populating the database. the setup methods can be safely called on a repeated basis to trigger data update. The methods check the persistent data and compares them with the available date from the service and only processes new data when necessary.
 
@@ -222,3 +222,7 @@ WeatherFactory.checkStorage();
 WeatherEvents.INSTANCE.setup();
 --
 * **@Maintain(intervalMinutes = 60 * 24 * 3)**: run in cycle at a given inteval in minutes. This is where the stations setup (hence update) can be called.
+
+== Links, footnotes and resources
+
+=== Footnotes
