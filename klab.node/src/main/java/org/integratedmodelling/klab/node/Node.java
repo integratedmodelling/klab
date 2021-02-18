@@ -122,6 +122,8 @@ public class Node {
 		try {
 			SpringApplication app = new SpringApplication(NodeApplication.class);
 			this.context = app.run(options.getArguments());
+			Environment environment = this.context.getEnvironment();
+			setPropertiesFromEnvironment(environment);
 			this.engine = Engine.start(this.certificate);
 			this.port = options.getPort();
 			Map<String, Object> props = new HashMap<>();
