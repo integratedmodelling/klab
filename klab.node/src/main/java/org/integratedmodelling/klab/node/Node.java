@@ -230,8 +230,11 @@ public class Node {
 		        .filter(ps -> ps instanceof EnumerablePropertySource)
 		        .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
 		        .flatMap(Arrays::<String>stream)
-		        .forEach(propName -> Configuration.INSTANCE.getProperties().setProperty(propName, environment.getProperty(propName)));
-		Configuration.INSTANCE.save();
+		        .forEach(propName -> {
+		            if(propName.contains("klab.")) {
+		                Configuration.INSTANCE.getProperties().setProperty(propName, environment.getProperty(propName));
+		            }
+		        });
 		return;
 	}
 	

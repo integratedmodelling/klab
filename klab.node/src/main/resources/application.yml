@@ -7,6 +7,9 @@ server:
          maxRequest: 1280MB
       
 klab:
+   node:
+      submitting: "*"
+      searching: "*"
    adapter:
       fscan:
          auth: "*"
