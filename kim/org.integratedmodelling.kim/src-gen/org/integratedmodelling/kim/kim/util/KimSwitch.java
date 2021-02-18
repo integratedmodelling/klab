@@ -196,6 +196,7 @@ public class KimSwitch<T> extends Switch<T>
       {
         ClassifierRHS classifierRHS = (ClassifierRHS)theEObject;
         T result = caseClassifierRHS(classifierRHS);
+        if (result == null) result = caseTableRow(classifierRHS);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }

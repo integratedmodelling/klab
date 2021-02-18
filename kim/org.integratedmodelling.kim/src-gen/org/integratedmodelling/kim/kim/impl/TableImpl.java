@@ -35,6 +35,7 @@ import org.integratedmodelling.kim.kim.TableRow;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.TableImpl#getHeaders <em>Headers</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.TableImpl#getRows <em>Rows</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.TableImpl#getColumnClassifiers <em>Column Classifiers</em>}</li>
  * </ul>
  *
  * @generated
@@ -60,6 +61,16 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
    * @ordered
    */
   protected EList<TableRow> rows;
+
+  /**
+   * The cached value of the '{@link #getColumnClassifiers() <em>Column Classifiers</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getColumnClassifiers()
+   * @generated
+   * @ordered
+   */
+  protected TableRow columnClassifiers;
 
   /**
    * <!-- begin-user-doc -->
@@ -153,6 +164,56 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
    * @generated
    */
   @Override
+  public TableRow getColumnClassifiers()
+  {
+    return columnClassifiers;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetColumnClassifiers(TableRow newColumnClassifiers, NotificationChain msgs)
+  {
+    TableRow oldColumnClassifiers = columnClassifiers;
+    columnClassifiers = newColumnClassifiers;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KimPackage.TABLE__COLUMN_CLASSIFIERS, oldColumnClassifiers, newColumnClassifiers);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setColumnClassifiers(TableRow newColumnClassifiers)
+  {
+    if (newColumnClassifiers != columnClassifiers)
+    {
+      NotificationChain msgs = null;
+      if (columnClassifiers != null)
+        msgs = ((InternalEObject)columnClassifiers).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KimPackage.TABLE__COLUMN_CLASSIFIERS, null, msgs);
+      if (newColumnClassifiers != null)
+        msgs = ((InternalEObject)newColumnClassifiers).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KimPackage.TABLE__COLUMN_CLASSIFIERS, null, msgs);
+      msgs = basicSetColumnClassifiers(newColumnClassifiers, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.TABLE__COLUMN_CLASSIFIERS, newColumnClassifiers, newColumnClassifiers));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -161,6 +222,8 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
         return basicSetHeaders(null, msgs);
       case KimPackage.TABLE__ROWS:
         return ((InternalEList<?>)getRows()).basicRemove(otherEnd, msgs);
+      case KimPackage.TABLE__COLUMN_CLASSIFIERS:
+        return basicSetColumnClassifiers(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -179,6 +242,8 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
         return getHeaders();
       case KimPackage.TABLE__ROWS:
         return getRows();
+      case KimPackage.TABLE__COLUMN_CLASSIFIERS:
+        return getColumnClassifiers();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -201,6 +266,9 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
         getRows().clear();
         getRows().addAll((Collection<? extends TableRow>)newValue);
         return;
+      case KimPackage.TABLE__COLUMN_CLASSIFIERS:
+        setColumnClassifiers((TableRow)newValue);
+        return;
     }
     super.eSet(featureID, newValue);
   }
@@ -221,6 +289,9 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
       case KimPackage.TABLE__ROWS:
         getRows().clear();
         return;
+      case KimPackage.TABLE__COLUMN_CLASSIFIERS:
+        setColumnClassifiers((TableRow)null);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -239,6 +310,8 @@ public class TableImpl extends MinimalEObjectImpl.Container implements Table
         return headers != null;
       case KimPackage.TABLE__ROWS:
         return rows != null && !rows.isEmpty();
+      case KimPackage.TABLE__COLUMN_CLASSIFIERS:
+        return columnClassifiers != null;
     }
     return super.eIsSet(featureID);
   }

@@ -1,5 +1,5 @@
 = k.LAB resources handling
-A field guide about k.LAB's resources handling and adapters.
+A field guide to the lifecycle of resources in k.LAB's and their adapters.
 v1.0, 2021-02-18
 :doctype: article
 :description: Chat about resources handling with Villa
@@ -7,6 +7,7 @@ v1.0, 2021-02-18
 :kmod: k.Modeler
 :kact: k.Actors
 :keng: k.LAB Engine
+:knod: k.LAB Node
 :kim: k.IM
 :ked: k.LAB Resourced Editor
 :pex: Project Explorer
@@ -40,17 +41,18 @@ endif::[]
 
 == Introduction
 
-The **Resources layer**, also referred to as the _first layer_ of {kl}, is the **NON** semantic layer in which we find what most novice users would identify as a resource: a dataset or data services. 
-But in {kl} also models can be and are one of the most important resource. Actually, anything that takes and input and produces outputs that can be defined "tangible" can be a resource. These outputs might be for example numbers or categories. Imagine this as the black & white world.
+The **Resources layer** is the bottom layer of {kl}, in which we find what most novice users would identify as a resource: datasets or data services, devoid of any semantics beyond their conventional metadata. In {kl}, _computations_, from simple equations to complex models, can also live in the resources layer. In fact, anything that takes inputs and produces outputs can be seen as a {kl} resource. These inputs and outputs will be identified by a name and a type, for example numbers or textual categories. Imagine this as a black & white world, where products of scientific research live.
 
-In the second layer, the semantic layer, the resources are coupled with concepts creating a world of knowledge that the first layer can't provide. And this is where the world get's its color.
+The aim of the resources layer is offering a common interface for k.LAB to access and manage pre-existing data, models and services of all kinds, as a first level of interoperability. This is obtained by a simple, carefully designed API, and through the use of _adapters_, i.e. software plug-ins that adapt a specific data or service format to it. Adapters are made available as {kl} _components_, installable in {keng}s and {knod}s, and can be extended by developers using the Java API to support formats and services not yet available.
 
-This document looks into resources handling at two levels:
+In the _semantic_ layer of {kl}, resources are coupled with concepts, creating an _integrated_ world of knowledge that the resources layer alone can't provide. This is where the world gets its _meaning_ - its colors! - and where integration becomes possible. In the resources layer, knowledge is only identified by names and basic types, such as numeric, textual, or boolean.
 
-* the user perspective: using the {kmod} to access resources, manage, add or remove them
-* the developer perspective: discussing the classes used to manage resources in the {keng}
+This document looks at resources handling in a learn-by-example fashion from two different angles:
 
-This document assumes that the reader is already acquainted with the {kmod} application user interface and its {kl} perspective.
+* the _modeler_ perspective: using {kmod} to create, modify, test, access or delete resources;
+* the _developer_ perspective: the Java API and classes used to manage resources in the {keng}.
+
+This document assumes that the reader is already acquainted with {kmod}'s user interface and its {kl} perspective.
 
 === Example project
 
@@ -60,60 +62,64 @@ Each {kl} project contains a resources node in its tree:
 
 image::imgs/01_resources_tree.png[scaledwidth=40%, width=40%, align="center"]
 
-Adding a file resource (ex. shapefile or geotiff) is as simple as dragging a file from the filesystem explorer.
+Adding a file resource (ex. an ESRI shapefile, CSV file, or geotiff raster coverage) is as simple as dragging a file from the filesystem explorer to the resources node.
 
-Let's for example add a naturalearth world shapefile to the example resources by dragging it onto the Resources tree node. The resource is instantly imported and appears in the tree:
+Let's for example add a https://www.naturalearthdata.com/[Natural Earth] world shapefile to the example resources by dragging it onto the Resources tree node. The resource is instantly imported and appears in the tree:
 
 image::imgs/02_resources_tree.png[scaledwidth=60%, width=60%, align="center"]
 
-The import process follows a validation procedure to assure that the resource can be used inside klab (ex. projection is checked).
+The import process performs a number of validation steps to assure that the resource can be used inside {kl}. In this case, the projection and other attributes are checked for conformance with accepted conventions and the shapes are validated. In general, {kl} adapters are intentionally strict, and won't accept files that are partially or badly specified: all information is needed in order for resources to be adaptable to all context of use.
 
 == The Resource Editor
 
-{kmod} features a **Resource Editor** that allows the user to manage supported resource types. When selecting a resource prior imported into the resources tree, the editor opens, showcasing three tabs, the default one being the Resource data tab:
+{kmod} features a **Resource Editor** that allows the user to manage supported resource types. When selecting a resource previously imported into the resources tree, the editor opens, showing three tabs, the default one being the Resource data tab:
 
 image::imgs/03_resource_editor.png[scaledwidth=70%, width=70%, align="center"]
 
-If the validation procedure errors, the _Publishable_ checkbox won't be ticked and the _Why not_ textfield will report an error.
+If the validation procedure had produced errors, the _Publishable_ checkbox won't be ticked and the _Why not_ textfield will describe the reason.
 
 [NOTE]
 ====
-Importing for example an imagery geotiff raster the same way as done with the shapefile, the editor reports an issue, and the URN is coloured red:
+Importing for example a multi-band imagery geotiff raster the same way as done with the shapefile, the editor reports an issue, and the URN is coloured red:
 
 image::imgs/04_import_error.png[scaledwidth=100%, width=100%, align="center"]
+
+It will be necessary to choose a band or provide a band mixer expression in the resource parameters to make the error go away and render the resource usable in a model.
 ====
 
 The editor exposes important information about the resource:
 
-* URN
-* attributes
-* geometry information
-* adapter attributes
+* Its unique URN (Uniform Resource Name);
+* Its attributes, if any exist;
+* The geometry (space, time) and its textual encoding;
+* All adapter attributes that define how {kl} will handle the resource.
 
-**Every resource also has a type.** The type is currently not visible in the editor. It depends on the resource adapter and can change depending on the used context. In the case of a shapefile the type is **OBJECT**. If we'ld instead consider a WCS raster service, then the type would be a **NUMBER**.
+Every resource also has a **data type.**, which describes the main output as, for example, numeric or textual. Because the type may change depending on the context of use, it is not shown in the editor. In the case of a shapefile the type is **OBJECT**, i.e. the resource, when applied to a context, will produce a set of objects, each of which will have its own independent geometry. In the case of a raster coverage, such as a geotiff or a WCS service, then the type would be **NUMBER**.
 
-TIP: The types of an Artifact are defined in the class **IArtifact**footnote:[org.integratedmodelling.klab.api.provenance.IArtifact].
+TIP: In the Java API, the possible types of a resource (also including many others that resources cannot produce) are defined in the `Type` enum which belongs to the `IArtifact` class. footnote:[org.integratedmodelling.klab.api.provenance.IArtifact - PROBABLY WE SHOULD HAVE MAVEN INSTALL JAVADOCS SOMEWHERE STABLE, AND LINK TO THAT INSTEAD]. 
 
 === Local and global URNs
 [#REF_URNS]
 
-Each resource can be identified as local and global. Upon creation the resource is local. Its name is derived from the original resource, for example in case of a shapefile it is the file name. The local name can be used as identifier in scripts inside the project.
-The URN (which can be obtained by right clicking on the resource through _copy URN_) is the global identifier and is the suggested way to reference resources in {kim} scripts.
+Each resource can be identified as local or public. Upon creation the resource lives in a user project, and is therefore local. Modelers wishing to use that resource must have that project loaded in their engine's workspace. The name of a file-based local resource is derived from that of the original file: for example in case of a shapefile it is simply the file name without the path. The local name can be used as an identifier in place of the fully specified URN in {kim} models located the same project.
+The URN (which can be copied to che clipboard by right clicking on the resource through _copy URN_) is the fully specified identifier and is the recommended way to reference resources in {kim} namespaces.
 
 
-URNs consist of 4 pieces:
+A URN consists of 4 parts, separated by colons:
 
-* the node
-* the catalog (a logical space on the node defined by specification/domain, as for ex. hydrology)
-* the namespace
-* the id
+* the **node name** (the name of the node where the resource was originally published);
+* the **catalog** (a logical space handled by the node, for example a domain such as hydrology, or a name describing a large-scale collection of data);
+* the **namespace** (a secondary logical space within the catalog);
+* the **resource identifier**.
 
-When a resouce is created as local, the above described pieces are filled in with:
+Dot-separated paths are normally used for each component of a URN, providing a further way to organize and document the origin and logical scope of a resource, using https://en.wikipedia.org/wiki/Reverse_domain_name_notation[reverse DNS notation] when appropriate. A clean URN should contain only lowercase identifiers and no other characters than ASCII letters or the underscore sign, although other characters are accepted.
 
-* instead of the node the string 'local' to highlight the local origin
-* instead of the catalog the name of the user that created it
-* the project name is used as namespace
-* the file name (if file based) as the identifier
+When a resource is created locally, the four parts of the URN are used differently:
+
+* instead of the node name, the string 'local' is used;
+* instead of the catalog, the URN will contain the user name of the user that created it;
+* instead of the namespace, the URN will contain the name of the project where the resource was created;
+* the identifier will be built from the file name (if file based) or from user input.
 
 A **local** resource's URN might for example look as follows:
 
@@ -123,20 +129,23 @@ local:moovida:im.docexample:ne_10m_admin_1_states_provinces
 
 Once published, the URN of a resource will reflect the above described specification.
 
-NOTE: One important note related to the node part in the URN: even if the resource will forever carry its originating node name inside the URN's DNA, this doesn't mean that it can't  be exposed by other nodes. {kl}'s mirroring API allows to distribute resources on nodes that gave their availablility. 
+NOTE: One important note related to the node part in the URN: even if the resource will forever carry the originating node name in its URN, this doesn't mean that it can't be resolved by other nodes. {kl}'s mirroring API can be used to mirror resources to different nodes, to maximize the chance that a public resource is resolved even if some nodes are offline, and to support load balancing in the {kl} network for frequently used resources. 
 
 There is a third type of resource, named universal resource (see <<REF_UNIVERSALRESOURCES, the dedicated section>>) that, due to its nature, follows a particular URN schema, identified by the **klab** prefix. 
-
 If the URN starts with the keyword **klab**, then the meaning of the 4 pieces of the URN are the following:
 
-* the keyword klab
-* the name of the adapter to use
-* the namespace that basically tells what we want from the adapter
-* the identifier of the specific resource
+* the keyword klab;
+* the name of the adapter to use to resolve it;
+* the namespace to specify the service requested to the adapter;
+* the identifier of the specific resource.
+
+For example, the following URN
 
 ----
-klab:weather:stations:all#prec,tavg
+klab:weather:stations:all
 ----
+
+turns into a request to the `weather` adapter for the `stations` service, which returns weather station objects with their data, and requests all the stations in the context of resolution (as opposed to, e.g., only those of a certain category or technology). The weather adapter may be installed in the local engine (in which case no node is involved in satisfying the request) or provided by one or more nodes on the network. In the latter case, the node with the lightest load at the time of request will be chosen to honor it.
 
 Detailed information about URN internals can be found in the section _<<REF_RESOURCEMANAGEMENT, about URNs and resources management>>_. 
 

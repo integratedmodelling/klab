@@ -33,6 +33,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTableArgs <em>Lookup Table Args</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTable <em>Lookup Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getLookupTableId <em>Lookup Table Id</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isTwoway <em>Twoway</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getMetadata <em>Metadata</em>}</li>
  * </ul>
@@ -344,6 +345,28 @@ public interface ModelBodyStatement extends EObject
    * @generated
    */
   void setLookupTableId(String value);
+
+  /**
+   * Returns the value of the '<em><b>Twoway</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Twoway</em>' attribute.
+   * @see #setTwoway(boolean)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getModelBodyStatement_Twoway()
+   * @model
+   * @generated
+   */
+  boolean isTwoway();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isTwoway <em>Twoway</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Twoway</em>' attribute.
+   * @see #isTwoway()
+   * @generated
+   */
+  void setTwoway(boolean value);
 
   /**
    * Returns the value of the '<em><b>Actions</b></em>' containment reference list.

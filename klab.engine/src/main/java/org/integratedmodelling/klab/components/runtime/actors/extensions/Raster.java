@@ -21,6 +21,8 @@ import groovy.lang.GroovyObjectSupport;
  */
 public class Raster extends GroovyObjectSupport {
 
+    public static final String WORLD_SHAPE = "s2{bbox=[-180.0 180.0 -90.0 90.0],proj=EPSG:4326}";
+    
     GridCoverage2D coverage;
     // grid for the overall coverage
     Grid grid;
