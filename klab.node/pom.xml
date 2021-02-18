@@ -38,6 +38,11 @@
 						<jvmFlags>
 						</jvmFlags>
 						<mainClass>org.integratedmodelling.klab.node.NodeApplication</mainClass>
+						<entrypoint>
+			              <arg>/bin/sh</arg>
+			              <arg>-c</arg>
+			              <arg>exec java -cp /app/resources:/app/classes:/app/libs/* org.integratedmodelling.klab.node.NodeApplication</arg>
+			            </entrypoint>
 						<args>
 						</args>
 						<ports>
