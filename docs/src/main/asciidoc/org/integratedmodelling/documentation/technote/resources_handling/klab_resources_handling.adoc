@@ -1,4 +1,4 @@
-= k.LAB resources handling
+= k.LAB resources
 A field guide to the lifecycle of resources in k.LAB's and their adapters.
 v1.0, 2021-02-18
 :doctype: article
@@ -41,13 +41,13 @@ endif::[]
 
 == Introduction
 
-The **Resources layer** is the bottom layer of {kl}, in which we find what most novice users would identify as a resource: datasets or data services, devoid of any semantics beyond their conventional metadata. In {kl}, _computations_, from simple equations to complex models, can also live in the resources layer. In fact, anything that takes inputs and produces outputs can be seen as a {kl} resource. These inputs and outputs will be identified by a name and a type, for example numbers or textual categories. Imagine this as a black & white world, where products of scientific research live.
+The **Resources layer** is the bottom layer in the {kl} architecture, in which we find what most novice users would identify as a resource: datasets or data services, devoid of semantics beyond their conventional metadata. In {kl}, _computations_, from simple equations to complex models, can also live in the resources layer. In fact, anything that takes inputs and produces outputs can be seen as a {kl} resource. These inputs and outputs will be identified by a name and a type, for example numbers or textual categories. Imagine this as a black & white world, where products of scientific research live.
 
 The aim of the resources layer is offering a common interface for k.LAB to access and manage pre-existing data, models and services of all kinds, as a first level of interoperability. This is obtained by a simple, carefully designed API, and through the use of _adapters_, i.e. software plug-ins that adapt a specific data or service format to it. Adapters are made available as {kl} _components_, installable in {keng}s and {knod}s, and can be extended by developers using the Java API to support formats and services not yet available.
 
-In the _semantic_ layer of {kl}, resources are coupled with concepts, creating an _integrated_ world of knowledge that the resources layer alone can't provide. This is where the world gets its _meaning_ - its colors! - and where integration becomes possible. In the resources layer, knowledge is only identified by names and basic types, such as numeric, textual, or boolean.
+In the _semantic_ layer of {kl}, resources are coupled with concepts, creating an _integrated_ world of knowledge that the resources layer alone can't provide. This is where the world gets its _meaning_ - its colors! - and where integration becomes possible. In the resources layer, knowledge is only identified by names and basic types, such as numeric, textual, or boolean, and only basic validation of compatibility between resources is possible.
 
-This document looks at resources handling in a learn-by-example fashion from two different angles:
+This document looks at resources handling in a learn-by-example fashion, from two different angles:
 
 * the _modeler_ perspective: using {kmod} to create, modify, test, access or delete resources;
 * the _developer_ perspective: the Java API and classes used to manage resources in the {keng}.
@@ -98,7 +98,7 @@ Every resource also has a **data type.**, which describes the main output as, fo
 
 TIP: In the Java API, the possible types of a resource (also including many others that resources cannot produce) are defined in the `Type` enum which belongs to the `IArtifact` class. footnote:[org.integratedmodelling.klab.api.provenance.IArtifact - PROBABLY WE SHOULD HAVE MAVEN INSTALL JAVADOCS SOMEWHERE STABLE, AND LINK TO THAT INSTEAD]. 
 
-=== Local and global URNs
+=== Local and public URNs
 [#REF_URNS]
 
 Each resource can be identified as local or public. Upon creation the resource lives in a user project, and is therefore local. Modelers wishing to use that resource must have that project loaded in their engine's workspace. The name of a file-based local resource is derived from that of the original file: for example in case of a shapefile it is simply the file name without the path. The local name can be used as an identifier in place of the fully specified URN in {kim} models located the same project.
