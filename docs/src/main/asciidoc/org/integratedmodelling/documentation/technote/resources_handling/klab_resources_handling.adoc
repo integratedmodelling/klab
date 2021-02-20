@@ -9,8 +9,9 @@ v1.0, 2021-02-18
 :keng: k.LAB Engine
 :knod: k.LAB Node
 :kim: k.IM
-:ked: k.LAB Resourced Editor
-:pex: Project Explorer
+:ked: k.LAB Resource Editor
+:pex: k.LAB Explorer
+:kex: Project Explorer
 :encoding: utf-8
 :lang: en
 :title-page:
@@ -41,7 +42,7 @@ endif::[]
 
 == Introduction
 
-The **Resources layer** is the bottom layer in the {kl} architecture, in which we find what most novice users would identify as a resource: datasets or data services, devoid of semantics beyond their conventional metadata. In {kl}, _computations_, from simple equations to complex models, can also live in the resources layer. In fact, anything that takes inputs and produces outputs can be seen as a {kl} resource. These inputs and outputs will be identified by a name and a type, for example numbers or textual categories. Imagine this as a black & white world, where products of scientific research live.
+Resources are used in {kl} to make observations - finished scientific artifacts that describe a concept. This process involves the choice of a _context_ for the observation (for example, a spatial region and a time period, at user-specified extents and resolution), and a logical query (e.g. a concept, such as `geography:Elevation`) which is _resolved_ to one or more _semantic models_, producing a computational strategy that ultimately relies on resources to provide or compute data. This document describes the **Resources layer**, i.e. the bottom layer of the three in the {kl} architecture, in which we find what most novice users would identify as a "conventional" knowledge artifact: datasets or data services, devoid of semantics beyond their conventional metadata. In {kl}, _computations_, from simple equations to complex models, can also live in the resources layer. In fact, anything that takes inputs and produces outputs can be seen as a {kl} resource. These inputs and outputs will be identified by a name and a type, for example numbers or textual categories. Imagine this as a black & white world, where products of scientific research live.
 
 The aim of the resources layer is offering a common interface for k.LAB to access and manage pre-existing data, models and services of all kinds, as a first level of interoperability. This is obtained by a simple, carefully designed API, and through the use of _adapters_, i.e. software plug-ins that adapt a specific data or service format to it. Adapters are made available as {kl} _components_, installable in {keng}s and {knod}s, and can be extended by developers using the Java API to support formats and services not yet available.
 
@@ -149,48 +150,72 @@ turns into a request to the `weather` adapter for the `stations` service, which 
 
 Detailed information about URN internals can be found in the section _<<REF_RESOURCEMANAGEMENT, about URNs and resources management>>_. 
 
-=== Attributes
+=== Attributes, inputs and outputs
 [#REF_ATTRIBUTES]
 
-Depending on the type of resource, the object can have attributes, inputs or outputs. A shapefile based resource, which is of type OBJECT, has an attribute table:
+Resources, when _contextualized_ to a context through a model, always produce an output corresponding to their main type - for example numbers or objects. In addition to their main output, they may expose additional outputs (for example, a numeric resource may also produce, on request, an uncertainty metric related to the main output) and may, in the case of computed resources, need or accept inputs. In addition, resources that produce objects or wrap multi-dimensional data sources such as tables may expose _attributes_, which can be referenced in models. 
+
+As an example, a resource wrapping a vector spatial coverage (ESRI shapefile), which is of type OBJECT, has an attribute table:
 
 image::imgs/05_attributes.png[scaledwidth=70%, width=70%, align="center"]
 
-If instead the resource is a model, it will have the **inputs** and **outputs** tabs filled instead of attributes tab. 
+If the resource is a computation, it may have the **inputs** and **outputs** tabs filled instead, or in addition to, its attributes tab. 
 
 [NOTE]
 ====
-The attributes, inputs and outputs, that are defined by a name and type, are the connection piece between the resources and the semantic level. These can be referenced in the models using the attribute's name to create the connection to the concepts in the semantic world.
+In a resource, the main output, along with optional attributes, inputs and outputs, are defined by a name and a data type, and make the connection between the resources and the semantic level. These are referenced in semantic models using their names to connect to concepts in the semantic world.
 ====
 
+The existence of attributes for an object resource allows it to be contextualized also as a "data" resource through a process called _dereification_. This corresponds to the removal of the object character by producing an attribute's value as the main output, and simply using the objects' spatial and temporal geometry to distribute its value over the context of observation. So assuming that the shapefile in the example had a numeric attribute named `population`, containing the number of people living in each region, the URN `local:moovida:im.docexample:ne_10m_admin_1_states_provinces#population` can be used in a model that observes the population size over a grid without any other modification. The adapter will take care of rasterizing as needed. Depending on the adapter, parameters in the URN may be used to filter the data, modify them, or trigger sophisticated operations of different kinds.
 
-=== Geometry information
+=== The geometry
 
-Under the map view in light gray, a small text describes the geometry of the resource. For the example shapefile it states:
+Each resource has a _geometry_, which describes the _topology_ over which the resource's information is distributed. A geometry may be trivial (_scalar_, describing a single value that does not change in time or space) but more typically contains _dimensions_, such as time and space. The geometry descriptor is normally initialized during the validation process when the resource is created, and may, under some circumstances, be edited by the user to add missing information. 
+
+Geometry data are summarized in an expression that is visible in the resource editor for inspection and cannot be modified directly. For the example shapefile it states:
 
 ----
 #s2(4594){bbox=[-179.99999999999991 180.0 -89.99999999999994 83.63410065300008],proj=EPSG:4326}
 ----
 
-Defining:
+The string, generated by the validator, can be read as follows:
 
-* a resource that contains several objects (defined by the presence of the **#**)
-* irregular spatial bidimensional geometry (defined by the lowercase **s2**)
-* the data bounding box
-* the projection
+* The resource contains 4594 objects (defined by the presence of the **#** denoting multiplicity of objects, and the number in parenthesis for the _size_ of the resource in this dimension);
+* each object has irregular spatial bidimensional geometry (defined by the lowercase **s2**);
+* the spatial dimension has two attributes, shown between curly brackets:
+** a bounding box in projected coordinates;
+** a projection (Lat/Long)
 
-=== Adapter attributes
+Information in the resource string is also displayed in the temporal and spatial widgets in the resource editor, making it unnecessary to interpret the geometry string directly; for trained eyes, though, the string offers much information in a very short form and it can be useful to read it. The {kl} Java API can manipulate the string definition and convert it to any internal representations needed.
+
+The resource editor does not offer at the moment a way to edit the spatial geometry; a full-fledged time dimension editor is instead provided.
+
+Dimensions may also be _regular_ (for example a gridded raster will show **S2**, with an uppercase **S** indicating regularity in space) or _generic_ (using Greek letters), meaning they imply a spatial dimension but do not indicate which one. Similar considerations apply to space and time.
+
+As shapefile sources contain no temporal information, the user can edit the temporal geometry using the time editor in the resource view. After that is done (for example to state that the spatial data refer to the year 2020 and should be considered unchanging over a year's span) and the resource saved, the geometry shown will include the temporal information, for example:
+
+----
+τ1{tend=978307200000,tscope=1.0,tstart=946684800000,ttype=logical,tunit=year}S2(4319,2159){...}
+----
+
+In the example above, a raster grid of dimension (x = 4319, y=2159) has been annotated to refer generically to year 2000 (expressed in milliseconds after 1/1/1970): the data will also be used by k.LAB to make observations when contextualizing in a period beyond 2001, as long as there are no better sources of information for more recent years. A specific time extent (with a **T** instead of **τ**) would cause the resource to only be used within the time coverage specified.
+
+=== Adapter parameters
 [#REF_ADAPTERATTRIBUTES]
 
-The adapter properties view lists the parameters of the currently used adapter. In the discussed test case the used adapter is the **VECTOR** adapter:
+The _adapter_ is the software plug-in that takes care of validating, interpreting, encoding and decoding the original contents of a resource to adapt them to the {kl} world. Each adapter has different functionalities and defines a set of parameters that control the way the resource is interpreted. Many of these parameters are filled in automatically when the resource is imported from a file; if instead the resource is created from scratch, the user will be requested to fill in the mandatory parameters before the resource can be created. The parameters remain available in the editor for modification: users cannot add arbitrary parameters, but the adapter will add empty definition of all optional parameters so that they can be filled in later if desired.
+
+The adapter properties view lists the name and parameters of the currently used adapter. In the discussed test case the used adapter is the **VECTOR** adapter:
 
 image::imgs/09_adapter_table.png[scaledwidth=80%, width=80%, align="center"]
 
-One notable parameter is the filter parameter, which can be used to exclude part of the resource, if necessary. The procedure is as simple as inserting a CQL (https://docs.geoserver.org/latest/en/user/tutorials/cql/cql_tutorial.html[Common Query Language]) based on the object's attributes (ex. _adm1_code=SOMECODE_).
+The specific role of each parameter is discussed in the documentation of each individual adapter. As an example, the filter parameter seen in the picture can be used to exclude part of the resource, if necessary. The procedure is as simple as inserting a CQL (https://docs.geoserver.org/latest/en/user/tutorials/cql/cql_tutorial.html[Common Query Language]) based on the object's attributes (ex. _adm1_code=SOMECODE_). Adapters that operate on more flexible resources (such as tables or machine-learned classifiers) can contain a high number of parameters, which are often organized hierarchially for ease of navigation.
 
+Modifying parameters enables the "Save" button in the editor. Saving the resource triggers revalidation and will result in errors if the parameter values are incompatible with the functionality of the adapter.
+ 
 === Publishing a resource
 
-Resources are created at first as local and can be used inside the project that contains them. The obvious lifecycle of a resource is to be published and made available across nodes that are interested in exposing it. 
+Resources start their life as _local_ within a user project, and can be used inside the project that contains them or in any other project that shares the same local workspace. While local resources may be enough to use them in {kl} for a specific, short-term project, the natural lifecycle of a resource continues with _publication_, which makes it available across the {kl} network. When published, resources become independent of projects, their URNs gain an "official" status following a _linked data_ paradigm, and live on {knod}s which may optimize their data for faster serving and have them mirrored to other nodes for increased availability. While public resources may be visibile, at the choice of their owner, only to selected users or groups of users, their URLs are universally recognized and can be used in {kim} models without the need for any registration or download, as long as the user is connected to the {kl} network.
 
 The publish button in the {ked} helps the user in the publishing process with a dedicated wizard:
 
@@ -198,12 +223,14 @@ image::imgs/10_publish_dialog.png[scaledwidth=70%, width=70%, align="center"]
 
 [CAUTION]
 ====
-Publishing is the moment in which the user will need to have very clear ideas about the resource and its whereabouts. **Once published, a resource should not be changed** anymore, since changes in existing resources might break models that depend on them.
+The publishing facilities in {kl} are in active development, and many important details are yet to be defined. In general, a resource can only be published after a number of validation steps, including full metadata compliance and licensing information, validation at a stricter level than what requested for local usage, and conformity and uniqueness checks for the public URNs. **Once published, a resource should not be changed**, since changes in existing resources might break models that depend on them.
 
-In future {kl} will feature a peer review procedure to add a level of control to the resources publishing workflow.
+Among the many details of the publishing workflow, {kl} will eventually feature an optional peer review procedure (which will affect the prioritization of the resource when multiple alternatives are available) and a multi-criteria rating system. While the process is developed and tested with partners, it is important that users refrain from publishing resources unless directed by authoritative partners.
 ====
 
-The publishing dialog also allows to choose finer granularity for resource permissions. By default a resource is visible only to the user that created it. The _Publish_ checkbox allows to make it globally visible. Finally, it is possible to make resources visible only to certain users and groups (comma separated list) or exclude groups/users.
+The publishing dialog also allows fine granularity in the specification of resource permissions. By default a resource is visible only to the user that created it. The _Public_ checkbox allows to make it globally visible. Finally, it is possible to make resources visible only to certain users and groups (comma separated list) or exclude groups/users.
+
+NOTE: It is important to note that because resources are never used directly in {kl}, but rather through semantic models, users will never see permission errors due to accessing resources that they have no rights to. Any model using a resource that is not allowed for the user running it is automatically deactivated and cannot be chosen to resolve its observable concept; the resolution process will automatically find a computational workflow that can resolve the query in terms of visible resources only. This enables a smooth and graceful enforcing of permissions.
 
 Before publishing, the metadata tab should be filled in with relevant metadata:
 
@@ -211,14 +238,26 @@ image::imgs/11_publish_metadata.png[scaledwidth=80%, width=80%, align="center"]
 
 WARNING: Many users believe that information such as time and spatial context are part of the metadata. This is bad practice since they are part of the semantic and have their own place in {kl}.
 
+=== Universal resources
+[#REF_UNIVERSALRESOURCES]
+
+In the <<REF_URNS,section about URNs>> local and global URNs have been discussed and a third type of resource has been introduced: universal resources.
+
+A universal resource is basically a service and does not own specific resource storage on the filesystem. Therefore universal resources can be considered public and do not need to be created. In fact, both nodes and engine may host universal adapters: when a universal resource is referenced, the engine will first try to contextualize it using its own installed adapters; only if the requested one is not available the engine will lookup nodes on the network that have it and allow it for the current user, then, if multiple ones are available, choose the node with the lightest current load and use the node resource API to obtain the data in the desired context. Universal resource adapters are created by implementing the **IUrnAdapter** interface, which does not have import, export and validation methods and thus has a simpler API than a full resource adapter. One example is the **RandomAdapter**footnote:[org.integratedmodelling.random.adapters.RandomAdapter] that is able to handle URNs that start with: **klab:random:...**.
+
+Any resource whose node name is **klab:** is a universal resource. This means that no physical node can be named `klab`.
+
+The weather adapterfootnote:[org.integratedmodelling.weather.adapters.WeatherAdapter] is an example of a complex service implemented as a universal resource. Because it relies on a large database of weather data and stations, updated regularly from online sources and contributing institutions, it can only be implemented as a service; behind the scenes, constant processing ensures data validation and synchronization of several datasources (ex. NOAA-catalogued weather stations) that change in time and are often integrated with new information. The underlying data are saved in an internal database and are made available through the URN to models that need weather data relative to a specific temporal and spatial geometry. The {kl} weather resource can be accessed through the **klab:weather:...** prefix, where the catalog identifier specifies the weather service.
+
+Universal klab resources can be served by different nodes the same way as it happens for other global resources. It is clear that while a random adapter resource - being very simple - can be run from any node, a weather adapter that would take days only to build the initial database will be accepted only on dedicated nodes. For that exacty reason only one node, **im.weather**, currently handles `klab:weather` resources.
 
 == Adding resources 
 
-In cases in which the resource is not file based and drag'n'drop can't be exploited, the _new resource_ wizard can be launched by right clicking on the resources node and selecting the **New resource...** action. The wizard allows to define an id for the resource and select one fo the possible adapter types:
+In cases in which the resource is not file-based and a drag-and-drop action cannot be used, the _new resource_ wizard can be launched by right clicking on the resources node and selecting the **New resource...** action. The wizard allows to define an id for the resource and select one of adapter types enabled for resource creation in the connected engine:
 
 image::imgs/06_new_resource.png[scaledwidth=80%, width=80%, align="center"]
 
-Once the adapter has been chosen, its parameters need to be defined. The following image shows the example of the mandatory (red) and optional parameters of a WFS adapter:
+Once the adapter has been chosen, its parameters will appear, ready to be defined. The following image shows the example of the mandatory (red) and optional parameters of a WFS adapter:
 
 image::imgs/07_new_resource_wfs.png[scaledwidth=80%, width=80%, align="center"]
 
@@ -226,15 +265,15 @@ In the image it is quite clear what the URN of the new resource will look like (
 
 === Behind the scenes
 
-How things are handled behind the scenes can be understood when leaving the safety of the {kl} perspective by switching to the **{pex}** perspective:
+Local resources are hosted on the local filesystem and belong to projects. The way things are handled behind the scenes can be understood when leaving the safety of the {kl} perspective by switching to the **{pex}** perspective:
 
 image::imgs/08_project_explorer.png[scaledwidth=80%, width=80%, align="center"]
 
-While the {kl} prespective shows a logical view of the resources, the {pex} presents a physical view of the resources, as they are persisted on the storage.
+While the {kl} prespective shows a logical view of the resources, the {pex} presents a physical view of the resources, as they are persisted on the storage. The average user does not need to know the details of how resources are stored, but this information can help more advanced users understand resources and report problems.
 
-CAUTION: File based resources are copied in the resources folder when imported, being it few bytes or many gigabytes. The user should be aware of ramifications when importing datasets.
+CAUTION: File-based resources are _copied_ to the resources folder when imported, being it few bytes or many gigabytes, to ensure the self-consistency of the resulting resource. The user should be aware of ramifications when importing datasets and when committing projects that contain resources to git or other source code control system.
 
-Looking into the **resources** folder we will find a folder for each created resource. Each resource also presents a **resource.json** file, which contains all information {kl} needs to know about. The resource json file is text based and it is simple to read the basic information from it and see where they are used in the {ked} user interface:
+Looking into the **resources** folder we will find a folder for each created resource. Each resource also presents a **resource.json** file, which contains all information {kl} needs to know about. The json file is text-based and indented for readability, so the basic information from it is easily accessible in the {ked} user interface:
 
 [source,json,linenums]
 ----
@@ -296,30 +335,28 @@ Looking into the **resources** folder we will find a folder for each created res
 
 == Finding resources
 
-To help users to find resources when writing models, the {kmod} offers a resources finder view:
+To help users find resources when writing models, the {kmod} offers a resources finder view:
 
 image::imgs/12_resources_view.png[scaledwidth=80%, width=80%, align="center"]
 
-On entering keywords in the search field, the view presents resouces that match the text. 
+On entering keywords in the search field, the view presents resouces whose URN matches the text. 
 
-On double clicking on the resource, it is opened in the {ked} while with a simple right click it is possible to get the URN to use inside the scripts.
+On double clicking on the resource, it is opened in the {ked} while with a right click it is possible to copy the URN to the clipboard, to use in {kim} models. The "Copy URN" action is also available in the {kex} in the right-click menu, along with operations to delete the resource or move it to another project.
 
-The upper right combobox allows to set the filer on looking for the resource locally or on public nodes.
+The upper right combobox allows to set the filer on looking for the resource locally or on public nodes. When set to public, search is expected to operate not only on URNs, but also on metadata, descriptions and other information saved with the resources. The public view will also display status information on resources that are published from the local environment, allowing the user to list the resources published (including when publishing failed) and, if wished, remove from the nodes they are published to.
 
-WARNING: At the moment the search API for nodes is not implemented, therefore the public search is not yet usable.
-
-
+WARNING: At the moment the search API for nodes is not implemented, therefore the public search is not yet usable; the publishing feedback features are partially implemented and should not be relied upon.
 
 == Looking at the source code
 [#REF_RESOURCEMANAGEMENT]
 
-The following sections present the developer perspective of what has been seen in the previous chapters. Notable code passages are used to explain the information flow and processes behind the {keng} and {kmod}.
+The following sections describe a Java developer's perspective on what has been seen in the previous ones. Notable code passages are used to explain the information flow and processes behind the {keng} and {kmod}.
 
 === URNs
 
-URNs are handled in the class **Urns**footnote:[org.integratedmodelling.klab.common.Urns].
+Simple textual information on URNs is handled in the singleton **Urns**footnote:[org.integratedmodelling.klab.common.Urns - WE SHOULD PUBLISH THE JAVADOCS TO A STABLE PLACE WITH MAVEN BUILDS AND LINK TO THEM INSTEAD]. The class is a utility class that allows the developer to manage URNs. In addition to the methods in the `Urns` class, a string-based URN can be used to create a `org.integratedmodelling.klab.Urn` object which also gives access to URN parameters and is nicer to handle than a simple string.
 
-The class is basically and utility class that allows the developer to manage URNs.
+NOTE: In {kl} we consider a URN any string identifier that can be connected to known objects in the {kl} ecosystem. So while a resource URN typically display the structure discussed here, other objects such as concepts (e.g. `geography:Slope`), concept expressions (`im:Normalized geography:Elevation`) or model identifier (`im.data.global.dem90`) may also be referred to as URNs. All these can be considered short-hand forms that can, if needed, be expanded into a fully compliant URN form, including a common **urn:klab:** prefix. We do not normally need to do so when writing and discussing resources or models, nor when writing code using {kim} or {kact}. The full URN may be important for standardization in API communication.
 
 One important information developers should be aware of, is the one expressed by the first attributes of the class:
 
@@ -330,8 +367,6 @@ One important information developers should be aware of, is the one expressed by
 	final public static String VOID_URN_PREFIX = "urn:klab:void:";
 	final public static String LOCAL_FILE_PREFIX = "file:";
 ----
-
-{kl} URNs are build following offical URN Specifications. As such all {kl} URNs begin with the **urn:klab** prefix. It is only to enhance readability that inside the {kim} and {kact} editors shortcuts omitting the prefix can be used.
 
 Another information that the URN class (in conjunction with the Resources class, explained later) makes clear are the tree levels of URN visibility:
 
@@ -350,17 +385,17 @@ While the instance of Resources can be accessed directly, it is a service (IReso
 IResourceService service = Services.INSTANCE.getService(IResourceService.class)
 ----
 
-Resource resolution is done by passing the URN to the **resolveResource** method. If the URN can be properly resolved, an IResource object is returned. 
+Resource resolution is done by passing the URN to the **resolveResource** method. If the URN can be properly resolved, either locally or globally, an IResource object is returned. 
 
 === IResources
 
-In the IResource interface we find farious methods, whose functionality can be tracked back to the {ked} user interface (this should now sound obvious, since it represents the resource object). The methods are quite selfexplicatory and have a javadoc that describes them. Some of these are worth to be described for better understanding without the need to access the source code:
+In the IResource interface we find various methods, whose functionality can be tracked back to the {ked} user interface (this should now sound obvious, since it represents the resource object). No API in the current version of {kl} can yet be considered stable and the details shown here may change. The methods are quite self-explanatory and are documented in Javadoc. Some of these are worth describing for better understanding without the need to access the source code:
 
 * _getDependencies()_: resources can depend on other resources. If that is the case, the method will return a list of the URNs of said dependencies.
 * _getGeometry()_: the resource's geometry. Geometries are quite complex in {kl} and can cover different extents (also time, not just space) and have different dimensions. Interested developers should head to the javadoc of the IGeometry interface to dive in the internals of geometries. It is important to understand that the scale (**IScale**footnote:[org.integratedmodelling.klab.api.observations.scale.IScale]) is the semantic version of the geometry. As such it is possible to create a scale from a geometry or vice versa. It is in the scale where the geometry finds a place in which space and time are understood through semantics, while at mere IGeometry level it represents a topologhy and that's it.
 * _getVersion()_: each resource has a versioning system. Local resources don't obey to said system. But once a resource is published, a version 0.0.1 is attributed to it. At every change a version update is done. 
 * _getHistory()_: each resource also contains a list of its history. The list contains all resources the current resource transitioned through in history, each with its own version.
-* _getParameters()_: a resource can have parameters. Part of them can be created by the adapter that took care of a resource (the ones seen in section about <<REF_ADAPTERATTRIBUTES, adapter attributes>>). 
+* _getParameters()_: a resource can have parameters. Part of them can be created by the adapter that took care of a resource (the ones seen in section about <<REF_ADAPTERATTRIBUTES, adapter parameters>>). 
 *  _getAttributes(), getInputs(), getOutputs()_: resources that produce objects can have a set of attributes, modeling resources can have inputs and outputs. These are visualized in the {ked} as shown in the <<REF_ATTRIBUTES, attributes>> section.
 * _getAdapterType()_: the adapter type that is in charge of the resource.
 
@@ -427,18 +462,6 @@ Geometry geometry = Geometry.create("S2")
 builderObj.withGeometry(geometry);
 ----
 
-=== Universal resources
-[#REF_UNIVERSALRESOURCES]
-
-In the <<REF_URNS,section about URNs>> local and global URNs have been discussed and a third type of resource has been introduced: universal resources.
-
-A universal resource is basically a service. It is not created on top of a particular node and hence doesn't base on the availability of a particular node (even if nodes can be configured to accept such a resource or not). It is created implementing the universal protocol using the **IUrnAdapter** interface. One example is the **RandomAdapter**footnote:[org.integratedmodelling.random.adapters.RandomAdapter] that is able to handle URNs that start with: **klab:random:...**.
-
-Basically universal resources can be accessed using the **klab:...** prefix. This means that there is one reserved node named klab and it can be used to address universal resources.
-
-The weather adapterfootnote:[org.integratedmodelling.weather.adapters.WeatherAdapter] is probably the most important example of universal resource. It was created as such mainly because it is a resource that is handled internally in the {kl} system and does not come directly from external sources. That is due to the fact that a lot of preprocessing needs to be done to address data validation as well as synchronization with several datasources (ex. NOAA) needs to occurr. The data are then saved in an internal database and made available as internal service. The {kl} weather resource can be accessed through the **klab:weather:...** prefix.
-
-Universal klab resources can be served by different nodes the same way as it happens for other global resources. It is clear that while a random adapter resource - being very simple - can be run from any node, a weather adapter that would take days only to build the initial database will be accepted only on dedicated nodes. For that exacty reason only one node, **im.weather**, currently handles _klab:weather_ resources.
 
 === Contextualizing a resource
 
