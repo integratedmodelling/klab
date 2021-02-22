@@ -618,13 +618,13 @@ public class ResourceEditor extends ViewPart {
             Group grpSpaceclickTo = new Group(geometryTabFolder, SWT.NONE);
             spaceTabItem.setControl(grpSpaceclickTo);
 
-            GridData gd_grpSpaceclickTo = new GridData(SWT.FILL, SWT.FILL, true, false, 1, 1);
-            gd_grpSpaceclickTo.heightHint = 181;
+            GridData gd_grpSpaceclickTo = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
             grpSpaceclickTo.setLayoutData(gd_grpSpaceclickTo);
             grpSpaceclickTo.setLayout(new GridLayout(1, false));
             this.worldWidget = new WorldWidget(grpSpaceclickTo, SWT.NONE);
             worldWidget.setToolTipText("click to edit");
-            worldWidget.setLayoutData(new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1));
+            GridData gd_worldWidget = new GridData(SWT.FILL, SWT.FILL, true, true, 1, 1);
+            worldWidget.setLayoutData(gd_worldWidget);
 
             TabItem timeTabItem = new TabItem(geometryTabFolder, SWT.NONE);
             timeTabItem.setText("Time");
