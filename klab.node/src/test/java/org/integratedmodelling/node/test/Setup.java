@@ -1,6 +1,5 @@
 package org.integratedmodelling.node.test;
 
-import org.integratedmodelling.klab.node.Node;
 import org.integratedmodelling.klab.node.NodeStartupOptions;
 
 public enum Setup {

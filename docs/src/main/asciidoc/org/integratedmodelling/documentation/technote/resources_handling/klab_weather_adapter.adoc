@@ -48,7 +48,7 @@ NOTE: Resources like yearly precipitations are handled in {kl} via datasets, i.e
 At the time of writing weather data are aggregated from https://www1.ncdc.noaa.gov[NOAA] and https://crudata.uea.ac.uk/[CRU]. The NOAA database has global coverage and counts over 100000 stations. For all stations subscribed to the service, the dataset is updated on a daily basis. Of all the registered stations many are no longer active and the distribution density varies, with better coverage in developed countries. Sadly, also European coverage is not at its best, mostly because different countries often use different _standard_ and are not compatible with the service of NOAA. To be able to include more European stations for better coverage, the adapter would need to be extended to include the special cases of data sources. 
 CRU is a netcdf formatted dataset of monthly data with global coverage of half degree from 1900 to today. Being of lower quality than the NOAA dataset it is meant to be a fallback dataset to fill gaps when necessary. 
 
-The NOAA datasets are downscaled when requested at a wider scale than the daily interval. In this case, depending on the data type, sum, averaging or interpolation occurrs. For CRU datasets, when requested at an interval less than the monthly, an upscaling is requred. In that case a method named LPJ (Dieter & Gerten 2002) is used to produce daily data.
+The NOAA datasets are downscaled when requested at a wider scale than the daily interval. In this case, depending on the data type, sum, averaging or interpolation occurs. For CRU datasets, when requested at an interval less than the monthly, an upscaling is required. In that case a method named LPJ (Dieter & Gerten 2002) is used to produce daily data.
 
 The source code of the adapter component resides in the **klab.component.weather** plugin of the klab project.
 
@@ -58,7 +58,7 @@ This document assumes as prior knowledge the document **"k.LAB resources handlin
 
 == The modeller perspective
 
-The simplest way to exlain the use of a resource, is by guiding the user through a selfcontained example. When available, generally user should have a look at the test cases section of a project:
+The simplest way to explain the use of a resource is by guiding the user through a self-contained example. When available, generally user should have a look at the test cases section of a project:
 
 image::imgs/13_testcases_node.png[scaledwidth=50%, width=50%, align="center"]
 

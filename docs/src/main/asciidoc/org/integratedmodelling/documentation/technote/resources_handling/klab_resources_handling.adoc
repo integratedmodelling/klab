@@ -1,6 +1,6 @@
 = k.LAB resources
-A field guide to the lifecycle of resources in k.LAB's and their adapters.
-v1.0, 2021-02-18
+A field guide to the lifecycle of resources in k.LAB and their adapters.
+v1.0, 2021-02-20
 :doctype: article
 :description: Chat about resources handling with Villa
 :kl: k.LAB
@@ -42,11 +42,13 @@ endif::[]
 
 == Introduction
 
-Resources are used in {kl} to make observations - finished scientific artifacts that describe a concept. This process involves the choice of a _context_ for the observation (for example, a spatial region and a time period, at user-specified extents and resolution), and a logical query (e.g. a concept, such as `geography:Elevation`) which is _resolved_ to one or more _semantic models_, producing a computational strategy that ultimately relies on resources to provide or compute data. This document describes the **Resources layer**, i.e. the bottom layer of the three in the {kl} architecture, in which we find what most novice users would identify as a "conventional" knowledge artifact: datasets or data services, devoid of semantics beyond their conventional metadata. In {kl}, _computations_, from simple equations to complex models, can also live in the resources layer. In fact, anything that takes inputs and produces outputs can be seen as a {kl} resource. These inputs and outputs will be identified by a name and a type, for example numbers or textual categories. Imagine this as a black & white world, where products of scientific research live.
+Resources are used in {kl} to make observations - finished scientific artifacts that describe a concept. This process involves the choice of a _context_ for the observation (for example, a spatial region and a time period, at user-specified extents and resolution), and a logical query (e.g. a concept, such as `geography:Elevation`) which is _resolved_ to one or more _semantic models_, producing a computational strategy that ultimately relies on resources to provide or compute data. This document describes the **Resources layer**, i.e. the bottom layer of three in the {kl} architecture, in which we find what is easily identified as "conventional" un the world of knowledge artifacts: datasets or data services, devoid of semantics beyond metadata. 
 
-The aim of the resources layer is offering a common interface for k.LAB to access and manage pre-existing data, models and services of all kinds, as a first level of interoperability. This is obtained by a simple, carefully designed API, and through the use of _adapters_, i.e. software plug-ins that adapt a specific data or service format to it. Adapters are made available as {kl} _components_, installable in {keng}s and {knod}s, and can be extended by developers using the Java API to support formats and services not yet available.
+Importantly, in {kl}, _computations_, from simple equations to complex models, can also live in the resources layer. In fact, anything that takes inputs and produces outputs in numeric or other form, with no meaning explicitly attached beyond names and metadata, can be seen as a {kl} resource. Inputs and outputs will be similarly identified by a name and a type, for example numbers or textual categories. Imagine this as a black & white world, where the "standard" products of scientific research can live safely for a long time.
 
 In the _semantic_ layer of {kl}, resources are coupled with concepts, creating an _integrated_ world of knowledge that the resources layer alone can't provide. This is where the world gets its _meaning_ - its colors! - and where integration becomes possible. In the resources layer, knowledge is only identified by names and basic types, such as numeric, textual, or boolean, and only basic validation of compatibility between resources is possible.
+
+The aim of the resources layer is offering a common interface for k.LAB to access and manage pre-existing data, models and services of all kinds, as a first level of interoperability. While the semantic layer specifies a _language_ for interoperability, the resource layer provides a _protocol_. This is implemented as a simple, carefully designed API, enabled through the use of _adapters_, i.e. software plug-ins that adapt a specific data or service format to the API. Adapters are made available as {kl} _components_, installable in {keng}s and {knod}s, and can be extended by developers using the Java API to support formats and services not yet available.
 
 This document looks at resources handling in a learn-by-example fashion, from two different angles:
 
@@ -251,7 +253,7 @@ The weather adapterfootnote:[org.integratedmodelling.weather.adapters.WeatherAda
 
 Universal klab resources can be served by different nodes the same way as it happens for other global resources. It is clear that while a random adapter resource - being very simple - can be run from any node, a weather adapter that would take days only to build the initial database will be accepted only on dedicated nodes. For that exacty reason only one node, **im.weather**, currently handles `klab:weather` resources.
 
-== Adding resources 
+=== Adding non file-based resources 
 
 In cases in which the resource is not file-based and a drag-and-drop action cannot be used, the _new resource_ wizard can be launched by right clicking on the resources node and selecting the **New resource...** action. The wizard allows to define an id for the resource and select one of adapter types enabled for resource creation in the connected engine:
 
@@ -263,7 +265,7 @@ image::imgs/07_new_resource_wfs.png[scaledwidth=80%, width=80%, align="center"]
 
 In the image it is quite clear what the URN of the new resource will look like (Resource ID at the top) and how for the local resource the user selects only the last piece of the URN, the resource identifier.
 
-=== Behind the scenes
+== Local resources behind the scenes
 
 Local resources are hosted on the local filesystem and belong to projects. The way things are handled behind the scenes can be understood when leaving the safety of the {kl} perspective by switching to the **{pex}** perspective:
 
@@ -347,7 +349,7 @@ The upper right combobox allows to set the filer on looking for the resource loc
 
 WARNING: At the moment the search API for nodes is not implemented, therefore the public search is not yet usable; the publishing feedback features are partially implemented and should not be relied upon.
 
-== Looking at the source code
+== The developer perspective
 [#REF_RESOURCEMANAGEMENT]
 
 The following sections describe a Java developer's perspective on what has been seen in the previous ones. Notable code passages are used to explain the information flow and processes behind the {keng} and {kmod}.
