@@ -203,18 +203,27 @@ The resource editor does not offer at the moment a way to edit the spatial geome
 
 Dimensions may also be _regular_ (for example a gridded raster will show **S2**, with an uppercase **S** indicating regularity in space) or _generic_ (using Greek letters), meaning they imply a spatial dimension but do not indicate which one. Similar considerations as for space apply to time.
 
-As shapefile sources contain no temporal information, the user can edit the temporal geometry using the time editor in the resource view. After that is done (for example to state that the spatial data refer to the year 2020 and should be considered unchanging over a year's span) and the resource saved, the geometry shown will include the temporal information, for example:
+As shapefile sources contain no temporal information, the user can edit the temporal geometry using the time editor in the second tab of the geometry panel, which by default focuses on the space tab showing a world map. 
+
+image::imgs/03_resource_editor_time.png[scaledwidth=70%, width=70%, align="center"]
+
+After that is done (for example to state that the spatial data refer to the year 2020 and should be considered unchanging over a year's span) and the resource saved, the geometry shown will include the temporal information, for example:
+----
+τ1{tend=1609459200000,tstart=1577836800000,ttype=logical}s1(4594){bbox=[-179.99999999999991 180.0 -89.99999999999994 83.63410065300008],proj=EPSG:4326}
+----
+
+To show a slightly different example, this is what it might look like for a raster:
 
 ----
 τ1{tend=978307200000,tscope=1.0,tstart=946684800000,ttype=logical,tunit=year}S2(4319,2159){...}
 ----
 
-In the example above, a raster grid of dimension (x = 4319, y=2159) has been annotated to refer generically to year 2000 (expressed in milliseconds after 1/1/1970): the data will also be used by k.LAB to make observations when contextualizing in a period beyond 2001, as long as there are no better sources of information for more recent years. A specific time extent (with a **T** instead of **τ**) would cause the resource to only be used within the time coverage specified.
+In this case, a raster grid of dimension (x = 4319, y=2159) has been annotated to refer generically to year 2000 (expressed in milliseconds after 1/1/1970): the data will also be used by k.LAB to make observations when contextualizing in a period beyond 2001, as long as there are no better sources of information for more recent years. A specific time extent (with a **T** instead of **τ**) would cause the resource to only be used within the time coverage specified.
 
 === Adapter parameters
 [#REF_ADAPTERATTRIBUTES]
 
-The _adapter_ is the software plug-in that takes care of validating, interpreting, encoding and decoding the original contents of a resource to adapt them to the {kl} world. Each adapter has different functionalities and defines a set of parameters that control the way the resource is interpreted. Many of these parameters are filled in automatically when the resource is imported from a file; if instead the resource is created from scratch, the user will be requested to fill in the mandatory parameters before the resource can be created. The parameters remain available in the editor for modification: users cannot add arbitrary parameters, but the adapter will add empty definition of all optional parameters so that they can be filled in later if desired.
+The _adapter_ is the software plug-in that takes care of validating, interpreting, encoding and decoding the original contents of a resource to adapt them to the {kl} world. Each adapter has different functionalities and defines a set of parameters that control the way the resource is interpreted. Many of these parameters are filled in automatically when the resource is imported from a file; if instead the resource is created from scratch, the user will be requested to fill in the mandatory parameters before the resource can be created. The parameters remain available in the editor for modification: users cannot add arbitrary parameters, but the adapter will add an empty definition for all optional parameters so that they can be filled in later if desired.
 
 The adapter properties view lists the name and parameters of the currently used adapter. In the discussed test case the used adapter is the **VECTOR** adapter:
 
@@ -354,7 +363,7 @@ On entering keywords in the search field, the view presents resouces whose URN m
 
 On double clicking on the resource, it is opened in the {ked} while with a right click it is possible to copy the URN to the clipboard, to use in {kim} models. The "Copy URN" action is also available in the {kex} in the right-click menu, along with operations to delete the resource or move it to another project.
 
-The upper right combobox allows to set the filer on looking for the resource locally or on public nodes. When set to public, search is expected to operate not only on URNs, but also on metadata, descriptions and other information saved with the resources. The public view will also display status information on resources that are published from the local environment, allowing the user to list the resources published (including when publishing failed) and, if wished, remove from the nodes they are published to.
+The upper right combobox allows to set the filter on looking for the resource locally or on public nodes. When set to public, search is expected to operate not only on URNs, but also on metadata, descriptions and other information saved with the resources. The public view will also display status information on resources that are published from the local environment, allowing the user to list the resources published (including when publishing failed) and, if wished, remove from the nodes they are published to.
 
 WARNING: At the moment the search API for nodes is not implemented, therefore the public search is not yet usable; the publishing feedback features are partially implemented and should not be relied upon.
 
@@ -367,7 +376,7 @@ The following sections describe a Java developer's perspective on what has been 
 
 Simple textual information on URNs is handled in the singleton **Urns**footnote:[org.integratedmodelling.klab.common.Urns - WE SHOULD PUBLISH THE JAVADOCS TO A STABLE PLACE WITH MAVEN BUILDS AND LINK TO THEM INSTEAD]. The class is a utility class that allows the developer to manage URNs. In addition to the methods in the `Urns` class, a string-based URN can be used to create a `org.integratedmodelling.klab.Urn` object which also gives access to URN parameters and is nicer to handle than a simple string.
 
-NOTE: In {kl} we consider a URN any string identifier that can be connected to known objects in the {kl} ecosystem. So while a resource URN typically display the structure discussed here, other objects such as concepts (e.g. `geography:Slope`), concept expressions (`im:Normalized geography:Elevation`) or model identifier (`im.data.global.dem90`) may also be referred to as URNs. All these can be considered short-hand forms that can, if needed, be expanded into a fully compliant URN form, including a common **urn:klab:** prefix. We do not normally need to do so when writing and discussing resources or models, nor when writing code using {kim} or {kact}. The full URN may be important for standardization in API communication.
+NOTE: In {kl} we consider a URN any string identifier that can be connected to known objects in the {kl} ecosystem. So while a resource URN typically displays the structure discussed here, other objects such as concepts (e.g. `geography:Slope`), concept expressions (`im:Normalized geography:Elevation`) or model identifier (`im.data.global.dem90`) may also be referred to as URNs. All these can be considered short-hand forms that can, if needed, be expanded into a fully compliant URN form, including a common **urn:klab:** prefix. We do not normally need to do so when writing and discussing resources or models, nor when writing code using {kim} or {kact}. The full URN may be important for standardization in API communication.
 
 One important information developers should be aware of, is the one expressed by the first attributes of the class:
 
