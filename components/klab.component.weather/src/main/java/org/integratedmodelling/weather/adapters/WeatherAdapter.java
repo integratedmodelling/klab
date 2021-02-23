@@ -10,7 +10,6 @@ import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.IResource;
-import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData.Builder;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.extensions.UrnAdapter;
@@ -33,8 +32,8 @@ import org.integratedmodelling.weather.data.WeatherFactory;
  * Handles URNs:
  * 
  * <ul>
- * <li>klab:weather:data:{all|catalog} (handles primary output as parameter,
- * e.g. #precipitation, and others as additional attributes)</li>
+ * <li>klab:weather:data:{all|catalog} (handles primary output as parameter, e.g. #precipitation,
+ * and others as additional attributes)</li>
  * <li>klab:weather:stations:{all|catalog}</li>
  * <li>klab:weather:storms:{all|catalog}</li>
  * </ul>
@@ -47,207 +46,207 @@ import org.integratedmodelling.weather.data.WeatherFactory;
 @UrnAdapter(type = "weather", version = Version.CURRENT)
 public class WeatherAdapter implements IUrnAdapter {
 
-	public enum Services {
-		/**
-		 * Return weather stations with their data for the requested spatio/temporal ctx
-		 */
-		stations,
-		/**
-		 * Return interpolated weather data for the requested variables and context
-		 */
-		data,
-		/**
-		 * Return individual storm events for the context
-		 */
-		storms
-	}
+    public enum Services {
+        /**
+         * Return weather stations with their data for the requested spatio/temporal ctx
+         */
+        stations,
+        /**
+         * Return interpolated weather data for the requested variables and context
+         */
+        data,
+        /**
+         * Return individual storm events for the context
+         */
+        storms
+    }
 
-	@Override
-	public String getName() {
-		return "weather";
-	}
+    @Override
+    public String getName() {
+        return "weather";
+    }
 
-	@Override
-	public boolean isOnline(Urn urn) {
-		switch (Services.valueOf(urn.getNamespace())) {
-		case data:
-		case stations:
-			// TODO check catalog and args before saying OK!
-			return WeatherFactory.INSTANCE.isOnline();
-		case storms:
-			// TODO check catalog and args before saying OK!
-			return WeatherEvents.INSTANCE.isOnline();
-		}
-		return false;
-	}
+    @Override
+    public boolean isOnline(Urn urn) {
+        switch(Services.valueOf(urn.getNamespace())) {
+        case data:
+        case stations:
+            // TODO check catalog and args before saying OK!
+            return WeatherFactory.INSTANCE.isOnline();
+        case storms:
+            // TODO check catalog and args before saying OK!
+            return WeatherEvents.INSTANCE.isOnline();
+        }
+        return false;
+    }
 
-	@Override
-	public IKlabData getEncodedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
+    @Override
+    public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {
 
-		switch (Services.valueOf(urn.getNamespace())) {
-		case data:
-			getInterpolatedData(urn, builder, geometry, context);
-			return builder.build();
-		case stations:
-			getStations(urn, builder, geometry, context);
-			return builder.build();
-		case storms:
-			getStorms(urn, builder, geometry, context);
-			return builder.build();
-		default:
-			break;
-		}
+        switch(Services.valueOf(urn.getNamespace())) {
+        case data:
+            getInterpolatedData(urn, builder, geometry, scope);
+            return;
+        case stations:
+            getStations(urn, builder, geometry, scope);
+            return;
+        case storms:
+            getStorms(urn, builder, geometry, scope);
+            return;
+        }
 
-		throw new IllegalArgumentException(
-				"weather service: URN namespace " + urn.getNamespace() + " cannot be understood");
+        throw new IllegalArgumentException("weather service: URN namespace " + urn.getNamespace() + " cannot be understood");
 
-	}
+    }
 
-	private void getStations(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
+//    @Override
+//    public IKlabData getEncodedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope scope) {
+//        encodeData(urn, builder, geometry, scope);
+//        return builder.build();
+//    }
 
-		boolean expand = false;
-		if (urn.getParameters().containsKey("expand")) {
-			expand = Boolean.parseBoolean(urn.getParameters().get("expand").toString());
-		}
+    private void getStations(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
 
-		Scale scale = Scale.create(geometry);
-		String[] originalVariables = urn.getSplitParameter(Urn.SINGLE_PARAMETER_KEY);
-		String[] variables = WeatherComponent.normalizeVariableNames(originalVariables);
-		Weather weather = WeatherComponent.getWeather(scale.getSpace(), scale.getTime(), "ALL", expand, variables);
+        boolean expand = false;
+        if (urn.getParameters().containsKey("expand")) {
+            expand = Boolean.parseBoolean(urn.getParameters().get("expand").toString());
+        }
 
-		for (Map<String, Object> sd : weather.getStationData()) {
+        Scale scale = Scale.create(geometry);
+        String[] originalVariables = urn.getSplitParameter(Urn.SINGLE_PARAMETER_KEY);
+        String[] variables = WeatherComponent.normalizeVariableNames(originalVariables);
+        Weather weather = WeatherComponent.getWeather(scale.getSpace(), scale.getTime(), "ALL", expand, variables);
 
-			Scale stationScale = Scale.create(scale.getTime(),
-					Shape.create((Double) sd.get("lon"), (Double) sd.get("lat"), Projection.getLatLon()));
+        for (Map<String, Object> sd : weather.getStationData()) {
 
-			Builder ob = builder.startObject("result", sd.get("id").toString(), stationScale.asGeometry());
+            Scale stationScale = Scale.create(scale.getTime(),
+                    Shape.create((Double) sd.get("lon"), (Double) sd.get("lat"), Projection.getLatLon()));
 
-			for (int i = 0; i < originalVariables.length; i++) {
+            Builder ob = builder.startObject("result", sd.get("id").toString(), stationScale.asGeometry());
 
-				if (sd.containsKey(variables[i])) {
-					double[] data = (double[]) sd.get(variables[i]);
-					Builder sb = ob.startState(originalVariables[i]);
-					for (double d : data) {
-						sb.add(d);
-					}
-					sb.finishState();
-				}
-			}
+            for (int i = 0; i < originalVariables.length; i++) {
 
-			ob.finishObject();
-		}
-	}
+                if (sd.containsKey(variables[i])) {
+                    double[] data = (double[]) sd.get(variables[i]);
+                    Builder sb = ob.startState(originalVariables[i]);
+                    for (double d : data) {
+                        sb.add(d);
+                    }
+                    sb.finishState();
+                }
+            }
 
-	private void getStorms(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
+            ob.finishObject();
+        }
+    }
 
-		double minPrecipitation = 0;
+    private void getStorms(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
 
-		if (urn.getParameters().containsKey("minprec")) {
-			minPrecipitation = Double.parseDouble(urn.getParameters().get("minprec").toString());
-		}
+        double minPrecipitation = 0;
 
-		boolean adjustDates = true;
-		if (urn.getParameters().containsKey("realdate")) {
-			adjustDates = false;
-		}
+        if (urn.getParameters().containsKey("minprec")) {
+            minPrecipitation = Double.parseDouble(urn.getParameters().get("minprec").toString());
+        }
 
-		int nEvents = 0;
+        boolean adjustDates = true;
+        if (urn.getParameters().containsKey("realdate")) {
+            adjustDates = false;
+        }
 
-		for (WeatherEvent event : WeatherEvents.INSTANCE.getEvents(Scale.create(geometry), minPrecipitation,
-				adjustDates, context.getMonitor())) {
+        int nEvents = 0;
 
-			Scale eventScale = Scale.create(
-					Time.create((long) event.asData().get(WeatherEvent.START_LONG),
-							(long) event.asData().get(WeatherEvent.START_LONG)),
-					Shape.create((com.vividsolutions.jts.geom.Geometry) event.asData().get(WeatherEvent.BOUNDING_BOX),
-							Projection.getLatLon()));
+        for (WeatherEvent event : WeatherEvents.INSTANCE.getEvents(Scale.create(geometry), minPrecipitation, adjustDates,
+                context.getMonitor())) {
 
-			Builder ob = builder.startObject("result", "storm_" + event.asData().get(WeatherEvent.ID),
-					eventScale.asGeometry());
+            Scale eventScale = Scale.create(
+                    Time.create((long) event.asData().get(WeatherEvent.START_LONG),
+                            (long) event.asData().get(WeatherEvent.START_LONG)),
+                    Shape.create((com.vividsolutions.jts.geom.Geometry) event.asData().get(WeatherEvent.BOUNDING_BOX),
+                            Projection.getLatLon()));
 
-			// TODO use urn parameters, set attributes
-//
-//			Builder sb = ob.startState("precipitation");
-//			sb.add(event.asData().get(WeatherEvent.PRECIPITATION_MM));
-//			sb.finishState();
-//
-//			Builder db = ob.startState("duration");
-//			db.add(event.asData().get(WeatherEvent.DURATION_HOURS));
-//			db.finishState();
+            Builder ob = builder.startObject("result", "storm_" + event.asData().get(WeatherEvent.ID), eventScale.asGeometry());
 
-			ob.finishObject();
+            // TODO use urn parameters, set attributes
+            //
+            // Builder sb = ob.startState("precipitation");
+            // sb.add(event.asData().get(WeatherEvent.PRECIPITATION_MM));
+            // sb.finishState();
+            //
+            // Builder db = ob.startState("duration");
+            // db.add(event.asData().get(WeatherEvent.DURATION_HOURS));
+            // db.finishState();
 
-			nEvents++;
-		}
+            ob.finishObject();
 
-		Logging.INSTANCE.info("query for storm events returned " + nEvents + " instances");
+            nEvents++;
+        }
 
-	}
+        Logging.INSTANCE.info("query for storm events returned " + nEvents + " instances");
 
-	private void getInterpolatedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
-		// TODO Auto-generated method stub
+    }
 
-	}
+    private void getInterpolatedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
+        // TODO Auto-generated method stub
 
-	@Override
-	public Collection<String> getResourceUrns() {
-		List<String> ret = new ArrayList<>();
-		// TODO
-		return ret;
-	}
+    }
 
-	@Override
-	public Type getType(Urn urn) {
+    @Override
+    public Collection<String> getResourceUrns() {
+        List<String> ret = new ArrayList<>();
+        // TODO
+        return ret;
+    }
 
-		switch (Services.valueOf(urn.getNamespace())) {
-		case data:
-			return Type.NUMBER;
-		case storms:
-			return Type.EVENT;
-		case stations:
-			return Type.OBJECT;
-		default:
-			break;
-		}
+    @Override
+    public Type getType(Urn urn) {
 
-		throw new IllegalArgumentException(
-				"weather service: URN namespace " + urn.getNamespace() + " cannot be understood");
-	}
+        switch(Services.valueOf(urn.getNamespace())) {
+        case data:
+            return Type.NUMBER;
+        case storms:
+            return Type.EVENT;
+        case stations:
+            return Type.OBJECT;
+        default:
+            break;
+        }
 
-	@Override
-	public IGeometry getGeometry(Urn urn) {
+        throw new IllegalArgumentException("weather service: URN namespace " + urn.getNamespace() + " cannot be understood");
+    }
 
-		switch (Services.valueOf(urn.getNamespace())) {
-		case data:
-			return Geometry.create("\u03c41\u03c32");
-		case stations:
-			return Geometry.create("#\u03c41\u03c30");
-		case storms:
-			return Geometry.create("#\u03c41\u03c32");
-		}
+    @Override
+    public IGeometry getGeometry(Urn urn) {
 
-		throw new IllegalArgumentException(
-				"weather service: URN namespace " + urn.getNamespace() + " cannot be understood");
-	}
+        switch(Services.valueOf(urn.getNamespace())) {
+        case data:
+            return Geometry.create("\u03c41\u03c32");
+        case stations:
+            return Geometry.create("#\u03c41\u03c30");
+        case storms:
+            return Geometry.create("#\u03c41\u03c32");
+        }
 
-	@Override
-	public String getDescription() {
-		return "Weather stations and their data, reconstructed storm events and on-demand interpolation of weather records.";
-	}
+        throw new IllegalArgumentException("weather service: URN namespace " + urn.getNamespace() + " cannot be understood");
+    }
 
-	@Override
-	public IResource getResource(String urn) {
+    @Override
+    public String getDescription() {
+        return "Weather stations and their data, reconstructed storm events and on-demand interpolation of weather records.";
+    }
 
-		Urn kurn = new Urn(urn);
-		ResourceReference ref = new ResourceReference();
-		ref.setUrn(kurn.getUrn());
-		ref.setAdapterType(getName());
-		ref.setLocalName(kurn.getResourceId());
-		ref.setGeometry(getGeometry(kurn).encode());
-		ref.setVersion(Version.CURRENT);
-		ref.setType(getType(kurn));
+    @Override
+    public IResource getResource(String urn) {
 
-		return new Resource(ref);
-	}
+        Urn kurn = new Urn(urn);
+        ResourceReference ref = new ResourceReference();
+        ref.setUrn(kurn.getUrn());
+        ref.setAdapterType(getName());
+        ref.setLocalName(kurn.getResourceId());
+        ref.setGeometry(getGeometry(kurn).encode());
+        ref.setVersion(Version.CURRENT);
+        ref.setType(getType(kurn));
+
+        return new Resource(ref);
+    }
 
 }

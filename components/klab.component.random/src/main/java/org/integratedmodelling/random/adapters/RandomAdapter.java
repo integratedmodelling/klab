@@ -173,7 +173,7 @@ public class RandomAdapter implements IUrnAdapter {
 	}
 
 	@Override
-	public IKlabData getEncodedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
+	public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
 		switch (urn.getNamespace()) {
 		case DATA:
 			makeData(urn, builder, geometry, context);
@@ -183,7 +183,7 @@ public class RandomAdapter implements IUrnAdapter {
 			makeObjects(urn, builder, geometry, context);
 			break;
 		}
-		return builder.build();
+//		return builder.build();
 	}
 
 	private void makeObjects(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {

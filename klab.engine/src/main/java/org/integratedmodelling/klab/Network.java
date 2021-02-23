@@ -319,9 +319,9 @@ public enum Network implements INetworkService {
 		         * Temporary hack to prevent non-setup nodes to serve the weather adapter, which shouldn't
 		         * happen but does.
 		         */
-			    if ("weather".equals(adapter) && !"im.weather".equals(node.getName())) {
-			        continue;
-			    }
+//			    if ("weather".equals(adapter) && !"im.weather".equals(node.getName())) {
+//			        continue;
+//			    }
 				ret.add(node);
 			}
 		}
