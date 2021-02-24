@@ -210,8 +210,7 @@ public class Weather {
 
 			for (String var : variables) {
 				List<Double> vdata = new ArrayList<>();
-				// skip initialization
-				for (int i = 1; i < time.size(); i++) {
+				for (int i = 0; i < time.size(); i++) {
 					ITime step = (ITime) ((AbstractExtent) time).getExtent(i);
 					vdata.add(getAggregatedData(ws, var, step.getStart().getMilliseconds(),
 							step.getEnd().getMilliseconds()));

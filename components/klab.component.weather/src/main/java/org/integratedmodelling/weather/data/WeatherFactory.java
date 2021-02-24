@@ -487,7 +487,7 @@ public enum WeatherFactory {
 	}
 
 	public static void main(String[] args) throws Exception {
-		INSTANCE.setupGHCNDStations();
+		INSTANCE.setupCRUStations();
 	}
 
 	public long getStationsCount() {

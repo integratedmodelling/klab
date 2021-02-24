@@ -1,4 +1,4 @@
-= k.LAB resources
+= The k.LAB resources layer
 A field guide to the lifecycle of resources in k.LAB and their adapters.
 v1.0, 2021-02-20
 :doctype: article
@@ -539,7 +539,7 @@ IKlabData ret = builder.build();
 ----
 
 
-Generally speaking, if the resource is local, a **LocalDataBuilder** is used and passed to the encoder of the adapter. The encoder is the component that takes the resource and the scale and fills in all the necessary pieces of the data builder:
+Generally speaking, if the resource is local, a **LocalDataBuilder** is used at the client side, and passed to the encoder of the adapter. The encoder is the component that takes the resource and the scale and fills in all the necessary pieces of the data builder:
 
 [source,java,linenums]
 ----
@@ -557,10 +557,10 @@ IKlabData ret = builder.build();
 ====
 If the case of a raster resource for example the encoder would take the geometry and create a subset, reproject and apply any necessary transform, then it would extract each x/y cell and pass them to the builder. Once the build method is called a **non-semantic** artifact is created. 
 
-The non-semantic artifact, depending on the used builder, could be promoted to the semantic world. For example, when a model is run, the context passed to the LocalDataBuilder could provide an empty state (IState). The builder would then add information of the artifact to the state.
+The non-semantic artifact, depending on the used builder, could be promoted to the semantic world. For example, when a model is run, the context passed to the LocalDataBuilder could provide an empty state (IState). The builder would then add information of the artifact to the state. Non-semantic versions of builders exist for special purposes (for example when resources must be used from inside a specialized process that does not need to participate in the semantic resolution) and build "raw" **IArtifact**s that  
 ====
 
-If instead the resource is public (aka global), a **DecodingDataBuilder** is used. It basically followes the same logic as the local builder, but using network protocols to retrieve the necessary pieces (using https://en.wikipedia.org/wiki/Protocol_Buffers[protobuf] for the serialization).
+If instead the resource is public (hosted on an external node), a **DecodingDataBuilder** is used at the requesting engine side. It follows the same logic as the local builder, but using network protocols to retrieve the necessary pieces (using https://en.wikipedia.org/wiki/Protocol_Buffers[protobuf] for the deserialization).
 
 [source,java,linenums]
 ----
@@ -568,6 +568,8 @@ DecodingDataBuilder builder = new DecodingDataBuilder(
         node.getClient().post(API.NODE.RESOURCE.CONTEXTUALIZE, request, Map.class), context);
 IKlabData ret = builder.build();
 ----
+
+At the node side, where public resources reside, a specialized **EncodingDataBuilder** is used to serialize the built result into the Protobuf message which will be sent to the requesting engine. The engine will use the DecodingDataBuilder to decode the message and pass the result to the contextualizing dataflow. This logical arrangement allows the same resource adapters to function in engines and in nodes without modification: adapters may, however, adopt specialized interfaces that will enable optimization functions to be run only in nodes, so that resources can be optimized for fast delivery when they are exposed through public APIs.
 
 == Links, footnotes and resources
 
