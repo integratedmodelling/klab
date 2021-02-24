@@ -32,6 +32,7 @@
 							<goal>build-jar</goal>
 						</goals>
 					</execution>
+					<!-- 
 					<execution>
 						<id>create-native</id>
 						<phase>package</phase>
@@ -39,6 +40,7 @@
 							<goal>build-native</goal>
 						</goals>
 					</execution>
+					 -->
 				</executions>
 			</plugin>
 		</plugins>
@@ -55,6 +57,19 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<resources>
+	        <resource>
+	            <filtering>false</filtering>
+	            <directory>src/main/java</directory>
+	            <includes>
+	                <include>**/*.fxml</include>
+	                <include>**/*.css</include>
+	                <include>**/*.gif</include>
+	                <include>**/*.png</include>
+	                <include>**/*.ico</include>
+	            </includes>             
+	        </resource>
+	    </resources>
 	</build>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j -->
@@ -161,5 +176,12 @@
 			<url>http://jcenter.bintray.com</url>
 		</repository>
 	</repositories>
-
+	
+	<pluginRepositories>
+	  <pluginRepository>
+	    <id>ej-technologies</id>
+	    <url>https://maven.ej-technologies.com/repository</url>
+	  </pluginRepository>
+	</pluginRepositories>
+	
 </project>
