@@ -323,7 +323,7 @@ public interface IKimConcept extends IKimStatement {
         /**
          * Specifier for values; affects validation of currencies
          */
-        MONETARY,
+        MONETARY_VALUE,
         /**
          * Makes an attribute a rescaling transformation, which does not preserve
          * observation semantics
@@ -380,7 +380,7 @@ public interface IKimConcept extends IKimStatement {
 
     public static final Set<Type> OPERATOR_TYPES = EnumSet.of(Type.CHANGE, Type.NUMEROSITY, Type.DISTANCE,
             /* FIXME MISSING: LEVEL */ Type.MAGNITUDE, Type.OBSERVABILITY, Type.OCCURRENCE, Type.PRESENCE, Type.PROBABILITY,
-            Type.PROPORTION, Type.RATIO, Type.CLASS, Type.UNCERTAINTY, Type.VALUE);
+            Type.PROPORTION, Type.RATIO, Type.CLASS, Type.UNCERTAINTY, Type.VALUE, Type.MONETARY_VALUE);
 
     /**
      * All quality type bits sets (not QUALITY itself). Each quality AND this must
@@ -390,7 +390,7 @@ public interface IKimConcept extends IKimStatement {
             Type.LENGTH, Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION,
             Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE, Type.ANGLE,
             Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION, Type.PROBABILITY,
-            Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT, Type.RATE);
+            Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.MONETARY_VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT, Type.RATE);
 
     /**
      * All quality type bits sets including QUALITY itself. Each quality AND this
@@ -401,7 +401,7 @@ public interface IKimConcept extends IKimStatement {
             Type.ACCELERATION, Type.PRIORITY, Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY,
             Type.PRESSURE, Type.ANGLE, Type.VELOCITY, Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO,
             Type.PROPORTION, Type.PROBABILITY, Type.NUMEROSITY, Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE,
-            Type.AMOUNT, Type.RATE);
+            Type.AMOUNT, Type.RATE, Type.MONETARY_VALUE);
 
     /**
      * All qualities that are expressed through a continuous numeric state.
@@ -410,7 +410,7 @@ public interface IKimConcept extends IKimStatement {
             Type.MASS, Type.VOLUME, Type.WEIGHT, Type.MONEY, Type.DURATION, Type.AREA, Type.ACCELERATION, Type.PRIORITY,
             Type.ELECTRIC_POTENTIAL, Type.CHARGE, Type.RESISTANCE, Type.RESISTIVITY, Type.PRESSURE, Type.ANGLE, Type.VELOCITY,
             Type.TEMPERATURE, Type.VISCOSITY, Type.UNCERTAINTY, Type.RATIO, Type.PROPORTION, Type.PROBABILITY, Type.NUMEROSITY,
-            Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT, Type.MAGNITUDE, Type.RATE);
+            Type.DISTANCE, Type.VALUE, Type.OCCURRENCE, Type.PRESENCE, Type.AMOUNT, Type.MAGNITUDE, Type.RATE, Type.MONETARY_VALUE);
 
     /**
      * All direct observables

@@ -3,6 +3,9 @@ package org.integratedmodelling.tables;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Pattern;
 
@@ -12,7 +15,7 @@ import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.knowledge.IAuthority;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.components.time.extents.Time;
@@ -21,15 +24,24 @@ import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Utils;
 
 /**
- * Maps the values in a table (as strings) to other values, in either direction. Initialized with a
- * property file that besides the category mappings (expressed as category.nn=X->Y) may contain a
- * type for the values, a worldview identifier and a root concept if the type is concept and the
- * worldview is set.
+ * Maps the values in a table (as strings) to other values, in either direction. Can be initialized
+ * parametrically (as a function), with conventional mapping types, or initialized from a property
+ * file that besides the category mappings (expressed as category.nn=X->Y) may contain a type for
+ * the values, a worldview identifier and a root concept if the type is concept and the worldview is
+ * set.
+ * 
+ * TODO must become more sophisticated and enable 1) separate, optional bi-directional
+ * specifications and 2) many-to-many mapping. The current implementation uses a bidimap which only
+ * handles functional mappings.
+ * 
+ * TODO must provide a constructor to initialize from a SDMX codelist
+ * 
+ * TODO must enable descriptions and other metadata for each code - a Map<String, IMetadata>
  * 
  * @author Ferd
  *
  */
-public class CodeMapping {
+public class CodeList {
 
     public enum Mapping {
         CODELIST, YEAR, DATE_PATTERN
@@ -42,19 +54,20 @@ public class CodeMapping {
     private String worldview = null;
     private IConcept rootConcept = null;
     private IAuthority authority;
+    private Map<String, IMetadata> metadata = new HashMap<>();
 
     // we either encode the mapping in a file or use the logic encoded in the next fields
     private Mapping mapping = Mapping.CODELIST;
     private String mappingKey;
     private String name;
-    
-    public CodeMapping(Mapping type, String value) {
+
+    public CodeList(Mapping type, String value) {
         this.mapping = type;
         this.mappingKey = value;
         this.name = type + ": " + value;
     }
 
-    public CodeMapping(String name, File propertiesFile) {
+    public CodeList(String name, File propertiesFile) {
         this.name = name;
         try (InputStream input = new FileInputStream(propertiesFile)) {
             properties.load(input);
@@ -128,7 +141,7 @@ public class CodeMapping {
         if (this.mapping == Mapping.YEAR) {
 
             if (value instanceof Time) {
-                return mappings.inverseBidiMap().get(((Time)value).encode());
+                return mappings.inverseBidiMap().get(((Time) value).encode());
             }
 
         } else if (this.mapping == Mapping.DATE_PATTERN) {

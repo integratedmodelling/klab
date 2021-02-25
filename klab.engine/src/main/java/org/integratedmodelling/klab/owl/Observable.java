@@ -802,6 +802,19 @@ public class Observable implements IObservable {
                 return c;
             }
         }
+
+        /*
+         * Predicates within the scope of a first-level operator are also returned.
+         * TODO should we recurse? probably not - but keep this in mind.
+         */
+        IConcept described = Observables.INSTANCE.getDescribedType(getType());
+        if (described != null) {
+            for (IConcept c : Traits.INSTANCE.getTraits(described)) {
+                if (c.is(predicate)) {
+                    return c;
+                }
+            }
+        }
         return predicate;
     }
 

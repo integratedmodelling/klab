@@ -31,7 +31,7 @@ import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
 import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.NumberUtils;
-import org.integratedmodelling.tables.CodeMapping.Mapping;
+import org.integratedmodelling.tables.CodeList.Mapping;
 
 /**
  * This matches a dimension in the table (according to specified encodings) to the corresponding
@@ -78,7 +78,7 @@ public class DimensionScanner<T> {
      * mappings are listed in the order they come in the specifications, and will be matched
      * backwards from the resource to obtain the values to use for filtering.
      */
-    private List<CodeMapping> mappings = new ArrayList<>();
+    private List<CodeList> mappings = new ArrayList<>();
 
     /*
      * for temporal indexing to specific columns or rows. For now this is only used when one column
@@ -151,10 +151,10 @@ public class DimensionScanner<T> {
                  * must be a code mapping or a recognized identifier
                  */
                 if ("YEAR".equals(definition[i]) && ITime.class.isAssignableFrom(cls)) {
-                    mappings.add(new CodeMapping(Mapping.YEAR, null));
+                    mappings.add(new CodeList(Mapping.YEAR, null));
                 } else if (Time.class.isAssignableFrom(cls)
                         && org.integratedmodelling.klab.Time.INSTANCE.isTimePattern(definition[i])) {
-                    mappings.add(new CodeMapping(Mapping.DATE_PATTERN, definition[i]));
+                    mappings.add(new CodeList(Mapping.DATE_PATTERN, definition[i]));
                 } else {
 
                     /*
@@ -166,7 +166,7 @@ public class DimensionScanner<T> {
                         throw new KlabValidationException("code mapping " + definition[i] + " cannot be matched to a definition");
 
                     }
-                    mappings.add(new CodeMapping(definition[i], mapfile));
+                    mappings.add(new CodeList(definition[i], mapfile));
                 }
             }
         }
@@ -233,7 +233,7 @@ public class DimensionScanner<T> {
     private T extractExtent(Object o) {
         if (o != null) {
             if (!this.mappings.isEmpty()) {
-                for (CodeMapping mapping : this.mappings) {
+                for (CodeList mapping : this.mappings) {
                     o = mapping.map(o);
                 }
                 return (T) o;
