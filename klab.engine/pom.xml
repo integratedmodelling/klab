@@ -127,15 +127,16 @@
 		<!-- Unirest, while redundant with Spring templates, removes a lot of pain 
 			when doing quick REST interactions -->
 		<dependency>
-			<groupId>com.konghq</groupId>
-			<artifactId>unirest-java</artifactId>
-			<version>3.4.03</version>
-			<classifier>standalone</classifier>
+		    <groupId>com.konghq</groupId>
+		    <artifactId>unirest-java</artifactId>
+		    <version>3.11.09</version>
+		    <classifier>standalone</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.konghq</groupId>
 			<artifactId>unirest-objectmapper-jackson</artifactId>
-			<version>3.4.03</version>
+		    <version>3.11.09</version>
+		    <classifier>standalone</classifier>
 		</dependency>
 
 		<!-- tiny Jar to pluralize subject names for folder IDs -->
