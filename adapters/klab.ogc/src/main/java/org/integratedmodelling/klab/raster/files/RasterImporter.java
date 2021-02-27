@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.raster.files;
 import java.awt.image.DataBuffer;
 import java.io.File;
 import java.io.IOException;
+import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -10,6 +11,10 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.gce.geotiff.GeoTiffWriter;
@@ -19,14 +24,21 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.data.classification.IDataKey;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.data.adapters.AbstractFilesetImporter;
+import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.ogc.RasterAdapter;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Triple;
+import org.integratedmodelling.klab.utils.ZipUtils;
 
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 
@@ -81,18 +93,37 @@ public class RasterImporter extends AbstractFilesetImporter {
         if (observation instanceof IState && observation.getGeometry().getDimension(Type.SPACE) != null) {
 
             if (observation.getScale().isSpatiallyDistributed() && observation.getScale().getSpace().isRegular()) {
+                File dir = new File(MiscUtilities.changeExtension(file.toString(), "dir"));
+                dir.mkdirs();
+                File out = new File(dir + File.separator + MiscUtilities.getFileName(file));
+                File outAux = new File(MiscUtilities.changeExtension(out.toString(), "aux.xml"));
+
+                try {
+                    if (!writeAuxXml(outAux, observation)) {
+                        outAux = null;
+                    }
+                } catch (JAXBException e1) {
+                    e1.printStackTrace();
+                }
 
                 GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage((IState) observation, locator,
                         DataBuffer.TYPE_FLOAT, Float.NaN, true);
 
                 if (format.equalsIgnoreCase("tiff")) {
                     try {
-                        GeoTiffWriter writer = new GeoTiffWriter(file);
+                        GeoTiffWriter writer = new GeoTiffWriter(out);
 
                         writer.setMetadataValue(Integer.toString(BaselineTIFFTagSet.TAG_SOFTWARE),
                                 "k.LAB (www.integratedmodelling.org)");
 
                         writer.write(coverage, null);
+
+                        if (outAux != null) {
+                            File zip = new File(MiscUtilities.changeExtension(file.toString(), "zip"));
+                            ZipUtils.zip(zip, dir, false, false);
+
+                            file = zip;
+                        }
                         return file;
                     } catch (IOException e) {
                         return null;
@@ -104,10 +135,65 @@ public class RasterImporter extends AbstractFilesetImporter {
         return null;
     }
 
+    private boolean writeAuxXml( File auxFile, IObservation observation ) throws JAXBException {
+        IState state = (IState) observation;
+        IDataKey dataKey = state.getDataKey();
+        if (dataKey instanceof Classification) {
+
+            RasterAuxXml rasterAuxXml = new RasterAuxXml();
+            rasterAuxXml.rasterBand = new PAMRasterBand();
+            rasterAuxXml.rasterBand.band = 1;
+            rasterAuxXml.rasterBand.attributeTable = new GDALRasterAttributeTable();
+
+            FieldDefn oidFieldDefn = new FieldDefn();
+            oidFieldDefn.index = 0;
+            oidFieldDefn.name = "OBJECTID";
+            oidFieldDefn.type = 0;
+            oidFieldDefn.usage = 0;
+            rasterAuxXml.rasterBand.attributeTable.fieldDefnList.add(oidFieldDefn);
+            FieldDefn valueFieldDefn = new FieldDefn();
+            valueFieldDefn.index = 1;
+            valueFieldDefn.name = "value";
+            valueFieldDefn.type = 0;
+            valueFieldDefn.usage = 0;
+            rasterAuxXml.rasterBand.attributeTable.fieldDefnList.add(valueFieldDefn);
+            FieldDefn labelFieldDefn = new FieldDefn();
+            labelFieldDefn.index = 2;
+            labelFieldDefn.name = "label";
+            labelFieldDefn.type = 2;
+            labelFieldDefn.usage = 0;
+            rasterAuxXml.rasterBand.attributeTable.fieldDefnList.add(labelFieldDefn);
+
+            Classification classification = (Classification) dataKey;
+            List<Pair<Integer, String>> values = classification.getAllValues();
+            int index = 0;
+            for( Pair<Integer, String> pair : values ) {
+                Integer code = pair.getFirst();
+                String classString = pair.getSecond();
+                Row row = new Row();
+                row.index = index;
+                row.fList.add(String.valueOf(index));
+                row.fList.add(code.toString());
+                row.fList.add(classString);
+                rasterAuxXml.rasterBand.attributeTable.rowList.add(row);
+                index++;
+            }
+
+            JAXBContext context = JAXBContext.newInstance(RasterAuxXml.class);
+            Marshaller marshaller = context.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+//            StringWriter stringWriter = new StringWriter();
+            marshaller.marshal(rasterAuxXml, auxFile);
+//            System.out.println(stringWriter.toString());
+            return true;
+        }
+        return false;
+    }
+
     @Override
     public Map<String, String> getExportCapabilities( IResource resource ) {
         Map<String, String> ret = new HashMap<>();
-        ret.put("tiff", "GeoTiff");
+        ret.put("zip", "GeoTiff");
         return ret;
     }
 
