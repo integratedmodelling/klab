@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
@@ -239,5 +240,17 @@ public class KimProject implements IKimProject {
     @Override
     public List<IKActorsBehavior> getTests() {
         return KActors.INSTANCE.getBehaviors(this.name, IKActorsBehavior.Type.UNITTEST, IKActorsBehavior.Type.TRAITS);
+    }
+
+    @Override
+    public Collection<String> getRequiredProjectNames() {
+        List<String> ret = new ArrayList<>();
+        String[] pps = getProperties().getProperty(KLAB_CONFIGURATION_PREREQUISITES, "").split(",");
+        if (pps != null && pps.length > 0) {
+            for (String p : pps) {
+                ret.add(p.trim());
+            }
+        }
+        return ret;
     }
 }

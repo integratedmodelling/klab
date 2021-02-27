@@ -66,9 +66,9 @@ public enum KimKnowledgeProcessor {
         coreConceptPeers.put(worldviewConcept, coreConcept);
     }
 
-    public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace, final IMonitor monitor) {
-        return build(concept, namespace, null, monitor);
-    }
+//    public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace, final IMonitor monitor) {
+//        return build(concept, namespace, null, monitor);
+//    }
 
     public @Nullable Concept build(final IKimConceptStatement concept, final INamespace namespace, ConceptStatement kimObject,
             final IMonitor monitor) {
