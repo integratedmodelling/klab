@@ -35,7 +35,9 @@ public class Project implements IProject {
 
     public Project(IKimProject project) {
         this.delegate = project;
-        synchronizeResources();
+        // TODO this is done twice in the engine. The sequencing is messy but eventually we should
+        // remove this.
+        synchronizeResources(project.getRoot());
     }
 
     @Override
@@ -43,8 +45,8 @@ public class Project implements IProject {
         return localResourceUrns;
     }
 
-    public void synchronizeResources() {
-        File resourceDir = new File(getRoot() + File.separator + "resources");
+    public void synchronizeResources(File projectRoot) {
+        File resourceDir = new File(projectRoot + File.separator + "resources");
         if (resourceDir.exists() && resourceDir.isDirectory()) {
             for (File rdir : resourceDir.listFiles()) {
                 if (rdir.isDirectory()) {

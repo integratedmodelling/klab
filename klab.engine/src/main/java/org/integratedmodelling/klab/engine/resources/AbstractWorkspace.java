@@ -15,83 +15,102 @@ import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.FileUtils;
 
 public abstract class AbstractWorkspace implements IWorkspace {
 
-	protected KimWorkspace delegate;
-	
-	AbstractWorkspace() {
-	}
+    protected KimWorkspace delegate;
 
-	public AbstractWorkspace(String name, File root) {
-		delegate = new KimWorkspace(root, name);
-	}
+    AbstractWorkspace() {
+    }
 
-	@Override
-	public String getName() {
-		return delegate.getName();
-	}
+    public AbstractWorkspace(String name, File root) {
+        delegate = new KimWorkspace(root, name);
+    }
 
-	public Collection<File> getProjectLocations() {
-		return delegate.getProjectLocations();
-	}
+    @Override
+    public String getName() {
+        return delegate.getName();
+    }
 
-	public Collection<String> getProjectNames() {
-		return delegate.getProjectNames();
-	}
+    public Collection<File> getProjectLocations() {
+        return delegate.getProjectLocations();
+    }
 
-	protected void readProjects() throws IOException {
-		delegate.readProjects();
-	}
+    public Collection<String> getProjectNames() {
+        return delegate.getProjectNames();
+    }
 
-	/**
-	 * Add a project from a local directory.
-	 * 
-	 * @param root
-	 * @return
-	 */
-	public IProject addProject(File root) {
-		IKimProject ret = delegate.loadProject(root);
-		return ret == null ? null : Resources.INSTANCE.retrieveOrCreate(ret);
-	}
+    protected void loadResources() {
+        /*
+         * Read resources before loading. 
+         */
+        for (File projectRoot : getProjectLocations()) {
+            File resourceDir = new File(projectRoot + File.separator + "resources");
+            if (resourceDir.exists() && resourceDir.isDirectory()) {
+                for (File rdir : resourceDir.listFiles()) {
+                    if (rdir.isDirectory()) {
+                        Resources.INSTANCE.synchronize(rdir);
+                    }
+                }
+            }
+        }
 
-	@Override
-	public IKimLoader load(IMonitor monitor) throws KlabException {
-		return delegate.load();
-	}
+    }
+    
+    protected void readProjects() {
+        delegate.readProjects();
+    }
 
-	@Override
-	public IKimLoader load(IKimLoader loader, IMonitor monitor) throws KlabException {
-		return delegate.load(loader);
-	}
+    /**
+     * Add a project from a local directory.
+     * 
+     * @param root
+     * @return
+     */
+    public IProject addProject(File root) {
+        IKimProject ret = delegate.loadProject(root);
+        return ret == null ? null : Resources.INSTANCE.retrieveOrCreate(ret);
+    }
 
-	@Override
-	public File getRoot() {
-		return delegate.getRoot();
-	}
+    @Override
+    public IKimLoader load(IMonitor monitor) throws KlabException {
+        loadResources();
+        return delegate.load();
+    }
 
-	public Collection<IProject> getProjects() {
-		List<IProject> ret = new ArrayList<>();
-		for (String projectId : delegate.getProjectNames()) {
-			ret.add(Resources.INSTANCE.retrieveOrCreate(delegate.getProject(projectId)));
-		}
-		return ret;
-	}
+    @Override
+    public IKimLoader load(IKimLoader loader, IMonitor monitor) throws KlabException {
+        return delegate.load(loader);
+    }
 
-	@Override
-	public IProject getProject(String projectId) {
-		IKimProject ret = delegate.getProject(projectId);
-		return ret == null ? null : Resources.INSTANCE.retrieveOrCreate(ret);
-	}
+    @Override
+    public File getRoot() {
+        return delegate.getRoot();
+    }
 
-	public void deleteProject(IProject project) {
-		delegate.deleteProject(((Project)project).delegate);
-		try {
-			FileUtils.deleteDirectory(project.getRoot());
-		} catch (IOException e) {
-			throw new KlabIOException(e);
-		}
-	}
-	
+    public Collection<IProject> getProjects() {
+        List<IProject> ret = new ArrayList<>();
+        for (String projectId : delegate.getProjectNames()) {
+            ret.add(Resources.INSTANCE.retrieveOrCreate(delegate.getProject(projectId)));
+        }
+        return ret;
+    }
+
+    @Override
+    public IProject getProject(String projectId) {
+        IKimProject ret = delegate.getProject(projectId);
+        return ret == null ? null : Resources.INSTANCE.retrieveOrCreate(ret);
+    }
+
+    public void deleteProject(IProject project) {
+        delegate.deleteProject(((Project) project).delegate);
+        try {
+            FileUtils.deleteDirectory(project.getRoot());
+        } catch (IOException e) {
+            throw new KlabIOException(e);
+        }
+    }
+
 }
