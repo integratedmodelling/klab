@@ -32,35 +32,29 @@
 							<goal>build-jar</goal>
 						</goals>
 					</execution>
-					<!-- 
-					<execution>
-						<id>create-native</id>
-						<phase>package</phase>
-						<goals>
-							<goal>build-native</goal>
-						</goals>
-					</execution>
-					 -->
+					<!-- <execution> <id>create-native</id> <phase>package</phase> <goals> 
+						<goal>build-native</goal> </goals> </execution> -->
 				</executions>
 			</plugin>
 			<plugin>
-		      <groupId>com.install4j</groupId>
-		      <artifactId>install4j-maven</artifactId>
-		      <version>9.0</version>
-		      <executions>
-		        <execution>
-		          <id>compile-installers</id>
-		          <phase>package</phase>
-		          <goals>
-		            <goal>compile</goal>
-		          </goals>
-		          <configuration>
-		            <installDir>${env.INSTALL4J_PATH}</installDir>
-		            <projectFile>${project.basedir}/controlcenter.install4j</projectFile>
-		          </configuration>
-		        </execution>
-		      </executions>
-		    </plugin>
+				<groupId>com.install4j</groupId>
+				<artifactId>install4j-maven</artifactId>
+				<version>9.0</version>
+				<executions>
+					<execution>
+						<id>compile-installers</id>
+						<phase>package</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+						<configuration>
+							<license>${install4j.licenseKey}</license>
+							<installDir>${install4j.home}</installDir>
+							<projectFile>${project.basedir}/controlcenter.install4j</projectFile>
+						</configuration>
+					</execution>
+				</executions>
+			</plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>
@@ -76,18 +70,18 @@
 			</plugins>
 		</pluginManagement>
 		<resources>
-	        <resource>
-	            <filtering>false</filtering>
-	            <directory>src/main/java</directory>
-	            <includes>
-	                <include>**/*.fxml</include>
-	                <include>**/*.css</include>
-	                <include>**/*.gif</include>
-	                <include>**/*.png</include>
-	                <include>**/*.ico</include>
-	            </includes>             
-	        </resource>
-	    </resources>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.fxml</include>
+					<include>**/*.css</include>
+					<include>**/*.gif</include>
+					<include>**/*.png</include>
+					<include>**/*.ico</include>
+				</includes>
+			</resource>
+		</resources>
 	</build>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j -->
@@ -194,12 +188,12 @@
 			<url>http://jcenter.bintray.com</url>
 		</repository>
 	</repositories>
-	
+
 	<pluginRepositories>
-	  <pluginRepository>
-	    <id>ej-technologies</id>
-	    <url>https://maven.ej-technologies.com/repository</url>
-	  </pluginRepository>
+		<pluginRepository>
+			<id>ej-technologies</id>
+			<url>https://maven.ej-technologies.com/repository</url>
+		</pluginRepository>
 	</pluginRepositories>
-	
+
 </project>
