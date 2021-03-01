@@ -55,7 +55,7 @@
 		            <goal>compile</goal>
 		          </goals>
 		          <configuration>
-		            <installDir>${install4j.home}</installDir>
+		            <installDir>${env.INSTALL4J_PATH}</installDir>
 		            <projectFile>${project.basedir}/controlcenter.install4j</projectFile>
 		          </configuration>
 		        </execution>
