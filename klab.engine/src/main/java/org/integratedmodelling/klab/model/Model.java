@@ -592,7 +592,7 @@ public class Model extends KimObject implements IModel {
                     || this.observables.get(0).getDescriptionType() == IActivity.Description.CLASSIFICATION) {
                 // must be a filter
                 if (!isFilter(resource)) {
-                    monitor.error("all computations  in attribute contextualizers must be filters", this.getStatement());
+                    monitor.error("all computations in attribute contextualizers must be filters", this.getStatement());
                 }
             }
 

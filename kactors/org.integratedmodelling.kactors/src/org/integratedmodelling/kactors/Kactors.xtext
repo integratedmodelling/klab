@@ -247,6 +247,7 @@ ValueWithMetadataWithoutTree returns Value:
 
 Match:
 	id=LOWERCASE_ID '->' body=StatementList  |
+	annotation=ANNOTATION_ID '->' body=StatementList |
 	constant=UPPERCASE_ID '->' body=StatementList  |
 	boolean=('true'|'false') '->' body=StatementList  |
 	type=CAMELCASE_ID '->' body=StatementList |

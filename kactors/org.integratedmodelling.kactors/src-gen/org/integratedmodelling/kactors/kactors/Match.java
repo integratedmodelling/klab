@@ -16,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getAnnotation <em>Annotation</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getConstant <em>Constant</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getBoolean <em>Boolean</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getType <em>Type</em>}</li>
@@ -82,6 +83,28 @@ public interface Match extends EObject
    * @generated
    */
   void setBody(StatementList value);
+
+  /**
+   * Returns the value of the '<em><b>Annotation</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Annotation</em>' attribute.
+   * @see #setAnnotation(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_Annotation()
+   * @model
+   * @generated
+   */
+  String getAnnotation();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getAnnotation <em>Annotation</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Annotation</em>' attribute.
+   * @see #getAnnotation()
+   * @generated
+   */
+  void setAnnotation(String value);
 
   /**
    * Returns the value of the '<em><b>Constant</b></em>' attribute.

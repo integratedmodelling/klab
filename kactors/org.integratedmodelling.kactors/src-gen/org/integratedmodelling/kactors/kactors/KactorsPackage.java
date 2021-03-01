@@ -1486,13 +1486,22 @@ public interface KactorsPackage extends EPackage
   int MATCH__BODY = 1;
 
   /**
+   * The feature id for the '<em><b>Annotation</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MATCH__ANNOTATION = 2;
+
+  /**
    * The feature id for the '<em><b>Constant</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MATCH__CONSTANT = 2;
+  int MATCH__CONSTANT = 3;
 
   /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
@@ -1501,7 +1510,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__BOOLEAN = 3;
+  int MATCH__BOOLEAN = 4;
 
   /**
    * The feature id for the '<em><b>Type</b></em>' attribute.
@@ -1510,7 +1519,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__TYPE = 4;
+  int MATCH__TYPE = 5;
 
   /**
    * The feature id for the '<em><b>Regexp</b></em>' attribute.
@@ -1519,7 +1528,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__REGEXP = 5;
+  int MATCH__REGEXP = 6;
 
   /**
    * The feature id for the '<em><b>Observable</b></em>' containment reference.
@@ -1528,7 +1537,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__OBSERVABLE = 6;
+  int MATCH__OBSERVABLE = 7;
 
   /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
@@ -1537,7 +1546,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__LITERAL = 7;
+  int MATCH__LITERAL = 8;
 
   /**
    * The feature id for the '<em><b>List</b></em>' containment reference.
@@ -1546,7 +1555,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__LIST = 8;
+  int MATCH__LIST = 9;
 
   /**
    * The feature id for the '<em><b>Set</b></em>' containment reference.
@@ -1555,7 +1564,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__SET = 9;
+  int MATCH__SET = 10;
 
   /**
    * The feature id for the '<em><b>Quantity</b></em>' containment reference.
@@ -1564,7 +1573,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__QUANTITY = 10;
+  int MATCH__QUANTITY = 11;
 
   /**
    * The feature id for the '<em><b>Expr</b></em>' attribute.
@@ -1573,7 +1582,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__EXPR = 11;
+  int MATCH__EXPR = 12;
 
   /**
    * The feature id for the '<em><b>Nodata</b></em>' attribute.
@@ -1582,7 +1591,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__NODATA = 12;
+  int MATCH__NODATA = 13;
 
   /**
    * The feature id for the '<em><b>Star</b></em>' attribute.
@@ -1591,7 +1600,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__STAR = 13;
+  int MATCH__STAR = 14;
 
   /**
    * The feature id for the '<em><b>Anything</b></em>' attribute.
@@ -1600,7 +1609,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__ANYTHING = 14;
+  int MATCH__ANYTHING = 15;
 
   /**
    * The feature id for the '<em><b>Empty</b></em>' attribute.
@@ -1609,7 +1618,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__EMPTY = 15;
+  int MATCH__EMPTY = 16;
 
   /**
    * The feature id for the '<em><b>Exception</b></em>' attribute.
@@ -1618,7 +1627,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH__EXCEPTION = 16;
+  int MATCH__EXCEPTION = 17;
 
   /**
    * The number of structural features of the '<em>Match</em>' class.
@@ -1627,7 +1636,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MATCH_FEATURE_COUNT = 17;
+  int MATCH_FEATURE_COUNT = 18;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ListImpl <em>List</em>}' class.
@@ -5027,6 +5036,17 @@ public interface KactorsPackage extends EPackage
   EReference getMatch_Body();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Match#getAnnotation <em>Annotation</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Annotation</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Match#getAnnotation()
+   * @see #getMatch()
+   * @generated
+   */
+  EAttribute getMatch_Annotation();
+
+  /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Match#getConstant <em>Constant</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -8349,6 +8369,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference MATCH__BODY = eINSTANCE.getMatch_Body();
+
+    /**
+     * The meta object literal for the '<em><b>Annotation</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MATCH__ANNOTATION = eINSTANCE.getMatch_Annotation();
 
     /**
      * The meta object literal for the '<em><b>Constant</b></em>' attribute feature.

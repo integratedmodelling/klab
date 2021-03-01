@@ -30,6 +30,7 @@ import org.integratedmodelling.kactors.kactors.StatementList;
  * <ul>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getBody <em>Body</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getAnnotation <em>Annotation</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getConstant <em>Constant</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getBoolean <em>Boolean</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MatchImpl#getType <em>Type</em>}</li>
@@ -80,6 +81,26 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
    * @ordered
    */
   protected StatementList body;
+
+  /**
+   * The default value of the '{@link #getAnnotation() <em>Annotation</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAnnotation()
+   * @generated
+   * @ordered
+   */
+  protected static final String ANNOTATION_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getAnnotation() <em>Annotation</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getAnnotation()
+   * @generated
+   * @ordered
+   */
+  protected String annotation = ANNOTATION_EDEFAULT;
 
   /**
    * The default value of the '{@link #getConstant() <em>Constant</em>}' attribute.
@@ -425,6 +446,31 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__BODY, newBody, newBody));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getAnnotation()
+  {
+    return annotation;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setAnnotation(String newAnnotation)
+  {
+    String oldAnnotation = annotation;
+    annotation = newAnnotation;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.MATCH__ANNOTATION, oldAnnotation, annotation));
   }
 
   /**
@@ -967,6 +1013,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return getId();
       case KactorsPackage.MATCH__BODY:
         return getBody();
+      case KactorsPackage.MATCH__ANNOTATION:
+        return getAnnotation();
       case KactorsPackage.MATCH__CONSTANT:
         return getConstant();
       case KactorsPackage.MATCH__BOOLEAN:
@@ -1016,6 +1064,9 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return;
       case KactorsPackage.MATCH__BODY:
         setBody((StatementList)newValue);
+        return;
+      case KactorsPackage.MATCH__ANNOTATION:
+        setAnnotation((String)newValue);
         return;
       case KactorsPackage.MATCH__CONSTANT:
         setConstant((String)newValue);
@@ -1082,6 +1133,9 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
       case KactorsPackage.MATCH__BODY:
         setBody((StatementList)null);
         return;
+      case KactorsPackage.MATCH__ANNOTATION:
+        setAnnotation(ANNOTATION_EDEFAULT);
+        return;
       case KactorsPackage.MATCH__CONSTANT:
         setConstant(CONSTANT_EDEFAULT);
         return;
@@ -1145,6 +1199,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KactorsPackage.MATCH__BODY:
         return body != null;
+      case KactorsPackage.MATCH__ANNOTATION:
+        return ANNOTATION_EDEFAULT == null ? annotation != null : !ANNOTATION_EDEFAULT.equals(annotation);
       case KactorsPackage.MATCH__CONSTANT:
         return CONSTANT_EDEFAULT == null ? constant != null : !CONSTANT_EDEFAULT.equals(constant);
       case KactorsPackage.MATCH__BOOLEAN:
@@ -1192,6 +1248,8 @@ public class MatchImpl extends MinimalEObjectImpl.Container implements Match
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (id: ");
     result.append(id);
+    result.append(", annotation: ");
+    result.append(annotation);
     result.append(", constant: ");
     result.append(constant);
     result.append(", boolean: ");
