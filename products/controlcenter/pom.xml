@@ -43,6 +43,24 @@
 					 -->
 				</executions>
 			</plugin>
+			<plugin>
+		      <groupId>com.install4j</groupId>
+		      <artifactId>install4j-maven</artifactId>
+		      <version>9.0</version>
+		      <executions>
+		        <execution>
+		          <id>compile-installers</id>
+		          <phase>package</phase>
+		          <goals>
+		            <goal>compile</goal>
+		          </goals>
+		          <configuration>
+		            <installDir>${install4j.home}</installDir>
+		            <projectFile>${project.basedir}/controlcenter.install4j</projectFile>
+		          </configuration>
+		        </execution>
+		      </executions>
+		    </plugin>
 		</plugins>
 		<pluginManagement>
 			<plugins>

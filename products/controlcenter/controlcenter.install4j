@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="8.0.11" transformSequenceNumber="8">
-  <directoryPresets config="./src/main/deploy/package/macosx" />
-  <application name="k.LAB Control Center" applicationId="3443-1218-3478-1447" mediaDir="target/media" shortName="ControlCenter" publisher="Integrated Modelling" publisherWeb="https://integratedmodelling.org/" version="1.1" allPathsRelative="true" macVolumeId="5755f304874440a" javaMinVersion="1.8" javaMaxVersion="1.8" jdkMode="jdk" jdkName="JDK 1.8">
+  <directoryPresets config="./src/main/deploy/package/images" />
+  <application name="k.LAB Control Center" applicationId="3443-1218-3478-1447" mediaDir="target/media" shortName="controlcenter" publisher="The Integrated Modelling Partnership" publisherWeb="https://integratedmodelling.org/" version="1.1" allPathsRelative="true" macVolumeId="5755f304874440a" javaMinVersion="1.8" javaMaxVersion="1.8" jdkMode="jdk" jdkName="JDK 1.8">
     <jreBundles jdkProviderId="Liberica" release="OpenJDK 8u282+8" />
   </application>
   <files>
@@ -13,8 +13,8 @@
     </entries>
   </files>
   <launchers>
-    <launcher name="controlcenter" id="38" icnsFile="./src/main/deploy/package/macosx/klab.icns">
-      <executable name="controlcenter" iconSet="true" iconFile="./src/main/deploy/package/windows/klab.ico" executableMode="gui" executionLevel="highestAvailable" />
+    <launcher name="controlcenter" id="38">
+      <executable name="controlcenter" iconSet="true" executableMode="gui" executionLevel="highestAvailable" />
       <java mainClass="org.integratedmodelling.controlcenter.ControlCenter">
         <classPath>
           <archive location="controlcenter-0.10.0-SNAPSHOT-jfx.jar" failOnError="false" />
@@ -23,7 +23,11 @@
       </java>
       <vmOptionsFile mode="none" />
       <iconImageFiles>
-        <file path="./src/main/deploy/package/linux/klab.png" />
+        <file path="./src/main/deploy/package/images/KLAB_icon_16x16.png" />
+        <file path="./src/main/deploy/package/images/KLAB_icon_32x32.png" />
+        <file path="./src/main/deploy/package/images/KLAB_icon_48x48.png" />
+        <file path="./src/main/deploy/package/images/KLAB_icon_128x128.png" />
+        <file path="./src/main/deploy/package/images/KLAB_icon_256x256.png" />
       </iconImageFiles>
     </launcher>
   </launchers>
@@ -55,6 +59,54 @@
         </startup>
         <screens>
           <screen id="2" beanClass="com.install4j.runtime.beans.screens.WelcomeScreen" styleId="7" rollbackBarrierExitCode="0">
+            <styleOverrides>
+              <styleOverride name="Customize banner image" enabled="true">
+                <group id="45" beanClass="com.install4j.runtime.beans.groups.VerticalFormComponentGroup" useExternalParametrization="true" externalParametrizationName="Customize banner image" externalParametrizationMode="include">
+                  <serializedBean>
+                    <property name="backgroundColor">
+                      <object class="java.awt.Color">
+                        <int>255</int>
+                        <int>255</int>
+                        <int>255</int>
+                        <int>255</int>
+                      </object>
+                    </property>
+                    <property name="borderSides">
+                      <object class="com.install4j.runtime.beans.formcomponents.BorderSides">
+                        <property name="bottom" type="boolean" value="true" />
+                      </object>
+                    </property>
+                    <property name="imageEdgeBackgroundColor">
+                      <object class="java.awt.Color">
+                        <int>25</int>
+                        <int>143</int>
+                        <int>220</int>
+                        <int>255</int>
+                      </object>
+                    </property>
+                    <property name="imageEdgeBorder" type="boolean" value="true" />
+                    <property name="imageFile">
+                      <object class="com.install4j.api.beans.ExternalFile">
+                        <string>${compiler:sys.install4jHome}/resource/styles/wizard.png</string>
+                      </object>
+                    </property>
+                    <property name="insets">
+                      <object class="java.awt.Insets">
+                        <int>5</int>
+                        <int>10</int>
+                        <int>10</int>
+                        <int>10</int>
+                      </object>
+                    </property>
+                  </serializedBean>
+                  <externalParametrizationPropertyNames>
+                    <propertyName>imageAnchor</propertyName>
+                    <propertyName>imageEdgeBackgroundColor</propertyName>
+                    <propertyName>imageFile</propertyName>
+                  </externalParametrizationPropertyNames>
+                </group>
+              </styleOverride>
+            </styleOverrides>
             <actions>
               <action id="7" beanClass="com.install4j.runtime.beans.actions.misc.LoadResponseFileAction" rollbackBarrierExitCode="0" multiExec="true">
                 <serializedBean>
@@ -458,7 +510,7 @@ return console.askYesNo(message, true);
   </installerGui>
   <mediaSets>
     <unixInstaller name="Unix Installer" id="39">
-      <jreBundle release="openjdk8/jdk8u282-b08" usePack200="false" jreBundleSource="generated" manualJreEntry="true">
+      <jreBundle release="openjdk8/jdk8u282-b08" jreBundleSource="generated" manualJreEntry="true">
         <modules>
           <defaultModules set="jre" />
         </modules>
@@ -471,5 +523,12 @@ return console.askYesNo(message, true);
         </modules>
       </jreBundle>
     </windows>
+    <macosFolder name="macOS Folder" id="49">
+      <jreBundle jreBundleSource="generated">
+        <modules>
+          <defaultModules set="jre" />
+        </modules>
+      </jreBundle>
+    </macosFolder>
   </mediaSets>
 </install4j>
