@@ -114,7 +114,7 @@ public class SQL {
         }
 
     }
-
+    
     /**
      * Wrap the obvious values. Empty string, NaN or any true nodata (null, Double.NaN) are nodata.
      * 

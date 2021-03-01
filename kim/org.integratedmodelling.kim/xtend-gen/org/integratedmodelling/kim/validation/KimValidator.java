@@ -826,8 +826,7 @@ public class KimValidator extends AbstractKimValidator {
           int _size_1 = model.getLookupTableArgs().size();
           boolean _tripleNotEquals_2 = (_size_1 != 2);
           if (_tripleNotEquals_2) {
-            this.error(
-              "Two-way tables must have two arguments", 
+            this.error("Two-way tables must have two arguments", 
               KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
             ok = false;
           }
@@ -1282,7 +1281,7 @@ public class KimValidator extends AbstractKimValidator {
       Currency _currency = semantics.getCurrency();
       boolean _tripleNotEquals_1 = (_currency != null);
       if (_tripleNotEquals_1) {
-        if (((!declaration.is(IKimConcept.Type.MONEY)) && (!declaration.is(IKimConcept.Type.MONETARY)))) {
+        if (((!declaration.is(IKimConcept.Type.MONEY)) && (!declaration.is(IKimConcept.Type.MONETARY_VALUE)))) {
           this.error("Currencies can only be specified for monetary values", semantics.getCurrency(), null, 
             KimPackage.OBSERVABLE_SEMANTICS__CURRENCY);
         }
@@ -2130,10 +2129,11 @@ public class KimValidator extends AbstractKimValidator {
                                   } else {
                                     boolean _isValue = concept.isValue();
                                     if (_isValue) {
-                                      operator.add(IKimConcept.Type.VALUE);
                                       boolean _isMonetary = concept.isMonetary();
                                       if (_isMonetary) {
-                                        operator.add(IKimConcept.Type.MONETARY);
+                                        operator.add(IKimConcept.Type.MONETARY_VALUE);
+                                      } else {
+                                        operator.add(IKimConcept.Type.VALUE);
                                       }
                                     } else {
                                       boolean _isUncertainty = concept.isUncertainty();

@@ -278,10 +278,10 @@ public abstract class AbstractTable<T> implements ITable<T> {
     Class<? extends T> valueClass;
     protected List<Integer> lastScannedIndices;
     protected boolean empty = false;
-    Map<String, List<CodeMapping>> mappings = Collections.synchronizedMap(new HashMap<>());
+    Map<String, List<CodeList>> mappings = Collections.synchronizedMap(new HashMap<>());
     private SQLTableCache cache_ = null;
     IMonitor monitor;
-    private Map<String, CodeMapping> mappingCatalog = Collections.synchronizedMap(new HashMap<>());
+    private Map<String, CodeList> mappingCatalog = Collections.synchronizedMap(new HashMap<>());
 
     public AbstractTable(IResource resource, Class<? extends T> cls, IMonitor monitor) {
         this.resource = resource;
@@ -371,9 +371,9 @@ public abstract class AbstractTable<T> implements ITable<T> {
             if (mapping != null && !mapping.toString().trim().isEmpty()) {
 
                 String[] mapchain = mapping.toString().trim().split(Pattern.quote("->"));
-                List<CodeMapping> chain = new ArrayList<>();
+                List<CodeList> chain = new ArrayList<>();
                 for (String mapid : mapchain) {
-                    CodeMapping map = getMapping(mapid);
+                    CodeList map = getMapping(mapid);
                     if (map == null) {
                         throw new KlabValidationException("no mapping named " + mapid + " is defined for table");
                     }
@@ -794,7 +794,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
     public Object mapValue(Object value, Attribute attribute) {
 
         if (mappings.containsKey(attribute.getName())) {
-            for (CodeMapping cmap : mappings.get(attribute.getName())) {
+            for (CodeList cmap : mappings.get(attribute.getName())) {
                 value = value == null ? cmap.map("null") : cmap.map(value);
             }
         }
@@ -805,7 +805,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
     public Object unmapValue(Object value, Attribute attribute) {
 
         if (mappings.containsKey(attribute.getName())) {
-            List<CodeMapping> mps = mappings.get(attribute.getName());
+            List<CodeList> mps = mappings.get(attribute.getName());
             for (int i = mps.size() - 1; i >= 0; i--) {
                 value = value == null ? mps.get(i).reverseMap("null") : mps.get(i).reverseMap(value);
             }
@@ -857,12 +857,12 @@ public abstract class AbstractTable<T> implements ITable<T> {
         return new FilterDescriptor(filter, objects);
     }
 
-    public CodeMapping getMapping(String string) {
-        CodeMapping ret = this.mappingCatalog.get(string);
+    public CodeList getMapping(String string) {
+        CodeList ret = this.mappingCatalog.get(string);
         if (ret == null) {
             File mapfile = new File(((Resource) resource).getPath() + File.separator + "code_" + string + ".properties");
             if (mapfile.exists()) {
-                ret = new CodeMapping(string, mapfile);
+                ret = new CodeList(string, mapfile);
                 this.mappingCatalog.put(string, ret);
             }
         }

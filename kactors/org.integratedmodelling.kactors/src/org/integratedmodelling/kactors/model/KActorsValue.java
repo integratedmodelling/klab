@@ -298,7 +298,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.value = parseLiteral(match.getLiteral());
         } else if (match.getExpr() != null) {
             this.type = Type.EXPRESSION;
-            this.value = match.getExpr().substring(0, match.getExpr().length() - 1);
+            this.value = match.getExpr().substring(1, match.getExpr().length() - 1);
         } else if (match.getQuantity() != null) {
             this.type = Type.QUANTITY;
             this.value = parseQuantity(match.getQuantity());
@@ -328,8 +328,11 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.type = Type.ERROR;
         } else if (match.isStar()) {
             this.type = Type.ANYVALUE;
+        } else if (match.getAnnotation() != null) {
+            this.type = Type.ANNOTATION;
+            this.value = match.getAnnotation().substring(1);
         }
-    }
+     }
 
     KActorsValue(Type type, Object value) {
         this.type = type;
@@ -528,7 +531,9 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         case TYPE:
         case URN:
         case OBJECT:
+            // TODO return a JSON map from the object
         case CONSTANT:
+        case ANNOTATION:
         case EMPTY:
             ret.put("label", ret.get("id"));
             break;

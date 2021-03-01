@@ -454,7 +454,7 @@ public class Aggregator {
             if (Observables.INSTANCE.getDirectInherentType(observable.getType()) != null) {
                 return Aggregation.MEAN;
             }
-            return (observable.getType().is(Type.EXTENSIVE_PROPERTY) || observable.getType().is(Type.MONEY))
+            return (observable.getType().is(Type.EXTENSIVE_PROPERTY) || observable.getType().is(Type.MONEY)|| observable.getType().is(Type.MONEY))
                     ? Aggregation.SUM
                     : Aggregation.MEAN;
         default:

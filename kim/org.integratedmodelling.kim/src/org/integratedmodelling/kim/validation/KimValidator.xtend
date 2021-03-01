@@ -624,15 +624,14 @@ class KimValidator extends AbstractKimValidator {
 
 			if (table !== null) {
 				if (model.twoway) {
-					
+
 					// check that we have two dims
 					if (model.lookupTableArgs.size !== 2) {
-						error(
-							'Two-way tables must have two arguments',
+						error('Two-way tables must have two arguments',
 							KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
 						ok = false
 					}
-					
+
 				} else {
 					if (model.lookupTableArgs.size > table.table.columnCount) {
 						error(
@@ -1007,7 +1006,7 @@ class KimValidator extends AbstractKimValidator {
 				}
 			}
 			if (semantics.currency !== null) {
-				if (!declaration.is(Type.MONEY) && !declaration.is(Type.MONETARY)) {
+				if (!declaration.is(Type.MONEY) && !declaration.is(Type.MONETARY_VALUE)) {
 					error("Currencies can only be specified for monetary values", semantics.currency, null,
 						KimPackage.OBSERVABLE_SEMANTICS__CURRENCY)
 				}
@@ -1699,9 +1698,10 @@ class KimValidator extends AbstractKimValidator {
 //					}
 					operator.add(Type.RATIO)
 				} else if (concept.isValue) {
-					operator.add(Type.VALUE)
 					if (concept.isMonetary) {
-						operator.add(Type.MONETARY)
+						operator.add(Type.MONETARY_VALUE)
+					} else {
+						operator.add(Type.VALUE)
 					}
 				} else if (concept.isUncertainty) {
 					if (!flags.contains(Type.QUALITY)) {

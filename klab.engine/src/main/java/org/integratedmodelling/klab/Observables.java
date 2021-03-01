@@ -91,7 +91,7 @@ public enum Observables implements IObservableService {
     }
 
     private Map<String, Configuration> configurations = Collections.synchronizedMap(new LinkedHashMap<String, Configuration>());
-
+    
     @Inject
     ParseHelper<Model> observableParser;
 

@@ -37,7 +37,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.utils.SemanticType;
 import org.integratedmodelling.tables.AbstractTable;
-import org.integratedmodelling.tables.CodeMapping;
+import org.integratedmodelling.tables.CodeList;
 import org.integratedmodelling.tables.DimensionScanner;
 
 public class TableEncoder implements IResourceEncoder {
@@ -89,7 +89,7 @@ public class TableEncoder implements IResourceEncoder {
 
             String collected = urnParameters.get("collect");
             String collectCondition = null;
-            List<CodeMapping> collectedMappings = new ArrayList<>();
+            List<CodeList> collectedMappings = new ArrayList<>();
             Map<String, IConcept> collectedAttributeToConcept = new HashMap<>();
 
             if (collected != null) {
@@ -105,7 +105,7 @@ public class TableEncoder implements IResourceEncoder {
                     String[] cc = collected.split(Pattern.quote("->"));
                     collected = cc[0];
                     for (int i = 1; i < cc.length; i++) {
-                        CodeMapping cm = ((AbstractTable<?>) table).getMapping(cc[i]);
+                        CodeList cm = ((AbstractTable<?>) table).getMapping(cc[i]);
                         if (cm == null) {
                             throw new KlabValidationException("table resource refers to non-existent mapping " + cc[i]);
                         }
@@ -117,7 +117,7 @@ public class TableEncoder implements IResourceEncoder {
 
                     for (Attribute attr : resource.getAttributes()) {
                         Object attrName = attr.getName();
-                        for (CodeMapping m : collectedMappings) {
+                        for (CodeList m : collectedMappings) {
                             attrName = m.map(attrName);
                         }
                         if (attrName instanceof IConcept) {
@@ -247,7 +247,7 @@ public class TableEncoder implements IResourceEncoder {
                 }
 
                 for (int i = 1; i < columnId.length; i++) {
-                    CodeMapping map = ((AbstractTable<?>) table).getMapping(columnId[i]);
+                    CodeList map = ((AbstractTable<?>) table).getMapping(columnId[i]);
                     if (map == null) {
                         throw new KlabIllegalArgumentException("table resource does not include a codelist named " + columnId[i]);
                     }

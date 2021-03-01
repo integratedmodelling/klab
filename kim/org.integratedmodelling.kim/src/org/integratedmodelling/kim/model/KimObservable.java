@@ -376,7 +376,7 @@ public class KimObservable extends KimStatement implements IKimObservable {
 		if (main == null) {
 			return false;
 		}
-		if (main.is(Type.MONEY) || main.is(Type.MONETARY) || main.is(Type.EXTENSIVE_PROPERTY)
+		if (main.is(Type.MONEY) || main.is(Type.MONETARY_VALUE) || main.is(Type.EXTENSIVE_PROPERTY)
 				|| main.is(Type.INTENSIVE_PROPERTY) || main.is(Type.NUMEROSITY)) {
 			boolean assignUnits = true;
 //			Boolean rescaled = main.getType().getMetadata().get(IMetadata.IM_IS_RESCALED, Boolean.class);

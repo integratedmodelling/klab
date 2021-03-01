@@ -501,7 +501,9 @@ public class CoreOntology extends AbstractWorkspace {
 			ret = Type.RATIO;
 		} else if (type.contains(Type.VALUE)) {
 			ret = Type.VALUE;
-		} else if (type.contains(Type.OCCURRENCE)) {
+		} else if (type.contains(Type.MONETARY_VALUE)) {
+            ret = Type.MONETARY_VALUE;
+        } else if (type.contains(Type.OCCURRENCE)) {
 			ret = Type.OCCURRENCE;
 		} else if (type.contains(Type.PRESENCE)) {
 			ret = Type.PRESENCE;

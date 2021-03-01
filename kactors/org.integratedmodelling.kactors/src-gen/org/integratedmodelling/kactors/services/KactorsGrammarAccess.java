@@ -2167,115 +2167,122 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Assignment cBodyAssignment_0_2 = (Assignment)cGroup_0.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_0_2_0 = (RuleCall)cBodyAssignment_0_2.eContents().get(0);
 		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
-		private final Assignment cConstantAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
-		private final RuleCall cConstantUPPERCASE_IDTerminalRuleCall_1_0_0 = (RuleCall)cConstantAssignment_1_0.eContents().get(0);
+		private final Assignment cAnnotationAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
+		private final RuleCall cAnnotationANNOTATION_IDTerminalRuleCall_1_0_0 = (RuleCall)cAnnotationAssignment_1_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
 		private final Assignment cBodyAssignment_1_2 = (Assignment)cGroup_1.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_1_2_0 = (RuleCall)cBodyAssignment_1_2.eContents().get(0);
 		private final Group cGroup_2 = (Group)cAlternatives.eContents().get(2);
-		private final Assignment cBooleanAssignment_2_0 = (Assignment)cGroup_2.eContents().get(0);
-		private final Alternatives cBooleanAlternatives_2_0_0 = (Alternatives)cBooleanAssignment_2_0.eContents().get(0);
-		private final Keyword cBooleanTrueKeyword_2_0_0_0 = (Keyword)cBooleanAlternatives_2_0_0.eContents().get(0);
-		private final Keyword cBooleanFalseKeyword_2_0_0_1 = (Keyword)cBooleanAlternatives_2_0_0.eContents().get(1);
+		private final Assignment cConstantAssignment_2_0 = (Assignment)cGroup_2.eContents().get(0);
+		private final RuleCall cConstantUPPERCASE_IDTerminalRuleCall_2_0_0 = (RuleCall)cConstantAssignment_2_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_2_1 = (Keyword)cGroup_2.eContents().get(1);
 		private final Assignment cBodyAssignment_2_2 = (Assignment)cGroup_2.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_2_2_0 = (RuleCall)cBodyAssignment_2_2.eContents().get(0);
 		private final Group cGroup_3 = (Group)cAlternatives.eContents().get(3);
-		private final Assignment cTypeAssignment_3_0 = (Assignment)cGroup_3.eContents().get(0);
-		private final RuleCall cTypeCAMELCASE_IDTerminalRuleCall_3_0_0 = (RuleCall)cTypeAssignment_3_0.eContents().get(0);
+		private final Assignment cBooleanAssignment_3_0 = (Assignment)cGroup_3.eContents().get(0);
+		private final Alternatives cBooleanAlternatives_3_0_0 = (Alternatives)cBooleanAssignment_3_0.eContents().get(0);
+		private final Keyword cBooleanTrueKeyword_3_0_0_0 = (Keyword)cBooleanAlternatives_3_0_0.eContents().get(0);
+		private final Keyword cBooleanFalseKeyword_3_0_0_1 = (Keyword)cBooleanAlternatives_3_0_0.eContents().get(1);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_3_1 = (Keyword)cGroup_3.eContents().get(1);
 		private final Assignment cBodyAssignment_3_2 = (Assignment)cGroup_3.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_3_2_0 = (RuleCall)cBodyAssignment_3_2.eContents().get(0);
 		private final Group cGroup_4 = (Group)cAlternatives.eContents().get(4);
-		private final Assignment cRegexpAssignment_4_0 = (Assignment)cGroup_4.eContents().get(0);
-		private final RuleCall cRegexpREGEXPTerminalRuleCall_4_0_0 = (RuleCall)cRegexpAssignment_4_0.eContents().get(0);
+		private final Assignment cTypeAssignment_4_0 = (Assignment)cGroup_4.eContents().get(0);
+		private final RuleCall cTypeCAMELCASE_IDTerminalRuleCall_4_0_0 = (RuleCall)cTypeAssignment_4_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_4_1 = (Keyword)cGroup_4.eContents().get(1);
 		private final Assignment cBodyAssignment_4_2 = (Assignment)cGroup_4.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_4_2_0 = (RuleCall)cBodyAssignment_4_2.eContents().get(0);
 		private final Group cGroup_5 = (Group)cAlternatives.eContents().get(5);
-		private final Assignment cObservableAssignment_5_0 = (Assignment)cGroup_5.eContents().get(0);
-		private final RuleCall cObservableObservableParserRuleCall_5_0_0 = (RuleCall)cObservableAssignment_5_0.eContents().get(0);
+		private final Assignment cRegexpAssignment_5_0 = (Assignment)cGroup_5.eContents().get(0);
+		private final RuleCall cRegexpREGEXPTerminalRuleCall_5_0_0 = (RuleCall)cRegexpAssignment_5_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_5_1 = (Keyword)cGroup_5.eContents().get(1);
 		private final Assignment cBodyAssignment_5_2 = (Assignment)cGroup_5.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_5_2_0 = (RuleCall)cBodyAssignment_5_2.eContents().get(0);
 		private final Group cGroup_6 = (Group)cAlternatives.eContents().get(6);
-		private final Assignment cLiteralAssignment_6_0 = (Assignment)cGroup_6.eContents().get(0);
-		private final RuleCall cLiteralLiteralParserRuleCall_6_0_0 = (RuleCall)cLiteralAssignment_6_0.eContents().get(0);
+		private final Assignment cObservableAssignment_6_0 = (Assignment)cGroup_6.eContents().get(0);
+		private final RuleCall cObservableObservableParserRuleCall_6_0_0 = (RuleCall)cObservableAssignment_6_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_6_1 = (Keyword)cGroup_6.eContents().get(1);
 		private final Assignment cBodyAssignment_6_2 = (Assignment)cGroup_6.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_6_2_0 = (RuleCall)cBodyAssignment_6_2.eContents().get(0);
 		private final Group cGroup_7 = (Group)cAlternatives.eContents().get(7);
-		private final Assignment cListAssignment_7_0 = (Assignment)cGroup_7.eContents().get(0);
-		private final RuleCall cListListParserRuleCall_7_0_0 = (RuleCall)cListAssignment_7_0.eContents().get(0);
+		private final Assignment cLiteralAssignment_7_0 = (Assignment)cGroup_7.eContents().get(0);
+		private final RuleCall cLiteralLiteralParserRuleCall_7_0_0 = (RuleCall)cLiteralAssignment_7_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_7_1 = (Keyword)cGroup_7.eContents().get(1);
 		private final Assignment cBodyAssignment_7_2 = (Assignment)cGroup_7.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_7_2_0 = (RuleCall)cBodyAssignment_7_2.eContents().get(0);
 		private final Group cGroup_8 = (Group)cAlternatives.eContents().get(8);
-		private final Keyword cInKeyword_8_0 = (Keyword)cGroup_8.eContents().get(0);
-		private final Assignment cSetAssignment_8_1 = (Assignment)cGroup_8.eContents().get(1);
-		private final RuleCall cSetListParserRuleCall_8_1_0 = (RuleCall)cSetAssignment_8_1.eContents().get(0);
-		private final Keyword cHyphenMinusGreaterThanSignKeyword_8_2 = (Keyword)cGroup_8.eContents().get(2);
-		private final Assignment cBodyAssignment_8_3 = (Assignment)cGroup_8.eContents().get(3);
-		private final RuleCall cBodyStatementListParserRuleCall_8_3_0 = (RuleCall)cBodyAssignment_8_3.eContents().get(0);
+		private final Assignment cListAssignment_8_0 = (Assignment)cGroup_8.eContents().get(0);
+		private final RuleCall cListListParserRuleCall_8_0_0 = (RuleCall)cListAssignment_8_0.eContents().get(0);
+		private final Keyword cHyphenMinusGreaterThanSignKeyword_8_1 = (Keyword)cGroup_8.eContents().get(1);
+		private final Assignment cBodyAssignment_8_2 = (Assignment)cGroup_8.eContents().get(2);
+		private final RuleCall cBodyStatementListParserRuleCall_8_2_0 = (RuleCall)cBodyAssignment_8_2.eContents().get(0);
 		private final Group cGroup_9 = (Group)cAlternatives.eContents().get(9);
-		private final Assignment cQuantityAssignment_9_0 = (Assignment)cGroup_9.eContents().get(0);
-		private final RuleCall cQuantityQuantityParserRuleCall_9_0_0 = (RuleCall)cQuantityAssignment_9_0.eContents().get(0);
-		private final Keyword cHyphenMinusGreaterThanSignKeyword_9_1 = (Keyword)cGroup_9.eContents().get(1);
-		private final Assignment cBodyAssignment_9_2 = (Assignment)cGroup_9.eContents().get(2);
-		private final RuleCall cBodyStatementListParserRuleCall_9_2_0 = (RuleCall)cBodyAssignment_9_2.eContents().get(0);
+		private final Keyword cInKeyword_9_0 = (Keyword)cGroup_9.eContents().get(0);
+		private final Assignment cSetAssignment_9_1 = (Assignment)cGroup_9.eContents().get(1);
+		private final RuleCall cSetListParserRuleCall_9_1_0 = (RuleCall)cSetAssignment_9_1.eContents().get(0);
+		private final Keyword cHyphenMinusGreaterThanSignKeyword_9_2 = (Keyword)cGroup_9.eContents().get(2);
+		private final Assignment cBodyAssignment_9_3 = (Assignment)cGroup_9.eContents().get(3);
+		private final RuleCall cBodyStatementListParserRuleCall_9_3_0 = (RuleCall)cBodyAssignment_9_3.eContents().get(0);
 		private final Group cGroup_10 = (Group)cAlternatives.eContents().get(10);
-		private final Assignment cExprAssignment_10_0 = (Assignment)cGroup_10.eContents().get(0);
-		private final RuleCall cExprEXPRTerminalRuleCall_10_0_0 = (RuleCall)cExprAssignment_10_0.eContents().get(0);
+		private final Assignment cQuantityAssignment_10_0 = (Assignment)cGroup_10.eContents().get(0);
+		private final RuleCall cQuantityQuantityParserRuleCall_10_0_0 = (RuleCall)cQuantityAssignment_10_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_10_1 = (Keyword)cGroup_10.eContents().get(1);
 		private final Assignment cBodyAssignment_10_2 = (Assignment)cGroup_10.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_10_2_0 = (RuleCall)cBodyAssignment_10_2.eContents().get(0);
 		private final Group cGroup_11 = (Group)cAlternatives.eContents().get(11);
-		private final Assignment cNodataAssignment_11_0 = (Assignment)cGroup_11.eContents().get(0);
-		private final Keyword cNodataUnknownKeyword_11_0_0 = (Keyword)cNodataAssignment_11_0.eContents().get(0);
+		private final Assignment cExprAssignment_11_0 = (Assignment)cGroup_11.eContents().get(0);
+		private final RuleCall cExprEXPRTerminalRuleCall_11_0_0 = (RuleCall)cExprAssignment_11_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_11_1 = (Keyword)cGroup_11.eContents().get(1);
 		private final Assignment cBodyAssignment_11_2 = (Assignment)cGroup_11.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_11_2_0 = (RuleCall)cBodyAssignment_11_2.eContents().get(0);
 		private final Group cGroup_12 = (Group)cAlternatives.eContents().get(12);
-		private final Assignment cStarAssignment_12_0 = (Assignment)cGroup_12.eContents().get(0);
-		private final Keyword cStarAsteriskKeyword_12_0_0 = (Keyword)cStarAssignment_12_0.eContents().get(0);
+		private final Assignment cNodataAssignment_12_0 = (Assignment)cGroup_12.eContents().get(0);
+		private final Keyword cNodataUnknownKeyword_12_0_0 = (Keyword)cNodataAssignment_12_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_12_1 = (Keyword)cGroup_12.eContents().get(1);
 		private final Assignment cBodyAssignment_12_2 = (Assignment)cGroup_12.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_12_2_0 = (RuleCall)cBodyAssignment_12_2.eContents().get(0);
 		private final Group cGroup_13 = (Group)cAlternatives.eContents().get(13);
-		private final Assignment cAnythingAssignment_13_0 = (Assignment)cGroup_13.eContents().get(0);
-		private final Keyword cAnythingNumberSignKeyword_13_0_0 = (Keyword)cAnythingAssignment_13_0.eContents().get(0);
+		private final Assignment cStarAssignment_13_0 = (Assignment)cGroup_13.eContents().get(0);
+		private final Keyword cStarAsteriskKeyword_13_0_0 = (Keyword)cStarAssignment_13_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_13_1 = (Keyword)cGroup_13.eContents().get(1);
 		private final Assignment cBodyAssignment_13_2 = (Assignment)cGroup_13.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_13_2_0 = (RuleCall)cBodyAssignment_13_2.eContents().get(0);
 		private final Group cGroup_14 = (Group)cAlternatives.eContents().get(14);
-		private final Assignment cEmptyAssignment_14_0 = (Assignment)cGroup_14.eContents().get(0);
-		private final Keyword cEmptyEmptyKeyword_14_0_0 = (Keyword)cEmptyAssignment_14_0.eContents().get(0);
+		private final Assignment cAnythingAssignment_14_0 = (Assignment)cGroup_14.eContents().get(0);
+		private final Keyword cAnythingNumberSignKeyword_14_0_0 = (Keyword)cAnythingAssignment_14_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_14_1 = (Keyword)cGroup_14.eContents().get(1);
 		private final Assignment cBodyAssignment_14_2 = (Assignment)cGroup_14.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_14_2_0 = (RuleCall)cBodyAssignment_14_2.eContents().get(0);
 		private final Group cGroup_15 = (Group)cAlternatives.eContents().get(15);
-		private final Assignment cExceptionAssignment_15_0 = (Assignment)cGroup_15.eContents().get(0);
-		private final Keyword cExceptionExceptionKeyword_15_0_0 = (Keyword)cExceptionAssignment_15_0.eContents().get(0);
+		private final Assignment cEmptyAssignment_15_0 = (Assignment)cGroup_15.eContents().get(0);
+		private final Keyword cEmptyEmptyKeyword_15_0_0 = (Keyword)cEmptyAssignment_15_0.eContents().get(0);
 		private final Keyword cHyphenMinusGreaterThanSignKeyword_15_1 = (Keyword)cGroup_15.eContents().get(1);
 		private final Assignment cBodyAssignment_15_2 = (Assignment)cGroup_15.eContents().get(2);
 		private final RuleCall cBodyStatementListParserRuleCall_15_2_0 = (RuleCall)cBodyAssignment_15_2.eContents().get(0);
+		private final Group cGroup_16 = (Group)cAlternatives.eContents().get(16);
+		private final Assignment cExceptionAssignment_16_0 = (Assignment)cGroup_16.eContents().get(0);
+		private final Keyword cExceptionExceptionKeyword_16_0_0 = (Keyword)cExceptionAssignment_16_0.eContents().get(0);
+		private final Keyword cHyphenMinusGreaterThanSignKeyword_16_1 = (Keyword)cGroup_16.eContents().get(1);
+		private final Assignment cBodyAssignment_16_2 = (Assignment)cGroup_16.eContents().get(2);
+		private final RuleCall cBodyStatementListParserRuleCall_16_2_0 = (RuleCall)cBodyAssignment_16_2.eContents().get(0);
 		
 		//Match:
-		//	id=LOWERCASE_ID '->' body=StatementList | constant=UPPERCASE_ID '->' body=StatementList | boolean=('true' | 'false')
-		//	'->' body=StatementList | type=CAMELCASE_ID '->' body=StatementList | regexp=REGEXP '->' body=StatementList |
-		//	observable=Observable '->' body=StatementList | literal=Literal '->' body=StatementList | list=List '->'
-		//	body=StatementList |
+		//	id=LOWERCASE_ID '->' body=StatementList | annotation=ANNOTATION_ID '->' body=StatementList | constant=UPPERCASE_ID
+		//	'->' body=StatementList | boolean=('true' | 'false') '->' body=StatementList | type=CAMELCASE_ID '->'
+		//	body=StatementList | regexp=REGEXP '->' body=StatementList | observable=Observable '->' body=StatementList |
+		//	literal=Literal '->' body=StatementList | list=List '->' body=StatementList |
 		//	'in' set=List '->' body=StatementList | quantity=Quantity '->' body=StatementList | expr=EXPR '->' body=StatementList
 		//	| nodata='unknown' '->' body=StatementList | star?='*' '->' body=StatementList | anything?='#' '->'
 		//	body=StatementList | empty?='empty' '->' body=StatementList | exception?='exception' '->' body=StatementList;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//id=LOWERCASE_ID '->' body=StatementList | constant=UPPERCASE_ID '->' body=StatementList | boolean=('true' | 'false')
-		//'->' body=StatementList | type=CAMELCASE_ID '->' body=StatementList | regexp=REGEXP '->' body=StatementList |
-		//observable=Observable '->' body=StatementList | literal=Literal '->' body=StatementList | list=List '->'
-		//body=StatementList | 'in' set=List '->' body=StatementList | quantity=Quantity '->' body=StatementList | expr=EXPR
-		//'->' body=StatementList | nodata='unknown' '->' body=StatementList | star?='*' '->' body=StatementList | anything?='#'
-		//'->' body=StatementList | empty?='empty' '->' body=StatementList | exception?='exception' '->' body=StatementList
+		//id=LOWERCASE_ID '->' body=StatementList | annotation=ANNOTATION_ID '->' body=StatementList | constant=UPPERCASE_ID '->'
+		//body=StatementList | boolean=('true' | 'false') '->' body=StatementList | type=CAMELCASE_ID '->' body=StatementList |
+		//regexp=REGEXP '->' body=StatementList | observable=Observable '->' body=StatementList | literal=Literal '->'
+		//body=StatementList | list=List '->' body=StatementList | 'in' set=List '->' body=StatementList | quantity=Quantity
+		//'->' body=StatementList | expr=EXPR '->' body=StatementList | nodata='unknown' '->' body=StatementList | star?='*'
+		//'->' body=StatementList | anything?='#' '->' body=StatementList | empty?='empty' '->' body=StatementList |
+		//exception?='exception' '->' body=StatementList
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//id=LOWERCASE_ID '->' body=StatementList
@@ -2296,14 +2303,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_0_2_0() { return cBodyStatementListParserRuleCall_0_2_0; }
 		
-		//constant=UPPERCASE_ID '->' body=StatementList
+		//annotation=ANNOTATION_ID '->' body=StatementList
 		public Group getGroup_1() { return cGroup_1; }
 		
-		//constant=UPPERCASE_ID
-		public Assignment getConstantAssignment_1_0() { return cConstantAssignment_1_0; }
+		//annotation=ANNOTATION_ID
+		public Assignment getAnnotationAssignment_1_0() { return cAnnotationAssignment_1_0; }
 		
-		//UPPERCASE_ID
-		public RuleCall getConstantUPPERCASE_IDTerminalRuleCall_1_0_0() { return cConstantUPPERCASE_IDTerminalRuleCall_1_0_0; }
+		//ANNOTATION_ID
+		public RuleCall getAnnotationANNOTATION_IDTerminalRuleCall_1_0_0() { return cAnnotationANNOTATION_IDTerminalRuleCall_1_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_1_1() { return cHyphenMinusGreaterThanSignKeyword_1_1; }
@@ -2314,20 +2321,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_1_2_0() { return cBodyStatementListParserRuleCall_1_2_0; }
 		
-		//boolean=('true' | 'false') '->' body=StatementList
+		//constant=UPPERCASE_ID '->' body=StatementList
 		public Group getGroup_2() { return cGroup_2; }
 		
-		//boolean=('true' | 'false')
-		public Assignment getBooleanAssignment_2_0() { return cBooleanAssignment_2_0; }
+		//constant=UPPERCASE_ID
+		public Assignment getConstantAssignment_2_0() { return cConstantAssignment_2_0; }
 		
-		//('true' | 'false')
-		public Alternatives getBooleanAlternatives_2_0_0() { return cBooleanAlternatives_2_0_0; }
-		
-		//'true'
-		public Keyword getBooleanTrueKeyword_2_0_0_0() { return cBooleanTrueKeyword_2_0_0_0; }
-		
-		//'false'
-		public Keyword getBooleanFalseKeyword_2_0_0_1() { return cBooleanFalseKeyword_2_0_0_1; }
+		//UPPERCASE_ID
+		public RuleCall getConstantUPPERCASE_IDTerminalRuleCall_2_0_0() { return cConstantUPPERCASE_IDTerminalRuleCall_2_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_2_1() { return cHyphenMinusGreaterThanSignKeyword_2_1; }
@@ -2338,14 +2339,20 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_2_2_0() { return cBodyStatementListParserRuleCall_2_2_0; }
 		
-		//type=CAMELCASE_ID '->' body=StatementList
+		//boolean=('true' | 'false') '->' body=StatementList
 		public Group getGroup_3() { return cGroup_3; }
 		
-		//type=CAMELCASE_ID
-		public Assignment getTypeAssignment_3_0() { return cTypeAssignment_3_0; }
+		//boolean=('true' | 'false')
+		public Assignment getBooleanAssignment_3_0() { return cBooleanAssignment_3_0; }
 		
-		//CAMELCASE_ID
-		public RuleCall getTypeCAMELCASE_IDTerminalRuleCall_3_0_0() { return cTypeCAMELCASE_IDTerminalRuleCall_3_0_0; }
+		//('true' | 'false')
+		public Alternatives getBooleanAlternatives_3_0_0() { return cBooleanAlternatives_3_0_0; }
+		
+		//'true'
+		public Keyword getBooleanTrueKeyword_3_0_0_0() { return cBooleanTrueKeyword_3_0_0_0; }
+		
+		//'false'
+		public Keyword getBooleanFalseKeyword_3_0_0_1() { return cBooleanFalseKeyword_3_0_0_1; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_3_1() { return cHyphenMinusGreaterThanSignKeyword_3_1; }
@@ -2356,14 +2363,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_3_2_0() { return cBodyStatementListParserRuleCall_3_2_0; }
 		
-		//regexp=REGEXP '->' body=StatementList
+		//type=CAMELCASE_ID '->' body=StatementList
 		public Group getGroup_4() { return cGroup_4; }
 		
-		//regexp=REGEXP
-		public Assignment getRegexpAssignment_4_0() { return cRegexpAssignment_4_0; }
+		//type=CAMELCASE_ID
+		public Assignment getTypeAssignment_4_0() { return cTypeAssignment_4_0; }
 		
-		//REGEXP
-		public RuleCall getRegexpREGEXPTerminalRuleCall_4_0_0() { return cRegexpREGEXPTerminalRuleCall_4_0_0; }
+		//CAMELCASE_ID
+		public RuleCall getTypeCAMELCASE_IDTerminalRuleCall_4_0_0() { return cTypeCAMELCASE_IDTerminalRuleCall_4_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_4_1() { return cHyphenMinusGreaterThanSignKeyword_4_1; }
@@ -2374,14 +2381,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_4_2_0() { return cBodyStatementListParserRuleCall_4_2_0; }
 		
-		//observable=Observable '->' body=StatementList
+		//regexp=REGEXP '->' body=StatementList
 		public Group getGroup_5() { return cGroup_5; }
 		
-		//observable=Observable
-		public Assignment getObservableAssignment_5_0() { return cObservableAssignment_5_0; }
+		//regexp=REGEXP
+		public Assignment getRegexpAssignment_5_0() { return cRegexpAssignment_5_0; }
 		
-		//Observable
-		public RuleCall getObservableObservableParserRuleCall_5_0_0() { return cObservableObservableParserRuleCall_5_0_0; }
+		//REGEXP
+		public RuleCall getRegexpREGEXPTerminalRuleCall_5_0_0() { return cRegexpREGEXPTerminalRuleCall_5_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_5_1() { return cHyphenMinusGreaterThanSignKeyword_5_1; }
@@ -2392,14 +2399,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_5_2_0() { return cBodyStatementListParserRuleCall_5_2_0; }
 		
-		//literal=Literal '->' body=StatementList
+		//observable=Observable '->' body=StatementList
 		public Group getGroup_6() { return cGroup_6; }
 		
-		//literal=Literal
-		public Assignment getLiteralAssignment_6_0() { return cLiteralAssignment_6_0; }
+		//observable=Observable
+		public Assignment getObservableAssignment_6_0() { return cObservableAssignment_6_0; }
 		
-		//Literal
-		public RuleCall getLiteralLiteralParserRuleCall_6_0_0() { return cLiteralLiteralParserRuleCall_6_0_0; }
+		//Observable
+		public RuleCall getObservableObservableParserRuleCall_6_0_0() { return cObservableObservableParserRuleCall_6_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_6_1() { return cHyphenMinusGreaterThanSignKeyword_6_1; }
@@ -2410,14 +2417,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_6_2_0() { return cBodyStatementListParserRuleCall_6_2_0; }
 		
-		//list=List '->' body=StatementList
+		//literal=Literal '->' body=StatementList
 		public Group getGroup_7() { return cGroup_7; }
 		
-		//list=List
-		public Assignment getListAssignment_7_0() { return cListAssignment_7_0; }
+		//literal=Literal
+		public Assignment getLiteralAssignment_7_0() { return cLiteralAssignment_7_0; }
 		
-		//List
-		public RuleCall getListListParserRuleCall_7_0_0() { return cListListParserRuleCall_7_0_0; }
+		//Literal
+		public RuleCall getLiteralLiteralParserRuleCall_7_0_0() { return cLiteralLiteralParserRuleCall_7_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_7_1() { return cHyphenMinusGreaterThanSignKeyword_7_1; }
@@ -2428,53 +2435,53 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_7_2_0() { return cBodyStatementListParserRuleCall_7_2_0; }
 		
-		//'in' set=List '->' body=StatementList
+		//list=List '->' body=StatementList
 		public Group getGroup_8() { return cGroup_8; }
 		
-		//'in'
-		public Keyword getInKeyword_8_0() { return cInKeyword_8_0; }
-		
-		//set=List
-		public Assignment getSetAssignment_8_1() { return cSetAssignment_8_1; }
+		//list=List
+		public Assignment getListAssignment_8_0() { return cListAssignment_8_0; }
 		
 		//List
-		public RuleCall getSetListParserRuleCall_8_1_0() { return cSetListParserRuleCall_8_1_0; }
+		public RuleCall getListListParserRuleCall_8_0_0() { return cListListParserRuleCall_8_0_0; }
 		
 		//'->'
-		public Keyword getHyphenMinusGreaterThanSignKeyword_8_2() { return cHyphenMinusGreaterThanSignKeyword_8_2; }
+		public Keyword getHyphenMinusGreaterThanSignKeyword_8_1() { return cHyphenMinusGreaterThanSignKeyword_8_1; }
 		
 		//body=StatementList
-		public Assignment getBodyAssignment_8_3() { return cBodyAssignment_8_3; }
+		public Assignment getBodyAssignment_8_2() { return cBodyAssignment_8_2; }
 		
 		//StatementList
-		public RuleCall getBodyStatementListParserRuleCall_8_3_0() { return cBodyStatementListParserRuleCall_8_3_0; }
+		public RuleCall getBodyStatementListParserRuleCall_8_2_0() { return cBodyStatementListParserRuleCall_8_2_0; }
 		
-		//quantity=Quantity '->' body=StatementList
+		//'in' set=List '->' body=StatementList
 		public Group getGroup_9() { return cGroup_9; }
 		
-		//quantity=Quantity
-		public Assignment getQuantityAssignment_9_0() { return cQuantityAssignment_9_0; }
+		//'in'
+		public Keyword getInKeyword_9_0() { return cInKeyword_9_0; }
 		
-		//Quantity
-		public RuleCall getQuantityQuantityParserRuleCall_9_0_0() { return cQuantityQuantityParserRuleCall_9_0_0; }
+		//set=List
+		public Assignment getSetAssignment_9_1() { return cSetAssignment_9_1; }
+		
+		//List
+		public RuleCall getSetListParserRuleCall_9_1_0() { return cSetListParserRuleCall_9_1_0; }
 		
 		//'->'
-		public Keyword getHyphenMinusGreaterThanSignKeyword_9_1() { return cHyphenMinusGreaterThanSignKeyword_9_1; }
+		public Keyword getHyphenMinusGreaterThanSignKeyword_9_2() { return cHyphenMinusGreaterThanSignKeyword_9_2; }
 		
 		//body=StatementList
-		public Assignment getBodyAssignment_9_2() { return cBodyAssignment_9_2; }
+		public Assignment getBodyAssignment_9_3() { return cBodyAssignment_9_3; }
 		
 		//StatementList
-		public RuleCall getBodyStatementListParserRuleCall_9_2_0() { return cBodyStatementListParserRuleCall_9_2_0; }
+		public RuleCall getBodyStatementListParserRuleCall_9_3_0() { return cBodyStatementListParserRuleCall_9_3_0; }
 		
-		//expr=EXPR '->' body=StatementList
+		//quantity=Quantity '->' body=StatementList
 		public Group getGroup_10() { return cGroup_10; }
 		
-		//expr=EXPR
-		public Assignment getExprAssignment_10_0() { return cExprAssignment_10_0; }
+		//quantity=Quantity
+		public Assignment getQuantityAssignment_10_0() { return cQuantityAssignment_10_0; }
 		
-		//EXPR
-		public RuleCall getExprEXPRTerminalRuleCall_10_0_0() { return cExprEXPRTerminalRuleCall_10_0_0; }
+		//Quantity
+		public RuleCall getQuantityQuantityParserRuleCall_10_0_0() { return cQuantityQuantityParserRuleCall_10_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_10_1() { return cHyphenMinusGreaterThanSignKeyword_10_1; }
@@ -2485,14 +2492,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_10_2_0() { return cBodyStatementListParserRuleCall_10_2_0; }
 		
-		//nodata='unknown' '->' body=StatementList
+		//expr=EXPR '->' body=StatementList
 		public Group getGroup_11() { return cGroup_11; }
 		
-		//nodata='unknown'
-		public Assignment getNodataAssignment_11_0() { return cNodataAssignment_11_0; }
+		//expr=EXPR
+		public Assignment getExprAssignment_11_0() { return cExprAssignment_11_0; }
 		
-		//'unknown'
-		public Keyword getNodataUnknownKeyword_11_0_0() { return cNodataUnknownKeyword_11_0_0; }
+		//EXPR
+		public RuleCall getExprEXPRTerminalRuleCall_11_0_0() { return cExprEXPRTerminalRuleCall_11_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_11_1() { return cHyphenMinusGreaterThanSignKeyword_11_1; }
@@ -2503,14 +2510,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_11_2_0() { return cBodyStatementListParserRuleCall_11_2_0; }
 		
-		//star?='*' '->' body=StatementList
+		//nodata='unknown' '->' body=StatementList
 		public Group getGroup_12() { return cGroup_12; }
 		
-		//star?='*'
-		public Assignment getStarAssignment_12_0() { return cStarAssignment_12_0; }
+		//nodata='unknown'
+		public Assignment getNodataAssignment_12_0() { return cNodataAssignment_12_0; }
 		
-		//'*'
-		public Keyword getStarAsteriskKeyword_12_0_0() { return cStarAsteriskKeyword_12_0_0; }
+		//'unknown'
+		public Keyword getNodataUnknownKeyword_12_0_0() { return cNodataUnknownKeyword_12_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_12_1() { return cHyphenMinusGreaterThanSignKeyword_12_1; }
@@ -2521,14 +2528,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_12_2_0() { return cBodyStatementListParserRuleCall_12_2_0; }
 		
-		//anything?='#' '->' body=StatementList
+		//star?='*' '->' body=StatementList
 		public Group getGroup_13() { return cGroup_13; }
 		
-		//anything?='#'
-		public Assignment getAnythingAssignment_13_0() { return cAnythingAssignment_13_0; }
+		//star?='*'
+		public Assignment getStarAssignment_13_0() { return cStarAssignment_13_0; }
 		
-		//'#'
-		public Keyword getAnythingNumberSignKeyword_13_0_0() { return cAnythingNumberSignKeyword_13_0_0; }
+		//'*'
+		public Keyword getStarAsteriskKeyword_13_0_0() { return cStarAsteriskKeyword_13_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_13_1() { return cHyphenMinusGreaterThanSignKeyword_13_1; }
@@ -2539,14 +2546,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_13_2_0() { return cBodyStatementListParserRuleCall_13_2_0; }
 		
-		//empty?='empty' '->' body=StatementList
+		//anything?='#' '->' body=StatementList
 		public Group getGroup_14() { return cGroup_14; }
 		
-		//empty?='empty'
-		public Assignment getEmptyAssignment_14_0() { return cEmptyAssignment_14_0; }
+		//anything?='#'
+		public Assignment getAnythingAssignment_14_0() { return cAnythingAssignment_14_0; }
 		
-		//'empty'
-		public Keyword getEmptyEmptyKeyword_14_0_0() { return cEmptyEmptyKeyword_14_0_0; }
+		//'#'
+		public Keyword getAnythingNumberSignKeyword_14_0_0() { return cAnythingNumberSignKeyword_14_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_14_1() { return cHyphenMinusGreaterThanSignKeyword_14_1; }
@@ -2557,14 +2564,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_14_2_0() { return cBodyStatementListParserRuleCall_14_2_0; }
 		
-		//exception?='exception' '->' body=StatementList
+		//empty?='empty' '->' body=StatementList
 		public Group getGroup_15() { return cGroup_15; }
 		
-		//exception?='exception'
-		public Assignment getExceptionAssignment_15_0() { return cExceptionAssignment_15_0; }
+		//empty?='empty'
+		public Assignment getEmptyAssignment_15_0() { return cEmptyAssignment_15_0; }
 		
-		//'exception'
-		public Keyword getExceptionExceptionKeyword_15_0_0() { return cExceptionExceptionKeyword_15_0_0; }
+		//'empty'
+		public Keyword getEmptyEmptyKeyword_15_0_0() { return cEmptyEmptyKeyword_15_0_0; }
 		
 		//'->'
 		public Keyword getHyphenMinusGreaterThanSignKeyword_15_1() { return cHyphenMinusGreaterThanSignKeyword_15_1; }
@@ -2574,6 +2581,24 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//StatementList
 		public RuleCall getBodyStatementListParserRuleCall_15_2_0() { return cBodyStatementListParserRuleCall_15_2_0; }
+		
+		//exception?='exception' '->' body=StatementList
+		public Group getGroup_16() { return cGroup_16; }
+		
+		//exception?='exception'
+		public Assignment getExceptionAssignment_16_0() { return cExceptionAssignment_16_0; }
+		
+		//'exception'
+		public Keyword getExceptionExceptionKeyword_16_0_0() { return cExceptionExceptionKeyword_16_0_0; }
+		
+		//'->'
+		public Keyword getHyphenMinusGreaterThanSignKeyword_16_1() { return cHyphenMinusGreaterThanSignKeyword_16_1; }
+		
+		//body=StatementList
+		public Assignment getBodyAssignment_16_2() { return cBodyAssignment_16_2; }
+		
+		//StatementList
+		public RuleCall getBodyStatementListParserRuleCall_16_2_0() { return cBodyStatementListParserRuleCall_16_2_0; }
 	}
 	public class UrnIdElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.UrnId");
@@ -6551,10 +6576,10 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//Match:
-	//	id=LOWERCASE_ID '->' body=StatementList | constant=UPPERCASE_ID '->' body=StatementList | boolean=('true' | 'false')
-	//	'->' body=StatementList | type=CAMELCASE_ID '->' body=StatementList | regexp=REGEXP '->' body=StatementList |
-	//	observable=Observable '->' body=StatementList | literal=Literal '->' body=StatementList | list=List '->'
-	//	body=StatementList |
+	//	id=LOWERCASE_ID '->' body=StatementList | annotation=ANNOTATION_ID '->' body=StatementList | constant=UPPERCASE_ID
+	//	'->' body=StatementList | boolean=('true' | 'false') '->' body=StatementList | type=CAMELCASE_ID '->'
+	//	body=StatementList | regexp=REGEXP '->' body=StatementList | observable=Observable '->' body=StatementList |
+	//	literal=Literal '->' body=StatementList | list=List '->' body=StatementList |
 	//	'in' set=List '->' body=StatementList | quantity=Quantity '->' body=StatementList | expr=EXPR '->' body=StatementList
 	//	| nodata='unknown' '->' body=StatementList | star?='*' '->' body=StatementList | anything?='#' '->'
 	//	body=StatementList | empty?='empty' '->' body=StatementList | exception?='exception' '->' body=StatementList;
