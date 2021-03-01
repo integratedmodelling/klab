@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="8.0.11" transformSequenceNumber="8">
-  <directoryPresets config="./src/main/deploy/package/images" />
-  <application name="k.LAB Control Center" applicationId="3443-1218-3478-1447" mediaDir="target/media" shortName="controlcenter" publisher="The Integrated Modelling Partnership" publisherWeb="https://integratedmodelling.org/" version="1.1" allPathsRelative="true" macVolumeId="5755f304874440a" javaMinVersion="1.8" javaMaxVersion="1.8" jdkMode="jdk" jdkName="JDK 1.8">
+  <directoryPresets config="./src/main/deploy/package/windows" />
+  <application name="k.LAB Control Center" applicationId="3443-1218-3478-1447" mediaDir="target/media" shortName="klab" publisher="The Integrated Modelling Partnership" publisherWeb="https://integratedmodelling.org/" version="1.1" allPathsRelative="true" macVolumeId="5755f304874440a" javaMinVersion="1.8" javaMaxVersion="1.8" jdkMode="jdk" jdkName="JDK 1.8">
     <jreBundles jdkProviderId="Liberica" release="OpenJDK 8u282+8" />
   </application>
   <files>
@@ -13,8 +13,8 @@
     </entries>
   </files>
   <launchers>
-    <launcher name="controlcenter" id="38">
-      <executable name="controlcenter" iconSet="true" executableMode="gui" executionLevel="highestAvailable" />
+    <launcher name="controlcenter" id="38" menuName="k.LAB">
+      <executable name="k.LAB" iconSet="true" executableMode="gui" executionLevel="highestAvailable" />
       <java mainClass="org.integratedmodelling.controlcenter.ControlCenter">
         <classPath>
           <archive location="controlcenter-0.10.0-SNAPSHOT-jfx.jar" failOnError="false" />
@@ -208,13 +208,14 @@ return console.askOkCancel(message, true);
               <action id="17" beanClass="com.install4j.runtime.beans.actions.InstallFilesAction" actionElevationType="elevated" rollbackBarrierExitCode="0" failureStrategy="quit" errorMessage="${i18n:FileCorrupted}" />
               <action id="18" beanClass="com.install4j.runtime.beans.actions.desktop.CreateProgramGroupAction" actionElevationType="elevated" rollbackBarrierExitCode="0">
                 <serializedBean>
+                  <property name="addUninstaller" type="boolean" value="true" />
                   <property name="uninstallerMenuName" type="string">${i18n:UninstallerMenuEntry(${compiler:sys.fullName})}</property>
                 </serializedBean>
                 <condition>!context.getBooleanVariable("sys.programGroupDisabled")</condition>
               </action>
               <action id="19" beanClass="com.install4j.runtime.beans.actions.desktop.RegisterAddRemoveAction" actionElevationType="elevated" rollbackBarrierExitCode="0">
                 <serializedBean>
-                  <property name="itemName" type="string">${compiler:sys.fullName} ${compiler:sys.version}</property>
+                  <property name="itemName" type="string">${compiler:sys.fullName}</property>
                 </serializedBean>
               </action>
             </actions>
