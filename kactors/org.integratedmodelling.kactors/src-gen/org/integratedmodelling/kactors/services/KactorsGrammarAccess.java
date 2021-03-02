@@ -1685,16 +1685,26 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cTableLookupTableParserRuleCall_12_0 = (RuleCall)cTableAssignment_12.eContents().get(0);
 		private final Assignment cQuantityAssignment_13 = (Assignment)cAlternatives.eContents().get(13);
 		private final RuleCall cQuantityQuantityParserRuleCall_13_0 = (RuleCall)cQuantityAssignment_13.eContents().get(0);
+		private final Group cGroup_14 = (Group)cAlternatives.eContents().get(14);
+		private final Assignment cComponentAssignment_14_0 = (Assignment)cGroup_14.eContents().get(0);
+		private final Keyword cComponentNewKeyword_14_0_0 = (Keyword)cComponentAssignment_14_0.eContents().get(0);
+		private final Assignment cBehaviorAssignment_14_1 = (Assignment)cGroup_14.eContents().get(1);
+		private final RuleCall cBehaviorPathNameParserRuleCall_14_1_0 = (RuleCall)cBehaviorAssignment_14_1.eContents().get(0);
+		private final Group cGroup_14_2 = (Group)cGroup_14.eContents().get(2);
+		private final Keyword cLeftParenthesisKeyword_14_2_0 = (Keyword)cGroup_14_2.eContents().get(0);
+		private final Assignment cParametersAssignment_14_2_1 = (Assignment)cGroup_14_2.eContents().get(1);
+		private final RuleCall cParametersParameterListParserRuleCall_14_2_1_0 = (RuleCall)cParametersAssignment_14_2_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_14_2_2 = (Keyword)cGroup_14_2.eContents().get(2);
 		
 		//ValueWithConstructor Value:
 		//	constructor=Constructor | tree=Tree | empty?='empty' | argvalue=ARGVALUE | literal=Literal | urn=UrnId | id=PathName
 		//	| list=List | map=Map | constant=UPPERCASE_ID | observable=Observable | expression=EXPR | table=LookupTable |
-		//	quantity=Quantity;
+		//	quantity=Quantity | component?='new' behavior=PathName ('(' parameters=ParameterList? ')')?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//constructor=Constructor | tree=Tree | empty?='empty' | argvalue=ARGVALUE | literal=Literal | urn=UrnId | id=PathName |
 		//list=List | map=Map | constant=UPPERCASE_ID | observable=Observable | expression=EXPR | table=LookupTable |
-		//quantity=Quantity
+		//quantity=Quantity | component?='new' behavior=PathName ('(' parameters=ParameterList? ')')?
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//constructor=Constructor
@@ -1780,6 +1790,36 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//Quantity
 		public RuleCall getQuantityQuantityParserRuleCall_13_0() { return cQuantityQuantityParserRuleCall_13_0; }
+		
+		//component?='new' behavior=PathName ('(' parameters=ParameterList? ')')?
+		public Group getGroup_14() { return cGroup_14; }
+		
+		//component?='new'
+		public Assignment getComponentAssignment_14_0() { return cComponentAssignment_14_0; }
+		
+		//'new'
+		public Keyword getComponentNewKeyword_14_0_0() { return cComponentNewKeyword_14_0_0; }
+		
+		//behavior=PathName
+		public Assignment getBehaviorAssignment_14_1() { return cBehaviorAssignment_14_1; }
+		
+		//PathName
+		public RuleCall getBehaviorPathNameParserRuleCall_14_1_0() { return cBehaviorPathNameParserRuleCall_14_1_0; }
+		
+		//('(' parameters=ParameterList? ')')?
+		public Group getGroup_14_2() { return cGroup_14_2; }
+		
+		//'('
+		public Keyword getLeftParenthesisKeyword_14_2_0() { return cLeftParenthesisKeyword_14_2_0; }
+		
+		//parameters=ParameterList?
+		public Assignment getParametersAssignment_14_2_1() { return cParametersAssignment_14_2_1; }
+		
+		//ParameterList
+		public RuleCall getParametersParameterListParserRuleCall_14_2_1_0() { return cParametersParameterListParserRuleCall_14_2_1_0; }
+		
+		//')'
+		public Keyword getRightParenthesisKeyword_14_2_2() { return cRightParenthesisKeyword_14_2_2; }
 	}
 	public class ConstructorElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Constructor");
@@ -3760,15 +3800,15 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cInteractiveQuestionMarkEqualsSignKeyword_1_0_1_0_0 = (Keyword)cInteractiveAssignment_1_0_1_0.eContents().get(0);
 		private final Keyword cEqualsSignKeyword_1_0_1_1 = (Keyword)cAlternatives_1_0_1.eContents().get(1);
 		private final Assignment cValueAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cValueValueParserRuleCall_1_1_0 = (RuleCall)cValueAssignment_1_1.eContents().get(0);
+		private final RuleCall cValueValueWithConstructorParserRuleCall_1_1_0 = (RuleCall)cValueAssignment_1_1.eContents().get(0);
 		private final Assignment cKeyAssignment_2 = (Assignment)cAlternatives.eContents().get(2);
 		private final RuleCall cKeyKEYTerminalRuleCall_2_0 = (RuleCall)cKeyAssignment_2.eContents().get(0);
 		
 		//KeyValuePair:
-		//	tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value | key=KEY;
+		//	tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=ValueWithConstructor | key=KEY;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value | key=KEY
+		//tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=ValueWithConstructor | key=KEY
 		public Alternatives getAlternatives() { return cAlternatives; }
 		
 		//tag=TAG
@@ -3777,7 +3817,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//TAG
 		public RuleCall getTagTAGTerminalRuleCall_0_0() { return cTagTAGTerminalRuleCall_0_0; }
 		
-		//(name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value
+		//(name=LOWERCASE_ID (interactive?='?=' | '='))? value=ValueWithConstructor
 		public Group getGroup_1() { return cGroup_1; }
 		
 		//(name=LOWERCASE_ID (interactive?='?=' | '='))?
@@ -3801,11 +3841,11 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//'='
 		public Keyword getEqualsSignKeyword_1_0_1_1() { return cEqualsSignKeyword_1_0_1_1; }
 		
-		//value=Value
+		//value=ValueWithConstructor
 		public Assignment getValueAssignment_1_1() { return cValueAssignment_1_1; }
 		
-		//Value
-		public RuleCall getValueValueParserRuleCall_1_1_0() { return cValueValueParserRuleCall_1_1_0; }
+		//ValueWithConstructor
+		public RuleCall getValueValueWithConstructorParserRuleCall_1_1_0() { return cValueValueWithConstructorParserRuleCall_1_1_0; }
 		
 		//key=KEY
 		public Assignment getKeyAssignment_2() { return cKeyAssignment_2; }
@@ -6523,7 +6563,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	//ValueWithConstructor Value:
 	//	constructor=Constructor | tree=Tree | empty?='empty' | argvalue=ARGVALUE | literal=Literal | urn=UrnId | id=PathName
 	//	| list=List | map=Map | constant=UPPERCASE_ID | observable=Observable | expression=EXPR | table=LookupTable |
-	//	quantity=Quantity;
+	//	quantity=Quantity | component?='new' behavior=PathName ('(' parameters=ParameterList? ')')?;
 	public ValueWithConstructorElements getValueWithConstructorAccess() {
 		return pValueWithConstructor;
 	}
@@ -6786,7 +6826,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//KeyValuePair:
-	//	tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=Value | key=KEY;
+	//	tag=TAG | (name=LOWERCASE_ID (interactive?='?=' | '='))? value=ValueWithConstructor | key=KEY;
 	public KeyValuePairElements getKeyValuePairAccess() {
 		return pKeyValuePair;
 	}

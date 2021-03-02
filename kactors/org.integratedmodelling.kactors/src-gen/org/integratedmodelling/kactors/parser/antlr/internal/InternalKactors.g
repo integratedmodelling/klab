@@ -3447,6 +3447,71 @@ ruleValueWithConstructor returns [EObject current=null]
 				}
 			)
 		)
+		    |
+		(
+			(
+				(
+					lv_component_14_0='new'
+					{
+						newLeafNode(lv_component_14_0, grammarAccess.getValueWithConstructorAccess().getComponentNewKeyword_14_0_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getValueWithConstructorRule());
+						}
+						setWithLastConsumed($current, "component", true, "new");
+					}
+				)
+			)
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithConstructorAccess().getBehaviorPathNameParserRuleCall_14_1_0());
+					}
+					lv_behavior_15_0=rulePathName
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
+						}
+						set(
+							$current,
+							"behavior",
+							lv_behavior_15_0,
+							"org.integratedmodelling.kactors.Kactors.PathName");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			(
+				otherlv_16='('
+				{
+					newLeafNode(otherlv_16, grammarAccess.getValueWithConstructorAccess().getLeftParenthesisKeyword_14_2_0());
+				}
+				(
+					(
+						{
+							newCompositeNode(grammarAccess.getValueWithConstructorAccess().getParametersParameterListParserRuleCall_14_2_1_0());
+						}
+						lv_parameters_17_0=ruleParameterList
+						{
+							if ($current==null) {
+								$current = createModelElementForParent(grammarAccess.getValueWithConstructorRule());
+							}
+							set(
+								$current,
+								"parameters",
+								lv_parameters_17_0,
+								"org.integratedmodelling.kactors.Kactors.ParameterList");
+							afterParserOrEnumRuleCall();
+						}
+					)
+				)?
+				otherlv_18=')'
+				{
+					newLeafNode(otherlv_18, grammarAccess.getValueWithConstructorAccess().getRightParenthesisKeyword_14_2_2());
+				}
+			)?
+		)
 	)
 ;
 
@@ -6952,9 +7017,9 @@ ruleKeyValuePair returns [EObject current=null]
 			(
 				(
 					{
-						newCompositeNode(grammarAccess.getKeyValuePairAccess().getValueValueParserRuleCall_1_1_0());
+						newCompositeNode(grammarAccess.getKeyValuePairAccess().getValueValueWithConstructorParserRuleCall_1_1_0());
 					}
-					lv_value_4_0=ruleValue
+					lv_value_4_0=ruleValueWithConstructor
 					{
 						if ($current==null) {
 							$current = createModelElementForParent(grammarAccess.getKeyValuePairRule());
@@ -6963,7 +7028,7 @@ ruleKeyValuePair returns [EObject current=null]
 							$current,
 							"value",
 							lv_value_4_0,
-							"org.integratedmodelling.kactors.Kactors.Value");
+							"org.integratedmodelling.kactors.Kactors.ValueWithConstructor");
 						afterParserOrEnumRuleCall();
 					}
 				)

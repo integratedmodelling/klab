@@ -51,7 +51,13 @@ public interface IKActorsValue extends IKActorsCodeStatement {
 		/**
 		 * Only for matching any object that has a specified annotation. 
 		 */
-		ANNOTATION	
+		ANNOTATION, 
+		
+		/**
+		 * A component path and possibly arguments passed after 'new'
+		 */
+		COMPONENT
+		
 	}
 
 	/**

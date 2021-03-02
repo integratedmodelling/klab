@@ -1883,9 +1883,42 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EAttribute getValue_Component()
+  {
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(14);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getValue_Behavior()
+  {
+    return (EAttribute)valueEClass.getEStructuralFeatures().get(15);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getValue_Parameters()
+  {
+    return (EReference)valueEClass.getEStructuralFeatures().get(16);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getValue_Metadata()
   {
-    return (EReference)valueEClass.getEStructuralFeatures().get(14);
+    return (EReference)valueEClass.getEStructuralFeatures().get(17);
   }
 
   /**
@@ -4364,6 +4397,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(valueEClass, VALUE__TABLE);
     createEReference(valueEClass, VALUE__QUANTITY);
     createEReference(valueEClass, VALUE__CONSTRUCTOR);
+    createEAttribute(valueEClass, VALUE__COMPONENT);
+    createEAttribute(valueEClass, VALUE__BEHAVIOR);
+    createEReference(valueEClass, VALUE__PARAMETERS);
     createEReference(valueEClass, VALUE__METADATA);
 
     constructorEClass = createEClass(CONSTRUCTOR);
@@ -4784,6 +4820,9 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getValue_Table(), this.getLookupTable(), null, "table", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Quantity(), this.getQuantity(), null, "quantity", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Constructor(), this.getConstructor(), null, "constructor", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getValue_Component(), ecorePackage.getEBoolean(), "component", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getValue_Behavior(), ecorePackage.getEString(), "behavior", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getValue_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getValue_Metadata(), this.getMetadata(), null, "metadata", null, 0, 1, Value.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(constructorEClass, Constructor.class, "Constructor", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);

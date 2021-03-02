@@ -177,7 +177,7 @@ Value:
 	observable=Observable | 
 	expression=EXPR |
 	table=LookupTable |
-	quantity=Quantity
+	quantity=Quantity 
 	;
 
 ValueWithConstructor returns Value:
@@ -194,7 +194,8 @@ ValueWithConstructor returns Value:
 	observable=Observable | 
 	expression=EXPR |
 	table=LookupTable |
-	quantity=Quantity
+	quantity=Quantity  |
+	component?='new' behavior=PathName ('(' (parameters=ParameterList)? ')')?
 	;
 
 Constructor:
@@ -360,7 +361,7 @@ ParameterList:
 	
 KeyValuePair:
     tag=TAG |
-	(name=(LOWERCASE_ID) (interactive?='?=' | '='))? value=Value |
+	(name=(LOWERCASE_ID) (interactive?='?=' | '='))? value=ValueWithConstructor |
     key=KEY 
 ;
 

@@ -159,6 +159,8 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getForStatementAccess().getGroup_1(), "rule__ForStatement__Group_1__0");
 			builder.put(grammarAccess.getActionsAccess().getGroup_1(), "rule__Actions__Group_1__0");
 			builder.put(grammarAccess.getActionsAccess().getGroup_3(), "rule__Actions__Group_3__0");
+			builder.put(grammarAccess.getValueWithConstructorAccess().getGroup_14(), "rule__ValueWithConstructor__Group_14__0");
+			builder.put(grammarAccess.getValueWithConstructorAccess().getGroup_14_2(), "rule__ValueWithConstructor__Group_14_2__0");
 			builder.put(grammarAccess.getConstructorAccess().getGroup(), "rule__Constructor__Group__0");
 			builder.put(grammarAccess.getConstructorAccess().getGroup_0(), "rule__Constructor__Group_0__0");
 			builder.put(grammarAccess.getConstructorAccess().getGroup_2(), "rule__Constructor__Group_2__0");
@@ -437,6 +439,9 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getValueWithConstructorAccess().getExpressionAssignment_11(), "rule__ValueWithConstructor__ExpressionAssignment_11");
 			builder.put(grammarAccess.getValueWithConstructorAccess().getTableAssignment_12(), "rule__ValueWithConstructor__TableAssignment_12");
 			builder.put(grammarAccess.getValueWithConstructorAccess().getQuantityAssignment_13(), "rule__ValueWithConstructor__QuantityAssignment_13");
+			builder.put(grammarAccess.getValueWithConstructorAccess().getComponentAssignment_14_0(), "rule__ValueWithConstructor__ComponentAssignment_14_0");
+			builder.put(grammarAccess.getValueWithConstructorAccess().getBehaviorAssignment_14_1(), "rule__ValueWithConstructor__BehaviorAssignment_14_1");
+			builder.put(grammarAccess.getValueWithConstructorAccess().getParametersAssignment_14_2_1(), "rule__ValueWithConstructor__ParametersAssignment_14_2_1");
 			builder.put(grammarAccess.getConstructorAccess().getPathAssignment_0_0(), "rule__Constructor__PathAssignment_0_0");
 			builder.put(grammarAccess.getConstructorAccess().getClassidAssignment_1(), "rule__Constructor__ClassidAssignment_1");
 			builder.put(grammarAccess.getConstructorAccess().getParametersAssignment_2_1(), "rule__Constructor__ParametersAssignment_2_1");

@@ -1394,13 +1394,40 @@ public interface KactorsPackage extends EPackage
   int VALUE__CONSTRUCTOR = 13;
 
   /**
+   * The feature id for the '<em><b>Component</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__COMPONENT = 14;
+
+  /**
+   * The feature id for the '<em><b>Behavior</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__BEHAVIOR = 15;
+
+  /**
+   * The feature id for the '<em><b>Parameters</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__PARAMETERS = 16;
+
+  /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__METADATA = 14;
+  int VALUE__METADATA = 17;
 
   /**
    * The number of structural features of the '<em>Value</em>' class.
@@ -1409,7 +1436,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 15;
+  int VALUE_FEATURE_COUNT = 18;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ConstructorImpl <em>Constructor</em>}' class.
@@ -4950,6 +4977,39 @@ public interface KactorsPackage extends EPackage
   EReference getValue_Constructor();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#isComponent <em>Component</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Component</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#isComponent()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Component();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#getBehavior <em>Behavior</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Behavior</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#getBehavior()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Behavior();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getParameters <em>Parameters</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Parameters</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#getParameters()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Parameters();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getMetadata <em>Metadata</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -8301,6 +8361,30 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference VALUE__CONSTRUCTOR = eINSTANCE.getValue_Constructor();
+
+    /**
+     * The meta object literal for the '<em><b>Component</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__COMPONENT = eINSTANCE.getValue_Component();
+
+    /**
+     * The meta object literal for the '<em><b>Behavior</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__BEHAVIOR = eINSTANCE.getValue_Behavior();
+
+    /**
+     * The meta object literal for the '<em><b>Parameters</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__PARAMETERS = eINSTANCE.getValue_Parameters();
 
     /**
      * The meta object literal for the '<em><b>Metadata</b></em>' containment reference feature.

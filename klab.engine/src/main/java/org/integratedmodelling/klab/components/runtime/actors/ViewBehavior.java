@@ -566,6 +566,7 @@ public class ViewBehavior {
         @Override
         protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
             if ("add".equals(message.message)) {
+                System.out.println("ADDING " + message);
                 // this.component.getAttributes().put("selected",
                 // getDefaultAsString(message.arguments, this, scope));
             } else if ("remove".equals(message.message)) {
