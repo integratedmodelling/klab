@@ -754,7 +754,7 @@ public class SearchContext implements IIndexingService.Context {
 				break;
 			case IN:
 				ret.nextTokenType = meaning.getSemantics().contains(IKimConcept.Type.MONEY)
-						|| meaning.getSemantics().contains(IKimConcept.Type.MONETARY) 
+						|| meaning.getSemantics().contains(IKimConcept.Type.MONETARY_VALUE) 
 							? TokenClass.CURRENCY
 							: TokenClass.UNIT;
 				ret.allow(Constraint.unit(meaning.getSemantics()));

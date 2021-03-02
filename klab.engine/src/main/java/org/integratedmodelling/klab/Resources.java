@@ -413,7 +413,7 @@ public enum Resources implements IResourceService {
 	}
 
 	public IResourceAdapter getResourceAdapter(String id) {
-		return resourceAdapters.get(id).adapter;
+		return resourceAdapters.containsKey(id) ? resourceAdapters.get(id).adapter : null;
 	}
 
 	public IUrnAdapter getUrnAdapter(String id) {
@@ -1074,7 +1074,7 @@ public enum Resources implements IResourceService {
 
 			IContextualizationScope context = Expression.emptyContext(geometry, monitor);
 			try {
-				adapter.getEncodedData(kurn, builder, geometry, context);
+				adapter.encodeData(kurn, builder, geometry, context);
 			} catch (Throwable e) {
 				// just return null later
 				context.getMonitor().error("could not extract data from " + urn + ": " + e.getMessage());
@@ -1159,7 +1159,7 @@ public enum Resources implements IResourceService {
 
 				IKlabData.Builder builder = new LocalDataBuilder((IRuntimeScope) context);
 				try {
-					adapter.getEncodedData(urn, builder, geometry, context);
+					adapter.encodeData(urn, builder, geometry, context);
 					IKlabData ret = builder.build();
 					if (descriptor != null) {
 						long elapsed = System.currentTimeMillis() - start;
@@ -1291,8 +1291,9 @@ public enum Resources implements IResourceService {
 				}
 
 				VisitingDataBuilder builder = new VisitingDataBuilder();
-				IKlabData data = adapter.getEncodedData(kurn, builder, null, null);
-
+				adapter.encodeData(kurn, builder, null, null);
+				IKlabData data = builder.build();
+				
 				// resource specifies one object
 				if (data.getObjectCount() == 1) {
 
@@ -1420,6 +1421,9 @@ public enum Resources implements IResourceService {
 			return publicResourceCatalog.isOnline(urn);
 		}
 		IResource resource = resolveResource(urn);
+		if (resource == null) {
+		    Klab.INSTANCE.getRootMonitor().error("non-existent resource referenced: " + urn);
+		}
 		return resource == null ? false : isResourceOnline(resource);
 	}
 

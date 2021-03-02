@@ -1005,9 +1005,20 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
    * @generated
    */
   @Override
+  public EAttribute getModelBodyStatement_Twoway()
+  {
+    return (EAttribute)modelBodyStatementEClass.getEStructuralFeatures().get(16);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getModelBodyStatement_Actions()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(16);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(17);
   }
 
   /**
@@ -1018,7 +1029,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   @Override
   public EReference getModelBodyStatement_Metadata()
   {
-    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(17);
+    return (EReference)modelBodyStatementEClass.getEStructuralFeatures().get(18);
   }
 
   /**
@@ -1052,6 +1063,17 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   public EReference getLookupTableArgument_Concept()
   {
     return (EReference)lookupTableArgumentEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getLookupTableArgument_Key()
+  {
+    return (EAttribute)lookupTableArgumentEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1437,6 +1459,17 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
   public EReference getTable_Rows()
   {
     return (EReference)tableEClass.getEStructuralFeatures().get(1);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getTable_ColumnClassifiers()
+  {
+    return (EReference)tableEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -5553,12 +5586,14 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS);
     createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__LOOKUP_TABLE);
     createEAttribute(modelBodyStatementEClass, MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID);
+    createEAttribute(modelBodyStatementEClass, MODEL_BODY_STATEMENT__TWOWAY);
     createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__ACTIONS);
     createEReference(modelBodyStatementEClass, MODEL_BODY_STATEMENT__METADATA);
 
     lookupTableArgumentEClass = createEClass(LOOKUP_TABLE_ARGUMENT);
     createEAttribute(lookupTableArgumentEClass, LOOKUP_TABLE_ARGUMENT__ID);
     createEReference(lookupTableArgumentEClass, LOOKUP_TABLE_ARGUMENT__CONCEPT);
+    createEAttribute(lookupTableArgumentEClass, LOOKUP_TABLE_ARGUMENT__KEY);
 
     classificationEClass = createEClass(CLASSIFICATION);
     createEReference(classificationEClass, CLASSIFICATION__CLASSIFIERS);
@@ -5600,6 +5635,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     tableEClass = createEClass(TABLE);
     createEReference(tableEClass, TABLE__HEADERS);
     createEReference(tableEClass, TABLE__ROWS);
+    createEReference(tableEClass, TABLE__COLUMN_CLASSIFIERS);
 
     headerRowEClass = createEClass(HEADER_ROW);
     createEAttribute(headerRowEClass, HEADER_ROW__ELEMENTS);
@@ -6043,6 +6079,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     // Set bounds for type parameters
 
     // Add supertypes to classes
+    classifierRHSEClass.getESuperTypes().add(this.getTableRow());
 
     // Initialize classes and features; add operations and parameters
     initEClass(modelEClass, Model.class, "Model", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
@@ -6091,12 +6128,14 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEReference(getModelBodyStatement_LookupTableArgs(), this.getLookupTableArgument(), null, "lookupTableArgs", null, 0, -1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModelBodyStatement_LookupTable(), this.getTable(), null, "lookupTable", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getModelBodyStatement_LookupTableId(), ecorePackage.getEString(), "lookupTableId", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getModelBodyStatement_Twoway(), ecorePackage.getEBoolean(), "twoway", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModelBodyStatement_Actions(), this.getActionSpecification(), null, "actions", null, 0, -1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getModelBodyStatement_Metadata(), this.getMap(), null, "metadata", null, 0, 1, ModelBodyStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(lookupTableArgumentEClass, LookupTableArgument.class, "LookupTableArgument", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getLookupTableArgument_Id(), ecorePackage.getEString(), "id", null, 0, 1, LookupTableArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getLookupTableArgument_Concept(), this.getConceptDeclaration(), null, "concept", null, 0, 1, LookupTableArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getLookupTableArgument_Key(), ecorePackage.getEString(), "key", null, 0, 1, LookupTableArgument.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(classificationEClass, Classification.class, "Classification", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getClassification_Classifiers(), this.getClassifier(), null, "classifiers", null, 0, -1, Classification.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
@@ -6138,6 +6177,7 @@ public class KimPackageImpl extends EPackageImpl implements KimPackage
     initEClass(tableEClass, Table.class, "Table", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getTable_Headers(), this.getHeaderRow(), null, "headers", null, 0, 1, Table.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getTable_Rows(), this.getTableRow(), null, "rows", null, 0, -1, Table.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getTable_ColumnClassifiers(), this.getTableRow(), null, "columnClassifiers", null, 0, 1, Table.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(headerRowEClass, HeaderRow.class, "HeaderRow", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getHeaderRow_Elements(), ecorePackage.getEString(), "elements", null, 0, -1, HeaderRow.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, !IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

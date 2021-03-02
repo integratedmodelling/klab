@@ -144,6 +144,7 @@ public abstract class TableInterpreter implements ITableInterpreter {
 
 				strategy.encodedDimension = Time.create(new TimeInstant(start), new TimeInstant(end), resolution)
 						.encode();
+				timeEncoding = strategy.encodedDimension;
 
 				TableAdapter.runtimeData.put(resource.getUrn() + "_time", strategy);
 

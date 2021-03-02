@@ -153,29 +153,6 @@ public class Resolver {
         ResolutionScope ret = null;
         if (resolvable instanceof Observable) {
 
-            // Coverage coverage = null;
-            // parentScope.setOriginalScope(
-            // ((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE :
-            // Scope.MODEL);
-
-            // for (IObservable observable : resolveAbstractPredicates((IObservable) resolvable,
-            // parentScope)) {
-            // ResolutionScope mscope = resolve((Observable) observable, parentScope,
-            // observable.getDescriptionType().getResolutionMode());
-            // if (ret == null) {
-            // ret = mscope;
-            // coverage = mscope.getCoverage();
-            // } else {
-            // coverage = coverage.merge(mscope.getCoverage(), LogicalConnector.INTERSECTION);
-            // }
-            //
-            // if (coverage.isEmpty()) {
-            // break;
-            // }
-            // }
-            //
-            // ret.setCoverage(coverage);
-            //
             parentScope.setOriginalScope(((Observable) resolvable).getReferencedModel() == null ? Scope.OBSERVABLE : Scope.MODEL);
             ret = resolve((Observable) resolvable, parentScope,
                     ((Observable) resolvable).getDescriptionType().getResolutionMode());
@@ -210,7 +187,7 @@ public class Resolver {
                         continue;
                     }
 
-                    ret.getMonitor().info("Resolution scope is occurrent: resolving additional observable "
+                    ret.getMonitor().debug("Resolution scope is occurrent: resolving additional observable "
                             + Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
                     ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(ret), Mode.RESOLUTION);

@@ -5,10 +5,16 @@ import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IQuantity;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
+import org.integratedmodelling.klab.api.observations.scale.space.IShape;
+import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.extents.mediators.Subgrid;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
+import org.integratedmodelling.klab.scale.Scale;
 
 import groovy.lang.GroovyObjectSupport;
 
@@ -20,6 +26,9 @@ import groovy.lang.GroovyObjectSupport;
  *
  */
 public class Raster extends GroovyObjectSupport {
+
+    public static final String WORLD_SHAPE = "s2{bbox=[-180.0 180.0 -90.0 90.0],proj=EPSG:4326}";
+    public static final String WORLD_POLYGON = "EPSG:4326 POLYGON ((-180.0 -90.0, 180.0 -90.0, 180.0 90.0, -180.0 90.0, -180.0 -90.0))";
 
     GridCoverage2D coverage;
     // grid for the overall coverage
@@ -35,9 +44,24 @@ public class Raster extends GroovyObjectSupport {
      * @param geometry
      */
     public Raster(String geometry, IQuantity resolution) {
+        
+        IScale scale = null;
         if ("world".equals(geometry)) {
-
+            IShape shape = Shape.create(WORLD_POLYGON);
+            Space space = Space.create(shape, resolution);
+            scale = Scale.create(space);
+        } else {
+            scale = Scale.create(Geometry.create(geometry));
         }
+        
+        if (scale != null && scale.getSpace() != null && scale.getSpace().isRegular()) {
+            this.grid = (Grid) ((Space)scale.getSpace()).getGrid();
+        }
+        
+        if (this.grid == null) {
+            throw new KlabIllegalArgumentException("Raster can only be created from a grid geometry");
+        }
+        
     }
 
     /**
@@ -46,6 +70,7 @@ public class Raster extends GroovyObjectSupport {
      * @param state
      */
     public void merge(IState state) {
+        
         Subgrid sgrid = Subgrid.create(this.grid, (Shape) state.getScale().getSpace().getShape());
         for (ILocator loc : state.getScale()) {
             /*

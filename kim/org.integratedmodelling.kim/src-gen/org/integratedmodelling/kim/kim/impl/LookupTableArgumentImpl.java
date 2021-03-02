@@ -27,6 +27,7 @@ import org.integratedmodelling.kim.kim.LookupTableArgument;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.LookupTableArgumentImpl#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.LookupTableArgumentImpl#getConcept <em>Concept</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.LookupTableArgumentImpl#getKey <em>Key</em>}</li>
  * </ul>
  *
  * @generated
@@ -62,6 +63,26 @@ public class LookupTableArgumentImpl extends MinimalEObjectImpl.Container implem
    * @ordered
    */
   protected ConceptDeclaration concept;
+
+  /**
+   * The default value of the '{@link #getKey() <em>Key</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getKey()
+   * @generated
+   * @ordered
+   */
+  protected static final String KEY_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getKey() <em>Key</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getKey()
+   * @generated
+   * @ordered
+   */
+  protected String key = KEY_EDEFAULT;
 
   /**
    * <!-- begin-user-doc -->
@@ -165,6 +186,31 @@ public class LookupTableArgumentImpl extends MinimalEObjectImpl.Container implem
    * @generated
    */
   @Override
+  public String getKey()
+  {
+    return key;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setKey(String newKey)
+  {
+    String oldKey = key;
+    key = newKey;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.LOOKUP_TABLE_ARGUMENT__KEY, oldKey, key));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -189,6 +235,8 @@ public class LookupTableArgumentImpl extends MinimalEObjectImpl.Container implem
         return getId();
       case KimPackage.LOOKUP_TABLE_ARGUMENT__CONCEPT:
         return getConcept();
+      case KimPackage.LOOKUP_TABLE_ARGUMENT__KEY:
+        return getKey();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -208,6 +256,9 @@ public class LookupTableArgumentImpl extends MinimalEObjectImpl.Container implem
         return;
       case KimPackage.LOOKUP_TABLE_ARGUMENT__CONCEPT:
         setConcept((ConceptDeclaration)newValue);
+        return;
+      case KimPackage.LOOKUP_TABLE_ARGUMENT__KEY:
+        setKey((String)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -229,6 +280,9 @@ public class LookupTableArgumentImpl extends MinimalEObjectImpl.Container implem
       case KimPackage.LOOKUP_TABLE_ARGUMENT__CONCEPT:
         setConcept((ConceptDeclaration)null);
         return;
+      case KimPackage.LOOKUP_TABLE_ARGUMENT__KEY:
+        setKey(KEY_EDEFAULT);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -247,6 +301,8 @@ public class LookupTableArgumentImpl extends MinimalEObjectImpl.Container implem
         return ID_EDEFAULT == null ? id != null : !ID_EDEFAULT.equals(id);
       case KimPackage.LOOKUP_TABLE_ARGUMENT__CONCEPT:
         return concept != null;
+      case KimPackage.LOOKUP_TABLE_ARGUMENT__KEY:
+        return KEY_EDEFAULT == null ? key != null : !KEY_EDEFAULT.equals(key);
     }
     return super.eIsSet(featureID);
   }
@@ -264,6 +320,8 @@ public class LookupTableArgumentImpl extends MinimalEObjectImpl.Container implem
     StringBuilder result = new StringBuilder(super.toString());
     result.append(" (id: ");
     result.append(id);
+    result.append(", key: ");
+    result.append(key);
     result.append(')');
     return result.toString();
   }

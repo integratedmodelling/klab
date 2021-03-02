@@ -100,7 +100,7 @@ public class SearchMatch implements IIndexingService.Match {
 				return TokenClass.DOUBLE;
 			case IN:
 				return this.semantics.contains(IKimConcept.Type.MONEY)
-						|| this.semantics.contains(IKimConcept.Type.MONETARY) 
+						|| this.semantics.contains(IKimConcept.Type.MONETARY_VALUE) 
 						? TokenClass.CURRENCY 
 						: TokenClass.UNIT;
 			case PER:

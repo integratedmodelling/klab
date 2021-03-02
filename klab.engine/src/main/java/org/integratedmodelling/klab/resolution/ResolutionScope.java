@@ -268,7 +268,7 @@ public class ResolutionScope implements IResolutionScope {
          */
         if (modelScope.model.changesIn(Dimension.Type.TIME, coverage.asScale())) {
             IObservable main = modelScope.model.getObservables().get(0);
-            if (!main.is(Type.CHANGE)) {
+            if (!main.is(Type.CHANGE) && !main.is(Type.PREDICATE)) {
                 /*
                  * models with temporally merged resources also handle change
                  */

@@ -3,7 +3,6 @@ package org.integratedmodelling.kim.model;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IKimTable;
@@ -20,76 +19,83 @@ public class KimLookupTable extends KimStatement implements IKimLookupTable {
     int searchColumn = -1;
     IArtifact.Type lookupType;
     String error;
-    
-	public KimLookupTable(IKimTable table, List<LookupTableArgument> arguments, IKimStatement parent) {
-        super(((KimStatement)table).getEObject(), parent);
+    boolean twoWay = false;
+
+    public KimLookupTable(IKimTable table, List<LookupTableArgument> arguments, boolean twoWay, IKimStatement parent) {
+        super(((KimStatement) table).getEObject(), parent);
         this.table = table;
+        this.twoWay = twoWay;
         boolean haveSearch = false;
         for (LookupTableArgument arg : arguments) {
-        	Argument a = new Argument();
-        	if (arg.getId() != null) {
-        		a.id = arg.getId();
-        		if ("?".equals(arg.getId())) {
-        		    haveSearch = true;
-        		}
-        	} else if (arg.getConcept() != null) {
-        		a.concept = Kim.INSTANCE.declareConcept(arg.getConcept());
-        	}
+            Argument a = new Argument();
+            if (arg.getId() != null) {
+                a.id = arg.getId();
+                if ("?".equals(arg.getId())) {
+                    haveSearch = true;
+                }
+                if (arg.getKey() != null) {
+                    a.dimension = Argument.Dimension.valueOf(arg.getKey().toUpperCase());
+                }
+            } else if (arg.getConcept() != null) {
+                a.concept = Kim.INSTANCE.declareConcept(arg.getConcept());
+            }
             this.arguments.add(a);
         }
         int ncols = -1;
         // pad any needed argument with the most likely implied
-        while (arguments.size() < ncols) {
-        	Argument arg = new Argument();
-        	arg.id = (ncols == 2 && arguments.size() == 1 && !haveSearch) ? "?" : "*";
-        	this.arguments.add(arg);
+        if (!twoWay) {
+            while(arguments.size() < ncols) {
+                Argument arg = new Argument();
+                arg.id = (ncols == 2 && arguments.size() == 1 && !haveSearch) ? "?" : "*";
+                this.arguments.add(arg);
+            }
+            for (int i = 0; i < arguments.size(); i++) {
+                if ("?".equals(arguments.get(i).getId())) {
+                    searchColumn = i;
+                    break;
+                }
+            }
+
+            // if no ? is given and the arguments are one less than the columns, the
+            // last column is the search column
+            if (searchColumn < 0 && arguments.size() == table.getColumnCount() - 1) {
+                searchColumn = table.getColumnCount() - 1;
+            }
+
+            if (searchColumn >= 0) {
+                for (int i = 0; i < table.getRowCount(); i++) {
+                    if (lookupType == null) {
+                        lookupType = table.getRow(i)[searchColumn].getType();
+                    } else if (table.getRow(i)[searchColumn].getType() != lookupType) {
+                        this.error = "the type of the objects in the search column must be uniform";
+                    }
+                }
+            }
         }
-        for (int i = 0; i < arguments.size(); i++) {
-        	if ("?".equals(arguments.get(i).getId())) {
-        		searchColumn = i;
-        		break;
-        	}
-        }
-        
-        // if no ? is given and the arguments are one less than the columns, the
-        // last column is the search column
-        if (searchColumn < 0 && arguments.size() == table.getColumnCount() - 1) {
-            searchColumn = table.getColumnCount() - 1;
-        }
-        
-		if (searchColumn >= 0) {
-			for (int i = 0; i < table.getRowCount(); i++) {
-				if (lookupType == null) {
-					lookupType = table.getRow(i)[searchColumn].getType();
-				} else if (table.getRow(i)[searchColumn].getType() != lookupType) {
-					this.error = "the type of the objects in the search column must be uniform";
-				}
-			}
-		}
     }
 
-	public String getError() {
-		return error;
-	}
-	
-	@Override
-	public List<Argument> getArguments() {
-		return arguments;
-	}
+    public String getError() {
+        return error;
+    }
 
-	@Override
-	public Type getLookupType() {
-		return this.lookupType;
-	}
+    @Override
+    public List<Argument> getArguments() {
+        return arguments;
+    }
 
-	@Override
-	public IKimTable getTable() {
-		return this.table;
-	}
+    @Override
+    public Type getLookupType() {
+        return this.lookupType;
+    }
 
-	@Override
-	public int getLookupColumnIndex() {
-		return searchColumn;
-	}
+    @Override
+    public IKimTable getTable() {
+        return this.table;
+    }
+
+    @Override
+    public int getLookupColumnIndex() {
+        return searchColumn;
+    }
 
 }

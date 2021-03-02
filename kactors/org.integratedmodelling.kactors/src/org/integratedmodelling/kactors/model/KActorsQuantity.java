@@ -53,4 +53,9 @@ public class KActorsQuantity implements IQuantity {
 		throw new KlabValidationException("wrong string input for quantity: " + string);
 	}
 
+	@Override
+	public String toString() {
+	    return value + "." + (unit == null ? currency : unit);
+	}
+
 }

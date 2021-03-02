@@ -39,7 +39,7 @@ public class OSMUrnAdapter implements IUrnAdapter {
 	}
 
 	@Override
-	public IKlabData getEncodedData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
+	public void encodeData(Urn urn, Builder builder, IGeometry geometry, IContextualizationScope context) {
 
 		IParameters<String> data = Geocoder.INSTANCE.getData(urn.getNamespace(), urn.getResourceId());
 
@@ -76,7 +76,7 @@ public class OSMUrnAdapter implements IUrnAdapter {
 
 			builder.finishObject();
 
-			return builder.build();
+//			return builder.build();
 		}
 
 		throw new KlabIOException("cannot retrieve OSM data to resolve URN " + urn);

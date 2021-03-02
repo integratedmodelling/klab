@@ -20,6 +20,7 @@ import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
 import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.Observable;
+import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Value;
@@ -46,6 +47,9 @@ import org.integratedmodelling.kactors.kactors.Value;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getQuantity <em>Quantity</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getConstructor <em>Constructor</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#isComponent <em>Component</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getBehavior <em>Behavior</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getMetadata <em>Metadata</em>}</li>
  * </ul>
  *
@@ -252,6 +256,56 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected Constructor constructor;
+
+  /**
+   * The default value of the '{@link #isComponent() <em>Component</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isComponent()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean COMPONENT_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isComponent() <em>Component</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isComponent()
+   * @generated
+   * @ordered
+   */
+  protected boolean component = COMPONENT_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getBehavior() <em>Behavior</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getBehavior()
+   * @generated
+   * @ordered
+   */
+  protected static final String BEHAVIOR_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getBehavior() <em>Behavior</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getBehavior()
+   * @generated
+   * @ordered
+   */
+  protected String behavior = BEHAVIOR_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getParameters()
+   * @generated
+   * @ordered
+   */
+  protected ParameterList parameters;
 
   /**
    * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
@@ -840,6 +894,106 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
+  public boolean isComponent()
+  {
+    return component;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setComponent(boolean newComponent)
+  {
+    boolean oldComponent = component;
+    component = newComponent;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__COMPONENT, oldComponent, component));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getBehavior()
+  {
+    return behavior;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setBehavior(String newBehavior)
+  {
+    String oldBehavior = behavior;
+    behavior = newBehavior;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__BEHAVIOR, oldBehavior, behavior));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ParameterList getParameters()
+  {
+    return parameters;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetParameters(ParameterList newParameters, NotificationChain msgs)
+  {
+    ParameterList oldParameters = parameters;
+    parameters = newParameters;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__PARAMETERS, oldParameters, newParameters);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setParameters(ParameterList newParameters)
+  {
+    if (newParameters != parameters)
+    {
+      NotificationChain msgs = null;
+      if (parameters != null)
+        msgs = ((InternalEObject)parameters).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__PARAMETERS, null, msgs);
+      if (newParameters != null)
+        msgs = ((InternalEObject)newParameters).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__PARAMETERS, null, msgs);
+      msgs = basicSetParameters(newParameters, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__PARAMETERS, newParameters, newParameters));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Metadata getMetadata()
   {
     return metadata;
@@ -910,6 +1064,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return basicSetQuantity(null, msgs);
       case KactorsPackage.VALUE__CONSTRUCTOR:
         return basicSetConstructor(null, msgs);
+      case KactorsPackage.VALUE__PARAMETERS:
+        return basicSetParameters(null, msgs);
       case KactorsPackage.VALUE__METADATA:
         return basicSetMetadata(null, msgs);
     }
@@ -954,6 +1110,12 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getQuantity();
       case KactorsPackage.VALUE__CONSTRUCTOR:
         return getConstructor();
+      case KactorsPackage.VALUE__COMPONENT:
+        return isComponent();
+      case KactorsPackage.VALUE__BEHAVIOR:
+        return getBehavior();
+      case KactorsPackage.VALUE__PARAMETERS:
+        return getParameters();
       case KactorsPackage.VALUE__METADATA:
         return getMetadata();
     }
@@ -1011,6 +1173,15 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return;
       case KactorsPackage.VALUE__CONSTRUCTOR:
         setConstructor((Constructor)newValue);
+        return;
+      case KactorsPackage.VALUE__COMPONENT:
+        setComponent((Boolean)newValue);
+        return;
+      case KactorsPackage.VALUE__BEHAVIOR:
+        setBehavior((String)newValue);
+        return;
+      case KactorsPackage.VALUE__PARAMETERS:
+        setParameters((ParameterList)newValue);
         return;
       case KactorsPackage.VALUE__METADATA:
         setMetadata((Metadata)newValue);
@@ -1071,6 +1242,15 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__CONSTRUCTOR:
         setConstructor((Constructor)null);
         return;
+      case KactorsPackage.VALUE__COMPONENT:
+        setComponent(COMPONENT_EDEFAULT);
+        return;
+      case KactorsPackage.VALUE__BEHAVIOR:
+        setBehavior(BEHAVIOR_EDEFAULT);
+        return;
+      case KactorsPackage.VALUE__PARAMETERS:
+        setParameters((ParameterList)null);
+        return;
       case KactorsPackage.VALUE__METADATA:
         setMetadata((Metadata)null);
         return;
@@ -1116,6 +1296,12 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return quantity != null;
       case KactorsPackage.VALUE__CONSTRUCTOR:
         return constructor != null;
+      case KactorsPackage.VALUE__COMPONENT:
+        return component != COMPONENT_EDEFAULT;
+      case KactorsPackage.VALUE__BEHAVIOR:
+        return BEHAVIOR_EDEFAULT == null ? behavior != null : !BEHAVIOR_EDEFAULT.equals(behavior);
+      case KactorsPackage.VALUE__PARAMETERS:
+        return parameters != null;
       case KactorsPackage.VALUE__METADATA:
         return metadata != null;
     }
@@ -1145,6 +1331,10 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     result.append(constant);
     result.append(", expression: ");
     result.append(expression);
+    result.append(", component: ");
+    result.append(component);
+    result.append(", behavior: ");
+    result.append(behavior);
     result.append(')');
     return result.toString();
   }

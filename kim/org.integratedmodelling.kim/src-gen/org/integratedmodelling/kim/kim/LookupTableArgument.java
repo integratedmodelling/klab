@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.LookupTableArgument#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.LookupTableArgument#getConcept <em>Concept</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.LookupTableArgument#getKey <em>Key</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getLookupTableArgument()
@@ -68,5 +69,27 @@ public interface LookupTableArgument extends EObject
    * @generated
    */
   void setConcept(ConceptDeclaration value);
+
+  /**
+   * Returns the value of the '<em><b>Key</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Key</em>' attribute.
+   * @see #setKey(String)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getLookupTableArgument_Key()
+   * @model
+   * @generated
+   */
+  String getKey();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.LookupTableArgument#getKey <em>Key</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Key</em>' attribute.
+   * @see #getKey()
+   * @generated
+   */
+  void setKey(String value);
 
 } // LookupTableArgument

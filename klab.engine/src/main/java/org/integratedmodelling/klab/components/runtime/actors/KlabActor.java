@@ -48,6 +48,7 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spa
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Stop;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
 import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
+import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.GroupHandler;
 import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetActionExecutor;
 import org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior.Match;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -782,6 +783,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
     private void executeGroup(ConcurrentGroup code, Scope scope) {
         Scope groupScope = scope.getChild(code);
+        if (code.getTag() != null) {
+            /*
+             * install executor for group actions
+             */
+            this.localActionExecutors.put(code.getTag(), new GroupHandler(this.identity, null, scope, this.getContext().getSelf(), null));
+        }
         for (IKActorsStatement statement : code.getStatements()) {
             execute(statement, groupScope);
         }

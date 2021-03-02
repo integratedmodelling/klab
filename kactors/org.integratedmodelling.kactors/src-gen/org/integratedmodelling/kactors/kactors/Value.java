@@ -28,6 +28,9 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getQuantity <em>Quantity</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getConstructor <em>Constructor</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#isComponent <em>Component</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getBehavior <em>Behavior</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getMetadata <em>Metadata</em>}</li>
  * </ul>
  *
@@ -344,6 +347,72 @@ public interface Value extends EObject
    * @generated
    */
   void setConstructor(Constructor value);
+
+  /**
+   * Returns the value of the '<em><b>Component</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Component</em>' attribute.
+   * @see #setComponent(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Component()
+   * @model
+   * @generated
+   */
+  boolean isComponent();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#isComponent <em>Component</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Component</em>' attribute.
+   * @see #isComponent()
+   * @generated
+   */
+  void setComponent(boolean value);
+
+  /**
+   * Returns the value of the '<em><b>Behavior</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Behavior</em>' attribute.
+   * @see #setBehavior(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Behavior()
+   * @model
+   * @generated
+   */
+  String getBehavior();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getBehavior <em>Behavior</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Behavior</em>' attribute.
+   * @see #getBehavior()
+   * @generated
+   */
+  void setBehavior(String value);
+
+  /**
+   * Returns the value of the '<em><b>Parameters</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Parameters</em>' containment reference.
+   * @see #setParameters(ParameterList)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Parameters()
+   * @model containment="true"
+   * @generated
+   */
+  ParameterList getParameters();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getParameters <em>Parameters</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Parameters</em>' containment reference.
+   * @see #getParameters()
+   * @generated
+   */
+  void setParameters(ParameterList value);
 
   /**
    * Returns the value of the '<em><b>Metadata</b></em>' containment reference.

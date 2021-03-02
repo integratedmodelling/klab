@@ -807,70 +807,86 @@ public class KimValidator extends AbstractKimValidator {
           ok = false;
         } else {
           EList<LookupTableArgument> _lookupTableArgs = model.getLookupTableArgs();
-          KimLookupTable _kimLookupTable = new KimLookupTable(((IKimTable) tobj), _lookupTableArgs, null);
+          boolean _isTwoway = model.isTwoway();
+          KimLookupTable _kimLookupTable = new KimLookupTable(((IKimTable) tobj), _lookupTableArgs, _isTwoway, null);
           table = _kimLookupTable;
         }
       } else {
         Table _lookupTable = model.getLookupTable();
         KimTable _kimTable = new KimTable(_lookupTable, null);
         EList<LookupTableArgument> _lookupTableArgs_1 = model.getLookupTableArgs();
-        KimLookupTable _kimLookupTable_1 = new KimLookupTable(_kimTable, _lookupTableArgs_1, null);
+        boolean _isTwoway_1 = model.isTwoway();
+        KimLookupTable _kimLookupTable_1 = new KimLookupTable(_kimTable, _lookupTableArgs_1, _isTwoway_1, 
+          null);
         table = _kimLookupTable_1;
       }
       if ((table != null)) {
-        int _size_1 = model.getLookupTableArgs().size();
-        int _columnCount = table.getTable().getColumnCount();
-        boolean _greaterThan_1 = (_size_1 > _columnCount);
-        if (_greaterThan_1) {
-          this.error(
-            "The number of arguments exceeds the number of columns. Use ? for the arguments to look up or * for arguments to ignore", 
-            KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
-          ok = false;
-        }
-        String _error = table.getError();
-        boolean _tripleNotEquals_2 = (_error != null);
-        if (_tripleNotEquals_2) {
-          this.error(table.getError(), KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE, KimValidator.BAD_TABLE_FORMAT);
-          ok = false;
-        }
-        int o = 0;
-        boolean checkFound = false;
-        EList<LookupTableArgument> _lookupTableArgs_2 = model.getLookupTableArgs();
-        for (final LookupTableArgument arg : _lookupTableArgs_2) {
-          {
-            String _id = arg.getId();
-            boolean _tripleNotEquals_3 = (_id != null);
-            if (_tripleNotEquals_3) {
-              if (((!Objects.equal(arg.getId(), "?")) && (!Objects.equal(arg.getId(), "*")))) {
-                boolean found = false;
-                for (final KimObservable dependency : dependencies) {
-                  if (((dependency.getName() != null) && Objects.equal(dependency.getName(), arg))) {
-                    found = true;
+        boolean _isTwoway_2 = model.isTwoway();
+        if (_isTwoway_2) {
+          int _size_1 = model.getLookupTableArgs().size();
+          boolean _tripleNotEquals_2 = (_size_1 != 2);
+          if (_tripleNotEquals_2) {
+            this.error("Two-way tables must have two arguments", 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
+            ok = false;
+          }
+        } else {
+          int _size_2 = model.getLookupTableArgs().size();
+          int _columnCount = table.getTable().getColumnCount();
+          boolean _greaterThan_1 = (_size_2 > _columnCount);
+          if (_greaterThan_1) {
+            this.error(
+              "The number of arguments exceeds the number of columns. Use ? for the arguments to look up or * for arguments to ignore", 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
+            ok = false;
+          }
+          String _error = table.getError();
+          boolean _tripleNotEquals_3 = (_error != null);
+          if (_tripleNotEquals_3) {
+            this.error(table.getError(), KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE, 
+              KimValidator.BAD_TABLE_FORMAT);
+            ok = false;
+          }
+          int o = 0;
+          boolean checkFound = false;
+          EList<LookupTableArgument> _lookupTableArgs_2 = model.getLookupTableArgs();
+          for (final LookupTableArgument arg : _lookupTableArgs_2) {
+            {
+              String _id = arg.getId();
+              boolean _tripleNotEquals_4 = (_id != null);
+              if (_tripleNotEquals_4) {
+                if (((!Objects.equal(arg.getId(), "?")) && (!Objects.equal(arg.getId(), "*")))) {
+                  boolean found = false;
+                  for (final KimObservable dependency : dependencies) {
+                    if (((dependency.getName() != null) && Objects.equal(dependency.getName(), arg))) {
+                      found = true;
+                    }
                   }
-                }
-                if ((!found)) {
-                }
-              } else {
-                String _id_1 = arg.getId();
-                boolean _equals = Objects.equal(_id_1, "?");
-                if (_equals) {
-                  if (checkFound) {
-                    this.error("Only one \'?\' is allowed in the argument list, to mark the result column", 
-                      KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, KimValidator.BAD_TABLE_FORMAT);
-                    ok = false;
+                  if ((!found)) {
                   }
-                  checkFound = true;
+                } else {
+                  String _id_1 = arg.getId();
+                  boolean _equals = Objects.equal(_id_1, "?");
+                  if (_equals) {
+                    if (checkFound) {
+                      this.error("Only one \'?\' is allowed in the argument list, to mark the result column", 
+                        KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, 
+                        KimValidator.BAD_TABLE_FORMAT);
+                      ok = false;
+                    }
+                    checkFound = true;
+                  }
                 }
               }
+              o++;
             }
-            o++;
           }
-        }
-        if (((!checkFound) && (model.getLookupTableArgs().size() > 2))) {
-          this.error(
-            "One \'?\' must be present in the argument list to mark the result column when the table has more than 2 columns. Use * to mark columns to ignore.", 
-            KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
-          ok = false;
+          if (((!checkFound) && (model.getLookupTableArgs().size() > 2))) {
+            this.error(
+              "One \'?\' must be present in the argument list to mark the result column when the table has more than 2 columns. Use * to mark columns to ignore.", 
+              KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, KimValidator.BAD_TABLE_FORMAT);
+            ok = false;
+          }
         }
       }
     }
@@ -894,18 +910,18 @@ public class KimValidator extends AbstractKimValidator {
           descriptor.getResourceUrns().add(Kim.INSTANCE.getUrnValue(urn));
         }
         String _boolean = model.getBoolean();
-        boolean _tripleNotEquals_3 = (_boolean != null);
-        if (_tripleNotEquals_3) {
+        boolean _tripleNotEquals_4 = (_boolean != null);
+        if (_tripleNotEquals_4) {
           descriptor.setInlineValue(Boolean.valueOf(Boolean.parseBoolean(model.getBoolean())));
         } else {
           org.integratedmodelling.kim.kim.Number _number = model.getNumber();
-          boolean _tripleNotEquals_4 = (_number != null);
-          if (_tripleNotEquals_4) {
+          boolean _tripleNotEquals_5 = (_number != null);
+          if (_tripleNotEquals_5) {
             descriptor.setInlineValue(Kim.INSTANCE.parseNumber(model.getNumber()));
           } else {
             ConceptDeclaration _concept = model.getConcept();
-            boolean _tripleNotEquals_5 = (_concept != null);
-            if (_tripleNotEquals_5) {
+            boolean _tripleNotEquals_6 = (_concept != null);
+            if (_tripleNotEquals_6) {
               descriptor.setInlineValue(Kim.INSTANCE.declareConcept(model.getConcept()));
             }
           }
@@ -979,8 +995,8 @@ public class KimValidator extends AbstractKimValidator {
           _contextualization.add(_computableResource);
         }
         Classification _classification_1 = model.getClassification();
-        boolean _tripleNotEquals_6 = (_classification_1 != null);
-        if (_tripleNotEquals_6) {
+        boolean _tripleNotEquals_7 = (_classification_1 != null);
+        if (_tripleNotEquals_7) {
           java.util.List<IContextualizable> _contextualization_1 = descriptor.getContextualization();
           Classification _classification_2 = model.getClassification();
           boolean _isDiscretization = model.isDiscretization();
@@ -988,43 +1004,45 @@ public class KimValidator extends AbstractKimValidator {
           _contextualization_1.add(_computableResource_1);
         }
         Table _lookupTable_1 = model.getLookupTable();
-        boolean _tripleNotEquals_7 = (_lookupTable_1 != null);
-        if (_tripleNotEquals_7) {
+        boolean _tripleNotEquals_8 = (_lookupTable_1 != null);
+        if (_tripleNotEquals_8) {
           java.util.List<IContextualizable> _contextualization_2 = descriptor.getContextualization();
           Table _lookupTable_2 = model.getLookupTable();
           EList<LookupTableArgument> _lookupTableArgs_3 = model.getLookupTableArgs();
-          ComputableResource _computableResource_2 = new ComputableResource(_lookupTable_2, _lookupTableArgs_3, descriptor);
+          boolean _isTwoway_3 = model.isTwoway();
+          ComputableResource _computableResource_2 = new ComputableResource(_lookupTable_2, _lookupTableArgs_3, _isTwoway_3, descriptor);
           _contextualization_2.add(_computableResource_2);
         }
         String _lookupTableId_2 = model.getLookupTableId();
-        boolean _tripleNotEquals_8 = (_lookupTableId_2 != null);
-        if (_tripleNotEquals_8) {
+        boolean _tripleNotEquals_9 = (_lookupTableId_2 != null);
+        if (_tripleNotEquals_9) {
           Object tobj_1 = ns_1.getSymbolTable().get(model.getLookupTableId());
           EList<LookupTableArgument> _lookupTableArgs_4 = model.getLookupTableArgs();
-          KimLookupTable table_1 = new KimLookupTable(((IKimTable) tobj_1), _lookupTableArgs_4, null);
+          boolean _isTwoway_4 = model.isTwoway();
+          KimLookupTable table_1 = new KimLookupTable(((IKimTable) tobj_1), _lookupTableArgs_4, _isTwoway_4, null);
           java.util.List<IContextualizable> _contextualization_3 = descriptor.getContextualization();
           ComputableResource _computableResource_3 = new ComputableResource(table_1, descriptor);
           _contextualization_3.add(_computableResource_3);
         }
         String _classificationProperty = model.getClassificationProperty();
-        boolean _tripleNotEquals_9 = (_classificationProperty != null);
-        if (_tripleNotEquals_9) {
+        boolean _tripleNotEquals_10 = (_classificationProperty != null);
+        if (_tripleNotEquals_10) {
           java.util.List<IContextualizable> _contextualization_4 = descriptor.getContextualization();
           String _classificationProperty_1 = model.getClassificationProperty();
           ComputableResource _computableResource_4 = new ComputableResource(descriptor, _classificationProperty_1);
           _contextualization_4.add(_computableResource_4);
         }
         String _name_1 = model.getName();
-        boolean _tripleNotEquals_10 = (_name_1 != null);
-        if (_tripleNotEquals_10) {
+        boolean _tripleNotEquals_11 = (_name_1 != null);
+        if (_tripleNotEquals_11) {
           descriptor.name = model.getName();
         } else {
-          int _size_2 = descriptor.getObservables().size();
-          boolean _greaterThan_2 = (_size_2 > 0);
+          int _size_3 = descriptor.getObservables().size();
+          boolean _greaterThan_2 = (_size_3 > 0);
           if (_greaterThan_2) {
             String _formalName = descriptor.getObservables().get(0).getFormalName();
-            boolean _tripleNotEquals_11 = (_formalName != null);
-            if (_tripleNotEquals_11) {
+            boolean _tripleNotEquals_12 = (_formalName != null);
+            if (_tripleNotEquals_12) {
               descriptor.name = observables.get(0).getFormalName();
             } else {
               String _xifexpression_6 = null;
@@ -1064,8 +1082,8 @@ public class KimValidator extends AbstractKimValidator {
           ns_1.getSymbolTable().put(descriptor.name, descriptor);
         }
         Map _metadata = model.getMetadata();
-        boolean _tripleNotEquals_12 = (_metadata != null);
-        if (_tripleNotEquals_12) {
+        boolean _tripleNotEquals_13 = (_metadata != null);
+        if (_tripleNotEquals_13) {
           Map _metadata_1 = model.getMetadata();
           KimMetadata _kimMetadata = new KimMetadata(_metadata_1, descriptor);
           descriptor.setMetadata(_kimMetadata);
@@ -1263,7 +1281,7 @@ public class KimValidator extends AbstractKimValidator {
       Currency _currency = semantics.getCurrency();
       boolean _tripleNotEquals_1 = (_currency != null);
       if (_tripleNotEquals_1) {
-        if (((!declaration.is(IKimConcept.Type.MONEY)) && (!declaration.is(IKimConcept.Type.MONETARY)))) {
+        if (((!declaration.is(IKimConcept.Type.MONEY)) && (!declaration.is(IKimConcept.Type.MONETARY_VALUE)))) {
           this.error("Currencies can only be specified for monetary values", semantics.getCurrency(), null, 
             KimPackage.OBSERVABLE_SEMANTICS__CURRENCY);
         }
@@ -2111,10 +2129,11 @@ public class KimValidator extends AbstractKimValidator {
                                   } else {
                                     boolean _isValue = concept.isValue();
                                     if (_isValue) {
-                                      operator.add(IKimConcept.Type.VALUE);
                                       boolean _isMonetary = concept.isMonetary();
                                       if (_isMonetary) {
-                                        operator.add(IKimConcept.Type.MONETARY);
+                                        operator.add(IKimConcept.Type.MONETARY_VALUE);
+                                      } else {
+                                        operator.add(IKimConcept.Type.VALUE);
                                       }
                                     } else {
                                       boolean _isUncertainty = concept.isUncertainty();
@@ -2617,12 +2636,14 @@ public class KimValidator extends AbstractKimValidator {
                 boolean _contains_1 = iden.getType().contains(IKimConcept.Type.IDENTITY);
                 boolean _not_3 = (!_contains_1);
                 if (_not_3) {
-                  this.error("The concept required is not an identity", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__REQUIREMENTS, i_3);
+                  this.error("The concept required is not an identity", concept, 
+                    KimPackage.Literals.CONCEPT_STATEMENT_BODY__REQUIREMENTS, i_3);
                 }
                 boolean _contains_2 = iden.getType().contains(IKimConcept.Type.ABSTRACT);
                 boolean _not_4 = (!_contains_2);
                 if (_not_4) {
-                  this.error("Required identities must be abstract", concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__REQUIREMENTS, i_3);
+                  this.error("Required identities must be abstract", concept, 
+                    KimPackage.Literals.CONCEPT_STATEMENT_BODY__REQUIREMENTS, i_3);
                 }
                 ret.getRequiredIdentities().add(iden);
               }

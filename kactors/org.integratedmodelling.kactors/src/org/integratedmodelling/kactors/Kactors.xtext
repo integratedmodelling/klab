@@ -177,7 +177,7 @@ Value:
 	observable=Observable | 
 	expression=EXPR |
 	table=LookupTable |
-	quantity=Quantity
+	quantity=Quantity 
 	;
 
 ValueWithConstructor returns Value:
@@ -194,7 +194,8 @@ ValueWithConstructor returns Value:
 	observable=Observable | 
 	expression=EXPR |
 	table=LookupTable |
-	quantity=Quantity
+	quantity=Quantity  |
+	component?='new' behavior=PathName ('(' (parameters=ParameterList)? ')')?
 	;
 
 Constructor:
@@ -247,6 +248,7 @@ ValueWithMetadataWithoutTree returns Value:
 
 Match:
 	id=LOWERCASE_ID '->' body=StatementList  |
+	annotation=ANNOTATION_ID '->' body=StatementList |
 	constant=UPPERCASE_ID '->' body=StatementList  |
 	boolean=('true'|'false') '->' body=StatementList  |
 	type=CAMELCASE_ID '->' body=StatementList |
@@ -359,7 +361,7 @@ ParameterList:
 	
 KeyValuePair:
     tag=TAG |
-	(name=(LOWERCASE_ID) (interactive?='?=' | '='))? value=Value |
+	(name=(LOWERCASE_ID) (interactive?='?=' | '='))? value=ValueWithConstructor |
     key=KEY 
 ;
 

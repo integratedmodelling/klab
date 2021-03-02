@@ -6,8 +6,6 @@ package org.integratedmodelling.kim.kim;
 
 import org.eclipse.emf.common.util.EList;
 
-import org.eclipse.emf.ecore.EObject;
-
 /**
  * <!-- begin-user-doc -->
  * A representation of the model object '<em><b>Classifier RHS</b></em>'.
@@ -42,7 +40,7 @@ import org.eclipse.emf.ecore.EObject;
  * @model
  * @generated
  */
-public interface ClassifierRHS extends EObject
+public interface ClassifierRHS extends TableRow
 {
   /**
    * Returns the value of the '<em><b>Boolean</b></em>' attribute.

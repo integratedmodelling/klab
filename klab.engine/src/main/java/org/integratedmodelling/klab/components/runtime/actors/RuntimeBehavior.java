@@ -93,6 +93,7 @@ public class RuntimeBehavior {
 
                             @Override
                             public void newObservation(IObservation observation, ISubject context) {
+                                fire(observation, false, scope.semaphore, scope.getSymbols(identity));
                             }
 
                             @Override

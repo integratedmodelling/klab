@@ -54,7 +54,7 @@ public class MongoConfigDev extends AbstractMongoConfiguration {
     public MongoServer mongoServer() {
     	MemoryBackend backend = (MemoryBackend) new MemoryBackend().version(ServerVersion.MONGO_3_6);
         MongoServer mongoServer = new MongoServer(backend);
-        mongoServer.bind("localhost", 27017);
+        mongoServer.bind("localhost", 27018);
         return mongoServer;
     }
     
@@ -75,6 +75,6 @@ public class MongoConfigDev extends AbstractMongoConfiguration {
 
 	@Override
 	public MongoClient mongoClient() {
-		return new MongoClient("localhost", 27017);
+		return new MongoClient("localhost", 27018);
 	}
 }

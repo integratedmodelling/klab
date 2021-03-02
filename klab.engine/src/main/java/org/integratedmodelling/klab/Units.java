@@ -559,7 +559,7 @@ public enum Units implements IUnitService {
     @Override
     public Unit getDefaultUnitFor(IObservable observable) {
 
-        if (observable.is(Type.MONEY) || observable.is(Type.MONETARY) || observable.is(Type.NUMEROSITY)) {
+        if (observable.is(Type.MONEY) || observable.is(Type.MONETARY_VALUE) || observable.is(Type.NUMEROSITY)) {
             return Unit.unitless();
         }
 
@@ -668,7 +668,8 @@ public enum Units implements IUnitService {
             ret.aggregation = Aggregation.MAJORITY;
         case QUANTIFICATION:
 
-            boolean aggregates = observable.getType().is(Type.EXTENSIVE_PROPERTY) || observable.getType().is(Type.MONEY);
+            boolean aggregates = observable.getType().is(Type.EXTENSIVE_PROPERTY) || observable.getType().is(Type.MONEY)
+                    || observable.getType().is(Type.MONETARY_VALUE);
             if (!aggregates || Observables.INSTANCE.getDirectInherentType(observable.getType()) != null) {
                 // do what the semantics tell us
                 ret.aggregation = aggregates ? Aggregation.SUM : Aggregation.MEAN;
@@ -677,8 +678,8 @@ public enum Units implements IUnitService {
                  * analyze the unit vs. the current locator
                  */
                 Unit unit = (Unit) observable.getUnit();
-                ISpace space = locator.getSpace();
-                ITime time = locator.getTime();
+                ISpace space = locator == null ? null : locator.getSpace();
+                ITime time = locator == null ? null : locator.getTime();
                 int sdim = getSpatialDimensionality(unit);
                 int tdim = getTemporalDimensionality(unit);
                 if (space != null && sdim > 0) {
@@ -715,7 +716,8 @@ public enum Units implements IUnitService {
                         }
                     }
                 } else if (space != null) {
-                    // we have no spatial dimension, so we sum or average depending only on semantics
+                    // we have no spatial dimension, so we sum or average depending only on
+                    // semantics
                     ret.aggregation = aggregates ? Aggregation.SUM : Aggregation.MEAN;
                 }
                 if (time != null && tdim > 0) {
@@ -751,7 +753,7 @@ public enum Units implements IUnitService {
         }
 
         boolean checkMetadata = false;
-        if (observable.is(Type.MONEY) || observable.is(Type.MONETARY) || observable.is(Type.EXTENSIVE_PROPERTY)
+        if (observable.is(Type.MONEY) || observable.is(Type.MONETARY_VALUE) || observable.is(Type.EXTENSIVE_PROPERTY)
                 || observable.is(Type.INTENSIVE_PROPERTY) || observable.is(Type.NUMEROSITY)) {
             boolean assignUnits = true;
             Boolean rescaled = observable.getType().getMetadata().get(IMetadata.IM_IS_RESCALED, Boolean.class);
