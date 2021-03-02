@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="8.0.11" transformSequenceNumber="8">
-  <directoryPresets config="./src/main/deploy/package/windows" />
+  <directoryPresets config="./src/main/deploy/package/images" />
   <application name="k.LAB Control Center" applicationId="3443-1218-3478-1447" mediaDir="target/media" shortName="klab" publisher="The Integrated Modelling Partnership" publisherWeb="https://integratedmodelling.org/" version="1.1" allPathsRelative="true" macVolumeId="5755f304874440a" javaMinVersion="1.8" javaMaxVersion="1.8" jdkMode="jdk" jdkName="JDK 1.8">
     <jreBundles jdkProviderId="Liberica" release="OpenJDK 8u282+8" />
   </application>
@@ -9,25 +9,32 @@
       <mountPoint id="35" />
     </mountPoints>
     <entries>
-      <dirEntry mountPoint="35" file="./target/jfx/app" subDirectory="app" />
+      <dirEntry mountPoint="35" file="./target/jfx/app" entryMode="subdir" subDirectory="app" />
     </entries>
   </files>
   <launchers>
     <launcher name="controlcenter" id="38" menuName="k.LAB">
-      <executable name="k.LAB" iconSet="true" executableMode="gui" executionLevel="highestAvailable" />
+      <executable name="klab" iconSet="true" stderrMode="append" executableMode="gui" executionLevel="highestAvailable" />
+      <splashScreen width="1151" height="465" bitmapFile="./src/main/deploy/package/images/KLAB_LOGO.png" textOverlay="true">
+        <text>
+          <versionLine x="1044" y="451" text="version ${compiler:sys.version}" />
+        </text>
+      </splashScreen>
       <java mainClass="org.integratedmodelling.controlcenter.ControlCenter">
         <classPath>
-          <archive location="controlcenter-0.10.0-SNAPSHOT-jfx.jar" failOnError="false" />
-          <directory location="lib" failOnError="false" />
+          <archive location="app/controlcenter-1.1-jfx.jar" failOnError="false" />
+          <directory location="app/lib" failOnError="false" />
         </classPath>
       </java>
       <vmOptionsFile mode="none" />
       <iconImageFiles>
-        <file path="./src/main/deploy/package/images/KLAB_icon_16x16.png" />
-        <file path="./src/main/deploy/package/images/KLAB_icon_32x32.png" />
-        <file path="./src/main/deploy/package/images/KLAB_icon_48x48.png" />
-        <file path="./src/main/deploy/package/images/KLAB_icon_128x128.png" />
-        <file path="./src/main/deploy/package/images/KLAB_icon_256x256.png" />
+        <file path="./src/main/deploy/package/images/KLAB_icon_white_16x16.png" />
+        <file path="./src/main/deploy/package/images/KLAB_icon_white_32x32.png" />
+        <file path="./src/main/deploy/package/images/KLAB_icon_white_48x48.png" />
+        <file path="./src/main/deploy/package/images/KLAB_icon_white_64x64.png" />
+        <file path="./src/main/deploy/package/images/KLAB_icon_white_128x128.png" />
+        <file path="./src/main/deploy/package/images/KLAB_icon_white_256x256.png" />
+        <file path="./src/main/deploy/package/images/KLAB_icon_white_512x512.png" />
       </iconImageFiles>
     </launcher>
   </launchers>
@@ -510,13 +517,6 @@ return console.askYesNo(message, true);
     </styles>
   </installerGui>
   <mediaSets>
-    <unixInstaller name="Unix Installer" id="39">
-      <jreBundle release="openjdk8/jdk8u282-b08" jreBundleSource="generated" manualJreEntry="true">
-        <modules>
-          <defaultModules set="jre" />
-        </modules>
-      </jreBundle>
-    </unixInstaller>
     <windows name="Windows" id="43">
       <jreBundle release="openjdk8/jdk8u282-b08" jreBundleSource="generated">
         <modules>
@@ -524,12 +524,26 @@ return console.askYesNo(message, true);
         </modules>
       </jreBundle>
     </windows>
-    <macosFolder name="macOS Folder" id="49">
+    <macosArchive name="macOS Single Bundle Archive" id="59" launcherId="38">
       <jreBundle jreBundleSource="generated">
         <modules>
           <defaultModules set="jre" />
         </modules>
       </jreBundle>
-    </macosFolder>
+    </macosArchive>
+    <linuxDeb name="Linux Deb Archive" id="61" maintainerEmail="support@integratedmodelling.org">
+      <jreBundle jreBundleSource="generated">
+        <modules>
+          <defaultModules set="jre" />
+        </modules>
+      </jreBundle>
+    </linuxDeb>
+    <unixArchive name="Unix Archive" id="62">
+      <jreBundle jreBundleSource="generated">
+        <modules>
+          <defaultModules set="jre" />
+        </modules>
+      </jreBundle>
+    </unixArchive>
   </mediaSets>
 </install4j>
