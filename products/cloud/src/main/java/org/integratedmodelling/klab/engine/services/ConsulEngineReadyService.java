@@ -3,13 +3,17 @@ package org.integratedmodelling.klab.engine.services;
 
 import org.integratedmodelling.klab.engine.RemoteEngineService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 @Service
-@Profile("consul")
+@ConditionalOnProperty(
+        value="spring.cloud.consul.enabled", 
+        havingValue = "true", 
+        matchIfMissing = false)
 public class ConsulEngineReadyService {
 	
 	@Autowired

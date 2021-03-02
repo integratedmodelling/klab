@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.auth.ICertificate;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationPreparedEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Bean;
@@ -24,6 +25,10 @@ import org.springframework.web.client.RestTemplate;
 
 @ComponentScan(basePackages = { "org.integratedmodelling.klab.engine"})
 @Component
+@ConditionalOnProperty(
+        value="spring.cloud.consul.enabled", 
+        havingValue = "true", 
+        matchIfMissing = false)
 public class EngineRunner implements ApplicationListener<ApplicationPreparedEvent>{
 
 
@@ -78,11 +83,16 @@ public class EngineRunner implements ApplicationListener<ApplicationPreparedEven
 	
 	private boolean boot() {
 		try {
-			Environment env = environment;
-			String certString = env.getProperty("klab.certificate");
-			this.certificate = KlabCertificate.createFromString(certString);
-			setPropertiesFromEnvironment(env);
-			engine = RemoteEngine.start(this.certificate, new EngineStartupOptions());
+		    String consul = environment.getProperty("spring.cloud.consul.enabled");
+		    if(consul == "true") {
+		        String certString = environment.getProperty("klab.certificate");
+		        this.certificate = KlabCertificate.createFromString(certString);
+		        setPropertiesFromEnvironment(environment);
+		        engine = RemoteEngine.start(this.certificate, new EngineStartupOptions());
+		    } else {
+		        engine = RemoteEngine.start(null, new EngineStartupOptions());
+		    }
+			
 		} catch (Throwable e) {
 			return false;
 		}
