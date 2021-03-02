@@ -24,7 +24,6 @@ import org.springframework.web.client.RestTemplate;
 
 @ComponentScan(basePackages = { "org.integratedmodelling.klab.engine"})
 @Component
-@EnableAspectJAutoProxy
 public class EngineRunner implements ApplicationListener<ApplicationPreparedEvent>{
 
 

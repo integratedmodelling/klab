@@ -39,6 +39,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -55,6 +56,7 @@ import org.springframework.web.client.RestTemplate;
  *
  */
 @Service
+@EnableAsync
 public class HubUserService implements RemoteUserService {
 	
 	@Autowired
@@ -62,9 +64,6 @@ public class HubUserService implements RemoteUserService {
 
 	@Autowired
 	UserEventPublisher publisher;
-	
-	@Value( "${stats.server.url}" )
-	private String statsServerUrl;
 	
 	/*
 	 * Generates a response entity a url to the session generated after succesful
@@ -208,21 +207,7 @@ public class HubUserService implements RemoteUserService {
 
             @Override
             public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
-                String url = null;
-                try {
-                    URIBuilder urlBuilder;
-                    urlBuilder = new URIBuilder(statsServerUrl);
-                    urlBuilder.setPath(API.STATS.STATS_BASE);
-                    urlBuilder.addParameter(API.STATS.PARAMETERS.TYPE, rootActivity.getClass().getCanonicalName());
-                    
-                    url = urlBuilder.build().toString();
-                } catch (URISyntaxException e) {
-                    // TODO Auto-generated catch block
-                    e.printStackTrace();
-                }
-                
-                restTemplate.postForLocation(url, rootActivity);
-                //restTemplate.postForLocation(url, currentActivity);
+                publisher.history(profile, session, rootActivity);
                 
             }
 
