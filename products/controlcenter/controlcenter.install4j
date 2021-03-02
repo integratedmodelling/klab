@@ -545,5 +545,12 @@ return console.askYesNo(message, true);
         </modules>
       </jreBundle>
     </unixArchive>
+    <unixInstaller name="Unix Installer" id="68">
+      <jreBundle jreBundleSource="generated">
+        <modules>
+          <defaultModules set="jre" />
+        </modules>
+      </jreBundle>
+    </unixInstaller>
   </mediaSets>
 </install4j>
