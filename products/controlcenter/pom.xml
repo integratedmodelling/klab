@@ -8,7 +8,7 @@
 		<version>0.10.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>controlcenter</artifactId>
-	<version>1.1</version>
+	<version>1.01.003</version>
 	<name>k.LAB Control Center</name>
 	<build>
 		<plugins>
@@ -170,19 +170,21 @@
 			<!-- <systemPath>C:\Program Files\Java\jdk1.8.0_181/jre/lib/ext/jfxrt.jar</systemPath> -->
 			<scope>system</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
-
 	</dependencies>
 
 	<repositories>
 		<repository>
 			<id>jcenter</id>
 			<url>http://jcenter.bintray.com</url>
+		</repository>
+		<repository>
+			<id>ej-technologies</id>
+			<url>https://maven.ej-technologies.com/repository</url>
 		</repository>
 	</repositories>
 

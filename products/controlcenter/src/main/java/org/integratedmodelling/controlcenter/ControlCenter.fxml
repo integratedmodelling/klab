@@ -537,7 +537,7 @@
                                     <Font size="11.0" />
                                  </font>
                               </Label>
-                              <Hyperlink onAction="#launchHubSite" text="🡆 k.LAB Hub" />
+                              <Hyperlink onAction="#launchHubSite" text="🡆 k.LAB Hub 1" />
                            </children>
                         </VBox>
                         <VBox alignment="CENTER">
