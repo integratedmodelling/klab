@@ -1809,6 +1809,7 @@ public class TableCompiler {
                         categorize(CATEGORY, category, sorted, observable);
                     }
                 } else if (observable.is(IKimConcept.Type.PRESENCE)) {
+                    observables.add(new ObservedConcept(observable));
                     categorize(BOOLEAN, true, sorted, observable);
                     categorize(BOOLEAN, false, sorted, observable);
                 } else if (observable.is(IKimConcept.Type.PREDICATE)) {
