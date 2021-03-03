@@ -23,6 +23,7 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.api.IKActorsStatement.While;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsActionCall;
+import org.integratedmodelling.kactors.model.KActorsConcurrentGroup;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Actors;
@@ -251,9 +252,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         public Scope withMatch(Match match, Object value, Map<String, Object> vars) {
 
             Scope ret = new Scope(this);
-            
+
             ret.symbolTable.putAll(vars);
-            
+
             /*
              * if we have identifiers either as key or in list key, match them to the values.
              * Otherwise match to $, $1, ... #n
@@ -787,7 +788,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             /*
              * install executor for group actions
              */
-            this.localActionExecutors.put(code.getTag(), new GroupHandler(this.identity, null, scope, this.getContext().getSelf(), null));
+            this.localActionExecutors.put(code.getTag(),
+                    new GroupHandler(this.identity, (KActorsConcurrentGroup) code, scope, this.getContext().getSelf(), null));
         }
         for (IKActorsStatement statement : code.getStatements()) {
             execute(statement, groupScope);

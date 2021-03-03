@@ -50,10 +50,20 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     private boolean exclusive;
     private Constructor constructor;
 
+    /**
+     * Constructors can be either for Java objects (with classname and possibly classpath not null)
+     * or for components (with component != null). The value type is either OBJECT or COMPONENT and
+     * the source idiom is the Java class constructor (for OBJECT) or a component created with 'new'
+     * (for COMPONENT).
+     * 
+     * @author Ferd
+     *
+     */
     public static class Constructor {
 
         private String classpath;
         private String classname;
+        private String component;
         private KActorsArguments arguments;
 
         /**
@@ -95,6 +105,14 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
         public void setArguments(KActorsArguments arguments) {
             this.arguments = arguments;
+        }
+
+        public String getComponent() {
+            return component;
+        }
+
+        public void setComponent(String component) {
+            this.component = component;
         }
     }
 
@@ -262,6 +280,13 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
                     : new KActorsArguments(value.getConstructor().getParameters()));
             this.constructor.setClassname(value.getConstructor().getClassid());
             this.constructor.setClasspath(value.getConstructor().getPath());
+        } else if (value.isComponent()) {
+            this.constructor = new Constructor();
+            this.type = Type.COMPONENT;
+            this.constructor.setArguments(value.getParameters() == null
+                    ? new KActorsArguments()
+                    : new KActorsArguments(value.getParameters()));
+            this.constructor.setComponent(value.getBehavior());
         }
 
         if (value.getMetadata() != null) {
@@ -332,7 +357,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.type = Type.ANNOTATION;
             this.value = match.getAnnotation().substring(1);
         }
-     }
+    }
 
     KActorsValue(Type type, Object value) {
         this.type = type;
@@ -352,7 +377,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         return ret;
     }
 
-    public List< ? > parseList(org.integratedmodelling.kactors.kactors.List list, KActorCodeStatement parent) {
+    public List<?> parseList(org.integratedmodelling.kactors.kactors.List list, KActorCodeStatement parent) {
         List<Object> ret = new ArrayList<>();
         for (ListElement val : list.getContents()) {
             if (val.getValue() != null) {
@@ -403,7 +428,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     }
 
     @Override
-    public <T> T as(Class< ? extends T> cls) {
+    public <T> T as(Class<? extends T> cls) {
         // TODO Auto-generated method stub
         return null;
     }
@@ -423,7 +448,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
     public boolean isVariable() {
         if (this.value instanceof List) {
-            for (Object val : ((List< ? >) this.value)) {
+            for (Object val : ((List<?>) this.value)) {
                 if (val instanceof KActorsValue && ((KActorsValue) val).getType() == Type.IDENTIFIER) {
                     return true;
                 }
@@ -561,7 +586,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     public Constructor getConstructor() {
         return this.constructor;
     }
-    
+
     /**
      * Check for truth value. For now we consider true anything that is not null or not empty,
      * unless it's a boolean or number where we check the actual value for true value or != 0.
@@ -579,7 +604,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         } else if (check instanceof IArtifact) {
             return !((IArtifact) check).isEmpty();
         } else if (check instanceof Collection) {
-            return !((Collection< ? >) check).isEmpty();
+            return !((Collection<?>) check).isEmpty();
         }
         return check != null;
     }
