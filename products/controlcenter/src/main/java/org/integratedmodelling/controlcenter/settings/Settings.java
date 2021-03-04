@@ -236,7 +236,8 @@ public class Settings {
 							if (isActionReady())
 								ControlCenter.INSTANCE.changeStack(b);
 						})), Setting.of("Number of builds to keep", buildsToKeep),
-						Setting.of("Check for Control Center updates on launch", checkForCCUpdates),
+						// TODO: check if we need to implement in install4j
+						// Setting.of("Check for Control Center updates on launch", checkForCCUpdates),
 						Setting.of("Check interval for k.LAB updates (minutes)", checkIntervalKlabUpdates),
 						Setting.of("Update k.LAB automatically", updateAutomatically)),
 						Group.of("Installed k.LAB distributions",

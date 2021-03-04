@@ -13,6 +13,7 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Timer;
@@ -49,8 +50,6 @@ import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.kordamp.ikonli.javafx.FontIcon;
 
-import com.install4j.api.launcher.ApplicationLauncher;
-
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
@@ -78,6 +77,7 @@ import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import kong.unirest.JacksonObjectMapper;
@@ -120,6 +120,9 @@ public class ControlCenter extends Application {
 
     @FXML
     Button buttonSettings;
+    
+    @FXML
+    Label ccNameAndVersion;
 
     @FXML
     Label certContentLabel;
@@ -279,22 +282,6 @@ public class ControlCenter extends Application {
 
     @FXML
     private void initialize() {
-        /*
-        try {
-            ApplicationLauncher.launchApplication("142", null, true, new ApplicationLauncher.Callback() {
-                    public void exited(int exitValue) {
-                        //TODO add your code here (not invoked on event dispatch thread)
-                    }
-                    
-                    public void prepareShutdown() {
-                        //TODO add your code here (not invoked on event dispatch thread)
-                    }
-                }
-            );
-        } catch (IOException e) {
-            e.printStackTrace();
-            //TODO handle invocation failure
-        }
         /*
          * check Java first
          */
@@ -557,7 +544,18 @@ public class ControlCenter extends Application {
      * Reentrant UI setup, to be called as needed.
      */
     public void setupUI() {
-
+        final Properties properties = new Properties();
+        try {
+            properties.load(getClass().getClassLoader().getResourceAsStream("application.properties"));
+            String version = properties.getProperty("version");
+            if (version.split("\\.").length > 2) {
+                version = version.substring(0, version.lastIndexOf("."));
+            }
+            ccNameAndVersion.setText(properties.getProperty("name")+" v"+version);
+        } catch (IOException e) {
+            e.printStackTrace();
+            ccNameAndVersion.setText("k.LAB Control Center");
+        }
         /*
          * setup choices of builds
          */
@@ -1104,10 +1102,10 @@ public class ControlCenter extends Application {
     }
 
     public synchronized void checkForUpdates() {
-
-        if (checkForCCUpdates()) {
-            System.exit(0);
-        }
+        // Managed by install4j
+        //  if (checkForCCUpdates()) {
+        //      System.exit(0);
+        //  }  
         ProductService.INSTANCE.initialize();
         this.engine.setProduct(ProductService.INSTANCE.getProduct(ProductService.PRODUCT_ENGINE));
         this.modeler.setProduct(ProductService.INSTANCE.getProduct(ProductService.PRODUCT_MODELER));
@@ -1119,9 +1117,9 @@ public class ControlCenter extends Application {
      * If there is a new CC update, alert and ask if we should download; if so,
      * download in modal window, [launch installer] and return true, which will
      * terminate the application.
+     * 
      *
-     * @return
-     */
+    
     private synchronized boolean checkForCCUpdates() {
 
         if (Timestamp.BUILD_TIMESTAMP.startsWith("@")) {
@@ -1130,9 +1128,7 @@ public class ControlCenter extends Application {
         }
 
         if (this.ccUpdateShown) {
-            /*
-             * once is enough.
-             */
+            // once is enough.
             return false;
         }
 
@@ -1159,11 +1155,9 @@ public class ControlCenter extends Application {
 
                     if (available.isAfter(installed)) {
 
-                        /*
-                         * the date of the last build we installed is higher, but the user may have
-                         * updated, in which case we need to update the date. We use the timestamps to
-                         * check; no timestamp = -1 so the test still works.
-                         */
+                        // the date of the last build we installed is higher, but the user may have
+                        // updated, in which case we need to update the date. We use the timestamps to
+                        // check; no timestamp = -1 so the test still works.
 
                         boolean haveUpdatedAlready = currentInstanceTimestamp > previouslyRunTimestamp;
 
@@ -1197,10 +1191,17 @@ public class ControlCenter extends Application {
 
         return false;
     }
+    */
 
     @Override
     public void start( Stage primaryStage ) {
         try {
+            Font.loadFont(getClass().getResource("css/fonts/OpenSans-Regular.ttf").toExternalForm(), 10);
+            Font.loadFont(getClass().getResource("css/fonts/OpenSans-Italic.ttf").toExternalForm(), 10);
+            Font.loadFont(getClass().getResource("css/fonts/OpenSans-Bold.ttf").toExternalForm(), 10);
+            Font.loadFont(getClass().getResource("css/fonts/OpenSans-BoldItalic.ttf").toExternalForm(), 10);
+            Font.loadFont(getClass().getResource("css/fonts/OpenSans-Light.ttf").toExternalForm(), 10);
+            Font.loadFont(getClass().getResource("css/fonts/OpenSans-LightItalic.ttf").toExternalForm(), 10);
             URL resource = getClass().getResource("ControlCenter.fxml");
             BorderPane root = (BorderPane) FXMLLoader.load(resource);
             Scene scene = new Scene(root, 260, 450);
