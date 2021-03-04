@@ -1138,7 +1138,7 @@ return true;</property>
       </jreBundle>
     </unixInstaller>
   </mediaSets>
-  <buildIds buildAll="false">
+  <buildIds>
     <mediaSet refId="68" />
   </buildIds>
 </install4j>
