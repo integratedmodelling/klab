@@ -1,15 +1,60 @@
 = Semantic modeling with k.LAB
-:doctype: book
+A guide to the semantic modeling with k.LAB and the k.IM language.
+v1.0, 2021-02-20
+:doctype: article
+:description: Chat about resources handling with Villa
+:kl: k.LAB
+:kmod: k.Modeler
+:kact: k.Actors
+:keng: k.LAB Engine
+:knod: k.LAB Node
+:kim: k.IM
+:ked: k.LAB Resource Editor
+:pex: k.LAB Explorer
+:kex: Project Explorer
+:encoding: utf-8
+:lang: en
+:title-page:
+:toc: left
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+:numbered:
+:experimental:
+:reproducible:
+:icons: font
+:listing-caption: Listing
+:sectnums:
+:autofit-option:
+:mdash: &#8212;
+:language: asciidoc
+ifdef::backend-pdf[]
+:title-logo-image: image:imgs/KLAB_LOGO.png[align=center]
+:source-highlighter: rouge
+//:rouge-style: github
+//:source-highlighter: pygments
+//:pygments-style: tango
+endif::[]
+:stem:
+
+<<<
 
 == Overview
 
-What models are, how they are chosen and what they cause once used.
+Models, as commonly understood in scientific practice, are computational or logical processes that create scientific artifacts that describe a phenomenon of interest, for example the numeric measurement of a property such as atmospheric temperature, or its change over time under the effect of a hypothesized stressor. A "model" of rainfall may use a static dataset (for previous field measurements) or a computed best-guess (for example to fill holes in available data). A "model" of climate change will need to incorporate many factors, hypotheses and assumptions to predict that same phenomenon over, say, the next 50 years. All of these are everyday questions in scientific investigation, and they currently require major efforts on behalf of investigators, to find, assemble, process, verify input data, then manually run any software that implements the model to obtain outputs.
 
-Models make observations, i.e. _contextualize_ a concept in a context, producing the intended observational artifact through a two-step process: first, the concept is _resolved_ to the best model or models for the context - which, through its dependencies, may cause more resolutions to take place until the system has a strategy to make the observation. Second, the resolved strategy is compiled into a _dataflow_, i.e. a computation that can be run by a runtime system that is unaware of any semantics. Third, the dataflow is run to compute all the observations in the context.
+The {kl} technology is dedicated to providing a systematic, reliable process to streamline the scientific observation process by _reusing_ data and models, making them _findable_ and _accessible_ over the network, and ensuring their _integration_ by design. This is done by providing languages and infrastructure to:
 
-Because all contextualizations are context-dependent, the choice of the overall context for the observation is an arbitrary choice of the user. So the first observation is not computed, but merely _acknowledged_: for example, we may _choose_ to use Italy as a context, and maybe pre-define a resolution and extent for the time and space that we want reflected in the observations. After that initial choice, users can just say what they want and how they want it observed, by querying the k.LAB engine. 
+1. identify _observable_ concepts (the _semantics_) for the phenomena under investigation, then 
+2. write concise statements that specify how to create scientific artifacts (observations) of _each_ observable, which describes both the model and the resulting observation. 
 
-Models make _observations_, and according to the underlying https://github.com/integratedmodelling/odo.html[ontology], the activities that create observational artifacts are of two fundamental types: _resolution_ and _instantiation_.  These, in turn, are subdivided into a few subcategories. The <<section-kim-observable,observable>> declared for the model determines which type of observation activity is encoded in each model. These are relevant to the issue of <<TBD,provenance>>, also discussed elsewhere in this documentation.
+These models, potentially restricted to apply to specified spatial or temporal context of usage, are made available on the network to contribute to a distributed knowledge base. Once such a knowledge base is available, it can be used to _resolve_ ... using existing data and models adaptively, efficiently and with no duplication of effort. This is obtained through a two-step process: first, the concept is _resolved_ to the best model or models for the context - which, through its dependencies, may cause more resolutions to take place until the system has a strategy to make the observation. Second, the resolved strategy is compiled into a _dataflow_, i.e. a computation that can be run by a runtime system that is unaware of any semantics. Third, the dataflow is run to compute all the observations in the context.
+
+In other words, models describe an _observation activity_; this activity will operate differently according to the _core type_ of the observable. For example, observing the elevation in a region will be a _quantification_ of its value in each point at the observational scale. Observing the land cover type will be a _classification_; observing cars or elections in the region will require _instantiation_ of the correspondent objects or events; while observing the water flow or a governance process will require a _simulation_. In general, all activities that create observational artifacts are of two fundamental types: _resolution_ and _instantiation_. These, in turn, are subdivided into a few more subcategories. The  https://github.com/integratedmodelling/odo-im[ontology] that underlies {kl} describes all these types, which are relevant to the issue of <<TBD,provenance>>, discussed elsewhere in this documentation.
+
+It is important to understand that there is always a main observation (in the examples above, a region) which represents the _context_ for all others, and is an arbitrary choice of the user. The first observation is merely _acknowledged_: for example, we may _choose_ to use Italy as a context, and that choice will pre-define a resolution and extent for the time and space that we want reflected in the observations. After that initial choice, users can just say what they want and how they want it observed, by querying the k.LAB engine. But the inherent human-centric relativity of the scientific observation process cannot be escaped, here or in any other scientific endeavor: one must always _choose_ what to look at and, to some extent, _how_ to look at it. The process of semantic modeling embraces this relativity, while making it explicit.
+
+Models make _observations_, and according to the underlying https://github.com/integratedmodelling/odo-im[ontology], the activities that create observational artifacts are of two fundamental types: _resolution_ and _instantiation_.  These, in turn, are subdivided into a few more subcategories. The <<section-kim-observable,observable>> declared for the model determines which type of observation activity is specified by each model. These are relevant to the issue of <<TBD,provenance>>, discussed elsewhere in this documentation.
 
 It is very typical for all k.LAB models to be very short and very simple. Every model, with few exceptions, is written for _one_ concept, with all its inputs stated merely as semantics, and can be computed and tested as an independent, self-contained module. When the model logics require that certain dependencies are satisfied in a specific way, you use <<modeling-scoping,scoping rules>> to ensure that the specific dependencies you need are picked. It is also possible to use (libraries of) <<TBD,non-semantic models>> to bring in specific computations that have no semantic equivalent worth the effort of annotating, ensuring the linkage with a specific computation without sacrificing modularity. In most situations, models can be written independent of the spatial and temporal context in which they will be run, and often even in ways that are compatible with different interpretations of space and time. Input, output, visualization and contextual validation are all concerns that are left to the k.LAB runtime. In general, writing models this way enforces discipline and maximizes clarity, readability and parsimony: you only write the core computation that leads you to one specific observation, leaving every other aspect (including the selection and computation of any inputs) to the resolver and the k.LAB runtime.
 
@@ -118,7 +163,7 @@ Situations that arise most commonly during modeling
 
 ==== Resolution
 
-A typical situation is that the model picked by the system to resolve a particular concept is not the one the modeler expects. Resolution prioritization is complex and it helps to visualize the set of criteria used by the prioritizer. This can be done by setting the `klab.debugging.resolution.ranks` property to true, either permanently in the ~/.klab.properties file or manually in the engine command line window:
+A common concern is when the model picked by the system to resolve a particular concept is not the one the modeler expects. Resolution prioritization is complex and it helps to visualize the set of criteria used by the prioritizer. This can be done by setting the `klab.debugging.resolution.ranks` property to true, either permanently in the ~/.klab.properties file or manually in the engine command line window:
 
 ----
 set klab.debugging.resolution.ranks true
@@ -157,11 +202,11 @@ model query for explanation of [land_cover_type = landcover:LandCoverType] found
 accepting data.global.landcover.land-cover-type-resolver to resolve 100% of [land_cover_type = landcover:LandCoverType]
 ----
 
-Inspecting the scores can be very useful to understand, and possibly change, why the resolver pick each specific model. If the expected model does not appear in the list, it probably has errors or is out of scope of the resolution.
+Inspecting the scores can be very useful to understand, and possibly change, why the resolver pick each specific model. If an expected model does not appear in the list, it probably has errors or is out of scope of the resolution.
 
 ==== The context debugger
 
-Since build 234, k.LAB incorporates a simple _context debugger_ that is particularly useful to inspect values and their change when they are part of large and complex contexts, such as raster space. 
+Since build 234, k.LAB incorporates a simple _context debugger_ that is useful to inspect values and track their change when they are part of large and complex contexts, such as a raster space. 
 
 TODO debugger usage
 

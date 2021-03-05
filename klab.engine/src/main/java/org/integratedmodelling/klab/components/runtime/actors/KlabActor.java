@@ -23,7 +23,6 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.api.IKActorsStatement.While;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsActionCall;
-import org.integratedmodelling.kactors.model.KActorsConcurrentGroup;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Actors;
@@ -38,6 +37,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage.Semaphore;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AddComponentToGroup;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.BindUserAction;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Cleanup;
@@ -365,6 +365,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             return ret;
         }
 
+        public Scope withComponent(ViewComponent component) {
+            Scope ret = new Scope(this);
+            ret.viewScope.currentComponent = component;
+            return ret;
+        }
+
         public Scope getChild(ConcurrentGroup code) {
             Scope ret = new Scope(this);
             if (!initializing && this.viewScope != null) {
@@ -438,6 +444,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                 .onMessage(Spawn.class, this::handleCreateChildMessage).onMessage(Fire.class, this::handleFireMessage)
                 .onMessage(ComponentFire.class, this::handleComponentFireMessage)
                 .onMessage(UserAction.class, this::handleUserActionMessage).onMessage(AppReset.class, this::handleAppReset)
+                .onMessage(AddComponentToGroup.class, this::handleAddComponentToGroupMessage)
                 .onMessage(BindUserAction.class, this::handleBindActionMessage)
                 .onMessage(KActorsMessage.class, this::handleCallMessage).onMessage(Stop.class, this::stopChild)
                 .onMessage(Cleanup.class, this::handleCleanupMessage).onSignal(PostStop.class, signal -> onPostStop());
@@ -789,7 +796,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
              * install executor for group actions
              */
             this.localActionExecutors.put(code.getTag(),
-                    new GroupHandler(this.identity, (KActorsConcurrentGroup) code, scope, this.getContext().getSelf(), null));
+                    new GroupHandler(this.identity, appId, groupScope, this.getContext().getSelf(), null));
         }
         for (IKActorsStatement statement : code.getStatements()) {
             execute(statement, groupScope);
@@ -911,6 +918,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             return true;
         case OBJECT:
             return Actors.INSTANCE.createJavaObject(arg.getConstructor(), scope, identity);
+        case COMPONENT:
+            return arg.getConstructor();
         case ERROR:
             throw arg.getValue() instanceof Throwable
                     ? new KlabException((Throwable) arg.getValue())
@@ -1157,20 +1166,27 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         }
 
         if (executor instanceof KlabWidgetActionExecutor) {
+
             /*
              * the run() method in these is never called: they act through their view components
              */
             ViewComponent viewComponent = ((KlabWidgetActionExecutor) executor).getViewComponent();
-            scope.viewScope.setViewMetadata(viewComponent, executor.arguments);
-            viewComponent.setIdentity(this.identity.getId());
-            viewComponent.setApplicationId(this.appId);
-            viewComponent.setParentId(code.getCallId()); // check - seems
-                                                         // wrong
-            viewComponent.setId(executorId);
-            viewComponent.setActorPath(this.childActorPath);
-            ((KlabWidgetActionExecutor) executor).setInitializedComponent(viewComponent);
 
-            scope.viewScope.currentComponent.getComponents().add(viewComponent);
+            // may be null if the addition of the component happens as the result of an action
+            // enqueued by the component on this actor, run and notified by the message handler
+            // after the call.
+            if (viewComponent != null) {
+                scope.viewScope.setViewMetadata(viewComponent, executor.arguments);
+                viewComponent.setIdentity(this.identity.getId());
+                viewComponent.setApplicationId(this.appId);
+                viewComponent.setParentId(code.getCallId()); // check - seems
+                                                             // wrong
+                viewComponent.setId(executorId);
+                viewComponent.setActorPath(this.childActorPath);
+                ((KlabWidgetActionExecutor) executor).setInitializedComponent(viewComponent);
+                scope.viewScope.currentComponent.getComponents().add(viewComponent);
+            }
+
         } else if (executor != null) {
             executor.run(scope.withNotifyId(notifyId).withSender(getContext().getSelf(), appId));
         }
@@ -1208,6 +1224,108 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                 actions.match(message.value, MapUtils.EMPTY_MAP);
             }
         }
+        return Behaviors.same();
+    }
+
+    protected Behavior<KlabMessage> handleAddComponentToGroupMessage(AddComponentToGroup message) {
+
+        /*
+         * this is only for components, and these only happen in sessions.
+         */
+        if (!(this.identity instanceof Session)) {
+            return Behaviors.same();
+        }
+
+        Behavior<KlabMessage> child = SessionActor.create((Session) this.identity, null);
+        String actorName = message.group.getId().replaceAll("/", "_") + "_" + message.id;
+
+        // existing actors for this behavior
+        List<ActorRef<KlabMessage>> actors = this.childInstances.get(appId);
+
+        // TODO detach so that the components can be written to this without consequence
+        Scope scope = message.scope.withComponent(message.group);
+
+        ActorRef<KlabMessage> actor = getContext()
+                .spawn(Behaviors.supervise(child).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)), actorName);
+
+        // remove the appId for the children, otherwise their messages will be rerouted
+        Map<String, Object> arguments = new HashMap<>();
+        if (message.arguments != null) {
+            /*
+             * TODO match the arguments to the correspondent names for the declaration of main()
+             */
+            IBehavior childBehavior = Actors.INSTANCE.getBehavior(message.componentPath);
+            if (childBehavior == null) {
+                this.getIdentity().getMonitor()
+                        .error("unreferenced child behavior: " + message.componentPath + " when execute instantiation");
+                return Behaviors.same();
+            }
+            Action main = childBehavior.getAction("main");
+            int n = 0;
+            for (int i = 0; i < main.getStatement().getArgumentNames().size(); i++) {
+                String arg = main.getStatement().getArgumentNames().get(i);
+                Object value = message.arguments.get(arg);
+                if (value == null && message.arguments.getUnnamedKeys().size() > n) {
+                    value = message.arguments.get(message.arguments.getUnnamedKeys().get(n++));
+                    if (value instanceof KActorsValue) {
+                        value = evaluateInScope((KActorsValue) value, scope);
+                    }
+                }
+                arguments.put(arg, value);
+            }
+        }
+
+        IBehavior actorBehavior = Actors.INSTANCE.getBehavior(message.componentPath);
+        if (actorBehavior != null) {
+
+            /*
+             * AppID in message is null because this is run by the newly spawned actor; we
+             * communicate the overall appID through the specific field below.
+             */
+            Load loadMessage = new Load(this.identity, message.componentPath, null, scope)
+                    .withChildActorPath(this.childActorPath == null ? actorName : (this.childActorPath + "." + actorName))
+                    .withActorBaseName(actorName).withMainArguments(arguments).withApplicationId(this.appId)
+                    .withParent(getContext().getSelf());
+
+            Semaphore semaphore = null;
+            if (actorBehavior.getDestination() == Type.COMPONENT) {
+                /*
+                 * synchronize by default
+                 */
+                semaphore = Actors.INSTANCE.createSemaphore(Semaphore.Type.LOAD);
+                loadMessage.withSemaphore(semaphore);
+                componentActors.add(actor);
+            }
+
+            actor.tell(loadMessage);
+
+            if (semaphore != null) {
+                
+                waitForGreen(semaphore);
+
+                /*
+                 * TODO send the view message to the view with the group definition from the view
+                 * scope
+                 */
+                ViewAction action = new ViewAction(scope.viewScope.currentComponent);
+                action.setApplicationId(appId);
+                action.setData(ViewBehavior.getMetadata(message.arguments, scope));
+//                action.setComponentTag(this.getName());
+//                session.getState().updateView(this.component);
+                identity.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.ViewAction, action);
+
+            }
+
+            receivers.put(actorName, actor);
+
+            if (actors == null) {
+                actors = new ArrayList<>();
+                this.childInstances.put(actorName, actors);
+            }
+
+            actors.add(actor);
+        }
+
         return Behaviors.same();
     }
 
@@ -1332,7 +1450,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                     KlabActor.this.identity.setLayout(message.scope.viewScope.layout);
                     KlabActor.this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
                             message.scope.viewScope.layout);
-                }
+                } /*
+                   * TODO else if we have been spawned by a new component inside a group, we should
+                   * send the group update message
+                   */
                 /*
                  * move on, you waiters
                  */
