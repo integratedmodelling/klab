@@ -141,7 +141,7 @@ public class Aggregator {
                 if (this.aggregation == null) {
                     this.aggregation = ad.aggregation;
                 }
-                double dval = ((Number) value).doubleValue() * ad.conversionFactor;
+                double dval = ((Number) value).doubleValue() * (ad == null ? 1 : ad.conversionFactor);
                 sum += dval;
                 count++;
             } else {
@@ -157,6 +157,11 @@ public class Aggregator {
     }
 
     private AggregationData getAggregationData(IObservable observable, ILocator locator) {
+
+        if (observable == null) {
+            return null;
+        }
+        
         AggregationData ret = strategy.get(observable.getDefinition());
         if (ret == null) {
             ret = Units.INSTANCE.getAggregationData(observable, (IScale) locator);

@@ -16,14 +16,17 @@ import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsBehavior;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.klab.Annotations;
-import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.utils.Range;
 
 public class Behavior implements IBehavior {
@@ -87,6 +90,7 @@ public class Behavior implements IBehavior {
 			case ANNOTATION:
 			    for (IAnnotation annotation : Annotations.INSTANCE.collectAnnotations(value)) {
 			        if (annotation.getName().equals(this.value.getValue())) {
+			            scope.symbolTable.put(annotation.getName(), annotation);
 			            return true;
 			        }
 			    }
@@ -142,6 +146,12 @@ public class Behavior implements IBehavior {
 			case NUMBERED_PATTERN:
 				break;
 			case OBSERVABLE:
+			    Object obj = KlabActor.evaluateInScope(this.value, scope, (IActorIdentity<?>)scope.getIdentity());
+			    if (obj instanceof IObservable) {
+			        if (value instanceof IObservation) {
+			            return ((IObservation)value).getObservable().resolves((IObservable)obj, null);
+			        }
+			    }
 				break;
 			case QUANTITY:
 				break;

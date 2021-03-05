@@ -93,7 +93,6 @@ public class RuntimeBehavior {
 
                             @Override
                             public void newObservation(IObservation observation, ISubject context) {
-                                fire(observation, false, scope.semaphore, scope.getSymbols(identity));
                             }
 
                             @Override
@@ -148,11 +147,11 @@ public class RuntimeBehavior {
                     }
 
                     if (artifact != null) {
-                        
+
                         IScale scale = spaceResolution == null
                                 ? Scale.create(artifact.getGeometry())
                                 : Scale.create(artifact.getGeometry(), spaceResolution);
-                                
+
                         session.getState().resetContext();
                         if (scale.getSpace() != null) {
                             // avoid geocoding
@@ -503,4 +502,58 @@ public class RuntimeBehavior {
             scope.runtimeScope.getMonitor().debug(args.toArray());
         }
     }
+
+    /**
+     * Install a listener in a context that will fire an object to the sender whenever it is
+     * resolved, optionally matching a type.
+     * 
+     * @author Ferd
+     *
+     */
+    @Action(id = "when", fires = Type.OBSERVATION)
+    public static class When extends KlabActionExecutor {
+
+        String listener;
+
+        public When(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+            // TODO filters
+        }
+
+        @Override
+        void run(KlabActor.Scope scope) {
+            this.listener = scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState()
+                    .addApplicationGlobalListener(new ISessionState.Listener(){
+                        @Override
+                        public void newObservation(IObservation observation, ISubject context) {
+                            /*
+                             * Needs to intercept observations in any context. Not sure this works.
+                             */
+                            fire(observation, false, scope.semaphore, scope.getSymbols(identity));
+                        }
+
+                        @Override
+                        public void newContext(ISubject context) {
+                        }
+
+                        @Override
+                        public void scaleChanged(ScaleReference scale) {
+                            // TODO Auto-generated method stub
+
+                        }
+
+                        @Override
+                        public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
+                        }
+
+                    }, scope.appId);
+        }
+
+        @Override
+        public void dispose() {
+            scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState().removeGlobalListener(this.listener);
+        }
+    }
+
 }

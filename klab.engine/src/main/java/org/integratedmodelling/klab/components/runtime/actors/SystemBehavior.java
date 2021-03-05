@@ -5,11 +5,18 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.extensions.actors.Action;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
+import org.integratedmodelling.klab.rest.ScaleReference;
+import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -440,4 +447,5 @@ public class SystemBehavior {
         }
 
     }
+
 }
