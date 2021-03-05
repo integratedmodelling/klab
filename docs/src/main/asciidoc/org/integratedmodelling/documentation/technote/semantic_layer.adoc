@@ -1,0 +1,204 @@
+= The k.LAB Semantic Layer
+Technical note
+v1.0, 2021-02-27
+:doctype: article
+:description: The Semantic Layer
+:kl: k.LAB
+:kmod: k.Modeler
+:kact: k.Actors
+:keng: k.LAB Engine
+:knod: k.LAB Node
+:kim: k.IM
+:ked: k.LAB Resource Editor
+:kex: k.LAB Explorer
+:pex: Project Explorer
+:encoding: utf-8
+:lang: en
+:title-page:
+:toc: left
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+:numbered:
+:experimental:
+:reproducible:
+:icons: font
+:listing-caption: Listing
+:sectnums:
+:autofit-option:
+:mdash: &#8212;
+:language: asciidoc
+:source-highlighter: highlightjs
+:highlightjs-languages: groovy, java
+ifdef::backend-pdf[]
+:title-logo-image: image:resources_handling/imgs/KLAB_LOGO.png[align=center]
+endif::[]
+:stem:
+
+<<<
+
+## Introduction to {kim}
+
+{kim} is the declarative language used to annotate knowledge in the semantic layer and is de facto a linguistic representation of the constraints implemented by the used base ontologyfootnote:[The base ontology can be found in the resources of the engine plugin in _klab.engine/src/main/resources/knowledge_ as a set of owl files.].
+When modeling, it is used to define, for example, Concepts, Statements or Models. 
+
+NOTE: {kim} is optimized for the use of semantics. Since the expressions found in the language are just declarative, it is not possible to write maths expressions with {kim}.
+
+Its grammar has been created using the https://www.eclipse.org/xtend/[Xtend] project and its classes, both the xtend sources and its generated java sources reside in the `org.integratedmodelling.kim` plugin.
+
+A quick look at the Kim.xtextfootnote:[org.integratedmodelling.kim/src/org/integratedmodelling/kim/Kim.xtext] class shows how the grammar is built using xtend.
+To create concepts the https://en.wikipedia.org/wiki/QName[_qualified names_] notation is used, which is a particular way to express URIs with abbreviated syntax as https://en.wikipedia.org/wiki/CURIE[CURIE].
+
+Basically a concept is expressed as _namespace:identifier_:
+
+[source]
+----
+// XTEXT
+Model:
+	observable=ObservableSemantics |
+	namespace=Namespace? statements+=Statement*
+;
+
+Statement:
+	conceptStatement=ConceptStatement ';' |
+	modelStatement=ModelStatement ';' |
+	upperOntologyStatement=UpperOntologyDefinition ';' |
+	defineStatement=DefineStatement ';' |
+	observeStatement=ObserveStatement ';' 
+;
+
+ModelStatement:
+	 (annotations+=Annotation (annotations+=Annotation)*)? 
+	 ((inactive?='void')? & ((projectPrivate?='project')? private?='private')?)? model=MODEL_TYPE body=ModelBodyStatement
+;
+----
+
+Possible statements are:
+
+* ConceptStatement: soemthing that declares a concept. This is tipical of the worldviews, that declare building blocks. It is not tipical for namespaces on which modelers work.
+* ModelStatement: definition of models, syntactically starting with the keyword **model**.
+* UpperOntologyDefinition: a particular statement, that can be used only in the root namespace of the worldview. This requires a section per se, but basically it is about linking concepts found in {kl}'s worldview' to an externaly defined ontology in order to allow validation in terms of a different ontology.
+* DefineStatement: used to define variables inside of namespaces. If properly declared, they can also be imported into other namespaces. Defines are usually not used when modelling, since in that case a modeler wants to declare semantically also constants, so they would be defined as models. One example of the use of define is the creation of tables, where the table is defined through a data structure similar to a json:
++
+--
+[source,java,linenums]
+----
+define table elevation_lc_class_totals as {
+	title: "Area covered by each landcover type and elevation range (km²)"
+	label: "Land cover by elevation class, with totals"
+	target: geography:Elevation in m
+	columns: (
+		{ title: "Elevation in m ({classifier})", filter: (0 to 500, 500 to 1500, > 1500) }
+		{ title: "Total", summarize: sum, style: (bold bg_highlight) }
+	)
+	rows: (
+		{ title: "{classifier}", filter: landcover:LandCoverType, target: im:Area in km^2 }
+		{ title: "Total", summarize: sum, style: (bold bg_highlight) }
+	)
+};
+----
+--
+* ObserveStatement: this is used as a fallback for cases in which the context supplied by the graphical user interface ({kex}) is not available. One example fo r this situation is the execution of a unit test. In that case, having no user interface, the context needs to be defined using the **observe** keyword:
++
+--
+[source,java,linenums]
+----
+observe earth:Region named etnasnap
+	over space(shape = "EPSG:4326 POLYGON (( 14.8336 37.8513, 14.8336 37.6126, 15.1375 37.6126, 15.1375 37.8513, 14.8336 37.8513 ))" 
+		, grid="1000 m"  
+	)
+;
+----
+--
+
+NOTE: A description of the syntax for each statement can be found in the comments in Kim.xtext in each ***Body** section. For example _ConceptStatementBody_ for the _ConceptStatement_.
+
+## Syntax management in the {kmod}
+
+When opening namespaces in the {kmod}, one big help is represented by the syntax coloring, which allows users to get a first grip around the various types referenced in concepts and models by thir color. 
+
+The modeler itself is not able to do machine reasoning, and even if it was, machine reasoning to validate syntax would be too slow for a realtime function as syntax coloring. there fore there are two levels at which validation occurrs:
+
+* the ontologic validation done in the modeler, which occurrs in realtime while the user writes code
+* the semantic validation that the modeler delegates to the engine and occurrs when the model is executed
+
+
+
+
+## Syntactic and semantic level in {kim} expressions
+
+Two types of namespace exist in {kim}. They are logically separated, even if they can redside in the same namespace: concepts and models. 
+
+It is good manner to keep these separated, but it is possible to use them in the same project and namespace, for example for testing purposes.
+
+In fact:
+
+* concepts could be seen as the building blocks. They are carfully designed and thought by communities and are shared between them. They are usually synchronized in order to be used to build models on top of them. An example is the worldview of {kl}.
+* models #TODO: DESCRIBE THEM IN THIS CONTEXT#
+
+Concepts that use concepts from other namespaces, as for example in this case the reference to the _chemistry_ namespace
+
+[source,java,linenums]
+----
+abstract identity Nutrient 
+	"Any chemical element or compound that is necessary to the ontogenesis of an
+	 individual."
+	is chemistry:ChemicalSpecies;
+----
+
+need to be declared in the namespace definition through the **using** keyworld:
+
+[source,java,linenums]
+----
+namespace biology
+	"Fundamental biological concepts and relationships."
+	using im, physical, chemistry
+	in domain im:Nature
+;
+----
+
+A workspace, which is an aggregation of projects, is loaded as a whole, preprocessing and loading the contained namespaces in order of dependencies. For this reason declaring dependencies is normally necessary. But given that
+
+* the worldview is a particular workspace that is loaded before the others and assures to contain only concepts
+* models can't have dependencies from each other by design
+
+concepts need to make sure to obey to the laws of dependency declaration, while models do not need to, since all the concepts have already been already loaded when they are referenced.
+
+An exeption to the above would be the case in which a modeler defines a new concept in her/his local namespace together with a model and later on needs to reference that concept in a different namespace for another model. In that case the namespace import is necessary. This is legal, but should be avoided and left only to particular cases, one being the writing of unit tests.
+
+
+
+## API
+
+#TODO#
+
+Look at API class that contains all the possible API calls.
+
+
+
+## Authorities
+
+#TODO#
+
+Notes:
+
+* authorities are annotated with ```@Authority```
+* example IUPAC: `org.integratedmodelling.authorities.iupac.IUPACAuthority`
+* the authority service makes them available throughout the system (`org.integratedmodelling.klab.api.services.IAuthorityService`). 
+* the main implementation is `org.integratedmodelling.klab.Authorities`, authorities are collected on object instantiation
+* `org.integratedmodelling.klab.owl.OWL` should make use of it, #but I could not find how.# 
+ 
+
+## {kim} Syntax Notes
+
+
+* use camelcase for ids of concepts
+* use lowercase for namespaces
+** uppercase namespaces are authorities (ex. **IUPAC**:Water)
+
+
+## Footnotes
+
+
+Minute 3.55
+
