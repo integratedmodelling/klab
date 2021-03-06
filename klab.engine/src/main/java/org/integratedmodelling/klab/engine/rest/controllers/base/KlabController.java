@@ -27,6 +27,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.kim.KimTemplateProcessor;
 import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.EngineStatus;
 import org.integratedmodelling.klab.rest.KimCapabilities;
@@ -39,6 +40,7 @@ import org.springframework.http.MediaType;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -73,7 +75,7 @@ public class KlabController {
         return ret;
     }
     
-    @RequestMapping(value = API.KIM, method = RequestMethod.GET, produces = "application/json")
+    @RequestMapping(value = API.KIM.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
     @ResponseBody
     public KimCapabilities kimCapabilities(Principal user, HttpServletRequest request) {
         KimCapabilities ret = new KimCapabilities();
@@ -84,6 +86,14 @@ public class KlabController {
         ret.getKeywords().addAll(Kim.INSTANCE.getKimKeywords());
         return ret;
     }
+
+    @RequestMapping(value = API.KIM.TEMPLATE, method = RequestMethod.POST, consumes="text/plain", produces = "text/plain")
+    @ResponseBody
+    public String kimGenerateTemplate(@RequestBody String template) {
+        // TODO pass separator in optional query parameter
+        return KimTemplateProcessor.process(template, " ");
+    }
+
     
 	@RequestMapping(value = API.ENGINE.STATUS, method = RequestMethod.GET, produces = "application/json")
 	@ResponseBody
