@@ -22,6 +22,7 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.Sequence;
 import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.api.IKActorsStatement.While;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.api.IKActorsValue.ExpressionType;
 import org.integratedmodelling.kactors.model.KActorsActionCall;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
@@ -909,17 +910,24 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         return evaluateInScope(arg, scope, this.identity);
     }
 
+    @SuppressWarnings("unchecked")
     public static Object evaluateInScope(KActorsValue arg, Scope scope, IActorIdentity<?> identity) {
+
+        Object ret = null;
+        
         switch(arg.getType()) {
         case ANYTHING:
         case ANYVALUE:
             break;
         case ANYTRUE:
-            return true;
+            ret = true;
+            break;
         case OBJECT:
-            return Actors.INSTANCE.createJavaObject(arg.getConstructor(), scope, identity);
+            ret = Actors.INSTANCE.createJavaObject(arg.getConstructor(), scope, identity);
+            break;
         case COMPONENT:
-            return arg.getConstructor();
+            ret = arg.getConstructor();
+            break;
         case ERROR:
             throw arg.getValue() instanceof Throwable
                     ? new KlabException((Throwable) arg.getValue())
@@ -927,11 +935,17 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                             arg.getValue() == null ? "Unspecified actor error from error value" : arg.getValue().toString());
 
         case NUMBERED_PATTERN:
+            
+            if (!"$".equals(arg.getValue().toString())) {
+                // TODO
+            } /* else fall through to IDENTIFIER */
+            
         case IDENTIFIER:
 
             // TODO check for recipient in ID
-            return scope.getValue(arg.getValue().toString());
-
+            ret = scope.getValue(arg.getValue().toString());
+            break;
+            
         case EXPRESSION:
 
             if (arg.getData() == null) {
@@ -939,12 +953,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                         new ObjectExpression((IKimExpression) arg.getValue(), scope.runtimeScope, CompilerOption.WrapParameters));
             }
             try {
-                return ((ObjectExpression) arg.getData()).eval(scope.runtimeScope, identity,
+                ret = ((ObjectExpression) arg.getData()).eval(scope.runtimeScope, identity,
                         Parameters.create(scope.getSymbols(identity)));
             } catch (Throwable t) {
                 scope.getMonitor().error(t);
                 return null;
             }
+            
+            break;
 
         case BOOLEAN:
         case CLASS:
@@ -955,7 +971,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         case OBSERVABLE:
         case QUANTITY:
         case CONSTANT:
-            return arg.getValue();
+            ret = arg.getValue();
+            break;
+            
         case OBSERVATION:
             // TODO
             break;
@@ -963,11 +981,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             // eval all args
             break;
         case LIST:
-            List<Object> ret = new ArrayList<>();
+            ret = new ArrayList<Object>();
             for (Object o : (Collection<?>) arg.getValue()) {
-                ret.add(o instanceof KActorsValue ? evaluateInScope((KActorsValue) o, scope, identity) : o);
+                ((List<Object>)ret).add(o instanceof KActorsValue ? evaluateInScope((KActorsValue) o, scope, identity) : o);
             }
-            return ret;
+            break;
         case TREE:
             // eval all args
             break;
@@ -975,7 +993,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             break;
         case NODATA:
             return null;
-        // return Observables.INSTANCE.declare(arg.getValue().toString());
         case REGEXP:
             break;
         case TABLE:
@@ -983,15 +1000,25 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         case TYPE:
             break;
         case URN:
-            return new Urn(arg.getValue().toString());
-        // default:
-        // break;
+            ret = new Urn(arg.getValue().toString());
+            break;
         case EMPTY:
+            break;
+        case ANNOTATION:
             break;
         default:
             break;
         }
-        return null;
+        
+        if (arg.getExpressionType() == ExpressionType.TERNARY_OPERATOR) {
+            if (Actors.INSTANCE.asBooleanValue(ret)) {
+                ret = arg.getTrueCase() == null ? null : evaluateInScope(arg.getTrueCase(), scope, identity);
+            } else {
+                ret = arg.getFalseCase() == null ? null : evaluateInScope(arg.getFalseCase(), scope, identity);
+            }
+        }
+        
+        return ret;
     }
 
     @SuppressWarnings("unchecked")

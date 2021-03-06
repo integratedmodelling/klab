@@ -205,6 +205,10 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="quantity" eType="#//Quantity"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="then" eType="#//Value"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="else" eType="#//Value"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="constructor" eType="#//Constructor"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="component" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
