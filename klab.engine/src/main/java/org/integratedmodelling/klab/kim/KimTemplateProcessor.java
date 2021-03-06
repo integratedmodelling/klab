@@ -8,7 +8,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kactors.kactors.Concept;
+import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.Kim;
@@ -17,7 +17,6 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IProject;
-import org.integratedmodelling.klab.api.knowledge.IWorldview;
 import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -43,9 +42,9 @@ public enum KimTemplateProcessor {
 			for (INamespace ns : project.getNamespaces()) {
 				IKimNamespace namespace = Kim.INSTANCE.getNamespace(ns.getName());
 				for (IKimStatement statement : namespace.getAllStatements()) {
-					if (statement instanceof IConceptDefinition) {
-						String conceptId = namespace.getName() + ":" + ((IConceptDefinition) statement).getId();
-						IConcept concept = Concepts.c(conceptId);
+					if (statement instanceof IKimConceptStatement) {
+						String conceptId = namespace.getName() + ":" + ((IKimConceptStatement) statement).getName();
+						IConcept concept = Concepts.INSTANCE.getConcept(conceptId);
 						if (concept != null) {
 							classify(concept);
 						}
