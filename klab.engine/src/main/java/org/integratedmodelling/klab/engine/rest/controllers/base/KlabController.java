@@ -91,7 +91,7 @@ public class KlabController {
     @ResponseBody
     public String kimGenerateTemplate(@RequestBody String template) {
         // TODO pass separator in optional query parameter
-        return KimTemplateProcessor.process(template, " ");
+        return KimTemplateProcessor.INSTANCE.process(template, " ");
     }
 
     

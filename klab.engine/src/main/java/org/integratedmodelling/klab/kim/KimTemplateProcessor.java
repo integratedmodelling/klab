@@ -1,116 +1,135 @@
 package org.integratedmodelling.klab.kim;
 
-import java.io.IOException;
-import java.net.URL;
 import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Pattern;
 
-import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
+import org.integratedmodelling.kactors.kactors.Concept;
+import org.integratedmodelling.kim.api.IKimNamespace;
+import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorldview;
+import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.INamespace;
-import org.integratedmodelling.klab.engine.Engine;
-
-import com.google.common.base.Charsets;
+import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
- * Substitute any section named as __XXX__ (where XXX is one of the Section enum values) into a
- * template with the corresponding lists of concepts or keywords. Meant to build language processors
- * such as syntax highlighters. Bound to the {@link API.KIM.TEMPLATE} engine public endpoint.
+ * Substitute any section named as __XXX__ (where XXX is one of the Section enum
+ * values) into a template with the corresponding lists of concepts or keywords.
+ * Meant to build language processors such as syntax highlighters. Bound to the
+ * {@link API.KIM.TEMPLATE} engine public endpoint.
  * 
  * @author Ferd
  *
  */
-public class KimTemplateProcessor {
+public enum KimTemplateProcessor {
 
-    enum Section {
-        KEYWORDS, 
-        QUALITIES, RELATIONSHIPS, SUBJECTS, EVENTS, PREDICATES, CONFIGURATIONS, PROCESSES,
-        CONCRETE_QUALITIES, CONCRETE_RELATIONSHIPS, CONCRETE_SUBJECTS, CONCRETE_EVENTS, CONCRETE_PREDICATES, CONCRETE_CONFIGURATIONS, CONCRETE_PROCESSES,
-        ABSTRACT_QUALITIES, ABSTRACT_RELATIONSHIPS, ABSTRACT_SUBJECTS, ABSTRACT_EVENTS, ABSTRACT_PREDICATES, ABSTRACT_CONFIGURATIONS, ABSTRACT_PROCESSES
-    }
+	INSTANCE;
 
-    static public String process(String template, String separator) {
+	private KimTemplateProcessor() {
 
-        IWorldview worldview = Resources.INSTANCE.getWorldview();
+		data.put(Section.KEYWORDS, pickKeywords());
 
-        Set<Section> elements = EnumSet.noneOf(Section.class);
-        
-        for (Section section : Section.values()) {
-            if (template.contains("__" + section.name() + "__")) {
-                elements.add(section);
-            }
-        }
+		for (IProject project : Resources.INSTANCE.getWorldview().getProjects()) {
+			for (INamespace ns : project.getNamespaces()) {
+				IKimNamespace namespace = Kim.INSTANCE.getNamespace(ns.getName());
+				for (IKimStatement statement : namespace.getAllStatements()) {
+					if (statement instanceof IConceptDefinition) {
+						String conceptId = namespace.getName() + ":" + ((IConceptDefinition) statement).getId();
+						IConcept concept = Concepts.c(conceptId);
+						if (concept != null) {
+							classify(concept);
+						}
+					}
+				}
+			}
+		}
+	}
 
-        for (Section section : elements) {
-            template = substitute(template, section);
-        }
-        
-        return template;
-    }
+	private void classify(IConcept concept) {
 
-    private static String substitute(String template, Section section) {
-//        if ()
-        return template;
-    }
+		Set<Section> section = EnumSet.noneOf(Section.class);
+		if (concept.is(Type.SUBJECT) || concept.is(Type.AGENT)) {
+			section.add(Section.SUBJECTS);
+			section.add(concept.is(Type.ABSTRACT) ? Section.ABSTRACT_SUBJECTS : Section.CONCRETE_SUBJECTS);
+		} else if (concept.is(Type.QUALITY)) {
+			section.add(Section.QUALITIES);
+			section.add(concept.is(Type.ABSTRACT) ? Section.ABSTRACT_QUALITIES : Section.CONCRETE_QUALITIES);
+		} else if (concept.is(Type.EVENT)) {
+			section.add(Section.EVENTS);
+			section.add(concept.is(Type.ABSTRACT) ? Section.ABSTRACT_EVENTS : Section.CONCRETE_EVENTS);
+		} else if (concept.is(Type.RELATIONSHIP)) {
+			section.add(Section.RELATIONSHIPS);
+			section.add(concept.is(Type.ABSTRACT) ? Section.ABSTRACT_RELATIONSHIPS : Section.CONCRETE_RELATIONSHIPS);
+		} else if (concept.is(Type.PROCESS)) {
+			section.add(Section.PROCESSES);
+			section.add(concept.is(Type.ABSTRACT) ? Section.ABSTRACT_PROCESSES : Section.CONCRETE_PROCESSES);
+		} else if (concept.is(Type.PREDICATE)) {
+			section.add(Section.PREDICATES);
+			section.add(concept.is(Type.ABSTRACT) ? Section.ABSTRACT_PREDICATES : Section.CONCRETE_PREDICATES);
+		}
 
-    private static Set<String> pickKeywords() {
-        Set<String> ret = new HashSet<>();
-        Pattern p = Pattern.compile("^[a-z]*$");
-        for (String k : Kim.INSTANCE.getKimKeywords()) {
-            if (k.length() > 1 && p.matcher(k).find()) {
-                ret.add(k);
-            }
-        }
-        return ret;
-    }
+		for (Section sec : section) {
+			Set<String> set = data.get(sec);
+			if (set == null) {
+				set = new HashSet<>();
+				data.put(sec, set);
+			}
+			set.add(concept.toString());
+		}
+	}
 
-    private static Set<String> collect(Type event, IWorldview worldview) {
-        Set<String> ret = new HashSet<>();
-        for (IProject p : worldview.getProjects()) {
-            for (INamespace n : p.getNamespaces()) {
-                for (IConcept c : n.getOntology().getConcepts()) {
-                    if (c.is(event) && !c.toString().contains("_")) {
-                        ret.add(c.toString());
-                    }
-                }
-            }
-        }
-        return ret;
-    }
+	enum Section {
+		KEYWORDS, QUALITIES, RELATIONSHIPS, SUBJECTS, EVENTS, PREDICATES, CONFIGURATIONS, PROCESSES, CONCRETE_QUALITIES,
+		CONCRETE_RELATIONSHIPS, CONCRETE_SUBJECTS, CONCRETE_EVENTS, CONCRETE_PREDICATES, CONCRETE_CONFIGURATIONS,
+		CONCRETE_PROCESSES, ABSTRACT_QUALITIES, ABSTRACT_RELATIONSHIPS, ABSTRACT_SUBJECTS, ABSTRACT_EVENTS,
+		ABSTRACT_PREDICATES, ABSTRACT_CONFIGURATIONS, ABSTRACT_PROCESSES
+	}
 
-    private static String substitute(String template, Section section, Set<String> words, String separator) {
+	private Map<Section, Set<String>> data = new HashMap<>();
 
-        int n = 0;
-        StringBuffer set = new StringBuffer(1024);
-        for (String word : words) {
+	public String process(String template, String separator) {
 
-            // add 5, then switch to a new line
-            if ((n % 5) == 0) {
-                if (n > 0) {
-                    set.append("' + \n");
-                }
-                set.append("     '");
-            } else {
-                set.append(" ");
-            }
+		Set<Section> elements = EnumSet.noneOf(Section.class);
 
-            set.append(word);
-            n++;
-        }
+		for (Section section : Section.values()) {
+			if (template.contains("__" + section.name() + "__")) {
+				elements.add(section);
+			}
+		}
 
-        if (!set.toString().endsWith("'")) {
-            set.append("'");
-        }
+		for (Section section : elements) {
+			template = substitute(template, section, separator);
+		}
 
-        return template.replaceAll("__" + section.name() + "__", set.toString());
-    }
+		return template;
+	}
+
+	private String substitute(String template, Section section, String separator) {
+		if (data.containsKey(section)) {
+			return template.replace("__" + section.name() + "__", StringUtil.join(data.get(section), separator));
+		}
+		return template;
+	}
+
+	private Set<String> pickKeywords() {
+		Set<String> ret = new HashSet<>();
+		Pattern p = Pattern.compile("^[a-z]*$");
+		for (String k : Kim.INSTANCE.getKimKeywords()) {
+			if (k.length() > 1 && p.matcher(k).find()) {
+				ret.add(k);
+			}
+		}
+		return ret;
+	}
 
 }
