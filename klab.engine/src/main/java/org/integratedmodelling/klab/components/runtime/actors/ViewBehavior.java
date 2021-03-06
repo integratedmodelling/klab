@@ -558,14 +558,16 @@ public class ViewBehavior {
     public static class GroupHandler extends KlabWidgetActionExecutor {
 
         private String appId;
+        // add to this
         private ViewComponent group;
+        // keep this for resetting
         private ViewComponent originalGroup;
 
         public GroupHandler(IActorIdentity<KlabMessage> identity, String appId, KlabActor.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, null, scope, sender, callId);
             this.appId = appId;
-            this.group = this.initializedComponent = scope.viewScope.currentComponent;
+            this.group = copyComponent(scope.viewScope.currentComponent);
             this.originalGroup = copyComponent(this.group);
         }
 
@@ -592,6 +594,7 @@ public class ViewBehavior {
             
             if (message instanceof KActorsMessage && "reset".equals(((KActorsMessage)message).message)) {
                 KActorsMessage mess = (KActorsMessage) message;
+                this.group = copyComponent(this.originalGroup);
                 ViewAction action = new ViewAction(this.originalGroup);
                 action.setApplicationId(mess.appId);
                 action.setData(getMetadata(mess.arguments, scope));
