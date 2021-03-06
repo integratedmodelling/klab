@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor.Actor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage.Semaphore;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AddComponentToGroup;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
@@ -517,6 +518,15 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
          */
         for (KlabActionExecutor executor : actionCache.values()) {
             if (executor instanceof KlabWidgetActionExecutor) {
+                ((KlabWidgetActionExecutor) executor).onMessage(mes, message.scope);
+            }
+        }
+
+        /*
+         * groups are handled separately and don't end up in the action cache
+         */
+        for (Actor executor : localActionExecutors.values()) {
+            if (executor instanceof GroupHandler) {
                 ((KlabWidgetActionExecutor) executor).onMessage(mes, message.scope);
             }
         }

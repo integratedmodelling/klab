@@ -127,7 +127,7 @@ public class ViewBehavior {
          * Called when a k.Actors action is called with a component as receiver.
          */
         @Override
-        public final void onMessage(KlabMessage message, Scope scope) {
+        public void onMessage(KlabMessage message, Scope scope) {
 
             if (message instanceof KActorsMessage) {
 
@@ -226,7 +226,7 @@ public class ViewBehavior {
             this.initializedComponent = copyComponent(viewComponent);
         }
 
-        private ViewComponent copyComponent(ViewComponent viewComponent) {
+        protected ViewComponent copyComponent(ViewComponent viewComponent) {
             try {
                 return JsonUtils.cloneObject(viewComponent);
             } catch (Throwable e) {
@@ -559,12 +559,14 @@ public class ViewBehavior {
 
         private String appId;
         private ViewComponent group;
+        private ViewComponent originalGroup;
 
         public GroupHandler(IActorIdentity<KlabMessage> identity, String appId, KlabActor.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, null, scope, sender, callId);
             this.appId = appId;
-            this.group = scope.viewScope.currentComponent;
+            this.group = this.initializedComponent = scope.viewScope.currentComponent;
+            this.originalGroup = copyComponent(this.group);
         }
 
         @Override
@@ -583,6 +585,22 @@ public class ViewBehavior {
             // return null to ignore the results and exit to the message queue, where the add
             // component message is waiting
             return null;
+        }
+
+        @Override
+        public void onMessage(KlabMessage message, Scope scope) {
+            
+            if (message instanceof KActorsMessage && "reset".equals(((KActorsMessage)message).message)) {
+                KActorsMessage mess = (KActorsMessage) message;
+                ViewAction action = new ViewAction(this.originalGroup);
+                action.setApplicationId(mess.appId);
+                action.setData(getMetadata(mess.arguments, scope));
+                action.setComponentTag(this.getName());
+                session.getState().updateView(this.originalGroup);
+                session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.ViewAction, action);
+            } else {
+                super.onMessage(message, scope);
+            }
         }
 
         @Override
