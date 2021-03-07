@@ -46,15 +46,17 @@ public enum KimTemplateProcessor {
 						String conceptId = namespace.getName() + ":" + ((IKimConceptStatement) statement).getName();
 						IConcept concept = Concepts.INSTANCE.getConcept(conceptId);
 						if (concept != null) {
-							classify(concept);
+						    // passing the conceptId captures 'equals' and authority concepts
+						    classify(concept, conceptId);
 						}
 					}
 				}
 			}
 		}
+		
 	}
 
-	private void classify(IConcept concept) {
+	private void classify(IConcept concept, String conceptId) {
 
 		Set<Section> section = EnumSet.noneOf(Section.class);
 		if (concept.is(Type.SUBJECT) || concept.is(Type.AGENT)) {
@@ -75,7 +77,10 @@ public enum KimTemplateProcessor {
 		} else if (concept.is(Type.PREDICATE)) {
 			section.add(Section.PREDICATES);
 			section.add(concept.is(Type.ABSTRACT) ? Section.ABSTRACT_PREDICATES : Section.CONCRETE_PREDICATES);
-		}
+		}  else if (concept.is(Type.CONFIGURATION)) {
+            section.add(Section.CONFIGURATIONS);
+            section.add(concept.is(Type.ABSTRACT) ? Section.ABSTRACT_CONFIGURATIONS : Section.CONCRETE_CONFIGURATIONS);
+        }
 
 		for (Section sec : section) {
 			Set<String> set = data.get(sec);
@@ -83,7 +88,7 @@ public enum KimTemplateProcessor {
 				set = new HashSet<>();
 				data.put(sec, set);
 			}
-			set.add(concept.toString());
+			set.add(conceptId);
 		}
 	}
 
