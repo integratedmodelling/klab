@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="8.0.11" transformSequenceNumber="8">
-  <directoryPresets config="./src/main/deploy/package" />
+  <directoryPresets config="./target/jfx" />
   <application name="k.LAB Control Center" applicationId="3443-1218-3478-1447" mediaDir="target/media" shortName="klab" publisher="The Integrated Modelling Partnership" publisherWeb="https://integratedmodelling.org/" version="1.1" allPathsRelative="true" macVolumeId="5755f304874440a" javaMinVersion="1.8" javaMaxVersion="1.8" jdkMode="jdk" jdkName="JDK 1.8">
     <languages>
       <principalLanguage id="en" customLocalizationFile="./src/main/deploy/package/install4j.utf8" />
@@ -9,10 +9,10 @@
   </application>
   <files>
     <mountPoints>
-      <mountPoint id="35" />
+      <mountPoint id="560" location="app" />
     </mountPoints>
     <entries>
-      <dirEntry mountPoint="35" file="./target/jfx/app" entryMode="subdir" subDirectory="app" />
+      <dirEntry mountPoint="560" file="./target/jfx/app" subDirectory="app" />
     </entries>
   </files>
   <launchers>
@@ -27,7 +27,7 @@
       </splashScreen>
       <java mainClass="org.integratedmodelling.controlcenter.ControlCenter">
         <classPath>
-          <archive location="app/controlcenter-1.1-jfx.jar" failOnError="false" />
+          <archive location="app/controlcenter-jfx.jar" failOnError="false" />
           <directory location="app/lib" failOnError="false" />
         </classPath>
       </java>
