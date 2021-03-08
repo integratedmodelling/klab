@@ -76,7 +76,7 @@ public abstract class TableInterpreter implements ITableInterpreter {
 
 		ITable<?> table = null;
 
-		if (parameters.containsKey("space.encoding")) {
+		if (parameters.containsKey("space.encoding") && !parameters.get("space.encoding").trim().isEmpty()) {
 
 			@SuppressWarnings("unchecked")
 			DimensionScanner<IShape> strategy = TableAdapter.runtimeData.get(resource.getUrn() + "_space",
@@ -113,7 +113,7 @@ public abstract class TableInterpreter implements ITableInterpreter {
 			}
 		}
 
-		if (parameters.containsKey("time.encoding")) {
+		if (parameters.containsKey("time.encoding") && !parameters.get("time.encoding").trim().isEmpty()) {
 
 			@SuppressWarnings("unchecked")
 			DimensionScanner<ITime> strategy = TableAdapter.runtimeData.get(resource.getUrn() + "_time",
@@ -144,6 +144,7 @@ public abstract class TableInterpreter implements ITableInterpreter {
 
 				strategy.encodedDimension = Time.create(new TimeInstant(start), new TimeInstant(end), resolution)
 						.encode();
+				timeEncoding = strategy.encodedDimension;
 
 				TableAdapter.runtimeData.put(resource.getUrn() + "_time", strategy);
 

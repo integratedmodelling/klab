@@ -116,7 +116,7 @@ public class Actuator implements IActuator {
         public Computation() {
         }
 
-        public Computation(String targetId, Variable variable ) {
+        public Computation(String targetId, Variable variable) {
             this.targetId = targetId;
             this.variable = variable;
         }
@@ -153,7 +153,16 @@ public class Actuator implements IActuator {
     private Dataflow dataflow;
     List<IActuator> actuators = new ArrayList<>();
     Date creationTime = new Date();
-    // private boolean createsObservation;
+
+    /**
+     * Filled in after the dataflow is compiled, contains the name mappings that apply to this
+     * actuator only when the aliased name of a referenced artifact is different from its stable
+     * name in the catalog. Used to remap the names in each actuator before computation. These are
+     * kept here rather than collected while computing, because actuator are topologically sorted
+     * into one flat list before execution.
+     * 
+     */
+    Map<String, String> localNames = new HashMap<>();
 
     // reference means that this actuator is a stand-in for another in the same
     // dataflow
@@ -725,11 +734,11 @@ public class Actuator implements IActuator {
                     /*
                      * resolve and compute any distributed observables
                      */
-                    ITaskTree< ? > task = null;
+                    ITaskTree<?> task = null;
                     for (Observable deferred : deferredObservables) {
 
                         if (task == null) {
-                            task = ((ITaskTree< ? >) ctx.getMonitor().getIdentity()).createChild("Resolution of "
+                            task = ((ITaskTree<?>) ctx.getMonitor().getIdentity()).createChild("Resolution of "
                                     + Observables.INSTANCE.getDisplayName(deferred) + " within " + object.getName());
                         }
                         ctx.resolve(deferred, (IDirectObservation) object, task,
@@ -800,7 +809,7 @@ public class Actuator implements IActuator {
             IConcept targetPredicate = ((Observable) ((ComputableResource) resource).getOriginalObservable())
                     .getTargetPredicate();
 
-            boolean ok = ((IPredicateClassifier< ? >) contextualizer).initialize((IObjectArtifact) ret, abstractPredicate,
+            boolean ok = ((IPredicateClassifier<?>) contextualizer).initialize((IObjectArtifact) ret, abstractPredicate,
                     targetPredicate, ctx);
 
             if (ok) {
@@ -923,6 +932,10 @@ public class Actuator implements IActuator {
         }
 
         for (IActuator input : getActuators()) {
+            
+            /*
+             * TODO check: is this ever right?
+             */
             if (ret.getArtifact(input.getName()) != null) {
                 // no effect if not aliased
                 ret.rename(input.getName(), input.getAlias());
@@ -946,6 +959,15 @@ public class Actuator implements IActuator {
                         ret.setData(targetArtifactId, mediated);
                     }
                 }
+            }
+        }
+
+        /**
+         * Rename in scope
+         */
+        for (String key : localNames.keySet()) {
+            if (ret.getArtifact(key) != null) {
+                ret.rename(key, localNames.get(key));
             }
         }
 
@@ -1198,6 +1220,7 @@ public class Actuator implements IActuator {
     /*
      * Called after target was created. Not meant for listeners but to complete the observation with
      * its model-dependent information before the model goes away.
+     * 
      * @param observation
      */
     public void notifyNewObservation(IObservation observation) {
@@ -1375,10 +1398,12 @@ public class Actuator implements IActuator {
      * put last; if they're partitions, sort them by increasing priority (the opposite of their
      * natural order) so that the highest-priority computes last, just in case overlaps happen.
      * Note: All partitions of the same observable must go after the dependencies
+     * 
      * @param actuator
+     * 
      * @return
      */
-    private List<IActuator> getSortedChildren(Actuator actuator, boolean skipSubdataflows) {
+    protected List<IActuator> getSortedChildren(Actuator actuator, boolean skipSubdataflows) {
 
         List<IActuator> ret = new ArrayList<>();
         List<IActuator> partitions = new ArrayList<>();
@@ -1423,6 +1448,7 @@ public class Actuator implements IActuator {
      * is no computation, so if we have no artifacts check first if we have a product with the same
      * name (happens with countables when no resolver was found). TODO ensure that @probe
      * annotations are honored.
+     * 
      * @param isMainObservable
      */
     public void notifyArtifacts(boolean isMainObservable, IRuntimeScope context) {
@@ -1570,7 +1596,7 @@ public class Actuator implements IActuator {
     public ObservedConcept getObservedConcept() {
         return new ObservedConcept(this.observable, this.mode);
     }
-    
+
     @Override
     public IScale mergeScale(IScale scale, IMonitor monitor) {
 
@@ -1605,5 +1631,9 @@ public class Actuator implements IActuator {
 
     public boolean isTrivial() {
         return actuators.isEmpty() && computationStrategy.isEmpty() && mediationStrategy.isEmpty();
+    }
+    
+    public Map<String, String> getLocalNames() {
+        return this.localNames;
     }
 }

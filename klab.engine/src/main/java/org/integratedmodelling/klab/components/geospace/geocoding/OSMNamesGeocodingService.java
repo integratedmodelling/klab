@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.geospace.geocoding;
 
 import java.util.Map;
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
@@ -34,7 +35,7 @@ public class OSMNamesGeocodingService extends GeocodingService {
 		 */
 		IShape ret = null;
 		String name = null;
-		System.out.println(url);
+//		System.out.println(url);
 		try {
 			Map<?, ?> res = fastClient.get(url, Map.class);
 			if (res != null && res.containsKey("display_name")) {
@@ -47,7 +48,7 @@ public class OSMNamesGeocodingService extends GeocodingService {
 			// this tells the view to not paint the shape
 			ret.getMetadata().put(IMetadata.IM_GEOGRAPHIC_AREA, Boolean.FALSE);
 		} catch (Throwable t) {
-
+		    Logging.INSTANCE.warn("Could not geocode " + envelope);
 		}
 		return ret;
 	}

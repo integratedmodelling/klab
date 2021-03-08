@@ -45,9 +45,9 @@ public class ObjectBehavior {
 					try {
 						Future<IArtifact> future = ((ISubject) identity)
 								.observe(((IObservable) arg).getDefinition());
-						fire(future.get(), true);
+						fire(future.get(), true, scope.semaphore, scope.getSymbols(identity));
 					} catch (Throwable e) {
-						fail(e);
+						fail(e, scope.semaphore);
 					}
 				}
 			} else if (this.identity instanceof Session) {
@@ -57,14 +57,14 @@ public class ObjectBehavior {
 					if (arg instanceof IObservable) {
 						Future<IArtifact> future = ((Session) this.identity).getState()
 								.submit(((IObservable) arg).getDefinition());
-						fire(future.get(), true);
+						fire(future.get(), true, scope.semaphore, scope.getSymbols(identity));
 					}
 				} catch (Throwable e) {
-					fail(e);
+					fail(e, scope.semaphore);
 				}
 
 			} else {
-				fail(this.identity + ": observations can only be made within subjects or sessions");
+				fail(this.identity + ": observations can only be made within subjects or sessions", scope.semaphore);
 			}
 
 		}
@@ -135,7 +135,7 @@ public class ObjectBehavior {
 							// TODO filter if a filter was configured; also may need to have a "current
 							// context"
 							// in the scope and match the context to it before firing.
-							fire(observation, false);
+							fire(observation, false, scope.semaphore, scope.getSymbols(identity));
 						}
 
 						@Override

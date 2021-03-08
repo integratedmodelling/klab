@@ -5,8 +5,10 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.api.data.IResource;
@@ -34,6 +36,7 @@ public class SQLTableCache {
     List<Attribute> sortedAttributes_ = null;
     IResource resource;
     int[] dimensions;
+    Map<String, String> sanitizedNames = new HashMap<>();
 
     public SQLTableCache(IResource resource) {
 
@@ -41,7 +44,9 @@ public class SQLTableCache {
         this.resource = resource;
         this.dimensions = new int[]{Integer.parseInt(resource.getParameters().get("rows.data").toString()),
                 Integer.parseInt(resource.getParameters().get("columns.data").toString())};
-
+        for (Attribute attribute : resource.getAttributes()) {
+            this.sanitizedNames.put(sanitize(attribute.getName()), attribute.getName());
+        }
         if (database == null) {
             database = H2Database.createPersistent(dbname);
         }
@@ -67,7 +72,7 @@ public class SQLTableCache {
 
         String sql = "CREATE TABLE data (\n   oid LONG";
         for (Attribute column : getSortedAttributes()) {
-            sql += ",\n   " + column.getName() + " " + SQL.getType(column.getType());
+            sql += ",\n   " + sanitize(column.getName()) + " " + SQL.getType(column.getType());
             if (getWidth(column) > 0) {
                 sql += "(" + getWidth(column) + ")";
             }
@@ -77,7 +82,7 @@ public class SQLTableCache {
         for (Attribute column : getSortedAttributes()) {
             if (isIndexed(column)) {
                 sql += "\nCREATE " + (column.getType() == IArtifact.Type.SPATIALEXTENT ? "SPATIAL" : "") + " INDEX "
-                        + column.getName() + "_index ON data (" + column.getName() + ");";
+                        + sanitize(column.getName()) + "_index ON data (" + sanitize(column.getName()) + ");";
             }
         }
 
@@ -102,7 +107,7 @@ public class SQLTableCache {
      * @return
      */
     public int getWidth(Attribute attribute) {
-        Integer ret = Integer.parseInt(resource.getParameters().get("column." + attribute.getName() + ".searchable", "-1"));
+        Integer ret = Integer.parseInt(resource.getParameters().get("column." + attribute.getName() + ".size", "-1"));
         if (ret < 0 && attribute.getType() == Type.TEXT) {
             return 1024;
         }
@@ -118,9 +123,11 @@ public class SQLTableCache {
     }
 
     public void reset(ITable<?> table) {
-        database.execute("DROP TABLE data;");
-        createStructure();
-        loadData(table);
+        if (isEmpty()) {
+            database.execute("DROP TABLE IF EXISTS data;");
+            createStructure();
+            loadData(table);
+        }
     }
 
     public Object getObject(int... locators) {
@@ -188,8 +195,8 @@ public class SQLTableCache {
                     Object value = filter.getArguments().get(++i);
                     if (attribute != null) {
                         value = table.unmapValue(value, attribute);
-                        searchedColumns.add(attribute.getName());
-                        where += (where.isEmpty() ? "(" : " AND (") + getCondition(attribute.getName(), value) + ")";
+                        searchedColumns.add(sanitize(attribute.getName()));
+                        where += (where.isEmpty() ? "(" : " AND (") + getCondition(sanitize(attribute.getName()), value) + ")";
                     }
                 }
 
@@ -201,8 +208,8 @@ public class SQLTableCache {
                 for (Integer index : indices) {
                     Attribute attribute = table.getColumnDescriptor(index);
                     if (attribute != null) {
-                        fields += (fields.isEmpty() ? "" : ", ") + attribute.getName();
-                        retrieved.add(attribute.getName());
+                        fields += (fields.isEmpty() ? "" : ", ") + sanitize(attribute.getName());
+                        retrieved.add(sanitize(attribute.getName()));
                     }
                 }
                 break;
@@ -222,7 +229,7 @@ public class SQLTableCache {
         if (fields.isEmpty()) {
             fields = "*";
             for (Attribute attr : getSortedAttributes()) {
-                retrieved.add(attr.getName());
+                retrieved.add(sanitize(attr.getName()));
             }
         }
 
@@ -246,11 +253,13 @@ public class SQLTableCache {
             while(result.hasNext()) {
                 try {
                     if (retrieved.size() == 1) {
-                        ret.add(table.mapValue(result.result.getObject(1), table.getColumnDescriptor(retrieved.get(0))));
+                        ret.add(table.mapValue(result.result.getObject(1),
+                                table.getColumnDescriptor(sanitizedNames.get(retrieved.get(0)))));
                     } else if (retrieved.size() > 1) {
                         List<Object> row = new ArrayList<>();
                         for (int i = 0; i < retrieved.size(); i++) {
-                            row.add(table.mapValue(result.result.getObject(i + 1), table.getColumnDescriptor(retrieved.get(i))));
+                            row.add(table.mapValue(result.result.getObject(i + 1),
+                                    table.getColumnDescriptor(sanitizedNames.get(retrieved.get(i)))));
                         }
                         ret.add(row);
                     }

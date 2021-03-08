@@ -23,9 +23,11 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.api.IKActorsStatement.While;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsActionCall;
+import org.integratedmodelling.kactors.model.KActorsConcurrentGroup;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
@@ -47,6 +49,7 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spa
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Stop;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
 import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
+import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.GroupHandler;
 import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetActionExecutor;
 import org.integratedmodelling.klab.components.runtime.actors.behavior.Behavior.Match;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
@@ -58,6 +61,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
+import org.integratedmodelling.klab.utils.MapUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
@@ -141,18 +145,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         // executed upon a match.
         Scope scope;
 
-        public void match(Object value, List<Semaphore> semaphores) {
+        public void match(Object value, Map<String, Object> scopeVars) {
 
             for (Pair<Match, IKActorsStatement> match : matches) {
                 if (match.getFirst().matches(value, scope)) {
-                    execute(match.getSecond(), scope.withMatch(match.getFirst(), value));
+                    execute(match.getSecond(), scope.withMatch(match.getFirst(), value, scopeVars));
                     break;
-                }
-            }
-
-            if (semaphores != null) {
-                for (Semaphore semaphore : semaphores) {
-                    Actors.INSTANCE.expire(semaphore);
                 }
             }
         }
@@ -251,8 +249,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             this.viewScope = new ViewScope(this);
         }
 
-        public Scope withMatch(Match match, Object value) {
+        public Scope withMatch(Match match, Object value, Map<String, Object> vars) {
+
             Scope ret = new Scope(this);
+
+            ret.symbolTable.putAll(vars);
+
             /*
              * if we have identifiers either as key or in list key, match them to the values.
              * Otherwise match to $, $1, ... #n
@@ -390,9 +392,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         public void waitForGreen() {
 
             if (semaphore != null) {
+                int cnt = 0;
                 while(!Actors.INSTANCE.expired(semaphore)) {
                     try {
                         Thread.sleep(50);
+                        cnt++;
+                        if (cnt % 100 == 0) {
+                            System.out.println("DIO FINFERLO DUE ORE CHE ASPETTO STO SEMAFORO " + semaphore);
+                        }
                     } catch (InterruptedException e) {
                         return;
                     }
@@ -524,7 +531,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                     KlabActionExecutor executor = actionCache.get(message.action.getComponent().getId());
                     actions.match(executor instanceof KlabWidgetActionExecutor
                             ? ((KlabWidgetActionExecutor) executor).getFiredValue(message.action)
-                            : getActionValue(message.action), message.getSemaphores(Semaphore.Type.FIRE));
+                            : getActionValue(message.action), message.scope);
                 }
             } else if (message.action.getComponent().getActorPath() != null) {
 
@@ -596,42 +603,49 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
     }
 
     private void execute(IKActorsStatement code, Scope scope) {
-        switch(code.getType()) {
-        case ACTION_CALL:
-            executeCall((IKActorsStatement.Call) code, scope);
-            break;
-        case ASSIGNMENT:
-            executeAssignment((IKActorsStatement.Assignment) code, scope);
-            break;
-        case DO_STATEMENT:
-            executeDo((IKActorsStatement.Do) code, scope);
-            break;
-        case FIRE_VALUE:
-            executeFire((IKActorsStatement.FireValue) code, scope);
-            break;
-        case FOR_STATEMENT:
-            executeFor((IKActorsStatement.For) code, scope);
-            break;
-        case IF_STATEMENT:
-            executeIf((IKActorsStatement.If) code, scope);
-            break;
-        case CONCURRENT_GROUP:
-            executeGroup((IKActorsStatement.ConcurrentGroup) code, scope);
-            break;
-        case SEQUENCE:
-            executeSequence((IKActorsStatement.Sequence) code, scope);
-            break;
-        case TEXT_BLOCK:
-            executeText((IKActorsStatement.TextBlock) code, scope);
-            break;
-        case WHILE_STATEMENT:
-            executeWhile((IKActorsStatement.While) code, scope);
-            break;
-        case INSTANTIATION:
-            executeInstantiation((IKActorsStatement.Instantiation) code, scope);
-            break;
-        default:
-            break;
+
+        // System.out.println("EXECUTING " + code);
+
+        try {
+            switch(code.getType()) {
+            case ACTION_CALL:
+                executeCall((IKActorsStatement.Call) code, scope);
+                break;
+            case ASSIGNMENT:
+                executeAssignment((IKActorsStatement.Assignment) code, scope);
+                break;
+            case DO_STATEMENT:
+                executeDo((IKActorsStatement.Do) code, scope);
+                break;
+            case FIRE_VALUE:
+                executeFire((IKActorsStatement.FireValue) code, scope);
+                break;
+            case FOR_STATEMENT:
+                executeFor((IKActorsStatement.For) code, scope);
+                break;
+            case IF_STATEMENT:
+                executeIf((IKActorsStatement.If) code, scope);
+                break;
+            case CONCURRENT_GROUP:
+                executeGroup((IKActorsStatement.ConcurrentGroup) code, scope);
+                break;
+            case SEQUENCE:
+                executeSequence((IKActorsStatement.Sequence) code, scope);
+                break;
+            case TEXT_BLOCK:
+                executeText((IKActorsStatement.TextBlock) code, scope);
+                break;
+            case WHILE_STATEMENT:
+                executeWhile((IKActorsStatement.While) code, scope);
+                break;
+            case INSTANTIATION:
+                executeInstantiation((IKActorsStatement.Instantiation) code, scope);
+                break;
+            default:
+                break;
+            }
+        } catch (Throwable t) {
+            Logging.INSTANCE.warn("Exception thrown in k.Actors interpreter: " + t.getMessage());
         }
     }
 
@@ -770,6 +784,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
     private void executeGroup(ConcurrentGroup code, Scope scope) {
         Scope groupScope = scope.getChild(code);
+        if (code.getTag() != null) {
+            /*
+             * install executor for group actions
+             */
+            this.localActionExecutors.put(code.getTag(),
+                    new GroupHandler(this.identity, (KActorsConcurrentGroup) code, scope, this.getContext().getSelf(), null));
+        }
         for (IKActorsStatement statement : code.getStatements()) {
             execute(statement, groupScope);
         }
@@ -819,7 +840,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
              * this should happen when a non-main action executes the fire. Must be checked first.
              * Fire may happen if the action firing is called again, so don't remove the listener.
              */
-            scope.sender.tell(new Fire(scope.listenerId, code.getValue().getValue(), false, scope.appId, scope.semaphore));
+            scope.sender.tell(new Fire(scope.listenerId, code.getValue().getValue(), false, scope.appId, scope.semaphore,
+                    scope.getSymbols(this.identity)));
 
         } else if (parentActor != null) {
 
@@ -1178,11 +1200,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         return Behaviors.same();
     }
 
+    @SuppressWarnings("unchecked")
     protected Behavior<KlabMessage> handleComponentFireMessage(ComponentFire message) {
         if (message.listenerId != null) {
             MatchActions actions = componentFireListeners.get(message.listenerId);
             if (actions != null) {
-                actions.match(message.value, /* TODO CHECK */ null);
+                actions.match(message.value, MapUtils.EMPTY_MAP);
             }
         }
         return Behaviors.same();
@@ -1199,11 +1222,15 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             if (message.listenerId != null) {
                 MatchActions actions = listeners.get(message.listenerId);
                 if (actions != null) {
-                    actions.match(message.value, message.semaphore == null ? null : Collections.singletonList(message.semaphore));
-                    if (message.finalize) {
-                        listeners.remove(message.listenerId);
-                    }
+                    actions.match(message.value, message.scopeVars);
+                    // if (message.finalize) {
+                    // listeners.remove(message.listenerId);
+                    // }
                 }
+            }
+
+            if (message.semaphore != null) {
+                Actors.INSTANCE.expire(message.semaphore);
             }
         }
         return Behaviors.same();

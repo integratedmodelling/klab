@@ -133,7 +133,7 @@ public class ResourceManager {
 			}
 
 			EncodingDataBuilder builder = new EncodingDataBuilder();
-			adapter.getEncodedData(kurn, builder, geometry,
+			adapter.encodeData(kurn, builder, geometry,
 					new ResourceScope(adapter.getResource(urn), geometry, builder.getMonitor()));
 			return builder.buildEncoded();
 

@@ -15,6 +15,7 @@ import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.kim.model.KimQuantity;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
@@ -23,6 +24,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -31,6 +33,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimePeriod;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
+import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
@@ -85,11 +88,12 @@ public class RuntimeBehavior {
                         .addApplicationListener(new ISessionState.Listener(){
                             @Override
                             public void newContext(ISubject observation) {
-                                fire(observation, false);
+                                fire(observation, false, scope.semaphore, scope.getSymbols(identity));
                             }
 
                             @Override
                             public void newObservation(IObservation observation, ISubject context) {
+                                fire(observation, false, scope.semaphore, scope.getSymbols(identity));
                             }
 
                             @Override
@@ -107,9 +111,9 @@ public class RuntimeBehavior {
                 if (arg instanceof Urn) {
                     try {
                         Future<IArtifact> future = ((Session) identity).getState().submit(((Urn) arg).getUrn());
-                        fire(future.get(), true);
+                        fire(future.get(), true, scope.semaphore, scope.getSymbols(identity));
                     } catch (Throwable e) {
-                        fail();
+                        fail(scope.semaphore);
                     }
                 } else {
 
@@ -144,9 +148,17 @@ public class RuntimeBehavior {
                     }
 
                     if (artifact != null) {
-                        IScale scale = Scale.create(artifact.getGeometry());
+                        
+                        IScale scale = spaceResolution == null
+                                ? Scale.create(artifact.getGeometry())
+                                : Scale.create(artifact.getGeometry(), spaceResolution);
+                                
                         session.getState().resetContext();
                         if (scale.getSpace() != null) {
+                            // avoid geocoding
+                            if (!scale.getSpace().getShape().getMetadata().containsKey(IMetadata.DC_DESCRIPTION)) {
+                                scale.getSpace().getShape().getMetadata().put(IMetadata.DC_DESCRIPTION, artifact.getName());
+                            }
                             session.getState().setShape(scale.getSpace().getShape());
                         }
                         if (spaceResolution != null) {
@@ -157,12 +169,13 @@ public class RuntimeBehavior {
                     if (observable != null) {
                         try {
                             Future<IArtifact> future = ((Session) identity).getState().submit(observable.getDefinition());
-                            fire(future.get(), true);
+                            IArtifact result = future.get();
+                            fire(result, true, scope.semaphore, scope.getSymbols(identity));
                         } catch (Throwable e) {
                             fail();
                         }
                     } else {
-                        
+
                     }
 
                 }
@@ -199,17 +212,17 @@ public class RuntimeBehavior {
         void run(KlabActor.Scope scope) {
 
             if (!arguments.getUnnamedKeys().isEmpty()) {
-                fire(Status.WAITING, false);
+                fire(Status.WAITING, false, scope.semaphore, scope.getSymbols(identity));
                 identity.getParentIdentity(Session.class).getState().submit(
                         getUrnValue(KlabActor.evaluate(arguments.get(arguments.getUnnamedKeys().get(0)), scope)),
                         (task, observation) -> {
                             if (observation == null) {
-                                fire(Status.STARTED, false);
+                                fire(Status.STARTED, false, scope.semaphore, scope.getSymbols(identity));
                             } else {
-                                fire(observation, false);
+                                fire(observation, false, scope.semaphore, scope.getSymbols(identity));
                             }
                         }, (task, exception) -> {
-                            fire(Status.ABORTED, false);
+                            fire(Status.ABORTED, false, scope.semaphore, scope.getSymbols(identity));
                         });
             }
         }
@@ -342,7 +355,7 @@ public class RuntimeBehavior {
                                 ret.put("unit", scale.getSpaceUnit());
                                 ret.put("envelope",
                                         new double[]{scale.getWest(), scale.getSouth(), scale.getEast(), scale.getNorth()});
-                                fire(ret, false);
+                                fire(ret, false, scope.semaphore, scope.getSymbols(identity));
                             }
 
                             @Override
@@ -397,10 +410,10 @@ public class RuntimeBehavior {
         @Override
         void run(KlabActor.Scope scope) {
             if (random.nextDouble() < probability) {
-                fire(fired == null ? DEFAULT_FIRE : fired, true);
+                fire(fired == null ? DEFAULT_FIRE : fired, true, scope.semaphore, scope.getSymbols(identity));
             } else {
                 // fire anyway so that anything that's waiting can continue
-                fire(false, true);
+                fire(false, true, scope.semaphore, scope.getSymbols(identity));
             }
         }
     }

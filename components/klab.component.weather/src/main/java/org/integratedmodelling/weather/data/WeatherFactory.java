@@ -115,6 +115,7 @@ public enum WeatherFactory {
 				}, (station) -> {
 					return station.getId();
 				});
+		checkStorage();
 	}
 
 	public static void checkStorage() {

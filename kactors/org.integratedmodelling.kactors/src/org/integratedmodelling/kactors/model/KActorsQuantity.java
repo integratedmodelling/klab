@@ -1,9 +1,10 @@
 package org.integratedmodelling.kactors.model;
 
+import org.integratedmodelling.klab.api.data.IQuantity;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Utils;
 
-public class KActorsQuantity {
+public class KActorsQuantity implements IQuantity {
 
 	private String unit;
 	private String currency;
@@ -50,6 +51,11 @@ public class KActorsQuantity {
 		}
 		
 		throw new KlabValidationException("wrong string input for quantity: " + string);
+	}
+
+	@Override
+	public String toString() {
+	    return value + "." + (unit == null ? currency : unit);
 	}
 
 }

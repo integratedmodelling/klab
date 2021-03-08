@@ -347,6 +347,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 
 	@Override
 	public Object put(String key, Object value) {
+	    
 		switch (key) {
 		case GEOCODING_STRATEGY_KEY:
 			setGeocodingStrategy(value == null ? null : value.toString());
@@ -366,6 +367,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
 			this.scaleOfInterest.setSpaceResolutionDescription(
 					NumberFormat.getInstance().format(this.scaleOfInterest.getSpaceResolution()) + " "
 							+ this.scaleOfInterest.getSpaceUnit());
+			break;
 		case SPACE_RESOLUTION_MULTIPLIER_KEY:
 			this.scaleOfInterest.setSpaceResolution(check(value, Number.class).doubleValue());
 			this.scaleOfInterest.setSpaceResolutionConverted(

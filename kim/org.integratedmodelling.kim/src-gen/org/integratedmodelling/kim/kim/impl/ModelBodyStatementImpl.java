@@ -57,6 +57,7 @@ import org.integratedmodelling.kim.kim.ValueAssignment;
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getLookupTableArgs <em>Lookup Table Args</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getLookupTable <em>Lookup Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getLookupTableId <em>Lookup Table Id</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#isTwoway <em>Twoway</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getActions <em>Actions</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.impl.ModelBodyStatementImpl#getMetadata <em>Metadata</em>}</li>
  * </ul>
@@ -294,6 +295,26 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @ordered
    */
   protected String lookupTableId = LOOKUP_TABLE_ID_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #isTwoway() <em>Twoway</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isTwoway()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean TWOWAY_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isTwoway() <em>Twoway</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isTwoway()
+   * @generated
+   * @ordered
+   */
+  protected boolean twoway = TWOWAY_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getActions() <em>Actions</em>}' containment reference list.
@@ -792,6 +813,31 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
    * @generated
    */
   @Override
+  public boolean isTwoway()
+  {
+    return twoway;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setTwoway(boolean newTwoway)
+  {
+    boolean oldTwoway = twoway;
+    twoway = newTwoway;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KimPackage.MODEL_BODY_STATEMENT__TWOWAY, oldTwoway, twoway));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EList<ActionSpecification> getActions()
   {
     if (actions == null)
@@ -929,6 +975,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return getLookupTable();
       case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID:
         return getLookupTableId();
+      case KimPackage.MODEL_BODY_STATEMENT__TWOWAY:
+        return isTwoway();
       case KimPackage.MODEL_BODY_STATEMENT__ACTIONS:
         return getActions();
       case KimPackage.MODEL_BODY_STATEMENT__METADATA:
@@ -1001,6 +1049,9 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID:
         setLookupTableId((String)newValue);
         return;
+      case KimPackage.MODEL_BODY_STATEMENT__TWOWAY:
+        setTwoway((Boolean)newValue);
+        return;
       case KimPackage.MODEL_BODY_STATEMENT__ACTIONS:
         getActions().clear();
         getActions().addAll((Collection<? extends ActionSpecification>)newValue);
@@ -1070,6 +1121,9 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
       case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID:
         setLookupTableId(LOOKUP_TABLE_ID_EDEFAULT);
         return;
+      case KimPackage.MODEL_BODY_STATEMENT__TWOWAY:
+        setTwoway(TWOWAY_EDEFAULT);
+        return;
       case KimPackage.MODEL_BODY_STATEMENT__ACTIONS:
         getActions().clear();
         return;
@@ -1122,6 +1176,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
         return lookupTable != null;
       case KimPackage.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID:
         return LOOKUP_TABLE_ID_EDEFAULT == null ? lookupTableId != null : !LOOKUP_TABLE_ID_EDEFAULT.equals(lookupTableId);
+      case KimPackage.MODEL_BODY_STATEMENT__TWOWAY:
+        return twoway != TWOWAY_EDEFAULT;
       case KimPackage.MODEL_BODY_STATEMENT__ACTIONS:
         return actions != null && !actions.isEmpty();
       case KimPackage.MODEL_BODY_STATEMENT__METADATA:
@@ -1155,6 +1211,8 @@ public class ModelBodyStatementImpl extends MinimalEObjectImpl.Container impleme
     result.append(classificationProperty);
     result.append(", lookupTableId: ");
     result.append(lookupTableId);
+    result.append(", twoway: ");
+    result.append(twoway);
     result.append(')');
     return result.toString();
   }

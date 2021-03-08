@@ -497,7 +497,7 @@ public class GroovyExpressionPreprocessor {
 	public IKimConcept.Type getIdentifierType(String identifier, IExpression.Context context) {
 
 		if (context == null) {
-			return IKimConcept.Type.VALUE;
+			return IKimConcept.Type.PRIORITY;
 		}
 
 		if (identifier.equals("self")) {

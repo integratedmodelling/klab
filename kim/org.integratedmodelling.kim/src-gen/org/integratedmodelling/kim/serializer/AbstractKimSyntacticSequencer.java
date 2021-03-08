@@ -85,8 +85,20 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	
 	@Override
 	protected String getUnassignedRuleCallToken(EObject semanticObject, RuleCall ruleCall, INode node) {
-		if (ruleCall.getRule() == grammarAccess.getSEPARATORRule())
+		if (ruleCall.getRule() == grammarAccess.getLOWERCASE_IDRule())
+			return getLOWERCASE_IDToken(semanticObject, ruleCall, node);
+		else if (ruleCall.getRule() == grammarAccess.getSEPARATORRule())
 			return getSEPARATORToken(semanticObject, ruleCall, node);
+		return "";
+	}
+	
+	/**
+	 * terminal LOWERCASE_ID:
+	 * 	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
+	 */
+	protected String getLOWERCASE_IDToken(EObject semanticObject, RuleCall ruleCall, INode node) {
+		if (node != null)
+			return getTokenText(node);
 		return "";
 	}
 	
@@ -952,6 +964,7 @@ public abstract class AbstractKimSyntacticSequencer extends AbstractSyntacticSeq
 	 *     'exclusive'?
 	 *
 	 * This ambiguous syntax occurs at:
+	 *     int1=Number (ambiguity) '|' elements+=TableClassifier
 	 *     int1=Number (ambiguity) (rule end)
 	 */
 	protected void emit_TableClassifier_ExclusiveKeyword_1_4_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {

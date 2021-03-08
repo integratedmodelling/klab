@@ -480,13 +480,22 @@ public interface KimPackage extends EPackage
   int MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID = 15;
 
   /**
+   * The feature id for the '<em><b>Twoway</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MODEL_BODY_STATEMENT__TWOWAY = 16;
+
+  /**
    * The feature id for the '<em><b>Actions</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__ACTIONS = 16;
+  int MODEL_BODY_STATEMENT__ACTIONS = 17;
 
   /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
@@ -495,7 +504,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT__METADATA = 17;
+  int MODEL_BODY_STATEMENT__METADATA = 18;
 
   /**
    * The number of structural features of the '<em>Model Body Statement</em>' class.
@@ -504,7 +513,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MODEL_BODY_STATEMENT_FEATURE_COUNT = 18;
+  int MODEL_BODY_STATEMENT_FEATURE_COUNT = 19;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.LookupTableArgumentImpl <em>Lookup Table Argument</em>}' class.
@@ -535,13 +544,22 @@ public interface KimPackage extends EPackage
   int LOOKUP_TABLE_ARGUMENT__CONCEPT = 1;
 
   /**
+   * The feature id for the '<em><b>Key</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int LOOKUP_TABLE_ARGUMENT__KEY = 2;
+
+  /**
    * The number of structural features of the '<em>Lookup Table Argument</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int LOOKUP_TABLE_ARGUMENT_FEATURE_COUNT = 2;
+  int LOOKUP_TABLE_ARGUMENT_FEATURE_COUNT = 3;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ClassificationImpl <em>Classification</em>}' class.
@@ -627,6 +645,34 @@ public interface KimPackage extends EPackage
   int CLASSIFIER_FEATURE_COUNT = 4;
 
   /**
+   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.TableRowImpl <em>Table Row</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kim.kim.impl.TableRowImpl
+   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getTableRow()
+   * @generated
+   */
+  int TABLE_ROW = 14;
+
+  /**
+   * The feature id for the '<em><b>Elements</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TABLE_ROW__ELEMENTS = 0;
+
+  /**
+   * The number of structural features of the '<em>Table Row</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TABLE_ROW_FEATURE_COUNT = 1;
+
+  /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ClassifierRHSImpl <em>Classifier RHS</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -637,13 +683,22 @@ public interface KimPackage extends EPackage
   int CLASSIFIER_RHS = 9;
 
   /**
+   * The feature id for the '<em><b>Elements</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int CLASSIFIER_RHS__ELEMENTS = TABLE_ROW__ELEMENTS;
+
+  /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__BOOLEAN = 0;
+  int CLASSIFIER_RHS__BOOLEAN = TABLE_ROW_FEATURE_COUNT + 0;
 
   /**
    * The feature id for the '<em><b>Int0</b></em>' containment reference.
@@ -652,7 +707,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__INT0 = 1;
+  int CLASSIFIER_RHS__INT0 = TABLE_ROW_FEATURE_COUNT + 1;
 
   /**
    * The feature id for the '<em><b>Left Limit</b></em>' attribute.
@@ -661,7 +716,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__LEFT_LIMIT = 2;
+  int CLASSIFIER_RHS__LEFT_LIMIT = TABLE_ROW_FEATURE_COUNT + 2;
 
   /**
    * The feature id for the '<em><b>Int1</b></em>' containment reference.
@@ -670,7 +725,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__INT1 = 3;
+  int CLASSIFIER_RHS__INT1 = TABLE_ROW_FEATURE_COUNT + 3;
 
   /**
    * The feature id for the '<em><b>Right Limit</b></em>' attribute.
@@ -679,7 +734,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__RIGHT_LIMIT = 4;
+  int CLASSIFIER_RHS__RIGHT_LIMIT = TABLE_ROW_FEATURE_COUNT + 4;
 
   /**
    * The feature id for the '<em><b>Num</b></em>' containment reference.
@@ -688,7 +743,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__NUM = 5;
+  int CLASSIFIER_RHS__NUM = TABLE_ROW_FEATURE_COUNT + 5;
 
   /**
    * The feature id for the '<em><b>Set</b></em>' containment reference.
@@ -697,7 +752,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__SET = 6;
+  int CLASSIFIER_RHS__SET = TABLE_ROW_FEATURE_COUNT + 6;
 
   /**
    * The feature id for the '<em><b>String</b></em>' attribute.
@@ -706,7 +761,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__STRING = 7;
+  int CLASSIFIER_RHS__STRING = TABLE_ROW_FEATURE_COUNT + 7;
 
   /**
    * The feature id for the '<em><b>Concept</b></em>' containment reference.
@@ -715,7 +770,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__CONCEPT = 8;
+  int CLASSIFIER_RHS__CONCEPT = TABLE_ROW_FEATURE_COUNT + 8;
 
   /**
    * The feature id for the '<em><b>To Resolve</b></em>' containment reference list.
@@ -724,7 +779,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__TO_RESOLVE = 9;
+  int CLASSIFIER_RHS__TO_RESOLVE = TABLE_ROW_FEATURE_COUNT + 9;
 
   /**
    * The feature id for the '<em><b>Op</b></em>' containment reference.
@@ -733,7 +788,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__OP = 10;
+  int CLASSIFIER_RHS__OP = TABLE_ROW_FEATURE_COUNT + 10;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' containment reference.
@@ -742,7 +797,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__EXPRESSION = 11;
+  int CLASSIFIER_RHS__EXPRESSION = TABLE_ROW_FEATURE_COUNT + 11;
 
   /**
    * The feature id for the '<em><b>Nodata</b></em>' attribute.
@@ -751,7 +806,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__NODATA = 12;
+  int CLASSIFIER_RHS__NODATA = TABLE_ROW_FEATURE_COUNT + 12;
 
   /**
    * The feature id for the '<em><b>Star</b></em>' attribute.
@@ -760,7 +815,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__STAR = 13;
+  int CLASSIFIER_RHS__STAR = TABLE_ROW_FEATURE_COUNT + 13;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -769,7 +824,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__ID = 14;
+  int CLASSIFIER_RHS__ID = TABLE_ROW_FEATURE_COUNT + 14;
 
   /**
    * The feature id for the '<em><b>Quantity</b></em>' containment reference.
@@ -778,7 +833,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__QUANTITY = 15;
+  int CLASSIFIER_RHS__QUANTITY = TABLE_ROW_FEATURE_COUNT + 15;
 
   /**
    * The feature id for the '<em><b>Date</b></em>' containment reference.
@@ -787,7 +842,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__DATE = 16;
+  int CLASSIFIER_RHS__DATE = TABLE_ROW_FEATURE_COUNT + 16;
 
   /**
    * The feature id for the '<em><b>Expr</b></em>' attribute.
@@ -796,7 +851,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__EXPR = 17;
+  int CLASSIFIER_RHS__EXPR = TABLE_ROW_FEATURE_COUNT + 17;
 
   /**
    * The feature id for the '<em><b>Anything</b></em>' attribute.
@@ -805,7 +860,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS__ANYTHING = 18;
+  int CLASSIFIER_RHS__ANYTHING = TABLE_ROW_FEATURE_COUNT + 18;
 
   /**
    * The number of structural features of the '<em>Classifier RHS</em>' class.
@@ -814,7 +869,7 @@ public interface KimPackage extends EPackage
    * @generated
    * @ordered
    */
-  int CLASSIFIER_RHS_FEATURE_COUNT = 19;
+  int CLASSIFIER_RHS_FEATURE_COUNT = TABLE_ROW_FEATURE_COUNT + 19;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.UrnImpl <em>Urn</em>}' class.
@@ -910,13 +965,22 @@ public interface KimPackage extends EPackage
   int TABLE__ROWS = 1;
 
   /**
+   * The feature id for the '<em><b>Column Classifiers</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int TABLE__COLUMN_CLASSIFIERS = 2;
+
+  /**
    * The number of structural features of the '<em>Table</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int TABLE_FEATURE_COUNT = 2;
+  int TABLE_FEATURE_COUNT = 3;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.HeaderRowImpl <em>Header Row</em>}' class.
@@ -945,34 +1009,6 @@ public interface KimPackage extends EPackage
    * @ordered
    */
   int HEADER_ROW_FEATURE_COUNT = 1;
-
-  /**
-   * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.TableRowImpl <em>Table Row</em>}' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @see org.integratedmodelling.kim.kim.impl.TableRowImpl
-   * @see org.integratedmodelling.kim.kim.impl.KimPackageImpl#getTableRow()
-   * @generated
-   */
-  int TABLE_ROW = 14;
-
-  /**
-   * The feature id for the '<em><b>Elements</b></em>' containment reference list.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int TABLE_ROW__ELEMENTS = 0;
-
-  /**
-   * The number of structural features of the '<em>Table Row</em>' class.
-   * <!-- begin-user-doc -->
-   * <!-- end-user-doc -->
-   * @generated
-   * @ordered
-   */
-  int TABLE_ROW_FEATURE_COUNT = 1;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kim.kim.impl.ActionSpecificationImpl <em>Action Specification</em>}' class.
@@ -5100,6 +5136,17 @@ public interface KimPackage extends EPackage
   EAttribute getModelBodyStatement_LookupTableId();
 
   /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#isTwoway <em>Twoway</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Twoway</em>'.
+   * @see org.integratedmodelling.kim.kim.ModelBodyStatement#isTwoway()
+   * @see #getModelBodyStatement()
+   * @generated
+   */
+  EAttribute getModelBodyStatement_Twoway();
+
+  /**
    * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kim.kim.ModelBodyStatement#getActions <em>Actions</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -5152,6 +5199,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getLookupTableArgument_Concept();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kim.kim.LookupTableArgument#getKey <em>Key</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Key</em>'.
+   * @see org.integratedmodelling.kim.kim.LookupTableArgument#getKey()
+   * @see #getLookupTableArgument()
+   * @generated
+   */
+  EAttribute getLookupTableArgument_Key();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.Classification <em>Classification</em>}'.
@@ -5531,6 +5589,17 @@ public interface KimPackage extends EPackage
    * @generated
    */
   EReference getTable_Rows();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kim.kim.Table#getColumnClassifiers <em>Column Classifiers</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Column Classifiers</em>'.
+   * @see org.integratedmodelling.kim.kim.Table#getColumnClassifiers()
+   * @see #getTable()
+   * @generated
+   */
+  EReference getTable_ColumnClassifiers();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kim.kim.HeaderRow <em>Header Row</em>}'.
@@ -9888,6 +9957,14 @@ public interface KimPackage extends EPackage
     EAttribute MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID = eINSTANCE.getModelBodyStatement_LookupTableId();
 
     /**
+     * The meta object literal for the '<em><b>Twoway</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute MODEL_BODY_STATEMENT__TWOWAY = eINSTANCE.getModelBodyStatement_Twoway();
+
+    /**
      * The meta object literal for the '<em><b>Actions</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -9928,6 +10005,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference LOOKUP_TABLE_ARGUMENT__CONCEPT = eINSTANCE.getLookupTableArgument_Concept();
+
+    /**
+     * The meta object literal for the '<em><b>Key</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute LOOKUP_TABLE_ARGUMENT__KEY = eINSTANCE.getLookupTableArgument_Key();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.ClassificationImpl <em>Classification</em>}' class.
@@ -10220,6 +10305,14 @@ public interface KimPackage extends EPackage
      * @generated
      */
     EReference TABLE__ROWS = eINSTANCE.getTable_Rows();
+
+    /**
+     * The meta object literal for the '<em><b>Column Classifiers</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference TABLE__COLUMN_CLASSIFIERS = eINSTANCE.getTable_ColumnClassifiers();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kim.kim.impl.HeaderRowImpl <em>Header Row</em>}' class.

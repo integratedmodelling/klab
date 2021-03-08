@@ -19,6 +19,7 @@ import org.eclipse.emf.ecore.EObject;
  * <ul>
  *   <li>{@link org.integratedmodelling.kim.kim.Table#getHeaders <em>Headers</em>}</li>
  *   <li>{@link org.integratedmodelling.kim.kim.Table#getRows <em>Rows</em>}</li>
+ *   <li>{@link org.integratedmodelling.kim.kim.Table#getColumnClassifiers <em>Column Classifiers</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kim.kim.KimPackage#getTable()
@@ -60,5 +61,27 @@ public interface Table extends EObject
    * @generated
    */
   EList<TableRow> getRows();
+
+  /**
+   * Returns the value of the '<em><b>Column Classifiers</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Column Classifiers</em>' containment reference.
+   * @see #setColumnClassifiers(TableRow)
+   * @see org.integratedmodelling.kim.kim.KimPackage#getTable_ColumnClassifiers()
+   * @model containment="true"
+   * @generated
+   */
+  TableRow getColumnClassifiers();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kim.kim.Table#getColumnClassifiers <em>Column Classifiers</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Column Classifiers</em>' containment reference.
+   * @see #getColumnClassifiers()
+   * @generated
+   */
+  void setColumnClassifiers(TableRow value);
 
 } // Table

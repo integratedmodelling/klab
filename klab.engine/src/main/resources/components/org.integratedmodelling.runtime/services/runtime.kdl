@@ -199,7 +199,7 @@ filter value aggregate
 	 spatial aggregators."
 	label "Aggregate by $classifier"
 {
-	optional import value artifact
+	optional import concept observable
 		"The artifact to categorize" 
 		
 	import object 'classifier'

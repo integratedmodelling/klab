@@ -783,6 +783,41 @@ public class Observable implements IObservable {
         return this.targetPredicate;
     }
 
+    /**
+     * Used within Groovy and k.Actors to extract the actual predicate that resolves the passed one.
+     * 
+     * @param abstractPredicate anything referring to a concept - string, concept or Groovy peer for
+     *        now.
+     * @return
+     */
+    public IConcept getPredicate(Object abstractPredicate) {
+
+        IConcept predicate = Concepts.INSTANCE.asConcept(abstractPredicate);
+        if (predicate == null) {
+            return null;
+        }
+
+        for (IConcept c : Traits.INSTANCE.getTraits(getType())) {
+            if (c.is(predicate)) {
+                return c;
+            }
+        }
+
+        /*
+         * Predicates within the scope of a first-level operator are also returned.
+         * TODO should we recurse? probably not - but keep this in mind.
+         */
+        IConcept described = Observables.INSTANCE.getDescribedType(getType());
+        if (described != null) {
+            for (IConcept c : Traits.INSTANCE.getTraits(described)) {
+                if (c.is(predicate)) {
+                    return c;
+                }
+            }
+        }
+        return predicate;
+    }
+
     public void setMustContextualizeAtResolution(boolean b) {
         this.mustContextualize = b;
     }
@@ -873,7 +908,7 @@ public class Observable implements IObservable {
         return ((Concept) getType()).resolves(other.getType(), context, ((Observable) other).resolvedPredicates)
                 && CollectionUtils.isEqualCollection(this.valueOperators, ((Observable) other).valueOperators);
     }
-    
+
     @Override
     public Collection<IConcept> getAbstractPredicates() {
 

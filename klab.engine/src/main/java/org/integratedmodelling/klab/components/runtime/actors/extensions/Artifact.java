@@ -20,6 +20,7 @@ public class Artifact extends GroovyObjectSupport {
         this.artifact = artifact;
     }
 
+    @Override
     public void setProperty(String key, Object value) {
         this.artifact.getMetadata().put(key, value);
     }

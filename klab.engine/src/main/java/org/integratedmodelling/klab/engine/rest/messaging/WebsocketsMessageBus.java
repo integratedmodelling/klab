@@ -217,6 +217,8 @@ public class WebsocketsMessageBus implements IMessageBus {
 
 	private void dispatchMessage(Message message, Object identity) {
 
+//	    System.out.println("DISPATCHING " + message);
+	    
 		try {
 			/*
 			 * 1. Determine payload type
@@ -260,7 +262,15 @@ public class WebsocketsMessageBus implements IMessageBus {
 
 	@Override
 	public synchronized void post(IMessage message) {
-		webSocket.convertAndSend(API.MESSAGE + "/" + message.getIdentity(), message);
+
+//	    System.out.println("POSTING " + message);
+
+	    try {
+	        webSocket.convertAndSend(API.MESSAGE + "/" + message.getIdentity(), message);
+	    } catch (Throwable e) {
+            Logging.INSTANCE.error("internal error: posting message " + message.getId()
+                    + "  for payload type " + ((Message)message).getPayloadClass());
+        }
 	}
 
 	@Override

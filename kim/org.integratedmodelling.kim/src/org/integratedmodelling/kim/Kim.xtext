@@ -56,10 +56,16 @@ ModelBodyStatement:
 		 ('using' /*  | merging?='merging')*/ contextualizers+=ValueExecution (',' contextualizers+=ValueExecution)*)?
 		 (('classified' | discretization?='discretized') (('into' classification=Classification) | ('according' 'to' classificationProperty=PropertyId)))?
 	     // arg ? means result field, arg * means ignore column. If not given, will match self in the first column and result in last, ignoring anything in between
-		 ('lookup' 
+		 (('lookup' 
 		 	('(' lookupTableArgs+=LookupTableArgument (',' lookupTableArgs+=LookupTableArgument)* ')')?  
 		 	'into' 
 		 		(lookupTable=Table | lookupTableId=UPPERCASE_ID)
+		 ) | 
+		  (twoway?='match' 
+		 	('(' lookupTableArgs+=LookupTableArgumentQualified ',' lookupTableArgs+=LookupTableArgumentQualified ')')?  
+		 	'to' 
+		 		(lookupTable=TwoWayTable | lookupTableId=UPPERCASE_ID)
+		  )
 		 )?
 		 actions+=ActionSpecification*
 		 ('metadata' metadata=Map)? 
@@ -68,6 +74,11 @@ ModelBodyStatement:
 LookupTableArgument:
 	id=(LOWERCASE_ID | '?' | '*') |
 	concept=ConceptDeclaration
+;
+
+LookupTableArgumentQualified returns LookupTableArgument:
+	(key=('column'|'row') '=')? id=LOWERCASE_ID |
+	(key=('column'|'row') '=')? concept=ConceptDeclaration
 ;
 
 Classification:
@@ -119,11 +130,14 @@ Urn:
 
 // Lookup table literal
 LookupTable: {LookupTable}
-	'{{' table=Table? '}}'
+	'{{' table=(Table|TwoWayTable)? '}}'
 ;
 
 Table:
 	(headers=HeaderRow SEPARATOR)? rows+=TableRow (',' rows+=TableRow)*;
+
+TwoWayTable returns Table:
+	columnClassifiers=TwoWayHeaderRow SEPARATOR rows+=TableRow (',' rows+=TableRow)*;
 
 HeaderRow:
 	elements+=(LOWERCASE_ID|STRING) ('|' elements+=(LOWERCASE_ID|STRING))*
@@ -131,6 +145,11 @@ HeaderRow:
 
 TableRow:
 	elements+=TableClassifier ('|' elements+=TableClassifier)*
+;
+
+TwoWayHeaderRow returns TableRow:
+	// ignore the first element
+	(LOWERCASE_ID|TableClassifier) ('|' elements+=TableClassifier)+
 ;
 
 TableClassifier returns ClassifierRHS:
@@ -363,7 +382,7 @@ SimpleObservableSemantics returns ObservableSemantics:
 
 ValueOperator:
 	(modifier=VALUE_OPERATOR | downTo='down' 'to') 
-		(comparisonValue=Number| comparisonQuantity=Quantity | comparisonConcept+=ConceptDeclaration (',' comparisonConcept+=ConceptDeclaration)* | ('(' comparisonObservable=ObservableSemantics ')')) |
+		(comparisonValue=Number| comparisonQuantity=Quantity | comparisonConcept+=ConceptDeclaration | ('(' comparisonObservable=ObservableSemantics ')')) |
 	total='total' | 
 	averaged='averaged' | 
 	summed='summed'

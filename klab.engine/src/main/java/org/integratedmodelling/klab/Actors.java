@@ -5,7 +5,6 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Constructor;
-import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URL;
 import java.util.ArrayList;
@@ -20,6 +19,7 @@ import java.util.Set;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.reflect.MethodUtils;
 import org.eclipse.xtext.testing.IInjectorProvider;
 import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
@@ -114,7 +114,8 @@ public enum Actors implements IActorsService {
             .synchronizedMap(new HashMap<>());
     private Map<String, Pair<String, Class<? extends KlabWidgetActionExecutor>>> viewActionClasses = Collections
             .synchronizedMap(new HashMap<>());
-
+    AtomicLong semaphoreId = new AtomicLong(1L);
+    Map<Semaphore.Type, Set<Long>> semaphores = Collections.synchronizedMap(new HashMap<>());
     static Set<String> layoutMetadata = null;
 
     /**
@@ -200,6 +201,7 @@ public enum Actors implements IActorsService {
         layoutMetadata.add("type");
     }
 
+    @Override
     public IBehavior getBehavior(String behaviorId) {
         return behaviors.get(behaviorId);
     }
@@ -226,8 +228,7 @@ public enum Actors implements IActorsService {
         @Override
         public Receive<Void> createReceive() {
             return newReceiveBuilder()
-                    // for now just stop. We should have this respond to a onSession message by
-                    // creating the session actor?
+                    // for now just stop
                     .onSignal(PostStop.class, signal -> onPostStop()).build();
         }
 
@@ -290,15 +291,16 @@ public enum Actors implements IActorsService {
                     value = Observables.INSTANCE.declare(value.toString());
                     break;
                 case QUANTITY:
-                    if (value instanceof KActorsQuantity) {
-                        if (((KActorsQuantity) value).getUnit() != null) {
-                            value = Quantity.create(((KActorsQuantity) value).getValue(),
-                                    Unit.create(((KActorsQuantity) value).getUnit()));
-                        } else if (((KActorsQuantity) value).getCurrency() != null) {
-                            value = Quantity.create(((KActorsQuantity) value).getValue(),
-                                    Currency.create(((KActorsQuantity) value).getCurrency()));
-                        }
-                    }
+                    // NO - leave it as is, implementing the syntactic peer.
+//                    if (value instanceof KActorsQuantity) {
+//                        if (((KActorsQuantity) value).getUnit() != null) {
+//                            value = Quantity.create(((KActorsQuantity) value).getValue(),
+//                                    Unit.create(((KActorsQuantity) value).getUnit()));
+//                        } else if (((KActorsQuantity) value).getCurrency() != null) {
+//                            value = Quantity.create(((KActorsQuantity) value).getValue(),
+//                                    Currency.create(((KActorsQuantity) value).getCurrency()));
+//                        }
+//                    }
                     break;
                 case RANGE:
                     break;
@@ -495,10 +497,13 @@ public enum Actors implements IActorsService {
         return ret == null ? null : ret.getSecond();
     }
 
+    
+    @Override
     public Collection<String> getBehaviorIds() {
         return behaviors.keySet();
     }
 
+    @Override
     public Collection<String> getBehaviorIds(IKActorsBehavior.Type type) {
         List<String> ret = new ArrayList<>();
         for (String key : behaviors.keySet()) {
@@ -509,6 +514,7 @@ public enum Actors implements IActorsService {
         return ret;
     }
 
+    @Override
     public Collection<String> getPublicApps() {
         List<String> ret = new ArrayList<>();
         for (String key : behaviors.keySet()) {
@@ -726,9 +732,6 @@ public enum Actors implements IActorsService {
         return layoutMetadata;
     }
 
-    AtomicLong semaphoreId = new AtomicLong(1L);
-    Map<Semaphore.Type, Set<Long>> semaphores = Collections.synchronizedMap(new HashMap<>());
-
     class SemaphoreImpl implements Semaphore {
 
         long id;
@@ -747,10 +750,18 @@ public enum Actors implements IActorsService {
         public long getId() {
             return id;
         }
+        
+        @Override
+        public String toString() {
+            return type + "-" + id;
+        }
 
     }
 
     /**
+     * Create and keep a semaphore for different actors to share and check. Used to implement serial
+     * behavior when needed to serialize chains of fired messages or load operations.
+     * 
      * @param type
      * @return
      */
@@ -764,7 +775,6 @@ public enum Actors implements IActorsService {
 
         final long id = semaphoreId.incrementAndGet();
         ids.add(id);
-
         return new SemaphoreImpl(type, id);
     }
 
@@ -792,6 +802,14 @@ public enum Actors implements IActorsService {
         return ids == null || !ids.contains(((SemaphoreImpl) semaphore).getId());
     }
 
+    /**
+     * Build a Java object through reflection when invoked by a k.Actors constructor
+     * 
+     * @param constructor
+     * @param scope
+     * @param identity
+     * @return
+     */
     public Object createJavaObject(KActorsValue.Constructor constructor, Scope scope, IActorIdentity<?> identity) {
 
         Class<?> cls = null;
@@ -1008,51 +1026,49 @@ public enum Actors implements IActorsService {
      * @param arguments
      * @param scope
      */
-    public void invokeReactorMethod(Object reactor, String methodName, IParameters<String> arguments, Scope scope, IActorIdentity<?> identity) {
+    public void invokeReactorMethod(Object reactor, String methodName, IParameters<String> arguments, Scope scope,
+            IActorIdentity<?> identity) {
 
         List<Object> jargs = new ArrayList<>();
         Map<String, Object> kargs = null;
         for (Object v : arguments.getUnnamedArguments()) {
-            jargs.add(v instanceof KActorsValue ? KlabActor.evaluateInScope((KActorsValue)v, scope, identity) : v);
+            jargs.add(v instanceof KActorsValue ? KlabActor.evaluateInScope((KActorsValue) v, scope, identity) : v);
         }
-        for (String k : arguments.keySet()) {
+        for (String k : arguments.getNamedKeys()) {
             if (kargs == null) {
                 kargs = new HashMap<>();
             }
             Object v = arguments.get(k);
-            kargs.put(k, v instanceof KActorsValue ? KlabActor.evaluateInScope((KActorsValue)v, scope, identity) : v);
+            kargs.put(k, v instanceof KActorsValue ? KlabActor.evaluateInScope((KActorsValue) v, scope, identity) : v);
         }
         if (kargs != null) {
             jargs.add(kargs);
         }
-        
+
         Class<?>[] clss = new Class[jargs.size()];
-        
+
         int i = 0;
         for (Object jarg : jargs) {
             clss[i++] = jarg == null ? Object.class : jarg.getClass();
         }
-        
-        Method method = null;
-        try {
-            method = reactor.getClass().getMethod(methodName, clss);
-        } catch (NoSuchMethodException e) {
-            // ok, we dont'have it.
-        }
 
+        Method method = MethodUtils.getMatchingMethod(reactor.getClass(), methodName, clss);
+ 
         if (method != null) {
-                try {
-                    method.invoke(reactor, jargs.toArray());
-                } catch (Throwable e) {
+            try {
+                method.invoke(reactor, jargs.toArray());
+            } catch (Throwable e) {
+                if (scope != null) {
                     scope.getMonitor().error(e);
+                } else {
+                    Logging.INSTANCE.error(e);
                 }
+            }
         } else {
             if (scope != null) {
-                scope.getMonitor().warn(
-                        "k.Actors: cannot find a " + methodName + " method to invoke on object");
+                scope.getMonitor().warn("k.Actors: cannot find a '" + methodName + "' method to invoke on object");
             } else {
-                Logging.INSTANCE.warn(
-                        "k.Actors: cannot find a " + methodName + " method to invoke on object");
+                Logging.INSTANCE.warn("k.Actors: cannot find a '" + methodName + "' method to invoke on object");
             }
         }
 

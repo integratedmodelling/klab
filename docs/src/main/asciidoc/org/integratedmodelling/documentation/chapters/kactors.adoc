@@ -1,11 +1,44 @@
 [#chapter-kactors]
 = The k.Actors language
-Ferdinando Villa
-:doctype: book
+Introduction and user manual, June 2020
+v1.0, 2021-02-20
+:doctype: article
+:description: High-level technical description of k.LAB for technical partners
+:kl: k.LAB
+:kmod: k.Modeler
+:kact: k.Actors
+:keng: k.LAB Engine
+:knod: k.LAB Node
+:kim: k.IM
+:ked: k.LAB Resource Editor
+:pex: k.LAB Explorer
+:kex: Project Explorer
 :encoding: utf-8
 :lang: en
+:title-page:
 :toc: left
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
 :numbered:
+:experimental:
+:reproducible:
+:icons: font
+:listing-caption: Listing
+:sectnums:
+:autofit-option:
+:mdash: &#8212;
+:language: asciidoc
+ifdef::backend-pdf[]
+:title-logo-image: image:../technote/resources_handling/imgs/KLAB_LOGO.png[align=center]
+:source-highlighter: rouge
+//:rouge-style: github
+//:source-highlighter: pygments
+//:pygments-style: tango
+endif::[]
+:stem:
+
+<<<
 
 The k.Actors language, one of the three languages supported in k.LAB, is used to specify reactive _behaviors_ for the different agents created during a k.LAB session, including observations of all kinds. By extending the notion of _agent_ to k.LAB users and sessions, k.Actors also enables the definition of _applications_ that implement custom user interfaces and support specialized workflows on top of the <<chapter-explorer,k.Explorer>> view component. Applications can also encode complex batch computations and test cases, intended as behaviors for the k.LAB runtime.
 
@@ -34,9 +67,9 @@ action invite(friend): <2>
 
 In the code above, two _actions_ are defined, each composed of one statement that calls other actions and specifies a chain of events triggered when each of them "responds" (_fires_). While k.Actors reads less like English than k.IM, it is fairly easy to get the hang of the syntax by recognizing action calls (_verbs_) and learning to interpret the symbols `:` and `->` above:
 
-In action `main` (1), the verb `invite` is called with an email address as a parameter. The call, whose internal behavior is defined below in the same behavior (2), results in an action being executed. The important thing to know is that actions may cause events (_fire_) zero or more times, and that those events can be captured by the code that called the action. Firing may not happen at all, happen once and immediately, or happen multiple times at any time. For this reason, k.LAB starts the action and immediately moves on. If the ':' operator follows the call, though, the actor running the behavior readies itself to process events fired by it, whenever they happens as long as the actor is "alive".
+In action `main` (1), the verb `invite` is called, passing an email address as a parameter. The call, defined in (2), results in an action being executed. The important thing to know is that actions may cause events (_fire_) zero or more times, and that those events can be captured by the code that called the action. Firing may not happen at all, happen once and immediately, or happen multiple times at any time. For this reason, k.LAB starts the action and immediately moves on, without waiting for it to fire unless synchronous execution is forced (see below). If the ':' operator follows the call, the actor running the behavior readies itself to process events fired by it, whenever they happen, which may be any time as long as the actor is "alive".
 
-NOTE: In k.Actors, some action names are bound by convention to specific runtime behaviors. Specifically, an action named `main` will be automatically executed when the behavior is loaded. In normal circumstances, an action is only executed when explicitly called by another actor by sending a _message_ to it. So any actor that is bound to the `restaurant` behavior will immediately invite a friend to dinner as soon as it is created.
+NOTE: In k.Actors, some action names are bound by convention to specific runtime behaviors. Specifically, an action named `main` will be automatically executed when the behavior is loaded. In normal circumstances, an action is only executed when explicitly called by another actor by sending a _message_ to it. So any actor that is bound to the `restaurant` behavior will immediately invite a friend to dinner as soon as it is initialized.
 
 So the `main` action will invite a person, identified by an email address, to dinner and wait for a positive ("OK") or negative response. If and when the response arrives, the action `choose`  will lookup restaurants in the context of execution of the behavior, and choose one (again, there may be none). You may notice:
 
@@ -49,14 +82,14 @@ Using the same mechanism, we chain the action `reserve`  to the choice of a rest
 
 You can now, armed with some imagination, try to understand what the `invite`  action does (all the new syntactic elements in it will be explained later).
 
-## Concurrent execution paradigm
+## Concurrent execution
 
 Each action only contains one statement in the example above. If there is more than one statement, the statements belonging to each action constitute a _concurrent block_, in which statements are executed in _no particular order_ and _without waiting for each other_ when the action is invoked. Most statements represent action calls (_verbs_), which invoke an action in the same or another behavior, and they often consist of a single word. As a rule, it is not known whether an action invoked in a behavior may end immediately or trigger behaviors that include waiting and may continue indefinitely. For this reason all the actions in a block should be conceptualized as starting at the same time, and no assumption should be made as to their sequence or side effects within the block. If needed and appropriate (but see below as to appropriateness), "serial" behavior can be specified explicitly: if within a block a set of statements are separated by commas, the set of them becomes a _sequence_, which is executed serially. So the action specified as 
 [source,kactors]
 ----
 action xxx: a b c, d, e f g
 ----
-contains _five_ statements: `a`, `b`, the sequence `c, d, e` and again `f` and `g`. When this action is called (i.e., when its name is used as a verb in another action), the five statements will be executed together, without waiting for any of them to do anything before calling the other. Within the sequence, though, only `c` will be executed, and `d` will only follow after the execution of `c` has caused a response (`c` has _fired_). Concurrent groups within groups can be declared using parentheses, and they may contain one or more statement: so the declaration
+contains _five_ statements: `a`, `b`, the sequence `c, d, e` (in turn composed of three statements) and again `f` and `g`. When this action is called (i.e., when its name is used as a verb in another action), the five statements will be executed "together", without waiting for any of them to do anything before calling the other. Within the sequence, though, only `c` will be executed, and `d` will only follow after the execution of `c` has caused a response (`c` has _fired_) - _if_ it does. Concurrent groups within groups can be declared using parentheses, and they may contain one or more statement: so the declaration
 [source,kactors]
 ----
 action xxx: a b (c, d, e) f g

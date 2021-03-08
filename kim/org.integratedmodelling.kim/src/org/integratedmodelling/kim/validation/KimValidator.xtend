@@ -615,57 +615,71 @@ class KimValidator extends AbstractKimValidator {
 						KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ID, BAD_TABLE_FORMAT)
 					ok = false
 				} else {
-					table = new KimLookupTable(tobj as IKimTable, model.lookupTableArgs, null)
+					table = new KimLookupTable(tobj as IKimTable, model.lookupTableArgs, model.twoway, null)
 				}
 			} else {
-				table = new KimLookupTable(new KimTable(model.lookupTable, null), model.lookupTableArgs, null)
+				table = new KimLookupTable(new KimTable(model.lookupTable, null), model.lookupTableArgs, model.twoway,
+					null)
 			}
 
 			if (table !== null) {
-				if (model.lookupTableArgs.size > table.table.columnCount) {
-					error(
-						'The number of arguments exceeds the number of columns. Use ? for the arguments to look up or * for arguments to ignore',
-						KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
-					ok = false
-				}
-				if (table.getError() !== null) {
-					error(table.getError(), KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE, BAD_TABLE_FORMAT)
-					ok = false
-				}
-				var o = 0
-				var checkFound = false
-				for (arg : model.lookupTableArgs) {
+				if (model.twoway) {
 
-					if (arg.id !== null) {
-					if (arg.id != "?" && arg.id != "*") {
-						var found = false
-						for (dependency : dependencies) {
-							// TODO dependency.name returns too many nulls to check effectively
-							if (dependency.name !== null && dependency.name == arg) {
-								found = true;
-							}
-						}
-						if (!found) {
-							// TODO reintegrate, or at worst move into engine
+					// check that we have two dims
+					if (model.lookupTableArgs.size !== 2) {
+						error('Two-way tables must have two arguments',
+							KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
+						ok = false
+					}
+
+				} else {
+					if (model.lookupTableArgs.size > table.table.columnCount) {
+						error(
+							'The number of arguments exceeds the number of columns. Use ? for the arguments to look up or * for arguments to ignore',
+							KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
+						ok = false
+					}
+					if (table.getError() !== null) {
+						error(table.getError(), KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE,
+							BAD_TABLE_FORMAT)
+						ok = false
+					}
+					var o = 0
+					var checkFound = false
+					for (arg : model.lookupTableArgs) {
+
+						if (arg.id !== null) {
+							if (arg.id != "?" && arg.id != "*") {
+								var found = false
+								for (dependency : dependencies) {
+									// TODO dependency.name returns too many nulls to check effectively
+									if (dependency.name !== null && dependency.name == arg) {
+										found = true;
+									}
+								}
+								if (!found) {
+									// TODO reintegrate, or at worst move into engine
 //						error('Argument ' + arg + ' is unknown within this model',
 //								 KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, BAD_TABLE_FORMAT)
+								}
+							} else if (arg.id == "?") {
+								if (checkFound) {
+									error("Only one '?' is allowed in the argument list, to mark the result column",
+										KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o,
+										BAD_TABLE_FORMAT)
+									ok = false
+								}
+								checkFound = true
+							}
 						}
-					} else if (arg.id == "?") {
-						if (checkFound) {
-							error("Only one '?' is allowed in the argument list, to mark the result column",
-								KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, o, BAD_TABLE_FORMAT)
-							ok = false
-						}
-						checkFound = true
+						o++
 					}
+					if (!checkFound && model.lookupTableArgs.size() > 2) {
+						error(
+							"One '?' must be present in the argument list to mark the result column when the table has more than 2 columns. Use * to mark columns to ignore.",
+							KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
+						ok = false
 					}
-					o++
-				}
-				if (!checkFound && model.lookupTableArgs.size() > 2) {
-					error(
-						"One '?' must be present in the argument list to mark the result column when the table has more than 2 columns. Use * to mark columns to ignore.",
-						KimPackage.Literals.MODEL_BODY_STATEMENT__LOOKUP_TABLE_ARGS, BAD_TABLE_FORMAT)
-					ok = false
 				}
 			}
 		}
@@ -770,12 +784,12 @@ class KimValidator extends AbstractKimValidator {
 
 				if (model.lookupTable !== null) {
 					descriptor.contextualization.add(
-						new ComputableResource(model.lookupTable, model.lookupTableArgs, descriptor))
+						new ComputableResource(model.lookupTable, model.lookupTableArgs, model.twoway, descriptor))
 				}
 
 				if (model.lookupTableId !== null) {
 					var tobj = ns.getSymbolTable().get(model.lookupTableId)
-					var table = new KimLookupTable(tobj as IKimTable, model.lookupTableArgs, null)
+					var table = new KimLookupTable(tobj as IKimTable, model.lookupTableArgs, model.twoway, null)
 					descriptor.contextualization.add(new ComputableResource(table, descriptor))
 				}
 
@@ -992,7 +1006,7 @@ class KimValidator extends AbstractKimValidator {
 				}
 			}
 			if (semantics.currency !== null) {
-				if (!declaration.is(Type.MONEY) && !declaration.is(Type.MONETARY)) {
+				if (!declaration.is(Type.MONEY) && !declaration.is(Type.MONETARY_VALUE)) {
 					error("Currencies can only be specified for monetary values", semantics.currency, null,
 						KimPackage.OBSERVABLE_SEMANTICS__CURRENCY)
 				}
@@ -1684,9 +1698,10 @@ class KimValidator extends AbstractKimValidator {
 //					}
 					operator.add(Type.RATIO)
 				} else if (concept.isValue) {
-					operator.add(Type.VALUE)
 					if (concept.isMonetary) {
-						operator.add(Type.MONETARY)
+						operator.add(Type.MONETARY_VALUE)
+					} else {
+						operator.add(Type.VALUE)
 					}
 				} else if (concept.isUncertainty) {
 					if (!flags.contains(Type.QUALITY)) {
@@ -2060,7 +2075,7 @@ class KimValidator extends AbstractKimValidator {
 //			ret.authorityDefined
 //			concept.definedAuthority
 		}
-	
+
 		var i = 0
 		for (requirement : concept.requirements) {
 			if (requirement.authority !== null) {
@@ -2070,12 +2085,12 @@ class KimValidator extends AbstractKimValidator {
 					var iden = Kim.INSTANCE.declareConcept(identity)
 					if (requirement.type == "identity") {
 						if (!iden.type.contains(Type.IDENTITY)) {
-							error("The concept required is not an identity",
-								concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__REQUIREMENTS, i)
+							error("The concept required is not an identity", concept,
+								KimPackage.Literals.CONCEPT_STATEMENT_BODY__REQUIREMENTS, i)
 						}
 						if (!iden.type.contains(Type.ABSTRACT)) {
-							error("Required identities must be abstract",
-								concept, KimPackage.Literals.CONCEPT_STATEMENT_BODY__REQUIREMENTS, i)
+							error("Required identities must be abstract", concept,
+								KimPackage.Literals.CONCEPT_STATEMENT_BODY__REQUIREMENTS, i)
 						}
 						ret.requiredIdentities.add(iden);
 					} // else ... TODO the others

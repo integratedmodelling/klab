@@ -40,6 +40,10 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial, partial implementation of multiple table adapters with (so far) CSV support
   and conventions for time/space contextualization and filtering.
 ### Fixed
+- Engine honors 'klab.prerequisites' property in project options (still no IDE 
+  support for defining it).
+- Pre-load local resources before any namespace is created in engine
+- Review naming logics to ensure all local names are seen in actuators
 - Bug in resolving processes that would cause some changing states to not be found
 - Bug in resolving states with value operators from pre-existing observations that
   did not have the operators.

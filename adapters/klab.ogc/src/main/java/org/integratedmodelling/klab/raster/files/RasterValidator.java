@@ -1,17 +1,15 @@
 /*
  * This file is part of k.LAB.
  * 
- * k.LAB is free software: you can redistribute it and/or modify
- * it under the terms of the Affero GNU General Public License as published
- * by the Free Software Foundation, either version 3 of the License,
- * or (at your option) any later version.
+ * k.LAB is free software: you can redistribute it and/or modify it under the terms of the Affero
+ * GNU General Public License as published by the Free Software Foundation, either version 3 of the
+ * License, or (at your option) any later version.
  *
- * A copy of the GNU Affero General Public License is distributed in the root
- * directory of the k.LAB distribution (LICENSE.txt). If this cannot be found 
- * see <http://www.gnu.org/licenses/>.
+ * A copy of the GNU Affero General Public License is distributed in the root directory of the k.LAB
+ * distribution (LICENSE.txt). If this cannot be found see <http://www.gnu.org/licenses/>.
  * 
- * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned
- * in author tags. All rights reserved.
+ * Copyright (C) 2007-2018 integratedmodelling.org and any authors mentioned in author tags. All
+ * rights reserved.
  */
 package org.integratedmodelling.klab.raster.files;
 
@@ -56,157 +54,156 @@ import org.opengis.referencing.crs.CoordinateReferenceSystem;
  */
 public class RasterValidator implements IResourceValidator {
 
-	@Override
-	public IResource.Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
+    @Override
+    public IResource.Builder validate(URL url, IParameters<String> userData, IMonitor monitor) {
 
-		IResource.Builder ret = Resources.INSTANCE.createResourceBuilder().withType(IArtifact.Type.NUMBER);
+        IResource.Builder ret = Resources.INSTANCE.createResourceBuilder().withType(IArtifact.Type.NUMBER);
 
-		try {
+        try {
 
-			File file = URLUtils.getFileForURL(url);
+            File file = URLUtils.getFileForURL(url);
 
-			monitor.info("Validating raster resource " + url);
+            monitor.info("Validating raster resource " + url);
 
-			ret.withParameter("fileUrl", url).withLocalName(MiscUtilities.getFileName(url.getFile()));
+            ret.withParameter("fileUrl", url).withLocalName(MiscUtilities.getFileName(url.getFile()))
+                    .withParameter("transform", "");
 
-			monitor.info("Running access tests...");
-			AbstractGridFormat format = GridFormatFinder.findFormat(file);
-			AbstractGridCoverage2DReader reader = format.getReader(file);
-			GridCoverage2D coverage = reader.read(null);
-			Envelope envelope = coverage.getEnvelope();
-			CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
-			GridGeometry2D grid = coverage.getGridGeometry();
-			org.integratedmodelling.klab.components.geospace.extents.Envelope refenv = org.integratedmodelling.klab.components.geospace.extents.Envelope
-					.create(envelope, Projection.create(crs));
-			ret.withSpatialExtent(refenv.asShape().getExtentDescriptor());
+            monitor.info("Running access tests...");
+            AbstractGridFormat format = GridFormatFinder.findFormat(file);
+            AbstractGridCoverage2DReader reader = format.getReader(file);
+            GridCoverage2D coverage = reader.read(null);
+            Envelope envelope = coverage.getEnvelope();
+            CoordinateReferenceSystem crs = coverage.getCoordinateReferenceSystem();
+            GridGeometry2D grid = coverage.getGridGeometry();
+            org.integratedmodelling.klab.components.geospace.extents.Envelope refenv = org.integratedmodelling.klab.components.geospace.extents.Envelope
+                    .create(envelope, Projection.create(crs));
+            ret.withSpatialExtent(refenv.asShape().getExtentDescriptor());
 
-			String crsCode = null;
-			if (crs == null) {
-				ret.addError("Coverage has no coordinate reference system");
-			} else {
+            String crsCode = null;
+            if (crs == null) {
+                ret.addError("Coverage has no coordinate reference system");
+            } else {
 
-				try {
-					monitor.info("Testing reprojection to WGS84...");
-					CRS.findMathTransform(crs, DefaultGeographicCRS.WGS84);
-					Projection utmProjection = Projection
-							.getUTM(org.integratedmodelling.klab.components.geospace.extents.Envelope.create(envelope,
-									Projection.create(crs)));
-					if (!crs.equals(utmProjection.getCoordinateReferenceSystem())) {
-						monitor.info("Testing reprojection to UTM " + utmProjection + "...");
-						CRS.findMathTransform(crs, utmProjection.getCoordinateReferenceSystem());
-					}
+                try {
+                    monitor.info("Testing reprojection to WGS84...");
+                    CRS.findMathTransform(crs, DefaultGeographicCRS.WGS84);
+                    Projection utmProjection = Projection.getUTM(org.integratedmodelling.klab.components.geospace.extents.Envelope
+                            .create(envelope, Projection.create(crs)));
+                    if (!crs.equals(utmProjection.getCoordinateReferenceSystem())) {
+                        monitor.info("Testing reprojection to UTM " + utmProjection + "...");
+                        CRS.findMathTransform(crs, utmProjection.getCoordinateReferenceSystem());
+                    }
 
-					crsCode = CRS.lookupIdentifier(crs, true);
+                    crsCode = CRS.lookupIdentifier(crs, true);
 
-				} catch (Throwable e) {
-					ret.addError("Coverage projection failed reprojection test (check Bursa-Wolfe parameters)");
-				}
+                } catch (Throwable e) {
+                    ret.addError("Coverage projection failed reprojection test (check Bursa-Wolfe parameters)");
+                }
 
-				if (crsCode == null) {
-					ret.addError("Projection CRS code cannot be assessed");
-				}
+                if (crsCode == null) {
+                    ret.addError("Projection CRS code cannot be assessed");
+                }
 
-				monitor.info("Running band tests...");
-				int numBands = coverage.getNumSampleDimensions();
-				if (numBands > 1 && !userData.contains("band") && !userData.contains("bandmixer")) {
-					ret.addError("raster coverage " + coverage.getName()
-							+ " has multiple bands but no band selector or band mixer expression are specified");
-				} else if (userData.contains("band")) {
-					if (numBands < userData.get("band", Integer.class)) {
-						ret.addError("raster coverage " + coverage.getName() + " has " + numBands + "  bands but band "
-								+ userData.get("band", Integer.class) + " is requested");
-					}
-				}
+                monitor.info("Running band tests...");
+                int numBands = coverage.getNumSampleDimensions();
+                if (numBands > 1 && !userData.contains("band") && !userData.contains("bandmixer")) {
+                    ret.addError("raster coverage " + coverage.getName()
+                            + " has multiple bands but no band selector or band mixer expression are specified");
+                } else if (userData.contains("band")) {
+                    if (numBands < userData.get("band", Integer.class)) {
+                        ret.addError("raster coverage " + coverage.getName() + " has " + numBands + "  bands but band "
+                                + userData.get("band", Integer.class) + " is requested");
+                    }
+                }
 
-				int band = userData.get("band", 0);
+                int band = userData.get("band", 0);
 
-				/*
-				 * Nodata value for band. TODO make it a list, which requires moving to top
-				 * level or JSON will complain.
-				 */
-				SampleDimension sdim = coverage.getSampleDimension(band);
-				if (sdim.getNoDataValues() != null) {
-					for (double d : sdim.getNoDataValues()) {
-						ret.withParameter("nodata", d);
-					}
-				}
+                /*
+                 * Nodata value for band. TODO make it a list, which requires moving to top level or
+                 * JSON will complain.
+                 */
+                SampleDimension sdim = coverage.getSampleDimension(band);
+                if (sdim.getNoDataValues() != null) {
+                    for (double d : sdim.getNoDataValues()) {
+                        ret.withParameter("nodata", d);
+                    }
+                }
 
-			}
+            }
 
-			if (!ret.hasErrors()) {
+            if (!ret.hasErrors()) {
 
-				monitor.info("Raster file is valid: resource is OK");
-				Geometry geometry = Geometry.create("S2")
-						.withBoundingBox(envelope.getMinimum(0), envelope.getMaximum(0), envelope.getMinimum(1),
-								envelope.getMaximum(1))
-						.withProjection(crsCode)
-						.withSpatialShape((long) grid.getGridRange().getSpan(0), (long) grid.getGridRange().getSpan(1));
+                monitor.info("Raster file is valid: resource is OK");
+                Geometry geometry = Geometry.create("S2")
+                        .withBoundingBox(envelope.getMinimum(0), envelope.getMaximum(0), envelope.getMinimum(1),
+                                envelope.getMaximum(1))
+                        .withProjection(crsCode)
+                        .withSpatialShape((long) grid.getGridRange().getSpan(0), (long) grid.getGridRange().getSpan(1));
 
-				ret.withGeometry(geometry);
+                ret.withGeometry(geometry);
 
-			} else {
-				monitor.info("Raster file is invalid; resource has errors");
-			}
+            } else {
+                monitor.info("Raster file is invalid; resource has errors");
+            }
 
-		} catch (Throwable e) {
-			ret.addError("Errors validating resource: " + e.getMessage());
-		}
+        } catch (Throwable e) {
+            ret.addError("Errors validating resource: " + e.getMessage());
+        }
 
-		return ret;
-	}
+        return ret;
+    }
 
-	@Override
-	public boolean canHandle(File resource, IParameters<String> parameters) {
+    @Override
+    public boolean canHandle(File resource, IParameters<String> parameters) {
 
-		if (resource == null) {
-			return false;
-		}
-		String extension = MiscUtilities.getFileExtension(resource);
-		if (extension != null) {
-			return
-			// TODO other raster formats understandable by geotools
-			extension.toLowerCase().equals("tif") || extension.toLowerCase().equals("tiff")
-					|| extension.toLowerCase().equals("geotiff");
-		}
+        if (resource == null) {
+            return false;
+        }
+        String extension = MiscUtilities.getFileExtension(resource);
+        if (extension != null) {
+            return
+            // TODO other raster formats understandable by geotools
+            extension.toLowerCase().equals("tif") || extension.toLowerCase().equals("tiff")
+                    || extension.toLowerCase().equals("geotiff");
+        }
 
-		return false;
-	}
+        return false;
+    }
 
-	@Override
-	public Collection<File> getAllFilesForResource(File file) {
-		return FileUtils.getSidecarFiles(file, RasterAdapter.secondaryFileExtensions);
-	}
+    @Override
+    public Collection<File> getAllFilesForResource(File file) {
+        return FileUtils.getSidecarFiles(file, RasterAdapter.secondaryFileExtensions);
+    }
 
-	@Override
-	public List<Operation> getAllowedOperations(IResource resource) {
-		List<Operation> ret = new ArrayList<>();
-		return ret;
-	}
+    @Override
+    public List<Operation> getAllowedOperations(IResource resource) {
+        List<Operation> ret = new ArrayList<>();
+        return ret;
+    }
 
-	@Override
-	public IResource performOperation(IResource resource, String operationName, IParameters<String> parameters,
-			IResourceCatalog catalog, IMonitor monitor) {
-		throw new KlabUnimplementedException("resource operations unimplemented");
-	}
+    @Override
+    public IResource performOperation(IResource resource, String operationName, IParameters<String> parameters,
+            IResourceCatalog catalog, IMonitor monitor) {
+        throw new KlabUnimplementedException("resource operations unimplemented");
+    }
 
-	@Override
-	public Map<String, Object> describeResource(IResource resource) {
-		Map<String, Object> ret = new LinkedHashMap<>();
-		// TODO
-		return ret;
-	}
-	
-	@Override
-	public IResource update(IResource resource, ResourceCRUDRequest updateData) {
-		((Resource) resource).update(updateData);
-		return resource;
-	}
+    @Override
+    public Map<String, Object> describeResource(IResource resource) {
+        Map<String, Object> ret = new LinkedHashMap<>();
+        // TODO
+        return ret;
+    }
 
-	@Override
-	public boolean isObservationAllowed(IResource resource, Map<String, String> urnParameters,
-			Description description) {
-		// TODO Auto-generated method stub
-		return false;
-	}
+    @Override
+    public IResource update(IResource resource, ResourceCRUDRequest updateData) {
+        ((Resource) resource).update(updateData);
+        return resource;
+    }
+
+    @Override
+    public boolean isObservationAllowed(IResource resource, Map<String, String> urnParameters, Description description) {
+        // TODO Auto-generated method stub
+        return false;
+    }
 
 }

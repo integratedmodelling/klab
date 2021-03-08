@@ -66,4 +66,22 @@ public class KimTable extends KimStatement implements IKimTable {
 	public List<IKimClassifier[]> getRows() {
 		return rows;
 	}
+
+    @Override
+    public boolean isTwoWay() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public List<IKimClassifier> getRowClassifiers() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public List<IKimClassifier> getColumnClassifiers() {
+        // TODO Auto-generated method stub
+        return null;
+    }
 }

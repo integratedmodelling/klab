@@ -46,7 +46,18 @@ public interface IKActorsValue extends IKActorsCodeStatement {
 		/**
 		 * Objects that don't have literals in the language but can be fired
 		 */
-		OBSERVATION
+		OBSERVATION,
+		
+		/**
+		 * Only for matching any object that has a specified annotation. 
+		 */
+		ANNOTATION, 
+		
+		/**
+		 * A component path and possibly arguments passed after 'new'
+		 */
+		COMPONENT
+		
 	}
 
 	/**

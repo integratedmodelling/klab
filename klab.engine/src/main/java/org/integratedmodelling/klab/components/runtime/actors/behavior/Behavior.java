@@ -16,6 +16,7 @@ import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsBehavior;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -83,6 +84,13 @@ public class Behavior implements IBehavior {
 
 		public boolean matches(Object value, Scope scope) {
 			switch (this.value.getType()) {
+			case ANNOTATION:
+			    for (IAnnotation annotation : Annotations.INSTANCE.collectAnnotations(value)) {
+			        if (annotation.getName().equals(this.value.getValue())) {
+			            return true;
+			        }
+			    }
+			    break;
 			case ANYTHING:
 				return true;
 			case ANYVALUE:
@@ -167,9 +175,10 @@ public class Behavior implements IBehavior {
 						|| (value instanceof Collection && ((Collection<?>) value).isEmpty())
 						|| (value instanceof String && ((String) value).isEmpty())
 						|| (value instanceof IArtifact && ((IArtifact) value).isEmpty());
-			default:
-				break;
-
+            case OBJECT:
+                break;
+            default:
+                break;
 			}
 			return false;
 		}

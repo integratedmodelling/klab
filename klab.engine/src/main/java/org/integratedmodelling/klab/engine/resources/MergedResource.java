@@ -611,4 +611,10 @@ public class MergedResource implements IResource {
 		return urns;
 	}
 
+    @Override
+    public Collection<String> getCategorizables() {
+        // TODO shouldn't be called as it's only for the editor
+        return null;
+    }
+
 }

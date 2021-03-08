@@ -476,7 +476,7 @@ public class TableCompiler {
                     // we have found a filter matching the state
                     return true;
                 }
-                
+
                 if (target != null) {
 
                     IObservation observation = getObservation(catalog, classifier, dimension);
@@ -486,12 +486,12 @@ public class TableCompiler {
                     } else if (selectsState) {
                         return false;
                     }
-                    
+
                     if (dimension.contextualizedState != null) {
                         this.lastMatched = currentState;
                         return true;
                     }
-                    
+
                 }
                 if (!selectsState && !classifier.classify(currentState, scope)) {
                     return false;
@@ -508,18 +508,25 @@ public class TableCompiler {
             if (this.target.getObservable().isAbstract() && classifier.isConcept()) {
 
                 if (!dimension.stateContextualized) {
-                    
+
                     this.selectsState = true;
                     dimension.stateContextualized = true;
-                    
+
                     /*
                      * find the specific artifact that incarnates the abstract concept
                      */
-                    for (IObservation obs : catalog.values()) {
-                        if (obs instanceof IState
-                                && obs.getObservable().getResolvedPredicates().containsValue(classifier.getConcept())) {
+                    if (classifier.getConcept().is(Type.PREDICATE)) {
+                        for (IObservation obs : catalog.values()) {
+                            if (obs instanceof IState
+                                    && obs.getObservable().getResolvedPredicates().containsValue(classifier.getConcept())) {
+                                dimension.contextualizedState = (IState) obs;
+                                break;
+                            }
+                        }
+                    } else {
+                        IObservation obs = catalog.get(new ObservedConcept(classifier.getConcept()));
+                        if (obs instanceof IState) {
                             dimension.contextualizedState = (IState) obs;
-                            break;
                         }
                     }
 
@@ -528,7 +535,7 @@ public class TableCompiler {
                     return dimension.contextualizedState;
                 }
             }
-            
+
             return catalog.get(target);
 
         }
@@ -1474,20 +1481,45 @@ public class TableCompiler {
                 }
             } else if (trg != null) {
 
-                target = new ObservedConcept(trg, trg.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+                List<IObservable> targets = new ArrayList<>();
 
-                if (trg.getType().equals(Concepts.c(NS.CORE_AREA))) {
-                    targetType = TargetType.AREA;
-                } else if (trg.getType().equals(Concepts.c(NS.CORE_DURATION))) {
-                    targetType = TargetType.DURATION;
-                } else if (trg.getType().equals(Concepts.c(NS.CORE_COUNT))) {
-                    targetType = TargetType.NUMEROSITY;
+                if (trg.isAbstract()) {
+
+                    if (scope != null) {
+
+                        Map<ObservedConcept, IObservation> catalog = scope.getCatalog();
+                        for (ObservedConcept concept : catalog.keySet()) {
+                            boolean stateOK = trg.resolves(concept.getObservable(),
+                                    scope.getContextObservation() == null
+                                            ? null
+                                            : scope.getContextObservation().getObservable().getType());
+                            if (stateOK) {
+                                targets.add(concept.getObservable());
+                            }
+                        }
+                    }
+                    
                 } else {
-                    this.observables.add(target);
-                    targetType = trg.is(Type.QUALITY) ? TargetType.QUALITY : null;
+                    targets.add(trg);
                 }
 
-                ret.add(new Pair<>(target, targetType));
+                for (IObservable observable : targets) {
+
+                    target = new ObservedConcept(observable, observable.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+
+                    if (trg.getType().equals(Concepts.c(NS.CORE_AREA))) {
+                        targetType = TargetType.AREA;
+                    } else if (trg.getType().equals(Concepts.c(NS.CORE_DURATION))) {
+                        targetType = TargetType.DURATION;
+                    } else if (trg.getType().equals(Concepts.c(NS.CORE_COUNT))) {
+                        targetType = TargetType.NUMEROSITY;
+                    } else {
+                        this.observables.add(target);
+                        targetType = observable.is(Type.QUALITY) ? TargetType.QUALITY : null;
+                    }
+
+                    ret.add(new Pair<>(target, targetType));
+                }
 
             } else {
                 throw new KlabValidationException("Table definition: target: " + object + " does not specify a known observable");
@@ -1785,6 +1817,22 @@ public class TableCompiler {
                     for (ObservedConcept category : expandConcept(observable.getType(), observable)) {
                         categorize(CATEGORY, category, sorted, observable);
                     }
+                } else if (observable.isAbstract()) {
+
+                    if (scope != null) {
+
+                        Map<ObservedConcept, IObservation> catalog = scope.getCatalog();
+                        for (ObservedConcept concept : catalog.keySet()) {
+                            boolean stateOK = observable.resolves(concept.getObservable(),
+                                    scope.getContextObservation() == null
+                                            ? null
+                                            : scope.getContextObservation().getObservable().getType());
+                            if (stateOK) {
+                                categorize(CATEGORY, concept, sorted, observable);
+                            }
+                        }
+                    }
+
                 } else {
                     throw new KlabValidationException("table: cannot classify on " + observable.getType()
                             + ": only categories (type of) and countables are valid classifiers");
@@ -2286,6 +2334,13 @@ public class TableCompiler {
 
         if (dimension.target != null) {
             ret.put("target", Observables.INSTANCE.getDisplayName(dimension.target.getObservable()));
+            if (!dimension.target.getObservable().getResolvedPredicates().isEmpty()) {
+                String resolved = "";
+                for (IConcept c : dimension.target.getObservable().getResolvedPredicates().values()) {
+                    resolved += (resolved.isEmpty() ? "" : ", ") + Concepts.INSTANCE.getDisplayName(c);
+                }
+                ret.put("classifier", resolved);
+            }
         }
 
         ret.put("init", "at start of " + Time.getDisplayLabel(scope.getRootSubject().getScale().getTime().getStart(),
