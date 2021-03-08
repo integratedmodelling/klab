@@ -75,8 +75,8 @@ ModelStatement:
 
 Possible statements are:
 
-* ConceptStatement: soemthing that declares a concept. This is tipical of the worldviews, that declare building blocks. It is not tipical for namespaces on which modelers work.
-* ModelStatement: definition of models, syntactically starting with the keyword **model**.
+* ConceptStatement: something that declares a concept. This is tipical of the worldviews, that declare building blocks (or core types). It is not tipical for namespaces on which modelers work. 
+* ModelStatement: definition of models, usually introduced by the keyword **model**.
 * UpperOntologyDefinition: a particular statement, that can be used only in the root namespace of the worldview. This requires a section per se, but basically it is about linking concepts found in {kl}'s worldview' to an externaly defined ontology in order to allow validation in terms of a different ontology.
 * DefineStatement: used to define variables inside of namespaces. If properly declared, they can also be imported into other namespaces. Defines are usually not used when modelling, since in that case a modeler wants to declare semantically also constants, so they would be defined as models. One example of the use of define is the creation of tables, where the table is defined through a data structure similar to a json:
 +
@@ -112,6 +112,20 @@ observe earth:Region named etnasnap
 --
 
 NOTE: A description of the syntax for each statement can be found in the comments in Kim.xtext in each ***Body** section. For example _ConceptStatementBody_ for the _ConceptStatement_.
+
+## {kim} syntax
+
+As noted before, the most important types of knowledge that can be specified in {kim} are concepts and models.
+
+Concepts are the building block of the world view and being core types, they are well defined, unique and immutable. For this reasons there is no need for a **concept** keyword. In the case of concepts the keyword of the core type is used directly such as **process, agent or temperature**.
+
+A model definition is instead introduced most of the types by the **model** keyword. Some exceptions exist, such as non-semantic models, that are introduced by the data type (**number, boolean or text**), or learning models, introduced by **learn**.
+
+To modify or connect concepts as well as support the definition of models, other keywords are necessary. And since {kim}'s objective is to adhere as much as possible to the English language, the keywords are selected prepositions, adverbs, conjunctions and verbs from that language. A high number of keywords results into a beautiful fluid language but presents the downside of a steap learning curve for modelers. 
+
+#TODO: should we reference a syntax manual?#
+
+
 
 ## Syntax management in the {kmod}
 
