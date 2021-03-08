@@ -21,8 +21,6 @@ public class JreDialogController {
 	@FXML
 	ProgressBar progress;
 	@FXML
-	Button specifyPathButton;
-	@FXML
 	Button downloadButton;
 	@FXML
 	Button continueButton;
@@ -102,7 +100,8 @@ public class JreDialogController {
 		message.setText(problem == null ? "Everything OK!" : problem);
 
 		if (problem == null) {
-			continueButton.setText("Continue");
+		    downloadButton.setDisable(true);
+			continueButton.setText("Continue");			
 		} else {
 			continueButton.setText("Exit");
 		}

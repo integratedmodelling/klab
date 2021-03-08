@@ -11,21 +11,34 @@
 <?import javafx.scene.shape.Rectangle?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="242.0" prefWidth="421.0" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.integratedmodelling.controlcenter.jre.JreDialogController">
+<AnchorPane prefHeight="242.0" prefWidth="420.0" xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.integratedmodelling.controlcenter.jre.JreDialogController">
    <children>
-      <DialogPane AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
-      <Label fx:id="message" layoutX="37.0" layoutY="89.0" prefHeight="79.0" prefWidth="353.0" textFill="#000000d6" wrapText="true">
+      <Label layoutX="22.0" layoutY="52.0" prefWidth="383.0" text="A Java virtual machine version 1.8 or higher is required to run k.LAB." wrapText="true">
+      	<font>
+            <Font name="Open Sans Regular" size="14.0" />
+         </font>
+      </Label>
+      <Label layoutX="24.0" layoutY="15.0" text="Java installation check" textFill="#000000bc">
+         <font>
+            <Font name="Open Sans Bold" size="28.0" />
+         </font>
+      </Label>
+      <Label fx:id="message" layoutX="40.0" layoutY="95.0" prefHeight="80.0" prefWidth="350.0" textFill="#000000d6" wrapText="true">
          <font>
             <Font name="Open Sans Regular" size="14.0" />
-         </font></Label>
-      <ProgressBar fx:id="progress" layoutX="29.0" layoutY="166.0" prefHeight="18.0" prefWidth="368.0" progress="0.0" visible="false" />
-      <FlowPane alignment="CENTER_RIGHT" columnHalignment="RIGHT" layoutX="22.0" layoutY="187.0" prefHeight="50.0" prefWidth="389.0">
+         </font>
+      </Label>
+      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="80.0" layoutX="22.0" layoutY="95.0" stroke="BLACK" strokeType="INSIDE" width="380.0" />
+      <ProgressBar fx:id="progress" layoutX="22.0" layoutY="180.0" prefHeight="18.0" prefWidth="380.0" progress="0.0" visible="false" />
+      <FlowPane alignment="CENTER_RIGHT" columnHalignment="RIGHT" layoutX="22.0" layoutY="200.0" prefHeight="50.0" prefWidth="380.0">
          <children>
+            <!-- 
             <Button fx:id="specifyPathButton" disable="true" mnemonicParsing="false" onAction="#specifyPath" text="Specify Java path">
                <tooltip>
                   <Tooltip text="Specify the path to an existing Java JRE" />
                </tooltip>
             </Button>
+             -->
             <Button fx:id="downloadButton" mnemonicParsing="false" onAction="#download" text="Download JRE">
                <FlowPane.margin>
                   <Insets left="2.0" />
@@ -41,12 +54,5 @@
             </Button>
          </children>
       </FlowPane>
-      <Label layoutX="24.0" layoutY="15.0" text="Java installation check" textFill="#000000bc">
-         <font>
-            <Font name="Open Sans Bold" size="28.0" />
-         </font>
-      </Label>
-      <Label layoutX="29.0" layoutY="48.0" text="A Java virtual machine version 1.8 or higher is required to run k.LAB." />
-      <Rectangle arcHeight="5.0" arcWidth="5.0" fill="#1f93ff00" height="114.0" layoutX="22.0" layoutY="75.0" stroke="BLACK" strokeType="INSIDE" width="383.0" />
    </children>
 </AnchorPane>

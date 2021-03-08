@@ -13,7 +13,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.util.Arrays;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Timer;
@@ -28,7 +27,6 @@ import org.integratedmodelling.controlcenter.api.IAuthentication.Group;
 import org.integratedmodelling.controlcenter.api.IAuthentication.Status;
 import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.auth.Authentication;
-import org.integratedmodelling.controlcenter.dialogs.Update;
 import org.integratedmodelling.controlcenter.jre.JreDialog;
 import org.integratedmodelling.controlcenter.jre.JreModel;
 import org.integratedmodelling.controlcenter.product.Distribution.SyncListener;
@@ -40,7 +38,6 @@ import org.integratedmodelling.controlcenter.runtime.EngineInstance.EngineInfo;
 import org.integratedmodelling.controlcenter.runtime.ModelerInstance;
 import org.integratedmodelling.controlcenter.settings.Settings;
 import org.integratedmodelling.controlcenter.utils.TimerService;
-import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.utils.BrowserUtils;
 import org.integratedmodelling.klab.utils.OS;
 import org.joda.time.DateTime;
@@ -49,6 +46,8 @@ import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.PeriodFormatter;
 import org.joda.time.format.PeriodFormatterBuilder;
 import org.kordamp.ikonli.javafx.FontIcon;
+
+import com.dlsc.preferencesfx.PreferencesFx;
 
 import javafx.application.Application;
 import javafx.application.Platform;
@@ -751,7 +750,8 @@ public class ControlCenter extends Application {
 
     @FXML
     public void buttonSettingsClicked() {
-        settings.getPreferences().show();
+        PreferencesFx setting = settings.getPreferences();
+        setting.show(true);
     }
 
     @FXML
@@ -1208,6 +1208,7 @@ public class ControlCenter extends Application {
             primaryStage.setTitle("k.LAB");
             primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icons/kdot16.png")));
             primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icons/kdot32.png")));
+            primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icons/kdot48.png")));
             primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icons/kdot64.png")));
             primaryStage.getIcons().add(new Image(getClass().getResourceAsStream("icons/kdot128.png")));
             scene.getStylesheets().add(getClass().getResource("css/application.css").toExternalForm());
