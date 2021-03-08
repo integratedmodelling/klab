@@ -524,13 +524,22 @@ public interface KactorsPackage extends EPackage
   int ACTOR_INSTANTIATION__ACTIONS = 2;
 
   /**
+   * The feature id for the '<em><b>Metadata</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTOR_INSTANTIATION__METADATA = 3;
+
+  /**
    * The number of structural features of the '<em>Actor Instantiation</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTOR_INSTANTIATION_FEATURE_COUNT = 3;
+  int ACTOR_INSTANTIATION_FEATURE_COUNT = 4;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl <em>Message Call</em>}' class.
@@ -4128,6 +4137,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getActorInstantiation_Actions();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ActorInstantiation#getMetadata <em>Metadata</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Metadata</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ActorInstantiation#getMetadata()
+   * @see #getActorInstantiation()
+   * @generated
+   */
+  EReference getActorInstantiation_Metadata();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.MessageCall <em>Message Call</em>}'.
@@ -7731,6 +7751,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference ACTOR_INSTANTIATION__ACTIONS = eINSTANCE.getActorInstantiation_Actions();
+
+    /**
+     * The meta object literal for the '<em><b>Metadata</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTOR_INSTANTIATION__METADATA = eINSTANCE.getActorInstantiation_Metadata();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl <em>Message Call</em>}' class.

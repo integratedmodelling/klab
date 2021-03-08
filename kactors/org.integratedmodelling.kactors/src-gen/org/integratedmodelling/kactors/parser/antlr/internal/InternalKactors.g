@@ -1283,6 +1283,25 @@ ruleActorInstantiation returns [EObject current=null]
 				)
 			)
 		)?
+		(
+			(
+				{
+					newCompositeNode(grammarAccess.getActorInstantiationAccess().getMetadataMetadataParserRuleCall_4_0());
+				}
+				lv_metadata_7_0=ruleMetadata
+				{
+					if ($current==null) {
+						$current = createModelElementForParent(grammarAccess.getActorInstantiationRule());
+					}
+					set(
+						$current,
+						"metadata",
+						lv_metadata_7_0,
+						"org.integratedmodelling.kactors.Kactors.Metadata");
+					afterParserOrEnumRuleCall();
+				}
+			)
+		)?
 	)
 ;
 

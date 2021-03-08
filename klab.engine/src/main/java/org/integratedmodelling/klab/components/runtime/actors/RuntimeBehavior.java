@@ -83,7 +83,12 @@ public class RuntimeBehavior {
         @Override
         void run(KlabActor.Scope scope) {
 
-            if (arguments.getUnnamedKeys().isEmpty()) {
+            if (arguments.get("reset") instanceof IKActorsValue) {
+                KActorsValue reset = arguments.get("reset", KActorsValue.class);
+                if (reset.getType() == Type.BOOLEAN && ((Boolean) reset.getValue())) {
+                    scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState().resetContext();
+                }
+            } else if (arguments.getUnnamedKeys().isEmpty()) {
                 this.listenerId = scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState()
                         .addApplicationListener(new ISessionState.Listener(){
                             @Override

@@ -17,7 +17,6 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IProject;
-import org.integratedmodelling.klab.api.model.IConceptDefinition;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.utils.StringUtil;
 

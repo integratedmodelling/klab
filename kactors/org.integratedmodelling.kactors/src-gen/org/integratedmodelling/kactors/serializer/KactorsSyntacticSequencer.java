@@ -130,6 +130,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 * This ambiguous syntax occurs at:
 	 *     behavior=PathName (ambiguity) ':' actions=Actions
 	 *     behavior=PathName (ambiguity) (rule end)
+	 *     behavior=PathName (ambiguity) metadata=Metadata
 	 */
 	protected void emit_ActorInstantiation___LeftParenthesisKeyword_2_0_RightParenthesisKeyword_2_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);

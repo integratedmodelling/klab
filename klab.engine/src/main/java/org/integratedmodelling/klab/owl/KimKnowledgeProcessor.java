@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Traits;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Builder;
 import org.integratedmodelling.klab.api.knowledge.IObservable.Resolution;
 import org.integratedmodelling.klab.api.knowledge.IOntology;
@@ -128,10 +129,11 @@ public enum KimKnowledgeProcessor {
             }
 
             Concept ret = buildInternal(concept, ns, kimObject, monitor);
+            IConcept upperConceptDefined = null;
             if (((KimConceptStatement) concept).getParents().isEmpty()) {
                 IConcept parent = null;
                 if (concept.getUpperConceptDefined() != null) {
-                    parent = Concepts.INSTANCE.getConcept(concept.getUpperConceptDefined());
+                    upperConceptDefined = parent = Concepts.INSTANCE.getConcept(concept.getUpperConceptDefined());
                     if (parent == null) {
                         monitor.error("Core concept " + concept.getUpperConceptDefined() + " is unknown", concept);
                     }
@@ -155,7 +157,8 @@ public enum KimKnowledgeProcessor {
 
                 Observables.INSTANCE.registerConfigurations(ret);
 
-                if (coreConceptPeers.containsKey(ret.toString())) {
+                if (coreConceptPeers.containsKey(ret.toString()) && upperConceptDefined != null
+                        && "true".equals(upperConceptDefined.getMetadata().get(NS.IS_CORE_KIM_TYPE, "false"))) {
                     Resources.INSTANCE.getUpperOntology().setAsCoreType(ret);
                 }
 

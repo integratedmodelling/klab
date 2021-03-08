@@ -38,3 +38,24 @@ endif::[]
 :stem:
 
 <<<
+
+
+=== Inherency
+
+Inherency is ... It concerns the most important semantic operators and needs to be understood fully. Two operators, `within` and `of`, express **direct** and **indirect** respectively. Where to use each.
+
+The {klab} annotation conventions are built around the fact that inherency _affects resolution and validation_. So we do not use it indiscriminately but only when we need to trigger these behaviors. When we need to simply qualify an observable we use predicates (identities or others) instead. So in {kim} expressions like
+
+[source,kim]
+----
+occurrence of agriculture:Pollinator ecology:Nesting
+----
+
+are used in place of the seemingly correct 
+
+[source,kim]
+----
+occurrence of ecology:Nesting of agriculture:Pollinator biology:Individual
+----
+
+The second use does not seem semantically incorrect (it is certainly acceptable _linguistically_), until you consider what inherency actually means.... It would cause the resolver to try and resolve.. In comparison, the predicate simply _subsets_ the concept of nesting to the set of events that have to do with pollinators.  

@@ -13,8 +13,6 @@
  */
 package org.integratedmodelling.klab.api.knowledge;
 
-import java.util.Collection;
-
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.observations.scale.IScale;

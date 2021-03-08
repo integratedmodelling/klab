@@ -658,12 +658,14 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final Keyword cColonKeyword_3_0 = (Keyword)cGroup_3.eContents().get(0);
 		private final Assignment cActionsAssignment_3_1 = (Assignment)cGroup_3.eContents().get(1);
 		private final RuleCall cActionsActionsParserRuleCall_3_1_0 = (RuleCall)cActionsAssignment_3_1.eContents().get(0);
+		private final Assignment cMetadataAssignment_4 = (Assignment)cGroup.eContents().get(4);
+		private final RuleCall cMetadataMetadataParserRuleCall_4_0 = (RuleCall)cMetadataAssignment_4.eContents().get(0);
 		
 		//ActorInstantiation:
-		//	'create' behavior=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions)?;
+		//	'create' behavior=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions)? metadata=Metadata?;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'create' behavior=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions)?
+		//'create' behavior=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions)? metadata=Metadata?
 		public Group getGroup() { return cGroup; }
 		
 		//'create'
@@ -701,6 +703,12 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		
 		//Actions
 		public RuleCall getActionsActionsParserRuleCall_3_1_0() { return cActionsActionsParserRuleCall_3_1_0; }
+		
+		//metadata=Metadata?
+		public Assignment getMetadataAssignment_4() { return cMetadataAssignment_4; }
+		
+		//Metadata
+		public RuleCall getMetadataMetadataParserRuleCall_4_0() { return cMetadataMetadataParserRuleCall_4_0; }
 	}
 	public class MessageCallElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.MessageCall");
@@ -6368,7 +6376,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//ActorInstantiation:
-	//	'create' behavior=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions)?;
+	//	'create' behavior=PathName ('(' parameters=ParameterList? ')')? (':' actions=Actions)? metadata=Metadata?;
 	public ActorInstantiationElements getActorInstantiationAccess() {
 		return pActorInstantiation;
 	}

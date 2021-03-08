@@ -66,7 +66,7 @@ ArgumentDeclaration: {ArgumentDeclaration}
 MessageBody: {MessageBody} lists+=StatementList*;
 
 ActorInstantiation:
-	'create' behavior=PathName ('(' (parameters=ParameterList)? ')')? (':' actions=Actions)?
+	'create' behavior=PathName ('(' (parameters=ParameterList)? ')')? (':' actions=Actions)? metadata=Metadata?
 ;
 
 MessageCall:
