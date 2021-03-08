@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <install4j version="8.0.11" transformSequenceNumber="8">
-  <directoryPresets config="./target/jfx" />
+  <directoryPresets config="./src/main/java/org/integratedmodelling/controlcenter/icons" />
   <application name="k.LAB Control Center" applicationId="3443-1218-3478-1447" mediaDir="target/media" shortName="klab" publisher="The Integrated Modelling Partnership" publisherWeb="https://integratedmodelling.org/" version="1.1" allPathsRelative="true" macVolumeId="5755f304874440a" javaMinVersion="1.8" javaMaxVersion="1.8" jdkMode="jdk" jdkName="JDK 1.8">
     <languages>
       <principalLanguage id="en" customLocalizationFile="./src/main/deploy/package/install4j.utf8" />
@@ -33,13 +33,11 @@
       </java>
       <vmOptionsFile mode="none" />
       <iconImageFiles>
-        <file path="./src/main/deploy/package/images/KLAB_icon_white_16x16.png" />
-        <file path="./src/main/deploy/package/images/KLAB_icon_white_32x32.png" />
-        <file path="./src/main/deploy/package/images/KLAB_icon_white_48x48.png" />
-        <file path="./src/main/deploy/package/images/KLAB_icon_white_64x64.png" />
-        <file path="./src/main/deploy/package/images/KLAB_icon_white_128x128.png" />
-        <file path="./src/main/deploy/package/images/KLAB_icon_white_256x256.png" />
-        <file path="./src/main/deploy/package/images/KLAB_icon_white_512x512.png" />
+        <file path="./src/main/java/org/integratedmodelling/controlcenter/icons/kdot16.png" />
+        <file path="./src/main/java/org/integratedmodelling/controlcenter/icons/kdot32.png" />
+        <file path="./src/main/java/org/integratedmodelling/controlcenter/icons/kdot48.png" />
+        <file path="./src/main/java/org/integratedmodelling/controlcenter/icons/kdot64.png" />
+        <file path="./src/main/java/org/integratedmodelling/controlcenter/icons/kdot128.png" />
       </iconImageFiles>
     </launcher>
   </launchers>

@@ -8,6 +8,8 @@ import java.util.List;
 import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 import org.integratedmodelling.controlcenter.ControlCenter;
 import org.integratedmodelling.klab.Configuration;
@@ -47,16 +49,17 @@ public class Settings {
 	private BooleanProperty startWithCLI = new SimpleBooleanProperty(true);
 	private BooleanProperty useDevelop = new SimpleBooleanProperty(false);
 	private BooleanProperty detectLocalHub = new SimpleBooleanProperty(false);
-	private BooleanProperty checkForCCUpdates = new SimpleBooleanProperty(true);
+	// TODO implement install4j integration
+	// private BooleanProperty checkForCCUpdates = new SimpleBooleanProperty(true);
 	private BooleanProperty resetAllBuilds = new SimpleBooleanProperty(false);
 	private BooleanProperty resetAllBuildsButLatest = new SimpleBooleanProperty(false);
 	private BooleanProperty updateAutomatically = new SimpleBooleanProperty(false);
 	private BooleanProperty resetKnowledge = new SimpleBooleanProperty(false);
 	private BooleanProperty resetModelerWorkspace = new SimpleBooleanProperty(false);
-	private IntegerProperty buildsToKeep = new SimpleIntegerProperty(1);
+	private IntegerProperty buildsToKeep = new SimpleIntegerProperty(7);
 	private IntegerProperty maxMemory = new SimpleIntegerProperty(2048);
 	private IntegerProperty checkIntervalKlabUpdates = new SimpleIntegerProperty(1);
-	private IntegerProperty sessionIdleMaximum = new SimpleIntegerProperty(90);
+	private IntegerProperty sessionIdleMaximum = new SimpleIntegerProperty(7);
 	private IntegerProperty maxLocalSessions = new SimpleIntegerProperty(10);
 	private IntegerProperty maxRemoteSessions = new SimpleIntegerProperty(0);
 	private IntegerProperty maxSessionsPerUser = new SimpleIntegerProperty(3);
@@ -155,7 +158,14 @@ public class Settings {
 	public File getKlabWorkspace() {
 		return workspaceDirectory.get();
 	}
+	
+	public int buildsToKeep() {
+	    return buildsToKeep.intValue();
+	}
 
+	public boolean resetAllBuildsButLatest() {
+	    return resetAllBuildsButLatest.get();
+	}
 	public Settings() {
 		preferencesFx = createPreferences();
 	}
@@ -243,7 +253,7 @@ public class Settings {
 						Group.of("Installed k.LAB distributions",
 								Setting.of("Delete all builds except latest", resetAllBuildsButLatest),
 								Setting.of("Delete all builds installed", resetAllBuilds))),
-
+			
 				Category.of("Paths", Setting.of("k.LAB work directory", workDirectory, true),
 						Setting.of("Binary products path", productDirectory, true),
 						Setting.of("k.LAB project workspace", workspaceDirectory, true),
@@ -323,7 +333,7 @@ public class Settings {
 								Setting.of("Visualize spatial debugging aids", visualizeSpatialDebuggingAids),
 								Setting.of("Remote debug engine configuration (port 8000)", useDebugParameters))))
 
-				.persistWindowState(false).saveSettings(true).debugHistoryMode(false).buttonsVisibility(true);
+				.persistWindowState(false).saveSettings(true).debugHistoryMode(true).buttonsVisibility(true);
 	}
 
 	public List<String> newArrayList(String... strings) {
@@ -341,6 +351,7 @@ public class Settings {
 			String tempFilePath = absolutePath.substring(0, absolutePath.lastIndexOf(File.separator));
 			return new File(tempFilePath);
 		} catch (IOException e) {
+		    System.err.println(e);
 		}
 		return new File(System.getProperty("user.home") + File.separator + ".klab" + File.separator + ".scratch");
 	}

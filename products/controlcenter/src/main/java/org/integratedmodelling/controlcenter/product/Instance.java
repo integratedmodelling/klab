@@ -6,6 +6,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,18 +136,39 @@ public abstract class Instance implements IInstance {
 	public List<Integer> getInstalledBuilds() {
 		List<Integer> ret = new ArrayList<>();
 		File ws = this.product.getLocalWorkspace();
+		/*
+		 * TODO: implementation of delete folder
+		
+		int toKeep = ControlCenter.INSTANCE.getSettings().resetAllBuildsButLatest() ? 1 : ControlCenter.INSTANCE.getSettings().buildsToKeep();
+		Arrays.stream(ws.listFiles())
+		.sorted(Comparator.comparing(File::getName).reversed())
+        .skip(toKeep)
+        .forEach((x) -> {
+            this.deleteDirectory(x);
+        });
+        */
 		for (File bws : ws.listFiles()) {
 			if (bws.isDirectory() && new File(bws + File.separator + "filelist.txt").exists()) {
 				ret.add(Integer.parseInt(bws.getName()));
 			}
 		}
-
 		/*
 		 * most recent first
 		 */
 		ret.sort((o1, o2) -> o2.compareTo(o1));
-
+		
 		return ret;
+	}
+	
+	private boolean deleteDirectory(File directoryToBeDeleted) {
+	    System.out.println("Try to delete "+directoryToBeDeleted);
+	    File[] allContents = directoryToBeDeleted.listFiles();
+	    if (allContents != null) {
+	        for (File file : allContents) {
+	            deleteDirectory(file);
+	        }
+	    }
+	    return directoryToBeDeleted.delete();
 	}
 
 	@Override
