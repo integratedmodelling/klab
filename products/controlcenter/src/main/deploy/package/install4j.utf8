@@ -1,0 +1,4 @@
+WizardCaption=k.LAB install wizard
+PrepareInstaller={0} is preparing the wizard which will guide you through the rest of the setup process.
+LocateOrDownloadJre2=The wizard could not find a Java(TM) Runtime Environment on your system. You can locate or download a suitable JRE. (minimum version: {0}, maximum version: {1})
+LocateJre2=The wizard could not find a Java(TM) Runtime Environment on your system. Please locate a suitable JRE. (minimum version: {0}, maximum version: {1})
