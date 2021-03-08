@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.hub.listeners;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
-import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.security.InvalidAlgorithmParameterException;
@@ -18,9 +17,9 @@ import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
 import org.integratedmodelling.klab.hub.commands.GenerateLicenseFactory;
 import org.integratedmodelling.klab.hub.config.LegacyLicenseConfig;
 import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
-import org.springframework.boot.context.event.ApplicationReadyEvent;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Component;
 
 import name.neuhalfen.projects.crypto.bouncycastle.openpgp.BouncyGPG;
@@ -54,6 +53,7 @@ public class LicenseStartupEventDev {
 	private LicenseConfigRepository repository;
 	private LegacyLicenseConfig legacy;
 	
+	@Async
 	@EventListener
 	public void startup(LicenseStartupReady event) throws NoSuchAlgorithmException, NoSuchProviderException, InvalidAlgorithmParameterException, PGPException, IOException, DecoderException, URISyntaxException {
 		

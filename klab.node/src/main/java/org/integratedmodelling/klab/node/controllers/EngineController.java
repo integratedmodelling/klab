@@ -109,12 +109,17 @@ public class EngineController {
 		}
 		
 		ret.getResourceUrns().addAll(universalResourceUrns);
+		ret.setOnline(true);
 		
 		return ret;
 	}
 
 	public static boolean isAuthorized(EngineAuthorization user, String permissions) {
-
+		
+		if(user == null) {
+			return false;
+		}
+		
 		if ("*".equals(permissions)) {
 			return true;
 		} else if ("NONE".equals(permissions)) {
