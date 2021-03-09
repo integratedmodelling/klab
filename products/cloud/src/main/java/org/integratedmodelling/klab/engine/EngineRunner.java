@@ -101,8 +101,12 @@ public class EngineRunner implements ApplicationListener<ApplicationPreparedEven
 		        setPropertiesFromEnvironment(environment);
 		        engine = RemoteEngine.start(this.certificate, new EngineStartupOptions());
 		    } else {
-		        setPropertiesFromEnvironment(environment);
-		        engine = RemoteEngine.start(null, this.options);
+		        if(this.options != null) {
+		            engine = RemoteEngine.start(null, this.options);
+		        } else {
+		            engine = RemoteEngine.start(null, new EngineStartupOptions());
+		        }
+		        
 		    }
 			
 		} catch (Throwable e) {

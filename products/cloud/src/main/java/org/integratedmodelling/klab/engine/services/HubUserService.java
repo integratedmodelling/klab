@@ -11,13 +11,13 @@ import java.util.Set;
 import org.apache.http.client.utils.URIBuilder;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.auth.EngineUser;
-import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.KlabUser;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.api.HubLoginResponse;
@@ -33,7 +33,6 @@ import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
@@ -318,26 +317,17 @@ public class HubUserService implements RemoteUserService {
 	
 	
 	private String getLoginUrl() {
-		return KlabCertificate
-				.createFromString(Configuration.INSTANCE.getProperty("klab.certificate", ""))
-				.getProperty(KlabCertificate.KEY_PARTNER_HUB) + 
-				API.HUB.AUTHENTICATE_USER;
+	    return Network.INSTANCE.getHub().getUrls().iterator().next() + API.HUB.AUTHENTICATE_USER;
 	}
 	
 	
 	private String getLogOutUrll() {
-		return KlabCertificate
-				.createFromString(Configuration.INSTANCE.getProperty("klab.certificate", ""))
-				.getProperty(KlabCertificate.KEY_PARTNER_HUB) + 
-				API.HUB.DEAUTHENTICATE_USER;
+	    return Network.INSTANCE.getHub().getUrls().iterator().next() + API.HUB.DEAUTHENTICATE_USER;
 	}
 	
 	
 	private String getProfileUrl() {
-		return KlabCertificate
-				.createFromString(Configuration.INSTANCE.getProperty("klab.certificate", ""))
-				.getProperty(KlabCertificate.KEY_PARTNER_HUB) + 
-				API.HUB.CURRENT_PROFILE;
+	    return Network.INSTANCE.getHub().getUrls().iterator().next() + API.HUB.CURRENT_PROFILE;
 	}
 
 	
