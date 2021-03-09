@@ -22,6 +22,9 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.shapefile.dbf.DbaseFileHeader;
 import org.geotools.data.shapefile.dbf.DbaseFileWriter;
 import org.geotools.gce.geotiff.GeoTiffWriter;
+import org.geotools.styling.ColorMap;
+import org.geotools.styling.ColorMapEntry;
+import org.geotools.styling.RasterSymbolizer;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
@@ -35,6 +38,7 @@ import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.data.adapters.AbstractFilesetImporter;
 import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.ogc.RasterAdapter;
@@ -109,6 +113,7 @@ public class RasterImporter extends AbstractFilesetImporter {
                 File outAux = new File(MiscUtilities.changeExtension(out.toString(), "tiff.aux.xml"));
                 File outCpg = new File(MiscUtilities.changeExtension(out.toString(), "tiff.vat.cpg"));
                 File outDbf = new File(MiscUtilities.changeExtension(out.toString(), "tiff.vat.dbf"));
+                File outQml = new File(MiscUtilities.changeExtension(out.toString(), "qml"));
 
                 GridCoverage2D coverage;
                 boolean hasSideCarFiles = false;
@@ -123,12 +128,15 @@ public class RasterImporter extends AbstractFilesetImporter {
                         // write categories dbf
                         writeAuxDbf(outDbf, dataKey);
                         FileUtils.writeStringToFile(outCpg, "UTF-8");
+
+                        // write QGIS style
+                        writeQgisStyle(outQml, state, locator);
                     } catch (Exception e1) {
                         // ignore, since the output still will be a valid tiff
                         // THIS SHOULD BE LOGGED THOUGH
                     }
 
-                    int noValue = -2147483648;//Integer.MAX_VALUE;
+                    int noValue = -2147483648;// Integer.MAX_VALUE;
                     coverage = GeotoolsUtils.INSTANCE.stateToIntCoverage((IState) observation, locator, noValue, null);
                 } else {
                     coverage = GeotoolsUtils.INSTANCE.stateToCoverage((IState) observation, locator, DataBuffer.TYPE_FLOAT,
@@ -207,6 +215,49 @@ public class RasterImporter extends AbstractFilesetImporter {
 //            StringWriter stringWriter = new StringWriter();
         marshaller.marshal(rasterAuxXml, auxFile);
 //            System.out.println(stringWriter.toString());
+    }
+
+    private void writeQgisStyle( File qmlFile, IState state, ILocator locator ) throws IOException {
+        IDataKey dataKey = state.getDataKey();
+
+        Pair<RasterSymbolizer, String> rasterSymbolizerPair = Renderer.INSTANCE.getRasterSymbolizer(state, locator);
+        RasterSymbolizer rasterSymbolizer = rasterSymbolizerPair.getFirst();
+        ColorMap colorMap = rasterSymbolizer.getColorMap();
+        ColorMapEntry[] colorMapEntries = colorMap.getColorMapEntries();
+        HashMap<String, String> label2ColorMap = new HashMap<>();
+        for( ColorMapEntry colorMapEntry : colorMapEntries ) {
+            String label = colorMapEntry.getLabel();
+            String color = colorMapEntry.getColor().evaluate(null, String.class);
+            label2ColorMap.put(label, color);
+        }
+
+        String ind = "\t";
+        StringBuilder sb = new StringBuilder();
+        sb.append("<qgis>\n");
+        sb.append(ind).append("<pipe>\n");
+        sb.append(ind).append(ind)
+                .append("<rasterrenderer band=\"1\" type=\"paletted\" alphaBand=\"-1\" opacity=\"1\" nodataColor=\"\">\n");
+        sb.append(ind).append(ind).append(ind).append("<colorPalette>\n");
+        List<Pair<Integer, String>> values = dataKey.getAllValues();
+        for( Pair<Integer, String> pair : values ) {
+            sb.append(ind).append(ind).append(ind).append(ind);
+
+            Integer code = pair.getFirst();
+            String classString = pair.getSecond();
+            String color = label2ColorMap.get(classString);
+
+            // <paletteEntry value="0" alpha="255" color="#7e7fef" label="cat0"/>
+            sb.append("<paletteEntry value=\"" + code + "\" alpha=\"255\" color=\"" + color + "\" label=\"" + classString
+                    + "\"/>\n");
+        }
+        sb.append(ind).append(ind).append(ind).append("</colorPalette>\n");
+        sb.append(ind).append(ind).append("</rasterrenderer>\n");
+        sb.append(ind).append("</pipe>\n");
+        sb.append("</qgis>\n");
+        
+        
+        FileUtils.writeStringToFile(qmlFile, sb.toString());
+
     }
 
     private boolean writeAuxDbf( File auxDbfFile, IDataKey dataKey ) throws Exception {
