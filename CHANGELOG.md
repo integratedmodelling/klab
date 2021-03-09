@@ -9,6 +9,18 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Categories are now exported along with geotiffs when requested, supporting both ArcGIS 
+  and QGIS conventions. With QGIS, colormap is preserved.
+- 'new' verb enables creating components as values in k.Actors, to pass as parameters 
+  (constructors) to actions
+- Groups in k.Actors UIs have an executor associated if they have a tag. For now they 
+  support "add" of components.
+- Ternary operator recognized as value in k.Actors; opens road to more operators although
+  parenthesization is not feasible with current syntax.
+- Concept distance calculator (used for resolution) improved to better consider traits 
+  in described types.
+- Matching of annotations of fired objects in k.Actors - if matching, the map is set 
+  in the scope with the annotation's name for retrieval of parameters.
 - Improve concurrency logics for k.Actors: init/main code is run in a separate thread to
   avoid hogging the actor's mailbox; a semaphore (handled by the engine) can be passed
   in the scope; synchronization is now handled (must test more thoroughly) and a new
@@ -40,6 +52,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Initial, partial implementation of multiple table adapters with (so far) CSV support
   and conventions for time/space contextualization and filtering.
 ### Fixed
+- Wrong inheritance of core concepts when core ontology derivation is used in non-fundamental
+  types.
 - Engine honors 'klab.prerequisites' property in project options (still no IDE 
   support for defining it).
 - Pre-load local resources before any namespace is created in engine
