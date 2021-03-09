@@ -686,9 +686,9 @@ public class Concept extends Knowledge implements IConcept {
 
         int distance = 0;
 
-        String resolving = this.getDefinition();
-        String resolved = concept.getDefinition();
-        System.out.println("Does " + resolving + " resolve " + resolved + "?");
+//        String resolving = this.getDefinition();
+//        String resolved = concept.getDefinition();
+//        System.out.println("Does " + resolving + " resolve " + resolved + "?");
 
         int mainDistance = getCoreDistance(concept, context, compareInherency, resolvedAbstractPredicates);
         distance += mainDistance * 50;
@@ -921,11 +921,13 @@ public class Concept extends Knowledge implements IConcept {
         }
 
         /**
-         * Previously returning the distance. The problem is that two identities will have distance
-         * 1 no matter what they are. I think they must be the exact same at this point, but I may
-         * be wrong.
+         * Previously returning the distance, which does not work unless the core observables are
+         * the same (differentiated by predicates only) - which for example makes identities under
+         * 'type of' be compatible no matter the identity. 
          */
-        return Concepts.INSTANCE.getAssertedDistance(this, concept) == 0 ? 0 : -1;
+        return core1.equals(core2)
+                ? Concepts.INSTANCE.getAssertedDistance(this, concept)
+                : (Concepts.INSTANCE.getAssertedDistance(this, concept) == 0 ? 0 : -1);
     }
 
     private int getDistance(IConcept cc1, IConcept cc2, boolean acceptAbsent) {
