@@ -2,10 +2,12 @@ package org.integratedmodelling.klab.raster.files;
 
 import java.awt.image.DataBuffer;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -17,6 +19,8 @@ import javax.xml.bind.JAXBException;
 import javax.xml.bind.Marshaller;
 
 import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.data.shapefile.dbf.DbaseFileHeader;
+import org.geotools.data.shapefile.dbf.DbaseFileWriter;
 import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
@@ -79,7 +83,13 @@ public class RasterImporter extends AbstractFilesetImporter {
         if (observation instanceof IState) {
             if (observation.getScale().getSpace() != null && observation.getScale().getSpace().isRegular()
                     && observation.getScale().isSpatiallyDistributed()) {
-                ret.add(new Triple<>("tiff", "GeoTIFF raster", "tiff"));
+                IState state = (IState) observation;
+                IDataKey dataKey = state.getDataKey();
+                if (dataKey != null) {
+                    ret.add(new Triple<>("tiff", "GeoTIFF raster archive", "zip"));
+                } else {
+                    ret.add(new Triple<>("tiff", "GeoTIFF raster", "tiff"));
+                }
                 ret.add(new Triple<>("png", "PNG image", "png"));
             }
         }
@@ -96,18 +106,34 @@ public class RasterImporter extends AbstractFilesetImporter {
                 File dir = new File(MiscUtilities.changeExtension(file.toString(), "dir"));
                 dir.mkdirs();
                 File out = new File(dir + File.separator + MiscUtilities.getFileName(file));
-                File outAux = new File(MiscUtilities.changeExtension(out.toString(), "aux.xml"));
+                File outAux = new File(MiscUtilities.changeExtension(out.toString(), "tiff.aux.xml"));
+                File outCpg = new File(MiscUtilities.changeExtension(out.toString(), "tiff.vat.cpg"));
+                File outDbf = new File(MiscUtilities.changeExtension(out.toString(), "tiff.vat.dbf"));
 
-                try {
-                    if (!writeAuxXml(outAux, observation)) {
-                        outAux = null;
+                GridCoverage2D coverage;
+                boolean hasSideCarFiles = false;
+                IState state = (IState) observation;
+                IDataKey dataKey = state.getDataKey();
+                if (dataKey != null) {
+                    try {
+                        hasSideCarFiles = true;
+                        // write categories aux xml
+                        writeAuxXml(outAux, dataKey);
+
+                        // write categories dbf
+                        writeAuxDbf(outDbf, dataKey);
+                        FileUtils.writeStringToFile(outCpg, "UTF-8");
+                    } catch (Exception e1) {
+                        // ignore, since the output still will be a valid tiff
+                        // THIS SHOULD BE LOGGED THOUGH
                     }
-                } catch (JAXBException e1) {
-                    e1.printStackTrace();
-                }
 
-                GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage((IState) observation, locator,
-                        DataBuffer.TYPE_FLOAT, Float.NaN, true);
+                    int noValue = -2147483648;//Integer.MAX_VALUE;
+                    coverage = GeotoolsUtils.INSTANCE.stateToIntCoverage((IState) observation, locator, noValue, null);
+                } else {
+                    coverage = GeotoolsUtils.INSTANCE.stateToCoverage((IState) observation, locator, DataBuffer.TYPE_FLOAT,
+                            Float.NaN, true, null);
+                }
 
                 if (format.equalsIgnoreCase("tiff")) {
                     try {
@@ -118,7 +144,7 @@ public class RasterImporter extends AbstractFilesetImporter {
 
                         writer.write(coverage, null);
 
-                        if (outAux != null) {
+                        if (hasSideCarFiles) {
                             File zip = new File(MiscUtilities.changeExtension(file.toString(), "zip"));
                             ZipUtils.zip(zip, dir, false, false);
 
@@ -135,59 +161,77 @@ public class RasterImporter extends AbstractFilesetImporter {
         return null;
     }
 
-    private boolean writeAuxXml( File auxFile, IObservation observation ) throws JAXBException {
-        IState state = (IState) observation;
-        IDataKey dataKey = state.getDataKey();
-        if (dataKey instanceof Classification) {
+    private void writeAuxXml( File auxFile, IDataKey dataKey ) throws JAXBException {
 
-            RasterAuxXml rasterAuxXml = new RasterAuxXml();
-            rasterAuxXml.rasterBand = new PAMRasterBand();
-            rasterAuxXml.rasterBand.band = 1;
-            rasterAuxXml.rasterBand.attributeTable = new GDALRasterAttributeTable();
+        RasterAuxXml rasterAuxXml = new RasterAuxXml();
+        rasterAuxXml.rasterBand = new PAMRasterBand();
+        rasterAuxXml.rasterBand.band = 1;
+        rasterAuxXml.rasterBand.attributeTable = new GDALRasterAttributeTable();
 
-            FieldDefn oidFieldDefn = new FieldDefn();
-            oidFieldDefn.index = 0;
-            oidFieldDefn.name = "OBJECTID";
-            oidFieldDefn.type = 0;
-            oidFieldDefn.usage = 0;
-            rasterAuxXml.rasterBand.attributeTable.fieldDefnList.add(oidFieldDefn);
-            FieldDefn valueFieldDefn = new FieldDefn();
-            valueFieldDefn.index = 1;
-            valueFieldDefn.name = "value";
-            valueFieldDefn.type = 0;
-            valueFieldDefn.usage = 0;
-            rasterAuxXml.rasterBand.attributeTable.fieldDefnList.add(valueFieldDefn);
-            FieldDefn labelFieldDefn = new FieldDefn();
-            labelFieldDefn.index = 2;
-            labelFieldDefn.name = "label";
-            labelFieldDefn.type = 2;
-            labelFieldDefn.usage = 0;
-            rasterAuxXml.rasterBand.attributeTable.fieldDefnList.add(labelFieldDefn);
+        FieldDefn oidFieldDefn = new FieldDefn();
+        oidFieldDefn.index = 0;
+        oidFieldDefn.name = "OBJECTID";
+        oidFieldDefn.type = 0;
+        oidFieldDefn.usage = 0;
+        rasterAuxXml.rasterBand.attributeTable.fieldDefnList.add(oidFieldDefn);
+        FieldDefn valueFieldDefn = new FieldDefn();
+        valueFieldDefn.index = 1;
+        valueFieldDefn.name = "value";
+        valueFieldDefn.type = 0;
+        valueFieldDefn.usage = 0;
+        rasterAuxXml.rasterBand.attributeTable.fieldDefnList.add(valueFieldDefn);
+        FieldDefn labelFieldDefn = new FieldDefn();
+        labelFieldDefn.index = 2;
+        labelFieldDefn.name = "label";
+        labelFieldDefn.type = 2;
+        labelFieldDefn.usage = 0;
+        rasterAuxXml.rasterBand.attributeTable.fieldDefnList.add(labelFieldDefn);
 
-            Classification classification = (Classification) dataKey;
-            List<Pair<Integer, String>> values = classification.getAllValues();
-            int index = 0;
+        List<Pair<Integer, String>> values = dataKey.getAllValues();
+        int index = 0;
+        for( Pair<Integer, String> pair : values ) {
+            Integer code = pair.getFirst();
+            String classString = pair.getSecond();
+            Row row = new Row();
+            row.index = index;
+            row.fList.add(String.valueOf(index));
+            row.fList.add(code.toString());
+            row.fList.add(classString);
+            rasterAuxXml.rasterBand.attributeTable.rowList.add(row);
+            index++;
+        }
+
+        JAXBContext context = JAXBContext.newInstance(RasterAuxXml.class);
+        Marshaller marshaller = context.createMarshaller();
+        marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
+//            StringWriter stringWriter = new StringWriter();
+        marshaller.marshal(rasterAuxXml, auxFile);
+//            System.out.println(stringWriter.toString());
+    }
+
+    private boolean writeAuxDbf( File auxDbfFile, IDataKey dataKey ) throws Exception {
+
+        DbaseFileHeader header = new DbaseFileHeader();
+        header.addColumn("Value", 'N', 10, 0);
+        int stringLimit = 100;
+        header.addColumn("Label", 'C', stringLimit, 0);
+
+        List<Pair<Integer, String>> values = dataKey.getAllValues();
+        header.setNumRecords(values.size());
+
+        try (FileOutputStream fout = new FileOutputStream(auxDbfFile)) {
+            DbaseFileWriter dbf = new DbaseFileWriter(header, fout.getChannel(), Charset.forName("UTF-8"));
             for( Pair<Integer, String> pair : values ) {
                 Integer code = pair.getFirst();
                 String classString = pair.getSecond();
-                Row row = new Row();
-                row.index = index;
-                row.fList.add(String.valueOf(index));
-                row.fList.add(code.toString());
-                row.fList.add(classString);
-                rasterAuxXml.rasterBand.attributeTable.rowList.add(row);
-                index++;
+                if (classString.length() > stringLimit) {
+                    classString = classString.substring(0, stringLimit);
+                }
+                dbf.write(new Object[]{code, classString});
             }
-
-            JAXBContext context = JAXBContext.newInstance(RasterAuxXml.class);
-            Marshaller marshaller = context.createMarshaller();
-            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-//            StringWriter stringWriter = new StringWriter();
-            marshaller.marshal(rasterAuxXml, auxFile);
-//            System.out.println(stringWriter.toString());
-            return true;
+            dbf.close();
         }
-        return false;
+        return true;
     }
 
     @Override
