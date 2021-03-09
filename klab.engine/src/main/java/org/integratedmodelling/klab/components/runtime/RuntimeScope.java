@@ -1309,6 +1309,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                     session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
                             IMessage.Type.NewObservation, descriptor));
 
+                    
+                    session.getState().notifyObservation(observation);
+                    
+                    
                     report.include(descriptor);
 
                     notifiedObservations.add(observation.getId());

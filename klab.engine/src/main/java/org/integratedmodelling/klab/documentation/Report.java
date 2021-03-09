@@ -168,10 +168,10 @@ public class Report implements IReport {
         observations.put(output.getId(), output);
     }
 
-    public void addSection(Section section) {
-        ReportSection main = getMainSection(section.getRole());
-        main.children.add((ReportSection) section);
-    }
+//    public void addSection(Section section) {
+//        ReportSection main = getMainSection(section.getRole());
+//        main.children.add((ReportSection) section);
+//    }
 
     public void include(ITask<?> task) {
         // notify task start, finish, abort

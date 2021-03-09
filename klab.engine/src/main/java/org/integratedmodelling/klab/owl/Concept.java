@@ -74,8 +74,7 @@ import org.semanticweb.owlapi.model.OWLRestriction;
 import org.semanticweb.owlapi.model.OWLSubClassOfAxiom;
 
 /**
- * Just a wrapper for an OWL concept. Metadata are redirected to annotation
- * properties.
+ * Just a wrapper for an OWL concept. Metadata are redirected to annotation properties.
  * 
  * @author Ferd
  * 
@@ -88,14 +87,14 @@ public class Concept extends Knowledge implements IConcept {
     OWLClass _owl;
     Set<Type> type = Collections.synchronizedSet(EnumSet.noneOf(Type.class));
 
-    Concept( OWLClass c, String cs, Set<Type> type ) {
+    Concept(OWLClass c, String cs, Set<Type> type) {
         _owl = c;
         _id = c.getIRI().getFragment();
         _cs = cs;
         this.type.addAll(type);
     }
 
-    protected Concept( Concept concept ) {
+    protected Concept(Concept concept) {
         _owl = concept._owl;
         _id = concept._owl.getIRI().getFragment();
         _cs = concept._cs;
@@ -131,8 +130,8 @@ public class Concept extends Knowledge implements IConcept {
         Concept cc = (Concept) concept;
 
         /*
-         * TODO first use "isn't" based on the enum types to quickly cut out those that
-         * don't match. I guess they have to have the exact same types (?)
+         * TODO first use "isn't" based on the enum types to quickly cut out those that don't match.
+         * I guess they have to have the exact same types (?)
          */
 
         if (this == cc || getDefinition().equals(cc.getDefinition())) {
@@ -174,7 +173,7 @@ public class Concept extends Knowledge implements IConcept {
         Set<IConcept> concepts = new HashSet<>();
         synchronized (_owl) {
             Set<OWLClassExpression> set = _owl.getSuperClasses(OWL.INSTANCE.manager.getOntologies());
-            for(OWLClassExpression s : set) {
+            for (OWLClassExpression s : set) {
                 if (s.equals(_owl)) {
                     Logging.INSTANCE.error("self-referential inheritance for " + this);
                     break;
@@ -202,7 +201,7 @@ public class Concept extends Knowledge implements IConcept {
 
         seen.add(this);
 
-        for(IConcept c : getParents()) {
+        for (IConcept c : getParents()) {
             concepts.add(c);
             concepts.addAll(((Concept) c).getAllParentsInternal(seen));
         }
@@ -217,12 +216,12 @@ public class Concept extends Knowledge implements IConcept {
         synchronized (_owl) {
             Set<OWLClassExpression> set = _owl.getSubClasses(OWL.INSTANCE.manager.getOntologies());
 
-            for(OWLClassExpression s : set) {
+            for (OWLClassExpression s : set) {
                 if (!(s.isAnonymous() || s.isOWLNothing() || s.isOWLThing()))
                     concepts.add(OWL.INSTANCE.getExistingOrCreate(s.asOWLClass()));
             }
             if (set.isEmpty() && _owl.isOWLThing()) {
-                for(IOntology onto : OWL.INSTANCE.ontologies.values()) {
+                for (IOntology onto : OWL.INSTANCE.ontologies.values()) {
                     concepts.addAll(onto.getConcepts());
                 }
             }
@@ -236,12 +235,12 @@ public class Concept extends Knowledge implements IConcept {
         Collection<IProperty> props = getDirectProperties();
         ArrayList<Collection<IProperty>> psets = new ArrayList<>();
 
-        for(IProperty prop : props)
+        for (IProperty prop : props)
             synchronized (prop) {
                 psets.add(prop.getChildren());
             }
 
-        for(Collection<IProperty> pp : psets)
+        for (Collection<IProperty> pp : psets)
             props.addAll(pp);
 
         return props;
@@ -259,12 +258,12 @@ public class Concept extends Knowledge implements IConcept {
         OWLOntology ontology = (getOntology()).ontology;
 
         synchronized (ontology) {
-            for(OWLObjectProperty op : ontology.getObjectPropertiesInSignature(true)) {
+            for (OWLObjectProperty op : ontology.getObjectPropertiesInSignature(true)) {
                 Set<OWLClassExpression> rang = op.getDomains(OWL.INSTANCE.manager.getOntologies());
                 if (rang.contains(_owl))
                     properties.add(new Property(op, OWL.INSTANCE.getConceptSpace(op.getIRI())));
             }
-            for(OWLDataProperty op : ontology.getDataPropertiesInSignature(true)) {
+            for (OWLDataProperty op : ontology.getDataPropertiesInSignature(true)) {
                 Set<OWLClassExpression> rang = op.getDomains(OWL.INSTANCE.manager.getOntologies());
                 if (rang.contains(_owl))
                     properties.add(new Property(op, OWL.INSTANCE.getConceptSpace(op.getIRI())));
@@ -276,7 +275,7 @@ public class Concept extends Knowledge implements IConcept {
     @Override
     public synchronized Collection<IProperty> getAllProperties() {
         Set<IProperty> props = (Set<IProperty>) getProperties();
-        for(IConcept c : getAllParents()) {
+        for (IConcept c : getAllParents()) {
             props.addAll(c.getProperties());
         }
         return props;
@@ -290,14 +289,14 @@ public class Concept extends Knowledge implements IConcept {
     public Collection<Pair<IConcept, IProperty>> getObjectRestrictions() {
 
         List<Pair<IConcept, IProperty>> ret = new ArrayList<>();
-        for(OWLQuantifiedRestriction< ? , ? , ? > r : getRestrictions().getObjectRestrictions()) {
+        for (OWLQuantifiedRestriction<?, ?, ?> r : getRestrictions().getObjectRestrictions()) {
 
             OWLClass filler = r.getFiller() instanceof OWLClass ? (OWLClass) r.getFiller() : null;
 
             if (filler == null)
                 continue;
             @SuppressWarnings("unchecked")
-            OWLObjectPropertyExpression zz = ((OWLRestriction< ? , ? extends OWLObjectPropertyExpression, ? >) r).getProperty();
+            OWLObjectPropertyExpression zz = ((OWLRestriction<?, ? extends OWLObjectPropertyExpression, ?>) r).getProperty();
             ret.add(new Pair<IConcept, IProperty>(OWL.INSTANCE.getExistingOrCreate(filler),
                     new Property(zz.asOWLObjectProperty(), OWL.INSTANCE.getConceptSpace(zz.asOWLObjectProperty().getIRI()))));
         }
@@ -308,14 +307,14 @@ public class Concept extends Knowledge implements IConcept {
     public synchronized Collection<IProperty> findRestrictingProperty(IConcept target) {
         HashSet<IProperty> ret = new HashSet<>();
 
-        for(OWLQuantifiedRestriction< ? , ? , ? > r : getRestrictions().getObjectRestrictions()) {
+        for (OWLQuantifiedRestriction<?, ?, ?> r : getRestrictions().getObjectRestrictions()) {
 
             OWLClass filler = r.getFiller() instanceof OWLClass ? (OWLClass) r.getFiller() : null;
 
             if (filler == null || !filler.getIRI().equals(((Concept) target)._owl.getIRI()))
                 continue;
             @SuppressWarnings("unchecked")
-            OWLObjectPropertyExpression zz = ((OWLRestriction< ? , ? extends OWLObjectPropertyExpression, ? >) r).getProperty();
+            OWLObjectPropertyExpression zz = ((OWLRestriction<?, ? extends OWLObjectPropertyExpression, ?>) r).getProperty();
             ret.add(new Property(zz.asOWLObjectProperty(), OWL.INSTANCE.getConceptSpace(zz.asOWLObjectProperty().getIRI())));
         }
 
@@ -343,7 +342,7 @@ public class Concept extends Knowledge implements IConcept {
             // }
             // } else {
 
-            for(OWLClassExpression zio : ((Property) property)._owl.asOWLObjectProperty()
+            for (OWLClassExpression zio : ((Property) property)._owl.asOWLObjectProperty()
                     .getRanges(OWL.INSTANCE.manager.getOntologies())) {
                 ret.add(OWL.INSTANCE.getExistingOrCreate(zio.asOWLClass()));
             }
@@ -357,7 +356,7 @@ public class Concept extends Knowledge implements IConcept {
         }
         if (property.isObjectProperty()) {
 
-            for(OWLQuantifiedRestriction< ? , ? , ? > r : getRestrictions().getObjectRestrictions()) {
+            for (OWLQuantifiedRestriction<?, ?, ?> r : getRestrictions().getObjectRestrictions()) {
 
                 if (!r.getObjectPropertiesInSignature().contains(((Property) property)._owl))
                     continue;
@@ -376,7 +375,7 @@ public class Concept extends Knowledge implements IConcept {
                 }
             }
         } else {
-            for(OWLQuantifiedRestriction< ? , ? , ? > r : getRestrictions().getDataRestrictions()) {
+            for (OWLQuantifiedRestriction<?, ?, ?> r : getRestrictions().getDataRestrictions()) {
 
                 if (!r.getDataPropertiesInSignature().contains(((Property) property)._owl))
                     continue;
@@ -428,7 +427,7 @@ public class Concept extends Knowledge implements IConcept {
         int min = -1, max = -1;
 
         if (property.isObjectProperty()) {
-            for(OWLQuantifiedRestriction< ? , ? , ? > r : getRestrictions().getObjectRestrictions()) {
+            for (OWLQuantifiedRestriction<?, ?, ?> r : getRestrictions().getObjectRestrictions()) {
                 if (r instanceof OWLObjectExactCardinality) {
                     min = max = ((OWLObjectExactCardinality) r).getCardinality();
                     break;
@@ -439,7 +438,7 @@ public class Concept extends Knowledge implements IConcept {
                 }
             }
         } else {
-            for(OWLQuantifiedRestriction< ? , ? , ? > r : getRestrictions().getDataRestrictions()) {
+            for (OWLQuantifiedRestriction<?, ?, ?> r : getRestrictions().getDataRestrictions()) {
                 if (r instanceof OWLDataExactCardinality) {
                     min = max = ((OWLDataExactCardinality) r).getCardinality();
                     break;
@@ -465,7 +464,7 @@ public class Concept extends Knowledge implements IConcept {
         } else if (otherConcept.is(this)) {
             ret = this;
         } else {
-            for(IConcept pp : getParents()) {
+            for (IConcept pp : getParents()) {
                 IConcept c1 = pp.getLeastGeneralCommonConcept(otherConcept);
                 if (c1 != null) {
                     ret = c1;
@@ -500,7 +499,7 @@ public class Concept extends Knowledge implements IConcept {
 
     private Set<IConcept> collectChildren(Set<IConcept> hashSet) {
 
-        for(IConcept c : getChildren()) {
+        for (IConcept c : getChildren()) {
             if (!hashSet.contains(c))
                 ((Concept) c).collectChildren(hashSet);
             hashSet.add(c);
@@ -529,7 +528,7 @@ public class Concept extends Knowledge implements IConcept {
         if (getOntology() == null) {
             return visitor;
         }
-        for(OWLSubClassOfAxiom ax : getOntology().ontology.getSubClassAxiomsForSubClass(_owl)) {
+        for (OWLSubClassOfAxiom ax : getOntology().ontology.getSubClassAxiomsForSubClass(_owl)) {
             ax.getSuperClass().accept(visitor);
         }
         return visitor;
@@ -539,7 +538,7 @@ public class Concept extends Knowledge implements IConcept {
         HashMap<IProperty, String> ret = new HashMap<>();
         if (getOntology() == null)
             return ret;
-        for(OWLAnnotation annotation : _owl.getAnnotations(getOntology().ontology)) {
+        for (OWLAnnotation annotation : _owl.getAnnotations(getOntology().ontology)) {
             OWLLiteral l = (OWLLiteral) annotation.getValue();
             ret.put(new Property(annotation.getProperty(), OWL.INSTANCE.getConceptSpace(annotation.getProperty().getIRI())),
                     l.getLiteral());
@@ -564,14 +563,14 @@ public class Concept extends Knowledge implements IConcept {
         Set<IConcept> ret = new HashSet<>();
         Set<IConcept> bad = new HashSet<>();
 
-        for(IKnowledge c : getSemanticClosure()) {
+        for (IKnowledge c : getSemanticClosure()) {
             if (!c.isAbstract()) {
                 ret.add((IConcept) c);
             }
         }
 
-        for(IConcept c1 : ret) {
-            for(IConcept c2 : ret) {
+        for (IConcept c1 : ret) {
+            for (IConcept c2 : ret) {
                 if (c1.is(c2) || c2.is(c1)) {
                     bad.add(c1);
                     bad.add(c2);
@@ -579,7 +578,7 @@ public class Concept extends Knowledge implements IConcept {
             }
         }
 
-        for(IConcept b : bad) {
+        for (IConcept b : bad) {
             ret.remove(b);
         }
 
@@ -606,9 +605,8 @@ public class Concept extends Knowledge implements IConcept {
     }
 
     /**
-     * Return the asserted definition in parentheses if the concept is composed, or
-     * the simple definition otherwise. Used when composing definitions to avoid
-     * lots of branching.
+     * Return the asserted definition in parentheses if the concept is composed, or the simple
+     * definition otherwise. Used when composing definitions to avoid lots of branching.
      * 
      * @return the asserted definition
      */
@@ -633,9 +631,9 @@ public class Concept extends Knowledge implements IConcept {
         List<IConcept> ret = new ArrayList<>();
         if (type.contains(Type.UNION) || type.contains(Type.INTERSECTION)) {
             Set<OWLClassExpression> set = _owl.getSuperClasses(OWL.INSTANCE.manager.getOntologies());
-            for(OWLClassExpression s : set) {
+            for (OWLClassExpression s : set) {
                 if (s instanceof OWLNaryBooleanClassExpression) {
-                    for(OWLClassExpression cls : ((OWLNaryBooleanClassExpression) s).getOperandsAsList()) {
+                    for (OWLClassExpression cls : ((OWLNaryBooleanClassExpression) s).getOperandsAsList()) {
                         if (cls instanceof OWLClass) {
                             ret.add(OWL.INSTANCE.getExistingOrCreate(cls.asOWLClass()));
                         }
@@ -669,14 +667,13 @@ public class Concept extends Knowledge implements IConcept {
     }
 
     /**
-     * The workhorse of semantic distance computation can also consider any
-     * predicates that were abstract in the lineage of the passed concept (i.e. the
-     * concept is the result of a query with the abstract predicates, which has been
-     * contextualized to incarnate them into the passed correspondence with concrete
-     * counterparts). In that case, and only in that case, the distance between a
-     * concrete candidate and one that contains its predicates in the abstract form
-     * can be positive, i.e. a concept with abstract predicates can resolve one with
-     * concrete subclasses as long as the lineage contains its resolution.
+     * The workhorse of semantic distance computation can also consider any predicates that were
+     * abstract in the lineage of the passed concept (i.e. the concept is the result of a query with
+     * the abstract predicates, which has been contextualized to incarnate them into the passed
+     * correspondence with concrete counterparts). In that case, and only in that case, the distance
+     * between a concrete candidate and one that contains its predicates in the abstract form can be
+     * positive, i.e. a concept with abstract predicates can resolve one with concrete subclasses as
+     * long as the lineage contains its resolution.
      * 
      * @param concept
      * @param context
@@ -689,9 +686,9 @@ public class Concept extends Knowledge implements IConcept {
 
         int distance = 0;
 
-//		String resolving = this.getDefinition();
-//		String resolved = concept.getDefinition();
-//		System.out.println("Does " + resolving + " resolve " + resolved + "?");
+//        String resolving = this.getDefinition();
+//        String resolved = concept.getDefinition();
+//        System.out.println("Does " + resolving + " resolve " + resolved + "?");
 
         int mainDistance = getCoreDistance(concept, context, compareInherency, resolvedAbstractPredicates);
         distance += mainDistance * 50;
@@ -702,7 +699,7 @@ public class Concept extends Knowledge implements IConcept {
         // should have all the same traits - additional traits are allowed only
         // in contextual types
         Set<IConcept> acceptedTraits = new HashSet<>();
-        for(IConcept t : Traits.INSTANCE.getTraits(this)) {
+        for (IConcept t : Traits.INSTANCE.getTraits(this)) {
             if (t.isAbstract() && resolvedAbstractPredicates != null && resolvedAbstractPredicates.containsKey(t)) {
                 distance += Concepts.INSTANCE.getAssertedDistance(resolvedAbstractPredicates.get(t), t);
                 acceptedTraits.add(resolvedAbstractPredicates.get(t));
@@ -714,7 +711,7 @@ public class Concept extends Knowledge implements IConcept {
             }
         }
 
-        for(IConcept t : Traits.INSTANCE.getTraits(concept)) {
+        for (IConcept t : Traits.INSTANCE.getTraits(concept)) {
             if (!acceptedTraits.contains(t) && !Traits.INSTANCE.hasTrait(this, t)) {
                 return -50;
             }
@@ -722,7 +719,7 @@ public class Concept extends Knowledge implements IConcept {
 
         // same with roles.
         Set<IConcept> acceptedRoles = new HashSet<>();
-        for(IConcept t : Roles.INSTANCE.getRoles(this)) {
+        for (IConcept t : Roles.INSTANCE.getRoles(this)) {
             if (t.isAbstract() && resolvedAbstractPredicates != null && resolvedAbstractPredicates.containsKey(t)) {
                 distance += Concepts.INSTANCE.getAssertedDistance(resolvedAbstractPredicates.get(t), t);
                 acceptedRoles.add(resolvedAbstractPredicates.get(t));
@@ -734,7 +731,7 @@ public class Concept extends Knowledge implements IConcept {
             }
         }
 
-        for(IConcept t : Roles.INSTANCE.getRoles(concept)) {
+        for (IConcept t : Roles.INSTANCE.getRoles(concept)) {
             if (!acceptedRoles.contains(t) && !Roles.INSTANCE.hasRole(this, t)) {
                 return -50;
             }
@@ -867,8 +864,9 @@ public class Concept extends Knowledge implements IConcept {
     }
 
     /**
-     * Get the distance between the core described observables after factoring out all operators and ensuring they are
-     * the same. If not the same, the concepts are incompatible and the distance is negative.
+     * Get the distance between the core described observables after factoring out all operators and
+     * ensuring they are the same. If not the same, the concepts are incompatible and the distance
+     * is negative.
      * 
      * @param concept
      * @return
@@ -889,9 +887,9 @@ public class Concept extends Knowledge implements IConcept {
 
         if (!c1ops.getSecond().isEmpty()) {
             /*
-             * if operators were extracted, the distance must take into account traits and the like for
-             * the concepts they describe, so call the main method again, which will call this and perform
-             * the core check below.
+             * if operators were extracted, the distance must take into account traits and the like
+             * for the concepts they describe, so call the main method again, which will call this
+             * and perform the core check below.
              */
             return ((Concept) c1ops.getFirst()).getSemanticDistance(c2ops.getFirst(), context, compareInherency,
                     resolvedAbstractPredicates);
@@ -901,7 +899,8 @@ public class Concept extends Knowledge implements IConcept {
         IConcept core2 = Observables.INSTANCE.getCoreObservable(c2ops.getFirst());
 
         /*
-         * FIXME this must check: have operator ? (operator == operator && coreObs == coreObs) : coreObs == coreObs;
+         * FIXME this must check: have operator ? (operator == operator && coreObs == coreObs) :
+         * coreObs == coreObs;
          */
 
         if (core1 == null || core2 == null) {
@@ -910,18 +909,25 @@ public class Concept extends Knowledge implements IConcept {
 
         if (!this.is(Type.PREDICATE) && !core1.equals(core2)) {
             /*
-             * in order to resolve an observation, the core observables must be equal;
-             * subsumption is not OK (lidar elevation does not resolve elevation as it
-             * creates different observations; same for different observation techniques -
-             * easy strategy to annotate techs that make measurements incompatible = use a
-             * subclass instead of a related trait).
+             * in order to resolve an observation, the core observables must be equal; subsumption
+             * is not OK (lidar elevation does not resolve elevation as it creates different
+             * observations; same for different observation techniques - easy strategy to annotate
+             * techs that make measurements incompatible = use a subclass instead of a related
+             * trait).
              * 
              * Predicates are unique in being able to resolve a more specific predicate.
              */
             return -50;
         }
 
-        return Concepts.INSTANCE.getAssertedDistance(this, concept);
+        /**
+         * Previously returning the distance, which does not work unless the core observables are
+         * the same (differentiated by predicates only) - which for example makes identities under
+         * 'type of' be compatible no matter the identity. 
+         */
+        return core1.equals(core2)
+                ? Concepts.INSTANCE.getAssertedDistance(this, concept)
+                : (Concepts.INSTANCE.getAssertedDistance(this, concept) == 0 ? 0 : -1);
     }
 
     private int getDistance(IConcept cc1, IConcept cc2, boolean acceptAbsent) {
@@ -934,13 +940,13 @@ public class Concept extends Knowledge implements IConcept {
         } else if (cc1 != null && cc2 != null) {
             ret = cc2.is(cc1) ? Concepts.INSTANCE.getAssertedDistance(cc2, cc1) : -100;
             if (ret >= 0) {
-                for(IConcept t : Traits.INSTANCE.getTraits(cc1)) {
+                for (IConcept t : Traits.INSTANCE.getTraits(cc1)) {
                     boolean ok = Traits.INSTANCE.hasTrait(cc2, t);
                     if (!ok) {
                         return -50;
                     }
                 }
-                for(IConcept t : Traits.INSTANCE.getTraits(cc2)) {
+                for (IConcept t : Traits.INSTANCE.getTraits(cc2)) {
                     if (!Traits.INSTANCE.hasTrait(cc1, t)) {
                         ret += 10;
                     }
@@ -957,8 +963,8 @@ public class Concept extends Knowledge implements IConcept {
 
     /*
      * @Override public boolean equals(Object obj) { return obj instanceof Concept ?
-     * toString().equals(obj.toString()) || getDefinition().equals(((Concept)
-     * obj).getDefinition()) : false; }
+     * toString().equals(obj.toString()) || getDefinition().equals(((Concept) obj).getDefinition())
+     * : false; }
      * 
      * @Override public int hashCode() { return getDefinition().hashCode(); }
      */

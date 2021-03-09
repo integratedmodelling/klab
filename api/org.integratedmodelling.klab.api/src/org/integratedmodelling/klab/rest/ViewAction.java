@@ -115,14 +115,6 @@ public class ViewAction {
 		this.componentTag = componentTag;
 	}
 
-//	public Operation getOperation() {
-//		return operation;
-//	}
-//
-//	public void setOperation(Operation operation) {
-//		this.operation = operation;
-//	}
-
 	public String getApplicationId() {
 		return applicationId;
 	}

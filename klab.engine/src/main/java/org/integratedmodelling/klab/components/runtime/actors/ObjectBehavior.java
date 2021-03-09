@@ -109,59 +109,6 @@ public class ObjectBehavior {
 	}
 
 	/**
-	 * Install a listener in a context that will fire an object to the sender
-	 * whenever it is resolved, optionally matching a type.
-	 * 
-	 * @author Ferd
-	 *
-	 */
-	@Action(id = "when")
-	public static class When extends KlabActionExecutor {
-
-		String listener;
-
-		public When(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender, String callId) {
-			super(identity, arguments, scope, sender, callId);
-			// TODO filters
-		}
-
-		@Override
-		void run(KlabActor.Scope scope) {
-			this.listener = scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState()
-					.addApplicationListener(new ISessionState.Listener() {
-						@Override
-						public void newObservation(IObservation observation, ISubject context) {
-							// TODO filter if a filter was configured; also may need to have a "current
-							// context"
-							// in the scope and match the context to it before firing.
-							fire(observation, false, scope.semaphore, scope.getSymbols(identity));
-						}
-
-						@Override
-						public void newContext(ISubject context) {
-						}
-
-						@Override
-						public void scaleChanged(ScaleReference scale) {
-							// TODO Auto-generated method stub
-							
-						}
-
-						@Override
-						public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
-						}
-
-					}, scope.appId);
-		}
-
-		@Override
-		public void dispose() {
-			scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState().removeListener(this.listener);
-		}
-	}
-
-	/**
 	 * Fire the list of all siblings of an object, optionally filtered by type
 	 * 
 	 * @author Ferd
