@@ -50,23 +50,34 @@ public class EngineRunner implements ApplicationListener<ApplicationPreparedEven
 		return service;
 	}
 
+	
+	private EngineStartupOptions options;
+	
+	
 	public EngineRunner() {
 	}
 	
 	
-	private static RemoteEngine engine;
+	public EngineRunner( String[] args ) {
+	    if (args.length != 0) {
+	        this.options = new EngineStartupOptions(args);
+	    }
+	}
+
+
+    private static RemoteEngine engine;
 	private static Environment environment;
 	private ICertificate certificate;
 	
 	public static EngineRunner start(ApplicationPreparedEvent event) {
 		environment = event.getApplicationContext().getEnvironment();
-		return run();
+		return run(event.getArgs());
 		
 	}
 
 	
-	private static EngineRunner run() {
-		EngineRunner ret = new EngineRunner();
+	private static EngineRunner run(String[] args) {
+		EngineRunner ret = new EngineRunner(args);
 		if(!ret.boot()){
 			throw new KlabException("Engine failed to start");
 		};
@@ -90,7 +101,7 @@ public class EngineRunner implements ApplicationListener<ApplicationPreparedEven
 		        setPropertiesFromEnvironment(environment);
 		        engine = RemoteEngine.start(this.certificate, new EngineStartupOptions());
 		    } else {
-		        engine = RemoteEngine.start(null, new EngineStartupOptions());
+		        engine = RemoteEngine.start(null, this.options);
 		    }
 			
 		} catch (Throwable e) {
