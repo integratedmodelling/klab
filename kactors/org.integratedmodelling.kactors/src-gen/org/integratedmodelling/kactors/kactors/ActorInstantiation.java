@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.ActorInstantiation#getBehavior <em>Behavior</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.ActorInstantiation#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.ActorInstantiation#getActions <em>Actions</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.ActorInstantiation#getMetadata <em>Metadata</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getActorInstantiation()
@@ -90,5 +91,27 @@ public interface ActorInstantiation extends EObject
    * @generated
    */
   void setActions(Actions value);
+
+  /**
+   * Returns the value of the '<em><b>Metadata</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Metadata</em>' containment reference.
+   * @see #setMetadata(Metadata)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getActorInstantiation_Metadata()
+   * @model containment="true"
+   * @generated
+   */
+  Metadata getMetadata();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.ActorInstantiation#getMetadata <em>Metadata</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Metadata</em>' containment reference.
+   * @see #getMetadata()
+   * @generated
+   */
+  void setMetadata(Metadata value);
 
 } // ActorInstantiation

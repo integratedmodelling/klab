@@ -216,7 +216,7 @@ public interface IMetadata extends IParameters<String> {
 
 	/** The Constant IM_MAX_TEMPORAL_SCALE. */
 	public static final String IM_MAX_TEMPORAL_SCALE = "im:max-temporal-scale";
-
+	
 	/**
 	 * 
 	 */

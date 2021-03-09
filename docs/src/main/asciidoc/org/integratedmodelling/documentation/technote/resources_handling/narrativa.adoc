@@ -1,0 +1,66 @@
+= Narrative
+Stuff
+v1.0, 2021-03-05
+:doctype: article
+:description: 
+:kl: k.LAB
+:kmod: k.Modeler
+:kact: k.Actors
+:keng: k.LAB Engine
+:knod: k.LAB Node
+:kim: k.IM
+:ked: k.LAB Resource Editor
+:kex: k.LAB Explorer
+:pex: Project Explorer
+:domo: HAL9000
+:domoauthor: Stanley Inc.
+:encoding: utf-8
+:lang: en
+:title-page:
+:toc: left
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+:numbered:
+:experimental:
+:reproducible:
+:icons: font
+:listing-caption: Listing
+:sectnums:
+:autofit-option:
+:mdash: &#8212;
+:language: asciidoc
+:source-highlighter: highlightjs
+:highlightjs-languages: groovy, java
+ifdef::backend-pdf[]
+endif::[]
+:stem:
+
+<<<
+
+## {domo} vs. k.LAB
+    
+This morning I was preparing coffe, just like every day. The night had been rought on me with kids dancing onto my head. I needed some push to get my engines running. So asked my domotic system for help: _"{domo}, play music of the type of the band Korn"_. Faithfully {domo} chose a playlist of hard rock to get my day going. While the music was playing, all of a sudden it paused, because a fresh baked news about teh disturbed Italian politics system had just been published. Therefore {domo} new that on such an event, I would want to know it instantly, and the news was read out to me. After that, music went back to fill my head with positive thoughts
+
+While the beat was starting to wake up my engines, it occurred to me: "{domoauthor} is using {kl}! It just HAS to be."
+
+Well, let's have a look. When you plug in your domotic system and its engine starts, it is like putting {kl} online. The engine starts, the nodes get online, everything gets ready to work and listen to incoming requests. from now on any {kex} can get in touch with requests.
+
+Therefore opening a {kex} is the same as speaking out the keyword "{domo}". It will connect you with the engine and have it ready for your request.
+
+Then you speak out your query: "play music of the type of the band Korn".
+This can be seen as:
+
+#TODO: FERD PLEASE FILL IN THE BLANKS#
+
+* play: the process model
+* music: 
+* type of: the predicate 
+* band: a namespace defining aggregation of musicians that produce consumer music
+* Korn: a particular persistent resource, stored in the node of musicians, namespace of heavymetal
+
+Once the query is sent to {domo}, the system starts the resolution of the logical query into a chain of models that end with the production of music for the user.
+
+The resources layer is where the music files reside or federated streaming services supply additional titles that can be played. Each file or service has structural data and metadata. The file is known to have a particular length, the waveform and frequencies of a song as well as the timbre can identify the genre of music at large and the type of emotional response it can produce.
+
+The semantic layer is where the resources are linked to semantics. Here the type of a certain music is bound to more terrain feeling. Music can be percieved as dark, emotionally happy. Annotated resources are bundled to be resolved as being similar and answer to a request that identifies them as of the _same type as_ the music of the band Korn.

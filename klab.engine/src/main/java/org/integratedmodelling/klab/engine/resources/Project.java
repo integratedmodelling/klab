@@ -86,6 +86,11 @@ public class Project implements IProject {
         if (this.prerequisites == null) {
             this.prerequisites = new ArrayList<>();
             for (String p : delegate.getRequiredProjectNames()) {
+                
+                if (p == null || p.trim().isEmpty()) {
+                    continue;
+                }
+                
                 IProject proj = Resources.INSTANCE.getProject(p);
                 if (proj != null) {
                     this.prerequisites.add(proj);

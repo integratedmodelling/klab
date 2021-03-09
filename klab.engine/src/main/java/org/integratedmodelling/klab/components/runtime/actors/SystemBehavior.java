@@ -2,14 +2,23 @@ package org.integratedmodelling.klab.components.runtime.actors;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.api.extensions.actors.Action;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
+import org.integratedmodelling.klab.rest.ScaleReference;
+import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.rest.ViewAction;
+import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.utils.Parameters;
 
 import akka.actor.typed.ActorRef;
@@ -24,6 +33,8 @@ import akka.actor.typed.ActorRef;
  */
 public class SystemBehavior {
 
+    static AtomicLong nextId = new AtomicLong(1l);
+    
     /**
      * Load a behavior
      * 
@@ -337,6 +348,42 @@ public class SystemBehavior {
 
     }
 
+    /**
+     * Invoked internally by the group action handler when components must be added to a group. The
+     * handler prepares the message to send to the same actor that invoked it; the actor finishes
+     * handling the action, then creates the new component, adds it to the group and notifies the
+     * view of the changed group structure.
+     * 
+     * @author Ferd
+     *
+     */
+    public static class AddComponentToGroup extends AbstractKlabMessage {
+
+        ViewComponent group;
+        String componentPath;
+        IParameters<String> arguments;
+        Scope scope;
+        long id = nextId.incrementAndGet();
+        
+        public AddComponentToGroup(ViewComponent group, String componentPath, IParameters<String> arguments, Scope scope) {
+            this.group = group;
+            this.componentPath = componentPath;
+            this.arguments = arguments;
+            this.scope = scope;
+        }
+
+        @Override
+        public String toString() {
+            return "[ADD COMPONENT " + componentPath + " to " + group.getId() + "]";
+        }
+
+        @Override
+        public AddComponentToGroup direct() {
+            return new AddComponentToGroup(group, componentPath, arguments, scope);
+        }
+
+    }
+
     public static class AppReset extends AbstractKlabMessage {
 
         Scope scope;
@@ -400,4 +447,5 @@ public class SystemBehavior {
         }
 
     }
+
 }

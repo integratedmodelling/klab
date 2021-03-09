@@ -83,9 +83,9 @@ public class Structure implements IArtifact.Structure {
 
 	@Override
 	public IArtifact getArtifactParent(IArtifact child) {
-//		if (!artifactStructure.vertexSet().contains(child)) {
-//			return null;
-//		}
+		if (!artifactStructure.vertexSet().contains(child)) {
+			return null;
+		}
 		for (DefaultEdge edge : artifactStructure.outgoingEdgesOf(child)) {
 			return artifactStructure.getEdgeTarget(edge);
 		}

@@ -48,7 +48,15 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     // if true when used in matching, the value matched will be any value except the
     // stated
     private boolean exclusive;
-    private Constructor constructor;
+    private Constructor constructor; 
+    
+    /*
+     * if expresion type is TERNARY_OPERATOR, we are the condition and these are the two 
+     * actual values according to our outcome when evaluated in context.
+     */
+    private ExpressionType expressionType = ExpressionType.VALUE;
+    private KActorsValue trueCase;
+    private KActorsValue falseCase;
 
     /**
      * Constructors can be either for Java objects (with classname and possibly classpath not null)
@@ -289,6 +297,15 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.constructor.setComponent(value.getBehavior());
         }
 
+        if (value.getThen() != null) {
+            this.expressionType = ExpressionType.TERNARY_OPERATOR;
+            this.trueCase = new KActorsValue(value.getThen(), parent);
+        }
+        if (value.getElse() != null) {
+            this.expressionType = ExpressionType.TERNARY_OPERATOR;
+            this.falseCase = new KActorsValue(value.getElse(), parent);
+        }
+        
         if (value.getMetadata() != null) {
             for (MetadataPair pair : value.getMetadata().getPairs()) {
                 String key = pair.getKey().substring(1);
@@ -465,6 +482,16 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     public Object getData() {
         return data;
     }
+    
+    @Override
+    public KActorsValue getTrueCase() {
+        return trueCase;
+    }
+
+    @Override
+    public KActorsValue getFalseCase() {
+        return falseCase;
+    }
 
     /**
      * Use in translators to support complex and costly data processing.
@@ -607,6 +634,11 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             return !((Collection<?>) check).isEmpty();
         }
         return check != null;
+    }
+
+    @Override
+    public ExpressionType getExpressionType() {
+        return expressionType;
     }
 
 }

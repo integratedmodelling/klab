@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.utils;
 
+import java.util.Collection;
+
 public class StringUtil {
 
     public static final int WHITESPACE = 0x0001;
@@ -279,6 +281,14 @@ public class StringUtil {
 			ret += (ret.isEmpty() ? "" : string) + cmds[n];
 		}
 		return ret;
+	}
+
+	public static String join(Collection<String> set, String separator) {
+		StringBuffer ret = new StringBuffer(1024);
+		for (String string : set) {
+			ret.append((ret.length() == 0 ? "" : separator) + string);
+		}
+		return ret.toString();
 	}
 
 }

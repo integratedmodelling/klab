@@ -1498,14 +1498,15 @@ public class TableCompiler {
                             }
                         }
                     }
-                    
+
                 } else {
                     targets.add(trg);
                 }
 
                 for (IObservable observable : targets) {
 
-                    target = new ObservedConcept(observable, observable.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+                    target = new ObservedConcept(observable,
+                            observable.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
 
                     if (trg.getType().equals(Concepts.c(NS.CORE_AREA))) {
                         targetType = TargetType.AREA;
@@ -1788,6 +1789,7 @@ public class TableCompiler {
         final int NUMERIC = 3;
         final int TIME = 4;
         final int SPACE = 5;
+        final int BOOLEAN = 6;
 
         for (Object o : (declaration instanceof Collection ? (Collection<?>) declaration : Collections.singleton(declaration))) {
             if (o instanceof IKimConcept || o instanceof IKimObservable) {
@@ -1806,6 +1808,10 @@ public class TableCompiler {
                     for (ObservedConcept category : expandCategory(observable)) {
                         categorize(CATEGORY, category, sorted, observable);
                     }
+                } else if (observable.is(IKimConcept.Type.PRESENCE)) {
+                    observables.add(new ObservedConcept(observable));
+                    categorize(BOOLEAN, true, sorted, observable);
+                    categorize(BOOLEAN, false, sorted, observable);
                 } else if (observable.is(IKimConcept.Type.PREDICATE)) {
                     /*
                      * FIXME if the observable is an abstract identity or any other that is
@@ -1834,7 +1840,7 @@ public class TableCompiler {
                     }
 
                 } else {
-                    throw new KlabValidationException("table: cannot classify on " + observable.getType()
+                    throw new KlabValidationException("table: cannot classify on " + observable.getType().getDefinition()
                             + ": only categories (type of) and countables are valid classifiers");
                 }
 
@@ -2324,6 +2330,13 @@ public class TableCompiler {
                             ret.put("range", ((Classifier) filter.classifier).getDisplayLabel());
                         } else if (filter.classifier.isConcept()) {
                             ret.put("concept", ((Classifier) filter.classifier).getDisplayLabel());
+                        } else if (filter.classifier.isBoolean()) {
+                            if (filter.target != null) {
+                                IConcept c = Observables.INSTANCE.getDescribedType(filter.target.getConcept());
+                                if (c != null) {
+                                    ret.put("classifier", Concepts.INSTANCE.getDisplayLabel(c) + " " + ret.get("classifier"));
+                                }
+                            }
                         }
                     } else if (filter.timeSelector != null) {
                         ret.put("time", filter.timeSelector.getDisplayLabel(scope));
@@ -2383,6 +2396,12 @@ public class TableCompiler {
                                 : (ObservedConcept) ((Pair<?, ?>) o).getSecond();
                         filter.targetType = ((Pair<?, ?>) o).getSecond() == null ? targetType : null;
                     }
+                } else if (((Pair<?, ?>) o).getFirst() instanceof Boolean) {
+                    filter.classifier = Classifier.BooleanMatcher((Boolean) ((Pair<?, ?>) o).getFirst());
+                    filter.target = ((Pair<?, ?>) o).getSecond() == null
+                            ? target
+                            : (ObservedConcept) ((Pair<?, ?>) o).getSecond();
+                    filter.targetType = ((Pair<?, ?>) o).getSecond() == null ? targetType : null;
                 }
             } else if (o instanceof ObservedConcept) {
                 if (((ObservedConcept) o).getObservable().is(Type.COUNTABLE)) {

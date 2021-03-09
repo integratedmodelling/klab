@@ -27,6 +27,8 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getQuantity <em>Quantity</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getThen <em>Then</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getElse <em>Else</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getConstructor <em>Constructor</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#isComponent <em>Component</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getBehavior <em>Behavior</em>}</li>
@@ -325,6 +327,50 @@ public interface Value extends EObject
    * @generated
    */
   void setQuantity(Quantity value);
+
+  /**
+   * Returns the value of the '<em><b>Then</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Then</em>' containment reference.
+   * @see #setThen(Value)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Then()
+   * @model containment="true"
+   * @generated
+   */
+  Value getThen();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getThen <em>Then</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Then</em>' containment reference.
+   * @see #getThen()
+   * @generated
+   */
+  void setThen(Value value);
+
+  /**
+   * Returns the value of the '<em><b>Else</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Else</em>' containment reference.
+   * @see #setElse(Value)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Else()
+   * @model containment="true"
+   * @generated
+   */
+  Value getElse();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#getElse <em>Else</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Else</em>' containment reference.
+   * @see #getElse()
+   * @generated
+   */
+  void setElse(Value value);
 
   /**
    * Returns the value of the '<em><b>Constructor</b></em>' containment reference.
