@@ -107,21 +107,21 @@ public class RasterImporter extends AbstractFilesetImporter {
         if (observation instanceof IState && observation.getGeometry().getDimension(Type.SPACE) != null) {
 
             if (observation.getScale().isSpatiallyDistributed() && observation.getScale().getSpace().isRegular()) {
-                File dir = new File(MiscUtilities.changeExtension(file.toString(), "dir"));
-                dir.mkdirs();
-                File out = new File(dir + File.separator + MiscUtilities.getFileName(file));
-                File outAux = new File(MiscUtilities.changeExtension(out.toString(), "tiff.aux.xml"));
-                File outCpg = new File(MiscUtilities.changeExtension(out.toString(), "tiff.vat.cpg"));
-                File outDbf = new File(MiscUtilities.changeExtension(out.toString(), "tiff.vat.dbf"));
-                File outQml = new File(MiscUtilities.changeExtension(out.toString(), "qml"));
+                File out = file;
+                File dir = null;
 
                 GridCoverage2D coverage;
-                boolean hasSideCarFiles = false;
                 IState state = (IState) observation;
                 IDataKey dataKey = state.getDataKey();
                 if (dataKey != null) {
+                    dir = new File(MiscUtilities.changeExtension(file.toString(), "dir"));
+                    dir.mkdirs();
+                    out = new File(dir + File.separator + MiscUtilities.getFileName(file));
+                    File outAux = new File(MiscUtilities.changeExtension(out.toString(), "tiff.aux.xml"));
+                    File outCpg = new File(MiscUtilities.changeExtension(out.toString(), "tiff.vat.cpg"));
+                    File outDbf = new File(MiscUtilities.changeExtension(out.toString(), "tiff.vat.dbf"));
+                    File outQml = new File(MiscUtilities.changeExtension(out.toString(), "qml"));
                     try {
-                        hasSideCarFiles = true;
                         // write categories aux xml
                         writeAuxXml(outAux, dataKey);
 
@@ -152,7 +152,7 @@ public class RasterImporter extends AbstractFilesetImporter {
 
                         writer.write(coverage, null);
 
-                        if (hasSideCarFiles) {
+                        if (dir != null) {
                             File zip = new File(MiscUtilities.changeExtension(file.toString(), "zip"));
                             ZipUtils.zip(zip, dir, false, false);
 
