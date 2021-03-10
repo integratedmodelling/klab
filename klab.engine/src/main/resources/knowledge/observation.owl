@@ -50,6 +50,14 @@ Main author</dc:contributor>
     
 
 
+    <!-- http://integratedmodelling.org/ks/observation.owl#isCoreKimType -->
+
+    <owl:AnnotationProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isCoreKimType">
+        <rdfs:comment>Key property: a value of true is necessary for k.LAB to recognize a core concept in the worldview as the official representative of the base observable mentioned in it. It&apos;s a 2-way validation between expressions like &quot;Subject is core observable:Subject&apos; and the ontology.</rdfs:comment>
+    </owl:AnnotationProperty>
+    
+
+
     <!-- http://integratedmodelling.org/ks/observation.owl#isDeniable -->
 
     <owl:AnnotationProperty rdf:about="http://integratedmodelling.org/ks/observation.owl#isDeniable">
@@ -546,6 +554,7 @@ Main author</dc:contributor>
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Acceleration">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>m/s^2</unit>
     </owl:Class>
     
@@ -556,6 +565,7 @@ Main author</dc:contributor>
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Agent">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#PhysicalObject"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <rdfs:comment>An Agent is always physical and material.</rdfs:comment>
     </owl:Class>
     
@@ -566,6 +576,7 @@ Main author</dc:contributor>
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Amount">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>mol</unit>
     </owl:Class>
     
@@ -576,6 +587,7 @@ Main author</dc:contributor>
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Angle">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>degree_angle</unit>
     </owl:Class>
     
@@ -586,6 +598,7 @@ Main author</dc:contributor>
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Area">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>m^2</unit>
     </owl:Class>
     
@@ -664,6 +677,7 @@ Main author</dc:contributor>
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Charge">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>C</unit>
     </owl:Class>
     
@@ -706,6 +720,7 @@ Main author</dc:contributor>
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Configuration">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#universal"/>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <rdfs:comment>A configuration is what human observation perceives as a resultant &quot;pattern&quot; summing up the perceived effects of multiple qualities in a subject. It is not observable in k.LAB, but it can be used (exclusively) as the inherent subject for qualities. It must specify the subject type it pertains to (using an inherentTo restriction), and the subject type must match the subject where any observation of Q/Ts inherent to it are made.</rdfs:comment>
     </owl:Class>
     
@@ -861,6 +876,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Duration">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>s</unit>
     </owl:Class>
     
@@ -871,6 +887,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#ElectricPotential">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>J/C</unit>
     </owl:Class>
     
@@ -881,6 +898,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Energy">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>J</unit>
     </owl:Class>
     
@@ -891,6 +909,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Entropy">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>J/K</unit>
     </owl:Class>
     
@@ -910,6 +929,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Event">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#CountableThing"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
     </owl:Class>
     
 
@@ -1012,6 +1032,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Length">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>m</unit>
     </owl:Class>
     
@@ -1048,6 +1069,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Mass">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>kg</unit>
     </owl:Class>
     
@@ -1082,6 +1104,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Value"/>
         <owl:disjointWith rdf:resource="http://integratedmodelling.org/ks/observation.owl#PreferenceValue"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
     </owl:Class>
     
 
@@ -1107,6 +1130,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Numerosity">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#QuantifiableQuality"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
     </owl:Class>
     
 
@@ -1202,6 +1226,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Occurrence">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Probability"/>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
     </owl:Class>
     
 
@@ -1258,6 +1283,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#PreferenceValue">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#Value"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
     </owl:Class>
     
 
@@ -1285,6 +1311,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Pressure">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>Pa</unit>
     </owl:Class>
     
@@ -1294,6 +1321,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Priority">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#QuantifiableQuality"/>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
     </owl:Class>
     
 
@@ -1303,6 +1331,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Probability">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ContinuousNumericallyQuantifiableQuality"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
     </owl:Class>
     
 
@@ -1327,6 +1356,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
             </owl:Restriction>
         </rdfs:subClassOf>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
     </owl:Class>
     
 
@@ -1336,6 +1366,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Proportion">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#RelativeQuantity"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
     </owl:Class>
     
 
@@ -1397,6 +1428,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Ratio">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#RelativeQuantity"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
     </owl:Class>
     
 
@@ -1442,6 +1474,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Relationship">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#DirectObservable"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
     </owl:Class>
     
 
@@ -1461,6 +1494,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Resistance">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>Ohm</unit>
     </owl:Class>
     
@@ -1471,6 +1505,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Resistivity">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>Ohm/m</unit>
     </owl:Class>
     
@@ -1535,6 +1570,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Speed">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>m/s</unit>
     </owl:Class>
     
@@ -1572,6 +1608,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
             </owl:Class>
         </rdfs:subClassOf>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
     </owl:Class>
     
 
@@ -1589,6 +1626,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Temperature">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>K</unit>
     </owl:Class>
     
@@ -1696,6 +1734,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Viscosity">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#IntensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>100 Pa*s</unit>
         <rdfs:comment>Unit is Poise (P) which is not available in JScience, and corresponds to 100 mPa.s</rdfs:comment>
     </owl:Class>
@@ -1716,6 +1755,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Volume">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>m^3</unit>
     </owl:Class>
     
@@ -1742,6 +1782,7 @@ Importantly, a deliberative agent can access history, although the full meaning 
     <owl:Class rdf:about="http://integratedmodelling.org/ks/observation.owl#Weight">
         <rdfs:subClassOf rdf:resource="http://integratedmodelling.org/ks/observation.owl#ExtensivePhysicalProperty"/>
         <isAbstract rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isAbstract>
+        <isCoreKimType rdf:datatype="http://www.w3.org/2001/XMLSchema#boolean">true</isCoreKimType>
         <unit>kg</unit>
     </owl:Class>
     

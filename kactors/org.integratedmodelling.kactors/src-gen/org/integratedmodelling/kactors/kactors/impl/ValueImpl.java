@@ -20,6 +20,7 @@ import org.integratedmodelling.kactors.kactors.LookupTable;
 import org.integratedmodelling.kactors.kactors.Map;
 import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.Observable;
+import org.integratedmodelling.kactors.kactors.ParameterList;
 import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Value;
@@ -45,7 +46,12 @@ import org.integratedmodelling.kactors.kactors.Value;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getExpression <em>Expression</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTable <em>Table</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getQuantity <em>Quantity</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getThen <em>Then</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getElse <em>Else</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getConstructor <em>Constructor</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#isComponent <em>Component</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getBehavior <em>Behavior</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getMetadata <em>Metadata</em>}</li>
  * </ul>
  *
@@ -244,6 +250,26 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected Quantity quantity;
 
   /**
+   * The cached value of the '{@link #getThen() <em>Then</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getThen()
+   * @generated
+   * @ordered
+   */
+  protected Value then;
+
+  /**
+   * The cached value of the '{@link #getElse() <em>Else</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getElse()
+   * @generated
+   * @ordered
+   */
+  protected Value else_;
+
+  /**
    * The cached value of the '{@link #getConstructor() <em>Constructor</em>}' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -252,6 +278,56 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @ordered
    */
   protected Constructor constructor;
+
+  /**
+   * The default value of the '{@link #isComponent() <em>Component</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isComponent()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean COMPONENT_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isComponent() <em>Component</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isComponent()
+   * @generated
+   * @ordered
+   */
+  protected boolean component = COMPONENT_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getBehavior() <em>Behavior</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getBehavior()
+   * @generated
+   * @ordered
+   */
+  protected static final String BEHAVIOR_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getBehavior() <em>Behavior</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getBehavior()
+   * @generated
+   * @ordered
+   */
+  protected String behavior = BEHAVIOR_EDEFAULT;
+
+  /**
+   * The cached value of the '{@link #getParameters() <em>Parameters</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getParameters()
+   * @generated
+   * @ordered
+   */
+  protected ParameterList parameters;
 
   /**
    * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
@@ -790,6 +866,106 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
    * @generated
    */
   @Override
+  public Value getThen()
+  {
+    return then;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetThen(Value newThen, NotificationChain msgs)
+  {
+    Value oldThen = then;
+    then = newThen;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__THEN, oldThen, newThen);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setThen(Value newThen)
+  {
+    if (newThen != then)
+    {
+      NotificationChain msgs = null;
+      if (then != null)
+        msgs = ((InternalEObject)then).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__THEN, null, msgs);
+      if (newThen != null)
+        msgs = ((InternalEObject)newThen).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__THEN, null, msgs);
+      msgs = basicSetThen(newThen, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__THEN, newThen, newThen));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Value getElse()
+  {
+    return else_;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetElse(Value newElse, NotificationChain msgs)
+  {
+    Value oldElse = else_;
+    else_ = newElse;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__ELSE, oldElse, newElse);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setElse(Value newElse)
+  {
+    if (newElse != else_)
+    {
+      NotificationChain msgs = null;
+      if (else_ != null)
+        msgs = ((InternalEObject)else_).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__ELSE, null, msgs);
+      if (newElse != null)
+        msgs = ((InternalEObject)newElse).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__ELSE, null, msgs);
+      msgs = basicSetElse(newElse, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__ELSE, newElse, newElse));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Constructor getConstructor()
   {
     return constructor;
@@ -832,6 +1008,106 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     }
     else if (eNotificationRequired())
       eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__CONSTRUCTOR, newConstructor, newConstructor));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isComponent()
+  {
+    return component;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setComponent(boolean newComponent)
+  {
+    boolean oldComponent = component;
+    component = newComponent;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__COMPONENT, oldComponent, component));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public String getBehavior()
+  {
+    return behavior;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setBehavior(String newBehavior)
+  {
+    String oldBehavior = behavior;
+    behavior = newBehavior;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__BEHAVIOR, oldBehavior, behavior));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public ParameterList getParameters()
+  {
+    return parameters;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetParameters(ParameterList newParameters, NotificationChain msgs)
+  {
+    ParameterList oldParameters = parameters;
+    parameters = newParameters;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__PARAMETERS, oldParameters, newParameters);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setParameters(ParameterList newParameters)
+  {
+    if (newParameters != parameters)
+    {
+      NotificationChain msgs = null;
+      if (parameters != null)
+        msgs = ((InternalEObject)parameters).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__PARAMETERS, null, msgs);
+      if (newParameters != null)
+        msgs = ((InternalEObject)newParameters).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.VALUE__PARAMETERS, null, msgs);
+      msgs = basicSetParameters(newParameters, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__PARAMETERS, newParameters, newParameters));
   }
 
   /**
@@ -908,8 +1184,14 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return basicSetTable(null, msgs);
       case KactorsPackage.VALUE__QUANTITY:
         return basicSetQuantity(null, msgs);
+      case KactorsPackage.VALUE__THEN:
+        return basicSetThen(null, msgs);
+      case KactorsPackage.VALUE__ELSE:
+        return basicSetElse(null, msgs);
       case KactorsPackage.VALUE__CONSTRUCTOR:
         return basicSetConstructor(null, msgs);
+      case KactorsPackage.VALUE__PARAMETERS:
+        return basicSetParameters(null, msgs);
       case KactorsPackage.VALUE__METADATA:
         return basicSetMetadata(null, msgs);
     }
@@ -952,8 +1234,18 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return getTable();
       case KactorsPackage.VALUE__QUANTITY:
         return getQuantity();
+      case KactorsPackage.VALUE__THEN:
+        return getThen();
+      case KactorsPackage.VALUE__ELSE:
+        return getElse();
       case KactorsPackage.VALUE__CONSTRUCTOR:
         return getConstructor();
+      case KactorsPackage.VALUE__COMPONENT:
+        return isComponent();
+      case KactorsPackage.VALUE__BEHAVIOR:
+        return getBehavior();
+      case KactorsPackage.VALUE__PARAMETERS:
+        return getParameters();
       case KactorsPackage.VALUE__METADATA:
         return getMetadata();
     }
@@ -1009,8 +1301,23 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__QUANTITY:
         setQuantity((Quantity)newValue);
         return;
+      case KactorsPackage.VALUE__THEN:
+        setThen((Value)newValue);
+        return;
+      case KactorsPackage.VALUE__ELSE:
+        setElse((Value)newValue);
+        return;
       case KactorsPackage.VALUE__CONSTRUCTOR:
         setConstructor((Constructor)newValue);
+        return;
+      case KactorsPackage.VALUE__COMPONENT:
+        setComponent((Boolean)newValue);
+        return;
+      case KactorsPackage.VALUE__BEHAVIOR:
+        setBehavior((String)newValue);
+        return;
+      case KactorsPackage.VALUE__PARAMETERS:
+        setParameters((ParameterList)newValue);
         return;
       case KactorsPackage.VALUE__METADATA:
         setMetadata((Metadata)newValue);
@@ -1068,8 +1375,23 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
       case KactorsPackage.VALUE__QUANTITY:
         setQuantity((Quantity)null);
         return;
+      case KactorsPackage.VALUE__THEN:
+        setThen((Value)null);
+        return;
+      case KactorsPackage.VALUE__ELSE:
+        setElse((Value)null);
+        return;
       case KactorsPackage.VALUE__CONSTRUCTOR:
         setConstructor((Constructor)null);
+        return;
+      case KactorsPackage.VALUE__COMPONENT:
+        setComponent(COMPONENT_EDEFAULT);
+        return;
+      case KactorsPackage.VALUE__BEHAVIOR:
+        setBehavior(BEHAVIOR_EDEFAULT);
+        return;
+      case KactorsPackage.VALUE__PARAMETERS:
+        setParameters((ParameterList)null);
         return;
       case KactorsPackage.VALUE__METADATA:
         setMetadata((Metadata)null);
@@ -1114,8 +1436,18 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
         return table != null;
       case KactorsPackage.VALUE__QUANTITY:
         return quantity != null;
+      case KactorsPackage.VALUE__THEN:
+        return then != null;
+      case KactorsPackage.VALUE__ELSE:
+        return else_ != null;
       case KactorsPackage.VALUE__CONSTRUCTOR:
         return constructor != null;
+      case KactorsPackage.VALUE__COMPONENT:
+        return component != COMPONENT_EDEFAULT;
+      case KactorsPackage.VALUE__BEHAVIOR:
+        return BEHAVIOR_EDEFAULT == null ? behavior != null : !BEHAVIOR_EDEFAULT.equals(behavior);
+      case KactorsPackage.VALUE__PARAMETERS:
+        return parameters != null;
       case KactorsPackage.VALUE__METADATA:
         return metadata != null;
     }
@@ -1145,6 +1477,10 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     result.append(constant);
     result.append(", expression: ");
     result.append(expression);
+    result.append(", component: ");
+    result.append(component);
+    result.append(", behavior: ");
+    result.append(behavior);
     result.append(')');
     return result.toString();
   }

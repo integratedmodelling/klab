@@ -76,7 +76,7 @@ public class OSMUrnAdapter implements IUrnAdapter {
 
 			builder.finishObject();
 
-//			return builder.build();
+			return;
 		}
 
 		throw new KlabIOException("cannot retrieve OSM data to resolve URN " + urn);

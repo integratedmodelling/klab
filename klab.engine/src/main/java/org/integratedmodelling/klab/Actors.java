@@ -29,7 +29,6 @@ import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
 import org.integratedmodelling.kactors.model.KActors.ValueTranslator;
-import org.integratedmodelling.kactors.model.KActorsQuantity;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
@@ -44,9 +43,6 @@ import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.api.services.IActorsService;
 import org.integratedmodelling.klab.common.Urns;
-import org.integratedmodelling.klab.common.mediation.Currency;
-import org.integratedmodelling.klab.common.mediation.Quantity;
-import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
@@ -292,15 +288,15 @@ public enum Actors implements IActorsService {
                     break;
                 case QUANTITY:
                     // NO - leave it as is, implementing the syntactic peer.
-//                    if (value instanceof KActorsQuantity) {
-//                        if (((KActorsQuantity) value).getUnit() != null) {
-//                            value = Quantity.create(((KActorsQuantity) value).getValue(),
-//                                    Unit.create(((KActorsQuantity) value).getUnit()));
-//                        } else if (((KActorsQuantity) value).getCurrency() != null) {
-//                            value = Quantity.create(((KActorsQuantity) value).getValue(),
-//                                    Currency.create(((KActorsQuantity) value).getCurrency()));
-//                        }
-//                    }
+                    // if (value instanceof KActorsQuantity) {
+                    // if (((KActorsQuantity) value).getUnit() != null) {
+                    // value = Quantity.create(((KActorsQuantity) value).getValue(),
+                    // Unit.create(((KActorsQuantity) value).getUnit()));
+                    // } else if (((KActorsQuantity) value).getCurrency() != null) {
+                    // value = Quantity.create(((KActorsQuantity) value).getValue(),
+                    // Currency.create(((KActorsQuantity) value).getCurrency()));
+                    // }
+                    // }
                     break;
                 case RANGE:
                     break;
@@ -497,7 +493,6 @@ public enum Actors implements IActorsService {
         return ret == null ? null : ret.getSecond();
     }
 
-    
     @Override
     public Collection<String> getBehaviorIds() {
         return behaviors.keySet();
@@ -750,7 +745,7 @@ public enum Actors implements IActorsService {
         public long getId() {
             return id;
         }
-        
+
         @Override
         public String toString() {
             return type + "-" + id;
@@ -1053,7 +1048,7 @@ public enum Actors implements IActorsService {
         }
 
         Method method = MethodUtils.getMatchingMethod(reactor.getClass(), methodName, clss);
- 
+
         if (method != null) {
             try {
                 method.invoke(reactor, jargs.toArray());
@@ -1072,5 +1067,20 @@ public enum Actors implements IActorsService {
             }
         }
 
+    }
+
+    /**
+     * Return the boolean value of the passed object. In k.Actors, anything that isn't a null,
+     * false, empty string or zero is true.
+     * 
+     * @param ret
+     * @return
+     */
+    public boolean asBooleanValue(Object ret) {
+        if (ret == null || (ret instanceof String && ((String) ret).trim().isEmpty())
+                || (ret instanceof Boolean && !((Boolean) ret) || (ret instanceof Number && ((Number) ret).longValue() == 0))) {
+            return false;
+        }
+        return true;
     }
 }

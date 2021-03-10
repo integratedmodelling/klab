@@ -15,6 +15,7 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
+import org.integratedmodelling.kactors.kactors.Metadata;
 import org.integratedmodelling.kactors.kactors.ParameterList;
 
 /**
@@ -28,6 +29,7 @@ import org.integratedmodelling.kactors.kactors.ParameterList;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActorInstantiationImpl#getBehavior <em>Behavior</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActorInstantiationImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActorInstantiationImpl#getActions <em>Actions</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ActorInstantiationImpl#getMetadata <em>Metadata</em>}</li>
  * </ul>
  *
  * @generated
@@ -73,6 +75,16 @@ public class ActorInstantiationImpl extends MinimalEObjectImpl.Container impleme
    * @ordered
    */
   protected Actions actions;
+
+  /**
+   * The cached value of the '{@link #getMetadata() <em>Metadata</em>}' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMetadata()
+   * @generated
+   * @ordered
+   */
+  protected Metadata metadata;
 
   /**
    * <!-- begin-user-doc -->
@@ -226,6 +238,56 @@ public class ActorInstantiationImpl extends MinimalEObjectImpl.Container impleme
    * @generated
    */
   @Override
+  public Metadata getMetadata()
+  {
+    return metadata;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  public NotificationChain basicSetMetadata(Metadata newMetadata, NotificationChain msgs)
+  {
+    Metadata oldMetadata = metadata;
+    metadata = newMetadata;
+    if (eNotificationRequired())
+    {
+      ENotificationImpl notification = new ENotificationImpl(this, Notification.SET, KactorsPackage.ACTOR_INSTANTIATION__METADATA, oldMetadata, newMetadata);
+      if (msgs == null) msgs = notification; else msgs.add(notification);
+    }
+    return msgs;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setMetadata(Metadata newMetadata)
+  {
+    if (newMetadata != metadata)
+    {
+      NotificationChain msgs = null;
+      if (metadata != null)
+        msgs = ((InternalEObject)metadata).eInverseRemove(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ACTOR_INSTANTIATION__METADATA, null, msgs);
+      if (newMetadata != null)
+        msgs = ((InternalEObject)newMetadata).eInverseAdd(this, EOPPOSITE_FEATURE_BASE - KactorsPackage.ACTOR_INSTANTIATION__METADATA, null, msgs);
+      msgs = basicSetMetadata(newMetadata, msgs);
+      if (msgs != null) msgs.dispatch();
+    }
+    else if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.ACTOR_INSTANTIATION__METADATA, newMetadata, newMetadata));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public NotificationChain eInverseRemove(InternalEObject otherEnd, int featureID, NotificationChain msgs)
   {
     switch (featureID)
@@ -234,6 +296,8 @@ public class ActorInstantiationImpl extends MinimalEObjectImpl.Container impleme
         return basicSetParameters(null, msgs);
       case KactorsPackage.ACTOR_INSTANTIATION__ACTIONS:
         return basicSetActions(null, msgs);
+      case KactorsPackage.ACTOR_INSTANTIATION__METADATA:
+        return basicSetMetadata(null, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -254,6 +318,8 @@ public class ActorInstantiationImpl extends MinimalEObjectImpl.Container impleme
         return getParameters();
       case KactorsPackage.ACTOR_INSTANTIATION__ACTIONS:
         return getActions();
+      case KactorsPackage.ACTOR_INSTANTIATION__METADATA:
+        return getMetadata();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -276,6 +342,9 @@ public class ActorInstantiationImpl extends MinimalEObjectImpl.Container impleme
         return;
       case KactorsPackage.ACTOR_INSTANTIATION__ACTIONS:
         setActions((Actions)newValue);
+        return;
+      case KactorsPackage.ACTOR_INSTANTIATION__METADATA:
+        setMetadata((Metadata)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -300,6 +369,9 @@ public class ActorInstantiationImpl extends MinimalEObjectImpl.Container impleme
       case KactorsPackage.ACTOR_INSTANTIATION__ACTIONS:
         setActions((Actions)null);
         return;
+      case KactorsPackage.ACTOR_INSTANTIATION__METADATA:
+        setMetadata((Metadata)null);
+        return;
     }
     super.eUnset(featureID);
   }
@@ -320,6 +392,8 @@ public class ActorInstantiationImpl extends MinimalEObjectImpl.Container impleme
         return parameters != null;
       case KactorsPackage.ACTOR_INSTANTIATION__ACTIONS:
         return actions != null;
+      case KactorsPackage.ACTOR_INSTANTIATION__METADATA:
+        return metadata != null;
     }
     return super.eIsSet(featureID);
   }

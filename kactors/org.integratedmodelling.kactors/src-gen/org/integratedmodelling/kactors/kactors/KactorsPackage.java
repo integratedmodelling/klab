@@ -524,13 +524,22 @@ public interface KactorsPackage extends EPackage
   int ACTOR_INSTANTIATION__ACTIONS = 2;
 
   /**
+   * The feature id for the '<em><b>Metadata</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ACTOR_INSTANTIATION__METADATA = 3;
+
+  /**
    * The number of structural features of the '<em>Actor Instantiation</em>' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ACTOR_INSTANTIATION_FEATURE_COUNT = 3;
+  int ACTOR_INSTANTIATION_FEATURE_COUNT = 4;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl <em>Message Call</em>}' class.
@@ -1385,13 +1394,58 @@ public interface KactorsPackage extends EPackage
   int VALUE__QUANTITY = 12;
 
   /**
+   * The feature id for the '<em><b>Then</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__THEN = 13;
+
+  /**
+   * The feature id for the '<em><b>Else</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__ELSE = 14;
+
+  /**
    * The feature id for the '<em><b>Constructor</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__CONSTRUCTOR = 13;
+  int VALUE__CONSTRUCTOR = 15;
+
+  /**
+   * The feature id for the '<em><b>Component</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__COMPONENT = 16;
+
+  /**
+   * The feature id for the '<em><b>Behavior</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__BEHAVIOR = 17;
+
+  /**
+   * The feature id for the '<em><b>Parameters</b></em>' containment reference.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__PARAMETERS = 18;
 
   /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
@@ -1400,7 +1454,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__METADATA = 14;
+  int VALUE__METADATA = 19;
 
   /**
    * The number of structural features of the '<em>Value</em>' class.
@@ -1409,7 +1463,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 15;
+  int VALUE_FEATURE_COUNT = 20;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ConstructorImpl <em>Constructor</em>}' class.
@@ -4085,6 +4139,17 @@ public interface KactorsPackage extends EPackage
   EReference getActorInstantiation_Actions();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.ActorInstantiation#getMetadata <em>Metadata</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Metadata</em>'.
+   * @see org.integratedmodelling.kactors.kactors.ActorInstantiation#getMetadata()
+   * @see #getActorInstantiation()
+   * @generated
+   */
+  EReference getActorInstantiation_Metadata();
+
+  /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.MessageCall <em>Message Call</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4939,6 +5004,28 @@ public interface KactorsPackage extends EPackage
   EReference getValue_Quantity();
 
   /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getThen <em>Then</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Then</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#getThen()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Then();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getElse <em>Else</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Else</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#getElse()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Else();
+
+  /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getConstructor <em>Constructor</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -4948,6 +5035,39 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getValue_Constructor();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#isComponent <em>Component</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Component</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#isComponent()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Component();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#getBehavior <em>Behavior</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Behavior</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#getBehavior()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Behavior();
+
+  /**
+   * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getParameters <em>Parameters</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference '<em>Parameters</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#getParameters()
+   * @see #getValue()
+   * @generated
+   */
+  EReference getValue_Parameters();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getMetadata <em>Metadata</em>}'.
@@ -7633,6 +7753,14 @@ public interface KactorsPackage extends EPackage
     EReference ACTOR_INSTANTIATION__ACTIONS = eINSTANCE.getActorInstantiation_Actions();
 
     /**
+     * The meta object literal for the '<em><b>Metadata</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ACTOR_INSTANTIATION__METADATA = eINSTANCE.getActorInstantiation_Metadata();
+
+    /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl <em>Message Call</em>}' class.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
@@ -8295,12 +8423,52 @@ public interface KactorsPackage extends EPackage
     EReference VALUE__QUANTITY = eINSTANCE.getValue_Quantity();
 
     /**
+     * The meta object literal for the '<em><b>Then</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__THEN = eINSTANCE.getValue_Then();
+
+    /**
+     * The meta object literal for the '<em><b>Else</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__ELSE = eINSTANCE.getValue_Else();
+
+    /**
      * The meta object literal for the '<em><b>Constructor</b></em>' containment reference feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
     EReference VALUE__CONSTRUCTOR = eINSTANCE.getValue_Constructor();
+
+    /**
+     * The meta object literal for the '<em><b>Component</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__COMPONENT = eINSTANCE.getValue_Component();
+
+    /**
+     * The meta object literal for the '<em><b>Behavior</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__BEHAVIOR = eINSTANCE.getValue_Behavior();
+
+    /**
+     * The meta object literal for the '<em><b>Parameters</b></em>' containment reference feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference VALUE__PARAMETERS = eINSTANCE.getValue_Parameters();
 
     /**
      * The meta object literal for the '<em><b>Metadata</b></em>' containment reference feature.

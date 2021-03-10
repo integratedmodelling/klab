@@ -141,6 +141,7 @@ public class CoreOntology extends AbstractWorkspace {
 		public static final String IS_TYPE_DELEGATE = "observation:isTypeDelegate";
 		public static final String IS_NEGATION_OF = "observation:isNegationOf";
 		public static final String INHERENCY_IS_DISTRIBUTED = "observation:inherencyIsDistributed";
+        public static final String IS_CORE_KIM_TYPE = "observation:isCoreKimType";
 
 		// core observation ontology
 		public static final String OBSERVATION = "observation:Observation";

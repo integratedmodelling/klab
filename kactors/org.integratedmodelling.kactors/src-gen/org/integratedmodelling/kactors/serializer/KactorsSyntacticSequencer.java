@@ -38,6 +38,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	protected AbstractElementAlias match_Preamble_StyleKeyword_3_6_0_p;
 	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_5_1_1_q;
 	protected AbstractElementAlias match_TableClassifier_ExclusiveKeyword_5_4_1_q;
+	protected AbstractElementAlias match_ValueWithConstructor___LeftParenthesisKeyword_0_14_2_0_RightParenthesisKeyword_0_14_2_2__q;
 	
 	@Inject
 	protected void init(IGrammarAccess access) {
@@ -58,6 +59,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 		match_Preamble_StyleKeyword_3_6_0_p = new TokenAlias(true, false, grammarAccess.getPreambleAccess().getStyleKeyword_3_6_0());
 		match_TableClassifier_ExclusiveKeyword_5_1_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_5_1_1());
 		match_TableClassifier_ExclusiveKeyword_5_4_1_q = new TokenAlias(false, true, grammarAccess.getTableClassifierAccess().getExclusiveKeyword_5_4_1());
+		match_ValueWithConstructor___LeftParenthesisKeyword_0_14_2_0_RightParenthesisKeyword_0_14_2_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getValueWithConstructorAccess().getLeftParenthesisKeyword_0_14_2_0()), new TokenAlias(false, false, grammarAccess.getValueWithConstructorAccess().getRightParenthesisKeyword_0_14_2_2()));
 	}
 	
 	@Override
@@ -115,6 +117,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 				emit_TableClassifier_ExclusiveKeyword_5_1_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_TableClassifier_ExclusiveKeyword_5_4_1_q.equals(syntax))
 				emit_TableClassifier_ExclusiveKeyword_5_4_1_q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_ValueWithConstructor___LeftParenthesisKeyword_0_14_2_0_RightParenthesisKeyword_0_14_2_2__q.equals(syntax))
+				emit_ValueWithConstructor___LeftParenthesisKeyword_0_14_2_0_RightParenthesisKeyword_0_14_2_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else acceptNodes(getLastNavigableState(), syntaxNodes);
 		}
 	}
@@ -126,6 +130,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 * This ambiguous syntax occurs at:
 	 *     behavior=PathName (ambiguity) ':' actions=Actions
 	 *     behavior=PathName (ambiguity) (rule end)
+	 *     behavior=PathName (ambiguity) metadata=Metadata
 	 */
 	protected void emit_ActorInstantiation___LeftParenthesisKeyword_2_0_RightParenthesisKeyword_2_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
@@ -649,6 +654,18 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     int1=Number (ambiguity) (rule end)
 	 */
 	protected void emit_TableClassifier_ExclusiveKeyword_5_4_1_q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+		acceptNodes(transition, nodes);
+	}
+	
+	/**
+	 * Ambiguous syntax:
+	 *     ('(' ')')?
+	 *
+	 * This ambiguous syntax occurs at:
+	 *     behavior=PathName (ambiguity) '?' then=ValueWithConstructor
+	 *     behavior=PathName (ambiguity) (rule end)
+	 */
+	protected void emit_ValueWithConstructor___LeftParenthesisKeyword_0_14_2_0_RightParenthesisKeyword_0_14_2_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

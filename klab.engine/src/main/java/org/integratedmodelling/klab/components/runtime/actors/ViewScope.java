@@ -62,7 +62,8 @@ class ViewScope {
 		boolean isActive = group.getGroupMetadata().containsKey("inputgroup");
 		ret.setType(isActive ? ViewComponent.Type.InputGroup : ViewComponent.Type.Group);
 		if (group.getGroupMetadata().containsKey("name")) {
-			ret.setName(group.getGroupMetadata().get("name").getValue().toString());
+		    String name = group.getGroupMetadata().get("name").getValue().toString();
+			ret.setName(name);
 		}
 		String id = null;
 		if (group.getGroupMetadata().containsKey("id")) {
@@ -70,6 +71,7 @@ class ViewScope {
 		} else {
 			id = "g" + (groupCounter++);
 		}
+		
 		setViewMetadata(ret, group.getGroupMetadata());
 		ret.setId(parent.getId() + "/" + id);
 		parent.getComponents().add(ret);

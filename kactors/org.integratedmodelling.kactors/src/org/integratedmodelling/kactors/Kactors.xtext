@@ -66,7 +66,7 @@ ArgumentDeclaration: {ArgumentDeclaration}
 MessageBody: {MessageBody} lists+=StatementList*;
 
 ActorInstantiation:
-	'create' behavior=PathName ('(' (parameters=ParameterList)? ')')? (':' actions=Actions)?
+	'create' behavior=PathName ('(' (parameters=ParameterList)? ')')? (':' actions=Actions)? metadata=Metadata?
 ;
 
 MessageCall:
@@ -165,7 +165,7 @@ Actions:
 
 
 Value:
-	tree=Tree |
+	(tree=Tree |
 	empty?='empty' |
 	argvalue=ARGVALUE |
 	urn=UrnId | 
@@ -177,11 +177,11 @@ Value:
 	observable=Observable | 
 	expression=EXPR |
 	table=LookupTable |
-	quantity=Quantity
-	;
+	quantity=Quantity) ('?' then=Value ':' else=Value)?
+;
 
 ValueWithConstructor returns Value:
-	constructor=Constructor |
+	(constructor=Constructor |
 	tree=Tree |
 	empty?='empty' |
 	argvalue=ARGVALUE |
@@ -194,7 +194,9 @@ ValueWithConstructor returns Value:
 	observable=Observable | 
 	expression=EXPR |
 	table=LookupTable |
-	quantity=Quantity
+	quantity=Quantity  |
+	component?='new' behavior=PathName ('(' (parameters=ParameterList)? ')')? )
+	 ('?' then=ValueWithConstructor ':' else=ValueWithConstructor)?
 	;
 
 Constructor:
@@ -217,19 +219,19 @@ ValueWithMetadata returns Value:
 	 (metadata=Metadata)?
 	;
 
-ValueWithoutTree returns Value:
-	argvalue=ARGVALUE |
-	literal=Literal |
-	id=PathName |
-	urn=UrnId | 
-	list=List |
-	map=Map |
-	observable=Observable | 
-	expression=EXPR |
-	table=LookupTable |
-	quantity=Quantity
-	;
-	
+//ValueWithoutTree returns Value:
+//	argvalue=ARGVALUE |
+//	literal=Literal |
+//	id=PathName |
+//	urn=UrnId | 
+//	list=List |
+//	map=Map |
+//	observable=Observable | 
+//	expression=EXPR |
+//	table=LookupTable |
+//	quantity=Quantity
+//	;
+//	
 ValueWithMetadataWithoutTree returns Value:
 	(argvalue=ARGVALUE |
 	literal=Literal |
@@ -360,7 +362,7 @@ ParameterList:
 	
 KeyValuePair:
     tag=TAG |
-	(name=(LOWERCASE_ID) (interactive?='?=' | '='))? value=Value |
+	(name=(LOWERCASE_ID) (interactive?='?=' | '='))? value=ValueWithConstructor |
     key=KEY 
 ;
 

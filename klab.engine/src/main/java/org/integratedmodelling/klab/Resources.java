@@ -1421,6 +1421,9 @@ public enum Resources implements IResourceService {
 			return publicResourceCatalog.isOnline(urn);
 		}
 		IResource resource = resolveResource(urn);
+		if (resource == null) {
+		    Klab.INSTANCE.getRootMonitor().error("non-existent resource referenced: " + urn);
+		}
 		return resource == null ? false : isResourceOnline(resource);
 	}
 

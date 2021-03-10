@@ -87,6 +87,8 @@ public class OWLMetadata extends Metadata implements IMetadata {
         NS.IS_SUBJECTIVE);
     _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#inherencyIsDistributed",
             NS.INHERENCY_IS_DISTRIBUTED);
+    _metadataVocabulary.put("http://integratedmodelling.org/ks/observation.owl#isCoreKimType",
+            NS.IS_CORE_KIM_TYPE);
   }
 
   public OWLMetadata(OWLEntity owl, OWLOntology ontology) {

@@ -11,9 +11,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 
 import org.eclipse.emf.ecore.resource.Resource;
+import org.eclipse.xtext.GrammarUtil;
+import org.eclipse.xtext.IGrammarAccess;
 import org.eclipse.xtext.util.CancelIndicator;
 import org.eclipse.xtext.validation.CheckMode;
 import org.eclipse.xtext.validation.IResourceValidator;
@@ -26,6 +29,7 @@ import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.common.CompileNotification;
 import org.integratedmodelling.klab.rest.BehaviorReference;
 
+import com.google.inject.Inject;
 import com.google.inject.Injector;
 
 /**
@@ -40,6 +44,9 @@ public enum KActors {
 
 	private Map<String, BehaviorReference> behaviorManifest = Collections.synchronizedMap(new HashMap<>());
 
+    @Inject
+    private IGrammarAccess grammarAccess;
+    
 	public interface Notifier {
 		void notify(IKActorsBehavior behavior);
 	}
@@ -109,6 +116,10 @@ public enum KActors {
 		return new KActorsBehavior(model, null);
 	}
 
+	public Set<String> getKeywords() {
+	    return GrammarUtil.getAllKeywords(grammarAccess.getGrammar());
+	}
+	
 	public boolean isKActorsFile(File file) {
 		return file.toString().endsWith(".kactor");
 	}

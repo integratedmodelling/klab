@@ -69,6 +69,8 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="actions" eType="#//Actions"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="metadata" eType="#//Metadata"
+        containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="MessageCall">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="name" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
@@ -205,7 +207,15 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="quantity" eType="#//Quantity"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="then" eType="#//Value"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="else" eType="#//Value"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="constructor" eType="#//Constructor"
+        containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="component" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EBoolean"/>
+    <eStructuralFeatures xsi:type="ecore:EAttribute" name="behavior" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="parameters" eType="#//ParameterList"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="metadata" eType="#//Metadata"
         containment="true"/>
