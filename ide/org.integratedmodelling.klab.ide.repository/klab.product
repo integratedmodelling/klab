@@ -621,6 +621,7 @@ You should also get your employer (if you work as a programmer) or school, if an
 
    <repositories>
       <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
+      <repository location="http://www.integratedmodelling.org/updates/klab/0.10.0" enabled="true" />
    </repositories>
 
    <preferencesInfo>
