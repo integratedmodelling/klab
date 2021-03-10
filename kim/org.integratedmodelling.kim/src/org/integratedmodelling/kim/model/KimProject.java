@@ -11,6 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Properties;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.eclipse.emf.ecore.EObject;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
@@ -31,7 +32,7 @@ public class KimProject implements IKimProject {
     /**
      * Namespace IDs. The actual namespaces are held in Kim.INSTANCE.
      */
-    private Set<String> namespaces = new HashSet<>();
+    private Set<String> namespaces = ConcurrentHashMap.newKeySet();
     /**
      * Behavior IDs. The actual behaviors are in KActors.INSTANCE. (eventually)
      */
