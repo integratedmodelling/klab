@@ -176,6 +176,12 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<version>2.0.1.RELEASE</version>
 			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+          			<groupId>javax.annotation</groupId>
+          			<artifactId>javax.annotation-api</artifactId>
+        		</exclusion>
+			</exclusions>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-mongodb -->
 		<dependency>
@@ -224,20 +230,6 @@
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.engine</artifactId>
 			<version>${klab.version}</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.integratedmodelling</groupId>
-					<artifactId>org.integratedmodelling.kactors</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.integratedmodelling</groupId>
-					<artifactId>org.integratedmodelling.kdl</artifactId>
-				</exclusion>
-				<exclusion>
-					<groupId>org.integratedmodelling</groupId>
-					<artifactId>org.integratedmodelling.kim</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
