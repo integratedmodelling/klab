@@ -2,60 +2,15 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0"
 	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-	<groupId>org.integratedmodelling</groupId>
-	<version>0.10.0-SNAPSHOT</version>
 	<modelVersion>4.0.0</modelVersion>
-<!-- 	<parent>
+	<parent>
 		<groupId>org.integratedmodelling</groupId>
 		<artifactId>klab</artifactId>
 		<version>0.10.0-SNAPSHOT</version>
-	</parent> -->
+	</parent>
 	<artifactId>klab.hub</artifactId>
 	<name>k.LAB hub</name>
 	<description>k.LAB authentication and collaboration server hub</description>
-	
-	
-	<properties>
-
-		<klab.version>0.10.0-SNAPSHOT</klab.version>
-
-		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
-		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>
-		<java.version>1.8</java.version>
-		<!-- Careful here: geotools must be right for hortonmachine to work; JTS 
-			should be the same one that geotools needs.
-			
-			Next step: gt 20.0, horton 0.9.6, jts 1.16 (with different namespaces) - that should
-			allow Java upgrade to 1.13
-			 -->
-		<geotools.version>18.0</geotools.version>
-		<hortonmachine.version>0.9.1</hortonmachine.version>
-		<jts.version>1.13</jts.version>
-		<h2gis.version>1.5.0</h2gis.version>
-		<maven.compiler.source>1.8</maven.compiler.source>
-		<maven.compiler.target>1.8</maven.compiler.target>
-		<tycho-version>1.0.0</tycho-version>
-		<xtextVersion>2.18.0</xtextVersion>
-		<mweVersion>2.10.0</mweVersion>
-		<googleJibVersion>2.7.1</googleJibVersion>
-
-		<!-- the five below go together. Never change one without checking the 
-			others. Spring security latest is currently requiring 5.0.4, implying boot 
-			2.0.0 -->
-		<spring-boot-version>2.0.1.RELEASE</spring-boot-version>
-		<spring-version>5.0.5.RELEASE</spring-version>
-		<junit-version>4.12</junit-version>
-		<jackson-version>2.9.5</jackson-version>
-		<!-- end versions that need to be in lock-step to avoid multiple Spring 
-			issues -->
-	
-<!--     	<scala.version>2.13.1</scala.version>
- -->		<joda-time-version>2.3</joda-time-version>
-		<javax.mail-api.version>1.5.2</javax.mail-api.version>
-		<jung.version>2.1.1</jung.version>
-		
-	</properties>
-	
 	<build>
 		<plugins>
 			<plugin>
@@ -125,6 +80,19 @@
 		</dependencies>
 	</dependencyManagement>
 	<dependencies>
+		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-test -->
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<version>2.0.1.RELEASE</version>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+          			<groupId>javax.annotation</groupId>
+          			<artifactId>javax.annotation-api</artifactId>
+        		</exclusion>
+			</exclusions>
+		</dependency>
 		<!-- This is critical as other version build but throw errors 1.23 is minimum 
 			with our springboot -->
 		<dependency>
@@ -176,12 +144,6 @@
 			<artifactId>spring-boot-starter-test</artifactId>
 			<version>2.0.1.RELEASE</version>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-          			<groupId>javax.annotation</groupId>
-          			<artifactId>javax.annotation-api</artifactId>
-        		</exclusion>
-			</exclusions>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.springframework.boot/spring-boot-starter-data-mongodb -->
 		<dependency>
