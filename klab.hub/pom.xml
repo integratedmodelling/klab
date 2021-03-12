@@ -74,7 +74,6 @@
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
 				<version>Finchley.SR4</version>
-				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
 		</dependencies>
@@ -90,16 +89,12 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-consul-discovery</artifactId>
+			<version>${spring-boot-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-consul-config</artifactId>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/com.github.docker-java/docker-java -->
-		<dependency>
-			<groupId>com.github.docker-java</groupId>
-			<artifactId>docker-java</artifactId>
-			<version>3.1.5</version>
+			<version>${spring-boot-version}</version>
 		</dependency>
 		<!-- https://mvnrepository.com/artifact/org.bouncycastle/bcpkix-jdk15on -->
 		<dependency>
@@ -173,11 +168,6 @@
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.ogc</artifactId>
-			<version>${klab.version}</version>
-		</dependency>
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>klab.engine</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
 		<dependency>

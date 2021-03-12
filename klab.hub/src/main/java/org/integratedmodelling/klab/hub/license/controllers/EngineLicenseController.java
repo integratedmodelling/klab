@@ -128,7 +128,7 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 	
 	@PostMapping(value= API.HUB.LEGACY_AUTHENTICATE_ENGINE)
 	public ResponseEntity<EngineAuthenticationResponse> processLegacyEndpoint(HttpServletRequest request) throws IOException, MessagingException {
-	    final String str = IOUtils.toString(request.getInputStream(), StandardCharsets.UTF_8);
+	    final String str = IOUtils.toString(request.getInputStream());
 	    JsonObject translate = new Gson().fromJson(str, JsonObject.class);
 	    EngineAuthenticationRequest newRequest = new EngineAuthenticationRequest();
 	    newRequest.setCertificate(translate.get("certificate").getAsString());
