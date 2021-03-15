@@ -62,7 +62,7 @@ public class ResolutionScope implements IResolutionScope {
         int order;
         boolean partition;
 
-        Link(ResolutionScope target ) {
+        Link(ResolutionScope target) {
             this.target = target;
         }
 
@@ -140,6 +140,8 @@ public class ResolutionScope implements IResolutionScope {
      */
     Set<Link> links = new HashSet<>();
     Map<ObservedConcept, List<ResolutionScope>> resolvedObservables = new HashMap<>();
+
+    Map<ObservedConcept, List<IRankedModel>> resolutions = new HashMap<>();
 
     /*
      * We chain resolutions when we resolve change after the initialization resolution. In this case
@@ -357,12 +359,12 @@ public class ResolutionScope implements IResolutionScope {
         return new ResolutionScope(contextSubject, monitor, scenarios);
     }
 
-    private ResolutionScope(IMonitor monitor ) throws KlabException {
+    private ResolutionScope(IMonitor monitor) throws KlabException {
         this.coverage = Coverage.empty(Scale.create());
         this.monitor = monitor;
     }
 
-    private ResolutionScope(Subject contextSubject, IMonitor monitor, Collection<String> scenarios ) throws KlabException {
+    private ResolutionScope(Subject contextSubject, IMonitor monitor, Collection<String> scenarios) throws KlabException {
         this.coverage = Coverage.full(contextSubject.getScale());
         this.context = contextSubject;
         this.scenarios.addAll(scenarios);
@@ -372,7 +374,7 @@ public class ResolutionScope implements IResolutionScope {
         this.occurrent = contextSubject.getScope().isOccurrent() || this.coverage.isTemporallyDistributed();
     }
 
-    private ResolutionScope(Observer observer, IMonitor monitor, Collection<String> scenarios ) throws KlabException {
+    private ResolutionScope(Observer observer, IMonitor monitor, Collection<String> scenarios) throws KlabException {
         this.coverage = Coverage.full(Scale.create(observer.getContextualization().getExtents(monitor)));
         this.scenarios.addAll(scenarios);
         this.roles.putAll(monitor.getIdentity().getParentIdentity(ISession.class).getState().getRoles());
@@ -387,23 +389,23 @@ public class ResolutionScope implements IResolutionScope {
      * 
      * @param other
      */
-    private ResolutionScope(ResolutionScope other ) {
+    private ResolutionScope(ResolutionScope other) {
         this(other, false);
     }
 
-    private ResolutionScope(ResolutionScope other, double coverage ) {
+    private ResolutionScope(ResolutionScope other, double coverage) {
         this(other);
         this.coverage = new Coverage(this.coverage);
         this.coverage.setCoverage(coverage);
     }
 
-    private ResolutionScope(IScale scale, double coverage, ResolutionScope other, boolean copyResolution ) {
+    private ResolutionScope(IScale scale, double coverage, ResolutionScope other, boolean copyResolution) {
         copy(other, copyResolution);
         this.coverage = coverage == 1 ? Coverage.full(scale) : Coverage.empty(scale);
         this.occurrent = scale.isTemporallyDistributed();
     }
 
-    private ResolutionScope(ResolutionScope other, boolean copyResolution ) {
+    private ResolutionScope(ResolutionScope other, boolean copyResolution) {
         copy(other, copyResolution);
     }
 
@@ -433,6 +435,7 @@ public class ResolutionScope implements IResolutionScope {
             this.links.addAll(other.links);
             this.resolvedObservables.putAll(other.resolvedObservables);
         }
+        this.resolutions = other.resolutions;
     }
 
     public final ResolutionScope empty() {
@@ -469,7 +472,7 @@ public class ResolutionScope implements IResolutionScope {
         ret.observable = observable;
         ret.mode = mode;
         ret.resolverCache.putAll(this.resolverCache);
-//        ret.resolve(observable.getResolvedPredicates());
+        // ret.resolve(observable.getResolvedPredicates());
         ret.resolvedPredicates.putAll(observable.getResolvedPredicates());
         /*
          * check if we already can resolve this (directly or indirectly), and if so, set coverage so
@@ -987,6 +990,7 @@ public class ResolutionScope implements IResolutionScope {
 
     /*
      * (non-Javadoc)
+     * 
      * @see java.lang.Object#hashCode()
      */
     @Override
@@ -1002,6 +1006,7 @@ public class ResolutionScope implements IResolutionScope {
 
     /*
      * (non-Javadoc)
+     * 
      * @see java.lang.Object#equals(java.lang.Object)
      */
     @Override
@@ -1483,6 +1488,20 @@ public class ResolutionScope implements IResolutionScope {
             this.resolutionNamespace = (Namespace) model.getNamespace();
         }
         return this;
+    }
+
+    /**
+     * Notify each new resolution for documentation. Only one map of these is kept per context.
+     * 
+     * @param observable
+     * @param result
+     */
+    public void notifyResolution(IObservable observable, List<IRankedModel> result, Mode mode) {
+        this.resolutions.put(new ObservedConcept(observable, mode), result);
+    }
+    
+    public Map<ObservedConcept, List<IRankedModel>> getResolutions() {
+        return this.resolutions;
     }
 
 }

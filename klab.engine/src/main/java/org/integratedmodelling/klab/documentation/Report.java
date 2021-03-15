@@ -42,15 +42,18 @@ import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider.Item;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.Documentation.SectionImpl;
 import org.integratedmodelling.klab.documentation.Documentation.TemplateImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.kim.Prototype;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.utils.Path;
 import org.springframework.util.StringUtils;
 
@@ -239,13 +242,16 @@ public class Report implements IReport {
     private String sessionId;
 
     public Report() {
-        this.docTree = new DocumentationTree();
+        this.docTree = new DocumentationTree(this);
     }
 
-    public Report(IRuntimeScope context, String sessionId) {
+    public Report(IRuntimeScope context, IResolutionScope scope, String sessionId) {
         this.context = context;
         this.sessionId = sessionId;
-        this.docTree = new DocumentationTree(context, Authentication.INSTANCE.getIdentity(sessionId, ISession.class));
+        this.docTree = new DocumentationTree(this, context, Authentication.INSTANCE.getIdentity(sessionId, ISession.class));
+        for (ObservedConcept key : ((ResolutionScope)scope).getResolutions().keySet()) {
+            this.docTree.addResolution(key, ((ResolutionScope)scope).getResolutions().get(key));
+        }
     }
 
     public String asHTML(String markdown) {

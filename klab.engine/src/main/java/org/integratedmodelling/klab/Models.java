@@ -170,7 +170,9 @@ public enum Models implements IModelService {
 
 	@Override
 	public List<IRankedModel> resolve(IObservable observable, IResolutionScope scope) throws KlabException {
-		return kbox.query(observable, (ResolutionScope) scope);
+		List<IRankedModel> ret = kbox.query(observable, (ResolutionScope) scope);
+		((ResolutionScope)scope).notifyResolution(observable, ret, scope.getMode());
+		return ret;
 	}
 
 	/*
