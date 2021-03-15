@@ -64,20 +64,6 @@ public abstract class Instance implements IInstance {
 	@Override
 	public boolean start(int build) {
 
-		if (this instanceof ModelerInstance && OS.get() == OS.MACOS) {
-			// we need to use Desktop, so no way to know if it is closed, we don't touch the
-			// status
-			try {
-            	File executable = ((ModelerInstance)this).getExecutable(build);
-				Desktop.getDesktop().open(executable);
-			} catch (Throwable e) {
-				ControlCenter.INSTANCE.errorAlert("Could not launch the Eclipse product. Please launch it manually in "
-						+ product.getLocalWorkspace());
-				return false;
-			}
-			return true;
-		}
-
 		CommandLine cmdLine = getCommandLine(build);
 
 		/*

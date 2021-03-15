@@ -908,7 +908,7 @@ public class ControlCenter extends Application {
                                     public void transferFinished() {
                                         File ini;
                                         String executablePath = modeler.getExecutable(bs.chosen).getPath();
-                                        String executableFolder = modeler.getExecutable(bs.chosen).getParent();
+                                        String executableFolder = modeler.getExecutableFolderPath(bs.chosen);
 
                                         // we need to add execution flag in linux and mac
                                         // we add thing in ini file and need to change name in mac
@@ -918,10 +918,9 @@ public class ControlCenter extends Application {
                                             ini = new File(executableFolder + "/k.Modeler.ini");
                                             new File(executableFolder + "/k.ini").renameTo(ini);
                                         } else if (OS.get() == OS.MACOS) {
-                                            File realExecutable = new File(executablePath + "/Contents/MacOS/k.Modeler");
-                                            realExecutable.setExecutable(true);
-                                            ini = new File(executablePath + "/Contents/Eclipse/k.Modeler.ini");
-                                            new File(executablePath + "/Contents/Eclipse/k.ini").renameTo(ini);
+                                        	modeler.getExecutable(bs.chosen).setExecutable(true);
+                                            ini = new File(executableFolder + "/Contents/Eclipse/k.Modeler.ini");
+                                            new File(executableFolder + "/Contents/Eclipse/k.ini").renameTo(ini);
                                         } else {
                                             ini = new File(executableFolder + "/k.Modeler.ini");
                                         }
