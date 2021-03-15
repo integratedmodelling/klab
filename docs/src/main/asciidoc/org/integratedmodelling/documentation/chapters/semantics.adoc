@@ -39,6 +39,8 @@ endif::[]
 
 <<<
 
+Different way to look at models - in fact, even the word may be used in unfamiliar ways.
+
 Brief intro on main categories recognized by the k.LAB core ontology.
 
 Preamble on subjects as context, and the need for their acknowledgement before anything is observed. They set the main inherency for the observations, used implicitly in resolution: observing elevation after setting context to a Region means observing Elevation within Region. Because elevation is defined as ... it inherits "Location", and because Region is a location, any model of Elevation succeeds without having to explicitly mention the context.
@@ -49,7 +51,9 @@ Instantiation example
 
 Classification example 
 
-Move on to more systematic examples by type.
+Move on to more systematic examples by type. Traditional modeling sees "models" as computations that use _"data"_ as input and produce data as outputs. The idea of "data" usually falls within the phenomenological realm of qualities, so we start our exploration by discussing qualities. But before we do that, it is important to realize that "data" always apply to some context, which embodies choices of spatial and temporal scale made, often, before any experiment or simulation is started. In the k.LAB ontology like in all others [refs], qualities are "dependents", i.e. they can only exist inherently to another entity. So before we observe, say, elevation in a region, we need to define the region, and with it our preferred observation parameters such as extent and resolution in both space and time. We will use this basic phenomenological property to our advantage later. 
+
+So, we have a context and we want to observe some qualities, then write in a basic dependency between two of them.
 
 === Qualities
 
@@ -91,9 +95,13 @@ thing Coast
       adjacent to (earth:Marine or earth:Lacustrine) earth:Region;
 
 // use GBIF authority for Homo sapiens species
-identity Human identified as 2436436 by GBIF.SPECIES;
+identity Human equals GBIF.SPECIES:2436436;
 deliberative agent HumanIndividual 
 	is Human biology:Individual;
+
+// or more simply, but less readable:
+deliberative agent HumanIndividual 
+	is GBIF.SPECIES:2436436 biology:Individual;
 
 ----
 
@@ -142,11 +150,11 @@ The {klab} annotation conventions are built around the fact that inherency _affe
 occurrence of agriculture:Pollinator ecology:Nesting
 ----
 
-are used in place of the seemingly correct 
+are used instead of the seemingly correct 
 
 [source,kim]
 ----
 occurrence of ecology:Nesting of agriculture:Pollinator biology:Individual
 ----
 
-The second use does not seem semantically incorrect (it is certainly acceptable _linguistically_), until you consider what inherency actually means.... It would cause the resolver to try and resolve.. In comparison, the predicate simply _subsets_ the concept of nesting to the set of events that have to do with pollinators.  
+The seems more acceptable _linguistically_), until you consider what inherency actually means.... It would cause the resolver to try and resolve.. In comparison, the predicate simply _subsets_ the concept of nesting to the set of events that have to do with pollinators.  
