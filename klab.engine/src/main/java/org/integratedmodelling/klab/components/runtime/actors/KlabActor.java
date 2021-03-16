@@ -22,6 +22,7 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.Sequence;
 import org.integratedmodelling.kactors.api.IKActorsStatement.TextBlock;
 import org.integratedmodelling.kactors.api.IKActorsStatement.While;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.api.IKActorsValue.ExpressionType;
 import org.integratedmodelling.kactors.model.KActorsActionCall;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
@@ -36,7 +37,9 @@ import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor.Actor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage.Semaphore;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AddComponentToGroup;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.BindUserAction;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Cleanup;
@@ -251,9 +254,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         public Scope withMatch(Match match, Object value, Map<String, Object> vars) {
 
             Scope ret = new Scope(this);
-            
+
             ret.symbolTable.putAll(vars);
-            
+
             /*
              * if we have identifiers either as key or in list key, match them to the values.
              * Otherwise match to $, $1, ... #n
@@ -364,6 +367,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             return ret;
         }
 
+        public Scope withComponent(ViewComponent component) {
+            Scope ret = new Scope(this);
+            ret.viewScope.currentComponent = component;
+            return ret;
+        }
+
         public Scope getChild(ConcurrentGroup code) {
             Scope ret = new Scope(this);
             if (!initializing && this.viewScope != null) {
@@ -437,6 +446,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                 .onMessage(Spawn.class, this::handleCreateChildMessage).onMessage(Fire.class, this::handleFireMessage)
                 .onMessage(ComponentFire.class, this::handleComponentFireMessage)
                 .onMessage(UserAction.class, this::handleUserActionMessage).onMessage(AppReset.class, this::handleAppReset)
+                .onMessage(AddComponentToGroup.class, this::handleAddComponentToGroupMessage)
                 .onMessage(BindUserAction.class, this::handleBindActionMessage)
                 .onMessage(KActorsMessage.class, this::handleCallMessage).onMessage(Stop.class, this::stopChild)
                 .onMessage(Cleanup.class, this::handleCleanupMessage).onSignal(PostStop.class, signal -> onPostStop());
@@ -508,6 +518,15 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
          */
         for (KlabActionExecutor executor : actionCache.values()) {
             if (executor instanceof KlabWidgetActionExecutor) {
+                ((KlabWidgetActionExecutor) executor).onMessage(mes, message.scope);
+            }
+        }
+
+        /*
+         * groups are handled separately and don't end up in the action cache
+         */
+        for (Actor executor : localActionExecutors.values()) {
+            if (executor instanceof GroupHandler) {
                 ((KlabWidgetActionExecutor) executor).onMessage(mes, message.scope);
             }
         }
@@ -787,7 +806,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             /*
              * install executor for group actions
              */
-            this.localActionExecutors.put(code.getTag(), new GroupHandler(this.identity, null, scope, this.getContext().getSelf(), null));
+            this.localActionExecutors.put(code.getTag(),
+                    new GroupHandler(this.identity, appId, groupScope, this.getContext().getSelf(), null));
         }
         for (IKActorsStatement statement : code.getStatements()) {
             execute(statement, groupScope);
@@ -900,15 +920,24 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         return evaluateInScope(arg, scope, this.identity);
     }
 
+    @SuppressWarnings("unchecked")
     public static Object evaluateInScope(KActorsValue arg, Scope scope, IActorIdentity<?> identity) {
+
+        Object ret = null;
+        
         switch(arg.getType()) {
         case ANYTHING:
         case ANYVALUE:
             break;
         case ANYTRUE:
-            return true;
+            ret = true;
+            break;
         case OBJECT:
-            return Actors.INSTANCE.createJavaObject(arg.getConstructor(), scope, identity);
+            ret = Actors.INSTANCE.createJavaObject(arg.getConstructor(), scope, identity);
+            break;
+        case COMPONENT:
+            ret = arg.getConstructor();
+            break;
         case ERROR:
             throw arg.getValue() instanceof Throwable
                     ? new KlabException((Throwable) arg.getValue())
@@ -916,11 +945,17 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                             arg.getValue() == null ? "Unspecified actor error from error value" : arg.getValue().toString());
 
         case NUMBERED_PATTERN:
+            
+            if (!"$".equals(arg.getValue().toString())) {
+                // TODO
+            } /* else fall through to IDENTIFIER */
+            
         case IDENTIFIER:
 
             // TODO check for recipient in ID
-            return scope.getValue(arg.getValue().toString());
-
+            ret = scope.getValue(arg.getValue().toString());
+            break;
+            
         case EXPRESSION:
 
             if (arg.getData() == null) {
@@ -928,12 +963,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                         new ObjectExpression((IKimExpression) arg.getValue(), scope.runtimeScope, CompilerOption.WrapParameters));
             }
             try {
-                return ((ObjectExpression) arg.getData()).eval(scope.runtimeScope, identity,
+                ret = ((ObjectExpression) arg.getData()).eval(scope.runtimeScope, identity,
                         Parameters.create(scope.getSymbols(identity)));
             } catch (Throwable t) {
                 scope.getMonitor().error(t);
                 return null;
             }
+            
+            break;
 
         case BOOLEAN:
         case CLASS:
@@ -944,7 +981,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         case OBSERVABLE:
         case QUANTITY:
         case CONSTANT:
-            return arg.getValue();
+            ret = arg.getValue();
+            break;
+            
         case OBSERVATION:
             // TODO
             break;
@@ -952,11 +991,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             // eval all args
             break;
         case LIST:
-            List<Object> ret = new ArrayList<>();
+            ret = new ArrayList<Object>();
             for (Object o : (Collection<?>) arg.getValue()) {
-                ret.add(o instanceof KActorsValue ? evaluateInScope((KActorsValue) o, scope, identity) : o);
+                ((List<Object>)ret).add(o instanceof KActorsValue ? evaluateInScope((KActorsValue) o, scope, identity) : o);
             }
-            return ret;
+            break;
         case TREE:
             // eval all args
             break;
@@ -964,7 +1003,6 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             break;
         case NODATA:
             return null;
-        // return Observables.INSTANCE.declare(arg.getValue().toString());
         case REGEXP:
             break;
         case TABLE:
@@ -972,15 +1010,25 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         case TYPE:
             break;
         case URN:
-            return new Urn(arg.getValue().toString());
-        // default:
-        // break;
+            ret = new Urn(arg.getValue().toString());
+            break;
         case EMPTY:
+            break;
+        case ANNOTATION:
             break;
         default:
             break;
         }
-        return null;
+        
+        if (arg.getExpressionType() == ExpressionType.TERNARY_OPERATOR) {
+            if (Actors.INSTANCE.asBooleanValue(ret)) {
+                ret = arg.getTrueCase() == null ? null : evaluateInScope(arg.getTrueCase(), scope, identity);
+            } else {
+                ret = arg.getFalseCase() == null ? null : evaluateInScope(arg.getFalseCase(), scope, identity);
+            }
+        }
+        
+        return ret;
     }
 
     @SuppressWarnings("unchecked")
@@ -1155,20 +1203,27 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         }
 
         if (executor instanceof KlabWidgetActionExecutor) {
+
             /*
              * the run() method in these is never called: they act through their view components
              */
             ViewComponent viewComponent = ((KlabWidgetActionExecutor) executor).getViewComponent();
-            scope.viewScope.setViewMetadata(viewComponent, executor.arguments);
-            viewComponent.setIdentity(this.identity.getId());
-            viewComponent.setApplicationId(this.appId);
-            viewComponent.setParentId(code.getCallId()); // check - seems
-                                                         // wrong
-            viewComponent.setId(executorId);
-            viewComponent.setActorPath(this.childActorPath);
-            ((KlabWidgetActionExecutor) executor).setInitializedComponent(viewComponent);
 
-            scope.viewScope.currentComponent.getComponents().add(viewComponent);
+            // may be null if the addition of the component happens as the result of an action
+            // enqueued by the component on this actor, run and notified by the message handler
+            // after the call.
+            if (viewComponent != null) {
+                scope.viewScope.setViewMetadata(viewComponent, executor.arguments);
+                viewComponent.setIdentity(this.identity.getId());
+                viewComponent.setApplicationId(this.appId);
+                viewComponent.setParentId(code.getCallId()); // check - seems
+                                                             // wrong
+                viewComponent.setId(executorId);
+                viewComponent.setActorPath(this.childActorPath);
+                ((KlabWidgetActionExecutor) executor).setInitializedComponent(viewComponent);
+                scope.viewScope.currentComponent.getComponents().add(viewComponent);
+            }
+
         } else if (executor != null) {
             executor.run(scope.withNotifyId(notifyId).withSender(getContext().getSelf(), appId));
         }
@@ -1206,6 +1261,108 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                 actions.match(message.value, MapUtils.EMPTY_MAP);
             }
         }
+        return Behaviors.same();
+    }
+
+    protected Behavior<KlabMessage> handleAddComponentToGroupMessage(AddComponentToGroup message) {
+
+        /*
+         * this is only for components, and these only happen in sessions.
+         */
+        if (!(this.identity instanceof Session)) {
+            return Behaviors.same();
+        }
+
+        Behavior<KlabMessage> child = SessionActor.create((Session) this.identity, null);
+        String actorName = message.group.getId().replaceAll("/", "_") + "_" + message.id;
+
+        // existing actors for this behavior
+        List<ActorRef<KlabMessage>> actors = this.childInstances.get(appId);
+
+        // TODO detach so that the components can be written to this without consequence
+        Scope scope = message.scope.withComponent(message.group);
+
+        ActorRef<KlabMessage> actor = getContext()
+                .spawn(Behaviors.supervise(child).onFailure(SupervisorStrategy.resume().withLoggingEnabled(true)), actorName);
+
+        // remove the appId for the children, otherwise their messages will be rerouted
+        Map<String, Object> arguments = new HashMap<>();
+        if (message.arguments != null) {
+            /*
+             * TODO match the arguments to the correspondent names for the declaration of main()
+             */
+            IBehavior childBehavior = Actors.INSTANCE.getBehavior(message.componentPath);
+            if (childBehavior == null) {
+                this.getIdentity().getMonitor()
+                        .error("unreferenced child behavior: " + message.componentPath + " when execute instantiation");
+                return Behaviors.same();
+            }
+            Action main = childBehavior.getAction("main");
+            int n = 0;
+            for (int i = 0; i < main.getStatement().getArgumentNames().size(); i++) {
+                String arg = main.getStatement().getArgumentNames().get(i);
+                Object value = message.arguments.get(arg);
+                if (value == null && message.arguments.getUnnamedKeys().size() > n) {
+                    value = message.arguments.get(message.arguments.getUnnamedKeys().get(n++));
+                    if (value instanceof KActorsValue) {
+                        value = evaluateInScope((KActorsValue) value, scope);
+                    }
+                }
+                arguments.put(arg, value);
+            }
+        }
+
+        IBehavior actorBehavior = Actors.INSTANCE.getBehavior(message.componentPath);
+        if (actorBehavior != null) {
+
+            /*
+             * AppID in message is null because this is run by the newly spawned actor; we
+             * communicate the overall appID through the specific field below.
+             */
+            Load loadMessage = new Load(this.identity, message.componentPath, null, scope)
+                    .withChildActorPath(this.childActorPath == null ? actorName : (this.childActorPath + "." + actorName))
+                    .withActorBaseName(actorName).withMainArguments(arguments).withApplicationId(this.appId)
+                    .withParent(getContext().getSelf());
+
+            Semaphore semaphore = null;
+            if (actorBehavior.getDestination() == Type.COMPONENT) {
+                /*
+                 * synchronize by default
+                 */
+                semaphore = Actors.INSTANCE.createSemaphore(Semaphore.Type.LOAD);
+                loadMessage.withSemaphore(semaphore);
+                componentActors.add(actor);
+            }
+
+            actor.tell(loadMessage);
+
+            if (semaphore != null) {
+                
+                waitForGreen(semaphore);
+
+                /*
+                 * TODO send the view message to the view with the group definition from the view
+                 * scope
+                 */
+                ViewAction action = new ViewAction(scope.viewScope.currentComponent);
+                action.setApplicationId(appId);
+                action.setData(ViewBehavior.getMetadata(message.arguments, scope));
+//                action.setComponentTag(this.getName());
+//                session.getState().updateView(this.component);
+                identity.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.ViewAction, action);
+
+            }
+
+            receivers.put(actorName, actor);
+
+            if (actors == null) {
+                actors = new ArrayList<>();
+                this.childInstances.put(actorName, actors);
+            }
+
+            actors.add(actor);
+        }
+
         return Behaviors.same();
     }
 
@@ -1330,7 +1487,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                     KlabActor.this.identity.setLayout(message.scope.viewScope.layout);
                     KlabActor.this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
                             message.scope.viewScope.layout);
-                }
+                } /*
+                   * TODO else if we have been spawned by a new component inside a group, we should
+                   * send the group update message
+                   */
                 /*
                  * move on, you waiters
                  */

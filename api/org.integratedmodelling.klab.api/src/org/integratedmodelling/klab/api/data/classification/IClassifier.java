@@ -96,6 +96,12 @@ public interface IClassifier {
 	 * @return
 	 */
 	public boolean isConcept();
+	
+	/**
+	 * True if this classifies presence/absence
+	 * @return
+	 */
+	public boolean isBoolean();
 
 	/**
 	 * If isConcept(), getConcept.

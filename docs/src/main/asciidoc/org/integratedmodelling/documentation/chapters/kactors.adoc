@@ -42,13 +42,13 @@ endif::[]
 
 The k.Actors language, one of the three languages supported in k.LAB, is used to specify reactive _behaviors_ for the different agents created during a k.LAB session, including observations of all kinds. By extending the notion of _agent_ to k.LAB users and sessions, k.Actors also enables the definition of _applications_ that implement custom user interfaces and support specialized workflows on top of the <<chapter-explorer,k.Explorer>> view component. Applications can also encode complex batch computations and test cases, intended as behaviors for the k.LAB runtime.
 
-The k.Actors language has a very simple, minimal syntax that belies a complex and powerful model of execution. Both k.IM and k.Actors draw their syntax from the English language; if the k.IM language is concerned with representing what observations _are_, k.Actors is concerned with representing how they _behave_. For this reason, the linguistic realm of k.IM is that of nouns, adjectives and adverbs, while k.Actors deals mostly with _verbs_. Each behavior file is introduced by a _preamble_ and consists of a sequence of _action declarations_; each action, in turn, consists of a series of (zero or more) _statements_ that ends when another action is defined or when the file ends. Whitespace is not significant in k.Actors, so short behaviors may be specified as single-line actions, while longer ones may be indented for readability. The most intuitive way to understand k.Actors is probably through an annotated example.
+The k.Actors language has a very simple, minimal syntax that belies a complex and powerful model of execution. Both k.IM and k.Actors draw their syntax from the English language; if the k.IM language is concerned with representing what observations _are_ and how they are computed, k.Actors is concerned with representing how they _behave_. For this reason, the linguistic realm of k.IM is that of nouns, adjectives and adverbs, while k.Actors deals mostly with _verbs_. Each behavior file is introduced by a _preamble_ that identifies and describes the behavior, followed by a sequence of _action declarations_; each action declaration, in turn, consists of a series of (zero or more) _statements_ which ends when another action is defined, or when the file ends. Whitespace is not significant in k.Actors, so short behaviors may be specified as single-line actions, while longer ones should be indented for readability. The most intuitive way to understand the main principles of k.Actors is probably through an annotated example.
 
 ## An annotated example
 
 A k.Actors behavior should read easily and may look like the following:
 
-[source, kactors]
+[source,kactors]
 ----
 behavior restaurant
     "Invite a friend to dinner and if accepted, choose a restaurant in the context"
@@ -98,7 +98,7 @@ is a more cumbersome, but equivalent version of the above that may be more reada
 
 Groups may be defined within other groups or sequences by wrapping specific sets of statements in parentheses. EXPAND and show when useful. Also: WHO is the actor that runs the behavior? This must be _bound_ to some agents in order to be activated. A k.LAB session is full of agents - in fact it _is_ an agent itself.
 
-This concurrent model of execution is typical of agent programming but may be unfamiliar, and it is important to understand it well before using k.Actors.
+This concurrent model of execution is typical of agent programming but may be unfamiliar to anyone used to conventional procedural languages, and it is important to understand it well before using k.Actors.
 
 The k.Actors syntax also contains control flow statements (for, while, if, do) and, most importantly, a matching mechanism to react to the events caused by an action after it is called. We start with the most important statement, the _action call_ or _verb_.
 

@@ -186,7 +186,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
         this.catalog = new HashMap<>();
         this.behaviorBindings = new IntelligentMap<>();
-        this.report = new Report(this, monitor.getIdentity().getParentIdentity(ISession.class).getId());
+        this.report = new Report(this, scope, monitor.getIdentity().getParentIdentity(ISession.class).getId());
         this.observations = new HashMap<>();
         this.network = new DefaultDirectedGraph<>(IRelationship.class);
         this.structure = new Structure();
@@ -1309,6 +1309,10 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                     session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
                             IMessage.Type.NewObservation, descriptor));
 
+                    
+                    session.getState().notifyObservation(observation);
+                    
+                    
                     report.include(descriptor);
 
                     notifiedObservations.add(observation.getId());

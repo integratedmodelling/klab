@@ -11,6 +11,7 @@ import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsConcurrentGroup;
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kactors.model.KActorsValue.Constructor;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActionExecutor.Component;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AddComponentToGroup;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.KActorsMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -125,7 +127,7 @@ public class ViewBehavior {
          * Called when a k.Actors action is called with a component as receiver.
          */
         @Override
-        public final void onMessage(KlabMessage message, Scope scope) {
+        public void onMessage(KlabMessage message, Scope scope) {
 
             if (message instanceof KActorsMessage) {
 
@@ -224,7 +226,7 @@ public class ViewBehavior {
             this.initializedComponent = copyComponent(viewComponent);
         }
 
-        private ViewComponent copyComponent(ViewComponent viewComponent) {
+        protected ViewComponent copyComponent(ViewComponent viewComponent) {
             try {
                 return JsonUtils.cloneObject(viewComponent);
             } catch (Throwable e) {
@@ -555,42 +557,64 @@ public class ViewBehavior {
      */
     public static class GroupHandler extends KlabWidgetActionExecutor {
 
-        KActorsConcurrentGroup group;
+        private String appId;
+        // add to this
+        private ViewComponent group;
+        // keep this for resetting
+        private ViewComponent originalGroup;
 
-        public GroupHandler(IActorIdentity<KlabMessage> identity, KActorsConcurrentGroup group, KlabActor.Scope scope,
+        public GroupHandler(IActorIdentity<KlabMessage> identity, String appId, KlabActor.Scope scope,
                 ActorRef<KlabMessage> sender, String callId) {
             super(identity, null, scope, sender, callId);
-            this.group = group;
+            this.appId = appId;
+            this.group = copyComponent(scope.viewScope.currentComponent);
+            this.originalGroup = copyComponent(this.group);
         }
 
         @Override
         protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
-            if ("add".equals(message.message)) {
-                System.out.println("ADDING " + message);
-                // this.component.getAttributes().put("selected",
-                // getDefaultAsString(message.arguments, this, scope));
+
+            if ("add".equals(message.message) && message.arguments.getUnnamedArguments().size() > 0) {
+                Object arg = KlabActor.evaluate(message.arguments.getUnnamedArguments().get(0), scope);
+                if (arg instanceof Constructor) {
+                    this.sender.tell(new AddComponentToGroup(group, ((Constructor) arg).getComponent(),
+                            ((Constructor) arg).getArguments(), scope));
+                }
             } else if ("remove".equals(message.message)) {
-                // this.component.getAttributes().put("selected",
-                // getDefaultAsString(message.arguments, this, scope));
+                // TODO - requires tagging of component and similar support at actor's side
             }
 
-            /*
-             * TODO create the group after rendering the components, substitute the ID to the group's.
-             */
+            // return null to ignore the results and exit to the message queue, where the add
+            // component message is waiting
+            return null;
+        }
+
+        @Override
+        public void onMessage(KlabMessage message, Scope scope) {
             
-            return this.component;
+            if (message instanceof KActorsMessage && "reset".equals(((KActorsMessage)message).message)) {
+                KActorsMessage mess = (KActorsMessage) message;
+                this.group = copyComponent(this.originalGroup);
+                ViewAction action = new ViewAction(this.originalGroup);
+                action.setApplicationId(mess.appId);
+                action.setData(getMetadata(mess.arguments, scope));
+                action.setComponentTag(this.getName());
+                session.getState().updateView(this.originalGroup);
+                session.getMonitor().send(IMessage.MessageClass.ViewActor, IMessage.Type.ViewAction, action);
+            } else {
+                super.onMessage(message, scope);
+            }
         }
 
         @Override
         protected Object onViewAction(ViewAction action, Scope scope) {
-            // TODO add, remove widget/component
-            System.out.println("DIO ZEBEDEO " + action);
+            // won't happen, groups don't do things
             return true;
         }
 
         @Override
         protected ViewComponent createViewComponent(Scope scope) {
-            // TODO Auto-generated method stub
+            // won't be called, bypassed by actors
             return null;
         }
 

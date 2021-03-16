@@ -1566,8 +1566,9 @@ public class ObservableBuilder implements IObservable.Builder {
 				}
 
 				if (Traits.INSTANCE.getTraits(main).contains(t)) {
-					monitor.error("concept " + Concepts.INSTANCE.getDisplayName(main) + " already adopts trait "
-							+ Concepts.INSTANCE.getDisplayName(t), declaration);
+				    continue;
+//					monitor.error("concept " + Concepts.INSTANCE.getDisplayName(main) + " already adopts trait "
+//							+ Concepts.INSTANCE.getDisplayName(t), declaration);
 				}
 
 				if (t.is(Type.IDENTITY)) {

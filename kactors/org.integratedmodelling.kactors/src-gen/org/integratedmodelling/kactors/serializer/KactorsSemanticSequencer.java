@@ -257,10 +257,6 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 					sequence_ValueWithMetadata(context, (Value) semanticObject); 
 					return; 
 				}
-				else if (rule == grammarAccess.getValueWithoutTreeRule()) {
-					sequence_ValueWithoutTree(context, (Value) semanticObject); 
-					return; 
-				}
 				else if (rule == grammarAccess.getValueRule()) {
 					sequence_Value(context, (Value) semanticObject); 
 					return; 
@@ -294,7 +290,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     ActorInstantiation returns ActorInstantiation
 	 *
 	 * Constraint:
-	 *     (behavior=PathName parameters=ParameterList? actions=Actions?)
+	 *     (behavior=PathName parameters=ParameterList? actions=Actions? metadata=Metadata?)
 	 */
 	protected void sequence_ActorInstantiation(ISerializationContext context, ActorInstantiation semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -408,11 +404,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)?
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -439,11 +435,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)?
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
@@ -1168,21 +1164,24 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *
 	 * Constraint:
 	 *     (
-	 *         constructor=Constructor | 
-	 *         tree=Tree | 
-	 *         empty?='empty' | 
-	 *         argvalue=ARGVALUE | 
-	 *         literal=Literal | 
-	 *         urn=UrnId | 
-	 *         id=PathName | 
-	 *         list=List | 
-	 *         map=Map | 
-	 *         constant=UPPERCASE_ID | 
-	 *         observable=Observable | 
-	 *         expression=EXPR | 
-	 *         table=LookupTable | 
-	 *         quantity=Quantity | 
-	 *         (component?='new' behavior=PathName parameters=ParameterList?)
+	 *         (
+	 *             constructor=Constructor | 
+	 *             tree=Tree | 
+	 *             empty?='empty' | 
+	 *             argvalue=ARGVALUE | 
+	 *             literal=Literal | 
+	 *             urn=UrnId | 
+	 *             id=PathName | 
+	 *             list=List | 
+	 *             map=Map | 
+	 *             constant=UPPERCASE_ID | 
+	 *             observable=Observable | 
+	 *             expression=EXPR | 
+	 *             table=LookupTable | 
+	 *             quantity=Quantity | 
+	 *             (component?='new' behavior=PathName parameters=ParameterList?)
+	 *         ) 
+	 *         (then=ValueWithConstructor else=ValueWithConstructor)?
 	 *     )
 	 */
 	protected void sequence_ValueWithConstructor(ISerializationContext context, Value semanticObject) {
@@ -1246,46 +1245,26 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	
 	/**
 	 * Contexts:
-	 *     ValueWithoutTree returns Value
-	 *
-	 * Constraint:
-	 *     (
-	 *         argvalue=ARGVALUE | 
-	 *         literal=Literal | 
-	 *         id=PathName | 
-	 *         urn=UrnId | 
-	 *         list=List | 
-	 *         map=Map | 
-	 *         observable=Observable | 
-	 *         expression=EXPR | 
-	 *         table=LookupTable | 
-	 *         quantity=Quantity
-	 *     )
-	 */
-	protected void sequence_ValueWithoutTree(ISerializationContext context, Value semanticObject) {
-		genericSequencer.createSequence(context, semanticObject);
-	}
-	
-	
-	/**
-	 * Contexts:
 	 *     Value returns Value
 	 *
 	 * Constraint:
 	 *     (
-	 *         tree=Tree | 
-	 *         empty?='empty' | 
-	 *         argvalue=ARGVALUE | 
-	 *         urn=UrnId | 
-	 *         literal=Literal | 
-	 *         id=PathName | 
-	 *         list=List | 
-	 *         map=Map | 
-	 *         constant=UPPERCASE_ID | 
-	 *         observable=Observable | 
-	 *         expression=EXPR | 
-	 *         table=LookupTable | 
-	 *         quantity=Quantity
+	 *         (
+	 *             tree=Tree | 
+	 *             empty?='empty' | 
+	 *             argvalue=ARGVALUE | 
+	 *             urn=UrnId | 
+	 *             literal=Literal | 
+	 *             id=PathName | 
+	 *             list=List | 
+	 *             map=Map | 
+	 *             constant=UPPERCASE_ID | 
+	 *             observable=Observable | 
+	 *             expression=EXPR | 
+	 *             table=LookupTable | 
+	 *             quantity=Quantity
+	 *         ) 
+	 *         (then=Value else=Value)?
 	 *     )
 	 */
 	protected void sequence_Value(ISerializationContext context, Value semanticObject) {
