@@ -190,6 +190,11 @@ public class ReportSection extends Parameters<String> implements Section {
 
         IStructuredTable<?> table = getTable(args[0].toString());
         if (table != null) {
+            
+            // add to section in doc tree (this will split the section at the current place,
+            // then resume if more text arrives
+            report.docTree.addTable(this, table);
+            
             report.setReferenceType(args[1].toString(), RefType.TABLE);
             body.append("\n\n");
             if (!table.getColumnHeaders().get(0).startsWith("$")) {
@@ -251,6 +256,9 @@ public class ReportSection extends Parameters<String> implements Section {
             Reference reference = ((Documentation) documentation).getReference(args[0].toString());
             if (reference != null) {
                 report.referencesCited.put(args[0].toString(), new ReportSection(this.report, reference, args[0].toString()));
+                // add to section in doc tree (this will split the section at the current place,
+                // then resume if more text arrives
+                report.docTree.addCitation(this, reference);
             }
         }
         body.append((args.length > 1 ? args[1] : "") + "[@" + Report.RefType.REF.name().toLowerCase() + ":" + args[0] + "]");
@@ -286,6 +294,11 @@ public class ReportSection extends Parameters<String> implements Section {
                 if (args.length > 1) {
                     report.setReferenceType(args[1].toString(), RefType.FIG);
                 }
+
+                // add to section in doc tree (this will split the section at the current place,
+                // then resume if more text arrives
+                report.docTree.addFigure(this, ref);
+                
                 // this solution work if k.EXPLORER is the hosting one
                 // and doesn't work if it run in 'no engine' URL (as in front end development)
                 body.append("\n\n![" + ref.getLabel() + "](/modeler/engine/session/view/displaydata/" + report.getSessionId()

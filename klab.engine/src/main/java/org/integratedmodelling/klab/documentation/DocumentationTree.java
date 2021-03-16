@@ -8,6 +8,7 @@ import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
@@ -57,8 +58,6 @@ public class DocumentationTree {
 
         } else if (o instanceof ReportSection) {
 
-            System.out.println("ZODB");
-
         } else if (o instanceof IObservationReference) {
 
         } else if (o instanceof IKimTable) {
@@ -71,11 +70,43 @@ public class DocumentationTree {
     }
 
     /**
-     * Add a child object (can only be sections, which may contain figures)
+     * Add a child section
      */
     public void add(ReportSection section, ReportSection parent) {
         // TODO insert in tree; if figure 
-        System.out.println("ZUMB");
+        System.out.println("SUBSECTION " + section);
+    }
+
+    /**
+     * Child figure (will split paragraphs)
+     * @param reportSection
+     * @param ref
+     */
+    public void addFigure(ReportSection reportSection, IObservationReference ref) {
+        // TODO Auto-generated method stub
+        System.out.println("FIGURE " + ref);
+    }
+
+    /**
+     * Child table (split paragraph)
+     * 
+     * @param reportSection
+     * @param table
+     */
+    public void addTable(ReportSection reportSection, IStructuredTable<?> table) {
+        // TODO Auto-generated method stub
+        System.out.println("TABLE " + table);
+    }
+
+    /**
+     * Child citation
+     * @param reportSection
+     * @param reference
+     */
+    public void addCitation(ReportSection reportSection, Reference reference) {
+        // TODO Auto-generated method stub
+        System.out.println("CITATION " + reference);
+
     }
 
 }
