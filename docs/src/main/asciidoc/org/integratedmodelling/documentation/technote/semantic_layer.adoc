@@ -29,7 +29,8 @@ v1.0, 2021-02-27
 :mdash: &#8212;
 :language: asciidoc
 :source-highlighter: highlightjs
-:highlightjs-languages: groovy, java
+:highlightjs-languages: kim, java
+:highlightjs-theme: klab
 ifdef::backend-pdf[]
 :title-logo-image: image:resources_handling/imgs/KLAB_LOGO.png[align=center]
 endif::[]
@@ -51,7 +52,7 @@ To create concepts the https://en.wikipedia.org/wiki/QName[_qualified names_] no
 
 Basically a concept is expressed as _namespace:identifier_:
 
-[source]
+[source, kim]
 ----
 // XTEXT
 Model:
@@ -81,7 +82,7 @@ Possible statements are:
 * DefineStatement: used to define variables inside of namespaces. If properly declared, they can also be imported into other namespaces. Defines are usually not used when modelling, since in that case a modeler wants to declare semantically also constants, so they would be defined as models. One example of the use of define is the creation of tables, where the table is defined through a data structure similar to a json:
 +
 --
-[source,java,linenums]
+[source,kim,linenums]
 ----
 define table elevation_lc_class_totals as {
 	title: "Area covered by each landcover type and elevation range (km²)"
@@ -98,10 +99,10 @@ define table elevation_lc_class_totals as {
 };
 ----
 --
-* ObserveStatement: this is used as a fallback for cases in which the context supplied by the graphical user interface ({kex}) is not available. One example fo r this situation is the execution of a unit test. In that case, having no user interface, the context needs to be defined using the **observe** keyword:
+* ObserveStatement: this is used as a fallback for cases in which the context supplied by the graphical user interface ({kex}) is not available. One example for this situation is the execution of a unit test. In that case, having no user interface, the context needs to be defined using the **observe** keyword:
 +
 --
-[source,java,linenums]
+[source,kim,linenums]
 ----
 observe earth:Region named etnasnap
 	over space(shape = "EPSG:4326 POLYGON (( 14.8336 37.8513, 14.8336 37.6126, 15.1375 37.6126, 15.1375 37.8513, 14.8336 37.8513 ))" 
@@ -111,13 +112,39 @@ observe earth:Region named etnasnap
 ----
 --
 
-NOTE: A description of the syntax for each statement can be found in the comments in Kim.xtext in each ***Body** section. For example _ConceptStatementBody_ for the _ConceptStatement_.
+NOTE: A description of the syntax for each statement type can be found in the comments in Kim.xtext in each ***Body** section. For example _ConceptStatementBody_ for the _ConceptStatement_.
 
 ## {kim} syntax
 
 As noted before, the most important types of knowledge that can be specified in {kim} are concepts and models.
 
 Concepts are the building block of the world view and being core types, they are well defined, unique and immutable. For this reasons there is no need for a **concept** keyword. In the case of concepts the keyword of the core type is used directly such as **process, agent or temperature**.
+
+[NOTE]
+====
+Core concepts are linked to the ontology through the **equals core** words that can be used only in the root namespace.
+
+For example temperature is defined as:
+
+[source,kim,linenums]
+----
+abstract temperature Temperature 
+	equals core observation:Temperature;
+----
+
+After that any reference to **temperature** makes it automatically inheritor of **im:Temperature**, which again represents **observation:Temperature**.
+
+For example the atmospheric temperature is defined as:
+
+[source,kim,linenums]
+----
+temperature AtmosphericTemperature
+	""
+	is AtmosphericBottomLayer im:Temperature  within Location;
+----
+
+Actually this case also shows that the use of **im:Temperature** is still necessary when you need to contextualise something. In this case the derivation using **is - within** forces one to mention an existing concept. 
+====
 
 A model definition is instead introduced most of the types by the **model** keyword. Some exceptions exist, such as non-semantic models, that are introduced by the data type (**number, boolean or text**), or learning models, introduced by **learn**.
 
@@ -127,21 +154,217 @@ To modify or connect concepts as well as support the definition of models, other
 
 
 
-## Syntax management in the {kmod}
+## How does the syntax validator for {kim} work?
 
 When opening namespaces in the {kmod}, one big help is represented by the syntax coloring, which allows users to get a first grip around the various types referenced in concepts and models by thir color. 
 
-The modeler itself is not able to do machine reasoning, and even if it was, machine reasoning to validate syntax would be too slow for a realtime function as syntax coloring. there fore there are two levels at which validation occurrs:
+The modeler itself is not able to do machine reasoning, and even if it was, machine reasoning to validate syntax would be too slow for a realtime function as syntax coloring. Therefore there are two levels at which validation occurrs:
 
 * the ontologic validation done in the modeler, which occurrs in realtime while the user writes code
-* the semantic validation that the modeler delegates to the engine and occurrs when the model is executed
+* the semantic validation that the modeler delegates to the engine and occurrs when the model is executed. This is done by the internal reasoner.
+
+To make things more clear, this is the error reported by the modeler when using a non existing concept (or writing an existing one wrong). In this concept:
+
+[source,kim,linenums]
+----
+@colormap(values = {0: white, 90: black})
+angle Slope
+	"Inclination of the above-water terrain in a geographical region."
+	is im:Angle of earth:Location;
+----
+
+when changing angle to angel the following appears at once:
+
+image::semantic_layer_imgs/01_kim_syntax_error.png[scaledwidth=70%, width=70%, align="center"]
+
+While the error messager in this case doesn't address exactly the issue, it allows the modeler to identify easily the problem.
+
+The syntax validator is also able to check for inconsistent type. If we try, in the exampe above, to define the angle Slope as a proportion of an angle:
+
+image::semantic_layer_imgs/02_kim_syntax_error.png[scaledwidth=70%, width=70%, align="center"]
+
+or a length:
+
+image::semantic_layer_imgs/03_kim_syntax_error.png[scaledwidth=70%, width=70%, align="center"]
+
+
+
+
+As already stated, the grammar that links to the base ontology is defined in the Kim.xtext file. Using that allows to express ontology concepts that are complex and long to describe, using a natural language. The xtext compiler generates a set of java classes that can then be used for validation. The generated classes contain beans that represent the various concepts of the grammar.
+
+For example the concept statement contains:
+
+[source,kim,linenums]
+----
+ConceptStatement:
+	annotations += Annotation*
+	((abstract?='abstract')? &
+	(deniable?='deniable')? &
+	(subjective?='subjective')? &
+	(agentSpecifier=('deliberative' | 'interactive' | 'reactive') |
+		(propertySpecifiers+=PROPERTY_TYPE (propertySpecifiers+=PROPERTY_TYPE)*) |
+		attributeSpecifier='rescaling')?)
+	concept=CONCEPT_TYPE body=ConceptStatementBody
+	('named' name=NamespaceId)?;
+----
+
+and the generated class _ConceptStatement**Impl**_footnote:[org.integratedmodelling.kim.kim.impl.ConceptStatementImpl] contains beyond other things:
+
+[source,java,linenums]
+----
+  @Override
+  public EList<Annotation> getAnnotations()
+  {
+    if (annotations == null)
+    {
+      annotations = new EObjectContainmentEList<Annotation>(Annotation.class, this, KimPackage.CONCEPT_STATEMENT__ANNOTATIONS);
+    }
+    return annotations;
+  }
+
+  @Override
+  public boolean isAbstract()
+  {
+    return abstract_;
+  }
+----
+
+The syntactic model is then wrapped into various classes with the same name as the original and prefixed with **Kim** (ex. KimConceptStatementsfootnote:[org.integratedmodelling.kim.model.KimConceptStatement]). These classes hide the machine generated grammar classes behind a simple API while making use of them in the model.
+
+For example they contain the definitions of all fundamental concept types for rapid classification. The IKimConceptfootnote:[org.integratedmodelling.kim.api.IKimConcept] contains all types in a nested enumeration class Type:
+
+[source,java,linenums]
+----
+    enum Type {
+        OBSERVABLE,
+        PREDICATE,
+        QUALITY,
+        PROCESS,
+        SUBJECT,
+        EVENT,
+		...
+        SUBJECTIVE,
+        INTERNAL,
+        ROLE,
+        DENIABLE,
+        CONFIGURATION,
+        ABSTRACT,
+		...
+        LENGTH,
+        MASS,
+        VOLUME,
+        WEIGHT,
+        MONEY,
+        DURATION,
+        AREA,
+		...
+	}
+----
+
+
+They are used by the modeler to do fast syntax validation, but also passed on to the engine reasoner, where they are wrapped in different classes (ex. IConcept) to be then used in the reasoner.
+
+It is possible to check the types and identifiers also from the {keng} console. For example, running the command **reason info im:Temperature** will output:
+
+[source,java,linenums]
+----
+ OWL identifier: observation:Temperature (may not be unique)
+ k.IM definition: observation:Temperature
+ Core observable: observation:Temperature
+ Syntactic types: [OBSERVABLE, QUALITY, INTENSIVE_PROPERTY, ABSTRACT, TEMPERATURE, QUANTIFIABLE]
+
+        Context type: NONE [direct: NONE; in resolution: NONE]
+       Inherent type: NONE [direct: NONE]
+        Causant type: NONE [direct: NONE]
+         Caused type: NONE [direct: NONE]
+           Goal type: NONE [direct: NONE]
+       Adjacent type: NONE [direct: NONE]
+     Compresent type: NONE [direct: NONE]
+   Co-occurrent type: NONE [direct: NONE]
+
+ Metadata:
+   observation:isAbstract: true
+   observation:isCoreKimType: true
+   klab:localAlias: im:Temperature
+   observation:unit: K
+   im:is-rescaled: false
+
+ Default unit: K
+
+ Observation type: QUANTIFICATION
+ Generic: false
+----
+
+and running **reason info earth:AtmosphericTemperature** will output:
+
+[source,java,linenums]
+----
+OWL identifier: earth:AtmosphericTemperature (may not be unique)
+k.IM definition: earth:AtmosphericTemperature
+Core observable: earth:AtmosphericTemperature
+Syntactic types: [OBSERVABLE, QUALITY, INTENSIVE_PROPERTY, TEMPERATURE, QUANTIFIABLE]
+
+        Context type: earth:Location [direct: NONE; in resolution: earth:Location]
+       Inherent type: NONE [direct: NONE]
+        Causant type: NONE [direct: NONE]
+         Caused type: NONE [direct: NONE]
+           Goal type: NONE [direct: NONE]
+       Adjacent type: NONE [direct: NONE]
+     Compresent type: NONE [direct: NONE]
+   Co-occurrent type: NONE [direct: NONE]
+
+Traits:
+    earth:AtmosphericBottomLayer [indirect] [PREDICATE, TRAIT, REALM]
+
+Metadata:
+   klab:conceptDefinition: earth:AtmosphericTemperature
+   observation:baseDeclaration: true
+   im:is-rescaled: false
+
+Default unit: K
+
+Observation type: QUANTIFICATION
+Generic: false
+----
+
+In both the above the _syntactic type_ lists the fundamental types that describe the concept.
+
+
+The same IKimConcept class defines subgroups (EnumSet) of Types to be able to intersect quickly concepts and obtain a classification. One example is the check for trait type, for which the TRAIT_TYPES enumset can be used.
+
+[source,java,linenums]
+----
+public static final EnumSet<Type> TRAIT_TYPES = EnumSet.of(Type.ATTRIBUTE, Type.REALM, Type.IDENTITY);
+----
+
+**But how is validation really done?**
+
+As seen in the previous section the xtext compiler compiles the beans for the grammar, but it also supplies a template for a syntax validator (in this case KimValidatorfootnote:[org.integratedmodelling.kim.validation.KimValidator]) that can be filled with domain knowledge validation using the xtend language (which clearly has been done by the {kl} authors).
+
+So when for example a namespace is parsed, the check method from the generated java class is called:
+
+[source,java,linenums]
+----
+	@Check
+	def checkNamespace(Namespace namespace) {
+
+		var ns = Kim.INSTANCE.getNamespace(namespace)
+		var i = 0
+	...
+	}
+----
+
+NOTE: The whole grammar part is contained in the kim plugin and is used both in the modeler and in the engine. Note that the objects used (ex. Namespace in the above example) are the generated grammar beans and not some wrapper classes.
+
+While the fast syntax check is not enough to be used solely in the reasoner, it helps to speed up things, since it can be used to do an initial validationa and check that the reasoner would slover in.
+
 
 
 
 
 ## Syntactic and semantic level in {kim} expressions
 
-Two types of namespace exist in {kim}. They are logically separated, even if they can redside in the same namespace: concepts and models. 
+Two types of namespace exist in {kim}. They are logically separated, even if they can reside in the same namespace: concepts and models. 
 
 It is good manner to keep these separated, but it is possible to use them in the same project and namespace, for example for testing purposes.
 
@@ -152,7 +375,7 @@ In fact:
 
 Concepts that use concepts from other namespaces, as for example in this case the reference to the _chemistry_ namespace
 
-[source,java,linenums]
+[source,kim,linenums]
 ----
 abstract identity Nutrient 
 	"Any chemical element or compound that is necessary to the ontogenesis of an
@@ -162,7 +385,7 @@ abstract identity Nutrient
 
 need to be declared in the namespace definition through the **using** keyworld:
 
-[source,java,linenums]
+[source,kim,linenums]
 ----
 namespace biology
 	"Fundamental biological concepts and relationships."
@@ -171,7 +394,7 @@ namespace biology
 ;
 ----
 
-A workspace, which is an aggregation of projects, is loaded as a whole, preprocessing and loading the contained namespaces in order of dependencies. For this reason declaring dependencies is normally necessary. But given that
+A workspace, which is an aggregation of projects, is loaded as a whole, preprocessing and loading the contained namespaces in order of dependencies. For this reason declaring dependencies is usually necessary. But given that
 
 * the worldview is a particular workspace that is loaded before the others and assures to contain only concepts
 * models can't have dependencies from each other by design
@@ -187,7 +410,7 @@ An exeption to the above would be the case in which a modeler defines a new conc
 #TODO#
 
 Look at API class that contains all the possible API calls.
-
+ 
 
 
 ## Authorities
@@ -214,5 +437,5 @@ Notes:
 ## Footnotes
 
 
-Minute 3.55
+Minute 31.10
 
