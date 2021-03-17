@@ -9,13 +9,12 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
-import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
-import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.rest.GraphReference;
 
 /**
  * The structured version of the report, to substitute the simpler report based on a document view.
@@ -28,10 +27,16 @@ import org.integratedmodelling.klab.utils.Path;
  */
 public class DocumentationTree {
 
-    Map<String, DocumentationItem> items = new HashMap<>();
+    Map<String, org.integratedmodelling.klab.rest.DocumentationItem> items = new HashMap<>();
+    
     ISession session;
     IRuntimeScope context;
     Report report;
+    
+    
+    public enum View {
+        Report, Figures, Tables, Resources, Models
+    }
 
     public DocumentationTree(Report report) {
         //
@@ -41,6 +46,10 @@ public class DocumentationTree {
         // TODO Auto-generated constructor stub
     }
 
+    public GraphReference<org.integratedmodelling.klab.rest.DocumentationItem> getView(View view) {
+        return null;
+    }
+    
     public void addResolution(ObservedConcept observable, List<IRankedModel> resolved) {
 
     }
