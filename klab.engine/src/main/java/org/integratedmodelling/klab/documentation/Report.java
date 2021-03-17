@@ -1,24 +1,23 @@
 /*******************************************************************************
  * Copyright (C) 2007, 2015:
  * 
- * - Ferdinando Villa <ferdinando.villa@bc3research.org> - integratedmodelling.org - any
- * other authors listed in @author annotations
+ * - Ferdinando Villa <ferdinando.villa@bc3research.org> - integratedmodelling.org - any other
+ * authors listed in @author annotations
  *
- * All rights reserved. This file is part of the k.LAB software suite, meant to enable
- * modular, collaborative, integrated development of interoperable data and model
- * components. For details, see http://integratedmodelling.org.
+ * All rights reserved. This file is part of the k.LAB software suite, meant to enable modular,
+ * collaborative, integrated development of interoperable data and model components. For details,
+ * see http://integratedmodelling.org.
  * 
- * This program is free software; you can redistribute it and/or modify it under the terms
- * of the Affero General Public License Version 3 or any later version.
+ * This program is free software; you can redistribute it and/or modify it under the terms of the
+ * Affero General Public License Version 3 or any later version.
  *
- * This program is distributed in the hope that it will be useful, but without any
- * warranty; without even the implied warranty of merchantability or fitness for a
- * particular purpose. See the Affero General Public License for more details.
+ * This program is distributed in the hope that it will be useful, but without any warranty; without
+ * even the implied warranty of merchantability or fitness for a particular purpose. See the Affero
+ * General Public License for more details.
  * 
- * You should have received a copy of the Affero General Public License along with this
- * program; if not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite
- * 330, Boston, MA 02111-1307, USA. The license is also available at:
- * https://www.gnu.org/licenses/agpl.html
+ * You should have received a copy of the Affero General Public License along with this program; if
+ * not, write to the Free Software Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA
+ * 02111-1307, USA. The license is also available at: https://www.gnu.org/licenses/agpl.html
  *******************************************************************************/
 package org.integratedmodelling.klab.documentation;
 
@@ -34,6 +33,7 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -42,14 +42,18 @@ import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider.Item;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.Documentation.SectionImpl;
 import org.integratedmodelling.klab.documentation.Documentation.TemplateImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.kim.Prototype;
+import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.utils.Path;
 import org.springframework.util.StringUtils;
 
@@ -65,19 +69,15 @@ import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.util.options.MutableDataSet;
 
 /**
- * A report is a graph of sections generated from templates. Each section has a
- * role and may represent a reference to another.
+ * A report is a graph of sections generated from templates. Each section has a role and may
+ * represent a reference to another.
  * 
  * @author Ferd
  */
 public class Report implements IReport {
 
     enum RefType {
-        REF,
-        FIG,
-        TABLE,
-        FOOTNOTE,
-        DATAFLOW
+        REF, FIG, TABLE, FOOTNOTE, DATAFLOW
     }
 
     private Map<SectionRole, ReportSection> mainSections = new HashMap<>();
@@ -99,6 +99,8 @@ public class Report implements IReport {
     Set<String> observationDescribed = new HashSet<>();
     Set<String> inserted = new HashSet<>();
     Set<String> usedTags = new HashSet<>();
+
+    DocumentationTree docTree;
 
     public RefType getReferenceType(String reference) {
         RefType ret = null;
@@ -123,7 +125,7 @@ public class Report implements IReport {
         this.taggedText.put(item.getId(), item);
     }
 
-	public IDocumentationProvider.Item getTaggedText(String tag) {
+    public IDocumentationProvider.Item getTaggedText(String tag) {
         return this.taggedText.get(tag);
     }
 
@@ -133,19 +135,24 @@ public class Report implements IReport {
         template.compile(section, context);
     }
 
-    // @Override
     public void include(IContextualizable resource) {
 
         if (resource.getUrn() != null) {
-            resources.add(Resources.INSTANCE.resolveResource(resource.getUrn()));
+            IResource res = Resources.INSTANCE.resolveResource(resource.getUrn());
+            resources.add(res);
+            docTree.add(res);
         } else if (resource.getLookupTable() != null) {
-            tables.add(resource.getLookupTable().getTable());
+            IKimTable table = resource.getLookupTable().getTable();
+            tables.add(table);
+            docTree.add(table);
         } else if (resource.getClassification() != null) {
             // classification
+            docTree.add(resource.getClassification());
         } else if (resource.getServiceCall() != null) {
             Prototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
             if (prototype != null) {
                 services.add(prototype);
+                docTree.add(prototype);
             }
         }
     }
@@ -154,32 +161,29 @@ public class Report implements IReport {
         return observations.get(id);
     }
 
-    // @Override
     public void include(IModel model) {
         models.add(model);
+        docTree.add(model);
     }
 
-    // @Override
     public void include(IDataflow<?> dataflow) {
         dataflows.add(dataflow);
     }
 
     public void include(IObservationReference output) {
         observations.put(output.getId(), output);
+        docTree.add(output);
+        
     }
-
-//    public void addSection(Section section) {
-//        ReportSection main = getMainSection(section.getRole());
-//        main.children.add((ReportSection) section);
-//    }
 
     public void include(ITask<?> task) {
         // notify task start, finish, abort
+        docTree.add(task);
     }
 
     /**
-     * Require the contents of a passed project-level template into the section
-     * named in the second argument.
+     * Require the contents of a passed project-level template into the section named in the second
+     * argument.
      * 
      * @param processArguments
      * @param context
@@ -198,7 +202,7 @@ public class Report implements IReport {
                 ReportSection main = getMainSection(role);
                 if (args[1].toString().contains("/")) {
                     // TODO!
-                    //					main = main.getChild(parent, titlePath)
+                    // main = main.getChild(parent, titlePath)
                 }
                 main.body.append("\n\n" + template.get(BibTexFields.EXAMPLE_CITATION) + "\n\n");
             }
@@ -216,6 +220,7 @@ public class Report implements IReport {
             ret = new ReportSection(this, role);
             mainSections.put(role, ret);
             ret.name = StringUtils.capitalize(role.name().toLowerCase());
+            docTree.add(ret);
         }
         return ret;
     }
@@ -237,19 +242,23 @@ public class Report implements IReport {
     private String sessionId;
 
     public Report() {
+        this.docTree = new DocumentationTree(this);
     }
 
-    public Report(IRuntimeScope context, String sessionId) {
+    public Report(IRuntimeScope context, IResolutionScope scope, String sessionId) {
         this.context = context;
         this.sessionId = sessionId;
+        this.docTree = new DocumentationTree(this, context, Authentication.INSTANCE.getIdentity(sessionId, ISession.class));
+        for (ObservedConcept key : ((ResolutionScope)scope).getResolutions().keySet()) {
+            this.docTree.addResolution(key, ((ResolutionScope)scope).getResolutions().get(key));
+        }
     }
 
     public String asHTML(String markdown) {
 
         MutableDataSet options = new MutableDataSet().set(Parser.EXTENSIONS,
-                Arrays.asList(FootnoteExtension.create(), AttributesExtension.create(),
-                        EnumeratedReferenceExtension.create(), MediaTagsExtension.create(),
-                        DefinitionExtension.create(), TablesExtension.create()));
+                Arrays.asList(FootnoteExtension.create(), AttributesExtension.create(), EnumeratedReferenceExtension.create(),
+                        MediaTagsExtension.create(), DefinitionExtension.create(), TablesExtension.create()));
 
         Parser parser = Parser.builder(options).build();
         HtmlRenderer renderer = HtmlRenderer.builder(options).build();
@@ -267,22 +276,21 @@ public class Report implements IReport {
         Section appendix = mainSections.get(SectionRole.APPENDIX);
 
         /*
-         * If we have an appendix, add any tagged documentation coming from contextualizers that has not
-         * been used in the report.
+         * If we have an appendix, add any tagged documentation coming from contextualizers that has
+         * not been used in the report.
          */
         if (appendix != null) {
             for (String tag : taggedText.keySet()) {
                 if (!usedTags.contains(tag)) {
                     Item item = taggedText.get(tag);
-                    ((SectionImpl) appendix).body += "\n\n## " + item.getTitle() + "\n\n" + item.getMarkdownContents()
-                            + "\n\n";
+                    ((SectionImpl) appendix).body += "\n\n## " + item.getTitle() + "\n\n" + item.getMarkdownContents() + "\n\n";
                 }
             }
         }
 
         /*
-         * Add anything not explicitly described according to settings; make
-         * appendices and references
+         * Add anything not explicitly described according to settings; make appendices and
+         * references
          */
         int n = 0;
         for (Section s : getSections()) {
@@ -290,8 +298,8 @@ public class Report implements IReport {
         }
 
         /*
-         * If we have tagged content, no appendix and no sections that may have used it,
-         * make an appendix and add to it.
+         * If we have tagged content, no appendix and no sections that may have used it, make an
+         * appendix and add to it.
          */
         if (appendix == null && (taggedText.size() - usedTags.size()) > 0) {
 
@@ -309,9 +317,9 @@ public class Report implements IReport {
         ret.append("\n\n" + "[@ref]: Reference [#]\n" + "[@fig]: Figure [#]\n" + "[@table]: Table [#]\n"
                 + "[@footnote]: Footnote [#]\n" + "[@user]: [#]\n" + "[@dataflow]: Dataflow [#]\n");
 
-        //		System.out.println(ret.toString());
+        // System.out.println(ret.toString());
 
-        switch (encoding) {
+        switch(encoding) {
         case HTML:
             return asHTML(ret.toString());
         case MARKDOWN:

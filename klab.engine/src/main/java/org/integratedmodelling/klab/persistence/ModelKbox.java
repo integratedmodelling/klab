@@ -52,22 +52,21 @@ public class ModelKbox extends ObservableKbox {
     private boolean initialized = false;
 
     /**
-     * Create a kbox with the passed name. If the kbox exists, open it and return
-     * it.
+     * Create a kbox with the passed name. If the kbox exists, open it and return it.
      * 
      * @param name
      * @return a new kbox
      */
-    public static ModelKbox create( String name ) {
+    public static ModelKbox create(String name) {
         return new ModelKbox(name);
     }
 
-    private ModelKbox( String name ) {
+    private ModelKbox(String name) {
         super(name);
     }
 
     @Override
-    protected void initialize( IMonitor monitor ) {
+    protected void initialize(IMonitor monitor) {
 
         if (!initialized) {
 
@@ -91,7 +90,7 @@ public class ModelKbox extends ObservableKbox {
                             + "dereifyingattribute VARCHAR(256), " + "minspatialscale INTEGER, " + "maxspatialscale INTEGER, "
                             + "mintimescale INTEGER, " + "maxtimescale INTEGER, " + "space GEOMETRY, "
                             + "observationtype VARCHAR(256), " + "); " + "CREATE INDEX model_oid_index ON model(oid); "
-//							+ "CREATE SPATIAL INDEX model_space ON model(space);"
+                    // + "CREATE SPATIAL INDEX model_space ON model(space);"
                     ;
 
                     return ret;
@@ -101,12 +100,12 @@ public class ModelKbox extends ObservableKbox {
 
             setSerializer(ModelReference.class, new Serializer<ModelReference>(){
 
-                private String cn( Object o ) {
+                private String cn(Object o) {
                     return o == null ? "" : o.toString();
                 }
 
                 @Override
-                public String serialize( ModelReference model, long primaryKey, long foreignKey ) {
+                public String serialize(ModelReference model, long primaryKey, long foreignKey) {
 
                     long tid = requireConceptId(model.getObservableConcept(), monitor);
 
@@ -140,16 +139,16 @@ public class ModelKbox extends ObservableKbox {
     }
 
     /**
-     * Pass the output of queryModelData to a contextual prioritizer and return the
-     * ranked list of IModels. If we're a personal engine, also broadcast the query
-     * to the network and merge results before returning.
+     * Pass the output of queryModelData to a contextual prioritizer and return the ranked list of
+     * IModels. If we're a personal engine, also broadcast the query to the network and merge
+     * results before returning.
      * 
      * @param observable
      * @param resolutionScope
      * @return models resulting from query, best first.
      * @throws KlabException
      */
-    public List<IRankedModel> query( IObservable observable, ResolutionScope resolutionScope ) throws KlabException {
+    public List<IRankedModel> query(IObservable observable, ResolutionScope resolutionScope) throws KlabException {
 
         initialize(resolutionScope.getMonitor());
 
@@ -172,15 +171,15 @@ public class ModelKbox extends ObservableKbox {
         /*
          * use previously resolved
          * 
-         * TODO check use of contains(): overlaps() would be more correct but then we
-         * would need to continue resolving, which misses the whole point of caching,
-         * and limit the resolution to "other" models.
+         * TODO check use of contains(): overlaps() would be more correct but then we would need to
+         * continue resolving, which misses the whole point of caching, and limit the resolution to
+         * "other" models.
          * 
          * FIXME: MODELS FROM SCENARIOS MUST STILL TAKE OVER THESE!
          */
         if (preResolved != null && preResolved.getFirst().contains(resolutionScope.getCoverage())) {
 
-            for( IRankedModel model : preResolved.getSecond() ) {
+            for (IRankedModel model : preResolved.getSecond()) {
                 // rank them again in our scale
                 ret.addCachedModel(model);
             }
@@ -195,15 +194,15 @@ public class ModelKbox extends ObservableKbox {
          * only query locally if we've seen a model before.
          */
         if (database.hasTable("model")) {
-            for( ModelReference md : queryModels(observable, resolutionScope) ) {
+            for (ModelReference md : queryModels(observable, resolutionScope)) {
                 local.add(md);
                 ret.addModel(md);
             }
         }
 
         /**
-         * If we're a modeling engine, dispatch the request to all nodes that allow it,
-         * which we do simply by using the result list as a distributed operation.
+         * If we're a modeling engine, dispatch the request to all nodes that allow it, which we do
+         * simply by using the result list as a distributed operation.
          */
         if (Configuration.INSTANCE.isRemoteResolutionEnabled()) {
             // if (KLAB.ENGINE instanceof IModelingEngine && workRemotely) {
@@ -220,8 +219,8 @@ public class ModelKbox extends ObservableKbox {
         }
 
         /*
-         * Warn and provide output if models were chosen but reported unavailability.
-         * Message is a warning only if no other models were found.
+         * Warn and provide output if models were chosen but reported unavailability. Message is a
+         * warning only if no other models were found.
          */
         if (ret.getOfflineModels().size() > 0) {
 
@@ -234,7 +233,7 @@ public class ModelKbox extends ObservableKbox {
                 resolutionScope.getMonitor().warn(message);
             }
 
-            for( ModelReference ref : ret.getOfflineModels() ) {
+            for (ModelReference ref : ret.getOfflineModels()) {
                 resolutionScope.getMonitor().debug("model " + ref.getName() + " is offline");
             }
         }
@@ -243,15 +242,14 @@ public class ModelKbox extends ObservableKbox {
     }
 
     /**
-     * Find and deserialize all modeldata matching the parameters. Do not rank or
-     * anything.
+     * Find and deserialize all modeldata matching the parameters. Do not rank or anything.
      * 
      * @param observable
      * @param context
      * @return all unranked model descriptors matching the query
      * @throws KlabException
      */
-    public List<ModelReference> queryModels( IObservable observable, ResolutionScope context ) throws KlabException {
+    public List<ModelReference> queryModels(IObservable observable, ResolutionScope context) throws KlabException {
 
         List<ModelReference> ret = new ArrayList<>();
 
@@ -285,7 +283,7 @@ public class ModelKbox extends ObservableKbox {
 
         final List<Long> oids = database.queryIds(query);
 
-        for( long l : oids ) {
+        for (long l : oids) {
             ModelReference model = retrieveModel(l, context.getMonitor());
             if (model != null) {
                 if (!context.isResolving(model.getName())) {
@@ -303,7 +301,7 @@ public class ModelKbox extends ObservableKbox {
         return ret;
     }
 
-    private String observableQuery( IObservable observable, IConcept context, Mode mode ) {
+    private String observableQuery(IObservable observable, IConcept context, Mode mode) {
 
         // /*
         // * remove any transformations before querying
@@ -315,19 +313,18 @@ public class ModelKbox extends ObservableKbox {
             return null;
         }
         String ret = "";
-        for( long id : ids ) {
+        for (long id : ids) {
             ret += (ret.isEmpty() ? "" : ", ") + id;
         }
         return "typeid IN (" + ret + ")";
     }
 
     /*
-     * select models that are [instantiators if required] AND:] [private and in the
-     * home namespace if not dummy OR] [project private and in the home project if
-     * not dummy OR] (non-private and non-scenario) OR (in any of the scenarios in
-     * the context).
+     * select models that are [instantiators if required] AND:] [private and in the home namespace
+     * if not dummy OR] [project private and in the home project if not dummy OR] (non-private and
+     * non-scenario) OR (in any of the scenarios in the context).
      */
-    private String scopeQuery( IResolutionScope context, IObservable observable ) {
+    private String scopeQuery(IResolutionScope context, IObservable observable) {
 
         String ret = "";
         String projectId = null;
@@ -363,12 +360,11 @@ public class ModelKbox extends ObservableKbox {
     }
 
     /*
-     * select models that intersect the given space or have no space at all. TODO
-     * must match geometry when forced - if it has @intensive(space, time) it
-     * shouldn't match no space/time OR non-distributed space/time. ALSO the
-     * dimensionality!
+     * select models that intersect the given space or have no space at all. TODO must match
+     * geometry when forced - if it has @intensive(space, time) it shouldn't match no space/time OR
+     * non-distributed space/time. ALSO the dimensionality!
      */
-    private String spaceQuery( ISpace space ) {
+    private String spaceQuery(ISpace space) {
 
         if (((ISpace) ((AbstractExtent) space).getExtent()).getShape().isEmpty()) {
             return "";
@@ -383,17 +379,15 @@ public class ModelKbox extends ObservableKbox {
     }
 
     /*
-     * Entirely TODO. For initialization we should use time only to select for most
-     * current info - either closer to the context or to today if time is null. For
-     * dynamic models we should either not have a context or cover the context.
-     * Guess this is the job of the prioritizer, and we should simply let anything
-     * through except when we look for T1(n>1) models.
+     * Entirely TODO. For initialization we should use time only to select for most current info -
+     * either closer to the context or to today if time is null. For dynamic models we should either
+     * not have a context or cover the context. Guess this is the job of the prioritizer, and we
+     * should simply let anything through except when we look for T1(n>1) models.
      * 
-     * TODO must match geometry when forced - if it has @intensive(space, time) it
-     * shouldn't match no space/time OR non-distributed space/time. ALSO the
-     * dimensionality!
+     * TODO must match geometry when forced - if it has @intensive(space, time) it shouldn't match
+     * no space/time OR non-distributed space/time. ALSO the dimensionality!
      */
-    private String timeQuery( ITime time ) {
+    private String timeQuery(ITime time) {
 
         String ret = "";
         boolean checkBoundaries = false;
@@ -413,7 +407,7 @@ public class ModelKbox extends ObservableKbox {
         return ret;
     }
 
-    public List<ModelReference> retrieveAll( IMonitor monitor ) throws KlabException {
+    public List<ModelReference> retrieveAll(IMonitor monitor) throws KlabException {
 
         initialize(monitor);
 
@@ -421,20 +415,20 @@ public class ModelKbox extends ObservableKbox {
         if (!database.hasTable("model")) {
             return ret;
         }
-        for( long oid : database.queryIds("SELECT oid FROM model;") ) {
+        for (long oid : database.queryIds("SELECT oid FROM model;")) {
             ret.add(retrieveModel(oid, monitor));
         }
         return ret;
     }
 
-    public ModelReference retrieve( String query, IMonitor monitor ) {
+    public ModelReference retrieve(String query, IMonitor monitor) {
         initialize(monitor);
 
         final ModelReference ret = new ModelReference();
 
         database.query(query, new SQL.SimpleResultHandler(){
             @Override
-            public void onRow( ResultSet rs ) {
+            public void onRow(ResultSet rs) {
 
                 try {
 
@@ -487,7 +481,7 @@ public class ModelKbox extends ObservableKbox {
         return ret;
     }
 
-    public ModelReference retrieveModel( long oid, IMonitor monitor ) throws KlabException {
+    public ModelReference retrieveModel(long oid, IMonitor monitor) throws KlabException {
 
         ModelReference ret = retrieve("SELECT * FROM model WHERE oid = " + oid, monitor);
         ret.setMetadata(getMetadataFor(oid));
@@ -565,7 +559,7 @@ public class ModelKbox extends ObservableKbox {
      * @return true if model with given id exists in database
      * @throws KlabException
      */
-    public boolean hasModel( String name ) throws KlabException {
+    public boolean hasModel(String name) throws KlabException {
 
         if (!database.hasTable("model")) {
             return false;
@@ -575,10 +569,10 @@ public class ModelKbox extends ObservableKbox {
     }
 
     @Override
-    protected int deleteAllObjectsWithNamespace( String namespaceId, IMonitor monitor ) throws KlabException {
+    protected int deleteAllObjectsWithNamespace(String namespaceId, IMonitor monitor) throws KlabException {
         initialize(monitor);
         int n = 0;
-        for( long oid : database.queryIds("SELECT oid FROM model where namespaceid = '" + Escape.forSQL(namespaceId) + "';") ) {
+        for (long oid : database.queryIds("SELECT oid FROM model where namespaceid = '" + Escape.forSQL(namespaceId) + "';")) {
             deleteObjectWithId(oid, monitor);
             n++;
         }
@@ -586,14 +580,14 @@ public class ModelKbox extends ObservableKbox {
     }
 
     @Override
-    protected void deleteObjectWithId( long id, IMonitor monitor ) throws KlabException {
+    protected void deleteObjectWithId(long id, IMonitor monitor) throws KlabException {
         initialize(monitor);
         database.execute("DELETE FROM model WHERE oid = " + id);
         deleteMetadataFor(id);
     }
 
     @Override
-    public long store( Object o, IMonitor monitor ) throws KlabException {
+    public long store(Object o, IMonitor monitor) throws KlabException {
 
         initialize(monitor);
 
@@ -607,7 +601,7 @@ public class ModelKbox extends ObservableKbox {
 
             Logging.INSTANCE.debug("storing model " + ((IModel) o).getName());
 
-            for( ModelReference data : inferModels((org.integratedmodelling.klab.model.Model) o, monitor) ) {
+            for (ModelReference data : inferModels((org.integratedmodelling.klab.model.Model) o, monitor)) {
                 toStore.add(data);
             }
 
@@ -616,7 +610,7 @@ public class ModelKbox extends ObservableKbox {
         }
 
         long ret = -1;
-        for( Object obj : toStore ) {
+        for (Object obj : toStore) {
             long r = super.store(obj, monitor);
             if (ret < 0)
                 ret = r;
@@ -628,14 +622,14 @@ public class ModelKbox extends ObservableKbox {
     public static final String DUMMY_NAMESPACE_ID = "DUMMY_SEARCH_NS";
 
     /**
-     * Return a collection of model beans that contains all the models implied by a
-     * model statement (and the model itself, when appropriate).
+     * Return a collection of model beans that contains all the models implied by a model statement
+     * (and the model itself, when appropriate).
      * 
      * @param model
      * @param monitor
      * @return the models implied by the statement
      */
-    public static Collection<ModelReference> inferModels( Model model, IMonitor monitor ) {
+    public static Collection<ModelReference> inferModels(Model model, IMonitor monitor) {
 
         List<ModelReference> ret = new ArrayList<>();
 
@@ -644,13 +638,13 @@ public class ModelKbox extends ObservableKbox {
             return ret;
         }
 
-        for( ModelReference m : getModelDescriptors(model, monitor) ) {
+        for (ModelReference m : getModelDescriptors(model, monitor)) {
             ret.add(m);
         }
 
         if (ret.size() > 0) {
 
-            for( IObservable attr : model.getAttributeObservables().values() ) {
+            for (IObservable attr : model.getAttributeObservables().values()) {
 
                 if (attr == null) {
                     // only in error
@@ -684,8 +678,8 @@ public class ModelKbox extends ObservableKbox {
         return ret;
     }
 
-    private static Collection<ModelReference> getModelDescriptors( org.integratedmodelling.klab.model.Model model,
-            IMonitor monitor ) {
+    private static Collection<ModelReference> getModelDescriptors(org.integratedmodelling.klab.model.Model model,
+            IMonitor monitor) {
 
         List<ModelReference> ret = new ArrayList<>();
         Scale scale = null;
@@ -736,13 +730,13 @@ public class ModelKbox extends ObservableKbox {
 
         boolean first = true;
         IObservable main = null;
-        for( IObservable oobs : model.getObservables() ) {
+        for (IObservable oobs : model.getObservables()) {
 
             if (first) {
                 main = oobs;
             }
 
-            for( IObservable obs : unpackObservables(oobs, main, first) ) {
+            for (IObservable obs : unpackObservables(oobs, main, first)) {
 
                 ModelReference m = new ModelReference();
 
@@ -792,12 +786,11 @@ public class ModelKbox extends ObservableKbox {
             }
 
             /*
-             * For now just disable additional observables in instantiators and use their
-             * attribute observers upstream. We may do different things here:
+             * For now just disable additional observables in instantiators and use their attribute
+             * observers upstream. We may do different things here:
              * 
              * 0. keep ignoring them 1. keep them all, contextualized to the instantiated
-             * observable; 2. keep only the non-statically contextualized ones (w/o the
-             * value)
+             * observable; 2. keep only the non-statically contextualized ones (w/o the value)
              * 
              */
             if (model.isInstantiator()) {
@@ -808,35 +801,35 @@ public class ModelKbox extends ObservableKbox {
         return ret;
     }
 
-    private static List<IObservable> unpackObservables( IObservable oobs, IObservable main, boolean first ) {
+    private static List<IObservable> unpackObservables(IObservable oobs, IObservable main, boolean first) {
         List<IObservable> ret = new ArrayList<>();
-//		if (first || !main.is(Type.PROCESS)) {
+        // if (first || !main.is(Type.PROCESS)) {
         ret.add(oobs);
-//		} else {
-//			if (main.is(Type.PROCESS) && oobs.is(Type.QUALITY)) {
-//
-//				/*
-//				 * if the main observable is a process, any qualities CREATED should provide
-//				 * only a model of their CHANGE; qualities AFFECTED that are output should
-//				 * provide BOTH a change and a quality model.
-//				 */
-//
-//			} else {
-//				ret.add(oobs);
-//			}
-//		}
+        // } else {
+        // if (main.is(Type.PROCESS) && oobs.is(Type.QUALITY)) {
+        //
+        // /*
+        // * if the main observable is a process, any qualities CREATED should provide
+        // * only a model of their CHANGE; qualities AFFECTED that are output should
+        // * provide BOTH a change and a quality model.
+        // */
+        //
+        // } else {
+        // ret.add(oobs);
+        // }
+        // }
         return ret;
     }
 
-    private static Map<String, String> translateMetadata( IMetadata metadata ) {
+    private static Map<String, String> translateMetadata(IMetadata metadata) {
         Map<String, String> ret = new HashMap<>();
-        for( String key : metadata.keySet() ) {
+        for (String key : metadata.keySet()) {
             ret.put(key, metadata.get(key) == null ? "null" : metadata.get(key).toString());
         }
         return ret;
     }
 
-    public ModelReference retrieveModel( String string, IMonitor monitor ) {
+    public ModelReference retrieveModel(String string, IMonitor monitor) {
         return retrieve("SELECT * FROM model WHERE name = '" + string + "'", monitor);
     }
 
