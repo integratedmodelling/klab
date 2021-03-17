@@ -14,7 +14,7 @@ public enum JreModel {
 
 	File jreDirectory;
 	boolean haveSpecifiedJre;
-	boolean haveJavaHome;
+	// boolean haveJavaHome;
 	boolean haveKlabSetting;
 	boolean isPublicJavaOk;
 	Set<Action> possibleActions = new HashSet<>();
@@ -42,13 +42,13 @@ public enum JreModel {
 			// if jre is detected, we don't need to check the public java
 			isPublicJavaOk = true;
 		} else {
-			// try to find a solution using the $JAVA_HOME or the java.home system property
-			String javaHome = System.getenv("JAVA_HOME");
+		    isPublicJavaOk = false;
 			/*
+		    // try to find a solution using the $JAVA_HOME or the java.home system property
+			String javaHome = System.getenv("JAVA_HOME");
 			if ((javaHome = System.getenv("JAVA_HOME")) == null) {
 				javaHome = System.getProperty("java.home");
 			}
-			*/
 			if (haveJavaHome = javaHome != null) {
 				// try to find bin directory
 				// before if is JRE...
@@ -63,11 +63,12 @@ public enum JreModel {
 					jreDirectory = new File(binPath);
 				}
 			}
+			*/
 		}
 	}
 
 	public String concernMessage() {
-
+	    /*
 		String ret = null;
 
 		if (haveKlabSetting && !haveSpecifiedJre) {
@@ -79,6 +80,8 @@ public enum JreModel {
 		}
 
 		return ret;
+		*/
+	    return isPublicJavaOk ? null : "Download OpenJDK JRE";
 	}
 
 	public String getJavaExecutable() {

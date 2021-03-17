@@ -24,15 +24,22 @@ public class ModelerInstance extends Instance {
 
 	public File getExecutable(int build) {
 		if (OS.get() == OS.MACOS) {
-			return new File(product.getLocalWorkspace() + File.separator + build + File.separator + "kmodeler.app");
+			return new File(getExecutableFolderPath(build) + File.separator +  "Contents/MacOS/k.Modeler");
 		}
 		if (OS.get() == OS.UNIX) {
-			File file = new File(product.getLocalWorkspace() + File.separator + build + File.separator + "k.Modeler");
-			file.setExecutable(true);
+			File file = new File(getExecutableFolderPath(build) + File.separator +  "k.Modeler");
 			return file;
 		}
-		return new File(product.getLocalWorkspace() + File.separator + build + File.separator + "k.Modeler"
+		return new File(getExecutableFolderPath(build) + File.separator +  "k.Modeler"
 				+ (OS.get() == OS.WIN ? ".exe" : ""));
+	}
+	
+	public String getExecutableFolderPath(int build) {
+		String path = product.getLocalWorkspace() + File.separator + build;
+		if (OS.get() == OS.MACOS) {
+			path +=  File.separator + "kmodeler.app";
+		}
+		return path;
 	}
 
 	@Override

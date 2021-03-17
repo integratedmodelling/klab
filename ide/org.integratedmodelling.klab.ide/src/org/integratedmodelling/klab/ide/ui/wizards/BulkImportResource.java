@@ -195,7 +195,7 @@ public class BulkImportResource extends WizardPage {
 
 	public BulkImportResource(EResourceFolder folder) {
 		super("wizardPage");
-		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
+		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.png"));
 		setTitle("Bulk import");
 		setDescription("Specify a local folder or an external URL to import resources from");
 	}

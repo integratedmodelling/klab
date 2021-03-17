@@ -48,7 +48,7 @@ public class NewDocumentationFolder extends WizardPage {
 	 */
 	public NewDocumentationFolder(EDocumentationFolder folder) {
 		super("wizardPage");
-		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
+		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.png"));
 		setTitle("New documentation folder");
 		setDescription("Create a new documentation folder");
 		this.folder = folder;

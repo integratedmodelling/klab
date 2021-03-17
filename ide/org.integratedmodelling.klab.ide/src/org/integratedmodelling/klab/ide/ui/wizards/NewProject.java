@@ -46,7 +46,7 @@ public class NewProject extends WizardPage {
 	 */
 	public NewProject() {
 		super("wizardPage");
-		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
+		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.png"));
 		setTitle("New k.LAB project");
 		setDescription("Create a new local k.LAB project");
 	}

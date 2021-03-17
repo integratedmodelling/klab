@@ -63,7 +63,7 @@ public class PublishResource extends WizardPage {
 		super("wizardPage");
 		this.resource = resource;
 		this.nodes = nodes;
-		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
+		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.png"));
 		setTitle("Publish resource");
 		setDescription("Publish a local resource to a k.LAB node");
 	}

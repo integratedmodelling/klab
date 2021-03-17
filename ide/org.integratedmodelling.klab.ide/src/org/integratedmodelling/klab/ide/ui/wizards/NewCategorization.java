@@ -52,7 +52,7 @@ public class NewCategorization extends WizardPage {
 	public NewCategorization(List<String> categories) {
 		super("wizardPage");
 		this.categories = categories;
-		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
+		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.png"));
 		setTitle("New k.LAB categorization file");
 		setDescription("Create a new categorization to reinterpret a resource");
 	}

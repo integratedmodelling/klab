@@ -49,7 +49,7 @@ public class MoveResource extends WizardPage {
         super("wizardPage");
         this.targetProject = targetProject;
         this.resource = resource;
-		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
+		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.png"));
         setTitle("Move k.LAB resource");
         setDescription("Move a k.LAB resource from a project to another");
     }

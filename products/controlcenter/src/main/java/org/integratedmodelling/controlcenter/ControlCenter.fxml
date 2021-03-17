@@ -22,7 +22,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<BorderPane stylesheets="@css/application.css" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.integratedmodelling.controlcenter.ControlCenter">
+<BorderPane stylesheets="@css/application.css" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.integratedmodelling.controlcenter.ControlCenter">
    <center>
       <BorderPane prefHeight="450.0" prefWidth="260.0" BorderPane.alignment="CENTER">
          <bottom>
@@ -51,7 +51,7 @@
                         </Button>
                         <Label fx:id="messageLabel" textFill="#646464">
                            <font>
-                              <Font name="System Italic" size="11.0" />
+                              <Font name="Open Sans Regular" size="11.0" />
                            </font>
                            <HBox.margin>
                               <Insets left="2.0" top="4.0" />
@@ -122,9 +122,9 @@
                         </ImageView>
                         <VBox prefHeight="200.0" prefWidth="100.0" HBox.hgrow="ALWAYS">
                            <children>
-                              <Label prefHeight="26.0" prefWidth="207.0" text="k.LAB Control Center v1.1" textFill="#4a4a4a" VBox.vgrow="ALWAYS">
+                              <Label prefHeight="26.0" prefWidth="207.0" fx:id="ccNameAndVersion" textFill="#4a4a4a" VBox.vgrow="ALWAYS">
                                  <font>
-                                    <Font name="Calibri" size="18.0" />
+                                    <Font name="Open Sans Regular" size="17.0" />
                                  </font>
                                  <padding>
                                     <Insets left="4.0" top="4.0" />
@@ -135,9 +135,9 @@
                                     <Insets left="4.0" right="20.0" />
                                  </padding>
                               </Separator>
-                              <Label text="© 2019 Integrated Modelling Partnership" textFill="#797979">
+                              <Label text="© 2021 Integrated Modelling Partnership" textFill="#797979" >
                                  <font>
-                                    <Font name="Calibri Light" size="11.0" />
+                                    <Font name="Open Sans Light" size="11.0" />
                                  </font>
                                  <padding>
                                     <Insets left="4.0" right="4.0" />
@@ -182,12 +182,12 @@
                         </Button>
                         <Label text="k.LAB Engine" textFill="#828282" GridPane.rowIndex="1">
                            <font>
-                              <Font name="Arial" size="11.0" />
+                              <Font name="Open Sans Regular" size="11.0" />
                            </font>
                         </Label>
                         <Label text="k.LAB Modeler" textFill="#828282" GridPane.columnIndex="1" GridPane.rowIndex="1">
                            <font>
-                              <Font name="Arial" size="11.0" />
+                              <Font name="Open Sans Regular"  size="11.0" />
                            </font>
                         </Label>
                      </children>
@@ -217,12 +217,12 @@
                                  <children>
                                     <Label fx:id="engineHeader" text="Download k.LAB">
                                        <font>
-                                          <Font size="14.0" />
+                                          <Font name="Open Sans Regular"  size="14.0" />
                                        </font>
                                     </Label>
                                     <Label fx:id="engineHeaderDetail" text="V0.10.1 build 233 available" textFill="#777777">
                                        <font>
-                                          <Font size="10.0" />
+                                          <Font name="Open Sans Regular"  size="10.0" />
                                        </font>
                                     </Label>
                                  </children>
@@ -258,7 +258,7 @@
                                                       <ProgressBar fx:id="engineProgressBarOverall" maxHeight="12.0" minHeight="10.0" prefHeight="10.0" prefWidth="172.0" progress="0.0" style="-fx-text-box-border: #28c41d; -fx-background-insets: 0;" />
                                                       <Label fx:id="engineProgressLabelTotal" text="Copying local files" textFill="#797979">
                                                          <font>
-                                                            <Font size="10.0" />
+                                                            <Font name="Open Sans Regular"  size="10.0" />
                                                          </font>
                                                          <padding>
                                                             <Insets left="3.0" />
@@ -271,7 +271,7 @@
                                                       <ProgressBar fx:id="engineProgressBarDetail" maxHeight="8.0" minHeight="6.0" prefHeight="6.0" prefWidth="172.0" progress="0.0" style="-fx-text-box-border: #28c41d; -fx-background-insets: 0;" />
                                                       <Label fx:id="engineProgressLabelDetail" text="please wait..." textFill="#777777">
                                                          <font>
-                                                            <Font size="10.0" />
+                                                            <Font name="Open Sans Regular"  size="10.0" />
                                                          </font>
                                                          <padding>
                                                             <Insets left="3.0" />
@@ -281,7 +281,7 @@
                                                 </HBox>
                                                 <Label fx:id="engineCurrentFileLabel" text="Preparing k.Engine incremental download.." textFill="#797777">
                                                    <font>
-                                                      <Font size="10.0" />
+                                                      <Font name="Open Sans Regular"  size="10.0" />
                                                    </font>
                                                 </Label>
                                              </children>
@@ -297,7 +297,7 @@
                                                       <ProgressBar fx:id="modelerProgressBarOverall" maxHeight="12.0" minHeight="10.0" prefHeight="10.0" prefWidth="172.0" progress="0.0" style="-fx-text-box-border: #dfb300; -fx-background-insets: 0;" />
                                                       <Label fx:id="modelerProgressLabelTotal" text="Copying local files" textFill="#797979">
                                                          <font>
-                                                            <Font size="10.0" />
+                                                            <Font name="Open Sans Regular"  size="10.0" />
                                                          </font>
                                                          <padding>
                                                             <Insets left="3.0" />
@@ -310,7 +310,7 @@
                                                       <ProgressBar fx:id="modelerProgressBarDetail" maxHeight="8.0" minHeight="6.0" prefHeight="6.0" prefWidth="172.0" progress="0.0" style="-fx-text-box-border: #dfb300; -fx-background-insets: 0;" />
                                                       <Label fx:id="modelerProgressLabelDetail" text="please wait..." textFill="#777777">
                                                          <font>
-                                                            <Font size="10.0" />
+                                                            <Font name="Open Sans Regular"  size="10.0" />
                                                          </font>
                                                          <padding>
                                                             <Insets left="3.0" />
@@ -320,7 +320,7 @@
                                                 </HBox>
                                                 <Label fx:id="modelerCurrentFileLabel" text="Preparing k.Modeler incremental download..." textFill="#717171">
                                                    <font>
-                                                      <Font size="10.0" />
+                                                      <Font name="Open Sans Regular"  size="10.0" />
                                                    </font>
                                                 </Label>
                                              </children>
@@ -370,7 +370,7 @@
                                                    <children>
                                                       <Label maxWidth="40.0" minWidth="40.0" text="Load" textFill="#696969">
                                                          <font>
-                                                            <Font size="10.0" />
+                                                            <Font name="Open Sans Regular"  size="10.0" />
                                                          </font>
                                                          <HBox.margin>
                                                             <Insets right="2.0" />
@@ -378,7 +378,7 @@
                                                       </Label>
                                                       <Label fx:id="loadLabel" maxWidth="84.0" minWidth="84.0" style="-fx-background-color: #ccc; -fx-border-color: #fff;" HBox.hgrow="ALWAYS">
                                                          <font>
-                                                            <Font size="10.0" />
+                                                            <Font name="Open Sans Regular"  size="10.0" />
                                                          </font>
                                                          <HBox.margin>
                                                             <Insets right="2.0" />
@@ -399,7 +399,7 @@
                                                    <children>
                                                       <Label maxWidth="40.0" minWidth="40.0" text="Memory" textFill="#676666">
                                                          <font>
-                                                            <Font size="10.0" />
+                                                            <Font name="Open Sans Regular"  size="10.0" />
                                                          </font>
                                                          <HBox.margin>
                                                             <Insets right="2.0" />
@@ -410,7 +410,7 @@
                                                       </Label>
                                                       <Label fx:id="memoryLabel" maxWidth="84.0" minWidth="84.0" style="-fx-background-color: #ccc; -fx-border-color: #fff;" HBox.hgrow="ALWAYS">
                                                          <font>
-                                                            <Font size="10.0" />
+                                                            <Font name="Open Sans Regular"  size="10.0" />
                                                          </font>
                                                          <HBox.margin>
                                                             <Insets right="2.0" />
@@ -428,7 +428,7 @@
                                                    <children>
                                                       <Label maxWidth="40.0" minWidth="40.0" text="Uptime" textFill="#676767">
                                                          <font>
-                                                            <Font size="10.0" />
+                                                            <Font name="Open Sans Regular"  size="10.0" />
                                                          </font>
                                                          <opaqueInsets>
                                                             <Insets />
@@ -439,7 +439,7 @@
                                                       </Label>
                                                       <Label fx:id="uptimeLabel" maxWidth="84.0" minWidth="84.0" style="-fx-background-color: #ccc; -fx-border-color: #fff;" HBox.hgrow="ALWAYS">
                                                          <font>
-                                                            <Font size="10.0" />
+                                                            <Font name="Open Sans Regular"  size="10.0" />
                                                          </font>
                                                          <HBox.margin>
                                                             <Insets right="2.0" />
@@ -457,7 +457,7 @@
                                                    <children>
                                                       <Label maxWidth="40.0" minWidth="40.0" text="Sessions" textFill="#696969">
                                                          <font>
-                                                            <Font size="10.0" />
+                                                            <Font name="Open Sans Regular"  size="10.0" />
                                                          </font>
                                                          <HBox.margin>
                                                             <Insets right="2.0" />
@@ -465,7 +465,7 @@
                                                       </Label>
                                                       <Label fx:id="sessionsLabel" maxWidth="84.0" minWidth="84.0" style="-fx-background-color: #ccc; -fx-border-color: #fff;" HBox.hgrow="ALWAYS">
                                                          <font>
-                                                            <Font size="10.0" />
+                                                            <Font name="Open Sans Regular"  size="10.0" />
                                                          </font>
                                                          <HBox.margin>
                                                             <Insets right="2.0" />
@@ -499,12 +499,12 @@
                                                    <children>
                                                       <Label fx:id="installedVersionLabel" text="k.LAB is not installed" textFill="#696969">
                                                          <font>
-                                                            <Font name="Calibri" size="18.0" />
+                                                            <Font name="Open Sans Regular"  size="18.0" />
                                                          </font>
                                                       </Label>
                                                       <Label fx:id="engineMessageDetail" alignment="CENTER" contentDisplay="CENTER" text="Click the download button to install" textFill="#7f7f7f">
                                                          <font>
-                                                            <Font size="10.0" />
+                                                            <Font name="Open Sans Regular"  size="10.0" />
                                                          </font></Label>
                                                    </children>
                                                 </VBox>
@@ -523,7 +523,7 @@
                               <Label fx:id="certContentLabel" text="k.LAB user:" />
                               <Label fx:id="certUsername" alignment="CENTER" graphicTextGap="0.0" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="28.0" prefWidth="163.0" text="Not certified" textFill="#f23a01">
                                  <font>
-                                    <Font name="Calibri" size="24.0" />
+                                    <Font name="Open Sans Regular"  size="24.0" />
                                  </font>
                                  <padding>
                                     <Insets left="2.0" right="2.0" />
@@ -534,7 +534,7 @@
                               </Label>
                               <Label fx:id="certDescription" text="Drop a certificate file here" textFill="#6f6f6f">
                                  <font>
-                                    <Font size="11.0" />
+                                    <Font name="Open Sans Regular"  size="11.0" />
                                  </font>
                               </Label>
                               <Hyperlink onAction="#launchHubSite" text="🡆 k.LAB Hub" />
@@ -562,7 +562,7 @@
                               </GridPane>
                               <Label text="Groups" textFill="#878787" VBox.vgrow="ALWAYS">
                                  <font>
-                                    <Font size="8.0" />
+                                    <Font name="Open Sans Regular"  size="8.0" />
                                  </font>
                               </Label>
                            </children>
