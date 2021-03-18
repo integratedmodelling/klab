@@ -67,7 +67,7 @@ public class DragonConsoleFrame extends JFrame {
 		console.setInputFocus();
 
 		try {
-			this.setIconImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("icons/logo_white_64.jpg")));
+			this.setIconImage(ImageIO.read(getClass().getClassLoader().getResourceAsStream("icons/logo_white_64.png")));
 		} catch (Throwable e) {
 			// OK, next time.
 			Logging.INSTANCE.warn(e);
