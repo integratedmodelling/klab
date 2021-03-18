@@ -199,67 +199,7 @@ public interface API {
 
     public static interface HUB {
 
-		public static final String LEGACY_AUTHENTICATE_ENGINE = "/api/auth-cert/engine";
-		/**
-		 * Called by nodes on hubs when authenticating with them. Parameters like the
-		 * engine version.
-		 */
-		public static final String AUTHENTICATE_NODE = NODE_BASE + AUTH_BASE;
-		/**
-		 * Called by levers on hubs when authenticating with them. Parameters like the
-		 * engine version.
-		 */
-		public static final String AUTHENTICATE_LEVER = LEVER_BASE + AUTH_BASE;
-		/**
-		 * Called by users to log into the hub and receive an authentication token.
-		 */
-		public static final String AUTHENTICATE_USER = USER_BASE + "/log-in";
-		/**
-		 * Called by users to log into the hub and receive an authentication token.
-		 */
-		public static final String DEAUTHENTICATE_USER = USER_BASE + "/log-out";
-		/**
-		 * Base URL path for node resources on the hub.
-		 */
-		public static final String NODE_BASE_ID = NODE_BASE + "/{id}";
-		/**
-		 * Base URL path for user resources on the hub.
-		 */
-		public static final String USER_BASE_ID = USER_BASE + "/{id}";
-		/**
-		 * Base URL path for user resources on the hub.
-		 */
-		public static final String GROUPS_BASE_ID = GROUPS_BASE + "/{id}";
-		/**
-		 * Base URL path for lever resources on the hub.
-		 */
-		public static final String LEVER_BASE_ID = LEVER_BASE + "/{id}";
-		/**
-		 * Base URL path for task resource id on the hub.
-		 */
-		public static final String TASK_BASE_ID = TASK_BASE + "/{id}";
-		/**
-		 * Base URL path for email templated by id on the hub.
-		 */
-		public static final String EMAIL_BASE_ID = EMAIL_BASE + "/{id}";
-		/**
-		 * Base URL path application logs.
-		 */
-		public static final String LOGS = API_BASE + "/system/logs";
-		/**
-		 * Base URL path for deleted users.
-		 */
-		public static final String DELETED_USERS = USER_BASE + "/deleted-users";
-		/**
-		 * URL path for deleted users by id.
-		 */
-		public static final String DELETED_USER_ID = DELETED_USERS + "/{id}";
-		/**
-		 * URL path for current user profile, based on Authentication Token parsing.
-		 */
-		public static final String CURRENT_PROFILE = USER_BASE + "/me";
-
-        public static final String API_BASE = "/api/v2";
+		public static final String API_BASE = "/api/v2";
         /**
          * Base URL path for node on the hub.
          */
