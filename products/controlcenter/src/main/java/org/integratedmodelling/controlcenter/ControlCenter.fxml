@@ -132,7 +132,7 @@
                               </Label>
                               <Separator prefWidth="200.0">
                                  <padding>
-                                    <Insets left="4.0" right="20.0" />
+                                    <Insets left="4.0" right="4.0" />
                                  </padding>
                               </Separator>
                               <Label text="© 2021 Integrated Modelling Partnership" textFill="#797979" >
