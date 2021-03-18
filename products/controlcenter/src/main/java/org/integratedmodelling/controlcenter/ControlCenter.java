@@ -23,6 +23,7 @@ import java.util.concurrent.Future;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.collections4.queue.CircularFifoQueue;
+import org.apache.commons.io.FileUtils;
 import org.integratedmodelling.controlcenter.api.IAuthentication.Group;
 import org.integratedmodelling.controlcenter.api.IAuthentication.Status;
 import org.integratedmodelling.controlcenter.api.IInstance;
@@ -928,15 +929,20 @@ public class ControlCenter extends Application {
                                             // TODO: better error management
                                             System.err.println("Problems with INI file");
                                         } else {
-                                            // add JRE and startup options to init parameters
-                                            String options = "-vm\n" + JreModel.INSTANCE.getJavaExecutable() + "\n" + "-vmargs\n"
-                                                    + "-Xms512m\n-Xmx2048m";
+                                            // add JRE and startup options to init parameters if not exists
                                             try {
-                                                Files.write(ini.toPath(), options.getBytes(), StandardOpenOption.APPEND);
+                                                String content = FileUtils.readFileToString(ini);
+                                                if (!content.contains("-vm\n")) {
+                                                    String options = "-vm\n" + JreModel.INSTANCE.getJavaExecutable() + "\n" + "-vmargs\n"
+                                                        + "-Xms512m\n-Xmx2048m";
+                                                    Files.write(ini.toPath(), options.getBytes(), StandardOpenOption.APPEND);
+                                                }
                                             } catch (IOException e) {
                                                 // this is very strange
                                                 System.err.println("Error put content to ini file");
                                             }
+                                            
+                                            
                                         }
                                         Platform.runLater(() -> {
                                             modelerCurrentFileLabel.setText("k.Modeler download complete");
