@@ -51,6 +51,11 @@ public class ReportSection extends Parameters<String> implements Section {
         parent.children.add(this);
     }
 
+    @Override
+    public String toString() {
+        return "# " + getName() + ": (" + body.length() + ")";
+    }
+    
     public String getName() {
         return name == null ? StringUtil.capitalize(role.name()) : name;
     }

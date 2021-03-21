@@ -8,10 +8,10 @@ package org.integratedmodelling.klab.rest;
  * @author Ferd
  *
  */
-public class DocumentationItem {
+public class DocumentationNode {
 
     public static enum Type {
-        Report, Section, Table, Chart, Resource, Model, Reference
+        Report, Section, Table, Chart, Figure, Resource, Model, Reference, Citation, View
     }
 
     public static class Model {
@@ -19,7 +19,23 @@ public class DocumentationItem {
     }
 
     public static class Section {
+        private String text;
+        private int level;
+        public String getText() {
+            return text;
+        }
 
+        public void setText(String text) {
+            this.text = text;
+        }
+
+        public int getLevel() {
+            return level;
+        }
+
+        public void setLevel(int level) {
+            this.level = level;
+        }
     }
 
     public static class Resource {
@@ -49,6 +65,7 @@ public class DocumentationItem {
     private String nextId;
     private String title;
     private String subtitle;
+    private int relativePosition;
 
     /*
      * Only one of these below gets filled, according to the type.
@@ -138,6 +155,18 @@ public class DocumentationItem {
     }
     public void setReference(Reference reference) {
         this.reference = reference;
+    }
+
+    /**
+     * Character index of relative position in supersection, if a figure, table or reference.
+     * 
+     * @return
+     */
+    public int getRelativePosition() {
+        return relativePosition;
+    }
+    public void setRelativePosition(int relativePosition) {
+        this.relativePosition = relativePosition;
     }
 
 }
