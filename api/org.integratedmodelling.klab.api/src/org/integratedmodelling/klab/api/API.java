@@ -198,6 +198,22 @@ public interface API {
     }
 
     public static interface HUB {
+        
+        /**
+         * Returns authenticated user details and network status with all nodes (including offline
+         * if applicable) with refresh rate and unique network access token. Should be the only
+         * authentication call necessary in this API.
+         * 
+         * <p>
+         * <b>Protocol:</b> POST <br/>
+         * <b>Response type:</b> Json <br/>
+         * <b>Request:</b>
+         * {@code org.integratedmodelling.klab.rest.resources.requests.AuthenticationRequest} <br/>
+         * <b>Response:</b>
+         * {@code org.integratedmodelling.klab.rest.resources.responses.AuthenticationResponse}
+         * <br/>
+         * <b>Authentication:</b> open
+         */
 
 		public static final String API_BASE = "/api/v2";
         /**
