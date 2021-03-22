@@ -125,6 +125,10 @@ public class Report implements IReport {
         this.taggedText.put(item.getId(), item);
     }
 
+    public void addModel(IModel model) {
+        docTree.addModel(model);
+    }
+    
     public IDocumentationProvider.Item getTaggedText(String tag) {
         return this.taggedText.get(tag);
     }
@@ -249,11 +253,14 @@ public class Report implements IReport {
         this.context = context;
         this.sessionId = sessionId;
         this.docTree = new DocumentationTree(this, context, Authentication.INSTANCE.getIdentity(sessionId, ISession.class));
+    }
+
+    public void recordResolutions(IResolutionScope scope) {
         for (ObservedConcept key : ((ResolutionScope)scope).getResolutions().keySet()) {
             this.docTree.addResolution(key, ((ResolutionScope)scope).getResolutions().get(key));
         }
     }
-
+    
     public String asHTML(String markdown) {
 
         MutableDataSet options = new MutableDataSet().set(Parser.EXTENSIONS,
@@ -346,6 +353,10 @@ public class Report implements IReport {
 
     public void notifyUsedTag(String id) {
         this.usedTags.add(id);
+    }
+
+    public DocumentationTree getDocumentationTree() {
+        return docTree;
     }
 
 }
