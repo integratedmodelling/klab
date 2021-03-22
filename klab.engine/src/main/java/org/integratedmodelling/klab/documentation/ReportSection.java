@@ -57,7 +57,7 @@ public class ReportSection extends Parameters<String> implements Section {
     }
     
     public String getName() {
-        return name == null ? StringUtil.capitalize(role.name()) : name;
+        return name == null ? (role == null ? "" : StringUtil.capitalize(role.name())) : name;
     }
 
     @Override

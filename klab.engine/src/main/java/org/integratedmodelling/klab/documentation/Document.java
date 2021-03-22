@@ -42,8 +42,10 @@ public class Document {
      * @param section
      * @param locatedElements
      */
-    public void add(SectionRole mainSection, String section, List<DocumentationNode> childElements) {
+    public void add(SectionRole mainSection, ReportSection reportSection, List<DocumentationNode> childElements) {
 
+        String section = reportSection.body.toString();
+        
         /*
          * build a tree of subsections and remember the highest section level in it, which is 1 or
          * the number of # signs in the highest-level section mentioned minus 1. mainSection is
@@ -54,29 +56,47 @@ public class Document {
             chapter = new ArrayList<>();
             chapters.put(mainSection, chapter);
         }
-        chapter.add(readSection(section.split("\\r?\\n"), 0, 0));
+        
+        Section s = readSection(section.split("\\r?\\n"), 0);
+        
+        for (ReportSection child : reportSection.children) {
+            Section c = readSection(child.body.toString().split("\\r?\\n"), 1);
+            c.title = child.getName();
+            s.children.add(c);
+        }
+        
+        chapter.add(s);
     }
 
-    Section readSection(String[] lines, int level, int offset) {
+    Section readSection(String[] lines, int level) {
+        
         Section section = new Section();
         section.text = "";
         section.level = level;
         for (int i = 0; i < lines.length; i++) {
             if (lines[i].startsWith("#") && lines[i].length() > level) {
                 if (lines[i].charAt(level) == '#') {
-                    // child
-                    section.children.add(readSection(Arrays.copyOfRange(lines, i, lines.length), level + 1, offset));
-                    section.title = lines[i];
+                    // child: split until the first section marker of the same or higher level
+                    int tlev = StringUtil.countHeaderCharacters(lines[i], '#');
+                    int j = i + 1;
+                    for (; j < lines.length; j++) {
+                        int olev = StringUtil.countHeaderCharacters(lines[j], '#');
+                        if (olev > 0 && olev <= tlev) {
+                            break;
+                        }
+                    }
+                    Section child = readSection(Arrays.copyOfRange(lines, i+1, j), level + 1);
+                    section.children.add(child);
+                    child.title = lines[i].substring(tlev).trim();
+                    i += j-i-1;
                 } else {
                     return section;
                 }
             } else {
                 section.text += lines[i];
-                offset += lines[i].length();
                 section.lines++;
             }
         }
-        section.offset = offset;
         return section;
     }
 
@@ -100,16 +120,22 @@ public class Document {
     }
 
     private DocumentationNode addSection(Section section, DocumentationNode parent, GraphReference<DocumentationNode> graph) {
+        
         DocumentationNode ret = new DocumentationNode();
         ret.setId(NameGenerator.shortUUID());
         ret.setTitle(section.title);
-        ret.setType(Type.Section);
+        ret.setType(Type.Paragraph);
         DocumentationNode.Section s = new DocumentationNode.Section();
         s.setText(section.text);
         s.setLevel(section.level);
         ret.setSection(s);
         graph.getObjects().put(ret.getId(), ret);
         graph.link(ret.getId(), parent.getId());
+        
+        for (Section child : section.children) {
+            addSection(child, ret, graph);
+        }
+        
         return ret;
     }
 

@@ -11,7 +11,7 @@ package org.integratedmodelling.klab.rest;
 public class DocumentationNode {
 
     public static enum Type {
-        Report, Section, Table, Chart, Figure, Resource, Model, Reference, Citation, View
+        Report, Section, Paragraph, Table, Chart, Figure, Resource, Model, Reference, Citation, View
     }
 
     public static class Model {

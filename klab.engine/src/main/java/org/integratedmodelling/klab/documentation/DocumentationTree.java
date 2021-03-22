@@ -283,7 +283,7 @@ public class DocumentationTree {
             }
         }
         
-        document.add(role, reportSection.body.toString(), children);
+        document.add(role, reportSection, children);
         
         return ret;
     }
