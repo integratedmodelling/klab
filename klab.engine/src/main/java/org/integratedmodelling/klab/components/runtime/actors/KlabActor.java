@@ -681,7 +681,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         } else if (this.identity instanceof EngineUser) {
             child = UserActor.create((EngineUser) this.identity);
         }
-
+        
         // existing actors for this behavior
         List<ActorRef<KlabMessage>> actors = this.childInstances.get(code.getActorBaseName());
         String actorName = code.getActorBaseName() + (actors == null ? "" : ("_" + (actors.size() + 1)));
