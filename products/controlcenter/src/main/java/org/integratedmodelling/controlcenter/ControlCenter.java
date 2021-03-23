@@ -24,7 +24,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.collections4.queue.CircularFifoQueue;
 import org.apache.commons.io.FileUtils;
-import org.integratedmodelling.controlcenter.api.IAuthentication.Group;
 import org.integratedmodelling.controlcenter.api.IAuthentication.Status;
 import org.integratedmodelling.controlcenter.api.IInstance;
 import org.integratedmodelling.controlcenter.auth.Authentication;
@@ -39,6 +38,7 @@ import org.integratedmodelling.controlcenter.runtime.EngineInstance.EngineInfo;
 import org.integratedmodelling.controlcenter.runtime.ModelerInstance;
 import org.integratedmodelling.controlcenter.settings.Settings;
 import org.integratedmodelling.controlcenter.utils.TimerService;
+import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.utils.BrowserUtils;
 import org.integratedmodelling.klab.utils.OS;
 import org.joda.time.DateTime;
@@ -525,14 +525,14 @@ public class ControlCenter extends Application {
 
             int i = 0;
             for( Group group : this.authentication.getGroups() ) {
-                if (group.iconUrl != null && i < 9) {
+                if (group.getIconUrl() != null && i < 9) {
                     int columnIndex = i % 3;
                     int rowIndex = i / 3;
-                    Image groupImage = new Image(group.iconUrl, 24, 24, false, false);
+                    Image groupImage = new Image(group.getIconUrl(), 24, 24, false, false);
                     ImageView groupIcon = new ImageView(groupImage);
                     groupIcon.setPickOnBounds(true);
                     this.groupIconArea.add(groupIcon, columnIndex, rowIndex);
-                    Tooltip.install(groupIcon, new Tooltip(group.description));
+                    Tooltip.install(groupIcon, new Tooltip(group.getId() + " user group"));
                     i++;
                 }
             }
