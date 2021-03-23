@@ -53,6 +53,7 @@ public class SystemBehavior {
         // if not null, this is a child behavior from a 'new' instruction and it carries
         // a ref to the parent
         ActorRef<KlabMessage> parent = null;
+        Map<String, Object> metadata;
         Map<String, Object> arguments;
         // if not null, loading happens as a response to a 'new' and the base name
         // identifies the instantiation for all needed purposes
@@ -100,6 +101,11 @@ public class SystemBehavior {
             this.arguments = arguments;
             return this;
         }
+        
+        public Load withMetadata(Map<String, Object> metadata) {
+            this.metadata = metadata;
+            return this;
+        }
 
         public Load withParent(ActorRef<KlabMessage> parent) {
             this.parent = parent;
@@ -126,26 +132,6 @@ public class SystemBehavior {
             return this;
         }
     }
-
-    // /**
-    // * Setup a view component with view actions
-    // *
-    // * @author Ferd
-    // *
-    // */
-    // public static class SetView extends AbstractKlabMessage {
-    //
-    // ViewComponent component;
-    //
-    // public SetView(ViewComponent component) {
-    // this.component = component;
-    // }
-    //
-    // @Override
-    // public SetView direct() {
-    // throw new KlabIllegalStateException("Actors shouldn't stop themselves.");
-    // }
-    // }
 
     /**
      * Load a behavior
