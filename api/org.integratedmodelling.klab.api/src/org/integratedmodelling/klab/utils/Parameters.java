@@ -61,7 +61,7 @@ public class Parameters<T> implements IParameters<T> {
 		}
 		return new Parameters(inp);
 	}
-	
+		
 	/**
 	 * Like the other create() but also ignores null values for non-null keys.
 	 * 

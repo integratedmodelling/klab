@@ -24,6 +24,7 @@ import org.integratedmodelling.kactors.api.IKActorsStatement.While;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.ExpressionType;
 import org.integratedmodelling.kactors.model.KActorsActionCall;
+import org.integratedmodelling.kactors.model.KActorsArguments;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Actors;
@@ -243,12 +244,15 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         ActorRef<KlabMessage> sender;
         private boolean initializing;
         Semaphore semaphore = null;
+        // metadata come with the actor specification if created through instantiation and don't change.
+        Parameters<String> metadata;
 
         public Scope(IActorIdentity<KlabMessage> identity, String appId, IRuntimeScope scope) {
             this.runtimeScope = scope;
             this.identity = identity;
             this.appId = appId;
             this.viewScope = new ViewScope(this);
+            this.metadata = Parameters.create();
         }
 
         public Scope withMatch(Match match, Object value, Map<String, Object> vars) {
@@ -288,6 +292,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             this.viewScope = scope.viewScope;
             this.appId = scope.appId;
             this.semaphore = scope.semaphore;
+            this.metadata = scope.metadata;
         }
 
         public String toString() {
@@ -705,6 +710,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
         // remove the appId for the children, otherwise their messages will be rerouted
         Map<String, Object> arguments = new HashMap<>();
+        Map<String, Object> metadata = new HashMap<>();
         if (code.getArguments() != null) {
             /*
              * TODO match the arguments to the correspondent names for the declaration of main()
@@ -726,7 +732,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                         value = evaluateInScope((KActorsValue) value, scope);
                     }
                 }
-                arguments.put(arg, value);
+                if (((KActorsArguments)code.getArguments()).getMetadataKeys().contains(arg)) {
+                    metadata.put(arg, value);
+                } else {
+                    arguments.put(arg, value);
+                }
             }
         }
 
@@ -739,7 +749,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
              */
             Load loadMessage = new Load(this.identity, code.getBehavior(), null, scope)
                     .withChildActorPath(this.childActorPath == null ? actorName : (this.childActorPath + "." + actorName))
-                    .withActorBaseName(code.getActorBaseName()).withMainArguments(arguments).withApplicationId(this.appId)
+                    .withActorBaseName(code.getActorBaseName()).withMainArguments(arguments).withMetadata(metadata).withApplicationId(this.appId)
                     .withParent(getContext().getSelf());
 
             Semaphore semaphore = null;
@@ -963,8 +973,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                         new ObjectExpression((IKimExpression) arg.getValue(), scope.runtimeScope, CompilerOption.WrapParameters));
             }
             try {
+                /*
+                 * 'metadata' is bound to the actor metadata map, initialized in the call 
+                 */
                 ret = ((ObjectExpression) arg.getData()).eval(scope.runtimeScope, identity,
-                        Parameters.create(scope.getSymbols(identity)));
+                        Parameters.create(scope.getSymbols(identity), "metadata", scope.metadata));
             } catch (Throwable t) {
                 scope.getMonitor().error(t);
                 return null;
@@ -1458,6 +1471,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                  */
                 for (IBehavior.Action action : KlabActor.this.behavior.getActions("init", "@init")) {
                     Scope initScope = message.scope.forInit();
+                    initScope.metadata = new Parameters<>(message.metadata);
                     if (behavior.getDestination() == Type.SCRIPT || behavior.getDestination() == Type.UNITTEST) {
                         initScope = initScope.synchronous();
                     }
@@ -1469,6 +1483,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                  */
                 for (IBehavior.Action action : KlabActor.this.behavior.getActions("main", "@main")) {
                     Scope scope = message.scope.getChild(KlabActor.this.appId, action);
+                    scope.metadata = new Parameters<>(message.metadata);
                     if (behavior.getDestination() == Type.SCRIPT || behavior.getDestination() == Type.UNITTEST) {
                         scope = scope.synchronous();
                     }
