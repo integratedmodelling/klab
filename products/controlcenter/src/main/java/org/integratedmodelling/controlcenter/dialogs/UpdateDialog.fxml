@@ -7,7 +7,7 @@
 <?import javafx.scene.text.Font?>
 <?import org.kordamp.ikonli.javafx.FontIcon?>
 
-<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="206.0" prefWidth="480.0" type="AnchorPane" xmlns="http://javafx.com/javafx/10.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.integratedmodelling.controlcenter.dialogs.UpdateDialog">
+<fx:root maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="206.0" prefWidth="480.0" type="AnchorPane" xmlns="http://javafx.com/javafx" xmlns:fx="http://javafx.com/fxml" fx:controller="org.integratedmodelling.controlcenter.dialogs.UpdateDialog">
    <children>
       <FontIcon iconColor="RED" iconLiteral="dashicons-warning" iconSize="32" layoutX="24.0" layoutY="61.0" />
       <Label layoutX="65.0" layoutY="34.0" text="A k.LAB Control Center update is available">

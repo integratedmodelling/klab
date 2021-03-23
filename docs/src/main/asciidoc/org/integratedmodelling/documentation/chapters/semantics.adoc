@@ -39,6 +39,106 @@ endif::[]
 
 <<<
 
+Different way to look at models - in fact, even the word may be used in unfamiliar ways.
+
+Brief intro on main categories recognized by the k.LAB core ontology.
+
+Preamble on subjects as context, and the need for their acknowledgement before anything is observed. They set the main inherency for the observations, used implicitly in resolution: observing elevation after setting context to a Region means observing Elevation within Region. Because elevation is defined as ... it inherits "Location", and because Region is a location, any model of Elevation succeeds without having to explicitly mention the context.
+
+Traditional modeling sees "models" as computations that use _"data"_ as input and produce more data as outputs. The idea of "data" - for example, numeric measurements or categories - usually falls within the phenomenological realm of qualities, so we start our exploration by discussing qualities. But before we do that, it is important to realize that "data" always apply to some _context_, and it is the latter that embodies choices of spatial and temporal scale made, often, _a priori_, before any experiment or simulation is started. In {kl}, like in all ontologies used in science [refs], qualities are "dependent" entities, i.e. they can only exist inherently to another entity. So before we observe, say, the elevation of a region, we need to define the region, and with the choice of a region we make observation choices such as the extent and resolution in both space and time. If "elevation" is the _what_ of our observation, the context for its observation contains the _where_ and the _when_, all of which are necessary to observe anything. In {kl}, a semantic system that is founded on logical consistency, all this must be explicit: instead of a region, we could choose a tree as the context, and at that point elevation would not be a possible choice of observable as trees don't have elevation (the region containing the tree would; only (tree) height would be inherent to the tree itself). We will show how we can use these phenomenological principles to our advantage later. But to bridge the gap to traditional modelers and ease "entry" into the system, ...ROLE OF CLIENTS HERE which allows us to start with qualities.
+
+Height of tree example.
+
+Instantiation example
+
+Classification example 
+
+
+So, we have a context and we want to observe some qualities, then write in a basic dependency between two of them.
+
+=== Qualities
+
+Qualities can only exist inherently to a countable observation (subject, event, relationship)
+They are indirect observables because they can only be observed relative to a reference value (unit, classification system, currency).
+They inherit scale from their inherent subject; spatial and temporal representation are handled and mediated transparently.
+Units and currencies are also mediated transparently whenever possible.
+Inherency can be specified in models: “Height of Tree within Region”, “Sediment Mass within Riverine Reach”.
+Quality semantics admits operators in models: “LandCoverType without Urban”, “value of CarbonSequestration by LandCoverType”, “Elevation where (LandCoverType is Forest)”. This enables modeling in English without loss of semantics
+
+[source,kim,linenumbers]
+----
+length Elevation 
+"Geographical elevation above sea level, as described by a digital
+ elevation model."
+    is im:Height of earth:Terrain within earth:Location;
+
+abstract length Height is Length
+   inherits Vertical requires identity Lineal;
+----
+
+[source,kim,linenumbers]
+----
+
+----
+
+
+=== Subjects and agents
+Subjects are physical direct observations in that they are simply acknowledged: their statement is enough to put them into existence.
+Agents are special subjects that may be reactive, interactive, or deliberative, enabling different potential actions from their behaviors.
+All  subjects are instantiated and resolved (explained and given a behavior) by different models. This gives much flexibility to the modeller as the instantiators and resolvers may be contextualized differently. 
+Qualities, processes, events within them are declared with independent models and linked by semantic dependencies. 
+A root subject is the context for all modelling sessions. The view of time and space embedded in the root subject are the overall scale for the session, although each observation may see time and space differently.
+
+[source,kim]
+----
+thing Coast
+   is earth:Terrestrial earth:Region 
+      adjacent to (earth:Marine or earth:Lacustrine) earth:Region;
+
+// use GBIF authority for Homo sapiens species
+identity Human equals GBIF.SPECIES:2436436;
+deliberative agent HumanIndividual 
+	is Human biology:Individual;
+
+// or more simply, but less readable:
+deliberative agent HumanIndividual 
+	is GBIF.SPECIES:2436436 biology:Individual;
+
+----
+
+[source,kim]
+----
+// instantiator from resource
+model each biology:Tree ecology:Community
+   using im:global:plant.census:trees;
+
+// resolver adds dependency on biomass
+model biology:Tree ecology:Community
+   observing ecology:Biomass in t;
+
+// resolve biomass in each community based on species (algorithms missing)
+model ecology:Biomass within biology:Tree ecology:Community in t
+   observing biology:Species of biology:Plants ecology:Population;
+
+// attribute the dominant species using machine-learned model (dependencies missing)
+model biology:Species of each biology:Tree ecology:Community
+   using im:global.ecology:ml:treespecies.resolver;
+
+// resolve the species to PFT attributes using table from resource
+model biology:Species of biology:Tree ecology:Community
+   using im:global.ecology:ml:pft.resolver;
+----
+
+=== Predicates
+
+Roles, Attributes, Identities, Realms
+Collectively called predicates: they can only modify an observable but cannot be observed themselves.
+Each predicate carries semantics and is applied in k.IM as in English, building derived concepts transparently.
+Predicates are instantiated and resolved just like observables. They may be conferred by processes or events, after which they are automatically resolved.
+Identities are the bridge to controlled vocabularies, which we call authorities and are supported by the software. Examples: GBIF, Agrovoc, IUPAC InChem.
+Roles can imply other roles contextually to specific observables, allowing selective resolution of qualities or behaviors.
+Attribute instantiators can bridge to classification models from machine learning.
+
 
 === Inherency
 
@@ -51,11 +151,11 @@ The {klab} annotation conventions are built around the fact that inherency _affe
 occurrence of agriculture:Pollinator ecology:Nesting
 ----
 
-are used in place of the seemingly correct 
+are used instead of the seemingly correct 
 
 [source,kim]
 ----
 occurrence of ecology:Nesting of agriculture:Pollinator biology:Individual
 ----
 
-The second use does not seem semantically incorrect (it is certainly acceptable _linguistically_), until you consider what inherency actually means.... It would cause the resolver to try and resolve.. In comparison, the predicate simply _subsets_ the concept of nesting to the set of events that have to do with pollinators.  
+The seems more acceptable _linguistically_), until you consider what inherency actually means.... It would cause the resolver to try and resolve.. In comparison, the predicate simply _subsets_ the concept of nesting to the set of events that have to do with pollinators.  

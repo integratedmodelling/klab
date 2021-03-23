@@ -8,8 +8,8 @@
 		<version>0.10.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>controlcenter</artifactId>
+	<version>1.2.11</version>
 	<name>k.LAB Control Center</name>
-
 	<build>
 		<plugins>
 			<plugin>
@@ -18,6 +18,7 @@
 				<version>8.8.3</version>
 				<configuration>
 					<mainClass>org.integratedmodelling.controlcenter.ControlCenter</mainClass>
+					<jfxMainAppJarName>controlcenter-jfx.jar</jfxMainAppJarName>
 					<vendor>The Integrated Modelling Partnership</vendor>
 					<appName>klab</appName>
 					<nativeReleaseVersion>1.1</nativeReleaseVersion>
@@ -25,19 +26,30 @@
 				</configuration>
 				<executions>
 					<execution>
-						<!-- required before build-native -->
 						<id>create-jfxjar</id>
 						<phase>package</phase>
 						<goals>
 							<goal>build-jar</goal>
 						</goals>
 					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>com.install4j</groupId>
+				<artifactId>install4j-maven</artifactId>
+				<version>9.0</version>
+				<executions>
 					<execution>
-						<id>create-native</id>
+						<id>compile-installers</id>
 						<phase>package</phase>
 						<goals>
-							<goal>build-native</goal>
+							<goal>compile</goal>
 						</goals>
+						<configuration>
+							<license>${env.INSTALL4J_LICENSE}</license>
+							<installDir>${env.INSTALL4J_HOME}</installDir>
+							<projectFile>${project.basedir}/controlcenter.install4j</projectFile>
+						</configuration>
 					</execution>
 				</executions>
 			</plugin>
@@ -63,6 +75,24 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
+		<resources>
+			<resource>
+				<filtering>false</filtering>
+				<directory>src/main/java</directory>
+				<includes>
+					<include>**/*.fxml</include>
+					<include>**/*.css</include>
+					<include>**/*.ttf</include>
+					<include>**/*.gif</include>
+					<include>**/*.png</include>
+					<include>**/*.ico</include>
+				</includes>
+			</resource>
+			<resource>
+			  <directory>src/main/resources</directory>
+			  <filtering>true</filtering>
+			</resource>
+		</resources>
 	</build>
 	<dependencies>
 		<!-- https://mvnrepository.com/artifact/net.lingala.zip4j/zip4j -->
@@ -154,13 +184,11 @@
 			<!-- <systemPath>C:\Program Files\Java\jdk1.8.0_181/jre/lib/ext/jfxrt.jar</systemPath> -->
 			<scope>system</scope>
 		</dependency>
-
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
 		</dependency>
-
 	</dependencies>
 
 	<repositories>
@@ -168,6 +196,17 @@
 			<id>jcenter</id>
 			<url>http://jcenter.bintray.com</url>
 		</repository>
+		<repository>
+			<id>ej-technologies</id>
+			<url>https://maven.ej-technologies.com/repository</url>
+		</repository>
 	</repositories>
+
+	<pluginRepositories>
+		<pluginRepository>
+			<id>ej-technologies</id>
+			<url>https://maven.ej-technologies.com/repository</url>
+		</pluginRepository>
+	</pluginRepositories>
 
 </project>

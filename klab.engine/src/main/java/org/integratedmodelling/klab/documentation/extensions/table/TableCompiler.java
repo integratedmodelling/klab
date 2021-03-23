@@ -24,6 +24,7 @@ import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
@@ -1931,7 +1932,51 @@ public class TableCompiler {
                     .getConcreteChildren(category)/*
                                                    * : Types.INSTANCE.getConcreteLeaves(category)
                                                    */) {
-                ret.add(new ObservedConcept(Observable.promote(child), Mode.RESOLUTION));
+                boolean ok = true;
+                if (observable != null && !observable.getValueOperators().isEmpty()) {
+                    System.out.println("SUPPORT VALUE OPS");
+                    for (Pair<ValueOperator, Object> vp : observable.getValueOperators()) {
+                        switch (vp.getFirst()) {
+                        case AVERAGED:
+                            break;
+                        case BY:
+                            break;
+                        case DOWN_TO:
+                            break;
+                        case GREATER:
+                            break;
+                        case GREATEREQUAL:
+                            break;
+                        case IS:
+                            break;
+                        case LESS:
+                            break;
+                        case LESSEQUAL:
+                            break;
+                        case MINUS:
+                            break;
+                        case OVER:
+                            break;
+                        case PLUS:
+                            break;
+                        case SAMEAS:
+                            break;
+                        case SUMMED:
+                            break;
+                        case TIMES:
+                            break;
+                        case TOTAL:
+                            break;
+                        case WHERE:
+                            break;
+                        case WITHOUT:
+                            break;
+                        }
+                    }
+                }
+                if (ok) {
+                    ret.add(new ObservedConcept(Observable.promote(child), Mode.RESOLUTION));
+                }
             }
         }
         return ret;

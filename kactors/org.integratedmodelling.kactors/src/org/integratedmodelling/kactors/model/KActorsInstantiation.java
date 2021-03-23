@@ -16,77 +16,84 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class KActorsInstantiation extends KActorsStatement implements Instantiation {
 
-	String behavior;
-	KActorsArguments arguments = null;
-	private List<ActionDescriptor> actions = new ArrayList<>();
+    String behavior;
+    KActorsArguments arguments = null;
+    private List<ActionDescriptor> actions = new ArrayList<>();
 
-	private String actorBaseName = "a" + NameGenerator.shortUUID();
+    private String actorBaseName = null;
 
-	public KActorsInstantiation(ActorInstantiation statement, KActorCodeStatement parent) {
-		super(statement, parent, Type.INSTANTIATION);
-		this.behavior = statement.getBehavior();
-		if (statement.getParameters() != null) {
-			this.arguments = new KActorsArguments(statement.getParameters());
-			if (this.arguments.getData().containsKey("tag")) {
-				this.actorBaseName = this.arguments.getData().get("tag").toString();
-			}
-		}
-		
-		if (statement.getActions() != null) {
-			if (statement.getActions().getStatement() != null) {
-				ActionDescriptor action = new ActionDescriptor();
-				action.match = KActorsValue.anytrue();
-				action.action = KActorsStatement.create(statement.getActions().getStatement(), this);
-				actions.add(action);
-			} else if (statement.getActions().getStatements() != null) {
-				ActionDescriptor action = new ActionDescriptor();
-				action.match = KActorsValue.anytrue();
-				action.action = new KActorsConcurrentGroup(
-						Collections.singletonList(statement.getActions().getStatements()), this);
-				actions.add(action);
-			} else if (statement.getActions().getMatch() != null) {
-				ActionDescriptor action = new ActionDescriptor();
-				action.match = new KActorsValue(statement.getActions().getMatch(), this);
-				action.action = new KActorsConcurrentGroup(
-						Collections.singletonList(statement.getActions().getMatch().getBody()), this);
-				actions.add(action);
-			} else if (statement.getActions().getMatches() != null) {
-				for (Match match : statement.getActions().getMatches()) {
-					ActionDescriptor action = new ActionDescriptor();
-					action.match = new KActorsValue(match, this);
-					action.action = new KActorsConcurrentGroup(Collections.singletonList(match.getBody()), this);
-					actions.add(action);
-				}
-			}
-		}
-	}
+    public KActorsInstantiation(ActorInstantiation statement, String tag, KActorCodeStatement parent) {
+        super(statement, parent, Type.INSTANTIATION);
+        this.behavior = statement.getBehavior();
+        if (tag != null) {
+            this.actorBaseName = tag.substring(1);
+        }
+        if (statement.getParameters() != null) {
+            this.arguments = new KActorsArguments(statement.getParameters());
+            if (this.actorBaseName == null && this.arguments.getData().containsKey("tag")) {
+                this.actorBaseName = this.arguments.getData().get("tag").toString();
+            }
+        }
 
-	@Override
-	public String getBehavior() {
-		return behavior;
-	}
+        if (this.actorBaseName == null) {
+            this.actorBaseName = "a" + NameGenerator.shortUUID();
+        }
 
-	@Override
-	public IParameters<String> getArguments() {
-		return arguments;
-	}
+        if (statement.getActions() != null) {
+            if (statement.getActions().getStatement() != null) {
+                ActionDescriptor action = new ActionDescriptor();
+                action.match = KActorsValue.anytrue();
+                action.action = KActorsStatement.create(statement.getActions().getStatement(), this);
+                actions.add(action);
+            } else if (statement.getActions().getStatements() != null) {
+                ActionDescriptor action = new ActionDescriptor();
+                action.match = KActorsValue.anytrue();
+                action.action = new KActorsConcurrentGroup(Collections.singletonList(statement.getActions().getStatements()),
+                        this);
+                actions.add(action);
+            } else if (statement.getActions().getMatch() != null) {
+                ActionDescriptor action = new ActionDescriptor();
+                action.match = new KActorsValue(statement.getActions().getMatch(), this);
+                action.action = new KActorsConcurrentGroup(Collections.singletonList(statement.getActions().getMatch().getBody()),
+                        this);
+                actions.add(action);
+            } else if (statement.getActions().getMatches() != null) {
+                for (Match match : statement.getActions().getMatches()) {
+                    ActionDescriptor action = new ActionDescriptor();
+                    action.match = new KActorsValue(match, this);
+                    action.action = new KActorsConcurrentGroup(Collections.singletonList(match.getBody()), this);
+                    actions.add(action);
+                }
+            }
+        }
+    }
 
-	@Override
-	public String getActorBaseName() {
-		return actorBaseName;
-	}
-	
-	@Override
-	public List<Pair<IKActorsValue, IKActorsStatement>> getActions() {
-		List<Pair<IKActorsValue, IKActorsStatement>> ret = new ArrayList<>();
-		for (ActionDescriptor ad : actions) {
-			ret.add(new Pair<>(ad.match, ad.action));
-		}
-		return ret;
-	}
+    @Override
+    public String getBehavior() {
+        return behavior;
+    }
 
-	public void setActorBaseName(String actorBaseName) {
-		this.actorBaseName = actorBaseName;
-	}
+    @Override
+    public IParameters<String> getArguments() {
+        return arguments;
+    }
+
+    @Override
+    public String getActorBaseName() {
+        return actorBaseName;
+    }
+
+    @Override
+    public List<Pair<IKActorsValue, IKActorsStatement>> getActions() {
+        List<Pair<IKActorsValue, IKActorsStatement>> ret = new ArrayList<>();
+        for (ActionDescriptor ad : actions) {
+            ret.add(new Pair<>(ad.match, ad.action));
+        }
+        return ret;
+    }
+
+    public void setActorBaseName(String actorBaseName) {
+        this.actorBaseName = actorBaseName;
+    }
 
 }

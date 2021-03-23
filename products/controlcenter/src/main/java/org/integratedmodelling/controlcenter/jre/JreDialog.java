@@ -14,11 +14,6 @@ public class JreDialog extends Dialog<Boolean> {
 			FXMLLoader loader = new FXMLLoader(getClass().getResource("JreDialog.fxml"));
 			Parent root = loader.load();
 			getDialogPane().setContent(root);
-			setResultConverter(buttonType -> {
-				// SomeDataType someData = ... ;
-				return true;
-			});
-
 		} catch (IOException e) {
 			e.printStackTrace();
 		}

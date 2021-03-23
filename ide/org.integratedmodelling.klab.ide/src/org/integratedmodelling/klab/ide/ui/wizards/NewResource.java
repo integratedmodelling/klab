@@ -213,7 +213,7 @@ public class NewResource extends WizardPage {
 	 */
 	public NewResource(EResourceFolder folder) {
 		super("wizardPage");
-		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
+		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.png"));
 		setTitle("New resource");
 		setDescription(
 				"Create a new k.LAB resource for a specified adapter. Use to specify all parameters manually when drag&drop or bulk import cannot be used.");

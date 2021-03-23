@@ -291,4 +291,10 @@ public class StringUtil {
 		return ret.toString();
 	}
 
+    public static int countHeaderCharacters(String string, char c) {
+        int ret = 0;
+        while (ret < string.length() && string.charAt(ret) == c) ret++;
+        return ret;
+    }
+
 }

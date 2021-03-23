@@ -227,7 +227,7 @@ public class Documentation implements IDocumentation {
 				if (section.getType() == SectionImpl.Type.REPORT_CALL) {
 					switch (section.method) {
 					case "section":
-						current = ((ReportSection) sect).getChild(current, section.body);
+						current = ((ReportSection) sect).getChild(current, section.body, section.method);
 						break;
 					case "tag":
 						current.tag(processArguments(section.body, 1), Documentation.this, context);

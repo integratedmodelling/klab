@@ -22,3 +22,7 @@
 .chart-content {
     -fx-padding: 0px;
 }
+
+.root {
+	-fx-font-family: 'Open Sans';
+}

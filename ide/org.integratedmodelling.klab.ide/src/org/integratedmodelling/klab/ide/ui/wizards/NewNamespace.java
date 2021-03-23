@@ -53,7 +53,7 @@ public class NewNamespace extends WizardPage {
     public NewNamespace(IKimProject targetProject) {
         super("wizardPage");
         this.targetProject = targetProject;
-		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
+		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.png"));
         setTitle("New k.LAB namespace");
         setDescription("Create a new namespace for concepts, models or observations");
     }
