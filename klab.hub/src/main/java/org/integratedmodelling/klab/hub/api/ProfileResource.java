@@ -236,7 +236,7 @@ public class ProfileResource implements OAuth2User{
     public ArrayList<String> expiredGroupEntries() {
         ArrayList<String> expired = new ArrayList<String>();
         for (GroupEntry e : getGroups()) {
-            if(e.getExperation().isAfterNow()) {
+            if(e.getExperation().isBeforeNow()) {
                 expired.add(e.getGroupName());
             }
         }
@@ -246,7 +246,7 @@ public class ProfileResource implements OAuth2User{
     public ArrayList<String> expiringGroupEntries() {
         ArrayList<String> expiring = new ArrayList<String>();
         for (GroupEntry e : getGroups()) {
-            if(!e.getExperation().isAfter(DateTime.now().plusDays(30))) {
+            if(!e.getExperation().isBeforeNow() && !e.getExperation().isAfter(DateTime.now().plusDays(30))) {
                 expiring.add(e.getGroupName());
             }
         }
