@@ -1934,9 +1934,9 @@ public class TableCompiler {
                                                    */) {
                 boolean ok = true;
                 if (observable != null && !observable.getValueOperators().isEmpty()) {
-                    System.out.println("SUPPORT VALUE OPS");
+
                     for (Pair<ValueOperator, Object> vp : observable.getValueOperators()) {
-                        switch (vp.getFirst()) {
+                        switch(vp.getFirst()) {
                         case AVERAGED:
                             break;
                         case BY:
@@ -1948,6 +1948,9 @@ public class TableCompiler {
                         case GREATEREQUAL:
                             break;
                         case IS:
+                            if (vp.getSecond() instanceof IConcept) {
+                                ok = child.is((IConcept) vp.getSecond());
+                            }
                             break;
                         case LESS:
                             break;
@@ -1960,6 +1963,7 @@ public class TableCompiler {
                         case PLUS:
                             break;
                         case SAMEAS:
+                            ok = child.equals(vp.getSecond());
                             break;
                         case SUMMED:
                             break;
@@ -1972,6 +1976,11 @@ public class TableCompiler {
                         case WITHOUT:
                             break;
                         }
+
+                        if (!ok) {
+                            break;
+                        }
+
                     }
                 }
                 if (ok) {
