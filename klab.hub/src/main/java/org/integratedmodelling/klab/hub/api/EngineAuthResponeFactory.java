@@ -14,14 +14,18 @@ import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.hub.api.adapters.MongoGroupAdapter;
 import org.integratedmodelling.klab.hub.commands.GenerateHubReference;
+import org.integratedmodelling.klab.hub.exception.LicenseConfigDoestNotExists;
 import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
-import org.integratedmodelling.klab.hub.network.NodeNetworkManager;
+import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
+import org.integratedmodelling.klab.hub.network.NodeNetworkManager;
+import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.utils.IPUtils;
@@ -29,9 +33,27 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
 public class EngineAuthResponeFactory {
+    
+    private UserProfileService profileService;
+    
+    private MongoGroupRepository groupRepository;
+    
+    private LicenseConfigService configService;
+    
+    private UserAuthTokenService tokenService;
 	
-	public EngineAuthenticationResponse getRespone(EngineAuthenticationRequest request, String remoteAddr,
-			LicenseConfiguration config, UserProfileService userProfileService, MongoGroupRepository groupRepository) throws NoSuchProviderException, IOException, PGPException {
+    public EngineAuthResponeFactory(UserProfileService profileService,
+            MongoGroupRepository groupRepository,
+            LicenseConfigService configService,
+            UserAuthTokenService tokenService) {
+        this.profileService = profileService;
+        this.groupRepository = groupRepository;
+        this.configService = configService;
+        this.tokenService = tokenService;
+    }
+    
+	public EngineAuthenticationResponse getRespone(EngineAuthenticationRequest request, String remoteAddr) 
+	        throws NoSuchProviderException, IOException, PGPException {
 		switch (request.getLevel()) {
 		case ANONYMOUS:
 		case INSTITUTIONAL:
@@ -40,19 +62,27 @@ public class EngineAuthResponeFactory {
 			break;
 		case TEST:
 			if (IPUtils.isLocal(remoteAddr)) {
-				return localEngine(request, userProfileService, groupRepository);
+				return localEngine(request);
 			} else {
 				break;	
 			}
 		case USER:
 			if (IPUtils.isLocalhost(remoteAddr)) {
 				//You are running locally with a hub, so it is assumed that the hub is a development hub
-				return localEngine(request, userProfileService, groupRepository);
+				return localEngine(request);
 			} else {
-				ProfileResource profile = userProfileService.getRawUserProfile(request.getName());
+				ProfileResource profile = profileService.getRawUserProfile(request.getName());
+		        LicenseConfiguration config;
+		        try {
+		            config = configService.getConfigByKey(request.getKey());
+		        } catch (LicenseConfigDoestNotExists e) {
+		            config = null;
+		        }
 				EngineAuthenticationResponse response = remoteEngine(profile, request.getCertificate(), config);
+				TokenAuthentication token = tokenService.createToken(profile.getUsername(), TokenType.auth);
+				response.setAuthentication(token.getTokenString());
 	    		profile.setLastConnection(DateTime.now());
-	    		userProfileService.updateUserByProfile(profile);
+	    		profileService.updateUserByProfile(profile);
 	    		return response;
 			}
 		default:
@@ -65,12 +95,21 @@ public class EngineAuthResponeFactory {
 			String cipher, LicenseConfiguration config) throws NoSuchProviderException, IOException, PGPException {
 		Properties engineProperties = PropertiesFactory.fromProfile(profile, config).getProperties();
 		Properties cipherProperties = new CipherProperties().getCipherProperties(config, cipher);
-		ArrayList<String> warnings = new ArrayList<String>();
+		ArrayList<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
 		
 		DateTime expires = DateTime.parse(cipherProperties.getProperty(KlabCertificate.KEY_EXPIRATION), 
                 DateTimeFormat.forPattern("yyyy-MM-dd'T'HH:mm:ss.SSSZZ"));
-		if(expires.isAfter(DateTime.now().plusDays(30))) {
-			warnings.add("License set to expire on: " + expires.toString());
+		
+		if(!expires.isAfter(DateTime.now().plusDays(30))) {
+		    
+		    HubNotificationMessage msg = HubNotificationMessage.MessageClass
+		            .EXPIRING_CERTIFICATE.build("License set to expire on: " + expires.toString());
+		    
+		            //EXPIRING_CERTIFICATE.get( "License set to expire on: " + expires.toString());
+//		    HubNotificationMessage msg = new HubNotificationMessage.
+//		            new HubNotificationMessage(HubNotificationMessage.WARNING.EXPIRING_CERTIFICATE, 
+//		           );
+		    messages.add(msg);
 		}
 		
 		if (expires.isAfterNow()) {
@@ -85,26 +124,43 @@ public class EngineAuthResponeFactory {
 	    		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engine.getGroups(),
 	    				DateTime.now().plusDays(90).toString(), engine.getId());
 	    		
-	    		ArrayList<String> expired = profile.checkGroupEntries();
+	    		ArrayList<String> expired = profile.expiredGroupEntries();
+	    		ArrayList<String> expiring = profile.expiringGroupEntries();
+	    		
 	    		if(!expired.isEmpty()) {
-	    			warnings.add("Following group(s) expired: " + expired.toString());
+	    		    expired.forEach(grp -> {
+	    		        messages.add(
+	    		                HubNotificationMessage.MessageClass.EXPIRED_GROUP.build("The group " + grp + " has expired."));
+	    		    });
 	    		}
+	    		
+	            if(!expiring.isEmpty()) {
+	                expiring.forEach(grp -> {
+	                    messages.add(
+	                            HubNotificationMessage.MessageClass.EXPIRING_GROUP.build("The group " + grp + " is expiring."));
+	                 });
+	            }
 	    		
 	    		Logging.INSTANCE.info("Remote Engine Run on hub with User: " + engine.getUsername());
 	    		HubReference hub = new GenerateHubReference().execute();
-	    		EngineAuthenticationResponse resp = new EngineAuthenticationResponse(authenticatedIdentity, hub,NodeNetworkManager.INSTANCE.getNodeReferences());
-	    		if (!warnings.isEmpty()) {
-	    			resp.setWarnings(warnings);
+	    		EngineAuthenticationResponse resp = new EngineAuthenticationResponse(authenticatedIdentity, hub,
+	    				NodeNetworkManager.INSTANCE.getNodeReferences());
+	    		
+	    		if (!messages.isEmpty()) {
+	    			resp.setMessages(messages);
 	    		}
+	    		
 	    		return resp;
 	        }
 		} else {
+		    //should we send an email?
 			throw new LicenseExpiredException(profile.getUsername());
 		}
 		return null;
 	}
+	
 
-	private EngineAuthenticationResponse localEngine(EngineAuthenticationRequest request, UserProfileService userProfileService, MongoGroupRepository groupRepository) {
+	private EngineAuthenticationResponse localEngine(EngineAuthenticationRequest request) {
 		DateTime now = DateTime.now();
 		DateTime tomorrow = now.plusDays(90);
 		
@@ -114,9 +170,9 @@ public class EngineAuthResponeFactory {
 		ProfileResource profile = null;
 		
 		if(request.getName().equalsIgnoreCase("system")) {	
-			profile = userProfileService.getRawUserProfile(request.getName());
+			profile = profileService.getRawUserProfile(request.getName());
 		} else {
-			profile = userProfileService.getRawUserProfile("hades");
+			profile = profileService.getRawUserProfile("hades");
 		}
 		
 		mongoGroups.forEach(
@@ -130,7 +186,7 @@ public class EngineAuthResponeFactory {
 				tomorrow.toString(), engine.getId());
 		
 		profile.setLastConnection(now);
-		userProfileService.updateUserByProfile(profile);
+		profileService.updateUserByProfile(profile);
 
 		Logging.INSTANCE.info("Local Engine Run on hub with User: " + engine.getUsername());
 		HubReference hub = new GenerateHubReference().execute();

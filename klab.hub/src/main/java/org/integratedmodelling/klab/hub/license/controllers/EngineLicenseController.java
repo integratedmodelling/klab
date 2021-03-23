@@ -21,11 +21,11 @@ import org.integratedmodelling.klab.hub.api.LicenseGenerator;
 import org.integratedmodelling.klab.hub.api.ProfileResource;
 import org.integratedmodelling.klab.hub.api.PropertiesFactory;
 import org.integratedmodelling.klab.hub.emails.services.EmailManager;
-import org.integratedmodelling.klab.hub.exception.BadRequestException;
-import org.integratedmodelling.klab.hub.exception.LicenseConfigDoestNotExists;
 import org.integratedmodelling.klab.hub.exception.LicenseExpiredException;
+import org.integratedmodelling.klab.hub.exception.LicenseGenerationError;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
+import org.integratedmodelling.klab.hub.tokens.services.UserAuthTokenService;
 import org.integratedmodelling.klab.hub.users.services.UserProfileService;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
@@ -45,38 +45,33 @@ import com.google.gson.JsonObject;
 @RestController
 public class EngineLicenseController extends LicenseController<EngineAuthenticationRequest>{
 	
-	private UserProfileService userProfileService;
-
-	private LicenseConfigService configService;
-
-	private MongoGroupRepository groupRepository;
-	
 	private EmailManager emailManager;
+	
+	private EngineAuthResponeFactory authFactory;
+
+    private UserProfileService userProfileService;
+
+    private LicenseGenerator licenseGenerator;
 	
 	@Autowired
 	EngineLicenseController(UserProfileService userProfileService,
 			LicenseConfigService configService,
 			MongoGroupRepository groupRepository,
-		    EmailManager emailManager) {
+		    EmailManager emailManager,
+		    UserAuthTokenService authTokenService) {
+	    this.authFactory = new EngineAuthResponeFactory(userProfileService, groupRepository, configService, authTokenService);
+	    this.licenseGenerator = new LicenseGenerator(configService);
 		this.userProfileService = userProfileService;
-		this.configService = configService;
-		this.groupRepository = groupRepository;
 		this.emailManager = emailManager;
 	}
 	
 	@GetMapping(value= API.HUB.USER_BASE_ID, params = "certificate")
 	@PreAuthorize("authentication.getPrincipal() == #id")
 	public void generateCertFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
+	    
 		ProfileResource profile = userProfileService.getCurrentUserProfile();
-		LicenseConfiguration configuration = configService.getDefaultConfig();
-
-		Properties engineProperties = PropertiesFactory.fromProfile(profile, configuration).getProperties();
-
-
-		byte[] certFileContent = new LicenseGenerator(configuration, engineProperties).generate();
-
+		byte[] certFileContent = licenseGenerator.generate(profile, null);
 		String certFileString = String.format("attachment; filename=%s", KlabCertificate.DEFAULT_ENGINE_CERTIFICATE_FILENAME);
-
 		response.setHeader("Content-disposition", certFileString);
 		response.setContentType("text/plain;charset=utf-8");
 		response.setContentLength(certFileContent.length);
@@ -101,24 +96,18 @@ public class EngineLicenseController extends LicenseController<EngineAuthenticat
 				remoteAddr = httpRequest.getRemoteAddr();
 			}
 		}
+		
 		if(httpRequest.getHeader("test") != null) {
 			remoteAddr = "128.0.0.1";
 		}
 		
-		LicenseConfiguration config;
-		try {
-			config = configService.getConfigByKey(request.getKey());
-		} catch (LicenseConfigDoestNotExists e) {
-			config = null;
-		}
-
 		EngineAuthenticationResponse response = null;
 		
 		try {
-			response = new EngineAuthResponeFactory()
-				.getRespone(request, remoteAddr, config, userProfileService, groupRepository);
+			response = authFactory
+				.getRespone(request, remoteAddr);
 		} catch (NoSuchProviderException | IOException | PGPException e) {
-			throw new BadRequestException("");
+			throw new LicenseGenerationError("Issue in authenticating certificate.");
 		} catch (LicenseExpiredException e) {
 			emailManager.expiredLicenseEmail(request.getEmail());
 		}

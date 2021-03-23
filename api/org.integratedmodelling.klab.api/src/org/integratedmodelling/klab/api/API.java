@@ -198,7 +198,7 @@ public interface API {
     }
 
     public static interface HUB {
-
+        
         /**
          * Returns authenticated user details and network status with all nodes (including offline
          * if applicable) with refresh rate and unique network access token. Should be the only
@@ -215,7 +215,7 @@ public interface API {
          * <b>Authentication:</b> open
          */
 
-        public static final String API_BASE = "/api/v2";
+		public static final String API_BASE = "/api/v2";
         /**
          * Base URL path for node on the hub.
          */
