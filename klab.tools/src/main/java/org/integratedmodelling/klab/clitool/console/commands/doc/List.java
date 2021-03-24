@@ -64,7 +64,6 @@ public class List implements ICommand {
         String ret = "";
         DocumentationNode node = docs.getObjects().get(id);
         String filler = StringUtil.spaces(level * 3);
-        ret += filler + node.getTitle() + "\n";
 
         switch(node.getType()) {
         case Chart:
@@ -87,10 +86,16 @@ public class List implements ICommand {
         case Resource:
             break;
         case Section:
+
+            if (node.getTitle() != null && !node.getTitle().trim().isEmpty()) {
+                ret += "\n" + filler + node.getTitle() + "\n" + filler + StringUtil.repeat('-', node.getTitle().length())
+                        + "\n\n";
+            }
             if (node.getSection() != null && node.getSection().getText() != null) {
                 ret += StringUtil.indent(StringUtil.justifyLeft(node.getSection().getText(), 60), level * 3) + "\n";
             }
             break;
+
         case Table:
             break;
         case View:

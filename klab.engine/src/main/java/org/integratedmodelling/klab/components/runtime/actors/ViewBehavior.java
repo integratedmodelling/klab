@@ -810,7 +810,7 @@ public class ViewBehavior {
             for (String key : arguments.getNamedKeys()) {
                 Object o = arguments.get(key);
                 if (o instanceof KActorsValue) {
-                    o = ((KActorsValue) o).getValue();
+                    o = KlabActor.evaluateInScope((KActorsValue) o, scope, scope.identity);
                 }
                 if (o == null) {
                     ret.put(key, "null");
