@@ -1888,7 +1888,7 @@ public class TableCompiler {
 
     public List<ObservedConcept> expandCategory(IObservable observable) {
         IConcept category = Observables.INSTANCE.getDescribedType(observable.getType());
-        this.observables.add(new ObservedConcept(observable, Mode.RESOLUTION));
+        this.observables.add(new ObservedConcept(Observables.INSTANCE.removeValueOperators(observable, monitor), Mode.RESOLUTION));
         return expandConcept(category, observable);
     }
 

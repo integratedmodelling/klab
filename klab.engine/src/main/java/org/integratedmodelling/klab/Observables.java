@@ -1238,4 +1238,17 @@ public enum Observables implements IObservableService {
 
         return true;
     }
+
+    /**
+     * If the observable has value operators, remove them.
+     * 
+     * @param observable
+     * @return
+     */
+    public IObservable removeValueOperators(IObservable observable, IMonitor monitor) {
+        if (observable.getValueOperators().isEmpty()) {
+            return observable;
+        }
+        return observable.getBuilder(monitor).withoutValueOperators().buildObservable();
+    }
 }
