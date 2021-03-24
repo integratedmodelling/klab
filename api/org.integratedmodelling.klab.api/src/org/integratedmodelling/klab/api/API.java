@@ -806,6 +806,8 @@ public interface API {
             /** The Constant P_CONTEXT. */
             public static final String P_CONTEXT = "{context}";
 
+            public static final String P_VIEW = "{view}";
+
             /**
              * Create new context from the URN of its definition or remote computation. Return task
              * descriptor.
@@ -832,6 +834,11 @@ public interface API {
              */
             public static final String REPORT_CONTEXT = "/engine/session/observation/report/" + P_CONTEXT;
 
+            /**
+             * Return structured documentation view (with view being one of report, figures, tables, resources, models or provenance)
+             */
+            public static final String DOCUMENTATION_VIEW_CONTEXT = "/engine/session/observation/documentation/" + P_VIEW + "/" + P_CONTEXT;
+            
             /**
              * Endpoints to access tasks.
              * 
