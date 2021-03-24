@@ -76,6 +76,7 @@ import javafx.scene.input.TransferMode;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
+import javafx.scene.paint.Color;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
 import javafx.stage.Stage;
@@ -117,6 +118,8 @@ public class ControlCenter extends Application {
     private AtomicBoolean modelerStarting = new AtomicBoolean(false);
     private AtomicBoolean modelerRunning = new AtomicBoolean(false);
     private AtomicBoolean engineError = new AtomicBoolean(false);
+    
+    private Paint originalLabelColor;
 
     @FXML
     Button buttonSettings;
@@ -572,7 +575,7 @@ public class ControlCenter extends Application {
             }
 
             if (!engineStarting.get() && !engineError.get()) {
-
+                originalLabelColor = engineCurrentFileLabel.getTextFill();
                 if (bs.latest < 0) {
 
                     /*
@@ -826,6 +829,7 @@ public class ControlCenter extends Application {
 
                     @Override
                     public void run() {
+                        try {
 
                         downloadViewShown.set(true);
 
@@ -847,15 +851,22 @@ public class ControlCenter extends Application {
                                     int sofar = 0;
 
                                     @Override
-                                    public void transferFinished() {
+                                    public void transferFinished(Exception e) {
                                         Platform.runLater(() -> {
-                                            engineCurrentFileLabel.setText("k.Engine download complete");
+                                            if (e != null) {
+                                                engineCurrentFileLabel.setTextFill(Color.RED);
+                                                engineCurrentFileLabel.setText("Error downloading k.Engine");
+                                            } else {
+                                                engineCurrentFileLabel.setTextFill(originalLabelColor);
+                                                engineCurrentFileLabel.setText("k.Engine download complete");
+                                            }
                                         });
                                     }
 
                                     @Override
                                     public void notifyFileProgress( String file, long bytesSoFar, long totalBytes ) {
                                         Platform.runLater(() -> {
+                                            engineProgressLabelDetail.setTextFill(originalLabelColor);
                                             engineProgressBarDetail.setProgress((double) bytesSoFar / (double) totalBytes);
                                             engineProgressLabelDetail
                                                     .setText((bytesSoFar / 1024) + "/" + (totalBytes / 1024) + " kB");
@@ -869,6 +880,8 @@ public class ControlCenter extends Application {
 
                                     @Override
                                     public void beforeDownload( String file ) {
+                                        engineCurrentFileLabel.setTextFill(originalLabelColor);
+                                        engineProgressLabelDetail.setTextFill(originalLabelColor);
                                         sofar++;
                                         Platform.runLater(() -> {
                                             engineProgressBarOverall.setProgress((double) sofar / (double) total);
@@ -893,6 +906,14 @@ public class ControlCenter extends Application {
 
                                     }
 
+                                    @Override
+                                    public void notifyError( Exception e ) {
+                                        Platform.runLater(() -> {
+                                            engineCurrentFileLabel.setTextFill(Color.RED);
+                                            engineCurrentFileLabel.setText(e.getMessage());
+                                        });
+                                    }
+
                                 }).isComplete();
                             }
                         });
@@ -906,47 +927,55 @@ public class ControlCenter extends Application {
                                     int sofar = 0;
 
                                     @Override
-                                    public void transferFinished() {
-                                        File ini;
-                                        String executablePath = modeler.getExecutable(bs.chosen).getPath();
-                                        String executableFolder = modeler.getExecutableFolderPath(bs.chosen);
+                                    public void transferFinished(Exception e) {
+                                        if (e != null) {
+                                            Platform.runLater(() -> {
+                                                modelerCurrentFileLabel.setTextFill(Color.RED);
+                                                modelerCurrentFileLabel.setText("Error downloading k.Modeler");
+                                            });
+                                        } else {
+                                            File ini;
+                                            String executablePath = modeler.getExecutable(bs.chosen).getPath();
+                                            String executableFolder = modeler.getExecutableFolderPath(bs.chosen);
 
-                                        // we need to add execution flag in linux and mac
-                                        // we add thing in ini file and need to change name in mac
-                                        // and linux
-                                        if (OS.get() == OS.UNIX) {
-                                            modeler.getExecutable(bs.chosen).setExecutable(true);
-                                            ini = new File(executableFolder + "/k.Modeler.ini");
-                                            new File(executableFolder + "/k.ini").renameTo(ini);
-                                        } else if (OS.get() == OS.MACOS) {
-                                        	modeler.getExecutable(bs.chosen).setExecutable(true);
-                                            ini = new File(executableFolder + "/Contents/Eclipse/k.Modeler.ini");
-                                            new File(executableFolder + "/Contents/Eclipse/k.ini").renameTo(ini);
-                                        } else {
-                                            ini = new File(executableFolder + "/k.Modeler.ini");
-                                        }
-                                        if (!ini.exists()) {
-                                            // TODO: better error management
-                                            System.err.println("Problems with INI file");
-                                        } else {
-                                            // add JRE and startup options to init parameters if not exists
-                                            try {
-                                                String content = FileUtils.readFileToString(ini);
-                                                if (!content.contains("-vm\n")) {
-                                                    String options = "-vm\n" + JreModel.INSTANCE.getJavaExecutable() + "\n" + "-vmargs\n"
-                                                        + "-Xms512m\n-Xmx2048m";
-                                                    Files.write(ini.toPath(), options.getBytes(), StandardOpenOption.APPEND);
-                                                }
-                                            } catch (IOException e) {
-                                                // this is very strange
-                                                System.err.println("Error put content to ini file");
+                                            // we need to add execution flag in linux and mac
+                                            // we add thing in ini file and need to change name in mac
+                                            // and linux
+                                            if (OS.get() == OS.UNIX) {
+                                                modeler.getExecutable(bs.chosen).setExecutable(true);
+                                                ini = new File(executableFolder + "/k.Modeler.ini");
+                                                new File(executableFolder + "/k.ini").renameTo(ini);
+                                            } else if (OS.get() == OS.MACOS) {
+                                                modeler.getExecutable(bs.chosen).setExecutable(true);
+                                                ini = new File(executableFolder + "/Contents/Eclipse/k.Modeler.ini");
+                                                new File(executableFolder + "/Contents/Eclipse/k.ini").renameTo(ini);
+                                            } else {
+                                                ini = new File(executableFolder + "/k.Modeler.ini");
                                             }
-                                            
-                                            
+                                            if (!ini.exists()) {
+                                                // TODO: better error management
+                                                System.err.println("Problems with INI file");
+                                            } else {
+                                                // add JRE and startup options to init parameters if not exists
+                                                try {
+                                                    String content = FileUtils.readFileToString(ini);
+                                                    if (!content.contains("-vm\n")) {
+                                                        String options = "-vm\n" + JreModel.INSTANCE.getJavaExecutable() + "\n" + "-vmargs\n"
+                                                            + "-Xms512m\n-Xmx2048m";
+                                                        Files.write(ini.toPath(), options.getBytes(), StandardOpenOption.APPEND);
+                                                    }
+                                                } catch (IOException ioe) {
+                                                    // this is very strange
+                                                    System.err.println("Error put content to ini file");
+                                                }
+                                                
+                                                
+                                            }
+                                            Platform.runLater(() -> {
+                                                modelerCurrentFileLabel.setTextFill(originalLabelColor);
+                                                modelerCurrentFileLabel.setText("k.Modeler download complete");
+                                            });
                                         }
-                                        Platform.runLater(() -> {
-                                            modelerCurrentFileLabel.setText("k.Modeler download complete");
-                                        });
                                     }
 
                                     @Override
@@ -965,6 +994,7 @@ public class ControlCenter extends Application {
 
                                     @Override
                                     public void beforeDownload( String file ) {
+                                        modelerCurrentFileLabel.setTextFill(originalLabelColor);
                                         sofar++;
                                         Platform.runLater(() -> {
                                             modelerProgressBarOverall.setProgress((double) sofar / (double) total);
@@ -987,6 +1017,14 @@ public class ControlCenter extends Application {
                                     public void notifyDownloadPreparationEnd() {
                                         // TODO Auto-generated method stub
 
+                                    }
+
+                                    @Override
+                                    public void notifyError( Exception e ) {
+                                        Platform.runLater(() -> {
+                                            modelerCurrentFileLabel.setTextFill(Color.RED);
+                                            modelerCurrentFileLabel.setText(e.getMessage());
+                                        });
                                     }
 
                                 }).isComplete();
@@ -1013,8 +1051,11 @@ public class ControlCenter extends Application {
                         downloadViewShown.set(false);
 
                         Platform.runLater(() -> setupUI());
+                        } catch (Throwable t) {
+                            t.printStackTrace();
+                        }
                     }
-
+                    
                 }.start();
 
             }
