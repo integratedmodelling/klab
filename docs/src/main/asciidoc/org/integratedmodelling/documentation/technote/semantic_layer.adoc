@@ -12,6 +12,7 @@ v1.0, 2021-02-27
 :ked: k.LAB Resource Editor
 :kex: k.LAB Explorer
 :pex: Project Explorer
+:kim_manual: k.IM manual
 :encoding: utf-8
 :lang: en
 :title-page:
@@ -25,7 +26,7 @@ v1.0, 2021-02-27
 :icons: font
 :listing-caption: Listing
 :sectnums:
-:autofit-option:
+:autofit-option: true
 :mdash: &#8212;
 :language: asciidoc
 :source-highlighter: highlightjs
@@ -82,7 +83,30 @@ abstract length Length
 
 The above declaration defines **length**, but also the alias **Length** (im:Length when used in a different namespace). That means that after this declaration the system knows that length means im:Length. 
 
-With this information it is possible to create the height concept as a quality that is a Length with a verticality attribute:
+[NOTE]
+====
+The reader should be aware that {kl}'s first objective is to hide the complexities of an ontology (still maintaining it for the validation of concepts) that models the world behind a semantic definition of the world that uses a natural language that onces learned, allows modellers to model the world in a simple way (well at least much simpler than having to use ontologies directly). For the brave {kl} that wish to look into the dark realm of the ontologies, the {kl} console makes the **reason parents** command available. This allows to look at what a simple {kim} **im:Length** hides in terms of ontology:
+
+----
+> reason::parents im:Length
+observation:Length
+   observation:IntensivePhysicalProperty
+      observation:PhysicalProperty
+         observation:ContinuousNumericallyQuantifiableQuality
+            observation:QuantifiableQuality
+               observation:ObservedQuality
+                  observation:Quality
+                     observation:Observable
+                        bfo:BFO_0000001 (entity)
+                     bfo:BFO_0000019 (quality)
+                        bfo:BFO_0000020 (specifically dependent continuant)
+                           bfo:BFO_0000002 (continuant)
+                              bfo:BFO_0000001 (entity)
+----
+
+====
+
+Once we know that an _im:Length_ concept exists it is possible to create the height concept as a quality that is a Length with a verticality attribute:
 
 [source,kim,linenums]
 ----
@@ -112,7 +136,7 @@ Modelers may for example want to model resources, concepts in their domain or pa
 
 #### Modelling a resource
 
-A quality can be used to annotate a data resource with semantic knowledge:
+A quality can be used to annotate a data resource with semantic knowledge. To do so the **as** keyword is used:
 
 [source,kim,linenums]
 ----
@@ -250,8 +274,19 @@ thing WaterBody
 
 Attributes, Identities and Roles are collectively called Predicates and allow to further specify concepts and resolve their caracteristics. They can modify an observable, but can't be observed themselves.
 
+Predicates are used to categorize observables in order to refer to a subset of the category of observations that can be made of them.
 
+For example, a rock is defined as a solid compount in the _im_ namespace (omitting its children here):
 
+[source,kim,linenums]
+----
+identity Rock 
+	"Rock is a naturally occurring solid aggregate of minerals and/or mineraloids.  In general rocks are of three types, 
+	namely, igneous, sedimentary, and metamorphic."
+	is physical:Solid chemistry:Mixture
+----
+
+Predicates can also be used to model observations by prodcuting a quality:
 
 [source,kim,linenums]
 ----
@@ -259,6 +294,101 @@ number soil_texture_landslide_effect
 	observing type of soil:SoilTexture	named soil_texture
 	lookup (soil_texture) into SOIL_TEXTURE_SUSCEPTIBILITY_TABLE;
 ----
+
+In this case the **type of** operator produces a quality from the soil texture predicate. 
+
+This introduces us to the next chapter: semantic operators
+
+### Semantic operators
+
+Semantic operators are keywords, or groups of keywords (for better readability) that have the ability to transform concepts into different concepts. They can be applied to a single concept (unary) or join different concepts (binary).
+
+Operators allow parsimony of specification and hence to keep the worldview small. 
+
+#### Unary operators
+
+Unary operators change observables of various types into qualities that represent a particular aspect of those observables or of their observation.
+
+In the next section a few operators are listed. For a complete list refer to the {kim_manual}.
+
+##### presence of
+
+Produces a quality with true or false values representing the verification of the presence of a countable in the context.
+
+It can be used to annotate resources:
+
+[source,kim,linenums]
+----
+model 'local:akif.ortak:im.data.global:im-data-global-geography.GlobalMountainsK3Binary'
+	as presence of earth:Mountain;  
+----
+
+Once that is available this model will be able to resolve the quality **presence of earth:Mountain**. 
+
+Looking at a more complex example:
+
+[source,kim,linenums]
+----
+model im:Differential hydrology:RunoffWaterVolume caused by ecology:Vegetation in mm
+	observing 
+		hydrology:RunoffWaterVolume in m named actual_runoff,
+		hydrology:RunoffWaterVolume with landcover:BareArea in mm named runoff_without_vegetation,
+		presence of earth:Stream named presence_of_stream
+	set to [nodata(actual_runoff) ? unknown : (presence_of_stream ? 0 : (runoff_without_vegetation - actual_runoff)) ];
+----
+
+In this case the presence of a stream subject is observed as a dependency in order to allow a calculation to identify those sites that are on a stream against those that are not.
+
+##### distance from/to
+
+Produces a quality with the spatial distance between countables located in space.
+
+For example:
+
+[source,kim,linenums]
+----
+model distance to behavior:Recreational earth:Region in m  	
+	observing 
+		distance to conservation:ProtectedArea in m named distance_to_protected_areas,
+		distance to earth:Coastline in m    named distance_to_coast,
+		distance to earth:Waterway in m     named distance_to_streams,
+		distance to earth:WaterBody in m    named distance_to_water_bodies,
+		distance to earth:MountainPeak in m named distance_to_mountains
+----
+
+##### count of
+
+Produces the quality expressing the numerosity of any countable.
+
+For example if a resource expressing the population density is annotated as:
+
+[source,kim,linenums]
+----
+model local:srwohl:im.data.global:im-data-global-demography.global_population_density_2020
+	as count of demography:HumanIndividual per km^2;
+----
+
+It can then be used in a model (in this case a non semantic) as an observable:
+
+[source,kim,linenums]
+----
+number population_density_factor                                   
+	observing 
+		count of demography:HumanIndividual per km^2  named population,
+		landcover:LandCoverType without landcover:WaterBody named land_cover_type
+    set to [def min = population.min
+    	    return ((nodata(population) && (land_cover_type)) ? min : population)], 
+    	    klab.data.normalize(); 
+----
+
+##### type of
+
+
+
+
+
+
+
 
 ### The view of the modeller
 
@@ -406,6 +536,7 @@ observe earth:Region named etnasnap
 NOTE: A description of the syntax for each statement type can be found in the comments in Kim.xtext in each ***Body** section. For example _ConceptStatementBody_ for the _ConceptStatement_.
 
 
+[#KIM_SYNTAX]
 ## {kim} syntax
 
 As noted before, the most important types of knowledge that can be specified in {kim} are concepts and models.
@@ -873,8 +1004,27 @@ A **continuant** is something that exists at an instant in time. This actually m
 
 An **occurrent** is something that has a time component. Events (spring, month, flowering, birth, homicide) are occurrents, as are processes (snowmelt, sorfaceflow, growth, freezing, melting).
 
+### Non semantic models
 
-#### A little disgression about names
+Non semantic models are sintacticalli uniform with semantic ones. As described in the <<KIM_SYNTAX, {kim} syntax chapter>>, they are not annotated with the **model** keyword, but for example with **number**.
+
+[source,kim,linenums]
+----
+number population_density_factor                                   
+	observing 
+		count of demography:HumanIndividual per km^2  named population,
+		landcover:LandCoverType without landcover:WaterBody named land_cover_type
+    set to [def min = population.min
+    	    return ((nodata(population) && (land_cover_type)) ? min : population)], 
+    	    klab.data.normalize(); 
+----
+
+These models actually represent a resource and do not concurr in concept resolution. But they use inputs from the semantic layer without fear.
+
+
+### A little disgression about names
+
+#TODO#
 
 quel che conta e' "nomi di cosa": non sono nomi per "concetti" ma per gli osservabili che dovranno risolvere le dipendenze, ed includono la semantica dell'osservazione (how) e non solo quella dell'osservabile (what). Quindi l'observable e' un concetto "vestito" di nomi, unita' di misura, operatori per cambiare i valori, etc., tutti usati localmente al modello di cui fa parte.
 
