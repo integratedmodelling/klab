@@ -1888,7 +1888,8 @@ public class TableCompiler {
 
     public List<ObservedConcept> expandCategory(IObservable observable) {
         IConcept category = Observables.INSTANCE.getDescribedType(observable.getType());
-        this.observables.add(new ObservedConcept(Observables.INSTANCE.removeValueOperators(observable, monitor), Mode.RESOLUTION));
+        this.observables
+                .add(new ObservedConcept(Observables.INSTANCE.removeValueOperators(observable, monitor), Mode.RESOLUTION));
         return expandConcept(category, observable);
     }
 
@@ -2310,11 +2311,34 @@ public class TableCompiler {
                 if (rows.containsKey(symbol) || columns.containsKey(symbol)) {
                     parameters.put(symbol, ret.getCurrentValue(columnIndex, rowIndex, symbol, true));
                 } else {
-                    IArtifact artifact = scope.getArtifact(symbol);
-                    if (artifact instanceof IState) {
-                        parameters.put(symbol, ((IState) artifact).get(value.getSecond()));
-                    } else if (artifact != null) {
-                        parameters.put(symbol, artifact);
+
+                    /*
+                     * check with symbol contextualized to group
+                     */
+                    boolean done = false;
+                    if (row.parent != null) {
+                        String csym = row.parent.getName() + symbol;
+                        if (rows.containsKey(csym)) {
+                            parameters.put(symbol, ret.getCurrentValue(columnIndex, rowIndex, csym, true));
+                            done = true;
+                        }
+                    }
+
+                    if (!done && column.parent != null) {
+                        String csym = column.parent.getName() + symbol;
+                        if (columns.containsKey(csym)) {
+                            parameters.put(symbol, ret.getCurrentValue(columnIndex, rowIndex, csym, true));
+                            done = true;
+                        }
+                    }
+
+                    if (!done) {
+                        IArtifact artifact = scope.getArtifact(symbol);
+                        if (artifact instanceof IState) {
+                            parameters.put(symbol, ((IState) artifact).get(value.getSecond()));
+                        } else if (artifact != null) {
+                            parameters.put(symbol, artifact);
+                        }
                     }
                 }
                 break;
