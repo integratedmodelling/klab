@@ -10,6 +10,10 @@
 void 'list'
 	"Print documentation views in source form."
 {
+	optional boolean json
+		"Output JSON instead of structured text format"
+		default false
+		
 	class org.integratedmodelling.klab.clitool.console.commands.doc.List
 }
 

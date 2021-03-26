@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.documentation;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
@@ -58,6 +59,11 @@ public class DocumentationTree {
     // mutual dependencies by ID (key in nodes). Root node is ROOT_NODE.
     Graph<String, DefaultEdge> structure = new DefaultDirectedGraph<>(DefaultEdge.class);
     private String refSectionId;
+
+    /*
+     * this keeps track of which resources are used from temporally merged resourcesets
+     */
+    private Map<String, Map<String, IResource>> contextualizedResources = new HashMap<>();
 
     // models in order of usage
     private Set<IModel> models = new LinkedHashSet<>();
@@ -239,18 +245,18 @@ public class DocumentationTree {
     }
 
     private GraphReference<DocumentationNode> getProvenanceView() {
-        // TODO Auto-generated method stub
-        return null;
+        GraphReference<DocumentationNode> ret = new GraphReference<>();
+        return ret;
     }
 
     private GraphReference<DocumentationNode> getTablesView() {
-        // TODO Auto-generated method stub
-        return null;
+        GraphReference<DocumentationNode> ret = new GraphReference<>();
+        return ret;
     }
 
     private GraphReference<DocumentationNode> getResourcesView() {
-        // TODO Auto-generated method stub
-        return null;
+        GraphReference<DocumentationNode> ret = new GraphReference<>();
+        return ret;
     }
 
     private GraphReference<DocumentationNode> getReportView() {
@@ -279,23 +285,49 @@ public class DocumentationTree {
         for (DefaultEdge edge : structure.incomingEdgesOf(reportSection.getId())) {
             Object child = nodes.get(structure.getEdgeSource(edge));
             if (child instanceof DocumentationNode) {
-                children.add((DocumentationNode)child);
+                children.add((DocumentationNode) child);
             }
         }
-        
+
         document.add(role, reportSection, children);
-        
+
         return ret;
     }
 
     private GraphReference<DocumentationNode> getModelsView() {
-        // TODO Auto-generated method stub
-        return null;
+        GraphReference<DocumentationNode> ret = new GraphReference<>();
+        return ret;
     }
 
     private GraphReference<DocumentationNode> getFiguresView() {
-        // TODO Auto-generated method stub
-        return null;
+        GraphReference<DocumentationNode> ret = new GraphReference<>();
+        return ret;
+    }
+
+    /**
+     * Notify that a resource out of a merged resource set has been used in this scope.
+     * 
+     * @param urn
+     * @param first
+     */
+    public void addContextualizedResource(String urn, IResource resource) {
+        Map<String, IResource> ret = this.contextualizedResources.get(urn);
+        if (ret == null) {
+            ret = new LinkedHashMap<>();
+            this.contextualizedResources.put(urn, ret);
+        }
+        ret.put(resource.getUrn(), resource);
+    }
+    
+    public List<IResource> getContextualizedResources(String urn) {
+        List<IResource> ret = new ArrayList<>();
+        Map<String, IResource> ress = this.contextualizedResources.get(urn);
+        if (ress != null) {
+            for (IResource res : ress.values()) {
+                ret.add(res);
+            }
+        }        
+        return ret;
     }
 
 }

@@ -8,7 +8,6 @@ import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
-import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -16,6 +15,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -58,11 +58,16 @@ public class ChangingResourceResolver implements IResolver<IArtifact>, IExpressi
 
 		List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
 				.contextualize(context.getScale(), ret);
+		
 		if (resources.isEmpty()) {
 			// this can happen when the resource can't add anything to the artifact.
 			return ret;
 		}
 
+		for (Pair<IResource, Map<String, String>> pr : resources) {
+		    ((Report)context.getReport()).getDocumentationTree().addContextualizedResource(this.resource.getUrn(), pr.getFirst());
+		}
+		
 		// TODO must contextualize the LIST, not just the first resource. For now it can
 		// only happen with
 		// multiple spatial extents, but it could happen also with multiple temporal

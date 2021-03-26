@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.DocumentationNode;
 import org.integratedmodelling.klab.rest.GraphReference;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.StringUtil;
 
 /**
@@ -34,6 +35,8 @@ public class List implements ICommand {
             return "No context, no documentation";
         }
 
+        boolean json = call.getParameters().get("json", false);
+        
         IReport report = cotx.getScope().getReport();
         DocumentationTree docTree = ((Report) report).getDocumentationTree();
         for (Object o : call.getParameters().get("arguments", java.util.List.class)) {
@@ -46,7 +49,11 @@ public class List implements ICommand {
 
         for (View view : views) {
             GraphReference<DocumentationNode> docs = docTree.getView(view);
-            ret += "\n\n" + view + "\n\n" + printGraph(docs);
+            if (json) {
+                ret = JsonUtils.printAsJson(docs);
+            } else {
+                ret += "\n\n" + view + "\n\n" + printGraph(docs);
+            }
         }
 
         return ret;

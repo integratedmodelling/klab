@@ -43,9 +43,8 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.StringUtils;
 
 /**
- * Simple bean that holds the structure of the dataflow and the documentation
- * harvested from the computations. The DataflowGraph can compile this to an Elk
- * graph.
+ * Simple bean that holds the structure of the dataflow and the documentation harvested from the
+ * computations. The DataflowGraph can compile this to an Elk graph.
  * 
  * @author ferdinando.villa
  *
@@ -82,7 +81,7 @@ public class Flowchart {
 
         private Map<String, String> datapaths = new HashMap<>();
 
-        Element( Actuator actuator ) {
+        Element(Actuator actuator) {
 
             this.id = actuator.getDataflowId();
             this.type = ElementType.ACTUATOR;
@@ -97,12 +96,12 @@ public class Flowchart {
             }
         }
 
-        Element( Pair<IServiceCall, IContextualizable> resource ) {
+        Element(Actuator actuator, Pair<IServiceCall, IContextualizable> resource) {
             this.id = resource.getSecond().getDataflowId();
             this.type = ElementType.RESOLVER;
             this.label = Extensions.INSTANCE.getServiceLabel(resource.getFirst());
             this.name = resource.getFirst().getName();
-            this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this, resource);
+            this.documentation = DataflowDocumentation.INSTANCE.getDocumentation(this, resource, actuator.getCurrentContext());
             elementsById.put(this.id, this);
         }
 
@@ -110,7 +109,7 @@ public class Flowchart {
             return id;
         }
 
-        public void setId( String id ) {
+        public void setId(String id) {
             this.id = id;
         }
 
@@ -118,7 +117,7 @@ public class Flowchart {
             return label == null ? getName() : label;
         }
 
-        public void setLabel( String label ) {
+        public void setLabel(String label) {
             this.label = label;
         }
 
@@ -126,7 +125,7 @@ public class Flowchart {
             return description;
         }
 
-        public void setDescription( String description ) {
+        public void setDescription(String description) {
             this.description = description;
         }
 
@@ -134,7 +133,7 @@ public class Flowchart {
             return documentation;
         }
 
-        public void setDocumentation( String documentation ) {
+        public void setDocumentation(String documentation) {
             this.documentation = documentation;
         }
 
@@ -142,7 +141,7 @@ public class Flowchart {
             return type;
         }
 
-        public void setType( ElementType type ) {
+        public void setType(ElementType type) {
             this.type = type;
         }
 
@@ -150,10 +149,10 @@ public class Flowchart {
             return inputs;
         }
 
-        public String getOrCreateInput( String inputId, String... infixes ) {
+        public String getOrCreateInput(String inputId, String... infixes) {
             String ret = id + ".in.";
             if (infixes != null) {
-                for( String infix : infixes ) {
+                for (String infix : infixes) {
                     ret += infix + ".";
                 }
             }
@@ -164,10 +163,10 @@ public class Flowchart {
             return ret;
         }
 
-        public String getOrCreateOutput( String inputId, String... infixes ) {
+        public String getOrCreateOutput(String inputId, String... infixes) {
             String ret = id + ".out.";
             if (infixes != null) {
-                for( String infix : infixes ) {
+                for (String infix : infixes) {
                     ret += infix + ".";
                 }
             }
@@ -194,7 +193,7 @@ public class Flowchart {
             return ret;
         }
 
-        public void setInputs( List<String> inputs ) {
+        public void setInputs(List<String> inputs) {
             this.inputs = inputs;
         }
 
@@ -212,7 +211,7 @@ public class Flowchart {
          * 
          * @return
          */
-        public void setOutputs( List<String> outputs ) {
+        public void setOutputs(List<String> outputs) {
             this.outputs = outputs;
         }
 
@@ -220,7 +219,7 @@ public class Flowchart {
             return children;
         }
 
-        public void setChildren( List<Element> children ) {
+        public void setChildren(List<Element> children) {
             this.children = children;
         }
 
@@ -228,7 +227,7 @@ public class Flowchart {
             return tooltip;
         }
 
-        public void setTooltip( String tooltip ) {
+        public void setTooltip(String tooltip) {
             this.tooltip = tooltip;
         }
 
@@ -236,7 +235,7 @@ public class Flowchart {
             return name;
         }
 
-        public void setName( String name ) {
+        public void setName(String name) {
             this.name = name;
         }
 
@@ -249,20 +248,19 @@ public class Flowchart {
             return type == null ? id : (type.name().toLowerCase() + "." + id);
         }
 
-        public void addChild( Element cel ) {
+        public void addChild(Element cel) {
             children.add(cel);
         }
 
     }
 
     /**
-     * Create a flowchart from a dataflow. Pull out the passed output(s) if not
-     * null.
+     * Create a flowchart from a dataflow. Pull out the passed output(s) if not null.
      * 
      * @param dataflow
      * @return
      */
-    public static Flowchart create( Dataflow dataflow ) {
+    public static Flowchart create(Dataflow dataflow) {
 
         Flowchart ret = new Flowchart();
         if (dataflow.getActuators().size() > 0) {
@@ -279,7 +277,7 @@ public class Flowchart {
         return ret;
     }
 
-    private Element compileActuator( Actuator actuator, Element parent ) {
+    private Element compileActuator(Actuator actuator, Element parent) {
 
         if (actuator.isReference() || actuator.isInput()) {
             return null;
@@ -287,7 +285,7 @@ public class Flowchart {
 
         Element element = new Element(actuator);
 
-        for( IActuator child : actuator.getActuators() ) {
+        for (IActuator child : actuator.getActuators()) {
 
             Element cel = compileActuator((Actuator) child, element);
             if (cel != null) {
@@ -298,18 +296,17 @@ public class Flowchart {
         }
 
         /*
-         * compile mediations for any of the inputs. These will extend the input
-         * pathways.
+         * compile mediations for any of the inputs. These will extend the input pathways.
          */
-        for( Pair<IServiceCall, IContextualizable> actor : actuator.getMediationStrategy() ) {
+        for (Pair<IServiceCall, IContextualizable> actor : actuator.getMediationStrategy()) {
             compileComputation(actor, element, actuator);
         }
 
         /*
-         * go down into computations; filter inputs through local names. Track indirect
-         * targets and 'self' when the input is the same name as the actuator.
+         * go down into computations; filter inputs through local names. Track indirect targets and
+         * 'self' when the input is the same name as the actuator.
          */
-        for( Pair<IServiceCall, IContextualizable> actor : actuator.getComputationStrategy() ) {
+        for (Pair<IServiceCall, IContextualizable> actor : actuator.getComputationStrategy()) {
             if (actor.getFirst() != null) {
                 compileComputation(actor, element, actuator);
             }
@@ -318,9 +315,9 @@ public class Flowchart {
         return element;
     }
 
-    private Element compileComputation( Pair<IServiceCall, IContextualizable> computation, Element parent, Actuator context ) {
+    private Element compileComputation(Pair<IServiceCall, IContextualizable> computation, Element parent, Actuator context) {
 
-        Element ret = new Element(computation);
+        Element ret = new Element(context, computation);
 
         // TODO description, documentation (template with parameter substitution)
         ret.label = Extensions.INSTANCE.getServiceLabel(computation.getFirst());
@@ -339,11 +336,11 @@ public class Flowchart {
         Set<String> computationInputs = new HashSet<>();
 
         /*
-         * Normally we have the literal resource as second element and the service call
-         * that contextualizes it as first.
+         * Normally we have the literal resource as second element and the service call that
+         * contextualizes it as first.
          * 
-         * If the second element is an expression, the inputs may or may not be
-         * expressed as parameters in it.
+         * If the second element is an expression, the inputs may or may not be expressed as
+         * parameters in it.
          */
 
         if (computation.getSecond().getServiceCall() != null) {
@@ -356,14 +353,14 @@ public class Flowchart {
             computationOutputs.add(computationTarget);
 
             /*
-             * the calling function is important if the expression is passed to a classifier
-             * or something more complex.
+             * the calling function is important if the expression is passed to a classifier or
+             * something more complex.
              */
             analyzeServiceCall(computation.getFirst(), context, ret, parent, computationTarget, computationInputs,
                     computationOutputs);
 
-            for( String input : getExpressionInputs(computation.getSecond().getExpression().getCode(),
-                    computation.getSecond().getLanguage(), context) ) {
+            for (String input : getExpressionInputs(computation.getSecond().getExpression().getCode(),
+                    computation.getSecond().getLanguage(), context)) {
                 computationInputs.add("self".equals(input) ? computationTarget : input);
             }
 
@@ -383,17 +380,17 @@ public class Flowchart {
                 ret.setTooltip("Contextualize URN " + resource.getUrn());
 
                 /*
-                 * Resources: use inputs, check output map for additional outputs and add ret as
-                 * a producer if used.
+                 * Resources: use inputs, check output map for additional outputs and add ret as a
+                 * producer if used.
                  */
-                for( Attribute input : resource.getInputs() ) {
+                for (Attribute input : resource.getInputs()) {
                     String name = localNameFor(input.getName(), context);
                     if (parent.datapaths.containsKey(name)) {
                         computationInputs.add(input.getName());
                     }
                 }
 
-                for( Attribute output : resource.getOutputs() ) {
+                for (Attribute output : resource.getOutputs()) {
                     if (elementsByName.containsKey(output.getName())) {
                         computationOutputs.add(output.getName());
                     }
@@ -409,11 +406,11 @@ public class Flowchart {
 
             if (((ComputableResource) computation.getSecond()).getValidatedResource(Object.class) instanceof Classification) {
 
-                for( IKimExpression expression : ((ComputableResource) computation.getSecond())
-                        .getValidatedResource(Classification.class).getUniqueExpressions() ) {
+                for (IKimExpression expression : ((ComputableResource) computation.getSecond())
+                        .getValidatedResource(Classification.class).getUniqueExpressions()) {
                     String expcode = expression.getCode();
                     String explang = expression.getLanguage();
-                    for( String input : getExpressionInputs(expcode, explang, context) ) {
+                    for (String input : getExpressionInputs(expcode, explang, context)) {
                         if (!computationInputs.contains(input)) {
                             computationInputs.add(input);
                         }
@@ -426,11 +423,10 @@ public class Flowchart {
             computationOutputs.add(computationTarget);
 
             /*
-             * Lookup tables need their inputs and if the result column contains
-             * expressions, they will also need their expression inputs, but we ignore them
-             * as in classifications.
+             * Lookup tables need their inputs and if the result column contains expressions, they
+             * will also need their expression inputs, but we ignore them as in classifications.
              */
-            for( IKimLookupTable.Argument s : computation.getSecond().getLookupTable().getArguments() ) {
+            for (IKimLookupTable.Argument s : computation.getSecond().getLookupTable().getArguments()) {
                 if (s.id != null) {
                     String iid = s.id;
                     if ("self".equals(s.id)) {
@@ -444,11 +440,11 @@ public class Flowchart {
 
             if (((ComputableResource) computation.getSecond()).getValidatedResource(Object.class) instanceof LookupTable) {
 
-                for( IKimExpression expression : ((ComputableResource) computation.getSecond())
-                        .getValidatedResource(LookupTable.class).getUniqueExpressions() ) {
+                for (IKimExpression expression : ((ComputableResource) computation.getSecond())
+                        .getValidatedResource(LookupTable.class).getUniqueExpressions()) {
                     String expcode = expression.getCode();
                     String explang = expression.getLanguage();
-                    for( String input : getExpressionInputs(expcode, explang, context) ) {
+                    for (String input : getExpressionInputs(expcode, explang, context)) {
                         if (!computationInputs.contains(input)) {
                             computationInputs.add(input);
                         }
@@ -471,7 +467,7 @@ public class Flowchart {
             Logging.INSTANCE.warn("INTERNAL: unhandled computation in dataflow graph: " + computation.getSecond());
         }
 
-        for( String input : computationInputs ) {
+        for (String input : computationInputs) {
 
             String inport = ret.getOrCreateInput(input);
             if (!parent.datapaths.containsKey(input)) {
@@ -487,20 +483,19 @@ public class Flowchart {
             connections.add(new Pair<>(parent.datapaths.get(input), inport));
         }
 
-        for( String output : computationOutputs ) {
+        for (String output : computationOutputs) {
             parent.datapaths.put(output, ret.id);
         }
 
         return ret;
     }
 
-    private void analyzeServiceCall( IServiceCall serviceCall, Actuator context, Element ret, Element parent,
-            String computationTarget, Set<String> computationInputs, Set<String> computationOutputs ) {
+    private void analyzeServiceCall(IServiceCall serviceCall, Actuator context, Element ret, Element parent,
+            String computationTarget, Set<String> computationInputs, Set<String> computationOutputs) {
 
         /*
-         * Functions: check any parameters that identify artifacts against local catalog
-         * and the taginput annotations. Use exports for additional outputs and check
-         * with output map.
+         * Functions: check any parameters that identify artifacts against local catalog and the
+         * taginput annotations. Use exports for additional outputs and check with output map.
          */
         IPrototype prototype = Extensions.INSTANCE.getPrototype(serviceCall.getName());
 
@@ -513,12 +508,11 @@ public class Flowchart {
             }
 
             /*
-             * match imported artifacts declared in the prototype to imports in the
-             * function. If not available, store the ID so that we can look for artifact
-             * parameters later.
+             * match imported artifacts declared in the prototype to imports in the function. If not
+             * available, store the ID so that we can look for artifact parameters later.
              */
             Set<String> importArgs = new HashSet<>();
-            for( Argument arg : prototype.listImports() ) {
+            for (Argument arg : prototype.listImports()) {
                 String name = formalNameOf(arg.getName(), context);
                 if (name != null && (elementsByName.containsKey(name) || parent.datapaths.containsKey(arg.getName()))) {
                     computationInputs.add(arg.getName());
@@ -528,10 +522,10 @@ public class Flowchart {
             }
 
             /*
-             * Add any additional parameters marked as artifact (passing the parameter) or
-             * named in expressions.
+             * Add any additional parameters marked as artifact (passing the parameter) or named in
+             * expressions.
              */
-            for( String arg : serviceCall.getParameters().keySet() ) {
+            for (String arg : serviceCall.getParameters().keySet()) {
                 Object parameter = serviceCall.getParameters().get(arg);
                 Argument argument = prototype.getArgument(arg);
                 if (importArgs.contains(arg)) {
@@ -540,7 +534,7 @@ public class Flowchart {
                         IConcept concept = parameter instanceof IConcept
                                 ? ((IConcept) parameter)
                                 : ((IObservable) parameter).getType();
-                        for( IActuator dependency : context.getActuators() ) {
+                        for (IActuator dependency : context.getActuators()) {
                             if (concept.getSemanticDistance(((Actuator) dependency).getObservable().getType()) >= 0) {
                                 parameter = ((Actuator) dependency).getAlias();
                                 break;
@@ -558,7 +552,7 @@ public class Flowchart {
                             ? ((IKimExpression) expression).getCode()
                             : expression.toString();
                     String explang = expression instanceof IKimExpression ? ((IKimExpression) expression).getLanguage() : null;
-                    for( String input : getExpressionInputs(expcode, explang, context) ) {
+                    for (String input : getExpressionInputs(expcode, explang, context)) {
                         computationInputs.add(input);
                     }
                 }
@@ -566,8 +560,8 @@ public class Flowchart {
 
             IModel model = context.getModel();
             if (model != null) {
-                for( String s : prototype.listInputTags() ) {
-                    for( IObservable observable : model.getDependencies() ) {
+                for (String s : prototype.listInputTags()) {
+                    for (IObservable observable : model.getDependencies()) {
                         if (Annotations.INSTANCE.hasAnnotation(observable, s)) {
                             computationInputs.add(observable.getName());
                         }
@@ -576,23 +570,23 @@ public class Flowchart {
             }
 
             /*
-             * Check if this is a transformation type so we can add the default target as
-             * argument if not specified.
+             * Check if this is a transformation type so we can add the default target as argument
+             * if not specified.
              */
             boolean singleArtifact = prototype.listImports().size() == 1;
 
             /*
              * add any further outputs if it's used.
              */
-            for( Argument arg : prototype.listExports() ) {
+            for (Argument arg : prototype.listExports()) {
                 if (elementsByName.containsKey(arg.getName())) {
                     computationOutputs.add(arg.getName());
                 }
             }
 
             /*
-             * we let computations with a single artifact parameter default their argument
-             * to the main target.
+             * we let computations with a single artifact parameter default their argument to the
+             * main target.
              */
             if (computationInputs.isEmpty() && singleArtifact) {
                 computationInputs.add(computationTarget);
@@ -609,14 +603,14 @@ public class Flowchart {
 
     }
 
-    private String localNameFor( String name, Actuator context ) {
+    private String localNameFor(String name, Actuator context) {
         if (name.equals(context.getName())) {
             return name;
         }
         if ("self".equals(name)) {
             return context.getName();
         }
-        for( IActuator child : context.getActuators() ) {
+        for (IActuator child : context.getActuators()) {
             if (child.getName().equals(name)) {
                 return child.getAlias();
             }
@@ -631,14 +625,14 @@ public class Flowchart {
      * @param context
      * @return
      */
-    private String formalNameOf( String input, Actuator context ) {
+    private String formalNameOf(String input, Actuator context) {
         if (input.equals(context.getName())) {
             return input;
         }
         if ("self".equals(input)) {
             return context.getName();
         }
-        for( IActuator child : context.getActuators() ) {
+        for (IActuator child : context.getActuators()) {
             if (child.getAlias() != null && child.getAlias().equals(input)) {
                 return child.getName();
             }
@@ -646,7 +640,7 @@ public class Flowchart {
         return null;
     }
 
-    private Collection<String> getExpressionInputs( String expcode, String explang, final Actuator context ) {
+    private Collection<String> getExpressionInputs(String expcode, String explang, final Actuator context) {
 
         /*
          * Expressions: must use local IDs to process identifiers that are inputs
@@ -654,7 +648,7 @@ public class Flowchart {
         final Set<String> aliases = new HashSet<>();
         final Set<String> stateAliases = new HashSet<>();
         final Map<String, IKimConcept.Type> types = new HashMap<>();
-        for( IActuator act : context.getActuators() ) {
+        for (IActuator act : context.getActuators()) {
             aliases.add(act.getAlias());
             if (((Actuator) act).getObservable().getArtifactType().isState()) {
                 stateAliases.add(act.getAlias());
@@ -662,7 +656,7 @@ public class Flowchart {
             types.put(act.getAlias(), Observables.INSTANCE.getObservableType(((Actuator) act).getObservable(), true));
         }
         if (context.getModel() != null) {
-            for( IObservable dependency : context.getModel().getDependencies() ) {
+            for (IObservable dependency : context.getModel().getDependencies()) {
                 if (dependency.is(IKimConcept.Type.QUALITY)) {
                     stateAliases.add(dependency.getName());
                     types.put(dependency.getName(), Observables.INSTANCE.getObservableType(dependency, true));
@@ -702,12 +696,12 @@ public class Flowchart {
             }
 
             @Override
-            public Type getIdentifierType( String identifier ) {
+            public Type getIdentifierType(String identifier) {
                 return types.get(identifier);
             }
 
             @Override
-            public void addKnownIdentifier( String id, IKimConcept.Type type ) {
+            public void addKnownIdentifier(String id, IKimConcept.Type type) {
                 // TODO Auto-generated method stub
 
             }
@@ -727,8 +721,7 @@ public class Flowchart {
     }
 
     /**
-     * Connections are between inputs IDs and output IDs. These may be held in any
-     * Element.
+     * Connections are between inputs IDs and output IDs. These may be held in any Element.
      * 
      * @return all connections
      */
@@ -738,22 +731,22 @@ public class Flowchart {
 
     public String dump() {
         String ret = dump(root, 0);
-        for( Pair<String, String> connection : connections ) {
+        for (Pair<String, String> connection : connections) {
             ret += "\n" + connection.getFirst() + " --> " + connection.getSecond();
         }
         return ret;
     }
 
-    private String dump( Element element, int indent ) {
+    private String dump(Element element, int indent) {
         String prefix = StringUtils.spaces(indent);
         String ret = prefix + "E: " + element;
-        for( String input : element.getInputs() ) {
+        for (String input : element.getInputs()) {
             ret += "\n" + prefix + "   I: " + input;
         }
-        for( String input : element.getOutputs() ) {
+        for (String input : element.getOutputs()) {
             ret += "\n" + prefix + "   O: " + input;
         }
-        for( Element e : element.getChildren() ) {
+        for (Element e : element.getChildren()) {
             ret += "\n" + dump(e, indent + 3);
         }
         return ret;
@@ -767,11 +760,11 @@ public class Flowchart {
         return root.outputs;
     }
 
-    public Element getElementById( String nodeId ) {
+    public Element getElementById(String nodeId) {
         return elementsById.get(nodeId);
     }
 
-    public String pullOutput( String input ) {
+    public String pullOutput(String input) {
 
         if (elementsByName.containsKey(input)) {
             String ret = root.getOrCreateOutput(input, "export");

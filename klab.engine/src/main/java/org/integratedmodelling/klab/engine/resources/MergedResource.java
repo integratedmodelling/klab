@@ -617,4 +617,14 @@ public class MergedResource implements IResource {
         return null;
     }
 
+    public List<IResource> getResources() {
+        List<IResource> ret = new ArrayList<>();
+        for (ResourceSet rs: resources.values()) {
+            for (Pair<IResource, Map<String, String>> pr : rs.resources) {
+                ret.add(pr.getFirst());
+            }
+        }
+        return ret;
+    }
+
 }

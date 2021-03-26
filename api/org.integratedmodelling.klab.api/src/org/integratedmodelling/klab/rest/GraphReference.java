@@ -18,9 +18,28 @@ import java.util.Map;
 public class GraphReference<T> {
 
     public static class Link {
-        String type;
-        String source;
-        String destination;
+        private String type;
+        private String source;
+        private String destination;
+        public String getType() {
+            return type;
+        }
+        public void setType(String type) {
+            this.type = type;
+        }
+        public String getSource() {
+            return source;
+        }
+        public void setSource(String source) {
+            this.source = source;
+        }
+        public String getDestination() {
+            return destination;
+        }
+        public void setDestination(String destination) {
+            this.destination = destination;
+        }
+
     }
 
     private Map<String, T> objects = new HashMap<>();
@@ -60,7 +79,7 @@ public class GraphReference<T> {
         link.type = type;
         links.add(link);
     }
-    
+
     public List<String> incoming(String id) {
         List<String> ret = new ArrayList<>();
         for (Link link : links) {
