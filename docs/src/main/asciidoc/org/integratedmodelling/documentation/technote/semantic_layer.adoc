@@ -291,7 +291,8 @@ Predicates can also be used to model observations by prodcuting a quality:
 [source,kim,linenums]
 ----
 number soil_texture_landslide_effect
-	observing type of soil:SoilTexture	named soil_texture
+	observing 
+		type of soil:SoilTexture named soil_texture
 	lookup (soil_texture) into SOIL_TEXTURE_SUSCEPTIBILITY_TABLE;
 ----
 
@@ -383,8 +384,17 @@ number population_density_factor
 
 ##### type of
 
+Produces a quality that can have as values the concrete children of an attribute.
 
+For example:
 
+[source,kim,linenums]
+----
+number soil_texture_landslide_effect
+	observing 
+		type of soil:SoilTexture named soil_texture
+	lookup (soil_texture) into SOIL_TEXTURE_SUSCEPTIBILITY_TABLE;
+----
 
 
 
