@@ -39,11 +39,13 @@ endif::[]
 
 <<<
 
-{kim} is the declarative language used to specify knowledge to include in the semantic layer of {kl}. Its syntax is designed to provide a linguistic representation of the constraints of the core ontologyfootnote:[The base ontology can be found in the resources of the engine plugin in _klab.engine/src/main/resources/knowledge_ as a set of owl files.] in {kl}, so that its statement, once validated syntactically, can correspond to consistent and correct semantics. A {kim}  specification is a series of statements, whose most important types are **concept** and **model** definitions. 
+{kim} is the declarative language used to specify knowledge for the **semantic layer** of {kl}. Its syntax is the linguistic counterpart of the constraints of the core ontologyfootnote:[The base ontology can be found in the resources of the engine plugin in _klab.engine/src/main/resources/knowledge_ as a set of owl files.] used in {kl}: correct {kim} statements, once validated syntactically, correspond to consistent and correct semantics. {kim} source code consists of sequences of statements, organized into **namespaces**. The most important statements are **concept** and **model** definitions. Concepts and models specified in {kim} namespaces are added to the {kl} knowledge base and become available to the system and its users to, respectively, define _observables_ and _resolve_ them into observations. 
 
-## The main actors of the {kim} language
+Before we enter into the specific details of how {kim}'s language is created and where it is validated, it is important for the reader to have an understanding of the most important constructs that are used to annotate resources and create observations. In {kl}, every action and function revolves around _observables_, i.e. the logical expressions that specify the _meaning_ of any observation made. So any guide to {kim} must necessarily start with a brief discussion of observables.
 
-Before we enter the dark realm of how {kim}'s language is created and where it is validated, it is important for the reader to have a first view of the most important constructs that are used to annotate resources to create observations. 
+## Observables: the building blocks of the {kim} language
+
+Observables are built from _concepts_, which are defined in {kim} using concept statements. An observable may be just one concept or a more complex logical expression. For example, we may annotate a dataset as representing `geography:Elevation in m` or combine of several concepts and operators to yield expressions like `FILL IN`. In the core {kl} ontology, we recognize a few major classes of observables from which all other concepts are derived. These categories guide the conceptualization and building of models and determine the type of observation that can be made of them; they are so important that each concept, in the {kim} editor, is highlighted with a specific color according to its base category, for easy recognition and navigation.
 
 ### Qualities
 
