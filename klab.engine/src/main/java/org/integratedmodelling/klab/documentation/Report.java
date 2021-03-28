@@ -42,12 +42,14 @@ import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider.Item;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ITask;
 import org.integratedmodelling.klab.api.runtime.dataflow.IDataflow;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
+import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.Documentation.SectionImpl;
 import org.integratedmodelling.klab.documentation.Documentation.TemplateImpl;
@@ -139,7 +141,7 @@ public class Report implements IReport {
         template.compile(section, context);
     }
 
-    public void include(IContextualizable resource) {
+    public void include(IContextualizable resource, Actuator actuator) {
 
         if (resource.getUrn() != null) {
             IResource res = Resources.INSTANCE.resolveResource(resource.getUrn());
@@ -174,7 +176,7 @@ public class Report implements IReport {
         dataflows.add(dataflow);
     }
 
-    public void include(IObservationReference output) {
+    public void include(IObservationReference output, IObservation observation) {
         observations.put(output.getId(), output);
         docTree.add(output);
         

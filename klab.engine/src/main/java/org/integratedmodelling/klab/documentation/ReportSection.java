@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.documentation.Documentation.SectionImpl;
 import org.integratedmodelling.klab.documentation.Report.RefType;
+import org.integratedmodelling.klab.rest.DocumentationNode;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -26,10 +27,27 @@ public class ReportSection extends Parameters<String> implements Section {
     IReport.SectionRole role;
     String id = "rsec" + NameGenerator.shortUUID();
     String name = null;
-    List<ReportSection> children = new ArrayList<>();
+    private List<ReportSection> children = new ArrayList<>();
     StringBuffer body = new StringBuffer(512);
     Report report;
     String sectionRole;
+
+    // used to hold the structure when pieces are added. Offsets locate the piece of interest in the
+    // body. Anything outside of an element is a paragraph. Child sections also get added to this
+    // list as well as the children list.
+    List<Element> elements = new ArrayList<>();
+
+    class Element {
+
+        int startOffset;
+        int endOffset;
+        Object element;
+        DocumentationNode.Type type;
+
+        public void finalize() {
+            this.endOffset = body.length();
+        }
+    }
 
     ReportSection(Report report, SectionRole role) {
         this.role = role;
@@ -55,7 +73,7 @@ public class ReportSection extends Parameters<String> implements Section {
     public String toString() {
         return "# " + getName() + ": (" + body.length() + ")";
     }
-    
+
     public String getName() {
         return name == null ? (role == null ? "" : StringUtil.capitalize(role.name())) : name;
     }
@@ -95,6 +113,15 @@ public class ReportSection extends Parameters<String> implements Section {
         return true;
     }
 
+    private Element addElement(Object object, DocumentationNode.Type type) {
+        Element ret = new Element();
+        ret.element = object;
+        ret.type = type;
+        ret.startOffset = this.body.length();
+        elements.add(ret);
+        return ret;
+    }
+
     public ReportSection getChild(ReportSection parent, String titlePath, String role) {
         ReportSection ret = parent;
         while(titlePath.startsWith("/")) {
@@ -117,13 +144,13 @@ public class ReportSection extends Parameters<String> implements Section {
         ReportSection ret = new ReportSection(this);
         ret.name = string;
         ret.sectionRole = role;
-        report.docTree.add(ret, this);
+//        report.docTree.add(ret, this);
+        addElement(ret, DocumentationNode.Type.Section);
         return ret;
     }
 
     /*
-     * ---------------------------------------------------------------------------- API callable
-     * from Groovy code
+     * --- API callable from Groovy code
      */
     public void write(Object... objects) {
         for (Object o : objects) {
@@ -142,8 +169,7 @@ public class ReportSection extends Parameters<String> implements Section {
     }
 
     /*
-     * ---------------------------------------------------------------------------- API receiving
-     * the report calls through template instructions
+     * --- API receiving the report calls through template instructions
      */
 
     /**
@@ -165,7 +191,9 @@ public class ReportSection extends Parameters<String> implements Section {
      * @param context
      */
     public void tag(Object[] args, IDocumentation documentation, IContextualizationScope context) {
+        Element element = addElement(args[0], DocumentationNode.Type.Link);
         body.append("{#user:" + args[0] + "}");
+        element.finalize();
     }
 
     /**
@@ -178,9 +206,13 @@ public class ReportSection extends Parameters<String> implements Section {
     public void link(Object[] args, IDocumentation documentation, IContextualizationScope context) {
         RefType type = report.getReferenceType(args[0].toString());
         if (type != null) {
+            Element element = addElement(type.name().toLowerCase() + ":" + args[0], DocumentationNode.Type.Anchor);
             body.append("[@" + type.name().toLowerCase() + ":" + args[0] + "]");
+            element.finalize();
         } else {
+            Element element = addElement("user:" + args[0], DocumentationNode.Type.Anchor);
             body.append("[@user:" + args[0] + "]");
+            element.finalize();
         }
     }
 
@@ -195,11 +227,9 @@ public class ReportSection extends Parameters<String> implements Section {
 
         IStructuredTable<?> table = getTable(args[0].toString());
         if (table != null) {
-            
-            // add to section in doc tree (this will split the section at the current place,
-            // then resume if more text arrives
-            report.docTree.addTable(this, table);
-            
+
+            Element element = addElement(DocumentationTree.getTableDescriptor(table, args), DocumentationNode.Type.Table);
+
             report.setReferenceType(args[1].toString(), RefType.TABLE);
             body.append("\n\n");
             if (!table.getColumnHeaders().get(0).startsWith("$")) {
@@ -223,6 +253,8 @@ public class ReportSection extends Parameters<String> implements Section {
             body.append("[[#" + RefType.TABLE.name().toLowerCase() + ":" + args[1] + "] "
                     + (args.length > 2 ? (" " + args[2].toString()) : "") + "]");
             body.append("{#" + RefType.TABLE.name().toLowerCase() + ":" + args[1] + " text-align: center}\n\n");
+            
+            element.finalize();
         }
     }
 
@@ -257,16 +289,21 @@ public class ReportSection extends Parameters<String> implements Section {
      */
     public void cite(Object[] args, IDocumentation documentation, IContextualizationScope context) {
 
+        Element element = null;
         if (!report.referencesCited.containsKey(args[0])) {
             Reference reference = ((Documentation) documentation).getReference(args[0].toString());
             if (reference != null) {
+                element = addElement(args[0], DocumentationNode.Type.Citation);
                 report.referencesCited.put(args[0].toString(), new ReportSection(this.report, reference, args[0].toString()));
                 // add to section in doc tree (this will split the section at the current place,
                 // then resume if more text arrives
-                report.docTree.addCitation(this, reference);
+                report.docTree.addCitation(reference);
             }
         }
         body.append((args.length > 1 ? args[1] : "") + "[@" + Report.RefType.REF.name().toLowerCase() + ":" + args[0] + "]");
+        if (element != null) {
+            element.finalize();
+        }
     }
 
     /**
@@ -291,10 +328,16 @@ public class ReportSection extends Parameters<String> implements Section {
      */
     public void figure(Object[] args, IDocumentation documentation, IContextualizationScope context) {
 
+        // TODO accommodate insertion of actual figure from doc space
+        
         IArtifact artifact = "self".equals(args[0]) ? context.getTargetArtifact() : context.getArtifact(args[0].toString());
         if (artifact instanceof IObservation) {
+
             IObservationReference ref = report.getObservation(((IObservation) artifact).getId());
             if (ref != null) {
+
+                Element element = addElement(DocumentationTree.getFigureDescriptor(artifact, ref, args), DocumentationNode.Type.Figure);
+
                 // TODO check if we need an exception
                 if (args.length > 1) {
                     report.setReferenceType(args[1].toString(), RefType.FIG);
@@ -302,8 +345,8 @@ public class ReportSection extends Parameters<String> implements Section {
 
                 // add to section in doc tree (this will split the section at the current place,
                 // then resume if more text arrives
-                report.docTree.addFigure(this, ref);
-                
+//                report.docTree.addFigure(this, ref);
+
                 // this solution work if k.EXPLORER is the hosting one
                 // and doesn't work if it run in 'no engine' URL (as in front end development)
                 body.append("\n\n![" + ref.getLabel() + "](/modeler/engine/session/view/displaydata/" + report.getSessionId()
@@ -311,6 +354,8 @@ public class ReportSection extends Parameters<String> implements Section {
                 body.append("\n[[#" + RefType.FIG.name().toLowerCase() + ":" + args[1] + "] "
                         + (args.length > 2 ? (" " + args[2].toString()) : "") + "]");
                 body.append("{#" + RefType.FIG.name().toLowerCase() + ":" + args[1] + " text-align: center}\n\n");
+                
+                element.finalize();
             }
         }
     }
@@ -325,8 +370,10 @@ public class ReportSection extends Parameters<String> implements Section {
         if (processArguments.length > 0) {
             Item item = report.taggedText.get(processArguments[0].toString());
             if (item != null) {
+                Element element = addElement(item.getMarkdownContents(), DocumentationNode.Type.Paragraph);
                 body.append(item.getMarkdownContents());
                 report.usedTags.add(processArguments[0].toString());
+                element.finalize();
             }
         }
     }

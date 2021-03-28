@@ -1313,7 +1313,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                     session.getState().notifyObservation(observation);
                     
                     
-                    report.include(descriptor);
+                    report.include(descriptor, observation);
 
                     notifiedObservations.add(observation.getId());
                 }
@@ -2018,6 +2018,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         this.viewsByUrn.put(view.getUrn(), view);
         this.views.put(view.getId(), view);
 
+        
         /*
          * send directly to clients. If view can export, keep view and send URL to export service.
          */
@@ -2031,6 +2032,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         descriptor.setLabel(view.getLabel() == null
                 ? (StringUtil.capitalize(view.getViewClass()) + " " + (views.size() + 1))
                 : view.getLabel());
+
+        report.getDocumentationTree().addView(view, descriptor);
 
         ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
         session.getMonitor().send(

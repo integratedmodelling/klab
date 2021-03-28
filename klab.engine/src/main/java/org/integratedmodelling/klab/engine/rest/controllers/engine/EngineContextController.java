@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.engine.rest.controllers.engine;
 
 import java.security.Principal;
+import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
@@ -14,7 +15,6 @@ import org.integratedmodelling.klab.documentation.DocumentationTree.View;
 import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.rest.DataflowReference;
 import org.integratedmodelling.klab.rest.DocumentationNode;
-import org.integratedmodelling.klab.rest.GraphReference;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -54,7 +54,7 @@ public class EngineContextController {
      * Get the HTML report for the observation.
      */
     @RequestMapping(value = API.ENGINE.OBSERVATION.DOCUMENTATION_VIEW_CONTEXT, method = RequestMethod.GET)
-    public @ResponseBody GraphReference<DocumentationNode> getDocumentationView(Principal principal, @PathVariable String view,
+    public @ResponseBody List<DocumentationNode> getDocumentationView(Principal principal, @PathVariable String view,
             @PathVariable String context) throws Exception {
 
         ISession session = EngineSessionController.getSession(principal);

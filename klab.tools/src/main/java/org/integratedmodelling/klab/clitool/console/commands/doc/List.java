@@ -13,7 +13,6 @@ import org.integratedmodelling.klab.documentation.DocumentationTree.View;
 import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.DocumentationNode;
-import org.integratedmodelling.klab.rest.GraphReference;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.StringUtil;
 
@@ -36,7 +35,8 @@ public class List implements ICommand {
         }
 
         boolean json = call.getParameters().get("json", false);
-        
+        boolean verbose = call.getParameters().get("verbose", false);
+
         IReport report = cotx.getScope().getReport();
         DocumentationTree docTree = ((Report) report).getDocumentationTree();
         for (Object o : call.getParameters().get("arguments", java.util.List.class)) {
@@ -48,72 +48,41 @@ public class List implements ICommand {
         }
 
         for (View view : views) {
-            GraphReference<DocumentationNode> docs = docTree.getView(view);
+            java.util.List<DocumentationNode> docs = docTree.getView(view);
             if (json) {
                 ret = JsonUtils.printAsJson(docs);
             } else {
-                ret += "\n\n" + view + "\n\n" + printGraph(docs);
+                ret = printGraph(docs, verbose);
             }
         }
 
         return ret;
     }
 
-    private String printGraph(GraphReference<DocumentationNode> docs) {
+    private String printGraph(java.util.List<DocumentationNode> docs, boolean verbose) {
         String ret = "";
-        for (String id : docs.getRootObjectIds()) {
-            ret += printSection(id, docs, 0);
+        for (DocumentationNode node : docs) {
+            ret += printSection(node, verbose, 0);
         }
         return ret;
     }
 
-    private String printSection(String id, GraphReference<DocumentationNode> docs, int level) {
-        String ret = "";
-        DocumentationNode node = docs.getObjects().get(id);
-        String filler = StringUtil.spaces(level * 3);
+    private String printSection(DocumentationNode node, boolean verbose, int level) {
 
-        switch(node.getType()) {
-        case Chart:
-            break;
-        case Citation:
-            break;
-        case Figure:
-            break;
-        case Model:
-            break;
-        case Paragraph:
-            if (node.getSection() != null && node.getSection().getText() != null) {
-                ret += StringUtil.indent(StringUtil.justifyLeft(node.getSection().getText(), 60), level * 3) + "\n";
-            }
-            break;
-        case Reference:
-            break;
-        case Report:
-            break;
-        case Resource:
-            break;
-        case Section:
+        String filler = StringUtil.repeat('.', level * 3);
+        String ret = filler + "[" + node.getType() + "]"
+                + (node.getTitle() == null
+                        ? (node.getBodyText() == null
+                                ? ""
+                                : (verbose
+                                        ? ("\n" + StringUtil.indent(StringUtil.justifyLeft(node.getBodyText(), 60),
+                                                level * 3 + 2))
+                                        : (" " + StringUtil.abbreviate(node.getBodyText().trim(), 58))))
+                        : (" " + node.getTitle()))
+                + "\n";
 
-            if (node.getTitle() != null && !node.getTitle().trim().isEmpty()) {
-                ret += "\n" + filler + node.getTitle() + "\n" + filler + StringUtil.repeat('-', node.getTitle().length())
-                        + "\n\n";
-            }
-            if (node.getSection() != null && node.getSection().getText() != null) {
-                ret += StringUtil.indent(StringUtil.justifyLeft(node.getSection().getText(), 60), level * 3) + "\n";
-            }
-            break;
-
-        case Table:
-            break;
-        case View:
-            break;
-        default:
-            break;
-
-        }
-
-        for (String cid : docs.incoming(id)) {
-            ret += printSection(cid, docs, level + 1);
+        for (DocumentationNode cid : node.getChildren()) {
+            ret += printSection(cid, verbose, level + 1);
         }
         return ret;
     }

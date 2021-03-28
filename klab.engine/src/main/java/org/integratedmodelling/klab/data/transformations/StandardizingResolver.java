@@ -61,9 +61,9 @@ public class StandardizingResolver implements IResolver<IState>, IProcessor, IEx
 					double nval = ((Number) value).doubleValue();
 					nval = (nval - summary.getMean()) / summary.getStandardDeviation();
 					ret.set(locator, nval);
-					if (invert) {
-						max = Double.isNaN(nval) || max < nval ? nval : max;
-						min = Double.isNaN(nval) || min > nval ? nval : min;
+					if (invert && Observations.INSTANCE.isData(nval)) {
+						max = max < nval ? nval : max;
+						min = min > nval ? nval : min;
 					}
 				}
 			}

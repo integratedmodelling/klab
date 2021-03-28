@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Parent class for a member of the documentation tree. This will substitute the report and the
  * resource/model metadata through the specific subclasses. The DocumentationTree exposes graphs of
@@ -11,7 +14,7 @@ package org.integratedmodelling.klab.rest;
 public class DocumentationNode {
 
     public static enum Type {
-        Report, Section, Paragraph, Table, Chart, Figure, Resource, Model, Reference, Citation, View
+        Report, Section, Paragraph, Table, Chart, Figure, Resource, Model, Reference, Citation, View, Link, Anchor
     }
 
     public static class Model {
@@ -65,10 +68,12 @@ public class DocumentationNode {
     private String nextId;
     private String title;
     private String subtitle;
-    private int relativePosition;
+    private String bodyText; // only filled in paragraphs, anchors, links and citations
+    private List<DocumentationNode> children = new ArrayList<>();
 
     /*
-     * Only one of these below gets filled, according to the type.
+     * Only one of these below gets filled, according to the type. For the simplest types all are
+     * null and bodyText carries the content.
      */
 
     private Model model;
@@ -157,16 +162,18 @@ public class DocumentationNode {
         this.reference = reference;
     }
 
-    /**
-     * Character index of relative position in supersection, if a figure, table or reference.
-     * 
-     * @return
-     */
-    public int getRelativePosition() {
-        return relativePosition;
+    public void setBodyText(String bodyText) {
+        this.bodyText = bodyText;
     }
-    public void setRelativePosition(int relativePosition) {
-        this.relativePosition = relativePosition;
+
+    public String getBodyText() {
+        return this.bodyText;
+    }
+    public List<DocumentationNode> getChildren() {
+        return children;
+    }
+    public void setChildren(List<DocumentationNode> children) {
+        this.children = children;
     }
 
 }

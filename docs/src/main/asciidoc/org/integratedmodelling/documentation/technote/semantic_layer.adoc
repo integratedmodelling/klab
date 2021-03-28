@@ -39,8 +39,7 @@ endif::[]
 
 <<<
 
-{kim} is a declarative language used to annotate knowledge in the semantic layer of {kl} and is de facto a linguistic representation of the constraints implemented by the used base ontologyfootnote:[The base ontology can be found in the resources of the engine plugin in _klab.engine/src/main/resources/knowledge_ as a set of owl files.].
-When modeling, it is used to define, for example, Concepts, Statements or Models. 
+{kim} is the declarative language used to specify knowledge to include in the semantic layer of {kl}. Its syntax is designed to provide a linguistic representation of the constraints of the core ontologyfootnote:[The base ontology can be found in the resources of the engine plugin in _klab.engine/src/main/resources/knowledge_ as a set of owl files.] in {kl}, so that its statement, once validated syntactically, can correspond to consistent and correct semantics. A {kim}  specification is a series of statements, whose most important types are **concept** and **model** definitions. 
 
 ## The main actors of the {kim} language
 
@@ -1032,7 +1031,7 @@ number population_density_factor
 These models actually represent a resource and do not concurr in concept resolution. But they use inputs from the semantic layer without fear.
 
 
-### A little disgression about names
+### A little digression about names
 
 #TODO#
 

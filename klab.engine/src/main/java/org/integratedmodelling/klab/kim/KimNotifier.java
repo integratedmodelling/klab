@@ -233,12 +233,11 @@ public class KimNotifier implements Kim.Notifier {
 								+ "  definition: " + t.getMessage(), statement);
 					}
 				
-					ns.getSymbolTable().put(name, value);
-
 				} else if (value instanceof IKimTable) {
 					value = Table.create((IKimTable) value);
 				}
 
+                ns.getSymbolTable().put(name, value);
 
 			} else if (statement instanceof IKimConceptStatement) {
 				object = new ConceptStatement((IKimConceptStatement) statement);
