@@ -2,17 +2,22 @@ package org.integratedmodelling.klab.engine.services;
 
 import java.io.IOException;
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.http.client.utils.URIBuilder;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Network;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.ISubject;
+import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.auth.EngineUser;
-import org.integratedmodelling.klab.auth.KlabCertificate;
 import org.integratedmodelling.klab.auth.KlabUser;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.api.HubLoginResponse;
@@ -23,6 +28,8 @@ import org.integratedmodelling.klab.exceptions.KlabAuthorizationException;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.RemoteUserAuthenticationRequest;
+import org.integratedmodelling.klab.rest.ScaleReference;
+import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.rest.UserAuthenticationRequest;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,6 +38,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.EnableAsync;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.stereotype.Service;
@@ -47,6 +55,7 @@ import org.springframework.web.client.RestTemplate;
  *
  */
 @Service
+@EnableAsync
 public class HubUserService implements RemoteUserService {
 	
 	@Autowired
@@ -193,6 +202,32 @@ public class HubUserService implements RemoteUserService {
 		
 		Session session = getSession(user);
 		
+		session.getState().addListener(new ISessionState.Listener() {
+
+            @Override
+            public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
+                publisher.history(profile, session, rootActivity);
+                
+            }
+
+            @Override
+            public void scaleChanged(ScaleReference scale) {
+            }
+
+            @Override
+            public void newContext(ISubject context) {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void newObservation(IObservation observation, ISubject context) {
+                // TODO Auto-generated method stub
+                
+            }
+            
+        });
+		
 		publisher.login(profile, session);
 
 		response.setPublicApps(session.getSessionReference().getPublicApps());
@@ -282,26 +317,17 @@ public class HubUserService implements RemoteUserService {
 	
 	
 	private String getLoginUrl() {
-		return KlabCertificate
-				.createFromString(Configuration.INSTANCE.getProperty("klab.certificate", ""))
-				.getProperty(KlabCertificate.KEY_PARTNER_HUB) + 
-				API.HUB.AUTHENTICATE_USER;
+	    return Network.INSTANCE.getHub().getUrls().iterator().next() + API.HUB.AUTHENTICATE_USER;
 	}
 	
 	
 	private String getLogOutUrll() {
-		return KlabCertificate
-				.createFromString(Configuration.INSTANCE.getProperty("klab.certificate", ""))
-				.getProperty(KlabCertificate.KEY_PARTNER_HUB) + 
-				API.HUB.DEAUTHENTICATE_USER;
+	    return Network.INSTANCE.getHub().getUrls().iterator().next() + API.HUB.DEAUTHENTICATE_USER;
 	}
 	
 	
 	private String getProfileUrl() {
-		return KlabCertificate
-				.createFromString(Configuration.INSTANCE.getProperty("klab.certificate", ""))
-				.getProperty(KlabCertificate.KEY_PARTNER_HUB) + 
-				API.HUB.CURRENT_PROFILE;
+	    return Network.INSTANCE.getHub().getUrls().iterator().next() + API.HUB.CURRENT_PROFILE;
 	}
 
 	

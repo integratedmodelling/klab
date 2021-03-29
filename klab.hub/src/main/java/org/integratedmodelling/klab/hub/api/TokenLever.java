@@ -5,8 +5,10 @@ import java.util.Arrays;
 import java.util.Collection;
 
 import org.joda.time.DateTime;
+import org.springframework.data.annotation.TypeAlias;
 import org.springframework.security.core.GrantedAuthority;
 
+@TypeAlias("LeverToken")
 public class TokenLever extends TokenAuthentication{
 
 	private static final long serialVersionUID = -7438294770687877720L;
@@ -19,6 +21,6 @@ public class TokenLever extends TokenAuthentication{
 	
     public TokenLever(String name) {
         super(name);
-        expiration = DateTime.now().plusSeconds(TOKEN_TTL_SECONDS);
+        //expiration = DateTime.now().plusSeconds(TOKEN_TTL_SECONDS);
     }
 }

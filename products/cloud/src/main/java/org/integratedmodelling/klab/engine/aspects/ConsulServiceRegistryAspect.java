@@ -9,9 +9,11 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.engine.services.ConsulDnsService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 @Configuration
 @Aspect
+@Profile("consul")
 public class ConsulServiceRegistryAspect {
 	
 	@Autowired

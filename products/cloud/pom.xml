@@ -26,6 +26,43 @@
 					</execution>
 				</executions>
 			</plugin>
+            <plugin>
+                <groupId>com.google.cloud.tools</groupId>
+                <artifactId>jib-maven-plugin</artifactId>
+                <configuration>
+                    <from>
+						<image>${env.REGISTRY}/${env.BASE_CONTAINER}</image>
+        				 <auth>
+				    		<username>${env.USERNAME}</username>
+				    		<password>${env.PASSWORD}</password>
+            			</auth>
+      				</from>
+                    <to>
+                        <image>${env.REGISTRY}/engine-server</image>
+                        <tags>
+                        	<tag>${env.ENGINE_TAG}</tag>
+				      		<tag>latest</tag>
+				    	</tags>
+				    	<auth>
+				    		<username>${env.USERNAME}</username>
+				    		<password>${env.PASSWORD}</password>
+            			</auth>
+                    </to>
+					<container>
+						<user>klab:klab</user>
+						<jvmFlags>
+						</jvmFlags>
+						<mainClass>org.integratedmodelling.klab.engine.EngineApplication</mainClass>
+						<args>
+						</args>
+						<ports>
+							<port>8283</port>
+						</ports>
+						<labels>
+						</labels>
+					</container>
+                </configuration>
+            </plugin>
 		</plugins>
 	</build>
 	<dependencyManagement>

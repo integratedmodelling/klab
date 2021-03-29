@@ -7,8 +7,8 @@ import org.springframework.stereotype.Service;
 @Service
 public class RemoteEngineService {
 	
-	@Autowired
-	ConsulDnsService dnsService;
+//	@Autowired
+//	ConsulDnsService dnsService;
 	
 	RemoteEngine engine;
 
