@@ -55,7 +55,7 @@ public class NewScript extends WizardPage {
         super("wizardPage");
         this.targetProject = targetProject;
         this.role = role;
-		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
+		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.png"));
         setTitle("New k.LAB " + (role == Role.SCRIPT ? "script" : "test case"));
         setDescription("Create a new " + (role == Role.SCRIPT ? "script" : "test case"));
     }

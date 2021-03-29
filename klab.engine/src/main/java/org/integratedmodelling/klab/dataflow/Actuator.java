@@ -323,7 +323,7 @@ public class Actuator implements IActuator {
         this.currentContext = runtimeContext;
         this.status.set(1);
         this.startComputation.set(System.currentTimeMillis());
-
+        
         /*
          * poor-man attempt at reentrancy in case this has to get called more than once for any
          * reason later.
@@ -502,7 +502,7 @@ public class Actuator implements IActuator {
             /*
              * include the computed resource in the report
              */
-            ((Report) context.getReport()).include(contextualizer.getSecond());
+            ((Report) context.getReport()).include(contextualizer.getSecond(), this);
         }
 
         if (runtimeContext.getMonitor().isInterrupted()) {

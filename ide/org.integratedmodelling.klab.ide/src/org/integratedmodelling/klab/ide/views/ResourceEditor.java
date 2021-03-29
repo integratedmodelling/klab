@@ -540,7 +540,7 @@ public class ResourceEditor extends ViewPart {
         composite_1_1.setLayout(new GridLayout(2, false));
 
         Label lblNewLabel = new Label(composite_1_1, SWT.NONE);
-        lblNewLabel.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/logo_white_64.jpg"));
+        lblNewLabel.setImage(ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/logo_white_64.png"));
 
         Composite composite_2 = new Composite(composite_1_1, SWT.NONE);
         RowLayout rl_composite_2 = new RowLayout(SWT.VERTICAL);

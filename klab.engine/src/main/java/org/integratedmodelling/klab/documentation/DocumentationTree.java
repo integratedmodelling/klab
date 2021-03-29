@@ -1,0 +1,356 @@
+package org.integratedmodelling.klab.documentation;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashMap;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import org.integratedmodelling.kim.api.IKimTable;
+import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.classification.IClassification;
+import org.integratedmodelling.klab.api.data.general.IStructuredTable;
+import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
+import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
+import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
+import org.integratedmodelling.klab.documentation.ReportSection.Element;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.rest.DocumentationNode;
+import org.integratedmodelling.klab.rest.DocumentationNode.Figure;
+import org.integratedmodelling.klab.rest.DocumentationNode.Table;
+import org.integratedmodelling.klab.rest.DocumentationNode.Type;
+import org.integratedmodelling.klab.rest.KnowledgeViewReference;
+import org.integratedmodelling.klab.utils.NameGenerator;
+import org.integratedmodelling.klab.utils.StringUtil;
+
+import com.vladsch.flexmark.ast.Node;
+import com.vladsch.flexmark.ext.attributes.AttributesExtension;
+import com.vladsch.flexmark.ext.definition.DefinitionExtension;
+import com.vladsch.flexmark.ext.enumerated.reference.EnumeratedReferenceExtension;
+import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
+import com.vladsch.flexmark.ext.media.tags.MediaTagsExtension;
+import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.options.MutableDataSet;
+
+/**
+ * The structured version of the report, to substitute the simpler report based on a document view.
+ * Uses the beans from the rest package directly. Each report holds a doctree with info on
+ * everything that has gone through it. The tree is serializable to JSON. Eventually this may
+ * substitute the Report object in its entirety.
+ * <p>
+ * From a client perspective:
+ * <ul>
+ * <li>Every individual documentation item is notified with a message and an ID, with the ID of the
+ * context it belongs to. Nothing else is notified automatically.</li>
+ * <li>Since the first notification, the view can ask for any of the view types, which will return a
+ * graph of documentation types only referencing the IDs, possibly empty. The graph is produced
+ * directly in JSON-compatible bean form.</li>
+ * </ul>
+ * 
+ * @author Ferd
+ *
+ */
+public class DocumentationTree {
+
+    private Map<String, DocumentationNode> nodes = new LinkedHashMap<>();
+    private ISession session;
+    private IRuntimeScope context;
+    private Report report;
+    private List<ReportSection> mainSections = new ArrayList<>();
+
+    /*
+     * this keeps track of which resources are used from temporally merged resourcesets
+     */
+    private Map<String, Map<String, IResource>> contextualizedResources = new HashMap<>();
+
+    // models in order of usage
+    private Set<IModel> models = new LinkedHashSet<>();
+    // and the resolution for each observable
+    private Map<ObservedConcept, List<IRankedModel>> resolutions = new HashMap<>();
+    private Parser parser_;
+    private HtmlRenderer renderer_;
+
+    public enum View {
+        REPORT, FIGURES, TABLES, RESOURCES, MODELS, PROVENANCE
+    }
+
+    public DocumentationTree(Report report) {
+        this.report = report;
+    }
+
+    public DocumentationTree(Report report, IRuntimeScope context, ISession identity) {
+        this(report);
+        this.context = context;
+        this.session = identity;
+    }
+
+    private String md2html(String markdown) {
+        if (this.renderer_ == null) {
+            MutableDataSet options = new MutableDataSet().set(Parser.EXTENSIONS,
+                    Arrays.asList(FootnoteExtension.create(), AttributesExtension.create(), EnumeratedReferenceExtension.create(),
+                            MediaTagsExtension.create(), DefinitionExtension.create(), TablesExtension.create()));
+
+            this.parser_ = Parser.builder(options).build();
+            this.renderer_ = HtmlRenderer.builder(options).build();
+        }
+        Node document = parser_.parse(markdown);
+        return renderer_.render(document);
+    }
+
+    public List<DocumentationNode> getView(View view, String format) {
+        switch(view) {
+        case FIGURES:
+            return getFiguresView(format);
+        case MODELS:
+            return getModelsView(format);
+        case REPORT:
+            return getReportView(format);
+        case RESOURCES:
+            return getResourcesView(format);
+        case TABLES:
+            return getTablesView(format);
+        case PROVENANCE:
+            return getProvenanceView(format);
+        }
+        return null;
+    }
+
+    /**
+     * Add the item and notify the views so they can put that away.
+     * 
+     * @param item
+     */
+    public void addNode(DocumentationNode item) {
+        nodes.put(item.getId(), item);
+        // TODO notify view
+    }
+
+    public void addResolution(ObservedConcept observable, List<IRankedModel> resolved) {
+        resolutions.put(observable, resolved);
+    }
+
+    /**
+     * Add a first-class object TODO add the model that uses it, if any
+     * 
+     * @param o
+     */
+    public void addComputable(Object o) {
+
+        DocumentationNode item = null;
+
+        if (o instanceof IResource) {
+
+            // getItem(Type.Resource);
+
+        } else if (o instanceof IPrototype) {
+
+        } else if (o instanceof ReportSection) {
+            this.mainSections.add((ReportSection) o);
+        } else if (o instanceof IObservationReference) {
+
+        } else if (o instanceof IKimTable) {
+
+        } else if (o instanceof IClassification) {
+
+        } else {
+            System.out.println("OHIBÓ un cianfero non visto prima");
+        }
+    }
+
+    public void addView(IKnowledgeView view, KnowledgeViewReference descriptor) {
+        // TODO Auto-generated method stub
+
+    }
+
+    // TODO add the contextualization
+    public void addModel(IModel model) {
+        models.add(model);
+    }
+
+    // TODO add the model
+    public void addObservation(IObservation observation) {
+
+    }
+
+    /**
+     * Child citation
+     * 
+     * @param reportSection
+     * @param reference
+     */
+    public void addCitation(Reference reference) {
+
+        System.out.println("CITATION " + reference);
+
+        // TODO add reference if not there already
+        // nodes.put(reference.get("key"), getItem(Type.Citation, reportSection));
+
+    }
+
+    private List<DocumentationNode> getProvenanceView(String format) {
+        List<DocumentationNode> ret = new ArrayList<>();
+        return ret;
+    }
+
+    private List<DocumentationNode> getTablesView(String format) {
+        List<DocumentationNode> ret = new ArrayList<>();
+        return ret;
+    }
+
+    private List<DocumentationNode> getResourcesView(String format) {
+        List<DocumentationNode> ret = new ArrayList<>();
+        return ret;
+    }
+
+    private List<DocumentationNode> getReportView(String format) {
+        List<DocumentationNode> ret = new ArrayList<>();
+        for (SectionRole order : SectionRole.values()) {
+            for (ReportSection section : mainSections) {
+                if (order == section.getRole()) {
+                    ret.add(compileSection(section, format));
+                }
+            }
+        }
+
+        return ret;
+    }
+
+    private DocumentationNode compileSection(ReportSection section, String format) {
+
+        DocumentationNode ret = new DocumentationNode();
+        ret.setId(section.getId());
+        ret.setType(Type.Section);
+        ret.setTitle(section.getName() == null
+                ? (section.getRole() == null ? null : StringUtil.capitalize(section.getRole().name().toLowerCase()))
+                : section.getName());
+
+        String body = section.body.toString();
+        int offset = 0;
+        for (Element element : section.elements) {
+            if (element.startOffset > offset) {
+                offset = compileParagraph(body, offset, element.startOffset, element.endOffset, ret, format);
+            }
+            DocumentationNode child = compileElement(element, format);
+            if (child != null) {
+                ret.getChildren().add(child);
+            }
+        }
+
+        if (body.length() > offset) {
+            compileParagraph(body, offset, body.length(), 0, ret, format);
+        }
+
+        return ret;
+    }
+
+    private int compileParagraph(String body, int offset, int start, int end, DocumentationNode section, String format) {
+        String paragraph = body.substring(offset, start);
+        if ("html".equals(format)) {
+            paragraph = md2html(paragraph);
+        }
+        DocumentationNode node = new DocumentationNode();
+        node.setType(Type.Paragraph);
+        node.setId("p_" + NameGenerator.shortUUID());
+        node.setBodyText(paragraph);
+        section.getChildren().add(node);
+        return end;
+    }
+
+    private DocumentationNode compileElement(Element element, String format) {
+
+        if (element.type == Type.Section) {
+            return compileSection((ReportSection) element.element, format);
+        }
+
+        DocumentationNode node = new DocumentationNode();
+        node.setId(NameGenerator.shortUUID());
+        node.setType(element.type);
+
+        switch(element.type) {
+        case Anchor:
+        case Citation:
+        case Link:
+            node.setBodyText(element.element.toString());
+            break;
+        case Chart:
+            break;
+        case Figure:
+            node.setFigure((Figure) element.element);
+            break;
+        case Model:
+            break;
+        case Reference:
+            break;
+        case Resource:
+            break;
+        case Table:
+            node.setTable((Table) element.element);
+            break;
+        case View:
+            break;
+        default:
+            break;
+        }
+
+        return node;
+    }
+
+    private List<DocumentationNode> getModelsView(String format) {
+        List<DocumentationNode> ret = new ArrayList<>();
+        return ret;
+    }
+
+    private List<DocumentationNode> getFiguresView(String format) {
+        List<DocumentationNode> ret = new ArrayList<>();
+        return ret;
+    }
+
+    /**
+     * Notify that a resource out of a merged resource set has been used in this scope.
+     * 
+     * @param urn
+     * @param first
+     */
+    public void addContextualizedResource(String urn, IResource resource) {
+        Map<String, IResource> ret = this.contextualizedResources.get(urn);
+        if (ret == null) {
+            ret = new LinkedHashMap<>();
+            this.contextualizedResources.put(urn, ret);
+        }
+        ret.put(resource.getUrn(), resource);
+    }
+
+    public List<IResource> getContextualizedResources(String urn) {
+        List<IResource> ret = new ArrayList<>();
+        Map<String, IResource> ress = this.contextualizedResources.get(urn);
+        if (ress != null) {
+            for (IResource res : ress.values()) {
+                ret.add(res);
+            }
+        }
+        return ret;
+    }
+
+    public static Object getTableDescriptor(IStructuredTable<?> table, Object[] args) {
+        Table ret = new Table();
+        return ret;
+    }
+
+    public static Object getFigureDescriptor(IArtifact artifact, IObservationReference ref, Object[] args) {
+        Figure ret = new Figure();
+        return ret;
+    }
+
+}

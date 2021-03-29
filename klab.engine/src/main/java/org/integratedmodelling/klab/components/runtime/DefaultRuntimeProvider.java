@@ -81,6 +81,7 @@ import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.runtime.AbstractTask;
@@ -162,6 +163,11 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 				 * for posterity, needed in some situations
 				 */
 				((Dataflow)dataflow).setRuntimeScope(runtimeScope);
+				
+				/*
+				 * record all resolutions for the documentation
+				 */
+				((Report)runtimeScope.getReport()).recordResolutions(scope);
 				
 				IActuator firstActuator = null;
 

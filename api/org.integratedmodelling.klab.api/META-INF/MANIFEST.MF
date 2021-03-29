@@ -6,7 +6,6 @@ Bundle-SymbolicName: org.integratedmodelling.klab.api
 Bundle-Version: 0.10.0.qualifier
 Automatic-Module-Name: org.integratedmodelling.klab.api
 Bundle-RequiredExecutionEnvironment: JavaSE-1.8
-Require-Bundle: javax.annotation;bundle-version="1.2.0"
 Export-Package: org.integratedmodelling.contrib,
  org.integratedmodelling.contrib.jgrapht,
  org.integratedmodelling.contrib.jgrapht.alg,

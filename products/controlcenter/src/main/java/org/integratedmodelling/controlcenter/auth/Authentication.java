@@ -10,7 +10,10 @@ import org.integratedmodelling.controlcenter.ControlCenter;
 import org.integratedmodelling.controlcenter.api.IAuthentication;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.ICertificate;
+import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
+import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
+import org.integratedmodelling.klab.rest.Group;
 import org.joda.time.DateTime;
 
 import kong.unirest.HttpResponse;
@@ -101,38 +104,28 @@ public class Authentication implements IAuthentication {
 
 		try {
 
-			HttpResponse<JsonNode> httpResponse = Unirest.post(authenticationEndpoint + API.HUB.AUTHENTICATE_ENGINE)
-					.header("Content-Type", "application/json").body(request).asJson();
+			HttpResponse<EngineAuthenticationResponse> httpResponse = Unirest.post(authenticationEndpoint + API.HUB.AUTHENTICATE_ENGINE)
+					.header("Content-Type", "application/json").body(request).asObject(EngineAuthenticationResponse.class);
+			
+			if (httpResponse.isSuccess()) {
+			    EngineAuthenticationResponse response = httpResponse.getBody();
 
-			JSONObject response = httpResponse.getBody().getObject();
+	            if (response != null) {
+	                AuthenticatedIdentity userData = response.getUserData();
 
-			if (response != null) {
+                    this.username = userData.getIdentity().getId();
+                    this.email =  userData.getIdentity().getEmail();
+                    this.expiration = DateTime.parse(userData.getExpiry());
+                    this.authorization = userData.getToken();
 
-				if (response.has("error")) {
+                    response.getUserData().getGroups().forEach(g -> this.groups.add(g));
 
-					ControlCenter.INSTANCE.message("Authentication error");
-					this.status = Status.OFFLINE;
-
-				} else {
-
-					this.username = response.getJSONObject("userData").getJSONObject("identity").getString("id");
-					this.email = response.getJSONObject("userData").getJSONObject("identity").getString("email");
-					this.expiration = DateTime.parse(response.getJSONObject("userData").getString("expiry"));
-					this.authorization = response.getJSONObject("userData").getString("token");
-
-					for (Object group : response.getJSONObject("userData").getJSONArray("groups")) {
-						Group g = new Group();
-						g.name = ((JSONObject)group).getString("id");
-						g.iconUrl = ((JSONObject)group).has("iconUrl") ? ((JSONObject)group).getString("iconUrl") : null;
-						g.description = g.name + " user group";
-						this.groups.add(g);
-					}
-
-					status = this.expiration.isBefore(DateTime.now()) ? Status.EXPIRED : Status.VALID;
-				}
-
+                    status = this.expiration.isBefore(DateTime.now()) ? Status.EXPIRED : Status.VALID;
+	            } else {
+	                ControlCenter.INSTANCE.message("Authentication error");
+	                this.status = Status.OFFLINE;
+	            }
 			}
-
 		} catch (UnirestException e) {
 			// just leave the status as is
 			ControlCenter.INSTANCE.message("Connection error");

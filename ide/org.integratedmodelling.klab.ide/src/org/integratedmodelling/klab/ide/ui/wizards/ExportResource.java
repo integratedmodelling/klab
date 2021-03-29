@@ -59,7 +59,7 @@ public class ExportResource extends WizardPage {
 		this.targetProject = targetProject;
 		this.resource = resource;
 		this.formats = resource.getExportFormats();
-		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
+		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.png"));
 		setTitle("Export k.LAB resource");
 		setDescription("Export a k.LAB resource to an external file");
 	}

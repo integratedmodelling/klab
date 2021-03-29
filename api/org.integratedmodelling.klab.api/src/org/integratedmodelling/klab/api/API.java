@@ -198,7 +198,7 @@ public interface API {
     }
 
     public static interface HUB {
-
+        
         /**
          * Returns authenticated user details and network status with all nodes (including offline
          * if applicable) with refresh rate and unique network access token. Should be the only
@@ -215,7 +215,7 @@ public interface API {
          * <b>Authentication:</b> open
          */
 
-        public static final String API_BASE = "/api/v2";
+		public static final String API_BASE = "/api/v2";
         /**
          * Base URL path for node on the hub.
          */
@@ -806,6 +806,8 @@ public interface API {
             /** The Constant P_CONTEXT. */
             public static final String P_CONTEXT = "{context}";
 
+            public static final String P_VIEW = "{view}";
+
             /**
              * Create new context from the URN of its definition or remote computation. Return task
              * descriptor.
@@ -832,6 +834,11 @@ public interface API {
              */
             public static final String REPORT_CONTEXT = "/engine/session/observation/report/" + P_CONTEXT;
 
+            /**
+             * Return structured documentation view (with view being one of report, figures, tables, resources, models or provenance)
+             */
+            public static final String DOCUMENTATION_VIEW_CONTEXT = "/engine/session/observation/documentation/" + P_VIEW + "/" + P_CONTEXT;
+            
             /**
              * Endpoints to access tasks.
              * 
@@ -883,6 +890,28 @@ public interface API {
 
         }
 
+    }
+    
+    /**
+     * Endpoints for the stats server.
+     * 
+     * @author steven wohl
+     *
+     */
+    public interface STATS {
+        public static final String API_BASE = "/api/v2";
+        
+        public static final String STATS_BASE = API_BASE + "/stats";
+        
+        public interface PARAMETERS {
+            public static final String TYPE = "type";
+            
+            public static final String PAGE = "page";
+            
+            public static final String LIMIT = "limit";
+            
+        }
+        
     }
 
 }

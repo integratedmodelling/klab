@@ -2,8 +2,6 @@ package org.integratedmodelling.klab.hub.license.controllers;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.util.Properties;
-
 import javax.annotation.security.RolesAllowed;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -11,15 +9,11 @@ import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.io.IOUtils;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.auth.KlabCertificate;
-import org.integratedmodelling.klab.hub.api.BouncyLicense;
-import org.integratedmodelling.klab.hub.api.LicenseConfiguration;
 import org.integratedmodelling.klab.hub.api.LicenseGenerator;
 import org.integratedmodelling.klab.hub.api.MongoNode;
 import org.integratedmodelling.klab.hub.api.NodeAuthResponeFactory;
-import org.integratedmodelling.klab.hub.api.PropertiesFactory;
 import org.integratedmodelling.klab.hub.licenses.services.LicenseConfigService;
 import org.integratedmodelling.klab.hub.nodes.services.NodeService;
-import org.integratedmodelling.klab.hub.repository.LicenseConfigRepository;
 import org.integratedmodelling.klab.hub.repository.MongoGroupRepository;
 import org.integratedmodelling.klab.rest.NodeAuthenticationRequest;
 import org.integratedmodelling.klab.rest.NodeAuthenticationResponse;
@@ -36,28 +30,24 @@ import org.springframework.web.bind.annotation.RestController;
 public class NodeLicenseController extends LicenseController<NodeAuthenticationRequest>{
 	
 	private NodeService nodeService;
-	private LicenseConfigService configService;
-	private MongoGroupRepository groupRepository;
+    private LicenseGenerator licenseGenerator;
+    private NodeAuthResponeFactory nodeAuthResponeFactory;
 	
 	@Autowired
 	NodeLicenseController(NodeService nodeService,
 			LicenseConfigService configService,
 			MongoGroupRepository groupRepository) {
 		this.nodeService = nodeService;
-		this.configService = configService;
-		this.groupRepository = groupRepository;
+		this.licenseGenerator = new LicenseGenerator(configService);
+		this.nodeAuthResponeFactory = new NodeAuthResponeFactory(nodeService,groupRepository,configService);
 	}
 	
 	@GetMapping(value= API.HUB.NODE_BASE_ID, params = "certificate")
 	@RolesAllowed({ "ROLE_SYSTEM" })
 	public void generateCertFile(@PathVariable("id") String id, HttpServletResponse response) throws IOException {
 		MongoNode node = nodeService.getByName(id);
-		LicenseConfiguration configuration = configService.getDefaultConfig();
 
-		Properties nodeProperties = PropertiesFactory.fromNode(node, configuration).getProperties();
-
-
-		byte[] certFileContent = new LicenseGenerator(configuration, nodeProperties).generate();
+		byte[] certFileContent = licenseGenerator.generate(node, null);
 
 		String certFileString = String.format("attachment; filename=%s", KlabCertificate.DEFAULT_NODE_CERTIFICATE_FILENAME);
 
@@ -84,11 +74,7 @@ public class NodeLicenseController extends LicenseController<NodeAuthenticationR
 			}
 		}
 
-		LicenseConfiguration config = configService.getConfigByKey(request.getKey());
-
-		NodeAuthenticationResponse response;
-
-		response = new NodeAuthResponeFactory().getRespone(request, remoteAddr, config, nodeService, groupRepository);
+		NodeAuthenticationResponse response = nodeAuthResponeFactory.getRespone(request, remoteAddr);
 
 		return new ResponseEntity<>(response, HttpStatus.OK);
 	}

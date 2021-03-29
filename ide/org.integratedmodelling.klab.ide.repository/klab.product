@@ -30,17 +30,19 @@
    <launcher name="k.Modeler">
       <linux icon="branding/icon.xpm"/>
       <macosx icon="branding/k-lab.icns"/>
-      <win useIco="false">
+      <win useIco="true">
+         <ico path="branding/k-lab.ico"/>
          <bmp
-            winSmallHigh="branding/k-lab-icon-16_d.bmp"
-            winSmallLow="branding/k-lab-icon-16.bmp"
-            winMediumHigh="branding/k-lab-icon-32_d.bmp"
-            winMediumLow="branding/k-lab-icon-32.bmp"
-            winLargeHigh="branding/k-lab-icon-48_d.bmp"
-            winLargeLow="branding/k-lab-icon-48.bmp"
-            winExtraLargeHigh="branding/k-lab-icon-256_d.bmp"/>
+            winSmallHigh="branding/kdot16.bmp"
+            winSmallLow="branding/kdot16_8.bmp"
+            winMediumHigh="branding/kdot32.bmp"
+            winMediumLow="branding/kdot32_8.bmp"
+            winLargeHigh="branding/kdot48.bmp"
+            winLargeLow="branding/kdot48_8.bmp"
+            winExtraLargeHigh="branding/kdot256.bmp"/>
       </win>
    </launcher>
+
 
    <vm>
       <linux include="true">org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JRE-1.1</linux>

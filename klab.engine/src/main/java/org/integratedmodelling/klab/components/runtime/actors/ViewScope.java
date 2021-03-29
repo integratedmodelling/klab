@@ -85,7 +85,7 @@ class ViewScope {
 	void setViewMetadata(ViewComponent component, Map<String, ?> parameters) {
 		if (parameters != null) {
 			for (String key : parameters.keySet()) {
-				if (Actors.INSTANCE.getLayoutMetadata().contains(key)) {
+				if (!component.getAttributes().containsKey(key) && Actors.INSTANCE.getLayoutMetadata().contains(key)) {
 					Object param = parameters.get(key);
 					component.getAttributes().put(key,
 							param instanceof KActorsValue ? ((KActorsValue) param).getValue().toString()

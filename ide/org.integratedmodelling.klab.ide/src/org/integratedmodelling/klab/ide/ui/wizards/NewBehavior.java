@@ -54,7 +54,7 @@ public class NewBehavior extends WizardPage {
     public NewBehavior(IKimProject targetProject) {
         super("wizardPage");
         this.targetProject = targetProject;
-		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.jpg"));
+		setImageDescriptor(ResourceManager.getPluginImageDescriptor(Activator.PLUGIN_ID, "icons/logo_white_64.png"));
         setTitle("New k.LAB behavior");
         setDescription("Create a new behavior for observed actors");
     }

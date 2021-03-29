@@ -83,7 +83,6 @@ public class RemoteEngine extends Engine {
 				if(last < (current)) {
 					try {
 						sesh.close();
-						dnsService.removeSessionWeight(sesh);
 					} catch (IOException e) {
 						// I do not want to throw anything because the thread would die
 						Logging.INSTANCE.info("Error closing inactive session or removing dead weight.");

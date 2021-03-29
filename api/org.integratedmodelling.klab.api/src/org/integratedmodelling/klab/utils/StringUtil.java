@@ -291,4 +291,17 @@ public class StringUtil {
 		return ret.toString();
 	}
 
+    public static int countHeaderCharacters(String string, char c) {
+        int ret = 0;
+        while (ret < string.length() && string.charAt(ret) == c) ret++;
+        return ret;
+    }
+
+    public static String abbreviate(String string, int n) {
+        if (string.length() <= n) {
+            return string;
+        }
+        return string.substring(0, n-3) + "...";
+    }
+
 }

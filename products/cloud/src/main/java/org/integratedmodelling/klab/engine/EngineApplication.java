@@ -44,7 +44,7 @@ public class EngineApplication {
 	
 	public void run(String[] args) {
 		context = new SpringApplicationBuilder(EngineApplication.class)
-				.listeners(new EngineRunner()).run();
+				.listeners(new EngineRunner()).run(args);
 	}
 	
 	

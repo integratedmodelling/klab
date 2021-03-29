@@ -45,10 +45,10 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.INamespace;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IConfiguration;
-import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -186,7 +186,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
         this.catalog = new HashMap<>();
         this.behaviorBindings = new IntelligentMap<>();
-        this.report = new Report(this, monitor.getIdentity().getParentIdentity(ISession.class).getId());
+        this.report = new Report(this, scope, monitor.getIdentity().getParentIdentity(ISession.class).getId());
         this.observations = new HashMap<>();
         this.network = new DefaultDirectedGraph<>(IRelationship.class);
         this.structure = new Structure();
@@ -1313,7 +1313,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                     session.getState().notifyObservation(observation);
                     
                     
-                    report.include(descriptor);
+                    report.include(descriptor, observation);
 
                     notifiedObservations.add(observation.getId());
                 }
@@ -1577,6 +1577,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
     @Override
     public void setModel(Model model) {
         this.model = model;
+        ((Report)report).addModel(model);
     }
 
     @Override
@@ -2017,6 +2018,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         this.viewsByUrn.put(view.getUrn(), view);
         this.views.put(view.getId(), view);
 
+        
         /*
          * send directly to clients. If view can export, keep view and send URL to export service.
          */
@@ -2030,6 +2032,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         descriptor.setLabel(view.getLabel() == null
                 ? (StringUtil.capitalize(view.getViewClass()) + " " + (views.size() + 1))
                 : view.getLabel());
+
+        report.getDocumentationTree().addView(view, descriptor);
 
         ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
         session.getMonitor().send(

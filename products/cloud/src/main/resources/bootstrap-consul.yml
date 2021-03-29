@@ -1,0 +1,25 @@
+spring:
+  application:
+    name: ${ENGINE_SERVICE:engine-service}
+  cloud:
+    consul:
+      enabled: true
+      discovery:
+        port: ${server.port}
+        prefer-ip-address: true
+        instanceId: "${spring.application.name}-${HOSTNAME:${PID}}"
+        health-check-path: ${server.servlet.context-path}/actuator/health
+        health-check-interval: 15s
+      host: ${CONSUL_SERVER:192.168.250.210}
+      port: 8500
+      config:
+        prefix: config
+        enabled: true
+        defaultContext: ${ENGINE_SERVICE:engine-service}
+        profileSeparator: '::'
+        format: yaml
+        data-key: data
+        
+stats:
+  server:
+    url: "http://localhost:8080"

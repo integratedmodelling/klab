@@ -122,6 +122,8 @@ public class Node {
 		try {
 			SpringApplication app = new SpringApplication(NodeApplication.class);
 			this.context = app.run(options.getArguments());
+			Environment environment = this.context.getEnvironment();
+			setPropertiesFromEnvironment(environment);
 			this.engine = Engine.start(this.certificate);
 			this.port = options.getPort();
 			Map<String, Object> props = new HashMap<>();
@@ -228,8 +230,11 @@ public class Node {
 		        .filter(ps -> ps instanceof EnumerablePropertySource)
 		        .map(ps -> ((EnumerablePropertySource) ps).getPropertyNames())
 		        .flatMap(Arrays::<String>stream)
-		        .forEach(propName -> Configuration.INSTANCE.getProperties().setProperty(propName, environment.getProperty(propName)));
-		Configuration.INSTANCE.save();
+		        .forEach(propName -> {
+		            if(propName.contains("klab.")) {
+		                Configuration.INSTANCE.getProperties().setProperty(propName, environment.getProperty(propName));
+		            }
+		        });
 		return;
 	}
 	

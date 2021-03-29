@@ -2,11 +2,13 @@ package org.integratedmodelling.klab.engine.configs;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
 /*
  * The class if for retrieving the properties needed to configure the 
  */
 @Configuration
+@Profile("consul")
 public class ConsulConfig {
 
 	@Value("${spring.cloud.consul.host}")

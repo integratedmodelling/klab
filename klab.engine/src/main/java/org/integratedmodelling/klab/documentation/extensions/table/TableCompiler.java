@@ -24,6 +24,7 @@ import org.integratedmodelling.kim.api.IKimQuantity;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.UnarySemanticOperator;
+import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Observables;
@@ -1887,7 +1888,8 @@ public class TableCompiler {
 
     public List<ObservedConcept> expandCategory(IObservable observable) {
         IConcept category = Observables.INSTANCE.getDescribedType(observable.getType());
-        this.observables.add(new ObservedConcept(observable, Mode.RESOLUTION));
+        this.observables
+                .add(new ObservedConcept(Observables.INSTANCE.removeValueOperators(observable, monitor), Mode.RESOLUTION));
         return expandConcept(category, observable);
     }
 
@@ -1931,7 +1933,60 @@ public class TableCompiler {
                     .getConcreteChildren(category)/*
                                                    * : Types.INSTANCE.getConcreteLeaves(category)
                                                    */) {
-                ret.add(new ObservedConcept(Observable.promote(child), Mode.RESOLUTION));
+                boolean ok = true;
+                if (observable != null && !observable.getValueOperators().isEmpty()) {
+
+                    for (Pair<ValueOperator, Object> vp : observable.getValueOperators()) {
+                        switch(vp.getFirst()) {
+                        case AVERAGED:
+                            break;
+                        case BY:
+                            break;
+                        case DOWN_TO:
+                            break;
+                        case GREATER:
+                            break;
+                        case GREATEREQUAL:
+                            break;
+                        case IS:
+                            if (vp.getSecond() instanceof IConcept) {
+                                ok = child.is((IConcept) vp.getSecond());
+                            }
+                            break;
+                        case LESS:
+                            break;
+                        case LESSEQUAL:
+                            break;
+                        case MINUS:
+                            break;
+                        case OVER:
+                            break;
+                        case PLUS:
+                            break;
+                        case SAMEAS:
+                            ok = child.equals(vp.getSecond());
+                            break;
+                        case SUMMED:
+                            break;
+                        case TIMES:
+                            break;
+                        case TOTAL:
+                            break;
+                        case WHERE:
+                            break;
+                        case WITHOUT:
+                            break;
+                        }
+
+                        if (!ok) {
+                            break;
+                        }
+
+                    }
+                }
+                if (ok) {
+                    ret.add(new ObservedConcept(Observable.promote(child), Mode.RESOLUTION));
+                }
             }
         }
         return ret;
@@ -2256,11 +2311,34 @@ public class TableCompiler {
                 if (rows.containsKey(symbol) || columns.containsKey(symbol)) {
                     parameters.put(symbol, ret.getCurrentValue(columnIndex, rowIndex, symbol, true));
                 } else {
-                    IArtifact artifact = scope.getArtifact(symbol);
-                    if (artifact instanceof IState) {
-                        parameters.put(symbol, ((IState) artifact).get(value.getSecond()));
-                    } else if (artifact != null) {
-                        parameters.put(symbol, artifact);
+
+                    /*
+                     * check with symbol contextualized to group
+                     */
+                    boolean done = false;
+                    if (row.parent != null) {
+                        String csym = row.parent.getName() + symbol;
+                        if (rows.containsKey(csym)) {
+                            parameters.put(symbol, ret.getCurrentValue(columnIndex, rowIndex, csym, true));
+                            done = true;
+                        }
+                    }
+
+                    if (!done && column.parent != null) {
+                        String csym = column.parent.getName() + symbol;
+                        if (columns.containsKey(csym)) {
+                            parameters.put(symbol, ret.getCurrentValue(columnIndex, rowIndex, csym, true));
+                            done = true;
+                        }
+                    }
+
+                    if (!done) {
+                        IArtifact artifact = scope.getArtifact(symbol);
+                        if (artifact instanceof IState) {
+                            parameters.put(symbol, ((IState) artifact).get(value.getSecond()));
+                        } else if (artifact != null) {
+                            parameters.put(symbol, artifact);
+                        }
                     }
                 }
                 break;
