@@ -331,8 +331,13 @@ public class ViewerLabelProvider extends LabelProvider implements IDescriptionPr
             if (((EActorBehavior) element).getType() == IKActorsBehavior.Type.COMPONENT
                     || ((EActorBehavior) element).getType() == IKActorsBehavior.Type.TRAITS) {
                 return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/plugin.gif");
+            } else if (((EActorBehavior) element).getType() == IKActorsBehavior.Type.SCRIPT) {
+                return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/script.gif");
+            } else if (((EActorBehavior) element).getType() == IKActorsBehavior.Type.APP) {
+                return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/start_application.png");
+            } else {
+                return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/behavior.png");
             }
-            return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/behavior.png");
         }
         if (element instanceof EActorAction) {
             return ResourceManager.getPluginImage(Activator.PLUGIN_ID, "icons/action.gif");
