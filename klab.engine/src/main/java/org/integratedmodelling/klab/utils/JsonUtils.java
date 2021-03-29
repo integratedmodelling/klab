@@ -177,24 +177,9 @@ public class JsonUtils {
         om.enable(SerializationFeature.WRITE_NULL_MAP_VALUES); // pretty print
         om.enable(SerializationFeature.WRITE_SINGLE_ELEM_ARRAYS_UNWRAPPED); // pretty print
         om.disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
-        
-        // DefaultPrettyPrinter prettyPrinter = new DefaultPrettyPrinter();
-        // prettyPrinter.indentArraysWith(DefaultPrettyPrinter.Lf2SpacesIndenter.instance);
-        //
-        // String json = objectMapper.writer(prettyPrinter).writeValueAsString(object);
 
         try {
-            if (object instanceof Collection) {
-                StringBuffer ret = new StringBuffer(1024);
-                ret.append("[");
-                for (Object o : ((Collection<?>)object)) {
-                    ret.append((ret.length() == 1 ? "   " : "\n   ") + printAsJson(o));
-                }
-                ret.append("\n]");
-                return ret.toString();
-            } else {
-                return om.writeValueAsString(object);
-            }
+            return om.writeValueAsString(object);
         } catch (JsonProcessingException e) {
             throw new IllegalArgumentException("serialization failed: " + e.getMessage());
         }
