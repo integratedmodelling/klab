@@ -146,19 +146,19 @@ public class Report implements IReport {
         if (resource.getUrn() != null) {
             IResource res = Resources.INSTANCE.resolveResource(resource.getUrn());
             resources.add(res);
-            docTree.add(res);
+            docTree.addComputable(res);
         } else if (resource.getLookupTable() != null) {
             IKimTable table = resource.getLookupTable().getTable();
             tables.add(table);
-            docTree.add(table);
+            docTree.addComputable(table);
         } else if (resource.getClassification() != null) {
             // classification
-            docTree.add(resource.getClassification());
+            docTree.addComputable(resource.getClassification());
         } else if (resource.getServiceCall() != null) {
             Prototype prototype = Extensions.INSTANCE.getPrototype(resource.getServiceCall().getName());
             if (prototype != null) {
                 services.add(prototype);
-                docTree.add(prototype);
+                docTree.addComputable(prototype);
             }
         }
     }
@@ -169,7 +169,7 @@ public class Report implements IReport {
 
     public void include(IModel model) {
         models.add(model);
-        docTree.add(model);
+        docTree.addComputable(model);
     }
 
     public void include(IDataflow<?> dataflow) {
@@ -178,13 +178,13 @@ public class Report implements IReport {
 
     public void include(IObservationReference output, IObservation observation) {
         observations.put(output.getId(), output);
-        docTree.add(output);
+        docTree.addComputable(output);
         
     }
 
     public void include(ITask<?> task) {
         // notify task start, finish, abort
-        docTree.add(task);
+        docTree.addComputable(task);
     }
 
     /**
@@ -226,7 +226,7 @@ public class Report implements IReport {
             ret = new ReportSection(this, role);
             mainSections.put(role, ret);
             ret.name = StringUtils.capitalize(role.name().toLowerCase());
-            docTree.add(ret);
+            docTree.addComputable(ret);
         }
         return ret;
     }

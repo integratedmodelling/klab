@@ -18,6 +18,10 @@ void 'list'
 		"Output entire paragraphs instead of abbreviated synopses"
 		default false
 		
+	optional text format
+		"Format for body text. Either markdown or html for now."
+		default "markdown" 
+		
 	class org.integratedmodelling.klab.clitool.console.commands.doc.List
 }
 

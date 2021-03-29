@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -55,15 +56,18 @@ public class EngineContextController {
      */
     @RequestMapping(value = API.ENGINE.OBSERVATION.DOCUMENTATION_VIEW_CONTEXT, method = RequestMethod.GET)
     public @ResponseBody List<DocumentationNode> getDocumentationView(Principal principal, @PathVariable String view,
-            @PathVariable String context) throws Exception {
+            @PathVariable String context, @RequestParam(required = false) String format) throws Exception {
 
         ISession session = EngineSessionController.getSession(principal);
         IObservation ctx = session.getObservation(context);
+        if (format == null) {
+            format = "html";
+        }
         if (ctx == null) {
             throw new IllegalArgumentException("context " + context + " does not exist");
         }
 
-        return ((Report) ctx.getScope().getReport()).getDocumentationTree().getView(View.valueOf(view.toUpperCase()));
+        return ((Report) ctx.getScope().getReport()).getDocumentationTree().getView(View.valueOf(view.toUpperCase()), format);
     }
 
     /**

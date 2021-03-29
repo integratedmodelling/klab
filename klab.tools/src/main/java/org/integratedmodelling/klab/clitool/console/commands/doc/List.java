@@ -36,6 +36,7 @@ public class List implements ICommand {
 
         boolean json = call.getParameters().get("json", false);
         boolean verbose = call.getParameters().get("verbose", false);
+        String format = call.getParameters().get("format", "html");
 
         IReport report = cotx.getScope().getReport();
         DocumentationTree docTree = ((Report) report).getDocumentationTree();
@@ -48,7 +49,7 @@ public class List implements ICommand {
         }
 
         for (View view : views) {
-            java.util.List<DocumentationNode> docs = docTree.getView(view);
+            java.util.List<DocumentationNode> docs = docTree.getView(view, format);
             if (json) {
                 ret = JsonUtils.printAsJson(docs);
             } else {

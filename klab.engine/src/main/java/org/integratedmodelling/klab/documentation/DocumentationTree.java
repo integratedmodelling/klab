@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.documentation;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -31,9 +32,17 @@ import org.integratedmodelling.klab.rest.DocumentationNode.Type;
 import org.integratedmodelling.klab.rest.KnowledgeViewReference;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.StringUtil;
-import org.jgraph.graph.DefaultEdge;
-import org.jgrapht.Graph;
-import org.jgrapht.graph.DefaultDirectedGraph;
+
+import com.vladsch.flexmark.ast.Node;
+import com.vladsch.flexmark.ext.attributes.AttributesExtension;
+import com.vladsch.flexmark.ext.definition.DefinitionExtension;
+import com.vladsch.flexmark.ext.enumerated.reference.EnumeratedReferenceExtension;
+import com.vladsch.flexmark.ext.footnotes.FootnoteExtension;
+import com.vladsch.flexmark.ext.media.tags.MediaTagsExtension;
+import com.vladsch.flexmark.ext.tables.TablesExtension;
+import com.vladsch.flexmark.html.HtmlRenderer;
+import com.vladsch.flexmark.parser.Parser;
+import com.vladsch.flexmark.util.options.MutableDataSet;
 
 /**
  * The structured version of the report, to substitute the simpler report based on a document view.
@@ -55,18 +64,10 @@ import org.jgrapht.graph.DefaultDirectedGraph;
  */
 public class DocumentationTree {
 
-//    private final static String ROOT_NODE = "__root__";
-
-    // all items, which for now can be DocumentationNode, ReportSection, or Reference
-    Map<String, DocumentationNode> nodes = new HashMap<>();
-    ISession session;
-    IRuntimeScope context;
-    Report report;
-//    // mutual dependencies by ID (key in nodes). Root node is ROOT_NODE.
-//    @Deprecated
-//    Graph<String, DefaultEdge> structure = new DefaultDirectedGraph<>(DefaultEdge.class);
-//    private String refSectionId;
-
+    private Map<String, DocumentationNode> nodes = new LinkedHashMap<>();
+    private ISession session;
+    private IRuntimeScope context;
+    private Report report;
     private List<ReportSection> mainSections = new ArrayList<>();
 
     /*
@@ -78,6 +79,8 @@ public class DocumentationTree {
     private Set<IModel> models = new LinkedHashSet<>();
     // and the resolution for each observable
     private Map<ObservedConcept, List<IRankedModel>> resolutions = new HashMap<>();
+    private Parser parser_;
+    private HtmlRenderer renderer_;
 
     public enum View {
         REPORT, FIGURES, TABLES, RESOURCES, MODELS, PROVENANCE
@@ -85,30 +88,41 @@ public class DocumentationTree {
 
     public DocumentationTree(Report report) {
         this.report = report;
-//        this.structure.addVertex(ROOT_NODE);
     }
 
     public DocumentationTree(Report report, IRuntimeScope context, ISession identity) {
-        // TODO Auto-generated constructor stub
         this(report);
         this.context = context;
         this.session = identity;
     }
 
-    public List<DocumentationNode> getView(View view) {
+    private String md2html(String markdown) {
+        if (this.renderer_ == null) {
+            MutableDataSet options = new MutableDataSet().set(Parser.EXTENSIONS,
+                    Arrays.asList(FootnoteExtension.create(), AttributesExtension.create(), EnumeratedReferenceExtension.create(),
+                            MediaTagsExtension.create(), DefinitionExtension.create(), TablesExtension.create()));
+
+            this.parser_ = Parser.builder(options).build();
+            this.renderer_ = HtmlRenderer.builder(options).build();
+        }
+        Node document = parser_.parse(markdown);
+        return renderer_.render(document);
+    }
+
+    public List<DocumentationNode> getView(View view, String format) {
         switch(view) {
         case FIGURES:
-            return getFiguresView();
+            return getFiguresView(format);
         case MODELS:
-            return getModelsView();
+            return getModelsView(format);
         case REPORT:
-            return getReportView();
+            return getReportView(format);
         case RESOURCES:
-            return getResourcesView();
+            return getResourcesView(format);
         case TABLES:
-            return getTablesView();
+            return getTablesView(format);
         case PROVENANCE:
-            return getProvenanceView();
+            return getProvenanceView(format);
         }
         return null;
     }
@@ -128,33 +142,22 @@ public class DocumentationTree {
     }
 
     /**
-     * Add a first-class object
+     * Add a first-class object TODO add the model that uses it, if any
      * 
      * @param o
      */
-    public void add(Object o) {
+    public void addComputable(Object o) {
 
         DocumentationNode item = null;
 
         if (o instanceof IResource) {
 
-//            item = getItem(Type.Resource);
+            // getItem(Type.Resource);
 
         } else if (o instanceof IPrototype) {
 
         } else if (o instanceof ReportSection) {
-
             this.mainSections.add((ReportSection) o);
-
-            // nodes.put(((ReportSection) o).getId(), o);
-            // structure.addVertex(((ReportSection) o).getId());
-            // structure.addEdge(((ReportSection) o).getId(), ROOT_NODE);
-            //
-            // // save the reference section to append refs to.
-            // if (((ReportSection) o).getRole() == SectionRole.REFERENCES) {
-            // this.refSectionId = ((ReportSection) o).getId();
-            // }
-
         } else if (o instanceof IObservationReference) {
 
         } else if (o instanceof IKimTable) {
@@ -164,73 +167,22 @@ public class DocumentationTree {
         } else {
             System.out.println("OHIBÓ un cianfero non visto prima");
         }
-
-//        if (item != null) {
-//            addNode(item);
-//        }
     }
 
-//    private DocumentationNode getItem(Type type) {
-//        DocumentationNode ret = new DocumentationNode();
-//        ret.setType(type);
-//        ret.setId(NameGenerator.shortUUID());
-//        return ret;
-//    }
+    public void addView(IKnowledgeView view, KnowledgeViewReference descriptor) {
+        // TODO Auto-generated method stub
 
-//    private DocumentationNode getItem(Type type, ReportSection parent) {
-//        DocumentationNode ret = getItem(type);
-////        ret.setRelativePosition(parent.body.length());
-//        return ret;
-//    }
+    }
 
+    // TODO add the contextualization
     public void addModel(IModel model) {
         models.add(model);
     }
 
+    // TODO add the model
     public void addObservation(IObservation observation) {
 
     }
-
-//    /**
-//     * Add a child section
-//     */
-//    public void add(ReportSection section, ReportSection parent) {
-//        // TODO insert in tree; if figure
-//        System.out.println("SUBSECTION " + section);
-//        nodes.put(section.getId(), section);
-////        structure.addVertex(section.getId());
-////        structure.addEdge(section.getId(), parent.getId());
-//    }
-
-//    /**
-//     * Child figure (will split paragraphs)
-//     * 
-//     * @param reportSection
-//     * @param ref
-//     */
-//    public void addFigure(ReportSection reportSection, IObservationReference ref) {
-//        // TODO Auto-generated method stub
-//        System.out.println("FIGURE " + ref);
-//        DocumentationNode item = getItem(Type.Figure, reportSection);
-//        addNode(item);
-////        structure.addVertex(item.getId());
-////        structure.addEdge(item.getId(), reportSection.getId());
-//    }
-
-//    /**
-//     * Child table (split paragraph)
-//     * 
-//     * @param reportSection
-//     * @param table
-//     */
-//    public void addTable(ReportSection reportSection, IStructuredTable<?> table) {
-//        // TODO Auto-generated method stub
-//        System.out.println("TABLE " + table);
-//        DocumentationNode item = getItem(Type.Table, reportSection);
-//        addNode(item);
-////        structure.addVertex(item.getId());
-////        structure.addEdge(item.getId(), reportSection.getId());
-//    }
 
     /**
      * Child citation
@@ -243,45 +195,31 @@ public class DocumentationTree {
         System.out.println("CITATION " + reference);
 
         // TODO add reference if not there already
-        
-        
-        //        nodes.put(reference.get("key"), reference);
-//        DocumentationNode item = getItem(Type.Citation, reportSection);
+        // nodes.put(reference.get("key"), getItem(Type.Citation, reportSection));
 
-        
-        //        addNode(item);
-//        structure.addVertex(item.getId());
-//        structure.addEdge(item.getId(), reportSection.getId());
-//        if (refSectionId != null) {
-//            structure.addVertex(reference.get("key"));
-//            structure.addEdge(reference.get("key"), refSectionId);
-//        } else {
-//            // shouldn't happen, but in case, say something nice
-//            System.out.println("ZIOCAN NO REF SECTION");
-//        }
     }
 
-    private List<DocumentationNode> getProvenanceView() {
+    private List<DocumentationNode> getProvenanceView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
         return ret;
     }
 
-    private List<DocumentationNode> getTablesView() {
+    private List<DocumentationNode> getTablesView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
         return ret;
     }
 
-    private List<DocumentationNode> getResourcesView() {
+    private List<DocumentationNode> getResourcesView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
         return ret;
     }
 
-    private List<DocumentationNode> getReportView() {
+    private List<DocumentationNode> getReportView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
         for (SectionRole order : SectionRole.values()) {
             for (ReportSection section : mainSections) {
                 if (order == section.getRole()) {
-                    ret.add(compileSection(section));
+                    ret.add(compileSection(section, format));
                 }
             }
         }
@@ -289,7 +227,7 @@ public class DocumentationTree {
         return ret;
     }
 
-    private DocumentationNode compileSection(ReportSection section) {
+    private DocumentationNode compileSection(ReportSection section, String format) {
 
         DocumentationNode ret = new DocumentationNode();
         ret.setId(section.getId());
@@ -297,30 +235,31 @@ public class DocumentationTree {
         ret.setTitle(section.getName() == null
                 ? (section.getRole() == null ? null : StringUtil.capitalize(section.getRole().name().toLowerCase()))
                 : section.getName());
-        
-//        graph.getObjects().put(ret.getId(), ret);
-        
+
         String body = section.body.toString();
         int offset = 0;
         for (Element element : section.elements) {
             if (element.startOffset > offset) {
-                offset = compileParagraph(body, offset, element.startOffset, element.endOffset, ret);
+                offset = compileParagraph(body, offset, element.startOffset, element.endOffset, ret, format);
             }
-            DocumentationNode child = compileElement(element);
+            DocumentationNode child = compileElement(element, format);
             if (child != null) {
                 ret.getChildren().add(child);
             }
-       }
-        
-        if (body.length() > offset) {
-            compileParagraph(body, offset, body.length(), 0, ret);
         }
-        
+
+        if (body.length() > offset) {
+            compileParagraph(body, offset, body.length(), 0, ret, format);
+        }
+
         return ret;
     }
 
-    private int compileParagraph(String body, int offset, int start, int end, DocumentationNode section) {
+    private int compileParagraph(String body, int offset, int start, int end, DocumentationNode section, String format) {
         String paragraph = body.substring(offset, start);
+        if ("html".equals(format)) {
+            paragraph = md2html(paragraph);
+        }
         DocumentationNode node = new DocumentationNode();
         node.setType(Type.Paragraph);
         node.setId("p_" + NameGenerator.shortUUID());
@@ -329,17 +268,17 @@ public class DocumentationTree {
         return end;
     }
 
-    private DocumentationNode compileElement(Element element) {
+    private DocumentationNode compileElement(Element element, String format) {
 
         if (element.type == Type.Section) {
-            return compileSection((ReportSection)element.element);
+            return compileSection((ReportSection) element.element, format);
         }
-        
+
         DocumentationNode node = new DocumentationNode();
         node.setId(NameGenerator.shortUUID());
         node.setType(element.type);
-        
-        switch (element.type) {
+
+        switch(element.type) {
         case Anchor:
         case Citation:
         case Link:
@@ -348,7 +287,7 @@ public class DocumentationTree {
         case Chart:
             break;
         case Figure:
-            node.setFigure((Figure)element.element);
+            node.setFigure((Figure) element.element);
             break;
         case Model:
             break;
@@ -357,61 +296,23 @@ public class DocumentationTree {
         case Resource:
             break;
         case Table:
-            node.setTable((Table)element.element);
+            node.setTable((Table) element.element);
             break;
         case View:
             break;
         default:
             break;
         }
-        
+
         return node;
     }
 
-//    @Deprecated
-//    private List<DocumentationNode> getReportViewOld() {
-//        Document document = new Document();
-//        for (SectionRole order : SectionRole.values()) {
-//            addReportSection(document, order);
-//        }
-//        return document.getGraph();
-//    }
-//
-//    @Deprecated
-//    private void addReportSection(Document document, SectionRole role) {
-//        for (DefaultEdge edge : structure.incomingEdgesOf(ROOT_NODE)) {
-//            String id = structure.getEdgeSource(edge);
-//            if (nodes.get(id) instanceof ReportSection && (((ReportSection) nodes.get(id)).getRole() == role)) {
-//                makeSectionNode(document, (ReportSection) nodes.get(id), role);
-//            }
-//        }
-//    }
-//
-//    @Deprecated
-//    private DocumentationNode makeSectionNode(Document document, ReportSection reportSection, SectionRole role) {
-//
-//        DocumentationNode ret = new DocumentationNode();
-//        ret.setId(NameGenerator.shortUUID());
-//        ret.setTitle(reportSection.getName());
-//        List<DocumentationNode> children = new ArrayList<>();
-//        for (DefaultEdge edge : structure.incomingEdgesOf(reportSection.getId())) {
-//            Object child = nodes.get(structure.getEdgeSource(edge));
-//            if (child instanceof DocumentationNode) {
-//                children.add((DocumentationNode) child);
-//            }
-//        }
-//
-//        document.add(role, reportSection, children);
-//
-//        return ret;
-//    }
-
-    private List<DocumentationNode> getModelsView() {
+    private List<DocumentationNode> getModelsView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
         return ret;
     }
 
-    private List<DocumentationNode> getFiguresView() {
+    private List<DocumentationNode> getFiguresView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
         return ret;
     }
@@ -450,11 +351,6 @@ public class DocumentationTree {
     public static Object getFigureDescriptor(IArtifact artifact, IObservationReference ref, Object[] args) {
         Figure ret = new Figure();
         return ret;
-    }
-
-    public void addView(IKnowledgeView view, KnowledgeViewReference descriptor) {
-        // TODO Auto-generated method stub
-
     }
 
 }
