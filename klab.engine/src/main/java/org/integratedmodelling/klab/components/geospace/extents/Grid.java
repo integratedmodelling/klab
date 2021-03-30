@@ -276,7 +276,7 @@ public class Grid extends Area implements IGrid {
                 GeodeticCalculator gc = new GeodeticCalculator(crs);
                 gc.setStartingGeographicPoint(minX, minY);
                 gc.setDestinationGeographicPoint(maxX, minY);
-                double width = gc.getOrthodromicDistance();
+                double width = (minX == -180 && maxX == 180) ? EQUATOR_LENGTH_METERS : gc.getOrthodromicDistance();
                 gc = new GeodeticCalculator(crs);
                 gc.setStartingGeographicPoint(minX, minY);
                 gc.setDestinationGeographicPoint(minX, maxY);

@@ -39,8 +39,8 @@ import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
  */
 public class Raster extends GroovyObjectSupport {
 
-    public static final String WORLD_SHAPE = "s2{bbox=[-180.0 180.0 -90.0 90.0],proj=EPSG:4326}";
-    public static final String WORLD_POLYGON = "EPSG:4326 POLYGON ((-180.0 -90.0, 180.0 -90.0, 180.0 90.0, -180.0 90.0, -180.0 -90.0))";
+    public static final String WORLD_SHAPE = "s2{bbox=[-180.0 179.99 -90.0 90.0],proj=EPSG:4326}";
+    public static final String WORLD_POLYGON = "EPSG:4326 POLYGON ((-180.0 -90.0, 179.99 -90.0, 179.99 90.0, -180.0 90.0, -180.0 -90.0))";
 
     Grid grid;
     private WritableRaster raster;
