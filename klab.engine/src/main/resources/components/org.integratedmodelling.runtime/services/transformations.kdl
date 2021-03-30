@@ -72,7 +72,8 @@ filter number euclideandistance
 		"The artifact to standardize. Defaults to the target artifact."
 		
 	optional value weights
-		"Weighting scheme for the observations: either a number (equal for all) or a map of concept -> weight"
+		"Weighting scheme for the observations: either a number (equal for all) or a map of concept -> weight. If no weight is specified, equal 
+		 weights summing to 1 are used."
 		
 	optional value source
 		"What to aggregate as distance source: a role, attribute, observable, or list thereof. All dependencies will be matched."
