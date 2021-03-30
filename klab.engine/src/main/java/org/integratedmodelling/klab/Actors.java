@@ -841,6 +841,9 @@ public enum Actors implements IActorsService {
                 }
 
                 for (String key : constructor.getArguments().keySet()) {
+                    if (constructor.getArguments().getUnnamedKeys().contains(key)) {
+                        continue;
+                    }
                     Object arg = constructor.getArguments().get(key);
                     settings.put(key,
                             arg instanceof KActorsValue

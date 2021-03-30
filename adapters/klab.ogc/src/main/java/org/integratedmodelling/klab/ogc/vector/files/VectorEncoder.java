@@ -165,9 +165,9 @@ public class VectorEncoder implements IResourceEncoder {
 				&& (context.getTargetSemantics().is(Type.QUALITY) || context.getTargetSemantics().is(Type.TRAIT))))
 				&& requestScale.getSpace() instanceof Space && ((Space) requestScale.getSpace()).getGrid() != null;
 
-		if (resource.getParameters().contains("filter")) {
+		if (resource.getParameters().contains("filter") && !resource.getParameters().get("filter").toString().trim().isEmpty()) {
 			try {
-				Filter pfilter = ECQL.toFilter(resource.getParameters().get("filter", String.class));
+				Filter pfilter = ECQL.toFilter(resource.getParameters().get("filter", String.class).trim());
 				filter = filter == null ? pfilter : ff.and(filter, pfilter);
 			} catch (CQLException e) {
 				// shouldn't happen as filter was validated previously

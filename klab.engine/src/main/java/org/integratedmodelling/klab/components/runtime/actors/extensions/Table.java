@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.Configuration;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Utils;
@@ -45,11 +46,42 @@ public class Table extends GroovyObjectSupport {
     }
 
     /**
-     * Add a value to a column using a syntax like add(val, key=xxx, column=xxx). The associated
+     * Set a value into a column using a syntax like add(val, key=xxx, column=xxx). The associated
      * table must contain a key for the row (either a row number or a row key) and a column
      * identifier.
      * 
      * @param objects
+     */
+    public void set(Object value, Map<String, Object> keys) {
+        if (!(keys.containsKey("key") || keys.containsKey(keyColumn)) || !keys.containsKey("column")) {
+            throw new KlabValidationException("table: need to pass a key and a column to add a value");
+        }
+        Object key = keys.get("key");
+        if (key == null) {
+            key = keys.get(keyColumn);
+        }
+        if (key == null) {
+            throw new KlabValidationException("table: key can't be null in add");
+        }
+        Object col = keys.get("column");
+        if (col == null) {
+            throw new KlabValidationException("table: column can't be null in add");
+        }
+        Map<String, Object> row = data.get(key.toString());
+        if (row == null) {
+            row = new HashMap<>();
+            data.put(key.toString(), row);
+        }
+        row.put(col.toString(), value);
+        columns.add(col.toString());
+    }
+
+    /**
+     * Same as set, but if there is a numeric value in the column already and we get a valid number,
+     * add to it instead of substituting it.
+     * 
+     * @param value
+     * @param keys
      */
     public void add(Object value, Map<String, Object> keys) {
         if (!(keys.containsKey("key") || keys.containsKey(keyColumn)) || !keys.containsKey("column")) {
@@ -71,6 +103,14 @@ public class Table extends GroovyObjectSupport {
             row = new HashMap<>();
             data.put(key.toString(), row);
         }
+
+        Object existing = row.get(col.toString());
+        if (existing instanceof Number && value instanceof Number && Observations.INSTANCE.isData(value)) {
+            value = Observations.INSTANCE.isData(existing)
+                    ? ((Number) existing).doubleValue() + ((Number) value).doubleValue()
+                    : value;
+        }
+
         row.put(col.toString(), value);
         columns.add(col.toString());
     }

@@ -82,7 +82,11 @@ public class Space extends Extent implements ISpace {
     public static Space create(Dimension dimension) {
         return create(dimension, null);
     }
-    
+
+    public static Space create(IShape shape, IQuantity resolution) {
+        return create((Shape) shape, org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(resolution));
+    }
+
     public static Space create(Dimension dimension, IQuantity resolution) {
 
         double[] bbox = dimension.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);
@@ -115,11 +119,11 @@ public class Space extends Extent implements ISpace {
         }
 
         if (shape != null) {
-            
+
             if (resolution != null) {
                 shape = shape.getSimplified(resolution);
             }
-            
+
             if (gridres != null) {
                 return create(shape, org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(gridres));
             } else if (dims.length > 1) {
