@@ -5,13 +5,13 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
-import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.Direction;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.utils.SpatialDisplay;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.utils.Pair;
 
 import com.vividsolutions.jts.geom.Envelope;
@@ -84,7 +84,7 @@ public class Subgrid extends Grid {
 //		getDisplay(grid).show();
 		
 		if (!genv.covers(senv)) {
-			throw new IllegalArgumentException(
+			throw new KlabIllegalArgumentException(
 					"cannot create subgrid: the passed shape does not cover the original grid");
 		}
 

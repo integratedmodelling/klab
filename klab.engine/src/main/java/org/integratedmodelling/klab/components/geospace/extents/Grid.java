@@ -130,6 +130,8 @@ public class Grid extends Area implements IGrid {
 
 	}
 
+    private static final double EQUATOR_LENGTH_METERS = 40075000;
+
 	/**
 	 * Directions accessible from each corner
 	 */
@@ -274,7 +276,7 @@ public class Grid extends Area implements IGrid {
                 GeodeticCalculator gc = new GeodeticCalculator(crs);
                 gc.setStartingGeographicPoint(minX, minY);
                 gc.setDestinationGeographicPoint(maxX, minY);
-                double width = gc.getOrthodromicDistance();
+                double width = (minX == -180 && maxX == 180) ? EQUATOR_LENGTH_METERS : gc.getOrthodromicDistance();
                 gc = new GeodeticCalculator(crs);
                 gc.setStartingGeographicPoint(minX, minY);
                 gc.setDestinationGeographicPoint(minX, maxY);
@@ -316,7 +318,8 @@ public class Grid extends Area implements IGrid {
                 GeodeticCalculator gc = new GeodeticCalculator(crs);
                 gc.setStartingGeographicPoint(minX, minY);
                 gc.setDestinationGeographicPoint(maxX, minY);
-                double width = gc.getOrthodromicDistance();
+                // yes, we mean the other way around
+                double width = (minX == -180 && maxX == 180) ? EQUATOR_LENGTH_METERS : gc.getOrthodromicDistance();
                 gc = new GeodeticCalculator(crs);
                 gc.setStartingGeographicPoint(minX, minY);
                 gc.setDestinationGeographicPoint(minX, maxY);

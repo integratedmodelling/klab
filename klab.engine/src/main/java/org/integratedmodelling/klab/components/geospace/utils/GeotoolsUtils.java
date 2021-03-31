@@ -36,6 +36,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.components.geospace.visualization.raster.FloatRasterWrapper;
 import org.integratedmodelling.klab.components.geospace.visualization.raster.ReadonlyStateFloatBuffer;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
 import org.opengis.filter.expression.Literal;
@@ -85,6 +86,30 @@ public enum GeotoolsUtils {
 
     public GridCoverage2D stateToCoverage(IState state, ILocator locator, int type, Float noDataValue, boolean addKey) {
         return stateToCoverage(state, locator, type, noDataValue, addKey, null);
+    }
+
+    /**
+     * Make a coverage from a k.LAB grid space.
+     * 
+     * @param name a name for the coverage
+     * @param space any grid space
+     * @param type use {@link DataBuffer} constants
+     * @return the opened coverage ready for writing into
+     */
+    public GridCoverage2D makeCoverage(String name, ISpace space, int type) {
+        /*
+         * build a coverage.
+         * 
+         * TODO use a raster of the appropriate type - for now there is apparently a bug in geotools
+         * that makes it work only with float.
+         */
+        if (!(space instanceof Space) || ((Space)space).getGrid() == null) {
+            throw new KlabIllegalArgumentException("cannot build a coverage from a non-grid space");
+        }
+
+        Grid grid = (Grid) ((Space) space).getGrid();
+        WritableRaster raster = RasterFactory.createBandedRaster(type, (int) grid.getXCells(), (int) grid.getYCells(), 1, null);
+        return rasterFactory.create(name, raster, ((Space) space).getShape().getJTSEnvelope());
     }
 
     /**
@@ -170,7 +195,6 @@ public enum GeotoolsUtils {
                     if (value instanceof Number) {
                         category = new Category(label, color, ((Number) value).doubleValue());
                     } else {
-                        System.out.println("CIOIOCIOIOI");
                         pork = true;
                     }
 
@@ -366,37 +390,5 @@ public enum GeotoolsUtils {
         }
         return raster;
     }
-
-    // public Range getRange(IState state) {
-    //
-    // Range ret = new Range();
-    //
-    // Space space = (Space) state.getScale().getSpace();
-    // if (space == null || space.getGrid() != null) {
-    // throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
-    // }
-    // Grid grid = (Grid) space.getGrid();
-    //
-    // /*
-    // * TODO raster should be pre-filled with a chosen nodata value TODO use
-    // * activation layer
-    // */
-    // // IGrid.Mask act = space.requireActivationLayer(true);
-    //
-    // for (Cell cell : grid) {
-    // Object o = state.get(cell);
-    // if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
-    // // screw it
-    // } else if (o instanceof Number) {
-    // ret.adapt(((Number) o).doubleValue());
-    // } else if (o instanceof Boolean) {
-    // ret.adapt(((Boolean) o) ? 1. : 0.);
-    // } else if (o instanceof IConcept) {
-    // ret.adapt((double) state.getDataKey().reverseLookup((IConcept) o));
-    // }
-    // }
-    //
-    // return ret;
-    // }
 
 }
