@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.runtime;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
@@ -38,6 +39,7 @@ import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.contextualization.IStateResolver;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IRelationship;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -81,6 +83,7 @@ import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.Dataflow;
+import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.engine.debugger.Debug;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
@@ -369,8 +372,21 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
 			reentrant = false;
 		}
 		IArtifact self = context.get("self", IArtifact.class);
-		final IState target = data instanceof IState ? (IState) data
+		IState trg = data instanceof IState ? (IState) data
 				: context.getArtifact(resource.getTargetId(), IState.class);
+		if (trg == null && data instanceof IProcess && data.getObservable().is(Type.CHANGE)) {
+		    Map<ObservedConcept, IObservation> catalog = ((IRuntimeScope)context).getCatalog();
+		    ObservedConcept changing = new ObservedConcept(Observables.INSTANCE.getDescribedType(data.getObservable().getType()));
+		    if (catalog.get(changing) instanceof IState) {
+		        trg = (IState) catalog.get(changing);
+		    }
+		}
+		
+		if (trg == null) {
+		    throw new KlabInternalErrorException("cannot establish target state for contextualization: " + data.getObservable());
+		}
+		
+		final IState target = trg;
 		RuntimeScope ctx = new RuntimeScope((RuntimeScope) context, context.getVariables());
 		Collection<Pair<String, IDataArtifact>> variables = ctx.getArtifacts(IDataArtifact.class);
 

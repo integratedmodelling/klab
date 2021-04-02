@@ -132,3 +132,82 @@ public class Raster extends GroovyObjectSupport {
     }
 
 }
+
+//
+///*
+//* To change this template, choose Tools | Templates
+//* and open the template in the editor.
+//*/
+//package org.geotools.demo.coverage;
+//
+//import java.awt.Rectangle;
+//import java.awt.RenderingHints;
+//import java.awt.image.Raster;
+//import java.io.File;
+//import javax.media.jai.ImageLayout;
+//import javax.media.jai.JAI;
+//import javax.media.jai.ParameterBlockJAI;
+//import javax.media.jai.RenderedOp;
+//import org.geotools.coverage.grid.GridCoverage2D;
+//import org.geotools.coverage.grid.GridCoverageFactory;
+//import org.geotools.gce.geotiff.GeoTiffWriter;
+//import org.geotools.geometry.jts.ReferencedEnvelope;
+//import org.geotools.swing.data.JFileDataStoreChooser;
+
+///**
+//* This example illustrates creating a large coverage, avoiding the need to hold
+//* all of the data in memory at one time.
+//*
+//* @author Michael Bedward
+//*/
+//public class BigCoverage {
+//
+//private static final int IMAGE_WIDTH = 10000;
+//private static final int IMAGE_HEIGHT = 10000;
+//
+//public static void main(String[] args) throws Exception {
+//JFileDataStoreChooser chooser = new JFileDataStoreChooser("tif");
+//chooser.setDialogTitle("Create GeoTiff file");
+//
+//File file = null;
+//if (chooser.showSaveDialog(null) ==
+//JFileDataStoreChooser.APPROVE_OPTION) {
+//file = chooser.getSelectedFile();
+//}
+//
+//if (file == null) {
+//return;
+//}
+//
+//ParameterBlockJAI pb = new ParameterBlockJAI("Constant");
+//pb.setParameter("width", (float)IMAGE_WIDTH);
+//pb.setParameter("height", (float)IMAGE_HEIGHT);
+//pb.setParameter("bandValues", new Double[]{0.0d});
+//
+//final int tileWidth = 512;
+//
+//ImageLayout layout = new ImageLayout();
+//layout.setTileWidth(tileWidth);
+//layout.setTileHeight(tileWidth);
+//
+//RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
+//
+//RenderedOp image = JAI.create("Constant", pb, hints);
+//
+//for (int y = 0; y < image.getNumYTiles(); y++) {
+//for (int x = 0; x < image.getNumXTiles(); x++) {
+//Raster tile = image.getTile(x, y);
+//System.out.println(String.format("calling getTile(%d, %d): %s",
+//x, y, tile.getBounds().toString()));
+//}
+//}
+//
+//GeoTiffWriter writer = new GeoTiffWriter(file, null);
+//GridCoverageFactory factory = new GridCoverageFactory();
+//ReferencedEnvelope env = new ReferencedEnvelope(
+//new Rectangle(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT), null);
+//GridCoverage2D coverage = factory.create("coverage", image, env);
+//writer.write(coverage, null);
+//}
+//
+//}
