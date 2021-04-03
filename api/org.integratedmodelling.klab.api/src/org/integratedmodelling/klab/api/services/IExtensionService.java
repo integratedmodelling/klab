@@ -17,6 +17,7 @@ package org.integratedmodelling.klab.api.services;
 
 import java.util.Collection;
 
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimSymbolDefinition;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
@@ -94,6 +95,14 @@ public interface IExtensionService {
 	 */
 	<T> T getComponentImplementation(String componentId, Class<? extends T> requestedClass);
 
+	/**
+	 * Parse a string expression into the syntactic expression peer for the default language.
+	 * 
+	 * @param expression
+	 * @return
+	 */
+	IKimExpression parse(String expression);
+	
 	/**
 	 * Define statements that use a specific class will have their argument filtered
 	 * by this method, so that the object can be processed appropriately. If the

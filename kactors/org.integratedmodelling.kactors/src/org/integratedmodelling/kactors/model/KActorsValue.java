@@ -14,6 +14,7 @@ import org.eclipse.xtext.nodemodel.util.NodeModelUtils;
 import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultDirectedGraph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Scope;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.ListElement;
@@ -26,14 +27,19 @@ import org.integratedmodelling.kactors.kactors.Quantity;
 import org.integratedmodelling.kactors.kactors.Tree;
 import org.integratedmodelling.kactors.kactors.Value;
 import org.integratedmodelling.klab.Services;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.services.IConceptService;
+import org.integratedmodelling.klab.api.services.IExtensionService;
+import org.integratedmodelling.klab.api.services.IObservableService;
 import org.integratedmodelling.klab.utils.Range;
 
 /**
  * Values. Most are reported as the object they are encoded with (strings for most non-POD objects)
- * but carry the type defined by the semantics they are declared with.
+ * but carry the type defined by the semantics they are declared with. Values also encode
+ * expressions (for now just a ternary operation). They may be deferred, meaning the container is
+ * passed to functions without evaluation until the time of usage of the actual evaluated value.
  * 
  * @author Ferd
  */
@@ -42,17 +48,18 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     private Type type;
     private Object value;
     private Map<String, KActorsValue> metadata = new HashMap<>();
-
+    private boolean deferred = false;
+    
     // to support costly translations from implementations
     private Object data;
     // if true when used in matching, the value matched will be any value except the
     // stated
     private boolean exclusive;
-    private Constructor constructor; 
-    
+    private Constructor constructor;
+
     /*
-     * if expresion type is TERNARY_OPERATOR, we are the condition and these are the two 
-     * actual values according to our outcome when evaluated in context.
+     * if expresion type is TERNARY_OPERATOR, we are the condition and these are the two actual
+     * values according to our outcome when evaluated in context.
      */
     private ExpressionType expressionType = ExpressionType.VALUE;
     private KActorsValue trueCase;
@@ -233,15 +240,21 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         }
     }
 
-    public static String parseObservable(Observable observable) {
+    public static Object parseObservable(Observable observable) {
         INode node = NodeModelUtils.getNode(observable);
         String ret = NodeModelUtils.getTokenText(node).trim();
         // remove leading spaces and backquotes
-        return ret.substring(1, ret.length() - 1).trim().replace("`", "");
+        ret = ret.substring(1, ret.length() - 1).trim().replace("`", "");
+        IObservableService service = Services.INSTANCE.getService(IObservableService.class);
+        if (service != null) {
+            return service.parseDeclaration(ret);
+        }
+        return ret;
     }
 
     public KActorsValue(Value value, KActorCodeStatement parent) {
         super(value, parent);
+        this.deferred = value.isDeferred();
         if (value.getId() != null) {
             this.type = value.getId().contains(".") ? Type.URN : Type.IDENTIFIER;
             this.value = value.getId();
@@ -249,7 +262,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.value = parseLiteral(value.getLiteral());
         } else if (value.getExpression() != null) {
             this.type = Type.EXPRESSION;
-            this.value = value.getExpression().substring(1, value.getExpression().length() - 1);
+            this.value = parseExpression(value.getExpression().substring(1, value.getExpression().length() - 1));
         } else if (value.getQuantity() != null) {
             this.type = Type.QUANTITY;
             this.value = parseQuantity(value.getQuantity());
@@ -291,9 +304,8 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         } else if (value.isComponent()) {
             this.constructor = new Constructor();
             this.type = Type.COMPONENT;
-            this.constructor.setArguments(value.getParameters() == null
-                    ? new KActorsArguments()
-                    : new KActorsArguments(value.getParameters()));
+            this.constructor.setArguments(
+                    value.getParameters() == null ? new KActorsArguments() : new KActorsArguments(value.getParameters()));
             this.constructor.setComponent(value.getBehavior());
         }
 
@@ -305,7 +317,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.expressionType = ExpressionType.TERNARY_OPERATOR;
             this.falseCase = new KActorsValue(value.getElse(), parent);
         }
-        
+
         if (value.getMetadata() != null) {
             for (MetadataPair pair : value.getMetadata().getPairs()) {
                 String key = pair.getKey().substring(1);
@@ -320,6 +332,18 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             }
         }
 
+    }
+
+    private Object parseExpression(String string) {
+        
+        IExtensionService service = Services.INSTANCE.getService(IExtensionService.class);
+        if (service != null) {
+            return service.parse(string);
+        } else {
+            System.out.println("DIO ROTTO");
+        }
+        
+        return string;
     }
 
     public static Map<KActorsValue, KActorsValue> parseMap(org.integratedmodelling.kactors.kactors.Map map,
@@ -340,7 +364,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
             this.value = parseLiteral(match.getLiteral());
         } else if (match.getExpr() != null) {
             this.type = Type.EXPRESSION;
-            this.value = match.getExpr().substring(1, match.getExpr().length() - 1);
+            this.value = parseExpression(match.getExpr().substring(1, match.getExpr().length() - 1));
         } else if (match.getQuantity() != null) {
             this.type = Type.QUANTITY;
             this.value = parseQuantity(match.getQuantity());
@@ -456,10 +480,26 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     }
 
     @Override
-    public Object getValue() {
-        if (KActors.INSTANCE.getValueTranslator() != null) {
-            return KActors.INSTANCE.getValueTranslator().translate(this, this.value);
+    public Object evaluate(Scope scope, IIdentity identity, boolean forceEvaluationIfDeferred) {
+
+        if (this.deferred && !forceEvaluationIfDeferred) {
+            return this;
         }
+        
+        if (identity == null && scope != null) {
+            identity = scope.getIdentity();
+        }
+        
+        Object ret = this.value;
+        if (KActors.INSTANCE.getValueTranslator() != null) {
+            ret = KActors.INSTANCE.getValueTranslator().translate(this, identity, scope);
+        }
+
+        return ret;
+    }
+    
+    @Override
+    public Object getStatedValue() {
         return this.value;
     }
 
@@ -482,7 +522,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     public Object getData() {
         return data;
     }
-    
+
     @Override
     public KActorsValue getTrueCase() {
         return trueCase;
@@ -553,7 +593,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
 
         switch(type) {
         case OBSERVABLE:
-            Object o = getValue();
+            Object o = getStatedValue();
             if (cservice != null && o instanceof ISemantic) {
                 ret.put("label", cservice.getDisplayLabel(((ISemantic) o).getType()));
                 break;
@@ -595,7 +635,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
          * metadata may override anything
          */
         for (String key : metadata.keySet()) {
-            ret.put(key, metadata.get(key).getValue().toString());
+            ret.put(key, metadata.get(key).getStatedValue().toString());
         }
 
         return ret;
@@ -639,6 +679,11 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     @Override
     public ExpressionType getExpressionType() {
         return expressionType;
+    }
+
+    @Override
+    public boolean isDeferred() {
+        return deferred;
     }
 
 }

@@ -33,6 +33,7 @@ import org.integratedmodelling.kactors.kactors.Value;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#isDeferred <em>Deferred</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getTree <em>Tree</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#isEmpty <em>Empty</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ValueImpl#getArgvalue <em>Argvalue</em>}</li>
@@ -59,6 +60,26 @@ import org.integratedmodelling.kactors.kactors.Value;
  */
 public class ValueImpl extends MinimalEObjectImpl.Container implements Value
 {
+  /**
+   * The default value of the '{@link #isDeferred() <em>Deferred</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDeferred()
+   * @generated
+   * @ordered
+   */
+  protected static final boolean DEFERRED_EDEFAULT = false;
+
+  /**
+   * The cached value of the '{@link #isDeferred() <em>Deferred</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #isDeferred()
+   * @generated
+   * @ordered
+   */
+  protected boolean deferred = DEFERRED_EDEFAULT;
+
   /**
    * The cached value of the '{@link #getTree() <em>Tree</em>}' containment reference.
    * <!-- begin-user-doc -->
@@ -358,6 +379,31 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   protected EClass eStaticClass()
   {
     return KactorsPackage.Literals.VALUE;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public boolean isDeferred()
+  {
+    return deferred;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setDeferred(boolean newDeferred)
+  {
+    boolean oldDeferred = deferred;
+    deferred = newDeferred;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.VALUE__DEFERRED, oldDeferred, deferred));
   }
 
   /**
@@ -1208,6 +1254,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KactorsPackage.VALUE__DEFERRED:
+        return isDeferred();
       case KactorsPackage.VALUE__TREE:
         return getTree();
       case KactorsPackage.VALUE__EMPTY:
@@ -1262,6 +1310,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KactorsPackage.VALUE__DEFERRED:
+        setDeferred((Boolean)newValue);
+        return;
       case KactorsPackage.VALUE__TREE:
         setTree((Tree)newValue);
         return;
@@ -1336,6 +1387,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KactorsPackage.VALUE__DEFERRED:
+        setDeferred(DEFERRED_EDEFAULT);
+        return;
       case KactorsPackage.VALUE__TREE:
         setTree((Tree)null);
         return;
@@ -1410,6 +1464,8 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
   {
     switch (featureID)
     {
+      case KactorsPackage.VALUE__DEFERRED:
+        return deferred != DEFERRED_EDEFAULT;
       case KactorsPackage.VALUE__TREE:
         return tree != null;
       case KactorsPackage.VALUE__EMPTY:
@@ -1465,7 +1521,9 @@ public class ValueImpl extends MinimalEObjectImpl.Container implements Value
     if (eIsProxy()) return super.toString();
 
     StringBuilder result = new StringBuilder(super.toString());
-    result.append(" (empty: ");
+    result.append(" (deferred: ");
+    result.append(deferred);
+    result.append(", empty: ");
     result.append(empty);
     result.append(", argvalue: ");
     result.append(argvalue);

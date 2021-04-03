@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.components.runtime.actors;
 
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
+import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
@@ -53,7 +54,7 @@ public class ExplorerBehavior {
 
 				ViewSetting message = new ViewSetting();
 				message.setOperation(Operation.Show);
-				Object what = KlabActor.evaluate(arg, scope);
+                Object what = arg instanceof KActorsValue ? ((KActorsValue)arg).evaluate(scope, scope.identity, true) : arg;
 				if (what instanceof IObservation) {
 					message.setTarget(Target.Observation);
 					message.setTargetId(((IObservation) what).getId());
@@ -120,7 +121,7 @@ public class ExplorerBehavior {
 
 				ViewSetting message = new ViewSetting();
 				message.setOperation(Operation.Hide);
-				Object what = KlabActor.evaluate(arg, scope);
+				Object what = arg instanceof KActorsValue ? ((KActorsValue)arg).evaluate(scope, identity, true) : arg;
 				if (what instanceof IObservation) {
 					message.setTarget(Target.Observation);
 					message.setTargetId(((IObservation) what).getId());

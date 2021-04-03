@@ -1277,13 +1277,22 @@ public interface KactorsPackage extends EPackage
   int VALUE = 20;
 
   /**
+   * The feature id for the '<em><b>Deferred</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int VALUE__DEFERRED = 0;
+
+  /**
    * The feature id for the '<em><b>Tree</b></em>' containment reference.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int VALUE__TREE = 0;
+  int VALUE__TREE = 1;
 
   /**
    * The feature id for the '<em><b>Empty</b></em>' attribute.
@@ -1292,7 +1301,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__EMPTY = 1;
+  int VALUE__EMPTY = 2;
 
   /**
    * The feature id for the '<em><b>Argvalue</b></em>' attribute.
@@ -1301,7 +1310,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__ARGVALUE = 2;
+  int VALUE__ARGVALUE = 3;
 
   /**
    * The feature id for the '<em><b>Urn</b></em>' attribute.
@@ -1310,7 +1319,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__URN = 3;
+  int VALUE__URN = 4;
 
   /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
@@ -1319,7 +1328,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LITERAL = 4;
+  int VALUE__LITERAL = 5;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1328,7 +1337,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__ID = 5;
+  int VALUE__ID = 6;
 
   /**
    * The feature id for the '<em><b>List</b></em>' containment reference.
@@ -1337,7 +1346,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__LIST = 6;
+  int VALUE__LIST = 7;
 
   /**
    * The feature id for the '<em><b>Map</b></em>' containment reference.
@@ -1346,7 +1355,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__MAP = 7;
+  int VALUE__MAP = 8;
 
   /**
    * The feature id for the '<em><b>Constant</b></em>' attribute.
@@ -1355,7 +1364,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__CONSTANT = 8;
+  int VALUE__CONSTANT = 9;
 
   /**
    * The feature id for the '<em><b>Observable</b></em>' containment reference.
@@ -1364,7 +1373,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__OBSERVABLE = 9;
+  int VALUE__OBSERVABLE = 10;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' attribute.
@@ -1373,7 +1382,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__EXPRESSION = 10;
+  int VALUE__EXPRESSION = 11;
 
   /**
    * The feature id for the '<em><b>Table</b></em>' containment reference.
@@ -1382,7 +1391,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__TABLE = 11;
+  int VALUE__TABLE = 12;
 
   /**
    * The feature id for the '<em><b>Quantity</b></em>' containment reference.
@@ -1391,7 +1400,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__QUANTITY = 12;
+  int VALUE__QUANTITY = 13;
 
   /**
    * The feature id for the '<em><b>Then</b></em>' containment reference.
@@ -1400,7 +1409,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__THEN = 13;
+  int VALUE__THEN = 14;
 
   /**
    * The feature id for the '<em><b>Else</b></em>' containment reference.
@@ -1409,7 +1418,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__ELSE = 14;
+  int VALUE__ELSE = 15;
 
   /**
    * The feature id for the '<em><b>Constructor</b></em>' containment reference.
@@ -1418,7 +1427,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__CONSTRUCTOR = 15;
+  int VALUE__CONSTRUCTOR = 16;
 
   /**
    * The feature id for the '<em><b>Component</b></em>' attribute.
@@ -1427,7 +1436,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__COMPONENT = 16;
+  int VALUE__COMPONENT = 17;
 
   /**
    * The feature id for the '<em><b>Behavior</b></em>' attribute.
@@ -1436,7 +1445,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__BEHAVIOR = 17;
+  int VALUE__BEHAVIOR = 18;
 
   /**
    * The feature id for the '<em><b>Parameters</b></em>' containment reference.
@@ -1445,7 +1454,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__PARAMETERS = 18;
+  int VALUE__PARAMETERS = 19;
 
   /**
    * The feature id for the '<em><b>Metadata</b></em>' containment reference.
@@ -1454,7 +1463,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE__METADATA = 19;
+  int VALUE__METADATA = 20;
 
   /**
    * The number of structural features of the '<em>Value</em>' class.
@@ -1463,7 +1472,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int VALUE_FEATURE_COUNT = 20;
+  int VALUE_FEATURE_COUNT = 21;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ConstructorImpl <em>Constructor</em>}' class.
@@ -4859,6 +4868,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EClass getValue();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Value#isDeferred <em>Deferred</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Deferred</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Value#isDeferred()
+   * @see #getValue()
+   * @generated
+   */
+  EAttribute getValue_Deferred();
 
   /**
    * Returns the meta object for the containment reference '{@link org.integratedmodelling.kactors.kactors.Value#getTree <em>Tree</em>}'.
@@ -8317,6 +8337,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EClass VALUE = eINSTANCE.getValue();
+
+    /**
+     * The meta object literal for the '<em><b>Deferred</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute VALUE__DEFERRED = eINSTANCE.getValue_Deferred();
 
     /**
      * The meta object literal for the '<em><b>Tree</b></em>' containment reference feature.

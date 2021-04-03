@@ -62,12 +62,12 @@ class ViewScope {
 		boolean isActive = group.getGroupMetadata().containsKey("inputgroup");
 		ret.setType(isActive ? ViewComponent.Type.InputGroup : ViewComponent.Type.Group);
 		if (group.getGroupMetadata().containsKey("name")) {
-		    String name = group.getGroupMetadata().get("name").getValue().toString();
+		    String name = group.getGroupMetadata().get("name").getStatedValue().toString();
 			ret.setName(name);
 		}
 		String id = null;
 		if (group.getGroupMetadata().containsKey("id")) {
-			id = group.getGroupMetadata().get("id").getValue().toString();
+			id = group.getGroupMetadata().get("id").getStatedValue().toString();
 		} else {
 			id = "g" + (groupCounter++);
 		}
@@ -88,7 +88,7 @@ class ViewScope {
 				if (!component.getAttributes().containsKey(key) && Actors.INSTANCE.getLayoutMetadata().contains(key)) {
 					Object param = parameters.get(key);
 					component.getAttributes().put(key,
-							param instanceof KActorsValue ? ((KActorsValue) param).getValue().toString()
+							param instanceof KActorsValue ? ((KActorsValue) param).getStatedValue().toString()
 									: param.toString());
 				}
 			}
