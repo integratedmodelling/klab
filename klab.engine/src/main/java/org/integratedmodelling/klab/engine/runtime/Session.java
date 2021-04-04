@@ -146,6 +146,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import akka.actor.typed.ActorRef;
+import groovy.lang.GroovyObjectSupport;
 
 /**
  * Engine session. Implements UserDetails to be directly usable as a principal
@@ -154,7 +155,7 @@ import akka.actor.typed.ActorRef;
  * @author ferdinando.villa
  *
  */
-public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetails, IMessageBus.Relay {
+public class Session extends GroovyObjectSupport implements ISession, IActorIdentity<KlabMessage>, UserDetails, IMessageBus.Relay {
 
 	private static final long serialVersionUID = -1571090827271892549L;
 
@@ -1536,4 +1537,14 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	public long getLastActivity() {
 		return lastActivity;
 	}
+
+    @Override
+    public Object getProperty(String property) {
+        if (this.globalState.containsKey(property)) {
+            return this.globalState.get(property);
+        }
+        return super.getProperty(property);
+    }
+	
+	
 }

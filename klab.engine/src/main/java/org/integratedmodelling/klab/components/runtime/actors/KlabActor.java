@@ -642,7 +642,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
     private void execute(IKActorsStatement code, Scope scope) {
 
-        // System.out.println("EXECUTING " + code);
+//        System.out.println("EXECUTING " + code);
 
         try {
             switch(code.getType()) {
@@ -992,7 +992,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                     val = Extensions.INSTANCE.parse((String) val);
                 }
 
-                arg.setData(new ObjectExpression((IKimExpression) val, scope.runtimeScope, CompilerOption.WrapParameters));
+                arg.setData(new ObjectExpression((IKimExpression) val, scope.runtimeScope, CompilerOption.WrapParameters, CompilerOption.IgnoreContext));
             }
 
             try {
@@ -1000,7 +1000,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                  * 'metadata' is bound to the actor metadata map, initialized in the call
                  */
                 ret = ((ObjectExpression) arg.getData()).eval(scope.runtimeScope, identity,
-                        Parameters.create(scope.getSymbols(identity), "metadata", scope.metadata));
+                        Parameters.create(scope.getSymbols(identity), "metadata", scope.metadata, "self", identity));
             } catch (Throwable t) {
                 scope.getMonitor().error(t);
                 return null;

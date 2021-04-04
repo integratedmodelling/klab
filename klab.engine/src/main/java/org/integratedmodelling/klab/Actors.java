@@ -247,7 +247,8 @@ public enum Actors implements IActorsService {
         Services.INSTANCE.registerService(this, IActorsService.class);
         KActors.INSTANCE.setValueTranslator(new ValueTranslator(){
             @Override
-            public Object translate(KActorsValue container, IIdentity identity, org.integratedmodelling.kactors.api.IKActorsBehavior.Scope scope) {
+            public Object translate(KActorsValue container, IIdentity identity,
+                    org.integratedmodelling.kactors.api.IKActorsBehavior.Scope scope) {
 
                 Object value = container.getStatedValue();
 
@@ -285,11 +286,17 @@ public enum Actors implements IActorsService {
                 }
 
                 /*
-                 * if we get here, it wasn't a literal
+                 * if we get here, it wasn't a literal; loop until all deferred computations are
+                 * over
                  */
-                return scope == null
-                        ? value
-                        : KlabActor.evaluateInScope(container, (Scope) scope, (IActorIdentity<?>) identity);
+                if (scope != null) {
+                    value = container;
+                    while(value instanceof KActorsValue) {
+                        value = KlabActor.evaluateInScope((KActorsValue) value, (Scope) scope, (IActorIdentity<?>) identity);
+                    }
+                }
+
+                return value;
             }
         });
     }
@@ -812,10 +819,7 @@ public enum Actors implements IActorsService {
                         continue;
                     }
                     Object arg = constructor.getArguments().get(key);
-                    settings.put(key,
-                            arg instanceof KActorsValue
-                                    ? ((KActorsValue) arg).evaluate(scope, identity, true)
-                                    : arg);
+                    settings.put(key, arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
                 }
 
                 Constructor<?> constr = null;

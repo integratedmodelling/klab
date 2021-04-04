@@ -17,76 +17,78 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Utils;
 
 /**
- * A specialized expression that is initialized with a runtime scope and
- * evaluated in the context of a passed direct observation, known as "self" in
- * it. The expression is aware of all the details of the context and sets up
- * proxies and variables according to what is requested and available. Meant
+ * A specialized expression that is initialized with a runtime scope and evaluated in the context of
+ * a passed direct observation, known as "self" in it. The expression is aware of all the details of
+ * the context and sets up proxies and variables according to what is requested and available. Meant
  * mainly for use by k.LAB actors.
  * <p>
- * TODO collect all the expressions used in contextualizers and refactor to
- * this.
+ * TODO collect all the expressions used in contextualizers and refactor to this.
  * 
  * @author Ferd
  *
  */
 public class ObjectExpression {
 
-	private ILanguageProcessor.Descriptor descriptor;
-	private IParameters<String> parameters = Parameters.create();
-	private ILanguageExpression expression = null;
-	private boolean first = false;
-	CompilerOption[] compilerOptions;
+    private ILanguageProcessor.Descriptor descriptor;
+    private IParameters<String> parameters = Parameters.create();
+    private ILanguageExpression expression = null;
+    private boolean first = false;
+    CompilerOption[] compilerOptions;
 
-	public ObjectExpression(IKimExpression expression, IRuntimeScope scope, CompilerOption... options) {
-		this(expression, scope, false, options);
-	}
+    public ObjectExpression(IKimExpression expression, IRuntimeScope scope, CompilerOption... options) {
+        this(expression, scope, false, options);
+    }
 
-	public ObjectExpression(IKimExpression expression, IRuntimeScope overallScope, boolean forceScalar, CompilerOption... options) {
-		boolean scalar = forceScalar || expression.isForcedScalar();
-		this.descriptor = Extensions.INSTANCE
-				.getLanguageProcessor(expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE
-						: expression.getLanguage())
-				.describe(expression.getCode(), overallScope.getExpressionContext(), Extensions.options(scalar, false, options));
-		this.expression = this.descriptor.compile();
-	}
+    public ObjectExpression(IKimExpression expression, IRuntimeScope overallScope, boolean forceScalar,
+            CompilerOption... options) {
+        boolean scalar = forceScalar || expression.isForcedScalar();
+        this.descriptor = Extensions.INSTANCE
+                .getLanguageProcessor(
+                        expression.getLanguage() == null ? Extensions.DEFAULT_EXPRESSION_LANGUAGE : expression.getLanguage())
+                .describe(expression.getCode(), overallScope.getExpressionContext(), Extensions.options(scalar, false, options));
+        this.expression = this.descriptor.compile();
+    }
 
-	public Object eval(IRuntimeScope scope, IIdentity identity) {
-		return eval(scope, identity, null, Object.class);
-	}
+    public Object eval(IRuntimeScope scope, IIdentity identity) {
+        return eval(scope, identity, null, Object.class);
+    }
 
-	public Object eval(IRuntimeScope scope, IIdentity identity, IParameters<String> additionalParameters) {
-		return eval(scope, identity, additionalParameters, Object.class);
-	}
+    public Object eval(IRuntimeScope scope, IIdentity identity, IParameters<String> additionalParameters) {
+        return eval(scope, identity, additionalParameters, Object.class);
+    }
 
-	public <T> T eval(IRuntimeScope scope, IIdentity identity, Class<? extends T> cls) {
-		return eval(scope, identity, null, cls);
-	}
+    public <T> T eval(IRuntimeScope scope, IIdentity identity, Class<? extends T> cls) {
+        return eval(scope, identity, null, cls);
+    }
 
-	public <T> T eval(IRuntimeScope scope, IIdentity identity, IParameters<String> additionalParameters,
-			Class<? extends T> cls) {
+    public <T> T eval(IRuntimeScope scope, IIdentity identity, IParameters<String> additionalParameters, Class<? extends T> cls) {
 
-		this.parameters.clear();
-		if (additionalParameters != null) {
-			this.parameters.putAll(additionalParameters);
-		}
+        this.parameters.clear();
+        if (additionalParameters != null) {
+            this.parameters.putAll(additionalParameters);
+        }
 
-		if (first) {
-			parameters.put("self", identity);
-			first = true;
-		} else {
-			this.expression.override("self", identity);
-		}
+        if (!this.parameters.containsKey("self")) {
+            if (first) {
+                parameters.put("self", identity);
+                first = true;
+            } else {
+                this.expression.override("self", identity);
+            }
+        }
 
-		IScale scale = identity instanceof IObservation ? ((IObservation) identity).getScale() : null;
+        IScale scale = identity instanceof IObservation ? ((IObservation) identity).getScale() : null;
 
-		Map<String, IObservation> artifacts = scope.getLocalCatalog(IObservation.class);
-		for (String id : descriptor.getIdentifiersInScalarScope()) {
-			IObservation artifact = artifacts.get(id);
-			if (artifact instanceof IState && scale != null) {
-				parameters.put(id, ((IState) artifact).get(scale));
-			}
-		}
+        Map<String, IObservation> artifacts = scope.getLocalCatalog(IObservation.class);
+        if (artifacts != null) {
+            for (String id : descriptor.getIdentifiersInScalarScope()) {
+                IObservation artifact = artifacts.get(id);
+                if (artifact instanceof IState && scale != null) {
+                    parameters.put(id, ((IState) artifact).get(scale));
+                }
+            }
+        }
 
-		return Utils.asType(this.expression.eval(parameters, scope), cls);
-	}
+        return Utils.asType(this.expression.eval(parameters, scope), cls);
+    }
 }

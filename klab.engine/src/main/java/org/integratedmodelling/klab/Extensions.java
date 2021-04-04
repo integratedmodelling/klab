@@ -523,7 +523,7 @@ public enum Extensions implements IExtensionService {
 
     @Override
     public IKimExpression parse(String expression) {
-        return new KimExpression(expression,DEFAULT_EXPRESSION_LANGUAGE);
+        return new KimExpression(expression);
     }
 
 }
