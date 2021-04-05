@@ -48,293 +48,311 @@ import org.springframework.stereotype.Service;
 @Service
 public class ResourceManager {
 
-	@Autowired
-	TicketService ticketService;
+    @Autowired
+    TicketService ticketService;
 
-	private Timer resourceChecker;
+    private Timer resourceChecker;
 
-	/*
-	 * The public resource catalog. This is not persisted at the moment, but simply
-	 * uses the physical resources in ~/.klab/resources. Only this class must be
-	 * able to access it as insertion and deletion need to keep the resource paths
-	 * updated, which doesn't happen automatically at put().
-	 */
-	private ResourceCatalog catalog;
-	private Set<String> onlineResourceUrns = Collections.synchronizedSet(new LinkedHashSet<>());
-	private Set<String> offlineResourceUrns = Collections.synchronizedSet(new LinkedHashSet<>());
+    /*
+     * The public resource catalog. This is not persisted at the moment, but simply uses the
+     * physical resources in ~/.klab/resources. Only this class must be able to access it as
+     * insertion and deletion need to keep the resource paths updated, which doesn't happen
+     * automatically at put().
+     */
+    private ResourceCatalog catalog;
+    private Set<String> onlineResourceUrns = Collections.synchronizedSet(new LinkedHashSet<>());
+    private Set<String> offlineResourceUrns = Collections.synchronizedSet(new LinkedHashSet<>());
 
-	public ResourceManager() {
-		this.catalog = new ResourceCatalog();
-		for (String resource : this.catalog.keySet()) {
-			ResourceIndexer.INSTANCE.index(this.catalog.get(resource));
-		}
-		ResourceIndexer.INSTANCE.commitChanges();
-		this.resourceChecker = new Timer(true);
-		this.resourceChecker.scheduleAtFixedRate(new TimerTask() {
+    public ResourceManager() {
+        this.catalog = new ResourceCatalog();
+        for (String resource : this.catalog.keySet()) {
+            ResourceIndexer.INSTANCE.index(this.catalog.get(resource));
+        }
+        ResourceIndexer.INSTANCE.commitChanges();
+        this.resourceChecker = new Timer(true);
+        this.resourceChecker.scheduleAtFixedRate(new TimerTask(){
 
-			@Override
-			public void run() {
-				checkResources();
-			}
-		}, 0, Long.parseLong(
-				// six minutes default
-				Configuration.INSTANCE.getProperty(NodeApplication.RESOURCE_CHECKING_INTERVAL_SECONDS, "360")) * 1000L);
+            @Override
+            public void run() {
+                checkResources();
+            }
+        }, 0, Long.parseLong(
+                // six minutes default
+                Configuration.INSTANCE.getProperty(NodeApplication.RESOURCE_CHECKING_INTERVAL_SECONDS, "360")) * 1000L);
 
-	}
+    }
 
-	protected synchronized void checkResources() {
+    protected synchronized void checkResources() {
 
-		List<String> urns = new ArrayList<>(this.catalog.keySet());
-		List<String> online = new ArrayList<>();
-		List<String> offline = new ArrayList<>();
-		for (String urn : urns) {
-			boolean ok = false;
-			IResource resource = catalog.get(urn);
-			if (resource != null) {
-				IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
-				ok = adapter != null && adapter.getEncoder().isOnline(resource, Klab.INSTANCE.getRootMonitor());
-			}
-			if (ok) {
-				online.add(urn);
-			} else {
-				offline.add(urn);
-			}
-		}
+        List<String> urns = new ArrayList<>(this.catalog.keySet());
+        List<String> online = new ArrayList<>();
+        List<String> offline = new ArrayList<>();
+        for (String urn : urns) {
+            boolean ok = false;
+            IResource resource = catalog.get(urn);
+            if (resource != null) {
+                IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
+                ok = adapter != null && adapter.getEncoder().isOnline(resource, Klab.INSTANCE.getRootMonitor());
+            }
+            if (ok) {
+                online.add(urn);
+            } else {
+                offline.add(urn);
+            }
+        }
 
-		this.offlineResourceUrns.clear();
-		this.offlineResourceUrns.addAll(offline);
-		this.onlineResourceUrns.clear();
-		this.onlineResourceUrns.addAll(online);
-	}
+        this.offlineResourceUrns.clear();
+        this.offlineResourceUrns.addAll(offline);
+        this.onlineResourceUrns.clear();
+        this.onlineResourceUrns.addAll(online);
+    }
 
-	/**
-	 * TODO this version accepts no inputs. The one that does should encode
-	 * everything, including geometry and URN, into a posted KlabData object.
-	 * 
-	 * @param urn
-	 * @param geometry
-	 * @param groups
-	 * @return
-	 */
-	public KlabData getResourceData(String urn, IGeometry geometry) {
+    /**
+     * TODO this version accepts no inputs. The one that does should encode everything, including
+     * geometry and URN, into a posted KlabData object.
+     * 
+     * @param urn
+     * @param geometry
+     * @param groups
+     * @return
+     */
+    public KlabData getResourceData(String urn, IGeometry geometry) {
 
-		Urn kurn = new Urn(urn);
+        Urn kurn = new Urn(urn);
 
-		/*
-		 * The monitor passed to the encoder notifies the client through the returned
-		 * data object.
-		 */
+        /*
+         * The monitor passed to the encoder notifies the client through the returned data object.
+         */
 
-		if (kurn.isUniversal()) {
+        if (kurn.isUniversal()) {
 
-			IUrnAdapter adapter = Resources.INSTANCE.getUrnAdapter(kurn.getCatalog());
-			if (adapter == null) {
-				return null;
-			}
+            IUrnAdapter adapter = Resources.INSTANCE.getUrnAdapter(kurn.getCatalog());
+            if (adapter == null) {
+                return null;
+            }
 
-			EncodingDataBuilder builder = new EncodingDataBuilder();
-			adapter.encodeData(kurn, builder, geometry,
-					new ResourceScope(adapter.getResource(urn), geometry, builder.getMonitor()));
-			return builder.buildEncoded();
+            EncodingDataBuilder builder = new EncodingDataBuilder();
+            adapter.encodeData(kurn, builder, geometry,
+                    new ResourceScope(adapter.getResource(urn), geometry, builder.getMonitor()));
+            return builder.buildEncoded();
 
-		}
+        }
 
-		IResource resource = catalog.get(kurn.getUrn());
-		if (resource == null) {
-			throw new IllegalArgumentException("URN " + urn + " cannot be resolved");
-		}
+        IResource resource = catalog.get(kurn.getUrn());
+        if (resource == null) {
+            throw new IllegalArgumentException("URN " + urn + " cannot be resolved");
+        }
 
-		EncodingDataBuilder builder = new EncodingDataBuilder();
-		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
-		if (adapter == null) {
-			throw new KlabUnsupportedFeatureException(
-					"adapter for resource of type " + resource.getAdapterType() + " not available");
-		}
+        EncodingDataBuilder builder = new EncodingDataBuilder();
+        IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
+        if (adapter == null) {
+            throw new KlabUnsupportedFeatureException(
+                    "adapter for resource of type " + resource.getAdapterType() + " not available");
+        }
 
-		adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), geometry, builder,
-				new ResourceScope(resource, geometry, builder.getMonitor()));
+        adapter.getEncoder().getEncodedData(resource, kurn.getParameters(), geometry, builder,
+                new ResourceScope(resource, geometry, builder.getMonitor()));
 
-		return builder.buildEncoded();
+        return builder.buildEncoded();
 
-	}
+    }
 
-	public void updateResource(String urn, ResourceReference content, EngineAuthorization user, IMonitor monitor) {
-		if (!canAccess(urn, user)) {
-			throw new SecurityException(urn);
-		}
-		catalog.update(urn, content, "Updated on " + new Date() + " by " + user.getUsername());
-	}
+    public void updateResource(String urn, ResourceReference content, EngineAuthorization user, IMonitor monitor) {
 
-	public boolean deleteResource(String urn, EngineAuthorization user, IMonitor monitor) {
-		if (!canAccess(urn, user)) {
-			throw new SecurityException(urn);
-		}
-		return catalog.remove(urn) != null;
-	}
+        if (!canAccess(urn, user)) {
+            throw new SecurityException(urn);
+        }
 
-	public ITicket publishResource(ResourceReference resourceReference, File uploadArchive, EngineAuthorization user,
-			IMonitor monitor) {
+        catalog.update(urn, content, "Updated on " + new Date() + " by " + user.getUsername());
+    }
 
-		String originalUrn = null;
-		File resourcePath = null;
-		if (uploadArchive != null) {
-			Logging.INSTANCE.info("unpacking resource archive from " + uploadArchive);
-			Pair<File, String> unpacked = catalog.unpackArchive(uploadArchive);
-			resourcePath = unpacked.getFirst();
-			originalUrn = unpacked.getSecond();
-			Logging.INSTANCE.info("resource archive unpacked into  " + resourcePath + " for " + originalUrn);
-		} else {
-			originalUrn = resourceReference.getUrn();
-			Logging.INSTANCE.info("publishing logical resource " + originalUrn + " from posted descriptor");
-		}
+    public boolean deleteResource(String urn, EngineAuthorization user, IMonitor monitor) {
 
-		final ITicket ret = ticketService.open(ITicket.Type.ResourcePublication, "resource", originalUrn, "user",
-				user.getUsername());
-		final File uploadDirectory = resourcePath;
+        if (!canAccess(urn, user)) {
+            throw new SecurityException(urn);
+        }
 
-		/*
-		 * spawn thread that will publish and resolve the ticket with the "urn"
-		 * parameter set to the public URN.
-		 */
-		new Thread() {
-			@Override
-			public void run() {
-				try {
-					IResource resource = null;
-					if (uploadDirectory != null) {
-						resource = catalog.importResource(uploadDirectory, user);
-					} else {
-						resource = catalog.importResource(resourceReference, user);
-					}
-					if (resource != null) {
-						ResourceIndexer.INSTANCE.index(resource);
-						ResourceIndexer.INSTANCE.commitChanges();
-					}
-					ret.resolve("urn", resource.getUrn());
-				} catch (Throwable t) {
-					Logging.INSTANCE.error("exception when publishing " + resourceReference.getUrn() + ": "
-							+ ExceptionUtils.getStackTrace(t));
-					ret.error("Publishing failed with exception: " + t.getMessage());
-				}
-			}
-		}.start();
+        IResource resource = catalog.get(urn);
+        if (resource == null) {
+            throw new IllegalArgumentException("URN " + urn + " cannot be resolved");
+        }
+        
+        IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
+        if (adapter == null) {
+            throw new KlabUnsupportedFeatureException(
+                    "adapter for resource of type " + resource.getAdapterType() + " not available");
+        }
 
-		return ret;
-	}
+        if (!adapter.getPublisher().unpublish(resource, monitor)) {
+            Logging.INSTANCE.warn("unpublishing resource " + urn + " returned false: check for side effects and leftover data");
+        }
 
-	public Collection<String> getOnlineResources() {
-		return onlineResourceUrns;
-	}
+        return catalog.remove(urn) != null;
+    }
 
-	public IResource getResource(String urn, Set<Group> groups) {
-		if (Urns.INSTANCE.isUniversal(urn)) {
-			Urn u = new Urn(urn);
-			IUrnAdapter adapter = Resources.INSTANCE.getUrnAdapter(u.getCatalog());
-			if (adapter != null) {
-				return adapter.getResource(urn);
-			}
-		}
-		return catalog.get(urn);
-	}
+    public ITicket publishResource(ResourceReference resourceReference, File uploadArchive, EngineAuthorization user,
+            IMonitor monitor) {
 
-	public Collection<String> getCatalogs() {
-		// TODO maybe some catalogs could be reserved to specific groups/users
-		return catalog.getCatalogs();
-	}
+        String originalUrn = null;
+        File resourcePath = null;
+        if (uploadArchive != null) {
+            Logging.INSTANCE.info("unpacking resource archive from " + uploadArchive);
+            Pair<File, String> unpacked = catalog.unpackArchive(uploadArchive);
+            resourcePath = unpacked.getFirst();
+            originalUrn = unpacked.getSecond();
+            Logging.INSTANCE.info("resource archive unpacked into  " + resourcePath + " for " + originalUrn);
+        } else {
+            originalUrn = resourceReference.getUrn();
+            Logging.INSTANCE.info("publishing logical resource " + originalUrn + " from posted descriptor");
+        }
 
-	public Collection<String> getNamespaces() {
-		// TODO maybe some namespaces could be reserved to specific groups/users
-		return catalog.getNamespaces();
-	}
+        final ITicket ret = ticketService.open(ITicket.Type.ResourcePublication, "resource", originalUrn, "user",
+                user.getUsername());
+        final File uploadDirectory = resourcePath;
 
-	public String getDefaultCatalog() {
-		return catalog.getDefaultCatalog();
-	}
+        /*
+         * spawn thread that will publish and resolve the ticket with the "urn" parameter set to the
+         * public URN.
+         */
+        new Thread(){
+            @Override
+            public void run() {
+                try {
+                    IResource resource = null;
+                    if (uploadDirectory != null) {
+                        resource = catalog.importResource(uploadDirectory, user);
+                    } else {
+                        resource = catalog.importResource(resourceReference, user);
+                    }
+                    if (resource != null) {
+                        ResourceIndexer.INSTANCE.index(resource);
+                        ResourceIndexer.INSTANCE.commitChanges();
+                    }
+                    ret.resolve("urn", resource.getUrn());
+                } catch (Throwable t) {
+                    Logging.INSTANCE.error(
+                            "exception when publishing " + resourceReference.getUrn() + ": " + ExceptionUtils.getStackTrace(t));
+                    ret.error("Publishing failed with exception: " + t.getMessage());
+                }
+            }
+        }.start();
 
-	public String getDefaultNamespace() {
-		return catalog.getDefaultNamespace();
-	}
+        return ret;
+    }
 
-	public List<Match> queryResources(String query) {
-		return ResourceIndexer.INSTANCE.query(query);
-	}
+    public Collection<String> getOnlineResources() {
+        return onlineResourceUrns;
+    }
 
-	public boolean canAccess(String urn, EngineAuthorization user) {
+    public IResource getResource(String urn, Set<Group> groups) {
+        if (Urns.INSTANCE.isUniversal(urn)) {
+            Urn u = new Urn(urn);
+            IUrnAdapter adapter = Resources.INSTANCE.getUrnAdapter(u.getCatalog());
+            if (adapter != null) {
+                return adapter.getResource(urn);
+            }
+        }
+        return catalog.get(urn);
+    }
 
-		Urn u = new Urn(urn);
+    public Collection<String> getCatalogs() {
+        // TODO maybe some catalogs could be reserved to specific groups/users
+        return catalog.getCatalogs();
+    }
 
-		if (Urns.INSTANCE.isUniversal(urn)) {
+    public Collection<String> getNamespaces() {
+        // TODO maybe some namespaces could be reserved to specific groups/users
+        return catalog.getNamespaces();
+    }
 
-			/*
-			 * just check if the adapter is allowed
-			 */
-			IUrnAdapter adapter = Resources.INSTANCE.getUrnAdapter(u.getCatalog());
-			if (adapter != null) {
-				// TODO FIXME streamline this into extensions or resource service and handle
-				// adapter authorizations
-				// there; refactor code in EngineController and (maybe) ResourceManager to use
-				// that.
-				String authorized = Configuration.INSTANCE
-						.getProperty("klab.adapter." + adapter.getName().toLowerCase() + ".auth", "");
-				if (EngineController.isAuthorized(user, authorized)) {
-					return true;
-				}
-			}
-		}
+    public String getDefaultCatalog() {
+        return catalog.getDefaultCatalog();
+    }
 
-		IResource resource = catalog.get(u.getUrn());
-		if (resource != null) {
-			if (user.getRoles().contains(Role.ROLE_ADMINISTRATOR)) {
-				return true;
-			}
-			if (resource.getMetadata().containsKey(IMetadata.DC_CONTRIBUTOR)
-					&& user.getUsername().equals(resource.getMetadata().get(IMetadata.DC_CONTRIBUTOR))) {
-				return true;
-			}
-			KlabPermissions permissions = KlabPermissions.empty();
-			if (resource.getMetadata().containsKey(IMetadata.IM_PERMISSIONS)) {
-				permissions = KlabPermissions.create(resource.getMetadata().get(IMetadata.IM_PERMISSIONS).toString());
-			}
-			List<String> groups = new ArrayList<>();
-			for (Group group : user.getGroups()) {
-				groups.add(group.getId());
-			}
-			return permissions.isAuthorized(user.getUsername(), groups);
-		}
-		return false;
-	}
+    public String getDefaultNamespace() {
+        return catalog.getDefaultNamespace();
+    }
 
-	/**
-	 * Start an operation on a resource and return a ticket.
-	 * 
-	 * @param urn
-	 * @param resource
-	 * @param principal
-	 * @param rootMonitor
-	 * @return
-	 */
-	public TicketResponse.Ticket updateResource(String urn, ResourceOperationRequest resource,
-			EngineAuthorization principal, IMonitor rootMonitor) {
-		// TODO Auto-generated method stub
-		return null;
+    public List<Match> queryResources(String query) {
+        return ResourceIndexer.INSTANCE.query(query);
+    }
 
-	}
+    public boolean canAccess(String urn, EngineAuthorization user) {
 
-	/**
-	 * Return information about the resource, using the adapter to report on the
-	 * internal details. For now just use a map instead of a specialized bean.
-	 * 
-	 * @param resource
-	 * @return
-	 */
-	public Map<String, Object> getResourceInfo(IResource resource) {
-		Map<String, Object> ret = new LinkedHashMap<>();
-		ret.put("urn", resource.getUrn());
-		ret.put("online", this.getOnlineResources().contains(resource.getUrn()));
-		IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
-		ret.put("adapter", adapter == null ? "UNKNOWN" : adapter.getName());
-		ret.putAll(adapter.getValidator().describeResource(resource));
-		return ret;
-	}
+        Urn u = new Urn(urn);
+
+        if (Urns.INSTANCE.isUniversal(urn)) {
+
+            /*
+             * just check if the adapter is allowed
+             */
+            IUrnAdapter adapter = Resources.INSTANCE.getUrnAdapter(u.getCatalog());
+            if (adapter != null) {
+                // TODO FIXME streamline this into extensions or resource service and handle
+                // adapter authorizations
+                // there; refactor code in EngineController and (maybe) ResourceManager to use
+                // that.
+                String authorized = Configuration.INSTANCE
+                        .getProperty("klab.adapter." + adapter.getName().toLowerCase() + ".auth", "");
+                if (EngineController.isAuthorized(user, authorized)) {
+                    return true;
+                }
+            }
+        }
+
+        IResource resource = catalog.get(u.getUrn());
+        if (resource != null) {
+            if (user.getRoles().contains(Role.ROLE_ADMINISTRATOR)) {
+                return true;
+            }
+            if (resource.getMetadata().containsKey(IMetadata.DC_CONTRIBUTOR)
+                    && user.getUsername().equals(resource.getMetadata().get(IMetadata.DC_CONTRIBUTOR))) {
+                return true;
+            }
+            KlabPermissions permissions = KlabPermissions.empty();
+            if (resource.getMetadata().containsKey(IMetadata.IM_PERMISSIONS)) {
+                permissions = KlabPermissions.create(resource.getMetadata().get(IMetadata.IM_PERMISSIONS).toString());
+            }
+            List<String> groups = new ArrayList<>();
+            for (Group group : user.getGroups()) {
+                groups.add(group.getId());
+            }
+            return permissions.isAuthorized(user.getUsername(), groups);
+        }
+        return false;
+    }
+
+    /**
+     * Start an operation on a resource and return a ticket.
+     * 
+     * @param urn
+     * @param resource
+     * @param principal
+     * @param rootMonitor
+     * @return
+     */
+    public TicketResponse.Ticket updateResource(String urn, ResourceOperationRequest resource, EngineAuthorization principal,
+            IMonitor rootMonitor) {
+        // TODO Auto-generated method stub
+        return null;
+
+    }
+
+    /**
+     * Return information about the resource, using the adapter to report on the internal details.
+     * For now just use a map instead of a specialized bean.
+     * 
+     * @param resource
+     * @return
+     */
+    public Map<String, Object> getResourceInfo(IResource resource) {
+        Map<String, Object> ret = new LinkedHashMap<>();
+        ret.put("urn", resource.getUrn());
+        ret.put("online", this.getOnlineResources().contains(resource.getUrn()));
+        IResourceAdapter adapter = Resources.INSTANCE.getResourceAdapter(resource.getAdapterType());
+        ret.put("adapter", adapter == null ? "UNKNOWN" : adapter.getName());
+        ret.putAll(adapter.getValidator().describeResource(resource));
+        return ret;
+    }
 
 }

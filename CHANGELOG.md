@@ -9,6 +9,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Backtick operator in k.Actors enables deferred evaluation of values, so that "closures"
+  of sorts can be passed as arguments to components or actions for evaluation in their
+  scopes of execution.. Scoped evaluation API straightened out and simplified.
 - Categories are now exported along with geotiffs when requested, supporting both ArcGIS 
   and QGIS conventions. With QGIS, colormap is preserved.
 - 'new' verb enables creating components as values in k.Actors, to pass as parameters 

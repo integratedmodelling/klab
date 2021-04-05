@@ -23,6 +23,7 @@ import java.util.Map;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
+import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureCollection;
@@ -51,7 +52,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.GeometrySanitizer;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
-import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -95,9 +95,11 @@ public class VectorEncoder implements IResourceEncoder {
 			throw new KlabResourceNotFoundException("vector resource " + resource.getUrn() + " cannot be accessed");
 		}
 
-		Map<String, Object> map = new HashMap<>();
+		Map<Object, Object> map = new HashMap<>();
 		try {
 			map.put("url", mainFile.toURI().toURL().toString());
+            // TODO check and honor any charset in the resource. This could be the default.
+			map.put(ShapefileDataStoreFactory.DBFCHARSET, "UTF-8");
 			DataStore dataStore = DataStoreFinder.getDataStore(map);
 			String typeName = dataStore.getTypeNames()[0];
 			return dataStore.getFeatureSource(typeName);
