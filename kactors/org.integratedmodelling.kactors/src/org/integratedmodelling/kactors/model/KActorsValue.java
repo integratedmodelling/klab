@@ -653,6 +653,11 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
     public Constructor getConstructor() {
         return this.constructor;
     }
+    
+    @Override
+    public String toString() {
+        return "<" + type + " " + getStatedValue() + ">";
+    }
 
     /**
      * Check for truth value. For now we consider true anything that is not null or not empty,

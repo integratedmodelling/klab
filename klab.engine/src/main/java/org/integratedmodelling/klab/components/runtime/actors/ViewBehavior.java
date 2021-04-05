@@ -700,6 +700,7 @@ public class ViewBehavior {
                     if (val instanceof KActorsValue) {
                         val = ((KActorsValue)val).evaluate(scope, identity, false);
                     }
+                    ret.add(val);
                 }
             }
             return ret;
