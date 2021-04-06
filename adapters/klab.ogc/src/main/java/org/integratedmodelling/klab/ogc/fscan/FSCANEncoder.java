@@ -70,24 +70,36 @@ public class FSCANEncoder implements IResourceEncoder {
         boolean simplify = urnParameters.containsKey("simplify") ? Boolean.getBoolean(urnParameters.get("simplify")) : true;
         int level = urnParameters.containsKey("level") ? Integer.parseInt(urnParameters.get("level")) : -1;
         String id = urnParameters.get("id");
-        String collection = urnParameters.get("collection");
-        
+        String within = urnParameters.get("within");
+
         /*
          * default behavior: find the shape that best fits the context
          */
         IScale scale = geometry instanceof IScale ? (IScale) geometry : Scale.create(geometry);
         IEnvelope envelope = scale.getSpace().getShape().getEnvelope().transform(Projection.getLatLon(), false);
-        IShape shape = FSCANAdapter.getPostgis().getLargestInScale(urn, envelope);
-        // Logging.INSTANCE.info("Query in " + envelope + " returned " + shape);
-        // Logging.INSTANCE.info("Builder class is " + builder.getClass());
-        if (shape != null) {
-            Builder bb = builder.startObject(context.getTargetName() == null ? "result" : context.getTargetName(),
-                    shape.getMetadata().get(IMetadata.DC_NAME, String.class), Scale.create(shape));
-            for (String key : shape.getMetadata().keySet()) {
-                bb.withMetadata(key, shape.getMetadata().get(key));
+
+        if (id != null) {
+
+        } else if (within != null) {
+
+        } else if (level >= 0) {
+
+        } else {
+
+            IShape shape = FSCANAdapter.getPostgis().getLargestInScale(urn, envelope);
+            // Logging.INSTANCE.info("Query in " + envelope + " returned " + shape);
+            // Logging.INSTANCE.info("Builder class is " + builder.getClass());
+            if (shape != null) {
+                Builder bb = builder.startObject(context.getTargetName() == null ? "result" : context.getTargetName(),
+                        shape.getMetadata().get(IMetadata.DC_NAME, String.class), Scale.create(shape));
+                for (String key : shape.getMetadata().keySet()) {
+                    bb.withMetadata(key, shape.getMetadata().get(key));
+                }
+                bb.finishObject();
             }
-            bb.finishObject();
+
         }
+
     }
 
     public long indexShapes(IResource resource, IResourceCatalog catalog) {

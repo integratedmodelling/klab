@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -73,7 +74,7 @@ public enum Geocoder {
 		services.put(DEFAULT_GEOCODING_STRATEGY, new OSMNamesGeocodingService(0.75));
 		services.put(ADMIN_GEOCODING_STRATEGY,
 				new ResourceGeocodingService("im.geo:gadm:administrative:boundaries", 0.5));
-//		new ResourceGeocodingService("local:ferdinando.villa:scratch:administrative.un.gadm", 0.5));
+//		new ResourceGeocodingService("local:ferdinando.villa:scratch:administrative.un.split", 0.5));
 		services.put(WATERSHED_GEOCODING_STRATEGY,
 				new ResourceGeocodingService("local:ferdinando.villa:scratch:watershed", 0.5));
 //		services.put(RANDOM_GEOCODING_STRATEGY, new RandomGeocodingService(0.5));
@@ -538,4 +539,11 @@ public enum Geocoder {
 		}
 		return null;
 	}
+
+    public ScaleReference finalizeShape(ScaleReference scale) {
+        if (scale.getFeatureUrn() != null) {
+            
+        }
+        return scale;
+    }
 }

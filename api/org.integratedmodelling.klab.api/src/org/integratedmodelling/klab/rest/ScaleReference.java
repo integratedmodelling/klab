@@ -3,257 +3,271 @@ package org.integratedmodelling.klab.rest;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 
 /**
- * Used to communicate spatio/temporal regions of interest. Space values should
- * be in decimal latitude and longitude.
+ * Used to communicate spatio/temporal regions of interest. Space values should be in decimal
+ * latitude and longitude.
  * 
- * Sent from back-end to communicate new resolution when extent is changed on
- * the front end. Sent by front-end when user wants to set resolution, which
- * locks the scale to the user choice. A front-end message with just unlockSpace
- * == true resets the behavior to automatic resolution definition.
+ * Sent from back-end to communicate new resolution when extent is changed on the front end. Sent by
+ * front-end when user wants to set resolution, which locks the scale to the user choice. A
+ * front-end message with just unlockSpace == true resets the behavior to automatic resolution
+ * definition.
  * 
  * @author ferdinando.villa
  *
  */
 public class ScaleReference {
 
-	private String name;
-	private double east;
-	private double west;
-	private double north;
-	private double south;
-	private int spaceScale;
-	private int timeScale;
-	/**
-	 * Resolution is always in m
-	 */
-	private double spaceResolution;
-	/**
-	 * Description is in whatever unit is more convenient
-	 */
-	private String spaceResolutionDescription;
-	private double spaceResolutionConverted;
-	private String spaceUnit;
-	private double timeResolutionMultiplier;
-	private ITime.Resolution.Type timeUnit;
-	private String timeResolutionDescription;
-	private String shape;
-	private String timeType;
-	
-	// used when we start from a geometry and it's quicker to specify this way.
-	private String timeGeometry;
-	private String spaceGeometry;
+    private String name;
+    private double east;
+    private double west;
+    private double north;
+    private double south;
+    private int spaceScale;
+    private int timeScale;
+    /**
+     * Resolution is always in m
+     */
+    private double spaceResolution;
+    /**
+     * Description is in whatever unit is more convenient
+     */
+    private String spaceResolutionDescription;
+    private double spaceResolutionConverted;
+    private String spaceUnit;
+    private double timeResolutionMultiplier;
+    private ITime.Resolution.Type timeUnit;
+    private String timeResolutionDescription;
+    private String shape;
+    private String timeType;
 
-	private long start;
-	private long end;
-	
-	// unused for now, or enabled in developer mode
-	private long step;
+    // used when we start from a geometry and it's quicker to specify this way.
+    private String timeGeometry;
+    private String spaceGeometry;
 
-	/*
-	 * If this is not empty, user wants to change the scale for an existing context.
-	 */
-	private String contextId = null;
+    private long start;
+    private long end;
 
-	// FIXME REMOVE
-	private String resolutionDescription;
-	private int year = -1;
+    // unused for now, or enabled in developer mode
+    private long step;
 
-	public double getEast() {
-		return east;
-	}
+    /*
+     * If this is not empty, user wants to change the scale for an existing context.
+     */
+    private String contextId = null;
 
-	public String getSpaceUnit() {
-		return spaceUnit;
-	}
+    /**
+     * This is only filled in when we have a geocoded feature that we need to submit back to the geocoder
+     * for finalization before creating a definitive context, to adapt to the desired resolution.
+     */
+    transient private String featureUrn;
 
-	public void setSpaceUnit(String spaceUnit) {
-		this.spaceUnit = spaceUnit;
-	}
+    // FIXME REMOVE
+    private String resolutionDescription;
+    private int year = -1;
 
-	public void setEast(double east) {
-		this.east = east;
-	}
+    public double getEast() {
+        return east;
+    }
 
-	public double getWest() {
-		return west;
-	}
+    public String getSpaceUnit() {
+        return spaceUnit;
+    }
 
-	public void setWest(double west) {
-		this.west = west;
-	}
+    public void setSpaceUnit(String spaceUnit) {
+        this.spaceUnit = spaceUnit;
+    }
 
-	public double getNorth() {
-		return north;
-	}
+    public void setEast(double east) {
+        this.east = east;
+    }
 
-	public void setNorth(double north) {
-		this.north = north;
-	}
+    public double getWest() {
+        return west;
+    }
 
-	public double getSouth() {
-		return south;
-	}
+    public void setWest(double west) {
+        this.west = west;
+    }
 
-	public void setSouth(double south) {
-		this.south = south;
-	}
+    public double getNorth() {
+        return north;
+    }
 
-	public long getStart() {
-		return start;
-	}
+    public void setNorth(double north) {
+        this.north = north;
+    }
 
-	public void setStart(long start) {
-		this.start = start;
-	}
+    public double getSouth() {
+        return south;
+    }
 
-	public long getEnd() {
-		return end;
-	}
+    public void setSouth(double south) {
+        this.south = south;
+    }
 
-	public void setEnd(long end) {
-		this.end = end;
-	}
+    public long getStart() {
+        return start;
+    }
 
-	public void setYear(int year) {
-		this.year = year;
-	}
+    public void setStart(long start) {
+        this.start = start;
+    }
 
-	public int getYear() {
-		return this.year;
-	}
+    public long getEnd() {
+        return end;
+    }
 
-	public long getStep() {
-		return step;
-	}
+    public void setEnd(long end) {
+        this.end = end;
+    }
 
-	public void setStep(long step) {
-		this.step = step;
-	}
+    public void setYear(int year) {
+        this.year = year;
+    }
 
-	public int getSpaceScale() {
-		return spaceScale;
-	}
+    public int getYear() {
+        return this.year;
+    }
 
-	public void setSpaceScale(int spaceScale) {
-		this.spaceScale = spaceScale;
-	}
+    public long getStep() {
+        return step;
+    }
 
-	public int getTimeScale() {
-		return timeScale;
-	}
+    public void setStep(long step) {
+        this.step = step;
+    }
 
-	public void setTimeScale(int timeScale) {
-		this.timeScale = timeScale;
-	}
+    public int getSpaceScale() {
+        return spaceScale;
+    }
 
-	public double getSpaceResolution() {
-		return spaceResolution;
-	}
+    public void setSpaceScale(int spaceScale) {
+        this.spaceScale = spaceScale;
+    }
 
-	public void setSpaceResolution(double resolution) {
-		this.spaceResolution = resolution;
-	}
+    public int getTimeScale() {
+        return timeScale;
+    }
 
-	public String getSpaceResolutionDescription() {
-		return spaceResolutionDescription;
-	}
+    public void setTimeScale(int timeScale) {
+        this.timeScale = timeScale;
+    }
 
-	public void setSpaceResolutionDescription(String resolutionDescription) {
-		this.spaceResolutionDescription = resolutionDescription;
-	}
+    public double getSpaceResolution() {
+        return spaceResolution;
+    }
 
-	@Override
-	public String toString() {
-		return "ScaleReference [east=" + east + ", west=" + west + ", north=" + north + ", south=" + south
-				+ ", spaceScale=" + spaceScale + ", resolutionDescription=" + spaceResolutionDescription + "]";
-	}
+    public void setSpaceResolution(double resolution) {
+        this.spaceResolution = resolution;
+    }
 
-	public void setResolutionDescription(String string) {
-		this.resolutionDescription = string;
-	}
+    public String getSpaceResolutionDescription() {
+        return spaceResolutionDescription;
+    }
 
-	public String getResolutionDescription() {
-		return this.resolutionDescription;
-	}
+    public void setSpaceResolutionDescription(String resolutionDescription) {
+        this.spaceResolutionDescription = resolutionDescription;
+    }
 
-	public double getSpaceResolutionConverted() {
-		return spaceResolutionConverted;
-	}
+    @Override
+    public String toString() {
+        return "ScaleReference [east=" + east + ", west=" + west + ", north=" + north + ", south=" + south + ", spaceScale="
+                + spaceScale + ", resolutionDescription=" + spaceResolutionDescription + "]";
+    }
 
-	public void setSpaceResolutionConverted(double spaceResolutionConverted) {
-		this.spaceResolutionConverted = spaceResolutionConverted;
-	}
+    public void setResolutionDescription(String string) {
+        this.resolutionDescription = string;
+    }
 
-	public String getContextId() {
-		return contextId;
-	}
+    public String getResolutionDescription() {
+        return this.resolutionDescription;
+    }
 
-	public void setContextId(String contextId) {
-		this.contextId = contextId;
-	}
+    public double getSpaceResolutionConverted() {
+        return spaceResolutionConverted;
+    }
 
-	public double getTimeResolutionMultiplier() {
-		return timeResolutionMultiplier;
-	}
+    public void setSpaceResolutionConverted(double spaceResolutionConverted) {
+        this.spaceResolutionConverted = spaceResolutionConverted;
+    }
 
-	public void setTimeResolutionMultiplier(double timeResolutionMultiplier) {
-		this.timeResolutionMultiplier = timeResolutionMultiplier;
-	}
+    public String getContextId() {
+        return contextId;
+    }
 
-	public ITime.Resolution.Type getTimeUnit() {
-		return timeUnit;
-	}
+    public void setContextId(String contextId) {
+        this.contextId = contextId;
+    }
 
-	public void setTimeUnit(ITime.Resolution.Type timeUnit) {
-		this.timeUnit = timeUnit;
-	}
+    public double getTimeResolutionMultiplier() {
+        return timeResolutionMultiplier;
+    }
 
-	public String getTimeResolutionDescription() {
-		return timeResolutionDescription;
-	}
+    public void setTimeResolutionMultiplier(double timeResolutionMultiplier) {
+        this.timeResolutionMultiplier = timeResolutionMultiplier;
+    }
 
-	public void setTimeResolutionDescription(String timeResolutionDescription) {
-		this.timeResolutionDescription = timeResolutionDescription;
-	}
+    public ITime.Resolution.Type getTimeUnit() {
+        return timeUnit;
+    }
 
-	public String getShape() {
-		return shape;
-	}
+    public void setTimeUnit(ITime.Resolution.Type timeUnit) {
+        this.timeUnit = timeUnit;
+    }
 
-	public void setShape(String shape) {
-		this.shape = shape;
-	}
+    public String getTimeResolutionDescription() {
+        return timeResolutionDescription;
+    }
 
-	public String getName() {
-		return name;
-	}
+    public void setTimeResolutionDescription(String timeResolutionDescription) {
+        this.timeResolutionDescription = timeResolutionDescription;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public String getShape() {
+        return shape;
+    }
 
-	public String getTimeGeometry() {
-		return timeGeometry;
-	}
+    public void setShape(String shape) {
+        this.shape = shape;
+    }
 
-	public void setTimeGeometry(String timeGeometry) {
-		this.timeGeometry = timeGeometry;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public String getSpaceGeometry() {
-		return spaceGeometry;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public void setSpaceGeometry(String spaceGeometry) {
-		this.spaceGeometry = spaceGeometry;
-	}
+    public String getTimeGeometry() {
+        return timeGeometry;
+    }
 
-	public String getTimeType() {
-		return timeType;
-	}
+    public void setTimeGeometry(String timeGeometry) {
+        this.timeGeometry = timeGeometry;
+    }
 
-	public void setTimeType(String timeType) {
-		this.timeType = timeType;
-	}
+    public String getSpaceGeometry() {
+        return spaceGeometry;
+    }
+
+    public void setSpaceGeometry(String spaceGeometry) {
+        this.spaceGeometry = spaceGeometry;
+    }
+
+    public String getTimeType() {
+        return timeType;
+    }
+
+    public void setTimeType(String timeType) {
+        this.timeType = timeType;
+    }
+
+    public String getFeatureUrn() {
+        return featureUrn;
+    }
+
+    public void setFeatureUrn(String featureUrn) {
+        this.featureUrn = featureUrn;
+    }
 
 }

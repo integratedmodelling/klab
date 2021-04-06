@@ -368,6 +368,7 @@ public class Postgis {
                     Shape shape = Shape.create(geometry, Projection.getLatLon());
                     shape.getMetadata().put(FSCANEncoder.FEATURE_ID, gid);
                     shape.getMetadata().put(FSCANEncoder.COLLECTION_ID, sourceTable);
+                    shape.getMetadata().put(IMetadata.IM_FEATURE_URN, urn + "#" + sourceTable + "." + gid);
                     shape.getMetadata().put(IMetadata.DC_NAME, shapeName);
                     shape.getMetadata().put(IMetadata.IM_MIN_SPATIAL_SCALE, level);
                     return shape;
