@@ -8,6 +8,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -21,7 +22,6 @@ import org.geotools.data.FeatureWriter;
 import org.geotools.data.Transaction;
 import org.geotools.data.postgis.PostgisNGDataStoreFactory;
 import org.geotools.data.shapefile.ShapefileDataStore;
-import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
@@ -273,6 +273,47 @@ public class Postgis {
     }
 
     /**
+     * Get all the shapes that compose another or are "subsumed" by it
+     * 
+     * @param urn
+     * @param envelope
+     * @return
+     */
+    public Collection<IShape> getShapesAtLowerLevel(Urn urn, IEnvelope envelope) {
+        IShape largest = getLargestInScale(urn, envelope);
+        if (largest == null) {
+            return new ArrayList<>();
+        }
+        /*
+         * FIXME must clamp level to the existing ones
+         */
+        return getShapesAtLevel(urn, envelope, largest.getMetadata().get(IMetadata.IM_MIN_SPATIAL_SCALE, Integer.class) + 1);
+    }
+
+    /**
+     * Get shapes in envelope at specified level, simplified as needed for the passed resolution
+     * 
+     * @param urn
+     * @param envelope
+     * @param level
+     * @return
+     */
+    public Collection<IShape> getShapesAtLevel(Urn urn, IEnvelope envelope, int level) {
+        List<IShape> ret = new ArrayList<>();
+        return ret;
+    }
+    
+    /**
+     * Get the full shape 
+     * @param tableName
+     * @param featureId
+     * @return
+     */
+    public IShape getShape(String tableName, long featureId) {
+        return null;
+    }
+
+    /**
      * Return the simplified shape that best fills the passed envelope using the previously built
      * indices. The shape will contain the metadata fields FEATURE_ID and COLLECTION_ID for
      * successive retrieval of the full polygon.
@@ -409,11 +450,11 @@ public class Postgis {
             while(rs.next()) {
                 tables.add(rs.getString(1));
             }
-            
+
             for (String t : tables) {
                 st.execute("DROP TABLE IF EXISTS \"" + t + "\";");
             }
-            
+
             for (String tablename : new String[]{ /* table_boundaries, */ table_simplified}) {
                 st.execute("DROP TABLE IF EXIST \"" + tablename + ";");
                 st.execute("COMMIT;");
@@ -600,7 +641,7 @@ public class Postgis {
             DataStore dataStore = DataStoreFinder.getDataStore(map);
             if (dataStore instanceof ShapefileDataStore) {
                 // TODO use encoding from resource, init at UTF-8 unless available in original file
-                ((ShapefileDataStore)dataStore).setCharset(Charset.forName("UTF-8"));
+                ((ShapefileDataStore) dataStore).setCharset(Charset.forName("UTF-8"));
             }
             String typeName = dataStore.getTypeNames()[0];
             SimpleFeatureSource featureSource = dataStore.getFeatureSource(typeName);
