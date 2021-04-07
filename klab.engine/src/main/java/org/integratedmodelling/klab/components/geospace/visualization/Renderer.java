@@ -429,11 +429,15 @@ public enum Renderer {
 				 * leave it to the interpolator.
 				 */
 				Range range = Range.create(summary.getRange()).stretchForMidpoint(midpoint);
-				for (int i = 0; i < colors.length; i++) {
-					values[i] = colors.length == 3 && i == 1 ? midpoint
-							: (i == 0 ? range.getLowerBound() : range.getUpperBound());
-					labels[i] = "" + values[i];
-				}
+                double lowerBound = range.getLowerBound();
+                double upperBound = range.getUpperBound();
+                if (midpoint <= lowerBound || midpoint >= upperBound) {
+                    midpoint = lowerBound + (upperBound - lowerBound) / 2.0;
+                }
+                for( int i = 0; i < colors.length; i++ ) {
+                    values[i] = colors.length == 3 && i == 1 ? midpoint : (i == 0 ? lowerBound : upperBound);
+                    labels[i] = "" + values[i];
+                }
 
 			}
 		} else if (state.getDataKey() != null && colors != null && (values == null || labels == null)) {
