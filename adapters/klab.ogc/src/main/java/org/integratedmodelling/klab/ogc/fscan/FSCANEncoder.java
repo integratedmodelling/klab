@@ -15,12 +15,16 @@ import org.integratedmodelling.klab.api.data.adapters.IResourceEncoder;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.data.resources.Resource;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.ogc.FSCANAdapter;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Path;
@@ -55,7 +59,7 @@ public class FSCANEncoder implements IResourceEncoder {
          * no parameters -> get the largest shape that fits the bounding box at scale level in its
          * pre-simplified form (or use #simplify=false).
          *
-         * #id=nnnn,collection=abcd[,simplify=false] -> get the specific shape, simplified to fit
+         * #id=table.fid[,simplify=false] -> get the specific shape, simplified to fit
          * the incoming resolution (or not if false)
          * 
          * #within[,id=nnnn,collection=abcd,simplify=false] -> find the largest shape in bounding
@@ -80,6 +84,27 @@ public class FSCANEncoder implements IResourceEncoder {
 
         if (id != null) {
 
+            String[] tid = urnParameters.get("id").split("\\.");
+            if (tid.length != 2) {
+                throw new KlabValidationException("wrong ID format in FSCAN URN: must be table.featureId");
+            }
+            
+            IShape shape = FSCANAdapter.getPostgis().getShape(tid[0], Long.parseLong(tid[1]));
+            if (shape != null) {
+
+                if (scale.getSpace() instanceof Space && ((Space)scale.getSpace()).getGrid() != null) {
+                    IGrid grid = ((Space)scale.getSpace()).getGrid();
+                    shape = ((Shape)shape).getSimplified(grid.getCellWidth());
+                }
+                                
+                Builder bb = builder.startObject(context.getTargetName() == null ? "result" : context.getTargetName(),
+                        shape.getMetadata().get(IMetadata.DC_NAME, String.class), Scale.create(shape));
+                for (String key : shape.getMetadata().keySet()) {
+                    bb.withMetadata(key, shape.getMetadata().get(key));
+                }
+                bb.finishObject();
+            }
+            
         } else if (within != null) {
 
         } else if (level >= 0) {

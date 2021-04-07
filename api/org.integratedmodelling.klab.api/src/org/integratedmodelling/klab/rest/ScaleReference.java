@@ -1,5 +1,8 @@
 package org.integratedmodelling.klab.rest;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 
 /**
@@ -59,6 +62,7 @@ public class ScaleReference {
      * for finalization before creating a definitive context, to adapt to the desired resolution.
      */
     transient private String featureUrn;
+    transient private Map<String, String> metadata = new HashMap<>();
 
     // FIXME REMOVE
     private String resolutionDescription;
@@ -268,6 +272,14 @@ public class ScaleReference {
 
     public void setFeatureUrn(String featureUrn) {
         this.featureUrn = featureUrn;
+    }
+
+    public Map<String, String> getMetadata() {
+        return metadata;
+    }
+
+    public void setMetadata(Map<String, String> metadata) {
+        this.metadata = metadata;
     }
 
 }

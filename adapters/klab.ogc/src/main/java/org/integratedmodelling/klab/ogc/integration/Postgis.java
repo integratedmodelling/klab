@@ -302,7 +302,7 @@ public class Postgis {
         List<IShape> ret = new ArrayList<>();
         return ret;
     }
-    
+
     /**
      * Get the full shape 
      * @param tableName
@@ -310,6 +310,29 @@ public class Postgis {
      * @return
      */
     public IShape getShape(String tableName, long featureId) {
+        
+        try (Connection con = DriverManager.getConnection(this.pgurl,
+                Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+                Configuration.INSTANCE.getServiceProperty("postgres", "password")); Statement st = con.createStatement()) {
+
+            // add the data and compute names. We don't need the name in the main table.
+            con.setAutoCommit(false);
+            st.setFetchSize(50);
+            ResultSet rs = st.executeQuery("SELECT fid, the_geom FROM \"" + tableName + "\" WHERE fid = " + featureId + ";");
+            
+            if (rs.next()) {
+
+                WKBReader wkb = new WKBReader();
+
+                PGobject thegeom = (PGobject) rs.getObject(2);
+                Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
+                return Shape.create(geometry, Projection.getLatLon());
+            }
+            
+        } catch (Throwable t) {
+            Logging.INSTANCE.error(t);
+        }
+        
         return null;
     }
 
@@ -368,7 +391,7 @@ public class Postgis {
                     Shape shape = Shape.create(geometry, Projection.getLatLon());
                     shape.getMetadata().put(FSCANEncoder.FEATURE_ID, gid);
                     shape.getMetadata().put(FSCANEncoder.COLLECTION_ID, sourceTable);
-                    shape.getMetadata().put(IMetadata.IM_FEATURE_URN, urn + "#" + sourceTable + "." + gid);
+                    shape.getMetadata().put(IMetadata.IM_FEATURE_URN, urn + "#id=" + sourceTable + "." + gid);
                     shape.getMetadata().put(IMetadata.DC_NAME, shapeName);
                     shape.getMetadata().put(IMetadata.IM_MIN_SPATIAL_SCALE, level);
                     return shape;

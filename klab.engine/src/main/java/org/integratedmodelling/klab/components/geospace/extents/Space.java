@@ -96,7 +96,8 @@ public class Space extends Extent implements ISpace {
         String shapeSpec = dimension.getParameters().get(Geometry.PARAMETER_SPACE_SHAPE, String.class);
         long[] dims = dimension.shape();
         boolean generic = false;
-
+        boolean simplified = Boolean.parseBoolean(dimension.getParameters().get("simplified", "false"));
+        
         Projection projection = null;
         Shape shape = null;
 
@@ -120,7 +121,9 @@ public class Space extends Extent implements ISpace {
 
         if (shape != null) {
 
-            if (resolution != null) {
+            shape.setSimplified(simplified);
+            
+            if (resolution != null && !simplified) {
                 shape = shape.getSimplified(resolution);
             }
 
@@ -258,7 +261,7 @@ public class Space extends Extent implements ISpace {
 
     private Space(Shape shape, Grid grid) {
 
-        if (grid.getXCells() * grid.getYCells() > 1000) {
+        if (!shape.isSimplified() && grid.getXCells() * grid.getYCells() > 1000) {
             shape = shape.getSimplified(Math.max(grid.getCellHeight(), grid.getCellWidth()));
         }
         this.projection = shape.getProjection();

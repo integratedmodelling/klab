@@ -340,15 +340,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
             return null;
         }
         
-        ScaleReference scale = this.scaleOfInterest;
-        if (this.scaleOfInterest.getFeatureUrn() != null) {
-            /*
-             * TODO go back to the geocoder for the shape at the final resolution
-             */
-            scale = Geocoder.INSTANCE.finalizeShape(scale);
-        }
-        
-        return Geometry.create(scale);
+        return Geometry.create(Geocoder.INSTANCE.finalizeShape(this.scaleOfInterest, session.getMonitor()));
     }
 
     @Override

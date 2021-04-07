@@ -42,6 +42,12 @@ public interface IKimLookupTable extends IKimStatement {
     IKimTable getTable();
 
     /**
+     * If true, the table is a two-way table with classifiers for both rows and columns, and the
+     * match must be done differently.
+     */
+    boolean isTwoWay();
+
+    /**
      * Return the numeric index of the result column in the table, or -1 if none was specified
      * (which should not happen).
      * 

@@ -39,7 +39,6 @@ public class LookupTable implements ILookupTable {
 		public IConcept getConcept() {
 			return concept;
 		}
-
 	}
 
 	Table<IClassifier> table;
@@ -49,6 +48,7 @@ public class LookupTable implements ILookupTable {
 
 	Map<IConcept, Integer> key;
 	Map<String, Object> cache = new HashMap<>();
+    private boolean twoWay;
 
 	class RowProxy {
 		int row;
@@ -61,6 +61,8 @@ public class LookupTable implements ILookupTable {
 	public LookupTable(IKimLookupTable lookupTable) {
 
 		this.table = Table.create(lookupTable.getTable());
+		this.twoWay = lookupTable.isTwoWay();
+		
 		for (IKimLookupTable.Argument a : lookupTable.getArguments()) {
 			ArgImpl aa = new ArgImpl();
 			if (a.id != null) {
@@ -236,4 +238,9 @@ public class LookupTable implements ILookupTable {
 			this.key.put((IConcept) value, this.key.size());
 		}
 	}
+
+    public boolean isTwoWay() {
+        return twoWay;
+    }
+
 }
