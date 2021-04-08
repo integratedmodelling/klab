@@ -94,6 +94,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityResolutionRequest;
+import org.integratedmodelling.klab.rest.ConsoleNotification;
 import org.integratedmodelling.klab.rest.ContextualizationRequest;
 import org.integratedmodelling.klab.rest.DataflowDetail;
 import org.integratedmodelling.klab.rest.DataflowState;
@@ -842,6 +843,29 @@ public class Session extends GroovyObjectSupport implements ISession, IActorIden
 		}
 	}
 
+	@MessageHandler
+	private void handleConsoleRequest(final ConsoleNotification message, final IMessage.Type messageType) {
+	    switch(messageType) {
+        case CommandRequest:
+            ConsoleNotification response = new ConsoleNotification();
+            response.setCommandId(message.getCommandId());
+            response.setConsoleId(message.getConsoleId());
+            response.setConsoleType(message.getConsoleType());
+            response.setPayload("OK! " + message.getPayload());
+            this.monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.CommandResponse, response);
+            break;
+        case ConsoleClosed:
+            System.out.println("OPEN " + message.getConsoleType() + " " + message.getConsoleId());
+            break;
+        case ConsoleCreated:
+            System.out.println("CLOSE " + message.getConsoleType() + " " + message.getConsoleId());
+            break;
+        default:
+            break;
+	    
+	    }
+	}
+	
 	private IRuntimeScope findContext(String contextId) {
 		for (IRuntimeScope ctx : observationContexts) {
 			if (ctx.getRootSubject().getId().equals(contextId)) {
