@@ -16,19 +16,21 @@ package org.integratedmodelling.klab.utils;
 import java.io.File;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 
+import com.fasterxml.jackson.core.JsonGenerator;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.SerializerProvider;
+import com.fasterxml.jackson.databind.ser.std.StdSerializer;
 
 /**
  * Obvious JSON utilities.
@@ -38,8 +40,32 @@ import com.fasterxml.jackson.databind.SerializationFeature;
  */
 public class JsonUtils {
 
-    static ObjectMapper defaultMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
-            .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS);
+    static ObjectMapper defaultMapper;
+
+    static {
+        defaultMapper = new ObjectMapper().enable(DeserializationFeature.ACCEPT_SINGLE_VALUE_AS_ARRAY)
+                .disable(SerializationFeature.FAIL_ON_EMPTY_BEANS).enable(SerializationFeature.WRITE_NULL_MAP_VALUES);
+        defaultMapper.getSerializerProvider().setNullKeySerializer(new NullKeySerializer());
+    }
+
+    static class NullKeySerializer extends StdSerializer<Object> {
+
+        private static final long serialVersionUID = 7120301608140961908L;
+
+        public NullKeySerializer() {
+            this(null);
+        }
+
+        public NullKeySerializer(Class<Object> t) {
+            super(t);
+        }
+
+        @Override
+        public void serialize(Object nullKey, JsonGenerator jsonGenerator, SerializerProvider unused)
+                throws IOException, JsonProcessingException {
+            jsonGenerator.writeFieldName("");
+        }
+    }
 
     /**
      * Default conversion for a map object.
