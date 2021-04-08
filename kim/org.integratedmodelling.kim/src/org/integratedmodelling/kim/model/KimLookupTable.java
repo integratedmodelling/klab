@@ -74,12 +74,6 @@ public class KimLookupTable extends KimStatement implements IKimLookupTable {
                     }
                 }
             }
-        } else {
-            
-            for (IKimClassifier classifier : table.getColumnClassifiers()) {
-                System.out.println("ZIO " + classifier);
-            }
-
         }
     }
 
@@ -110,6 +104,16 @@ public class KimLookupTable extends KimStatement implements IKimLookupTable {
     @Override
     public boolean isTwoWay() {
         return twoWay;
+    }
+
+    @Override
+    public List<IKimClassifier> getRowClassifiers() {
+        return table.getRowClassifiers();
+    }
+
+    @Override
+    public List<IKimClassifier> getColumnClassifiers() {
+        return table.getColumnClassifiers();
     }
 
 }

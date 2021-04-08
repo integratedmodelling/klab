@@ -43,13 +43,29 @@ public interface IKimLookupTable extends IKimStatement {
 
     /**
      * If true, the table is a two-way table with classifiers for both rows and columns, and the
-     * match must be done differently.
+     * match must be done by matching them instead of the contents of the table.
      */
     boolean isTwoWay();
 
     /**
+     * If {@link #isTwoWay()} returns true, this will return the classifiers to match the rows.
+     * Its return value is undefined (likely null) if the table is not 2-way.
+     * 
+     * @return
+     */
+    List<IKimClassifier> getRowClassifiers();
+
+    /**
+     * If {@link #isTwoWay()} returns true, this will return the classifiers to match the columns.
+     * Its return value is undefined (likely null) if the table is not 2-way.
+     * 
+     * @return
+     */
+    List<IKimClassifier> getColumnClassifiers();
+
+    /**
      * Return the numeric index of the result column in the table, or -1 if none was specified
-     * (which should not happen).
+     * (which should not happen unless the table is 2-way).
      * 
      * @return
      */

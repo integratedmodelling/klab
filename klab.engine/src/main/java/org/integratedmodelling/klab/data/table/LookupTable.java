@@ -9,6 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
 
+import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimLookupTable;
@@ -21,6 +22,7 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.utils.Pair;
 
 public class LookupTable implements ILookupTable {
@@ -49,6 +51,9 @@ public class LookupTable implements ILookupTable {
 	Map<IConcept, Integer> key;
 	Map<String, Object> cache = new HashMap<>();
     private boolean twoWay;
+    List<IClassifier> columnClassifiers = new ArrayList<>();
+    List<IClassifier> rowClassifiers = new ArrayList<>();
+    
 
 	class RowProxy {
 		int row;
@@ -80,6 +85,15 @@ public class LookupTable implements ILookupTable {
 			for (int i = 0; i < table.getRowCount(); i++) {
 				this.key.put((IConcept) table.getRow(i)[searchIndex].asValue(null), i);
 			}
+		}
+		
+		if (this.twoWay) {
+		    for (IKimClassifier classifier : lookupTable.getColumnClassifiers()) {
+		        columnClassifiers.add(new Classifier(classifier));
+		    }
+            for (IKimClassifier classifier : lookupTable.getRowClassifiers()) {
+                rowClassifiers.add(new Classifier(classifier));
+            }
 		}
 
 	}
@@ -145,6 +159,18 @@ public class LookupTable implements ILookupTable {
 	@Override
 	public Object lookup(IParameters<String> parameters, IContextualizationScope context) {
 
+	    if (this.twoWay) {
+
+	        /*
+	         * match the parameters to row and column, fail if match is not possible
+	         */
+	        
+	        /*
+	         * return the value @x,y
+	         */
+	        return null;
+	    }
+	    
 		StringBuffer s = new StringBuffer(1024);
 		Object[] values = new Object[variables.size()];
 

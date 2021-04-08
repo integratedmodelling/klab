@@ -218,9 +218,8 @@ public class RuntimeBehavior {
 
             if (!arguments.getUnnamedKeys().isEmpty()) {
                 fire(Status.WAITING, false, scope.semaphore, scope.getSymbols(identity));
-                identity.getParentIdentity(Session.class).getState().submit(
-                        getUrnValue(arguments.get(arguments.getUnnamedKeys().get(0)), scope),
-                        (task, observation) -> {
+                identity.getParentIdentity(Session.class).getState()
+                        .submit(getUrnValue(arguments.get(arguments.getUnnamedKeys().get(0)), scope), (task, observation) -> {
                             if (observation == null) {
                                 fire(Status.STARTED, false, scope.semaphore, scope.getSymbols(identity));
                             } else {
@@ -234,7 +233,7 @@ public class RuntimeBehavior {
 
         private String getUrnValue(Object object, KlabActor.Scope scope) {
             if (object instanceof KActorsValue) {
-                object = ((KActorsValue)object).evaluate(scope, identity, true);
+                object = ((KActorsValue) object).evaluate(scope, identity, true);
             }
             if (object instanceof IConcept) {
                 return ((IConcept) object).getDefinition();
@@ -271,7 +270,7 @@ public class RuntimeBehavior {
             Set<IConcept> observables = new HashSet<>();
 
             for (Object arg : arguments.getUnnamedArguments()) {
-                Object value = arg instanceof KActorsValue ? ((KActorsValue)arg).evaluate(scope, identity, true) : arg;
+                Object value = arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg;
                 if (value instanceof IObservable) {
                     IConcept c = ((IObservable) value).getType();
                     if (c.is(IKimConcept.Type.ROLE)) {
