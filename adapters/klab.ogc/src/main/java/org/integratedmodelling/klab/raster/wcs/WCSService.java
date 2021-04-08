@@ -132,6 +132,10 @@ public class WCSService {
                         // so it's highly likely that this is a Geotools bug
                         Object fock = ((Map<?, ?>) quantity.get("nilValues")).get(null);
                         if (fock == null) {
+                            // this is the bull that we have to put in the cache in its place
+                            fock = ((Map<?, ?>) quantity.get("nilValues")).get("");
+                        }
+                        if (fock /* still */ == null) {
                             Logging.INSTANCE.warn("WCS: null key in nilValues is not null anymore: revise Geotools API versions");
                         } else {
                             this.nodata.add(Double.parseDouble(fock.toString()));
