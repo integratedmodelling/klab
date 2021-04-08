@@ -1,17 +1,15 @@
 package org.integratedmodelling.klab.rest;
 
-public class ConsoleNotification {
+import org.integratedmodelling.klab.api.cli.IConsole;
 
-    public static enum ConsoleType {
-        Console, Debugger
-    }
+public class ConsoleNotification {
 
     public static enum NotificationType {
         NewConsole, UserCommand,
     }
 
     private String consoleId;
-    private ConsoleType consoleType;
+    private IConsole.Type consoleType;
     private NotificationType notificationType;
     private String payload;
     private String commandId;
@@ -22,10 +20,10 @@ public class ConsoleNotification {
     public void setConsoleId(String consoleId) {
         this.consoleId = consoleId;
     }
-    public ConsoleType getConsoleType() {
+    public IConsole.Type getConsoleType() {
         return consoleType;
     }
-    public void setConsoleType(ConsoleType consoleType) {
+    public void setConsoleType(IConsole.Type consoleType) {
         this.consoleType = consoleType;
     }
     public NotificationType getNotificationType() {
