@@ -99,7 +99,7 @@ public class EngineInstance extends Instance {
 		if (ret != null) {
 			ret.addArgument("-network");
 		}
-		System.err.println(ret);
+		
 		return ret;
 		
 	}
