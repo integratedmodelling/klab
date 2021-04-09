@@ -79,7 +79,7 @@ public class EngineInstance extends Instance {
 			ret.addArgument("-Xbootclasspath/p:lib/jsr166.jar");
 			ret.addArgument("-Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=" + debugPort);
 		}
-
+		ret.addArgument("-Dfile.encoding=UTF-8");
 		ret.addArgument("-Dserver-port=" + instancePort);
 
 		String classpath = getClassPath(build);
@@ -99,8 +99,9 @@ public class EngineInstance extends Instance {
 		if (ret != null) {
 			ret.addArgument("-network");
 		}
-
+		System.err.println(ret);
 		return ret;
+		
 	}
 
 	private String getClassPath(int build) {
