@@ -9,7 +9,6 @@ import java.util.function.Consumer;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.data.storage.RescalingState;
 import org.integratedmodelling.klab.utils.Triple;
@@ -78,7 +77,7 @@ public enum Debug {
 		}
 	}
 
-	public void newDebugger(ISession session) {
-		Debugger.create(session, debuggers);
-	}
+//	public void newDebugger(ISession session) {
+//		Debugger.create(session, debuggers);
+//	}
 }

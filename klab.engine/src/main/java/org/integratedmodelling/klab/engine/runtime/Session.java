@@ -1280,7 +1280,7 @@ public class Session extends GroovyObjectSupport implements ISession, IActorIden
 
 		switch (message.getRequest()) {
 		case "debugger":
-			Debug.INSTANCE.newDebugger(this);
+//			Debug.INSTANCE.newDebugger(this);
 			break;
 		}
 
