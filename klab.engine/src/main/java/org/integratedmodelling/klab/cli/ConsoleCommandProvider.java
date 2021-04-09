@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -72,20 +73,6 @@ public enum ConsoleCommandProvider {
         }
     }
 
-    private Map<String, Prototype> getPackage(String namespace) {
-        Map<String, Prototype> ret = packages.get(namespace);
-        if (ret == null) {
-            /*
-             * see if we have the command in the main package
-             */
-            ret = packages.get("main");
-            if (ret != null && !ret.containsKey(namespace)) {
-                ret = null;
-            }
-        }
-        return ret;
-    }
-
     public Command processCommand(String input, String currentPackage) {
 
         input = input.trim();
@@ -123,8 +110,7 @@ public enum ConsoleCommandProvider {
         return null;
 
     }
-    
-    
+
     public Command parseCommandLine(String line, String pack) throws KlabValidationException {
 
         String[] a = line.split("\\s");
@@ -134,22 +120,26 @@ public enum ConsoleCommandProvider {
             return null;
         }
 
+        int startFrom = 1;
         
         IPrototype prototype = null;
-        if (packages.containsKey(pack) && a.length > 1) {
+        if (pack != null && packages.containsKey(pack)) {
             prototype = packages.get(pack).get(a[0]);
+        } else if (pack == null && packages.containsKey(a[0]) && a.length > 1) {
+            prototype = packages.get(a[0]).get(a[1]);
+            startFrom = 2;
         } else if (packages.containsKey("main") && packages.get("main").containsKey(a[0])) {
             prototype = packages.get("main").get(a[0]);
         }
-        
+
         if (prototype == null) {
             return null;
         }
 
         call = KimServiceCall.create(prototype.getName());
 
-        String[] args = new String[a.length - 1];
-        System.arraycopy(a, 1, args, 0, a.length - 1);
+        String[] args = new String[a.length - startFrom];
+        System.arraycopy(a, startFrom, args, 0, a.length - startFrom);
 
         OptionParser parser = getOptionParser(prototype);
 
@@ -185,7 +175,7 @@ public enum ConsoleCommandProvider {
                 } catch (Throwable e) {
                     return null;
                 }
-                
+
                 if (command != null) {
                     Command ret = new Command();
                     ret.call = call;
@@ -215,4 +205,31 @@ public enum ConsoleCommandProvider {
         }
         return parser;
     }
+
+    public List<IPrototype> getPrototypes(String pack) {
+
+        List<IPrototype> ret = new ArrayList<>();
+
+        if (packages.containsKey(pack)) {
+            ret.addAll(packages.get(pack).values());
+        }
+
+        ret.sort(new Comparator<IPrototype>(){
+            @Override
+            public int compare(IPrototype o1, IPrototype o2) {
+                return o1.getName().compareTo(o2.getName());
+            }
+        });
+
+        return ret;
+    }
+
+    public List<String> getPackages() {
+        List<String> ret = new ArrayList<>(packages.keySet());
+        ret.remove("main");
+        Collections.sort(ret);
+        ret.add(0, "main");
+        return ret;
+    }
+
 }
