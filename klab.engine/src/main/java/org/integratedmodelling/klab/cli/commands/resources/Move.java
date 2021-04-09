@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 public class Move implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		List<String> projectNames = new ArrayList<>();
 		List<String> urns = new ArrayList<>();

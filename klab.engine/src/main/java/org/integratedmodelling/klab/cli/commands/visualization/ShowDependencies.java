@@ -8,7 +8,7 @@ import org.integratedmodelling.klab.utils.graph.Graphs;
 public class ShowDependencies implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 		Graphs.showDependencies();
 		return null;
 	}

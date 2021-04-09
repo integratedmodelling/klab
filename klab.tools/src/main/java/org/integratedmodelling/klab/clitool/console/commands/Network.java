@@ -13,7 +13,7 @@ import org.integratedmodelling.klab.utils.BrowserUtils;
 public class Network implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		if (((List<?>) call.getParameters().get("arguments")).size() > 0) {
 			String arg = ((List<?>) call.getParameters().get("arguments")).get(0).toString();

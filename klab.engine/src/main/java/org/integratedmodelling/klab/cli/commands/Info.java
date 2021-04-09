@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 public class Info implements ICommand {
 
     @Override
-    public Object execute(IServiceCall call, ISession session) throws Exception {
+    public Object execute(IServiceCall call, ISession session) {
 
         if (((List<?>) call.getParameters().get("arguments")).size() > 0) {
             String arg = ((List<?>) call.getParameters().get("arguments")).get(0).toString();

@@ -17,7 +17,7 @@ import org.integratedmodelling.klab.utils.Parameters;
 public class Import implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		String adapter = call.getParameters().get("adapter", String.class);
 		String projectId = call.getParameters().get("project", String.class);

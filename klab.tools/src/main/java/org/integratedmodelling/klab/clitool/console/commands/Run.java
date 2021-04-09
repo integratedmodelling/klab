@@ -1,14 +1,17 @@
 package org.integratedmodelling.klab.clitool.console.commands;
 
 import java.io.File;
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.reflections.Reflections;
@@ -17,7 +20,7 @@ import org.reflections.scanners.ResourcesScanner;
 public class Run implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		List<?> arguments = call.getParameters().get("arguments", List.class);
 		String visProp = System.getProperty("visualize");
@@ -51,8 +54,12 @@ public class Run implements ICommand {
 					}
 
 					String uname = MiscUtilities.getURLBaseName(url.toString());
-					ret += (ret.isEmpty() ? "" : "\n") + "[S " + session.getId() + "] " + uname + " -> "
-							+ session.run(url).get();
+					try {
+                        ret += (ret.isEmpty() ? "" : "\n") + "[S " + session.getId() + "] " + uname + " -> "
+                        		+ session.run(url).get();
+                    } catch (Exception e) {
+                        throw new KlabException(e);
+                    }
 
 					if (call.getParameters().get("visualize", false)) {
 						System.clearProperty("waitForKey");
@@ -72,11 +79,19 @@ public class Run implements ICommand {
 
 			URL url = null;
 			if (resource.toString().contains("://")) {
-				url = new URL(resource.toString());
+				try {
+                    url = new URL(resource.toString());
+                } catch (MalformedURLException e) {
+                    throw new KlabException(e);
+                }
 			} else {
 				File file = Klab.INSTANCE.resolveFile(resource.toString());
 				if (file != null) {
-					url = file.toURI().toURL();
+					try {
+                        url = file.toURI().toURL();
+                    } catch (MalformedURLException e) {
+                        throw new KlabException(e);
+                    }
 				} else {
 					throw new KlabIOException("file " + resource + " was not found");
 				}
@@ -90,7 +105,11 @@ public class Run implements ICommand {
 				}
 
 				String uname = MiscUtilities.getURLBaseName(url.toString());
-				ret += "[S " + session.getId() + "] " + uname + " -> " + session.run(url).get();
+				try {
+                    ret += "[S " + session.getId() + "] " + uname + " -> " + session.run(url).get();
+                } catch (Exception e) {
+                    throw new KlabException(e);
+                }
 
 				if (call.getParameters().get("visualize", false)) {
 					System.clearProperty("waitForKey");

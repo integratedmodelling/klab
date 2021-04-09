@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.utils.FileUtils;
 public class Log implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		String ret = "";
 		String nodeId = call.getParameters().containsKey("node") ? call.getParameters().get("node").toString() : null;

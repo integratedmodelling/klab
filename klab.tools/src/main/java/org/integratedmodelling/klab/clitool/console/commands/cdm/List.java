@@ -13,7 +13,7 @@ import ucar.nc2.dataset.NetcdfDataset;
 public class List implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		boolean verbose = call.getParameters().get("verbose", false);
 		String ret = "";

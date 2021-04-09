@@ -18,7 +18,7 @@ import org.integratedmodelling.klab.utils.JsonUtils;
 public class Info implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		String ret = "";
 		String nodeId = (String) call.getParameters().get("node");

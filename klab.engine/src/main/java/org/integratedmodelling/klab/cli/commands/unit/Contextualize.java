@@ -24,7 +24,7 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 public class Contextualize implements ICommand {
 
     @Override
-    public Object execute(IServiceCall call, ISession session) throws Exception {
+    public Object execute(IServiceCall call, ISession session) {
 
         String ret = "";
 

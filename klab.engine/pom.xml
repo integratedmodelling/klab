@@ -469,6 +469,12 @@
 			<version>${klab.version}</version>
 		</dependency>
 
+		<dependency>
+			<groupId>net.sf.jopt-simple</groupId>
+			<artifactId>jopt-simple </artifactId>
+			<version>4.6</version>
+		</dependency>
+
 		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext -->
 		<dependency>
 			<groupId>org.eclipse.xtext</groupId>

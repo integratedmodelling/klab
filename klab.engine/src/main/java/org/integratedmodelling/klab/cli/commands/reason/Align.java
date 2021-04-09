@@ -1,5 +1,4 @@
-package org.integratedmodelling.klab.cli.commands.reason;
-//package org.integratedmodelling.klab.clitool.console.commands.reason;
+//package org.integratedmodelling.klab.cli.commands.reason;
 //
 //import java.io.StringWriter;
 //import java.util.HashSet;

@@ -1,0 +1,29 @@
+/**
+ * This file defines the contract for all commands recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace doc
+
+void 'list'
+	"Print documentation views in source form."
+{
+	optional boolean json
+		"Output JSON instead of structured text format"
+		default false
+		
+	optional boolean verbose
+		"Output entire paragraphs instead of abbreviated synopses"
+		default false
+		
+	optional text format
+		"Format for body text. Either markdown or html for now."
+		default "markdown" 
+		
+	class org.integratedmodelling.klab.cli.commands.doc.List
+}
+
+
+

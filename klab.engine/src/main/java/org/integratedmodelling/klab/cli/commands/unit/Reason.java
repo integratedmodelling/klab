@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.utils.StringUtils;
 public class Reason implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		String declaration = StringUtils.join((List<?>) call.getParameters().get("arguments"), ' ').trim();
 		IObservable observable = Observables.INSTANCE.declare(declaration);

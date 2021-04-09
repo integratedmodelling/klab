@@ -12,6 +12,6 @@ public interface ICommand {
    * @return the result of executing the command
    * @throws Exception 
    */
-  public Object execute(IServiceCall call, ISession session) throws Exception;
+  public Object execute(IServiceCall call, ISession session);
 
 }

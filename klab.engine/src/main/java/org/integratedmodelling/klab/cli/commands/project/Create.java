@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 public class Create implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		if (((List<?>) call.getParameters().get("arguments")).size() < 1) {
 			throw new KlabValidationException("project::create requires one or more project names as arguments");

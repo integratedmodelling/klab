@@ -20,47 +20,47 @@ import org.integratedmodelling.klab.utils.MapUtils;
 
 public class Status implements ICommand {
 
-	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+    @Override
+    public Object execute(IServiceCall call, ISession session) {
 
-		String ret = "";
-		String nodeId = call.getParameters().get("node", String.class);
-		List<String> components = new ArrayList<>();
-		if (call.getParameters().get("arguments", java.util.List.class).size() > 0) {
-			for (Object o : call.getParameters().get("arguments", java.util.List.class)) {
-				components.add(o.toString());
-			}
-		}
+        String ret = "";
+        String nodeId = call.getParameters().get("node", String.class);
+        List<String> components = new ArrayList<>();
+        if (call.getParameters().get("arguments", java.util.List.class).size() > 0) {
+            for (Object o : call.getParameters().get("arguments", java.util.List.class)) {
+                components.add(o.toString());
+            }
+        }
 
-		INodeIdentity node = null;
-		if (nodeId != null) {
-			node = Network.INSTANCE.getNode(nodeId);
-		}
+        INodeIdentity node = null;
+        if (nodeId != null) {
+            node = Network.INSTANCE.getNode(nodeId);
+        }
 
-		for (String component : components) {
+        for (String component : components) {
 
-			if (node == null) {
+            if (node == null) {
 
-				Component c = Extensions.INSTANCE.getComponent(component);
-				if (c == null) {
-					throw new KlabResourceNotFoundException("component " + component + " is not installed in engine");
-				}
+                Component c = Extensions.INSTANCE.getComponent(component);
+                if (c == null) {
+                    throw new KlabResourceNotFoundException("component " + component + " is not installed in engine");
+                }
 
-				IMetadata data = c.getStatus();
+                IMetadata data = c.getStatus();
 
-				ret += JsonUtils.printAsJson(((Metadata)data).getData());
+                ret += JsonUtils.printAsJson(((Metadata) data).getData());
 
-			} else {
+            } else {
 
-				Map<?, ?> data = node.getClient().get(API.NODE.ADMIN.COMPONENT_GET_STATUS, Map.class,
-						API.NODE.ADMIN.P_COMPONENT, component);
-				
-				ret += JsonUtils.printAsJson(data);
-				
-			}
-		}
+                Map<?, ?> data = node.getClient().get(API.NODE.ADMIN.COMPONENT_GET_STATUS, Map.class, API.NODE.ADMIN.P_COMPONENT,
+                        component);
 
-		return ret;
-	}
+                ret += JsonUtils.printAsJson(data);
+
+            }
+        }
+
+        return ret;
+    }
 
 }

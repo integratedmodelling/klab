@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 public class Network implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		if (((List<?>) call.getParameters().get("arguments")).size() > 0) {
 			String arg = ((List<?>) call.getParameters().get("arguments")).get(0).toString();
@@ -22,7 +22,7 @@ public class Network implements ICommand {
              * CliRuntime.INSTANCE.getSession().getId()) : null)) {
              * session.getMonitor().error("Please wait until engine is active"); } } else if
              * ("off".equals(arg)) { CliRuntime.INSTANCE.stopNetwork(); } else
-             */ if ("nodes".equals(arg)) {
+             */if ("nodes".equals(arg)) {
 				INetworkSessionIdentity network = session.getParentIdentity(INetworkSessionIdentity.class);
 				String ret = "";
 				if (network != null) {

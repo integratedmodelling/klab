@@ -11,7 +11,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 public class Clear implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		String nodeId = (String)call.getParameters().get("node");
 

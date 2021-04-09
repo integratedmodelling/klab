@@ -12,7 +12,7 @@ import org.integratedmodelling.klab.rest.ExternalAuthenticationCredentials;
 public class Set implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {		
+	public Object execute(IServiceCall call, ISession session) {		
 		
 		List<?> args = (List<?>) call.getParameters().get("arguments");
 		if (args.size() != 3) {

@@ -49,6 +49,7 @@ import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.api.cli.IConsole;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -72,6 +73,8 @@ import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.cli.CommandConsole;
+import org.integratedmodelling.klab.cli.DebuggerConsole;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
@@ -174,6 +177,8 @@ public class Session extends GroovyObjectSupport implements ISession, IActorIden
 	ActorRef<KlabMessage> actor;
 	private SessionState globalState = new SessionState(this);
 	private View view;
+	private Map<String, IConsole> consoles = new HashMap<>();
+	
 
 	// tracks the setting of the actor so we can avoid the ask pattern
 	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
@@ -851,18 +856,29 @@ public class Session extends GroovyObjectSupport implements ISession, IActorIden
             response.setCommandId(message.getCommandId());
             response.setConsoleId(message.getConsoleId());
             response.setConsoleType(message.getConsoleType());
-            response.setPayload("OK! " + message.getPayload());
+            if (consoles.containsKey(message.getConsoleId())) {
+                // set payload to
+                response.setPayload(consoles.get(message.getConsoleId()).executeCommand(message.getPayload()));
+            } else {
+                response.setPayload("ERROR: console ID not recognized");
+            }
             this.monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.CommandResponse, response);
             break;
         case ConsoleClosed:
-            System.out.println("OPEN " + message.getConsoleType() + " " + message.getConsoleId());
+            consoles.remove(message.getConsoleId());
             break;
         case ConsoleCreated:
-            System.out.println("CLOSE " + message.getConsoleType() + " " + message.getConsoleId());
+            switch (message.getConsoleType()) {
+            case Console:
+                consoles.put(message.getConsoleId(), new CommandConsole(this));
+                break;
+            case Debugger:
+                consoles.put(message.getConsoleId(), new DebuggerConsole(this));
+                break;
+            }
             break;
         default:
             break;
-	    
 	    }
 	}
 	

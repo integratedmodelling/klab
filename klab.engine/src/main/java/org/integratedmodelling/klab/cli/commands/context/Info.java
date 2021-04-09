@@ -16,7 +16,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 public class Info implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		String ret = "";
 		ISubject ctx = session.getState().getCurrentContext();

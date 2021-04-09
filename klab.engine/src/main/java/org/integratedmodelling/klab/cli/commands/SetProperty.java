@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 public class SetProperty implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		boolean persist = call.getParameters().get("persist", false);
 		

@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.utils.Utils;
 public class Update implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		int i = 0;
 		IResource resource = null;

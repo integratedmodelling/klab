@@ -25,7 +25,7 @@ import org.integratedmodelling.klab.utils.StringUtil;
 public class List implements ICommand {
 
     @Override
-    public Object execute(IServiceCall call, ISession session) throws Exception {
+    public Object execute(IServiceCall call, ISession session) {
 
         String ret = "";
         Set<View> views = new LinkedHashSet<>();

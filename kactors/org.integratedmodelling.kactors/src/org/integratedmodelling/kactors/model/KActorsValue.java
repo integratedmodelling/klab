@@ -339,8 +339,6 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         IExtensionService service = Services.INSTANCE.getService(IExtensionService.class);
         if (service != null) {
             return service.parse(string);
-        } else {
-            System.out.println("DIO ROTTO");
         }
         
         return string;

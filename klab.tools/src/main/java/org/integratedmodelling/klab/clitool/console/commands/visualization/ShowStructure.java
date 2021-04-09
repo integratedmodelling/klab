@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.utils.graph.Graphs;
 public class ShowStructure implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		IObservation obs = null;
 		if (call.getParameters().get("arguments", List.class).size() == 1) {
