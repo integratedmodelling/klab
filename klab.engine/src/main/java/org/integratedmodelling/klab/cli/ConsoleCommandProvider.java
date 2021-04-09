@@ -56,7 +56,11 @@ public enum ConsoleCommandProvider {
                     }
                     for (IKdlActuator actuator : declaration.getActuators()) {
                         Prototype prototype = new Prototype(actuator, null);
-                        Map<String, Prototype> commands = getPackage(namespace);
+                        Map<String, Prototype> commands = packages.get(namespace);
+                        if (commands == null) {
+                            commands = new HashMap<>();
+                            packages.put(namespace, commands);
+                        }
                         commands.put(prototype.getName(), prototype);
                     }
                 } catch (Throwable e) {
@@ -119,6 +123,8 @@ public enum ConsoleCommandProvider {
         return null;
 
     }
+    
+    
     public Command parseCommandLine(String line, String pack) throws KlabValidationException {
 
         String[] a = line.split("\\s");
