@@ -136,8 +136,8 @@ public enum ConsoleCommandProvider {
 
         
         IPrototype prototype = null;
-        if (packages.containsKey(a[0]) && a.length > 1) {
-            prototype = packages.get(a[0]).get(a[1]);
+        if (packages.containsKey(pack) && a.length > 1) {
+            prototype = packages.get(pack).get(a[0]);
         } else if (packages.containsKey("main") && packages.get("main").containsKey(a[0])) {
             prototype = packages.get("main").get(a[0]);
         }
