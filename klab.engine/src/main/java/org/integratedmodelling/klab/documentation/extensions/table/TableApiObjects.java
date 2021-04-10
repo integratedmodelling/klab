@@ -11,6 +11,8 @@ import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Dimension;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Filter;
 
+import groovy.lang.GroovyObjectSupport;
+
 /**
  * Collection of beans for the table Groovy API, included if mentioned to access
  * columns, classifiers and the like from computed expressions.
@@ -20,7 +22,7 @@ import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler
  */
 public class TableApiObjects {
 
-	public static class TableCell {
+	public static class TableCell extends GroovyObjectSupport {
 
 		private ILocator locator;
 		private Object target;
@@ -40,6 +42,7 @@ public class TableApiObjects {
 		 * @return
 		 */
 		public boolean changed(Object from, Object to, Object locateFrom) {
+		    
 			IConcept cTo = ((TableDimension) to).getConcept();
 			if (!cTo.equals(this.target)) {
 				return false;
@@ -58,6 +61,10 @@ public class TableApiObjects {
 		}
 
 		public Object getProperty(String state) {
+		    switch (state) {
+		    case "target":
+		        return target;
+		    }
 			return null;
 		}
 	}
