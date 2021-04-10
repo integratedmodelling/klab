@@ -1,9 +1,11 @@
 package org.integratedmodelling.klab.cli;
 
 import org.integratedmodelling.klab.api.cli.IConsole;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.engine.debugger.Debugger;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.rest.ConsoleNotification;
 
 /**
  * Engine peer for a command console. Will refactor the CLI methods in klab.tools for generalization and
@@ -17,14 +19,18 @@ public class DebuggerConsole implements IConsole {
     ISession session;
     Debugger debugger;
     StringBuffer buffer = new StringBuffer(1024);
+    private String id;
     
-    public DebuggerConsole(Session session) {
+    public DebuggerConsole(String id, Session session) {
+        
         this.session = session;
+        this.id = id;
         this.debugger = new Debugger(session) {
 
             @Override
             protected void setTitle(String string) {
-                // TODO
+                // TODO specific message
+                println("TITLE: " + string);
             }
 
             @Override
@@ -35,10 +41,15 @@ public class DebuggerConsole implements IConsole {
             @Override
             protected void println(String string) {
                 buffer.append(string);
-                buffer.append("\n");
+                DebuggerConsole.this.println(buffer.toString());
+                buffer.setLength(0);
             }
             
         };
+    }
+    
+    public Debugger getDebugger() {
+        return debugger;
     }
 
     @Override
@@ -46,6 +57,14 @@ public class DebuggerConsole implements IConsole {
         buffer.setLength(0);
         debugger.accept(command);
         return buffer.toString();
+    }
+
+    @Override
+    public void println(String string) {
+        ConsoleNotification response = new ConsoleNotification();
+        response.setConsoleId(this.id);
+        response.setPayload(string);
+        session.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.CommandResponse, response);
     }
     
 }

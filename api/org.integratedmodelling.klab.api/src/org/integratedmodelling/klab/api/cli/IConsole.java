@@ -13,4 +13,6 @@ public interface IConsole {
      * @return
      */
     String executeCommand(String command);
+
+    void println(String string);
 }

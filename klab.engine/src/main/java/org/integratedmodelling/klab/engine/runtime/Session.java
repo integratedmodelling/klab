@@ -865,15 +865,20 @@ public class Session extends GroovyObjectSupport implements ISession, IActorIden
             this.monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.CommandResponse, response);
             break;
         case ConsoleClosed:
-            consoles.remove(message.getConsoleId());
+            IConsole console = consoles.remove(message.getConsoleId());
+            if (console instanceof DebuggerConsole) {
+                Debug.INSTANCE.removeDebugger(message.getConsoleId());
+            }
             break;
         case ConsoleCreated:
             switch (message.getConsoleType()) {
             case Console:
-                consoles.put(message.getConsoleId(), new CommandConsole(this));
+                consoles.put(message.getConsoleId(), new CommandConsole(message.getConsoleId(), this));
                 break;
             case Debugger:
-                consoles.put(message.getConsoleId(), new DebuggerConsole(this));
+                DebuggerConsole db = new DebuggerConsole(message.getConsoleId(), this);
+                consoles.put(message.getConsoleId(), db);
+                Debug.INSTANCE.addDebugger(message.getConsoleId(), db.getDebugger());
                 break;
             }
             break;
