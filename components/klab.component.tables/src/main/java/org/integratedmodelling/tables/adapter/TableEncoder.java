@@ -259,11 +259,17 @@ public class TableEncoder implements IResourceEncoder {
                     column = mapped;
                 }
 
+                /**
+                 * FIXME this duplicates what set at beginning by setFilters - the filter checks for
+                 * duplicates so nothing bad happens, but there should be no duplication in the first
+                 * place.
+                 */
                 if (table.getColumnDescriptor(column.toString()) == null) {
                     throw new KlabIllegalArgumentException("table resource does not include a column named " + column);
                 }
 
-                table = table.filter(Type.INCLUDE_COLUMNS, table.getColumnDescriptor(column.toString()).getIndex());
+                table = table.filter(Type.INCLUDE_COLUMNS,
+                        Collections.singleton(table.getColumnDescriptor(column.toString()).getIndex()));
             }
 
             Map<Filter, Object> valueCache = new HashMap<>();
@@ -277,15 +283,18 @@ public class TableEncoder implements IResourceEncoder {
 
             /**
              * Otherwise, we just scan the space (time has been filtered upstream) and collect the
-             * values corresponding to the remaining filtering in the table.
+             * values corresponding to the remaining filtering in the table. If there is no space we
+             * only do one evaluation.
              */
+            boolean cached = false;
+            Object value = null;
+
             for (ILocator locator : scope.getScale()) {
 
                 if (scope.getMonitor().isInterrupted()) {
                     return;
                 }
 
-                Object value = null;
                 if (!table.isEmpty()) {
 
                     ITable<?> t = table;
@@ -312,6 +321,10 @@ public class TableEncoder implements IResourceEncoder {
                             System.out.println("       aggregated value = " + value);
                             valueCache.put(filter, value);
                         }
+                    } else if (!cached || ignoreSpace) {
+                        value = t.get(Object.class, scope, aggregator);
+                        cached = true;
+                        System.out.println("       aggregated value = " + value);
                     }
                 }
 

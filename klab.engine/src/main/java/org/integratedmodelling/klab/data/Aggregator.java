@@ -136,7 +136,11 @@ public class Aggregator {
 
         if (Observations.INSTANCE.isData(value)) {
 
-            if (value instanceof Number) {
+            if (value instanceof Collection) {
+                for (Object o : ((Collection<?>)value)) {
+                    add(o, observable, locator);
+                }
+            } else if (value instanceof Number) {
                 AggregationData ad = getAggregationData(observable, locator);
                 if (this.aggregation == null) {
                     this.aggregation = ad.aggregation;

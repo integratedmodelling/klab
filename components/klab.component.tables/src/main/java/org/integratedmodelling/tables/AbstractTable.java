@@ -638,8 +638,11 @@ public abstract class AbstractTable<T> implements ITable<T> {
         if (target == Filter.Type.NO_RESULTS) {
             ret.empty = true;
         }
-        ret.filters.add(new FilterDescriptor(target, locators));
-        validateFilters();
+        FilterDescriptor filter = new FilterDescriptor(target, locators);
+        if (!filters.contains(filter)) {
+            ret.filters.add(filter);
+            validateFilters();
+        }
         return ret;
     }
 
