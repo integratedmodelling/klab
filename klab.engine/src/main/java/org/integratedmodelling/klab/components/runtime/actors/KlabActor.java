@@ -1033,7 +1033,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             ret = new Urn(arg.getStatedValue().toString());
             break;
         default:
-            break;
+            ret = arg.getStatedValue();
         }
 
         if (arg.getExpressionType() == ExpressionType.TERNARY_OPERATOR) {

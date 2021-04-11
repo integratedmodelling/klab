@@ -295,6 +295,7 @@ public class ViewBehavior {
 
         @Override
         protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+            this.component.getAttributes().putAll(getMetadata(message.arguments, scope));
             return this.component;
         }
 

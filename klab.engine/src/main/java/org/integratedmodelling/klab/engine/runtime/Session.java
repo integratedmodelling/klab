@@ -1110,8 +1110,9 @@ public class Session extends GroovyObjectSupport implements ISession, IActorIden
 		case RunUnitTest:
 			if (request.isStop()) {
 				stop(request.getBehavior());
-				this.globalState.clear();
+				// TODO should clear the state now, but it comes AFTER initialization of the next application!
 			} else {
+                this.globalState.clear();
 				IBehavior behavior = Actors.INSTANCE.getBehavior(request.getBehavior());
 				if (behavior != null) {
 					this.load(behavior, new SimpleRuntimeScope(this));
