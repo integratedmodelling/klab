@@ -82,10 +82,10 @@ public enum Debug {
     }
 
     public void removeDebugger(String id) {
-        debuggers.remove(id);
+        Debugger debugger = debuggers.remove(id);
+        if (debugger != null) {
+            debugger.close();
+        }
     }
 
-    // public void newDebugger(ISession session) {
-    // Debugger.create(session, debuggers);
-    // }
 }

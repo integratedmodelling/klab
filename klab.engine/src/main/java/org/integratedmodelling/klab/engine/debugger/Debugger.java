@@ -363,9 +363,11 @@ public abstract class Debugger {
         return ret;
     }
 
+    public void close() {
+        session.getState().removeListener(listenerId);
+    }
+    
     private void help() {
-        // TODO Auto-generated method stub
-
     }
 
 }
