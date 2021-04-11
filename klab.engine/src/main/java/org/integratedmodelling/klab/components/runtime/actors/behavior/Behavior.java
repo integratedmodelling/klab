@@ -62,18 +62,18 @@ public class Behavior implements IBehavior {
         /**
          * If true, no match value was given and the values will be set into system variables $ for
          * the entire match, plus $1..$n if multiple values. This is crucial as some matchers will
-         * just imply but not contain the matched value. TODO CHECK this - 
+         * just imply but not contain the matched value. TODO CHECK this -
          * 
          * @return
          */
         public boolean isImplicit() {
-            return value == null || value.getValue() == null || value.getType() == IKActorsValue.Type.OBSERVABLE
+            return value == null || value.getStatedValue() == null || value.getType() == IKActorsValue.Type.OBSERVABLE
                     || value.getType() == IKActorsValue.Type.ANNOTATION;
         }
 
         // Call only if isIdentifier() returns true
         public String getIdentifier() {
-            return this.value.getValue().toString();
+            return this.value.getStatedValue().toString();
         }
 
         /**
@@ -84,14 +84,15 @@ public class Behavior implements IBehavior {
          * @return
          */
         public boolean isIdentifier(Scope scope) {
-            return this.value.getType() == IKActorsValue.Type.IDENTIFIER && !scope.containsKey(this.value.getValue());
+            return this.value.getType() == IKActorsValue.Type.IDENTIFIER
+                    && !scope.getSymbolTable().containsKey(this.value.getStatedValue());
         }
 
         public boolean matches(Object value, Scope scope) {
             switch(this.value.getType()) {
             case ANNOTATION:
                 for (IAnnotation annotation : Annotations.INSTANCE.collectAnnotations(value)) {
-                    if (annotation.getName().equals(this.value.getValue())) {
+                    if (annotation.getName().equals(this.value.getStatedValue())) {
                         scope.symbolTable.put(annotation.getName(), annotation);
                         return true;
                     }
@@ -114,7 +115,7 @@ public class Behavior implements IBehavior {
                 // }
                 return ret;
             case BOOLEAN:
-                return value instanceof Boolean && value.equals(this.value.getValue());
+                return value instanceof Boolean && value.equals(this.value.getStatedValue());
             case CLASS:
                 break;
             case DATE:
@@ -123,8 +124,8 @@ public class Behavior implements IBehavior {
                 System.out.println("ACH AN EXPRESSION");
                 break;
             case IDENTIFIER:
-                if (scope.symbolTable.containsKey(this.value.getValue())) {
-                    return this.value.getValue().equals(scope.symbolTable.get(value));
+                if (scope.symbolTable.containsKey(this.value.getStatedValue())) {
+                    return this.value.getStatedValue().equals(scope.symbolTable.get(value));
                 }
                 if (!notMatch(value)) {
                     // NO - if defined in scope, match to its value, else just return true.
@@ -143,11 +144,11 @@ public class Behavior implements IBehavior {
             case NODATA:
                 return value == null || value instanceof Number && Double.isNaN(((Number) value).doubleValue());
             case NUMBER:
-                return value instanceof Number && value.equals(this.value.getValue());
+                return value instanceof Number && value.equals(this.value.getStatedValue());
             case NUMBERED_PATTERN:
                 break;
             case OBSERVABLE:
-                Object obj = KlabActor.evaluateInScope(this.value, scope, (IActorIdentity<?>) scope.getIdentity());
+                Object obj = this.value.evaluate(scope, scope.getIdentity(), true);
                 if (obj instanceof IObservable) {
                     if (value instanceof IObservation) {
                         return ((IObservation) value).getObservable().resolves((IObservable) obj, null);
@@ -157,11 +158,11 @@ public class Behavior implements IBehavior {
             case QUANTITY:
                 break;
             case RANGE:
-                return value instanceof Number && ((Range) (this.value.getValue())).contains(((Number) value).doubleValue());
+                return value instanceof Number && ((Range) (this.value.getStatedValue())).contains(((Number) value).doubleValue());
             case REGEXP:
                 break;
             case STRING:
-                return value instanceof String && value.equals(this.value.getValue());
+                return value instanceof String && value.equals(this.value.getStatedValue());
             case TABLE:
                 break;
             case TYPE:
@@ -177,8 +178,8 @@ public class Behavior implements IBehavior {
             case TREE:
                 break;
             case CONSTANT:
-                return (value instanceof Enum && ((Enum<?>) value).name().toUpperCase().equals(this.value.getValue()))
-                        || (value instanceof String && ((String) value).equals(this.value.getValue()));
+                return (value instanceof Enum && ((Enum<?>) value).name().toUpperCase().equals(this.value.getStatedValue()))
+                        || (value instanceof String && ((String) value).equals(this.value.getStatedValue()));
             case EMPTY:
                 return value == null || (value instanceof Collection && ((Collection<?>) value).isEmpty())
                         || (value instanceof String && ((String) value).isEmpty())

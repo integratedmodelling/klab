@@ -129,6 +129,11 @@ public interface IMessage {
 		 * response besides collateral effects.
 		 */
 		ExecuteCommand,
+		
+		/*
+		 * Console requests: new console, command received, response received
+		 */
+		ConsoleCreated, ConsoleClosed, CommandRequest, CommandResponse,
 
 		/*
 		 * UserContextChange-class types.

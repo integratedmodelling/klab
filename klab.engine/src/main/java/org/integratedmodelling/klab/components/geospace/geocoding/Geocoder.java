@@ -10,14 +10,23 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Resources;
+import org.integratedmodelling.klab.api.data.IGeometry;
+import org.integratedmodelling.klab.api.data.adapters.IKlabData;
+import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.communication.client.Client;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
+import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SpatialExtent;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.Parameters;
 
@@ -72,8 +81,8 @@ public enum Geocoder {
 	private Geocoder() {
 		services.put(DEFAULT_GEOCODING_STRATEGY, new OSMNamesGeocodingService(0.75));
 		services.put(ADMIN_GEOCODING_STRATEGY,
-				new ResourceGeocodingService("im.geo:gadm:administrative:boundaries", 0.5));
-//		new ResourceGeocodingService("local:ferdinando.villa:scratch:administrative", 0.5));
+//				new ResourceGeocodingService("im.geo:gadm:administrative:boundaries", 0.5));
+		new ResourceGeocodingService("local:ferdinando.villa:scratch:administrative.un.split", 0.5));
 		services.put(WATERSHED_GEOCODING_STRATEGY,
 				new ResourceGeocodingService("local:ferdinando.villa:scratch:watershed", 0.5));
 //		services.put(RANDOM_GEOCODING_STRATEGY, new RandomGeocodingService(0.5));
@@ -538,4 +547,31 @@ public enum Geocoder {
 		}
 		return null;
 	}
+
+    public ScaleReference finalizeShape(ScaleReference scale, IMonitor monitor) {
+
+        if (scale.getFeatureUrn() != null) {
+
+            org.integratedmodelling.klab.common.Geometry g = org.integratedmodelling.klab.common.Geometry.createGrid(scale);
+            
+            IKlabData data = Resources.INSTANCE.getResourceData(scale.getFeatureUrn(), new VisitingDataBuilder(),
+                    Scale.create(g), monitor);
+            
+            if (data.getArtifact() != null) {
+                IGeometry geometry = data.getArtifact().getGeometry();
+                if (geometry != null) {
+                    IShape shape = geometry instanceof IScale ? ((IScale) geometry).getSpace().getShape()
+                            : Scale.create(geometry).getSpace().getShape();
+                    if (shape != null) {
+                        scale.setShape(((Shape) shape).getJTSGeometry().toString());
+                        scale.setFeatureUrn(null);
+                        // don't simplify further
+                        scale.getMetadata().put("simplified", "true");
+                    }
+                }
+            }
+
+        }
+        return scale;
+    }
 }

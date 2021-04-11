@@ -1,6 +1,5 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
-import java.util.List;
 import java.util.concurrent.Future;
 
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
@@ -11,16 +10,11 @@ import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.api.runtime.ISessionState;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
-import org.integratedmodelling.klab.rest.ScaleReference;
-import org.integratedmodelling.klab.rest.SessionActivity;
 import org.integratedmodelling.klab.utils.Pair;
 
 import akka.actor.typed.ActorRef;
@@ -96,9 +90,9 @@ public class ObjectBehavior {
 
 		@Override
 		void run(KlabActor.Scope scope) {
-			IObservable what = Actors.INSTANCE.getArgument(arguments, IObservable.class);
-			String behavior = Actors.INSTANCE.getArgument(arguments, String.class);
-			IKimExpression filter = Actors.INSTANCE.getArgument(arguments, IKimExpression.class);
+			IObservable what = Actors.INSTANCE.getArgument(arguments, scope, identity, IObservable.class);
+			String behavior = Actors.INSTANCE.getArgument(arguments, scope, identity, String.class);
+			IKimExpression filter = Actors.INSTANCE.getArgument(arguments, scope, identity, IKimExpression.class);
 			if (what == null || behavior == null || Actors.INSTANCE.getBehavior(behavior) == null) {
 				// TODO improve message
 				error("error in bind action: behavior or observable not specified or recognized");

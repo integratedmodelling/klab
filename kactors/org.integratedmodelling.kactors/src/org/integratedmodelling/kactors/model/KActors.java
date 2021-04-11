@@ -23,8 +23,10 @@ import org.eclipse.xtext.validation.IResourceValidator;
 import org.eclipse.xtext.validation.Issue;
 import org.integratedmodelling.kactors.KactorsStandaloneSetup;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Scope;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.utils.KActorsResourceSorter;
+import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.errormanagement.ICompileNotification;
 import org.integratedmodelling.klab.common.CompileNotification;
 import org.integratedmodelling.klab.rest.BehaviorReference;
@@ -61,7 +63,7 @@ public enum KActors {
 		 * @param value
 		 * @return
 		 */
-		Object translate(KActorsValue container, Object value);
+		Object translate(KActorsValue container, IIdentity identity, Scope scope);
 	}
 
 	/**
@@ -299,7 +301,7 @@ public enum KActors {
 	 * 
 	 * @param valueTranslator
 	 */
-	public void setValueTranslator(ValueTranslator valueTranslator) {
+    public void setValueTranslator(ValueTranslator valueTranslator) {
 		this.valueTranslator = valueTranslator;
 	}
 

@@ -1,0 +1,131 @@
+/**
+ * This file defines the contract for all core annotations recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.10.0
+@version 0.10.0
+
+/**
+ * Help
+ */
+void help
+	"List all available commands and their options."
+{
+	class org.integratedmodelling.klab.clitool.console.commands.Help
+}
+
+void run
+	"Run scripts from a file or URL. If the first argument is 'demo', the
+     command will run the named demos after it, or list all available demos
+     if no other argument is passed."
+{
+	optional boolean visualize
+		"Visualize outputs using debug tools"
+		default false
+		 
+	class org.integratedmodelling.klab.cli.commands.Run
+}
+
+void cd
+	"Change or display the current work directory"
+{
+	class org.integratedmodelling.klab.cli.commands.Cd
+}
+
+void log
+	"Tail the logfile of this engine or any node. Pass the number of lines, defaults at 100."
+{
+	optional text node
+		"An online node to which we have admin access." 
+
+	class org.integratedmodelling.klab.cli.commands.Log
+}
+
+void who
+	"Return details about the connected user or (if admin) others from either the engine or a
+	 remote node."
+{
+	optional text node
+		"An online node to which we have admin access." 
+
+	class org.integratedmodelling.klab.cli.commands.Who
+}
+
+void version
+	"Print version and build information"
+{
+	class org.integratedmodelling.klab.cli.commands.Info
+}
+
+
+void ls
+	"List the files in the current work directory"
+{
+	optional boolean recursive
+		"Recurse sub-directories"
+		default false
+		 
+	class org.integratedmodelling.klab.cli.commands.Dir
+}
+
+void 'dependencies'
+	"Show the namespace dependency graph"
+{
+	class org.integratedmodelling.klab.clitool.console.commands.visualization.ShowDependencies
+}
+
+void get
+	"List the value of a particular property or all known properties"
+{
+	class org.integratedmodelling.klab.cli.commands.GetProperty
+}
+
+void set
+	"Set the value of a system property in klab.properties, optionally persisting it."
+{
+	optional boolean persist
+		"Persist the property change after making it."
+
+	class org.integratedmodelling.klab.cli.commands.SetProperty
+}
+
+void network
+	"Turn REST network services on and off"
+{
+	
+	optional boolean browser
+		"Start a session viewer on the local browser when the network services have booted"
+		default false
+	
+	class org.integratedmodelling.klab.cli.commands.Network
+}
+
+void debug
+	"Meta-command to access the context debugger. Use 'debug help' for details."
+{
+	class org.integratedmodelling.klab.cli.commands.Debug
+}
+
+/**
+ * Batch run: use CL parameters to enable multiple batch contexts
+ */
+//annotation run for observers
+//	"Mark a context for batch execution, specifying the observations to be made in it."
+//{
+//	optional input name 
+//		"A name for this run. If given, the results will be saved in a subdirectory
+//        of the same name." 
+//		default ""
+//	
+//	optional input description 
+//		"A description for this run, its parameters and intended outputs."
+//		default ""
+//			
+//	optional input observations
+//		"A list of the concepts or objects to observe in the context after it is resolved."
+//		default ()
+//		
+//	class org.integratedmodelling.klab.engine.apps.AppRunner
+//}
+

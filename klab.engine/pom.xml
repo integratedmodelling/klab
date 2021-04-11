@@ -85,11 +85,11 @@
 	</build>
 	<dependencies>
 
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.beryx</groupId>
 			<artifactId>text-io</artifactId>
 			<version>3.4.1</version>
-		</dependency>
+		</dependency> -->
 
  		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils 
  				<dependency>
@@ -467,6 +467,12 @@
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>org.integratedmodelling.klab.api</artifactId>
 			<version>${klab.version}</version>
+		</dependency>
+
+		<dependency>
+			<groupId>net.sf.jopt-simple</groupId>
+			<artifactId>jopt-simple </artifactId>
+			<version>4.6</version>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/org.eclipse.xtext/org.eclipse.xtext -->

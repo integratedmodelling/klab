@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 public class Setup implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session)  {
 
 		String ret = "";
 		String nodeId = call.getParameters().get("node", String.class);

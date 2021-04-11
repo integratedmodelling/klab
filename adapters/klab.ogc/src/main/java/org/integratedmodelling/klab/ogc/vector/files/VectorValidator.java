@@ -26,9 +26,11 @@ import java.util.List;
 import java.util.Map;
 
 import org.eclipse.xtext.util.Arrays;
+import org.geotools.data.DataAccessFactory;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
+import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.text.cql2.CQLException;
@@ -82,7 +84,7 @@ public class VectorValidator implements IResourceValidator {
 		try {
 
 			ret.withParameter("fileUrl", url).withLocalName(MiscUtilities.getFileName(url.getFile()));
-			Map<String, Object> map = new HashMap<>();
+			Map<Object, Object> map = new HashMap<>();
 			map.put("url", url);
 
 			if (userData.contains("filter")) {
@@ -94,6 +96,9 @@ public class VectorValidator implements IResourceValidator {
 				}
 			}
 
+			// TODO check and honor any charset in the resource. This could be the default.
+			map.put(ShapefileDataStoreFactory.DBFCHARSET, "UTF-8");
+			
 			DataStore dataStore = DataStoreFinder.getDataStore(map);
 			String typeName = dataStore.getTypeNames()[0];
 			FeatureSource<SimpleFeatureType, SimpleFeature> source = dataStore.getFeatureSource(typeName);

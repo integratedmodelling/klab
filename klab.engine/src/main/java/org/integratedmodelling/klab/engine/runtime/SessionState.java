@@ -339,7 +339,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
         if (this.scaleOfInterest.getEast() == 0 && this.scaleOfInterest.getWest() == 0) {
             return null;
         }
-        return Geometry.create(this.scaleOfInterest);
+        
+        return Geometry.create(Geocoder.INSTANCE.finalizeShape(this.scaleOfInterest, session.getMonitor()));
     }
 
     @Override
@@ -706,6 +707,9 @@ public class SessionState extends Parameters<String> implements ISessionState {
             IShape shape = Geocoder.INSTANCE.geocodeToShape(extent, this.geocodingStrategy, session.getMonitor());
             if (shape != null) {
                 this.scaleOfInterest.setName(shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class));
+                if (shape.getMetadata().containsKey(IMetadata.IM_FEATURE_URN)) {
+                    this.scaleOfInterest.setFeatureUrn(shape.getMetadata().get(IMetadata.IM_FEATURE_URN, String.class));
+                }
                 if (!(shape.getMetadata().containsKey(IMetadata.IM_GEOGRAPHIC_AREA)
                         && !shape.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA, Boolean.FALSE))) {
                     this.scaleOfInterest.setShape(((Shape) shape).getJTSGeometry().toString());

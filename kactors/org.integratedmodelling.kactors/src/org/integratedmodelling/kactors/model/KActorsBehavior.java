@@ -27,7 +27,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 
 	private String name;
 	private Version version;
-	private String observable;
+	private Object observable;
 	private Type type = Type.BEHAVIOR;
 	private Platform platform = Platform.ANY;
 	private File file;
@@ -83,7 +83,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 			Map<KActorsValue, KActorsValue> map = KActorsValue.parseMap(preamble.getInlineStyle(), this);
 			// turn into a string map for later serialization
 			for (Entry<KActorsValue, KActorsValue> entry : map.entrySet()) {
-				this.styleSpecs.put(entry.getKey().getValue().toString(), entry.getValue().getValue().toString());
+				this.styleSpecs.put(entry.getKey().getStatedValue().toString(), entry.getValue().getStatedValue().toString());
 			}
 		}
 
@@ -177,7 +177,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		return logo;
 	}
 
-	public String getObservable() {
+	public Object getObservable() {
 		return observable;
 	}
 

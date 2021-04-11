@@ -87,7 +87,9 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				EResourceFolder.class, (folder) -> KlabNavigatorActions.importResources(folder));
 		action("Copy URN", "Copy the resource's URN to the clipboard", "copy.gif", EResource.class,
 				(resource) -> Eclipse.INSTANCE.copyToClipboard(resource.getResource().getUrn())).activate();
-		action("Copy shape", "Copy the resource's bounding box to the clipboard", "copy.gif", EResource.class,
+        action("Copy URN", "Copy the model's URN to the clipboard", "copy.gif", EModel.class,
+                (model) -> Eclipse.INSTANCE.copyToClipboard(model.getId())).activate();
+        action("Copy shape", "Copy the resource's bounding box to the clipboard", "copy.gif", EResource.class,
 				(resource) -> Eclipse.INSTANCE
 						.copyToClipboard(ResourceUtils.extractShapeSpecification(resource.getResource()))).activate();
 		action("Edit resource", "Edit the selected resource", "resource.gif", EResource.class,

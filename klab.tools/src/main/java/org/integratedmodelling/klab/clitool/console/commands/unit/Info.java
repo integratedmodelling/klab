@@ -9,6 +9,7 @@ import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.common.mediation.Unit;
+import org.integratedmodelling.klab.exceptions.KlabException;
 
 /**
  * Print information about a unit, or an error if the unit is unrecognized.
@@ -19,10 +20,14 @@ import org.integratedmodelling.klab.common.mediation.Unit;
 public class Info implements ICommand {
 
     @Override
-    public Object execute(IServiceCall call, ISession session) throws Exception {
+    public Object execute(IServiceCall call, ISession session) {
         String ret = "";
         for (Object urn : call.getParameters().get("arguments", java.util.List.class)) {
-            ret += unitInfo(urn.toString()) + "\n";
+            try {
+                ret += unitInfo(urn.toString()) + "\n";
+            } catch (UnsupportedEncodingException e) {
+                throw new KlabException(e);
+            }
         }
         return ret;
     }

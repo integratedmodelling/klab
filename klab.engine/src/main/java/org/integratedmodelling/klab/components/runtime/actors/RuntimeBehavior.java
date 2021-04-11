@@ -16,6 +16,7 @@ import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.model.KimQuantity;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
@@ -85,7 +86,7 @@ public class RuntimeBehavior {
 
             if (arguments.get("reset") instanceof IKActorsValue) {
                 KActorsValue reset = arguments.get("reset", KActorsValue.class);
-                if (reset.getType() == Type.BOOLEAN && ((Boolean) reset.getValue())) {
+                if (Actors.INSTANCE.asBooleanValue(reset.evaluate(scope, identity, true))) {
                     scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState().resetContext();
                 }
             } else if (arguments.getUnnamedKeys().isEmpty()) {
@@ -134,7 +135,7 @@ public class RuntimeBehavior {
                     // more: shapes, time res, time spans, etc
                     for (Object o : arguments.getUnnamedArguments()) {
                         if (o instanceof KActorsValue) {
-                            o = evaluateInContext((KActorsValue) o, scope);
+                            o = ((KActorsValue) o).evaluate(scope, identity, true);
                         }
                         if (o instanceof Artifact) {
                             artifact = ((Artifact) o).getObjectArtifact();
@@ -217,9 +218,8 @@ public class RuntimeBehavior {
 
             if (!arguments.getUnnamedKeys().isEmpty()) {
                 fire(Status.WAITING, false, scope.semaphore, scope.getSymbols(identity));
-                identity.getParentIdentity(Session.class).getState().submit(
-                        getUrnValue(KlabActor.evaluate(arguments.get(arguments.getUnnamedKeys().get(0)), scope)),
-                        (task, observation) -> {
+                identity.getParentIdentity(Session.class).getState()
+                        .submit(getUrnValue(arguments.get(arguments.getUnnamedKeys().get(0)), scope), (task, observation) -> {
                             if (observation == null) {
                                 fire(Status.STARTED, false, scope.semaphore, scope.getSymbols(identity));
                             } else {
@@ -231,7 +231,10 @@ public class RuntimeBehavior {
             }
         }
 
-        private String getUrnValue(Object object) {
+        private String getUrnValue(Object object, KlabActor.Scope scope) {
+            if (object instanceof KActorsValue) {
+                object = ((KActorsValue) object).evaluate(scope, identity, true);
+            }
             if (object instanceof IConcept) {
                 return ((IConcept) object).getDefinition();
             } else if (object instanceof IObservable) {
@@ -267,7 +270,7 @@ public class RuntimeBehavior {
             Set<IConcept> observables = new HashSet<>();
 
             for (Object arg : arguments.getUnnamedArguments()) {
-                Object value = KlabActor.evaluate(arg, scope);
+                Object value = arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg;
                 if (value instanceof IObservable) {
                     IConcept c = ((IObservable) value).getType();
                     if (c.is(IKimConcept.Type.ROLE)) {
@@ -320,7 +323,7 @@ public class RuntimeBehavior {
         void run(KlabActor.Scope scope) {
             Set<String> scenarios = new HashSet<>();
             for (String key : arguments.getUnnamedKeys()) {
-                scenarios.add(KlabActor.evaluate((IKActorsValue) arguments.get(key), scope).toString());
+                scenarios.add(((IKActorsValue) arguments.get(key)).evaluate(scope, identity, true).toString());
             }
             session.getState().setActiveScenarios(scenarios);
         }
@@ -448,7 +451,7 @@ public class RuntimeBehavior {
         void run(KlabActor.Scope scope) {
             List<Object> args = new ArrayList<>();
             for (Object arg : arguments.values()) {
-                args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg, scope) : arg);
+                args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
             scope.runtimeScope.getMonitor().info(args.toArray());
         }
@@ -466,7 +469,7 @@ public class RuntimeBehavior {
         void run(KlabActor.Scope scope) {
             List<Object> args = new ArrayList<>();
             for (Object arg : arguments.values()) {
-                args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg, scope) : arg);
+                args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
             scope.runtimeScope.getMonitor().warn(args.toArray());
         }
@@ -484,7 +487,7 @@ public class RuntimeBehavior {
         void run(KlabActor.Scope scope) {
             List<Object> args = new ArrayList<>();
             for (Object arg : arguments.values()) {
-                args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg, scope) : arg);
+                args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
             scope.runtimeScope.getMonitor().error(args.toArray());
         }
@@ -502,7 +505,7 @@ public class RuntimeBehavior {
         void run(KlabActor.Scope scope) {
             List<Object> args = new ArrayList<>();
             for (Object arg : arguments.values()) {
-                args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg, scope) : arg);
+                args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
             scope.runtimeScope.getMonitor().debug(args.toArray());
         }

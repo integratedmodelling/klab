@@ -3,7 +3,6 @@ package org.integratedmodelling.klab.utils;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -27,7 +26,7 @@ public class Parameters<T> implements IParameters<T> {
 	private List<T> unnamedKeys = new ArrayList<>();
 
 	public Parameters(Map<T, Object> delegate) {
-		this.delegate = delegate;
+		this.delegate = delegate == null ? new LinkedHashMap<>() : delegate;
 		if (delegate instanceof Parameters) {
 			this.unnamedKeys.addAll(((Parameters<T>) delegate).unnamedKeys);
 		}

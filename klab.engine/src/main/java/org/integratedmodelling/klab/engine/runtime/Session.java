@@ -49,6 +49,7 @@ import org.integratedmodelling.klab.api.auth.INodeIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
 import org.integratedmodelling.klab.api.auth.Roles;
+import org.integratedmodelling.klab.api.cli.IConsole;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
@@ -72,6 +73,8 @@ import org.integratedmodelling.klab.api.services.IIndexingService;
 import org.integratedmodelling.klab.api.services.IIndexingService.Context;
 import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.auth.EngineUser;
+import org.integratedmodelling.klab.cli.CommandConsole;
+import org.integratedmodelling.klab.cli.DebuggerConsole;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
@@ -94,6 +97,7 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.rest.AuthorityIdentity;
 import org.integratedmodelling.klab.rest.AuthorityResolutionRequest;
+import org.integratedmodelling.klab.rest.ConsoleNotification;
 import org.integratedmodelling.klab.rest.ContextualizationRequest;
 import org.integratedmodelling.klab.rest.DataflowDetail;
 import org.integratedmodelling.klab.rest.DataflowState;
@@ -146,6 +150,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import akka.actor.typed.ActorRef;
+import groovy.lang.GroovyObjectSupport;
 
 /**
  * Engine session. Implements UserDetails to be directly usable as a principal
@@ -154,7 +159,7 @@ import akka.actor.typed.ActorRef;
  * @author ferdinando.villa
  *
  */
-public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetails, IMessageBus.Relay {
+public class Session extends GroovyObjectSupport implements ISession, IActorIdentity<KlabMessage>, UserDetails, IMessageBus.Relay {
 
 	private static final long serialVersionUID = -1571090827271892549L;
 
@@ -172,6 +177,8 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	ActorRef<KlabMessage> actor;
 	private SessionState globalState = new SessionState(this);
 	private View view;
+	private Map<String, IConsole> consoles = new HashMap<>();
+	
 
 	// tracks the setting of the actor so we can avoid the ask pattern
 	private AtomicBoolean actorSet = new AtomicBoolean(Boolean.FALSE);
@@ -841,6 +848,45 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		}
 	}
 
+	@MessageHandler
+	private void handleConsoleRequest(final ConsoleNotification message, final IMessage.Type messageType) {
+	    switch(messageType) {
+        case CommandRequest:
+            ConsoleNotification response = new ConsoleNotification();
+            response.setCommandId(message.getCommandId());
+            response.setConsoleId(message.getConsoleId());
+            response.setConsoleType(message.getConsoleType());
+            if (consoles.containsKey(message.getConsoleId())) {
+                // set payload to
+                response.setPayload(consoles.get(message.getConsoleId()).executeCommand(message.getPayload()));
+            } else {
+                response.setPayload("ERROR: console ID not recognized");
+            }
+            this.monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.CommandResponse, response);
+            break;
+        case ConsoleClosed:
+            IConsole console = consoles.remove(message.getConsoleId());
+            if (console instanceof DebuggerConsole) {
+                Debug.INSTANCE.removeDebugger(message.getConsoleId());
+            }
+            break;
+        case ConsoleCreated:
+            switch (message.getConsoleType()) {
+            case Console:
+                consoles.put(message.getConsoleId(), new CommandConsole(message.getConsoleId(), this));
+                break;
+            case Debugger:
+                DebuggerConsole db = new DebuggerConsole(message.getConsoleId(), this);
+                consoles.put(message.getConsoleId(), db);
+                Debug.INSTANCE.addDebugger(message.getConsoleId(), db.getDebugger());
+                break;
+            }
+            break;
+        default:
+            break;
+	    }
+	}
+	
 	private IRuntimeScope findContext(String contextId) {
 		for (IRuntimeScope ctx : observationContexts) {
 			if (ctx.getRootSubject().getId().equals(contextId)) {
@@ -1064,8 +1110,9 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 		case RunUnitTest:
 			if (request.isStop()) {
 				stop(request.getBehavior());
-				this.globalState.clear();
+				// TODO should clear the state now, but it comes AFTER initialization of the next application!
 			} else {
+                this.globalState.clear();
 				IBehavior behavior = Actors.INSTANCE.getBehavior(request.getBehavior());
 				if (behavior != null) {
 					this.load(behavior, new SimpleRuntimeScope(this));
@@ -1239,7 +1286,7 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 
 		switch (message.getRequest()) {
 		case "debugger":
-			Debug.INSTANCE.newDebugger(this);
+//			Debug.INSTANCE.newDebugger(this);
 			break;
 		}
 
@@ -1536,4 +1583,14 @@ public class Session implements ISession, IActorIdentity<KlabMessage>, UserDetai
 	public long getLastActivity() {
 		return lastActivity;
 	}
+
+    @Override
+    public Object getProperty(String property) {
+        if (this.globalState.containsKey(property)) {
+            return this.globalState.get(property);
+        }
+        return super.getProperty(property);
+    }
+	
+	
 }

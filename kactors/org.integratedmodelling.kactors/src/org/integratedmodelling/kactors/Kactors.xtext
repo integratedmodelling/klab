@@ -165,7 +165,7 @@ Actions:
 
 
 Value:
-	(tree=Tree |
+	(deferred?='`')? (tree=Tree |
 	empty?='empty' |
 	argvalue=ARGVALUE |
 	urn=UrnId | 
@@ -181,7 +181,7 @@ Value:
 ;
 
 ValueWithConstructor returns Value:
-	(constructor=Constructor |
+	(deferred?='`')? (constructor=Constructor |
 	tree=Tree |
 	empty?='empty' |
 	argvalue=ARGVALUE |
@@ -204,7 +204,7 @@ Constructor:
 ;
 
 ValueWithMetadata returns Value:
-	(tree=Tree |
+	(deferred?='`')? (tree=Tree |
 	 argvalue=ARGVALUE |
 	 literal=Literal |
 	 urn=UrnId | 
@@ -233,7 +233,7 @@ ValueWithMetadata returns Value:
 //	;
 //	
 ValueWithMetadataWithoutTree returns Value:
-	(argvalue=ARGVALUE |
+	(deferred?='`')? (argvalue=ARGVALUE |
 	literal=Literal |
 	id=PathName |
 	urn=UrnId | 

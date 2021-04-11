@@ -14,6 +14,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Value#isDeferred <em>Deferred</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getTree <em>Tree</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#isEmpty <em>Empty</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Value#getArgvalue <em>Argvalue</em>}</li>
@@ -42,6 +43,28 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface Value extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Deferred</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Deferred</em>' attribute.
+   * @see #setDeferred(boolean)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getValue_Deferred()
+   * @model
+   * @generated
+   */
+  boolean isDeferred();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Value#isDeferred <em>Deferred</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Deferred</em>' attribute.
+   * @see #isDeferred()
+   * @generated
+   */
+  void setDeferred(boolean value);
+
   /**
    * Returns the value of the '<em><b>Tree</b></em>' containment reference.
    * <!-- begin-user-doc -->

@@ -8,7 +8,7 @@ import org.integratedmodelling.klab.utils.JsonUtils;
 public class History implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 		return JsonUtils.printAsJson(session.getState().getHistory());
 	}
 

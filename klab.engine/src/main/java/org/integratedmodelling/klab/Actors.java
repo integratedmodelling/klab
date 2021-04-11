@@ -25,6 +25,7 @@ import org.eclipse.xtext.testing.util.ParseHelper;
 import org.integratedmodelling.kactors.api.IKActorsBehavior;
 import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.api.IKActorsValue.ExpressionType;
 import org.integratedmodelling.kactors.kactors.Model;
 import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kactors.model.KActors.Notifier;
@@ -34,6 +35,7 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimExpression;
+import org.integratedmodelling.kim.model.KimQuantity;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IUserIdentity;
@@ -245,79 +247,53 @@ public enum Actors implements IActorsService {
         Services.INSTANCE.registerService(this, IActorsService.class);
         KActors.INSTANCE.setValueTranslator(new ValueTranslator(){
             @Override
-            public Object translate(KActorsValue container, Object value) {
+            public Object translate(KActorsValue container, IIdentity identity,
+                    org.integratedmodelling.kactors.api.IKActorsBehavior.Scope scope) {
 
-                switch(container.getType()) {
-                case ANYTHING:
-                    break;
-                case ANYTRUE:
-                    break;
-                case OBJECT:
-                    return createJavaObject(container.getConstructor(), null, null);
-                case ANYVALUE:
-                    break;
-                case BOOLEAN:
-                    break;
-                case CLASS:
-                    break;
-                case DATE:
-                    break;
-                case ERROR:
-                    break;
-                case EXPRESSION:
-                    value = new KimExpression(value.toString() + " ", Extensions.DEFAULT_EXPRESSION_LANGUAGE);
-                    break;
-                case IDENTIFIER:
-                    break;
-                case SET:
-                    break;
-                case TREE:
-                    break;
-                case LIST:
-                    break;
-                case MAP:
-                    break;
-                case NODATA:
-                    break;
-                case NUMBER:
-                    break;
-                case NUMBERED_PATTERN:
-                    break;
-                case OBSERVABLE:
-                    value = Observables.INSTANCE.declare(value.toString());
-                    break;
-                case QUANTITY:
-                    // NO - leave it as is, implementing the syntactic peer.
-                    // if (value instanceof KActorsQuantity) {
-                    // if (((KActorsQuantity) value).getUnit() != null) {
-                    // value = Quantity.create(((KActorsQuantity) value).getValue(),
-                    // Unit.create(((KActorsQuantity) value).getUnit()));
-                    // } else if (((KActorsQuantity) value).getCurrency() != null) {
-                    // value = Quantity.create(((KActorsQuantity) value).getValue(),
-                    // Currency.create(((KActorsQuantity) value).getCurrency()));
-                    // }
-                    // }
-                    break;
-                case RANGE:
-                    break;
-                case REGEXP:
-                    break;
-                case STRING:
-                    break;
-                case TABLE:
-                    break;
-                case TYPE:
-                    break;
-                case URN:
-                    break;
-                case OBSERVATION:
-                    break;
-                case CONSTANT:
-                    break;
-                case EMPTY:
-                    break;
-                default:
-                    break;
+                Object value = container.getStatedValue();
+
+                // handle all literals
+                if (container.getExpressionType() == ExpressionType.VALUE) {
+                    switch(container.getType()) {
+                    case OBJECT:
+                        if (scope == null) {
+                            return createJavaObject(container.getConstructor(), null, null);
+                        }
+                        break;
+                    case OBSERVABLE:
+                        return Observables.INSTANCE.declare(value.toString());
+                    case ANYTHING:
+                    case ANYVALUE:
+                    case BOOLEAN:
+                    case CLASS:
+                    case DATE:
+                    case ANNOTATION:
+                    case CONSTANT:
+                    case EMPTY:
+                    case NODATA:
+                    case NUMBER:
+                    case RANGE:
+                    case STRING:
+                    case TYPE:
+                    case REGEXP:
+                        return value;
+                    case ANYTRUE:
+                        // only used in matching
+                        return true;
+                    default:
+                        break;
+                    }
+                }
+
+                /*
+                 * if we get here, it wasn't a literal; loop until all deferred computations are
+                 * over
+                 */
+                if (scope != null) {
+                    value = container;
+                    while(value instanceof KActorsValue) {
+                        value = KlabActor.evaluateInScope((KActorsValue) value, (Scope) scope, (IActorIdentity<?>) identity);
+                    }
                 }
 
                 return value;
@@ -580,11 +556,11 @@ public enum Actors implements IActorsService {
      * @return
      */
     @SuppressWarnings("unchecked")
-    public <T> T getArgument(IParameters<String> arguments, Class<T> cls) {
+    public <T> T getArgument(IParameters<String> arguments, Scope scope, IIdentity identity, Class<T> cls) {
         for (String key : arguments.getUnnamedKeys()) {
             Object ret = arguments.get(key);
             if (ret instanceof KActorsValue) {
-                ret = ((KActorsValue) ret).getValue();
+                ret = ((KActorsValue) ret).evaluate(scope, identity, false);
             }
             if (ret != null && cls.isAssignableFrom(ret.getClass())) {
                 return (T) ret;
@@ -832,22 +808,18 @@ public enum Actors implements IActorsService {
 
                 for (Object arg : constructor.getArguments().getUnnamedArguments()) {
                     if (arg instanceof KActorsValue) {
-                        arguments.add(scope == null
-                                ? ((KActorsValue) arg).getValue()
-                                : KlabActor.evaluateInScope((KActorsValue) arg, scope, identity));
+                        arguments.add(((KActorsValue) arg).evaluate(scope, identity, true));
                     } else {
                         arguments.add(arg);
                     }
                 }
 
                 for (String key : constructor.getArguments().keySet()) {
+                    if (constructor.getArguments().getUnnamedKeys().contains(key)) {
+                        continue;
+                    }
                     Object arg = constructor.getArguments().get(key);
-                    settings.put(key,
-                            arg instanceof KActorsValue
-                                    ? (scope == null
-                                            ? ((KActorsValue) arg).getValue()
-                                            : KlabActor.evaluateInScope((KActorsValue) arg, scope, identity))
-                                    : arg);
+                    settings.put(key, arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
                 }
 
                 Constructor<?> constr = null;
@@ -941,15 +913,15 @@ public enum Actors implements IActorsService {
         case NUMBER:
         case OBSERVABLE:
         case STRING:
-            if (Urns.INSTANCE.isUrn(iterable.getValue().toString())) {
-                return iterateResource(iterable.getValue().toString(), scope.getMonitor());
+            if (Urns.INSTANCE.isUrn(iterable.getStatedValue().toString())) {
+                return iterateResource(iterable.getStatedValue().toString(), scope.getMonitor());
             }
-            return Collections.singletonList(KlabActor.evaluateInScope((KActorsValue) iterable, scope, identity));
+            return Collections.singletonList(((KActorsValue) iterable).evaluate(scope, identity, false));
         case OBJECT:
         case IDENTIFIER:
         case LIST:
         case SET:
-            Object o = KlabActor.evaluateInScope((KActorsValue) iterable, scope, identity);
+            Object o = ((KActorsValue) iterable).evaluate(scope, identity, false);
             if (o instanceof Iterable) {
                 return (Iterable<Object>) o;
             } else {
@@ -962,9 +934,7 @@ public enum Actors implements IActorsService {
         case NUMBERED_PATTERN:
             break;
         case OBSERVATION:
-            return (Iterable<Object>) KlabActor.evaluateInScope((KActorsValue) iterable, scope, identity);
-        case QUANTITY:
-            break;
+            return (Iterable<Object>) ((KActorsValue) iterable).evaluate(scope, identity, false);
         case RANGE:
             // TODO iterate the range
             break;
@@ -975,7 +945,7 @@ public enum Actors implements IActorsService {
         case TYPE:
             break;
         case URN:
-            return iterateResource(iterable.getValue().toString(), scope.getMonitor());
+            return iterateResource(iterable.getStatedValue().toString(), scope.getMonitor());
         default:
             break;
         }
@@ -1027,14 +997,14 @@ public enum Actors implements IActorsService {
         List<Object> jargs = new ArrayList<>();
         Map<String, Object> kargs = null;
         for (Object v : arguments.getUnnamedArguments()) {
-            jargs.add(v instanceof KActorsValue ? KlabActor.evaluateInScope((KActorsValue) v, scope, identity) : v);
+            jargs.add(v instanceof KActorsValue ? ((KActorsValue) v).evaluate(scope, identity, false) : v);
         }
         for (String k : arguments.getNamedKeys()) {
             if (kargs == null) {
                 kargs = new HashMap<>();
             }
             Object v = arguments.get(k);
-            kargs.put(k, v instanceof KActorsValue ? KlabActor.evaluateInScope((KActorsValue) v, scope, identity) : v);
+            kargs.put(k, v instanceof KActorsValue ? ((KActorsValue) v).evaluate(scope, identity, false) : v);
         }
         if (kargs != null) {
             jargs.add(kargs);

@@ -692,7 +692,7 @@ public class GroovyExpressionPreprocessor {
 
 	private String translateParameter(String currentToken, boolean isScalar) {
 		boolean isMapIdentifier = mapIdentifiers.containsKey(currentToken);
-		boolean includeLiterally = this.ignoreContext && !this.context.getStateIdentifiers().contains(currentToken);
+		boolean includeLiterally = this.ignoreContext && (this.context == null || !this.context.getStateIdentifiers().contains(currentToken));
 		return (isScalar || isMapIdentifier || includeLiterally) ? currentToken : "_p.get(\"" + currentToken + "\")";
 	}
 

@@ -33,7 +33,7 @@ public class BehaviorAction implements IBehavior.Action {
 			for (String key : a.keySet()) {
 				Object value = a.get(key);
 				if (value instanceof KActorsValue) {
-					a.put(key, ((KActorsValue)value).getValue());
+					a.put(key, ((KActorsValue)value).getStatedValue());
 				}
 			}
 			this.annotations.add(a);

@@ -59,7 +59,7 @@ public class RasterImporter extends AbstractFilesetImporter {
     }
 
     @Override
-    protected Builder importFile( File file, IParameters<String> userData, IMonitor monitor ) {
+    protected Builder importFile(File file, IParameters<String> userData, IMonitor monitor) {
         try {
 
             Builder builder = validator.validate(file.toURI().toURL(), userData, monitor);
@@ -67,7 +67,7 @@ public class RasterImporter extends AbstractFilesetImporter {
             if (builder != null) {
                 String layerId = MiscUtilities.getFileBaseName(file).toLowerCase();
                 builder.withLocalName(layerId).setResourceId(layerId);
-                for( File f : validator.getAllFilesForResource(file) ) {
+                for (File f : validator.getAllFilesForResource(file)) {
                     builder.addImportedFile(f);
                 }
             }
@@ -81,7 +81,7 @@ public class RasterImporter extends AbstractFilesetImporter {
     }
 
     @Override
-    public Collection<Triple<String, String, String>> getExportCapabilities( IObservation observation ) {
+    public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
         List<Triple<String, String, String>> ret = new ArrayList<>();
 
         if (observation instanceof IState) {
@@ -102,14 +102,13 @@ public class RasterImporter extends AbstractFilesetImporter {
     }
 
     @Override
-    public File exportObservation( File file, IObservation observation, ILocator locator, String format, IMonitor monitor ) {
+    public File exportObservation(File file, IObservation observation, ILocator locator, String format, IMonitor monitor) {
 
         if (observation instanceof IState && observation.getGeometry().getDimension(Type.SPACE) != null) {
 
             if (observation.getScale().isSpatiallyDistributed() && observation.getScale().getSpace().isRegular()) {
                 File out = file;
                 File dir = null;
-
                 GridCoverage2D coverage;
                 IState state = (IState) observation;
                 IDataKey dataKey = state.getDataKey();
@@ -169,7 +168,7 @@ public class RasterImporter extends AbstractFilesetImporter {
         return null;
     }
 
-    private void writeAuxXml( File auxFile, IDataKey dataKey ) throws JAXBException {
+    private void writeAuxXml(File auxFile, IDataKey dataKey) throws JAXBException {
 
         RasterAuxXml rasterAuxXml = new RasterAuxXml();
         rasterAuxXml.rasterBand = new PAMRasterBand();
@@ -197,7 +196,7 @@ public class RasterImporter extends AbstractFilesetImporter {
 
         List<Pair<Integer, String>> values = dataKey.getAllValues();
         int index = 0;
-        for( Pair<Integer, String> pair : values ) {
+        for (Pair<Integer, String> pair : values) {
             Integer code = pair.getFirst();
             String classString = pair.getSecond();
             Row row = new Row();
@@ -212,12 +211,12 @@ public class RasterImporter extends AbstractFilesetImporter {
         JAXBContext context = JAXBContext.newInstance(RasterAuxXml.class);
         Marshaller marshaller = context.createMarshaller();
         marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, true);
-//            StringWriter stringWriter = new StringWriter();
+        // StringWriter stringWriter = new StringWriter();
         marshaller.marshal(rasterAuxXml, auxFile);
-//            System.out.println(stringWriter.toString());
+        // System.out.println(stringWriter.toString());
     }
 
-    private void writeQgisStyle( File qmlFile, IState state, ILocator locator ) throws IOException {
+    private void writeQgisStyle(File qmlFile, IState state, ILocator locator) throws IOException {
         IDataKey dataKey = state.getDataKey();
 
         Pair<RasterSymbolizer, String> rasterSymbolizerPair = Renderer.INSTANCE.getRasterSymbolizer(state, locator);
@@ -225,7 +224,7 @@ public class RasterImporter extends AbstractFilesetImporter {
         ColorMap colorMap = rasterSymbolizer.getColorMap();
         ColorMapEntry[] colorMapEntries = colorMap.getColorMapEntries();
         HashMap<String, String> label2ColorMap = new HashMap<>();
-        for( ColorMapEntry colorMapEntry : colorMapEntries ) {
+        for (ColorMapEntry colorMapEntry : colorMapEntries) {
             String label = colorMapEntry.getLabel();
             String color = colorMapEntry.getColor().evaluate(null, String.class);
             label2ColorMap.put(label, color);
@@ -239,7 +238,7 @@ public class RasterImporter extends AbstractFilesetImporter {
                 .append("<rasterrenderer band=\"1\" type=\"paletted\" alphaBand=\"-1\" opacity=\"1\" nodataColor=\"\">\n");
         sb.append(ind).append(ind).append(ind).append("<colorPalette>\n");
         List<Pair<Integer, String>> values = dataKey.getAllValues();
-        for( Pair<Integer, String> pair : values ) {
+        for (Pair<Integer, String> pair : values) {
             sb.append(ind).append(ind).append(ind).append(ind);
 
             Integer code = pair.getFirst();
@@ -254,13 +253,12 @@ public class RasterImporter extends AbstractFilesetImporter {
         sb.append(ind).append(ind).append("</rasterrenderer>\n");
         sb.append(ind).append("</pipe>\n");
         sb.append("</qgis>\n");
-        
-        
+
         FileUtils.writeStringToFile(qmlFile, sb.toString());
 
     }
 
-    private boolean writeAuxDbf( File auxDbfFile, IDataKey dataKey ) throws Exception {
+    private boolean writeAuxDbf(File auxDbfFile, IDataKey dataKey) throws Exception {
 
         DbaseFileHeader header = new DbaseFileHeader();
         header.addColumn("Value", 'N', 10, 0);
@@ -272,7 +270,7 @@ public class RasterImporter extends AbstractFilesetImporter {
 
         try (FileOutputStream fout = new FileOutputStream(auxDbfFile)) {
             DbaseFileWriter dbf = new DbaseFileWriter(header, fout.getChannel(), Charset.forName("UTF-8"));
-            for( Pair<Integer, String> pair : values ) {
+            for (Pair<Integer, String> pair : values) {
                 Integer code = pair.getFirst();
                 String classString = pair.getSecond();
                 if (classString.length() > stringLimit) {
@@ -286,26 +284,26 @@ public class RasterImporter extends AbstractFilesetImporter {
     }
 
     @Override
-    public Map<String, String> getExportCapabilities( IResource resource ) {
+    public Map<String, String> getExportCapabilities(IResource resource) {
         Map<String, String> ret = new HashMap<>();
         ret.put("zip", "GeoTiff");
         return ret;
     }
 
     @Override
-    public boolean exportResource( File file, IResource resource, String format ) {
+    public boolean exportResource(File file, IResource resource, String format) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public boolean importIntoResource( URL importLocation, IResource target, IMonitor monitor ) {
+    public boolean importIntoResource(URL importLocation, IResource target, IMonitor monitor) {
         // TODO Auto-generated method stub
         return false;
     }
 
     @Override
-    public boolean resourceCanHandle( IResource resource, String importLocation ) {
+    public boolean resourceCanHandle(IResource resource, String importLocation) {
         // TODO Auto-generated method stub
         return false;
     }

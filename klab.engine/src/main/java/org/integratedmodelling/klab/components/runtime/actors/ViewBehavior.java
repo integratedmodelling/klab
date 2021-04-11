@@ -295,6 +295,7 @@ public class ViewBehavior {
 
         @Override
         protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+            this.component.getAttributes().putAll(getMetadata(message.arguments, scope));
             return this.component;
         }
 
@@ -481,6 +482,8 @@ public class ViewBehavior {
      * Recover an id, a label and a value from a value passed as an item for a tree, combo or list
      * component.
      * 
+     * TODO use the scope!
+     * 
      * @param value
      * @return
      */
@@ -490,12 +493,12 @@ public class ViewBehavior {
         String label = null;
         IKActorsValue val = value;
         if (((KActorsValue) value).getType() == IKActorsValue.Type.LIST) {
-            List<?> list = (List<?>) ((KActorsValue) value).getValue();
+            List<?> list = (List<?>) ((KActorsValue) value).getStatedValue();
             if (list.size() == 2) {
                 if (id == null) {
-                    id = ((KActorsValue) list.get(0)).getValue().toString();
+                    id = ((KActorsValue) list.get(0)).getStatedValue().toString();
                 } else {
-                    label = ((KActorsValue) list.get(0)).getValue().toString();
+                    label = ((KActorsValue) list.get(0)).getStatedValue().toString();
                 }
                 val = ((KActorsValue) list.get(1));
             }
@@ -575,7 +578,10 @@ public class ViewBehavior {
         protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
 
             if ("add".equals(message.message) && message.arguments.getUnnamedArguments().size() > 0) {
-                Object arg = KlabActor.evaluate(message.arguments.getUnnamedArguments().get(0), scope);
+                Object arg = message.arguments.getUnnamedArguments().get(0);
+                if (arg instanceof KActorsValue) {
+                    arg = ((KActorsValue)arg).evaluate(scope, identity, false);
+                }
                 if (arg instanceof Constructor) {
                     this.sender.tell(new AddComponentToGroup(group, ((Constructor) arg).getComponent(),
                             ((Constructor) arg).getArguments(), scope));
@@ -691,7 +697,11 @@ public class ViewBehavior {
                 for (String choice : action.getListValue()) {
                     String[] split = choice.split("\\-");
                     // TODO review the split[1] with Enrico - should be split[0] or maybe not.
-                    ret.add(KlabActor.evaluate(values.get(split[1]), scope));
+                    Object val = values.get(split[1]);
+                    if (val instanceof KActorsValue) {
+                        val = ((KActorsValue)val).evaluate(scope, identity, false);
+                    }
+                    ret.add(val);
                 }
             }
             return ret;
@@ -744,9 +754,12 @@ public class ViewBehavior {
         }
     }
 
+    /*
+     * TODO use the scope!
+     */
     public static ViewComponent.Tree getTree(KActorsValue tree, Map<String, IKActorsValue> values) {
         @SuppressWarnings("unchecked")
-        Graph<KActorsValue, DefaultEdge> graph = (Graph<KActorsValue, DefaultEdge>) tree.getValue();
+        Graph<KActorsValue, DefaultEdge> graph = (Graph<KActorsValue, DefaultEdge>) tree.getStatedValue();
         ViewComponent.Tree ret = new ViewComponent.Tree();
         String rootId = "";
         Map<KActorsValue, String> ids = new HashMap<>();
@@ -772,7 +785,7 @@ public class ViewBehavior {
             Object a = arguments.get(arguments.getUnnamedKeys().iterator().next());
             if (a != null) {
                 if (a instanceof KActorsValue) {
-                    a = action.evaluateInContext((KActorsValue) a, scope);
+                    a = ((KActorsValue) a).evaluate(scope, scope.getIdentity(), true);
                 }
                 if (a != null) {
                     ret = a.toString();
@@ -785,7 +798,7 @@ public class ViewBehavior {
     public static String processTemplate(Object value, Scope scope) {
         String template = value instanceof String ? (String) value : null;
         if (template == null && value instanceof KActorsValue) {
-            template = ((KActorsValue) value).getValue().toString();
+            template = ((KActorsValue) value).getStatedValue().toString();
         }
         /*
          * TODO engage the template system to merge with the runtime context
@@ -810,7 +823,7 @@ public class ViewBehavior {
             for (String key : arguments.getNamedKeys()) {
                 Object o = arguments.get(key);
                 if (o instanceof KActorsValue) {
-                    o = KlabActor.evaluateInScope((KActorsValue) o, scope, scope.identity);
+                    o = ((KActorsValue) o).evaluate(scope, scope.getIdentity(), true);
                 }
                 if (o == null) {
                     ret.put(key, "null");

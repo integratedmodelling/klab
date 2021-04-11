@@ -4,6 +4,7 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.api.cli.ICommand;
 import org.integratedmodelling.klab.api.runtime.ISession;
+import org.integratedmodelling.klab.cli.ConsoleCommandProvider;
 import org.integratedmodelling.klab.clitool.CliRuntime;
 import org.integratedmodelling.klab.utils.StringUtil;
 
@@ -16,7 +17,7 @@ public class Help implements ICommand {
       if (!pack.equals("main")) {
         output += pack + ":\n" + StringUtil.repeat('-', pack.length() + 1) + "\n\n";
       }
-      for (IPrototype prototype : CliRuntime.INSTANCE.getCommandProcessor().getPrototypes(pack)) {
+      for (IPrototype prototype : ConsoleCommandProvider.INSTANCE.getPrototypes(pack)) {
         String synopsis = prototype.getSynopsis();
         if (!pack.equals("main")) {
           synopsis = StringUtil.leftIndent(synopsis, 3);

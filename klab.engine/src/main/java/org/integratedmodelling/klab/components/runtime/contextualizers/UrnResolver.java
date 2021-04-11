@@ -65,7 +65,8 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
             List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
                     .contextualize(context.getScale(), observation);
             if (resources.isEmpty()) {
-                context.getMonitor().warn("resource " + this.resource.getUrn() + " could not be contextualized in this scale");
+                // it's OK if the resource was already contextualized up to the available data. TODO distinguish the use cases.
+                // context.getMonitor().warn("resource " + this.resource.getUrn() + " could not be contextualized in this scale");
                 return observation;
             }
 

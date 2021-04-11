@@ -15,7 +15,7 @@ import org.integratedmodelling.klab.utils.StringUtil;
 public class PrintStructure implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		IObservation obs = null;
 		if (call.getParameters().get("arguments", List.class).size() == 1) {

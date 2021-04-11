@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 
 /**
  * The syntactic peer resulting from parsing a .kactor file. Specifies a {@link IBehavior} to be
@@ -79,6 +81,24 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
 
     enum Platform {
         ANY, DESKTOP, WEB, MOBILE
+    }
+    
+    /**
+     * The scope for evaluating k.Actors statements. Not used in the API except for passing to  
+     * 
+     * @author Ferd
+     *
+     */
+    public interface Scope {
+
+        IMonitor getMonitor();
+
+        Map<String, Object> getSymbolTable();
+
+        boolean isSynchronous();
+
+        IIdentity getIdentity();
+        
     }
 
     /**

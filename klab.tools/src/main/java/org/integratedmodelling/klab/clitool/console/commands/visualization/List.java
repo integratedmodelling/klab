@@ -9,7 +9,7 @@ import org.integratedmodelling.klab.engine.runtime.Session;
 public class List implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		String ret = "";
 		for (IObservation o : ((Session) session).getRootContexts()) {

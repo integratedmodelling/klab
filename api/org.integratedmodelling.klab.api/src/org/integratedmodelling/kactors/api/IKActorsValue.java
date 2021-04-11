@@ -1,5 +1,8 @@
 package org.integratedmodelling.kactors.api;
 
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Scope;
+import org.integratedmodelling.klab.api.auth.IIdentity;
+
 /**
  * Values can be a lot of different things in k.Actors and serve as matches for fired values, so we
  * categorize them on parsing to allow quick matching. The categorization includes the distinction
@@ -102,11 +105,14 @@ public interface IKActorsValue extends IKActorsCodeStatement {
     ExpressionType getExpressionType();
 
     /**
-     * The value itself. Will be null if unknown, anyvalue or anything.
+     * The value stated in the value statement. Will contain expression text, literals, or k.IM
+     * syntactic objects. Will be null if unknown, anyvalue or anything. This does not provide the
+     * value that the statement <em>computes</em> in the scope of evaluation: for that,
+     * {@link #evaluate(Scope, boolean)} must be called.
      * 
      * @return
      */
-    Object getValue();
+    Object getStatedValue();
 
     /**
      * Return the value as the type passed. Meant to complement the enum in a fluent API and not to
@@ -140,5 +146,29 @@ public interface IKActorsValue extends IKActorsCodeStatement {
      * @return
      */
     IKActorsValue getFalseCase();
+
+    /**
+     * A value prefixed with ` is deferred and its evaluation should be postponed for as long as
+     * possible when passing as argument in actor calls or construction.
+     * 
+     * @return
+     */
+    boolean isDeferred();
+
+    /**
+     * Evaluate the statement in scope. The scope can be null and this will use any evaluation
+     * helpers set in the runtime, if any, to produce the final "meaning" stated in the code. Only
+     * in some situations the result may remain a IKActorsValue.
+     * 
+     * @param scope of execution. Can be null, in which case the value will be the stated value if
+     *        not null, or the object itself if the stated value is null and the type implies a
+     *        different value.
+     * @param identity can be null. If null and scope != null, the scope identity should be used.
+     * @param forceEvaluationIfDeferred if false, any value that is deferred will produce itself as
+     *        the result of evaluation. If true, the evaluation will proceed as if this was not
+     *        deferred.
+     * @return
+     */
+    Object evaluate(Scope scope, IIdentity identity, boolean forceEvaluationIfDeferred);
 
 }
