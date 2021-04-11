@@ -14,351 +14,354 @@ import java.util.function.Function;
 import org.integratedmodelling.kim.api.IParameters;
 
 /**
- * An order-preserving map with two improved get() methods to enable simpler and
- * more flexible use idioms.
+ * An order-preserving map with improved get() methods to enable simpler and more flexible use
+ * idioms. Also enables accounting of unnamed inputs (mapped to _p<n> keys, from k.IM/k.Actors code)
+ * and metadata keys.
  * 
  * @author ferdinando.villa
  *
  */
 public class Parameters<T> implements IParameters<T> {
 
-	private Map<T, Object> delegate;
-	private List<T> unnamedKeys = new ArrayList<>();
+    private Map<T, Object> delegate;
+    private List<T> unnamedKeys = new ArrayList<>();
 
-	public Parameters(Map<T, Object> delegate) {
-		this.delegate = delegate == null ? new LinkedHashMap<>() : delegate;
-		if (delegate instanceof Parameters) {
-			this.unnamedKeys.addAll(((Parameters<T>) delegate).unnamedKeys);
-		}
-	}
+    public Parameters(Map<T, Object> delegate) {
+        this.delegate = delegate == null ? new LinkedHashMap<>() : delegate;
+        if (delegate instanceof Parameters) {
+            this.unnamedKeys.addAll(((Parameters<T>) delegate).unnamedKeys);
+        }
+    }
 
-	public static final String IGNORED_PARAMETER = "__IGNORED__";
+    public static final String IGNORED_PARAMETER = "__IGNORED__";
 
-	/**
-	 * Create a parameters object from a list of key/value pairs, optionally
-	 * including also other (non-paired) map objects whose values are added as is. A
-	 * null in first position of a pair is ignored, as well as anything whose key is
-	 * {@link #IGNORED_PARAMETER}.
-	 * 
-	 * @param o
-	 * @return
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> Parameters<T> create(Object... o) {
-		Map<T, Object> inp = new LinkedHashMap<T, Object>();
-		if (o != null) {
-			for (int i = 0; i < o.length; i++) {
-				if (o[i] instanceof Map) {
-					inp.putAll((Map) o[i]);
-				} else if (o[i] != null) {
-					if (!IGNORED_PARAMETER.equals(o[i])) {
-						inp.put((T) o[i], o[i + 1]);
-					}
-					i++;
-				}
-			}
-		}
-		return new Parameters(inp);
-	}
-		
-	/**
-	 * Like the other create() but also ignores null values for non-null keys.
-	 * 
-	 * @param <T>
-	 * @param o
-	 * @return
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> Parameters<T> createNotNull(Object... o) {
-		Map<T, Object> inp = new LinkedHashMap<T, Object>();
-		if (o != null) {
-			for (int i = 0; i < o.length; i++) {
-				if (o[i] instanceof Map) {
-					inp.putAll((Map) o[i]);
-				} else if (o[i] != null) {
-					if (o[1+1] != null && !IGNORED_PARAMETER.equals(o[i])) {
-						inp.put((T) o[i], o[i + 1]);
-					}
-					i++;
-				}
-			}
-		}
-		return new Parameters(inp);
-	}
-	
-	/**
-	 * Create a parameters object from a list of key/value pairs, optionally
-	 * including also other (non-paired) map objects whose values are added as is. A
-	 * null in first position of a pair is ignored, as well as anything whose key is
-	 * {@link #IGNORED_PARAMETER}.
-	 * 
-	 * @param o
-	 * @return
-	 */
-	@SuppressWarnings({ "unchecked", "rawtypes" })
-	public static <T> Parameters<T> createSynchronized(Object... o) {
-		Map<T, Object> inp = Collections.synchronizedMap(new LinkedHashMap<T, Object>());
-		if (o != null) {
-			for (int i = 0; i < o.length; i++) {
-				if (o[i] instanceof Map) {
-					inp.putAll((Map) o[i]);
-				} else if (o[i] != null) {
-					if (!IGNORED_PARAMETER.equals(o[i])) {
-						inp.put((T) o[i], o[i + 1]);
-					}
-					i++;
-				}
-			}
-		}
-		return new Parameters(inp);
-	}
+    /**
+     * Create a parameters object from a list of key/value pairs, optionally including also other
+     * (non-paired) map objects whose values are added as is. A null in first position of a pair is
+     * ignored, as well as anything whose key is {@link #IGNORED_PARAMETER}.
+     * 
+     * @param o
+     * @return
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T> Parameters<T> create(Object... o) {
+        Map<T, Object> inp = new LinkedHashMap<T, Object>();
+        if (o != null) {
+            for (int i = 0; i < o.length; i++) {
+                if (o[i] instanceof Map) {
+                    inp.putAll((Map) o[i]);
+                } else if (o[i] != null) {
+                    if (!IGNORED_PARAMETER.equals(o[i])) {
+                        inp.put((T) o[i], o[i + 1]);
+                    }
+                    i++;
+                }
+            }
+        }
+        return new Parameters(inp);
+    }
 
-	/**
-	 * Wrap an existing map and enjoy.
-	 * 
-	 * @param <T>
-	 * @param map
-	 * @return
-	 */
-	public static <T> Parameters<T> wrap(Map<T, Object> map) {
-		return new Parameters<T>(map);
-	}
+    /**
+     * Like the other create() but also ignores null values for non-null keys.
+     * 
+     * @param <T>
+     * @param o
+     * @return
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T> Parameters<T> createNotNull(Object... o) {
+        Map<T, Object> inp = new LinkedHashMap<T, Object>();
+        if (o != null) {
+            for (int i = 0; i < o.length; i++) {
+                if (o[i] instanceof Map) {
+                    inp.putAll((Map) o[i]);
+                } else if (o[i] != null) {
+                    if (o[1 + 1] != null && !IGNORED_PARAMETER.equals(o[i])) {
+                        inp.put((T) o[i], o[i + 1]);
+                    }
+                    i++;
+                }
+            }
+        }
+        return new Parameters(inp);
+    }
 
-	/**
-	 * Only used when the object must be serialized through reflection.
-	 * 
-	 * @return a map with all data
-	 */
-	public Map<T, Object> getData() {
-		return delegate;
-	}
+    /**
+     * Create a parameters object from a list of key/value pairs, optionally including also other
+     * (non-paired) map objects whose values are added as is. A null in first position of a pair is
+     * ignored, as well as anything whose key is {@link #IGNORED_PARAMETER}.
+     * 
+     * @param o
+     * @return
+     */
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    public static <T> Parameters<T> createSynchronized(Object... o) {
+        Map<T, Object> inp = Collections.synchronizedMap(new LinkedHashMap<T, Object>());
+        if (o != null) {
+            for (int i = 0; i < o.length; i++) {
+                if (o[i] instanceof Map) {
+                    inp.putAll((Map) o[i]);
+                } else if (o[i] != null) {
+                    if (!IGNORED_PARAMETER.equals(o[i])) {
+                        inp.put((T) o[i], o[i + 1]);
+                    }
+                    i++;
+                }
+            }
+        }
+        return new Parameters(inp);
+    }
 
-	@Override
-	public <K> K get(T name, K defaultValue) {
-		Object ret = get(name);
-		if (ret == null) {
-			return defaultValue;
-		}
-		return defaultValue == null ? null : Utils.asType(ret, defaultValue.getClass());
-	}
+    /**
+     * Wrap an existing map and enjoy.
+     * 
+     * @param <T>
+     * @param map
+     * @return
+     */
+    public static <T> Parameters<T> wrap(Map<T, Object> map) {
+        return new Parameters<T>(map);
+    }
 
-	@Override
-	public <K> K get(T name, Class<? extends K> cls) {
-		Object ret = get(name);
-		if (ret == null) {
-			return null;
-		}
-		return Utils.asType(ret, cls);
-	}
+    /**
+     * Only used when the object must be serialized through reflection.
+     * 
+     * @return a map with all data
+     */
+    public Map<T, Object> getData() {
+        return delegate;
+    }
 
-	@Override
-	public <K> K getNotNull(T name, Class<? extends K> cls) {
-		Object ret = get(name);
-		if (ret == null) {
-			return Utils.notNull(cls);
-		}
-		return Utils.asType(ret, cls);
-	}
+    @Override
+    public <K> K get(T name, K defaultValue) {
+        Object ret = get(name);
+        if (ret == null) {
+            return defaultValue;
+        }
+        return defaultValue == null ? null : Utils.asType(ret, defaultValue.getClass());
+    }
 
-	public Parameters() {
-		this.delegate = new LinkedHashMap<>();
-	}
+    @Override
+    public <K> K get(T name, Class<? extends K> cls) {
+        Object ret = get(name);
+        if (ret == null) {
+            return null;
+        }
+        return Utils.asType(ret, cls);
+    }
 
-	public int size() {
-		return delegate.size();
-	}
+    @Override
+    public <K> K getNotNull(T name, Class<? extends K> cls) {
+        Object ret = get(name);
+        if (ret == null) {
+            return Utils.notNull(cls);
+        }
+        return Utils.asType(ret, cls);
+    }
 
-	public boolean isEmpty() {
-		return delegate.isEmpty();
-	}
+    public Parameters() {
+        this.delegate = new LinkedHashMap<>();
+    }
 
-	public boolean containsKey(Object key) {
-		return delegate.containsKey(key);
-	}
+    public int size() {
+        return delegate.size();
+    }
 
-	public boolean containsValue(Object value) {
-		return delegate.containsValue(value);
-	}
+    public boolean isEmpty() {
+        return delegate.isEmpty();
+    }
 
-	public Object get(Object key) {
-		return delegate.get(key);
-	}
+    public boolean containsKey(Object key) {
+        return delegate.containsKey(key);
+    }
 
-	public Object put(T key, Object value) {
-		return delegate.put(key, value);
-	}
+    public boolean containsValue(Object value) {
+        return delegate.containsValue(value);
+    }
 
-	public Object remove(Object key) {
-		return delegate.remove(key);
-	}
+    public Object get(Object key) {
+        return delegate.get(key);
+    }
 
-	@SuppressWarnings("unchecked")
-	public void putAll(Map<? extends T, ? extends Object> m) {
-		delegate.putAll(m);
-		if (m instanceof Parameters) {
-			this.unnamedKeys.addAll(((Parameters<T>) m).unnamedKeys);
-		}
-	}
+    public Object put(T key, Object value) {
+        return delegate.put(key, value);
+    }
 
-	public void clear() {
-		delegate.clear();
-	}
+    public Object remove(Object key) {
+        return delegate.remove(key);
+    }
 
-	public Set<T> keySet() {
-		return delegate.keySet();
-	}
+    @Override
+    public String toString() {
+        return delegate.toString();
+    }
 
-	public Collection<Object> values() {
-		return delegate.values();
-	}
+    @SuppressWarnings("unchecked")
+    public void putAll(Map<? extends T, ? extends Object> m) {
+        delegate.putAll(m);
+        if (m instanceof Parameters) {
+            this.unnamedKeys.addAll(((Parameters<T>) m).unnamedKeys);
+        }
+    }
 
-	public Set<Entry<T, Object>> entrySet() {
-		return delegate.entrySet();
-	}
+    public void clear() {
+        delegate.clear();
+    }
 
-	public boolean equals(Object o) {
-		return delegate.equals(o);
-	}
+    public Set<T> keySet() {
+        return delegate.keySet();
+    }
 
-	public int hashCode() {
-		return delegate.hashCode();
-	}
+    public Collection<Object> values() {
+        return delegate.values();
+    }
 
-	public Object getOrDefault(Object key, Object defaultValue) {
-		return delegate.getOrDefault(key, defaultValue);
-	}
+    public Set<Entry<T, Object>> entrySet() {
+        return delegate.entrySet();
+    }
 
-	public void forEach(BiConsumer<? super T, ? super Object> action) {
-		delegate.forEach(action);
-	}
+    public boolean equals(Object o) {
+        return delegate.equals(o);
+    }
 
-	public void replaceAll(BiFunction<? super T, ? super Object, ? extends Object> function) {
-		delegate.replaceAll(function);
-	}
+    public int hashCode() {
+        return delegate.hashCode();
+    }
 
-	public Object putIfAbsent(T key, Object value) {
-		return delegate.putIfAbsent(key, value);
-	}
+    public Object getOrDefault(Object key, Object defaultValue) {
+        return delegate.getOrDefault(key, defaultValue);
+    }
 
-	@SuppressWarnings("unchecked")
-	public Object putUnnamed(Object value) {
-		String name = "_p" + (unnamedKeys.size() + 1);
-		unnamedKeys.add((T) name);
-		return put((T) name, value);
-	}
+    public void forEach(BiConsumer<? super T, ? super Object> action) {
+        delegate.forEach(action);
+    }
 
-	public boolean remove(Object key, Object value) {
-		return delegate.remove(key, value);
-	}
+    public void replaceAll(BiFunction<? super T, ? super Object, ? extends Object> function) {
+        delegate.replaceAll(function);
+    }
 
-	public boolean replace(T key, Object oldValue, Object newValue) {
-		return delegate.replace(key, oldValue, newValue);
-	}
+    public Object putIfAbsent(T key, Object value) {
+        return delegate.putIfAbsent(key, value);
+    }
 
-	public Object replace(T key, Object value) {
-		return delegate.replace(key, value);
-	}
+    @SuppressWarnings("unchecked")
+    public Object putUnnamed(Object value) {
+        String name = "_p" + (unnamedKeys.size() + 1);
+        unnamedKeys.add((T) name);
+        return put((T) name, value);
+    }
 
-	public Object computeIfAbsent(T key, Function<? super T, ? extends Object> mappingFunction) {
-		return delegate.computeIfAbsent(key, mappingFunction);
-	}
+    public boolean remove(Object key, Object value) {
+        return delegate.remove(key, value);
+    }
 
-	public Object computeIfPresent(T key, BiFunction<? super T, ? super Object, ? extends Object> remappingFunction) {
-		return delegate.computeIfPresent(key, remappingFunction);
-	}
+    public boolean replace(T key, Object oldValue, Object newValue) {
+        return delegate.replace(key, oldValue, newValue);
+    }
 
-	public Object compute(T key, BiFunction<? super T, ? super Object, ? extends Object> remappingFunction) {
-		return delegate.compute(key, remappingFunction);
-	}
+    public Object replace(T key, Object value) {
+        return delegate.replace(key, value);
+    }
 
-	public Object merge(T key, Object value,
-			BiFunction<? super Object, ? super Object, ? extends Object> remappingFunction) {
-		return delegate.merge(key, value, remappingFunction);
-	}
+    public Object computeIfAbsent(T key, Function<? super T, ? extends Object> mappingFunction) {
+        return delegate.computeIfAbsent(key, mappingFunction);
+    }
 
-	@Override
-	public boolean contains(T key) {
-		return delegate.get(key) != null;
-	}
+    public Object computeIfPresent(T key, BiFunction<? super T, ? super Object, ? extends Object> remappingFunction) {
+        return delegate.computeIfPresent(key, remappingFunction);
+    }
 
-	@Override
-	public boolean contains(T key, Class<?> cls) {
-		Object obj = delegate.get(key);
-		return obj != null && cls.isAssignableFrom(obj.getClass());
-	}
+    public Object compute(T key, BiFunction<? super T, ? super Object, ? extends Object> remappingFunction) {
+        return delegate.compute(key, remappingFunction);
+    }
 
-	@Override
-	public List<T> getUnnamedKeys() {
-		return unnamedKeys;
-	}
+    public Object merge(T key, Object value, BiFunction<? super Object, ? super Object, ? extends Object> remappingFunction) {
+        return delegate.merge(key, value, remappingFunction);
+    }
 
-	@Override
-	public List<T> getNamedKeys() {
-		List<T> ret = new ArrayList<>();
-		for (T key : delegate.keySet()) {
-			if (!unnamedKeys.contains(key)) {
-				ret.add(key);
-			}
-		}
-		return ret;
-	}
+    @Override
+    public boolean contains(T key) {
+        return delegate.get(key) != null;
+    }
 
-	@Override
-	public boolean containsAnyKey(T... keys) {
-		if (keys != null) {
-			for (T key : keys) {
-				if (this.containsKey(key)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    @Override
+    public boolean contains(T key, Class<?> cls) {
+        Object obj = delegate.get(key);
+        return obj != null && cls.isAssignableFrom(obj.getClass());
+    }
 
-	@Override
-	public boolean containsAny(Object... objects) {
-		if (objects != null) {
-			for (Object key : objects) {
-				if (this.containsValue(key)) {
-					return true;
-				}
-			}
-		}
-		return false;
-	}
+    @Override
+    public List<T> getUnnamedKeys() {
+        return unnamedKeys;
+    }
 
-	@SuppressWarnings("unchecked")
-	@Override
-	public <K> K getAny(T... keys) {
-		if (keys != null) {
-			for (T key : keys) {
-				K ret = (K) get(key);
-				if (ret != null) {
-					return (K)ret;
-				}
-			}
-		}
-		return null;
-	}
+    @Override
+    public List<T> getNamedKeys() {
+        List<T> ret = new ArrayList<>();
+        for (T key : delegate.keySet()) {
+            if (!unnamedKeys.contains(key)) {
+                ret.add(key);
+            }
+        }
+        return ret;
+    }
 
-	@Override
-	public Map<T, Object> getLike(String string) {
-		Map<T, Object> ret = new LinkedHashMap<>();
-		for (T key : keySet()) {
-			if (key.toString().startsWith(string)) {
-				ret.put(key, get(key));
-			}
-		}
-		return ret;
-	}
+    @Override
+    public boolean containsAnyKey(T... keys) {
+        if (keys != null) {
+            for (T key : keys) {
+                if (this.containsKey(key)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
 
-	@Override
-	public List<Object> getUnnamedArguments() {
-		List<Object> ret = new ArrayList<>();
-		for (T key : getUnnamedKeys()) {
-			ret.add(get(key));
-		}
-		return ret;
-	}
+    @Override
+    public boolean containsAny(Object... objects) {
+        if (objects != null) {
+            for (Object key : objects) {
+                if (this.containsValue(key)) {
+                    return true;
+                }
+            }
+        }
+        return false;
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <K> K getAny(T... keys) {
+        if (keys != null) {
+            for (T key : keys) {
+                K ret = (K) get(key);
+                if (ret != null) {
+                    return (K) ret;
+                }
+            }
+        }
+        return null;
+    }
+
+    @Override
+    public Map<T, Object> getLike(String string) {
+        Map<T, Object> ret = new LinkedHashMap<>();
+        for (T key : keySet()) {
+            if (key.toString().startsWith(string)) {
+                ret.put(key, get(key));
+            }
+        }
+        return ret;
+    }
+
+    @Override
+    public List<Object> getUnnamedArguments() {
+        List<Object> ret = new ArrayList<>();
+        for (T key : getUnnamedKeys()) {
+            ret.add(get(key));
+        }
+        return ret;
+    }
 
 }
