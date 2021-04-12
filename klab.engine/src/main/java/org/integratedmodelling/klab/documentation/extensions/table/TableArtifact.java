@@ -400,7 +400,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                             nCols++;
                         }
                         int cell = ret.newHeaderCell(tRow, group.nDimensions, false);
-                        ret.write(cell, group.title, Style.BOLD);
+                        ret.write(cell, group.title, Double.NaN, Style.BOLD);
                         nCols += group.nDimensions;
                     }
 
@@ -420,7 +420,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                         if (cDesc.hidden) {
                             continue;
                         }
-                        ret.write(ret.newHeaderCell(tRow, false), getHeader(cDesc, ct, cTitles, scope), cDesc.style);
+                        ret.write(ret.newHeaderCell(tRow, false), getHeader(cDesc, ct, cTitles, scope), Double.NaN, cDesc.style);
                     }
                 }
             }
@@ -435,14 +435,14 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                 }
                 int hRow = ret.newRow(hBody);
                 for (int i = 0; i < rTitles; i++) {
-                    ret.write(ret.newHeaderCell(hRow, true), getHeader(rDesc, i, rTitles, scope), rDesc.style);
+                    ret.write(ret.newHeaderCell(hRow, true), getHeader(rDesc, i, rTitles, scope), Double.NaN, rDesc.style);
                 }
                 for (Dimension cDesc : getActiveColumns()) {
                     if (cDesc.hidden) {
                         continue;
                     }
                     Cell cell = cells[cDesc.index][rDesc.index];
-                    ret.write(ret.newCell(hRow), getData(cell), getStyle(cell));
+                    ret.write(ret.newCell(hRow), getData(cell), getNumberValue(cell), getStyle(cell));
                 }
             }
 
@@ -706,6 +706,23 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
             ret = NumberFormat.getNumberInstance().format((Number) ret);
         }
         return ret.toString();
+    }
+
+    private double getNumberValue(Cell cell) {
+
+        if (cell == null) {
+            return Double.NaN;
+        }
+
+        Object ret = cell.computedValue;
+        if (Observations.INSTANCE.isNodata(ret)) {
+            return Double.NaN;
+        }
+        if (ret instanceof Number) {
+            // TODO harvest format specs from row, then col
+            return ((Number)ret).doubleValue();
+        }
+        return Double.NaN;
     }
 
     private String getHeader(Dimension dimension, int currentLevelIndex, int totalLevels, IRuntimeScope scope) {
