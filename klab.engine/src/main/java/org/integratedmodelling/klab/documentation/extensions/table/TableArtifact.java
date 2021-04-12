@@ -16,8 +16,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.documentation.views.IDocumentationView;
@@ -169,7 +171,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
      * @param column
      * @param row
      */
-    public void accumulate(Object value, IObservable observable, ILocator locator, Phase phase, int column, int row) {
+    public void accumulate(Object value, IObservable observable, ILocator locator, Phase phase, int column, int row, ComputationType forcedAggregation) {
 
         /*
          * at this point the catalogs are stable
@@ -227,7 +229,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                  * create aggregator if not there
                  */
                 if (cell.aggregator == null) {
-                    cell.aggregator = new Aggregator(observable, scope.getMonitor(), true);
+                    if (forcedAggregation != null) {
+                        cell.aggregator = new Aggregator(forcedAggregation.getAggregation(), scope.getScale());
+                    } else {
+                        cell.aggregator = new Aggregator(observable, scope.getMonitor(), true);
+                    }
                 }
                 cell.aggregator.add(value, observable, locator);
             }
@@ -653,7 +659,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
              * Create an aggregator w/o semantics according to the computation type, which is
              * guaranteed consistent.
              */
-            Aggregator aggregator = new Aggregator(cell.computationType.getAggregation(), scope.getScale());
+            Aggregation aggregation = dimension.getForcedAggregation();
+            if (aggregation == null) {
+                aggregation = cell.computationType.getAggregation();
+            }
+            Aggregator aggregator = new Aggregator(aggregation, scope.getScale());
 
             /*
              * scan the OTHER dimension and add the computedValue of all cells that have aggregators
