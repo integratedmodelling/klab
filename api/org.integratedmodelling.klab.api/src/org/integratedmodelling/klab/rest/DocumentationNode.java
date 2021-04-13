@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.rest;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 /**
  * Parent class for a member of the documentation tree. This will substitute the report and the
@@ -47,6 +48,82 @@ public class DocumentationNode {
 
     public static class Table {
 
+        public static class Column {
+
+            private String title;
+            private String id;
+            private boolean headerVertical;
+            private String sorter;
+            private String hozAlign;
+            private String formatter;
+            
+            public String getTitle() {
+                return title;
+            }
+            public void setTitle(String title) {
+                this.title = title;
+            }
+            public String getId() {
+                return id;
+            }
+            public void setId(String id) {
+                this.id = id;
+            }
+            public boolean isHeaderVertical() {
+                return headerVertical;
+            }
+            public void setHeaderVertical(boolean headerVertical) {
+                this.headerVertical = headerVertical;
+            }
+            public String getSorter() {
+                return sorter;
+            }
+            public void setSorter(String sorter) {
+                this.sorter = sorter;
+            }
+            public String getHozAlign() {
+                return hozAlign;
+            }
+            public void setHozAlign(String hozAlign) {
+                this.hozAlign = hozAlign;
+            }
+            public String getFormatter() {
+                return formatter;
+            }
+            public void setFormatter(String formatter) {
+                this.formatter = formatter;
+            }
+            
+            
+        }
+
+        private List<Column> columns = new ArrayList<>();
+
+        /**
+         * Data come as strings to avoid having to enable polymorphism in JSON; the type is in the
+         * column definition. For types other than POD, the type may also select a formatter based
+         * on configuration.
+         */
+        private List<Map<String, String>> rows = new ArrayList<>();
+
+        public List<Column> getColumns() {
+            return columns;
+        }
+
+        public void setColumns(List<Column> columns) {
+            this.columns = columns;
+        }
+
+        public List<Map<String, String>> getRows() {
+            return rows;
+        }
+
+        public void setRows(List<Map<String, String>> rows) {
+            this.rows = rows;
+        }
+
+        
+        
     }
 
     public static class Figure {

@@ -35,10 +35,15 @@ import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.DimensionType;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Phase;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Style;
+import org.integratedmodelling.klab.documentation.extensions.table.TableView.Cell;
+import org.integratedmodelling.klab.documentation.extensions.table.TableView.Container;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.provenance.Artifact;
+import org.integratedmodelling.klab.rest.DocumentationNode.Table;
+import org.integratedmodelling.klab.rest.DocumentationNode.Table.Column;
 import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
 import org.integratedmodelling.klab.utils.CollectionUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -171,7 +176,8 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
      * @param column
      * @param row
      */
-    public void accumulate(Object value, IObservable observable, ILocator locator, Phase phase, int column, int row, ComputationType forcedAggregation) {
+    public void accumulate(Object value, IObservable observable, ILocator locator, Phase phase, int column, int row,
+            ComputationType forcedAggregation) {
 
         /*
          * at this point the catalogs are stable
@@ -252,6 +258,211 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
         int level;
         int startIndex;
         List<Group> children = new ArrayList<>();
+    }
+
+    @SuppressWarnings("unchecked")
+    @Override
+    public <T> T getBean(Class<T> cls) {
+
+        if (Table.class.isAssignableFrom(cls)) {
+            Table ret = new Table();
+            compile(ret);
+            return (T) ret;
+        }
+
+        return null;
+    }
+
+    /**
+     * Compile to bean. FIXME the logics when cells are not computed should be in one place only -
+     * at worst, just identify the places where that is called and call compileView (text) to ensure
+     * it's done.
+     * 
+     * @param ret
+     */
+    private void compile(Table ret) {
+
+        List<Cell> aggregatedCells = new ArrayList<>();
+        
+        List<Column> cols = new ArrayList<>();
+        List<Map<String, String>> data = new ArrayList<>();
+        
+        /*
+         * compute groups based on dimension hierarchies. Dimensions that stand alone will have a
+         * group all by themselves. These must preserve order or we're screwed.
+         */
+        Map<String, Group> colGroups = new LinkedHashMap<>();
+        Map<String, Group> rowGroups = new LinkedHashMap<>();
+        int cGroupLevel = 0, rGroupLevel = 0;
+        int sCol = 0, sRow = 0;
+
+        for (Dimension column : getActiveColumns()) {
+            if (column.hidden) {
+                continue;
+            }
+            sCol++;
+            int level = checkGroups(column, scope, sCol++, colGroups);
+            if (cGroupLevel < level) {
+                cGroupLevel = level;
+            }
+            for (Dimension row : getActiveRows()) {
+                if (row.hidden) {
+                    continue;
+                }
+                if (sCol == 1) {
+                    sRow++;
+                }
+                level = checkGroups(row, scope, sRow++, rowGroups);
+                if (rGroupLevel < level) {
+                    rGroupLevel = level;
+                }
+            }
+        }
+
+        /*
+         * precompute all cells with aggregators and not those that aggregate them; the latter are
+         * put away and deferred for computing in order of level, so that aggregations of
+         * aggregations are computed last. Put row and column in the cell in this pass.
+         */
+        for (Dimension column : getActiveColumns()) {
+            for (Dimension row : getActiveRows()) {
+                Cell cell = cells[column.index][row.index];
+                if (cell != null) {
+                    cell.row = row;
+                    cell.column = column;
+                    if (cell.computationType == null && cell.aggregator != null) {
+                        cell.computedValue = cell.get();
+                    } else if (cell.computationType != null) {
+                        // those with summarizing computations go first
+                        if (cell.computationType == ComputationType.Summarize) {
+                            cell.aggregationLevel = 0;
+                        } else {
+                            cell.aggregationLevel++;
+                        }
+                        aggregatedCells.add(cell);
+                    }
+                }
+            }
+        }
+
+        /*
+         * compute all aggregating cells in order of level
+         */
+        Collections.sort(aggregatedCells, new Comparator<Cell>(){
+            @Override
+            public int compare(Cell o1, Cell o2) {
+                return Integer.compare(o1.aggregationLevel, o2.aggregationLevel);
+            }
+        });
+
+        for (Cell cell : aggregatedCells) {
+            cell.computedValue = aggregateData(cell);
+        }
+
+//        int hTable = ret.table(this.table.getTitle(), hSheet);
+
+        /*
+         * add separator indices for both rows and columns
+         */
+        int rTitles = 0;
+        for (Dimension row : rows) {
+            if (row.hidden) {
+                continue;
+            }
+            if (row.titles != null && row.titles.length > rTitles) {
+                rTitles = row.titles.length;
+            }
+            if (row.separator) {
+                activeRows.add(row.index);
+            }
+        }
+        int cTitles = 0;
+        for (Dimension column : columns) {
+            if (column.hidden) {
+                continue;
+            }
+            if (column.titles != null && column.titles.length > cTitles) {
+                cTitles = column.titles.length;
+            }
+            if (column.separator) {
+                activeColumns.add(column.index);
+            }
+        }
+
+        /*
+         * headers
+         */
+        if ((rTitles + cTitles) > 0 || (colGroups.size() + rowGroups.size()) > 0) {
+
+//            int hHeader = ret.header(hTable);
+
+            for (int i = cGroupLevel; i > 0; i--) {
+
+//                int tRow = ret.newRow(hHeader);
+                int level = i;
+                int nCols = 0;
+
+                // skip row titles
+                for (int n = 0; n < rTitles; n++) {
+//                    ret.newHeaderCell(tRow, false);
+                }
+
+                for (Group group : colGroups.values().stream().filter(group -> group.level == level)
+                        .collect(Collectors.toList())) {
+                    while(nCols > group.startIndex) {
+//                        ret.newHeaderCell(tRow, false);
+                        nCols++;
+                    }
+//                    int cell = ret.newHeaderCell(tRow, group.nDimensions, false);
+//                    ret.write(cell, group.title, Double.NaN, Style.BOLD);
+                    nCols += group.nDimensions;
+                }
+
+                for (int n = nCols; n < (sCol - nCols); n++) {
+//                    ret.newHeaderCell(tRow, false);
+                }
+            }
+
+            for (int ct = 0; ct < cTitles; ct++) {
+
+//                int tRow = ret.newRow(hHeader);
+
+                for (int rt = 0; rt < rTitles; rt++) {
+//                    ret.newHeaderCell(tRow, false);
+                }
+                for (Dimension cDesc : getActiveColumns()) {
+                    if (cDesc.hidden) {
+                        continue;
+                    }
+//                    ret.write(ret.newHeaderCell(tRow, false), getHeader(cDesc, ct, cTitles, scope), Double.NaN, cDesc.style);
+                }
+            }
+        }
+
+        /*
+         * data and row titles. Row groups can go to hell for now.
+         */
+//        int hBody = ret.body(hTable);
+        for (Dimension rDesc : getActiveRows()) {
+            if (rDesc.hidden) {
+                continue;
+            }
+//            int hRow = ret.newRow(hBody);
+            for (int i = 0; i < rTitles; i++) {
+//                ret.write(ret.newHeaderCell(hRow, true), getHeader(rDesc, i, rTitles, scope), Double.NaN, rDesc.style);
+            }
+            for (Dimension cDesc : getActiveColumns()) {
+                if (cDesc.hidden) {
+                    continue;
+                }
+                Cell cell = cells[cDesc.index][rDesc.index];
+//                ret.write(ret.newCell(hRow), getData(cell), getNumberValue(cell), getStyle(cell));
+            }
+        }
+        
+        ret.getColumns().addAll(cols);
+        ret.getRows().addAll(data);
+
     }
 
     /**
@@ -628,7 +839,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
              */
             IParameters<String> parameters = Parameters.create();
             for (String symbol : symbols) {
-                
+
                 Set<String> candidates = new HashSet<>();
                 candidates.add(symbol);
                 if (cell.row.parent != null && aggregatingDimension == DimensionType.ROW) {
@@ -637,17 +848,15 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                 if (cell.column.parent != null && aggregatingDimension == DimensionType.COLUMN) {
                     candidates.add(cell.column.parent.getName() + symbol);
                 }
-                
+
                 for (String s : candidates) {
                     if (dimensionCatalog.containsKey(s)) {
                         int row = aggregatingDimension == DimensionType.ROW ? dimensionCatalog.get(s).index : cell.row.index;
-                        int col = aggregatingDimension == DimensionType.ROW
-                                ? cell.column.index
-                                : dimensionCatalog.get(s).index;
+                        int col = aggregatingDimension == DimensionType.ROW ? cell.column.index : dimensionCatalog.get(s).index;
                         Cell target = cells[col][row];
                         parameters.put(symbol, target == null ? 0 : (target.computedValue == null ? 0 : target.computedValue));
                         break;
-                    } 
+                    }
                 }
             }
 
@@ -730,7 +939,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
         }
         if (ret instanceof Number) {
             // TODO harvest format specs from row, then col
-            return ((Number)ret).doubleValue();
+            return ((Number) ret).doubleValue();
         }
         return Double.NaN;
     }

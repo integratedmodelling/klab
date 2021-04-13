@@ -170,8 +170,12 @@ public class DocumentationTree {
     }
 
     public void addView(IKnowledgeView view, KnowledgeViewReference descriptor) {
-        // TODO Auto-generated method stub
 
+        DocumentationNode node = new DocumentationNode();
+        if ("table".equals(view.getViewClass())) {
+            node.setTable(view.getBean(Table.class));
+        }
+        
     }
 
     // TODO add the contextualization

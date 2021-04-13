@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.raster.wcs;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -30,10 +31,12 @@ import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.SpatialExtent;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Range;
@@ -230,7 +233,7 @@ public class WCSService {
         }
 
         private void describeCoverage() {
-            
+
             if (!finished || (System.currentTimeMillis() - timestamp) > LAYER_INFO_EXPIRATION_MILLISECONDS) {
                 finished = true;
                 timestamp = System.currentTimeMillis();
@@ -270,7 +273,7 @@ public class WCSService {
                             parseV1(coverage);
                         }
                     }
-                    
+
                 } catch (Throwable t) {
                     this.error = true;
                 }
@@ -448,7 +451,8 @@ public class WCSService {
                 /*
                  * by default cache the individual coverage info for 12h
                  */
-                .parseLong(Configuration.INSTANCE.getProperty("wcs.cache.expiration", "" + (LAYER_INFO_EXPIRATION_MILLISECONDS * 6)));
+                .parseLong(Configuration.INSTANCE.getProperty("wcs.cache.expiration",
+                        "" + (LAYER_INFO_EXPIRATION_MILLISECONDS * 6)));
 
         if (db == null) {
 
@@ -469,7 +473,21 @@ public class WCSService {
             con.setConnectTimeout(CONNECT_TIMEOUT_MS);
             con.setReadTimeout(READ_TIMEOUT_MS);
 
+            /*
+             * save capabilities XML to file
+             */
+            File tempfile = File.createTempFile("wcsc", ".xml");
             try (InputStream input = con.getInputStream()) {
+                FileUtils.copyInputStreamToFile(input, tempfile);
+            } catch (IOException e) {
+                throw new KlabIOException(e);
+            }
+            
+            /*
+             * hash the file and if we have a hash and it's the same, force use of cache
+             */
+            
+            try (InputStream input = new FileInputStream(tempfile)){
 
                 Map<?, ?> capabilitiesType = (Map<?, ?>) parser.parse(input);
 

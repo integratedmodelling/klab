@@ -13,6 +13,8 @@ import java.util.Set;
 import org.integratedmodelling.klab.api.documentation.views.ITableView;
 import org.integratedmodelling.klab.documentation.extensions.table.TableCompiler.Style;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
+import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
+import org.integratedmodelling.klab.rest.DocumentationNode.Table;
 import org.integratedmodelling.klab.utils.Escape;
 
 /**
