@@ -37,6 +37,7 @@ public class TableView implements ITableView {
 
 		boolean header;
 		boolean rowScope;
+		Double value;
 		String contents;
 		Set<Style> style;
 		int span = 1;
@@ -54,7 +55,7 @@ public class TableView implements ITableView {
 
 
 		public String getHtmlContents() {
-			if (contents == null) {
+            if (contents == null) {
 				return (header ? "<th" + (span > 1 ? (" colspan=\"" + span + "\"") : "") + (rowScope ? " scope=\"row\"" : "") + "></th>" : "<td></td>");
 			}
 			return (header ? ("<th" + (span > 1 ? (" colspan=\"" + span + "\"") : "") + (rowScope ? " scope=\"ro\"" : "")) : "<td") + getStyle(style) + ">"
@@ -231,7 +232,7 @@ public class TableView implements ITableView {
 
 	@SuppressWarnings("unchecked")
 	@Override
-	public void write(int cell, Object content, Object... options) {
+	public void write(int cell, Object content, double value, Object... options) {
 		Cell cll = cells.get(cell);
 		for (Object option : options) {
 			if (option instanceof Set) {
@@ -241,7 +242,9 @@ public class TableView implements ITableView {
 		}
 		// TODO if there is formatting in the options, add it
 		cll.contents = content.toString();
-
+		if (!Double.isNaN(value)) {
+		    cll.value = value;
+		}
 	}
 
 	@Override

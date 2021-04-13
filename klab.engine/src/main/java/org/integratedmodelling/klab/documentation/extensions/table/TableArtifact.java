@@ -16,8 +16,10 @@ import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.documentation.views.IDocumentationView;
@@ -169,7 +171,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
      * @param column
      * @param row
      */
-    public void accumulate(Object value, IObservable observable, ILocator locator, Phase phase, int column, int row) {
+    public void accumulate(Object value, IObservable observable, ILocator locator, Phase phase, int column, int row, ComputationType forcedAggregation) {
 
         /*
          * at this point the catalogs are stable
@@ -227,7 +229,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                  * create aggregator if not there
                  */
                 if (cell.aggregator == null) {
-                    cell.aggregator = new Aggregator(observable, scope.getMonitor(), true);
+                    if (forcedAggregation != null) {
+                        cell.aggregator = new Aggregator(forcedAggregation.getAggregation(), scope.getScale());
+                    } else {
+                        cell.aggregator = new Aggregator(observable, scope.getMonitor(), true);
+                    }
                 }
                 cell.aggregator.add(value, observable, locator);
             }
@@ -400,7 +406,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                             nCols++;
                         }
                         int cell = ret.newHeaderCell(tRow, group.nDimensions, false);
-                        ret.write(cell, group.title, Style.BOLD);
+                        ret.write(cell, group.title, Double.NaN, Style.BOLD);
                         nCols += group.nDimensions;
                     }
 
@@ -420,7 +426,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                         if (cDesc.hidden) {
                             continue;
                         }
-                        ret.write(ret.newHeaderCell(tRow, false), getHeader(cDesc, ct, cTitles, scope), cDesc.style);
+                        ret.write(ret.newHeaderCell(tRow, false), getHeader(cDesc, ct, cTitles, scope), Double.NaN, cDesc.style);
                     }
                 }
             }
@@ -435,14 +441,14 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                 }
                 int hRow = ret.newRow(hBody);
                 for (int i = 0; i < rTitles; i++) {
-                    ret.write(ret.newHeaderCell(hRow, true), getHeader(rDesc, i, rTitles, scope), rDesc.style);
+                    ret.write(ret.newHeaderCell(hRow, true), getHeader(rDesc, i, rTitles, scope), Double.NaN, rDesc.style);
                 }
                 for (Dimension cDesc : getActiveColumns()) {
                     if (cDesc.hidden) {
                         continue;
                     }
                     Cell cell = cells[cDesc.index][rDesc.index];
-                    ret.write(ret.newCell(hRow), getData(cell), getStyle(cell));
+                    ret.write(ret.newCell(hRow), getData(cell), getNumberValue(cell), getStyle(cell));
                 }
             }
 
@@ -653,7 +659,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
              * Create an aggregator w/o semantics according to the computation type, which is
              * guaranteed consistent.
              */
-            Aggregator aggregator = new Aggregator(cell.computationType.getAggregation(), scope.getScale());
+            Aggregation aggregation = dimension.getForcedAggregation();
+            if (aggregation == null) {
+                aggregation = cell.computationType.getAggregation();
+            }
+            Aggregator aggregator = new Aggregator(aggregation, scope.getScale());
 
             /*
              * scan the OTHER dimension and add the computedValue of all cells that have aggregators
@@ -706,6 +716,23 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
             ret = NumberFormat.getNumberInstance().format((Number) ret);
         }
         return ret.toString();
+    }
+
+    private double getNumberValue(Cell cell) {
+
+        if (cell == null) {
+            return Double.NaN;
+        }
+
+        Object ret = cell.computedValue;
+        if (Observations.INSTANCE.isNodata(ret)) {
+            return Double.NaN;
+        }
+        if (ret instanceof Number) {
+            // TODO harvest format specs from row, then col
+            return ((Number)ret).doubleValue();
+        }
+        return Double.NaN;
     }
 
     private String getHeader(Dimension dimension, int currentLevelIndex, int totalLevels, IRuntimeScope scope) {

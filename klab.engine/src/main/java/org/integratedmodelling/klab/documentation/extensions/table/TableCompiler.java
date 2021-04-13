@@ -732,9 +732,14 @@ public class TableCompiler {
         List<Filter> classifiers;
 
         /**
-         * Aggregation type, if any.
+         * Aggregation type, if any. (UNUSED)
          */
         AggregationType aggregation = null;
+
+        /**
+         * This takes over the type of aggregator if specified with 'aggregation'.
+         */
+        ComputationType forcedAggregation = null;
 
         /**
          * Computation type may require the use of specific formulas or defer calculation to a
@@ -782,6 +787,7 @@ public class TableCompiler {
             this.computation = dim.computation;
             this.expression = dim.expression;
             this.dimensionType = dim.dimensionType;
+            this.forcedAggregation = dim.forcedAggregation;
             this.computationType = dim.computationType;
             if (dim.filters != null) {
                 for (Filter filter : dim.filters) {
@@ -832,16 +838,16 @@ public class TableCompiler {
 
                 // register row and column names unless the rows/colums are aggregations
                 for (Dimension dimension : rows.values()) {
-                    if (dimension.computationType == null || !dimension.computationType.isAggregation()) {
+//                    if (dimension.computationType == null || !dimension.computationType.isAggregation()) {
                         // FIXME IDs for all siblings, getName() for others
                         context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
-                    }
+//                    }
                 }
                 for (Dimension dimension : columns.values()) {
-                    if (dimension.computationType == null || !dimension.computationType.isAggregation()) {
+//                    if (dimension.computationType == null || !dimension.computationType.isAggregation()) {
                         // FIXME IDs for all siblings, getName() for others
                         context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
-                    }
+//                    }
                 }
 
                 context.addKnownIdentifier("cell", Type.COUNTABLE);
@@ -1064,6 +1070,7 @@ public class TableCompiler {
             ret.computationType = this.computationType;
             ret.expression = this.expression;
             ret.dimensionType = this.dimensionType;
+            ret.forcedAggregation = this.forcedAggregation;
             if (this.filters != null) {
                 for (Filter filter : this.filters) {
                     if (filter.objectFilter == null) {
@@ -1108,6 +1115,10 @@ public class TableCompiler {
         public Object getDefault() {
             // TODO Auto-generated method stub
             return 0;
+        }
+
+        public Aggregation getForcedAggregation() {
+            return this.forcedAggregation == null ? null : this.forcedAggregation.getAggregation();
         }
 
         // public void retarget(ObservedConcept target) {
@@ -1688,7 +1699,32 @@ public class TableCompiler {
                 ret.computationType = ComputationType.Max;
                 break;
             default:
-                throw new KlabValidationException("unrecognized symbol in computation: " + definition.get("compute"));
+                throw new KlabValidationException("unrecognized symbol in summarization: " + definition.get("summarize"));
+            }
+        }
+
+        if (definition.containsKey("aggregation")) {
+            switch(definition.get("aggregation").toString()) {
+            case "sum":
+                ret.forcedAggregation = ComputationType.Sum;
+                break;
+            case "average":
+                ret.forcedAggregation = ComputationType.Average;
+                break;
+            case "variance":
+                ret.forcedAggregation = ComputationType.Variance;
+                break;
+            case "std":
+                ret.forcedAggregation = ComputationType.Std;
+                break;
+            case "min":
+                ret.forcedAggregation = ComputationType.Min;
+                break;
+            case "max":
+                ret.forcedAggregation = ComputationType.Max;
+                break;
+            default:
+                throw new KlabValidationException("unrecognized symbol in aggregation: " + definition.get("aggregation"));
             }
         }
 
@@ -2103,6 +2139,9 @@ public class TableCompiler {
                         // bring along the data of computation closest to us
                         ObservedConcept rowTarget = getCellTarget(row, column, columnTarget);
                         TargetType rowTargetType = row.targetType == null ? columnTargetType : row.targetType;
+                        ComputationType forcedAggregation = row.forcedAggregation == null
+                                ? column.forcedAggregation
+                                : row.forcedAggregation;
                         ComputationType rowComputationType = row.computationType == null
                                 ? column.computationType
                                 : row.computationType;
@@ -2173,11 +2212,11 @@ public class TableCompiler {
                                 break;
                             }
                         }
-
+                        
                         if (rowComputationType == null) {
 
                             ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(), phase,
-                                    column.index, row.index);
+                                    column.index, row.index, forcedAggregation);
 
                             // System.out.println("Accumulating " + val + " of " + rowTarget + " in
                             // " + column + ", " + row
@@ -2195,7 +2234,7 @@ public class TableCompiler {
                             }
 
                             ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(), phase,
-                                    column.index, row.index);
+                                    column.index, row.index, forcedAggregation);
 
                             if (referencesPhases && phase.isLast()) {
                                 ret.setValue(evaluate(rowExpression, val, rowSymbols, objSymbols, value, ret, column.index,

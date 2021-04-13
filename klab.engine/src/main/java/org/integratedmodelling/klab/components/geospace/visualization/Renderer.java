@@ -60,6 +60,9 @@ import org.opengis.style.ContrastMethod;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 
+import akka.event.Logging;
+import akka.event.jul.Logger;
+
 /**
  * Rendering functions for raster coverages and possibly more. Uses Geotools' SLD support and
  * manages SLD definitions created from classpath, files, URLs and annotations.
@@ -403,8 +406,8 @@ public enum Renderer {
                         colors = Arrays.copyOf(excel, state.getDataKey().size());
                     } else {
                         // warn and use random shit
-                        state.getMonitor().warn("creating random colors to render " + state.getDataKey().size()
-                                + " categories: results won't be optimal");
+//                        Logging.INSTANCE.warn("creating random colors to render " + state.getDataKey().size()
+//                                + " categories: results won't be optimal");
                         colors = getRandomColors(state.getDataKey().size());
                     }
                 }
@@ -538,7 +541,8 @@ public enum Renderer {
 
     private Color[] getRandomColors(int size) {
         Color[] ret = new Color[size];
-        Random random = new Random();
+        // use same seed for repeatability
+        Random random = new Random(12345L);
         for (int i = 0; i < size; i++) {
             ret[i] = new Color(random.nextInt(256), random.nextInt(256), random.nextInt(256));
         }

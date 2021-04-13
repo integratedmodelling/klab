@@ -75,7 +75,6 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.ObservationStrategy;
@@ -84,7 +83,6 @@ import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
-import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
 
