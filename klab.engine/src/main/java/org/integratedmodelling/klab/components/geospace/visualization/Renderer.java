@@ -74,7 +74,7 @@ public enum Renderer {
 
     INSTANCE;
 
-    private static final String NO_DATA_MESSAGE = "NO DATA";
+    private static final String NO_DATA_MESSAGE = "No data";
 
     private Map<String, ColorScheme> colorSchemata = new HashMap<>();
     // private Map<String, Style> styles = new HashMap<>();
@@ -140,8 +140,8 @@ public enum Renderer {
                 renderer.paint(gr, coverage, rasterSymbolizer.getFirst());
             } else {
                 String s = rasterSymbolizer.getSecond();
-                Font f = new Font("SansSerif", Font.BOLD, 172);
-                gr.setColor(s.equals(NO_DATA_MESSAGE) ? Color.red : Color.white);
+                Font f = new Font("SansSerif", Font.BOLD, s.equals(NO_DATA_MESSAGE) ? 108 : 172);
+                gr.setColor(s.equals(NO_DATA_MESSAGE) ? Color.gray : Color.white);
                 gr.setFont(f);
                 FontMetrics fm = gr.getFontMetrics();
                 int x = (imagesize[0] - fm.stringWidth(s)) / 2;
