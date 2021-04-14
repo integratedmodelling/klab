@@ -172,10 +172,13 @@ public class DocumentationTree {
     public void addView(IKnowledgeView view, KnowledgeViewReference descriptor) {
 
         DocumentationNode node = new DocumentationNode();
+        node.setId(view.getId());
+        node.setTitle(view.getTitle());
         if ("table".equals(view.getViewClass())) {
             node.setTable(view.getBean(Table.class));
+            node.setType(DocumentationNode.Type.Table);
         }
-        
+        this.nodes.put(node.getId(), node);
     }
 
     // TODO add the contextualization
@@ -210,6 +213,11 @@ public class DocumentationTree {
 
     private List<DocumentationNode> getTablesView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
+        for (DocumentationNode node : nodes.values()) {
+            if (node.getType() == Type.Table) {
+                ret.add(node);
+            }
+        }
         return ret;
     }
 

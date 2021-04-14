@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.klab.api.provenance.IArtifact;
+
 /**
  * Parent class for a member of the documentation tree. This will substitute the report and the
  * resource/model metadata through the specific subclasses. The DocumentationTree exposes graphs of
@@ -56,6 +58,9 @@ public class DocumentationNode {
             private String sorter;
             private String hozAlign;
             private String formatter;
+            private IArtifact.Type type;
+            
+            private List<Column> columns = new ArrayList<>();
             
             public String getTitle() {
                 return title;
@@ -92,6 +97,18 @@ public class DocumentationNode {
             }
             public void setFormatter(String formatter) {
                 this.formatter = formatter;
+            }
+            public List<Column> getColumns() {
+                return columns;
+            }
+            public void setColumns(List<Column> columns) {
+                this.columns = columns;
+            }
+            public IArtifact.Type getType() {
+                return type;
+            }
+            public void setType(IArtifact.Type type) {
+                this.type = type;
             }
             
             
