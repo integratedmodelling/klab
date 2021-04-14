@@ -27,17 +27,18 @@ Preamble: {Preamble}
 			behavior?=('behavior'|'behaviour')
 		) name=PathName
 	)?
-	label=STRING?
+	label=(STRING|LOCALIZED_STRING_REFERENCE)?
 	(
 		('import' imports+=PathName (',' imports+=PathName)*)? &
 		('worldview' worldview=PathName)? &
 		('observable' (observable=Observable | observables=List))? &
-		('description' description=STRING)? &
-		('permissions' permissions=STRING)? &
-		('author' authors+=STRING)* &
+		('description' description=(STRING|LOCALIZED_STRING_REFERENCE))? &
+		('permissions' permissions=(STRING|LOCALIZED_STRING_REFERENCE))? &
+		('author' authors+=(STRING|LOCALIZED_STRING_REFERENCE))* &
 		('style' (style=PathName ('with' inlineStyle=Map)? | inlineStyle=Map)?)? &
-		('logo' logo=(Path|STRING))? &
+		('logo' logo=(Path|(STRING|LOCALIZED_STRING_REFERENCE)))? &
 		('version' version=VersionNumber)? & 
+		('locale' locale=LOCALE)? & 
 		('created' created=Date (createcomment=STRING)?)? &
 		('modified' modified=Date (modcomment=STRING)?)? 
 	)
@@ -326,7 +327,7 @@ Table:
 	(headers=HeaderRow SEPARATOR)? rows+=TableRow (',' rows+=TableRow)*;
 
 HeaderRow:
-	elements+=(LOWERCASE_ID|STRING) ('|' elements+=(LOWERCASE_ID|STRING))*
+	elements+=(LOWERCASE_ID|(STRING|LOCALIZED_STRING_REFERENCE)) ('|' elements+=(LOWERCASE_ID|(STRING|LOCALIZED_STRING_REFERENCE)))*
 ;
 
 TableRow:
@@ -355,7 +356,7 @@ Annotation:
 	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
 	
 Literal:
-	number=Number | from=Number 'to' to=Number | string=STRING | date=Date | boolean=('true' | 'false');
+	number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | boolean=('true' | 'false');
 	
 ParameterList:
 	pairs+=KeyValuePair (=> (',')? pairs+=KeyValuePair)*;
@@ -546,6 +547,9 @@ terminal KEY:
 terminal TAG:
 	('#')('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
 
+terminal LOCALIZED_STRING_REFERENCE:
+	('#')('A'..'Z') ('A'..'Z' | '0'..'9'| '_')*;
+
 terminal UPPERCASE_ID:
 	('A'..'Z') ('A'..'Z' | '_')*;
 
@@ -560,6 +564,10 @@ VersionNumber:
 
 terminal LOWERCASE_ID:
 	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
+
+terminal LOCALE:
+	('a'..'z')('a'..'z')('-' ('A'..'Z')('A'..'Z'))*
+;
 
 terminal QUOTED_LOWERCASE_ID:
 	('`')('a'..'z')('a'..'z' | '0'..'9'| '_')*;

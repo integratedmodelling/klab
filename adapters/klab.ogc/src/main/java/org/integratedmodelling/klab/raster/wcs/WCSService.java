@@ -178,6 +178,11 @@ public class WCSService {
         private boolean error = false;
         private int[] gridShape;
         private long timestamp = System.currentTimeMillis();
+        private boolean skipRefresh;
+
+        public WCSLayer(boolean skipRefresh) {
+            this.skipRefresh = skipRefresh;
+        }
 
         public String getName() {
             return name;
@@ -249,7 +254,7 @@ public class WCSService {
                         if (cached != null) {
                             Map<?, ?> map = JsonUtils.parseObject(cached, Map.class);
                             Long ts = (Long) map.get("timestamp");
-                            if ((System.currentTimeMillis() - ts) < cacheExpiration) {
+                            if (this.skipRefresh || (System.currentTimeMillis() - ts) < cacheExpiration) {
                                 coverage = map;
                             }
                         }
@@ -459,7 +464,8 @@ public class WCSService {
             File dpath = Configuration.INSTANCE.getDataPath("wcs");
             dpath.mkdirs();
 
-            db = DBMaker.fileDB(new File(dpath + File.separator + "wcscache.dat")).closeOnJvmShutdown().make();
+            db = DBMaker.fileDB(new File(dpath + File.separator + "wcscache.dat")).closeOnJvmShutdown().transactionEnable()
+                    .make();
             wcsCache = db.treeMap("layers", Serializer.STRING, Serializer.STRING).createOrOpen();
         }
 
@@ -482,12 +488,28 @@ public class WCSService {
             } catch (IOException e) {
                 throw new KlabIOException(e);
             }
-            
+
             /*
-             * hash the file and if we have a hash and it's the same, force use of cache
+             * hash the file and if we have a hash and it's the same, no need to call
+             * describeCoverage yet.
              */
-            
-            try (InputStream input = new FileInputStream(tempfile)){
+            String hash = FileUtils.getFileHash(tempfile);
+            String prev = wcsCache.get(url.toString());
+            boolean skipRefresh = (prev != null && hash.equals(prev));
+
+            if (skipRefresh) {
+                Logging.INSTANCE.info("WCS catalog at " + url + " is unchanged since last read: coverage cache is valid");
+            } else {
+                Logging.INSTANCE.info("WCS catalog at " + url + " has changed since last read: coverage cache expires in 12h");
+            }
+
+            wcsCache.put(url.toString(), hash);
+
+            /**
+             * Open the file anyway and build the layers following it, even if we have a cache and
+             * the hash is the same.
+             */
+            try (InputStream input = new FileInputStream(tempfile)) {
 
                 Map<?, ?> capabilitiesType = (Map<?, ?>) parser.parse(input);
 
@@ -508,7 +530,7 @@ public class WCSService {
 
                     if (name instanceof String && bbox instanceof Map) {
 
-                        WCSLayer layer = new WCSLayer();
+                        WCSLayer layer = new WCSLayer(skipRefresh);
 
                         layer.name = name.toString();
                         double[] upperCorner = NumberUtils.doubleArrayFromString(((Map<?, ?>) bbox).get(UPPER_CORNER).toString(),
@@ -530,6 +552,7 @@ public class WCSService {
             errors.add(e);
             Logging.INSTANCE.error(e);
         } finally {
+            db.commit();
             Klab.INSTANCE.notifyEventEnd(event);
         }
     }

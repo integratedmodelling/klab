@@ -404,11 +404,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -435,11 +435,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)?
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
@@ -592,7 +592,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     HeaderRow returns HeaderRow
 	 *
 	 * Constraint:
-	 *     ((elements+=LOWERCASE_ID | elements+=STRING) elements+=LOWERCASE_ID? (elements+=STRING? elements+=LOWERCASE_ID?)*)
+	 *     (
+	 *         (elements+=LOWERCASE_ID | elements+=STRING | elements+=LOCALIZED_STRING_REFERENCE) 
+	 *         elements+=LOWERCASE_ID? 
+	 *         ((elements+=STRING | elements+=LOCALIZED_STRING_REFERENCE)? elements+=LOWERCASE_ID?)*
+	 *     )
 	 */
 	protected void sequence_HeaderRow(ISerializationContext context, HeaderRow semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
@@ -656,6 +660,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *         number=Number | 
 	 *         (from=Number to=Number) | 
 	 *         string=STRING | 
+	 *         string=LOCALIZED_STRING_REFERENCE | 
 	 *         date=Date | 
 	 *         boolean='true' | 
 	 *         boolean='false'
@@ -915,25 +920,31 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *             ) 
 	 *             name=PathName
 	 *         )? 
-	 *         label=STRING? 
+	 *         (label=STRING | label=LOCALIZED_STRING_REFERENCE)? 
+	 *         worldview=PathName? 
 	 *         (
 	 *             (
-	 *                 worldview=PathName | 
+	 *                 (imports+=PathName imports+=PathName*) | 
 	 *                 observable=Observable | 
 	 *                 observables=List | 
 	 *                 description=STRING | 
+	 *                 description=LOCALIZED_STRING_REFERENCE | 
 	 *                 permissions=STRING | 
+	 *                 permissions=LOCALIZED_STRING_REFERENCE | 
 	 *                 authors+=STRING | 
+	 *                 authors+=LOCALIZED_STRING_REFERENCE | 
+	 *                 (style=PathName inlineStyle=Map?) | 
 	 *                 inlineStyle=Map | 
 	 *                 logo=Path | 
 	 *                 logo=STRING | 
-	 *                 version=VersionNumber
+	 *                 logo=LOCALIZED_STRING_REFERENCE | 
+	 *                 version=VersionNumber | 
+	 *                 locale=LOCALE | 
+	 *                 (created=Date createcomment=STRING?) | 
+	 *                 (modified=Date modcomment=STRING?)
 	 *             )? 
-	 *             (imports+=PathName imports+=PathName*)? 
-	 *             (style=PathName inlineStyle=Map?)? 
-	 *             (created=Date createcomment=STRING?)? 
-	 *             (modified=Date modcomment=STRING?)?
-	 *         )+
+	 *             worldview=PathName?
+	 *         )*
 	 *     )
 	 */
 	protected void sequence_Preamble(ISerializationContext context, Preamble semanticObject) {
