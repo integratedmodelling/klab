@@ -838,16 +838,18 @@ public class TableCompiler {
 
                 // register row and column names unless the rows/colums are aggregations
                 for (Dimension dimension : rows.values()) {
-//                    if (dimension.computationType == null || !dimension.computationType.isAggregation()) {
-                        // FIXME IDs for all siblings, getName() for others
-                        context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
-//                    }
+                    // if (dimension.computationType == null ||
+                    // !dimension.computationType.isAggregation()) {
+                    // FIXME IDs for all siblings, getName() for others
+                    context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
+                    // }
                 }
                 for (Dimension dimension : columns.values()) {
-//                    if (dimension.computationType == null || !dimension.computationType.isAggregation()) {
-                        // FIXME IDs for all siblings, getName() for others
-                        context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
-//                    }
+                    // if (dimension.computationType == null ||
+                    // !dimension.computationType.isAggregation()) {
+                    // FIXME IDs for all siblings, getName() for others
+                    context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
+                    // }
                 }
 
                 context.addKnownIdentifier("cell", Type.COUNTABLE);
@@ -1452,7 +1454,8 @@ public class TableCompiler {
         for (Pair<ObservedConcept, TargetType> target : parseTarget(map.get("target"))) {
             Object classifiers = map.containsKey("filter") ? map.get("filter") : map.get("classifier");
             boolean isClassifier = map.containsKey("classifier");
-            Pair<Collection<List<Filter>>, String> clss = expandClassifier(target.getFirst(), target.getSecond(), classifiers);
+            Pair<Collection<List<Filter>>, String> clss = expandClassifier(target.getFirst(), target.getSecond(), classifiers,
+                    map);
             for (List<Filter> filters : clss.getFirst()) {
                 Dimension dimension = newDimension(target.getFirst(), target.getSecond(), filters, map, type, dimensions.size(),
                         isClassifier, clss.getSecond(), parent, dimensions);
@@ -1783,7 +1786,7 @@ public class TableCompiler {
     }
 
     private Pair<Collection<List<Filter>>, String> expandClassifier(ObservedConcept target, TargetType targetType,
-            Object declaration) {
+            Object declaration, Map<?, ?> dimensionDeclaration) {
 
         List<List<Filter>> ret = new ArrayList<>();
         String classId = null;
@@ -1796,25 +1799,26 @@ public class TableCompiler {
         if (declaration instanceof Map) {
             for (Entry<?, ?> entry : ((Map<?, ?>) declaration).entrySet()) {
                 if ("default".equals(entry.getKey())) {
-                    expandClassifiers(target, targetType, declaration, ret);
+                    expandClassifiers(target, targetType, declaration, ret, dimensionDeclaration);
                 } else {
                     List<Pair<ObservedConcept, TargetType>> classifierTarget = parseTarget(entry.getKey());
                     if (classifierTarget.size() > 1) {
                         throw new KlabValidationException("Only one specific target is admitted in a classifier");
                     } else if (classifierTarget.size() > 0) {
                         expandClassifiers(classifierTarget.get(0).getFirst(), classifierTarget.get(0).getSecond(), declaration,
-                                ret);
+                                ret, dimensionDeclaration);
                     }
                 }
             }
         } else {
-            expandClassifiers(target, targetType, declaration, ret);
+            expandClassifiers(target, targetType, declaration, ret, dimensionDeclaration);
         }
 
         return new Pair<>(ret, classId);
     }
 
-    private void expandClassifiers(ObservedConcept target, TargetType targetType, Object declaration, List<List<Filter>> ret) {
+    private void expandClassifiers(ObservedConcept target, TargetType targetType, Object declaration, List<List<Filter>> ret,
+            Map<?, ?> dimensionDeclaration) {
         Map<Integer, List<Object>> sorted = new HashMap<>();
 
         /*
@@ -1842,7 +1846,24 @@ public class TableCompiler {
                 if (observable.is(IKimConcept.Type.COUNTABLE)) {
                     categorize(OBJECT, new ObservedConcept(observable, Mode.INSTANTIATION), sorted, null);
                 } else if (observable.is(IKimConcept.Type.CLASS)) {
-                    for (ObservedConcept category : expandCategory(observable)) {
+
+                    List<IObservable> keep = null;
+                    if (dimensionDeclaration.containsKey("keep")) {
+                        Object z = dimensionDeclaration.get("keep");
+                        if (z instanceof List) {
+                            for (Object zz : ((List<?>) z)) {
+                                keep.add(zz instanceof IKimObservable
+                                        ? Observables.INSTANCE.declare((IKimObservable) zz, monitor)
+                                        : Observable.promote(Concepts.INSTANCE.declare((IKimConcept) zz)));
+                                 }
+                        } else {
+                            keep.add(z instanceof IKimObservable
+                                    ? Observables.INSTANCE.declare((IKimObservable) z, monitor)
+                                    : Observable.promote(Concepts.INSTANCE.declare((IKimConcept) z)));
+                        }
+                    }
+
+                    for (ObservedConcept category : expandCategory(observable, keep)) {
                         categorize(CATEGORY, category, sorted, observable);
                     }
                 } else if (observable.is(IKimConcept.Type.PRESENCE)) {
@@ -1922,10 +1943,19 @@ public class TableCompiler {
         list.add(target == null ? value : new Pair<Object, ObservedConcept>(value, new ObservedConcept(target)));
     }
 
-    public List<ObservedConcept> expandCategory(IObservable observable) {
+    public List<ObservedConcept> expandCategory(IObservable observable, List<IObservable> keep) {
         IConcept category = Observables.INSTANCE.getDescribedType(observable.getType());
         this.observables
                 .add(new ObservedConcept(Observables.INSTANCE.removeValueOperators(observable, monitor), Mode.RESOLUTION));
+
+        if (keep != null && !keep.isEmpty()) {
+            List<ObservedConcept> ret = new ArrayList<>();
+            for (IObservable k : keep) {
+                ret.add(new ObservedConcept(k));
+            }
+            return ret;
+        }
+        
         return expandConcept(category, observable);
     }
 
@@ -2212,7 +2242,7 @@ public class TableCompiler {
                                 break;
                             }
                         }
-                        
+
                         if (rowComputationType == null) {
 
                             ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(), phase,
