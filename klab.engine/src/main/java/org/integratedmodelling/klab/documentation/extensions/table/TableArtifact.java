@@ -42,6 +42,7 @@ import org.integratedmodelling.klab.rest.DocumentationNode.Table;
 import org.integratedmodelling.klab.rest.DocumentationNode.Table.Column;
 import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
 import org.integratedmodelling.klab.utils.CollectionUtils;
+import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.TemplateUtils;
@@ -314,6 +315,55 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                 }
             }
         }
+        /*
+         * add separator indices for both rows and columns
+         */
+        int rTitles = 0;
+        for (Dimension row : rows) {
+            if (row.hidden) {
+                continue;
+            }
+            if (row.titles != null && row.titles.length > rTitles) {
+                rTitles = row.titles.length;
+            }
+            if (row.separator) {
+                activeRows.add(row.index);
+            }
+        }
+        int cTitles = 0;
+        for (Dimension column : columns) {
+            if (column.hidden) {
+                continue;
+            }
+            if (column.titles != null && column.titles.length > cTitles) {
+                cTitles = column.titles.length;
+            }
+            if (column.separator) {
+                activeColumns.add(column.index);
+            }
+        }
+            
+        for (int n = 0; n < rTitles; n++) {
+            Column rowHeaderColumn = new Column();
+            rowHeaderColumn.setId("rowtitles_" + (n + 1));
+            rowHeaderColumn.setTitle("");
+            rowHeaderColumn.setType(IArtifact.Type.TEXT);
+            cols.add(rowHeaderColumn);
+        }
+        
+        /*
+         * compile columns recursively only at the highest group level.
+         */
+        for (Dimension column : getActiveColumns()) {
+            if (column.hidden) {
+                continue;
+            }
+            sCol++;
+            int level = checkGroups(column, scope, sCol++, colGroups);
+            if (level == cGroupLevel) {
+                cols.add(compileColumn(column, cGroupLevel, cGroupLevel));
+            }
+        }
 
         /*
          * precompute all cells with aggregators and not those that aggregate them; the latter are
@@ -355,110 +405,48 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
             cell.computedValue = aggregateData(cell);
         }
 
-//        int hTable = ret.table(this.table.getTitle(), hSheet);
-
-        /*
-         * add separator indices for both rows and columns
-         */
-        int rTitles = 0;
-        for (Dimension row : rows) {
-            if (row.hidden) {
-                continue;
-            }
-            if (row.titles != null && row.titles.length > rTitles) {
-                rTitles = row.titles.length;
-            }
-            if (row.separator) {
-                activeRows.add(row.index);
-            }
-        }
-        int cTitles = 0;
-        for (Dimension column : columns) {
-            if (column.hidden) {
-                continue;
-            }
-            if (column.titles != null && column.titles.length > cTitles) {
-                cTitles = column.titles.length;
-            }
-            if (column.separator) {
-                activeColumns.add(column.index);
-            }
-        }
-
-        /*
-         * headers
-         */
-        if ((rTitles + cTitles) > 0 || (colGroups.size() + rowGroups.size()) > 0) {
-
-//            int hHeader = ret.header(hTable);
-
-            for (int i = cGroupLevel; i > 0; i--) {
-
-//                int tRow = ret.newRow(hHeader);
-                int level = i;
-                int nCols = 0;
-
-                // skip row titles
-                for (int n = 0; n < rTitles; n++) {
-//                    ret.newHeaderCell(tRow, false);
-                }
-
-                for (Group group : colGroups.values().stream().filter(group -> group.level == level)
-                        .collect(Collectors.toList())) {
-                    while(nCols > group.startIndex) {
-//                        ret.newHeaderCell(tRow, false);
-                        nCols++;
-                    }
-//                    int cell = ret.newHeaderCell(tRow, group.nDimensions, false);
-//                    ret.write(cell, group.title, Double.NaN, Style.BOLD);
-                    nCols += group.nDimensions;
-                }
-
-                for (int n = nCols; n < (sCol - nCols); n++) {
-//                    ret.newHeaderCell(tRow, false);
-                }
-            }
-
-            for (int ct = 0; ct < cTitles; ct++) {
-
-//                int tRow = ret.newRow(hHeader);
-
-                for (int rt = 0; rt < rTitles; rt++) {
-//                    ret.newHeaderCell(tRow, false);
-                }
-                for (Dimension cDesc : getActiveColumns()) {
-                    if (cDesc.hidden) {
-                        continue;
-                    }
-//                    ret.write(ret.newHeaderCell(tRow, false), getHeader(cDesc, ct, cTitles, scope), Double.NaN, cDesc.style);
-                }
-            }
-        }
-
-        /*
-         * data and row titles. Row groups can go to hell for now.
-         */
-//        int hBody = ret.body(hTable);
         for (Dimension rDesc : getActiveRows()) {
+
             if (rDesc.hidden) {
                 continue;
             }
-//            int hRow = ret.newRow(hBody);
+            
+            Map<String, String> rowData = new HashMap<>();
             for (int i = 0; i < rTitles; i++) {
-//                ret.write(ret.newHeaderCell(hRow, true), getHeader(rDesc, i, rTitles, scope), Double.NaN, rDesc.style);
+                rowData.put("rowtitles_" + (i + 1), getHeader(rDesc, i, rTitles, scope));
             }
             for (Dimension cDesc : getActiveColumns()) {
                 if (cDesc.hidden) {
                     continue;
                 }
                 Cell cell = cells[cDesc.index][rDesc.index];
-//                ret.write(ret.newCell(hRow), getData(cell), getNumberValue(cell), getStyle(cell));
+                Object value = getNumberValue(cell);
+                if (value instanceof Double && Double.isNaN((Double)value)) {
+                    value = getData(cell);
+                }
+                rowData.put(cDesc.getName(), value.toString());
             }
+            
+            data.add(rowData);
         }
         
         ret.getColumns().addAll(cols);
         ret.getRows().addAll(data);
+        
+        System.out.println(JsonUtils.printAsJson(ret));
 
+    }
+
+    private Column compileColumn(Dimension column, int level, int totalLevels) {
+        Column ret = new Column();
+        ret.setId(column.getLocalName());
+        ret.setTitle(getHeader(column, level, totalLevels, scope));
+        ret.setType(IArtifact.Type.NUMBER);
+        for (Dimension dim : column.children) {
+            ret.getColumns().add(compileColumn(dim, level--, totalLevels));
+        }
+        
+        return ret;
     }
 
     /**
