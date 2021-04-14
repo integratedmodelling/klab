@@ -1849,6 +1849,7 @@ public class TableCompiler {
 
                     List<IObservable> keep = null;
                     if (dimensionDeclaration.containsKey("keep")) {
+                        keep = new ArrayList<>();
                         Object z = dimensionDeclaration.get("keep");
                         if (z instanceof List) {
                             for (Object zz : ((List<?>) z)) {
