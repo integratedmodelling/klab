@@ -179,7 +179,7 @@ public class Resolver {
                         // these are mere transformations and we don't need their change.
                         continue;
                     }
-
+                    
                     IObservable toResolve = observable.getObservable().getBuilder(parentScope.getMonitor())
                             .as(UnarySemanticOperator.CHANGE).buildObservable();
 
