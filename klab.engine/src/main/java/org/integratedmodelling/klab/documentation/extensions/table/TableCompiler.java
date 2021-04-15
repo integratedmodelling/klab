@@ -451,8 +451,20 @@ public class TableCompiler {
                 IObservation observation = catalog.get(target);
                 if (observation instanceof IState) {
                     if (((IState) observation).getDataKey() != null && classifier.isConcept()) {
-                        if (!((IState) observation).getDataKey().getConcepts().contains(classifier.getConcept())) {
-                            return false;
+                        if (classifier.getConceptResolution() == IObservable.Resolution.Only) {
+                            if (!((IState) observation).getDataKey().getConcepts().contains(classifier.getConcept())) {
+                                return false;
+                            } else if (classifier.getConceptResolution() == IObservable.Resolution.Any) {
+                                if (((IState) observation).getDataKey().getConcepts().contains(classifier.getConcept())) {
+                                    return true;
+                                }
+                                for (IConcept child : classifier.getConcept().getChildren()) {
+                                    if (((IState) observation).getDataKey().getConcepts().contains(child)) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }
                         }
                     }
                 }
