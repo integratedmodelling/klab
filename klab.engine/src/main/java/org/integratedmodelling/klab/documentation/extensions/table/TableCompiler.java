@@ -1856,7 +1856,7 @@ public class TableCompiler {
                                 keep.add(zz instanceof IKimObservable
                                         ? Observables.INSTANCE.declare((IKimObservable) zz, monitor)
                                         : Observable.promote(Concepts.INSTANCE.declare((IKimConcept) zz)));
-                                 }
+                            }
                         } else {
                             keep.add(z instanceof IKimObservable
                                     ? Observables.INSTANCE.declare((IKimObservable) z, monitor)
@@ -1956,7 +1956,7 @@ public class TableCompiler {
             }
             return ret;
         }
-        
+
         return expandConcept(category, observable);
     }
 
@@ -2532,9 +2532,12 @@ public class TableCompiler {
                         filter.objectFilter = observable;
                     } else {
                         /*
-                         * by default concept matches on expanded concepts are exact
+                         * by default concept matches on expanded concepts are exact unless the
+                         * concept is abstract
                          */
-                        IObservable.Resolution resolution = IObservable.Resolution.Only;
+                        IObservable.Resolution resolution = observable.getObservable().getType().isAbstract()
+                                ? IObservable.Resolution.Any
+                                : IObservable.Resolution.Only;
                         if (observable.getObservable().getResolution() != null) {
                             resolution = observable.getObservable().getResolution();
                         }
