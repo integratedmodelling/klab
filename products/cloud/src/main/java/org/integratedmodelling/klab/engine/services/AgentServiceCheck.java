@@ -14,6 +14,7 @@ import org.integratedmodelling.klab.engine.configs.ConsulConfig;
 import org.integratedmodelling.klab.engine.events.GenericUserEvent;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
@@ -28,9 +29,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class AgentServiceCheck {
+    
+    @Value("${engine.agent.port:8999}")
+    private int port;
 
 	//to be set from config
-	int port = 6666;
 	int weight = 100;
 	int overload = 0;
 
