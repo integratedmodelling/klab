@@ -43,13 +43,14 @@
 .dv-content p {
   text-align: justify;
 }
-
+/*
 .dv-content [id] {
   transition: .3s ease;
   border-radius: 10px;
 }
 .dv-content [id].dv-selected {
   box-shadow: 0 2px 6px rgba(17, 170, 187, .5);
-  transform: translateY(-10px) scale(1.02);
+  transform: translateY(10px) scale(1.02);
   padding: 5px 10px;
 }
+*/
