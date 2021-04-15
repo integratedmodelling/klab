@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.engine.services;
 
 
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.engine.RemoteEngineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
@@ -10,10 +11,6 @@ import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
 @Service
-@ConditionalOnProperty(
-        value="spring.cloud.consul.enabled", 
-        havingValue = "", 
-        matchIfMissing = true)
 public class EngineReadyService {
 	
 	@Autowired
@@ -24,6 +21,7 @@ public class EngineReadyService {
 	
     @EventListener(ApplicationReadyEvent.class)
     public void ContextRefreshedEventExecute(){
+        Logging.INSTANCE.info("Started Agent Check Port");
         check.start();
         engineService.getEngine().setCheck(check);
     }
