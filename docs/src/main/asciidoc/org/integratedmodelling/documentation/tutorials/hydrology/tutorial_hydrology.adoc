@@ -47,15 +47,16 @@ We will start from the very basics of writing models and processes, as well as k
 It is assumed that the reader has a basic knowledge about {kl} sematics and the {kim} syntax.
 
 ## A basic model structure
+[#BASIC_STRUCTURE]
 
 To be able to start, we need to have an idea about the model we are going to work on. We will implement a seasonal water yield model on the footsteps of https://github.com/natcap/invest[INVEST]. Basically we will try to define the change of baseflow on a given watershed throughout time.
 
 To calculate the baseflow we need:
 
+* the infiltrated water volume
 * the precipitation volume
 * the evapotranspiration volume
 * the runoff volume
-* the infiltrated water volume
 
 ## Modeling a simple observation
 
@@ -120,7 +121,7 @@ image::imgs/01_const_model.png[scaledwidth=80%, width=80%, align="center"]
 When a raster is made of one single constant value, then {kl} shows it as in the above image. We produced the expected result. A map of constant values of 100.
 
 
-## Model a process
+## Modeling a process
 
 Hydrological modelling is all about simulating water flow in time, so _just_ observing a quality like BaseFlowWaterVolume will not suffice. To observe its changes in time we need a process. A process can be created in two ways:
 
@@ -172,22 +173,76 @@ image::imgs/02_const_process.png[scaledwidth=80%, width=80%, align="center"]
 
 The result window now shows a process as main output observation, and the observations tree shows a dynamic result, being the base water flow volume over a year, using monthly timesteps as requested. The constant map now grows times 10 for every timestep.
 
-#CHECK WITH FERDY WHY THIS DOESN'T WORK FOR ME#
 
-### Using an ad hoc process
+### Using _process_
 
-#TODO#
-
-Once the process is defined, it can be modelled. To test it with a simple example, the processing function has been simplified to a simple product (times 10) for every timestep using the **set to** syntax.
+If the process modeled process is a well defined one, it can make senso to name it and define it as a process. 
 
 [source,kim]
 ----
-@time(step = 1.day) <1>
-@intensive(space, time) <2>
-model BaseFlowWaterVolumeChange, <3>
-	hydrology:BaseFlowWaterVolume in mm
+@intensive(space)
+model 100 as hydrology:BaseFlowWaterVolume in mm;
+	
+process BaseFlowWaterVolumeChange    // <1>
+	affects hydrology:BaseFlowWaterVolume;
+
+@time(step = 1.month)
+@intensive(space, time)
+model BaseFlowWaterVolumeChange,   // <2>
+	hydrology:BaseFlowWaterVolume   // <3>
 	set base_flow_water_volume to [base_flow_water_volume * 10.0]
-	;
+;
 ----
 
-<1> The model also needs to be annotated to define the time-step
+<1> definition of the process and the quality it affects.
+<2> model the process.
+<3> set the output observable of the process.
+
+
+## Adding dependencies
+
+As described in <<BASIC_STRUCTURE, the model structure description>>, the baseflow model has several dependencies. Let' sfind out how to add for example the infiltration volume.
+
+The base kowledge already contains a quality for the infiltrated water volume:
+[source,kim]
+----
+hydrology:InfiltratedWaterVolume
+----
+
+First thing we need to model the quality. Again we use a constant map so start:
+
+[source,kim]
+----
+@intensive(space)
+model 10 as hydrology:InfiltratedWaterVolume in mm;
+----
+
+and add the dependency to the baseflow model. This is done through the _observing_ keyword:
+
+[source,kim]
+----
+@time(step=1.month)
+@intensive(space, time)
+model change in hydrology:BaseFlowWaterVolume
+	observing hydrology:InfiltratedWaterVolume
+	set base_flow_water_volume to [
+		infiltrated_water_volume + base_flow_water_volume * 10.0
+	]
+;
+----
+
+To be able to check the result of the semantics with simple value, we set the baseflow volume to a simple expression that also contains the infiltrated volume, retrived from the resolved observable.
+
+If we run the model now, we are observing the change in the baseflow, with a dependency on a constant infiltration value. This will create a baseflow observation, that will start at 110 and increase * 10 as before, but always adding the 10 contribution of the infiltrated volume.
+
+Since there is  no doubt about the fact that infiltration is also a process, we can model it as such and add a simple function to be able to check the change of the values over time:
+
+[source,kim]
+----
+@intensive(space, time)
+model change in hydrology:InfiltratedWaterVolume
+	set infiltrated_water_volume to [infiltrated_water_volume + 10 ]
+;
+----
+
+If we run the model now, the infiltrated volume will be resolved to 10, but then its change will be tracked by the **change in hydrology:InfiltratedWaterVolume** model, increasing the infiltration test value by 10 at every timestep.
