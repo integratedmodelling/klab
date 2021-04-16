@@ -283,6 +283,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
         
         List<Column> cols = new ArrayList<>();
         List<Map<String, String>> data = new ArrayList<>();
+        ret.setNumberFormat(this.table.getNumberFormat());
         
         /*
          * compute groups based on dimension hierarchies. Dimensions that stand alone will have a
@@ -348,6 +349,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
             rowHeaderColumn.setId("rowtitles_" + (n + 1));
             rowHeaderColumn.setTitle("");
             rowHeaderColumn.setType(IArtifact.Type.TEXT);
+            rowHeaderColumn.setFrozen(true);
             cols.add(rowHeaderColumn);
         }
         

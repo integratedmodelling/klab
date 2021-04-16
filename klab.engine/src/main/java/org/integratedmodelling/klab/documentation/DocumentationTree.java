@@ -25,6 +25,7 @@ import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.ReportSection.Element;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.rest.DocumentationNode;
 import org.integratedmodelling.klab.rest.DocumentationNode.Figure;
 import org.integratedmodelling.klab.rest.DocumentationNode.Table;
@@ -184,7 +185,16 @@ public class DocumentationTree {
 
     // TODO add the contextualization
     public void addModel(IModel model) {
-        models.add(model);
+        if (!this.nodes.containsKey(model.getName())) {
+            DocumentationNode node = new DocumentationNode();
+            node.setId(model.getName());
+            // node.setTitle(view.getTitle());
+            node.setBodyText(model.getStatement().getSourceCode());
+            node.setModel(((Model) model).getBean());
+            node.setType(DocumentationNode.Type.Model);
+            this.nodes.put(node.getId(), node);
+            models.add(model);
+        }
     }
 
     // TODO add the model

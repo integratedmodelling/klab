@@ -1703,4 +1703,9 @@ public class Model extends KimObject implements IModel {
         return abstractTraits_;
     }
 
+    public org.integratedmodelling.klab.rest.DocumentationNode.Model getBean() {
+        org.integratedmodelling.klab.rest.DocumentationNode.Model ret = new org.integratedmodelling.klab.rest.DocumentationNode.Model();
+        return ret;
+    }
+
 }

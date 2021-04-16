@@ -1196,6 +1196,8 @@ public class TableCompiler {
 
     private Map<?, ?> timelabels;
 
+    private String numberFormat = null;
+    
     /**
      * Return the passed dimensions in order of dependency. If circular dependencies are detected
      * throw a validation exception as the definition is misconfigured.
@@ -1312,6 +1314,8 @@ public class TableCompiler {
 
         this.activeColumns = parseDimension(definition.get("columns"), colList, DimensionType.COLUMN, null);
         this.activeRows = parseDimension(definition.get("rows"), rowList, DimensionType.ROW, null);
+        this.numberFormat = definition.containsKey("numberformat") ? definition.get("numberformat").toString() : null;
+        
         for (Dimension row : rowList) {
             String id = rename.containsKey(row.getName()) ? rename.get(row.getName()) : row.getName();
             row.id = id.substring(row.parent == null ? 0 : row.parent.getName().length());
@@ -2645,6 +2649,10 @@ public class TableCompiler {
 
     public IObservable getTargetObservable() {
         return this.target == null ? null : this.target.getObservable();
+    }
+
+    public String getNumberFormat() {
+        return numberFormat;
     }
 
 }

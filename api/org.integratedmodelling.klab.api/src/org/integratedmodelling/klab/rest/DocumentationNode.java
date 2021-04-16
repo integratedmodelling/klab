@@ -59,9 +59,10 @@ public class DocumentationNode {
             private String hozAlign;
             private String formatter;
             private IArtifact.Type type;
-            
+            private boolean frozen;
+
             private List<Column> columns = new ArrayList<>();
-            
+
             public String getTitle() {
                 return title;
             }
@@ -110,8 +111,12 @@ public class DocumentationNode {
             public void setType(IArtifact.Type type) {
                 this.type = type;
             }
-            
-            
+            public boolean isFrozen() {
+                return frozen;
+            }
+            public void setFrozen(boolean frozen) {
+                this.frozen = frozen;
+            }
         }
 
         private List<Column> columns = new ArrayList<>();
@@ -122,6 +127,12 @@ public class DocumentationNode {
          * on configuration.
          */
         private List<Map<String, String>> rows = new ArrayList<>();
+
+        /**
+         * printf-style number format pattern. Comes directly from table specs, if any, so we can
+         * make it what we want.
+         */
+        private String numberFormat;
 
         public List<Column> getColumns() {
             return columns;
@@ -139,8 +150,14 @@ public class DocumentationNode {
             this.rows = rows;
         }
 
-        
-        
+        public String getNumberFormat() {
+            return numberFormat;
+        }
+
+        public void setNumberFormat(String numberFormat) {
+            this.numberFormat = numberFormat;
+        }
+
     }
 
     public static class Figure {
