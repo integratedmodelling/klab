@@ -193,7 +193,7 @@ class ViewScope {
         ret.layout.setPlatform(this.layout.getPlatform());
         ret.layout.setLogo(annotation.get("logo", (String) null));
         ret.layout.setProjectId(this.layout.getProjectId());
-        ret.layout.setType();
+//        ret.layout.setType();
         ViewPanel panel = new ViewPanel(annotation.containsKey("id") ? annotation.get("id", String.class) : actionId,
                 annotation.get("style", String.class));
         panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
