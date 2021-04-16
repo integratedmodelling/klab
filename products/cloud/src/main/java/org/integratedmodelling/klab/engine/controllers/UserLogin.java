@@ -18,13 +18,13 @@ public class UserLogin {
 	@Autowired
 	private HubUserService remoteUserService;
 	
-	@CrossOrigin(origins = "http://localhost:8080")
+	@CrossOrigin(origins = "*")
 	@PostMapping(value = API.HUB.AUTHENTICATE_USER, consumes="application/json",headers = "content-type=application/x-www-form-urlencoded;charset=UTF-8")
 	public ResponseEntity<?> loginResponse(@RequestBody RemoteUserAuthenticationRequest request) throws JSONException {
 		return remoteUserService.login(request);
 	}
 	
-	@CrossOrigin(origins = "http://localhost:8080")
+	@CrossOrigin(origins = "*")
 	@PostMapping(value = API.HUB.DEAUTHENTICATE_USER, consumes="application/json",headers = "content-type=application/x-www-form-urlencoded;charset=UTF-8")
 	public ResponseEntity<?> logoutResponse(@RequestHeader("Authentication") String token) throws JSONException {
 		return remoteUserService.logout(token);
