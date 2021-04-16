@@ -358,7 +358,7 @@ public interface IMessage {
 		/*
 		 * --- View actor messages
 		 */
-		CreateViewComponent, SetupInterface,
+		CreateViewComponent, SetupInterface, CreateViewPanel,
 
 		/*
 		 * --- Sent F->B when a view action interacts with a component and B->F to send
