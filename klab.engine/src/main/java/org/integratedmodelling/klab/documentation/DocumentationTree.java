@@ -185,7 +185,7 @@ public class DocumentationTree {
 
     // TODO add the contextualization
     public void addModel(IModel model) {
-        if (!this.nodes.containsKey(model.getName())) {
+        if (!this.nodes.containsKey(model.getName()) && model.getStatement() != null) {
             DocumentationNode node = new DocumentationNode();
             node.setId(model.getName());
             // node.setTitle(view.getTitle());

@@ -34,138 +34,202 @@ import akka.actor.typed.ActorRef;
 @Behavior(id = "explorer", version = Version.CURRENT)
 public class ExplorerBehavior {
 
-	@Action(id = "show", fires = IKActorsValue.Type.OBSERVATION, description = "Show an artifact in the explorer,identified by name, semantics, or the artifact itself."
-			+ " When selected, fire the artifact if all OK, an error, or empty if it was shown already.")
-	public static class Show extends KlabActionExecutor {
+    @Action(id = "setui", fires = IKActorsValue.Type.EMPTY, description = "Set a number of options for the UI, such as enabled/disabled state or the current view.")
+    public static class SetUi extends KlabActionExecutor {
 
-		String listenerId = null;
+        String listenerId = null;
 
-		public Show(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender, String callId) {
-			super(identity, arguments, scope, sender, callId);
-		}
+        public SetUi(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
 
-		@Override
-		void run(KlabActor.Scope scope) {
+        @Override
+        void run(KlabActor.Scope scope) {
 
-			if (!arguments.getUnnamedKeys().isEmpty()) {
+            if (!arguments.getUnnamedKeys().isEmpty()) {
 
-				Object arg = arguments.get(arguments.getUnnamedKeys().get(0));
+                Object arg = arguments.get(arguments.getUnnamedKeys().get(0));
 
-				ViewSetting message = new ViewSetting();
-				message.setOperation(Operation.Show);
-                Object what = arg instanceof KActorsValue ? ((KActorsValue)arg).evaluate(scope, scope.identity, true) : arg;
-				if (what instanceof IObservation) {
-					message.setTarget(Target.Observation);
-					message.setTargetId(((IObservation) what).getId());
-				} else if (what instanceof IKnowledgeView) {
-					message.setTarget(Target.View);
-					message.setTargetId(((IKnowledgeView) what).getId());
-				} else if (what instanceof IObservable && scope.identity instanceof ISession) {
-					IObservation observation = ((ISession) scope.identity).getState()
-							.getObservation((IObservable) what);
-					if (observation != null) {
-						message.setTarget(Target.Observation);
-						message.setTargetId(observation.getId());
-					}
-				} else {
-					if (arg instanceof IKActorsValue && ((IKActorsValue) arg).getType() == Type.CONSTANT) {
-						switch (what.toString()) {
-						case "TREE":
-							message.setTarget(Target.Tree);
-							break;
-						case "REPORT":
-							message.setTarget(Target.Report);
-							break;
-						case "DATAFLOW":
-							message.setTarget(Target.Dataflow);
-							break;
-						}
-					} else if (what != null) {
-						IArtifact artifact = ((ISession) scope.identity).getState().getArtifact(what.toString());
-						if (artifact instanceof IObservation) {
-							message.setTarget(Target.Observation);
-							message.setTargetId(((IObservation) artifact).getId());
-						} else if (artifact instanceof IKnowledgeView) {
-							message.setTarget(Target.View);
-							message.setTargetId(((IKnowledgeView) artifact).getId());
-						}
-					}
-				}
+                ViewSetting message = new ViewSetting();
+                message.setOperation(Operation.Show);
+                Object what = arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, scope.identity, true) : arg;
+                if (what instanceof IObservation) {
+                    message.setTarget(Target.Observation);
+                    message.setTargetId(((IObservation) what).getId());
+                } else if (what instanceof IKnowledgeView) {
+                    message.setTarget(Target.View);
+                    message.setTargetId(((IKnowledgeView) what).getId());
+                } else if (what instanceof IObservable && scope.identity instanceof ISession) {
+                    IObservation observation = ((ISession) scope.identity).getState().getObservation((IObservable) what);
+                    if (observation != null) {
+                        message.setTarget(Target.Observation);
+                        message.setTargetId(observation.getId());
+                    }
+                } else {
+                    if (arg instanceof IKActorsValue && ((IKActorsValue) arg).getType() == Type.CONSTANT) {
+                        switch(what.toString()) {
+                        case "TREE":
+                            message.setTarget(Target.Tree);
+                            break;
+                        case "REPORT":
+                            message.setTarget(Target.Report);
+                            break;
+                        case "DATAFLOW":
+                            message.setTarget(Target.Dataflow);
+                            break;
+                        }
+                    } else if (what != null) {
+                        IArtifact artifact = ((ISession) scope.identity).getState().getArtifact(what.toString());
+                        if (artifact instanceof IObservation) {
+                            message.setTarget(Target.Observation);
+                            message.setTargetId(((IObservation) artifact).getId());
+                        } else if (artifact instanceof IKnowledgeView) {
+                            message.setTarget(Target.View);
+                            message.setTargetId(((IKnowledgeView) artifact).getId());
+                        }
+                    }
+                }
 
-				if (message.getTarget() != null) {
-					identity.getParentIdentity(ISession.class).getMonitor().send(IMessage.MessageClass.UserInterface,
-							IMessage.Type.ViewSetting, message);
-				}
+                if (message.getTarget() != null) {
+                    identity.getParentIdentity(ISession.class).getMonitor().send(IMessage.MessageClass.UserInterface,
+                            IMessage.Type.ViewSetting, message);
+                }
 
-			}
-		}
-	}
+            }
+        }
+    }
 
-	@Action(id = "hide", fires = IKActorsValue.Type.OBSERVATION, description = "Hide an artifact in the explorer, identified by name, semantics, or the artifact itself."
-			+ " When selected, fire the artifact if all OK, an error, or empty if it wasn't shown.")
-	public static class Hide extends KlabActionExecutor {
+    @Action(id = "show", fires = IKActorsValue.Type.OBSERVATION, description = "Show an artifact in the explorer,identified by name, semantics, or the artifact itself."
+            + " When selected, fire the artifact if all OK, an error, or empty if it was shown already.")
+    public static class Show extends KlabActionExecutor {
 
-		String listenerId = null;
+        String listenerId = null;
 
-		public Hide(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
-				ActorRef<KlabMessage> sender, String callId) {
-			super(identity, arguments, scope, sender, callId);
-		}
+        public Show(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
 
-		@Override
-		void run(KlabActor.Scope scope) {
+        @Override
+        void run(KlabActor.Scope scope) {
 
-			if (!arguments.getUnnamedKeys().isEmpty()) {
-				Object arg = arguments.get(arguments.getUnnamedKeys().get(0));
+            if (!arguments.getUnnamedKeys().isEmpty()) {
 
-				ViewSetting message = new ViewSetting();
-				message.setOperation(Operation.Hide);
-				Object what = arg instanceof KActorsValue ? ((KActorsValue)arg).evaluate(scope, identity, true) : arg;
-				if (what instanceof IObservation) {
-					message.setTarget(Target.Observation);
-					message.setTargetId(((IObservation) what).getId());
-				} else if (what instanceof IKnowledgeView) {
-					message.setTarget(Target.View);
-					message.setTargetId(((IKnowledgeView) what).getId());
-				} else if (what instanceof IObservable && scope.identity instanceof ISession) {
-					IObservation observation = ((ISession) scope.identity).getState()
-							.getObservation((IObservable) what);
-					if (observation != null) {
-						message.setTarget(Target.Observation);
-						message.setTargetId(observation.getId());
-					}
-				} else {
-					if (arg instanceof IKActorsValue && ((IKActorsValue) arg).getType() == Type.CONSTANT) {
-						switch (what.toString()) {
-						case "TREE":
-							message.setTarget(Target.Tree);
-							break;
-						case "REPORT":
-							message.setTarget(Target.Report);
-							break;
-						case "DATAFLOW":
-							message.setTarget(Target.Dataflow);
-							break;
-						}
-					} else if (arg != null) {
-						IArtifact artifact = ((ISession) scope.identity).getState().getArtifact(arg.toString());
-						if (artifact instanceof IObservation) {
-							message.setTarget(Target.Observation);
-							message.setTargetId(((IObservation) artifact).getId());
-						} else if (artifact instanceof IKnowledgeView) {
-							message.setTarget(Target.View);
-							message.setTargetId(((IKnowledgeView) artifact).getId());
-						}
-					}
-				}
+                Object arg = arguments.get(arguments.getUnnamedKeys().get(0));
 
-				if (message.getTarget() != null) {
-					identity.getParentIdentity(ISession.class).getMonitor().send(IMessage.MessageClass.UserInterface,
-							IMessage.Type.ViewSetting, message);
-				}
-			}
-		}
-	}
+                ViewSetting message = new ViewSetting();
+                message.setOperation(Operation.Show);
+                Object what = arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, scope.identity, true) : arg;
+                if (what instanceof IObservation) {
+                    message.setTarget(Target.Observation);
+                    message.setTargetId(((IObservation) what).getId());
+                } else if (what instanceof IKnowledgeView) {
+                    message.setTarget(Target.View);
+                    message.setTargetId(((IKnowledgeView) what).getId());
+                } else if (what instanceof IObservable && scope.identity instanceof ISession) {
+                    IObservation observation = ((ISession) scope.identity).getState().getObservation((IObservable) what);
+                    if (observation != null) {
+                        message.setTarget(Target.Observation);
+                        message.setTargetId(observation.getId());
+                    }
+                } else {
+                    if (arg instanceof IKActorsValue && ((IKActorsValue) arg).getType() == Type.CONSTANT) {
+                        switch(what.toString()) {
+                        case "TREE":
+                            message.setTarget(Target.Tree);
+                            break;
+                        case "REPORT":
+                            message.setTarget(Target.Report);
+                            break;
+                        case "DATAFLOW":
+                            message.setTarget(Target.Dataflow);
+                            break;
+                        }
+                    } else if (what != null) {
+                        IArtifact artifact = ((ISession) scope.identity).getState().getArtifact(what.toString());
+                        if (artifact instanceof IObservation) {
+                            message.setTarget(Target.Observation);
+                            message.setTargetId(((IObservation) artifact).getId());
+                        } else if (artifact instanceof IKnowledgeView) {
+                            message.setTarget(Target.View);
+                            message.setTargetId(((IKnowledgeView) artifact).getId());
+                        }
+                    }
+                }
+
+                if (message.getTarget() != null) {
+                    identity.getParentIdentity(ISession.class).getMonitor().send(IMessage.MessageClass.UserInterface,
+                            IMessage.Type.ViewSetting, message);
+                }
+
+            }
+        }
+    }
+
+    @Action(id = "hide", fires = IKActorsValue.Type.OBSERVATION, description = "Hide an artifact in the explorer, identified by name, semantics, or the artifact itself."
+            + " When selected, fire the artifact if all OK, an error, or empty if it wasn't shown.")
+    public static class Hide extends KlabActionExecutor {
+
+        String listenerId = null;
+
+        public Hide(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+        @Override
+        void run(KlabActor.Scope scope) {
+
+            if (!arguments.getUnnamedKeys().isEmpty()) {
+                Object arg = arguments.get(arguments.getUnnamedKeys().get(0));
+
+                ViewSetting message = new ViewSetting();
+                message.setOperation(Operation.Hide);
+                Object what = arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg;
+                if (what instanceof IObservation) {
+                    message.setTarget(Target.Observation);
+                    message.setTargetId(((IObservation) what).getId());
+                } else if (what instanceof IKnowledgeView) {
+                    message.setTarget(Target.View);
+                    message.setTargetId(((IKnowledgeView) what).getId());
+                } else if (what instanceof IObservable && scope.identity instanceof ISession) {
+                    IObservation observation = ((ISession) scope.identity).getState().getObservation((IObservable) what);
+                    if (observation != null) {
+                        message.setTarget(Target.Observation);
+                        message.setTargetId(observation.getId());
+                    }
+                } else {
+                    if (arg instanceof IKActorsValue && ((IKActorsValue) arg).getType() == Type.CONSTANT) {
+                        switch(what.toString()) {
+                        case "TREE":
+                            message.setTarget(Target.Tree);
+                            break;
+                        case "REPORT":
+                            message.setTarget(Target.Report);
+                            break;
+                        case "DATAFLOW":
+                            message.setTarget(Target.Dataflow);
+                            break;
+                        }
+                    } else if (arg != null) {
+                        IArtifact artifact = ((ISession) scope.identity).getState().getArtifact(arg.toString());
+                        if (artifact instanceof IObservation) {
+                            message.setTarget(Target.Observation);
+                            message.setTargetId(((IObservation) artifact).getId());
+                        } else if (artifact instanceof IKnowledgeView) {
+                            message.setTarget(Target.View);
+                            message.setTargetId(((IKnowledgeView) artifact).getId());
+                        }
+                    }
+                }
+
+                if (message.getTarget() != null) {
+                    identity.getParentIdentity(ISession.class).getMonitor().send(IMessage.MessageClass.UserInterface,
+                            IMessage.Type.ViewSetting, message);
+                }
+            }
+        }
+    }
 
 }
