@@ -99,7 +99,7 @@ public enum Actors implements IActorsService {
      * @author Ferd
      */
     public enum PanelLocation {
-        Left, Right, Panel, Header, Footer, Window
+        Left, Right, Panel, Header, Footer, Window, Modal
     }
 
     @Inject

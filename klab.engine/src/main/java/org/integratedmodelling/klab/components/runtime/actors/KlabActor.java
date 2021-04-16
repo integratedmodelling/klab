@@ -29,6 +29,7 @@ import org.integratedmodelling.kactors.model.KActorsArguments;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
@@ -37,6 +38,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
@@ -443,6 +445,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             }
             return ret;
         }
+
+        public Scope forWindow(IAnnotation wspecs, String actionId) {
+            Scope ret = new Scope(this);
+            ret.viewScope = ret.viewScope.createLayout(wspecs, actionId);
+            return ret;
+        }
+        
     }
 
     protected IActorIdentity<KlabMessage> getIdentity() {
@@ -637,12 +646,30 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
      */
 
     protected void run(IBehavior.Action action, Scope scope) {
+
+        IAnnotation wspecs = Annotations.INSTANCE.getAnnotation(action, "modal");
+        if (wspecs == null) {
+            wspecs = Annotations.INSTANCE.getAnnotation(action, "window");
+        }
+
+        if (wspecs != null) {
+            scope = scope.forWindow(wspecs, action.getName());
+        }
+
         execute(action.getStatement().getCode(), scope);
+
+        if (wspecs != null) {
+            System.out.println(Actors.INSTANCE.dumpView(scope.viewScope.layout));
+            KlabActor.this.identity.setLayout(scope.viewScope.layout);
+            KlabActor.this.identity.getMonitor().send(IMessage.MessageClass.UserInterface,
+                    "modal".equals(wspecs.getName()) ? IMessage.Type.CreateModalWindow : IMessage.Type.CreateWindow,
+                    scope.viewScope.layout);
+        }
     }
 
     private void execute(IKActorsStatement code, Scope scope) {
 
-//        System.out.println("EXECUTING " + code);
+        // System.out.println("EXECUTING " + code);
 
         try {
             switch(code.getType()) {
@@ -992,7 +1019,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                     val = Extensions.INSTANCE.parse((String) val);
                 }
 
-                arg.setData(new ObjectExpression((IKimExpression) val, scope.runtimeScope, CompilerOption.WrapParameters, CompilerOption.IgnoreContext));
+                arg.setData(new ObjectExpression((IKimExpression) val, scope.runtimeScope, CompilerOption.WrapParameters,
+                        CompilerOption.IgnoreContext));
             }
 
             try {

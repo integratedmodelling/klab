@@ -174,6 +174,7 @@ public class DocumentationTree {
         DocumentationNode node = new DocumentationNode();
         node.setId(view.getId());
         node.setTitle(view.getTitle());
+        node.setBodyText(view.getLabel());
         if ("table".equals(view.getViewClass())) {
             node.setTable(view.getBean(Table.class));
             node.setType(DocumentationNode.Type.Table);
