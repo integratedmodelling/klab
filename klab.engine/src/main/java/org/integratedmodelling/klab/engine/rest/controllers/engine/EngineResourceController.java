@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.HandlerMapping;
 
 /**
  * The controller implementing the
@@ -33,30 +35,33 @@ import org.springframework.web.bind.annotation.RestController;
 @Secured(Roles.SESSION)
 public class EngineResourceController {
 
-	@RequestMapping(value = API.ENGINE.RESOURCE.GET_PROJECT_RESOURCE, method = RequestMethod.GET)
-	public void getObservationData(@PathVariable String project, @PathVariable String resourcepath,
-			HttpServletResponse response) throws IOException {
+    @RequestMapping(value = API.ENGINE.RESOURCE.GET_PROJECT_RESOURCE, method = RequestMethod.GET)
+    public void getObservationData(@PathVariable String project, HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
 
-		IProject proj = Resources.INSTANCE.getProject(project);
-		if (proj == null) {
-			throw new IllegalArgumentException("project " + project + " does not exist");
-		}
+        IProject proj = Resources.INSTANCE.getProject(project);
+        if (proj == null) {
+            throw new IllegalArgumentException("project " + project + " does not exist");
+        }
 
-		/*
-		 * for now resourcepath is limited to the application directory
-		 */
-		File resourceFile = new File(
-				proj.getRoot() + File.separator + IKimProject.SCRIPT_FOLDER + File.separator + resourcepath.replaceAll(":", "/"));
+        String resourcepath = (String) request.getAttribute(HandlerMapping.PATH_WITHIN_HANDLER_MAPPING_ATTRIBUTE);
+        resourcepath = resourcepath.substring(resourcepath.indexOf(project) + project.length() + 1).replaceAll(":", "/");
 
-		if (!resourceFile.exists() || !resourceFile.isFile()) {
-			throw new IllegalArgumentException("project " + project + " does not exist");
-		}
+        /*
+         * for now resourcepath is limited to the application directory. Any : will become / (FIXME:
+         * this can be eliminated once legacy usages are).
+         */
+        File resourceFile = new File(proj.getRoot() + File.separator + IKimProject.SCRIPT_FOLDER + File.separator + resourcepath);
 
-		try (InputStream in = new FileInputStream(resourceFile)) {
-			response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
-			IOUtils.copy(in, response.getOutputStream());
-		}
+        if (!resourceFile.exists() || !resourceFile.isFile()) {
+            throw new IllegalArgumentException("project " + project + " does not exist or resource not found");
+        }
 
-	}
+        try (InputStream in = new FileInputStream(resourceFile)) {
+            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            IOUtils.copy(in, response.getOutputStream());
+        }
+
+    }
 
 }

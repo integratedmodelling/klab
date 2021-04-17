@@ -60,6 +60,7 @@ public class DocumentationNode {
             private String formatter;
             private IArtifact.Type type;
             private boolean frozen;
+            private String caption;
 
             private List<Column> columns = new ArrayList<>();
 
@@ -116,6 +117,12 @@ public class DocumentationNode {
             }
             public void setFrozen(boolean frozen) {
                 this.frozen = frozen;
+            }
+            public String getCaption() {
+                return caption;
+            }
+            public void setCaption(String caption) {
+                this.caption = caption;
             }
         }
 

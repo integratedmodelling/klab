@@ -10,7 +10,7 @@ public class ViewSetting {
 	}
 
 	public enum Target {
-		Observation, View, Tree, Report, Dataflow, Explorer
+		Observation, View, Tree, Report, Dataflow, Explorer, Url
 	}
 
 	private Operation operation;

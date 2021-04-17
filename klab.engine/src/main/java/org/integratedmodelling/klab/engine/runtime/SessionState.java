@@ -233,14 +233,16 @@ public class SessionState extends Parameters<String> implements ISessionState {
                 activity.setEnd(System.currentTimeMillis());
                 activity.setStatus(DataflowState.Status.FINISHED);
 
-                if (activity.getActivityId().equals(this.currentActivity.getActivityId())) {
+                if (this.currentActivity != null && activity.getActivityId().equals(this.currentActivity.getActivityId())) {
                     this.currentActivity.setContextId(observation.getId());
                     this.historyByContext.put(observation.getId(), activity);
                 }
 
                 for (ListenerWrapper listener : listeners.values()) {
-                    listener.listener.historyChanged(this.currentActivity,
-                            activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
+                    if (this.currentActivity != null) {
+                        listener.listener.historyChanged(this.currentActivity,
+                                activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
+                    }
                 }
             }
         });
@@ -255,8 +257,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
             activity.setStackTrace(ExceptionUtils.getStackTrace(error));
 
             for (ListenerWrapper listener : listeners.values()) {
-                listener.listener.historyChanged(this.currentActivity,
-                        activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
+                if (this.currentActivity != null) {
+                    listener.listener.historyChanged(this.currentActivity,
+                            activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
+                }
             }
 
         });
@@ -339,7 +343,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
         if (this.scaleOfInterest.getEast() == 0 && this.scaleOfInterest.getWest() == 0) {
             return null;
         }
-        
+
         return Geometry.create(Geocoder.INSTANCE.finalizeShape(this.scaleOfInterest, session.getMonitor()));
     }
 
@@ -771,12 +775,11 @@ public class SessionState extends Parameters<String> implements ISessionState {
     public void removeListener(String listenerId) {
         this.listeners.remove(listenerId);
     }
-    
+
     @Override
     public void removeGlobalListener(String listenerId) {
         this.globalListeners.remove(listenerId);
     }
-
 
     public String getGeocodingStrategy() {
         return geocodingStrategy;

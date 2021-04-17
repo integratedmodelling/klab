@@ -14,6 +14,7 @@ import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kactors.model.KActorsValue.Constructor;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -365,7 +366,6 @@ public class ViewBehavior {
             }
             return action.isBooleanValue();
         }
-
     }
 
     @Action(id = "radiobutton")
@@ -478,6 +478,79 @@ public class ViewBehavior {
 
     }
 
+    public static String getStaticPath(String resourceId, Scope scope) {
+        String projectId = scope.getBehavior() == null ? null : scope.getBehavior().getProject();
+        return API.ENGINE.RESOURCE.GET_PROJECT_RESOURCE.replace(API.ENGINE.RESOURCE.P_PROJECT, projectId)
+                .replace("**", resourceId);
+    }
+
+    @Action(id = "html")
+    public static class Html extends KlabWidgetActionExecutor {
+
+        public Html(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+        @Override
+        public ViewComponent createViewComponent(Scope scope) {
+            ViewComponent message = new ViewComponent();
+            message.setType(Type.Browser);
+            message.setContent(getStaticPath(this.evaluateArgument(0, scope, (String) null), scope));
+            message.getAttributes().putAll(getMetadata(arguments, scope));
+            return message;
+        }
+
+        @Override
+        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+            if ("update".equals(message.message)) {
+                this.component.setContent(getDefaultAsString(message.arguments, this, scope));
+            }
+            return this.component;
+        }
+
+        @Override
+        protected Object onViewAction(ViewAction action, Scope scope) {
+            this.component.setContent(action.getStringValue());
+            return action.getStringValue();
+        }
+
+    }
+
+    @Action(id = "image")
+    public static class Image extends KlabWidgetActionExecutor {
+
+        public Image(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+        @Override
+        public ViewComponent createViewComponent(Scope scope) {
+            ViewComponent message = new ViewComponent();
+            message.setType(Type.Image);
+            message.setContent(getStaticPath(this.evaluateArgument(0, scope, (String) null), scope));
+            message.getAttributes().putAll(getMetadata(arguments, scope));
+            return message;
+        }
+
+        @Override
+        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+            if ("update".equals(message.message)) {
+                this.component.setContent(getDefaultAsString(message.arguments, this, scope));
+            }
+            return this.component;
+        }
+
+        @Override
+        protected Object onViewAction(ViewAction action, Scope scope) {
+            // TODO fire a boolean if clicked (which requires the "active" attribute)
+            this.component.setContent(action.getStringValue());
+            return action.getStringValue();
+        }
+
+    }
+
     /**
      * Recover an id, a label and a value from a value passed as an item for a tree, combo or list
      * component.
@@ -580,7 +653,7 @@ public class ViewBehavior {
             if ("add".equals(message.message) && message.arguments.getUnnamedArguments().size() > 0) {
                 Object arg = message.arguments.getUnnamedArguments().get(0);
                 if (arg instanceof KActorsValue) {
-                    arg = ((KActorsValue)arg).evaluate(scope, identity, false);
+                    arg = ((KActorsValue) arg).evaluate(scope, identity, false);
                 }
                 if (arg instanceof Constructor) {
                     this.sender.tell(new AddComponentToGroup(group, ((Constructor) arg).getComponent(),
@@ -597,8 +670,8 @@ public class ViewBehavior {
 
         @Override
         public void onMessage(KlabMessage message, Scope scope) {
-            
-            if (message instanceof KActorsMessage && "reset".equals(((KActorsMessage)message).message)) {
+
+            if (message instanceof KActorsMessage && "reset".equals(((KActorsMessage) message).message)) {
                 KActorsMessage mess = (KActorsMessage) message;
                 this.group = copyComponent(this.originalGroup);
                 ViewAction action = new ViewAction(this.originalGroup);
@@ -699,7 +772,7 @@ public class ViewBehavior {
                     // TODO review the split[1] with Enrico - should be split[0] or maybe not.
                     Object val = values.get(split[1]);
                     if (val instanceof KActorsValue) {
-                        val = ((KActorsValue)val).evaluate(scope, identity, false);
+                        val = ((KActorsValue) val).evaluate(scope, identity, false);
                     }
                     ret.add(val);
                 }

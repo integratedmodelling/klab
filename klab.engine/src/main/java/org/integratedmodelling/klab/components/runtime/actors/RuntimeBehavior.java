@@ -67,6 +67,8 @@ import akka.actor.typed.ActorRef;
 @Behavior(id = "session", version = Version.CURRENT)
 public class RuntimeBehavior {
 
+    
+    
     /**
      * Set the root context
      */
@@ -83,6 +85,13 @@ public class RuntimeBehavior {
 
         @Override
         void run(KlabActor.Scope scope) {
+
+            if (arguments.get("interrupt") instanceof IKActorsValue) {
+                KActorsValue interrupt = arguments.get("interrupt", KActorsValue.class);
+                if (Actors.INSTANCE.asBooleanValue(interrupt.evaluate(scope, identity, true))) {
+                    scope.getMonitor().getIdentity().getParentIdentity(ISession.class).interruptAllTasks();
+                }
+            }
 
             if (arguments.get("reset") instanceof IKActorsValue) {
                 KActorsValue reset = arguments.get("reset", KActorsValue.class);
@@ -222,6 +231,8 @@ public class RuntimeBehavior {
                         .submit(getUrnValue(arguments.get(arguments.getUnnamedKeys().get(0)), scope), (task, observation) -> {
                             if (observation == null) {
                                 fire(Status.STARTED, false, scope.semaphore, scope.getSymbols(identity));
+                            } else if (task.getMonitor().isInterrupted()) {
+                                fire(Status.INTERRUPTED, false, scope.semaphore, scope.getSymbols(identity));
                             } else {
                                 fire(observation, false, scope.semaphore, scope.getSymbols(identity));
                             }
@@ -511,6 +522,24 @@ public class RuntimeBehavior {
         }
     }
 
+    @Action(id = "pack", fires = IKActorsValue.Type.URN, description = "Prepares a downloadable payload and fires the URL to it when ready")
+    public static class Pack extends KlabActionExecutor {
+
+        public Pack(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+        @Override
+        void run(KlabActor.Scope scope) {
+            List<Object> args = new ArrayList<>();
+            for (Object arg : arguments.values()) {
+                args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
+            }
+            //            scope.runtimeScope.getMonitor().debug(args.toArray());
+        }
+    }
+    
     /**
      * Install a listener in a context that will fire an object to the sender whenever it is
      * resolved, optionally matching a type.

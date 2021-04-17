@@ -251,13 +251,15 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         // metadata come with the actor specification if created through instantiation and don't
         // change.
         Parameters<String> metadata;
+        IBehavior behavior;
 
-        public Scope(IActorIdentity<KlabMessage> identity, String appId, IRuntimeScope scope) {
+        public Scope(IActorIdentity<KlabMessage> identity, String appId, IRuntimeScope scope, IBehavior behavior) {
             this.runtimeScope = scope;
             this.identity = identity;
             this.appId = appId;
             this.viewScope = new ViewScope(this);
             this.metadata = Parameters.create();
+            this.behavior = behavior;
         }
 
         public Scope withMatch(Match match, Object value, Map<String, Object> vars) {
@@ -298,6 +300,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             this.appId = scope.appId;
             this.semaphore = scope.semaphore;
             this.metadata = scope.metadata;
+            this.behavior = scope.behavior;
         }
 
         public String toString() {
@@ -450,6 +453,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             Scope ret = new Scope(this);
             ret.viewScope = ret.viewScope.createLayout(wspecs, actionId);
             return ret;
+        }
+
+        public IBehavior getBehavior() {
+            return this.behavior;
         }
         
     }
