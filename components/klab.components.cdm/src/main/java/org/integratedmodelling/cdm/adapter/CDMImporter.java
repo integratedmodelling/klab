@@ -60,7 +60,7 @@ public class CDMImporter implements IMultipleResourceImporter {
 	}
 
 	@Override
-	public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+	public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
 		// TODO Auto-generated method stub
 		return new ArrayList<>();
 	}

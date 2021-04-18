@@ -820,4 +820,10 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return predicate;
     }
 
+    @Override
+    public Collection<IKnowledgeView> getViews() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

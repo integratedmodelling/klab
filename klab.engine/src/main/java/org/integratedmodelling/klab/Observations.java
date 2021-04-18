@@ -4,8 +4,8 @@ import java.io.File;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -54,7 +54,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
-import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
@@ -820,6 +819,51 @@ public enum Observations implements IObservationService {
                         : (value instanceof Boolean
                                 ? ((Boolean) value ? Observations.PRESENT_LABEL : Observations.NOT_PRESENT_LABEL)
                                 : "No data"));
+    }
+
+    public File packObservations(List<Object> args) {
+
+        List<IObservation> artifacts = new ArrayList<>();
+        for (Object arg : args) {
+            addArtifacts(arg, artifacts);
+        }
+
+        // String is either null (root) or artifact directory if multiple timeslices are available
+        List<Pair<String, File>> exports = new ArrayList<>();
+        for (IObservation artifact : artifacts) {
+
+            /*
+             * export [each timeslice] to a file.
+             */
+            List<ExportFormat> formats = getExportFormats(artifact);
+            if (formats.size() > 0) {
+                
+            }
+
+        }
+
+        /*
+         * produce the final output. If one non-zip file, we have it; if one zip, we also have it;
+         * if multiple files OR multiple zips, unpack any zips and make a final package.
+         */
+        if (exports.size() == 1) {
+
+        } else if (exports.size() > 1) {
+
+        }
+
+        return null;
+    }
+
+    private void addArtifacts(Object arg, List<IObservation> artifacts) {
+        if (arg instanceof IObservation) {
+            artifacts.add((IObservation) arg);
+        } else if (arg instanceof Collection) {
+            for (Object o : ((Collection<?>) arg)) {
+                addArtifacts(o, artifacts);
+            }
+        }
+
     }
 
 }

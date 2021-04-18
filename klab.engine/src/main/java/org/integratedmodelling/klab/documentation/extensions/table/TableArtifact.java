@@ -452,6 +452,17 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
     }
 
     /**
+     * Export multiple tables as one XLS file with multiple sheets.
+     * 
+     * @param tables
+     * @param file
+     * @return
+     */
+    public static File exportMultiple(Collection<TableArtifact> tables, File file) {
+        return null;
+    }
+    
+    /**
      * TODO turn into a private function that takes a table view and a sheet handle, so it can be
      * generalized to >1 sheets.
      */

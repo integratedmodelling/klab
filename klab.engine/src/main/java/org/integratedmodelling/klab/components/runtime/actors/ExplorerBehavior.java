@@ -1,5 +1,7 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.io.File;
+
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
@@ -95,15 +97,37 @@ public class ExplorerBehavior {
                 message.setOperation(Operation.Download);
                 Object value = arguments.getUnnamedArguments().get(0);
                 if (value instanceof KActorsValue) {
-                    value = ((KActorsValue)value).evaluate(scope, identity, true);
+                    value = ((KActorsValue) value).evaluate(scope, identity, true);
                 }
-                message.setTargetId(value == null ? null : value.toString());
-                identity.getParentIdentity(ISession.class).getMonitor().send(IMessage.MessageClass.UserInterface,
-                        IMessage.Type.ViewSetting, message);
+
+                if (value != null) {
+
+                    if (value instanceof File) {
+
+                        /*
+                         * Set up a one-time staging area and create the URL with the special
+                         * project staging.ID so that the endpoint can find it.
+                         */
+
+                        /*
+                         * Set value back to the URL string
+                         */
+                    }
+
+                    if (value != null && value.toString().startsWith("http")) {
+
+                        message.setTargetId(value == null ? null : value.toString());
+                        identity.getParentIdentity(ISession.class).getMonitor().send(IMessage.MessageClass.UserInterface,
+                                IMessage.Type.ViewSetting, message);
+
+                    }
+
+                }
+
             }
         }
     }
-    
+
     @Action(id = "show", fires = IKActorsValue.Type.OBSERVATION, description = "Show an artifact in the explorer,identified by name, semantics, or the artifact itself."
             + " When selected, fire the artifact if all OK, an error, or empty if it was shown already.")
     public static class Show extends KlabActionExecutor {

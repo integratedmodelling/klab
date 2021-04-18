@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -202,8 +203,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable(), true);
         this.dataflow = actuator.getDataflow();
         this.watchedObservations = Collections.synchronizedSet(new HashSet<>());
-        this.views = new HashMap<>();
-        this.viewsByUrn = new HashMap<>();
+        this.views = new LinkedHashMap<>();
+        this.viewsByUrn = new LinkedHashMap<>();
         this.concreteIdentities = new HashMap<>();
 
         // cache for groovy IS operator in this context
@@ -2156,6 +2157,14 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
     public IConcept localizePredicate(IConcept predicate) {
         IConcept ret = resolvedPredicates.get(predicate);
         return ret == null ? predicate : ret;
+    }
+    
+    @Override
+    public Collection<IKnowledgeView> getViews() {
+        if (this.views == null) {
+            return new ArrayList<IKnowledgeView>();
+        }
+        return this.views.values();
     }
 
 }

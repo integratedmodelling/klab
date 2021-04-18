@@ -207,7 +207,7 @@ public class ViewBehavior {
          */
         protected abstract ViewComponent createViewComponent(Scope scope);
 
-        public Object getFiredValue(ViewAction action) {
+        public Object getFiredValue(ViewAction action, Scope scope) {
             Object ret = onViewAction(action, scope);
             session.getState().updateView(this.component);
             return ret;
@@ -544,9 +544,7 @@ public class ViewBehavior {
 
         @Override
         protected Object onViewAction(ViewAction action, Scope scope) {
-            // TODO fire a boolean if clicked (which requires the "active" attribute)
-            this.component.setContent(action.getStringValue());
-            return action.getStringValue();
+            return true;
         }
 
     }

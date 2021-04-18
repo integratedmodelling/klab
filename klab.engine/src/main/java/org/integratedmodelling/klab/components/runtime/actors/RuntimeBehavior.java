@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,8 +16,8 @@ import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.model.KimQuantity;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
@@ -34,11 +35,11 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimePeriod;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
-import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
 import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifact;
+import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.SessionState;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -67,8 +68,6 @@ import akka.actor.typed.ActorRef;
 @Behavior(id = "session", version = Version.CURRENT)
 public class RuntimeBehavior {
 
-    
-    
     /**
      * Set the root context
      */
@@ -531,15 +530,36 @@ public class RuntimeBehavior {
         }
 
         @Override
-        void run(KlabActor.Scope scope) {
-            List<Object> args = new ArrayList<>();
-            for (Object arg : arguments.values()) {
-                args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
+        void run(final KlabActor.Scope scope) {
+            final List<Object> args = new ArrayList<>();
+            final boolean tables = arguments.containsKey("tables") && arguments.get("tables") instanceof Boolean
+                    && arguments.get("tables", Boolean.class);
+            if (!tables) {
+                for (Object arg : arguments.values()) {
+                    args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
+                }
             }
-            //            scope.runtimeScope.getMonitor().debug(args.toArray());
+            new Thread(){
+
+                @Override
+                public void run() {
+
+                    File file = null;
+                    if (tables) {   
+                        file = TableArtifact.exportMultiple(identity.getParentIdentity(Session.class).getState().getTables(), file);
+                    } else {
+                        file = Observations.INSTANCE.packObservations(args);
+                    }
+                    
+                    if (file != null) {
+                        fire(file, false, scope.semaphore, scope.getSymbols(identity));
+                    }
+                }
+
+            }.start();
         }
     }
-    
+
     /**
      * Install a listener in a context that will fire an object to the sender whenever it is
      * resolved, optionally matching a type.

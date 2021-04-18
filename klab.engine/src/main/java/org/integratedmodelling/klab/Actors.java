@@ -197,6 +197,7 @@ public enum Actors implements IActorsService {
         layoutMetadata.add("multiple");
         layoutMetadata.add("selected");
         layoutMetadata.add("type");
+        layoutMetadata.add("active");
     }
 
     @Override

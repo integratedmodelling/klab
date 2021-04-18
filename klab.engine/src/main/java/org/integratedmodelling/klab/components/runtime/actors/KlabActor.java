@@ -156,7 +156,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
             for (Pair<Match, IKActorsStatement> match : matches) {
                 if (match.getFirst().matches(value, scope)) {
-                    execute(match.getSecond(), scope.withMatch(match.getFirst(), value, scopeVars));
+                    Scope s = scope.withMatch(match.getFirst(), value, scopeVars);
+                    s.symbolTable.putAll(symbolTable);
+                    execute(match.getSecond(), s);
                     break;
                 }
             }
@@ -260,6 +262,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             this.viewScope = new ViewScope(this);
             this.metadata = Parameters.create();
             this.behavior = behavior;
+        }
+
+        public Scope withGlobalSymbols(Map<String, Object> symbols) {
+            this.symbolTable.putAll(symbols);
+            return this;
         }
 
         public Scope withMatch(Match match, Object value, Map<String, Object> vars) {
@@ -458,7 +465,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         public IBehavior getBehavior() {
             return this.behavior;
         }
-        
+
     }
 
     protected IActorIdentity<KlabMessage> getIdentity() {
@@ -583,9 +590,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                 MatchActions actions = listeners.get(notifyId);
                 if (actions != null) {
                     KlabActionExecutor executor = actionCache.get(message.action.getComponent().getId());
-                    actions.match(executor instanceof KlabWidgetActionExecutor
-                            ? ((KlabWidgetActionExecutor) executor).getFiredValue(message.action)
-                            : getActionValue(message.action), message.scope);
+                    actions.match(
+                            executor instanceof KlabWidgetActionExecutor
+                                    ? ((KlabWidgetActionExecutor) executor).getFiredValue(message.action,
+                                            new Scope(identity, appId, message.scope, this.behavior)
+                                                    .withGlobalSymbols(this.symbolTable))
+                                    : getActionValue(message.action),
+                            message.scope);
                 }
             } else if (message.action.getComponent().getActorPath() != null) {
 
@@ -1121,14 +1132,20 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
              * it the message and return.
              */
             if (this.javaReactors.containsKey(receiverName)
-                    || (scope.symbolTable.containsKey(receiverName) && !Utils.isPOD(scope.symbolTable.get(receiverName)))) {
+                    || (scope.symbolTable.containsKey(receiverName) && !Utils.isPOD(scope.symbolTable.get(receiverName)))
+                    || (scope.globalSymbols.containsKey(receiverName) && !Utils.isPOD(scope.globalSymbols.get(receiverName)))) {
+
                 Object reactor = this.javaReactors.get(receiverName);
                 if (reactor == null) {
-                    reactor = scope.symbolTable.containsKey(receiverName);
+                    reactor = scope.symbolTable.get(receiverName);
+                }
+                if (reactor == null) {
+                    reactor = scope.globalSymbols.get(receiverName);
                 }
                 if (reactor != null) {
                     Actors.INSTANCE.invokeReactorMethod(reactor, messageName, code.getArguments(), scope, this.identity);
                 }
+
                 return;
             }
 

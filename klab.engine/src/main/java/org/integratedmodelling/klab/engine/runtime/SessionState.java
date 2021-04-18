@@ -38,6 +38,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -59,6 +60,7 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Use
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
+import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
@@ -945,6 +947,23 @@ public class SessionState extends Parameters<String> implements ISessionState {
     @Override
     public Map<IConcept, Collection<IConcept>> getRoles() {
         return this.roles;
+    }
+
+    /**
+     * Return all the table artifacts produced in this state.
+     * 
+     * @return
+     */
+    public Collection<TableArtifact> getTables() {
+        List<TableArtifact> ret = new ArrayList<>();
+        if (this.context != null) {
+            for (IKnowledgeView view :  ((IRuntimeScope) ((Subject) context).getScope()).getViews()) {
+                if (view instanceof TableArtifact) {
+                    ret.add((TableArtifact)view);
+                }
+            }
+        }
+        return ret;
     }
 
 }

@@ -44,7 +44,7 @@ public class WekaImporter implements IResourceImporter {
     }
 
     @Override
-    public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+    public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
         List<Triple<String, String, String>> ret = new ArrayList<>();
         return ret;
     }

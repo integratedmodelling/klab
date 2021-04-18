@@ -81,7 +81,7 @@ public class RasterImporter extends AbstractFilesetImporter {
     }
 
     @Override
-    public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+    public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
         List<Triple<String, String, String>> ret = new ArrayList<>();
 
         if (observation instanceof IState) {
