@@ -22,6 +22,7 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Documentation;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
@@ -102,6 +103,7 @@ import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
+import org.integratedmodelling.klab.rest.DocumentationNode;
 import org.integratedmodelling.klab.rest.KnowledgeViewReference;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
@@ -2020,7 +2022,6 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
         this.viewsByUrn.put(view.getUrn(), view);
         this.views.put(view.getId(), view);
-
         
         /*
          * send directly to clients. If view can export, keep view and send URL to export service.
@@ -2028,7 +2029,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         KnowledgeViewReference descriptor = new KnowledgeViewReference();
         descriptor.setContextId(monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
         descriptor.setBody(view.getCompiledView("text/html").getText());
-        descriptor.setViewClass(view.getViewClass());
+        descriptor.setViewClass(DocumentationNode.Type.valueOf(StringUtil.capitalize(view.getViewClass())));
         descriptor.setTitle(view.getTitle());
         descriptor.setViewId(view.getId());
         descriptor.getExportFormats().addAll(view.getExportFormats());
