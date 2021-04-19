@@ -66,6 +66,11 @@ import com.vladsch.flexmark.util.options.MutableDataSet;
  */
 public class DocumentationTree {
 
+    /**
+     * Anchors in HTML code are sent using this pattern, to be reinterpreted by the client.
+     */
+    public static final String ANCHOR_PATTERN = "%ANCHOR:{type}:{id}%";
+
     private Map<String, DocumentationNode> nodes = new LinkedHashMap<>();
     private ISession session;
     private IRuntimeScope context;
