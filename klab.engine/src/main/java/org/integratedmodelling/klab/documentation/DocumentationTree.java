@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
+import org.integratedmodelling.klab.api.documentation.IReport.View;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -82,10 +83,6 @@ public class DocumentationTree {
     private Map<ObservedConcept, List<IRankedModel>> resolutions = new HashMap<>();
     private Parser parser_;
     private HtmlRenderer renderer_;
-
-    public enum View {
-        REPORT, FIGURES, TABLES, RESOURCES, MODELS, PROVENANCE
-    }
 
     public DocumentationTree(Report report) {
         this.report = report;

@@ -3,13 +3,14 @@ package org.integratedmodelling.klab.rest;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.rest.ObservationReference.ExportFormat;
 
 public class KnowledgeViewReference {
 
     private String title;
     private String body;
-    private DocumentationNode.Type viewClass;
+    private IReport.View viewClass;
     private String contextId;
     private String viewId;
     private String label;
@@ -63,11 +64,11 @@ public class KnowledgeViewReference {
         this.exportFormats = exportFormats;
     }
 
-    public DocumentationNode.Type getViewClass() {
+    public IReport.View getViewClass() {
         return viewClass;
     }
 
-    public void setViewClass(DocumentationNode.Type viewClass) {
+    public void setViewClass(IReport.View viewClass) {
         this.viewClass = viewClass;
     }
 

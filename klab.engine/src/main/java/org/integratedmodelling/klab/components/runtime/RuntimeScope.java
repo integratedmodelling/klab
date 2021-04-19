@@ -37,6 +37,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
+import org.integratedmodelling.klab.api.documentation.IReport.View;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -1312,10 +1313,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                     session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
                             IMessage.Type.NewObservation, descriptor));
 
-                    
                     session.getState().notifyObservation(observation);
-                    
-                    
+
                     report.include(descriptor, observation);
 
                     notifiedObservations.add(observation.getId());
@@ -1581,7 +1580,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
     public void setModel(Model model) {
         this.model = model;
         if (model != null) {
-            ((Report)report).addModel(model);
+            ((Report) report).addModel(model);
         }
     }
 
@@ -2022,14 +2021,21 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
         this.viewsByUrn.put(view.getUrn(), view);
         this.views.put(view.getId(), view);
-        
+
+        IReport.View type = null;
+        switch(view.getViewClass()) {
+        case "table":
+            type = View.TABLES;
+            break;
+        }
+
         /*
          * send directly to clients. If view can export, keep view and send URL to export service.
          */
         KnowledgeViewReference descriptor = new KnowledgeViewReference();
         descriptor.setContextId(monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
         descriptor.setBody(view.getCompiledView("text/html").getText());
-        descriptor.setViewClass(DocumentationNode.Type.valueOf(StringUtil.capitalize(view.getViewClass())));
+        descriptor.setViewClass(type);
         descriptor.setTitle(view.getTitle());
         descriptor.setViewId(view.getId());
         descriptor.getExportFormats().addAll(view.getExportFormats());
@@ -2161,7 +2167,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         IConcept ret = resolvedPredicates.get(predicate);
         return ret == null ? predicate : ret;
     }
-    
+
     @Override
     public Collection<IKnowledgeView> getViews() {
         if (this.views == null) {
