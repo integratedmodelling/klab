@@ -356,14 +356,18 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
         /*
          * compile columns recursively only at the highest group level.
          */
+        Set<String> compiled = new HashSet<>();
         for (Dimension column : getActiveColumns()) {
             if (column.hidden) {
                 continue;
             }
-            sCol++;
-            int level = checkGroups(column, scope, sCol++, colGroups);
-            if (level == cGroupLevel) {
-                cols.add(compileColumn(column, cGroupLevel, cGroupLevel));
+            Dimension col = column;
+            while (col.parent != null) {
+                col = col.parent;
+            }
+            if (!compiled.contains(col.getName())) {
+                cols.add(compileColumn(col, 0, cGroupLevel));
+                compiled.add(col.getName());
             }
         }
 
@@ -442,10 +446,12 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
     private Column compileColumn(Dimension column, int level, int totalLevels) {
         Column ret = new Column();
         ret.setId(column.getLocalName());
-        ret.setTitle(getHeader(column, level, totalLevels, scope));
+        String title = (column.titles == null || column.titles.length == 0) ? "{classifier}" : column.titles[0];
+        title = TemplateUtils.expandMatches(title, this.table.getTemplateVars(column, scope)).get(0);
+        ret.setTitle(title);
         ret.setType(IArtifact.Type.NUMBER);
         for (Dimension dim : column.children) {
-            ret.getColumns().add(compileColumn(dim, level--, totalLevels));
+            ret.getColumns().add(compileColumn(dim, level++, totalLevels));
         }
         
         return ret;

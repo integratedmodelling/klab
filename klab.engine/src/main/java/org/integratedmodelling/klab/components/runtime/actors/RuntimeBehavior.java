@@ -91,7 +91,6 @@ public class RuntimeBehavior {
                     scope.getMonitor().getIdentity().getParentIdentity(ISession.class).interruptAllTasks();
                 }
             }
-
             if (arguments.get("reset") instanceof IKActorsValue) {
                 KActorsValue reset = arguments.get("reset", KActorsValue.class);
                 if (Actors.INSTANCE.asBooleanValue(reset.evaluate(scope, identity, true))) {
