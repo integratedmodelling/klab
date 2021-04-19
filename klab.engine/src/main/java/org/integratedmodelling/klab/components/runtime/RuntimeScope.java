@@ -1578,7 +1578,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
     @Override
     public void setModel(Model model) {
         this.model = model;
-        ((Report)report).addModel(model);
+        if (model != null) {
+            ((Report)report).addModel(model);
+        }
     }
 
     @Override

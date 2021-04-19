@@ -45,7 +45,6 @@ public class CreateHighlighter {
 		/*
 		 * determine output file name
 		 */
-
 		IWorldview worldview = Resources.INSTANCE.getWorldview();
 
 		for (Section section : Section.values()) {
