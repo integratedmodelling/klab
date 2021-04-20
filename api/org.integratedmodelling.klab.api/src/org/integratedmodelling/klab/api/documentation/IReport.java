@@ -42,7 +42,7 @@ public interface IReport {
     }
     
     public enum View {
-        REPORT, FIGURES, TABLES, RESOURCES, MODELS, PROVENANCE
+        REPORT, FIGURES, TABLES, RESOURCES, MODELS, PROVENANCE, REFERENCES
     }
 
     /**

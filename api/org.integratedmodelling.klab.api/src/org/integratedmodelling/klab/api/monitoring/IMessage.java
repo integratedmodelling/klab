@@ -369,7 +369,12 @@ public interface IMessage {
 		/*
 		 * Sent B->F when a new view has been generated in a context
 		 */
-		ViewAvailable
+		ViewAvailable, 
+		
+		/*
+		 * Sent B->F when one or more documentation views have incorporated a new element
+		 */
+		DocumentationChanged
 
 	}
 

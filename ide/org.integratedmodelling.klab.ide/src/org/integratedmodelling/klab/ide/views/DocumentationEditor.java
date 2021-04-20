@@ -307,7 +307,7 @@ public class DocumentationEditor extends ViewPart {
             public void doubleClick(DoubleClickEvent event) {
                 Object o = ((StructuredSelection) (event.getSelection())).getFirstElement();
                 if (o instanceof Reference) {
-                    String key = ((Reference) o).get(BibTexFields.KEY);
+                    String key = ((Reference) o).get(BibTexFields.KEY).toString();
                     editor.insert("@cite(" + key + ")");
                     editor.setFocus();
                 }

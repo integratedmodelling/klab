@@ -15,7 +15,6 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.data.classification.Classifier;
-import org.integratedmodelling.klab.documentation.Documentation.SectionImpl;
 import org.integratedmodelling.klab.documentation.Report.RefType;
 import org.integratedmodelling.klab.rest.DocumentationNode;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -59,15 +58,15 @@ public class ReportSection extends Parameters<String> implements Section {
         this.report = parent.report;
     }
 
-    public ReportSection(Report report, Reference reference, String tag) {
-        this.report = report;
-        this.body.append("[#" + Report.RefType.REF.name().toLowerCase() + ":" + tag + "]. ");
-        this.body.append(reference.get(BibTexFields.EXAMPLE_CITATION));
-        this.body.append(" {#" + Report.RefType.REF.name().toLowerCase() + ":" + tag + "}");
-        this.body.append("\n\n");
-        ReportSection parent = report.getMainSection(SectionRole.REFERENCES);
-        parent.children.add(this);
-    }
+//    public ReportSection(Report report, Reference reference, String tag) {
+//        this.report = report;
+//        this.body.append("[#" + Report.RefType.REF.name().toLowerCase() + ":" + tag + "]. ");
+//        this.body.append(reference.get(BibTexFields.EXAMPLE_CITATION));
+//        this.body.append(" {#" + Report.RefType.REF.name().toLowerCase() + ":" + tag + "}");
+//        this.body.append("\n\n");
+//        ReportSection parent = report.getMainSection(SectionRole.REFERENCES);
+//        parent.children.add(this);
+//    }
 
     @Override
     public String toString() {
@@ -290,17 +289,23 @@ public class ReportSection extends Parameters<String> implements Section {
     public void cite(Object[] args, IDocumentation documentation, IContextualizationScope context) {
 
         Element element = null;
+        DocumentationNode node = null;
         if (!report.referencesCited.containsKey(args[0])) {
             Reference reference = ((Documentation) documentation).getReference(args[0].toString());
             if (reference != null) {
-                element = addElement(args[0], DocumentationNode.Type.Citation);
-                report.referencesCited.put(args[0].toString(), new ReportSection(this.report, reference, args[0].toString()));
+//                element = addElement(args[0], DocumentationNode.Type.Citation);
+//                report.referencesCited.put(args[0].toString(), new ReportSection(this.report, reference, args[0].toString()));
                 // add to section in doc tree (this will split the section at the current place,
                 // then resume if more text arrives
-                report.docTree.addCitation(reference);
+                node = report.docTree.addCitation(reference);
             }
         }
-        body.append((args.length > 1 ? args[1] : "") + "[@" + Report.RefType.REF.name().toLowerCase() + ":" + args[0] + "]");
+        
+        if (node != null) {
+            body.append(DocumentationTree.getLinkText(node));
+        }
+        
+//        body.append((args.length > 1 ? args[1] : "") + "[@" + Report.RefType.REF.name().toLowerCase() + ":" + args[0] + "]");
         if (element != null) {
             element.finalize();
         }
