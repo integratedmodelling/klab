@@ -96,6 +96,8 @@ public class DocumentationTree {
     private Parser parser_;
     private HtmlRenderer renderer_;
 
+    private int referencesCount;
+
     public DocumentationTree(Report report) {
         this.report = report;
     }
@@ -280,6 +282,7 @@ public class DocumentationTree {
             node.setType(DocumentationNode.Type.Reference);
             node.setId(ref.getDoi());
             nodes.put(node.getId(), node);
+            this.referencesCount++;
             notify(node);
         }
 
@@ -369,13 +372,32 @@ public class DocumentationTree {
     private List<DocumentationNode> getReportView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
         for (SectionRole order : SectionRole.values()) {
+            boolean done = false;
             for (ReportSection section : mainSections) {
                 if (order == section.getRole()) {
                     ret.add(compileSection(section, format));
+                    done = true;
                 }
+            }
+            if (order == SectionRole.REFERENCES && !done && this.referencesCount > 0) {
+                ret.add(getReferencesNode());
             }
         }
 
+        return ret;
+    }
+
+    private DocumentationNode getReferencesNode() {
+
+        DocumentationNode ret = new DocumentationNode();
+        ret.setId("References");
+        ret.setType(Type.Section);
+        ret.setTitle("References cited");
+        for (DocumentationNode node : nodes.values()) {
+            if (node.getType() == Type.Reference) {
+                ret.getChildren().add(node);
+            }
+        }
         return ret;
     }
 
@@ -404,6 +426,14 @@ public class DocumentationTree {
             compileParagraph(body, offset, body.length(), 0, ret, format);
         }
 
+        if (section.role == SectionRole.REFERENCES) {
+            for (DocumentationNode node : nodes.values()) {
+                if (node.getType() == Type.Reference) {
+                    ret.getChildren().add(node);
+                }
+            }
+        }
+
         return ret;
     }
 
@@ -424,6 +454,8 @@ public class DocumentationTree {
 
         if (element.type == Type.Section) {
             return compileSection((ReportSection) element.element, format);
+        } else if (element.type == Type.Anchor || element.type == Type.Citation || element.type == Type.Link) {
+            return null;
         }
 
         DocumentationNode node = new DocumentationNode();
@@ -431,11 +463,11 @@ public class DocumentationTree {
         node.setType(element.type);
 
         switch(element.type) {
-        case Anchor:
-        case Citation:
-        case Link:
-            node.setBodyText(element.element.toString());
-            break;
+        // case Anchor:
+        // case Citation:
+        // case Link:
+        // node.setBodyText(element.element.toString());
+        // break;
         case Chart:
             break;
         case Figure:

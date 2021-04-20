@@ -288,7 +288,7 @@ public class ReportSection extends Parameters<String> implements Section {
      */
     public void cite(Object[] args, IDocumentation documentation, IContextualizationScope context) {
 
-        Element element = null;
+//        Element element = null;
         DocumentationNode node = null;
         if (!report.referencesCited.containsKey(args[0])) {
             Reference reference = ((Documentation) documentation).getReference(args[0].toString());
@@ -306,9 +306,9 @@ public class ReportSection extends Parameters<String> implements Section {
         }
         
 //        body.append((args.length > 1 ? args[1] : "") + "[@" + Report.RefType.REF.name().toLowerCase() + ":" + args[0] + "]");
-        if (element != null) {
-            element.finalize();
-        }
+//        if (element != null) {
+//            element.finalize();
+//        }
     }
 
     /**
