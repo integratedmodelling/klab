@@ -2,6 +2,8 @@ package org.integratedmodelling.klab.documentation.extensions.table;
 
 import java.io.File;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.OutputStream;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -51,6 +53,9 @@ import org.integratedmodelling.klab.utils.TemplateUtils;
  * A computed table based on a table view model.
  */
 public class TableArtifact extends Artifact implements IKnowledgeView {
+
+    public static final String EXCEL_MEDIA_TYPE = "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
+    public static final String HTML_MEDIA_TYPE = "text/html";
 
     /**
      * A cell may contain a standard aggregator, a comparator, a differentiator or other accumulator
@@ -280,11 +285,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
     private void compile(Table ret) {
 
         List<Cell> aggregatedCells = new ArrayList<>();
-        
+
         List<Column> cols = new ArrayList<>();
         List<Map<String, String>> data = new ArrayList<>();
         ret.setNumberFormat(this.table.getNumberFormat());
-        
+
         /*
          * compute groups based on dimension hierarchies. Dimensions that stand alone will have a
          * group all by themselves. These must preserve order or we're screwed.
@@ -343,7 +348,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                 activeColumns.add(column.index);
             }
         }
-            
+
         for (int n = 0; n < rTitles; n++) {
             Column rowHeaderColumn = new Column();
             rowHeaderColumn.setId("rowtitles_" + (n + 1));
@@ -352,7 +357,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
             rowHeaderColumn.setFrozen(true);
             cols.add(rowHeaderColumn);
         }
-        
+
         /*
          * compile columns recursively only at the highest group level.
          */
@@ -362,7 +367,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                 continue;
             }
             Dimension col = column;
-            while (col.parent != null) {
+            while(col.parent != null) {
                 col = col.parent;
             }
             if (!compiled.contains(col.getName())) {
@@ -416,7 +421,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
             if (rDesc.hidden) {
                 continue;
             }
-            
+
             Map<String, String> rowData = new HashMap<>();
             for (int i = 0; i < rTitles; i++) {
                 rowData.put("rowtitles_" + (i + 1), getHeader(rDesc, i, rTitles, scope));
@@ -427,18 +432,18 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                 }
                 Cell cell = cells[cDesc.index][rDesc.index];
                 Object value = getNumberValue(cell);
-                if (value instanceof Double && Double.isNaN((Double)value)) {
+                if (value instanceof Double && Double.isNaN((Double) value)) {
                     value = getData(cell);
                 }
                 rowData.put(cDesc.getName(), value.toString());
             }
-            
+
             data.add(rowData);
         }
-        
+
         ret.getColumns().addAll(cols);
         ret.getRows().addAll(data);
-        
+
         System.out.println(JsonUtils.printAsJson(ret));
 
     }
@@ -453,7 +458,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
         for (Dimension dim : column.children) {
             ret.getColumns().add(compileColumn(dim, level++, totalLevels));
         }
-        
+
         return ret;
     }
 
@@ -461,13 +466,216 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
      * Export multiple tables as one XLS file with multiple sheets.
      * 
      * @param tables
-     * @param file
+     * @param file if null, a temp file is created (erased after shutdown)
      * @return
      */
     public static File exportMultiple(Collection<TableArtifact> tables, File file) {
-        return null;
+        
+        if (file == null) {
+            try {
+                file = File.createTempFile("tables", ".xlsx");
+                file.deleteOnExit();
+            } catch (IOException e) {
+                throw new KlabIOException(e);
+            }
+        }
+        
+        ITableView ret = new ExcelView();
+        
+        for (TableArtifact table : tables) {
+            table.getCompiledView(ret, ret.sheet(table.getLabel()));
+        }
+        
+        try (OutputStream out = new FileOutputStream(file)) {
+            ret.write(out);
+        } catch (Throwable e) {
+            throw new KlabIOException(e);
+        }
+        
+        return file;
     }
-    
+
+    /**
+     * Compile this table into the passed sheet of the passed view
+     */
+    public void getCompiledView(ITableView view, int sheetId) {
+        List<Cell> aggregatedCells = new ArrayList<>();
+
+        /*
+         * compute groups based on dimension hierarchies. Dimensions that stand alone will have a
+         * group all by themselves. These must preserve order or we're screwed.
+         */
+        Map<String, Group> colGroups = new LinkedHashMap<>();
+        Map<String, Group> rowGroups = new LinkedHashMap<>();
+        int cGroupLevel = 0, rGroupLevel = 0;
+        int sCol = 0, sRow = 0;
+
+        for (Dimension column : getActiveColumns()) {
+            if (column.hidden) {
+                continue;
+            }
+            sCol++;
+            int level = checkGroups(column, scope, sCol++, colGroups);
+            if (cGroupLevel < level) {
+                cGroupLevel = level;
+            }
+            for (Dimension row : getActiveRows()) {
+                if (row.hidden) {
+                    continue;
+                }
+                if (sCol == 1) {
+                    sRow++;
+                }
+                level = checkGroups(row, scope, sRow++, rowGroups);
+                if (rGroupLevel < level) {
+                    rGroupLevel = level;
+                }
+            }
+        }
+
+        /*
+         * precompute all cells with aggregators and not those that aggregate them; the latter are
+         * put away and deferred for computing in order of level, so that aggregations of
+         * aggregations are computed last. Put row and column in the cell in this pass.
+         */
+        for (Dimension column : getActiveColumns()) {
+            for (Dimension row : getActiveRows()) {
+                Cell cell = cells[column.index][row.index];
+                if (cell != null) {
+                    cell.row = row;
+                    cell.column = column;
+                    if (cell.computationType == null && cell.aggregator != null) {
+                        cell.computedValue = cell.get();
+                    } else if (cell.computationType != null) {
+                        // those with summarizing computations go first
+                        if (cell.computationType == ComputationType.Summarize) {
+                            cell.aggregationLevel = 0;
+                        } else {
+                            cell.aggregationLevel++;
+                        }
+                        aggregatedCells.add(cell);
+                    }
+                }
+            }
+        }
+
+        /*
+         * compute all aggregating cells in order of level
+         */
+        Collections.sort(aggregatedCells, new Comparator<Cell>(){
+            @Override
+            public int compare(Cell o1, Cell o2) {
+                return Integer.compare(o1.aggregationLevel, o2.aggregationLevel);
+            }
+        });
+
+        for (Cell cell : aggregatedCells) {
+            cell.computedValue = aggregateData(cell);
+        }
+
+        int hTable = view.table(this.table.getTitle(), sheetId);
+
+        /*
+         * add separator indices for both rows and columns
+         */
+        int rTitles = 0;
+        for (Dimension row : rows) {
+            if (row.hidden) {
+                continue;
+            }
+            if (row.titles != null && row.titles.length > rTitles) {
+                rTitles = row.titles.length;
+            }
+            if (row.separator) {
+                activeRows.add(row.index);
+            }
+        }
+        int cTitles = 0;
+        for (Dimension column : columns) {
+            if (column.hidden) {
+                continue;
+            }
+            if (column.titles != null && column.titles.length > cTitles) {
+                cTitles = column.titles.length;
+            }
+            if (column.separator) {
+                activeColumns.add(column.index);
+            }
+        }
+
+        /*
+         * headers
+         */
+        if ((rTitles + cTitles) > 0 || (colGroups.size() + rowGroups.size()) > 0) {
+
+            int hHeader = view.header(hTable);
+
+            for (int i = cGroupLevel; i > 0; i--) {
+
+                int tRow = view.newRow(hHeader);
+                int level = i;
+                int nCols = 0;
+
+                // skip row titles
+                for (int n = 0; n < rTitles; n++) {
+                    view.newHeaderCell(tRow, false);
+                }
+
+                for (Group group : colGroups.values().stream().filter(group -> group.level == level)
+                        .collect(Collectors.toList())) {
+                    while(nCols > group.startIndex) {
+                        view.newHeaderCell(tRow, false);
+                        nCols++;
+                    }
+                    int cell = view.newHeaderCell(tRow, group.nDimensions, false);
+                    view.write(cell, group.title, Double.NaN, Style.BOLD);
+                    nCols += group.nDimensions;
+                }
+
+                for (int n = nCols; n < (sCol - nCols); n++) {
+                    view.newHeaderCell(tRow, false);
+                }
+            }
+
+            for (int ct = 0; ct < cTitles; ct++) {
+
+                int tRow = view.newRow(hHeader);
+
+                for (int rt = 0; rt < rTitles; rt++) {
+                    view.newHeaderCell(tRow, false);
+                }
+                for (Dimension cDesc : getActiveColumns()) {
+                    if (cDesc.hidden) {
+                        continue;
+                    }
+                    view.write(view.newHeaderCell(tRow, false), getHeader(cDesc, ct, cTitles, scope), Double.NaN, cDesc.style);
+                }
+            }
+        }
+
+        /*
+         * data and row titles. Row groups can go to hell for now.
+         */
+        int hBody = view.body(hTable);
+        for (Dimension rDesc : getActiveRows()) {
+            if (rDesc.hidden) {
+                continue;
+            }
+            int hRow = view.newRow(hBody);
+            for (int i = 0; i < rTitles; i++) {
+                view.write(view.newHeaderCell(hRow, true), getHeader(rDesc, i, rTitles, scope), Double.NaN, rDesc.style);
+            }
+            for (Dimension cDesc : getActiveColumns()) {
+                if (cDesc.hidden) {
+                    continue;
+                }
+                Cell cell = cells[cDesc.index][rDesc.index];
+                view.write(view.newCell(hRow), getData(cell), getNumberValue(cell), getStyle(cell));
+            }
+        }
+
+    }
+
     /**
      * TODO turn into a private function that takes a table view and a sheet handle, so it can be
      * generalized to >1 sheets.
@@ -478,9 +686,9 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
         ITableView ret = this.compiledViews.get(mediaType);
         if (ret == null) {
 
-            if ("text/html".equals(mediaType)) {
+            if (HTML_MEDIA_TYPE.equals(mediaType)) {
                 ret = new TableView();
-            } else if ("application/vnd.openxmlformats-officedocument.spreadsheetml.sheet".equals(mediaType)) {
+            } else if (EXCEL_MEDIA_TYPE.equals(mediaType)) {
                 ret = new ExcelView();
             }
 
@@ -488,184 +696,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                 throw new KlabValidationException("table view: media type " + mediaType + " is not supported");
             }
 
-            // TODO externalize
-            int hSheet = ret.sheet("");
-
-            List<Cell> aggregatedCells = new ArrayList<>();
-
-            /*
-             * compute groups based on dimension hierarchies. Dimensions that stand alone will have
-             * a group all by themselves. These must preserve order or we're screwed.
-             */
-            Map<String, Group> colGroups = new LinkedHashMap<>();
-            Map<String, Group> rowGroups = new LinkedHashMap<>();
-            int cGroupLevel = 0, rGroupLevel = 0;
-            int sCol = 0, sRow = 0;
-
-            for (Dimension column : getActiveColumns()) {
-                if (column.hidden) {
-                    continue;
-                }
-                sCol++;
-                int level = checkGroups(column, scope, sCol++, colGroups);
-                if (cGroupLevel < level) {
-                    cGroupLevel = level;
-                }
-                for (Dimension row : getActiveRows()) {
-                    if (row.hidden) {
-                        continue;
-                    }
-                    if (sCol == 1) {
-                        sRow++;
-                    }
-                    level = checkGroups(row, scope, sRow++, rowGroups);
-                    if (rGroupLevel < level) {
-                        rGroupLevel = level;
-                    }
-                }
-            }
-
-            /*
-             * precompute all cells with aggregators and not those that aggregate them; the latter
-             * are put away and deferred for computing in order of level, so that aggregations of
-             * aggregations are computed last. Put row and column in the cell in this pass.
-             */
-            for (Dimension column : getActiveColumns()) {
-                for (Dimension row : getActiveRows()) {
-                    Cell cell = cells[column.index][row.index];
-                    if (cell != null) {
-                        cell.row = row;
-                        cell.column = column;
-                        if (cell.computationType == null && cell.aggregator != null) {
-                            cell.computedValue = cell.get();
-                        } else if (cell.computationType != null) {
-                            // those with summarizing computations go first
-                            if (cell.computationType == ComputationType.Summarize) {
-                                cell.aggregationLevel = 0;
-                            } else {
-                                cell.aggregationLevel++;
-                            }
-                            aggregatedCells.add(cell);
-                        }
-                    }
-                }
-            }
-
-            /*
-             * compute all aggregating cells in order of level
-             */
-            Collections.sort(aggregatedCells, new Comparator<Cell>(){
-                @Override
-                public int compare(Cell o1, Cell o2) {
-                    return Integer.compare(o1.aggregationLevel, o2.aggregationLevel);
-                }
-            });
-
-            for (Cell cell : aggregatedCells) {
-                cell.computedValue = aggregateData(cell);
-            }
-
-            int hTable = ret.table(this.table.getTitle(), hSheet);
-
-            /*
-             * add separator indices for both rows and columns
-             */
-            int rTitles = 0;
-            for (Dimension row : rows) {
-                if (row.hidden) {
-                    continue;
-                }
-                if (row.titles != null && row.titles.length > rTitles) {
-                    rTitles = row.titles.length;
-                }
-                if (row.separator) {
-                    activeRows.add(row.index);
-                }
-            }
-            int cTitles = 0;
-            for (Dimension column : columns) {
-                if (column.hidden) {
-                    continue;
-                }
-                if (column.titles != null && column.titles.length > cTitles) {
-                    cTitles = column.titles.length;
-                }
-                if (column.separator) {
-                    activeColumns.add(column.index);
-                }
-            }
-
-            /*
-             * headers
-             */
-            if ((rTitles + cTitles) > 0 || (colGroups.size() + rowGroups.size()) > 0) {
-
-                int hHeader = ret.header(hTable);
-
-                for (int i = cGroupLevel; i > 0; i--) {
-
-                    int tRow = ret.newRow(hHeader);
-                    int level = i;
-                    int nCols = 0;
-
-                    // skip row titles
-                    for (int n = 0; n < rTitles; n++) {
-                        ret.newHeaderCell(tRow, false);
-                    }
-
-                    for (Group group : colGroups.values().stream().filter(group -> group.level == level)
-                            .collect(Collectors.toList())) {
-                        while(nCols > group.startIndex) {
-                            ret.newHeaderCell(tRow, false);
-                            nCols++;
-                        }
-                        int cell = ret.newHeaderCell(tRow, group.nDimensions, false);
-                        ret.write(cell, group.title, Double.NaN, Style.BOLD);
-                        nCols += group.nDimensions;
-                    }
-
-                    for (int n = nCols; n < (sCol - nCols); n++) {
-                        ret.newHeaderCell(tRow, false);
-                    }
-                }
-
-                for (int ct = 0; ct < cTitles; ct++) {
-
-                    int tRow = ret.newRow(hHeader);
-
-                    for (int rt = 0; rt < rTitles; rt++) {
-                        ret.newHeaderCell(tRow, false);
-                    }
-                    for (Dimension cDesc : getActiveColumns()) {
-                        if (cDesc.hidden) {
-                            continue;
-                        }
-                        ret.write(ret.newHeaderCell(tRow, false), getHeader(cDesc, ct, cTitles, scope), Double.NaN, cDesc.style);
-                    }
-                }
-            }
-
-            /*
-             * data and row titles. Row groups can go to hell for now.
-             */
-            int hBody = ret.body(hTable);
-            for (Dimension rDesc : getActiveRows()) {
-                if (rDesc.hidden) {
-                    continue;
-                }
-                int hRow = ret.newRow(hBody);
-                for (int i = 0; i < rTitles; i++) {
-                    ret.write(ret.newHeaderCell(hRow, true), getHeader(rDesc, i, rTitles, scope), Double.NaN, rDesc.style);
-                }
-                for (Dimension cDesc : getActiveColumns()) {
-                    if (cDesc.hidden) {
-                        continue;
-                    }
-                    Cell cell = cells[cDesc.index][rDesc.index];
-                    ret.write(ret.newCell(hRow), getData(cell), getNumberValue(cell), getStyle(cell));
-                }
-            }
-
+            getCompiledView(ret, ret.sheet(table.getLabel()));
             this.compiledViews.put(mediaType, ret);
         }
         return ret;
