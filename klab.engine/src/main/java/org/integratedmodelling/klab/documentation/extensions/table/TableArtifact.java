@@ -451,6 +451,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
     private Column compileColumn(Dimension column, int level, int totalLevels) {
         Column ret = new Column();
         ret.setId(column.getLocalName());
+        ret.setNumberformat(column.numberformat);
         String title = (column.titles == null || column.titles.length == 0) ? "{classifier}" : column.titles[0];
         title = TemplateUtils.expandMatches(title, this.table.getTemplateVars(column, scope)).get(0);
         ret.setTitle(title);

@@ -25,9 +25,9 @@ public class DocumentationNode {
     }
 
     public static class Model {
-        
+
         public static class Computation {
-            
+
             private IContextualizable.Type type;
             private String name;
             private String description;
@@ -63,9 +63,9 @@ public class DocumentationNode {
             public void setContents(String contents) {
                 this.contents = contents;
             }
-            
+
         }
-        
+
         private String description;
         private String title;
         private String namespaceDescription;
@@ -77,7 +77,7 @@ public class DocumentationNode {
         private List<Computation> computations = new ArrayList<>();
         private Map<String, Double> ranks = new LinkedHashMap<>();
         private List<Model> otherCandidates = new ArrayList<>();
-        
+
         public String getDescription() {
             return description;
         }
@@ -367,6 +367,7 @@ public class DocumentationNode {
             private IArtifact.Type type;
             private boolean frozen;
             private String caption;
+            private String numberformat;
 
             private List<Column> columns = new ArrayList<>();
 
@@ -429,6 +430,12 @@ public class DocumentationNode {
             }
             public void setCaption(String caption) {
                 this.caption = caption;
+            }
+            public String getNumberformat() {
+                return numberformat;
+            }
+            public void setNumberformat(String numberformat) {
+                this.numberformat = numberformat;
             }
         }
 

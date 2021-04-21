@@ -707,6 +707,12 @@ public class TableCompiler {
         List<TargetOperation> targetOperation = new ArrayList<>();
 
         /**
+         * Gets to the view in case a column wants to specify a number format. Ignored in rows for
+         * now.
+         */
+        String numberformat = null;
+
+        /**
          * This tells us if we're scanning the actual values of the target or only the associated
          * context metrics such as area occupied per category or counts.
          */
@@ -1197,7 +1203,7 @@ public class TableCompiler {
     private Map<?, ?> timelabels;
 
     private String numberFormat = null;
-    
+
     /**
      * Return the passed dimensions in order of dependency. If circular dependencies are detected
      * throw a validation exception as the definition is misconfigured.
@@ -1315,7 +1321,7 @@ public class TableCompiler {
         this.activeColumns = parseDimension(definition.get("columns"), colList, DimensionType.COLUMN, null);
         this.activeRows = parseDimension(definition.get("rows"), rowList, DimensionType.ROW, null);
         this.numberFormat = definition.containsKey("numberformat") ? definition.get("numberformat").toString() : null;
-        
+
         for (Dimension row : rowList) {
             String id = rename.containsKey(row.getName()) ? rename.get(row.getName()) : row.getName();
             row.id = id.substring(row.parent == null ? 0 : row.parent.getName().length());
@@ -1594,6 +1600,7 @@ public class TableCompiler {
         ret.dimensionType = type;
         ret.parent = parent;
         ret.filterClassId = filterClassId;
+        ret.numberformat = definition.get("numberformat") != null ? definition.get("numberformat").toString() : null;
 
         if (parent != null) {
             ret.parent.children.add(ret);

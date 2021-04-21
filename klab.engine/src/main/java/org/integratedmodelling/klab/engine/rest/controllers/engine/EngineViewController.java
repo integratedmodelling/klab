@@ -176,6 +176,10 @@ public class EngineViewController {
 	/**
 	 * Get the data for an observation in directly usable form, as values or images
 	 * 
+	 * If outputformat = staged, the observation must be the ID of a previously staged
+	 * download file, which is deleted after the download completes. The staging happens
+	 * by calling the stageDownload() method in the session state.
+	 * 
 	 * TODO if format == null (currently mandatory) it should return the Protobuf
 	 * data for the corresponding artifact and geometry. For completeness there
 	 * should also be a GeometryType for this.
