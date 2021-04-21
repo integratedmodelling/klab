@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.api.runtime;
 
+import java.io.File;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
@@ -123,8 +124,8 @@ public interface ISessionState extends IParameters<String> {
     String addApplicationListener(Listener listener, String applicationId);
 
     /**
-     * Add an application-specific listener whose newObservation() method will be notified of
-     * all observations that are notified to the view.
+     * Add an application-specific listener whose newObservation() method will be notified of all
+     * observations that are notified to the view.
      * 
      * @param listener
      * @param appId
@@ -161,5 +162,20 @@ public interface ISessionState extends IParameters<String> {
      * @param observation
      */
     void notifyObservation(IObservation observation);
+
+    /**
+     * Put a download file in the staging area
+     * 
+     * @param file
+     * @return
+     */
+    String stageDownload(File file);
+
+    /**
+     * Retrieve the file from the staging area and eliminate the record.
+     * 
+     * @return
+     */
+    File getStagedFile(String id);
 
 }

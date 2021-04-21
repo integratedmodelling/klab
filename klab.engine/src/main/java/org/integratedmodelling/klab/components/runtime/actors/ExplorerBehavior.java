@@ -8,6 +8,7 @@ import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -102,21 +103,26 @@ public class ExplorerBehavior {
 
                 if (value != null) {
 
+                    String relativeUrl = null;
+
                     if (value instanceof File) {
 
                         /*
                          * Set up a one-time staging area and create the URL with the special
                          * project staging.ID so that the endpoint can find it.
                          */
+                        String id = identity.getParentIdentity(ISession.class).getState().stageDownload((File) value);
 
                         /*
                          * Set value back to the URL string
                          */
+                        relativeUrl = API.ENGINE.OBSERVATION.VIEW.GET_DATA_OBSERVATION
+                                .replace(API.ENGINE.OBSERVATION.VIEW.P_OBSERVATION, id) + "?outputFormat=staged";
                     }
 
-                    if (value != null && value.toString().startsWith("http")) {
+                    if (relativeUrl != null) {
 
-                        message.setTargetId(value == null ? null : value.toString());
+                        message.setTargetId(relativeUrl);
                         identity.getParentIdentity(ISession.class).getMonitor().send(IMessage.MessageClass.UserInterface,
                                 IMessage.Type.ViewSetting, message);
 

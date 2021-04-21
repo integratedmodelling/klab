@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.engine.runtime;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -130,6 +131,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
     private ScaleReference scaleOfInterest;
     private ISubject context;
     private String geocodingStrategy;
+    private Map<String, File> stagingArea = Collections.synchronizedMap(new HashMap<>());
 
     private class ListenerWrapper {
 
@@ -957,13 +959,25 @@ public class SessionState extends Parameters<String> implements ISessionState {
     public Collection<TableArtifact> getTables() {
         List<TableArtifact> ret = new ArrayList<>();
         if (this.context != null) {
-            for (IKnowledgeView view :  ((IRuntimeScope) ((Subject) context).getScope()).getViews()) {
+            for (IKnowledgeView view : ((IRuntimeScope) ((Subject) context).getScope()).getViews()) {
                 if (view instanceof TableArtifact) {
-                    ret.add((TableArtifact)view);
+                    ret.add((TableArtifact) view);
                 }
             }
         }
         return ret;
+    }
+
+    @Override
+    public String stageDownload(File file) {
+        String id = NameGenerator.shortUUID();
+        this.stagingArea.put(id, file);
+        return id;
+    }
+
+    @Override
+    public File getStagedFile(String id) {
+        return this.stagingArea.remove(id);
     }
 
 }
