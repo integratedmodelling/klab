@@ -202,6 +202,15 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             }
 
             Type getType();
+
+            /**
+             * For notification: return true if a potential deadlock warning was issued
+             * 
+             * @return
+             */
+            boolean isWarned();
+
+            void setWarned();
         }
 
         /**
@@ -429,7 +438,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             return ret;
         }
 
-        public void waitForGreen() {
+        public void waitForGreen(final int linenumber) {
 
             if (semaphore != null) {
                 int cnt = 0;
@@ -437,8 +446,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                     try {
                         Thread.sleep(50);
                         cnt++;
-                        if (cnt % 100 == 0) {
-                            System.out.println("DIO FINFERLO DUE ORE CHE ASPETTO STO SEMAFORO " + semaphore);
+                        if (cnt % 100 == 0 && !semaphore.isWarned()) {
+                            identity.getMonitor().warn("Potential actor deadlock running " + getBehavior().getName() + ":"
+                                    + linenumber + ": check logics");
+                            semaphore.setWarned();
                         }
                     } catch (InterruptedException e) {
                         return;
@@ -1158,7 +1169,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                 KActorsMessage m = new KActorsMessage(getContext().getSelf(), messageName, code.getCallId(), code.getArguments(),
                         scope.withNotifyId(notifyId), appId);
                 this.localActionExecutors.get(receiverName).onMessage(m, scope);
-                scope.waitForGreen();
+                scope.waitForGreen(code.getFirstLine());
                 return;
             }
 
@@ -1300,7 +1311,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
          * if the scope was not synchronous, or there were no actions after a fire, this does
          * nothing.
          */
-        scope.waitForGreen();
+        scope.waitForGreen(code.getFirstLine());
 
     }
 

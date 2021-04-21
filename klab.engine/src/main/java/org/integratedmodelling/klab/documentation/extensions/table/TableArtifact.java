@@ -288,7 +288,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
 
         List<Column> cols = new ArrayList<>();
         List<Map<String, String>> data = new ArrayList<>();
-        ret.setNumberFormat(this.table.getNumberFormat());
+        ret.setNumberFormat(this.table.getNumberFormat() == null ? "%.2f" : this.table.getNumberFormat());
 
         /*
          * compute groups based on dimension hierarchies. Dimensions that stand alone will have a
@@ -470,7 +470,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
      * @return
      */
     public static File exportMultiple(Collection<TableArtifact> tables, File file) {
-        
+
         if (file == null) {
             try {
                 file = File.createTempFile("tables", ".xlsx");
@@ -479,19 +479,19 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                 throw new KlabIOException(e);
             }
         }
-        
+
         ITableView ret = new ExcelView();
-        
+
         for (TableArtifact table : tables) {
             table.getCompiledView(ret, ret.sheet(table.getLabel()));
         }
-        
+
         try (OutputStream out = new FileOutputStream(file)) {
             ret.write(out);
         } catch (Throwable e) {
             throw new KlabIOException(e);
         }
-        
+
         return file;
     }
 

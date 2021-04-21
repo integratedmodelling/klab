@@ -708,6 +708,7 @@ public enum Actors implements IActorsService {
 
         long id;
         Type type;
+        boolean warned;
 
         SemaphoreImpl(Type type, long id) {
             this.type = type;
@@ -726,6 +727,15 @@ public enum Actors implements IActorsService {
         @Override
         public String toString() {
             return type + "-" + id;
+        }
+
+        public void setWarned() {
+            this.warned = true;
+        }
+        
+        @Override
+        public boolean isWarned() {
+            return warned;
         }
 
     }

@@ -133,7 +133,7 @@ public abstract class KlabActionExecutor {
                 }
             }
             if (scope != null) {
-                scope.runtimeScope.getMonitor().error(args);
+                scope.runtimeScope.getMonitor().error((args == null || args.length == 0) ? "Actor failure" : args);
             }
         }
         fire(false, true, semaphore, MapUtils.EMPTY_MAP);

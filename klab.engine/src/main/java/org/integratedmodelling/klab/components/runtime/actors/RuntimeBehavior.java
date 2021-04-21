@@ -531,8 +531,15 @@ public class RuntimeBehavior {
         @Override
         void run(final KlabActor.Scope scope) {
             final List<Object> args = new ArrayList<>();
-            final boolean tables = arguments.containsKey("tables") && arguments.get("tables") instanceof Boolean
-                    && arguments.get("tables", Boolean.class);
+            boolean tables = false;
+            if (arguments.containsKey("tables")) {
+                // jeez
+                Object tab = arguments.get("tables") instanceof KActorsValue
+                        ? ((KActorsValue) arguments.get("tables")).evaluate(scope, identity, true)
+                        : arguments.get("tables");
+               tables = tab instanceof Boolean && ((Boolean)tab);
+            }
+            final boolean dtabs = tables;
             if (!tables) {
                 for (Object arg : arguments.values()) {
                     args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
@@ -544,14 +551,17 @@ public class RuntimeBehavior {
                 public void run() {
 
                     File file = null;
-                    if (tables) {   
-                        file = TableArtifact.exportMultiple(identity.getParentIdentity(Session.class).getState().getTables(), file);
+                    if (dtabs) {
+                        file = TableArtifact.exportMultiple(identity.getParentIdentity(Session.class).getState().getTables(),
+                                file);
                     } else {
                         file = Observations.INSTANCE.packObservations(args);
                     }
-                    
+
                     if (file != null) {
                         fire(file, false, scope.semaphore, scope.getSymbols(identity));
+                    } else {
+                        fail();
                     }
                 }
 
