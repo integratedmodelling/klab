@@ -238,7 +238,7 @@ public class WCSService {
         }
 
         private void describeCoverage() {
-
+            
             if (!finished || (System.currentTimeMillis() - timestamp) > LAYER_INFO_EXPIRATION_MILLISECONDS) {
                 finished = true;
                 timestamp = System.currentTimeMillis();
@@ -266,6 +266,7 @@ public class WCSService {
                             Map<Object, Object> tocache = new HashMap<>(coverage);
                             tocache.put("timestamp", System.currentTimeMillis());
                             wcsCache.put(url.toString(), JsonUtils.asString(tocache));
+                            db.commit();
                         } catch (IOException e) {
                             error = true;
                         }
