@@ -555,7 +555,7 @@ public class RuntimeBehavior {
                         file = TableArtifact.exportMultiple(identity.getParentIdentity(Session.class).getState().getTables(),
                                 file);
                     } else {
-                        file = Observations.INSTANCE.packObservations(args);
+                        file = Observations.INSTANCE.packObservations(args, identity.getMonitor());
                     }
 
                     if (file != null) {

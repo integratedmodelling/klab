@@ -226,4 +226,8 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
         return ((AbstractAdaptiveStorage<?>)keyStore).getTimesliceLocators();
     }
 
+    public AbstractAdaptiveStorage<?> getBackend() {
+        return (AbstractAdaptiveStorage<?>)keyStore;
+    }
+
 }

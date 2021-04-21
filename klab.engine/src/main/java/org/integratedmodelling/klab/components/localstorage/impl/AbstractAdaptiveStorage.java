@@ -545,7 +545,14 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
     public List<ILocator> getTimesliceLocators() {
         List<ILocator> ret = new ArrayList<>();
+        for (int i = 0; i < slices.size(); i++) {
+            ret.add(new TimesliceLocator(this, getSlice(i), i));
+        }
         return ret;
+    }
+
+    public IState getState() {
+        return state;
     }
 
 }

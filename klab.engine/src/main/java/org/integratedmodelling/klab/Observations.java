@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -54,6 +55,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
+import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
@@ -66,6 +68,7 @@ import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Concept;
@@ -86,6 +89,7 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
+import org.integratedmodelling.klab.utils.ZipUtils;
 
 public enum Observations implements IObservationService {
 
@@ -821,15 +825,18 @@ public enum Observations implements IObservationService {
                                 : "No data"));
     }
 
-    public File packObservations(List<Object> args) {
+    public File packObservations(List<Object> args, IMonitor monitor) {
 
         List<IObservation> artifacts = new ArrayList<>();
         for (Object arg : args) {
             addArtifacts(arg, artifacts);
         }
 
-        // String is either null (root) or artifact directory if multiple timeslices are available
-        List<Pair<String, File>> exports = new ArrayList<>();
+        File stagingArea = Configuration.INSTANCE.getScratchDataDirectory("download");
+
+        // String is either Just the artifact name or artifact name/time label if multiple
+        // timeslices are available
+        List<File> exports = new ArrayList<>();
         for (IObservation artifact : artifacts) {
 
             /*
@@ -837,9 +844,27 @@ public enum Observations implements IObservationService {
              */
             List<ExportFormat> formats = getExportFormats(artifact);
             if (formats.size() > 0) {
-                
-            }
 
+                ExportFormat format = formats.get(0);
+                List<ILocator> states = new ArrayList<>();
+                if (artifact instanceof State) {
+                    states.addAll(((State) artifact).getSliceLocators());
+                } else {
+                    states.add(artifact.getScale());
+                }
+
+                for (ILocator locator : states) {
+
+                    String outfile = Concepts.INSTANCE.getCodeName(artifact.getObservable().getType()) + "." + format.getExtension();
+                    if (locator instanceof TimesliceLocator) {
+                        outfile = ((TimesliceLocator) locator).getLabel() + File.separator + outfile;
+                    }
+                    File output = new File(stagingArea + File.separator + outfile);
+                    output = export(artifact, locator, output, format.getValue(), format.getAdapter(), monitor);
+                    output.deleteOnExit();
+                    exports.add(output);
+                }
+            }
         }
 
         /*
@@ -847,9 +872,15 @@ public enum Observations implements IObservationService {
          * if multiple files OR multiple zips, unpack any zips and make a final package.
          */
         if (exports.size() == 1) {
-
+            return exports.get(0);
         } else if (exports.size() > 1) {
-
+            try {
+                File zipFile = File.createTempFile("out", ".zip");
+                ZipUtils.zip(zipFile, stagingArea, false, true);
+                return zipFile;
+            } catch (IOException e) {
+                throw new KlabIOException(e);
+            }
         }
 
         return null;

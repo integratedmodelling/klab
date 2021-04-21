@@ -96,6 +96,9 @@ public class State extends Observation implements IState, IKeyHolder {
         if (data instanceof AbstractAdaptiveStorage) {
             ((AbstractAdaptiveStorage<?>) data).setState(this);
             ((AbstractAdaptiveStorage<?>) data).setWatches(this.watches);
+        } else if (data instanceof KeyedStorage) {
+            ((KeyedStorage<?>) data).getBackend().setState(this);
+            ((KeyedStorage<?>) data).getBackend().setWatches(this.watches);
         }
     }
 

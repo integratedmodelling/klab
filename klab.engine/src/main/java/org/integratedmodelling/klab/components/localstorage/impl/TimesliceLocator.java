@@ -1,9 +1,11 @@
 package org.integratedmodelling.klab.components.localstorage.impl;
 
-import java.util.Iterator;
+import java.util.Date;
 
-import org.integratedmodelling.klab.api.data.IGeometry;
-import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
+import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage.Slice;
+import org.integratedmodelling.klab.components.time.extents.Time;
+import org.integratedmodelling.klab.components.time.extents.TimeInstant;
 
 /**
  * A special-purpose locator that will point to one specific timeslice in this specific
@@ -12,38 +14,24 @@ import org.integratedmodelling.klab.api.data.ILocator;
  * @author Ferd
  *
  */
-public class TimesliceLocator implements ILocator {
+public class TimesliceLocator extends Time {
 
     int sliceIndex;
     String label;
-    String codeName;
 
-    TimesliceLocator(AbstractAdaptiveStorage<?> storage, int slice) {
-        this.sliceIndex = slice;
+    @SuppressWarnings("rawtypes")
+    TimesliceLocator(AbstractAdaptiveStorage<?> storage, Slice slice, int sliceIndex) {
+        super(new TimeInstant(slice.timestart), new TimeInstant(slice.timeend));
+        this.sliceIndex = sliceIndex;
+        ITime overall = storage.getState().getScale().getTime();
+        this.label = slice.isInitialization()
+                ? (overall == null ? "Initialization" : ("Before " + overall.getStart()))
+                : (new Date(slice.timestart) + " to " + new Date(slice.timeend));
     }
 
-    @Override
-    public Iterator<ILocator> iterator() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public IGeometry getGeometry() {
-        // TODO Auto-generated method stub
-        return null;
-    }
-
-    @Override
-    public double getCoverage() {
-        // TODO Auto-generated method stub
-        return 0;
-    }
-
-    @Override
-    public <T extends ILocator> T as(Class<T> cls) {
-        // TODO Auto-generated method stub
-        return null;
+    
+    public String getLabel() {
+        return label;
     }
 
 }

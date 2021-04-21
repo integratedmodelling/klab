@@ -195,6 +195,7 @@ public class DocumentationNode {
         private String adapterDescription;
         private String adapterIconUrl;
         private double usageRank;
+
         public String getResourceId() {
             return resourceId;
         }
@@ -482,6 +483,70 @@ public class DocumentationNode {
 
     public static class Figure {
 
+        private String caption;
+        private String label;
+
+        /**
+         * Either an (absolute or relative) image URL or the URL to fetch the PNG, passing the
+         * locator=LOC:<n> with n = index of the desired slice. Internal endpoints differ if the
+         * image is just an image (timeSlices is empty) or a visualized observation (timeslices has
+         * at least one value for initialization).
+         */
+        private String baseUrl;
+
+        /**
+         * A label per each of the available timeslices. If empty, image is not an observation but
+         * just a URL to display.
+         */
+        private List<String> timeSlices = new ArrayList<>();
+
+        /**
+         * Only non-null if raster map
+         */
+        private Histogram legend;
+
+        /**
+         * Only non-null if raster map
+         */
+        private Colormap colormap;
+
+        public String getCaption() {
+            return caption;
+        }
+        public void setCaption(String caption) {
+            this.caption = caption;
+        }
+        public String getLabel() {
+            return label;
+        }
+        public void setLabel(String label) {
+            this.label = label;
+        }
+        public String getBaseUrl() {
+            return baseUrl;
+        }
+        public void setBaseUrl(String baseUrl) {
+            this.baseUrl = baseUrl;
+        }
+        public List<String> getTimeSlices() {
+            return timeSlices;
+        }
+        public void setTimeSlices(List<String> timeSlices) {
+            this.timeSlices = timeSlices;
+        }
+        public Histogram getLegend() {
+            return legend;
+        }
+        public void setLegend(Histogram legend) {
+            this.legend = legend;
+        }
+        public Colormap getColormap() {
+            return colormap;
+        }
+        public void setColormap(Colormap colormap) {
+            this.colormap = colormap;
+        }
+
     }
 
     public static class Chart {
@@ -505,7 +570,6 @@ public class DocumentationNode {
             public void setAffiliation(String affiliation) {
                 this.affiliation = affiliation;
             }
-
         }
 
         private String doi;
