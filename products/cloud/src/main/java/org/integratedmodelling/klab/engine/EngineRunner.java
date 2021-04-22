@@ -25,10 +25,10 @@ import org.springframework.web.client.RestTemplate;
 
 @ComponentScan(basePackages = { "org.integratedmodelling.klab.engine"})
 @Component
-@ConditionalOnProperty(
-        value="spring.cloud.consul.enabled", 
-        havingValue = "true", 
-        matchIfMissing = false)
+//@ConditionalOnProperty(
+//        value="spring.cloud.consul.enabled", 
+//        havingValue = "true", 
+//        matchIfMissing = false)
 public class EngineRunner implements ApplicationListener<ApplicationPreparedEvent>{
 
 

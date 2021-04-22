@@ -32,13 +32,12 @@ public class AgentServiceCheck {
     
     @Value("${engine.agent.port:8999}")
     private int port;
+    
+    private Map<HubUserProfile, Session> users = new HashMap<>();
 
 	//to be set from config
 	int weight = 100;
 	int overload = 0;
-
-//	@Autowired
-//	ConsulConfig consul;
 	
 	@Autowired
 	RestTemplate template;
@@ -101,14 +100,22 @@ public class AgentServiceCheck {
 	void handleLogin(GenericUserEvent<HubUserProfile, Session> event) {
 		HubUserProfile profile = event.getProfile();
 		Session session = event.getSession();
-		removeServiceWeight(profile);
-		//addUserToStore(profile, session);		
+		users.putIfAbsent(profile, session);
+		removeServiceWeight(profile);	
 	}
 	
 	@EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).LOGOUT")
 	void handleLogout(GenericUserEvent<HubUserProfile, Session> event) {
-	    //removeUserFromStore(event.getProfile().getName());
-    	addServiceWeight(event.getProfile());
+	    if(event.getProfile() != null) {
+	        addServiceWeight(event.getProfile());
+	    } else {
+	        HubUserProfile profile = users.entrySet()
+	            .stream()
+	            .filter(sesh -> sesh.getValue().getId().equals(event.getSession().getId()))
+	            .map(Map.Entry::getKey)
+	            .findFirst().get();
+	        addServiceWeight(profile);
+	    }
     }
 	
 	
