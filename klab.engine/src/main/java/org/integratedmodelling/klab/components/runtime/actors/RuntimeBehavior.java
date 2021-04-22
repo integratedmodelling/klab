@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -15,8 +16,8 @@ import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.model.KimQuantity;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
@@ -34,11 +35,11 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimePeriod;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
-import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
 import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifact;
+import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.SessionState;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
@@ -84,6 +85,12 @@ public class RuntimeBehavior {
         @Override
         void run(KlabActor.Scope scope) {
 
+            if (arguments.get("interrupt") instanceof IKActorsValue) {
+                KActorsValue interrupt = arguments.get("interrupt", KActorsValue.class);
+                if (Actors.INSTANCE.asBooleanValue(interrupt.evaluate(scope, identity, true))) {
+                    scope.getMonitor().getIdentity().getParentIdentity(ISession.class).interruptAllTasks();
+                }
+            }
             if (arguments.get("reset") instanceof IKActorsValue) {
                 KActorsValue reset = arguments.get("reset", KActorsValue.class);
                 if (Actors.INSTANCE.asBooleanValue(reset.evaluate(scope, identity, true))) {
@@ -222,6 +229,8 @@ public class RuntimeBehavior {
                         .submit(getUrnValue(arguments.get(arguments.getUnnamedKeys().get(0)), scope), (task, observation) -> {
                             if (observation == null) {
                                 fire(Status.STARTED, false, scope.semaphore, scope.getSymbols(identity));
+                            } else if (task.getMonitor().isInterrupted()) {
+                                fire(Status.INTERRUPTED, false, scope.semaphore, scope.getSymbols(identity));
                             } else {
                                 fire(observation, false, scope.semaphore, scope.getSymbols(identity));
                             }
@@ -508,6 +517,59 @@ public class RuntimeBehavior {
                 args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
             scope.runtimeScope.getMonitor().debug(args.toArray());
+        }
+    }
+
+    @Action(id = "pack", fires = IKActorsValue.Type.URN, description = "Prepares a downloadable payload and fires the URL to it when ready")
+    public static class Pack extends KlabActionExecutor {
+
+        public Pack(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+        @Override
+        void run(final KlabActor.Scope scope) {
+            final List<Object> args = new ArrayList<>();
+            boolean tables = false;
+            if (arguments.containsKey("tables")) {
+                // jeez
+                Object tab = arguments.get("tables") instanceof KActorsValue
+                        ? ((KActorsValue) arguments.get("tables")).evaluate(scope, identity, true)
+                        : arguments.get("tables");
+                tables = tab instanceof Boolean && ((Boolean) tab);
+            }
+            final boolean dtabs = tables;
+            if (!tables) {
+                for (Object arg : arguments.values()) {
+                    args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
+                }
+            }
+            new Thread(){
+
+                @Override
+                public void run() {
+
+                    try {
+                        File file = null;
+                        if (dtabs) {
+                            file = TableArtifact.exportMultiple(identity.getParentIdentity(Session.class).getState().getTables(),
+                                    file);
+                        } else {
+                            file = Observations.INSTANCE.packObservations(args, identity.getMonitor());
+                        }
+
+                        if (file != null) {
+                            fire(file, false, scope.semaphore, scope.getSymbols(identity));
+                        } else {
+                            fail();
+                        }
+                    } catch (Throwable t) {
+                        fail(t);
+                    }
+                }
+
+            }.start();
         }
     }
 

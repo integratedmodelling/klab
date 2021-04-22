@@ -666,7 +666,7 @@ public class Engine extends Server implements IEngine, UserDetails {
 
 	protected void closeExpiredSessions() {
 		// TODO Auto-generated method stub
-		Logging.INSTANCE.info("checking for expired sessions...");
+//		Logging.INSTANCE.info("checking for expired sessions...");
 	}
 
 	private void runJvmChecks() {

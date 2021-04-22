@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.components.localstorage.impl;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
@@ -17,7 +18,6 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.common.Offset;
 import org.integratedmodelling.klab.engine.debugger.Debugger.Watcher;
@@ -185,6 +185,20 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		return sliceSize;
 	}
 
+	/**
+	 * Get the n-th slice.
+	 * 
+	 * @param index
+	 * @return
+	 */
+	Slice getSlice(int index) {
+	    Iterator<Slice> it = slices.values().iterator();
+	    while (index-- > 0) {
+	        it.next();
+	    }
+	    return it.next();
+	}
+	
 	protected AbstractAdaptiveStorage(IGeometry geometry) {
 
 		this.isScalar = geometry.size() == 1;
@@ -528,5 +542,17 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 		}
 		return ret.toArray();
 	}
+
+    public List<ILocator> getTimesliceLocators() {
+        List<ILocator> ret = new ArrayList<>();
+        for (int i = 0; i < slices.size(); i++) {
+            ret.add(new TimesliceLocator(this, getSlice(i), i));
+        }
+        return ret;
+    }
+
+    public IState getState() {
+        return state;
+    }
 
 }

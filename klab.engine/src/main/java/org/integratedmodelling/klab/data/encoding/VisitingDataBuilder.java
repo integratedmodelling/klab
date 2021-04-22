@@ -139,7 +139,10 @@ public class VisitingDataBuilder implements IKlabData.Builder {
 						Utils.getArtifactType(value.getClass()),
 						current.scale instanceof IScale ? ((IScale) current.scale) : Scale.create(current.scale));
 			}
-			current.storage.putObject(value, offset);
+			if (value != null) {
+			    // FIXME we should have a peer for null and put it, creating the storage even if the value is null.
+			    current.storage.putObject(value, offset);
+			}
 		}
 	}
 	

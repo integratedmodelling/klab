@@ -77,6 +77,16 @@ public class FileUtils extends org.apache.commons.io.FileUtils {
 		}
 	}
 	
+	public static String getFileHash(File file) {
+	    String ret = "";
+	    try (FileInputStream fis = new FileInputStream(file)) {
+            ret = org.apache.commons.codec.digest.DigestUtils.md5Hex(fis);
+	    } catch (IOException e) {
+            throw new KlabIOException(e);
+        }
+	    return ret;
+	}
+	
 
 	/**
 	 * Assume file contains a path and defines a file in it, and ensure that all

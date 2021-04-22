@@ -358,7 +358,7 @@ ObservableSemantics:
 			(=> 'in' (unit=Unit | currency=Currency)) |
 			(=> 'per' unit=Unit)
 		)? &
-		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+		(=> valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
 		(optional?='optional' | 'required')? &
 		(from=Number 'to' to=Number)? &
 		('named' name=(LOWERCASE_ID|STRING))?
@@ -376,7 +376,7 @@ SimpleObservableSemantics returns ObservableSemantics:
 			(=> 'in' (unit=Unit | currency=Currency)) |
 			(=> 'per' unit=Unit)
 		)? &
-		(valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
+		(=> valueOperators+=ValueOperator (valueOperators+=ValueOperator)*)? &
 		(from=Number 'to' to=Number)? 
 	);
 
@@ -829,7 +829,6 @@ ParameterList:
 ;
 
 ValueWithIdAndConcept returns Value:
-	list=List |
 	map=Map |
 	concept=SimpleObservableSemantics |
 	function=Function |
@@ -838,6 +837,7 @@ ValueWithIdAndConcept returns Value:
 	expr=EXPR |
 	id=(PathName|LOWERCASE_ID|UPPERCASE_ID|CAMELCASE_ID) |
 	table=LookupTable |
+	list=List |
 	quantity=Quantity |
 	op=REL_OPERATOR expression=Number | 
 	null?='unknown';

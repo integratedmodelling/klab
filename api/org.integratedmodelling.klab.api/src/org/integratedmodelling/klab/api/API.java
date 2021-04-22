@@ -198,7 +198,7 @@ public interface API {
     }
 
     public static interface HUB {
-        
+
         /**
          * Returns authenticated user details and network status with all nodes (including offline
          * if applicable) with refresh rate and unique network access token. Should be the only
@@ -215,7 +215,7 @@ public interface API {
          * <b>Authentication:</b> open
          */
 
-		public static final String API_BASE = "/api/v2";
+        public static final String API_BASE = "/api/v2";
         /**
          * Base URL path for node on the hub.
          */
@@ -785,13 +785,13 @@ public interface API {
         public interface RESOURCE {
 
             public static final String P_PROJECT = "{project}";
-            public static final String P_RESOURCEPATH = "{resourcepath}";
+            // public static final String P_RESOURCEPATH = "{resourcepath}";
 
             /**
-             * Get a project resource as is (image, file or otherwise) by passing the path in the
-             * form
+             * Get a project resource as is (image, file or otherwise) by passing the path as the
+             * trailing end of the URL. Also accepts : as path separator.
              */
-            public static final String GET_PROJECT_RESOURCE = "/engine/project/resource/get/" + P_PROJECT + "/" + P_RESOURCEPATH;
+            public static final String GET_PROJECT_RESOURCE = "/engine/project/resource/get/" + P_PROJECT + "/**";
 
         }
 
@@ -835,10 +835,12 @@ public interface API {
             public static final String REPORT_CONTEXT = "/engine/session/observation/report/" + P_CONTEXT;
 
             /**
-             * Return structured documentation view (with view being one of report, figures, tables, resources, models or provenance)
+             * Return structured documentation view (with view being one of report, figures, tables,
+             * resources, models or provenance)
              */
-            public static final String DOCUMENTATION_VIEW_CONTEXT = "/engine/session/observation/documentation/" + P_VIEW + "/" + P_CONTEXT;
-            
+            public static final String DOCUMENTATION_VIEW_CONTEXT = "/engine/session/observation/documentation/" + P_VIEW + "/"
+                    + P_CONTEXT;
+
             /**
              * Endpoints to access tasks.
              * 
@@ -891,7 +893,7 @@ public interface API {
         }
 
     }
-    
+
     /**
      * Endpoints for the stats server.
      * 
@@ -900,18 +902,18 @@ public interface API {
      */
     public interface STATS {
         public static final String API_BASE = "/api/v2";
-        
+
         public static final String STATS_BASE = API_BASE + "/stats";
-        
+
         public interface PARAMETERS {
             public static final String TYPE = "type";
-            
+
             public static final String PAGE = "page";
-            
+
             public static final String LIMIT = "limit";
-            
+
         }
-        
+
     }
 
 }

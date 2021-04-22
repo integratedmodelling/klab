@@ -101,12 +101,6 @@ void network
 	class org.integratedmodelling.klab.cli.commands.Network
 }
 
-void debug
-	"Meta-command to access the context debugger. Use 'debug help' for details."
-{
-	class org.integratedmodelling.klab.cli.commands.Debug
-}
-
 /**
  * Batch run: use CL parameters to enable multiple batch contexts
  */

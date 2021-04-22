@@ -458,6 +458,14 @@ public class Documentation implements IDocumentation {
 	}
 
 	public Reference getReference(String id) {
+	    if (id.contains("/")) {
+	        /*
+	         * it's a DOI: just fill in the key and everything else will be done later.
+	         */
+	        Reference ref = new Reference();
+	        ref.put("key", id);
+	        return ref;
+	    }
 		for (ProjectReferences refs : this.referencesAvailable) {
 			Reference ref = refs.get(id);
 			if (ref != null) {

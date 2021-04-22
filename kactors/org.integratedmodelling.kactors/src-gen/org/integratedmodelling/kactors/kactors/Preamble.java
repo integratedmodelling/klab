@@ -41,6 +41,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getInlineStyle <em>Inline Style</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getLogo <em>Logo</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getVersion <em>Version</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getLocale <em>Locale</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getCreated <em>Created</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getCreatecomment <em>Createcomment</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getModified <em>Modified</em>}</li>
@@ -582,6 +583,28 @@ public interface Preamble extends EObject
    * @generated
    */
   void setVersion(String value);
+
+  /**
+   * Returns the value of the '<em><b>Locale</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Locale</em>' attribute.
+   * @see #setLocale(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_Locale()
+   * @model
+   * @generated
+   */
+  String getLocale();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getLocale <em>Locale</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Locale</em>' attribute.
+   * @see #getLocale()
+   * @generated
+   */
+  void setLocale(String value);
 
   /**
    * Returns the value of the '<em><b>Created</b></em>' containment reference.

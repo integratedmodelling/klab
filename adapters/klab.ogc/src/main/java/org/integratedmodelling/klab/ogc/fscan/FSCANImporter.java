@@ -90,7 +90,7 @@ public class FSCANImporter implements IResourceImporter {
 	}
 
 	@Override
-	public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+	public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
 		List<Triple<String, String, String>> ret = new ArrayList<>();
 		return ret;
 	}
@@ -113,5 +113,10 @@ public class FSCANImporter implements IResourceImporter {
 		// TODO Auto-generated method stub
 		return false;
 	}
+
+    @Override
+    public IResourceImporter withOption(String option, Object value) {
+        return this;
+    }
 
 }

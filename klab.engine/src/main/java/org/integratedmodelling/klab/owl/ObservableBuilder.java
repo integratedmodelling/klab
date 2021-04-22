@@ -314,6 +314,11 @@ public class ObservableBuilder implements IObservable.Builder {
 	@Override
 	public Builder as(UnarySemanticOperator type, IConcept... participants) throws KlabValidationException {
 
+	    Concept argument = null;
+        if (resolveMain()) {
+            argument = getArgumentBuilder().buildConcept();
+        }
+        
 		if (!declarationIsComplete) {
 			this.declaration.setObservationType(type);
 		}
@@ -329,12 +334,7 @@ public class ObservableBuilder implements IObservable.Builder {
 			}
 		}
 
-		if (resolveMain()) {
-
-			/**
-			 * Build the argument, then add the operator
-			 */
-			Concept argument = getArgumentBuilder().buildConcept();
+		if (argument != null) {
 
 			switch (type) {
 			case ASSESSMENT:

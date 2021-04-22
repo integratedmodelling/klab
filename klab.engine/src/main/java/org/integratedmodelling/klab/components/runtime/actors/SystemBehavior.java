@@ -5,6 +5,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
@@ -72,7 +73,7 @@ public class SystemBehavior {
             this.behavior = behavior;
             this.forwardApplicationId = appId;
             this.identity = identity;
-            this.scope = new Scope(identity, appId, scope);
+            this.scope = new Scope(identity, appId, scope, Actors.INSTANCE.getBehavior(behavior));
         }
 
         /**

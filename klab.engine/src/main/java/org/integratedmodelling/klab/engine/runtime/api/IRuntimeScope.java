@@ -463,4 +463,11 @@ public interface IRuntimeScope extends IContextualizationScope {
      */
     Collection<IConcept> getConcreteIdentities(IConcept predicate);
 
+    /**
+     * Return all the views produced in this scope.
+     * 
+     * @return
+     */
+    Collection<IKnowledgeView> getViews();
+
 }

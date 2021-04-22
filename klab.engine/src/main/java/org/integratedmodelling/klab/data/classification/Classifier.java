@@ -512,4 +512,9 @@ public class Classifier implements IClassifier {
     public IConcept getConcept() {
         return conceptMatch;
     }
+    
+    @Override
+    public IObservable.Resolution getConceptResolution() {
+        return conceptResolution;
+    }
 }

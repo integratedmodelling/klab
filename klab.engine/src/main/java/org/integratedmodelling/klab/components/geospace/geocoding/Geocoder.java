@@ -82,9 +82,8 @@ public enum Geocoder {
 		services.put(DEFAULT_GEOCODING_STRATEGY, new OSMNamesGeocodingService(0.75));
 		services.put(ADMIN_GEOCODING_STRATEGY,
               new ResourceGeocodingService("im.geo:gadm.un:boundaries.split:administrative", 0.5));
-//		new ResourceGeocodingService("local:ferdinando.villa:scratch:administrative.un.split", 0.5));
 		services.put(WATERSHED_GEOCODING_STRATEGY,
-				new ResourceGeocodingService("local:ferdinando.villa:scratch:watershed", 0.5));
+				new ResourceGeocodingService("im.geo:fao:hydrological:watersheds.named", 0.5));
 //		services.put(RANDOM_GEOCODING_STRATEGY, new RandomGeocodingService(0.5));
 		// TODO other services
 	}

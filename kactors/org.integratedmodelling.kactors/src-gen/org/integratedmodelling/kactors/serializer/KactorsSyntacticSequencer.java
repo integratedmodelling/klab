@@ -335,249 +335,452 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     'style'*
 	 *
 	 * This ambiguous syntax occurs at:
+	 *     (rule start) (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     (rule start) (ambiguity) 'author' authors+=STRING
 	 *     (rule start) (ambiguity) 'created' created=Date
+	 *     (rule start) (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     (rule start) (ambiguity) 'description' description=STRING
 	 *     (rule start) (ambiguity) 'import' imports+=PathName
+	 *     (rule start) (ambiguity) 'locale' locale=LOCALE
+	 *     (rule start) (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     (rule start) (ambiguity) 'logo' logo=Path
 	 *     (rule start) (ambiguity) 'logo' logo=STRING
 	 *     (rule start) (ambiguity) 'modified' modified=Date
 	 *     (rule start) (ambiguity) 'observable' observable=Observable
 	 *     (rule start) (ambiguity) 'observable' observables=List
+	 *     (rule start) (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     (rule start) (ambiguity) 'permissions' permissions=STRING
 	 *     (rule start) (ambiguity) 'version' version=VersionNumber
 	 *     (rule start) (ambiguity) 'worldview' worldview=PathName
 	 *     (rule start) (ambiguity) (rule start)
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=STRING
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'created' created=Date
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=STRING
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'import' imports+=PathName
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locale=LOCALE
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=Path
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=STRING
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'modified' modified=Date
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observable=Observable
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observables=List
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'worldview' worldview=PathName
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) (rule end)
+	 *     authors+=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     authors+=STRING (ambiguity) 'author' authors+=STRING
 	 *     authors+=STRING (ambiguity) 'created' created=Date
+	 *     authors+=STRING (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     authors+=STRING (ambiguity) 'description' description=STRING
 	 *     authors+=STRING (ambiguity) 'import' imports+=PathName
+	 *     authors+=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     authors+=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     authors+=STRING (ambiguity) 'logo' logo=Path
 	 *     authors+=STRING (ambiguity) 'logo' logo=STRING
 	 *     authors+=STRING (ambiguity) 'modified' modified=Date
 	 *     authors+=STRING (ambiguity) 'observable' observable=Observable
 	 *     authors+=STRING (ambiguity) 'observable' observables=List
+	 *     authors+=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     authors+=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     authors+=STRING (ambiguity) 'version' version=VersionNumber
 	 *     authors+=STRING (ambiguity) 'worldview' worldview=PathName
 	 *     authors+=STRING (ambiguity) (rule end)
+	 *     createcomment=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     createcomment=STRING (ambiguity) 'author' authors+=STRING
 	 *     createcomment=STRING (ambiguity) 'created' created=Date
+	 *     createcomment=STRING (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     createcomment=STRING (ambiguity) 'description' description=STRING
 	 *     createcomment=STRING (ambiguity) 'import' imports+=PathName
+	 *     createcomment=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     createcomment=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     createcomment=STRING (ambiguity) 'logo' logo=Path
 	 *     createcomment=STRING (ambiguity) 'logo' logo=STRING
 	 *     createcomment=STRING (ambiguity) 'modified' modified=Date
 	 *     createcomment=STRING (ambiguity) 'observable' observable=Observable
 	 *     createcomment=STRING (ambiguity) 'observable' observables=List
+	 *     createcomment=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     createcomment=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     createcomment=STRING (ambiguity) 'version' version=VersionNumber
 	 *     createcomment=STRING (ambiguity) 'worldview' worldview=PathName
 	 *     createcomment=STRING (ambiguity) (rule end)
+	 *     created=Date (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     created=Date (ambiguity) 'author' authors+=STRING
 	 *     created=Date (ambiguity) 'created' created=Date
+	 *     created=Date (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     created=Date (ambiguity) 'description' description=STRING
 	 *     created=Date (ambiguity) 'import' imports+=PathName
+	 *     created=Date (ambiguity) 'locale' locale=LOCALE
+	 *     created=Date (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     created=Date (ambiguity) 'logo' logo=Path
 	 *     created=Date (ambiguity) 'logo' logo=STRING
 	 *     created=Date (ambiguity) 'modified' modified=Date
 	 *     created=Date (ambiguity) 'observable' observable=Observable
 	 *     created=Date (ambiguity) 'observable' observables=List
+	 *     created=Date (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     created=Date (ambiguity) 'permissions' permissions=STRING
 	 *     created=Date (ambiguity) 'version' version=VersionNumber
 	 *     created=Date (ambiguity) 'worldview' worldview=PathName
 	 *     created=Date (ambiguity) (rule end)
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=STRING
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'created' created=Date
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=STRING
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'import' imports+=PathName
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locale=LOCALE
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=Path
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=STRING
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'modified' modified=Date
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observable=Observable
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observables=List
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'worldview' worldview=PathName
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) (rule end)
+	 *     description=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     description=STRING (ambiguity) 'author' authors+=STRING
 	 *     description=STRING (ambiguity) 'created' created=Date
+	 *     description=STRING (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     description=STRING (ambiguity) 'description' description=STRING
 	 *     description=STRING (ambiguity) 'import' imports+=PathName
+	 *     description=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     description=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     description=STRING (ambiguity) 'logo' logo=Path
 	 *     description=STRING (ambiguity) 'logo' logo=STRING
 	 *     description=STRING (ambiguity) 'modified' modified=Date
 	 *     description=STRING (ambiguity) 'observable' observable=Observable
 	 *     description=STRING (ambiguity) 'observable' observables=List
+	 *     description=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     description=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     description=STRING (ambiguity) 'version' version=VersionNumber
 	 *     description=STRING (ambiguity) 'worldview' worldview=PathName
 	 *     description=STRING (ambiguity) (rule end)
+	 *     imports+=PathName (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     imports+=PathName (ambiguity) 'author' authors+=STRING
 	 *     imports+=PathName (ambiguity) 'created' created=Date
+	 *     imports+=PathName (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     imports+=PathName (ambiguity) 'description' description=STRING
 	 *     imports+=PathName (ambiguity) 'import' imports+=PathName
+	 *     imports+=PathName (ambiguity) 'locale' locale=LOCALE
+	 *     imports+=PathName (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     imports+=PathName (ambiguity) 'logo' logo=Path
 	 *     imports+=PathName (ambiguity) 'logo' logo=STRING
 	 *     imports+=PathName (ambiguity) 'modified' modified=Date
 	 *     imports+=PathName (ambiguity) 'observable' observable=Observable
 	 *     imports+=PathName (ambiguity) 'observable' observables=List
+	 *     imports+=PathName (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     imports+=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     imports+=PathName (ambiguity) 'version' version=VersionNumber
 	 *     imports+=PathName (ambiguity) 'worldview' worldview=PathName
 	 *     imports+=PathName (ambiguity) (rule end)
+	 *     inlineStyle=Map (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     inlineStyle=Map (ambiguity) 'author' authors+=STRING
 	 *     inlineStyle=Map (ambiguity) 'created' created=Date
+	 *     inlineStyle=Map (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     inlineStyle=Map (ambiguity) 'description' description=STRING
 	 *     inlineStyle=Map (ambiguity) 'import' imports+=PathName
+	 *     inlineStyle=Map (ambiguity) 'locale' locale=LOCALE
+	 *     inlineStyle=Map (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     inlineStyle=Map (ambiguity) 'logo' logo=Path
 	 *     inlineStyle=Map (ambiguity) 'logo' logo=STRING
 	 *     inlineStyle=Map (ambiguity) 'modified' modified=Date
 	 *     inlineStyle=Map (ambiguity) 'observable' observable=Observable
 	 *     inlineStyle=Map (ambiguity) 'observable' observables=List
+	 *     inlineStyle=Map (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     inlineStyle=Map (ambiguity) 'permissions' permissions=STRING
 	 *     inlineStyle=Map (ambiguity) 'version' version=VersionNumber
 	 *     inlineStyle=Map (ambiguity) 'worldview' worldview=PathName
 	 *     inlineStyle=Map (ambiguity) (rule end)
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=STRING
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'created' created=Date
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=STRING
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'import' imports+=PathName
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locale=LOCALE
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=Path
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=STRING
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'modified' modified=Date
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observable=Observable
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observables=List
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'worldview' worldview=PathName
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) (rule end)
+	 *     label=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     label=STRING (ambiguity) 'author' authors+=STRING
 	 *     label=STRING (ambiguity) 'created' created=Date
+	 *     label=STRING (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     label=STRING (ambiguity) 'description' description=STRING
 	 *     label=STRING (ambiguity) 'import' imports+=PathName
+	 *     label=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     label=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     label=STRING (ambiguity) 'logo' logo=Path
 	 *     label=STRING (ambiguity) 'logo' logo=STRING
 	 *     label=STRING (ambiguity) 'modified' modified=Date
 	 *     label=STRING (ambiguity) 'observable' observable=Observable
 	 *     label=STRING (ambiguity) 'observable' observables=List
+	 *     label=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     label=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     label=STRING (ambiguity) 'version' version=VersionNumber
 	 *     label=STRING (ambiguity) 'worldview' worldview=PathName
 	 *     label=STRING (ambiguity) (rule end)
+	 *     locale=LOCALE (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
+	 *     locale=LOCALE (ambiguity) 'author' authors+=STRING
+	 *     locale=LOCALE (ambiguity) 'created' created=Date
+	 *     locale=LOCALE (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
+	 *     locale=LOCALE (ambiguity) 'description' description=STRING
+	 *     locale=LOCALE (ambiguity) 'import' imports+=PathName
+	 *     locale=LOCALE (ambiguity) 'locale' locale=LOCALE
+	 *     locale=LOCALE (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
+	 *     locale=LOCALE (ambiguity) 'logo' logo=Path
+	 *     locale=LOCALE (ambiguity) 'logo' logo=STRING
+	 *     locale=LOCALE (ambiguity) 'modified' modified=Date
+	 *     locale=LOCALE (ambiguity) 'observable' observable=Observable
+	 *     locale=LOCALE (ambiguity) 'observable' observables=List
+	 *     locale=LOCALE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
+	 *     locale=LOCALE (ambiguity) 'permissions' permissions=STRING
+	 *     locale=LOCALE (ambiguity) 'version' version=VersionNumber
+	 *     locale=LOCALE (ambiguity) 'worldview' worldview=PathName
+	 *     locale=LOCALE (ambiguity) (rule end)
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=STRING
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'created' created=Date
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=STRING
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'import' imports+=PathName
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locale=LOCALE
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=Path
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=STRING
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'modified' modified=Date
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observable=Observable
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observables=List
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'worldview' worldview=PathName
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) (rule end)
+	 *     logo=Path (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     logo=Path (ambiguity) 'author' authors+=STRING
 	 *     logo=Path (ambiguity) 'created' created=Date
+	 *     logo=Path (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     logo=Path (ambiguity) 'description' description=STRING
 	 *     logo=Path (ambiguity) 'import' imports+=PathName
+	 *     logo=Path (ambiguity) 'locale' locale=LOCALE
+	 *     logo=Path (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     logo=Path (ambiguity) 'logo' logo=Path
 	 *     logo=Path (ambiguity) 'logo' logo=STRING
 	 *     logo=Path (ambiguity) 'modified' modified=Date
 	 *     logo=Path (ambiguity) 'observable' observable=Observable
 	 *     logo=Path (ambiguity) 'observable' observables=List
+	 *     logo=Path (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     logo=Path (ambiguity) 'permissions' permissions=STRING
 	 *     logo=Path (ambiguity) 'version' version=VersionNumber
 	 *     logo=Path (ambiguity) 'worldview' worldview=PathName
 	 *     logo=Path (ambiguity) (rule end)
+	 *     logo=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     logo=STRING (ambiguity) 'author' authors+=STRING
 	 *     logo=STRING (ambiguity) 'created' created=Date
+	 *     logo=STRING (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     logo=STRING (ambiguity) 'description' description=STRING
 	 *     logo=STRING (ambiguity) 'import' imports+=PathName
+	 *     logo=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     logo=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     logo=STRING (ambiguity) 'logo' logo=Path
 	 *     logo=STRING (ambiguity) 'logo' logo=STRING
 	 *     logo=STRING (ambiguity) 'modified' modified=Date
 	 *     logo=STRING (ambiguity) 'observable' observable=Observable
 	 *     logo=STRING (ambiguity) 'observable' observables=List
+	 *     logo=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     logo=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     logo=STRING (ambiguity) 'version' version=VersionNumber
 	 *     logo=STRING (ambiguity) 'worldview' worldview=PathName
 	 *     logo=STRING (ambiguity) (rule end)
+	 *     modcomment=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     modcomment=STRING (ambiguity) 'author' authors+=STRING
 	 *     modcomment=STRING (ambiguity) 'created' created=Date
+	 *     modcomment=STRING (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     modcomment=STRING (ambiguity) 'description' description=STRING
 	 *     modcomment=STRING (ambiguity) 'import' imports+=PathName
+	 *     modcomment=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     modcomment=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     modcomment=STRING (ambiguity) 'logo' logo=Path
 	 *     modcomment=STRING (ambiguity) 'logo' logo=STRING
 	 *     modcomment=STRING (ambiguity) 'modified' modified=Date
 	 *     modcomment=STRING (ambiguity) 'observable' observable=Observable
 	 *     modcomment=STRING (ambiguity) 'observable' observables=List
+	 *     modcomment=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     modcomment=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     modcomment=STRING (ambiguity) 'version' version=VersionNumber
 	 *     modcomment=STRING (ambiguity) 'worldview' worldview=PathName
 	 *     modcomment=STRING (ambiguity) (rule end)
+	 *     modified=Date (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     modified=Date (ambiguity) 'author' authors+=STRING
 	 *     modified=Date (ambiguity) 'created' created=Date
+	 *     modified=Date (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     modified=Date (ambiguity) 'description' description=STRING
 	 *     modified=Date (ambiguity) 'import' imports+=PathName
+	 *     modified=Date (ambiguity) 'locale' locale=LOCALE
+	 *     modified=Date (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     modified=Date (ambiguity) 'logo' logo=Path
 	 *     modified=Date (ambiguity) 'logo' logo=STRING
 	 *     modified=Date (ambiguity) 'modified' modified=Date
 	 *     modified=Date (ambiguity) 'observable' observable=Observable
 	 *     modified=Date (ambiguity) 'observable' observables=List
+	 *     modified=Date (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     modified=Date (ambiguity) 'permissions' permissions=STRING
 	 *     modified=Date (ambiguity) 'version' version=VersionNumber
 	 *     modified=Date (ambiguity) 'worldview' worldview=PathName
 	 *     modified=Date (ambiguity) (rule end)
+	 *     name=PathName (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     name=PathName (ambiguity) 'author' authors+=STRING
 	 *     name=PathName (ambiguity) 'created' created=Date
+	 *     name=PathName (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     name=PathName (ambiguity) 'description' description=STRING
 	 *     name=PathName (ambiguity) 'import' imports+=PathName
+	 *     name=PathName (ambiguity) 'locale' locale=LOCALE
+	 *     name=PathName (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     name=PathName (ambiguity) 'logo' logo=Path
 	 *     name=PathName (ambiguity) 'logo' logo=STRING
 	 *     name=PathName (ambiguity) 'modified' modified=Date
 	 *     name=PathName (ambiguity) 'observable' observable=Observable
 	 *     name=PathName (ambiguity) 'observable' observables=List
+	 *     name=PathName (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     name=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     name=PathName (ambiguity) 'version' version=VersionNumber
 	 *     name=PathName (ambiguity) 'worldview' worldview=PathName
 	 *     name=PathName (ambiguity) (rule end)
+	 *     observable=Observable (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     observable=Observable (ambiguity) 'author' authors+=STRING
 	 *     observable=Observable (ambiguity) 'created' created=Date
+	 *     observable=Observable (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     observable=Observable (ambiguity) 'description' description=STRING
 	 *     observable=Observable (ambiguity) 'import' imports+=PathName
+	 *     observable=Observable (ambiguity) 'locale' locale=LOCALE
+	 *     observable=Observable (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     observable=Observable (ambiguity) 'logo' logo=Path
 	 *     observable=Observable (ambiguity) 'logo' logo=STRING
 	 *     observable=Observable (ambiguity) 'modified' modified=Date
 	 *     observable=Observable (ambiguity) 'observable' observable=Observable
 	 *     observable=Observable (ambiguity) 'observable' observables=List
+	 *     observable=Observable (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     observable=Observable (ambiguity) 'permissions' permissions=STRING
 	 *     observable=Observable (ambiguity) 'version' version=VersionNumber
 	 *     observable=Observable (ambiguity) 'worldview' worldview=PathName
 	 *     observable=Observable (ambiguity) (rule end)
+	 *     observables=List (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     observables=List (ambiguity) 'author' authors+=STRING
 	 *     observables=List (ambiguity) 'created' created=Date
+	 *     observables=List (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     observables=List (ambiguity) 'description' description=STRING
 	 *     observables=List (ambiguity) 'import' imports+=PathName
+	 *     observables=List (ambiguity) 'locale' locale=LOCALE
+	 *     observables=List (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     observables=List (ambiguity) 'logo' logo=Path
 	 *     observables=List (ambiguity) 'logo' logo=STRING
 	 *     observables=List (ambiguity) 'modified' modified=Date
 	 *     observables=List (ambiguity) 'observable' observable=Observable
 	 *     observables=List (ambiguity) 'observable' observables=List
+	 *     observables=List (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     observables=List (ambiguity) 'permissions' permissions=STRING
 	 *     observables=List (ambiguity) 'version' version=VersionNumber
 	 *     observables=List (ambiguity) 'worldview' worldview=PathName
 	 *     observables=List (ambiguity) (rule end)
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=STRING
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'created' created=Date
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'description' description=STRING
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'import' imports+=PathName
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'locale' locale=LOCALE
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=Path
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'logo' logo=STRING
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'modified' modified=Date
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observable=Observable
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'observable' observables=List
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'worldview' worldview=PathName
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) (rule end)
+	 *     permissions=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     permissions=STRING (ambiguity) 'author' authors+=STRING
 	 *     permissions=STRING (ambiguity) 'created' created=Date
+	 *     permissions=STRING (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     permissions=STRING (ambiguity) 'description' description=STRING
 	 *     permissions=STRING (ambiguity) 'import' imports+=PathName
+	 *     permissions=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     permissions=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     permissions=STRING (ambiguity) 'logo' logo=Path
 	 *     permissions=STRING (ambiguity) 'logo' logo=STRING
 	 *     permissions=STRING (ambiguity) 'modified' modified=Date
 	 *     permissions=STRING (ambiguity) 'observable' observable=Observable
 	 *     permissions=STRING (ambiguity) 'observable' observables=List
+	 *     permissions=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     permissions=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     permissions=STRING (ambiguity) 'version' version=VersionNumber
 	 *     permissions=STRING (ambiguity) 'worldview' worldview=PathName
 	 *     permissions=STRING (ambiguity) (rule end)
+	 *     style=PathName (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     style=PathName (ambiguity) 'author' authors+=STRING
 	 *     style=PathName (ambiguity) 'created' created=Date
+	 *     style=PathName (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     style=PathName (ambiguity) 'description' description=STRING
 	 *     style=PathName (ambiguity) 'import' imports+=PathName
+	 *     style=PathName (ambiguity) 'locale' locale=LOCALE
+	 *     style=PathName (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     style=PathName (ambiguity) 'logo' logo=Path
 	 *     style=PathName (ambiguity) 'logo' logo=STRING
 	 *     style=PathName (ambiguity) 'modified' modified=Date
 	 *     style=PathName (ambiguity) 'observable' observable=Observable
 	 *     style=PathName (ambiguity) 'observable' observables=List
+	 *     style=PathName (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     style=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     style=PathName (ambiguity) 'version' version=VersionNumber
 	 *     style=PathName (ambiguity) 'worldview' worldview=PathName
 	 *     style=PathName (ambiguity) (rule end)
+	 *     version=VersionNumber (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     version=VersionNumber (ambiguity) 'author' authors+=STRING
 	 *     version=VersionNumber (ambiguity) 'created' created=Date
+	 *     version=VersionNumber (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     version=VersionNumber (ambiguity) 'description' description=STRING
 	 *     version=VersionNumber (ambiguity) 'import' imports+=PathName
+	 *     version=VersionNumber (ambiguity) 'locale' locale=LOCALE
+	 *     version=VersionNumber (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     version=VersionNumber (ambiguity) 'logo' logo=Path
 	 *     version=VersionNumber (ambiguity) 'logo' logo=STRING
 	 *     version=VersionNumber (ambiguity) 'modified' modified=Date
 	 *     version=VersionNumber (ambiguity) 'observable' observable=Observable
 	 *     version=VersionNumber (ambiguity) 'observable' observables=List
+	 *     version=VersionNumber (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     version=VersionNumber (ambiguity) 'permissions' permissions=STRING
 	 *     version=VersionNumber (ambiguity) 'version' version=VersionNumber
 	 *     version=VersionNumber (ambiguity) 'worldview' worldview=PathName
 	 *     version=VersionNumber (ambiguity) (rule end)
+	 *     worldview=PathName (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     worldview=PathName (ambiguity) 'author' authors+=STRING
 	 *     worldview=PathName (ambiguity) 'created' created=Date
+	 *     worldview=PathName (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
 	 *     worldview=PathName (ambiguity) 'description' description=STRING
 	 *     worldview=PathName (ambiguity) 'import' imports+=PathName
+	 *     worldview=PathName (ambiguity) 'locale' locale=LOCALE
+	 *     worldview=PathName (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
 	 *     worldview=PathName (ambiguity) 'logo' logo=Path
 	 *     worldview=PathName (ambiguity) 'logo' logo=STRING
 	 *     worldview=PathName (ambiguity) 'modified' modified=Date
 	 *     worldview=PathName (ambiguity) 'observable' observable=Observable
 	 *     worldview=PathName (ambiguity) 'observable' observables=List
+	 *     worldview=PathName (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     worldview=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     worldview=PathName (ambiguity) 'version' version=VersionNumber
 	 *     worldview=PathName (ambiguity) 'worldview' worldview=PathName
@@ -594,20 +797,30 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 * This ambiguous syntax occurs at:
 	 *     (rule start) (ambiguity) inlineStyle=Map
 	 *     (rule start) (ambiguity) style=PathName
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) inlineStyle=Map
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) style=PathName
 	 *     authors+=STRING (ambiguity) inlineStyle=Map
 	 *     authors+=STRING (ambiguity) style=PathName
 	 *     createcomment=STRING (ambiguity) inlineStyle=Map
 	 *     createcomment=STRING (ambiguity) style=PathName
 	 *     created=Date (ambiguity) inlineStyle=Map
 	 *     created=Date (ambiguity) style=PathName
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) inlineStyle=Map
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) style=PathName
 	 *     description=STRING (ambiguity) inlineStyle=Map
 	 *     description=STRING (ambiguity) style=PathName
 	 *     imports+=PathName (ambiguity) inlineStyle=Map
 	 *     imports+=PathName (ambiguity) style=PathName
 	 *     inlineStyle=Map (ambiguity) inlineStyle=Map
 	 *     inlineStyle=Map (ambiguity) style=PathName
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) inlineStyle=Map
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) style=PathName
 	 *     label=STRING (ambiguity) inlineStyle=Map
 	 *     label=STRING (ambiguity) style=PathName
+	 *     locale=LOCALE (ambiguity) inlineStyle=Map
+	 *     locale=LOCALE (ambiguity) style=PathName
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) inlineStyle=Map
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) style=PathName
 	 *     logo=Path (ambiguity) inlineStyle=Map
 	 *     logo=Path (ambiguity) style=PathName
 	 *     logo=STRING (ambiguity) inlineStyle=Map
@@ -622,6 +835,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     observable=Observable (ambiguity) style=PathName
 	 *     observables=List (ambiguity) inlineStyle=Map
 	 *     observables=List (ambiguity) style=PathName
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) inlineStyle=Map
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) style=PathName
 	 *     permissions=STRING (ambiguity) inlineStyle=Map
 	 *     permissions=STRING (ambiguity) style=PathName
 	 *     style=PathName (ambiguity) inlineStyle=Map

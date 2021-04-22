@@ -32,6 +32,11 @@ import weka.classifiers.bayes.BayesNet;
 public class WekaImporter implements IResourceImporter {
 
     @Override
+    public IResourceImporter withOption(String option, Object value) {
+        return this;
+    }
+
+    @Override
     public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
         // TODO Auto-generated method stub
         return null;
@@ -44,7 +49,7 @@ public class WekaImporter implements IResourceImporter {
     }
 
     @Override
-    public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+    public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
         List<Triple<String, String, String>> ret = new ArrayList<>();
         return ret;
     }

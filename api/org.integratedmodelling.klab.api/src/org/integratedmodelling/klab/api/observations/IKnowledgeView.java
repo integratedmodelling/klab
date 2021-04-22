@@ -63,5 +63,17 @@ public interface IKnowledgeView extends IArtifact {
 	 * @return
 	 */
 	boolean export(File file, String mediaType);
+	
+    /**
+     * Return a suitable bean for transferring the view to clients. Class is usually mandatory in
+     * each implementation, added here for fluency in calls to avoid painful typing at the class
+     * level.
+     * 
+     * @param <T>
+     * @param cls
+     * @return
+     */
+    <T> T getBean(Class<T> cls);
+
 
 }

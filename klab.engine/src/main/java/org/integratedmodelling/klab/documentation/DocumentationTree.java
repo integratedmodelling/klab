@@ -11,11 +11,16 @@ import java.util.Set;
 
 import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.kim.api.IPrototype;
+import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
+import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
+import org.integratedmodelling.klab.api.documentation.IReport.View;
+import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.model.IModel;
+import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
@@ -24,7 +29,11 @@ import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.ReportSection.Element;
+import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.model.Model;
+import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.rest.DocumentationEvent;
 import org.integratedmodelling.klab.rest.DocumentationNode;
 import org.integratedmodelling.klab.rest.DocumentationNode.Figure;
 import org.integratedmodelling.klab.rest.DocumentationNode.Table;
@@ -64,6 +73,11 @@ import com.vladsch.flexmark.util.options.MutableDataSet;
  */
 public class DocumentationTree {
 
+    /**
+     * Anchors in HTML code are sent using this pattern, to be reinterpreted by the client.
+     */
+    public static final String ANCHOR_PATTERN = "LINK/{type}/{id}/";
+
     private Map<String, DocumentationNode> nodes = new LinkedHashMap<>();
     private ISession session;
     private IRuntimeScope context;
@@ -82,9 +96,7 @@ public class DocumentationTree {
     private Parser parser_;
     private HtmlRenderer renderer_;
 
-    public enum View {
-        REPORT, FIGURES, TABLES, RESOURCES, MODELS, PROVENANCE
-    }
+    private int referencesCount;
 
     public DocumentationTree(Report report) {
         this.report = report;
@@ -127,15 +139,19 @@ public class DocumentationTree {
         return null;
     }
 
-    /**
-     * Add the item and notify the views so they can put that away.
-     * 
-     * @param item
-     */
-    public void addNode(DocumentationNode item) {
-        nodes.put(item.getId(), item);
-        // TODO notify view
+    public static String getLinkText(DocumentationNode node) {
+        return ANCHOR_PATTERN.replace("{type}", node.getType().name()).replace("{id}", node.getId());
     }
+
+    // /**
+    // * Add the item and notify the views so they can put that away.
+    // *
+    // * @param item
+    // */
+    // public void addNode(DocumentationNode item) {
+    // nodes.put(item.getId(), item);
+    // // TODO notify view
+    // }
 
     public void addResolution(ObservedConcept observable, List<IRankedModel> resolved) {
         resolutions.put(observable, resolved);
@@ -152,12 +168,21 @@ public class DocumentationTree {
 
         if (o instanceof IResource) {
 
-            // getItem(Type.Resource);
+            IResource resource = (IResource) o;
+            if (nodes.get(resource.getUrn()) == null) {
+                DocumentationNode node = getResourceNode(resource);
+                if (node != null) {
+                    nodes.put(node.getId(), node);
+                    notify(node);
+                }
+            }
 
         } else if (o instanceof IPrototype) {
 
         } else if (o instanceof ReportSection) {
+
             this.mainSections.add((ReportSection) o);
+
         } else if (o instanceof IObservationReference) {
 
         } else if (o instanceof IKimTable) {
@@ -165,18 +190,60 @@ public class DocumentationTree {
         } else if (o instanceof IClassification) {
 
         } else {
-            System.out.println("OHIBÓ un cianfero non visto prima");
+            System.out.println("OHIBÓ un cianfero non visto prima: " + o.getClass().getCanonicalName());
         }
     }
 
-    public void addView(IKnowledgeView view, KnowledgeViewReference descriptor) {
-        // TODO Auto-generated method stub
+    private DocumentationNode getResourceNode(IResource resource) {
 
+        if (resource instanceof MergedResource) {
+            // we only document the individual (used) ones here.
+            return null;
+        }
+
+        Urn urn = new Urn(resource.getUrn());
+
+        DocumentationNode ret = new DocumentationNode();
+        ret.setId(resource.getUrn());
+        ret.setType(DocumentationNode.Type.Resource);
+        ret.setTitle(resource.getMetadata().containsKey(IMetadata.DC_TITLE)
+                ? resource.getMetadata().get(IMetadata.DC_TITLE).toString()
+                : urn.getResourceId());
+        DocumentationNode.Resource res = new DocumentationNode.Resource();
+
+        ret.setResource(res);
+        return ret;
+    }
+
+    public void addView(IKnowledgeView view, KnowledgeViewReference descriptor) {
+
+        DocumentationNode node = new DocumentationNode();
+        if (!nodes.containsKey(view.getId())) {
+            node.setId(view.getId());
+            node.setTitle(view.getTitle());
+            node.setBodyText(view.getLabel());
+            if ("table".equals(view.getViewClass())) {
+                node.setTable(view.getBean(Table.class));
+                node.setType(DocumentationNode.Type.Table);
+            }
+            this.nodes.put(node.getId(), node);
+            notify(node);
+        }
     }
 
     // TODO add the contextualization
     public void addModel(IModel model) {
-        models.add(model);
+        if (!this.nodes.containsKey(model.getName()) && model.getStatement() != null) {
+            DocumentationNode node = new DocumentationNode();
+            node.setId(model.getName());
+            // node.setTitle(view.getTitle());
+            node.setBodyText(model.getStatement().getSourceCode());
+            node.setModel(((Model) model).getBean());
+            node.setType(DocumentationNode.Type.Model);
+            this.nodes.put(node.getId(), node);
+            models.add(model);
+            notify(node);
+        }
     }
 
     // TODO add the model
@@ -190,13 +257,91 @@ public class DocumentationTree {
      * @param reportSection
      * @param reference
      */
-    public void addCitation(Reference reference) {
+    public DocumentationNode addCitation(Reference reference) {
 
-        System.out.println("CITATION " + reference);
+        DocumentationNode.Reference ref = null;
+        if (reference.get(BibTexFields.EXAMPLE_CITATION) == null) {
+            // the key is the DOI
+            String doi = reference.get("key").toString();
+            if (!nodes.containsKey(doi)) {
+                ref = Crossref.INSTANCE.resolve(doi);
+            }
+        } else {
 
-        // TODO add reference if not there already
-        // nodes.put(reference.get("key"), getItem(Type.Citation, reportSection));
+            if (!nodes.containsKey(reference.get("key").toString())) {
+                ref = new DocumentationNode.Reference();
+                ref.getCitations().put("default", reference.get(BibTexFields.EXAMPLE_CITATION).toString());
+                ref.setDoi(reference.get("key").toString());
+            }
+        }
 
+        // add reference if not there already
+        if (ref != null) {
+            DocumentationNode node = new DocumentationNode();
+            node.setBodyText(ref.getCitations().get("default"));
+            node.setType(DocumentationNode.Type.Reference);
+            node.setId(ref.getDoi());
+            nodes.put(node.getId(), node);
+            this.referencesCount++;
+            notify(node);
+        }
+
+        return ref == null ? null : nodes.get(ref.getDoi());
+    }
+
+    private void notify(DocumentationNode node) {
+
+        DocumentationEvent message = new DocumentationEvent();
+
+        message.setNodeId(node.getId());
+        message.setNodeType(node.getType());
+
+        switch(node.getType()) {
+        case Anchor:
+            break;
+        case Chart:
+            message.getViewsAffected().add(IReport.View.FIGURES);
+            break;
+        case Citation:
+            break;
+        case Figure:
+            message.getViewsAffected().add(IReport.View.FIGURES);
+            break;
+        case Link:
+            break;
+        case Model:
+            message.getViewsAffected().add(IReport.View.MODELS);
+            break;
+        case Paragraph:
+            message.getViewsAffected().add(IReport.View.REPORT);
+            break;
+        case Reference:
+            message.getViewsAffected().add(IReport.View.REPORT);
+            message.getViewsAffected().add(IReport.View.REFERENCES);
+            break;
+        case Report:
+            message.getViewsAffected().add(IReport.View.REPORT);
+            break;
+        case Resource:
+            message.getViewsAffected().add(IReport.View.RESOURCES);
+            break;
+        case Section:
+            message.getViewsAffected().add(IReport.View.REPORT);
+            break;
+        case Table:
+            message.getViewsAffected().add(IReport.View.REPORT);
+            message.getViewsAffected().add(IReport.View.TABLES);
+            break;
+        case View:
+            message.getViewsAffected().add(IReport.View.TABLES);
+            break;
+        default:
+            break;
+
+        }
+
+        session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.UserInterface,
+                IMessage.Type.DocumentationChanged, message));
     }
 
     private List<DocumentationNode> getProvenanceView(String format) {
@@ -206,24 +351,53 @@ public class DocumentationTree {
 
     private List<DocumentationNode> getTablesView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
+        for (DocumentationNode node : nodes.values()) {
+            if (node.getType() == Type.Table) {
+                ret.add(node);
+            }
+        }
         return ret;
     }
 
     private List<DocumentationNode> getResourcesView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
+        for (DocumentationNode node : nodes.values()) {
+            if (node.getType() == Type.Resource) {
+                ret.add(node);
+            }
+        }
         return ret;
     }
 
     private List<DocumentationNode> getReportView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
         for (SectionRole order : SectionRole.values()) {
+            boolean done = false;
             for (ReportSection section : mainSections) {
                 if (order == section.getRole()) {
                     ret.add(compileSection(section, format));
+                    done = true;
                 }
+            }
+            if (order == SectionRole.REFERENCES && !done && this.referencesCount > 0) {
+                ret.add(getReferencesNode());
             }
         }
 
+        return ret;
+    }
+
+    private DocumentationNode getReferencesNode() {
+
+        DocumentationNode ret = new DocumentationNode();
+        ret.setId("References");
+        ret.setType(Type.Section);
+        ret.setTitle("References cited");
+        for (DocumentationNode node : nodes.values()) {
+            if (node.getType() == Type.Reference) {
+                ret.getChildren().add(node);
+            }
+        }
         return ret;
     }
 
@@ -252,6 +426,14 @@ public class DocumentationTree {
             compileParagraph(body, offset, body.length(), 0, ret, format);
         }
 
+        if (section.role == SectionRole.REFERENCES) {
+            for (DocumentationNode node : nodes.values()) {
+                if (node.getType() == Type.Reference) {
+                    ret.getChildren().add(node);
+                }
+            }
+        }
+
         return ret;
     }
 
@@ -272,6 +454,8 @@ public class DocumentationTree {
 
         if (element.type == Type.Section) {
             return compileSection((ReportSection) element.element, format);
+        } else if (element.type == Type.Anchor || element.type == Type.Citation || element.type == Type.Link) {
+            return null;
         }
 
         DocumentationNode node = new DocumentationNode();
@@ -279,11 +463,11 @@ public class DocumentationTree {
         node.setType(element.type);
 
         switch(element.type) {
-        case Anchor:
-        case Citation:
-        case Link:
-            node.setBodyText(element.element.toString());
-            break;
+        // case Anchor:
+        // case Citation:
+        // case Link:
+        // node.setBodyText(element.element.toString());
+        // break;
         case Chart:
             break;
         case Figure:
@@ -309,11 +493,21 @@ public class DocumentationTree {
 
     private List<DocumentationNode> getModelsView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
+        for (DocumentationNode node : nodes.values()) {
+            if (node.getType() == Type.Model) {
+                ret.add(node);
+            }
+        }
         return ret;
     }
 
     private List<DocumentationNode> getFiguresView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
+        for (DocumentationNode node : nodes.values()) {
+            if (node.getType() == Type.Figure) {
+                ret.add(node);
+            }
+        }
         return ret;
     }
 
@@ -328,6 +522,13 @@ public class DocumentationTree {
         if (ret == null) {
             ret = new LinkedHashMap<>();
             this.contextualizedResources.put(urn, ret);
+            if (!nodes.containsKey(resource.getUrn())) {
+                DocumentationNode node = getResourceNode(resource);
+                if (node != null) {
+                    nodes.put(node.getId(), node);
+                    notify(node);
+                }
+            }
         }
         ret.put(resource.getUrn(), resource);
     }

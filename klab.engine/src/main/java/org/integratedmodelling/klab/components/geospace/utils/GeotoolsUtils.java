@@ -228,6 +228,10 @@ public enum GeotoolsUtils {
         WritableRaster raster = createWritableRaster((int) grid.getXCells(), (int) grid.getYCells(), Integer.class, null,
                 noDataValue);
 
+        if (!(locator instanceof IScale)) {
+            locator = state.getScale().at(locator);
+        }
+        
         /*
          * only go through active cells. State should have been located through a proxy for other
          * extents.

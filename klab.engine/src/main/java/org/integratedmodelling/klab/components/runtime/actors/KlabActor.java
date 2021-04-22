@@ -29,6 +29,7 @@ import org.integratedmodelling.kactors.model.KActorsArguments;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
@@ -37,6 +38,7 @@ import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
+import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.auth.EngineUser;
@@ -154,7 +156,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
             for (Pair<Match, IKActorsStatement> match : matches) {
                 if (match.getFirst().matches(value, scope)) {
-                    execute(match.getSecond(), scope.withMatch(match.getFirst(), value, scopeVars));
+                    Scope s = scope.withMatch(match.getFirst(), value, scopeVars);
+                    s.symbolTable.putAll(symbolTable);
+                    execute(match.getSecond(), s);
                     break;
                 }
             }
@@ -198,6 +202,15 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             }
 
             Type getType();
+
+            /**
+             * For notification: return true if a potential deadlock warning was issued
+             * 
+             * @return
+             */
+            boolean isWarned();
+
+            void setWarned();
         }
 
         /**
@@ -249,13 +262,20 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         // metadata come with the actor specification if created through instantiation and don't
         // change.
         Parameters<String> metadata;
+        IBehavior behavior;
 
-        public Scope(IActorIdentity<KlabMessage> identity, String appId, IRuntimeScope scope) {
+        public Scope(IActorIdentity<KlabMessage> identity, String appId, IRuntimeScope scope, IBehavior behavior) {
             this.runtimeScope = scope;
             this.identity = identity;
             this.appId = appId;
             this.viewScope = new ViewScope(this);
             this.metadata = Parameters.create();
+            this.behavior = behavior;
+        }
+
+        public Scope withGlobalSymbols(Map<String, Object> symbols) {
+            this.symbolTable.putAll(symbols);
+            return this;
         }
 
         public Scope withMatch(Match match, Object value, Map<String, Object> vars) {
@@ -296,6 +316,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             this.appId = scope.appId;
             this.semaphore = scope.semaphore;
             this.metadata = scope.metadata;
+            this.behavior = scope.behavior;
         }
 
         public String toString() {
@@ -417,7 +438,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             return ret;
         }
 
-        public void waitForGreen() {
+        public void waitForGreen(final int linenumber) {
 
             if (semaphore != null) {
                 int cnt = 0;
@@ -425,8 +446,10 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                     try {
                         Thread.sleep(50);
                         cnt++;
-                        if (cnt % 100 == 0) {
-                            System.out.println("DIO FINFERLO DUE ORE CHE ASPETTO STO SEMAFORO " + semaphore);
+                        if (cnt % 100 == 0 && !semaphore.isWarned()) {
+                            identity.getMonitor().warn("Potential actor deadlock running " + getBehavior().getName() + ":"
+                                    + linenumber + ": check logics");
+                            semaphore.setWarned();
                         }
                     } catch (InterruptedException e) {
                         return;
@@ -443,6 +466,17 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             }
             return ret;
         }
+
+        public Scope forWindow(IAnnotation wspecs, String actionId) {
+            Scope ret = new Scope(this);
+            ret.viewScope = ret.viewScope.createLayout(wspecs, actionId);
+            return ret;
+        }
+
+        public IBehavior getBehavior() {
+            return this.behavior;
+        }
+
     }
 
     protected IActorIdentity<KlabMessage> getIdentity() {
@@ -567,9 +601,13 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                 MatchActions actions = listeners.get(notifyId);
                 if (actions != null) {
                     KlabActionExecutor executor = actionCache.get(message.action.getComponent().getId());
-                    actions.match(executor instanceof KlabWidgetActionExecutor
-                            ? ((KlabWidgetActionExecutor) executor).getFiredValue(message.action)
-                            : getActionValue(message.action), message.scope);
+                    actions.match(
+                            executor instanceof KlabWidgetActionExecutor
+                                    ? ((KlabWidgetActionExecutor) executor).getFiredValue(message.action,
+                                            new Scope(identity, appId, message.scope, this.behavior)
+                                                    .withGlobalSymbols(this.symbolTable))
+                                    : getActionValue(message.action),
+                            message.scope);
                 }
             } else if (message.action.getComponent().getActorPath() != null) {
 
@@ -637,12 +675,30 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
      */
 
     protected void run(IBehavior.Action action, Scope scope) {
+
+        IAnnotation wspecs = Annotations.INSTANCE.getAnnotation(action, "modal");
+        if (wspecs == null) {
+            wspecs = Annotations.INSTANCE.getAnnotation(action, "window");
+        }
+
+        if (wspecs != null) {
+            scope = scope.forWindow(wspecs, action.getName());
+        }
+
         execute(action.getStatement().getCode(), scope);
+
+        if (wspecs != null) {
+            System.out.println(Actors.INSTANCE.dumpView(scope.viewScope.layout));
+            KlabActor.this.identity.setLayout(scope.viewScope.layout);
+            KlabActor.this.identity.getMonitor().send(IMessage.MessageClass.UserInterface,
+                    "modal".equals(wspecs.getName()) ? IMessage.Type.CreateModalWindow : IMessage.Type.CreateWindow,
+                    scope.viewScope.layout);
+        }
     }
 
     private void execute(IKActorsStatement code, Scope scope) {
 
-//        System.out.println("EXECUTING " + code);
+        // System.out.println("EXECUTING " + code);
 
         try {
             switch(code.getType()) {
@@ -992,7 +1048,8 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                     val = Extensions.INSTANCE.parse((String) val);
                 }
 
-                arg.setData(new ObjectExpression((IKimExpression) val, scope.runtimeScope, CompilerOption.WrapParameters, CompilerOption.IgnoreContext));
+                arg.setData(new ObjectExpression((IKimExpression) val, scope.runtimeScope, CompilerOption.WrapParameters,
+                        CompilerOption.IgnoreContext));
             }
 
             try {
@@ -1086,14 +1143,20 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
              * it the message and return.
              */
             if (this.javaReactors.containsKey(receiverName)
-                    || (scope.symbolTable.containsKey(receiverName) && !Utils.isPOD(scope.symbolTable.get(receiverName)))) {
+                    || (scope.symbolTable.containsKey(receiverName) && !Utils.isPOD(scope.symbolTable.get(receiverName)))
+                    || (scope.globalSymbols.containsKey(receiverName) && !Utils.isPOD(scope.globalSymbols.get(receiverName)))) {
+
                 Object reactor = this.javaReactors.get(receiverName);
                 if (reactor == null) {
-                    reactor = scope.symbolTable.containsKey(receiverName);
+                    reactor = scope.symbolTable.get(receiverName);
+                }
+                if (reactor == null) {
+                    reactor = scope.globalSymbols.get(receiverName);
                 }
                 if (reactor != null) {
                     Actors.INSTANCE.invokeReactorMethod(reactor, messageName, code.getArguments(), scope, this.identity);
                 }
+
                 return;
             }
 
@@ -1106,7 +1169,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                 KActorsMessage m = new KActorsMessage(getContext().getSelf(), messageName, code.getCallId(), code.getArguments(),
                         scope.withNotifyId(notifyId), appId);
                 this.localActionExecutors.get(receiverName).onMessage(m, scope);
-                scope.waitForGreen();
+                scope.waitForGreen(code.getFirstLine());
                 return;
             }
 
@@ -1248,7 +1311,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
          * if the scope was not synchronous, or there were no actions after a fire, this does
          * nothing.
          */
-        scope.waitForGreen();
+        scope.waitForGreen(code.getFirstLine());
 
     }
 

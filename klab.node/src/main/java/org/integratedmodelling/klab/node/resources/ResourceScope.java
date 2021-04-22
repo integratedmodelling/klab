@@ -761,4 +761,10 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         return predicate;
     }
 
+    @Override
+    public Collection<IKnowledgeView> getViews() {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
 }

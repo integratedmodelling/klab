@@ -58,4 +58,10 @@ public interface ITimeInstant extends Comparable<ITimeInstant> {
 	 */
 	int getDayOfYear();
 
+	/**
+	 * 
+	 * @return
+	 */
+    int getYear();
+
 }

@@ -1,0 +1,248 @@
+= Tutorial: How to model hydrology in k.LAB
+A semantic approach.
+v1.0, 2021-04
+:doctype: article
+:description: Hydrologic k.LAB tutorial
+:kl: k.LAB
+:kmod: k.Modeler
+:kact: k.Actors
+:keng: k.LAB Engine
+:knod: k.LAB Node
+:kim: k.IM
+:ked: k.LAB Resource Editor
+:kex: k.LAB Explorer
+:pex: Project Explorer
+:kim_manual: k.IM manual
+:encoding: utf-8
+:lang: en
+:title-page:
+:toc: left
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+:numbered:
+:experimental:
+:reproducible:
+:icons: font
+:listing-caption: Listing
+:sectnums:
+:autofit-option: true
+:mdash: &#8212;
+:language: asciidoc
+:source-highlighter: highlightjs
+:highlightjs-languages: kim, java, json
+:highlightjs-theme: klab
+ifdef::backend-pdf[]
+:title-logo-image: image:imgs/KLAB_LOGO.png[align=center]
+endif::[]
+:stem:
+
+<<<
+
+
+This tutorial will guide the reader through the journey of modelling hydrology in {kl}.
+
+We will start from the very basics of writing models and processes, as well as knowledge definitions, where necessary.
+
+It is assumed that the reader has a basic knowledge about {kl} sematics and the {kim} syntax.
+
+## A basic model structure
+[#BASIC_STRUCTURE]
+
+To be able to start, we need to have an idea about the model we are going to work on. We will implement a seasonal water yield model on the footsteps of https://github.com/natcap/invest[INVEST]. Basically we will try to define the change of baseflow on a given watershed throughout time.
+
+To calculate the baseflow we need:
+
+* the infiltrated water volume
+* the precipitation volume
+* the evapotranspiration volume
+* the runoff volume
+
+## Modeling a simple observation
+
+This tutorial starts with the assumtion that you are a {kmod} user and able to create a project and namespace. Please create a project named **invest** and a namespace **swy** for seasonal water yield.
+
+To test your initial setup we will create a very simple model. Since we aim to model the baseflow, after an accurate look into the base knowledge, the ideal candidate seems to be:
+
+[source,kim]
+----
+hydrology:BaseFlowWaterVolume
+----
+
+Since the base knowledge is automatically available to the processing engine, it is not necessary to import the namespace in order to make it available.
+
+To test our setup, we can just model a constant scalar to be the baseflow. This is done through:
+
+[source,kim,linenums]
+----
+private namespace invest.swy;
+
+model 100 as hydrology:BaseFlowWaterVolume;
+----
+
+NOTE: The first line defines the namespace, was created by the modeler upon creation, and will be omitted in the following examples.
+
+The {kmod} will complain about the need of a unit for the observable. This makes sense given the fact that we are modeling a scalar directly as an observation, so we need to define its units (it can't be guessed anywhere else from the context).
+While you might be tempted to use cubic meters for the volume, we decided to follow Invest's model. Invest produces the baseflow volume in mm. This brings us to:
+
+[source,kim,linenums]
+----
+model 100 as hydrology:BaseFlowWaterVolume in mm;
+----
+
+It seems quite odd to define a volume in millimeters. And it would be, if it wasn't for the fact that the produced result is a raster map. Therefore mm are implicitly seen as mm over an area, hence a volume.
+
+But {kl} can't forsee that at this stage. As the {kmod} suggests, it necessary to suggest some dimensionality. Suggestions can be passed to the model through annotations. In this case the **Intensive** is the right annotation to use.
+
+[source,kim,linenums]
+----
+@intensive(space)
+model 100 as hydrology:BaseFlowWaterVolume in mm;
+----
+
+
+[NOTE]
+====
+**Intensive vs extensive**
+
+Properties can be intensive or extensive. Intensive properties are those whose magnitude does not depend in the system's size, whereas for extensive properties the magnitude is additive for subsystems (see https://en.wikipedia.org/wiki/Intensive_and_extensive_properties[wikipedia article]). 
+
+In the previous example we create a simple model to observe baseflow in mm. We can't just observe it like that, because the baseflow is defined as a volume and mm would not be a compatible unit. Therefore you need to annotate it to tell the system that it is produced over a spatial context, hence the mm are the intensive measure of an extensive concept.
+
+This forces the model to run over an areal context, while it can't work on points, lines or volumes. This also allows to adjust the automatically the units in case of aggregation to produce a final output, as for example the discharge at a watershed outlet.
+====
+
+Now we should have a fully working model, which produces an observation of the baseflow as a since value of 100. 
+
+Therefore, if we have a {kex} open and we drag the model from the project tree into the context execution area (from now on we will just say: **run the model**), we should be able to see the observation produced by our primitive model:
+
+image::imgs/01_const_model.png[scaledwidth=80%, width=80%, align="center"]
+
+When a raster is made of one single constant value, then {kl} shows it as in the above image. We produced the expected result. A map of constant values of 100.
+
+
+## Modeling a process
+
+Hydrological modelling is all about simulating water flow in time, so _just_ observing a quality like BaseFlowWaterVolume will not suffice. To observe its changes in time we need a process. A process can be created in two ways:
+
+1. using the **change in** keyword, which is done directly in the model:
++
+[source,kim]
+----
+model change in hydrology:BaseFlowWaterVolume
+	set base_flow_water_volume to [base_flow_water_volume * 10.0]
+	;
+----
+2. defining a new process, naming it and stating the affected quality:
++
+[source,kim]
+----
+process BaseFlowWaterVolumeChange
+	affects hydrology:BaseFlowWaterVolume;
+----
++
+This process will then need to be modelled.
+
+
+### Using _Change in_
+
+To properly model a quality in time we need to do a few adjustments to the previously reported model. 
+
+NOTE: Since _change in hydrology:BaseFlowWaterVolume_ automatically affects _hydrology:BaseFlowWaterVolume_ in the execution context, it gets an implicit dependency for the initialization. Therefore the dataflow will contain an actuator for _hydrology:BaseFlowWaterVolume_, which will search for a model that resolves it. In this case it will be the constant 100 model. The process actuator then will contain the function that makes the update with the target _hydrology:BaseFlowWaterVolume_.
+
+
+[source,kim]
+----
+@time(step=1.month) // <1>
+@intensive(space, time)  // <2>
+model change in hydrology:BaseFlowWaterVolume
+	set base_flow_water_volume to [base_flow_water_volume * 10.0] // <3>
+	;
+----
+
+<1> a timestep needs to be defined. If none is defined, then the default timestep of the context is used. For example, the {kex} will use one single timestep over the default timespan of one year. 
+<2> being a volume over a spatial context changing in time, it is necessary to annotate it as being intensive in space and time.
+<3> in this case we simulate an times-10 growth of the baseflow at each timestep. 
+
+NOTE: The **set to** syntax allows us to make quick consistence tests while modelling the main structure of the complete model. This should be seen as a best practice. Before implementing the functional logic of a model, the semantic structure should be in place, with all defined dependencies.
+
+
+If we run this model now, the result will be a dynamic observation in time:
+
+image::imgs/02_const_process.png[scaledwidth=80%, width=80%, align="center"]
+
+The result window now shows a process as main output observation, and the observations tree shows a dynamic result, being the base water flow volume over a year, using monthly timesteps as requested. The constant map now grows times 10 for every timestep.
+
+
+### Using _process_
+
+If the process modeled process is a well defined one, it can make senso to name it and define it as a process. 
+
+[source,kim]
+----
+@intensive(space)
+model 100 as hydrology:BaseFlowWaterVolume in mm;
+	
+process BaseFlowWaterVolumeChange    // <1>
+	affects hydrology:BaseFlowWaterVolume;
+
+@time(step = 1.month)
+@intensive(space, time)
+model BaseFlowWaterVolumeChange,   // <2>
+	hydrology:BaseFlowWaterVolume   // <3>
+	set base_flow_water_volume to [base_flow_water_volume * 10.0]
+;
+----
+
+<1> definition of the process and the quality it affects.
+<2> model the process.
+<3> set the output observable of the process.
+
+
+## Adding dependencies
+
+As described in <<BASIC_STRUCTURE, the model structure description>>, the baseflow model has several dependencies. Let' sfind out how to add for example the infiltration volume.
+
+The base kowledge already contains a quality for the infiltrated water volume:
+[source,kim]
+----
+hydrology:InfiltratedWaterVolume
+----
+
+First thing we need to model the quality. Again we use a constant map so start:
+
+[source,kim]
+----
+@intensive(space)
+model 10 as hydrology:InfiltratedWaterVolume in mm;
+----
+
+and add the dependency to the baseflow model. This is done through the _observing_ keyword:
+
+[source,kim]
+----
+@time(step=1.month)
+@intensive(space, time)
+model change in hydrology:BaseFlowWaterVolume
+	observing hydrology:InfiltratedWaterVolume
+	set base_flow_water_volume to [
+		infiltrated_water_volume + base_flow_water_volume * 10.0
+	]
+;
+----
+
+To be able to check the result of the semantics with simple value, we set the baseflow volume to a simple expression that also contains the infiltrated volume, retrived from the resolved observable.
+
+If we run the model now, we are observing the change in the baseflow, with a dependency on a constant infiltration value. This will create a baseflow observation, that will start at 110 and increase * 10 as before, but always adding the 10 contribution of the infiltrated volume.
+
+Since there is  no doubt about the fact that infiltration is also a process, we can model it as such and add a simple function to be able to check the change of the values over time:
+
+[source,kim]
+----
+@intensive(space, time)
+model change in hydrology:InfiltratedWaterVolume
+	set infiltrated_water_volume to [infiltrated_water_volume + 10 ]
+;
+----
+
+If we run the model now, the infiltrated volume will be resolved to 10, but then its change will be tracked by the **change in hydrology:InfiltratedWaterVolume** model, increasing the infiltration test value by 10 at every timestep.

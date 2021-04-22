@@ -85,7 +85,8 @@ public interface IResourceAdapter {
 	 * is supported.
 	 * 
 	 * @return an importer, or null if the resource adapter does not support
-	 *         importing.
+	 *         importing. It should create a new importer at each call, as options
+	 *         may be set into it.
 	 */
 	IResourceImporter getImporter();
 

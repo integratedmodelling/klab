@@ -58,6 +58,7 @@ import org.integratedmodelling.kactors.kactors.Preamble;
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getInlineStyle <em>Inline Style</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getLogo <em>Logo</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getVersion <em>Version</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getLocale <em>Locale</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getCreated <em>Created</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getCreatecomment <em>Createcomment</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.PreambleImpl#getModified <em>Modified</em>}</li>
@@ -517,6 +518,26 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @ordered
    */
   protected String version = VERSION_EDEFAULT;
+
+  /**
+   * The default value of the '{@link #getLocale() <em>Locale</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLocale()
+   * @generated
+   * @ordered
+   */
+  protected static final String LOCALE_EDEFAULT = null;
+
+  /**
+   * The cached value of the '{@link #getLocale() <em>Locale</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getLocale()
+   * @generated
+   * @ordered
+   */
+  protected String locale = LOCALE_EDEFAULT;
 
   /**
    * The cached value of the '{@link #getCreated() <em>Created</em>}' containment reference.
@@ -1285,6 +1306,31 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
    * @generated
    */
   @Override
+  public String getLocale()
+  {
+    return locale;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public void setLocale(String newLocale)
+  {
+    String oldLocale = locale;
+    locale = newLocale;
+    if (eNotificationRequired())
+      eNotify(new ENotificationImpl(this, Notification.SET, KactorsPackage.PREAMBLE__LOCALE, oldLocale, locale));
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public Date getCreated()
   {
     return created;
@@ -1513,6 +1559,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return getLogo();
       case KactorsPackage.PREAMBLE__VERSION:
         return getVersion();
+      case KactorsPackage.PREAMBLE__LOCALE:
+        return getLocale();
       case KactorsPackage.PREAMBLE__CREATED:
         return getCreated();
       case KactorsPackage.PREAMBLE__CREATECOMMENT:
@@ -1612,6 +1660,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return;
       case KactorsPackage.PREAMBLE__VERSION:
         setVersion((String)newValue);
+        return;
+      case KactorsPackage.PREAMBLE__LOCALE:
+        setLocale((String)newValue);
         return;
       case KactorsPackage.PREAMBLE__CREATED:
         setCreated((Date)newValue);
@@ -1714,6 +1765,9 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
       case KactorsPackage.PREAMBLE__VERSION:
         setVersion(VERSION_EDEFAULT);
         return;
+      case KactorsPackage.PREAMBLE__LOCALE:
+        setLocale(LOCALE_EDEFAULT);
+        return;
       case KactorsPackage.PREAMBLE__CREATED:
         setCreated((Date)null);
         return;
@@ -1790,6 +1844,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
         return LOGO_EDEFAULT == null ? logo != null : !LOGO_EDEFAULT.equals(logo);
       case KactorsPackage.PREAMBLE__VERSION:
         return VERSION_EDEFAULT == null ? version != null : !VERSION_EDEFAULT.equals(version);
+      case KactorsPackage.PREAMBLE__LOCALE:
+        return LOCALE_EDEFAULT == null ? locale != null : !LOCALE_EDEFAULT.equals(locale);
       case KactorsPackage.PREAMBLE__CREATED:
         return created != null;
       case KactorsPackage.PREAMBLE__CREATECOMMENT:
@@ -1857,6 +1913,8 @@ public class PreambleImpl extends MinimalEObjectImpl.Container implements Preamb
     result.append(logo);
     result.append(", version: ");
     result.append(version);
+    result.append(", locale: ");
+    result.append(locale);
     result.append(", createcomment: ");
     result.append(createcomment);
     result.append(", modcomment: ");

@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -21,6 +22,7 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Dataflows;
+import org.integratedmodelling.klab.Documentation;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
@@ -35,6 +37,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
+import org.integratedmodelling.klab.api.documentation.IReport.View;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -101,6 +104,7 @@ import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
+import org.integratedmodelling.klab.rest.DocumentationNode;
 import org.integratedmodelling.klab.rest.KnowledgeViewReference;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
@@ -202,8 +206,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable(), true);
         this.dataflow = actuator.getDataflow();
         this.watchedObservations = Collections.synchronizedSet(new HashSet<>());
-        this.views = new HashMap<>();
-        this.viewsByUrn = new HashMap<>();
+        this.views = new LinkedHashMap<>();
+        this.viewsByUrn = new LinkedHashMap<>();
         this.concreteIdentities = new HashMap<>();
 
         // cache for groovy IS operator in this context
@@ -1309,10 +1313,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                     session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
                             IMessage.Type.NewObservation, descriptor));
 
-                    
                     session.getState().notifyObservation(observation);
-                    
-                    
+
                     report.include(descriptor, observation);
 
                     notifiedObservations.add(observation.getId());
@@ -1577,7 +1579,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
     @Override
     public void setModel(Model model) {
         this.model = model;
-        ((Report)report).addModel(model);
+        if (model != null) {
+            ((Report) report).addModel(model);
+        }
     }
 
     @Override
@@ -2018,14 +2022,20 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         this.viewsByUrn.put(view.getUrn(), view);
         this.views.put(view.getId(), view);
 
-        
+        IReport.View type = null;
+        switch(view.getViewClass()) {
+        case "table":
+            type = View.TABLES;
+            break;
+        }
+
         /*
          * send directly to clients. If view can export, keep view and send URL to export service.
          */
         KnowledgeViewReference descriptor = new KnowledgeViewReference();
         descriptor.setContextId(monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
         descriptor.setBody(view.getCompiledView("text/html").getText());
-        descriptor.setViewClass(view.getViewClass());
+        descriptor.setViewClass(type);
         descriptor.setTitle(view.getTitle());
         descriptor.setViewId(view.getId());
         descriptor.getExportFormats().addAll(view.getExportFormats());
@@ -2156,6 +2166,14 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
     public IConcept localizePredicate(IConcept predicate) {
         IConcept ret = resolvedPredicates.get(predicate);
         return ret == null ? predicate : ret;
+    }
+
+    @Override
+    public Collection<IKnowledgeView> getViews() {
+        if (this.views == null) {
+            return new ArrayList<IKnowledgeView>();
+        }
+        return this.views.values();
     }
 
 }

@@ -4,12 +4,10 @@ import java.awt.image.DataBuffer;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.StringWriter;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -31,31 +29,37 @@ import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
-import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.data.adapters.AbstractFilesetImporter;
-import org.integratedmodelling.klab.data.classification.Classification;
 import org.integratedmodelling.klab.ogc.RasterAdapter;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.ZipUtils;
 
+import ch.qos.logback.core.util.FileUtil;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 
 public class RasterImporter extends AbstractFilesetImporter {
 
     RasterValidator validator = new RasterValidator();
+    IParameters<String> options = Parameters.create();
 
     public RasterImporter() {
         super(RasterAdapter.fileExtensions.toArray(new String[RasterAdapter.fileExtensions.size()]));
+    }
+
+    @Override
+    public IResourceImporter withOption(String option, Object value) {
+        return this;
     }
 
     @Override
@@ -81,7 +85,7 @@ public class RasterImporter extends AbstractFilesetImporter {
     }
 
     @Override
-    public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+    public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
         List<Triple<String, String, String>> ret = new ArrayList<>();
 
         if (observation instanceof IState) {
@@ -115,7 +119,7 @@ public class RasterImporter extends AbstractFilesetImporter {
                 if (dataKey != null) {
                     dir = new File(MiscUtilities.changeExtension(file.toString(), "dir"));
                     dir.mkdirs();
-                    out = new File(dir + File.separator + MiscUtilities.getFileName(file));
+                    out = new File(dir + File.separator + MiscUtilities.getFileBaseName(file) + ".tiff");
                     File outAux = new File(MiscUtilities.changeExtension(out.toString(), "tiff.aux.xml"));
                     File outCpg = new File(MiscUtilities.changeExtension(out.toString(), "tiff.vat.cpg"));
                     File outDbf = new File(MiscUtilities.changeExtension(out.toString(), "tiff.vat.dbf"));
@@ -152,10 +156,14 @@ public class RasterImporter extends AbstractFilesetImporter {
                         writer.write(coverage, null);
 
                         if (dir != null) {
-                            File zip = new File(MiscUtilities.changeExtension(file.toString(), "zip"));
-                            ZipUtils.zip(zip, dir, false, false);
-
-                            file = zip;
+                            if (!options.get(OPTION_DO_NOT_ZIP_MULTIPLE_FILES, Boolean.FALSE)) {
+                                File zip = new File(MiscUtilities.changeExtension(file.toString(), "zip"));
+                                ZipUtils.zip(zip, dir, false, false);
+                                file = zip;
+                                org.apache.commons.io.FileUtils.deleteQuietly(dir);
+                            } else {
+                                file = dir;
+                            }
                         }
                         return file;
                     } catch (IOException e) {

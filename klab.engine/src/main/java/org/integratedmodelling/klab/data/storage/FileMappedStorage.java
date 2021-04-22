@@ -6,6 +6,7 @@ import java.io.RandomAccessFile;
 import java.nio.MappedByteBuffer;
 import java.nio.channels.FileChannel;
 
+import org.apache.tomcat.util.http.fileupload.FileUtils;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.DataType;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -133,8 +134,8 @@ public class FileMappedStorage<T> extends AbstractAdaptiveStorage<T> implements 
 			try {
 				this.file = new File(Configuration.INSTANCE.getTemporaryDataDirectory() + File.separator + LocalStorageComponent.FILE_PREFIX
 						+ NameGenerator.shortUUID() + ".dat");
-				this.file.deleteOnExit();
 				this.storage = new RandomAccessFile(this.file, "rw");
+                FileUtils.forceDeleteOnExit(this.file);
 				this.page1 = this.storage.getChannel().map(FileChannel.MapMode.READ_WRITE, 0,
 						getSliceSize() * getDatatype().size);
 				this.pageIndex1 = pageIndex;

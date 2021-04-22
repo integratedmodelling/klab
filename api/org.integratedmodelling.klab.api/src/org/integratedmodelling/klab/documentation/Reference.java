@@ -8,15 +8,14 @@ import java.util.LinkedHashMap;
  * such when importing BibTex, but the IDE and reporting engine only use the
  * field {@link BibTexFields#EXAMPLE_CITATION} to store a fixed citation to use
  * in references.
+ * <p>
+ * If the field 
  * 
  * @author ferdinando.villa
  *
  */
 public class Reference extends LinkedHashMap<String, String> {
 
-	/**
-	 * 
-	 */
 	private static final long serialVersionUID = 4783514922443736809L;
-
+	
 }

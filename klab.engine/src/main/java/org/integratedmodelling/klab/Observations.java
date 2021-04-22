@@ -1,11 +1,12 @@
 package org.integratedmodelling.klab;
 
 import java.io.File;
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,6 +14,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.atteo.evo.inflector.English;
@@ -20,6 +22,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -54,7 +57,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
-import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
+import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
@@ -67,6 +70,7 @@ import org.integratedmodelling.klab.engine.resources.Worldview;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.model.Namespace;
 import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.Concept;
@@ -87,6 +91,7 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
+import org.integratedmodelling.klab.utils.ZipUtils;
 
 public enum Observations implements IObservationService {
 
@@ -731,7 +736,7 @@ public enum Observations implements IObservationService {
 
     @Override
     public File export(IObservation observation, ILocator locator, File file, String outputFormat, @Nullable String adapterId,
-            IMonitor monitor) {
+            IMonitor monitor, Object... options) {
 
         IResourceAdapter adapter = null;
         if (adapterId == null) {
@@ -754,6 +759,14 @@ public enum Observations implements IObservationService {
             adapter = Resources.INSTANCE.getResourceAdapter(adapterId);
             if (adapter == null) {
                 throw new IllegalArgumentException("unknown adapter " + adapterId + " to export output format " + outputFormat);
+            }
+        }
+
+        IResourceImporter importer = adapter.getImporter();
+
+        if (options != null && options.length > 0 && options.length % 2 == 0) {
+            for (int i = 0; i < options.length; i++) {
+                importer = importer.withOption(options[i].toString(), options[++i]);
             }
         }
 
@@ -820,6 +833,86 @@ public enum Observations implements IObservationService {
                         : (value instanceof Boolean
                                 ? ((Boolean) value ? Observations.PRESENT_LABEL : Observations.NOT_PRESENT_LABEL)
                                 : "No data"));
+    }
+
+    public File packObservations(List<Object> args, IMonitor monitor) {
+
+        List<IObservation> artifacts = new ArrayList<>();
+        for (Object arg : args) {
+            addArtifacts(arg, artifacts);
+        }
+
+        File stagingArea = Configuration.INSTANCE.getScratchDataDirectory("download");
+
+        // String is either Just the artifact name or artifact name/time label if multiple
+        // timeslices are available
+        List<File> exports = new ArrayList<>();
+        for (IObservation artifact : artifacts) {
+
+            /*
+             * export [each timeslice] to a file.
+             */
+            List<ExportFormat> formats = getExportFormats(artifact);
+            if (formats.size() > 0) {
+
+                ExportFormat format = formats.get(0);
+                List<ILocator> states = new ArrayList<>();
+                if (artifact instanceof State) {
+                    states.addAll(((State) artifact).getSliceLocators());
+                } else {
+                    states.add(artifact.getScale());
+                }
+
+                for (ILocator locator : states) {
+
+                    String outfile = Concepts.INSTANCE.getCodeName(artifact.getObservable().getType()) + "."
+                            + format.getExtension();
+                    if (locator instanceof TimesliceLocator) {
+                        String timedir = ((TimesliceLocator) locator).getLabel().replaceAll("\\s+", "_").replaceAll(":", "-")
+                                .toLowerCase();
+                        File dir = new File(stagingArea + File.separator + timedir);
+                        dir.mkdir();
+                        outfile = timedir + File.separator + outfile;
+                    }
+                    File output = new File(stagingArea + File.separator + outfile);
+                    output = export(artifact, locator, output, format.getValue(), format.getAdapter(), monitor,
+                            IResourceImporter.OPTION_DO_NOT_ZIP_MULTIPLE_FILES, true);
+                    output.deleteOnExit();
+                    exports.add(output);
+                }
+            }
+        }
+
+        /*
+         * produce the final output. If one non-zip file, we have it; if one zip, we also have it;
+         * if multiple files OR multiple zips, unpack any zips and make a final package.
+         */
+        if (exports.size() == 1) {
+            return exports.get(0);
+        } else if (exports.size() > 1) {
+            try {
+                File zipFile = File.createTempFile("out", ".zip");
+                // must not exist or the zip thing will complain
+                FileUtils.deleteQuietly(zipFile);
+                ZipUtils.zip(zipFile, stagingArea, false, true);
+                return zipFile;
+            } catch (IOException e) {
+                throw new KlabIOException(e);
+            }
+        }
+
+        return null;
+    }
+
+    private void addArtifacts(Object arg, List<IObservation> artifacts) {
+        if (arg instanceof IObservation) {
+            artifacts.add((IObservation) arg);
+        } else if (arg instanceof Collection) {
+            for (Object o : ((Collection<?>) arg)) {
+                addArtifacts(o, artifacts);
+            }
+        }
+
     }
 
 }

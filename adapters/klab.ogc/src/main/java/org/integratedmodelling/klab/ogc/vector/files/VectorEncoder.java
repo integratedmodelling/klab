@@ -292,7 +292,7 @@ public class VectorEncoder implements IResourceEncoder {
 		if (rasterize) {
 			final Builder stateBuilder = builder;
 			rasterizer.finish((b, xy) -> {
-				stateBuilder.add(b, requestScale.at(ISpace.class, xy/* [0], xy[1] */));
+				stateBuilder.add(b, requestScale.at(ISpace.class, xy));
 			});
 			builder = builder.finishState();
 		}

@@ -99,7 +99,7 @@ public enum Actors implements IActorsService {
      * @author Ferd
      */
     public enum PanelLocation {
-        Left, Right, Panel, Header, Footer, Window
+        Left, Right, Panel, Header, Footer, Window, Modal
     }
 
     @Inject
@@ -197,6 +197,7 @@ public enum Actors implements IActorsService {
         layoutMetadata.add("multiple");
         layoutMetadata.add("selected");
         layoutMetadata.add("type");
+        layoutMetadata.add("active");
     }
 
     @Override
@@ -707,6 +708,7 @@ public enum Actors implements IActorsService {
 
         long id;
         Type type;
+        boolean warned;
 
         SemaphoreImpl(Type type, long id) {
             this.type = type;
@@ -725,6 +727,15 @@ public enum Actors implements IActorsService {
         @Override
         public String toString() {
             return type + "-" + id;
+        }
+
+        public void setWarned() {
+            this.warned = true;
+        }
+        
+        @Override
+        public boolean isWarned() {
+            return warned;
         }
 
     }
@@ -1053,4 +1064,5 @@ public enum Actors implements IActorsService {
         }
         return true;
     }
+    
 }

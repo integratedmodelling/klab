@@ -40,6 +40,10 @@ public interface IReport {
         PDF,
         LATEX
     }
+    
+    public enum View {
+        REPORT, FIGURES, TABLES, RESOURCES, MODELS, PROVENANCE, REFERENCES
+    }
 
     /**
      * Roles and titles of main sections, also providing the ordering for the

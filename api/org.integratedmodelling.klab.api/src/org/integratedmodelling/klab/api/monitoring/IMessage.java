@@ -358,7 +358,7 @@ public interface IMessage {
 		/*
 		 * --- View actor messages
 		 */
-		CreateViewComponent, SetupInterface,
+		CreateViewComponent, SetupInterface, CreateWindow, CreateModalWindow,
 
 		/*
 		 * --- Sent F->B when a view action interacts with a component and B->F to send
@@ -369,7 +369,12 @@ public interface IMessage {
 		/*
 		 * Sent B->F when a new view has been generated in a context
 		 */
-		ViewAvailable
+		ViewAvailable, 
+		
+		/*
+		 * Sent B->F when one or more documentation views have incorporated a new element
+		 */
+		DocumentationChanged
 
 	}
 

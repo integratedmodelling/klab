@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.raster.wcs;
 
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.MalformedURLException;
@@ -30,10 +31,12 @@ import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
+import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.exceptions.KlabUnsupportedFeatureException;
 import org.integratedmodelling.klab.rest.EngineEvent;
 import org.integratedmodelling.klab.rest.SpatialExtent;
+import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.NumberUtils;
 import org.integratedmodelling.klab.utils.Range;
@@ -175,6 +178,11 @@ public class WCSService {
         private boolean error = false;
         private int[] gridShape;
         private long timestamp = System.currentTimeMillis();
+        private boolean skipRefresh;
+
+        public WCSLayer(boolean skipRefresh) {
+            this.skipRefresh = skipRefresh;
+        }
 
         public String getName() {
             return name;
@@ -246,7 +254,7 @@ public class WCSService {
                         if (cached != null) {
                             Map<?, ?> map = JsonUtils.parseObject(cached, Map.class);
                             Long ts = (Long) map.get("timestamp");
-                            if ((System.currentTimeMillis() - ts) < cacheExpiration) {
+                            if (this.skipRefresh || (System.currentTimeMillis() - ts) < cacheExpiration) {
                                 coverage = map;
                             }
                         }
@@ -258,6 +266,7 @@ public class WCSService {
                             Map<Object, Object> tocache = new HashMap<>(coverage);
                             tocache.put("timestamp", System.currentTimeMillis());
                             wcsCache.put(url.toString(), JsonUtils.asString(tocache));
+                            db.commit();
                         } catch (IOException e) {
                             error = true;
                         }
@@ -270,7 +279,7 @@ public class WCSService {
                             parseV1(coverage);
                         }
                     }
-                    
+
                 } catch (Throwable t) {
                     this.error = true;
                 }
@@ -448,14 +457,16 @@ public class WCSService {
                 /*
                  * by default cache the individual coverage info for 12h
                  */
-                .parseLong(Configuration.INSTANCE.getProperty("wcs.cache.expiration", "" + (LAYER_INFO_EXPIRATION_MILLISECONDS * 6)));
+                .parseLong(Configuration.INSTANCE.getProperty("wcs.cache.expiration",
+                        "" + (LAYER_INFO_EXPIRATION_MILLISECONDS * 6)));
 
         if (db == null) {
 
             File dpath = Configuration.INSTANCE.getDataPath("wcs");
             dpath.mkdirs();
 
-            db = DBMaker.fileDB(new File(dpath + File.separator + "wcscache.dat")).closeOnJvmShutdown().make();
+            db = DBMaker.fileDB(new File(dpath + File.separator + "wcscache.dat")).closeOnJvmShutdown().transactionEnable()
+                    .make();
             wcsCache = db.treeMap("layers", Serializer.STRING, Serializer.STRING).createOrOpen();
         }
 
@@ -469,7 +480,37 @@ public class WCSService {
             con.setConnectTimeout(CONNECT_TIMEOUT_MS);
             con.setReadTimeout(READ_TIMEOUT_MS);
 
+            /*
+             * save capabilities XML to file
+             */
+            File tempfile = File.createTempFile("wcsc", ".xml");
             try (InputStream input = con.getInputStream()) {
+                FileUtils.copyInputStreamToFile(input, tempfile);
+            } catch (IOException e) {
+                throw new KlabIOException(e);
+            }
+
+            /*
+             * hash the file and if we have a hash and it's the same, no need to call
+             * describeCoverage yet.
+             */
+            String hash = FileUtils.getFileHash(tempfile);
+            String prev = wcsCache.get(url.toString());
+            boolean skipRefresh = (prev != null && hash.equals(prev));
+
+            if (skipRefresh) {
+                Logging.INSTANCE.info("WCS catalog at " + url + " is unchanged since last read: coverage cache is valid");
+            } else {
+                Logging.INSTANCE.info("WCS catalog at " + url + " has changed since last read: coverage cache expires in 12h");
+            }
+
+            wcsCache.put(url.toString(), hash);
+
+            /**
+             * Open the file anyway and build the layers following it, even if we have a cache and
+             * the hash is the same.
+             */
+            try (InputStream input = new FileInputStream(tempfile)) {
 
                 Map<?, ?> capabilitiesType = (Map<?, ?>) parser.parse(input);
 
@@ -490,7 +531,7 @@ public class WCSService {
 
                     if (name instanceof String && bbox instanceof Map) {
 
-                        WCSLayer layer = new WCSLayer();
+                        WCSLayer layer = new WCSLayer(skipRefresh);
 
                         layer.name = name.toString();
                         double[] upperCorner = NumberUtils.doubleArrayFromString(((Map<?, ?>) bbox).get(UPPER_CORNER).toString(),
@@ -512,6 +553,7 @@ public class WCSService {
             errors.add(e);
             Logging.INSTANCE.error(e);
         } finally {
+            db.commit();
             Klab.INSTANCE.notifyEventEnd(event);
         }
     }
