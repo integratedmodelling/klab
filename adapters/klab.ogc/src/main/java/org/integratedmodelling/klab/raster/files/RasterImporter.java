@@ -119,7 +119,7 @@ public class RasterImporter extends AbstractFilesetImporter {
                 if (dataKey != null) {
                     dir = new File(MiscUtilities.changeExtension(file.toString(), "dir"));
                     dir.mkdirs();
-                    out = new File(dir + File.separator + MiscUtilities.getFileName(file));
+                    out = new File(dir + File.separator + MiscUtilities.getFileBaseName(file) + ".tiff");
                     File outAux = new File(MiscUtilities.changeExtension(out.toString(), "tiff.aux.xml"));
                     File outCpg = new File(MiscUtilities.changeExtension(out.toString(), "tiff.vat.cpg"));
                     File outDbf = new File(MiscUtilities.changeExtension(out.toString(), "tiff.vat.dbf"));
