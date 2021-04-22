@@ -25,6 +25,7 @@ import org.geotools.styling.ColorMapEntry;
 import org.geotools.styling.RasterSymbolizer;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -38,6 +39,8 @@ import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.data.adapters.AbstractFilesetImporter;
 import org.integratedmodelling.klab.ogc.RasterAdapter;
+import org.integratedmodelling.klab.rest.Colormap;
+import org.integratedmodelling.klab.rest.StateSummary;
 import org.integratedmodelling.klab.utils.FileUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
@@ -45,7 +48,6 @@ import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.ZipUtils;
 
-import ch.qos.logback.core.util.FileUtil;
 import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
 
 public class RasterImporter extends AbstractFilesetImporter {
@@ -91,13 +93,13 @@ public class RasterImporter extends AbstractFilesetImporter {
         if (observation instanceof IState) {
             if (observation.getScale().getSpace() != null && observation.getScale().getSpace().isRegular()
                     && observation.getScale().isSpatiallyDistributed()) {
-                IState state = (IState) observation;
-                IDataKey dataKey = state.getDataKey();
-                if (dataKey != null) {
+//                IState state = (IState) observation;
+//                IDataKey dataKey = state.getDataKey();
+//                if (dataKey != null) {
                     ret.add(new Triple<>("tiff", "GeoTIFF raster archive", "zip"));
-                } else {
-                    ret.add(new Triple<>("tiff", "GeoTIFF raster", "tiff"));
-                }
+//                } else {
+//                    ret.add(new Triple<>("tiff", "GeoTIFF raster", "tiff"));
+//                }
                 ret.add(new Triple<>("png", "PNG image", "png"));
             }
         }
@@ -111,19 +113,17 @@ public class RasterImporter extends AbstractFilesetImporter {
         if (observation instanceof IState && observation.getGeometry().getDimension(Type.SPACE) != null) {
 
             if (observation.getScale().isSpatiallyDistributed() && observation.getScale().getSpace().isRegular()) {
-                File out = file;
-                File dir = null;
+                File dir = new File(MiscUtilities.changeExtension(file.toString(), "dir"));
+                dir.mkdirs();
+                File out = new File(dir + File.separator + MiscUtilities.getFileName(file));
                 GridCoverage2D coverage;
                 IState state = (IState) observation;
                 IDataKey dataKey = state.getDataKey();
+                File outQml = new File(MiscUtilities.changeExtension(out.toString(), "qml"));
                 if (dataKey != null) {
-                    dir = new File(MiscUtilities.changeExtension(file.toString(), "dir"));
-                    dir.mkdirs();
-                    out = new File(dir + File.separator + MiscUtilities.getFileBaseName(file) + ".tiff");
                     File outAux = new File(MiscUtilities.changeExtension(out.toString(), "tiff.aux.xml"));
                     File outCpg = new File(MiscUtilities.changeExtension(out.toString(), "tiff.vat.cpg"));
                     File outDbf = new File(MiscUtilities.changeExtension(out.toString(), "tiff.vat.dbf"));
-                    File outQml = new File(MiscUtilities.changeExtension(out.toString(), "qml"));
                     try {
                         // write categories aux xml
                         writeAuxXml(outAux, dataKey);
@@ -133,7 +133,7 @@ public class RasterImporter extends AbstractFilesetImporter {
                         FileUtils.writeStringToFile(outCpg, "UTF-8");
 
                         // write QGIS style
-                        writeQgisStyle(outQml, state, locator);
+                        writeQgisStyleCategories(outQml, state, locator);
                     } catch (Exception e1) {
                         // ignore, since the output still will be a valid tiff
                         // THIS SHOULD BE LOGGED THOUGH
@@ -142,6 +142,14 @@ public class RasterImporter extends AbstractFilesetImporter {
                     int noValue = -2147483648;// Integer.MAX_VALUE;
                     coverage = GeotoolsUtils.INSTANCE.stateToIntCoverage((IState) observation, locator, noValue, null);
                 } else {
+                 // write QGIS style
+                    try {
+                        writeQgisStyleContinuous(outQml, state, locator);
+                    } catch (IOException e) {
+                        // ignore, since the output still will be a valid tiff
+                        // THIS SHOULD BE LOGGED THOUGH
+                    }
+                    
                     coverage = GeotoolsUtils.INSTANCE.stateToCoverage((IState) observation, locator, DataBuffer.TYPE_FLOAT,
                             Float.NaN, true, null);
                 }
@@ -224,7 +232,7 @@ public class RasterImporter extends AbstractFilesetImporter {
         // System.out.println(stringWriter.toString());
     }
 
-    private void writeQgisStyle(File qmlFile, IState state, ILocator locator) throws IOException {
+    private void writeQgisStyleCategories(File qmlFile, IState state, ILocator locator) throws IOException {
         IDataKey dataKey = state.getDataKey();
 
         Pair<RasterSymbolizer, String> rasterSymbolizerPair = Renderer.INSTANCE.getRasterSymbolizer(state, locator);
@@ -263,7 +271,58 @@ public class RasterImporter extends AbstractFilesetImporter {
         sb.append("</qgis>\n");
 
         FileUtils.writeStringToFile(qmlFile, sb.toString());
+    }
 
+    private void writeQgisStyleContinuous(File qmlFile, IState state, ILocator locator) throws IOException {
+        StateSummary stateSummary = Observations.INSTANCE.getStateSummary(state, locator);
+        
+        Colormap colorMap = stateSummary.getColormap();
+        
+        List<Double> range = stateSummary.getRange();
+        
+        double min = range.get(0);
+        double max = range.get(1);
+        
+        List<String> labels = colorMap.getLabels();
+        List<String> colors = colorMap.getColors();
+
+        
+        String ind = "\t";
+        StringBuilder sb = new StringBuilder();
+        sb.append("<qgis>\n");
+        sb.append(ind).append("<pipe>\n");
+        sb.append(ind).append(ind)
+        .append("<rasterrenderer band=\"1\" type=\"singlebandpseudocolor\"")
+        .append(" classificationMax=\"").append(max).append("\"")
+        .append(" classificationMin=\"").append(min).append("\"")
+        .append(" alphaBand=\"-1\" opacity=\"1\" nodataColor=\"\">\n");
+        
+        
+        sb.append(ind).append(ind).append(ind).append("<rastershader>\n");
+        sb.append(ind).append(ind).append(ind).append(ind).append("<colorrampshader ")
+            .append(" minimumValue=\"").append(min).append("\"")
+            .append(" maximumValue=\"").append(max).append("\"")
+            .append(" colorRampType=\"INTERPOLATED\"")
+            .append(" classificationMode=\"1\"")
+            .append(" clip=\"0\"")
+            .append(">\n");
+        for(int i = 0; i < labels.size(); i++) {
+            sb.append(ind).append(ind).append(ind).append(ind).append(ind);
+
+            String label = labels.get(i);
+            String color = colors.get(i);
+            
+            // <item color="#d7191c" value="846.487670898438" label="846,4877" alpha="255"/>
+            sb.append("<item color=\"" + color + "\" value=\"" + label + "\" label=\"" + label + "\" alpha=\"255\"/>\n");
+        }
+        sb.append(ind).append(ind).append(ind).append(ind).append("</colorrampshader>\n");
+        sb.append(ind).append(ind).append(ind).append("</rastershader>\n");
+        
+        sb.append(ind).append(ind).append("</rasterrenderer>\n");
+        sb.append(ind).append("</pipe>\n");
+        sb.append("</qgis>\n");
+        
+        FileUtils.writeStringToFile(qmlFile, sb.toString());
     }
 
     private boolean writeAuxDbf(File auxDbfFile, IDataKey dataKey) throws Exception {
