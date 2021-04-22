@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.engine;
 
-import org.integratedmodelling.klab.engine.services.ConsulDnsService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service

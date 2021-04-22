@@ -2,10 +2,10 @@ package org.integratedmodelling.klab.engine.services;
 
 
 import org.integratedmodelling.klab.engine.RemoteEngineService;
+import org.integratedmodelling.klab.engine.events.UserEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.boot.context.event.ApplicationReadyEvent;
-import org.springframework.context.annotation.Profile;
 import org.springframework.context.event.EventListener;
 import org.springframework.stereotype.Service;
 
@@ -23,6 +23,9 @@ public class ConsulEngineReadyService {
 	AgentServiceCheck check;
 	
 	@Autowired
+	UserEventPublisher publisher;
+	
+	@Autowired
 	RemoteEngineService engineService;
 	
     @EventListener(ApplicationReadyEvent.class)
@@ -30,6 +33,7 @@ public class ConsulEngineReadyService {
         engineService.getEngine().setDnsService(dnsService);
         check.start();
         engineService.getEngine().setCheck(check);
+        engineService.getEngine().setPublisher(publisher);
     }
     
 }

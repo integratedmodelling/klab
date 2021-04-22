@@ -8,6 +8,10 @@ spring:
 stats:
   server:
     url: "http://localhost:8080"
+
+engie:
+  agent:
+    port: 8999
     
 server: 
   port: 8283
