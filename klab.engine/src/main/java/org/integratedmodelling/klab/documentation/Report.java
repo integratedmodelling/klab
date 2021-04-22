@@ -35,6 +35,7 @@ import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Extensions;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
@@ -130,7 +131,7 @@ public class Report implements IReport {
     public void addModel(IModel model) {
         docTree.addModel(model);
     }
-    
+
     public IDocumentationProvider.Item getTaggedText(String tag) {
         return this.taggedText.get(tag);
     }
@@ -179,7 +180,7 @@ public class Report implements IReport {
     public void include(IObservationReference output, IObservation observation) {
         observations.put(output.getId(), output);
         docTree.addComputable(output);
-        
+
     }
 
     public void include(ITask<?> task) {
@@ -203,14 +204,18 @@ public class Report implements IReport {
         Reference template = ((Documentation) documentation).getReference(args[0].toString());
         if (template != null) {
             String srole = Path.getFirst(args[1].toString(), "/");
-            SectionRole role = SectionRole.valueOf(srole.toUpperCase());
-            if (role != null) {
-                ReportSection main = getMainSection(role);
-                if (args[1].toString().contains("/")) {
-                    // TODO!
-                    // main = main.getChild(parent, titlePath)
+            try {
+                SectionRole role = SectionRole.valueOf(srole.toUpperCase());
+                if (role != null) {
+                    ReportSection main = getMainSection(role);
+                    if (args[1].toString().contains("/")) {
+                        // TODO!
+                        // main = main.getChild(parent, titlePath)
+                    }
+                    main.body.append("\n\n" + template.get(BibTexFields.EXAMPLE_CITATION) + "\n\n");
                 }
-                main.body.append("\n\n" + template.get(BibTexFields.EXAMPLE_CITATION) + "\n\n");
+            } catch (Throwable merda) {
+                Logging.INSTANCE.error("Someone not very smart touched the docs");
             }
         }
 
@@ -258,11 +263,11 @@ public class Report implements IReport {
     }
 
     public void recordResolutions(IResolutionScope scope) {
-        for (ObservedConcept key : ((ResolutionScope)scope).getResolutions().keySet()) {
-            this.docTree.addResolution(key, ((ResolutionScope)scope).getResolutions().get(key));
+        for (ObservedConcept key : ((ResolutionScope) scope).getResolutions().keySet()) {
+            this.docTree.addResolution(key, ((ResolutionScope) scope).getResolutions().get(key));
         }
     }
-    
+
     public String asHTML(String markdown) {
 
         MutableDataSet options = new MutableDataSet().set(Parser.EXTENSIONS,
