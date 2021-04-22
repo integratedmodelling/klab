@@ -14,6 +14,7 @@ import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.math3.stat.descriptive.SummaryStatistics;
 import org.atteo.evo.inflector.English;
@@ -21,6 +22,7 @@ import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
+import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -734,7 +736,7 @@ public enum Observations implements IObservationService {
 
     @Override
     public File export(IObservation observation, ILocator locator, File file, String outputFormat, @Nullable String adapterId,
-            IMonitor monitor) {
+            IMonitor monitor, Object... options) {
 
         IResourceAdapter adapter = null;
         if (adapterId == null) {
@@ -757,6 +759,14 @@ public enum Observations implements IObservationService {
             adapter = Resources.INSTANCE.getResourceAdapter(adapterId);
             if (adapter == null) {
                 throw new IllegalArgumentException("unknown adapter " + adapterId + " to export output format " + outputFormat);
+            }
+        }
+
+        IResourceImporter importer = adapter.getImporter();
+
+        if (options != null && options.length > 0 && options.length % 2 == 0) {
+            for (int i = 0; i < options.length; i++) {
+                importer = importer.withOption(options[i].toString(), options[++i]);
             }
         }
 
@@ -855,12 +865,18 @@ public enum Observations implements IObservationService {
 
                 for (ILocator locator : states) {
 
-                    String outfile = Concepts.INSTANCE.getCodeName(artifact.getObservable().getType()) + "." + format.getExtension();
+                    String outfile = Concepts.INSTANCE.getCodeName(artifact.getObservable().getType()) + "."
+                            + format.getExtension();
                     if (locator instanceof TimesliceLocator) {
-                        outfile = ((TimesliceLocator) locator).getLabel() + File.separator + outfile;
+                        String timedir = ((TimesliceLocator) locator).getLabel().replaceAll("\\s+", "_").replaceAll(":", "-")
+                                .toLowerCase();
+                        File dir = new File(stagingArea + File.separator + timedir);
+                        dir.mkdir();
+                        outfile = timedir + File.separator + outfile;
                     }
                     File output = new File(stagingArea + File.separator + outfile);
-                    output = export(artifact, locator, output, format.getValue(), format.getAdapter(), monitor);
+                    output = export(artifact, locator, output, format.getValue(), format.getAdapter(), monitor,
+                            IResourceImporter.OPTION_DO_NOT_ZIP_MULTIPLE_FILES, true);
                     output.deleteOnExit();
                     exports.add(output);
                 }
@@ -876,6 +892,8 @@ public enum Observations implements IObservationService {
         } else if (exports.size() > 1) {
             try {
                 File zipFile = File.createTempFile("out", ".zip");
+                // must not exist or the zip thing will complain
+                FileUtils.deleteQuietly(zipFile);
                 ZipUtils.zip(zipFile, stagingArea, false, true);
                 return zipFile;
             } catch (IOException e) {

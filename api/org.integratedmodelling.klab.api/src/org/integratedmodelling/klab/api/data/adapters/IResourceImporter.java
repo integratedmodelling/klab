@@ -20,7 +20,24 @@ import org.integratedmodelling.klab.utils.Triple;
  *
  */
 public interface IResourceImporter {
-
+    
+    /**
+     * Standard options for importers; each individual one can add its own.
+     */
+    public static final String OPTION_REMOVE_FILES_AFTER_ZIPPING = "remove.files.after.zipping"; 
+    public static final String OPTION_DO_NOT_ZIP_MULTIPLE_FILES = "do.not.zip.multiple"; 
+    
+    
+    /**
+     * Set options and return importer with option set.
+     * 
+     * @param option
+     * @param value
+     * @return
+     */
+    public IResourceImporter withOption(String option, Object value);
+    
+    
     /**
      * Return whether multiple resource URLs can be accepted to build a single resource (e.g. to
      * build collections of timeslices). If this returns true, the importer should implement

@@ -537,7 +537,7 @@ public class RuntimeBehavior {
                 Object tab = arguments.get("tables") instanceof KActorsValue
                         ? ((KActorsValue) arguments.get("tables")).evaluate(scope, identity, true)
                         : arguments.get("tables");
-               tables = tab instanceof Boolean && ((Boolean)tab);
+                tables = tab instanceof Boolean && ((Boolean) tab);
             }
             final boolean dtabs = tables;
             if (!tables) {
@@ -550,18 +550,22 @@ public class RuntimeBehavior {
                 @Override
                 public void run() {
 
-                    File file = null;
-                    if (dtabs) {
-                        file = TableArtifact.exportMultiple(identity.getParentIdentity(Session.class).getState().getTables(),
-                                file);
-                    } else {
-                        file = Observations.INSTANCE.packObservations(args, identity.getMonitor());
-                    }
+                    try {
+                        File file = null;
+                        if (dtabs) {
+                            file = TableArtifact.exportMultiple(identity.getParentIdentity(Session.class).getState().getTables(),
+                                    file);
+                        } else {
+                            file = Observations.INSTANCE.packObservations(args, identity.getMonitor());
+                        }
 
-                    if (file != null) {
-                        fire(file, false, scope.semaphore, scope.getSymbols(identity));
-                    } else {
-                        fail();
+                        if (file != null) {
+                            fire(file, false, scope.semaphore, scope.getSymbols(identity));
+                        } else {
+                            fail();
+                        }
+                    } catch (Throwable t) {
+                        fail(t);
                     }
                 }
 

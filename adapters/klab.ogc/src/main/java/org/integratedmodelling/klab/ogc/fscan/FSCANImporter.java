@@ -114,4 +114,9 @@ public class FSCANImporter implements IResourceImporter {
 		return false;
 	}
 
+    @Override
+    public IResourceImporter withOption(String option, Object value) {
+        return this;
+    }
+
 }

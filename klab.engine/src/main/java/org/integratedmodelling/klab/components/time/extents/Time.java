@@ -32,6 +32,7 @@ import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.LogicalConnector;
 import org.integratedmodelling.klab.common.mediation.Quantity;
+import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
 import org.integratedmodelling.klab.components.time.extents.mediators.TimeIdentity;
 import org.integratedmodelling.klab.engine.runtime.code.Expression;
 import org.integratedmodelling.klab.exceptions.KlabException;
@@ -43,7 +44,6 @@ import org.integratedmodelling.klab.utils.Range;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeConstants;
 import org.joda.time.DateTimeZone;
-import org.joda.time.Months;
 import org.joda.time.YearMonth;
 
 public class Time extends Extent implements ITime {
@@ -275,6 +275,10 @@ public class Time extends Extent implements ITime {
     public static Time create(ITime.Type type, Resolution.Type resolutionType, double resolutionMultiplier, ITimeInstant start,
             ITimeInstant end, ITimeDuration period) {
         return create(type, resolutionType, resolutionMultiplier, start, end, period, null, null, null);
+    }
+
+    protected void setTimeType(ITime.Type type) {
+        this.extentType = type;
     }
 
     /**
@@ -1208,6 +1212,11 @@ public class Time extends Extent implements ITime {
                     return new Time((Time) locators[0]).withScaleId(getScaleId()).withLocatedOffset(0);
                 } else if (((Time) locators[0]).__id == this.__id) {
                     return (IExtent) locators[0];
+                } else if (locators[0] instanceof TimesliceLocator) {
+                    return /* this.focus((ITimeInstant) */((TimesliceLocator) locators[0])/*
+                                                                                           * .getStart
+                                                                                           * ())
+                                                                                           */;
                 } else {
                     /*
                      * Mediation situation. Because of the irregular extents, not doing the coverage

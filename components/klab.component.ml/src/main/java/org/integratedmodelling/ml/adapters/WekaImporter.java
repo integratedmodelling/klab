@@ -32,6 +32,11 @@ import weka.classifiers.bayes.BayesNet;
 public class WekaImporter implements IResourceImporter {
 
     @Override
+    public IResourceImporter withOption(String option, Object value) {
+        return this;
+    }
+
+    @Override
     public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
         // TODO Auto-generated method stub
         return null;

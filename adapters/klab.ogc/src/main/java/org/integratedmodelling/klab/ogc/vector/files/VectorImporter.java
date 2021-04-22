@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -55,6 +56,11 @@ public class VectorImporter extends AbstractFilesetImporter {
         super(VectorAdapter.fileExtensions.toArray(new String[VectorAdapter.fileExtensions.size()]));
     }
 
+    @Override
+    public IResourceImporter withOption(String option, Object value) {
+        return this;
+    }
+    
     @Override
     protected Builder importFile(File file, IParameters<String> userData, IMonitor monitor) {
         try {

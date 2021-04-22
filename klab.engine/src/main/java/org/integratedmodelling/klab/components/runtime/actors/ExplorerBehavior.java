@@ -22,6 +22,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.ViewSetting;
 import org.integratedmodelling.klab.rest.ViewSetting.Operation;
 import org.integratedmodelling.klab.rest.ViewSetting.Target;
+import org.integratedmodelling.klab.utils.JsonUtils;
 
 import akka.actor.typed.ActorRef;
 
@@ -104,7 +105,15 @@ public class ExplorerBehavior {
                 if (value != null) {
 
                     String relativeUrl = null;
-
+                    
+                    if (value instanceof String) {
+                        if (((String) value).startsWith("http")) {
+                            relativeUrl = value.toString();
+                        } else {
+                            value = new File(value.toString());
+                        }
+                    }
+                    
                     if (value instanceof File) {
 
                         /*
@@ -123,6 +132,7 @@ public class ExplorerBehavior {
                     if (relativeUrl != null) {
 
                         message.setTargetId(relativeUrl);
+                        System.out.println("SENDING: " + JsonUtils.printAsJson(message));
                         identity.getParentIdentity(ISession.class).getMonitor().send(IMessage.MessageClass.UserInterface,
                                 IMessage.Type.ViewSetting, message);
 

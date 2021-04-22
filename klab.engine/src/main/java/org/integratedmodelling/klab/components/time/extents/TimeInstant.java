@@ -64,5 +64,10 @@ public class TimeInstant implements ITimeInstant {
 		// TODO Auto-generated method stub
 		return "todo";
 	}
+
+    @Override
+    public int getYear() {
+        return this.time.getYear();
+    }
 	
 }
