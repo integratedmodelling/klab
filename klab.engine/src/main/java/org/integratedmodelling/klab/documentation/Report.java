@@ -55,6 +55,7 @@ import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.Documentation.SectionImpl;
 import org.integratedmodelling.klab.documentation.Documentation.TemplateImpl;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabInternalErrorException;
 import org.integratedmodelling.klab.kim.Prototype;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.utils.Path;
@@ -215,7 +216,7 @@ public class Report implements IReport {
                     main.body.append("\n\n" + template.get(BibTexFields.EXAMPLE_CITATION) + "\n\n");
                 }
             } catch (Throwable merda) {
-                Logging.INSTANCE.error("Someone not very smart touched the docs");
+                throw new KlabInternalErrorException("Corrupt documentation file! Found non-existing section role " + srole);
             }
         }
 

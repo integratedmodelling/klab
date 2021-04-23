@@ -33,6 +33,7 @@ import org.integratedmodelling.klab.api.monitoring.IMessageBus;
 import org.integratedmodelling.klab.api.monitoring.MessageHandler;
 import org.integratedmodelling.klab.api.services.IConfigurationService;
 import org.integratedmodelling.klab.engine.rest.messaging.WebsocketsMessageBus.ReceiverDescription.MethodDescriptor;
+import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.utils.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -125,6 +126,9 @@ public class WebsocketsMessageBus implements IMessageBus {
 				}
 
 				try {
+				    if (identity instanceof Session) {
+				        ((Session)identity).touch();
+				    }
 					this.method.invoke(identity, params.toArray());
 				} catch (Throwable e) {
 					if (e instanceof InvocationTargetException) {

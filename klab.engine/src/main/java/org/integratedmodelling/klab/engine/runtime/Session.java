@@ -289,7 +289,7 @@ public class Session extends GroovyObjectSupport
         Authentication.INSTANCE.registerSession(this);
     }
 
-    void touch() {
+    public void touch() {
         this.lastActivity = System.currentTimeMillis();
     }
 

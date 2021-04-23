@@ -206,24 +206,23 @@ public class HubUserService implements RemoteUserService {
 
             @Override
             public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
+                session.touch();
                 publisher.history(profile, session, rootActivity);
-                
             }
 
             @Override
             public void scaleChanged(ScaleReference scale) {
+                session.touch();
             }
 
             @Override
             public void newContext(ISubject context) {
-                // TODO Auto-generated method stub
-                
+                session.touch();
             }
 
             @Override
             public void newObservation(IObservation observation, ISubject context) {
-                // TODO Auto-generated method stub
-                
+                session.touch();
             }
             
         });
