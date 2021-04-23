@@ -1,10 +1,14 @@
 package org.integratedmodelling.klab.engine.rest.controllers.engine;
 
+import java.awt.image.BufferedImage;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 
+import javax.imageio.ImageIO;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -61,7 +65,18 @@ public class EngineResourceController {
             response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
             IOUtils.copy(in, response.getOutputStream());
         }
-
+    }
+    
+    @RequestMapping(value = API.ENGINE.RESOURCE.GET_RESOURCE_SPATIAL_IMAGE, method = RequestMethod.GET)
+    public void getResourceSpatialImage(@PathVariable String urn, HttpServletRequest request, HttpServletResponse response) throws IOException {
+        BufferedImage image = Resources.INSTANCE.getResourceSpatialContextImage(urn);
+        if (image != null) {
+            ByteArrayOutputStream os = new ByteArrayOutputStream();
+            ImageIO.write(image, "png", os);
+            InputStream in = new ByteArrayInputStream(os.toByteArray());
+            response.setContentType(MediaType.IMAGE_PNG_VALUE);
+            IOUtils.copy(in, response.getOutputStream());
+        }
     }
 
 }

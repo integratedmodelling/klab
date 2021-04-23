@@ -12,7 +12,9 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -39,6 +41,7 @@ import org.integratedmodelling.klab.rest.DocumentationNode.Figure;
 import org.integratedmodelling.klab.rest.DocumentationNode.Table;
 import org.integratedmodelling.klab.rest.DocumentationNode.Type;
 import org.integratedmodelling.klab.rest.KnowledgeViewReference;
+import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.StringUtil;
 
@@ -209,10 +212,15 @@ public class DocumentationTree {
         ret.setTitle(resource.getMetadata().containsKey(IMetadata.DC_TITLE)
                 ? resource.getMetadata().get(IMetadata.DC_TITLE).toString()
                 : urn.getResourceId());
+        
         DocumentationNode.Resource res = new DocumentationNode.Resource();
         res.setOriginatorDescription(resource.getMetadata().containsKey(IMetadata.DC_ORIGINATOR)
                 ? resource.getMetadata().get(IMetadata.DC_ORIGINATOR).toString()
                 : "Unknown originator");
+        if (resource.getGeometry().getDimension(Dimension.Type.SPACE) != null) {
+            res.setSpaceDescriptionUrl(API.ENGINE.RESOURCE.GET_RESOURCE_SPATIAL_IMAGE.replace("{urn}", resource.getUrn()));
+        }
+        
         ret.setResource(res);
         return ret;
     }
@@ -238,7 +246,7 @@ public class DocumentationTree {
         if (!this.nodes.containsKey(model.getName()) && model.getStatement() != null) {
             DocumentationNode node = new DocumentationNode();
             node.setId(model.getName());
-            // node.setTitle(view.getTitle());
+            node.setTitle(StringUtil.capitalize(model.getId().replace("_", " ")));
             node.setBodyText(model.getStatement().getSourceCode());
             node.setModel(((Model) model).getBean());
             node.setType(DocumentationNode.Type.Model);
