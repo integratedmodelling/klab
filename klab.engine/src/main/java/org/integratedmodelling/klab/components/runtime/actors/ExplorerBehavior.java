@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.rest.ViewSetting;
 import org.integratedmodelling.klab.rest.ViewSetting.Operation;
 import org.integratedmodelling.klab.rest.ViewSetting.Target;
 import org.integratedmodelling.klab.utils.JsonUtils;
+import org.integratedmodelling.klab.utils.MiscUtilities;
 
 import akka.actor.typed.ActorRef;
 
@@ -92,6 +93,11 @@ public class ExplorerBehavior {
         @Override
         void run(KlabActor.Scope scope) {
 
+            Object suggestedFilename = arguments.get("filename");
+            if (suggestedFilename instanceof KActorsValue) {
+                suggestedFilename = ((KActorsValue) suggestedFilename).evaluate(scope, identity, true);
+            }
+
             if (!arguments.getUnnamedKeys().isEmpty()) {
 
                 ViewSetting message = new ViewSetting();
@@ -105,7 +111,7 @@ public class ExplorerBehavior {
                 if (value != null) {
 
                     String relativeUrl = null;
-                    
+
                     if (value instanceof String) {
                         if (((String) value).startsWith("http")) {
                             relativeUrl = value.toString();
@@ -113,9 +119,12 @@ public class ExplorerBehavior {
                             value = new File(value.toString());
                         }
                     }
-                    
+
+                    String extension = null;
                     if (value instanceof File) {
 
+                        extension = MiscUtilities.getFileExtension((File)value);
+                        
                         /*
                          * Set up a one-time staging area and create the URL with the special
                          * project staging.ID so that the endpoint can find it.
@@ -131,8 +140,18 @@ public class ExplorerBehavior {
 
                     if (relativeUrl != null) {
 
+                        if (suggestedFilename != null) {
+                            /*
+                             * change extension if the incoming file has a different one.
+                             */
+                            String ext = MiscUtilities.getFileExtension(suggestedFilename.toString());
+                            if (ext != null && extension != null && !ext.equals(extension)) {
+                                suggestedFilename = MiscUtilities.getFileBaseName(suggestedFilename.toString()) + "." + extension;
+                            }
+                            message.getParameters().put("filename", suggestedFilename.toString());
+                        }
                         message.setTargetId(relativeUrl);
-                        System.out.println("SENDING: " + JsonUtils.printAsJson(message));
+
                         identity.getParentIdentity(ISession.class).getMonitor().send(IMessage.MessageClass.UserInterface,
                                 IMessage.Type.ViewSetting, message);
 
