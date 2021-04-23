@@ -145,7 +145,7 @@ public class RasterImporter extends AbstractFilesetImporter {
                  // write QGIS style
                     try {
                         writeQgisStyleContinuous(outQml, state, locator);
-                    } catch (IOException e) {
+                    } catch (Exception e) {
                         // ignore, since the output still will be a valid tiff
                         // THIS SHOULD BE LOGGED THOUGH
                     }
@@ -184,7 +184,7 @@ public class RasterImporter extends AbstractFilesetImporter {
         return null;
     }
 
-    private void writeAuxXml(File auxFile, IDataKey dataKey) throws JAXBException {
+    private void writeAuxXml(File auxFile, IDataKey dataKey) throws Exception {
 
         RasterAuxXml rasterAuxXml = new RasterAuxXml();
         rasterAuxXml.rasterBand = new PAMRasterBand();
@@ -232,7 +232,7 @@ public class RasterImporter extends AbstractFilesetImporter {
         // System.out.println(stringWriter.toString());
     }
 
-    private void writeQgisStyleCategories(File qmlFile, IState state, ILocator locator) throws IOException {
+    private void writeQgisStyleCategories(File qmlFile, IState state, ILocator locator) throws Exception {
         IDataKey dataKey = state.getDataKey();
 
         Pair<RasterSymbolizer, String> rasterSymbolizerPair = Renderer.INSTANCE.getRasterSymbolizer(state, locator);
@@ -273,7 +273,7 @@ public class RasterImporter extends AbstractFilesetImporter {
         FileUtils.writeStringToFile(qmlFile, sb.toString());
     }
 
-    private void writeQgisStyleContinuous(File qmlFile, IState state, ILocator locator) throws IOException {
+    private void writeQgisStyleContinuous(File qmlFile, IState state, ILocator locator) throws Exception {
         StateSummary stateSummary = Observations.INSTANCE.getStateSummary(state, locator);
         
         Colormap colorMap = stateSummary.getColormap();
