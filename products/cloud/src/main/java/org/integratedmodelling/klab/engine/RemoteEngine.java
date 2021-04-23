@@ -25,7 +25,7 @@ public class RemoteEngine extends Engine {
 
     private static final long serialVersionUID = -7180871922872370852L;
 
-    private Long sessionDeadBand = 24L;
+    private Long sessionDeadBand = 1L;
     private ConsulDnsService dnsService;
     private UserEventPublisher publisher;
     private AgentServiceCheck check;
@@ -119,5 +119,9 @@ public class RemoteEngine extends Engine {
 
     public void setPublisher(UserEventPublisher publisher) {
         this.publisher = publisher;
+    }
+    
+    public void setSessionDeadBand(Long value) {
+        this.sessionDeadBand = value;
     }
 }

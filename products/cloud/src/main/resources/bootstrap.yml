@@ -12,6 +12,8 @@ stats:
 engie:
   agent:
     port: 8999
+  session:
+    inactive: 60
     
 server: 
   port: 8283
