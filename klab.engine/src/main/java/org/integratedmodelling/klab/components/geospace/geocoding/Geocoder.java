@@ -72,7 +72,7 @@ public enum Geocoder {
 	public String[] OSM_API_URLS = { "https://www.openstreetmap.org/api/0.6" };
 
 	public static final String DEFAULT_GEOCODING_STRATEGY = "Map boundaries";
-	public static final String WATERSHED_GEOCODING_STRATEGY = "Watershed";
+	public static final String WATERSHED_GEOCODING_STRATEGY = "River basin";
 	public static final String ADMIN_GEOCODING_STRATEGY = "Administrative region";
 	public static final String RANDOM_GEOCODING_STRATEGY = "I'm feeling stupid";
 
