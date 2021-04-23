@@ -915,6 +915,9 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
             if (aggregatingDimension == DimensionType.COLUMN) {
                 for (int i = 0; i < columns.size(); i++) {
                     Cell target = cells[i][cell.row.index];
+                    if (target != null && cell.column.index == target.column.index) {
+                        continue;
+                    }
                     if (target != null && (cell.computationType == null || cell.computationType == cell.column.computationType)) {
                         aggregator.add(target.computedValue == null ? 0 : target.computedValue, null);
                     }
@@ -922,6 +925,9 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
             } else {
                 for (int i = 0; i < rows.size(); i++) {
                     Cell target = cells[cell.column.index][i];
+                    if (target != null && cell.row.index == target.row.index) {
+                        continue;
+                    }
                     if (target != null && (cell.computationType == null || cell.computationType == cell.row.computationType)) {
                         aggregator.add(target.computedValue == null ? 0 : target.computedValue, null);
                     }
