@@ -1938,14 +1938,14 @@ public enum Resources implements IResourceService {
             SpatialExtent geometry = ref.getSpatialExtent();
 
             try {
-                BufferedImage image = ImageIO.read(getClass().getResource("icons/worldscaled.png"));
+                BufferedImage image = ImageIO.read(getClass().getResource("/icons/worldscaled.png"));
                 image.getGraphics().setColor(Color.RED);
                 int x = (int) (geometry.getWest() + 180);
                 int y = (int) (geometry.getSouth() + 90);
                 int width = (int) (geometry.getEast() - geometry.getWest());
                 int height = (int) (geometry.getNorth() - geometry.getSouth());
                 if (width < 2 && height < 2) {
-                    image.getGraphics().drawImage(ImageIO.read(getClass().getResource("icons/target_red.png")), x - 8,
+                    image.getGraphics().drawImage(ImageIO.read(getClass().getResource("/icons/target_red.png")), x - 8,
                             180 - y - 8, null);
                 } else {
                     image.getGraphics().drawRect(x, 180 - y - height, width, height);
