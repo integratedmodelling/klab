@@ -193,6 +193,8 @@ class ViewScope {
         ret.layout.setPlatform(this.layout.getPlatform());
         ret.layout.setLogo(annotation.get("logo", (String) null));
         ret.layout.setProjectId(this.layout.getProjectId());
+        ret.layout.setApplicationId(applicationId);
+        ret.layout.setId(actionId);
         ret.layout.setType("modal".equals(annotation.getName())? ViewComponent.Type.ModalWindow : ViewComponent.Type.Window);
         ViewPanel panel = new ViewPanel(annotation.containsKey("id") ? annotation.get("id", String.class) : actionId,
                 annotation.get("style", String.class));
