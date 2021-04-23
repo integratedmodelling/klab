@@ -27,6 +27,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 
 	private String name;
 	private Version version;
+	private String versionString;
 	private Object observable;
 	private Type type = Type.BEHAVIOR;
 	private Platform platform = Platform.ANY;
@@ -77,6 +78,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		this.description = preamble.getDescription();
 		this.logo = preamble.getLogo();
 		this.isPublic = preamble.isPublic();
+		this.versionString = preamble.getVersionString();
 
 		if (preamble.getInlineStyle() != null) {
 			this.styleSpecs = new LinkedHashMap<>();
@@ -221,5 +223,10 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		ret.setPlatform(this.platform);
 		return ret;
 	}
+
+    @Override
+    public String getVersionString() {
+        return this.versionString;
+    }
 
 }

@@ -13,8 +13,8 @@ import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.API;
-import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.documentation.IReport;
@@ -41,7 +41,6 @@ import org.integratedmodelling.klab.rest.DocumentationNode.Figure;
 import org.integratedmodelling.klab.rest.DocumentationNode.Table;
 import org.integratedmodelling.klab.rest.DocumentationNode.Type;
 import org.integratedmodelling.klab.rest.KnowledgeViewReference;
-import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.StringUtil;
 

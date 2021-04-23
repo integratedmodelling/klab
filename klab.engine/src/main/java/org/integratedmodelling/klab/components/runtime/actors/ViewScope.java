@@ -205,6 +205,7 @@ class ViewScope {
     private Layout createLayout(IBehavior behavior) {
 
         Layout ret = new Layout(behavior.getName(), this.applicationId);
+        ret.setVersionString(behavior.getStatement().getVersionString());
         ret.setStyle(behavior.getStatement().getStyle());
         ret.setDestination(behavior.getDestination());
         ret.setLabel(behavior.getStatement().getLabel());

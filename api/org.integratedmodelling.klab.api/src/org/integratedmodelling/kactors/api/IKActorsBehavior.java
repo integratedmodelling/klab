@@ -82,9 +82,9 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
     enum Platform {
         ANY, DESKTOP, WEB, MOBILE
     }
-    
+
     /**
-     * The scope for evaluating k.Actors statements. Not used in the API except for passing to  
+     * The scope for evaluating k.Actors statements. Not used in the API except for passing to
      * 
      * @author Ferd
      *
@@ -98,7 +98,7 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
         boolean isSynchronous();
 
         IIdentity getIdentity();
-        
+
     }
 
     /**
@@ -196,5 +196,12 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
      * @return
      */
     boolean isPublic();
+
+    /**
+     * Any version for display set in the app file.
+     * 
+     * @return
+     */
+    String getVersionString();
 
 }

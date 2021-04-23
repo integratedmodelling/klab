@@ -93,6 +93,7 @@ public class Layout extends ViewComponent {
 	private String label;
 	private String description;
 	private String logo;
+	private String versionString;
 	private String projectId;
 	private String styleSpecs = null;
 	private Workspace workspace = Workspace.Main;
@@ -218,4 +219,12 @@ public class Layout extends ViewComponent {
 	public void setWorkspace(Workspace workspace) {
 		this.workspace = workspace;
 	}
+
+    public String getVersionString() {
+        return versionString;
+    }
+
+    public void setVersionString(String versionString) {
+        this.versionString = versionString;
+    }
 }

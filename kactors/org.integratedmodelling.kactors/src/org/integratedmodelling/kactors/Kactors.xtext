@@ -38,6 +38,7 @@ Preamble: {Preamble}
 		('style' (style=PathName ('with' inlineStyle=Map)? | inlineStyle=Map)?)? &
 		('logo' logo=(Path|(STRING|LOCALIZED_STRING_REFERENCE)))? &
 		('version' version=VersionNumber)? & 
+		('versionstring' versionString=STRING)? & 
 		('locale' locale=LOCALE)? & 
 		('created' created=Date (createcomment=STRING)?)? &
 		('modified' modified=Date (modcomment=STRING)?)? 
