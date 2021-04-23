@@ -210,7 +210,9 @@ public class DocumentationTree {
                 ? resource.getMetadata().get(IMetadata.DC_TITLE).toString()
                 : urn.getResourceId());
         DocumentationNode.Resource res = new DocumentationNode.Resource();
-
+        res.setOriginatorDescription(resource.getMetadata().containsKey(IMetadata.DC_ORIGINATOR)
+                ? resource.getMetadata().get(IMetadata.DC_ORIGINATOR).toString()
+                : "Unknown originator");
         ret.setResource(res);
         return ret;
     }
