@@ -661,7 +661,7 @@ public enum OWL {
 
     public Concept getNothing() {
         if (this.nothing == null) {
-            this.nothing = new Concept(manager.getOWLDataFactory().getOWLNothing(), "owl", emptyType);
+            this.nothing = new Concept(manager.getOWLDataFactory().getOWLNothing(), "owl", EnumSet.of(Type.NOTHING));
         }
         return this.nothing;
     }

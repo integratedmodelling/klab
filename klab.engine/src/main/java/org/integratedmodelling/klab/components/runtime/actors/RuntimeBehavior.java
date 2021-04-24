@@ -124,7 +124,7 @@ public class RuntimeBehavior {
                     try {
                         Future<IArtifact> future = ((Session) identity).getState().submit(((Urn) arg).getUrn());
                         IArtifact result = future.get();
-                        fire(result.isEmpty() ? null : result, true, scope.semaphore, scope.getSymbols(identity));
+                        fire(result, true, scope.semaphore, scope.getSymbols(identity));
                     } catch (Throwable e) {
                         fail(scope.semaphore);
                     }
@@ -183,7 +183,7 @@ public class RuntimeBehavior {
                         try {
                             Future<IArtifact> future = ((Session) identity).getState().submit(observable.getDefinition());
                             IArtifact result = future.get();
-                            fire(result.isEmpty() ? null : result, true, scope.semaphore, scope.getSymbols(identity));
+                            fire(result, true, scope.semaphore, scope.getSymbols(identity));
                         } catch (Throwable e) {
                             fail();
                         }
@@ -233,7 +233,7 @@ public class RuntimeBehavior {
                             } else if (task.getMonitor().isInterrupted()) {
                                 fire(Status.INTERRUPTED, false, scope.semaphore, scope.getSymbols(identity));
                             } else {
-                                fire(observation.isEmpty() ? null : observation, false, scope.semaphore, scope.getSymbols(identity));
+                                fire(observation, false, scope.semaphore, scope.getSymbols(identity));
                             }
                         }, (task, exception) -> {
                             fire(Status.ABORTED, false, scope.semaphore, scope.getSymbols(identity));

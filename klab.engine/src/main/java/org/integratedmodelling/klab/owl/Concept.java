@@ -511,10 +511,11 @@ public class Concept extends Knowledge implements IConcept {
     public IMetadata getMetadata() {
         if (this.metadata == null) {
             Ontology ontology = getOntology();
-            if (ontology == null) {
+            if (ontology == null || ontology.ontology == null) {
                 this.metadata = new org.integratedmodelling.klab.data.Metadata();
+            } else {
+                this.metadata = new OWLMetadata(_owl, ontology.ontology);
             }
-            this.metadata = new OWLMetadata(_owl, ontology.ontology);
             IKimObject object = Resources.INSTANCE.getModelObject(getUrn());
             if (object instanceof IConceptDefinition && ((IConceptDefinition) object).getStatement().getMetadata() != null) {
                 this.metadata.putAll(((IConceptDefinition) object).getStatement().getMetadata());

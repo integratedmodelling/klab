@@ -155,7 +155,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         public void match(Object value, Map<String, Object> scopeVars) {
 
             for (Pair<Match, IKActorsStatement> match : matches) {
+                
                 if (match.getFirst().matches(value, scope)) {
+
+                    if (match.getFirst().getValue().getType() == IKActorsValue.Type.EMPTY) {
+                        System.out.println("COCO");
+                    }
+
+                    
                     Scope s = scope.withMatch(match.getFirst(), value, scopeVars);
                     s.symbolTable.putAll(symbolTable);
                     execute(match.getSecond(), s);
