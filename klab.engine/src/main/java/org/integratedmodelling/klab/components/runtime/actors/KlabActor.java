@@ -28,16 +28,19 @@ import org.integratedmodelling.kactors.model.KActorsActionCall;
 import org.integratedmodelling.kactors.model.KActorsArguments;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimExpression;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.auth.IRuntimeIdentity;
 import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
@@ -1041,6 +1044,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             break;
         case QUANTITY:
             ret = arg.getStatedValue();
+            break;
+        case OBSERVABLE:
+            if (arg.getData() instanceof IObservable) {
+                ret = arg.getData();
+            } else if (arg.getStatedValue() instanceof IKimObservable) {
+                ret = Observables.INSTANCE.declare((IKimObservable)arg.getStatedValue(), identity.getMonitor());
+                arg.setData(ret);
+            }
             break;
         case ERROR:
             throw arg.getStatedValue() instanceof Throwable

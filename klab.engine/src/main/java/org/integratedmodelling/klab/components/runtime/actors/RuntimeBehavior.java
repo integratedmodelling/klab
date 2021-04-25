@@ -15,8 +15,10 @@ import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.Urn;
@@ -43,6 +45,7 @@ import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.SessionState;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
+import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
@@ -155,6 +158,8 @@ public class RuntimeBehavior {
                             } // TODO
                         } else if (o instanceof IObservable) {
                             observable = (IObservable) o;
+                        } else if (o instanceof IKimObservable) {
+                            observable = Observables.INSTANCE.declare((IKimObservable)o, identity.getMonitor());
                         }
 
                         // TODO date, year - these should be keyed values
@@ -185,10 +190,11 @@ public class RuntimeBehavior {
                             IArtifact result = future.get();
                             fire(result, true, scope.semaphore, scope.getSymbols(identity));
                         } catch (Throwable e) {
-                            fail();
+                            fail(scope.semaphore);
                         }
                     } else {
-
+                        fire(new KlabActorException("improper observable passed to context"), true, scope.semaphore,
+                                scope.getSymbols(identity));
                     }
 
                 }
@@ -563,10 +569,10 @@ public class RuntimeBehavior {
                         if (file != null) {
                             fire(file, false, scope.semaphore, scope.getSymbols(identity));
                         } else {
-                            fail();
+                            fail(scope.semaphore);
                         }
                     } catch (Throwable t) {
-                        fail(t);
+                        fail(t, scope.semaphore);
                     }
                 }
 
