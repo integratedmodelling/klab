@@ -6,6 +6,7 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement.ConcurrentGroup;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Actors.PanelLocation;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
@@ -195,7 +196,7 @@ class ViewScope {
         ret.layout.setProjectId(this.layout.getProjectId());
         ret.layout.setApplicationId(applicationId);
         ret.layout.setId(actionId);
-        ret.layout.setType("modal".equals(annotation.getName())? ViewComponent.Type.ModalWindow : ViewComponent.Type.Window);
+        ret.layout.setType("modal".equals(annotation.getName()) ? ViewComponent.Type.ModalWindow : ViewComponent.Type.Window);
         ViewPanel panel = new ViewPanel(annotation.containsKey("id") ? annotation.get("id", String.class) : actionId,
                 annotation.get("style", String.class));
         panel.getAttributes().putAll(ViewBehavior.getMetadata(annotation, null));
@@ -215,6 +216,16 @@ class ViewScope {
         ret.setPlatform(behavior.getPlatform());
         ret.setLogo(behavior.getStatement().getLogo());
         ret.setProjectId(behavior.getProject());
+
+        for (Action action : behavior.getActions()) {
+            IAnnotation menu = Annotations.INSTANCE.getAnnotation(action, "menu");
+            if (menu != null) {
+                Layout.MenuItem menuItem = new Layout.MenuItem();
+                menuItem.setId("menu." + action.getId());
+                menuItem.setText(menu.containsKey("title") ? menu.get("title").toString() : "Unnamed menu");
+                ret.getMenu().add(menuItem);
+            }
+        }
 
         if (behavior.getStatement().getStyleSpecs() != null) {
             ret.setStyleSpecs(JsonUtils.printAsJson(behavior.getStatement().getStyleSpecs()));
