@@ -478,6 +478,27 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             return this.behavior;
         }
 
+        public Scope matchFormalArguments(Call code, Action actionCode) {
+
+            Scope ret = this;
+            
+            if (!actionCode.getFormalArguments().isEmpty()) {
+                ret = new Scope(this);
+                int i = 0;
+                for (String farg : actionCode.getFormalArguments()) {
+                    Object value = null;
+                    if (code.getArguments().getUnnamedArguments().size() > i) {
+                        Object argument = code.getArguments().getUnnamedArguments().get(i);
+                        value = argument instanceof KActorsValue ? ((KActorsValue)argument).evaluate(this, identity, false) : argument;
+                    }
+                    ret.symbolTable.put(farg, value);
+                    i++;
+                }
+            }
+            
+            return ret;
+        }
+
     }
 
     protected IActorIdentity<KlabMessage> getIdentity() {
@@ -1231,7 +1252,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
         Action actionCode = behavior.getAction(messageName);
         if (actionCode != null) {
-            run(actionCode, scope.withNotifyId(notifyId));
+            run(actionCode, scope.matchFormalArguments(code, actionCode).withNotifyId(notifyId));
             return;
         }
 

@@ -24,6 +24,8 @@ public interface IBehavior extends IKimObject {
 		@Override
 		IKActorsAction getStatement();
 
+		List<String> getFormalArguments();
+		
 	}
 
 	@Override

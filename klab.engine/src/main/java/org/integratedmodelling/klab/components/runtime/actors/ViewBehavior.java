@@ -9,7 +9,6 @@ import org.apache.groovy.util.Maps;
 import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.api.IKActorsValue;
-import org.integratedmodelling.kactors.model.KActorsConcurrentGroup;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kactors.model.KActorsValue.Constructor;
 import org.integratedmodelling.kim.api.IParameters;
@@ -480,8 +479,8 @@ public class ViewBehavior {
 
     public static String getStaticPath(String resourceId, Scope scope) {
         String projectId = scope.getBehavior() == null ? null : scope.getBehavior().getProject();
-        return API.ENGINE.RESOURCE.GET_PROJECT_RESOURCE.replace(API.ENGINE.RESOURCE.P_PROJECT, projectId)
-                .replace("**", resourceId);
+        return API.ENGINE.RESOURCE.GET_PROJECT_RESOURCE.replace(API.ENGINE.RESOURCE.P_PROJECT, projectId).replace("**",
+                resourceId);
     }
 
     @Action(id = "html")

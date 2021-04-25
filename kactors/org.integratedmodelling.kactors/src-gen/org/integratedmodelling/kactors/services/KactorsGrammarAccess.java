@@ -2207,8 +2207,15 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final RuleCall cTableLookupTableParserRuleCall_1_8_0 = (RuleCall)cTableAssignment_1_8.eContents().get(0);
 		private final Assignment cQuantityAssignment_1_9 = (Assignment)cAlternatives_1.eContents().get(9);
 		private final RuleCall cQuantityQuantityParserRuleCall_1_9_0 = (RuleCall)cQuantityAssignment_1_9.eContents().get(0);
-		private final Assignment cMetadataAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cMetadataMetadataParserRuleCall_2_0 = (RuleCall)cMetadataAssignment_2.eContents().get(0);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cQuestionMarkKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Assignment cThenAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cThenValueParserRuleCall_2_1_0 = (RuleCall)cThenAssignment_2_1.eContents().get(0);
+		private final Keyword cColonKeyword_2_2 = (Keyword)cGroup_2.eContents().get(2);
+		private final Assignment cElseAssignment_2_3 = (Assignment)cGroup_2.eContents().get(3);
+		private final RuleCall cElseValueParserRuleCall_2_3_0 = (RuleCall)cElseAssignment_2_3.eContents().get(0);
+		private final Assignment cMetadataAssignment_3 = (Assignment)cGroup.eContents().get(3);
+		private final RuleCall cMetadataMetadataParserRuleCall_3_0 = (RuleCall)cMetadataAssignment_3.eContents().get(0);
 		
 		////ValueWithoutTree returns Value:
 		////	argvalue=ARGVALUE |
@@ -2225,11 +2232,13 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		////	
 		//ValueWithMetadataWithoutTree Value:
 		//	deferred?='`'? (argvalue=ARGVALUE | literal=Literal | id=PathName | urn=UrnId | list=List | map=Map |
-		//	observable=Observable | expression=EXPR | table=LookupTable | quantity=Quantity) metadata=Metadata?;
+		//	observable=Observable | expression=EXPR | table=LookupTable | quantity=Quantity) ('?' then=Value ':' else=Value)?
+		//	metadata=Metadata?;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//deferred?='`'? (argvalue=ARGVALUE | literal=Literal | id=PathName | urn=UrnId | list=List | map=Map |
-		//observable=Observable | expression=EXPR | table=LookupTable | quantity=Quantity) metadata=Metadata?
+		//observable=Observable | expression=EXPR | table=LookupTable | quantity=Quantity) ('?' then=Value ':' else=Value)?
+		//metadata=Metadata?
 		public Group getGroup() { return cGroup; }
 		
 		//deferred?='`'?
@@ -2302,11 +2311,32 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		//Quantity
 		public RuleCall getQuantityQuantityParserRuleCall_1_9_0() { return cQuantityQuantityParserRuleCall_1_9_0; }
 		
+		//('?' then=Value ':' else=Value)?
+		public Group getGroup_2() { return cGroup_2; }
+		
+		//'?'
+		public Keyword getQuestionMarkKeyword_2_0() { return cQuestionMarkKeyword_2_0; }
+		
+		//then=Value
+		public Assignment getThenAssignment_2_1() { return cThenAssignment_2_1; }
+		
+		//Value
+		public RuleCall getThenValueParserRuleCall_2_1_0() { return cThenValueParserRuleCall_2_1_0; }
+		
+		//':'
+		public Keyword getColonKeyword_2_2() { return cColonKeyword_2_2; }
+		
+		//else=Value
+		public Assignment getElseAssignment_2_3() { return cElseAssignment_2_3; }
+		
+		//Value
+		public RuleCall getElseValueParserRuleCall_2_3_0() { return cElseValueParserRuleCall_2_3_0; }
+		
 		//metadata=Metadata?
-		public Assignment getMetadataAssignment_2() { return cMetadataAssignment_2; }
+		public Assignment getMetadataAssignment_3() { return cMetadataAssignment_3; }
 		
 		//Metadata
-		public RuleCall getMetadataMetadataParserRuleCall_2_0() { return cMetadataMetadataParserRuleCall_2_0; }
+		public RuleCall getMetadataMetadataParserRuleCall_3_0() { return cMetadataMetadataParserRuleCall_3_0; }
 	}
 	public class MatchElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Match");
@@ -6754,7 +6784,8 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	////	
 	//ValueWithMetadataWithoutTree Value:
 	//	deferred?='`'? (argvalue=ARGVALUE | literal=Literal | id=PathName | urn=UrnId | list=List | map=Map |
-	//	observable=Observable | expression=EXPR | table=LookupTable | quantity=Quantity) metadata=Metadata?;
+	//	observable=Observable | expression=EXPR | table=LookupTable | quantity=Quantity) ('?' then=Value ':' else=Value)?
+	//	metadata=Metadata?;
 	public ValueWithMetadataWithoutTreeElements getValueWithMetadataWithoutTreeAccess() {
 		return pValueWithMetadataWithoutTree;
 	}

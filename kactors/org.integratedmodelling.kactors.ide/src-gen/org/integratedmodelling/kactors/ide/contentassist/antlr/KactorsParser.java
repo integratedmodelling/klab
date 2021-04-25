@@ -179,6 +179,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getConstructorAccess().getGroup_2(), "rule__Constructor__Group_2__0");
 			builder.put(grammarAccess.getValueWithMetadataAccess().getGroup(), "rule__ValueWithMetadata__Group__0");
 			builder.put(grammarAccess.getValueWithMetadataWithoutTreeAccess().getGroup(), "rule__ValueWithMetadataWithoutTree__Group__0");
+			builder.put(grammarAccess.getValueWithMetadataWithoutTreeAccess().getGroup_2(), "rule__ValueWithMetadataWithoutTree__Group_2__0");
 			builder.put(grammarAccess.getMatchAccess().getGroup_0(), "rule__Match__Group_0__0");
 			builder.put(grammarAccess.getMatchAccess().getGroup_1(), "rule__Match__Group_1__0");
 			builder.put(grammarAccess.getMatchAccess().getGroup_2(), "rule__Match__Group_2__0");
@@ -492,7 +493,9 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getValueWithMetadataWithoutTreeAccess().getExpressionAssignment_1_7(), "rule__ValueWithMetadataWithoutTree__ExpressionAssignment_1_7");
 			builder.put(grammarAccess.getValueWithMetadataWithoutTreeAccess().getTableAssignment_1_8(), "rule__ValueWithMetadataWithoutTree__TableAssignment_1_8");
 			builder.put(grammarAccess.getValueWithMetadataWithoutTreeAccess().getQuantityAssignment_1_9(), "rule__ValueWithMetadataWithoutTree__QuantityAssignment_1_9");
-			builder.put(grammarAccess.getValueWithMetadataWithoutTreeAccess().getMetadataAssignment_2(), "rule__ValueWithMetadataWithoutTree__MetadataAssignment_2");
+			builder.put(grammarAccess.getValueWithMetadataWithoutTreeAccess().getThenAssignment_2_1(), "rule__ValueWithMetadataWithoutTree__ThenAssignment_2_1");
+			builder.put(grammarAccess.getValueWithMetadataWithoutTreeAccess().getElseAssignment_2_3(), "rule__ValueWithMetadataWithoutTree__ElseAssignment_2_3");
+			builder.put(grammarAccess.getValueWithMetadataWithoutTreeAccess().getMetadataAssignment_3(), "rule__ValueWithMetadataWithoutTree__MetadataAssignment_3");
 			builder.put(grammarAccess.getMatchAccess().getIdAssignment_0_0(), "rule__Match__IdAssignment_0_0");
 			builder.put(grammarAccess.getMatchAccess().getBodyAssignment_0_2(), "rule__Match__BodyAssignment_0_2");
 			builder.put(grammarAccess.getMatchAccess().getAnnotationAssignment_1_0(), "rule__Match__AnnotationAssignment_1_0");

@@ -4424,11 +4424,59 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 			)
 		)
 		(
+			otherlv_11='?'
+			{
+				newLeafNode(otherlv_11, grammarAccess.getValueWithMetadataWithoutTreeAccess().getQuestionMarkKeyword_2_0());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getThenValueParserRuleCall_2_1_0());
+					}
+					lv_then_12_0=ruleValue
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+						}
+						set(
+							$current,
+							"then",
+							lv_then_12_0,
+							"org.integratedmodelling.kactors.Kactors.Value");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+			otherlv_13=':'
+			{
+				newLeafNode(otherlv_13, grammarAccess.getValueWithMetadataWithoutTreeAccess().getColonKeyword_2_2());
+			}
+			(
+				(
+					{
+						newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getElseValueParserRuleCall_2_3_0());
+					}
+					lv_else_14_0=ruleValue
+					{
+						if ($current==null) {
+							$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
+						}
+						set(
+							$current,
+							"else",
+							lv_else_14_0,
+							"org.integratedmodelling.kactors.Kactors.Value");
+						afterParserOrEnumRuleCall();
+					}
+				)
+			)
+		)?
+		(
 			(
 				{
-					newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getMetadataMetadataParserRuleCall_2_0());
+					newCompositeNode(grammarAccess.getValueWithMetadataWithoutTreeAccess().getMetadataMetadataParserRuleCall_3_0());
 				}
-				lv_metadata_11_0=ruleMetadata
+				lv_metadata_15_0=ruleMetadata
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getValueWithMetadataWithoutTreeRule());
@@ -4436,7 +4484,7 @@ ruleValueWithMetadataWithoutTree returns [EObject current=null]
 					set(
 						$current,
 						"metadata",
-						lv_metadata_11_0,
+						lv_metadata_15_0,
 						"org.integratedmodelling.kactors.Kactors.Metadata");
 					afterParserOrEnumRuleCall();
 				}
