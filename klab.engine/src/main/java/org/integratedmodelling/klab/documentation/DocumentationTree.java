@@ -41,6 +41,7 @@ import org.integratedmodelling.klab.rest.DocumentationNode.Figure;
 import org.integratedmodelling.klab.rest.DocumentationNode.Table;
 import org.integratedmodelling.klab.rest.DocumentationNode.Type;
 import org.integratedmodelling.klab.rest.KnowledgeViewReference;
+import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.StringUtil;
 
@@ -212,12 +213,54 @@ public class DocumentationTree {
                 ? resource.getMetadata().get(IMetadata.DC_TITLE).toString()
                 : urn.getResourceId());
         
+        
         DocumentationNode.Resource res = new DocumentationNode.Resource();
+        
+        if (resource.getMetadata().get(IMetadata.IM_KEYWORDS) != null) {
+            String content = resource.getMetadata().get(IMetadata.IM_KEYWORDS).toString();
+            for (String c : content.split("\\s*(;|,|\\s)\\s*")) {
+                res.getKeywords().add(c);
+            }
+        }
+        if (resource.getMetadata().get(IMetadata.DC_URL) != null) {
+            String content = resource.getMetadata().get(IMetadata.DC_URL).toString();
+            for (String c : content.split("\\s*(;|,|\\s)\\s*")) {
+                res.getUrls().add(c);
+            }
+        }
+        if (resource.getMetadata().get(IMetadata.DC_COMMENT) != null) {
+            String content = resource.getMetadata().get(IMetadata.DC_COMMENT).toString();
+            res.setResourceDescription(MarkdownUtils.INSTANCE.format(content));
+        }
+        if (resource.getMetadata().get(IMetadata.DC_CREATOR) != null) {
+            String content = resource.getMetadata().get(IMetadata.DC_CREATOR).toString();
+        }
+        if (resource.getMetadata().get(IMetadata.IM_THEMATIC_AREA) != null) {
+            String content = resource.getMetadata().get(IMetadata.IM_THEMATIC_AREA).toString();
+        }
+        if (resource.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA) != null) {
+            String content = resource.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA).toString();
+        }
+        if (resource.getMetadata().get(IMetadata.DC_SOURCE) != null) {
+            String content = resource.getMetadata().get(IMetadata.DC_SOURCE).toString();
+        }
+        if (resource.getMetadata().get(IMetadata.IM_NOTES) != null) {
+            String content = resource.getMetadata().get(IMetadata.IM_NOTES).toString();
+            res.setAccessDescription(MarkdownUtils.INSTANCE.format(content));
+        }
+        if (resource.getMetadata().get(IMetadata.DC_ORIGINATOR) != null) {
+            String content = resource.getMetadata().get(IMetadata.DC_ORIGINATOR).toString();
+            res.setOriginatorDescription(content);
+        }
+        
         res.setOriginatorDescription(resource.getMetadata().containsKey(IMetadata.DC_ORIGINATOR)
                 ? resource.getMetadata().get(IMetadata.DC_ORIGINATOR).toString()
                 : "Unknown originator");
+        
         if (resource.getGeometry().getDimension(Dimension.Type.SPACE) != null) {
             res.setSpaceDescriptionUrl(API.ENGINE.RESOURCE.GET_RESOURCE_SPATIAL_IMAGE.replace("{urn}", resource.getUrn()));
+        }
+        if (resource.getGeometry().getDimension(Dimension.Type.TIME) != null) {
         }
         
         ret.setResource(res);

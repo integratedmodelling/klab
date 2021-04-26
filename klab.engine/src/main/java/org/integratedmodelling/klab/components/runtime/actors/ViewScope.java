@@ -190,7 +190,7 @@ class ViewScope {
         ret.layout.setStyle(this.layout.getStyle());
         ret.layout.setDestination(this.layout.getDestination());
         ret.layout.setLabel(annotation.get("title", ""));
-        ret.layout.setDescription(StringUtils.pack(annotation.get("description", "")));
+        ret.layout.setDescription(StringUtils.pack(annotation.get("subtitle", "")));
         ret.layout.setPlatform(this.layout.getPlatform());
         ret.layout.setLogo(annotation.get("logo", (String) null));
         ret.layout.setProjectId(this.layout.getProjectId());

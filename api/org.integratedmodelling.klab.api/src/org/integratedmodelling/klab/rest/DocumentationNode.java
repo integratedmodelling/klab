@@ -181,8 +181,7 @@ public class DocumentationNode {
         private String accessDescription;
         private String timeDescription;
         private String originatorDescription;
-        private String externalLink;
-        private String internalLink;
+        private List<String> urls = new ArrayList<>();
         private List<String> authors = new ArrayList<>();
         private Date releaseDate;
         private Date resourceDate;
@@ -194,6 +193,7 @@ public class DocumentationNode {
         private String adapterVersion;
         private String adapterDescription;
         private String adapterIconUrl;
+        private List<String> keywords = new ArrayList<>();
         private double usageRank;
 
         public String getResourceId() {
@@ -268,18 +268,6 @@ public class DocumentationNode {
         public void setOriginatorDescription(String originatorDescription) {
             this.originatorDescription = originatorDescription;
         }
-        public String getExternalLink() {
-            return externalLink;
-        }
-        public void setExternalLink(String externalLink) {
-            this.externalLink = externalLink;
-        }
-        public String getInternalLink() {
-            return internalLink;
-        }
-        public void setInternalLink(String internalLink) {
-            this.internalLink = internalLink;
-        }
         public List<String> getAuthors() {
             return authors;
         }
@@ -351,6 +339,18 @@ public class DocumentationNode {
         }
         public void setUsageRank(double usageRank) {
             this.usageRank = usageRank;
+        }
+        public List<String> getKeywords() {
+            return keywords;
+        }
+        public void setKeywords(List<String> keywords) {
+            this.keywords = keywords;
+        }
+        public List<String> getUrls() {
+            return urls;
+        }
+        public void setUrls(List<String> urls) {
+            this.urls = urls;
         }
 
     }

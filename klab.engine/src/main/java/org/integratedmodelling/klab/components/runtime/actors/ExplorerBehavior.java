@@ -22,7 +22,6 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.ViewSetting;
 import org.integratedmodelling.klab.rest.ViewSetting.Operation;
 import org.integratedmodelling.klab.rest.ViewSetting.Target;
-import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 
 import akka.actor.typed.ActorRef;
