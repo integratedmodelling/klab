@@ -58,6 +58,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserMenuAction;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
@@ -69,6 +70,7 @@ import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
+import org.integratedmodelling.klab.rest.MenuAction;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
@@ -535,6 +537,18 @@ public class SessionState extends Parameters<String> implements ISessionState {
             receiver.getActor().tell(
                     // TODO consider having a scope in the state
                     new UserAction(action, action.getComponent().getApplicationId(), new SimpleRuntimeScope(this.session)));
+        }
+    }
+    
+    public void register(MenuAction action) {
+
+        @SuppressWarnings("unchecked")
+        IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE.getIdentity(action.getIdentity(),
+                IActorIdentity.class);
+        if (receiver != null) {
+            receiver.getActor().tell(
+                    // TODO consider having a scope in the state
+                    new UserMenuAction(action, action.getApplicationId(), new SimpleRuntimeScope(this.session)));
         }
     }
 
