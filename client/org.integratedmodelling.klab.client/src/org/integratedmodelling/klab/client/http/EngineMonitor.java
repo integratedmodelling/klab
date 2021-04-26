@@ -107,8 +107,8 @@ public class EngineMonitor {
         }
 
         protected IStatus run(IProgressMonitor monitor) {
-
-            try {
+//
+//            try {
                 long delay = recheckSecondsWhenOffline;
                 long up = client.ping();
                 if (uptime < 0 && up > 0) {
@@ -125,8 +125,8 @@ public class EngineMonitor {
                 } else {
                     stop.set(false);
                 }
-            } catch (Throwable t) {
-            }
+//            } catch (Throwable t) {
+//            }
             return Status.OK_STATUS;
         }
 
