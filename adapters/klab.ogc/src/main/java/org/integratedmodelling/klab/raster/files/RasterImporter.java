@@ -156,7 +156,9 @@ public class RasterImporter extends AbstractFilesetImporter {
 
                 if (format.equalsIgnoreCase("tiff")) {
                     try {
-                        GeoTiffWriter writer = new GeoTiffWriter(out);
+                        
+                        File raster = new File(MiscUtilities.changeExtension(out.toString(), "tiff"));
+                        GeoTiffWriter writer = new GeoTiffWriter(raster);
 
                         writer.setMetadataValue(Integer.toString(BaselineTIFFTagSet.TAG_SOFTWARE),
                                 "k.LAB (www.integratedmodelling.org)");

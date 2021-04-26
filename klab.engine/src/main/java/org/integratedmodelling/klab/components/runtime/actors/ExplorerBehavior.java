@@ -148,8 +148,11 @@ public class ExplorerBehavior {
                             if (ext != null && extension != null && !ext.equals(extension)) {
                                 suggestedFilename = MiscUtilities.getFileBaseName(suggestedFilename.toString()) + "." + extension;
                             }
-                            message.getParameters().put("filename", suggestedFilename.toString());
+                        } else {
+                            suggestedFilename = MiscUtilities.getFileName((File)value);
                         }
+
+                        message.getParameters().put("filename", suggestedFilename.toString());
                         message.setTargetId(relativeUrl);
 
                         identity.getParentIdentity(ISession.class).getMonitor().send(IMessage.MessageClass.UserInterface,
