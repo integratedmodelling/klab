@@ -6,13 +6,14 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsStatement.ConcurrentGroup;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.klab.Actors;
-import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.Actors.PanelLocation;
+import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
 import org.integratedmodelling.klab.api.auth.IIdentity;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
+import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.rest.ViewPanel;
@@ -120,10 +121,12 @@ class ViewScope {
      * the current view component for the calls in the action to populate.
      * 
      * @param action
+     * @param identity2 
+     * @param appId 
      * @param parent
      * @return
      */
-    public ViewPanel createPanel(Action action) {
+    public ViewPanel createPanel(Action action, String appId, IActorIdentity<?> identity) {
 
         ViewPanel panel = null;
         boolean hasView = action.getBehavior().getDestination() == Type.COMPONENT && "main".equals(action.getName());
@@ -208,6 +211,7 @@ class ViewScope {
     private Layout createLayout(IBehavior behavior) {
 
         Layout ret = new Layout(behavior.getName(), this.applicationId);
+        ret.setIdentity(this.identityId);
         ret.setVersionString(behavior.getStatement().getVersionString());
         ret.setStyle(behavior.getStatement().getStyle());
         ret.setDestination(behavior.getDestination());
@@ -239,10 +243,11 @@ class ViewScope {
      * @param action
      * @return
      */
-    public ViewScope getChild(Action action) {
+    public ViewScope getChild(Action action, String appId, IActorIdentity<?> identity) {
 
         // this creates the layout if needed.
-        ViewPanel panel = createPanel(action);
+        this.applicationId = appId;
+        ViewPanel panel = createPanel(action, appId, identity);
         if (panel == null) {
             return this;
         }

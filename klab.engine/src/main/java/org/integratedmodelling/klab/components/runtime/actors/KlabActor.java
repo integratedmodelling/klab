@@ -58,6 +58,7 @@ import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Loa
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Spawn;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.Stop;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserMenuAction;
 import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
 import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.GroupHandler;
 import org.integratedmodelling.klab.components.runtime.actors.ViewBehavior.KlabWidgetActionExecutor;
@@ -395,7 +396,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
          */
         public Scope getChild(String appId, Action action) {
             Scope ret = new Scope(this);
-            ret.viewScope = this.viewScope.getChild(action);
+            ret.viewScope = this.viewScope.getChild(action, appId, identity);
             return ret;
         }
 
@@ -524,7 +525,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         return builder.onMessage(Load.class, this::handleLoadBehaviorMessage)
                 .onMessage(Spawn.class, this::handleCreateChildMessage).onMessage(Fire.class, this::handleFireMessage)
                 .onMessage(ComponentFire.class, this::handleComponentFireMessage)
-                .onMessage(UserAction.class, this::handleUserActionMessage).onMessage(AppReset.class, this::handleAppReset)
+                .onMessage(UserAction.class, this::handleUserActionMessage)
+                .onMessage(UserMenuAction.class, this::handleMenuActionMessage)
+                .onMessage(AppReset.class, this::handleAppReset)
                 .onMessage(AddComponentToGroup.class, this::handleAddComponentToGroupMessage)
                 .onMessage(BindUserAction.class, this::handleBindActionMessage)
                 .onMessage(KActorsMessage.class, this::handleCallMessage).onMessage(Stop.class, this::stopChild)
@@ -660,6 +663,53 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         return Behaviors.same();
     }
 
+    protected Behavior<KlabMessage> handleMenuActionMessage(UserMenuAction message) {
+
+        if (message.appId != null) {
+            ActorRef<KlabMessage> receiver = receivers.get(message.appId);
+            if (receiver != null) {
+                receiver.tell(message.direct());
+            }
+        } else {
+//            Long notifyId = this.actionBindings.get(message.action.getComponent().getId());
+//            if (notifyId != null && message.action.getComponent().getActorPath() == null) {
+//                MatchActions actions = listeners.get(notifyId);
+//                if (actions != null) {
+//                    KlabActionExecutor executor = actionCache.get(message.action.getComponent().getId());
+//                    actions.match(
+//                            executor instanceof KlabWidgetActionExecutor
+//                                    ? ((KlabWidgetActionExecutor) executor).getFiredValue(message.action,
+//                                            new Scope(identity, appId, message.scope, this.behavior)
+//                                                    .withGlobalSymbols(this.symbolTable))
+//                                    : getActionValue(message.action),
+//                            message.scope);
+//                }
+//            } else if (message.action.getComponent().getActorPath() != null) {
+//
+//                // dispatch to child actor
+//                String path = message.action.getComponent().getActorPath();
+//                String[] elements = path.split("\\.");
+//                if (elements.length > 0) {
+//
+//                    String actorId = elements[0];
+//                    ActorRef<KlabMessage> receiver = receivers.get(actorId);
+//                    if (receiver != null) {
+//                        if (elements.length == 1) {
+//                            message.action.getComponent().setActorPath(null);
+//                        } else if (elements.length > 1) {
+//                            message.action.getComponent().setActorPath(Path.getRemainder(path, "."));
+//                        }
+//                        receiver.tell(message);
+//                    } else {
+//                        message.scope.getMonitor()
+//                                .error("unreferenced child actor " + actorId + " when handling message from UI");
+//                    }
+//                }
+//            }
+        }
+        return Behaviors.same();
+    }
+    
     protected Behavior<KlabMessage> handleCleanupMessage(Cleanup message) {
 
         /*
