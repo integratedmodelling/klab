@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
 import java.security.Principal;
 
 import javax.imageio.ImageIO;
@@ -87,8 +88,9 @@ public class KlabController {
             throw new IllegalArgumentException("project " + project + " does not exist or resource not found");
         }
 
+        String mimeType = Files.probeContentType(resourceFile.toPath());
         try (InputStream in = new FileInputStream(resourceFile)) {
-            response.setContentType(MediaType.APPLICATION_OCTET_STREAM_VALUE);
+            response.setContentType(mimeType);
             IOUtils.copy(in, response.getOutputStream());
         }
     }
