@@ -185,6 +185,8 @@ public class DocumentationTree {
         } else if (o instanceof ReportSection) {
 
             this.mainSections.add((ReportSection) o);
+            // This only to send a placeholder and say that there is a report
+            notify(getReferencesNode());
 
         } else if (o instanceof IObservationReference) {
 

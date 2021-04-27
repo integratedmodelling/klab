@@ -120,23 +120,29 @@ public abstract class KlabActionExecutor {
     public void fire(Object value, Scope scope) {
         if (scope.listenerId != null) {
             this.sender.tell(new Fire(scope.listenerId, value/* , isFinal */,
+                    /**
+                     * FIXME passing a non-null appId loses messages even if there is one app (shows
+                     * in components created using modal windows). Eventually try to understand all
+                     * this and if appId is necessary at all.
+                     */
                     null /* this.scope.appId */, scope.semaphore, scope.getSymbols(identity)));
         }
     }
 
-//    @SuppressWarnings("unchecked")
+    // @SuppressWarnings("unchecked")
     public void fail(Scope scope, Object... args) {
-//        Semaphore semaphore = null;
-//        if (args != null) {
-//            for (Object arg : args) {
-//                if (arg instanceof Semaphore) {
-//                    semaphore = (Semaphore) arg;
-//                }
-//            }
-//            if (scope != null) {
-//                scope.runtimeScope.getMonitor().error((args == null || args.length == 0) ? "Actor failure" : args);
-//            }
-//        }
+        // Semaphore semaphore = null;
+        // if (args != null) {
+        // for (Object arg : args) {
+        // if (arg instanceof Semaphore) {
+        // semaphore = (Semaphore) arg;
+        // }
+        // }
+        // if (scope != null) {
+        // scope.runtimeScope.getMonitor().error((args == null || args.length == 0) ? "Actor
+        // failure" : args);
+        // }
+        // }
         fire(args != null && args.length > 0 ? args[0] : false, scope);
     }
 
@@ -153,75 +159,77 @@ public abstract class KlabActionExecutor {
         scope.runtimeScope.getMonitor().error(message);
     }
 
-//    protected Object evaluateInContext(KActorsValue arg, Scope scope) {
-//        switch(arg.getType()) {
-//        case ANYTHING:
-//        case ANYVALUE:
-//        case EMPTY:
-//            break;
-//        case OBJECT:
-//            return Actors.INSTANCE.createJavaObject(arg.getConstructor(), scope, identity);
-//        case ANYTRUE:
-//            return true;
-//        case ERROR:
-//            throw arg.getStatedValue() instanceof Throwable
-//                    ? new KlabException((Throwable) arg.getStatedValue())
-//                    : new KlabException(arg.getStatedValue() == null
-//                            ? "Unspecified actor error from error value"
-//                            : arg.getStatedValue().toString());
-//
-//        case NUMBERED_PATTERN:
-//        case IDENTIFIER:
-//            return scope.getValue(arg.getStatedValue().toString());
-//
-//        case EXPRESSION:
-//
-//            if (this.expression == null) {
-//                this.expression = new ObjectExpression((IKimExpression) arg.getStatedValue(), scope.runtimeScope,
-//                        CompilerOption.WrapParameters);
-//            }
-//            return this.expression.eval(scope.runtimeScope, identity, Parameters.create(scope.symbolTable));
-//
-//        case BOOLEAN:
-//        case CLASS:
-//        case DATE:
-//        case NUMBER:
-//        case RANGE:
-//        case STRING:
-//        case OBSERVABLE:
-//        case QUANTITY:
-//            return arg.getStatedValue();
-//        case OBSERVATION:
-//            // TODO
-//            break;
-//        case SET:
-//            // eval all args
-//            break;
-//        case LIST:
-//            // eval all args
-//            break;
-//        case TREE:
-//            // eval all args
-//            break;
-//        case MAP:
-//            break;
-//        case NODATA:
-//            return null;
-//        case REGEXP:
-//            break;
-//        case TABLE:
-//            break;
-//        case TYPE:
-//            break;
-//        case URN:
-//            return new Urn(arg.getStatedValue().toString());
-//        case CONSTANT:
-//            break;
-//        default:
-//            break;
-//        }
-//        return arg.getStatedValue();
-//    }
+    // protected Object evaluateInContext(KActorsValue arg, Scope scope) {
+    // switch(arg.getType()) {
+    // case ANYTHING:
+    // case ANYVALUE:
+    // case EMPTY:
+    // break;
+    // case OBJECT:
+    // return Actors.INSTANCE.createJavaObject(arg.getConstructor(), scope, identity);
+    // case ANYTRUE:
+    // return true;
+    // case ERROR:
+    // throw arg.getStatedValue() instanceof Throwable
+    // ? new KlabException((Throwable) arg.getStatedValue())
+    // : new KlabException(arg.getStatedValue() == null
+    // ? "Unspecified actor error from error value"
+    // : arg.getStatedValue().toString());
+    //
+    // case NUMBERED_PATTERN:
+    // case IDENTIFIER:
+    // return scope.getValue(arg.getStatedValue().toString());
+    //
+    // case EXPRESSION:
+    //
+    // if (this.expression == null) {
+    // this.expression = new ObjectExpression((IKimExpression) arg.getStatedValue(),
+    // scope.runtimeScope,
+    // CompilerOption.WrapParameters);
+    // }
+    // return this.expression.eval(scope.runtimeScope, identity,
+    // Parameters.create(scope.symbolTable));
+    //
+    // case BOOLEAN:
+    // case CLASS:
+    // case DATE:
+    // case NUMBER:
+    // case RANGE:
+    // case STRING:
+    // case OBSERVABLE:
+    // case QUANTITY:
+    // return arg.getStatedValue();
+    // case OBSERVATION:
+    // // TODO
+    // break;
+    // case SET:
+    // // eval all args
+    // break;
+    // case LIST:
+    // // eval all args
+    // break;
+    // case TREE:
+    // // eval all args
+    // break;
+    // case MAP:
+    // break;
+    // case NODATA:
+    // return null;
+    // case REGEXP:
+    // break;
+    // case TABLE:
+    // break;
+    // case TYPE:
+    // break;
+    // case URN:
+    // return new Urn(arg.getStatedValue().toString());
+    // case CONSTANT:
+    // break;
+    // default:
+    // break;
+    // }
+    // return arg.getStatedValue();
+    // }
 
     protected <T> T evaluateArgument(String argument, Scope scope, T defaultValue) {
         Object arg = evaluateArgument(argument, scope);
