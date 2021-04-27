@@ -296,6 +296,34 @@ public class ViewBehavior {
         @Override
         protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
             this.component.getAttributes().putAll(getMetadata(message.arguments, scope));
+            if ("update".equals(message.message)) {
+                this.component.setName(getDefaultAsString(message.arguments, this, scope));
+            } else if ("waiting".equals(message.message)) {
+                this.component.getAttributes().remove("error");
+                this.component.getAttributes().remove("done");
+                this.component.getAttributes().remove("computing");
+                this.component.getAttributes().put("waiting", "true");
+            } else if ("error".equals(message.message)) {
+                this.component.getAttributes().remove("waiting");
+                this.component.getAttributes().remove("done");
+                this.component.getAttributes().remove("computing");
+                this.component.getAttributes().put("error", "true");
+            } else if ("done".equals(message.message)) {
+                this.component.getAttributes().remove("waiting");
+                this.component.getAttributes().remove("error");
+                this.component.getAttributes().remove("computing");
+                this.component.getAttributes().put("done", "true");
+            } else if ("computing".equals(message.message)) {
+                this.component.getAttributes().remove("waiting");
+                this.component.getAttributes().remove("error");
+                this.component.getAttributes().remove("done");
+                this.component.getAttributes().put("computing", "true");
+            } else if ("reset".equals(message.message)) {
+                this.component.getAttributes().remove("waiting");
+                this.component.getAttributes().remove("error");
+                this.component.getAttributes().remove("done");
+                this.component.getAttributes().remove("computing");
+            }
             return this.component;
         }
 
@@ -478,6 +506,9 @@ public class ViewBehavior {
     }
 
     public static String getStaticPath(String resourceId, Scope scope) {
+        if (resourceId.startsWith("http")) {
+            return resourceId;
+        }
         String projectId = scope.getBehavior() == null ? null : scope.getBehavior().getProject();
         return API.ENGINE.RESOURCE.GET_PROJECT_RESOURCE.replace(API.ENGINE.RESOURCE.P_PROJECT, projectId).replace("**",
                 resourceId);

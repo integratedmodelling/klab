@@ -54,7 +54,6 @@ class ViewScope {
             // not an app with a view
             return null;
         }
-
         ViewComponent parent = this.currentComponent;
         ViewComponent ret = new ViewComponent();
         ret.setIdentity(identityId);
@@ -107,6 +106,7 @@ class ViewScope {
     }
 
     public ViewScope(ViewScope scope) {
+
         this.layout = scope.layout;
         this.applicationId = scope.applicationId;
         this.identityId = scope.identityId;
