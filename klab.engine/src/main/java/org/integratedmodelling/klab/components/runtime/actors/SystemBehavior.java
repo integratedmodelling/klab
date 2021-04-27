@@ -293,16 +293,16 @@ public class SystemBehavior {
     public static class Fire extends AbstractKlabMessage {
 
         Object value;
-        boolean finalize;
+//        boolean finalize;
         Long listenerId;
         String appId;
         Semaphore semaphore;
         Map<String, Object> scopeVars;
 
-        public Fire(Long listenerId, Object firedValue, boolean isFinal, String appId, Semaphore semaphore,
+        public Fire(Long listenerId, Object firedValue/* , boolean isFinal */, String appId, Semaphore semaphore,
                 Map<String, Object> scopeVars) {
             this.value = firedValue;
-            this.finalize = isFinal;
+//            this.finalize = isFinal;
             this.listenerId = listenerId;
             this.appId = appId;
             this.semaphore = semaphore;
@@ -316,7 +316,7 @@ public class SystemBehavior {
 
         @Override
         public Fire direct() {
-            return new Fire(listenerId, value, finalize, null, semaphore, scopeVars);
+            return new Fire(listenerId, value/* , finalize */, null, semaphore, scopeVars);
         }
 
     }

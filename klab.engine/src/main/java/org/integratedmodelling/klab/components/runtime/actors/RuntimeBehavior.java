@@ -104,7 +104,7 @@ public class RuntimeBehavior {
                         .addApplicationListener(new ISessionState.Listener(){
                             @Override
                             public void newContext(ISubject observation) {
-                                fire(observation, false, scope.semaphore, scope.getSymbols(identity));
+                                fire(observation, scope );
                             }
 
                             @Override
@@ -127,9 +127,9 @@ public class RuntimeBehavior {
                     try {
                         Future<IArtifact> future = ((Session) identity).getState().submit(((Urn) arg).getUrn());
                         IArtifact result = future.get();
-                        fire(result, true, scope.semaphore, scope.getSymbols(identity));
+                        fire(result, scope);
                     } catch (Throwable e) {
-                        fail(scope.semaphore);
+                        fail(scope);
                     }
                 } else {
 
@@ -188,13 +188,12 @@ public class RuntimeBehavior {
                         try {
                             Future<IArtifact> future = ((Session) identity).getState().submit(observable.getDefinition());
                             IArtifact result = future.get();
-                            fire(result, true, scope.semaphore, scope.getSymbols(identity));
+                            fire(result, scope);
                         } catch (Throwable e) {
-                            fail(scope.semaphore);
+                            fail(scope);
                         }
                     } else {
-                        fire(new KlabActorException("improper observable passed to context"), true, scope.semaphore,
-                                scope.getSymbols(identity));
+                        fire(new KlabActorException("improper observable passed to context"), scope);
                     }
 
                 }
@@ -231,18 +230,18 @@ public class RuntimeBehavior {
         void run(KlabActor.Scope scope) {
 
             if (!arguments.getUnnamedKeys().isEmpty()) {
-                fire(Status.WAITING, false, scope.semaphore, scope.getSymbols(identity));
+                fire(Status.WAITING, scope);
                 identity.getParentIdentity(Session.class).getState()
                         .submit(getUrnValue(arguments.get(arguments.getUnnamedKeys().get(0)), scope), (task, observation) -> {
                             if (observation == null) {
-                                fire(Status.STARTED, false, scope.semaphore, scope.getSymbols(identity));
+                                fire(Status.STARTED, scope);
                             } else if (task.getMonitor().isInterrupted()) {
-                                fire(Status.INTERRUPTED, false, scope.semaphore, scope.getSymbols(identity));
+                                fire(Status.INTERRUPTED, scope);
                             } else {
-                                fire(observation, false, scope.semaphore, scope.getSymbols(identity));
+                                fire(observation, scope);
                             }
                         }, (task, exception) -> {
-                            fire(Status.ABORTED, false, scope.semaphore, scope.getSymbols(identity));
+                            fire(Status.ABORTED, scope);
                         });
             }
         }
@@ -378,7 +377,7 @@ public class RuntimeBehavior {
                                 ret.put("unit", scale.getSpaceUnit());
                                 ret.put("envelope",
                                         new double[]{scale.getWest(), scale.getSouth(), scale.getEast(), scale.getNorth()});
-                                fire(ret, false, scope.semaphore, scope.getSymbols(identity));
+                                fire(ret, scope);
                             }
 
                             @Override
@@ -433,10 +432,10 @@ public class RuntimeBehavior {
         @Override
         void run(KlabActor.Scope scope) {
             if (random.nextDouble() < probability) {
-                fire(fired == null ? DEFAULT_FIRE : fired, true, scope.semaphore, scope.getSymbols(identity));
+                fire(fired == null ? DEFAULT_FIRE : fired, scope);
             } else {
                 // fire anyway so that anything that's waiting can continue
-                fire(false, true, scope.semaphore, scope.getSymbols(identity));
+                fire(false, scope);
             }
         }
     }
@@ -567,12 +566,12 @@ public class RuntimeBehavior {
                         }
 
                         if (file != null) {
-                            fire(file, false, scope.semaphore, scope.getSymbols(identity));
+                            fire(file, scope);
                         } else {
-                            fail(scope.semaphore);
+                            fail(scope);
                         }
                     } catch (Throwable t) {
-                        fail(t, scope.semaphore);
+                        fail(scope, t);
                     }
                 }
 
@@ -607,7 +606,7 @@ public class RuntimeBehavior {
                             /*
                              * Needs to intercept observations in any context. Not sure this works.
                              */
-                            fire(observation, false, scope.semaphore, scope.getSymbols(identity));
+                            fire(observation, scope);
                         }
 
                         @Override

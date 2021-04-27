@@ -117,26 +117,27 @@ public abstract class KlabActionExecutor {
 
     }
 
-    public void fire(Object value, boolean isFinal, Semaphore semaphore, Map<String, Object> scopeVars) {
+    public void fire(Object value, Scope scope) {
         if (scope.listenerId != null) {
-            this.sender.tell(new Fire(scope.listenerId, value, isFinal, scope.appId, semaphore, scopeVars));
+            this.sender.tell(new Fire(scope.listenerId, value/* , isFinal */,
+                    null /* this.scope.appId */, scope.semaphore, scope.getSymbols(identity)));
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public void fail(Object... args) {
-        Semaphore semaphore = null;
-        if (args != null) {
-            for (Object arg : args) {
-                if (arg instanceof Semaphore) {
-                    semaphore = (Semaphore) arg;
-                }
-            }
-            if (scope != null) {
-                scope.runtimeScope.getMonitor().error((args == null || args.length == 0) ? "Actor failure" : args);
-            }
-        }
-        fire(false, true, semaphore, MapUtils.EMPTY_MAP);
+//    @SuppressWarnings("unchecked")
+    public void fail(Scope scope, Object... args) {
+//        Semaphore semaphore = null;
+//        if (args != null) {
+//            for (Object arg : args) {
+//                if (arg instanceof Semaphore) {
+//                    semaphore = (Semaphore) arg;
+//                }
+//            }
+//            if (scope != null) {
+//                scope.runtimeScope.getMonitor().error((args == null || args.length == 0) ? "Actor failure" : args);
+//            }
+//        }
+        fire(args != null && args.length > 0 ? args[0] : false, scope);
     }
 
     protected Object evaluateArgument(String argument, Scope scope) {

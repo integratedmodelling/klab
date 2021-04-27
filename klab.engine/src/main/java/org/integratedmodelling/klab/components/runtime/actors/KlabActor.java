@@ -1042,7 +1042,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
              * this should happen when a non-main action executes the fire. Must be checked first.
              * Fire may happen if the action firing is called again, so don't remove the listener.
              */
-            scope.sender.tell(new Fire(scope.listenerId, code.getValue().evaluate(scope, identity, false), false, scope.appId,
+            scope.sender.tell(new Fire(scope.listenerId, code.getValue().evaluate(scope, identity, false), scope.appId,
                     scope.semaphore, scope.getSymbols(this.identity)));
 
         } else if (parentActor != null) {
