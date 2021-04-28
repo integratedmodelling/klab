@@ -14,6 +14,7 @@ import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
@@ -29,6 +30,8 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
+import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.ReportSection.Element;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
@@ -231,8 +234,8 @@ public class DocumentationTree {
         }
         if (resource.getMetadata().get(IMetadata.DC_CREATOR) != null) {
             String content = resource.getMetadata().get(IMetadata.DC_CREATOR).toString();
-            for (String c : content.split("\\s*(;|,|\\s)\\s*")) {
-                res.getAuthors().add(c);
+            for (String c : content.split(";")) {
+                res.getAuthors().add(c.trim());
             }
         }
         if (resource.getMetadata().get(IMetadata.IM_THEMATIC_AREA) != null) {
@@ -604,13 +607,48 @@ public class DocumentationTree {
         return ret;
     }
 
-    public static Object getTableDescriptor(IStructuredTable<?> table, Object[] args) {
+    public static Table getTableDescriptor(IStructuredTable<?> table, Object[] args) {
         Table ret = new Table();
         return ret;
     }
 
-    public static Object getFigureDescriptor(IArtifact artifact, IObservationReference ref, Object[] args) {
+    public static Figure getFigureDescriptor(IArtifact artifact, IObservationReference ref, Object[] args) {
+        
         Figure ret = new Figure();
+        
+        String id = args.length > 1 ? args[1].toString() : ("fig" + NameGenerator.shortUUID()); 
+        String caption = "";
+        if (args.length > 2) {
+            StringBuffer c = new StringBuffer(512);
+            for (int n = 2; n < args.length; n++) {
+                c.append(n == 2 ? args[n].toString() : (" " + args[n]));
+            }
+            caption = c.toString();
+        }
+        
+        ret.setId(id);
+        ret.setCaption(caption);    
+        ret.setObservationId(ret.getId());
+        ret.setLabel(ref.getLabel());
+        
+        /**
+         * Must add output type, locator and viewport
+         */
+        String baseUrl = API.ENGINE.OBSERVATION.VIEW.GET_DATA_OBSERVATION.replace("{observation}", artifact.getId());
+        ret.setObservationType(ref.getObservationType());
+        ret.getGeometryTypes().addAll(ref.getGeometryTypes());
+        ret.setObservableType(ref.getObservableType());
+        
+        if (artifact instanceof State) {
+            for (ILocator locator : ((State)artifact).getSliceLocators()) {
+                TimesliceLocator sl = (TimesliceLocator)locator;
+                ret.getTimeSlices().add(sl.getLocatorCode() + "," + sl.getLabel());
+            }
+        }
+
+        ret.setDataSummary(ref.getDataSummary());
+        ret.setBaseUrl(baseUrl);
+        
         return ret;
     }
 

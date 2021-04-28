@@ -17,6 +17,7 @@ import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.documentation.Report.RefType;
 import org.integratedmodelling.klab.rest.DocumentationNode;
+import org.integratedmodelling.klab.rest.DocumentationNode.Figure;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.StringUtil;
@@ -341,7 +342,8 @@ public class ReportSection extends Parameters<String> implements Section {
             IObservationReference ref = report.getObservation(((IObservation) artifact).getId());
             if (ref != null) {
 
-                Element element = addElement(DocumentationTree.getFigureDescriptor(artifact, ref, args), DocumentationNode.Type.Figure);
+                Figure figure = DocumentationTree.getFigureDescriptor(artifact, ref, args);
+                Element element = addElement(figure, DocumentationNode.Type.Figure);
 
                 // TODO check if we need an exception
                 if (args.length > 1) {
@@ -354,11 +356,11 @@ public class ReportSection extends Parameters<String> implements Section {
 
                 // this solution work if k.EXPLORER is the hosting one
                 // and doesn't work if it run in 'no engine' URL (as in front end development)
-                body.append("\n\n![" + ref.getLabel() + "](/modeler/engine/session/view/displaydata/" + report.getSessionId()
-                        + "/" + ref.getId() + "?format=RASTER&viewport=800)");
-                body.append("\n[[#" + RefType.FIG.name().toLowerCase() + ":" + args[1] + "] "
-                        + (args.length > 2 ? (" " + args[2].toString()) : "") + "]");
-                body.append("{#" + RefType.FIG.name().toLowerCase() + ":" + args[1] + " text-align: center}\n\n");
+//                body.append("\n\n![" + ref.getLabel() + "](/modeler/engine/session/view/displaydata/" + report.getSessionId()
+//                        + "/" + ref.getId() + "?format=RASTER&viewport=800)");
+//                body.append("\n[[#" + RefType.FIG.name().toLowerCase() + ":" + args[1] + "] "
+//                        + (args.length > 2 ? (" " + args[2].toString()) : "") + "]");
+//                body.append("{#" + RefType.FIG.name().toLowerCase() + ":" + args[1] + " text-align: center}\n\n");
                 
                 element.finalize();
             }

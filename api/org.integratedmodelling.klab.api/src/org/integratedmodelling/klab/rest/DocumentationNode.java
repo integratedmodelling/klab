@@ -3,12 +3,17 @@ package org.integratedmodelling.klab.rest;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
+import org.integratedmodelling.klab.rest.ObservationReference.GeometryType;
+import org.integratedmodelling.klab.rest.ObservationReference.ObservationType;
 
 /**
  * Parent class for a member of the documentation tree. This will substitute the report and the
@@ -492,7 +497,9 @@ public class DocumentationNode {
 
         private String caption;
         private String label;
-
+        private String id;
+        private String observationId;
+        
         /**
          * Either an (absolute or relative) image URL or the URL to fetch the PNG, passing the
          * locator=LOC:<n> with n = index of the desired slice. Internal endpoints differ if the
@@ -507,15 +514,10 @@ public class DocumentationNode {
          */
         private List<String> timeSlices = new ArrayList<>();
 
-        /**
-         * Only non-null if raster map
-         */
-        private Histogram legend;
-
-        /**
-         * Only non-null if raster map
-         */
-        private Colormap colormap;
+        private Set<GeometryType> geometryTypes = new HashSet<>();
+        private ObservationType observationType;
+        private IKimConcept.Type observableType;
+        private DataSummary dataSummary;
 
         public String getCaption() {
             return caption;
@@ -541,19 +543,42 @@ public class DocumentationNode {
         public void setTimeSlices(List<String> timeSlices) {
             this.timeSlices = timeSlices;
         }
-        public Histogram getLegend() {
-            return legend;
+        public String getId() {
+            return id;
         }
-        public void setLegend(Histogram legend) {
-            this.legend = legend;
+        public void setId(String id) {
+            this.id = id;
         }
-        public Colormap getColormap() {
-            return colormap;
+        public Set<GeometryType> getGeometryTypes() {
+            return geometryTypes;
         }
-        public void setColormap(Colormap colormap) {
-            this.colormap = colormap;
+        public void setGeometryTypes(Set<GeometryType> geometryTypes) {
+            this.geometryTypes = geometryTypes;
         }
-
+        public void setObservationType(ObservationType observationType) {
+            this.observationType = observationType;
+        }
+        public ObservationType getObservationType() {
+            return this.observationType;
+        }
+        public IKimConcept.Type getObservableType() {
+            return observableType;
+        }
+        public void setObservableType(IKimConcept.Type observableType) {
+            this.observableType = observableType;
+        }
+        public DataSummary getDataSummary() {
+            return dataSummary;
+        }
+        public void setDataSummary(DataSummary dataSummary) {
+            this.dataSummary = dataSummary;
+        }
+        public String getObservationId() {
+            return observationId;
+        }
+        public void setObservationId(String observationId) {
+            this.observationId = observationId;
+        }
     }
 
     public static class Chart {

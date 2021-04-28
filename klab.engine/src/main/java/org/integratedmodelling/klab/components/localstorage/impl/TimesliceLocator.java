@@ -47,5 +47,9 @@ public class TimesliceLocator extends Time {
     public String getLabel() {
         return label;
     }
+    
+    public String getLocatorCode() {
+        return "tloc:" + sliceIndex;
+    }
 
 }
