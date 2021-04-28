@@ -463,7 +463,6 @@ public enum Observations implements IObservationService {
              * in ObservationChange.
              */
             ret.getExportFormats().addAll(getExportFormats(observation));
-
             ret.getGeometryTypes().add(gtype);
         }
 

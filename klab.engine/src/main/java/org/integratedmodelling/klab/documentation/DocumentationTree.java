@@ -534,7 +534,10 @@ public class DocumentationTree {
         case Chart:
             break;
         case Figure:
+            node.setId(((Figure) element.element).getId());
             node.setFigure((Figure) element.element);
+            nodes.put(node.getId(), node);
+            notify(node);
             break;
         case Model:
             break;
@@ -544,6 +547,8 @@ public class DocumentationTree {
             break;
         case Table:
             node.setTable((Table) element.element);
+            nodes.put(node.getId(), node);
+            notify(node);
             break;
         case View:
             break;
@@ -614,6 +619,10 @@ public class DocumentationTree {
 
     public static Figure getFigureDescriptor(IArtifact artifact, IObservationReference ref, Object[] args) {
         
+        if (ref.isEmpty() || ref.getDataSummary() == null || ref.getLiteralValue() != null) {
+            return null;
+        }
+        
         Figure ret = new Figure();
         
         String id = args.length > 1 ? args[1].toString() : ("fig" + NameGenerator.shortUUID()); 
@@ -648,6 +657,7 @@ public class DocumentationTree {
 
         ret.setDataSummary(ref.getDataSummary());
         ret.setBaseUrl(baseUrl);
+
         
         return ret;
     }
