@@ -198,6 +198,7 @@ public enum Actors implements IActorsService {
         layoutMetadata.add("selected");
         layoutMetadata.add("type");
         layoutMetadata.add("active");
+        layoutMetadata.add("timeout");
     }
 
     @Override

@@ -15,18 +15,20 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsBehavior;
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.Metadata;
-import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.utils.Range;
 
 public class Behavior implements IBehavior {
@@ -55,6 +57,10 @@ public class Behavior implements IBehavior {
             this.value = (KActorsValue) ikActorsValue;
         }
 
+        public IKActorsValue getValue() {
+            return value;
+        }
+        
         private boolean notMatch(Object value) {
             return value == null || value instanceof Throwable || (value instanceof Boolean && !((Boolean) value));
         }
@@ -183,7 +189,10 @@ public class Behavior implements IBehavior {
             case EMPTY:
                 return value == null || (value instanceof Collection && ((Collection<?>) value).isEmpty())
                         || (value instanceof String && ((String) value).isEmpty())
-                        || (value instanceof IArtifact && ((IArtifact) value).isEmpty());
+                        || (value instanceof IConcept && ((IConcept) value).is(IKimConcept.Type.NOTHING))
+                        || (value instanceof IObservable && ((IObservable) value).is(IKimConcept.Type.NOTHING))
+                        || (value instanceof IArtifact && !(value instanceof IObservationGroup) && ((IArtifact) value).isEmpty()) 
+                        || (value instanceof IObservation && ((Observation)value).getObservable().is(IKimConcept.Type.NOTHING));
             case OBJECT:
                 break;
             default:
@@ -307,5 +316,5 @@ public class Behavior implements IBehavior {
     public String getProject() {
         return projectId;
     }
-
+    
 }

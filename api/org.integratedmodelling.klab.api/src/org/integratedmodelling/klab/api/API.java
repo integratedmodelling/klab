@@ -793,6 +793,11 @@ public interface API {
              */
             public static final String GET_PROJECT_RESOURCE = "/engine/project/resource/get/" + P_PROJECT + "/**";
 
+            /**
+             * For visualization, create an image of the spatial coverage of the resource and return it.
+             */
+            public static final String GET_RESOURCE_SPATIAL_IMAGE = "/engine/project/resource/spaceimg/" + P_URN;
+
         }
 
         /**

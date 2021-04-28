@@ -9,7 +9,6 @@ import org.apache.groovy.util.Maps;
 import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.api.IKActorsValue;
-import org.integratedmodelling.kactors.model.KActorsConcurrentGroup;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kactors.model.KActorsValue.Constructor;
 import org.integratedmodelling.kim.api.IParameters;
@@ -272,7 +271,7 @@ public class ViewBehavior {
             message.setContent(this.evaluateArgument(0, scope, "Confirm"));
             message.getAttributes().putAll(getMetadata(arguments, scope));
             session.getMonitor().post((msg) -> {
-                fire(msg.getPayload(ViewAction.class).isBooleanValue(), true, scope.semaphore, scope.getSymbols(identity));
+                fire(msg.getPayload(ViewAction.class).isBooleanValue(), scope);
             }, IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, message);
         }
     }
@@ -297,6 +296,34 @@ public class ViewBehavior {
         @Override
         protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
             this.component.getAttributes().putAll(getMetadata(message.arguments, scope));
+            if ("update".equals(message.message)) {
+                this.component.setName(getDefaultAsString(message.arguments, this, scope));
+            } else if ("waiting".equals(message.message)) {
+                this.component.getAttributes().remove("error");
+                this.component.getAttributes().remove("done");
+                this.component.getAttributes().remove("computing");
+                this.component.getAttributes().put("waiting", "true");
+            } else if ("error".equals(message.message)) {
+                this.component.getAttributes().remove("waiting");
+                this.component.getAttributes().remove("done");
+                this.component.getAttributes().remove("computing");
+                this.component.getAttributes().put("error", "true");
+            } else if ("done".equals(message.message)) {
+                this.component.getAttributes().remove("waiting");
+                this.component.getAttributes().remove("error");
+                this.component.getAttributes().remove("computing");
+                this.component.getAttributes().put("done", "true");
+            } else if ("computing".equals(message.message)) {
+                this.component.getAttributes().remove("waiting");
+                this.component.getAttributes().remove("error");
+                this.component.getAttributes().remove("done");
+                this.component.getAttributes().put("computing", "true");
+            } else if ("reset".equals(message.message)) {
+                this.component.getAttributes().remove("waiting");
+                this.component.getAttributes().remove("error");
+                this.component.getAttributes().remove("done");
+                this.component.getAttributes().remove("computing");
+            }
             return this.component;
         }
 
@@ -479,9 +506,12 @@ public class ViewBehavior {
     }
 
     public static String getStaticPath(String resourceId, Scope scope) {
+        if (resourceId.startsWith("http")) {
+            return resourceId;
+        }
         String projectId = scope.getBehavior() == null ? null : scope.getBehavior().getProject();
-        return API.ENGINE.RESOURCE.GET_PROJECT_RESOURCE.replace(API.ENGINE.RESOURCE.P_PROJECT, projectId)
-                .replace("**", resourceId);
+        return API.ENGINE.RESOURCE.GET_PROJECT_RESOURCE.replace(API.ENGINE.RESOURCE.P_PROJECT, projectId).replace("**",
+                resourceId);
     }
 
     @Action(id = "html")

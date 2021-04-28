@@ -37,6 +37,7 @@ import org.codehaus.groovy.antlr.parser.GroovyLexer;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -298,7 +299,6 @@ public class GroovyExpressionPreprocessor {
 
 		// substitute all #(...) declarations with ___DECL_n
 		code = preprocessDeclarations(code);
-
 		code = preprocessContextualizations(code);
 
 		List<List<Token>> groups = new ArrayList<>();
@@ -307,6 +307,7 @@ public class GroovyExpressionPreprocessor {
 		// String ret = "";
 		// String remainder = "";
 
+		
 		try {
 			lexer.consume();
 			List<Token> acc = new ArrayList<>();
@@ -319,8 +320,16 @@ public class GroovyExpressionPreprocessor {
 						&& (token.getType() == GroovyLexer.IDENT || delimiters.contains(token.getText()));
 				boolean isEof = token == null || token.getType() == Token.EOF_TYPE;
 				if (!acc.isEmpty() && (!isSpecial || isEof || (isSpecial && !wasSpecial) || isRecognized(acc))) {
-					groups.add(acc);
-					acc = new ArrayList<>();
+				    /*
+				     * if last parsed token is a namespace and this is a colon, keep the same group
+				     * TODO all this must be brought back to some level of sanity with a true state processor.
+				     */
+				    Token last = acc.get(acc.size() - 1);
+				    boolean conceptPrefix = ":".equals(token.getText()) && Namespaces.INSTANCE.getNamespace(last.getText()) != null;
+				    if (!conceptPrefix) {
+				        groups.add(acc);
+				        acc = new ArrayList<>();
+				    }
 				}
 				if (isEof) {
 					break;
@@ -371,7 +380,7 @@ public class GroovyExpressionPreprocessor {
 					}
 				}
 			}
-
+			
 			tokens.add(cls);
 		}
 		analyze();

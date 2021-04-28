@@ -1705,6 +1705,7 @@ public class Model extends KimObject implements IModel {
 
     public org.integratedmodelling.klab.rest.DocumentationNode.Model getBean() {
         org.integratedmodelling.klab.rest.DocumentationNode.Model ret = new org.integratedmodelling.klab.rest.DocumentationNode.Model();
+        // TODO
         return ret;
     }
 

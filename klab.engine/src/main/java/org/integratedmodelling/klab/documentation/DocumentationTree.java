@@ -12,6 +12,9 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Urn;
+import org.integratedmodelling.klab.api.API;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
@@ -27,6 +30,8 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
+import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
+import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
 import org.integratedmodelling.klab.documentation.ReportSection.Element;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
@@ -39,6 +44,7 @@ import org.integratedmodelling.klab.rest.DocumentationNode.Figure;
 import org.integratedmodelling.klab.rest.DocumentationNode.Table;
 import org.integratedmodelling.klab.rest.DocumentationNode.Type;
 import org.integratedmodelling.klab.rest.KnowledgeViewReference;
+import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.StringUtil;
 
@@ -182,6 +188,8 @@ public class DocumentationTree {
         } else if (o instanceof ReportSection) {
 
             this.mainSections.add((ReportSection) o);
+            // This only to send a placeholder and say that there is a report
+            notify(getReferencesNode());
 
         } else if (o instanceof IObservationReference) {
 
@@ -209,10 +217,67 @@ public class DocumentationTree {
         ret.setTitle(resource.getMetadata().containsKey(IMetadata.DC_TITLE)
                 ? resource.getMetadata().get(IMetadata.DC_TITLE).toString()
                 : urn.getResourceId());
+        
+        
         DocumentationNode.Resource res = new DocumentationNode.Resource();
+        
+
+        if (resource.getMetadata().get(IMetadata.DC_URL) != null) {
+            String content = resource.getMetadata().get(IMetadata.DC_URL).toString();
+            for (String c : content.split("\\s*(;|,|\\s)\\s*")) {
+                res.getUrls().add(c);
+            }
+        }
+        if (resource.getMetadata().get(IMetadata.DC_COMMENT) != null) {
+            String content = resource.getMetadata().get(IMetadata.DC_COMMENT).toString();
+            res.setResourceDescription(MarkdownUtils.INSTANCE.format(content));
+        }
+        if (resource.getMetadata().get(IMetadata.DC_CREATOR) != null) {
+            String content = resource.getMetadata().get(IMetadata.DC_CREATOR).toString();
+            if (!"".equals(content.trim())) {
+                for (String c : content.split("\\n")) {
+                    res.getAuthors().add(c.trim());
+                }
+            }
+        }
+        if (resource.getMetadata().get(IMetadata.IM_THEMATIC_AREA) != null) {
+            String content = resource.getMetadata().get(IMetadata.IM_THEMATIC_AREA).toString();
+            res.getKeywords().add(content);
+        }
+        if (resource.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA) != null) {
+            String content = resource.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA).toString();
+            res.getKeywords().add(content);
+        }
+        if (resource.getMetadata().get(IMetadata.DC_SOURCE) != null) {
+            String content = resource.getMetadata().get(IMetadata.DC_SOURCE).toString();
+            res.setBibliographicReference(content);
+        }
+        if (resource.getMetadata().get(IMetadata.IM_NOTES) != null) {
+            String content = resource.getMetadata().get(IMetadata.IM_NOTES).toString();
+            res.setAccessDescription(MarkdownUtils.INSTANCE.format(content));
+        }
+        if (resource.getMetadata().get(IMetadata.DC_ORIGINATOR) != null) {
+            String content = resource.getMetadata().get(IMetadata.DC_ORIGINATOR).toString();
+            res.setOriginatorDescription(content);
+        }
+        if (resource.getMetadata().get(IMetadata.IM_KEYWORDS) != null) {
+            String content = resource.getMetadata().get(IMetadata.IM_KEYWORDS).toString();
+            if (!"".equals(content.trim())) {
+                for (String c : content.trim().split("(;|,)")) {
+                    res.getKeywords().add(c.trim());
+                }
+            }
+        }
         res.setOriginatorDescription(resource.getMetadata().containsKey(IMetadata.DC_ORIGINATOR)
                 ? resource.getMetadata().get(IMetadata.DC_ORIGINATOR).toString()
                 : "Unknown originator");
+        
+        if (resource.getGeometry().getDimension(Dimension.Type.SPACE) != null) {
+            res.setSpaceDescriptionUrl(API.ENGINE.RESOURCE.GET_RESOURCE_SPATIAL_IMAGE.replace("{urn}", resource.getUrn()));
+        }
+        if (resource.getGeometry().getDimension(Dimension.Type.TIME) != null) {
+        }
+        
         ret.setResource(res);
         return ret;
     }
@@ -238,7 +303,7 @@ public class DocumentationTree {
         if (!this.nodes.containsKey(model.getName()) && model.getStatement() != null) {
             DocumentationNode node = new DocumentationNode();
             node.setId(model.getName());
-            // node.setTitle(view.getTitle());
+            node.setTitle(StringUtil.capitalize(model.getId().replace("_", " ")));
             node.setBodyText(model.getStatement().getSourceCode());
             node.setModel(((Model) model).getBean());
             node.setType(DocumentationNode.Type.Model);
@@ -473,7 +538,10 @@ public class DocumentationTree {
         case Chart:
             break;
         case Figure:
+            node.setId(((Figure) element.element).getId());
             node.setFigure((Figure) element.element);
+            nodes.put(node.getId(), node);
+            notify(node);
             break;
         case Model:
             break;
@@ -483,6 +551,8 @@ public class DocumentationTree {
             break;
         case Table:
             node.setTable((Table) element.element);
+            nodes.put(node.getId(), node);
+            notify(node);
             break;
         case View:
             break;
@@ -546,13 +616,53 @@ public class DocumentationTree {
         return ret;
     }
 
-    public static Object getTableDescriptor(IStructuredTable<?> table, Object[] args) {
+    public static Table getTableDescriptor(IStructuredTable<?> table, Object[] args) {
         Table ret = new Table();
         return ret;
     }
 
-    public static Object getFigureDescriptor(IArtifact artifact, IObservationReference ref, Object[] args) {
+    public static Figure getFigureDescriptor(IArtifact artifact, IObservationReference ref, Object[] args) {
+        
+        if (ref.isEmpty() || ref.getDataSummary() == null || ref.getLiteralValue() != null) {
+            return null;
+        }
+        
         Figure ret = new Figure();
+        
+        String id = args.length > 1 ? args[1].toString() : ("fig" + NameGenerator.shortUUID()); 
+        String caption = "";
+        if (args.length > 2) {
+            StringBuffer c = new StringBuffer(512);
+            for (int n = 2; n < args.length; n++) {
+                c.append(n == 2 ? args[n].toString() : (" " + args[n]));
+            }
+            caption = c.toString();
+        }
+        
+        ret.setId(id);
+        ret.setCaption(caption);    
+        ret.setObservationId(artifact.getId());
+        ret.setLabel(ref.getLabel());
+        
+        /**
+         * Must add output type, locator and viewport
+         */
+        String baseUrl = API.ENGINE.OBSERVATION.VIEW.GET_DATA_OBSERVATION.replace("{observation}", artifact.getId());
+        ret.setObservationType(ref.getObservationType());
+        ret.getGeometryTypes().addAll(ref.getGeometryTypes());
+        ret.setObservableType(ref.getObservableType());
+        
+        if (artifact instanceof State) {
+            for (ILocator locator : ((State)artifact).getSliceLocators()) {
+                TimesliceLocator sl = (TimesliceLocator)locator;
+                ret.getTimeSlices().add(sl.getTimestamp() + "," + sl.getLabel());
+            }
+        }
+
+        ret.setDataSummary(ref.getDataSummary());
+        ret.setBaseUrl(baseUrl);
+
+        
         return ret;
     }
 

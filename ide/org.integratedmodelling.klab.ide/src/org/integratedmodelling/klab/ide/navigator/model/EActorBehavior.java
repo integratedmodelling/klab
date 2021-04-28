@@ -138,4 +138,9 @@ public class EActorBehavior extends EKimObject implements IKActorsBehavior {
 		return behavior.isPublic();
 	}
 
+    @Override
+    public String getVersionString() {
+        return behavior.getVersionString();
+    }
+
 }

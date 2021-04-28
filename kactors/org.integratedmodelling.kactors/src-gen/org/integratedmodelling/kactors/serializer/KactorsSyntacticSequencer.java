@@ -351,6 +351,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     (rule start) (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     (rule start) (ambiguity) 'permissions' permissions=STRING
 	 *     (rule start) (ambiguity) 'version' version=VersionNumber
+	 *     (rule start) (ambiguity) 'versionstring' versionString=STRING
 	 *     (rule start) (ambiguity) 'worldview' worldview=PathName
 	 *     (rule start) (ambiguity) (rule start)
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -369,6 +370,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
+	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'versionstring' versionString=STRING
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) 'worldview' worldview=PathName
 	 *     authors+=LOCALIZED_STRING_REFERENCE (ambiguity) (rule end)
 	 *     authors+=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -387,6 +389,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     authors+=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     authors+=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     authors+=STRING (ambiguity) 'version' version=VersionNumber
+	 *     authors+=STRING (ambiguity) 'versionstring' versionString=STRING
 	 *     authors+=STRING (ambiguity) 'worldview' worldview=PathName
 	 *     authors+=STRING (ambiguity) (rule end)
 	 *     createcomment=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -405,6 +408,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     createcomment=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     createcomment=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     createcomment=STRING (ambiguity) 'version' version=VersionNumber
+	 *     createcomment=STRING (ambiguity) 'versionstring' versionString=STRING
 	 *     createcomment=STRING (ambiguity) 'worldview' worldview=PathName
 	 *     createcomment=STRING (ambiguity) (rule end)
 	 *     created=Date (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -423,6 +427,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     created=Date (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     created=Date (ambiguity) 'permissions' permissions=STRING
 	 *     created=Date (ambiguity) 'version' version=VersionNumber
+	 *     created=Date (ambiguity) 'versionstring' versionString=STRING
 	 *     created=Date (ambiguity) 'worldview' worldview=PathName
 	 *     created=Date (ambiguity) (rule end)
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -441,6 +446,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
+	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'versionstring' versionString=STRING
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) 'worldview' worldview=PathName
 	 *     description=LOCALIZED_STRING_REFERENCE (ambiguity) (rule end)
 	 *     description=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -459,6 +465,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     description=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     description=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     description=STRING (ambiguity) 'version' version=VersionNumber
+	 *     description=STRING (ambiguity) 'versionstring' versionString=STRING
 	 *     description=STRING (ambiguity) 'worldview' worldview=PathName
 	 *     description=STRING (ambiguity) (rule end)
 	 *     imports+=PathName (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -477,6 +484,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     imports+=PathName (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     imports+=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     imports+=PathName (ambiguity) 'version' version=VersionNumber
+	 *     imports+=PathName (ambiguity) 'versionstring' versionString=STRING
 	 *     imports+=PathName (ambiguity) 'worldview' worldview=PathName
 	 *     imports+=PathName (ambiguity) (rule end)
 	 *     inlineStyle=Map (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -495,6 +503,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     inlineStyle=Map (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     inlineStyle=Map (ambiguity) 'permissions' permissions=STRING
 	 *     inlineStyle=Map (ambiguity) 'version' version=VersionNumber
+	 *     inlineStyle=Map (ambiguity) 'versionstring' versionString=STRING
 	 *     inlineStyle=Map (ambiguity) 'worldview' worldview=PathName
 	 *     inlineStyle=Map (ambiguity) (rule end)
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -513,6 +522,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
+	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'versionstring' versionString=STRING
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) 'worldview' worldview=PathName
 	 *     label=LOCALIZED_STRING_REFERENCE (ambiguity) (rule end)
 	 *     label=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -531,6 +541,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     label=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     label=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     label=STRING (ambiguity) 'version' version=VersionNumber
+	 *     label=STRING (ambiguity) 'versionstring' versionString=STRING
 	 *     label=STRING (ambiguity) 'worldview' worldview=PathName
 	 *     label=STRING (ambiguity) (rule end)
 	 *     locale=LOCALE (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -549,6 +560,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     locale=LOCALE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     locale=LOCALE (ambiguity) 'permissions' permissions=STRING
 	 *     locale=LOCALE (ambiguity) 'version' version=VersionNumber
+	 *     locale=LOCALE (ambiguity) 'versionstring' versionString=STRING
 	 *     locale=LOCALE (ambiguity) 'worldview' worldview=PathName
 	 *     locale=LOCALE (ambiguity) (rule end)
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -567,6 +579,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
+	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'versionstring' versionString=STRING
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) 'worldview' worldview=PathName
 	 *     logo=LOCALIZED_STRING_REFERENCE (ambiguity) (rule end)
 	 *     logo=Path (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -585,6 +598,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     logo=Path (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     logo=Path (ambiguity) 'permissions' permissions=STRING
 	 *     logo=Path (ambiguity) 'version' version=VersionNumber
+	 *     logo=Path (ambiguity) 'versionstring' versionString=STRING
 	 *     logo=Path (ambiguity) 'worldview' worldview=PathName
 	 *     logo=Path (ambiguity) (rule end)
 	 *     logo=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -603,6 +617,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     logo=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     logo=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     logo=STRING (ambiguity) 'version' version=VersionNumber
+	 *     logo=STRING (ambiguity) 'versionstring' versionString=STRING
 	 *     logo=STRING (ambiguity) 'worldview' worldview=PathName
 	 *     logo=STRING (ambiguity) (rule end)
 	 *     modcomment=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -621,6 +636,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     modcomment=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     modcomment=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     modcomment=STRING (ambiguity) 'version' version=VersionNumber
+	 *     modcomment=STRING (ambiguity) 'versionstring' versionString=STRING
 	 *     modcomment=STRING (ambiguity) 'worldview' worldview=PathName
 	 *     modcomment=STRING (ambiguity) (rule end)
 	 *     modified=Date (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -639,6 +655,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     modified=Date (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     modified=Date (ambiguity) 'permissions' permissions=STRING
 	 *     modified=Date (ambiguity) 'version' version=VersionNumber
+	 *     modified=Date (ambiguity) 'versionstring' versionString=STRING
 	 *     modified=Date (ambiguity) 'worldview' worldview=PathName
 	 *     modified=Date (ambiguity) (rule end)
 	 *     name=PathName (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -657,6 +674,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     name=PathName (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     name=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     name=PathName (ambiguity) 'version' version=VersionNumber
+	 *     name=PathName (ambiguity) 'versionstring' versionString=STRING
 	 *     name=PathName (ambiguity) 'worldview' worldview=PathName
 	 *     name=PathName (ambiguity) (rule end)
 	 *     observable=Observable (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -675,6 +693,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     observable=Observable (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     observable=Observable (ambiguity) 'permissions' permissions=STRING
 	 *     observable=Observable (ambiguity) 'version' version=VersionNumber
+	 *     observable=Observable (ambiguity) 'versionstring' versionString=STRING
 	 *     observable=Observable (ambiguity) 'worldview' worldview=PathName
 	 *     observable=Observable (ambiguity) (rule end)
 	 *     observables=List (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -693,6 +712,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     observables=List (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     observables=List (ambiguity) 'permissions' permissions=STRING
 	 *     observables=List (ambiguity) 'version' version=VersionNumber
+	 *     observables=List (ambiguity) 'versionstring' versionString=STRING
 	 *     observables=List (ambiguity) 'worldview' worldview=PathName
 	 *     observables=List (ambiguity) (rule end)
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -711,6 +731,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'permissions' permissions=STRING
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'version' version=VersionNumber
+	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'versionstring' versionString=STRING
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) 'worldview' worldview=PathName
 	 *     permissions=LOCALIZED_STRING_REFERENCE (ambiguity) (rule end)
 	 *     permissions=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -729,6 +750,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     permissions=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     permissions=STRING (ambiguity) 'permissions' permissions=STRING
 	 *     permissions=STRING (ambiguity) 'version' version=VersionNumber
+	 *     permissions=STRING (ambiguity) 'versionstring' versionString=STRING
 	 *     permissions=STRING (ambiguity) 'worldview' worldview=PathName
 	 *     permissions=STRING (ambiguity) (rule end)
 	 *     style=PathName (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -747,6 +769,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     style=PathName (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     style=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     style=PathName (ambiguity) 'version' version=VersionNumber
+	 *     style=PathName (ambiguity) 'versionstring' versionString=STRING
 	 *     style=PathName (ambiguity) 'worldview' worldview=PathName
 	 *     style=PathName (ambiguity) (rule end)
 	 *     version=VersionNumber (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
@@ -765,8 +788,28 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     version=VersionNumber (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     version=VersionNumber (ambiguity) 'permissions' permissions=STRING
 	 *     version=VersionNumber (ambiguity) 'version' version=VersionNumber
+	 *     version=VersionNumber (ambiguity) 'versionstring' versionString=STRING
 	 *     version=VersionNumber (ambiguity) 'worldview' worldview=PathName
 	 *     version=VersionNumber (ambiguity) (rule end)
+	 *     versionString=STRING (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
+	 *     versionString=STRING (ambiguity) 'author' authors+=STRING
+	 *     versionString=STRING (ambiguity) 'created' created=Date
+	 *     versionString=STRING (ambiguity) 'description' description=LOCALIZED_STRING_REFERENCE
+	 *     versionString=STRING (ambiguity) 'description' description=STRING
+	 *     versionString=STRING (ambiguity) 'import' imports+=PathName
+	 *     versionString=STRING (ambiguity) 'locale' locale=LOCALE
+	 *     versionString=STRING (ambiguity) 'logo' logo=LOCALIZED_STRING_REFERENCE
+	 *     versionString=STRING (ambiguity) 'logo' logo=Path
+	 *     versionString=STRING (ambiguity) 'logo' logo=STRING
+	 *     versionString=STRING (ambiguity) 'modified' modified=Date
+	 *     versionString=STRING (ambiguity) 'observable' observable=Observable
+	 *     versionString=STRING (ambiguity) 'observable' observables=List
+	 *     versionString=STRING (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
+	 *     versionString=STRING (ambiguity) 'permissions' permissions=STRING
+	 *     versionString=STRING (ambiguity) 'version' version=VersionNumber
+	 *     versionString=STRING (ambiguity) 'versionstring' versionString=STRING
+	 *     versionString=STRING (ambiguity) 'worldview' worldview=PathName
+	 *     versionString=STRING (ambiguity) (rule end)
 	 *     worldview=PathName (ambiguity) 'author' authors+=LOCALIZED_STRING_REFERENCE
 	 *     worldview=PathName (ambiguity) 'author' authors+=STRING
 	 *     worldview=PathName (ambiguity) 'created' created=Date
@@ -783,6 +826,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     worldview=PathName (ambiguity) 'permissions' permissions=LOCALIZED_STRING_REFERENCE
 	 *     worldview=PathName (ambiguity) 'permissions' permissions=STRING
 	 *     worldview=PathName (ambiguity) 'version' version=VersionNumber
+	 *     worldview=PathName (ambiguity) 'versionstring' versionString=STRING
 	 *     worldview=PathName (ambiguity) 'worldview' worldview=PathName
 	 *     worldview=PathName (ambiguity) (rule end)
 	 */
@@ -843,6 +887,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     style=PathName (ambiguity) style=PathName
 	 *     version=VersionNumber (ambiguity) inlineStyle=Map
 	 *     version=VersionNumber (ambiguity) style=PathName
+	 *     versionString=STRING (ambiguity) inlineStyle=Map
+	 *     versionString=STRING (ambiguity) style=PathName
 	 *     worldview=PathName (ambiguity) inlineStyle=Map
 	 *     worldview=PathName (ambiguity) style=PathName
 	 */

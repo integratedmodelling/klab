@@ -39,9 +39,9 @@ public class ObjectBehavior {
 					try {
 						Future<IArtifact> future = ((ISubject) identity)
 								.observe(((IObservable) arg).getDefinition());
-						fire(future.get(), true, scope.semaphore, scope.getSymbols(identity));
+						fire(future.get(), scope);
 					} catch (Throwable e) {
-						fail(e, scope.semaphore);
+						fail(scope, e);
 					}
 				}
 			} else if (this.identity instanceof Session) {
@@ -51,14 +51,14 @@ public class ObjectBehavior {
 					if (arg instanceof IObservable) {
 						Future<IArtifact> future = ((Session) this.identity).getState()
 								.submit(((IObservable) arg).getDefinition());
-						fire(future.get(), true, scope.semaphore, scope.getSymbols(identity));
+						fire(future.get(), scope);
 					}
 				} catch (Throwable e) {
-					fail(e, scope.semaphore);
+					fail(scope, e);
 				}
 
 			} else {
-				fail(this.identity + ": observations can only be made within subjects or sessions", scope.semaphore);
+				fail(scope, this.identity + ": observations can only be made within subjects or sessions");
 			}
 
 		}

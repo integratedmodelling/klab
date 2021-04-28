@@ -38,6 +38,7 @@ Preamble: {Preamble}
 		('style' (style=PathName ('with' inlineStyle=Map)? | inlineStyle=Map)?)? &
 		('logo' logo=(Path|(STRING|LOCALIZED_STRING_REFERENCE)))? &
 		('version' version=VersionNumber)? & 
+		('versionstring' versionString=STRING)? & 
 		('locale' locale=LOCALE)? & 
 		('created' created=Date (createcomment=STRING)?)? &
 		('modified' modified=Date (modcomment=STRING)?)? 
@@ -234,7 +235,7 @@ ValueWithMetadata returns Value:
 //	;
 //	
 ValueWithMetadataWithoutTree returns Value:
-	(deferred?='`')? (argvalue=ARGVALUE |
+	(deferred?='`')? ((argvalue=ARGVALUE |
 	literal=Literal |
 	id=PathName |
 	urn=UrnId | 
@@ -243,7 +244,7 @@ ValueWithMetadataWithoutTree returns Value:
 	observable=Observable | 
 	expression=EXPR |
 	table=LookupTable |
-	quantity=Quantity) 
+	quantity=Quantity)) ('?' then=Value ':' else=Value)? 
 	(metadata=Metadata)?
 	;
 

@@ -31,6 +31,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.monitoring.Message;
+import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
@@ -113,11 +114,14 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 					 * model
 					 */
 					IResolvable resolvable = Resources.INSTANCE.getResolvableResource(urn, context.getScale());
-
+					IObservable observable = Observable.promote(OWL.INSTANCE.getNothing());
+					
 					if (resolvable instanceof IModel) {
 						resolvable = Observable.promote((IModel) resolvable);
+						observable = (IObservable)resolvable;
 					} else if (resolvable instanceof IViewModel) {
 						resolvable = Observable.promote((IViewModel) resolvable);
+                        observable = (IObservable)resolvable;
 					}
 
 					if (resolvable == null) {
@@ -129,7 +133,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 					 */
 					ResolutionScope scope = Resolver.create(null).resolve(resolvable,
 							ResolutionScope.create(context, monitor, scenarios));
-
+					
 					if (scope.getCoverage().isRelevant()) {
 
 						Dataflow dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + token,
@@ -181,6 +185,7 @@ public class ObserveInContextTask extends AbstractTask<IArtifact> {
 
 					} else {
 						monitor.warn("could not build dataflow: observation unsuccessful");
+						ret = Observation.empty(observable, context.getScope());
 					}
 
 					notifyEnd();

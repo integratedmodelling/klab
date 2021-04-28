@@ -47,5 +47,9 @@ public class TimesliceLocator extends Time {
     public String getLabel() {
         return label;
     }
-
+    
+    public long getTimestamp() {
+        return this.getTimeType() == ITime.Type.INITIALIZATION ? -1l : this.getStart().getMilliseconds();
+    }
+    
 }

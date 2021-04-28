@@ -4,13 +4,13 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * Sent from the back end to set up the interface. A Layout is a component with 0
- * or 1 header panel, 0 or 1 footer panel, 0 or more panels in the right, center
- * and left sections. The name of the view is the name of the behavior that
- * specifies it.
+ * Sent from the back end to set up the interface. A Layout is a component with 0 or 1 header panel,
+ * 0 or 1 footer panel, 0 or more panels in the right, center and left sections. The name of the
+ * view is the name of the behavior that specifies it.
  * 
  * 
  * Input from Enrico on suggested conventions:
+ * 
  * <pre>
  * --------------------------------------------------------------------------------------------------------
  * View
@@ -75,147 +75,179 @@ Oppure un tipo Dialog que puó avere delle implementazioni per alert e confirm
  */
 public class Layout extends ViewComponent {
 
-//	public static final String DEFAULT_PANEL_NAME = "defaultpanel";
+    public static enum Workspace {
+        Main, Window, Stack, Modal
+    }
 
-	public static enum Workspace {
-		Main,
-		Window,
-		Stack,
-		Modal
-	}
-	
-	private List<ViewPanel> panels = new ArrayList<>();
-	private List<ViewPanel> leftPanels = new ArrayList<>();
-	private List<ViewPanel> rightPanels = new ArrayList<>();
-	private ViewPanel header;
-	private ViewPanel footer;
-	private String receivingIdentity;
-	private String label;
-	private String description;
-	private String logo;
-	private String projectId;
-	private String styleSpecs = null;
-	private Workspace workspace = Workspace.Main;
-	
-	// this is for layout management in clients, not API
-	private int index;
+    public static class MenuItem {
 
-	public Layout() {
-		setType(Type.View);
-	}
+        private String text; // a slash is used to define nested menus
+        private String id;
 
-	public Layout(String behaviorName, String applicationId) {
-		this();
-		setName(behaviorName);
-		setApplicationId(applicationId);
-	}
+        public String getText() {
+            return text;
+        }
+        public void setText(String text) {
+            this.text = text;
+        }
+        public String getId() {
+            return id;
+        }
+        public void setId(String id) {
+            this.id = id;
+        }
 
-	public List<ViewPanel> getPanels() {
-		return panels;
-	}
+    }
 
-	public void setPanels(List<ViewPanel> panels) {
-		this.panels = panels;
-	}
+    private List<ViewPanel> panels = new ArrayList<>();
+    private List<ViewPanel> leftPanels = new ArrayList<>();
+    private List<ViewPanel> rightPanels = new ArrayList<>();
+    private ViewPanel header;
+    private ViewPanel footer;
+    private String receivingIdentity;
+    private String label;
+    private String description;
+    private String logo;
+    private String versionString;
+    private String projectId;
+    private String styleSpecs = null;
+    private Workspace workspace = Workspace.Main;
+    private List<MenuItem> menu = new ArrayList<>();
 
-	public ViewPanel getHeader() {
-		return header;
-	}
+    // this is for layout management in clients, not API
+    private int index;
 
-	public void setHeader(ViewPanel header) {
-		this.header = header;
-	}
+    public Layout() {
+        setType(Type.View);
+    }
 
-	public ViewPanel getFooter() {
-		return footer;
-	}
+    public Layout(String behaviorName, String applicationId) {
+        this();
+        setName(behaviorName);
+        setApplicationId(applicationId);
+    }
 
-	public void setFooter(ViewPanel footer) {
-		this.footer = footer;
-	}
+    public List<ViewPanel> getPanels() {
+        return panels;
+    }
 
-	public List<ViewPanel> getLeftPanels() {
-		return leftPanels;
-	}
+    public void setPanels(List<ViewPanel> panels) {
+        this.panels = panels;
+    }
 
-	public void setLeftPanels(List<ViewPanel> leftPanels) {
-		this.leftPanels = leftPanels;
-	}
+    public ViewPanel getHeader() {
+        return header;
+    }
 
-	public List<ViewPanel> getRightPanels() {
-		return rightPanels;
-	}
+    public void setHeader(ViewPanel header) {
+        this.header = header;
+    }
 
-	public void setRightPanels(List<ViewPanel> rightPanels) {
-		this.rightPanels = rightPanels;
-	}
+    public ViewPanel getFooter() {
+        return footer;
+    }
 
-	public boolean empty() {
-		return panels.size() == 0 && footer == null && header == null && rightPanels.size() > 0
-				&& leftPanels.size() > 0;
-	}
+    public void setFooter(ViewPanel footer) {
+        this.footer = footer;
+    }
 
-	public String getReceivingIdentity() {
-		return receivingIdentity;
-	}
+    public List<ViewPanel> getLeftPanels() {
+        return leftPanels;
+    }
 
-	public void setReceivingIdentity(String receivingIdentity) {
-		this.receivingIdentity = receivingIdentity;
-	}
+    public void setLeftPanels(List<ViewPanel> leftPanels) {
+        this.leftPanels = leftPanels;
+    }
 
-	public int getIndex() {
-		return index;
-	}
+    public List<ViewPanel> getRightPanels() {
+        return rightPanels;
+    }
 
-	public void setIndex(int index) {
-		this.index = index;
-	}
+    public void setRightPanels(List<ViewPanel> rightPanels) {
+        this.rightPanels = rightPanels;
+    }
 
-	public String getLabel() {
-		return label;
-	}
+    public boolean empty() {
+        return panels.size() == 0 && footer == null && header == null && rightPanels.size() > 0 && leftPanels.size() > 0;
+    }
 
-	public void setLabel(String label) {
-		this.label = label;
-	}
+    public String getReceivingIdentity() {
+        return receivingIdentity;
+    }
 
-	public String getDescription() {
-		return description;
-	}
+    public void setReceivingIdentity(String receivingIdentity) {
+        this.receivingIdentity = receivingIdentity;
+    }
 
-	public void setDescription(String description) {
-		this.description = description;
-	}
+    public int getIndex() {
+        return index;
+    }
 
-	public String getLogo() {
-		return logo;
-	}
+    public void setIndex(int index) {
+        this.index = index;
+    }
 
-	public void setLogo(String logo) {
-		this.logo = logo;
-	}
+    public String getLabel() {
+        return label;
+    }
 
-	public String getProjectId() {
-		return projectId;
-	}
+    public void setLabel(String label) {
+        this.label = label;
+    }
 
-	public void setProjectId(String projectId) {
-		this.projectId = projectId;
-	}
+    public String getDescription() {
+        return description;
+    }
 
-	public String getStyleSpecs() {
-		return styleSpecs;
-	}
+    public void setDescription(String description) {
+        this.description = description;
+    }
 
-	public void setStyleSpecs(String styleSpecs) {
-		this.styleSpecs = styleSpecs;
-	}
+    public String getLogo() {
+        return logo;
+    }
 
-	public Workspace getWorkspace() {
-		return workspace;
-	}
+    public void setLogo(String logo) {
+        this.logo = logo;
+    }
 
-	public void setWorkspace(Workspace workspace) {
-		this.workspace = workspace;
-	}
+    public String getProjectId() {
+        return projectId;
+    }
+
+    public void setProjectId(String projectId) {
+        this.projectId = projectId;
+    }
+
+    public String getStyleSpecs() {
+        return styleSpecs;
+    }
+
+    public void setStyleSpecs(String styleSpecs) {
+        this.styleSpecs = styleSpecs;
+    }
+
+    public Workspace getWorkspace() {
+        return workspace;
+    }
+
+    public void setWorkspace(Workspace workspace) {
+        this.workspace = workspace;
+    }
+
+    public String getVersionString() {
+        return versionString;
+    }
+
+    public void setVersionString(String versionString) {
+        this.versionString = versionString;
+    }
+
+    public List<MenuItem> getMenu() {
+        return menu;
+    }
+
+    public void setMenu(List<MenuItem> menu) {
+        this.menu = menu;
+    }
 }

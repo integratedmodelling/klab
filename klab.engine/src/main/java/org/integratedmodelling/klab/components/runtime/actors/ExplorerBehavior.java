@@ -22,7 +22,6 @@ import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.rest.ViewSetting;
 import org.integratedmodelling.klab.rest.ViewSetting.Operation;
 import org.integratedmodelling.klab.rest.ViewSetting.Target;
-import org.integratedmodelling.klab.utils.JsonUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 
 import akka.actor.typed.ActorRef;
@@ -148,8 +147,11 @@ public class ExplorerBehavior {
                             if (ext != null && extension != null && !ext.equals(extension)) {
                                 suggestedFilename = MiscUtilities.getFileBaseName(suggestedFilename.toString()) + "." + extension;
                             }
-                            message.getParameters().put("filename", suggestedFilename.toString());
+                        } else {
+                            suggestedFilename = MiscUtilities.getFileName((File)value);
                         }
+
+                        message.getParameters().put("filename", suggestedFilename.toString());
                         message.setTargetId(relativeUrl);
 
                         identity.getParentIdentity(ISession.class).getMonitor().send(IMessage.MessageClass.UserInterface,

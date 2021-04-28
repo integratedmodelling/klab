@@ -404,9 +404,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
@@ -435,9 +435,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
@@ -939,6 +939,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 logo=STRING | 
 	 *                 logo=LOCALIZED_STRING_REFERENCE | 
 	 *                 version=VersionNumber | 
+	 *                 versionString=STRING | 
 	 *                 locale=LOCALE | 
 	 *                 (created=Date createcomment=STRING?) | 
 	 *                 (modified=Date modcomment=STRING?)
@@ -1220,6 +1221,7 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *             table=LookupTable | 
 	 *             quantity=Quantity
 	 *         ) 
+	 *         (then=Value else=Value)? 
 	 *         metadata=Metadata?
 	 *     )
 	 */

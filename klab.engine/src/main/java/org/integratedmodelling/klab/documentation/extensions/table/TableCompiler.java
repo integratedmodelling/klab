@@ -2214,7 +2214,8 @@ public class TableCompiler {
                             aggregationLevel++;
                         }
 
-                        // ugh
+                        // ugh. This sucks because isAggregation() is WRONG (includes Summarize) but
+                        // if that changes, more gets messed up.
                         boolean inconsistentAggregation = columnComputationType != null && row.computationType != null
                                 && rowComputationType.isAggregation() && column.computationType.isAggregation()
                                 && row.computationType != column.computationType;
@@ -2268,7 +2269,7 @@ public class TableCompiler {
                         }
 
                         if (rowComputationType == null) {
-
+                            
                             ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(), phase,
                                     column.index, row.index, forcedAggregation);
 
@@ -2298,7 +2299,15 @@ public class TableCompiler {
                         } else if (!inconsistentAggregation) {
                             // schedule for aggregation after all other cells are computed
                             ret.aggregate(rowComputationType, phase, column.index, row.index, aggregationLevel);
+                        } else if (inconsistentAggregation && (rowComputationType == ComputationType.Summarize
+                                || column.computationType == ComputationType.Summarize)) {
+                            // this mess shouldn't be here. Stems from Summarize being considered
+                            // aggregation when it shouldn't.
+                            ret.aggregate(
+                                    rowComputationType == ComputationType.Summarize ? columnComputationType : rowComputationType,
+                                    phase, column.index, row.index, aggregationLevel);
                         }
+
                     }
                 }
             }

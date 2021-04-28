@@ -331,13 +331,22 @@ public interface KactorsPackage extends EPackage
   int PREAMBLE__VERSION = 24;
 
   /**
+   * The feature id for the '<em><b>Version String</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int PREAMBLE__VERSION_STRING = 25;
+
+  /**
    * The feature id for the '<em><b>Locale</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int PREAMBLE__LOCALE = 25;
+  int PREAMBLE__LOCALE = 26;
 
   /**
    * The feature id for the '<em><b>Created</b></em>' containment reference.
@@ -346,7 +355,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATED = 26;
+  int PREAMBLE__CREATED = 27;
 
   /**
    * The feature id for the '<em><b>Createcomment</b></em>' attribute.
@@ -355,7 +364,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__CREATECOMMENT = 27;
+  int PREAMBLE__CREATECOMMENT = 28;
 
   /**
    * The feature id for the '<em><b>Modified</b></em>' containment reference.
@@ -364,7 +373,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODIFIED = 28;
+  int PREAMBLE__MODIFIED = 29;
 
   /**
    * The feature id for the '<em><b>Modcomment</b></em>' attribute.
@@ -373,7 +382,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE__MODCOMMENT = 29;
+  int PREAMBLE__MODCOMMENT = 30;
 
   /**
    * The number of structural features of the '<em>Preamble</em>' class.
@@ -382,7 +391,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int PREAMBLE_FEATURE_COUNT = 30;
+  int PREAMBLE_FEATURE_COUNT = 31;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.DefinitionImpl <em>Definition</em>}' class.
@@ -3972,6 +3981,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EAttribute getPreamble_Version();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#getVersionString <em>Version String</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Version String</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Preamble#getVersionString()
+   * @see #getPreamble()
+   * @generated
+   */
+  EAttribute getPreamble_VersionString();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Preamble#getLocale <em>Locale</em>}'.
@@ -7647,6 +7667,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EAttribute PREAMBLE__VERSION = eINSTANCE.getPreamble_Version();
+
+    /**
+     * The meta object literal for the '<em><b>Version String</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute PREAMBLE__VERSION_STRING = eINSTANCE.getPreamble_VersionString();
 
     /**
      * The meta object literal for the '<em><b>Locale</b></em>' attribute feature.

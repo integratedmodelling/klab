@@ -41,6 +41,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getInlineStyle <em>Inline Style</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getLogo <em>Logo</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getVersion <em>Version</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getVersionString <em>Version String</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getLocale <em>Locale</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getCreated <em>Created</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Preamble#getCreatecomment <em>Createcomment</em>}</li>
@@ -583,6 +584,28 @@ public interface Preamble extends EObject
    * @generated
    */
   void setVersion(String value);
+
+  /**
+   * Returns the value of the '<em><b>Version String</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Version String</em>' attribute.
+   * @see #setVersionString(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getPreamble_VersionString()
+   * @model
+   * @generated
+   */
+  String getVersionString();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Preamble#getVersionString <em>Version String</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Version String</em>' attribute.
+   * @see #getVersionString()
+   * @generated
+   */
+  void setVersionString(String value);
 
   /**
    * Returns the value of the '<em><b>Locale</b></em>' attribute.

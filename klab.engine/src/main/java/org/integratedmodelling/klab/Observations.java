@@ -463,7 +463,6 @@ public enum Observations implements IObservationService {
              * in ObservationChange.
              */
             ret.getExportFormats().addAll(getExportFormats(observation));
-
             ret.getGeometryTypes().add(gtype);
         }
 
@@ -770,7 +769,7 @@ public enum Observations implements IObservationService {
             }
         }
 
-        return adapter.getImporter().exportObservation(file, observation, locator, outputFormat, monitor);
+        return importer.exportObservation(file, observation, locator, outputFormat, monitor);
     }
 
     public boolean isData(Object o) {
@@ -875,8 +874,12 @@ public enum Observations implements IObservationService {
                         outfile = timedir + File.separator + outfile;
                     }
                     File output = new File(stagingArea + File.separator + outfile);
-                    output = export(artifact, locator, output, format.getValue(), format.getAdapter(), monitor,
+                    if (states.size() == 1) {
+                        output = export(artifact, locator, output, format.getValue(), format.getAdapter(), monitor);
+                    } else {
+                        output = export(artifact, locator, output, format.getValue(), format.getAdapter(), monitor,
                             IResourceImporter.OPTION_DO_NOT_ZIP_MULTIPLE_FILES, true);
+                    }
                     output.deleteOnExit();
                     exports.add(output);
                 }

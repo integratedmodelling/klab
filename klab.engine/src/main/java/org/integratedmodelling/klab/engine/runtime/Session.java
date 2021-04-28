@@ -110,6 +110,7 @@ import org.integratedmodelling.klab.rest.IdentityReference;
 import org.integratedmodelling.klab.rest.InterruptTask;
 import org.integratedmodelling.klab.rest.Layout;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
+import org.integratedmodelling.klab.rest.MenuAction;
 import org.integratedmodelling.klab.rest.NetworkReference;
 import org.integratedmodelling.klab.rest.NodeReference;
 import org.integratedmodelling.klab.rest.NodeReference.Permission;
@@ -1132,6 +1133,14 @@ public class Session extends GroovyObjectSupport
         this.globalState.register(action);
 
     }
+    
+    @MessageHandler
+    private void handleMenuAction(MenuAction action) {
+
+        this.globalState.register(action);
+
+    }
+
 
     /*
      * This can arrive with different message types
