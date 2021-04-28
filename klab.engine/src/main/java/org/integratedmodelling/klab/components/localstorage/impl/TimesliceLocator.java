@@ -48,15 +48,8 @@ public class TimesliceLocator extends Time {
         return label;
     }
     
-    public String getLocatorCode() {
-        return "tloc:" + sliceIndex;
+    public long getTimestamp() {
+        return this.getTimeType() == ITime.Type.INITIALIZATION ? -1l : this.getStart().getMilliseconds();
     }
-
-    public static String toGeometry(String locator) {
-        if (!locator.startsWith("tloc:")) {
-            return null;
-        }
-        return "T(1)";
-    }
-
+    
 }

@@ -255,8 +255,6 @@ public class EngineViewController {
 
         ILocator loc = obs.getScale().initialization();
         if (locator != null) {
-            // this returns null unless it's proper
-            locator = TimesliceLocator.toGeometry(locator);
             if (obs.getScale().getTime() != null && !locator.toLowerCase().startsWith("t")) {
                 locator = "T1(1){time=INITIALIZATION}" + locator;
             }

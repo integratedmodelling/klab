@@ -655,7 +655,7 @@ public class DocumentationTree {
         if (artifact instanceof State) {
             for (ILocator locator : ((State)artifact).getSliceLocators()) {
                 TimesliceLocator sl = (TimesliceLocator)locator;
-                ret.getTimeSlices().add(sl.getLocatorCode() + "," + sl.getLabel());
+                ret.getTimeSlices().add(sl.getTimestamp() + "," + sl.getLabel());
             }
         }
 
