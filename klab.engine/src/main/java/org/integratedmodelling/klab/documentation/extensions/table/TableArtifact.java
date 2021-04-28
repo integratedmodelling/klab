@@ -376,15 +376,19 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
             }
         }
 
+        List<Dimension> shit = getActiveColumns();
+
         /*
          * precompute all cells with aggregators and not those that aggregate them; the latter are
          * put away and deferred for computing in order of level, so that aggregations of
          * aggregations are computed last. Put row and column in the cell in this pass.
          */
         for (Dimension column : getActiveColumns()) {
+
             for (Dimension row : getActiveRows()) {
                 Cell cell = cells[column.index][row.index];
                 if (cell != null) {
+
                     cell.row = row;
                     cell.column = column;
                     if (cell.computationType == null && cell.aggregator != null) {
@@ -851,17 +855,36 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
     private Object aggregateData(Cell cell) {
 
         Object ret = null;
-
+        
         /*
          * find out who is asking me to aggregate, the row or the column; if both, choose the row,
          * scanned in the inner loop.
          */
-        DimensionType aggregatingDimension = (cell.row.computationType != null && cell.row.computationType.isAggregation())
-                ? DimensionType.ROW
-                : DimensionType.COLUMN;
+
+        /*
+         * usual shit to fix: if both dimension have ctype and only one is summarize, the other is
+         * the aggregating.
+         */
+        ComputationType raggr = cell.row.computationType;
+        ComputationType caggr = cell.column.computationType;
+
+        DimensionType aggregatingDimension = null;
+        
+        /**
+         * Sant'Ignazio di Loyola 
+         * FIX this 
+         */
+        if ((raggr != null && caggr != null) && ((raggr == ComputationType.Summarize && caggr != ComputationType.Summarize)
+                || ((raggr != ComputationType.Summarize && caggr == ComputationType.Summarize)))) {
+            aggregatingDimension = caggr == ComputationType.Summarize ? DimensionType.ROW : DimensionType.COLUMN;
+        } else {
+            aggregatingDimension = (cell.row.computationType != null && cell.row.computationType.isAggregation())
+                    ? DimensionType.ROW
+                    : DimensionType.COLUMN;
+        }
         Dimension dimension = aggregatingDimension == DimensionType.ROW ? cell.row : cell.column;
 
-        if (dimension.computationType == ComputationType.Summarize) {
+        if (cell.computationType == ComputationType.Summarize) {
 
             ILanguageExpression expression = dimension.getExpression(scope);
 
@@ -933,7 +956,6 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                     }
                 }
             }
-            
 
             ret = aggregator.aggregate();
 
