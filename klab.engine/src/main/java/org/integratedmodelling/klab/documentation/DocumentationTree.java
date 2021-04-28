@@ -234,8 +234,10 @@ public class DocumentationTree {
         }
         if (resource.getMetadata().get(IMetadata.DC_CREATOR) != null) {
             String content = resource.getMetadata().get(IMetadata.DC_CREATOR).toString();
-            for (String c : content.split(";")) {
-                res.getAuthors().add(c.trim());
+            if (!"".equals(content.trim())) {
+                for (String c : content.split("\\n")) {
+                    res.getAuthors().add(c.trim());
+                }
             }
         }
         if (resource.getMetadata().get(IMetadata.IM_THEMATIC_AREA) != null) {
@@ -260,8 +262,10 @@ public class DocumentationTree {
         }
         if (resource.getMetadata().get(IMetadata.IM_KEYWORDS) != null) {
             String content = resource.getMetadata().get(IMetadata.IM_KEYWORDS).toString();
-            for (String c : content.split("\\s*(;|,|\\s)\\s*")) {
-                res.getKeywords().add(c);
+            if (!"".equals(content.trim())) {
+                for (String c : content.trim().split("(;|,)")) {
+                    res.getKeywords().add(c.trim());
+                }
             }
         }
         res.setOriginatorDescription(resource.getMetadata().containsKey(IMetadata.DC_ORIGINATOR)
