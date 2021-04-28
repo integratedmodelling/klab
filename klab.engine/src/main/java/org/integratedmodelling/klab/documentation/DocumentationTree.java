@@ -641,7 +641,7 @@ public class DocumentationTree {
         
         ret.setId(id);
         ret.setCaption(caption);    
-        ret.setObservationId(ret.getId());
+        ret.setObservationId(artifact.getId());
         ret.setLabel(ref.getLabel());
         
         /**

@@ -933,6 +933,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
                     }
                 }
             }
+            
 
             ret = aggregator.aggregate();
 
