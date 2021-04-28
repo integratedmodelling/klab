@@ -218,12 +218,7 @@ public class DocumentationTree {
         
         DocumentationNode.Resource res = new DocumentationNode.Resource();
         
-        if (resource.getMetadata().get(IMetadata.IM_KEYWORDS) != null) {
-            String content = resource.getMetadata().get(IMetadata.IM_KEYWORDS).toString();
-            for (String c : content.split("\\s*(;|,|\\s)\\s*")) {
-                res.getKeywords().add(c);
-            }
-        }
+
         if (resource.getMetadata().get(IMetadata.DC_URL) != null) {
             String content = resource.getMetadata().get(IMetadata.DC_URL).toString();
             for (String c : content.split("\\s*(;|,|\\s)\\s*")) {
@@ -236,15 +231,21 @@ public class DocumentationTree {
         }
         if (resource.getMetadata().get(IMetadata.DC_CREATOR) != null) {
             String content = resource.getMetadata().get(IMetadata.DC_CREATOR).toString();
+            for (String c : content.split("\\s*(;|,|\\s)\\s*")) {
+                res.getAuthors().add(c);
+            }
         }
         if (resource.getMetadata().get(IMetadata.IM_THEMATIC_AREA) != null) {
             String content = resource.getMetadata().get(IMetadata.IM_THEMATIC_AREA).toString();
+            res.getKeywords().add(content);
         }
         if (resource.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA) != null) {
             String content = resource.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA).toString();
+            res.getKeywords().add(content);
         }
         if (resource.getMetadata().get(IMetadata.DC_SOURCE) != null) {
             String content = resource.getMetadata().get(IMetadata.DC_SOURCE).toString();
+            res.setBibliographicReference(content);
         }
         if (resource.getMetadata().get(IMetadata.IM_NOTES) != null) {
             String content = resource.getMetadata().get(IMetadata.IM_NOTES).toString();
@@ -254,7 +255,12 @@ public class DocumentationTree {
             String content = resource.getMetadata().get(IMetadata.DC_ORIGINATOR).toString();
             res.setOriginatorDescription(content);
         }
-        
+        if (resource.getMetadata().get(IMetadata.IM_KEYWORDS) != null) {
+            String content = resource.getMetadata().get(IMetadata.IM_KEYWORDS).toString();
+            for (String c : content.split("\\s*(;|,|\\s)\\s*")) {
+                res.getKeywords().add(c);
+            }
+        }
         res.setOriginatorDescription(resource.getMetadata().containsKey(IMetadata.DC_ORIGINATOR)
                 ? resource.getMetadata().get(IMetadata.DC_ORIGINATOR).toString()
                 : "Unknown originator");

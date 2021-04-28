@@ -181,6 +181,7 @@ public class DocumentationNode {
         private String accessDescription;
         private String timeDescription;
         private String originatorDescription;
+        private String bibliographicReference;
         private List<String> urls = new ArrayList<>();
         private List<String> authors = new ArrayList<>();
         private Date releaseDate;
@@ -351,6 +352,12 @@ public class DocumentationNode {
         }
         public void setUrls(List<String> urls) {
             this.urls = urls;
+        }
+        public String getBibliographicReference() {
+            return bibliographicReference;
+        }
+        public void setBibliographicReference(String bibliographicReference) {
+            this.bibliographicReference = bibliographicReference;
         }
 
     }
