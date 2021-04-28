@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
+import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroupView;
 import org.integratedmodelling.klab.engine.debugger.Debug;
@@ -254,6 +255,8 @@ public class EngineViewController {
 
         ILocator loc = obs.getScale().initialization();
         if (locator != null) {
+            // this returns null unless it's proper
+            locator = TimesliceLocator.toGeometry(locator);
             if (obs.getScale().getTime() != null && !locator.toLowerCase().startsWith("t")) {
                 locator = "T1(1){time=INITIALIZATION}" + locator;
             }

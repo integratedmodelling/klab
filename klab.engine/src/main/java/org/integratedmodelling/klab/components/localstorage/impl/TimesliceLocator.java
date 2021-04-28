@@ -52,4 +52,11 @@ public class TimesliceLocator extends Time {
         return "tloc:" + sliceIndex;
     }
 
+    public static String toGeometry(String locator) {
+        if (!locator.startsWith("tloc:")) {
+            return null;
+        }
+        return "T(1)";
+    }
+
 }

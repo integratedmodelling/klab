@@ -33,6 +33,58 @@ public class TableApiObjects {
         }
 
         /**
+         * True if classifier of passed dimension matches current target
+         * 
+         * @param what
+         * @return
+         */
+        public boolean match(Object what) {
+            IConcept target = ((TableDimension) what).getConcept();
+            return (this.target == null && target == null) || (this.target != null && this.target.equals(target));
+        }
+
+        /**
+         * True if the current target is the one passed and the target at the passed time was
+         * different.
+         * 
+         * @param what
+         * @param locateFrom
+         * @return
+         */
+        public boolean changedInto(Object what, Object locateFrom) {
+
+            IConcept target = ((TableDimension) what).getConcept();
+            if (target == null) {
+                return false;
+            }
+            Object comparison = ((TableDimension) what).getState(((IScale) this.locator).at((ILocator) locateFrom));
+            if (comparison != null && !(comparison instanceof IConcept)) {
+                return false;
+            }
+
+            return target.equals(this.target) && (comparison == null || !comparison.equals(target));
+        }
+
+        /**
+         * True if the current target is not the one passed but it was it at the passed time.
+         * 
+         * @param what
+         * @param locateFrom
+         * @return
+         */
+        public boolean changedFrom(Object what, Object locateFrom) {
+
+            IConcept target = ((TableDimension) what).getConcept();
+            Object comparison = ((TableDimension) what).getState(((IScale) this.locator).at((ILocator) locateFrom));
+            if (!(comparison instanceof IConcept)) {
+                return false;
+            }
+
+            // also works if the current target is nodata
+            return !target.equals(this.target) && comparison.equals(target);
+        }
+
+        /**
          * Return true if the target of the "from" dimension is the previous state at the locator
          * and the current state is the target of the "to" dimension.
          * <p>
@@ -52,8 +104,8 @@ public class TableApiObjects {
              * case 1: cTo == cFrom and target == both at init and now: not changed but the answer
              * is yes
              * 
-             * case 2: cTo != cFrom and target was cFrom and now is cTo: changed as expected, answer is
-             * still yes.
+             * case 2: cTo != cFrom and target was cFrom and now is cTo: changed as expected, answer
+             * is still yes.
              * 
              * any other case: answer is no
              */
