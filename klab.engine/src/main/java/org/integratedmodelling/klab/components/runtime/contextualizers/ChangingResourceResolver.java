@@ -6,6 +6,7 @@ import java.util.Map;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
@@ -24,69 +25,74 @@ import org.integratedmodelling.klab.utils.Pair;
 
 public class ChangingResourceResolver implements IResolver<IArtifact>, IExpression {
 
-	static final public String FUNCTION_ID = "klab.runtime.resourcechange";
+    static final public String FUNCTION_ID = "klab.runtime.resourcechange";
 
-	private MergedResource resource;
+    private MergedResource resource;
 
-	// don't remove - only used as expression
-	public ChangingResourceResolver() {
-	}
+    // don't remove - only used as expression
+    public ChangingResourceResolver() {
+    }
 
-	public ChangingResourceResolver(IConcept changeProcess, MergedResource resource) {
-		this.resource = resource;
-	}
+    public ChangingResourceResolver(IConcept changeProcess, MergedResource resource) {
+        this.resource = resource;
+    }
 
-	public static IServiceCall getServiceCall(IConcept change, MergedResource resource) throws KlabValidationException {
-		return KimServiceCall.create(FUNCTION_ID, "change", change.getDefinition(), "resources", resource.getUrns());
-	}
+    public static IServiceCall getServiceCall(IConcept change, MergedResource resource) throws KlabValidationException {
+        return KimServiceCall.create(FUNCTION_ID, "change", change.getDefinition(), "resources", resource.getUrns());
+    }
 
-	@Override
-	public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
-		IConcept change = Observables.INSTANCE.declare(parameters.get("change", String.class)).getType();
-		@SuppressWarnings("unchecked")
-		List<String> urns = parameters.get("resources", List.class);
-		return new ChangingResourceResolver(change, new MergedResource(urns, (IRuntimeScope) context));
-	}
+    @Override
+    public Object eval(IParameters<String> parameters, IContextualizationScope context) throws KlabException {
+        IConcept change = Observables.INSTANCE.declare(parameters.get("change", String.class)).getType();
+        @SuppressWarnings("unchecked")
+        List<String> urns = parameters.get("resources", List.class);
+        return new ChangingResourceResolver(change, new MergedResource(urns, (IRuntimeScope) context));
+    }
 
-	@Override
-	public IArtifact.Type getType() {
-		return this.resource.getType();
-	}
+    @Override
+    public IArtifact.Type getType() {
+        return this.resource.getType();
+    }
 
-	@Override
-	public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
+    @Override
+    public IArtifact resolve(IArtifact ret, IContextualizationScope context) throws KlabException {
 
-		List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
-				.contextualize(context.getScale(), ret);
-		
-		if (resources.isEmpty()) {
-			// this can happen when the resource can't add anything to the artifact.
-			return ret;
-		}
+        List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource).contextualize(context.getScale(),
+                ret);
 
-		for (Pair<IResource, Map<String, String>> pr : resources) {
-		    ((Report)context.getReport()).getDocumentationTree().addContextualizedResource(this.resource.getUrn(), pr.getFirst());
-		}
-		
-		// TODO must contextualize the LIST, not just the first resource. For now it can
-		// only happen with
-		// multiple spatial extents, but it could happen also with multiple temporal
-		// slices.
-		if (resources.size() > 1) {
-			context.getMonitor().warn(
-					"Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
-		}
+        if (resources.isEmpty()) {
+            // this can happen when the resource can't add anything to the artifact.
+            return ret;
+        }
 
-		IResource res = resources.get(0).getFirst();
+        for (Pair<IResource, Map<String, String>> pr : resources) {
+            ((Report) context.getReport()).getDocumentationTree().addContextualizedResource(this.resource.getUrn(),
+                    pr.getFirst());
+        }
 
-		System.err.println("GETTING DATA FROM " + res.getUrn());
-		IKlabData data = Resources.INSTANCE.getResourceData(res, resources.get(0).getSecond(), context.getScale(), context);
-		System.err.println("DONE " + res.getUrn());
+        // TODO must contextualize the LIST, not just the first resource. For now it can
+        // only happen with
+        // multiple spatial extents, but it could happen also with multiple temporal
+        // slices.
+        if (resources.size() > 1) {
+            context.getMonitor()
+                    .warn("Warning: unimplemented use of multiple resources for one timestep. Choosing only the first.");
+        }
 
-		if (data == null) {
-			context.getMonitor().error("Cannot extract data from resource " + resource.getUrn());
-		}
+        IResource res = resources.get(0).getFirst();
 
-		return data == null ? ret : data.getArtifact();
-	}
+        if (Configuration.INSTANCE.isEchoEnabled()) {
+            System.err.println("GETTING DATA FROM " + res.getUrn());
+        }
+        IKlabData data = Resources.INSTANCE.getResourceData(res, resources.get(0).getSecond(), context.getScale(), context);
+        if (Configuration.INSTANCE.isEchoEnabled()) {
+            System.err.println("DONE " + res.getUrn());
+        }
+
+        if (data == null) {
+            context.getMonitor().error("Cannot extract data from resource " + resource.getUrn());
+        }
+
+        return data == null ? ret : data.getArtifact();
+    }
 }

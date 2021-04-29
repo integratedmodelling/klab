@@ -310,7 +310,7 @@ public class TableEncoder implements IResourceEncoder {
                             value = valueCache.get(filter);
                         } else {
                             if (filter != null) {
-                                System.out.println("   NEW SPATIAL FILTER " + filter);
+//                                System.out.println("   NEW SPATIAL FILTER " + filter);
                                 t = t.filter(filter);
                             }
                             /*
@@ -318,13 +318,13 @@ public class TableEncoder implements IResourceEncoder {
                              * aggregator that fits the semantics.
                              */
                             value = t.get(Object.class, scope, aggregator);
-                            System.out.println("       aggregated value = " + value);
+//                            System.out.println("       aggregated value = " + value);
                             valueCache.put(filter, value);
                         }
                     } else if (!cached || ignoreSpace) {
                         value = t.get(Object.class, scope, aggregator);
                         cached = true;
-                        System.out.println("       aggregated value = " + value);
+//                        System.out.println("       aggregated value = " + value);
                     }
                 }
 

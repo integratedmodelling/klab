@@ -324,6 +324,7 @@ public enum Configuration implements IConfigurationService {
 
     /**
      * Return a new directory in the temporary area
+     * 
      * @param directoryName
      * @return
      */
@@ -335,5 +336,9 @@ public enum Configuration implements IConfigurationService {
 
     public boolean synchronousDataflow() {
         return System.getProperty("synchronous") != null;
+    }
+
+    public boolean isEchoEnabled() {
+        return !"true".equals(getProperty(Configuration.KLAB_DISABLE_CONSOLE_ECHO, "false"));
     }
 }

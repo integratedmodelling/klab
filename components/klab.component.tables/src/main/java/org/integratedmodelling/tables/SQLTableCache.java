@@ -247,7 +247,7 @@ public class SQLTableCache {
 
         String query = "SELECT " + fields + " FROM data" + (where.isEmpty() ? "" : (" WHERE " + where)) + ";";
 
-        System.out.println(query);
+//        System.out.println(query);
 
         try (DBIterator result = database.query(query)) {
             while(result.hasNext()) {

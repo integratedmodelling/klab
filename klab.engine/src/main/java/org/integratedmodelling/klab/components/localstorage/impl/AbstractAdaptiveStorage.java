@@ -374,7 +374,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 			return null;
 		}
 
-		System.out.println("AGGREGATE " + map.size() + " VALUES");
+//		System.out.println("AGGREGATE " + map.size() + " VALUES");
 
 		return null;
 	}

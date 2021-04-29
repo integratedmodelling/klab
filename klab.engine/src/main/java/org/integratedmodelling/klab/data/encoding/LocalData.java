@@ -141,7 +141,7 @@ public class LocalData implements IKlabData {
 		if (data.containsKey("notifications")) {
 			// TODO send them over to the monitor
 			for (Object o : (List<?>) data.get("notification")) {
-				System.out.println("GOT NOTIFICATION " + o);
+//				System.out.println("GOT NOTIFICATION " + o);
 			}
 		}
 
@@ -268,7 +268,7 @@ public class LocalData implements IKlabData {
 		if (data.containsKey("notifications")) {
 			// TODO send them over to the monitor
 			for (Object o : (List<?>) data.get("notification")) {
-				System.out.println("GOT NOTIFICATION " + o);
+//				System.out.println("GOT NOTIFICATION " + o);
 			}
 		}
 	}

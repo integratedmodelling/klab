@@ -209,7 +209,7 @@ public abstract class Artifact implements IArtifact {
 	
 	@Override
 	public void release() {
-		System.out.println("RELEASING ARTIFACT - UNIMPLEMENTED!");
+//		System.out.println("RELEASING ARTIFACT - UNIMPLEMENTED!");
 	}
 
 	public Activity getGenerator() {

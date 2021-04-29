@@ -11,6 +11,7 @@ import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IContextualizable.InteractiveParameter;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Interaction;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
@@ -361,7 +362,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
                     .send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle, IMessage.Type.DataflowCompiled,
                             new DataflowReference(session.getMonitor().getIdentity().getId(), getKdlCode(),
                                     ContextualizationStrategy.getElkGraph(this))));
-            System.out.println(rootDataflow.getKdlCode());
+            if (Configuration.INSTANCE.isEchoEnabled()) {
+                System.out.println(rootDataflow.getKdlCode());
+            }
         }
 
         if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
@@ -809,14 +812,14 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
     private void computeLocalNames(Actuator actuator, HashMap<String, String> hashMap) {
 
-        for (IActuator a : actuator.getSortedChildren(actuator,false)) {
+        for (IActuator a : actuator.getSortedChildren(actuator, false)) {
             /*
              * TODO CHECK: unsure if the names should propagate downstream, but I think they're just
              * local to each actuator and re-imported at all levels if need be. If this changes, we
              * should pass hashMap instead.
              */
             computeLocalNames((Actuator) a, /* hashMap */ new HashMap<>());
-            ((Actuator)a).getLocalNames().putAll(hashMap);
+            ((Actuator) a).getLocalNames().putAll(hashMap);
             if (a.getAlias() != null && !a.getAlias().equals(a.getName())) {
                 hashMap.put(a.getName(), a.getAlias());
             }

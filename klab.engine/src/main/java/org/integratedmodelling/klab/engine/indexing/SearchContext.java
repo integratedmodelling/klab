@@ -631,7 +631,7 @@ public class SearchContext implements IIndexingService.Context {
 		 */
 		Meaning meaning = collectMeaning();
 
-		System.out.println("Meaning before accepting: " + meaning);
+//		System.out.println("Meaning before accepting: " + meaning);
 
 		if (match.getUnaryOperator() != null) {
 			ret.allow(Constraint.with(match.getUnaryOperator().getAllowedOperandTypes()));

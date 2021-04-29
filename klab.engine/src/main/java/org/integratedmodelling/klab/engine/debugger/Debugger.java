@@ -80,7 +80,7 @@ public abstract class Debugger {
             @Override
             public void historyChanged(SessionActivity rootActivity, SessionActivity currentActivity) {
                 // TODO put away for inspection
-                System.out.println("GOT " + JsonUtils.printAsJson(currentActivity == null ? rootActivity : currentActivity));
+//                System.out.println("GOT " + JsonUtils.printAsJson(currentActivity == null ? rootActivity : currentActivity));
             }
         });
     }
