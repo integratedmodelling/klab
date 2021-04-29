@@ -198,7 +198,7 @@ public class DocumentationTree {
         } else if (o instanceof IClassification) {
 
         } else {
-            System.out.println("OHIBÓ un cianfero non visto prima: " + o.getClass().getCanonicalName());
+//            System.out.println("OHIBÓ un cianfero non visto prima: " + o.getClass().getCanonicalName());
         }
     }
 

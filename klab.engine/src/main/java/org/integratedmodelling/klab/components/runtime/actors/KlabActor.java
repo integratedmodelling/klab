@@ -31,6 +31,7 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
@@ -788,7 +789,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         execute(action.getStatement().getCode(), scope);
 
         if (wspecs != null) {
-            System.out.println(Actors.INSTANCE.dumpView(scope.viewScope.layout));
+            if (Configuration.INSTANCE.isEchoEnabled()) {
+                System.out.println(Actors.INSTANCE.dumpView(scope.viewScope.layout));
+            }
             KlabActor.this.identity.setLayout(scope.viewScope.layout);
             KlabActor.this.identity.getMonitor().send(IMessage.MessageClass.UserInterface,
                     "modal".equals(wspecs.getName()) ? IMessage.Type.CreateModalWindow : IMessage.Type.CreateWindow,
@@ -1673,7 +1676,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
                  * views.
                  */
                 if (rootView && message.scope.viewScope.layout != null) {
-                    System.out.println(Actors.INSTANCE.dumpView(message.scope.viewScope.layout));
+                    if (Configuration.INSTANCE.isEchoEnabled()) {
+                        System.out.println(Actors.INSTANCE.dumpView(message.scope.viewScope.layout));
+                    }
                     KlabActor.this.identity.setLayout(message.scope.viewScope.layout);
                     KlabActor.this.identity.getMonitor().send(IMessage.MessageClass.UserInterface, IMessage.Type.SetupInterface,
                             message.scope.viewScope.layout);

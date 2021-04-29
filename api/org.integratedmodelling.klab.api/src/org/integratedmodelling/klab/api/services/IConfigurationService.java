@@ -66,6 +66,8 @@ public interface IConfigurationService {
 	// configurable temp dir for (potentially very large) storage during simulation.
 	public static final String KLAB_TEMPORARY_DATA_DIRECTORY = "klab.temporary.data.directory";
 
+	public static final String KLAB_DISABLE_CONSOLE_ECHO = "klab.disable.console.echo";
+	
 	/**
 	 * Name of work directory relative to ${user.home}. Ignored if
 	 * THINKLAB_DATA_DIRECTORY_PROPERTY is specified.

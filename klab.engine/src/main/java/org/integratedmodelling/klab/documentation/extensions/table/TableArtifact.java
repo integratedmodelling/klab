@@ -19,6 +19,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -448,8 +449,9 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
         ret.getColumns().addAll(cols);
         ret.getRows().addAll(data);
 
-        System.out.println(JsonUtils.printAsJson(ret));
-
+        if (Configuration.INSTANCE.isEchoEnabled()) {
+            System.out.println(JsonUtils.printAsJson(ret));
+        }
     }
 
     private Column compileColumn(Dimension column, int level, int totalLevels) {
@@ -855,7 +857,7 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
     private Object aggregateData(Cell cell) {
 
         Object ret = null;
-        
+
         /*
          * find out who is asking me to aggregate, the row or the column; if both, choose the row,
          * scanned in the inner loop.
@@ -869,10 +871,9 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
         ComputationType caggr = cell.column.computationType;
 
         DimensionType aggregatingDimension = null;
-        
+
         /**
-         * Sant'Ignazio di Loyola 
-         * FIX this 
+         * Sant'Ignazio di Loyola FIX this
          */
         if ((raggr != null && caggr != null) && ((raggr == ComputationType.Summarize && caggr != ComputationType.Summarize)
                 || ((raggr != ComputationType.Summarize && caggr == ComputationType.Summarize)))) {

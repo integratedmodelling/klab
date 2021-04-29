@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.components.runtime.actors.UserBehavior.UnknownMessage;
 
@@ -25,7 +26,9 @@ public class UserActor extends KlabActor {
 	}
 
 	private Behavior<KlabMessage> onUnknownMessage(UnknownMessage message) {
-		System.out.println("ZIO PAPA UNKNOWN MESSAGE " + message);
+	    if (Configuration.INSTANCE.isEchoEnabled()) {
+	        System.out.println("UNKNOWN MESSAGE " + message);
+	    }
 		return Behaviors.same();
 	}
 	

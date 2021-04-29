@@ -21,6 +21,7 @@ import java.util.function.Consumer;
 import javax.annotation.PostConstruct;
 
 import org.integratedmodelling.klab.Authentication;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.API;
@@ -178,7 +179,7 @@ public class WebsocketsMessageBus implements IMessageBus {
 		// TODO for now: print out all messages except network status, which clutters
 		// the output. This is
 		// really important for development but obviously should be removed.
-		if (message.getType() != IMessage.Type.NetworkStatus) {
+		if (Configuration.INSTANCE.isEchoEnabled() && message.getType() != IMessage.Type.NetworkStatus) {
 			System.out.println(JsonUtils.printAsJson(message));
 		}
 

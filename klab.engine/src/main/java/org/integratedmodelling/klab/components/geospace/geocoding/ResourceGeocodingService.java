@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.geospace.geocoding;
 
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -25,9 +26,9 @@ public class ResourceGeocodingService extends GeocodingService {
 	@Override
 	public IShape getAnnotatedRegion(IEnvelope envelope, IMonitor monitor) {
 
-        Logging.INSTANCE.info("Attempting to geocode " + envelope + " from resource " + urn);
-
-		IKlabData data = Resources.INSTANCE.getResourceData(urn, new VisitingDataBuilder(),
+//	    Logging.INSTANCE.info("Attempting to geocode " + envelope + " from resource " + urn);
+		
+	    IKlabData data = Resources.INSTANCE.getResourceData(urn, new VisitingDataBuilder(),
 				Scale.create(envelope.asShape()), monitor);
 		
 		if (data.getArtifact() != null) {
@@ -39,13 +40,13 @@ public class ResourceGeocodingService extends GeocodingService {
 					ret.getMetadata().put(IMetadata.DC_DESCRIPTION, ((IObjectArtifact)data.getArtifact()).getName());
 					return ret;
 				} else {
-				    Logging.INSTANCE.warn("Could not geocode " + envelope + ": null shape from resource with geometry " + geometry);
+//				    Logging.INSTANCE.warn("Could not geocode " + envelope + ": null shape from resource with geometry " + geometry);
 				}
 			} else {
-                Logging.INSTANCE.warn("Could not geocode " + envelope + ": null geometry from resource");
+//                Logging.INSTANCE.warn("Could not geocode " + envelope + ": null geometry from resource");
 			}
 		} else {
-            Logging.INSTANCE.warn("Could not geocode " + envelope + ": null response from getResourceData");
+//            Logging.INSTANCE.warn("Could not geocode " + envelope + ": null response from getResourceData");
 		}
 
 		return null;
