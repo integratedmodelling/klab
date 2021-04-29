@@ -455,7 +455,7 @@ public class Scale implements IScale {
 
         ScaleIterator() {
             if (size() == 0) {
-                System.out.println("FOCK SIZE ZERO");
+//                System.out.println("FOCK SIZE ZERO");
             }
         }
 

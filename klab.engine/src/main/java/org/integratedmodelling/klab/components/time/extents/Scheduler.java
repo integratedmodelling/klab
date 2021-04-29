@@ -16,6 +16,7 @@ import java.util.function.Function;
 
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.actors.IBehavior.Action;
@@ -984,7 +985,9 @@ public class Scheduler implements IScheduler {
 				}
 			}
 			if (recompute) {
-				System.out.println("RECOMPUTING " + observable);
+			    if (Configuration.INSTANCE.isEchoEnabled()) {
+			        System.out.println("RECOMPUTING " + observable);
+			    }
 				reinitializeObservation(observable.getObservable(), getActuator(observable, dependencies), time,
 						runtimeScope, dataflow);
 				changed.add(observable);

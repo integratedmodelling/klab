@@ -11,7 +11,6 @@ public class ShapeToGrid implements IScaleMediator {
 
     public ShapeToGrid(Shape shape, Grid grid) {
 		// TODO Auto-generated constructor stub
-    	System.out.println("du");
 	}
 
 	@Override

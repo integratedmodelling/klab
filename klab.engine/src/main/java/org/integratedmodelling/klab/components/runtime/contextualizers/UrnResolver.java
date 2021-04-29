@@ -7,6 +7,7 @@ import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.kim.model.KimServiceCall;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.adapters.IKlabData;
@@ -87,9 +88,13 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
             parameters = resources.get(0).getSecond();
         }
 
-        System.err.println("GETTING DATA FROM " + res.getUrn());
+        if (Configuration.INSTANCE.isEchoEnabled()) {
+            System.err.println("GETTING DATA FROM " + res.getUrn());
+        }
         IKlabData data = Resources.INSTANCE.getResourceData(res, parameters, context.getScale(), context);
-        System.err.println("DONE " + res.getUrn());
+        if (Configuration.INSTANCE.isEchoEnabled()) {
+            System.err.println("DONE " + res.getUrn());
+        }
 
         if (data == null) {
             context.getMonitor().error("Cannot extract data from resource " + resource.getUrn());

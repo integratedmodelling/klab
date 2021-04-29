@@ -835,16 +835,22 @@ public class Session extends GroovyObjectSupport
             if (element != null) {
                 String documentation = DataflowDocumentation.INSTANCE.getDocumentation(element, context);
                 if (documentation != null) {
-                    System.out.println(documentation);
+                    if (Configuration.INSTANCE.isEchoEnabled()) {
+                        System.out.println(documentation);
+                    }
                     monitor.send(IMessage.MessageClass.UserInterface, IMessage.Type.DataflowDocumentation,
                             new DataflowDetail(state.getNodeId(), documentation,
                                     element.getType() == ElementType.RESOURCE || element.getType() == ElementType.TABLE));
                 }
             } else {
-                System.out.println("element not found: " + state.getNodeId());
+                if (Configuration.INSTANCE.isEchoEnabled()) {
+                    System.out.println("element not found: " + state.getNodeId());
+                }
             }
         } else {
-            System.out.println("context not found: " + state.getContextId());
+            if (Configuration.INSTANCE.isEchoEnabled()) {
+                System.out.println("context not found: " + state.getContextId());
+            }
         }
     }
 
@@ -981,13 +987,13 @@ public class Session extends GroovyObjectSupport
                             if (request.getQueryString().equals("(")) {
 
                                 // TODO open submatch with empty head of list
-                                System.out.println("OPEN PARENTHESIS");
+//                                System.out.println("OPEN PARENTHESIS");
                                 literalMatch = true;
 
                             } else if (request.getQueryString().equals("(")) {
 
                                 // TODO close submatch and collapse meaning
-                                System.out.println("OPEN PARENTHESIS");
+//                                System.out.println("OPEN PARENTHESIS");
                                 literalMatch = true;
 
                             } else {
@@ -1133,14 +1139,13 @@ public class Session extends GroovyObjectSupport
         this.globalState.register(action);
 
     }
-    
+
     @MessageHandler
     private void handleMenuAction(MenuAction action) {
 
         this.globalState.register(action);
 
     }
-
 
     /*
      * This can arrive with different message types
