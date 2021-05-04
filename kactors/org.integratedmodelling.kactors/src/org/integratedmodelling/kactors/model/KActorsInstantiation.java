@@ -4,8 +4,10 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Instantiation;
 import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Match;
@@ -95,5 +97,15 @@ public class KActorsInstantiation extends KActorsStatement implements Instantiat
     public void setActorBaseName(String actorBaseName) {
         this.actorBaseName = actorBaseName;
     }
+    
+
+    @Override
+    protected void visit(IKActorsAction action, Visitor visitor) {
+        for (ActionDescriptor ad : actions) {
+            ad.visit(action, this, visitor);
+        }
+        super.visit(action, visitor);
+    }
+    
 
 }

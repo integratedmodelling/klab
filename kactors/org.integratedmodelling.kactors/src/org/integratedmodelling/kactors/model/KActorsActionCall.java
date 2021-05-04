@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.integratedmodelling.kactors.api.IKActorsAction;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Call;
 import org.integratedmodelling.kactors.api.IKActorsValue;
@@ -20,6 +22,11 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 		// validation).
 		KActorsValue match;
 		KActorsStatement action;
+		
+        public void visit(IKActorsAction action2, IKActorsStatement kActorsActionCall, Visitor visitor) {
+            visitor.visitValue(match, kActorsActionCall, action2);
+            action.visit(action2, visitor);
+        }
 	}
 
 	private String message;
@@ -116,4 +123,17 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 		return this.internalId;
 	}
 
+    @Override
+    protected void visit(IKActorsAction action, Visitor visitor) {
+        arguments.visit(action, this, visitor);
+        if (group != null) {
+            group.visit(action, visitor);
+        }
+        for (ActionDescriptor a : actions) {
+            a.visit(action, this, visitor);
+        }
+        super.visit(action, visitor);
+    }
+	
+	
 }

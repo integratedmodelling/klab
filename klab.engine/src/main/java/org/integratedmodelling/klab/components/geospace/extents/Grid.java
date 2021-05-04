@@ -714,6 +714,11 @@ public class Grid extends Area implements IGrid {
 		public <T extends ILocator> T as(Class<T> cls) {
 
 			Cell focus = this;
+			
+			if (Cell.class.isAssignableFrom(cls)) {
+			    return (T)this;
+			}
+			
 			if (Grid.this instanceof Subgrid) {
 				focus = ((Subgrid) Grid.this).getOriginalCell(focus);
 			}
