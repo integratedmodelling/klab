@@ -16,6 +16,7 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
@@ -36,19 +37,40 @@ public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpres
     @Override
     public IProcess resolve(IProcess baseflowProcess, IContextualizationScope context) throws KlabException {
 
-        IState infiltratedWaterVolume = context.getArtifact("infiltrated_water_volume", IState.class);
-        GridCoverage2D infiltratedWaterVolumeGC = GeotoolsUtils.INSTANCE.stateToCoverage(infiltratedWaterVolume,
+        IState baseflowVolumeState = context.getArtifact("base_flow_water_volume", IState.class);
+        IState infiltratedWaterVolumeState = context.getArtifact("infiltrated_water_volume", IState.class);
+
+        Grid baseflowGrid = Space.extractGrid(baseflowVolumeState);
+        if (baseflowGrid == null) {
+            throw new KlabValidationException("Baseflow must be computed on a grid extent");
+        }
+        for(ILocator locator : context.getScale()) {
+//          locator.as(null) -> cell
+
+            for(int i = 0; i < baseflowGrid.getCellCount(); i++) {
+                long[] xy = baseflowGrid.getXYOffsets(i);
+                Double value = itera.getSampleDouble((int) xy[0], (int) xy[1], 0);
+                ILocator spl = locator.at(ISpace.class, xy[0], xy[1]);
+                if (transformation != null) {
+                    value = transformation.apply(value);
+                }
+                if (coordinateChecker != null) {
+                    if (!coordinateChecker.apply(xy)) {
+                        value = Double.NaN;
+                    }
+                }
+                for(ILocator spp : spl) {
+                    state.set(spp, value);
+                }
+            }
+        }
+
+        GridCoverage2D infiltratedWaterVolumeGC = GeotoolsUtils.INSTANCE.stateToCoverage(infiltratedWaterVolumeState,
                 context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false);
-        
+
         double[] values = new double[1];
         infiltratedWaterVolumeGC.evaluate(new GridCoordinates2D(0, 0), values);
         context.getMonitor().info("Got infiltrated with value in 0,0:  " + values[0]);
-        
-        
-        for (ILocator locator : context.getScale()) {
-//            locator.as(null) -> cell
-
-        }
 
 //        IState baseflowState = null;
 //
