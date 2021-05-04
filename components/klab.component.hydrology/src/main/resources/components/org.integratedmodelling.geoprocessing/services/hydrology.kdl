@@ -320,3 +320,24 @@ export process weather
 		
 	class org.integratedmodelling.geoprocessing.weather.WeatherResolver
 }
+
+export process baseflowcalc
+	"Calculates the baseflow."
+	label 'Calculate Baseflow Water Volume'
+{
+	import number infiltrated_water_volume
+		"The infiltrated water volume."
+
+	geometry T1S2
+
+	class org.integratedmodelling.geoprocessing.hydrology.BaseFlowWaterVolumeResolver
+}
+
+export process infiltratedcalc
+	"Calculates the infiltrated volume."
+	label 'Calculate Infiltrated Water Volume'
+{
+	geometry T1S2
+
+	class org.integratedmodelling.geoprocessing.hydrology.InfiltratedWaterVolumeResolver
+}
