@@ -3,10 +3,16 @@ package org.integratedmodelling.geoprocessing.hydrology;
 import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 
 import java.awt.image.DataBuffer;
+import java.util.List;
 
+import org.geotools.coverage.grid.GridCoordinates2D;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
+import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -33,11 +39,22 @@ public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpres
         IState infiltratedWaterVolume = context.getArtifact("infiltrated_water_volume", IState.class);
         GridCoverage2D infiltratedWaterVolumeGC = GeotoolsUtils.INSTANCE.stateToCoverage(infiltratedWaterVolume,
                 context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false);
-        context.getMonitor().info("Got infiltrated:  " + infiltratedWaterVolumeGC);
+        
+        double[] values = new double[1];
+        infiltratedWaterVolumeGC.evaluate(new GridCoordinates2D(0, 0), values);
+        context.getMonitor().info("Got infiltrated with value in 0,0:  " + values[0]);
+        
+        
+        for (ILocator locator : context.getScale()) {
+//            locator.as(null) -> cell
+
+        }
 
 //        IState baseflowState = null;
 //
-//        for(int i = 1; i < context.getModel().getObservables().size(); i++) {
+//        IModel model = context.getModel();
+//        List<IObservable> observables = model.getObservables();
+//        for(int i = 1; i < observables.size(); i++) {
 //
 //            if (outputId.equals(context.getModel().getObservables().get(i).getName())) {
 //                IState state = context.getArtifact(outputId, IState.class);
