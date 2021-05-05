@@ -48,11 +48,10 @@ public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpres
 //        }
         for(ILocator locator : context.getScale()) {
             Cell cell = locator.as(Cell.class);
-
-            Double baseFlow = baseflowVolumeState.get(cell, Double.class);
+            Double baseFlow = baseflowVolumeState.get(locator, Double.class);
             if (baseFlow == null) {
                 baseFlow = 0.0;
-                baseflowVolumeState.set(cell, baseFlow);
+                baseflowVolumeState.set(locator, baseFlow);
             } else {
                 Double infiltration = infiltratedWaterVolumeState.get(cell, Double.class);
                 double[] center = cell.getCenter();

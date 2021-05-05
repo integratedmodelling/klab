@@ -458,11 +458,11 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
         return null;
     }
 
-    @Override
-    public Collection<IArtifact> getAdditionalOutputs() {
-        // TODO Auto-generated method stub
-        return null;
-    }
+//    @Override
+//    public Collection<IArtifact> getAdditionalOutputs() {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 
     class DummyArtifact implements IArtifact {
 

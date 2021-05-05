@@ -1913,19 +1913,19 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         return ret;
     }
 
-    @Override
-    public Collection<IArtifact> getAdditionalOutputs() {
-        List<IArtifact> ret = new ArrayList<>();
-        if (this.model != null) {
-            for (int i = 0; i < model.getObservables().size(); i++) {
-                IArtifact out = findArtifact(model.getObservables().get(i)).getSecond();
-                if (out != null) {
-                    ret.add(out);
-                }
-            }
-        }
-        return ret;
-    }
+//    @Override
+//    public Collection<IArtifact> getAdditionalOutputs() {
+//        List<IArtifact> ret = new ArrayList<>();
+//        if (this.model != null) {
+//            for (int i = 0; i < model.getObservables().size(); i++) {
+//                IArtifact out = findArtifact(model.getObservables().get(i)).getSecond();
+//                if (out != null) {
+//                    ret.add(out);
+//                }
+//            }
+//        }
+//        return ret;
+//    }
 
     @Override
     public Collection<IObservable> getDependents(IObservable observable, Mode resolutionMode) {
