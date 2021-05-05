@@ -13,6 +13,7 @@ public class AgentCheckThread extends Thread {
 	public AgentCheckThread(Socket socket, int load) {
 		this.socket = socket;
 		this.load = load;
+		this.setName("agent-check-thread");
 	}
 	
     public void run() {
