@@ -488,9 +488,17 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
         }
 
         ITableView ret = new ExcelView();
-
+        Map<String, Integer> sheetNames = new HashMap<String, Integer>();
         for (TableArtifact table : tables) {
-            table.getCompiledView(ret, ret.sheet(table.getLabel()));
+            StringBuffer sheetName = new StringBuffer(table.getLabel());
+            if (sheetNames.containsKey(table.getLabel())) {
+                int index = sheetNames.get(table.getLabel()) + 1;
+                sheetName.append(" (").append(index).append(")");
+                sheetNames.put(table.getLabel(), index);
+            } else {
+                sheetNames.put(table.getLabel(), 0);
+            }
+            table.getCompiledView(ret, ret.sheet(sheetName.toString()));
         }
 
         try (OutputStream out = new FileOutputStream(file)) {
