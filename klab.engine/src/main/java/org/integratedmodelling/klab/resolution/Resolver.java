@@ -417,6 +417,10 @@ public class Resolver {
 
         for (IObservable observable : observables) {
 
+            if (parentScope.isResolving(observable, mode)) {
+                continue;
+            }
+
             ResolutionScope mscope = resolveConcrete((Observable) observable, parentScope,
                     ((Observable) observable).getResolvedPredicates(), mode);
 
@@ -462,7 +466,7 @@ public class Resolver {
      */
     private ResolutionScope resolveConcrete(Observable observable, ResolutionScope parentScope,
             Map<IConcept, IConcept> resolvedPredicates, Mode mode) {
-
+        
         /*
          * Check first if we need to redistribute the observable, in which case we only resolve the
          * distribution context and we leave it to the runtime context to finish the job, as we do
@@ -516,7 +520,7 @@ public class Resolver {
 
         /**
          * The result scope will have non-empty coverage if we have resolved this observable
-         * upstream.
+         * upstream. This will also set the "being resolved" stack to avoid infinite recursion.
          */
         ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
