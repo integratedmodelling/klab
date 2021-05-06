@@ -321,19 +321,35 @@ public enum Observables implements IObservableService {
     }
 
     /**
-     * Get all qualities affected by a process
+     * Get all qualities affected by a process, <em>including</em> those created by it.
      * 
      * @param process
      * @return
      */
-    public Collection<IConcept> getAffectedQualities(IConcept process) {
+    public Collection<IConcept> getAffectedQualities(ISemantic process) {
         Set<IConcept> ret = new HashSet<>();
-        for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process, Concepts.p(NS.AFFECTS_PROPERTY))) {
+        for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process.getType(), Concepts.p(NS.AFFECTS_PROPERTY))) {
             if (!Concepts.INSTANCE.isInternal(c)) {
                 ret.add(c);
             }
         }
-        for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process, Concepts.p(NS.CREATES_PROPERTY))) {
+        for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process.getType(), Concepts.p(NS.CREATES_PROPERTY))) {
+            if (!Concepts.INSTANCE.isInternal(c)) {
+                ret.add(c);
+            }
+        }
+        return ret;
+    }
+    
+    /**
+     * Get <em>only</em> the qualities created by a process.
+     * 
+     * @param process
+     * @return
+     */
+    public Collection<IConcept> getCreatedQualities(ISemantic process) {
+        Set<IConcept> ret = new HashSet<>();
+        for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process.getType(), Concepts.p(NS.CREATES_PROPERTY))) {
             if (!Concepts.INSTANCE.isInternal(c)) {
                 ret.add(c);
             }

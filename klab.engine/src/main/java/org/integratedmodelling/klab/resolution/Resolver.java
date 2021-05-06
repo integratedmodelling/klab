@@ -171,7 +171,7 @@ public class Resolver {
 
                 /*
                  * visit the scope (building a list of ResolvedObservable for all qualities that may
-                 * change) and resolve their change in parent scope
+                 * change) and resolve their change in the original scope
                  */
                 for (ObservedConcept observable : parentScope.getResolved(Type.QUALITY)) {
 
@@ -179,7 +179,7 @@ public class Resolver {
                         // these are mere transformations and we don't need their change.
                         continue;
                     }
-                    
+
                     IObservable toResolve = observable.getObservable().getBuilder(parentScope.getMonitor())
                             .as(UnarySemanticOperator.CHANGE).buildObservable();
 
@@ -190,7 +190,7 @@ public class Resolver {
                     ret.getMonitor().debug("Resolution scope is occurrent: resolving additional observable "
                             + Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
-                    ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(ret), Mode.RESOLUTION);
+                    ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(ret, observable.getScope().getResolutionNamespace()), Mode.RESOLUTION);
 
                     if (cscope.getCoverage().isRelevant()) {
 
@@ -201,9 +201,6 @@ public class Resolver {
                         ret.getOccurrentResolutions().add(cscope);
 
                     } else {
-                        /*
-                         * These are accessible in the dataflow
-                         */
                         ret.getImplicitlyChangingObservables().add(observable);
                     }
                 }
@@ -417,6 +414,10 @@ public class Resolver {
 
         for (IObservable observable : observables) {
 
+            if (parentScope.isResolving(observable, mode)) {
+                continue;
+            }
+
             ResolutionScope mscope = resolveConcrete((Observable) observable, parentScope,
                     ((Observable) observable).getResolvedPredicates(), mode);
 
@@ -516,7 +517,7 @@ public class Resolver {
 
         /**
          * The result scope will have non-empty coverage if we have resolved this observable
-         * upstream.
+         * upstream. This will also set the "being resolved" stack to avoid infinite recursion.
          */
         ResolutionScope ret = parentScope.getChildScope(observable, mode);
 

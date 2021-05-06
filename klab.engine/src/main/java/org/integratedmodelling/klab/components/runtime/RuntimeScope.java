@@ -1082,6 +1082,25 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         }
 
         /*
+         * add additional observables that are created by a process
+         */
+        if (actuator.getObservable().is(Type.PROCESS) && actuator.getModel() != null) {
+            Collection<IConcept> created = Observables.INSTANCE.getCreatedQualities(actuator.getObservable());
+            if (!created.isEmpty()) {
+                for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
+                    IObservable output = actuator.getModel().getObservables().get(i);
+                    for (IConcept cr : created) {
+                        if (cached_is(output.getType(), cr) && !this.catalog.containsKey(output.getName())) {
+                            targetObservables.put(output.getName(), new Triple<>((Observable) output,
+                                    output.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, false));
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
+        /*
          * will be pre-existing only if: (i) it's an existing observation group and the observable
          * does not determine a new view; or (ii) we're resolving an attribute through a dataflow,
          * which will be added by this.
@@ -1913,19 +1932,19 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         return ret;
     }
 
-    @Override
-    public Collection<IArtifact> getAdditionalOutputs() {
-        List<IArtifact> ret = new ArrayList<>();
-        if (this.model != null) {
-            for (int i = 0; i < model.getObservables().size(); i++) {
-                IArtifact out = findArtifact(model.getObservables().get(i)).getSecond();
-                if (out != null) {
-                    ret.add(out);
-                }
-            }
-        }
-        return ret;
-    }
+    // @Override
+    // public Collection<IArtifact> getAdditionalOutputs() {
+    // List<IArtifact> ret = new ArrayList<>();
+    // if (this.model != null) {
+    // for (int i = 0; i < model.getObservables().size(); i++) {
+    // IArtifact out = findArtifact(model.getObservables().get(i)).getSecond();
+    // if (out != null) {
+    // ret.add(out);
+    // }
+    // }
+    // }
+    // return ret;
+    // }
 
     @Override
     public Collection<IObservable> getDependents(IObservable observable, Mode resolutionMode) {

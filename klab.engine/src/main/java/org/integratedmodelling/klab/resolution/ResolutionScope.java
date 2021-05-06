@@ -238,6 +238,7 @@ public class ResolutionScope implements IResolutionScope {
     private boolean caching;
     private IModel contextModel;
     private boolean occurrent = false;
+    private Set<ObservedConcept> resolving = new HashSet<>();
 
     private void addResolvedScope(ObservedConcept concept, ResolutionScope scope) {
         List<ResolutionScope> slist = resolvedObservables.get(concept);
@@ -428,6 +429,7 @@ public class ResolutionScope implements IResolutionScope {
         this.previousResolution.addAll(other.previousResolution);
         this.roles.putAll(other.roles);
         this.resolvedPredicates.putAll(other.resolvedPredicates);
+        this.resolving.addAll(other.resolving);
         if (copyResolution) {
             this.observable = other.observable;
             this.model = other.model;
@@ -474,6 +476,9 @@ public class ResolutionScope implements IResolutionScope {
         ret.resolverCache.putAll(this.resolverCache);
         // ret.resolve(observable.getResolvedPredicates());
         ret.resolvedPredicates.putAll(observable.getResolvedPredicates());
+        
+        ret.resolving .add(new ObservedConcept(observable, mode));
+        
         /*
          * check if we already can resolve this (directly or indirectly), and if so, set coverage so
          * that it can be accepted as is. This should be a model; we should make the link, increment
@@ -1403,7 +1408,7 @@ public class ResolutionScope implements IResolutionScope {
             if (!ok) {
                 for (Type type : types) {
                     if (scope.observable.is(type)) {
-                        ret.add(new ObservedConcept(scope.observable, scope.mode));
+                        ret.add(new ObservedConcept(scope.observable, scope.mode, scope));
                         break;
                     }
                 }
@@ -1454,7 +1459,7 @@ public class ResolutionScope implements IResolutionScope {
      * @param scope
      * @return
      */
-    public ResolutionScope acceptResolutions(ResolutionScope scope) {
+    public ResolutionScope acceptResolutions(ResolutionScope scope, Namespace namespace) {
         ResolutionScope ret = new ResolutionScope(this);
         ret.resolverCache.putAll(scope.resolverCache);
         for (Link link : links) {
@@ -1462,6 +1467,7 @@ public class ResolutionScope implements IResolutionScope {
                 ret.previousResolution.add(link.getSource());
             }
         }
+        ret.resolutionNamespace = namespace;
         return ret;
     }
 
@@ -1502,6 +1508,10 @@ public class ResolutionScope implements IResolutionScope {
     
     public Map<ObservedConcept, List<IRankedModel>> getResolutions() {
         return this.resolutions;
+    }
+
+    public boolean isResolving(IObservable observable, Mode mode) {
+        return this.resolving.contains(new ObservedConcept(observable, mode));
     }
 
 }
