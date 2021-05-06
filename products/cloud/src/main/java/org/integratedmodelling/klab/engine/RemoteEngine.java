@@ -74,7 +74,7 @@ public class RemoteEngine extends Engine {
 
     @Override
     protected void closeExpiredSessions() {
-;        if (!Authentication.INSTANCE.getSessions().isEmpty()) {
+        if (!Authentication.INSTANCE.getSessions().isEmpty()) {
             try {
                 long current = System.currentTimeMillis();
                 activeSessions().forEach(sesh -> {
