@@ -340,6 +340,9 @@ export process infiltratedcalc
 	"Calculates the infiltrated volume."
 	label 'Calculate Infiltrated Water Volume'
 {
+	export number infiltrated_water_volume
+		"TODO"
+		
 	geometry T1S2
 
 	class org.integratedmodelling.geoprocessing.hydrology.InfiltratedWaterVolumeResolver

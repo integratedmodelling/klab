@@ -1,10 +1,16 @@
 package org.integratedmodelling.geoprocessing.hydrology;
 
+import java.util.Iterator;
+
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
@@ -24,30 +30,35 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
     @Override
     public IProcess resolve(IProcess infiltratedProcess, IContextualizationScope context) throws KlabException {
 
-//        IState infiltratedState = null;
-//
-//        for(int i = 1; i < context.getModel().getObservables().size(); i++) {
-//
-//            if (outputId.equals(context.getModel().getObservables().get(i).getName())) {
-//                IState state = context.getArtifact(outputId, IState.class);
-//                if (state == null) {
-//                    context.getMonitor().warn("cannot find state for " + outputId);
-//                } else {
-//                    infiltratedState = state;
-//                }
-//                break;
-//            }
-//        }
-//
-//        if (infiltratedState == null) {
-//            return infiltratedProcess;
-//        }
-//
-//        Grid grid = Space.extractGrid(infiltratedState);
-//
-//        if (grid == null) {
-//            throw new KlabValidationException("Infiltrated volume must be computed on a grid extent");
-//        }
+        IState infiltratedWaterVolumeState = context.getArtifact("infiltrated_water_volume", IState.class);
+
+        Grid grid = Space.extractGrid(infiltratedWaterVolumeState);
+
+        if (grid == null) {
+            throw new KlabValidationException("Infiltration must be computed on a grid extent");
+        }
+
+        IScale locator = context.getScale();
+
+        // DUMMY TEST
+        
+        // iterate over the grid
+        long xCells = grid.getXCells();
+        long yCells = grid.getYCells();
+        for(int y = 0; y < yCells; y++) {
+            for(int x = 0; x < xCells; x++) {
+                ILocator spl = locator.at(ISpace.class, x, y);
+
+                Double infiltrated = infiltratedWaterVolumeState.get(spl, Double.class);
+                boolean isValid = Observations.INSTANCE.isData(infiltrated);
+                if (isValid) {
+                    infiltrated += x + y; 
+                } else {
+                    infiltrated = 0.0;
+                }
+                infiltratedWaterVolumeState.set(spl, infiltrated);
+            }
+        }
 
         // DUMMY PLACEHOLDER OPERATION
         context.getMonitor().info("Processing Infiltrated Volume the dummy way. Just a placeholder.");
