@@ -171,7 +171,7 @@ public class Resolver {
 
                 /*
                  * visit the scope (building a list of ResolvedObservable for all qualities that may
-                 * change) and resolve their change in parent scope
+                 * change) and resolve their change in the original scope
                  */
                 for (ObservedConcept observable : parentScope.getResolved(Type.QUALITY)) {
 
@@ -179,7 +179,7 @@ public class Resolver {
                         // these are mere transformations and we don't need their change.
                         continue;
                     }
-                    
+
                     IObservable toResolve = observable.getObservable().getBuilder(parentScope.getMonitor())
                             .as(UnarySemanticOperator.CHANGE).buildObservable();
 
@@ -190,7 +190,7 @@ public class Resolver {
                     ret.getMonitor().debug("Resolution scope is occurrent: resolving additional observable "
                             + Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
-                    ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(ret), Mode.RESOLUTION);
+                    ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(ret, observable.getScope().getResolutionNamespace()), Mode.RESOLUTION);
 
                     if (cscope.getCoverage().isRelevant()) {
 
@@ -201,9 +201,6 @@ public class Resolver {
                         ret.getOccurrentResolutions().add(cscope);
 
                     } else {
-                        /*
-                         * These are accessible in the dataflow
-                         */
                         ret.getImplicitlyChangingObservables().add(observable);
                     }
                 }
@@ -466,7 +463,7 @@ public class Resolver {
      */
     private ResolutionScope resolveConcrete(Observable observable, ResolutionScope parentScope,
             Map<IConcept, IConcept> resolvedPredicates, Mode mode) {
-        
+
         /*
          * Check first if we need to redistribute the observable, in which case we only resolve the
          * distribution context and we leave it to the runtime context to finish the job, as we do
