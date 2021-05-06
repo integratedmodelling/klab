@@ -30,7 +30,6 @@ public class EngineReadyService {
         engineService.getEngine().setPublisher(publisher);
         engineService.getEngine().setSessionDeadBand(inactive);
         Logging.INSTANCE.info("Started Agent Check Port");
-        check.start();
         engineService.getEngine().setCheck(check);
     }
     

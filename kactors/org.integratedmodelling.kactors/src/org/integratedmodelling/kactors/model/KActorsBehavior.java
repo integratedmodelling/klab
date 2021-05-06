@@ -229,4 +229,18 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
         return this.versionString;
     }
 
+    @Override
+    public void visit(Visitor visitor) {
+        // TODO Auto-generated method stub
+        /*
+         * visit preamble
+         */
+        
+        for (IKActorsAction action : getActions()) {
+            visitor.visitAction(action);
+            ((KActorsStatement)action.getCode()).visit(action, visitor); 
+        }
+        
+    }
+
 }

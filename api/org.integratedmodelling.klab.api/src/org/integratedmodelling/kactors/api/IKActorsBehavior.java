@@ -98,7 +98,19 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
         boolean isSynchronous();
 
         IIdentity getIdentity();
+    }
 
+    /**
+     * Visitor for inspection or refactoring.
+     * 
+     * @author Ferd
+     *
+     */
+    interface Visitor {
+        void visitPreamble(String variable, Object value);
+        void visitAction(IKActorsAction action);
+        void visitStatement(IKActorsAction action, IKActorsStatement statement);
+        void visitValue(IKActorsValue value, IKActorsStatement statement, IKActorsAction action);
     }
 
     /**
@@ -203,5 +215,12 @@ public interface IKActorsBehavior extends IKActorsCodeStatement {
      * @return
      */
     String getVersionString();
+
+    /**
+     * Visit all actions and statements in a behavior.
+     * 
+     * @param visitor
+     */
+    void visit(Visitor visitor);
 
 }

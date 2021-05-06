@@ -1,7 +1,9 @@
 package org.integratedmodelling.kactors.model;
 
 import org.integratedmodelling.kactors.api.IKActorsStatement.Assignment;
+import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
 
 public class KActorsAssignment extends KActorsStatement implements Assignment {
 
@@ -34,5 +36,12 @@ public class KActorsAssignment extends KActorsStatement implements Assignment {
 	public String getRecipient() {
 		return this.recipient;
 	}
+
+    @Override
+    protected void visit(IKActorsAction action, Visitor visitor) {
+        visitor.visitValue(value, this, action);
+        super.visit(action, visitor);
+    }
+    
 
 }

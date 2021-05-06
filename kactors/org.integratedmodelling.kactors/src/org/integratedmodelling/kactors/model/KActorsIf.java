@@ -3,9 +3,11 @@ package org.integratedmodelling.kactors.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.If;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
 import org.integratedmodelling.kactors.kactors.ElseIfStatementBody;
 import org.integratedmodelling.kactors.kactors.IfStatement;
 import org.integratedmodelling.klab.utils.Pair;
@@ -71,5 +73,20 @@ public class KActorsIf extends KActorsStatement implements If {
 	public IKActorsStatement getElse() {
 		return otherwise;
 	}
+
+    @Override
+    protected void visit(IKActorsAction action, Visitor visitor) {
+        visitor.visitValue(condition, this, action);
+        ((KActorsStatement)body).visit(action, visitor);
+        for (Pair<IKActorsValue, IKActorsStatement> ei : elseifs) {
+            visitor.visitValue(ei.getFirst(), this, action);
+            ((KActorsStatement)ei.getSecond()).visit(action, visitor);
+        }
+        if (otherwise != null) {
+            ((KActorsStatement)otherwise).visit(action, visitor);
+        }
+        super.visit(action, visitor);
+    }
+    
 
 }

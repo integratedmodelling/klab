@@ -51,7 +51,8 @@ public interface IConfigurationService {
 	public static final String CERTFILE_PROPERTY = "klab.certificate";
 	public static final String KLAB_CONNECTION_TIMEOUT = "klab.connection.timeout";
 	public static final String KLAB_PROJECT_BLACKLIST_PROPERTY = "klab.project.blacklist";
-
+	public static final String KLAB_STATS_SERVER_URL_PROPERTY = "stats.server.url";
+	
 	/**
 	 * Minutes after which a session times out. Default 60.
 	 */

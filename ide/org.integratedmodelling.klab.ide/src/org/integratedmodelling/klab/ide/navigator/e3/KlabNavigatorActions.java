@@ -3,6 +3,7 @@ package org.integratedmodelling.klab.ide.navigator.e3;
 import java.io.File;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
 
 import org.eclipse.jface.dialogs.MessageDialog;
 import org.eclipse.jface.wizard.WizardDialog;
@@ -10,6 +11,7 @@ import org.eclipse.ui.IViewPart;
 import org.eclipse.ui.IWorkbenchPage;
 import org.eclipse.ui.PartInitException;
 import org.eclipse.ui.PlatformUI;
+import org.integratedmodelling.kactors.utils.KActorsLocalizer;
 import org.integratedmodelling.kim.api.IKimNamespace.Role;
 import org.integratedmodelling.klab.api.data.CRUDOperation;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -140,6 +142,25 @@ public class KlabNavigatorActions {
 //					new ProjectModificationRequest(script.getProject().getName(), script.getName()));
 //		}
 	}
+	
+	   public static void editLocalization(EActorBehavior script, IWorkbenchPage page) {
+	      // pop up alert: if new, ask to fill strings in, harvest and substitute
+	      KActorsLocalizer localizer = new KActorsLocalizer(script); 
+	      Map<String, String> toLocalize = localizer.getUnlocalizedStrings();
+	      for (String key: toLocalize.keySet()) {
+	          System.out.println(key + " = " + toLocalize.get(key));
+	      }
+//	      if (MessageDialog.openConfirm(Eclipse.INSTANCE.getShell(), "Confirm deletion",
+//	              "Delete script " + script.getName() + "? This action cannot be recovered.")) {
+//	          Activator.post((message) -> {
+//	              File file = message.getPayload(ProjectModificationNotification.class).getFile();
+//	              Activator.loader().delete(file);
+//	              Eclipse.INSTANCE.closeEditor(file, page);
+//	              KlabNavigator.refresh();
+//	          }, IMessage.MessageClass.ProjectLifecycle, IMessage.Type.DeleteScript,
+//	                  new ProjectModificationRequest(script.getProject().getName(), script.getName()));
+//	      }
+	    }
 
 	public static void addTestCase(ETestFolder folder) {
 		WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(),

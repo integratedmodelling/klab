@@ -1,8 +1,10 @@
 package org.integratedmodelling.kactors.model;
 
+import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.While;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
 import org.integratedmodelling.kactors.kactors.WhileStatement;
 
 public class KActorsWhile extends KActorsStatement implements While {
@@ -23,5 +25,11 @@ public class KActorsWhile extends KActorsStatement implements While {
 		return null;
 	}
 
+    @Override
+    protected void visit(IKActorsAction action, Visitor visitor) {
+        // TODO Auto-generated method stub
+        super.visit(action, visitor);
+    }
+    
 
 }

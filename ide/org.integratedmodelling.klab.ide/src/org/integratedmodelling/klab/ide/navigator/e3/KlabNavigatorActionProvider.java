@@ -77,6 +77,8 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				(namespace) -> KlabNavigatorActions.deleteScript(namespace, wSite.getPage()));
 		action("Delete behavior", "Delete the selected behavior", "cog_delete.png", EActorBehavior.class,
 				(namespace) -> KlabNavigatorActions.deleteBehavior(namespace, wSite.getPage()));
+        action("Localization...", "Edit localized strings", "cog_delete.png", EActorBehavior.class,
+                (namespace) -> KlabNavigatorActions.editLocalization(namespace, wSite.getPage()));
 		action("Delete script", "Delete the selected script", "script.gif", EScript.class,
 				(namespace) -> KlabNavigatorActions.deleteScript(namespace, wSite.getPage()));
 		action("Delete test case", "Delete the selected test case", "test.gif", ETestCase.class,
