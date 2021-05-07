@@ -7,8 +7,8 @@ import org.integratedmodelling.kim.api.IKimAction;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.api.documentation.IReport.Section.Type;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.dataflow.IActuator;
 
 /**
  * A documentation object corresponds to one tag in the \@documented k.IM
@@ -144,7 +144,7 @@ public interface IDocumentation {
 	 * @return true if the context documentation should proceed, false otherwise
 	 * @param report
 	 */
-	boolean instrumentReport(IReport report, IObservable target, IContextualizationScope scope);
+	boolean instrumentReport(IReport report, IActuator actuator, IContextualizationScope scope);
 
 	/**
 	 * Get all templates corresponding to the passed action type, if any.

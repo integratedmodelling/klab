@@ -35,13 +35,13 @@ import org.integratedmodelling.kim.api.IKimTable;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.klab.Authentication;
 import org.integratedmodelling.klab.Extensions;
-import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider.Item;
 import org.integratedmodelling.klab.api.documentation.IReport;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
@@ -103,7 +103,8 @@ public class Report implements IReport {
     Set<String> observationDescribed = new HashSet<>();
     Set<String> inserted = new HashSet<>();
     Set<String> usedTags = new HashSet<>();
-
+    Map<IConcept, Set<IConcept>> incarnatedPredicates = new HashMap<>();
+    
     DocumentationTree docTree;
 
     public RefType getReferenceType(String reference) {
@@ -365,6 +366,37 @@ public class Report implements IReport {
 
     public DocumentationTree getDocumentationTree() {
         return docTree;
+    }
+
+    /**
+     * Check if an observable incarnates a set of abstract predicates, and if so only return true
+     * after all the incarnated traits have been seen. Set the variables so that a foreach loop over
+     * the abstract trait can return all the observables.
+     * 
+     * If there are no incarnated predicates, return true so that the report can continue.
+     * 
+     * @param target
+     * @return
+     */
+    public boolean checkObservableCoverage(Actuator actuator) {
+        if (!actuator.getObservable().getResolvedPredicates().isEmpty()) {
+            boolean ok = true;
+            for (IConcept key : actuator.getObservable().getResolvedPredicates().keySet()) {
+                Set<IConcept> seen = this.incarnatedPredicates.get(key);
+                if (seen == null) {
+                    seen = new HashSet<>();
+                    this.incarnatedPredicates.put(key, seen);
+                }
+                seen.add(actuator.getObservable().getResolvedPredicates().get(key));
+                if (seen.size() < actuator.getObservable().getResolvedPredicatesContext().get(key).size()) {
+                    ok = false;
+                } else {
+                    // TODO set the array of incarnated concepts as a var for the template to use if wanted
+                }
+            }
+            return ok;
+        }
+        return true;
     }
 
 }
