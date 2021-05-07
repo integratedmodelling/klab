@@ -239,6 +239,7 @@ public class ResolutionScope implements IResolutionScope {
     private IModel contextModel;
     private boolean occurrent = false;
     private Set<ObservedConcept> resolving = new HashSet<>();
+    private Map<IConcept, Set<IConcept>> resolvedPredicatesContext = new HashMap<>();
 
     private void addResolvedScope(ObservedConcept concept, ResolutionScope scope) {
         List<ResolutionScope> slist = resolvedObservables.get(concept);
@@ -429,6 +430,7 @@ public class ResolutionScope implements IResolutionScope {
         this.previousResolution.addAll(other.previousResolution);
         this.roles.putAll(other.roles);
         this.resolvedPredicates.putAll(other.resolvedPredicates);
+        this.resolvedPredicatesContext.putAll(other.resolvedPredicatesContext);
         this.resolving.addAll(other.resolving);
         if (copyResolution) {
             this.observable = other.observable;
@@ -476,7 +478,7 @@ public class ResolutionScope implements IResolutionScope {
         ret.resolverCache.putAll(this.resolverCache);
         // ret.resolve(observable.getResolvedPredicates());
         ret.resolvedPredicates.putAll(observable.getResolvedPredicates());
-        
+        ret.resolvedPredicatesContext.putAll(observable.getResolvedPredicatesContext());
         ret.resolving .add(new ObservedConcept(observable, mode));
         
         /*
@@ -1512,6 +1514,10 @@ public class ResolutionScope implements IResolutionScope {
 
     public boolean isResolving(IObservable observable, Mode mode) {
         return this.resolving.contains(new ObservedConcept(observable, mode));
+    }
+
+    public Map<IConcept, Set<IConcept>> getResolvedPredicatesContext() {
+        return this.resolvedPredicatesContext;
     }
 
 }

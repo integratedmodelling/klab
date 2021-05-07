@@ -476,13 +476,19 @@ public class Documentation implements IDocumentation {
 	}
 
 	@Override
-	public void instrumentReport(IReport report, IObservable target, IContextualizationScope scope) {
+	public boolean instrumentReport(IReport report, IObservable target, IContextualizationScope scope) {
+
+	    /*
+	     * TODO verify if the target is the "final" one, or collect 
+	     */
+	    
 		for (Map<?,?> table : this.tables) {
 			((Report)report).addTaggedText(new DocumentationItem(DocumentationExtensions.Annotation.table, table, (IRuntimeScope)scope, target));
 		}
 		for (Map<?,?> graph : this.graphs) {
 			((Report)report).addTaggedText(new DocumentationItem(DocumentationExtensions.Annotation.graph, graph, (IRuntimeScope)scope, target));
 		}
+		return true;
 	}
 
 }
