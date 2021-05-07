@@ -197,14 +197,14 @@ public interface IContextualizationScope extends IParameters<String> {
 	 */
 	IArtifact getTargetArtifact();
 
-	/**
-	 * Return any additional output artifacts implied by the current scope. If
-	 * resources are used, the names of these artifacts must match attribute names
-	 * (for object resources) or output names in the resource.
-	 * 
-	 * @return any output artifacts, or an empty list.
-	 */
-	Collection<IArtifact> getAdditionalOutputs();
+//	/**
+//	 * Return any additional output artifacts implied by the current scope. If
+//	 * resources are used, the names of these artifacts must match attribute names
+//	 * (for object resources) or output names in the resource.
+//	 * 
+//	 * @return any output artifacts, or an empty list.
+//	 */
+//	Collection<IArtifact> getAdditionalOutputs();
 
 	/**
 	 * Get the resolved {@link IArtifact object} corresponding to the passed local

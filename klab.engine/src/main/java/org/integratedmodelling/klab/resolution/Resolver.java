@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -171,7 +172,7 @@ public class Resolver {
 
                 /*
                  * visit the scope (building a list of ResolvedObservable for all qualities that may
-                 * change) and resolve their change in parent scope
+                 * change) and resolve their change in the original scope
                  */
                 for (ObservedConcept observable : parentScope.getResolved(Type.QUALITY)) {
 
@@ -179,7 +180,7 @@ public class Resolver {
                         // these are mere transformations and we don't need their change.
                         continue;
                     }
-                    
+
                     IObservable toResolve = observable.getObservable().getBuilder(parentScope.getMonitor())
                             .as(UnarySemanticOperator.CHANGE).buildObservable();
 
@@ -190,7 +191,8 @@ public class Resolver {
                     ret.getMonitor().debug("Resolution scope is occurrent: resolving additional observable "
                             + Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
-                    ResolutionScope cscope = resolve((Observable) toResolve, parentScope.acceptResolutions(ret), Mode.RESOLUTION);
+                    ResolutionScope cscope = resolve((Observable) toResolve,
+                            parentScope.acceptResolutions(ret, observable.getScope().getResolutionNamespace()), Mode.RESOLUTION);
 
                     if (cscope.getCoverage().isRelevant()) {
 
@@ -201,9 +203,6 @@ public class Resolver {
                         ret.getOccurrentResolutions().add(cscope);
 
                     } else {
-                        /*
-                         * These are accessible in the dataflow
-                         */
                         ret.getImplicitlyChangingObservables().add(observable);
                     }
                 }
@@ -236,7 +235,7 @@ public class Resolver {
         /**
          * Any pre-resolved predicate is substituted right away and doesn't enter the resolution.
          */
-        observable = Observable.concretize(observable, scope.getResolvedPredicates());
+        observable = Observable.concretize(observable, scope.getResolvedPredicates(), scope.getResolvedPredicatesContext());
 
         /*
          * find the remaining abstract predicates
@@ -282,7 +281,8 @@ public class Resolver {
 
                     // this accepts empty resolutions, so check that we have values in the resulting
                     // scope.
-                    ResolutionScope oscope = resolveConcrete(pobs, rscope, pobs.getResolvedPredicates(), Mode.RESOLUTION);
+                    ResolutionScope oscope = resolveConcrete(pobs, rscope, pobs.getResolvedPredicates(),
+                            pobs.getResolvedPredicatesContext(), Mode.RESOLUTION);
                     if (oscope.getCoverage().isComplete()) {
 
                         done = true;
@@ -298,7 +298,9 @@ public class Resolver {
                                 ? null
                                 : dataflow.getRuntimeScope().getConcreteIdentities(pobs.getType());
                         if (predicates != null && !predicates.isEmpty()) {
-                            incarnated.put(predicate, new HashSet<>(predicates));
+                            // use a stable order so that the reporting system can know when the
+                            // last one is contextualized
+                            incarnated.put(predicate, new LinkedHashSet<>(predicates));
                         } else if (predicate.is(Type.IDENTITY)) {
                             /*
                              * not being able to incarnate a required identity stops resolution; not
@@ -322,7 +324,7 @@ public class Resolver {
                 for (IConcept orole : incarnated.keySet()) {
                     resolved.put(orole, incarnation.get(i++));
                 }
-                IObservable result = Observable.concretize(observable, resolved);
+                IObservable result = Observable.concretize(observable, resolved, incarnated);
                 scope.getMonitor().info("   " + result.getType().getDefinition());
                 ret.add(result);
             }
@@ -417,8 +419,13 @@ public class Resolver {
 
         for (IObservable observable : observables) {
 
+            if (parentScope.isResolving(observable, mode)) {
+                continue;
+            }
+
             ResolutionScope mscope = resolveConcrete((Observable) observable, parentScope,
-                    ((Observable) observable).getResolvedPredicates(), mode);
+                    ((Observable) observable).getResolvedPredicates(), ((Observable) observable).getResolvedPredicatesContext(),
+                    mode);
 
             if (ret == null) {
                 ret = mscope;
@@ -454,6 +461,7 @@ public class Resolver {
      * @param observable
      * @param parentScope
      * @param resolvedPredicates
+     * @param map
      * @param mode
      * @return the scope with any child scopes for the models and the coverage of the resolved
      *         observable. If resolution is unsuccessful, return a scope with no children, with
@@ -461,7 +469,7 @@ public class Resolver {
      *         optional.
      */
     private ResolutionScope resolveConcrete(Observable observable, ResolutionScope parentScope,
-            Map<IConcept, IConcept> resolvedPredicates, Mode mode) {
+            Map<IConcept, IConcept> resolvedPredicates, Map<IConcept, Set<IConcept>> resolvedPredicatesContext, Mode mode) {
 
         /*
          * Check first if we need to redistribute the observable, in which case we only resolve the
@@ -499,7 +507,8 @@ public class Resolver {
              * Distribute the observable over the observation of its context. We don't know what the
              * context observation will produce.
              */
-            ResolutionScope ret = resolveConcrete(deferTo, parentScope, deferTo.getResolvedPredicates(), Mode.INSTANTIATION);
+            ResolutionScope ret = resolveConcrete(deferTo, parentScope, deferTo.getResolvedPredicates(),
+                    deferTo.getResolvedPredicatesContext(), Mode.INSTANTIATION);
             if (ret.getCoverage().isRelevant()) {
                 ResolutionScope deferred = ret.getChildScope(deferredObservable, mode);
                 deferred.setDeferred(true);
@@ -516,7 +525,7 @@ public class Resolver {
 
         /**
          * The result scope will have non-empty coverage if we have resolved this observable
-         * upstream.
+         * upstream. This will also set the "being resolved" stack to avoid infinite recursion.
          */
         ResolutionScope ret = parentScope.getChildScope(observable, mode);
 
@@ -623,7 +632,8 @@ public class Resolver {
 
                         for (IRankedModel model : candidateModels) {
 
-                            model = concretizeModel(model, resolvedPredicates, parentScope.getMonitor());
+                            model = concretizeModel(model, resolvedPredicates, resolvedPredicatesContext,
+                                    parentScope.getMonitor());
 
                             ResolutionScope mscope = resolve(model, ret);
 
@@ -717,8 +727,9 @@ public class Resolver {
      * predicates referenced in the model. If so, produce a concrete instance of the model
      * specialized for the predicates.
      */
-    private IRankedModel concretizeModel(IRankedModel model, Map<IConcept, IConcept> resolvedPredicates, IMonitor monitor) {
-        IModel m = Model.concretize(model, resolvedPredicates, monitor);
+    private IRankedModel concretizeModel(IRankedModel model, Map<IConcept, IConcept> resolvedPredicates,
+            Map<IConcept, Set<IConcept>> resolvedPredicatesContext, IMonitor monitor) {
+        IModel m = Model.concretize(model, resolvedPredicates, resolvedPredicatesContext, monitor);
         if (!model.getId().equals(m.getId())) {
             return RankedModel.create(model, m);
         }

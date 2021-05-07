@@ -141,9 +141,10 @@ public interface IDocumentation {
 	 * contextual to a specific contextualization scope and observable target, so
 	 * those are passed too.
 	 * 
+	 * @return true if the context documentation should proceed, false otherwise
 	 * @param report
 	 */
-	void instrumentReport(IReport report, IObservable target, IContextualizationScope scope);
+	boolean instrumentReport(IReport report, IObservable target, IContextualizationScope scope);
 
 	/**
 	 * Get all templates corresponding to the passed action type, if any.

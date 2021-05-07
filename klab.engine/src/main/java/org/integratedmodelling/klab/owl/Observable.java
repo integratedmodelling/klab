@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -118,6 +119,11 @@ public class Observable implements IObservable {
     // remember the lineage and
     // enable scoping for downstream resolutions.
     private Map<IConcept, IConcept> resolvedPredicates = new HashMap<>();
+    // also keep the full set of the resolved predicates of which we resolve just one, in stable
+    // order so that the reporting
+    // system can use it.
+    private Map<IConcept, Set<IConcept>> resolvedPredicatesContext = new HashMap<>();
+
     // keep these here for speed after computing them in case of repeated resolutions.
     private Set<IConcept> abstractPredicates_;
 
@@ -181,9 +187,11 @@ public class Observable implements IObservable {
      * 
      * @param observable
      * @param resolved
+     * @param incarnated
      * @return
      */
-    public static IObservable concretize(IObservable observable, Map<IConcept, IConcept> resolved) {
+    public static IObservable concretize(IObservable observable, Map<IConcept, IConcept> resolved,
+            Map<IConcept, Set<IConcept>> incarnated) {
 
         if (resolved.isEmpty()) {
             return observable;
@@ -199,6 +207,7 @@ public class Observable implements IObservable {
         for (IConcept key : resolved.keySet()) {
             if (abs.contains(key)) {
                 ((Observable) ret).resolvedPredicates.put(key, resolved.get(key));
+                ((Observable)ret).resolvedPredicatesContext.put(key, new LinkedHashSet<>(incarnated.get(key)));
             }
             if (key.is(Type.ROLE)) {
                 ret.getContextualRoles().add(key);
@@ -235,6 +244,7 @@ public class Observable implements IObservable {
         this.contextualRoles.addAll(observable.contextualRoles);
         this.dereifiedAttribute = observable.dereifiedAttribute;
         this.resolvedPredicates.putAll(observable.resolvedPredicates);
+        this.resolvedPredicatesContext.putAll(observable.resolvedPredicatesContext);
     }
 
     public static IObservable replaceComponent(Observable original, Map<IConcept, IConcept> replacements) {
@@ -804,8 +814,8 @@ public class Observable implements IObservable {
         }
 
         /*
-         * Predicates within the scope of a first-level operator are also returned.
-         * TODO should we recurse? probably not - but keep this in mind.
+         * Predicates within the scope of a first-level operator are also returned. TODO should we
+         * recurse? probably not - but keep this in mind.
          */
         IConcept described = Observables.INSTANCE.getDescribedType(getType());
         if (described != null) {
@@ -954,6 +964,10 @@ public class Observable implements IObservable {
 
     public void setStatedName(String statedName) {
         this.statedName = statedName;
+    }
+
+    public Map<IConcept, Set<IConcept>> getResolvedPredicatesContext() {
+        return this.resolvedPredicatesContext;
     }
 
 }

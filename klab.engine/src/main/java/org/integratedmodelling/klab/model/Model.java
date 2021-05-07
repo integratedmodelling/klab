@@ -160,7 +160,8 @@ public class Model extends KimObject implements IModel {
      * @param monitor
      * @return
      */
-    public static IModel concretize(IModel candidate, Map<IConcept, IConcept> resolvedTraits, IMonitor monitor) {
+    public static IModel concretize(IModel candidate, Map<IConcept, IConcept> resolvedTraits,
+            Map<IConcept, Set<IConcept>> resolvedPredicatesContext, IMonitor monitor) {
 
         if (resolvedTraits.isEmpty()) {
             return candidate;
@@ -186,10 +187,11 @@ public class Model extends KimObject implements IModel {
             }
         }
 
-        return needConcretization ? new Model((Model) model, resolvedTraits, monitor) : candidate;
+        return needConcretization ? new Model((Model) model, resolvedTraits, resolvedPredicatesContext, monitor) : candidate;
     }
 
-    private Model(Model model, Map<IConcept, IConcept> resolvedPredicates, IMonitor monitor) {
+    private Model(Model model, Map<IConcept, IConcept> resolvedPredicates, Map<IConcept, Set<IConcept>> resolvedPredicatesContext,
+            IMonitor monitor) {
 
         /*
          * easier to recreate from the statement, then fix observables and resources. Any "named"
@@ -215,10 +217,10 @@ public class Model extends KimObject implements IModel {
         this.dependencies.clear();
 
         for (IObservable observable : model.observables) {
-            this.observables.add(Observable.concretize(observable, resolvedPredicates));
+            this.observables.add(Observable.concretize(observable, resolvedPredicates, resolvedPredicatesContext));
         }
         for (IObservable dependency : model.dependencies) {
-            this.dependencies.add(Observable.concretize(dependency, resolvedPredicates));
+            this.dependencies.add(Observable.concretize(dependency, resolvedPredicates, resolvedPredicatesContext));
         }
 
     }
