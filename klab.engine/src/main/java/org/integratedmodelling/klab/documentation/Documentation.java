@@ -3,16 +3,18 @@ package org.integratedmodelling.klab.documentation;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.general.IExpression;
+import org.integratedmodelling.klab.api.data.general.IExpression.CompilerOption;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
 import org.integratedmodelling.klab.api.documentation.IReport;
-import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -21,6 +23,7 @@ import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.documentation.extensions.DocumentationExtensions;
 import org.integratedmodelling.klab.engine.resources.Project;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -53,6 +56,66 @@ public class Documentation implements IDocumentation {
      */
     public static Documentation empty() {
         return new Documentation();
+    }
+
+    /**
+     * Scope for flow directives in template execution
+     * 
+     * @author Ferd
+     *
+     */
+    class Scope {
+
+        public Scope(Map<String, Object> templateVariables) {
+            this.variables.putAll(templateVariables);
+        }
+
+        // if not active, skip the next section
+        boolean active = true;
+        // index of next directive in this.sections
+        int nextDirective = 0;
+        // // current section to append content to
+        // ReportSection currentSection;
+        Scope parent;
+
+        String method;
+        Map<String, Object> variables = new HashMap<>();
+        Iterator<?> iterator = null;
+        String iterated = null;
+
+        public int pop(int index) {
+            switch(method) {
+            case "for":
+                if (active = iterator.hasNext()) {
+                    variables.put(iterated, iterator.next());
+                    return this.nextDirective;
+                }
+            }
+            return index;
+        }
+
+        public Scope push(SectionImpl section, Map<String, Object> variables, int index) {
+            Scope scope = new Scope(this.variables);
+            scope.method = section.method;
+            switch(section.method) {
+            case "for":
+                List<String> args = section.getArguments(2);
+                scope.iterated = args.get(0);
+                if (variables.get(args.get(1)) instanceof Iterable) {
+                    scope.iterator = ((Iterable<?>) variables.get(args.get(1))).iterator();
+                } else {
+                    throw new KlabIllegalArgumentException("Non-iterable second argument passed to @for documentation directive");
+                }
+                if (scope.active = scope.iterator.hasNext()) {
+                    scope.variables.putAll(variables);
+                    scope.variables.put(scope.iterated, scope.iterator.next());
+                }
+                scope.nextDirective = index + 1;
+                break;
+            }
+            return scope;
+        }
+
     }
 
     private Documentation() {
@@ -216,77 +279,55 @@ public class Documentation implements IDocumentation {
         }
 
         @Override
-        public void compile(IReport.Section sect, IContextualizationScope context) {
+        public void compile(IReport.Section sect, IContextualizationScope context, Map<String, Object> templateVariables) {
+            compile(sect, context, templateVariables, new Scope(templateVariables));
+        }
+
+        /**
+         * Compile the current scope, return the index of the next
+         * 
+         * @param sect
+         * @param context
+         * @param templateVariables
+         * @param scope
+         * @return
+         */
+        private int compile(IReport.Section sect, IContextualizationScope context, Map<String, Object> templateVariables,
+                Scope scope) {
 
             ReportSection current = (ReportSection) sect;
 
-            for (SectionImpl section : sections) {
+            int ret = scope.nextDirective;
+            for (; ret < sections.size(); ret++) {
+
+                SectionImpl section = sections.get(ret);
 
                 // TODO switch to matching the enum
                 if (section.getType() == SectionImpl.Type.REPORT_CALL) {
                     switch(section.method) {
                     case "section":
-                        current = ((ReportSection) sect).getChild(current, section.body, section.method);
+                        current = current.getChild(current, section.body, section.method);
                         break;
-                    case "tag":
-                        current.tag(processArguments(section.body, 1), Documentation.this, context);
-                        break;
-                    case "describe":
-                        current.describe(processArguments(section.body, 1), Documentation.this, context);
-                        break;
-                    case "link":
-                    case "reference":
-                        current.link(processArguments(section.body, 1), Documentation.this, context);
-                        break;
-                    case "table":
-                        current.table(processArguments(section.body, 2), Documentation.this, context);
-                        break;
-                    case "cite":
-                        current.cite(processArguments(section.body, 1), Documentation.this, context);
-                        break;
-                    case "footnote":
-                        current.footnote(processArguments(section.body, 2), Documentation.this, context);
-                        break;
-                    case "figure":
-                        current.figure(processArguments(section.body, 2), Documentation.this, context);
-                        break;
-                    case "insert":
-                        current.insert(processArguments(section.body, 1), Documentation.this, context);
-                        break;
-                    case "require":
-                        current.getReport().require(processArguments(section.body, 2), Documentation.this, context);
-                        break;
-                    case "import":
-                        String id = processArguments(section.body, 1).toString();
-                        IDocumentationProvider.Item arg = current.getReport().getTaggedText(id);
-                        if (arg != null) {
-                            current.getReport().notifyUsedTag(id);
-                            current.body.append(arg.getMarkdownContents());
-                        }
-                        break;
-                    // next for later, allow unsupported use. Need scopes for these to work.
                     case "if":
-                        // open conditional scope, set active to result of expression
+                        // // open conditional scope, set active to result of expression
                         break;
                     case "elseif":
-                        break;
-                    case "endif":
-                        // close conditional scope
                         break;
                     case "else":
                         break;
                     case "for":
-                        // open iterator scope
+                        ret = compile(current, context, templateVariables, scope.push(section, templateVariables, ret));
                         break;
                     case "while":
                         // open iterator scope
                         break;
-                    case "endfor":
-                        // exit innermost iterator scope
-                        break;
                     case "endwhile":
-                        // exit innermost iterator scope
-                        break;
+                    case "endfor":
+                    case "endif":
+                        ret = scope.pop(ret);
+                        if (!scope.active) {
+                            return ret;
+                        }
                     case "break":
                         // exit innermost iterator scope
                         break;
@@ -299,17 +340,64 @@ public class Documentation implements IDocumentation {
                     case "ifndef":
                         break;
                     default:
-                        throw new KlabValidationException("unknown documentation directive @" + section.method);
+                        if (scope.active) {
+                            processDirective(section, current, context, scope);
+                        }
                     }
 
                 } else if (section.getType() == SectionImpl.Type.TEMPLATE_STRING
                         || section.getType() == SectionImpl.Type.ACTION_CODE) {
-
-                    current.body.append(section.evaluate(context, current));
-
+                    if (scope.active) {
+                        current.body.append(section.evaluate(section.getCode(), context, scope));
+                    }
                 }
             }
 
+            return ret;
+
+        }
+
+        private void processDirective(SectionImpl section, ReportSection current, IContextualizationScope context, Scope scope) {
+            switch(section.method) {
+            case "tag":
+                current.tag(processArguments(section, 1, context, scope), Documentation.this, context, scope);
+                break;
+            case "describe":
+                current.describe(processArguments(section, 1, context, scope), Documentation.this, context, scope);
+                break;
+            case "link":
+            case "reference":
+                current.link(processArguments(section, 1, context, scope), Documentation.this, context, scope);
+                break;
+            case "table":
+                current.table(processArguments(section, 2, context, scope), Documentation.this, context, scope);
+                break;
+            case "cite":
+                current.cite(processArguments(section, 1, context, scope), Documentation.this, context, scope);
+                break;
+            case "footnote":
+                current.footnote(processArguments(section, 2, context, scope), Documentation.this, context, scope);
+                break;
+            case "figure":
+                current.figure(processArguments(section, 2, context, scope), Documentation.this, context, scope);
+                break;
+            case "insert":
+                current.insert(processArguments(section, 1, context, scope), Documentation.this, context, scope);
+                break;
+            case "require":
+                current.getReport().require(processArguments(section, 2, context, scope), Documentation.this, context);
+                break;
+            case "import":
+                String id = processArguments(section, 1, context, scope).toString();
+                IDocumentationProvider.Item arg = current.getReport().getTaggedText(id);
+                if (arg != null) {
+                    current.getReport().notifyUsedTag(id);
+                    current.body.append(arg.getMarkdownContents());
+                }
+                break;
+            default:
+                throw new KlabValidationException("unknown documentation directive @" + section.method);
+            }
         }
 
         public SectionRole getRole() {
@@ -322,28 +410,33 @@ public class Documentation implements IDocumentation {
 
         /**
          * Split an argument string into a max of argCount comma-separated arguments, plus anything
-         * following the last as a last string argument
+         * following the last as a last string argument which is processed in the scope if it
+         * contains at least a dollar sign.
          * 
          * @param body
          * @param argCount
          * @return
          */
-        public Object[] processArguments(String body, int argCount) {
+        public Object[] processArguments(SectionImpl section, int argCount, IContextualizationScope context, Scope scope) {
 
             List<Object> arguments = new ArrayList<>();
             int offset = 0;
             while(arguments.size() < argCount) {
-                int nextComma = body.indexOf(',', offset + 1);
+                int nextComma = section.body.indexOf(',', offset + 1);
                 if (nextComma < 0) {
                     break;
                 }
-                String arg = body.substring(offset, nextComma);
+                String arg = section.body.substring(offset, nextComma);
                 arguments.add(Utils.asPOD(arg.trim()));
                 offset = nextComma + 1;
             }
 
-            if (offset < body.length()) {
-                arguments.add(body.substring(offset).trim());
+            if (offset < section.body.length()) {
+                String last = section.body.substring(offset).trim();
+                if (last.contains("$")) {
+                    last = section.evaluate(asGroovyTemplate(last), context, scope);
+                }
+                arguments.add(last);
             }
 
             return arguments.toArray();
@@ -384,6 +477,19 @@ public class Documentation implements IDocumentation {
             this.body = body;
         }
 
+        public List<String> getArguments(int i) {
+            String[] ret = this.body.split(",");
+            if (i >= 0 && ret.length != i) {
+                throw new KlabIllegalArgumentException(
+                        "wrong number of parameters for @" + method + " directive: " + i + " expected");
+            }
+            List<String> r = new ArrayList<>();
+            for (String s : ret) {
+                r.add(s.trim());
+            }
+            return r;
+        }
+
         // creates a call section
         public SectionImpl(String method, String body) {
             this.type = Type.REPORT_CALL;
@@ -395,13 +501,14 @@ public class Documentation implements IDocumentation {
             return type;
         }
 
-        public String evaluate(IContextualizationScope context, Section section) {
+        public String evaluate(String code, IContextualizationScope context, /* Section section, */ Scope scope) {
             Object ret = "";
             Parameters<String> parameters = new Parameters<>();
             parameters.putAll(context);
-            parameters.put("_section", section);
-            IExpression compiled = Extensions.INSTANCE.compileExpression(getCode(), context.getExpressionContext(),
-                    Extensions.DEFAULT_EXPRESSION_LANGUAGE);
+            parameters.putAll(scope.variables);
+            // parameters.put("_section", section);
+            IExpression compiled = Extensions.INSTANCE.compileExpression(code, context.getExpressionContext(),
+                    Extensions.DEFAULT_EXPRESSION_LANGUAGE, CompilerOption.DoNotPreprocess);
             if (compiled != null) {
                 ret = compiled.eval(parameters, context);
             }
@@ -439,6 +546,11 @@ public class Documentation implements IDocumentation {
             }
             return "// " + COMMENT_TEXT + " \n" + ret;
         }
+    }
+
+    public String asGroovyTemplate(String string) {
+        String vid = "_" + NameGenerator.shortUUID();
+        return "// " + COMMENT_TEXT + " \ndef " + vid + " = \"\"\"" + string + "\"\"\"\n;\n" + "return " + vid + ";";
     }
 
     public File getDocfile() {

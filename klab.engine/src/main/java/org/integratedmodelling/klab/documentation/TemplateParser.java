@@ -124,7 +124,7 @@ public class TemplateParser {
 
 				if (currentAnnotation != null) {
 
-					if (!token.getCompanion().equals(OPEN_PARENTHESIS)) {
+					if (token.getCompanion() != null && !token.getCompanion().equals(OPEN_PARENTHESIS)) {
 						ret.getErrors().add("arguments in parentheses are expected after report calls");
 					}
 
@@ -138,12 +138,12 @@ public class TemplateParser {
 
 					switch (token.getType()) {
 					case Token.PATTERN:
-						if (token.getCompanion().equals(ANNOTATION)) {
+						if (token.getCompanion() != null && token.getCompanion().equals(ANNOTATION)) {
 							currentAnnotation = value;
 						}
 						break;
 					case Token.SPECIAL_SEQUENCE:
-						if (token.getCompanion().equals(OPEN_BRACKET)
+						if (token.getCompanion() != null && token.getCompanion().equals(OPEN_BRACKET)
 								&& !(!currentText.isEmpty() && currentText.endsWith("\\"))) {
 							ret.addText(currentText);
 							currentText = "";

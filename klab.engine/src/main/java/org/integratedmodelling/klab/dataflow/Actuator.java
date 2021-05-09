@@ -1500,7 +1500,7 @@ public class Actuator implements IActuator {
         for (IDocumentation doc : documentation) {
             if (doc.instrumentReport(context.getReport(), this, context)) {
                 for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
-                    ((Report) context.getReport()).include(template, context);
+                    ((Report) context.getReport()).include(template, context, doc);
                 }
             }
         }
