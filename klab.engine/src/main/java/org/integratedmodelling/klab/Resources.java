@@ -1936,7 +1936,9 @@ public enum Resources implements IResourceService {
 
             ResourceReference ref = ((Resource) resource).getReference();
             SpatialExtent geometry = ref.getSpatialExtent();
-
+            if (geometry == null) {
+                return null;
+            }
             try {
                 BufferedImage image = ImageIO.read(getClass().getResource("/icons/worldscaled.png"));
                 image.getGraphics().setColor(Color.RED);

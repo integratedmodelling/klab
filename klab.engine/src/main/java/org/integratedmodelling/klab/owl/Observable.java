@@ -52,12 +52,14 @@ import org.integratedmodelling.klab.utils.CamelCase;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
+import groovy.lang.GroovyObjectSupport;
+
 /**
  * Equality ignores differences of name, value, optional and generic status.
  * 
  * @author ferdinando.villa
  */
-public class Observable implements IObservable {
+public class Observable extends GroovyObjectSupport implements IObservable {
 
     protected Concept observable;
     private String name;
@@ -968,6 +970,15 @@ public class Observable implements IObservable {
 
     public Map<IConcept, Set<IConcept>> getResolvedPredicatesContext() {
         return this.resolvedPredicatesContext;
+    }
+    
+    @Override
+    public Object getProperty(String property) {
+        switch(property) {
+        case "displayLabel":
+            return Concepts.INSTANCE.getDisplayLabel(this);
+        }
+        return super.getProperty(property);
     }
 
 }
