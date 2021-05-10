@@ -348,7 +348,12 @@ public class Documentation implements IDocumentation {
                 } else if (section.getType() == SectionImpl.Type.TEMPLATE_STRING
                         || section.getType() == SectionImpl.Type.ACTION_CODE) {
                     if (scope.active) {
-                        current.body.append(section.evaluate(section.getCode(), context, scope));
+                        try {
+                            current.body.append(section.evaluate(section.getCode(), context, scope));
+                        } catch (Throwable t) {
+                            context.getMonitor().error("Error compiling documentation " + trigger + "/" + sectionId
+                                    + " in section '" + current.getName() + "': " + section.body);
+                        }
                     }
                 }
             }

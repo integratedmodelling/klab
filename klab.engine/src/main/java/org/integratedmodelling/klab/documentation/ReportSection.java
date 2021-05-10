@@ -12,6 +12,7 @@ import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
 import org.integratedmodelling.klab.api.knowledge.ISemantic;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -19,6 +20,7 @@ import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.data.classification.Classifier;
 import org.integratedmodelling.klab.documentation.Documentation.Scope;
 import org.integratedmodelling.klab.documentation.Report.RefType;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.rest.DocumentationNode;
 import org.integratedmodelling.klab.rest.DocumentationNode.Figure;
 import org.integratedmodelling.klab.utils.NameGenerator;
@@ -171,7 +173,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param args tag
      * @param context
-     * @param scope 
+     * @param scope
      */
     public void describe(Object[] args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
         // TODO Auto-generated method stub
@@ -183,7 +185,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param args tag
      * @param context
-     * @param scope 
+     * @param scope
      */
     public void tag(Object[] args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
         Element element = addElement(args[0], DocumentationNode.Type.Link);
@@ -197,18 +199,22 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param processArguments tag, text
      * @param context
-     * @param scope 
+     * @param scope
      */
     public void link(Object[] args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
-        RefType type = report.getReferenceType(args[0].toString());
-        if (type != null) {
-            Element element = addElement(type.name().toLowerCase() + ":" + args[0], DocumentationNode.Type.Anchor);
-            body.append("[@" + type.name().toLowerCase() + ":" + args[0] + "]");
-            element.finalize();
+        if (args[0].toString().startsWith("http")) {
+            body.append((args.length > 1 ? ("[" + args[1] + "](") : "") + args[0] + (args.length > 1 ? ")" : ""));
         } else {
-            Element element = addElement("user:" + args[0], DocumentationNode.Type.Anchor);
-            body.append("[@user:" + args[0] + "]");
-            element.finalize();
+            RefType type = report.getReferenceType(args[0].toString());
+            if (type != null) {
+                Element element = addElement(type.name().toLowerCase() + ":" + args[0], DocumentationNode.Type.Anchor);
+                body.append("[@" + type.name().toLowerCase() + ":" + args[0] + "]");
+                element.finalize();
+            } else {
+                Element element = addElement("user:" + args[0], DocumentationNode.Type.Anchor);
+                body.append("[@user:" + args[0] + "]");
+                element.finalize();
+            }
         }
     }
 
@@ -218,11 +224,12 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param processArguments
      * @param context
-     * @param scope 
+     * @param scope
      */
     public void table(Object[] args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
 
         IStructuredTable<?> table = getTable(args[0].toString());
+        
         if (table != null) {
 
             Element element = addElement(DocumentationTree.getTableDescriptor(table, args), DocumentationNode.Type.Table);
@@ -252,6 +259,25 @@ public class ReportSection extends Parameters<String> implements Section {
             body.append("{#" + RefType.TABLE.name().toLowerCase() + ":" + args[1] + " text-align: center}\n\n");
 
             element.finalize();
+            
+        } else {
+            
+            for (IKnowledgeView view : ((IRuntimeScope)context).getViews()) {
+                if (view.getIdentifier().equals(args[0])) {
+                    /*
+                     * insert table component
+                     */
+                    DocumentationNode vnode = report.getDocumentationTree().getExistingViewNode(view.getIdentifier());
+                    if (vnode != null) {
+                      Element element = addElement(vnode, DocumentationNode.Type.Figure);
+                      if (args.length > 1) {
+                          report.setReferenceType(args[1].toString(), RefType.TABLE);
+                      }
+                      element.finalize();
+                    }
+                }
+            }
+            
         }
     }
 
@@ -283,7 +309,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param processArguments
      * @param context
-     * @param scope 
+     * @param scope
      */
     public void cite(Object[] args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
 
@@ -317,7 +343,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param processArguments
      * @param context
-     * @param scope 
+     * @param scope
      */
     public void footnote(Object[] processArguments, IDocumentation documentation, IContextualizationScope context, Scope scope) {
         // TODO Auto-generated method stub
@@ -332,24 +358,24 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param processArguments
      * @param context
-     * @param scope 
+     * @param scope
      */
     public void figure(Object[] args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
 
         // TODO accommodate insertion of actual figure from doc space
-        
+
         IArtifact artifact = null;
         if ("self".equals(args[0])) {
             artifact = context.getTargetArtifact();
         } else if (scope.variables.containsKey(args[0].toString())) {
-            
+
             Object o = scope.variables.get(args[0].toString());
             if (o instanceof IObservation) {
-                artifact = (IObservation)o;
+                artifact = (IObservation) o;
             } else if (o instanceof ISemantic) {
-                artifact = context.getArtifact(((ISemantic)o).getType(), IObservation.class);
+                artifact = context.getArtifact(((ISemantic) o).getType(), IObservation.class);
             }
-            
+
         } else {
             artifact = context.getArtifact(args[0].toString());
         }
@@ -375,7 +401,7 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param processArguments
      * @param context
-     * @param scope 
+     * @param scope
      */
     public void insert(Object[] processArguments, IDocumentation documentation, IContextualizationScope context, Scope scope) {
         if (processArguments.length > 0) {

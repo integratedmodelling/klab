@@ -1004,6 +1004,7 @@ public class Model extends KimObject implements IModel {
         // observables in the view as dependencies, the view compilation as code
         this.derived = true;
         this.viewModel = view;
+        this.getAnnotations().addAll(view.getAnnotations());
         this.namespace = (Namespace) view.getNamespace();
         this.observables.add(Observable.promote(Concepts.c(NS.CORE_VOID)));
         this.id = view.getId() + "_resolver";
