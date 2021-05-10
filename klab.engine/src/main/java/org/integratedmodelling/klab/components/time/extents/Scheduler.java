@@ -918,6 +918,7 @@ public class Scheduler implements IScheduler {
 			registration.run(monitor);
 		}
 
+		
 		// don't do this again if we make further observations later
 		this.registrations.clear();
 

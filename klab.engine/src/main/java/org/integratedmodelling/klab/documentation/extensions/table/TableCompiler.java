@@ -1204,6 +1204,9 @@ public class TableCompiler {
 
     private String numberFormat = null;
 
+    // tied to the "name" spec and initialized to the table's model name if unspecified.
+    private String identifier;
+
     /**
      * Return the passed dimensions in order of dependency. If circular dependencies are detected
      * throw a validation exception as the definition is misconfigured.
@@ -1334,6 +1337,7 @@ public class TableCompiler {
         }
         this.title = definition.containsKey("title") ? definition.get("title").toString() : null;
         this.label = definition.containsKey("label") ? definition.get("label").toString() : null;
+        this.identifier = definition.containsKey("name") ? definition.get("name").toString() : this.name;
         this.namespace = namespace;
         this.definition = definition;
         if (definition.get("timelabels") instanceof Map) {
@@ -2659,6 +2663,10 @@ public class TableCompiler {
         return namespace;
     }
 
+    public String getIdentifier() {
+        return identifier;
+    }
+    
     public TableCompiler contextualize(IRuntimeScope scope) {
         return new TableCompiler(this, scope);
     }

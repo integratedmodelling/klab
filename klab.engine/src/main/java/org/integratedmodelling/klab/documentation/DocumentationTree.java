@@ -141,6 +141,10 @@ public class DocumentationTree {
             return getTablesView(format);
         case PROVENANCE:
             return getProvenanceView(format);
+        case REFERENCES:
+            break;
+        default:
+            break;
         }
         return null;
     }
@@ -198,7 +202,8 @@ public class DocumentationTree {
         } else if (o instanceof IClassification) {
 
         } else {
-//            System.out.println("OHIBÓ un cianfero non visto prima: " + o.getClass().getCanonicalName());
+            // System.out.println("OHIBÓ un cianfero non visto prima: " +
+            // o.getClass().getCanonicalName());
         }
     }
 
@@ -217,10 +222,8 @@ public class DocumentationTree {
         ret.setTitle(resource.getMetadata().containsKey(IMetadata.DC_TITLE)
                 ? resource.getMetadata().get(IMetadata.DC_TITLE).toString()
                 : urn.getResourceId());
-        
-        
+
         DocumentationNode.Resource res = new DocumentationNode.Resource();
-        
 
         if (resource.getMetadata().get(IMetadata.DC_URL) != null) {
             String content = resource.getMetadata().get(IMetadata.DC_URL).toString();
@@ -271,13 +274,13 @@ public class DocumentationTree {
         res.setOriginatorDescription(resource.getMetadata().containsKey(IMetadata.DC_ORIGINATOR)
                 ? resource.getMetadata().get(IMetadata.DC_ORIGINATOR).toString()
                 : "Unknown originator");
-        
+
         if (resource.getGeometry().getDimension(Dimension.Type.SPACE) != null) {
             res.setSpaceDescriptionUrl(API.ENGINE.RESOURCE.GET_RESOURCE_SPATIAL_IMAGE.replace("{urn}", resource.getUrn()));
         }
         if (resource.getGeometry().getDimension(Dimension.Type.TIME) != null) {
         }
-        
+
         ret.setResource(res);
         return ret;
     }
@@ -426,6 +429,17 @@ public class DocumentationTree {
         return ret;
     }
 
+    public DocumentationNode getExistingViewNode(String viewIdentifier) {
+        for (DocumentationNode node : nodes.values()) {
+            if (node.getType() == Type.Table) {
+                if (node.getTable().getDocumentationIdentifier().equals(viewIdentifier)) {
+                    return node;
+                }
+            }
+        }
+        return null;
+    }
+
     private List<DocumentationNode> getResourcesView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
         for (DocumentationNode node : nodes.values()) {
@@ -519,6 +533,10 @@ public class DocumentationTree {
 
     private DocumentationNode compileElement(Element element, String format) {
 
+        if (element.element instanceof DocumentationNode) {
+            return (DocumentationNode)element.element;
+        }
+        
         if (element.type == Type.Section) {
             return compileSection((ReportSection) element.element, format);
         } else if (element.type == Type.Anchor || element.type == Type.Citation || element.type == Type.Link) {
@@ -622,24 +640,24 @@ public class DocumentationTree {
     }
 
     public static Figure getFigureDescriptor(IArtifact artifact, IObservationReference ref, Object[] args) {
-        
+
         if (ref.isEmpty() || ref.getDataSummary() == null || ref.getLiteralValue() != null) {
             return null;
         }
-        
+
         Figure ret = new Figure();
-        
-        String id = args.length > 1 ? args[1].toString() : ("fig" + NameGenerator.shortUUID()); 
+
+        String id = args.length > 1 ? args[1].toString() : ("fig" + NameGenerator.shortUUID());
         String caption = "";
         if (args.length > 2) {
             caption = args[2].toString();
         }
-        
+
         ret.setId(id);
-        ret.setCaption(caption);    
+        ret.setCaption(caption);
         ret.setObservationId(artifact.getId());
         ret.setLabel(ref.getLabel());
-        
+
         /**
          * Must add output type, locator and viewport
          */
@@ -647,10 +665,10 @@ public class DocumentationTree {
         ret.setObservationType(ref.getObservationType());
         ret.getGeometryTypes().addAll(ref.getGeometryTypes());
         ret.setObservableType(ref.getObservableType());
-        
+
         if (artifact instanceof State) {
-            for (ILocator locator : ((State)artifact).getSliceLocators()) {
-                TimesliceLocator sl = (TimesliceLocator)locator;
+            for (ILocator locator : ((State) artifact).getSliceLocators()) {
+                TimesliceLocator sl = (TimesliceLocator) locator;
                 ret.getTimeSlices().add(sl.getTimestamp() + "," + sl.getLabel());
             }
         }
@@ -658,7 +676,6 @@ public class DocumentationTree {
         ret.setDataSummary(ref.getDataSummary());
         ret.setBaseUrl(baseUrl);
 
-        
         return ret;
     }
 
