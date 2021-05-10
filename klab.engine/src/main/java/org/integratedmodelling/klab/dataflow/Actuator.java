@@ -1498,9 +1498,9 @@ public class Actuator implements IActuator {
          * when all is computed, reuse the context to render the documentation templates.
          */
         for (IDocumentation doc : documentation) {
-            if (doc.instrumentReport(context.getReport(), observable, context)) {
+            if (doc.instrumentReport(context.getReport(), this, context)) {
                 for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
-                    ((Report) context.getReport()).include(template, context);
+                    ((Report) context.getReport()).include(template, context, doc);
                 }
             }
         }

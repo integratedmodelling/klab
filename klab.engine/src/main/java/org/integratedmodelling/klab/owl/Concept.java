@@ -687,9 +687,9 @@ public class Concept extends Knowledge implements IConcept {
 
         int distance = 0;
 
-//        String resolving = this.getDefinition();
-//        String resolved = concept.getDefinition();
-//        System.out.println("Does " + resolving + " resolve " + resolved + "?");
+        // String resolving = this.getDefinition();
+        // String resolved = concept.getDefinition();
+        // System.out.println("Does " + resolving + " resolve " + resolved + "?");
 
         int mainDistance = getCoreDistance(concept, context, compareInherency, resolvedAbstractPredicates);
         distance += mainDistance * 50;
@@ -924,7 +924,7 @@ public class Concept extends Knowledge implements IConcept {
         /**
          * Previously returning the distance, which does not work unless the core observables are
          * the same (differentiated by predicates only) - which for example makes identities under
-         * 'type of' be compatible no matter the identity. 
+         * 'type of' be compatible no matter the identity.
          */
         return core1.equals(core2)
                 ? Concepts.INSTANCE.getAssertedDistance(this, concept)
@@ -960,6 +960,17 @@ public class Concept extends Knowledge implements IConcept {
 
     public String getHtmlDeclaration() {
         return "<span class=\"" + Concepts.INSTANCE.getCssClass(this) + "\">" + getDefinition() + "</span>";
+    }
+
+    @Override
+    public Object getProperty(String property) {
+        switch(property) {
+        case "displayLabel":
+            return Concepts.INSTANCE.getDisplayLabel(this);
+        case "codeName":
+            return Concepts.INSTANCE.getCodeName(this);
+        }
+        return super.getProperty(property);
     }
 
     /*
