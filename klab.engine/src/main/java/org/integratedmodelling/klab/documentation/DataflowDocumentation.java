@@ -250,7 +250,7 @@ public enum DataflowDocumentation {
                     report = new Report();
                 }
                 for (IDocumentation.Template ktemp : doc.get(Trigger.DOCUMENTATION)) {
-                    report.include(ktemp, actuator.getCurrentContext());
+                    report.include(ktemp, actuator.getCurrentContext(), doc);
                 }
             }
             if (report != null) {

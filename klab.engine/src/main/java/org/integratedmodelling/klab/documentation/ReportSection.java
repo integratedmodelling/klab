@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.documentation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
@@ -10,11 +11,13 @@ import org.integratedmodelling.klab.api.documentation.IDocumentationProvider.Ite
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.Section;
 import org.integratedmodelling.klab.api.documentation.IReport.SectionRole;
+import org.integratedmodelling.klab.api.knowledge.ISemantic;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.rest.IObservationReference;
 import org.integratedmodelling.klab.data.classification.Classifier;
+import org.integratedmodelling.klab.documentation.Documentation.Scope;
 import org.integratedmodelling.klab.documentation.Report.RefType;
 import org.integratedmodelling.klab.rest.DocumentationNode;
 import org.integratedmodelling.klab.rest.DocumentationNode.Figure;
@@ -58,16 +61,6 @@ public class ReportSection extends Parameters<String> implements Section {
         parent.children.add(this);
         this.report = parent.report;
     }
-
-    // public ReportSection(Report report, Reference reference, String tag) {
-    // this.report = report;
-    // this.body.append("[#" + Report.RefType.REF.name().toLowerCase() + ":" + tag + "]. ");
-    // this.body.append(reference.get(BibTexFields.EXAMPLE_CITATION));
-    // this.body.append(" {#" + Report.RefType.REF.name().toLowerCase() + ":" + tag + "}");
-    // this.body.append("\n\n");
-    // ReportSection parent = report.getMainSection(SectionRole.REFERENCES);
-    // parent.children.add(this);
-    // }
 
     @Override
     public String toString() {
@@ -178,8 +171,9 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param args tag
      * @param context
+     * @param scope 
      */
-    public void describe(Object[] args, IDocumentation documentation, IContextualizationScope context) {
+    public void describe(Object[] args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
         // TODO Auto-generated method stub
         // System.out.println("FOC");
     }
@@ -189,8 +183,9 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param args tag
      * @param context
+     * @param scope 
      */
-    public void tag(Object[] args, IDocumentation documentation, IContextualizationScope context) {
+    public void tag(Object[] args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
         Element element = addElement(args[0], DocumentationNode.Type.Link);
         body.append("{#user:" + args[0] + "}");
         element.finalize();
@@ -202,8 +197,9 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param processArguments tag, text
      * @param context
+     * @param scope 
      */
-    public void link(Object[] args, IDocumentation documentation, IContextualizationScope context) {
+    public void link(Object[] args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
         RefType type = report.getReferenceType(args[0].toString());
         if (type != null) {
             Element element = addElement(type.name().toLowerCase() + ":" + args[0], DocumentationNode.Type.Anchor);
@@ -222,8 +218,9 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param processArguments
      * @param context
+     * @param scope 
      */
-    public void table(Object[] args, IDocumentation documentation, IContextualizationScope context) {
+    public void table(Object[] args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
 
         IStructuredTable<?> table = getTable(args[0].toString());
         if (table != null) {
@@ -286,8 +283,9 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param processArguments
      * @param context
+     * @param scope 
      */
-    public void cite(Object[] args, IDocumentation documentation, IContextualizationScope context) {
+    public void cite(Object[] args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
 
         // Element element = null;
         DocumentationNode node = null;
@@ -319,8 +317,9 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param processArguments
      * @param context
+     * @param scope 
      */
-    public void footnote(Object[] processArguments, IDocumentation documentation, IContextualizationScope context) {
+    public void footnote(Object[] processArguments, IDocumentation documentation, IContextualizationScope context, Scope scope) {
         // TODO Auto-generated method stub
         // System.out.println("FOC");
     }
@@ -333,12 +332,27 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param processArguments
      * @param context
+     * @param scope 
      */
-    public void figure(Object[] args, IDocumentation documentation, IContextualizationScope context) {
+    public void figure(Object[] args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
 
         // TODO accommodate insertion of actual figure from doc space
-
-        IArtifact artifact = "self".equals(args[0]) ? context.getTargetArtifact() : context.getArtifact(args[0].toString());
+        
+        IArtifact artifact = null;
+        if ("self".equals(args[0])) {
+            artifact = context.getTargetArtifact();
+        } else if (scope.variables.containsKey(args[0].toString())) {
+            
+            Object o = scope.variables.get(args[0].toString());
+            if (o instanceof IObservation) {
+                artifact = (IObservation)o;
+            } else if (o instanceof ISemantic) {
+                artifact = context.getArtifact(((ISemantic)o).getType(), IObservation.class);
+            }
+            
+        } else {
+            artifact = context.getArtifact(args[0].toString());
+        }
         if (artifact instanceof IObservation) {
 
             IObservationReference ref = report.getObservation(((IObservation) artifact).getId());
@@ -361,8 +375,9 @@ public class ReportSection extends Parameters<String> implements Section {
      * 
      * @param processArguments
      * @param context
+     * @param scope 
      */
-    public void insert(Object[] processArguments, IDocumentation documentation, IContextualizationScope context) {
+    public void insert(Object[] processArguments, IDocumentation documentation, IContextualizationScope context, Scope scope) {
         if (processArguments.length > 0) {
             Item item = report.taggedText.get(processArguments[0].toString());
             if (item != null) {
@@ -375,11 +390,11 @@ public class ReportSection extends Parameters<String> implements Section {
     }
 
     @Override
-    public String render() {
-        return render(0, null);
+    public String render(Map<String, Object> templateVariables) {
+        return render(0, null, templateVariables);
     }
 
-    public String render(int level, String numbering) {
+    public String render(int level, String numbering, Map<String, Object> templateVariables) {
 
         String ret = "";
 
@@ -395,7 +410,7 @@ public class ReportSection extends Parameters<String> implements Section {
             if (child.name != null && numbering != null) {
                 numb = numbering + "." + (++n);
             }
-            ret += child.render(level + 1, numb);
+            ret += child.render(level + 1, numb, templateVariables);
         }
 
         return ret;

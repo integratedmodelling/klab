@@ -323,7 +323,7 @@ public class Actuator implements IActuator {
         this.currentContext = runtimeContext;
         this.status.set(1);
         this.startComputation.set(System.currentTimeMillis());
-        
+
         /*
          * poor-man attempt at reentrancy in case this has to get called more than once for any
          * reason later.
@@ -932,7 +932,7 @@ public class Actuator implements IActuator {
         }
 
         for (IActuator input : getActuators()) {
-            
+
             /*
              * TODO check: is this ever right?
              */
@@ -1498,9 +1498,10 @@ public class Actuator implements IActuator {
          * when all is computed, reuse the context to render the documentation templates.
          */
         for (IDocumentation doc : documentation) {
-            doc.instrumentReport(context.getReport(), observable, context);
-            for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
-                ((Report) context.getReport()).include(template, context);
+            if (doc.instrumentReport(context.getReport(), this, context)) {
+                for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
+                    ((Report) context.getReport()).include(template, context, doc);
+                }
             }
         }
 
@@ -1632,7 +1633,7 @@ public class Actuator implements IActuator {
     public boolean isTrivial() {
         return actuators.isEmpty() && computationStrategy.isEmpty() && mediationStrategy.isEmpty();
     }
-    
+
     public Map<String, String> getLocalNames() {
         return this.localNames;
     }

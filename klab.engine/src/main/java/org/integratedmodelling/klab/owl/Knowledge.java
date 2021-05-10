@@ -27,12 +27,14 @@ import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IKnowledge;
 import org.integratedmodelling.klab.api.model.INamespace;
 
+import groovy.lang.GroovyObjectSupport;
+
 /**
  * 
  * @author ferdinando.villa
  *
  */
-public abstract class Knowledge implements IKnowledge {
+public abstract class Knowledge extends GroovyObjectSupport implements IKnowledge {
 
     @Override
     public boolean equals(Object obj) {

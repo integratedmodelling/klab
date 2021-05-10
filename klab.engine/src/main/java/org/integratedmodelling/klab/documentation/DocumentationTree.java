@@ -632,11 +632,7 @@ public class DocumentationTree {
         String id = args.length > 1 ? args[1].toString() : ("fig" + NameGenerator.shortUUID()); 
         String caption = "";
         if (args.length > 2) {
-            StringBuffer c = new StringBuffer(512);
-            for (int n = 2; n < args.length; n++) {
-                c.append(n == 2 ? args[n].toString() : (" " + args[n]));
-            }
-            caption = c.toString();
+            caption = args[2].toString();
         }
         
         ret.setId(id);

@@ -55,6 +55,7 @@ import org.springframework.util.StringUtils;
 
 import groovyjarjarantlr.Token;
 import groovyjarjarantlr.TokenStreamException;
+import groovyjarjarantlr.TokenStreamRecognitionException;
 
 /**
  * Smarter preprocessor to produce proper Groovy from k.LAB expressions.
@@ -115,7 +116,19 @@ public class GroovyExpressionPreprocessor {
 			// // stop parsing without warning.
 			// return null;
 			// }
-			Token t = super.nextToken();
+		    Token t = null;
+//		    try {
+		        t = super.nextToken();
+//		    } catch (TokenStreamRecognitionException e) {
+//		        if (e.getMessage().contains("unexpected char: '")) {
+//		            // FIXME this is thrown from the template processor when a  $ is found in a triple-quoted string, which should not happen.
+//	                int n = "unexpected char: '".length();
+//		            t = new Token();
+//		            t.setType(GroovyLexer.IDENT);
+//		            t.setText(e.getMessage().substring(n, n+2));
+//		            super.s
+//		        }
+//		    }
 			// cheat Groovy into thinking that it just saw an integer, so that it won't
 			// try
 			// to interpret slashes as string separators.
@@ -125,7 +138,7 @@ public class GroovyExpressionPreprocessor {
 	}
 
 	/*
-	 * what separates Groovy words and not necessarily Thinklab's.
+	 * what separates Groovy words and not necessarily k.LAB's.
 	 */
 	static Set<String> delimiters;
 
@@ -156,6 +169,7 @@ public class GroovyExpressionPreprocessor {
 	 */
 	private Map<String, Set<String>> mapIdentifiers = new HashMap<>();
 	private boolean ignoreContext;
+    private boolean ignored;
 
 	static final int KNOWLEDGE = 1;
 	static final int DEFINE = 2;
@@ -178,6 +192,7 @@ public class GroovyExpressionPreprocessor {
 		this.contextual = contextual;
 		this.recontextualizeAsMap = options.contains(CompilerOption.RecontextualizeAsMap);
 		this.ignoreContext = options.contains(CompilerOption.IgnoreContext);
+		this.ignored = options.contains(CompilerOption.DoNotPreprocess);
 	}
 
 	public Geometry getInferredGeometry() {
@@ -301,6 +316,11 @@ public class GroovyExpressionPreprocessor {
 		code = preprocessDeclarations(code);
 		code = preprocessContextualizations(code);
 
+
+        if (this.ignored) {
+            return code;
+        }
+        
 		List<List<Token>> groups = new ArrayList<>();
 		Lexer lexer = new Lexer(new StringReader(code));
 		lexer.setWhitespaceIncluded(true);
