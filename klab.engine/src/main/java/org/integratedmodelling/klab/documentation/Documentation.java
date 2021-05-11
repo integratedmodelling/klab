@@ -78,6 +78,9 @@ public class Documentation implements IDocumentation {
         // ReportSection currentSection;
         Scope parent;
 
+        // if the scope is a repeated section, this will have a distinct 0+ value at each repetition
+        int index = -1;
+
         String method;
         Map<String, Object> variables = new HashMap<>();
         Iterator<?> iterator = null;
@@ -88,12 +91,21 @@ public class Documentation implements IDocumentation {
             case "for":
                 if (active = iterator.hasNext()) {
                     variables.put(iterated, iterator.next());
+                    this.index ++;
                     return this.nextDirective;
                 }
             }
             return index;
         }
 
+        public boolean isRepeated() {
+            return index >= 0;
+        }
+        
+        public int repeatIndex() {
+            return index;
+        }
+        
         public Scope push(SectionImpl section, Map<String, Object> variables, int index) {
             Scope scope = new Scope(this.variables);
             scope.method = section.method;
@@ -101,6 +113,7 @@ public class Documentation implements IDocumentation {
             case "for":
                 List<String> args = section.getArguments(2);
                 scope.iterated = args.get(0);
+                scope.index = 0;
                 if (variables.get(args.get(1)) instanceof Iterable) {
                     scope.iterator = ((Iterable<?>) variables.get(args.get(1))).iterator();
                 } else {
