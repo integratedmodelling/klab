@@ -650,9 +650,8 @@ public class DocumentationTree {
 
         Figure ret = new Figure();
 
-        String id = args.length > 1
-                ? args[1].toString()
-                : ("fig" + NameGenerator.shortUUID()) + (scope.isRepeated() ? ("_" + scope.repeatIndex()) : "");
+        String id = (args.length > 1 ? args[1].toString() : ("fig" + NameGenerator.shortUUID()))
+                + (scope.isRepeated() ? ("_" + scope.repeatIndex()) : "");
         String caption = "";
         if (args.length > 2) {
             caption = args[2].toString();
