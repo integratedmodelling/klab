@@ -50,7 +50,7 @@ public class ReportSection extends Parameters<String> implements Section {
         DocumentationNode.Type type;
 
         public void finalize() {
-            this.endOffset = body.length();
+            this.endOffset = startOffset + body.length();
         }
     }
 
@@ -229,10 +229,10 @@ public class ReportSection extends Parameters<String> implements Section {
     public void table(Object[] args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
 
         IStructuredTable<?> table = getTable(args[0].toString());
-        
+
         if (table != null) {
 
-            Element element = addElement(DocumentationTree.getTableDescriptor(table, args), DocumentationNode.Type.Table);
+            Element element = addElement(DocumentationTree.getTableDescriptor(table, scope, args), DocumentationNode.Type.Table);
 
             report.setReferenceType(args[1].toString(), RefType.TABLE);
             body.append("\n\n");
@@ -259,25 +259,24 @@ public class ReportSection extends Parameters<String> implements Section {
             body.append("{#" + RefType.TABLE.name().toLowerCase() + ":" + args[1] + " text-align: center}\n\n");
 
             element.finalize();
-            
+
         } else {
-            
-            for (IKnowledgeView view : ((IRuntimeScope)context).getViews()) {
+
+            for (IKnowledgeView view : ((IRuntimeScope) context).getViews()) {
                 if (view.getIdentifier().equals(args[0])) {
                     /*
                      * insert table component
                      */
-                    DocumentationNode vnode = report.getDocumentationTree().getExistingViewNode(view.getIdentifier());
-                    if (vnode != null) {
-                      Element element = addElement(vnode, DocumentationNode.Type.Figure);
-                      if (args.length > 1) {
-                          report.setReferenceType(args[1].toString(), RefType.TABLE);
-                      }
-                      element.finalize();
+                    for (DocumentationNode vnode : report.getDocumentationTree().getExistingViewNode(view.getIdentifier())) {
+                        Element element = addElement(vnode, DocumentationNode.Type.Figure);
+                        if (args.length > 1) {
+                            report.setReferenceType(args[1].toString(), RefType.TABLE);
+                        }
+                        element.finalize();
                     }
                 }
             }
-            
+
         }
     }
 
@@ -384,7 +383,7 @@ public class ReportSection extends Parameters<String> implements Section {
             IObservationReference ref = report.getObservation(((IObservation) artifact).getId());
             if (ref != null) {
 
-                Figure figure = DocumentationTree.getFigureDescriptor(artifact, ref, args);
+                Figure figure = DocumentationTree.getFigureDescriptor(artifact, ref, scope, args);
                 if (figure != null) {
                     Element element = addElement(figure, DocumentationNode.Type.Figure);
                     if (args.length > 1) {

@@ -2,6 +2,7 @@ package org.integratedmodelling.klab.documentation;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -33,6 +34,7 @@ import org.integratedmodelling.klab.api.services.IModelService.IRankedModel;
 import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
+import org.integratedmodelling.klab.documentation.Documentation.Scope;
 import org.integratedmodelling.klab.documentation.ReportSection.Element;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
@@ -429,15 +431,16 @@ public class DocumentationTree {
         return ret;
     }
 
-    public DocumentationNode getExistingViewNode(String viewIdentifier) {
+    public Collection<DocumentationNode> getExistingViewNode(String viewIdentifier) {
+        List<DocumentationNode> ret = new ArrayList<>();
         for (DocumentationNode node : nodes.values()) {
             if (node.getType() == Type.Table) {
                 if (node.getTable().getDocumentationIdentifier().equals(viewIdentifier)) {
-                    return node;
+                    ret.add(node);
                 }
             }
         }
-        return null;
+        return ret;
     }
 
     private List<DocumentationNode> getResourcesView(String format) {
@@ -534,9 +537,9 @@ public class DocumentationTree {
     private DocumentationNode compileElement(Element element, String format) {
 
         if (element.element instanceof DocumentationNode) {
-            return (DocumentationNode)element.element;
+            return (DocumentationNode) element.element;
         }
-        
+
         if (element.type == Type.Section) {
             return compileSection((ReportSection) element.element, format);
         } else if (element.type == Type.Anchor || element.type == Type.Citation || element.type == Type.Link) {
@@ -634,12 +637,12 @@ public class DocumentationTree {
         return ret;
     }
 
-    public static Table getTableDescriptor(IStructuredTable<?> table, Object[] args) {
+    public static Table getTableDescriptor(IStructuredTable<?> table, Scope scope, Object[] args) {
         Table ret = new Table();
         return ret;
     }
 
-    public static Figure getFigureDescriptor(IArtifact artifact, IObservationReference ref, Object[] args) {
+    public static Figure getFigureDescriptor(IArtifact artifact, IObservationReference ref, Scope scope, Object[] args) {
 
         if (ref.isEmpty() || ref.getDataSummary() == null || ref.getLiteralValue() != null) {
             return null;
@@ -647,7 +650,9 @@ public class DocumentationTree {
 
         Figure ret = new Figure();
 
-        String id = args.length > 1 ? args[1].toString() : ("fig" + NameGenerator.shortUUID());
+        String id = args.length > 1
+                ? args[1].toString()
+                : ("fig" + NameGenerator.shortUUID()) + (scope.isRepeated() ? ("_" + scope.repeatIndex()) : "");
         String caption = "";
         if (args.length > 2) {
             caption = args[2].toString();
