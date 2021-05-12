@@ -368,7 +368,9 @@ public class Documentation implements IDocumentation {
                     if (scope.active) {
                         try {
                             String content = section.evaluate(section.getCode(), context, scope);
-                            current.appendContent(content);
+                            if (!content.isEmpty()) {
+                                current.appendContent(content);
+                            }
                             // current.body.append();
                         } catch (Throwable t) {
                             context.getMonitor().error("Error compiling documentation " + trigger + "/" + sectionId
@@ -386,7 +388,7 @@ public class Documentation implements IDocumentation {
                 Scope scope) {
             switch(section.method) {
             case "tag":
-                current.tag(processArguments(section, 1, context, scope), Documentation.this, context, scope);
+                current.tag(processArguments(section, context, scope), Documentation.this, context, scope);
                 break;
             // case "describe":
             // current.describe(processArguments(section, 1, context, scope), Documentation.this,
@@ -394,28 +396,28 @@ public class Documentation implements IDocumentation {
             // break;
             case "link":
             case "reference":
-                current.link(processArguments(section, 1, context, scope), Documentation.this, context, scope);
+                current.link(processArguments(section, context, scope), Documentation.this, context, scope);
                 break;
             case "table":
-                current.table(processArguments(section, 2, context, scope), Documentation.this, context, scope);
+                current.table(processArguments(section, context, scope), Documentation.this, context, scope);
                 break;
             case "cite":
-                current.cite(processArguments(section, 1, context, scope), Documentation.this, context, scope);
+                current.cite(processArguments(section, context, scope), Documentation.this, context, scope);
                 break;
             case "footnote":
-                current.footnote(processArguments(section, 2, context, scope), Documentation.this, context, scope);
+                current.footnote(processArguments(section, context, scope), Documentation.this, context, scope);
                 break;
             case "figure":
-                current.figure(processArguments(section, 2, context, scope), Documentation.this, context, scope);
+                current.figure(processArguments(section, context, scope), Documentation.this, context, scope);
                 break;
             case "insert":
-                current.insert(processArguments(section, 1, context, scope), Documentation.this, context, scope);
+                current.insert(processArguments(section, context, scope), Documentation.this, context, scope);
                 break;
             case "require":
-                current.getReport().require(processArguments(section, 2, context, scope), Documentation.this, context);
+                current.getReport().require(processArguments(section, context, scope), Documentation.this, context);
                 break;
             case "import":
-                String id = processArguments(section, 1, context, scope).toString();
+                String id = processArguments(section, context, scope).toString();
                 IDocumentationProvider.Item arg = current.getReport().getTaggedText(id);
                 if (arg != null) {
                     current.getReport().notifyUsedTag(id);
@@ -563,21 +565,13 @@ public class Documentation implements IDocumentation {
     public static IParameters<String> processArguments(DocumentationDirective section, IContextualizationScope context,
             Scope scope) {
 
-        List<String> arguments = new ArrayList<>();
-        int offset = 0;
-        while(true) {
-            int nextComma = section.body.indexOf(',', offset + 1);
-            if (nextComma < 0) {
-                break;
-            }
-            String arg = section.body.substring(offset, nextComma);
-            arguments.add(arg.trim());
-            offset = nextComma + 1;
-        }
-
+        String args[] = section.body.split(",");
         Parameters<String> ret = Parameters.create();
 
-        for (String s : arguments) {
+        for (String s : args) {
+            if (s.trim().isEmpty()) {
+                continue;
+            }
             if (s.contains("$")) {
                 s = section.evaluate(asGroovyTemplate(s), context, scope);
             }
@@ -585,7 +579,7 @@ public class Documentation implements IDocumentation {
                 String[] fx = s.split("=");
                 ret.put(fx[0].trim(), Utils.asPOD(fx[1].trim()));
             } else {
-                ret.putUnnamed(s);
+                ret.putUnnamed(s.trim());
             }
         }
 
