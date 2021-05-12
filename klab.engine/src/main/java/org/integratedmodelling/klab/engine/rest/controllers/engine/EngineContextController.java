@@ -67,7 +67,7 @@ public class EngineContextController {
             throw new IllegalArgumentException("context " + context + " does not exist");
         }
 
-        return ((Report) ctx.getScope().getReport()).getDocumentationTree().getView(View.valueOf(view.toUpperCase()), format);
+        return ((Report) ctx.getScope().getReport()).getView(View.valueOf(view.toUpperCase()), format);
     }
 
     /**
