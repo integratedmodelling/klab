@@ -254,20 +254,20 @@ public class Report implements IReport {
      * @param processArguments
      * @param context
      */
-    public void require(Object[] args, IDocumentation documentation, IContextualizationScope context) {
+    public void require(IParameters<String> args, IDocumentation documentation, IContextualizationScope context) {
 
-        if (inserted.contains(args[0] + "|" + args[1])) {
+        if (inserted.contains(args.getUnnamedArguments().get(0) + "|" + args.getUnnamedArguments().get(1))) {
             return;
         }
 
-        Reference template = ((Documentation) documentation).getReference(args[0].toString());
+        Reference template = ((Documentation) documentation).getReference(args.getUnnamedArguments().get(0).toString());
         if (template != null) {
-            String srole = Path.getFirst(args[1].toString(), "/");
+            String srole = Path.getFirst(args.getUnnamedArguments().get(1).toString(), "/");
             try {
                 SectionRole role = SectionRole.valueOf(srole.toUpperCase());
                 if (role != null) {
                     ReportSection main = getMainSection(role);
-                    if (args[1].toString().contains("/")) {
+                    if (args.getUnnamedArguments().get(1).toString().contains("/")) {
                         // TODO!
                         // main = main.getChild(parent, titlePath)
                     }
@@ -278,7 +278,7 @@ public class Report implements IReport {
             }
         }
 
-        inserted.add(args[0] + "|" + args[1]);
+        inserted.add(args.getUnnamedArguments().get(0) + "|" + args.getUnnamedArguments().get(1));
     }
 
     /*
@@ -719,7 +719,7 @@ public class Report implements IReport {
         return ref == null ? null : nodes.get(ref.getDoi());
     }
 
-    private void notify(DocumentationNode node) {
+    public void notify(DocumentationNode node) {
 
         DocumentationEvent message = new DocumentationEvent();
 
@@ -952,8 +952,11 @@ public class Report implements IReport {
         return ret;
     }
 
-    public static ReportElement getTableDescriptor(IStructuredTable<?> table, Scope scope, IParameters<String> args) {
-        Table ret = new Table();
+    public ReportElement getTableDescriptor(IStructuredTable<?> table, Scope scope, IParameters<String> args) {
+        Table tab = new Table();
+        // TODO hostia
+        ReportElement ret = new ReportElement(Type.Table, tab, this);
+        scope.references.put(ret.getId(), ret);
         return ret;
     }
 
@@ -1008,7 +1011,7 @@ public class Report implements IReport {
         figure.setDataSummary(ref.getDataSummary());
         figure.setBaseUrl(baseUrl);
 
-        ReportElement ret = new ReportElement(Type.Figure, args, figure);
+        ReportElement ret = new ReportElement(Type.Figure, figure, this);
         scope.references.put(ret.getId(), ret);
         return ret;
     }

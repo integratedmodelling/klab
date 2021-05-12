@@ -8,6 +8,7 @@ import org.integratedmodelling.klab.rest.DocumentationNode;
 import org.integratedmodelling.klab.rest.DocumentationNode.Figure;
 import org.integratedmodelling.klab.rest.DocumentationNode.Table;
 import org.integratedmodelling.klab.rest.DocumentationNode.Type;
+import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Parameters;
 
 /**
@@ -26,11 +27,17 @@ public class ReportElement {
 
     public ReportElement(Type type) {
         this.type = type;
+        if (type == Type.Paragraph) {
+            this.node = new DocumentationNode();
+            this.node.setType(Type.Paragraph);
+            this.node.setId("p" + NameGenerator.shortUUID());
+            this.node.setBodyText("");
+        }
     }
 
-    public ReportElement(Type type, Object content) {
+    public ReportElement(Type type, Object content, Report report) {
         this.type = type;
-        this.node = encode(content);
+        this.node = encode(content, report);
         this.id = this.node.getId();
     }
 
@@ -39,20 +46,26 @@ public class ReportElement {
         return element;
     }
 
-    public DocumentationNode encode(Object element) {
+    private DocumentationNode encode(Object element, Report report) {
+
         if (element instanceof DocumentationNode) {
             return (DocumentationNode) element;
         }
+        
         DocumentationNode node = new DocumentationNode();
 
         if (element instanceof Figure) {
             node.setId(((Figure) element).getId());
             node.setFigure((Figure) element);
-            notify(node);
+            node.setType(Type.Figure);
+            report.notify(node);
         } else if (element instanceof Table) {
             node.setTable((Table) element);
+            node.setType(Type.Table);
             // nodes.put(node.getId(), node);
-            notify(node);
+            report.notify(node);
+        } else {
+            System.out.println("DIOCANE");
         }
 
         return node;
@@ -64,6 +77,10 @@ public class ReportElement {
 
     public String getId() {
         return id;
+    }
+
+    public DocumentationNode getNode() {
+        return this.node;
     }
 
 }

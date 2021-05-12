@@ -228,7 +228,7 @@ public class ReportSection extends ReportElement implements Section {
 
         if (table != null) {
 
-            report.setReferenceType(args[1].toString(), RefType.TABLE);
+            report.setReferenceType(args.getUnnamedArguments().get(1).toString(), RefType.TABLE);
             appendContent("\n\n");
             if (!table.getColumnHeaders().get(0).startsWith("$")) {
                 String separator = "";
@@ -248,23 +248,23 @@ public class ReportSection extends ReportElement implements Section {
                 }
                 appendContent("\n");
             }
-            appendContent("[[#" + RefType.TABLE.name().toLowerCase() + ":" + args[1] + "] "
-                    + (args.length > 2 ? (" " + args[2].toString()) : "") + "]");
-            appendContent("{#" + RefType.TABLE.name().toLowerCase() + ":" + args[1] + " text-align: center}\n\n");
+            appendContent("[[#" + RefType.TABLE.name().toLowerCase() + ":" + args.getUnnamedArguments().get(1) + "] "
+                    + (args.getUnnamedArguments().size() > 2 ? (" " + args.getUnnamedArguments().get(2).toString()) : "") + "]");
+            appendContent("{#" + RefType.TABLE.name().toLowerCase() + ":" + args.getUnnamedArguments().get(1) + " text-align: center}\n\n");
 
 //            element.finalize();
 
         } else {
 
             for (IKnowledgeView view : ((IRuntimeScope) context).getViews()) {
-                if (view.getIdentifier().equals(args[0])) {
+                if (view.getIdentifier().equals(args.getUnnamedArguments().get(0))) {
                     /*
                      * insert table component
                      */
                     for (DocumentationNode vnode : report.getExistingViewNode(view.getIdentifier())) {
 //                        Element element = addElement(vnode, DocumentationNode.Type.Figure);
-                        if (args.length > 1) {
-                            report.setReferenceType(args[1].toString(), RefType.TABLE);
+                        if (args.getUnnamedArguments().size() > 1) {
+                            report.setReferenceType(args.getUnnamedArguments().get(1).toString(), RefType.TABLE);
                         }
 //                        element.finalize();
                     }
@@ -304,12 +304,12 @@ public class ReportSection extends ReportElement implements Section {
      * @param context
      * @param scope
      */
-    public void cite(Object[] args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
+    public void cite(IParameters<String> args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
 
         // Element element = null;
         DocumentationNode node = null;
-        if (!report.referencesCited.containsKey(args[0])) {
-            Reference reference = ((Documentation) documentation).getReference(args[0].toString());
+        if (!report.referencesCited.containsKey(args.getUnnamedArguments().get(0))) {
+            Reference reference = ((Documentation) documentation).getReference(args.getUnnamedArguments().get(0).toString());
             if (reference != null) {
                 // element = addElement(args[0], DocumentationNode.Type.Citation);
                 // report.referencesCited.put(args[0].toString(), new ReportSection(this.report,
@@ -338,7 +338,7 @@ public class ReportSection extends ReportElement implements Section {
      * @param context
      * @param scope
      */
-    public void footnote(Object[] processArguments, IDocumentation documentation, IContextualizationScope context, Scope scope) {
+    public void footnote(IParameters<String> args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
         // TODO Auto-generated method stub
         // System.out.println("FOC");
     }
@@ -397,13 +397,13 @@ public class ReportSection extends ReportElement implements Section {
      * @param context
      * @param scope
      */
-    public void insert(Object[] processArguments, IDocumentation documentation, IContextualizationScope context, Scope scope) {
-        if (processArguments.length > 0) {
-            Item item = report.taggedText.get(processArguments[0].toString());
+    public void insert(IParameters<String> processArguments, IDocumentation documentation, IContextualizationScope context, Scope scope) {
+        if (processArguments.getUnnamedArguments().size() > 0) {
+            Item item = report.taggedText.get(processArguments.getUnnamedArguments().get(0).toString());
             if (item != null) {
 //                Element element = addElement(item.getMarkdownContents(), DocumentationNode.Type.Paragraph);
                 appendContent(item.getMarkdownContents());
-                report.usedTags.add(processArguments[0].toString());
+                report.usedTags.add(processArguments.getUnnamedArguments().get(0).toString());
 //                element.finalize();
             }
         }
@@ -441,9 +441,15 @@ public class ReportSection extends ReportElement implements Section {
     }
 
     public void appendContent(String content) {
-        // TODO add to current content if our last piece is a paragraph, otherwise create a new one
-        // and add to it.
-        System.out.println("HAOHAO");
+        
+        ReportElement textElement = null;
+        if (this.children.isEmpty() || this.children.get(this.children.size() - 1).getType() != DocumentationNode.Type.Paragraph) {
+            textElement = new ReportElement(DocumentationNode.Type.Paragraph);
+        } else {
+            textElement = this.children.get(this.children.size() -1);
+        }
+        textElement.getNode().setBodyText(textElement.getNode().getBodyText() + content);
+        
     }
 
 }
