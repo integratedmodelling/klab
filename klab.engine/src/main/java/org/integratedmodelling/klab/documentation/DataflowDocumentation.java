@@ -127,7 +127,8 @@ public enum DataflowDocumentation {
      * @param resource
      * @return
      */
-    public String getDocumentation(Element element, Pair<IServiceCall, IContextualizable> resource, IContextualizationScope scope) {
+    public String getDocumentation(Element element, Pair<IServiceCall, IContextualizable> resource,
+            IContextualizationScope scope) {
 
         String templateId = null;
         Object content = ((ComputableResource) resource.getSecond()).getValidatedResource(Object.class);
@@ -205,8 +206,7 @@ public enum DataflowDocumentation {
                             resources.add(r);
                         }
                     } else {
-                        resources.addAll(((Report) scope.getReport()).getDocumentationTree()
-                                .getContextualizedResources(resource.getSecond().getUrn()));
+                        resources.addAll(((Report) scope.getReport()).getContextualizedResources(resource.getSecond().getUrn()));
                     }
                 }
                 resources.add(res);

@@ -11,7 +11,7 @@ import org.integratedmodelling.contrib.jtopas.Tokenizer;
 import org.integratedmodelling.contrib.jtopas.TokenizerException;
 import org.integratedmodelling.contrib.jtopas.TokenizerProperties;
 import org.integratedmodelling.klab.documentation.DataflowDocumentation.Template;
-import org.integratedmodelling.klab.documentation.Documentation.SectionImpl;
+import org.integratedmodelling.klab.documentation.Documentation.DocumentationDirective;
 import org.integratedmodelling.klab.documentation.Documentation.TemplateImpl;
 
 /**

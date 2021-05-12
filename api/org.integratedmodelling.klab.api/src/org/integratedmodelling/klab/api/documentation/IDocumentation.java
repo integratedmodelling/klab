@@ -78,8 +78,8 @@ public interface IDocumentation {
      * Recognized tags:
      * 
      * <pre>
-     * &#64;tag(id)                     -> create tag pointing to ID of enclosing section
-     * &#64;section(path)               -> define relative subsection path for content after the tag until the next
+     * &#64;tag(id)                     -> create tag pointing to ID of enclosing section TODO REMOVE - use id=xxx in section
+     * &#64;section(path)               -> define absolute subsection path for content after the tag until the next
      * &#64;link(refId, text..)         -> insert text with link to tagged content; ignored if tag does not resolve
      * &#64;table(tableobject, id, ...) -> inserts the table and assigns id for referencing to it
      * &#64;cite(ref)                   -> resolve to citation of reference, insert reference in bibliography

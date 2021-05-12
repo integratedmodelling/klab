@@ -62,7 +62,7 @@ public interface IReport {
      * @author Ferd
      *
      */
-    interface Section extends IParameters<String> {
+    interface Section /* extends IParameters<String> */ {
 
         /**
          * 
