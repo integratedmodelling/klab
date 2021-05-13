@@ -340,10 +340,37 @@ export process infiltratedcalc
 	"Calculates the infiltrated volume."
 	label 'Calculate Infiltrated Water Volume'
 {
+	import number rainfall_volume
+		"The liquid precipitation volume."
+
+	import number evapotranspired_water_volume
+		"The evapotranspiration water volume."
+		
+	import boolean presence_of_stream
+		"The marker of stream network presence." 
+		
+	import number flow_directions_d8
+		"The D8 numeric code for flow direction"
+
 	export number infiltrated_water_volume
 		"TODO"
 		
 	geometry T1S2
 
 	class org.integratedmodelling.geoprocessing.hydrology.InfiltratedWaterVolumeResolver
+}
+
+export process evapotranspiredcalc
+	"Calculates the evapotranspired volume."
+	label 'Calculate Evapotranspired Water Volume'
+{
+	import number crop_coefficient
+		"The Crop Coefficient."
+
+	export number evapotranspired_water_volume
+		"TODO"
+		
+	geometry T1S2
+
+	class org.integratedmodelling.geoprocessing.hydrology.EvapotranspiredWaterVolumeResolver
 }
