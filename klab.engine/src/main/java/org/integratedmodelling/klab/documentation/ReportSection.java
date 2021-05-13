@@ -1,7 +1,5 @@
 package org.integratedmodelling.klab.documentation;
 
-import java.util.Map;
-
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
@@ -29,39 +27,31 @@ public class ReportSection extends ReportElement implements Section {
     IReport.SectionRole role;
     String id = "rsec" + NameGenerator.shortUUID();
     String name = null;
-    // StringBuffer body = new StringBuffer(512);
     Report report;
     String sectionRole;
-
-    // used to hold the structure when pieces are added. Offsets locate the piece of interest in the
-    // body. Anything outside of an element is a paragraph. Child sections also get added to this
-    // list as well as the children list.
-//    List<Element> elements = new ArrayList<>();
-//
-//    class Element {
-//
-//        // int startOffset;
-//        // int endOffset;
-//        Object element;
-//        DocumentationNode.Type type;
-//
-//        // public void finalize() {
-//        // this.endOffset = startOffset + body.length();
-//        // }
-//    }
+    private ReportSection parent;
 
     ReportSection(Report report, SectionRole role) {
-        super(DocumentationNode.Type.Section);
+        super(DocumentationNode.Type.Section, report);
         this.role = role;
         this.report = report;
     }
 
     ReportSection(ReportSection parent) {
-        super(DocumentationNode.Type.Section);
+        super(DocumentationNode.Type.Section, parent.report);
         parent.children.add(this);
+        this.parent = parent;
         this.report = parent.report;
     }
 
+    public ReportSection getMainSection() {
+        ReportSection ret = this;
+        while (ret.parent != null) {
+            ret = ret.parent;
+        }
+        return ret;
+    }
+    
     @Override
     public String toString() {
         return "# " + getName()  /*+ ": (" + body.length() + ")"*/;
@@ -106,15 +96,6 @@ public class ReportSection extends ReportElement implements Section {
         return true;
     }
 
-//    private Element addElement(Object object, DocumentationNode.Type type) {
-//        Element ret = new Element();
-//        ret.element = object;
-//        ret.type = type;
-////        ret.startOffset = this.body.length();
-//        elements.add(ret);
-//        return ret;
-//    }
-
     public ReportSection getChild(ReportSection parent, String titlePath, String role) {
         ReportSection ret = parent;
         while(titlePath.startsWith("/")) {
@@ -137,28 +118,8 @@ public class ReportSection extends ReportElement implements Section {
         ReportSection ret = new ReportSection(this);
         ret.name = string;
         ret.sectionRole = role;
-//        addElement(ret, DocumentationNode.Type.Section);
         return ret;
     }
-
-    /*
-     * --- API callable from Groovy code
-     */
-//    public void write(Object... objects) {
-//        for (Object o : objects) {
-//            appendContent(o == null ? "" : o.toString());
-//        }
-//    }
-//
-//    public void separator() {
-//        appendContent("\n---\n");
-//    }
-//
-//    public void paragraph(Object... objects) {
-//        appendContent("\n---\n");
-//        write(objects);
-//        appendContent("\n---\n");
-//    }
 
     /*
      * --- API receiving the report calls through template instructions
@@ -262,11 +223,11 @@ public class ReportSection extends ReportElement implements Section {
                      * insert table component
                      */
                     for (DocumentationNode vnode : report.getExistingViewNode(view.getIdentifier())) {
-//                        Element element = addElement(vnode, DocumentationNode.Type.Figure);
+                        ReportElement element = append(new ReportElement(DocumentationNode.Type.Table, vnode, report));
                         if (args.getUnnamedArguments().size() > 1) {
-                            report.setReferenceType(args.getUnnamedArguments().get(1).toString(), RefType.TABLE);
+                            scope.link(args.getUnnamedArguments().get(1).toString(), element);
+                            report.setReferenceType(scope.disambiguateId(args.getUnnamedArguments().get(1).toString()), RefType.TABLE);
                         }
-//                        element.finalize();
                     }
                 }
             }
@@ -306,16 +267,10 @@ public class ReportSection extends ReportElement implements Section {
      */
     public void cite(IParameters<String> args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
 
-        // Element element = null;
         DocumentationNode node = null;
         if (!report.referencesCited.containsKey(args.getUnnamedArguments().get(0))) {
             Reference reference = ((Documentation) documentation).getReference(args.getUnnamedArguments().get(0).toString());
             if (reference != null) {
-                // element = addElement(args[0], DocumentationNode.Type.Citation);
-                // report.referencesCited.put(args[0].toString(), new ReportSection(this.report,
-                // reference, args[0].toString()));
-                // add to section in doc tree (this will split the section at the current place,
-                // then resume if more text arrives
                 node = report.addCitation(reference);
             }
         }
@@ -324,11 +279,6 @@ public class ReportSection extends ReportElement implements Section {
             appendContent(Report.getLinkText(node));
         }
 
-        // appendContent((args.length > 1 ? args[1] : "") + "[@" +
-        // Report.RefType.REF.name().toLowerCase() + ":" + args[0] + "]");
-        // if (element != null) {
-        // element.finalize();
-        // }
     }
 
     /**
@@ -377,13 +327,7 @@ public class ReportSection extends ReportElement implements Section {
 
             IObservationReference ref = report.getObservation(((IObservation) artifact).getId());
             if (ref != null) {
-
                 append(report.getFigureDescriptor(artifact, ref, scope, args));
-//                if (figure != null) {
-////                    Element element = addElement(figure, DocumentationNode.Type.Figure);
-//
-////                    element.finalize();
-//                }
             }
         }
     }
@@ -409,32 +353,6 @@ public class ReportSection extends ReportElement implements Section {
         }
     }
 
-    @Override
-    public String render(Map<String, Object> templateVariables) {
-        return render(0, null, templateVariables);
-    }
-
-    public String render(int level, String numbering, Map<String, Object> templateVariables) {
-
-        String ret = "";
-
-        if (name != null) {
-            ret += "\n" + StringUtil.repeat('#', level + 1) + (numbering == null ? " " : (" " + numbering + " ")) + name + "\n";
-        }
-
-//        ret += body.toString();
-
-        int n = 0;
-        for (ReportElement child : children) {
-            String numb = null;
-//            if (child.name != null && numbering != null) {
-//                numb = numbering + "." + (++n);
-//            }
-//            ret += child.render(level + 1, numb, templateVariables);
-        }
-
-        return ret;
-    }
 
     public Report getReport() {
         return report;
@@ -444,12 +362,15 @@ public class ReportSection extends ReportElement implements Section {
         
         ReportElement textElement = null;
         if (this.children.isEmpty() || this.children.get(this.children.size() - 1).getType() != DocumentationNode.Type.Paragraph) {
-            textElement = new ReportElement(DocumentationNode.Type.Paragraph);
+            textElement = new ReportElement(DocumentationNode.Type.Paragraph, report);
+            this.children.add(textElement);
         } else {
             textElement = this.children.get(this.children.size() -1);
         }
         textElement.getNode().setBodyText(textElement.getNode().getBodyText() + content);
         
     }
+
+
 
 }

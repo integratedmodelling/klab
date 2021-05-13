@@ -311,20 +311,13 @@ public class Report implements IReport {
     IRuntimeScope context = null;
     private String sessionId;
 
-    // public Report() {
-    // this.docTree = new DocumentationTree(this);
-    // }
-
     public Report(IRuntimeScope context, IResolutionScope scope, String sessionId) {
         this.context = context;
         this.sessionId = sessionId;
         this.session = Authentication.INSTANCE.getIdentity(sessionId, ISession.class);
-        // this.docTree = new DocumentationTree(this, context,
-        // Authentication.INSTANCE.getIdentity(sessionId, ISession.class));
     }
 
     public Report() {
-        // TODO Auto-generated constructor stub
     }
 
     public void recordResolutions(IResolutionScope scope) {
@@ -345,72 +338,74 @@ public class Report implements IReport {
         return renderer.render(document);
     }
 
-    @Override
-    public String render(Encoding encoding) {
-
-        StringBuffer ret = new StringBuffer(16 * 1024);
-
-        ret.append(getTitleSection());
-
-        Section appendix = mainSections.get(SectionRole.APPENDIX);
-
-        /*
-         * If we have an appendix, add any tagged documentation coming from contextualizers that has
-         * not been used in the report.
-         */
-        if (appendix != null) {
-            for (String tag : taggedText.keySet()) {
-                if (!usedTags.contains(tag)) {
-                    Item item = taggedText.get(tag);
-                    ((DocumentationDirective) appendix).body += "\n\n## " + item.getTitle() + "\n\n" + item.getMarkdownContents()
-                            + "\n\n";
-                }
-            }
-        }
-
-        /*
-         * Add anything not explicitly described according to settings; make appendices and
-         * references
-         */
-        int n = 0;
-        for (Section s : getSections()) {
-            ret.append(((ReportSection) s).render(0, (++n) + "", this.templateVariables));
-        }
-
-        /*
-         * If we have tagged content, no appendix and no sections that may have used it, make an
-         * appendix and add to it.
-         */
-        if (appendix == null && (taggedText.size() - usedTags.size()) > 0) {
-
-            ret.append("\n\n# Appendix\n\n");
-
-            for (String tag : taggedText.keySet()) {
-                if (!usedTags.contains(tag)) {
-                    Item item = taggedText.get(tag);
-                    ret.append("\n\n## " + item.getTitle() + "\n\n" + item.getMarkdownContents() + "\n\n");
-                }
-            }
-        }
-
-        // TODO these should be configurable
-        ret.append("\n\n" + "[@ref]: Reference [#]\n" + "[@fig]: Figure [#]\n" + "[@table]: Table [#]\n"
-                + "[@footnote]: Footnote [#]\n" + "[@user]: [#]\n" + "[@dataflow]: Dataflow [#]\n");
-
-        // System.out.println(ret.toString());
-
-        switch(encoding) {
-        case HTML:
-            return asHTML(ret.toString());
-        case MARKDOWN:
-            return ret.toString();
-        case LATEX:
-        case PDF:
-            break;
-        }
-
-        return "<html><body><p>Unsupported encoding " + encoding + " </p></body></html>";
-    }
+    // @Override
+    // public String render(Encoding encoding) {
+    //
+    // StringBuffer ret = new StringBuffer(16 * 1024);
+    //
+    // ret.append(getTitleSection());
+    //
+    // Section appendix = mainSections.get(SectionRole.APPENDIX);
+    //
+    // /*
+    // * If we have an appendix, add any tagged documentation coming from contextualizers that has
+    // * not been used in the report.
+    // */
+    // if (appendix != null) {
+    // for (String tag : taggedText.keySet()) {
+    // if (!usedTags.contains(tag)) {
+    // Item item = taggedText.get(tag);
+    // ((DocumentationDirective) appendix).body += "\n\n## " + item.getTitle() + "\n\n" +
+    // item.getMarkdownContents()
+    // + "\n\n";
+    // }
+    // }
+    // }
+    //
+    // /*
+    // * Add anything not explicitly described according to settings; make appendices and
+    // * references
+    // */
+    // int n = 0;
+    // for (Section s : getSections()) {
+    // ret.append(((ReportSection) s).render(0, (++n) + "", this.templateVariables));
+    // }
+    //
+    // /*
+    // * If we have tagged content, no appendix and no sections that may have used it, make an
+    // * appendix and add to it.
+    // */
+    // if (appendix == null && (taggedText.size() - usedTags.size()) > 0) {
+    //
+    // ret.append("\n\n# Appendix\n\n");
+    //
+    // for (String tag : taggedText.keySet()) {
+    // if (!usedTags.contains(tag)) {
+    // Item item = taggedText.get(tag);
+    // ret.append("\n\n## " + item.getTitle() + "\n\n" + item.getMarkdownContents() + "\n\n");
+    // }
+    // }
+    // }
+    //
+    // // TODO these should be configurable
+    // ret.append("\n\n" + "[@ref]: Reference [#]\n" + "[@fig]: Figure [#]\n" + "[@table]: Table
+    // [#]\n"
+    // + "[@footnote]: Footnote [#]\n" + "[@user]: [#]\n" + "[@dataflow]: Dataflow [#]\n");
+    //
+    // // System.out.println(ret.toString());
+    //
+    // switch(encoding) {
+    // case HTML:
+    // return asHTML(ret.toString());
+    // case MARKDOWN:
+    // return ret.toString();
+    // case LATEX:
+    // case PDF:
+    // break;
+    // }
+    //
+    // return "<html><body><p>Unsupported encoding " + encoding + " </p></body></html>";
+    // }
 
     private String getTitleSection() {
         String ret = "# ![Integrated Modelling Partnership](../logos/im64.png){float=left} k.LAB Contextualization report\n\n";
@@ -427,10 +422,6 @@ public class Report implements IReport {
     public void notifyUsedTag(String id) {
         this.usedTags.add(id);
     }
-
-    // public DocumentationTree getDocumentationTree() {
-    // return docTree;
-    // }
 
     /**
      * Check if an observable incarnates a set of abstract predicates, and if so only return true
@@ -474,7 +465,7 @@ public class Report implements IReport {
         return true;
     }
 
-    private String md2html(String markdown) {
+    public String md2html(String markdown) {
         if (this.renderer_ == null) {
             MutableDataSet options = new MutableDataSet().set(Parser.EXTENSIONS,
                     Arrays.asList(FootnoteExtension.create(), AttributesExtension.create(), EnumeratedReferenceExtension.create(),
@@ -512,16 +503,6 @@ public class Report implements IReport {
     public static String getLinkText(DocumentationNode node) {
         return ANCHOR_PATTERN.replace("{type}", node.getType().name()).replace("{id}", node.getId());
     }
-
-    // /**
-    // * Add the item and notify the views so they can put that away.
-    // *
-    // * @param item
-    // */
-    // public void addNode(DocumentationNode item) {
-    // nodes.put(item.getId(), item);
-    // // TODO notify view
-    // }
 
     public void addResolution(ObservedConcept observable, List<IRankedModel> resolved) {
         resolutions.put(observable, resolved);
@@ -818,7 +799,7 @@ public class Report implements IReport {
             ReportSection section = mainSections.get(order);
             if (section != null) {
                 if (order == section.getRole()) {
-                    ret.add(compileSection(section, format));
+                    ret.add(section.render(format));
                     done = true;
                 }
             }
@@ -853,8 +834,12 @@ public class Report implements IReport {
                 ? (section.getRole() == null ? null : StringUtil.capitalize(section.getRole().name().toLowerCase()))
                 : section.getName());
 
+        // for (ReportElement child : section.children) {
+        // ret.getChildren().add
+        // }
+
         // String body = section.body.toString();
-        int offset = 0;
+        // int offset = 0;
         // for (Element element : section.elements) {
         // // if (element.startOffset > offset) {
         // // offset = compileParagraph(body, offset, element.startOffset, element.endOffset, ret,
@@ -881,22 +866,18 @@ public class Report implements IReport {
         return ret;
     }
 
-    private int compileParagraph(String body, int offset, int start, int end, DocumentationNode section, String format) {
-        String paragraph = body.substring(offset, start);
-        if ("html".equals(format)) {
-            paragraph = md2html(paragraph);
-        }
-        DocumentationNode node = new DocumentationNode();
-        node.setType(Type.Paragraph);
-        node.setId("p_" + NameGenerator.shortUUID());
-        node.setBodyText(paragraph);
-        section.getChildren().add(node);
-        return end;
-    }
-
-    // private DocumentationNode compileElement(Element element, String format) {
-    //
-    //
+    // private int compileParagraph(String body, int offset, int start, int end, DocumentationNode
+    // section, String format) {
+    // String paragraph = body.substring(offset, start);
+    // if ("html".equals(format)) {
+    // paragraph = md2html(paragraph);
+    // }
+    // DocumentationNode node = new DocumentationNode();
+    // node.setType(Type.Paragraph);
+    // node.setId("p_" + NameGenerator.shortUUID());
+    // node.setBodyText(paragraph);
+    // section.getChildren().add(node);
+    // return end;
     // }
 
     private List<DocumentationNode> getModelsView(String format) {
@@ -956,7 +937,7 @@ public class Report implements IReport {
         Table tab = new Table();
         // TODO hostia
         ReportElement ret = new ReportElement(Type.Table, tab, this);
-        scope.references.put(ret.getId(), ret);
+        scope.link(ret.getId(), ret);
         return ret;
     }
 
@@ -1012,8 +993,19 @@ public class Report implements IReport {
         figure.setBaseUrl(baseUrl);
 
         ReportElement ret = new ReportElement(Type.Figure, figure, this);
-        scope.references.put(ret.getId(), ret);
+        scope.link(ret.getId(), ret);
         return ret;
+    }
+
+    /**
+     * TODO out of date method: can't render as a string any more, but it's still called in dataflow
+     * docs. Should investigate exactly what's needed there.
+     * 
+     * @param html
+     * @return
+     */
+    public String render(Encoding html) {
+        return "";
     }
 
 }
