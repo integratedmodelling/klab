@@ -134,9 +134,14 @@ public class Documentation implements IDocumentation {
             return scope;
         }
 
+        public void link(String string, ReportElement element) {
+            // TODO disambiguate if within a loop?
+            this.references.put(string, element);
+        }
+
     }
 
-    private Documentation() {
+    Documentation() {
     }
 
     /**
@@ -170,6 +175,10 @@ public class Documentation implements IDocumentation {
         return ret;
     }
 
+    TemplateImpl parse(String string) {
+        return TemplateParser.parse(new TemplateImpl(), string);
+    }
+    
     /**
      * Read and compile all the templates corresponding to the passed docId.
      * 
@@ -324,7 +333,7 @@ public class Documentation implements IDocumentation {
                 if (section.getType() == DocumentationDirective.Type.REPORT_CALL) {
                     switch(section.method) {
                     case "section":
-                        current = current.getChild(current, section.body, section.method);
+                        current = current.getChild(current.getMainSection(), section.body, section.method);
                         break;
                     case "if":
                         // // open conditional scope, set active to result of expression
