@@ -54,7 +54,7 @@ public class ReportSection extends ReportElement implements Section {
     
     @Override
     public String toString() {
-        return "# " + getName()  /*+ ": (" + body.length() + ")"*/;
+        return "# " + getName();
     }
 
     public String getName() {
@@ -146,9 +146,7 @@ public class ReportSection extends ReportElement implements Section {
      * @param scope
      */
     public void tag(IParameters<String> args, IDocumentation documentation, IContextualizationScope context, Scope scope) {
-//        Element element = addElement(args[0], DocumentationNode.Type.Link);
         appendContent("{#user:" + args.getUnnamedArguments().get(0) + "}");
-//        element.finalize();
     }
 
     /**
@@ -213,8 +211,6 @@ public class ReportSection extends ReportElement implements Section {
                     + (args.getUnnamedArguments().size() > 2 ? (" " + args.getUnnamedArguments().get(2).toString()) : "") + "]");
             appendContent("{#" + RefType.TABLE.name().toLowerCase() + ":" + args.getUnnamedArguments().get(1) + " text-align: center}\n\n");
 
-//            element.finalize();
-
         } else {
 
             for (IKnowledgeView view : ((IRuntimeScope) context).getViews()) {
@@ -237,7 +233,6 @@ public class ReportSection extends ReportElement implements Section {
 
     private String formatTableElement(Object item) {
 
-        // TODO Auto-generated method stub
         if (item instanceof Classifier) {
             Classifier i = (Classifier) item;
             if (i.isUniversal()) {
@@ -345,10 +340,8 @@ public class ReportSection extends ReportElement implements Section {
         if (processArguments.getUnnamedArguments().size() > 0) {
             Item item = report.taggedText.get(processArguments.getUnnamedArguments().get(0).toString());
             if (item != null) {
-//                Element element = addElement(item.getMarkdownContents(), DocumentationNode.Type.Paragraph);
                 appendContent(item.getMarkdownContents());
                 report.usedTags.add(processArguments.getUnnamedArguments().get(0).toString());
-//                element.finalize();
             }
         }
     }
@@ -364,6 +357,7 @@ public class ReportSection extends ReportElement implements Section {
         if (this.children.isEmpty() || this.children.get(this.children.size() - 1).getType() != DocumentationNode.Type.Paragraph) {
             textElement = new ReportElement(DocumentationNode.Type.Paragraph, report);
             this.children.add(textElement);
+            report.notify(textElement.getNode());
         } else {
             textElement = this.children.get(this.children.size() -1);
         }

@@ -46,6 +46,7 @@ public class Documentation implements IDocumentation {
     List<ProjectReferences> referencesAvailable = new ArrayList<>();
     List<Map<?, ?>> tables = new ArrayList<>();
     List<Map<?, ?>> graphs = new ArrayList<>();
+    String id = "doc" + NameGenerator.shortUUID();
 
     // managed externally, needed to communicate changes
     private File docfile;
@@ -233,6 +234,7 @@ public class Documentation implements IDocumentation {
         private String sectionId;
         private IReport.Section.Type sectionType;
         private SectionRole role;
+        private String id = "tmpl" + NameGenerator.shortUUID();
 
         public List<String> getErrors() {
             return errors;
@@ -446,6 +448,16 @@ public class Documentation implements IDocumentation {
             this.role = role;
         }
 
+        @Override
+        public IDocumentation getDocumentation() {
+            return Documentation.this;
+        }
+
+        @Override
+        public String getId() {
+            return this.id;
+        }
+
     }
 
     /**
@@ -633,12 +645,12 @@ public class Documentation implements IDocumentation {
     }
 
     @Override
-    public boolean instrumentReport(IReport report, IActuator actuator, IContextualizationScope scope) {
+    public boolean instrumentReport(IReport report, Template template, Trigger trigger, IActuator actuator, IContextualizationScope scope) {
 
         /*
          * TODO verify if the target is the "final" one, or collect
          */
-        if (!((Report) report).checkObservableCoverage((Actuator) actuator)) {
+        if (!((Report) report).checkObservableCoverage(template, (Actuator) actuator, trigger)) {
             return false;
         }
 
@@ -651,6 +663,11 @@ public class Documentation implements IDocumentation {
                     (IRuntimeScope) scope, ((Actuator) actuator).getObservable()));
         }
         return true;
+    }
+    
+    @Override
+    public String getId() {
+        return this.id;
     }
 
 }

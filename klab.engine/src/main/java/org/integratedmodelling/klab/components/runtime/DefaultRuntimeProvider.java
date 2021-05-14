@@ -246,8 +246,8 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                     List<Actuator> order = ((Actuator) actuator).dependencyOrder();
                     for (Actuator active : order) {
                         for (IDocumentation doc : active.getDocumentation()) {
-                            if (doc.instrumentReport(runtimeScope.getReport(), active, runtimeScope)) {
-                                for (IDocumentation.Template template : doc.get(Trigger.TERMINATION)) {
+                            for (IDocumentation.Template template : doc.get(Trigger.TERMINATION)) {
+                                if (doc.instrumentReport(runtimeScope.getReport(), template, Trigger.TERMINATION, active, runtimeScope)) {
                                     ((Report) runtimeScope.getReport()).include(template, runtimeScope, doc);
                                 }
                             }
