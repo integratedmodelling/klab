@@ -62,7 +62,7 @@ public interface IReport {
      * @author Ferd
      *
      */
-    interface Section extends IParameters<String> {
+    interface Section {
 
         /**
          * 
@@ -95,14 +95,6 @@ public interface IReport {
          */
         SectionRole getRole();
 
-        /**
-         * Render and return the final string representation in the encoding language.
-         * 
-         * @param templateVariables variables computed by the documentation system itself
-         * @return
-         */
-        String render(Map<String, Object> templateVariables);
-
     }
 
     /**
@@ -111,12 +103,5 @@ public interface IReport {
      * @return
      */
     List<Section> getSections();
-
-    /**
-     * Render the report sections to the target language for display or further processing.
-     * 
-     * @return
-     */
-    String render(Encoding encoding);
 
 }

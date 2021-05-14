@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.dataflow.Flowchart;
 import org.integratedmodelling.klab.dataflow.Flowchart.Element;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
+import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.utils.MarkdownUtils;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Pair;
@@ -127,7 +128,8 @@ public enum DataflowDocumentation {
      * @param resource
      * @return
      */
-    public String getDocumentation(Element element, Pair<IServiceCall, IContextualizable> resource, IContextualizationScope scope) {
+    public String getDocumentation(Element element, Pair<IServiceCall, IContextualizable> resource,
+            IContextualizationScope scope) {
 
         String templateId = null;
         Object content = ((ComputableResource) resource.getSecond()).getValidatedResource(Object.class);
@@ -205,8 +207,7 @@ public enum DataflowDocumentation {
                             resources.add(r);
                         }
                     } else {
-                        resources.addAll(((Report) scope.getReport()).getDocumentationTree()
-                                .getContextualizedResources(resource.getSecond().getUrn()));
+                        resources.addAll(((Report) scope.getReport()).getContextualizedResources(resource.getSecond().getUrn()));
                     }
                 }
                 resources.add(res);

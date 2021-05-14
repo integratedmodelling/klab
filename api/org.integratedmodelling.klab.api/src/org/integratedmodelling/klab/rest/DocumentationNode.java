@@ -513,6 +513,8 @@ public class DocumentationNode {
         private String label;
         private String id;
         private String observationId;
+        private int originalWidth;
+        private int originalHeight;
 
         /**
          * Either an (absolute or relative) image URL or the URL to fetch the PNG, passing the
@@ -592,6 +594,18 @@ public class DocumentationNode {
         }
         public void setObservationId(String observationId) {
             this.observationId = observationId;
+        }
+        public int getOriginalWidth() {
+            return originalWidth;
+        }
+        public void setOriginalWidth(int originalWidth) {
+            this.originalWidth = originalWidth;
+        }
+        public int getOriginalHeight() {
+            return originalHeight;
+        }
+        public void setOriginalHeight(int originalHeight) {
+            this.originalHeight = originalHeight;
         }
     }
 

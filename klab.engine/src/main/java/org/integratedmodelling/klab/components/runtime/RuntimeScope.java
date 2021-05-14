@@ -2062,7 +2062,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                 ? (StringUtil.capitalize(view.getViewClass()) + " " + (views.size() + 1))
                 : view.getLabel());
 
-        report.getDocumentationTree().addView(view, descriptor);
+        report.addView(view, descriptor);
 
         ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
         session.getMonitor().send(
