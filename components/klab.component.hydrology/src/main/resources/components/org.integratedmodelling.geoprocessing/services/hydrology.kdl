@@ -340,11 +340,14 @@ export process infiltratedcalc
 	"Calculates the infiltrated volume."
 	label 'Calculate Infiltrated Water Volume'
 {
+	import number potential_evapotranspired_water_volume
+		"The potential evapotranspiration water volume."
+
 	import number rainfall_volume
 		"The liquid precipitation volume."
 
-	import number evapotranspired_water_volume
-		"The evapotranspiration water volume."
+	import number runoffWater_volume
+		"The marker of stream network presence." 
 		
 	import boolean presence_of_stream
 		"The marker of stream network presence." 
@@ -373,7 +376,7 @@ export process petcalc
 	import number minimum_temperature
 		"TODO"
 	
-	import number average_temperature
+	import number atmospheric_temperature
 		"TODO"
 	
 	import number solar_radiation
@@ -397,7 +400,7 @@ export process scsrunoffcalc
 	import number rainfall_volume
 		"The liquid precipitation volume."
 
-	import number number_of_events
+	import number number_of_storm_events
 		"TODO"
 	
 	import number curve_number
