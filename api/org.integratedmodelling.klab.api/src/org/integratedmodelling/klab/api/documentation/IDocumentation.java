@@ -127,7 +127,30 @@ public interface IDocumentation {
          * @return
          */
         Type getSectionType();
+
+        /**
+         * Return the documentation this is part of. Needed for caching and handling of multiple
+         * model incarnations.
+         * 
+         * @return
+         */
+        IDocumentation getDocumentation();
+
+        /**
+         * Unique ID for caching and processing. Not seen by users.
+         * 
+         * @return
+         */
+        String getId();
     }
+
+    /**
+     * An ID that must identify this documentation instance uniquely (even if the same documentation
+     * tag is used on two different actuators).
+     * 
+     * @return
+     */
+    String getId();
 
     /**
      * Pass a report and prepare it to receive our contents. This may include specifying components
@@ -137,8 +160,11 @@ public interface IDocumentation {
      * 
      * @return true if the context documentation should proceed, false otherwise
      * @param report
+     * @param template
+     * @param trigger
      */
-    boolean instrumentReport(IReport report, IActuator actuator, IContextualizationScope scope);
+    boolean instrumentReport(IReport report, Template template, Trigger trigger, IActuator actuator,
+            IContextualizationScope scope);
 
     /**
      * Get all templates corresponding to the passed action type, if any.

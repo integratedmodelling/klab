@@ -49,8 +49,9 @@ import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.classification.IClassification;
 import org.integratedmodelling.klab.api.data.general.IStructuredTable;
 import org.integratedmodelling.klab.api.documentation.IDocumentation;
+import org.integratedmodelling.klab.api.documentation.IDocumentation.Template;
+import org.integratedmodelling.klab.api.documentation.IDocumentation.Trigger;
 import org.integratedmodelling.klab.api.documentation.IDocumentationProvider;
-import org.integratedmodelling.klab.api.documentation.IDocumentationProvider.Item;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
@@ -71,7 +72,6 @@ import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocato
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.dataflow.Actuator;
 import org.integratedmodelling.klab.dataflow.ObservedConcept;
-import org.integratedmodelling.klab.documentation.Documentation.DocumentationDirective;
 import org.integratedmodelling.klab.documentation.Documentation.Scope;
 import org.integratedmodelling.klab.documentation.Documentation.TemplateImpl;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
@@ -120,7 +120,6 @@ public class Report implements IReport {
 
     private List<IResource> resources = new ArrayList<>();
     private List<IKimTable> tables = new ArrayList<>();
-    // private List<IModel> models = new ArrayList<>();
     private List<IPrototype> services = new ArrayList<>();
     private List<IDataflow<?>> dataflows = new ArrayList<>();
     private Map<String, IObservationReference> observations = new HashMap<>();
@@ -135,10 +134,9 @@ public class Report implements IReport {
     Set<String> observationDescribed = new HashSet<>();
     Set<String> inserted = new HashSet<>();
     Set<String> usedTags = new HashSet<>();
-    Map<IConcept, Set<IConcept>> incarnatedPredicates = new HashMap<>();
-    Map<String, Object> templateVariables = new HashMap<>();
-    //
-    // DocumentationTree docTree;
+    // abstract incarnated predicates by documentation ID
+    Map<String, Map<IConcept, Set<IConcept>>> incarnatedPredicates = new HashMap<>();
+    Map<String, Map<String, Object>> templateVariables = new HashMap<>();
 
     /**
      * Anchors in HTML code are sent using this pattern, to be reinterpreted by the client.
@@ -198,7 +196,7 @@ public class Report implements IReport {
     // @Override
     public void include(IDocumentation.Template template, IContextualizationScope context, IDocumentation documentation) {
         ReportSection section = getMainSection(((TemplateImpl) template).getRole());
-        template.compile(section, context, templateVariables);
+        template.compile(section, context, getTemplateVariables(template));
     }
 
     public void include(IContextualizable resource, Actuator actuator) {
@@ -410,7 +408,7 @@ public class Report implements IReport {
     private String getTitleSection() {
         String ret = "# ![Integrated Modelling Partnership](../logos/im64.png){float=left} k.LAB Contextualization report\n\n";
         ret += "---\n";
-        ret += "Computed at " + new Date();
+        ret += "Computed on " + new Date() + " in " + context.getRootSubject().getName();
         ret += "\n\n";
         return ret;
     }
@@ -423,6 +421,26 @@ public class Report implements IReport {
         this.usedTags.add(id);
     }
 
+    private Set<IConcept> getIncarnatedPredicates(Template template, Trigger trigger, IConcept key) {
+
+        String id = template.getId() + "@" + trigger.name();
+
+        Map<IConcept, Set<IConcept>> predicates = incarnatedPredicates.get(id);
+        if (predicates == null) {
+            predicates = new HashMap<>();
+            incarnatedPredicates.put(id, predicates);
+        }
+
+        Set<IConcept> ret = predicates.get(key);
+        if (ret == null) {
+            ret = new HashSet<>();
+            predicates.put(key, ret);
+        }
+
+        return ret;
+
+    }
+
     /**
      * Check if an observable incarnates a set of abstract predicates, and if so only return true
      * after all the incarnated traits have been seen. Set the variables so that a foreach loop over
@@ -430,39 +448,48 @@ public class Report implements IReport {
      * 
      * If there are no incarnated predicates, return true so that the report can continue.
      * 
+     * @param trigger
+     * 
      * @param target
      * @return
      */
-    public boolean checkObservableCoverage(Actuator actuator) {
+    public boolean checkObservableCoverage(Template template, Actuator actuator, Trigger trigger) {
         if (!actuator.getObservable().getResolvedPredicates().isEmpty()) {
             boolean ok = true;
             for (IConcept key : actuator.getObservable().getResolvedPredicates().keySet()) {
-                Set<IConcept> seen = this.incarnatedPredicates.get(key);
-                if (seen == null) {
-                    seen = new HashSet<>();
-                    this.incarnatedPredicates.put(key, seen);
-                }
+                Set<IConcept> seen = getIncarnatedPredicates(template, trigger, key);
                 @SuppressWarnings("unchecked")
-                Set<IObservable> observables = (Set<IObservable>) templateVariables
+                Set<IObservable> observables = (Set<IObservable>) getTemplateVariables(template)
                         .get(Concepts.INSTANCE.getCodeName(key) + "_observables");
                 if (observables == null) {
                     observables = new LinkedHashSet<>();
-                    this.templateVariables.put(Concepts.INSTANCE.getCodeName(key) + "_observables", observables);
+                    getTemplateVariables(template).put(Concepts.INSTANCE.getCodeName(key) + "_observables", observables);
                 }
                 observables.add(actuator.getObservable());
                 // stuff like 'crop_observables' will be in the template vars to access the states
                 seen.add(actuator.getObservable().getResolvedPredicates().get(key));
+
                 if (seen.size() < actuator.getObservable().getResolvedPredicatesContext().get(key).size()) {
                     ok = false;
                 } else {
                     // set the array of incarnated concepts as a var for each template during
                     // render() to use if wanted
-                    this.templateVariables.put(Concepts.INSTANCE.getCodeName(key) + "_types", seen);
+                    getTemplateVariables(template).put(Concepts.INSTANCE.getCodeName(key) + "_types", seen);
                 }
             }
+
             return ok;
         }
         return true;
+    }
+
+    private Map<String, Object> getTemplateVariables(Template template) {
+        Map<String, Object> ret = templateVariables.get(template.getId());
+        if (ret == null) {
+            ret = new HashMap<>();
+            templateVariables.put(template.getId(), ret);
+        }
+        return ret;
     }
 
     public String md2html(String markdown) {

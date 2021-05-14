@@ -192,7 +192,7 @@ public class TemplateParser {
 
         Documentation diobue = new Documentation();
 
-        TemplateImpl template = diobue.parse("Zio petardo@cite(Diocan) porcavvia @cite(Madonna)@cite(Scurreggia)");
+        TemplateImpl template = diobue.parse("Of the 12 crops, ${crop_types.size()} were found in this region: ${crop_types.collect({it.displayLabel}).join(', ')}.");
 
         // TemplateImpl template = diobue.parse("@section('Methods/Socio-environmental exchange')
         // \n" + "\n"
