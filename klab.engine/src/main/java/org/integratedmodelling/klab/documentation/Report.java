@@ -1018,8 +1018,11 @@ public class Report implements IReport {
 
         figure.setDataSummary(ref.getDataSummary());
         figure.setBaseUrl(baseUrl);
-
+        
         ReportElement ret = new ReportElement(Type.Figure, figure, this);
+        
+        nodes.put(figure.getId(), ret.getNode());
+        
         scope.link(ret.getId(), ret);
         return ret;
     }
