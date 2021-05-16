@@ -125,7 +125,7 @@ public class MergingState extends State {
 				OffsetIterator iterator = new OffsetIterator(state.getScale(), exts);
 				while (iterator.hasNext()) {
 					Offset offset = iterator.next();
-					aggregator.add(state.get(offset), state.getObservable(), offset);
+					aggregator.add(state.get(offset), state.getObservable(), index);
 				}
 			}
 		}
