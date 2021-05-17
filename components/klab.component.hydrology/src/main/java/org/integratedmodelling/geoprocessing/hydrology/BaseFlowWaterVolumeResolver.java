@@ -38,27 +38,38 @@ public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpres
     @Override
     public IProcess resolve(IProcess baseflowProcess, IContextualizationScope context) throws KlabException {
 
-        IState baseflowVolumeState = getBaseFlowState(context);
-
-        IState infiltratedWaterVolumeState = context.getArtifact("infiltrated_water_volume", IState.class);
+        String localName = "base_flow_water_volume";
+        IState baseflowVolumeState = context.getArtifact(localName, IState.class);
+        
+//        IState infiltratedWaterVolumeState = context.getArtifact("infiltrated_water_volume", IState.class);
 
 //        Grid baseflowGrid = Space.extractGrid(baseflowVolumeState);
 //        if (baseflowGrid == null) {
 //            throw new KlabValidationException("Baseflow must be computed on a grid extent");
 //        }
+        
+        
+//        for(ILocator locator : context.getScale()) {
+//            long ts = System.currentTimeMillis();
+//            baseflowVolumeState.set(locator, ts);        
+//        }
         for(ILocator locator : context.getScale()) {
             Cell cell = locator.as(Cell.class);
             Double baseFlow = baseflowVolumeState.get(locator, Double.class);
-            if (baseFlow == null) {
-                baseFlow = 0.0;
-                baseflowVolumeState.set(locator, baseFlow);
-            } else {
-                Double infiltration = infiltratedWaterVolumeState.get(cell, Double.class);
+            boolean isValid = Observations.INSTANCE.isData(baseFlow);
+            if (isValid) {
+//                Double infiltration = infiltratedWaterVolumeState.get(locator, Double.class);
                 double[] center = cell.getCenter();
-                baseFlow = center[0] + baseFlow * center[1]; // DUMMY test formula
+                baseFlow = baseFlow + center[0];// + baseFlow * center[1]; // DUMMY test formula
 
-                infiltration = infiltration * baseFlow; // DUMMY test formula
+//                infiltration = infiltration * baseFlow; // DUMMY test formula
+            } else {
+                baseFlow = 0.0;
             }
+            baseflowVolumeState.set(locator, baseFlow);
+            
+//            Double baseFlowPost = baseflowVolumeState.get(locator, Double.class);
+//            boolean isValid2 = Observations.INSTANCE.isData(baseFlowPost);
         }
 
 //        GridCoverage2D infiltratedWaterVolumeGC = GeotoolsUtils.INSTANCE.stateToCoverage(infiltratedWaterVolumeState,

@@ -340,7 +340,93 @@ export process infiltratedcalc
 	"Calculates the infiltrated volume."
 	label 'Calculate Infiltrated Water Volume'
 {
+
+	optional number alpha
+		"TODO."
+		default 1.0
+	
+	optional number beta
+		"TODO."
+		default 1.0
+
+	optional number gamma
+		"TODO."
+		default 1.0
+		
+	import number potential_evapotranspired_water_volume
+		"The potential evapotranspiration water volume."
+
+	import number rainfall_volume
+		"The liquid precipitation volume."
+
+	import number runoff_water_volume
+		"The marker of stream network presence." 
+		
+	import boolean presence_of_stream
+		"The marker of stream network presence." 
+		
+	import number flow_directions_d8
+		"The D8 numeric code for flow direction"
+
+	export number infiltrated_water_volume
+		"TODO"
+		
 	geometry T1S2
 
 	class org.integratedmodelling.geoprocessing.hydrology.InfiltratedWaterVolumeResolver
+}
+
+export process petcalc
+	"Calculates the potential evapotranspired volume."
+	label 'Calculate Potential Evapotranspired Water Volume'
+{
+	import number crop_coefficient
+		"The Crop Coefficient."
+	
+	import number maximum_temperature
+		"TODO"
+	
+	import number minimum_temperature
+		"TODO"
+	
+	import number atmospheric_temperature
+		"TODO"
+	
+	import number solar_radiation
+		"TODO"
+		
+	import number rainfall_volume
+		"The liquid precipitation volume."
+
+	export number evapotranspired_water_volume
+		"TODO"
+		
+	geometry T1S2
+
+	class org.integratedmodelling.geoprocessing.hydrology.PotentialEvapotranspiredWaterVolumeResolver
+}
+
+export process scsrunoffcalc
+	"Calculates the scs runoff volume."
+	label 'Calculate SCS Runoff Volume'
+{
+		
+	import number rainfall_volume
+		"The liquid precipitation volume."
+
+	import number number_of_storm_events
+		"TODO"
+	
+	import number curve_number
+		"TODO"
+
+	import boolean presence_of_stream
+		"TODO"
+
+	export number runoff_water_volume
+		"TODO"
+		
+	geometry T1S2
+
+	class org.integratedmodelling.geoprocessing.hydrology.ScsRunoffResolver
 }
