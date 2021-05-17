@@ -1,28 +1,46 @@
 package org.integratedmodelling.klab.components.geospace.utils;
 
 import java.awt.Color;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import javax.media.jai.ImageLayout;
+import javax.media.jai.JAI;
+import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RasterFactory;
+import javax.media.jai.RenderedOp;
 import javax.media.jai.iterator.RandomIter;
 import javax.media.jai.iterator.RandomIterFactory;
+import javax.media.jai.iterator.RectIterFactory;
+import javax.media.jai.iterator.WritableRectIter;
 
 import org.geotools.coverage.Category;
 import org.geotools.coverage.CoverageFactoryFinder;
 import org.geotools.coverage.GridSampleDimension;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
+import org.geotools.coverage.grid.io.AbstractGridCoverageWriter;
+import org.geotools.coverage.grid.io.AbstractGridFormat;
+import org.geotools.coverage.grid.io.imageio.GeoToolsWriteParams;
+import org.geotools.gce.geotiff.GeoTiffFormat;
+import org.geotools.gce.geotiff.GeoTiffWriteParams;
+import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.geotools.geometry.Envelope2D;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
 import org.geotools.styling.ColorMapEntry;
 import org.geotools.styling.RasterSymbolizer;
+import org.geotools.swing.data.JFileDataStoreChooser;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -39,7 +57,9 @@ import org.integratedmodelling.klab.components.geospace.visualization.raster.Rea
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
+import org.jaitools.tiledimage.DiskMemImage;
 import org.opengis.filter.expression.Literal;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public enum GeotoolsUtils {
@@ -103,7 +123,7 @@ public enum GeotoolsUtils {
          * TODO use a raster of the appropriate type - for now there is apparently a bug in geotools
          * that makes it work only with float.
          */
-        if (!(space instanceof Space) || ((Space)space).getGrid() == null) {
+        if (!(space instanceof Space) || ((Space) space).getGrid() == null) {
             throw new KlabIllegalArgumentException("cannot build a coverage from a non-grid space");
         }
 
@@ -231,7 +251,7 @@ public enum GeotoolsUtils {
         if (!(locator instanceof IScale)) {
             locator = state.getScale().at(locator);
         }
-        
+
         /*
          * only go through active cells. State should have been located through a proxy for other
          * extents.
@@ -309,6 +329,8 @@ public enum GeotoolsUtils {
     }
 
     /**
+     * FIXME remove - snippet for later
+     * 
      * Creates a {@link WritableRaster writable raster}.
      * 
      * @param width width of the raster to create.
@@ -393,6 +415,165 @@ public enum GeotoolsUtils {
 
         }
         return raster;
+    }
+
+    /**
+     * FIXME remove - snippet for later
+     * @param file
+     */
+    public void createBigTiff(File file) {
+
+        /*
+         * I first decide if tiling must be used and which size must be used (borrowed from
+         * ArcGridsImageReader), then I create the image, then I fill all the image with some
+         * useless values, and finally try to create a coverage and write this to disk by using
+         * GeoTiffWriter.
+         */
+
+        /** Minimum size of a certain file source that neds tiling. */
+        final int MIN_SIZE_NEED_TILING = 5242880; // 5 MByte
+        /** Defaul tile size. */
+        final int DEFAULT_TILE_SIZE = 1048576 / 2; // 1 MByte
+
+        // if the imageSize is bigger than MIN_SIZE_NEED_TILING
+        // we proceed to image tiling
+        boolean isTiled = false;
+
+        /**
+         * Tile width for the underlying raster.
+         */
+        int tileWidth = -1;
+
+        /**
+         * Tile height for the underlying raster.
+         */
+        int tileHeight = -1;
+
+        /** Image Size */
+        long imageSize = -1;
+
+        try {
+            CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
+            int width = 30000, height = 28000;
+            int sampleSizeByte = DataBuffer.getDataTypeSize(DataBuffer.TYPE_FLOAT);
+            imageSize = (long) width * (long) height * (long) sampleSizeByte;
+
+            /**
+             * Setting Tile Dimensions (If Tiling is supported)
+             */
+            // if the Image Size is greater than a certain dimension
+            // (MIN_SIZE_NEED_TILING), the image needs to be tiled
+            if (imageSize >= MIN_SIZE_NEED_TILING) {
+                isTiled = true;
+
+                // This implementation supposes that tileWidth is
+                // equal to the width
+                // of the whole image
+                tileWidth = width;
+
+                // actually (need improvements) tileHeight is given by
+                // the default tile size divided by the tileWidth
+                // multiplied by the
+                // sample size (in byte)
+                tileHeight = DEFAULT_TILE_SIZE / (tileWidth * sampleSizeByte);
+
+                // if computed tileHeight is zero, it is setted to 1
+                // as precaution
+                if (tileHeight < 1) {
+                    tileHeight = 1;
+                }
+
+            } else {
+                // If no Tiling needed, I set the tile sizes equal to the image
+                // sizes
+                tileWidth = width;
+                tileHeight = height;
+            }
+
+            Envelope2D envelope = new Envelope2D(crs, 0, 0, width, height);
+            SampleModel sampleModel = new ComponentSampleModel(DataBuffer.TYPE_FLOAT, tileWidth, tileHeight, 1, tileWidth,
+                    new int[]{0});
+            DiskMemImage img = new DiskMemImage(width, height, sampleModel);
+
+            WritableRectIter iter = RectIterFactory.createWritable(img, null);
+            do {
+                int x = 0;
+                do {
+                    iter.setSample(x / tileWidth);
+                } while(!iter.nextPixelDone());
+            } while(!iter.nextLineDone());
+
+            GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
+
+            GridCoverage2D gc = factory.create("bigtif", img, envelope);
+
+            GeoTiffFormat fmt = new GeoTiffFormat();
+            // getting the write parameters
+            final GeoTiffWriteParams wp = new GeoTiffWriteParams();
+
+            // setting compression to Deflate
+            wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
+            wp.setCompressionType("Deflate");
+            wp.setCompressionQuality(0.75F);
+
+            // setting the tile size to 256X256
+            wp.setTilingMode(GeoToolsWriteParams.MODE_EXPLICIT);
+            wp.setTiling(256, 256);
+
+            // setting the write parameters for this geotiff
+            final ParameterValueGroup[] params = {fmt.getWriteParameters()};
+
+            params[0].parameter(AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString()).setValue(wp);
+
+            AbstractGridCoverageWriter writer = new GeoTiffWriter(file);
+            writer.write(gc/* .view(ViewType.GEOPHYSICS) */, params);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+}
+
+class BigCoverage {
+
+    private static final int IMAGE_WIDTH = 10000;
+    private static final int IMAGE_HEIGHT = 10000;
+
+    public static void main(String[] args) throws Exception {
+        JFileDataStoreChooser chooser = new JFileDataStoreChooser("tif");
+        chooser.setDialogTitle("Create GeoTiff file");
+
+        File file = null;
+        if (chooser.showSaveDialog(null) == JFileDataStoreChooser.APPROVE_OPTION) {
+            file = chooser.getSelectedFile();
+        }
+
+        if (file == null) {
+            return;
+        }
+
+        ParameterBlockJAI pb = new ParameterBlockJAI("Constant");
+        pb.setParameter("width", (float) IMAGE_WIDTH);
+        pb.setParameter("height", (float) IMAGE_HEIGHT);
+        pb.setParameter("bandValues", new Double[]{0.0d});
+
+        final int tileWidth = 512;
+
+        ImageLayout layout = new ImageLayout();
+        layout.setTileWidth(tileWidth);
+        layout.setTileHeight(tileWidth);
+
+        RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
+
+        RenderedOp image = JAI.create("Constant", pb, hints);
+
+        GeoTiffWriter writer = new GeoTiffWriter(file, null);
+        GridCoverageFactory factory = new GridCoverageFactory();
+        ReferencedEnvelope env = new ReferencedEnvelope(new Rectangle(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT), null);
+        GridCoverage2D coverage = factory.create("coverage", image, env);
+        writer.write(coverage, null);
     }
 
 }
