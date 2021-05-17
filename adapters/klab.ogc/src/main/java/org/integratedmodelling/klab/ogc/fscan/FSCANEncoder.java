@@ -97,15 +97,16 @@ public class FSCANEncoder implements IResourceEncoder {
             IShape shape = FSCANAdapter.getPostgis().getShape(tid[0], Long.parseLong(tid[1]));
             if (shape != null) {
 
+                IMetadata metadata = shape.getMetadata();
                 if (scale.getSpace() instanceof Space && ((Space) scale.getSpace()).getGrid() != null) {
                     IGrid grid = ((Space) scale.getSpace()).getGrid();
                     shape = ((Shape) shape).getSimplified(grid.getCellWidth());
                 }
 
                 Builder bb = builder.startObject(context.getTargetName() == null ? "result" : context.getTargetName(),
-                        shape.getMetadata().get(IMetadata.DC_NAME, String.class), Scale.create(shape));
-                for (String key : shape.getMetadata().keySet()) {
-                    bb.withMetadata(key, shape.getMetadata().get(key));
+                        metadata.get(IMetadata.DC_NAME, String.class), Scale.create(shape));
+                for (String key : metadata.keySet()) {
+                    bb.withMetadata(key, metadata.get(key));
                 }
                 bb.finishObject();
             }
@@ -133,15 +134,16 @@ public class FSCANEncoder implements IResourceEncoder {
             for (IShape shape : FSCANAdapter.getPostgis().getCoveringShapes(urn, scale.getSpace().getShape(), minCoverage,
                     buffer)) {
 
+                IMetadata metadata = shape.getMetadata();
                 if (scale.getSpace() instanceof Space && ((Space) scale.getSpace()).getGrid() != null) {
                     IGrid grid = ((Space) scale.getSpace()).getGrid();
                     shape = ((Shape) shape).getSimplified(grid.getCellWidth());
                 }
 
                 Builder bb = builder.startObject(context.getTargetName() == null ? "result" : context.getTargetName(),
-                        shape.getMetadata().get(IMetadata.DC_NAME, String.class), Scale.create(shape));
-                for (String key : shape.getMetadata().keySet()) {
-                    bb.withMetadata(key, shape.getMetadata().get(key));
+                        metadata.get(IMetadata.DC_NAME, String.class), Scale.create(shape));
+                for (String key : metadata.keySet()) {
+                    bb.withMetadata(key, metadata.get(key));
                 }
                 bb.finishObject();
             }

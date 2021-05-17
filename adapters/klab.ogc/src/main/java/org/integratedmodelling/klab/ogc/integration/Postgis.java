@@ -358,7 +358,9 @@ public class Postgis {
             double coverage = commn.getStandardizedArea() / space.getStandardizedArea();
             if (coverage >= minCoverage) {
                 if (buffer > 0) {
+                    IMetadata metadata = space.getMetadata();
                     space = space.buffer(buffer);
+                    space.getMetadata().putAll(metadata);
                 }
                 ret.add(space);
             }
@@ -421,7 +423,7 @@ public class Postgis {
                         sh.getMetadata().put(FSCANEncoder.FEATURE_ID, gid);
                         sh.getMetadata().put(FSCANEncoder.COLLECTION_ID, sourceTable);
                         sh.getMetadata().put(IMetadata.IM_FEATURE_URN, urn + "#id=" + sourceTable + "." + gid);
-                        sh.getMetadata().put(IMetadata.DC_NAME, shapeName + "_" + gid);
+                        sh.getMetadata().put(IMetadata.DC_NAME, shapeName);
                         sh.getMetadata().put(IMetadata.IM_MIN_SPATIAL_SCALE, level);
 
                         ret.add(sh);
