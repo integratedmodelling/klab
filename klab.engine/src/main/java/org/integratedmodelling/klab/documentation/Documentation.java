@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -45,6 +46,7 @@ public class Documentation implements IDocumentation {
     List<ProjectReferences> referencesAvailable = new ArrayList<>();
     List<Map<?, ?>> tables = new ArrayList<>();
     List<Map<?, ?>> graphs = new ArrayList<>();
+    String id = "doc" + NameGenerator.shortUUID();
 
     // managed externally, needed to communicate changes
     private File docfile;
@@ -78,8 +80,12 @@ public class Documentation implements IDocumentation {
         // ReportSection currentSection;
         Scope parent;
 
+        // if the scope is a repeated section, this will have a distinct 0+ value at each repetition
+        int index = -1;
+
         String method;
         Map<String, Object> variables = new HashMap<>();
+        Map<String, ReportElement> references = new HashMap<>();
         Iterator<?> iterator = null;
         String iterated = null;
 
@@ -88,19 +94,32 @@ public class Documentation implements IDocumentation {
             case "for":
                 if (active = iterator.hasNext()) {
                     variables.put(iterated, iterator.next());
+                    this.index++;
                     return this.nextDirective;
                 }
             }
             return index;
         }
 
-        public Scope push(SectionImpl section, Map<String, Object> variables, int index) {
+        public String disambiguateId(String id) {
+            String ret = id;
+            if (index >= 0) {
+                if (ret.contains("_")) {
+                    ret = ret.substring(ret.lastIndexOf('_'));
+                }
+                ret += "_" + index;
+            }
+            return ret;
+        }
+
+        public Scope push(DocumentationDirective section, Map<String, Object> variables, int index) {
             Scope scope = new Scope(this.variables);
             scope.method = section.method;
             switch(section.method) {
             case "for":
                 List<String> args = section.getArguments(2);
                 scope.iterated = args.get(0);
+                scope.index = 0;
                 if (variables.get(args.get(1)) instanceof Iterable) {
                     scope.iterator = ((Iterable<?>) variables.get(args.get(1))).iterator();
                 } else {
@@ -116,9 +135,14 @@ public class Documentation implements IDocumentation {
             return scope;
         }
 
+        public void link(String string, ReportElement element) {
+            // TODO disambiguate if within a loop?
+            this.references.put(string, element);
+        }
+
     }
 
-    private Documentation() {
+    Documentation() {
     }
 
     /**
@@ -152,6 +176,10 @@ public class Documentation implements IDocumentation {
         return ret;
     }
 
+    TemplateImpl parse(String string) {
+        return TemplateParser.parse(new TemplateImpl(), string);
+    }
+    
     /**
      * Read and compile all the templates corresponding to the passed docId.
      * 
@@ -200,12 +228,13 @@ public class Documentation implements IDocumentation {
 
     class TemplateImpl implements IDocumentation.Template {
 
-        private List<SectionImpl> sections = new ArrayList<>();
+        private List<DocumentationDirective> sections = new ArrayList<>();
         private List<String> errors = new ArrayList<>();
         private Trigger trigger;
         private String sectionId;
         private IReport.Section.Type sectionType;
         private SectionRole role;
+        private String id = "tmpl" + NameGenerator.shortUUID();
 
         public List<String> getErrors() {
             return errors;
@@ -215,16 +244,16 @@ public class Documentation implements IDocumentation {
             this.errors = errors;
         }
 
-        public List<SectionImpl> getSections() {
+        public List<DocumentationDirective> getSections() {
             return sections;
         }
 
         public void addCall(String method, String parameters) {
-            sections.add(new SectionImpl(method, parameters));
+            sections.add(new DocumentationDirective(method, parameters));
         }
 
         public void addCode(String code) {
-            sections.add(new SectionImpl(SectionImpl.Type.ACTION_CODE, code));
+            sections.add(new DocumentationDirective(DocumentationDirective.Type.ACTION_CODE, code));
         }
 
         public void addText(String text) {
@@ -245,7 +274,7 @@ public class Documentation implements IDocumentation {
             // + StringUtils.pack(text)
             // + (tnlns > 1 ? StringUtils.repeat('\n', tnlns) : (tail.length() > 0 ? " " : ""));
 
-            sections.add(new SectionImpl(SectionImpl.Type.TEMPLATE_STRING, text));
+            sections.add(new DocumentationDirective(DocumentationDirective.Type.TEMPLATE_STRING, text));
         }
 
         public void addError(String message) {
@@ -284,7 +313,7 @@ public class Documentation implements IDocumentation {
         }
 
         /**
-         * Compile the current scope, return the index of the next
+         * Compile the current scope, return the index of the next directive in sections.
          * 
          * @param sect
          * @param context
@@ -300,13 +329,13 @@ public class Documentation implements IDocumentation {
             int ret = scope.nextDirective;
             for (; ret < sections.size(); ret++) {
 
-                SectionImpl section = sections.get(ret);
+                DocumentationDirective section = sections.get(ret);
 
                 // TODO switch to matching the enum
-                if (section.getType() == SectionImpl.Type.REPORT_CALL) {
+                if (section.getType() == DocumentationDirective.Type.REPORT_CALL) {
                     switch(section.method) {
                     case "section":
-                        current = current.getChild(current, section.body, section.method);
+                        current = current.getChild(current.getMainSection(), section.body, section.method);
                         break;
                     case "if":
                         // // open conditional scope, set active to result of expression
@@ -345,10 +374,19 @@ public class Documentation implements IDocumentation {
                         }
                     }
 
-                } else if (section.getType() == SectionImpl.Type.TEMPLATE_STRING
-                        || section.getType() == SectionImpl.Type.ACTION_CODE) {
+                } else if (section.getType() == DocumentationDirective.Type.TEMPLATE_STRING
+                        || section.getType() == DocumentationDirective.Type.ACTION_CODE) {
                     if (scope.active) {
-                        current.body.append(section.evaluate(section.getCode(), context, scope));
+                        try {
+                            String content = section.evaluate(section.getCode(), context, scope);
+                            if (!content.isEmpty()) {
+                                current.appendContent(content);
+                            }
+                            // current.body.append();
+                        } catch (Throwable t) {
+                            context.getMonitor().error("Error compiling documentation " + trigger + "/" + sectionId
+                                    + " in section '" + current.getName() + "': " + section.body);
+                        }
                     }
                 }
             }
@@ -357,42 +395,44 @@ public class Documentation implements IDocumentation {
 
         }
 
-        private void processDirective(SectionImpl section, ReportSection current, IContextualizationScope context, Scope scope) {
+        private void processDirective(DocumentationDirective section, ReportSection current, IContextualizationScope context,
+                Scope scope) {
             switch(section.method) {
             case "tag":
-                current.tag(processArguments(section, 1, context, scope), Documentation.this, context, scope);
+                current.tag(processArguments(section, context, scope), Documentation.this, context, scope);
                 break;
-            case "describe":
-                current.describe(processArguments(section, 1, context, scope), Documentation.this, context, scope);
-                break;
+            // case "describe":
+            // current.describe(processArguments(section, 1, context, scope), Documentation.this,
+            // context, scope);
+            // break;
             case "link":
             case "reference":
-                current.link(processArguments(section, 1, context, scope), Documentation.this, context, scope);
+                current.link(processArguments(section, context, scope), Documentation.this, context, scope);
                 break;
             case "table":
-                current.table(processArguments(section, 2, context, scope), Documentation.this, context, scope);
+                current.table(processArguments(section, context, scope), Documentation.this, context, scope);
                 break;
             case "cite":
-                current.cite(processArguments(section, 1, context, scope), Documentation.this, context, scope);
+                current.cite(processArguments(section, context, scope), Documentation.this, context, scope);
                 break;
             case "footnote":
-                current.footnote(processArguments(section, 2, context, scope), Documentation.this, context, scope);
+                current.footnote(processArguments(section, context, scope), Documentation.this, context, scope);
                 break;
             case "figure":
-                current.figure(processArguments(section, 2, context, scope), Documentation.this, context, scope);
+                current.figure(processArguments(section, context, scope), Documentation.this, context, scope);
                 break;
             case "insert":
-                current.insert(processArguments(section, 1, context, scope), Documentation.this, context, scope);
+                current.insert(processArguments(section, context, scope), Documentation.this, context, scope);
                 break;
             case "require":
-                current.getReport().require(processArguments(section, 2, context, scope), Documentation.this, context);
+                current.getReport().require(processArguments(section, context, scope), Documentation.this, context);
                 break;
             case "import":
-                String id = processArguments(section, 1, context, scope).toString();
+                String id = processArguments(section, context, scope).toString();
                 IDocumentationProvider.Item arg = current.getReport().getTaggedText(id);
                 if (arg != null) {
                     current.getReport().notifyUsedTag(id);
-                    current.body.append(arg.getMarkdownContents());
+                    current.appendContent(arg.getMarkdownContents());
                 }
                 break;
             default:
@@ -408,42 +448,28 @@ public class Documentation implements IDocumentation {
             this.role = role;
         }
 
-        /**
-         * Split an argument string into a max of argCount comma-separated arguments, plus anything
-         * following the last as a last string argument which is processed in the scope if it
-         * contains at least a dollar sign.
-         * 
-         * @param body
-         * @param argCount
-         * @return
-         */
-        public Object[] processArguments(SectionImpl section, int argCount, IContextualizationScope context, Scope scope) {
-
-            List<Object> arguments = new ArrayList<>();
-            int offset = 0;
-            while(arguments.size() < argCount) {
-                int nextComma = section.body.indexOf(',', offset + 1);
-                if (nextComma < 0) {
-                    break;
-                }
-                String arg = section.body.substring(offset, nextComma);
-                arguments.add(Utils.asPOD(arg.trim()));
-                offset = nextComma + 1;
-            }
-
-            if (offset < section.body.length()) {
-                String last = section.body.substring(offset).trim();
-                if (last.contains("$")) {
-                    last = section.evaluate(asGroovyTemplate(last), context, scope);
-                }
-                arguments.add(last);
-            }
-
-            return arguments.toArray();
+        @Override
+        public IDocumentation getDocumentation() {
+            return Documentation.this;
         }
+
+        @Override
+        public String getId() {
+            return this.id;
+        }
+
     }
 
-    static class SectionImpl {
+    /**
+     * User-edited documentation parts {@link DocumentationItem} are broken down into a list of
+     * documentation directives, either the @-tagged directives themselves (REPORT_CALL), Groovy
+     * expressions to execute in context (ACTION_CODE) or the text in between (TEMPLATE_STRING)
+     * which is passed through the Groovy Gstring template system at compilation.
+     * 
+     * @author Ferd
+     *
+     */
+    static class DocumentationDirective {
 
         public static enum Type {
 
@@ -472,7 +498,7 @@ public class Documentation implements IDocumentation {
         String body;
 
         // creates an expression or text section
-        public SectionImpl(Type type, String body) {
+        public DocumentationDirective(Type type, String body) {
             this.type = type;
             this.body = body;
         }
@@ -491,7 +517,7 @@ public class Documentation implements IDocumentation {
         }
 
         // creates a call section
-        public SectionImpl(String method, String body) {
+        public DocumentationDirective(String method, String body) {
             this.type = Type.REPORT_CALL;
             this.method = method.startsWith("@") ? method.substring(1) : method;
             this.body = body;
@@ -548,7 +574,39 @@ public class Documentation implements IDocumentation {
         }
     }
 
-    public String asGroovyTemplate(String string) {
+    /**
+     * Split an argument string into a max of argCount comma-separated arguments, plus anything
+     * following the last as a last string argument which is processed in the scope if it contains
+     * at least a dollar sign.
+     * 
+     * @param body
+     * @param argCount
+     * @return
+     */
+    public static IParameters<String> processArguments(DocumentationDirective section, IContextualizationScope context,
+            Scope scope) {
+
+        String args[] = section.body.split(",");
+        Parameters<String> ret = Parameters.create();
+
+        for (String s : args) {
+            if (s.trim().isEmpty()) {
+                continue;
+            }
+            if (s.contains("$")) {
+                s = section.evaluate(asGroovyTemplate(s), context, scope);
+            }
+            if (s.contains("=")) {
+                String[] fx = s.split("=");
+                ret.put(fx[0].trim(), Utils.asPOD(fx[1].trim()));
+            } else {
+                ret.putUnnamed(s.trim());
+            }
+        }
+
+        return ret;
+    }
+    public static String asGroovyTemplate(String string) {
         String vid = "_" + NameGenerator.shortUUID();
         return "// " + COMMENT_TEXT + " \ndef " + vid + " = \"\"\"" + string + "\"\"\"\n;\n" + "return " + vid + ";";
     }
@@ -587,12 +645,12 @@ public class Documentation implements IDocumentation {
     }
 
     @Override
-    public boolean instrumentReport(IReport report, IActuator actuator, IContextualizationScope scope) {
+    public boolean instrumentReport(IReport report, Template template, Trigger trigger, IActuator actuator, IContextualizationScope scope) {
 
         /*
          * TODO verify if the target is the "final" one, or collect
          */
-        if (!((Report) report).checkObservableCoverage((Actuator) actuator)) {
+        if (!((Report) report).checkObservableCoverage(template, (Actuator) actuator, trigger)) {
             return false;
         }
 
@@ -605,6 +663,11 @@ public class Documentation implements IDocumentation {
                     (IRuntimeScope) scope, ((Actuator) actuator).getObservable()));
         }
         return true;
+    }
+    
+    @Override
+    public String getId() {
+        return this.id;
     }
 
 }

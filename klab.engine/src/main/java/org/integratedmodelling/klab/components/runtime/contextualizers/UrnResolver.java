@@ -66,14 +66,15 @@ public class UrnResolver implements IExpression, IResolver<IArtifact> {
             List<Pair<IResource, Map<String, String>>> resources = ((MergedResource) this.resource)
                     .contextualize(context.getScale(), observation);
             if (resources.isEmpty()) {
-                // it's OK if the resource was already contextualized up to the available data. TODO distinguish the use cases.
-                // context.getMonitor().warn("resource " + this.resource.getUrn() + " could not be contextualized in this scale");
+                // it's OK if the resource was already contextualized up to the available data. TODO
+                // distinguish the use cases.
+                // context.getMonitor().warn("resource " + this.resource.getUrn() + " could not be
+                // contextualized in this scale");
                 return observation;
             }
 
             for (Pair<IResource, Map<String, String>> pr : resources) {
-                ((Report) context.getReport()).getDocumentationTree().addContextualizedResource(this.resource.getUrn(),
-                        pr.getFirst());
+                ((Report) context.getReport()).addContextualizedResource(this.resource.getUrn(), pr.getFirst());
             }
 
             // TODO must contextualize the LIST, not just the first resource. For now it can only

@@ -52,6 +52,7 @@ public class Node {
 	private ICertificate certificate;
 	private Engine engine;
 	
+	private static long bootTime;
 	
 	/**
 	 * 
@@ -139,6 +140,9 @@ public class Node {
 			Logging.INSTANCE.error(e);
 			return false;
 		}
+		
+		bootTime = System.currentTimeMillis();
+		
 		return true;
 	}
 	
@@ -160,6 +164,9 @@ public class Node {
 			Logging.INSTANCE.error(e);
 			return false;
 		}
+
+		bootTime = System.currentTimeMillis();
+		
 		return true;
 	}
 
@@ -237,6 +244,10 @@ public class Node {
 		        });
 		return;
 	}
+
+    public static long getBootTime() {
+        return bootTime;
+    }
 	
 
 }

@@ -293,6 +293,14 @@ public class Shape extends AbstractExtent implements IShape {
         return create(fix(shapeGeometry).intersection(fix(((Shape) other).shapeGeometry)), projection);
     }
 
+    public Shape fixInvalid() {
+        /*
+         * TODO use next-level JTS functions now available when we can upgrade
+         */
+        Geometry geom = this.shapeGeometry.buffer(0);
+        return create(geom, projection);
+    }
+    
     @Override
     public Shape union(IShape other) {
         if ((projection != null || other.getProjection() != null) && !projection.equals(other.getProjection())) {

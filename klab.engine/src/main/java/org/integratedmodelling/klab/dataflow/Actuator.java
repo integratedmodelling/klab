@@ -219,7 +219,7 @@ public class Actuator implements IActuator {
     }
 
     public void addDocumentation(IDocumentation documentation) {
-        this.documentation.add(documentation);
+        this.getDocumentation().add(documentation);
     }
 
     /**
@@ -1497,9 +1497,9 @@ public class Actuator implements IActuator {
         /*
          * when all is computed, reuse the context to render the documentation templates.
          */
-        for (IDocumentation doc : documentation) {
-            if (doc.instrumentReport(context.getReport(), this, context)) {
-                for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
+        for (IDocumentation doc : getDocumentation()) {
+            for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
+                if (doc.instrumentReport(context.getReport(), template, Trigger.DEFINITION, this, context)) {
                     ((Report) context.getReport()).include(template, context, doc);
                 }
             }
@@ -1636,5 +1636,9 @@ public class Actuator implements IActuator {
 
     public Map<String, String> getLocalNames() {
         return this.localNames;
+    }
+
+    public List<IDocumentation> getDocumentation() {
+        return documentation;
     }
 }

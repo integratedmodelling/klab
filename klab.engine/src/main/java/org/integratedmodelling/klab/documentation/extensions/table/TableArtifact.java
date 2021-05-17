@@ -290,7 +290,8 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
         List<Column> cols = new ArrayList<>();
         List<Map<String, String>> data = new ArrayList<>();
         ret.setNumberFormat(this.table.getNumberFormat() == null ? "%.2f" : this.table.getNumberFormat());
-
+        ret.setDocumentationIdentifier(this.table.getIdentifier());
+       
         /*
          * compute groups based on dimension hierarchies. Dimensions that stand alone will have a
          * group all by themselves. These must preserve order or we're screwed.
@@ -1059,6 +1060,11 @@ public class TableArtifact extends Artifact implements IKnowledgeView {
         return this.id;
     }
 
+    @Override
+    public String getIdentifier() {
+        return this.table.getIdentifier();
+    }
+    
     @Override
     public IArtifact getGroupMember(int n) {
         return n == 0 ? this : null;
