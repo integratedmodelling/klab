@@ -24,7 +24,7 @@ public class PotentialEvapotranspiredWaterVolumeResolver implements IResolver<IP
         IState cropCoefficientState = context.getArtifact("crop_coefficient", IState.class);
         IState maxTempState = context.getArtifact("maximum_temperature", IState.class);
         IState minTempState = context.getArtifact("minimum_temperature", IState.class);
-        IState avgTempState = context.getArtifact("average_temperature", IState.class);
+        IState tempState = context.getArtifact("atmospheric_temperature", IState.class);
         IState solarRadiationState = context.getArtifact("solar_radiation", IState.class);
         IState rainfallState = context.getArtifact("rainfall_volume", IState.class);
 
@@ -34,7 +34,7 @@ public class PotentialEvapotranspiredWaterVolumeResolver implements IResolver<IP
             Double kc = cropCoefficientState.get(locator, Double.class);
             Double tMax = maxTempState.get(locator, Double.class);
             Double tMin = minTempState.get(locator, Double.class);
-            Double tAvg = avgTempState.get(locator, Double.class);
+            Double tAvg = tempState.get(locator, Double.class);
             Double solarRad = solarRadiationState.get(locator, Double.class);
             Double rainfall = rainfallState.get(locator, Double.class);
 

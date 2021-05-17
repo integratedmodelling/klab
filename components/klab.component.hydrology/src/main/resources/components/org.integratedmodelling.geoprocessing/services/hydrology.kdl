@@ -340,13 +340,26 @@ export process infiltratedcalc
 	"Calculates the infiltrated volume."
 	label 'Calculate Infiltrated Water Volume'
 {
+
+	optional number alpha
+		"TODO."
+		default 1.0
+	
+	optional number beta
+		"TODO."
+		default 1.0
+
+	optional number gamma
+		"TODO."
+		default 1.0
+		
 	import number potential_evapotranspired_water_volume
 		"The potential evapotranspiration water volume."
 
 	import number rainfall_volume
 		"The liquid precipitation volume."
 
-	import number runoffWater_volume
+	import number runoff_water_volume
 		"The marker of stream network presence." 
 		
 	import boolean presence_of_stream
@@ -397,6 +410,7 @@ export process scsrunoffcalc
 	"Calculates the scs runoff volume."
 	label 'Calculate SCS Runoff Volume'
 {
+		
 	import number rainfall_volume
 		"The liquid precipitation volume."
 
