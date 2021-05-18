@@ -75,6 +75,7 @@ import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.cli.CommandConsole;
 import org.integratedmodelling.klab.cli.DebuggerConsole;
+import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
@@ -500,10 +501,29 @@ public class Session extends GroovyObjectSupport
     }
 
     @MessageHandler(messageClass = IMessage.MessageClass.Authorization, type = IMessage.Type.NetworkStatus)
-    private void handleNetworkStatusRequest(String dummy) {
+    private void handleNetworkStatusRequest(String urnOrDummy, IMessage message) {
+
         /*
-         * send back a network descriptor with all nodes we can publish to at the moment of the
-         * call.
+         * If message contains a URN, check on the status of the correspondent resource
+         */
+        if (Urns.INSTANCE.isUrn(urnOrDummy)) {
+            IResource ref = Resources.INSTANCE.resolveResource(urnOrDummy);
+            if (ref != null) {
+                boolean online = Resources.INSTANCE.isResourceOnline(ref);
+                monitor.send(Message.create(this.token, IMessage.MessageClass.ResourceLifecycle,
+                        online ? IMessage.Type.ResourceOnline : IMessage.Type.ResourceOffline, ((Resource) ref).getReference())
+                        .inResponseTo(message));
+            } else {
+                monitor.send(Message
+                        .create(this.token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUnknown, urnOrDummy)
+                        .inResponseTo(message));
+            }
+            return;
+        }
+
+        /*
+         * if message didn't contain a URN, send back a network descriptor with all nodes we can
+         * publish to at the moment of the call.
          */
         NetworkReference ret = new NetworkReference();
         ret.setHub(Network.INSTANCE.getHub());
@@ -987,13 +1007,13 @@ public class Session extends GroovyObjectSupport
                             if (request.getQueryString().equals("(")) {
 
                                 // TODO open submatch with empty head of list
-//                                System.out.println("OPEN PARENTHESIS");
+                                // System.out.println("OPEN PARENTHESIS");
                                 literalMatch = true;
 
                             } else if (request.getQueryString().equals("(")) {
 
                                 // TODO close submatch and collapse meaning
-//                                System.out.println("OPEN PARENTHESIS");
+                                // System.out.println("OPEN PARENTHESIS");
                                 literalMatch = true;
 
                             } else {
