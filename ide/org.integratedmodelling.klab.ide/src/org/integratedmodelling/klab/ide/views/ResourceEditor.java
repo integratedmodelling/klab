@@ -77,6 +77,7 @@ import org.integratedmodelling.klab.api.data.IResource.Attribute;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.common.Geometry;
+import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.ide.Activator;
 import org.integratedmodelling.klab.ide.navigator.e3.KlabNavigatorActions;
 import org.integratedmodelling.klab.ide.ui.TimeEditor;
@@ -154,12 +155,14 @@ public class ResourceEditor extends ViewPart {
 
     private Button btnEdit;
 
+    private boolean isLocal;
+
     public static class AttributeContentProvider implements IStructuredContentProvider {
 
         @Override
-        public Object[] getElements( Object inputElement ) {
+        public Object[] getElements(Object inputElement) {
             if (inputElement instanceof Collection) {
-                return ((Collection< ? >) inputElement).toArray();
+                return ((Collection<?>) inputElement).toArray();
             }
             return new Object[]{};
         }
@@ -169,7 +172,7 @@ public class ResourceEditor extends ViewPart {
     public static class AttributeLabelProvider extends LabelProvider implements ITableLabelProvider {
 
         @Override
-        public Image getColumnImage( Object element, int columnIndex ) {
+        public Image getColumnImage(Object element, int columnIndex) {
             if (element instanceof Attribute) {
                 return columnIndex == 0
                         ? ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/property.gif")
@@ -179,9 +182,9 @@ public class ResourceEditor extends ViewPart {
         }
 
         @Override
-        public String getColumnText( Object element, int columnIndex ) {
+        public String getColumnText(Object element, int columnIndex) {
             if (element instanceof Attribute) {
-                switch( columnIndex ) {
+                switch(columnIndex) {
                 case 0:
                     return ((Attribute) element).getName();
                 case 1:
@@ -196,8 +199,7 @@ public class ResourceEditor extends ViewPart {
     }
 
     /**
-     * These describe hierarchical parameters (of the type a.b.c) so that they can
-     * be easily shown.
+     * These describe hierarchical parameters (of the type a.b.c) so that they can be easily shown.
      * 
      * @author Ferd
      *
@@ -220,13 +222,13 @@ public class ResourceEditor extends ViewPart {
         // children are cached here
         ResourceParameter[] children = null;
 
-        ResourceParameter( String parameter, String value, Argument descriptor ) {
+        ResourceParameter(String parameter, String value, Argument descriptor) {
             this.parameter = this.label = parameter;
             this.value = value;
             this.descriptor = descriptor;
         }
 
-        ResourceParameter( String parameter, String value, ResourceParameter parent ) {
+        ResourceParameter(String parameter, String value, ResourceParameter parent) {
             this.parameter = parameter;
             this.label = Path.getLast(parameter, '.');
             this.value = value;
@@ -237,7 +239,7 @@ public class ResourceEditor extends ViewPart {
             if (this.children == null) {
                 List<ResourceParameter> ret = new ArrayList<>();
                 Set<String> added = new HashSet<>();
-                for( String s : resource.getParameters().keySet() ) {
+                for (String s : resource.getParameters().keySet()) {
                     if (s.startsWith(this.parameter + ".")) {
                         // one down
                         String rest = s.substring(this.parameter.length() + 1);
@@ -289,7 +291,7 @@ public class ResourceEditor extends ViewPart {
         List<ResourceParameter> known = new ArrayList<>();
         List<ResourceParameter> other = new ArrayList<>();
         if (adapter != null) {
-            for( Argument argument : adapter.getParameters().getArguments() ) {
+            for (Argument argument : adapter.getParameters().getArguments()) {
                 Object value = resource.getParameters().get(argument.getName());
                 known.add(new ResourceParameter(argument.getName(), value != null ? value.toString() : null, argument));
                 added.add(argument.getName());
@@ -297,7 +299,7 @@ public class ResourceEditor extends ViewPart {
         }
 
         Set<String> toAdd = new HashSet<>();
-        for( String pid : resource.getParameters().keySet() ) {
+        for (String pid : resource.getParameters().keySet()) {
             if (!pid.contains(".") && !added.contains(pid)) {
                 Object value = resource.getParameters().get(pid);
                 other.add(new ResourceParameter(pid, value != null ? value.toString() : null, (Argument) null));
@@ -307,7 +309,7 @@ public class ResourceEditor extends ViewPart {
             }
         }
 
-        for( String toadd : toAdd ) {
+        for (String toadd : toAdd) {
             if (!added.contains(toadd)) {
                 other.add(new ResourceParameter(toadd, null, (Argument) null).nonexisting());
             }
@@ -316,7 +318,7 @@ public class ResourceEditor extends ViewPart {
         Collections.sort(other, new Comparator<ResourceParameter>(){
 
             @Override
-            public int compare( ResourceParameter o1, ResourceParameter o2 ) {
+            public int compare(ResourceParameter o1, ResourceParameter o2) {
                 return o1.parameter.compareTo(o2.parameter);
             }
 
@@ -329,25 +331,25 @@ public class ResourceEditor extends ViewPart {
     class PropertyContentProvider implements ITreeContentProvider {
 
         @Override
-        public Object[] getElements( Object inputElement ) {
+        public Object[] getElements(Object inputElement) {
             if (inputElement instanceof Collection) {
-                return ((Collection< ? >) inputElement).toArray();
+                return ((Collection<?>) inputElement).toArray();
             }
             return new Object[]{};
         }
 
         @Override
-        public Object[] getChildren( Object parentElement ) {
+        public Object[] getChildren(Object parentElement) {
             return parentElement instanceof ResourceParameter ? ((ResourceParameter) parentElement).getChildren() : null;
         }
 
         @Override
-        public Object getParent( Object element ) {
+        public Object getParent(Object element) {
             return element instanceof ResourceParameter ? ((ResourceParameter) element).getParent() : null;
         }
 
         @Override
-        public boolean hasChildren( Object element ) {
+        public boolean hasChildren(Object element) {
             return element instanceof ResourceParameter ? ((ResourceParameter) element).hasChildren() : false;
         }
     }
@@ -355,17 +357,17 @@ public class ResourceEditor extends ViewPart {
     class PropertyLabelProvider extends LabelProvider implements ITableLabelProvider, IColorProvider {
 
         @Override
-        public Image getColumnImage( Object element, int columnIndex ) {
+        public Image getColumnImage(Object element, int columnIndex) {
             return columnIndex == 0
                     ? ResourceManager.getPluginImage("org.integratedmodelling.klab.ide", "icons/property.gif")
                     : null;
         }
 
         @Override
-        public String getColumnText( Object element, int columnIndex ) {
+        public String getColumnText(Object element, int columnIndex) {
             if (element instanceof ResourceParameter) {
                 ResourceParameter arg = (ResourceParameter) element;
-                switch( columnIndex ) {
+                switch(columnIndex) {
                 case 0:
                     return arg.label;
                 case 1:
@@ -381,7 +383,7 @@ public class ResourceEditor extends ViewPart {
         }
 
         @Override
-        public Color getForeground( Object element ) {
+        public Color getForeground(Object element) {
             if (element instanceof ResourceParameter && ((ResourceParameter) element).descriptor != null
                     && (((ResourceParameter) element).descriptor.isFinal()
                             || ((ResourceParameter) element).descriptor.isRequired())) {
@@ -393,7 +395,7 @@ public class ResourceEditor extends ViewPart {
         }
 
         @Override
-        public Color getBackground( Object element ) {
+        public Color getBackground(Object element) {
             // TODO Auto-generated method stub
             return null;
         }
@@ -402,7 +404,7 @@ public class ResourceEditor extends ViewPart {
     public ResourceEditor() {
     }
 
-    public void setMessage( String string, Level level ) {
+    public void setMessage(String string, Level level) {
 
         if (level.equals(Level.SEVERE)) {
             messageLabel.setForeground(SWTResourceManager.getColor(SWT.COLOR_DARK_RED));
@@ -415,14 +417,16 @@ public class ResourceEditor extends ViewPart {
         messageLabel.setText(string == null ? "" : string);
     }
 
-    public void loadResource( ResourceReference resource ) {
+    public void loadResource(ResourceReference resource) {
 
+        this.isLocal = Urns.INSTANCE.isLocal(resource.getUrn());
+        
         this.resource = resource;
         this.adapter = Activator.klab().getResourceAdapter(resource.getAdapterType());
         this.values.clear();
         this.geometry = Geometry.create(resource.getGeometry());
         if (adapter != null) {
-            for( Argument argument : adapter.getParameters().getArguments() ) {
+            for (Argument argument : adapter.getParameters().getArguments()) {
                 if (resource.getParameters().containsKey(argument.getName())) {
                     this.values.put(argument.getName(), resource.getParameters().get(argument.getName()));
                 }
@@ -452,7 +456,7 @@ public class ResourceEditor extends ViewPart {
         this.outputViewer.setInput(resource.getOutputs() == null ? new ArrayList<Attribute>() : resource.getOutputs());
 
         this.actionChooser.removeAll();
-        for( OperationReference operation : this.adapter.getOperations() ) {
+        for (OperationReference operation : this.adapter.getOperations()) {
             this.actionChooser.add(operation.getDescription());
         }
 
@@ -474,7 +478,7 @@ public class ResourceEditor extends ViewPart {
                 ? Activator.klab().getPublishingNodes(resource.getAdapterType())
                 : new ArrayList<>();
 
-        this.publishButton.setEnabled(this.isPublishable.getSelection() && !this.publishingNodes.isEmpty());
+        this.publishButton.setEnabled(isLocal && this.isPublishable.getSelection() && !this.publishingNodes.isEmpty());
 
         File rpath = getResourcePath(resource);
 
@@ -484,7 +488,7 @@ public class ResourceEditor extends ViewPart {
             this.btnEdit.setEnabled(true);
             this.categorizationsCombo.removeAll();
             this.categorizationsCombo.add("New");
-            for( File file : rpath.listFiles() ) {
+            for (File file : rpath.listFiles()) {
                 if (file.toString().endsWith(".properties")) {
                     String ff = MiscUtilities.getFileBaseName(file);
                     if (ff.startsWith("code_")) {
@@ -496,11 +500,15 @@ public class ResourceEditor extends ViewPart {
 
         }
 
+        /*
+         * TODO with remote resources, save button should only be enabled for owner or admin
+         */
+        
         setDirty(false);
 
     }
 
-    private File getResourcePath( ResourceReference resource ) {
+    private File getResourcePath(ResourceReference resource) {
         String path = resource.getLocalPath();
         String project = Path.getFirst(path, "/");
         IKimProject prj = Kim.INSTANCE.getProject(project);
@@ -513,10 +521,10 @@ public class ResourceEditor extends ViewPart {
         return null;
     }
 
-    private boolean hasErrors( ResourceReference resource ) {
+    private boolean hasErrors(ResourceReference resource) {
         this.unpublishableReason.setText("");
         this.isPublishable.setSelection(true);
-        for( Notification not : resource.getNotifications() ) {
+        for (Notification not : resource.getNotifications()) {
             if (not.getLevel().equals(Level.SEVERE.getName())) {
                 this.unpublishableReason.setText(not.getMessage());
                 this.isPublishable.setSelection(false);
@@ -532,7 +540,7 @@ public class ResourceEditor extends ViewPart {
      * @param parent
      */
     @Override
-    public void createPartControl( Composite parent ) {
+    public void createPartControl(Composite parent) {
         parent.setLayout(new GridLayout(1, false));
 
         Composite composite_1_1 = new Composite(parent, SWT.NONE);
@@ -636,7 +644,7 @@ public class ResourceEditor extends ViewPart {
 
             timeEditor = new TimeEditor(grpTime, SWT.NONE, new TimeEditor.Listener(){
                 @Override
-                public void onValidModification( String geometrySpecs ) {
+                public void onValidModification(String geometrySpecs) {
                     swapDimension(geometrySpecs);
                 }
             });
@@ -650,7 +658,7 @@ public class ResourceEditor extends ViewPart {
             isPublishable = new Button(operationsComposite, SWT.CHECK);
             isPublishable.addSelectionListener(new SelectionAdapter(){
                 @Override
-                public void widgetSelected( SelectionEvent e ) {
+                public void widgetSelected(SelectionEvent e) {
                     unpublishableReason.setEnabled(!isPublishable.getSelection());
                     labelWhy.setEnabled(!isPublishable.getSelection());
                 }
@@ -774,13 +782,13 @@ public class ResourceEditor extends ViewPart {
             lblOperations.setText("Operations:");
 
             this.actionChooser = new Combo(composite_3, SWT.READ_ONLY);
-            for( ResourceOperationRequest.Standard operation : ResourceOperationRequest.Standard.values() ) {
+            for (ResourceOperationRequest.Standard operation : ResourceOperationRequest.Standard.values()) {
                 actionChooser.add(operation.name());
             }
             actionChooser.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
             actionChooser.addSelectionListener(new SelectionAdapter(){
                 @Override
-                public void widgetSelected( SelectionEvent e ) {
+                public void widgetSelected(SelectionEvent e) {
                     selectedOperation = actionChooser.getText();
                     executeActionButton.setEnabled(true);
                 }
@@ -791,7 +799,7 @@ public class ResourceEditor extends ViewPart {
             executeActionButton.setEnabled(false);
             executeActionButton.addSelectionListener(new SelectionAdapter(){
                 @Override
-                public void widgetSelected( SelectionEvent e ) {
+                public void widgetSelected(SelectionEvent e) {
                     executeSelectedOperation();
                 }
             });
@@ -822,7 +830,7 @@ public class ResourceEditor extends ViewPart {
         propertyTable.addMouseListener(new MouseAdapter(){
 
             @Override
-            public void mouseUp( final MouseEvent e ) {
+            public void mouseUp(final MouseEvent e) {
                 final Control oldEditor = editor.getEditor();
                 if (oldEditor != null) {
                     oldEditor.dispose();
@@ -837,7 +845,7 @@ public class ResourceEditor extends ViewPart {
                 }
                 // Now that we know the TreeItem, we can use the getBounds() method
                 // to locate the corresponding column
-                for( int i = 0; i < propertyTable.getColumnCount(); ++i ) {
+                for (int i = 0; i < propertyTable.getColumnCount(); ++i) {
                     if (item.getBounds(i).contains(p)) {
                         final int columnIndex = i;
                         ResourceParameter data = (ResourceParameter) item.getData();
@@ -846,7 +854,7 @@ public class ResourceEditor extends ViewPart {
                             final Text newEditor = new Text(propertyTable, SWT.NONE);
                             newEditor.setText(item.getText(columnIndex));
                             newEditor.addModifyListener(new ModifyListener(){
-                                public void modifyText( final ModifyEvent e ) {
+                                public void modifyText(final ModifyEvent e) {
 
                                     final Text text = (Text) editor.getEditor();
                                     editor.getItem().setText(columnIndex, text.getText());
@@ -973,7 +981,7 @@ public class ResourceEditor extends ViewPart {
         title = new Text(composite_1, SWT.BORDER);
         title.addModifyListener(new ModifyListener(){
 
-            public void modifyText( ModifyEvent e ) {
+            public void modifyText(ModifyEvent e) {
                 metadata.put(IMetadata.DC_TITLE, title.getText());
                 setDirty(true);
             }
@@ -986,7 +994,7 @@ public class ResourceEditor extends ViewPart {
 
         description = new StyledText(composite_1, SWT.BORDER);
         description.addModifyListener(new ModifyListener(){
-            public void modifyText( ModifyEvent e ) {
+            public void modifyText(ModifyEvent e) {
                 metadata.put(IMetadata.DC_COMMENT, description.getText());
                 setDirty(true);
             }
@@ -1000,7 +1008,7 @@ public class ResourceEditor extends ViewPart {
 
         originatingInstitution = new StyledText(composite_1, SWT.BORDER);
         originatingInstitution.addModifyListener(new ModifyListener(){
-            public void modifyText( ModifyEvent e ) {
+            public void modifyText(ModifyEvent e) {
                 metadata.put(IMetadata.DC_ORIGINATOR, originatingInstitution.getText());
                 setDirty(true);
             }
@@ -1014,7 +1022,7 @@ public class ResourceEditor extends ViewPart {
 
         urlDoi = new Text(composite_1, SWT.BORDER);
         urlDoi.addModifyListener(new ModifyListener(){
-            public void modifyText( ModifyEvent e ) {
+            public void modifyText(ModifyEvent e) {
                 metadata.put(IMetadata.DC_URL, urlDoi.getText());
                 setDirty(true);
             }
@@ -1026,7 +1034,7 @@ public class ResourceEditor extends ViewPart {
 
         authors = new StyledText(composite_1, SWT.BORDER);
         authors.addModifyListener(new ModifyListener(){
-            public void modifyText( ModifyEvent e ) {
+            public void modifyText(ModifyEvent e) {
                 metadata.put(IMetadata.DC_CREATOR, authors.getText());
                 setDirty(true);
             }
@@ -1050,7 +1058,7 @@ public class ResourceEditor extends ViewPart {
                 "Landcover", "Physical and climatic", "Policy", "Socio-ecological", "Soil"});
         theme.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         theme.addModifyListener(new ModifyListener(){
-            public void modifyText( ModifyEvent e ) {
+            public void modifyText(ModifyEvent e) {
                 metadata.put(IMetadata.IM_THEMATIC_AREA, theme.getText());
                 setDirty(true);
             }
@@ -1064,7 +1072,7 @@ public class ResourceEditor extends ViewPart {
         geoRegion.setItems(new String[]{"Non-spatial", "Global"});
         geoRegion.setLayoutData(new GridData(SWT.FILL, SWT.CENTER, true, false, 1, 1));
         geoRegion.addModifyListener(new ModifyListener(){
-            public void modifyText( ModifyEvent e ) {
+            public void modifyText(ModifyEvent e) {
                 metadata.put(IMetadata.IM_GEOGRAPHIC_AREA, geoRegion.getText());
                 setDirty(true);
             }
@@ -1081,7 +1089,7 @@ public class ResourceEditor extends ViewPart {
 
         keywords = new Text(composite_1, SWT.BORDER);
         keywords.addModifyListener(new ModifyListener(){
-            public void modifyText( ModifyEvent e ) {
+            public void modifyText(ModifyEvent e) {
                 metadata.put(IMetadata.IM_KEYWORDS, keywords.getText());
                 setDirty(true);
             }
@@ -1094,7 +1102,7 @@ public class ResourceEditor extends ViewPart {
 
         references = new StyledText(composite_1, SWT.BORDER);
         references.addModifyListener(new ModifyListener(){
-            public void modifyText( ModifyEvent e ) {
+            public void modifyText(ModifyEvent e) {
                 metadata.put(IMetadata.DC_SOURCE, references.getText());
                 setDirty(true);
             }
@@ -1111,7 +1119,7 @@ public class ResourceEditor extends ViewPart {
         scrolledComposite.setContent(composite_1);
         scrolledComposite.setMinSize(composite_1.computeSize(SWT.DEFAULT, SWT.DEFAULT));
         notes.addModifyListener(new ModifyListener(){
-            public void modifyText( ModifyEvent e ) {
+            public void modifyText(ModifyEvent e) {
                 metadata.put(IMetadata.IM_NOTES, notes.getText());
                 setDirty(true);
             }
@@ -1133,10 +1141,10 @@ public class ResourceEditor extends ViewPart {
         GridData gd_categorizationsCombo = new GridData(SWT.LEFT, SWT.CENTER, false, false, 1, 1);
         gd_categorizationsCombo.widthHint = 76;
         categorizationsCombo.setLayoutData(gd_categorizationsCombo);
-//		categorizationsCombo.add("New");
-//		for (String cat : getCategorizations()) {
-//			categorizationsCombo.add(cat);
-//		}
+        // categorizationsCombo.add("New");
+        // for (String cat : getCategorizations()) {
+        // categorizationsCombo.add(cat);
+        // }
         categorizationsCombo.setBounds(0, 0, 91, 23);
         categorizationsCombo.setEnabled(false);
 
@@ -1145,7 +1153,7 @@ public class ResourceEditor extends ViewPart {
         btnEdit.setEnabled(false);
         btnEdit.addMouseListener(new MouseAdapter(){
             @Override
-            public void mouseDown( MouseEvent e ) {
+            public void mouseDown(MouseEvent e) {
                 editCategorization(categorizationsCombo.getText());
             }
         });
@@ -1162,7 +1170,7 @@ public class ResourceEditor extends ViewPart {
         publishButton.setEnabled(false);
         publishButton.addMouseListener(new MouseAdapter(){
             @Override
-            public void mouseDown( MouseEvent e ) {
+            public void mouseDown(MouseEvent e) {
                 publish();
             }
         });
@@ -1173,7 +1181,7 @@ public class ResourceEditor extends ViewPart {
         saveButton.setLayoutData(gd_saveButton);
         saveButton.addMouseListener(new MouseAdapter(){
             @Override
-            public void mouseDown( MouseEvent e ) {
+            public void mouseDown(MouseEvent e) {
                 save();
             }
         });
@@ -1186,7 +1194,7 @@ public class ResourceEditor extends ViewPart {
         cancelButton.setLayoutData(gd_cancelButton);
         cancelButton.addMouseListener(new MouseAdapter(){
             @Override
-            public void mouseDown( MouseEvent e ) {
+            public void mouseDown(MouseEvent e) {
                 if (!dirty || Eclipse.INSTANCE.confirm("Abandon changes?")) {
                     PlatformUI.getWorkbench().getActiveWorkbenchWindow().getActivePage().hideView(ResourceEditor.this);
                 }
@@ -1202,19 +1210,19 @@ public class ResourceEditor extends ViewPart {
         setDirty(false);
     }
 
-    protected void editCategorization( String text ) {
+    protected void editCategorization(String text) {
 
         if ("New".equals(text)) {
             List<String> cats = new ArrayList<>();
             if (resource != null) {
-                for( String id : resource.getCategorizables() ) {
+                for (String id : resource.getCategorizables()) {
                     cats.add(id);
                 }
-                for( AttributeReference attribute : resource.getAttributes() ) {
+                for (AttributeReference attribute : resource.getAttributes()) {
                     cats.add(attribute.getName());
                 }
             }
-            WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewCategorizationWizard(cats, ( id, cat ) -> {
+            WizardDialog dialog = new WizardDialog(Eclipse.INSTANCE.getShell(), new NewCategorizationWizard(cats, (id, cat) -> {
                 openCategorization(id, cat);
                 categorizationsCombo.add(id);
             }));
@@ -1225,7 +1233,7 @@ public class ResourceEditor extends ViewPart {
         }
     }
 
-    protected void openCategorization( String name, String category ) {
+    protected void openCategorization(String name, String category) {
 
         if (resource != null) {
             if (category != null) {
@@ -1256,7 +1264,7 @@ public class ResourceEditor extends ViewPart {
     protected void executeSelectedOperation() {
         if (resource != null && resource.getUrn() != null && selectedOperation != null) {
             ResourceOperationRequest request = new ResourceOperationRequest();
-            for( OperationReference operation : adapter.getOperations() ) {
+            for (OperationReference operation : adapter.getOperations()) {
                 if (operation.getDescription().equals(selectedOperation)) {
                     selectedOperation = operation.getName();
                     if (operation.isRequiresConfirmation()) {
@@ -1275,14 +1283,14 @@ public class ResourceEditor extends ViewPart {
         }
     }
 
-    protected void executeOperation( String operation, String... parameters ) {
+    protected void executeOperation(String operation, String... parameters) {
         if (resource != null && resource.getUrn() != null && selectedOperation != null) {
             ResourceOperationRequest request = new ResourceOperationRequest();
             request.setUrn(resource.getUrn());
             request.setOperation(operation);
             if (parameters != null) {
                 Map<String, String> params = new HashMap<>();
-                for( int i = 0; i < parameters.length; i++ ) {
+                for (int i = 0; i < parameters.length; i++) {
                     params.put(parameters[i], parameters[++i]);
                 }
                 request.setParameters(params);
@@ -1291,14 +1299,14 @@ public class ResourceEditor extends ViewPart {
         }
     }
 
-    protected IMessage executeOperationWait( String operation, String... parameters ) {
+    protected IMessage executeOperationWait(String operation, String... parameters) {
         if (resource != null && resource.getUrn() != null) {
             ResourceOperationRequest request = new ResourceOperationRequest();
             request.setUrn(resource.getUrn());
             request.setOperation(operation);
             if (parameters != null) {
                 Map<String, String> params = new HashMap<>();
-                for( int i = 0; i < parameters.length; i++ ) {
+                for (int i = 0; i < parameters.length; i++) {
                     params.put(parameters[i], parameters[++i]);
                 }
                 request.setParameters(params);
@@ -1326,7 +1334,7 @@ public class ResourceEditor extends ViewPart {
         setDirty(false);
     }
 
-    private void swapDimension( String timeSpec ) {
+    private void swapDimension(String timeSpec) {
         if (this.geometry != null) {
             setDirty(true);
         }
@@ -1341,7 +1349,7 @@ public class ResourceEditor extends ViewPart {
         }
     }
 
-    protected void setDirty( boolean b ) {
+    protected void setDirty(boolean b) {
         if (saveButton != null) {
             if (b) {
                 if (!getTitle().startsWith("*")) {
