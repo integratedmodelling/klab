@@ -38,12 +38,15 @@ import org.integratedmodelling.klab.api.observations.scale.space.IEnvelope;
 import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
+import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.engine.runtime.SimpleRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabStorageException;
+import org.integratedmodelling.klab.ogc.FSCANAdapter;
 import org.integratedmodelling.klab.ogc.fscan.FSCANEncoder;
 import org.integratedmodelling.klab.ogc.integration.Postgis.PublishedResource.Attribute;
 import org.integratedmodelling.klab.ogc.vector.files.VectorValidator;
 import org.integratedmodelling.klab.raster.files.RasterValidator;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.MiscUtilities;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -304,13 +307,14 @@ public class Postgis {
     }
 
     /**
-     * Get the full shape 
+     * Get the full shape
+     * 
      * @param tableName
      * @param featureId
      * @return
      */
     public IShape getShape(String tableName, long featureId) {
-        
+
         try (Connection con = DriverManager.getConnection(this.pgurl,
                 Configuration.INSTANCE.getServiceProperty("postgres", "user"),
                 Configuration.INSTANCE.getServiceProperty("postgres", "password")); Statement st = con.createStatement()) {
@@ -319,7 +323,7 @@ public class Postgis {
             con.setAutoCommit(false);
             st.setFetchSize(50);
             ResultSet rs = st.executeQuery("SELECT fid, the_geom FROM \"" + tableName + "\" WHERE fid = " + featureId + ";");
-            
+
             if (rs.next()) {
 
                 WKBReader wkb = new WKBReader();
@@ -328,12 +332,109 @@ public class Postgis {
                 Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
                 return Shape.create(geometry, Projection.getLatLon());
             }
-            
+
         } catch (Throwable t) {
             Logging.INSTANCE.error(t);
         }
-        
+
         return null;
+    }
+
+    /**
+     * Use {@link #getCoveringShapes(Urn, IEnvelope)} on the shape's envelope and discard any shapes
+     * whose coverage is less than a minimum proportion of the shape's area.
+     * 
+     * @param urn
+     * @param shape
+     * @param minCoverage
+     * @return
+     */
+    public List<IShape> getCoveringShapes(Urn urn, IShape shape, double minCoverage, double buffer) {
+
+        List<IShape> ret = new ArrayList<>();
+        for (IShape space : getCoveringShapes(urn, shape.getEnvelope())) {
+
+            IShape commn = space.intersection(shape);
+            double coverage = commn.getStandardizedArea() / space.getStandardizedArea();
+            if (coverage >= minCoverage) {
+                if (buffer > 0) {
+                    IMetadata metadata = space.getMetadata();
+                    space = space.buffer(buffer);
+                    space.getMetadata().putAll(metadata);
+                }
+                ret.add(space);
+            }
+        }
+        return ret;
+    }
+
+    public List<IShape> getCoveringShapes(Urn urn, IEnvelope envelope) {
+        List<IShape> ret = new ArrayList<>();
+
+        IShape shape = getLargestInScale(urn, envelope);
+
+        if (shape != null) {
+
+            int level = shape.getMetadata().get(IMetadata.IM_MIN_SPATIAL_SCALE, Integer.class);
+            double area = envelope.getHeight() * envelope.getWidth();
+            double coverage = shape.getMetadata().get(FSCANEncoder.AREA_COVERAGE_FACTOR, Double.class);
+
+            /**
+             * If shape covers the area entirely, go down one level
+             */
+
+            /*
+             * return all shapes at the given level in bounding box
+             */
+            String table = urn.getNamespace() + "_" + urn.getResourceId();
+            table = table.replaceAll("\\.", "_").toLowerCase();
+            String smTableName = table + "_sm";
+
+            String envSql = "ST_MakeEnvelope(" + envelope.getMinX() + ", " + envelope.getMinY() + ", " + envelope.getMaxX() + ", "
+                    + envelope.getMaxY() + ", 4326)";
+            String chooseShape = "SELECT gid, table_name, shape_name, geom, level from " + smTableName + "\n" + "WHERE \n"
+                    + "   level = " + level + "  \n" + "       AND \n" + " geom && " + envSql + ";";
+
+            WKBReader wkb = new WKBReader();
+
+            System.out.println(chooseShape);
+
+            try {
+                try (Connection con = DriverManager.getConnection(this.pgurl,
+                        Configuration.INSTANCE.getServiceProperty("postgres", "user"),
+                        Configuration.INSTANCE.getServiceProperty("postgres", "password"));
+                        Statement st = con.createStatement()) {
+
+                    // add the data and compute names. We don't need the name in the main table.
+                    con.setAutoCommit(false);
+                    st.setFetchSize(50);
+                    ResultSet rs = st.executeQuery(chooseShape);
+
+                    while(rs.next()) {
+
+                        long gid = rs.getLong(1);
+                        String sourceTable = rs.getString(2);
+                        String shapeName = rs.getString(3);
+
+                        PGobject thegeom = (PGobject) rs.getObject(4);
+                        Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
+
+                        Shape sh = Shape.create(geometry, Projection.getLatLon());
+                        sh.getMetadata().put(FSCANEncoder.FEATURE_ID, gid);
+                        sh.getMetadata().put(FSCANEncoder.COLLECTION_ID, sourceTable);
+                        sh.getMetadata().put(IMetadata.IM_FEATURE_URN, urn + "#id=" + sourceTable + "." + gid);
+                        sh.getMetadata().put(IMetadata.DC_NAME, shapeName);
+                        sh.getMetadata().put(IMetadata.IM_MIN_SPATIAL_SCALE, level);
+
+                        ret.add(sh);
+                    }
+                }
+            } catch (Throwable t) {
+                Logging.INSTANCE.error(t);
+            }
+        }
+
+        return ret;
     }
 
     /**
@@ -385,6 +486,7 @@ public class Postgis {
                     String sourceTable = rs.getString(2);
                     String shapeName = rs.getString(3);
                     int level = rs.getInt(5);
+                    double factor = rs.getDouble(6);
 
                     PGobject thegeom = (PGobject) rs.getObject(4);
                     Geometry geometry = wkb.read(WKBReader.hexToBytes(thegeom.getValue()));
@@ -394,6 +496,7 @@ public class Postgis {
                     shape.getMetadata().put(IMetadata.IM_FEATURE_URN, urn + "#id=" + sourceTable + "." + gid);
                     shape.getMetadata().put(IMetadata.DC_NAME, shapeName);
                     shape.getMetadata().put(IMetadata.IM_MIN_SPATIAL_SCALE, level);
+                    shape.getMetadata().put(FSCANEncoder.AREA_COVERAGE_FACTOR, factor);
                     return shape;
 
                     // /*
@@ -573,7 +676,7 @@ public class Postgis {
                     // Shape boundingBox = Shape.create(envelope);
 
                     if (!shape.getJTSGeometry().isValid()) {
-                        continue;
+                        shape = shape.fixInvalid();
                     }
 
                     long gid = rs.getLong("fid");
@@ -613,7 +716,7 @@ public class Postgis {
                     // + rank + ", ST_GeomFromText('" + boundingBox.getJTSGeometry() + "', 4326));";
 
                     if (!simplified.getJTSGeometry().isValid()) {
-                        continue;
+                        simplified = simplified.fixInvalid();
                     }
 
                     String sql_nd = "INSERT INTO \"" + table_simplified + "\" VALUES (" + gid + ", " + shape_area + ", '"
@@ -704,17 +807,16 @@ public class Postgis {
                 for (; it.hasNext();) {
                     SimpleFeature feature = it.next();
                     SimpleFeature toWrite = writer.next();
-                    toWrite.setAttributes(feature.getAttributes());
                     toWrite.getUserData().put(Hints.PROVIDED_FID, feature.getID());
+                    toWrite.getUserData().put(Hints.GEOMETRY_VALIDATE, Boolean.FALSE);
+                    toWrite.setAttributes(feature.getAttributes());
                     toWrite.getUserData().putAll(feature.getUserData());
                     try {
                         writer.write();
                         added++;
                     } catch (Throwable t) {
                         // just testing
-                        if (errors == 0) {
-                            Logging.INSTANCE.error(t);
-                        }
+                        Logging.INSTANCE.error(t);
                         errors++;
 
                     }

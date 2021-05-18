@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
+import org.integratedmodelling.kim.api.IServiceCall;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -20,6 +21,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Projection;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
@@ -33,6 +35,7 @@ public class FSCANEncoder implements IResourceEncoder {
 
     public static final String FEATURE_ID = "fscan.feature_id";
     public static final String COLLECTION_ID = "fscan.collection_id";
+    public static final String AREA_COVERAGE_FACTOR = "fscan.coverage_factor";
 
     @Override
     public boolean isOnline(IResource resource, IMonitor monitor) {
@@ -59,12 +62,14 @@ public class FSCANEncoder implements IResourceEncoder {
          * no parameters -> get the largest shape that fits the bounding box at scale level in its
          * pre-simplified form (or use #simplify=false).
          *
-         * #id=table.fid[,simplify=false] -> get the specific shape, simplified to fit
-         * the incoming resolution (or not if false)
+         * #id=table.fid[,simplify=false] -> get the specific shape, simplified to fit the incoming
+         * resolution (or not if false)
          * 
-         * #within[,id=nnnn,collection=abcd,simplify=false] -> find the largest shape in bounding
+         * #coverage[,id=nnnn,min=nnn,buffer=n,simplify=false] -> find the largest shape in bounding
          * box (or passed), then return all the shapes of the level below that intersect it; use
-         * resolution-dependent simplification or none
+         * resolution-dependent simplification or none. Minimum coverage (in proportion) for the
+         * resulting shapes may be passed; default is 0.05. Buffer can be specified as a number of
+         * cells, to aid hydrological calculations, and will be ignored if the extent is not a grid.
          * 
          * #level=n[&simplify=false] -> return all in bounding box at given level,
          * resolution-dependent simplification or none
@@ -74,7 +79,7 @@ public class FSCANEncoder implements IResourceEncoder {
         boolean simplify = urnParameters.containsKey("simplify") ? Boolean.getBoolean(urnParameters.get("simplify")) : true;
         int level = urnParameters.containsKey("level") ? Integer.parseInt(urnParameters.get("level")) : -1;
         String id = urnParameters.get("id");
-        String within = urnParameters.get("within");
+        boolean all = "coverage".equals(urnParameters.get(IServiceCall.DEFAULT_PARAMETER_NAME));
 
         /*
          * default behavior: find the shape that best fits the context
@@ -88,24 +93,60 @@ public class FSCANEncoder implements IResourceEncoder {
             if (tid.length != 2) {
                 throw new KlabValidationException("wrong ID format in FSCAN URN: must be table.featureId");
             }
-            
+
             IShape shape = FSCANAdapter.getPostgis().getShape(tid[0], Long.parseLong(tid[1]));
             if (shape != null) {
 
-                if (scale.getSpace() instanceof Space && ((Space)scale.getSpace()).getGrid() != null) {
-                    IGrid grid = ((Space)scale.getSpace()).getGrid();
-                    shape = ((Shape)shape).getSimplified(grid.getCellWidth());
+                IMetadata metadata = shape.getMetadata();
+                if (scale.getSpace() instanceof Space && ((Space) scale.getSpace()).getGrid() != null) {
+                    IGrid grid = ((Space) scale.getSpace()).getGrid();
+                    shape = ((Shape) shape).getSimplified(grid.getCellWidth());
                 }
-                                
+
                 Builder bb = builder.startObject(context.getTargetName() == null ? "result" : context.getTargetName(),
-                        shape.getMetadata().get(IMetadata.DC_NAME, String.class), Scale.create(shape));
-                for (String key : shape.getMetadata().keySet()) {
-                    bb.withMetadata(key, shape.getMetadata().get(key));
+                        metadata.get(IMetadata.DC_NAME, String.class), Scale.create(shape));
+                for (String key : metadata.keySet()) {
+                    bb.withMetadata(key, metadata.get(key));
                 }
                 bb.finishObject();
             }
-            
-        } else if (within != null) {
+
+        } else if (all) {
+
+            /*
+             * TODO pass a level strategy (default is use the same level as largest shape).
+             */
+
+            double minCoverage = 0.05;
+            double buffer = 0;
+            if (urnParameters.containsKey("min")) {
+                minCoverage = Double.parseDouble(urnParameters.get("min"));
+            }
+
+            if (urnParameters.containsKey("buffer")) {
+                IGrid grid = scale.getSpace() instanceof Space ? ((Space) scale.getSpace()).getGrid() : null;
+                if (grid != null) {
+                    int bcells = Integer.parseInt(urnParameters.get("buffer"));
+                    buffer = Math.max(grid.getCellWidth(), grid.getCellHeight()) * bcells;
+                }
+            }
+
+            for (IShape shape : FSCANAdapter.getPostgis().getCoveringShapes(urn, scale.getSpace().getShape(), minCoverage,
+                    buffer)) {
+
+                IMetadata metadata = shape.getMetadata();
+                if (scale.getSpace() instanceof Space && ((Space) scale.getSpace()).getGrid() != null) {
+                    IGrid grid = ((Space) scale.getSpace()).getGrid();
+                    shape = ((Shape) shape).getSimplified(grid.getCellWidth());
+                }
+
+                Builder bb = builder.startObject(context.getTargetName() == null ? "result" : context.getTargetName(),
+                        metadata.get(IMetadata.DC_NAME, String.class), Scale.create(shape));
+                for (String key : metadata.keySet()) {
+                    bb.withMetadata(key, metadata.get(key));
+                }
+                bb.finishObject();
+            }
 
         } else if (level >= 0) {
 

@@ -78,8 +78,8 @@ public interface IDocumentation {
      * Recognized tags:
      * 
      * <pre>
-     * &#64;tag(id)                     -> create tag pointing to ID of enclosing section
-     * &#64;section(path)               -> define relative subsection path for content after the tag until the next
+     * &#64;tag(id)                     -> create tag pointing to ID of enclosing section TODO REMOVE - use id=xxx in section
+     * &#64;section(path)               -> define absolute subsection path for content after the tag until the next
      * &#64;link(refId, text..)         -> insert text with link to tagged content; ignored if tag does not resolve
      * &#64;table(tableobject, id, ...) -> inserts the table and assigns id for referencing to it
      * &#64;cite(ref)                   -> resolve to citation of reference, insert reference in bibliography
@@ -127,7 +127,30 @@ public interface IDocumentation {
          * @return
          */
         Type getSectionType();
+
+        /**
+         * Return the documentation this is part of. Needed for caching and handling of multiple
+         * model incarnations.
+         * 
+         * @return
+         */
+        IDocumentation getDocumentation();
+
+        /**
+         * Unique ID for caching and processing. Not seen by users.
+         * 
+         * @return
+         */
+        String getId();
     }
+
+    /**
+     * An ID that must identify this documentation instance uniquely (even if the same documentation
+     * tag is used on two different actuators).
+     * 
+     * @return
+     */
+    String getId();
 
     /**
      * Pass a report and prepare it to receive our contents. This may include specifying components
@@ -137,8 +160,11 @@ public interface IDocumentation {
      * 
      * @return true if the context documentation should proceed, false otherwise
      * @param report
+     * @param template
+     * @param trigger
      */
-    boolean instrumentReport(IReport report, IActuator actuator, IContextualizationScope scope);
+    boolean instrumentReport(IReport report, Template template, Trigger trigger, IActuator actuator,
+            IContextualizationScope scope);
 
     /**
      * Get all templates corresponding to the passed action type, if any.

@@ -340,7 +340,7 @@ public enum Observables implements IObservableService {
         }
         return ret;
     }
-    
+
     /**
      * Get <em>only</em> the qualities created by a process.
      * 
@@ -503,6 +503,22 @@ public enum Observables implements IObservableService {
             return c;
         }
         return getBaseObservable(c.getParent());
+    }
+
+    /**
+     * Remove any attribute or explicit restriction and return the raw observable, without digging
+     * down to the core definition.
+     * 
+     * @param c
+     * @return
+     */
+    public IConcept getRawObservable(IConcept c) {
+        String def = c.getMetadata().get(NS.CORE_OBSERVABLE_PROPERTY, String.class);
+        IConcept ret = c;
+        if (def != null) {
+            ret = Concepts.c(def);
+        }
+        return ret;
     }
 
     @Override

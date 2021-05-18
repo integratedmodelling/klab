@@ -64,7 +64,7 @@ public class MergingInstantiator implements IExpression, IInstantiator {
             }
 
             for (Pair<IResource, Map<String, String>> pr : resources) {
-                ((Report) context.getReport()).getDocumentationTree().addContextualizedResource(this.resource.getUrn(),
+                ((Report) context.getReport()).addContextualizedResource(this.resource.getUrn(),
                         pr.getFirst());
             }
 

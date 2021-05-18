@@ -9,7 +9,6 @@ import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.documentation.IReport.View;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.documentation.DocumentationTree;
 import org.integratedmodelling.klab.documentation.Report;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.rest.DocumentationNode;
@@ -39,7 +38,7 @@ public class List implements ICommand {
         String format = call.getParameters().get("format", "html");
 
         IReport report = cotx.getScope().getReport();
-        DocumentationTree docTree = ((Report) report).getDocumentationTree();
+//        DocumentationTree docTree = ((Report) report).getDocumentationTree();
         for (Object o : call.getParameters().get("arguments", java.util.List.class)) {
             try {
                 views.add(View.valueOf(o.toString().toUpperCase()));
@@ -49,7 +48,7 @@ public class List implements ICommand {
         }
 
         for (View view : views) {
-            java.util.List<DocumentationNode> docs = docTree.getView(view, format);
+            java.util.List<DocumentationNode> docs = ((Report)report).getView(view, format);
             if (json) {
                 ret = JsonUtils.printAsJson(docs);
             } else {

@@ -78,4 +78,11 @@ public interface INodeIdentity extends IServerIdentity {
 	 * @return
 	 */
 	Map<String, IAuthority.Capabilities> getAuthorities();	
+	
+	/**
+	 * Get the node uptime in milliseconds
+	 * 
+	 * @return
+	 */
+	long getUptime();
 }
