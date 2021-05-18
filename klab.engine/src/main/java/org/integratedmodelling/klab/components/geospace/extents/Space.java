@@ -1054,7 +1054,12 @@ public class Space extends Extent implements ISpace {
 
     @Override
     protected IExtent contextualizeTo(IExtent other, IAnnotation constraint) {
-        // TODO Auto-generated method stub
+        if (other instanceof Space) {
+            // check for trivial 1x1 grid, which may come from networked objects
+            if (((Space)other).getGrid() != null && (this.grid == null || (this.grid.getCellCount() == 1))) {
+                return create(this.shape, ((Space)other).grid, true);
+            }
+        }
         return this;
     }
 

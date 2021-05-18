@@ -171,6 +171,9 @@ public enum GeotoolsUtils {
          */
         for (ILocator position : locator) {
             Cell cell = position.as(Cell.class);
+            if (cell == null) {
+                continue;
+            }
             Object o = state.get(position);
             if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
                 raster.setSample((int) cell.getX(), (int) cell.getY(), 0, noDataValue);
