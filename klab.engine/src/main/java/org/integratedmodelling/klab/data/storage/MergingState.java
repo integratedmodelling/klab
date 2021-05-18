@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IExtent;
@@ -18,6 +19,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Envelope;
 import org.integratedmodelling.klab.components.runtime.observations.ObservationGroup;
 import org.integratedmodelling.klab.components.runtime.observations.State;
 import org.integratedmodelling.klab.data.Aggregator;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
 import org.integratedmodelling.klab.owl.Observable;
@@ -83,6 +85,11 @@ public class MergingState extends State {
             }
         }
         return ret;
+    }
+
+    public MergingState(IObservable observable, IScale scale, IRuntimeScope scope) {
+        super((Observable) observable, (Scale) scale, scope, null);
+        this.delegate = new State((Observable) observable, (Scale) scale, scope, null);
     }
 
     public MergingState(IState delegate) {
