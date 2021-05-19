@@ -209,7 +209,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         for (IConcept key : resolved.keySet()) {
             if (abs.contains(key)) {
                 ((Observable) ret).resolvedPredicates.put(key, resolved.get(key));
-                ((Observable)ret).resolvedPredicatesContext.put(key, new LinkedHashSet<>(incarnated.get(key)));
+                ((Observable) ret).resolvedPredicatesContext.put(key, new LinkedHashSet<>(incarnated.get(key)));
             }
             if (key.is(Type.ROLE)) {
                 ret.getContextualRoles().add(key);
@@ -971,12 +971,14 @@ public class Observable extends GroovyObjectSupport implements IObservable {
     public Map<IConcept, Set<IConcept>> getResolvedPredicatesContext() {
         return this.resolvedPredicatesContext;
     }
-    
+
     @Override
     public Object getProperty(String property) {
         switch(property) {
         case "displayLabel":
             return Concepts.INSTANCE.getDisplayLabel(this);
+        case "codeName":
+            return Concepts.INSTANCE.getCodeName(this.getType());
         }
         return super.getProperty(property);
     }

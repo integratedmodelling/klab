@@ -1526,16 +1526,10 @@ public class Model extends KimObject implements IModel {
 
     @Override
     public boolean isInactive() {
-        if (this.inactive) {
-            System.out.println("PORCDPODD");
-        }
         return inactive;
     }
 
     public void setInactive(boolean inactive) {
-        if (inactive) {
-            System.out.println("COCCCODIIO");
-        }
         this.inactive = inactive;
     }
 

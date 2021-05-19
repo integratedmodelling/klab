@@ -27,8 +27,8 @@ import groovy.lang.GroovyObjectSupport;
  */
 public class Raster extends GroovyObjectSupport {
 
-    public static final String WORLD_SHAPE = "s2{bbox=[-180.0 179.99 -90.0 90.0],proj=EPSG:4326}";
-    public static final String WORLD_POLYGON = "EPSG:4326 POLYGON ((-180.0 -90.0, 179.99 -90.0, 179.99 90.0, -180.0 90.0, -180.0 -90.0))";
+    public static final String WORLD_SHAPE = "s2{bbox=[-180.0 180.0 -90.0 90.0],proj=EPSG:4326}";
+    public static final String WORLD_POLYGON = "EPSG:4326 POLYGON ((-180 -90, -180 90, 180 90, 180 -90, -180 -90))";
     MergingState state = null;
     IScale scale = null;
 
@@ -65,7 +65,7 @@ public class Raster extends GroovyObjectSupport {
      */
     public void merge(IState state) {
         if (this.state == null) {
-            state = new MergingState(state.getObservable(), this.scale, (IRuntimeScope) state.getScope());
+            this.state = new MergingState(state.getObservable(), this.scale, (IRuntimeScope) state.getScope());
         }
         this.state.add(state);
     }
@@ -77,7 +77,7 @@ public class Raster extends GroovyObjectSupport {
      */
     public void export(String file) {
         for (ExportFormat format : Observations.INSTANCE.getExportFormats(this.state)) {
-            if ("tiff".equals(format.getExtension())) {
+            if ("tiff".equals(format.getValue())) {
                 java.io.File output = Configuration.INSTANCE.getExportFile(file);
                 Observations.INSTANCE.export(this.state, this.scale, output, format.getValue(), format.getAdapter(), this.state.getMonitor());
                 break;
