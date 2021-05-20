@@ -198,6 +198,12 @@ public class Session extends GroovyObjectSupport
      * or a ITask.
      */
     Map<String, Future<?>> tasks = Collections.synchronizedMap(new HashMap<>());
+    
+    /*
+     * Tasks completed in this session. Allows for tracking completed tasks on the remote engine.
+     * Content may be a IScript or a ITask.
+     */    
+    Map<String, Future<?>> completedTasks = new HashMap<>();
 
     /*
      * The contexts for all root observations built in this session, up to the configured number,
@@ -452,8 +458,20 @@ public class Session extends GroovyObjectSupport
      */
     public void unregisterTask(Future<?> task) {
         this.tasks.remove(task instanceof ITask ? ((ITask<?>) task).getId() : ((IScript) task).getId());
+        storeCompletedTask(task);
     }
-
+    
+    /**
+     * Store a completed task. It may be a ITask or a IScript, which only have the Future identity in
+     * common.
+     * 
+     * @param task
+     */
+    public void storeCompletedTask(Future<?> task) {
+        String id = task instanceof ITask ? ((ITask<?>) task).getId() : ((IScript) task).getId();
+        this.completedTasks.putIfAbsent(id, task);
+    }
+    
     /**
      * Register the runtime context of a new observation. If needed, dispose of the oldest
      * observation made.
@@ -1627,6 +1645,10 @@ public class Session extends GroovyObjectSupport
                 interruptTask(((AbstractTask<?>) task).getToken(), true);
             }
         }
+    }
+    
+    public Map<String, Future< ? >> getCompletedTasks() {
+        return this.completedTasks;
     }
 
 }

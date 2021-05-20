@@ -3,12 +3,16 @@ package org.integratedmodelling.klab.stats.config;
 import static org.bson.codecs.configuration.CodecRegistries.fromProviders;
 import static org.bson.codecs.configuration.CodecRegistries.fromRegistries;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 import org.bson.codecs.configuration.CodecRegistry;
 import org.bson.codecs.pojo.PojoCodecProvider;
+import org.bson.codecs.pojo.PropertyCodecProvider;
+import org.bson.codecs.pojo.PropertyModelBuilder;
+import org.integratedmodelling.klab.rest.ObservationReference;
 import org.reflections.Reflections;
 import org.reflections.scanners.ResourcesScanner;
 import org.reflections.scanners.SubTypesScanner;
@@ -22,6 +26,7 @@ import org.springframework.context.annotation.Lazy;
 import org.springframework.context.annotation.Profile;
 import org.springframework.core.annotation.Order;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.mongodb.ConnectionString;
 import com.mongodb.MongoClientSettings;
 import com.mongodb.client.MongoClient;
@@ -32,72 +37,92 @@ import de.bwaldvogel.mongo.ServerVersion;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
 import org.bson.codecs.pojo.ClassModel;
+import org.bson.codecs.pojo.ClassModelBuilder;
 import org.bson.codecs.pojo.Convention;
 import org.bson.codecs.pojo.Conventions;
 
 @Configuration
 @Profile("development")
 public class MongoSyncConfigDev {
-    
-    @Bean(destroyMethod="shutdown")
+
+    @Bean(destroyMethod = "shutdown")
     public MongoServer mongoServer() {
-    
+
         MemoryBackend backend = (MemoryBackend) new MemoryBackend().version(ServerVersion.MONGO_3_6);
         MongoServer mongoServer = new MongoServer(backend);
         mongoServer.bind("localhost", 27017);
         return mongoServer;
-        
+
     }
-    
-	@Bean(destroyMethod="close")
-	public MongoClient mongoClient(MongoServer mongoServer) {
-	    ConnectionString connectionString = new ConnectionString("mongodb://localhost:27017");
-	    CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().conventions(asList(Conventions.ANNOTATION_CONVENTION)).register(getClassModels()).automatic(true).build());
-	    //CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().conventions(asList(Conventions.ANNOTATION_CONVENTION)).register("org.integratedmodelling.klab.rest").automatic(true).build());
-	    CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
-	    MongoClientSettings clientSettings = MongoClientSettings.builder()
-	                                                            .applyConnectionString(connectionString)
-	                                                            .codecRegistry(codecRegistry)
-	                                                            .build();
-	    MongoClient mongoClient = MongoClients.create(clientSettings);
-	    return mongoClient;
-	}
 
-	private List<Convention> asList(Convention annotationConvention) {
-		List<Convention> convention = new ArrayList<>();
-		convention.add(annotationConvention);
-		return convention;
-	}
-	
-	public ClassModel<?>[] getClassModels(){
-		//https://stackoverflow.com/questions/520328/can-you-find-all-classes-in-a-package-using-reflection magic?
-		List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
-		classLoadersList.add(ClasspathHelper.contextClassLoader());
-		classLoadersList.add(ClasspathHelper.staticClassLoader());
+    @Bean(destroyMethod = "close")
+    public MongoClient mongoClient(MongoServer mongoServer) {
+        ConnectionString connectionString = new ConnectionString("mongodb://localhost:27017");
+        CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().register(getClassModels()).automatic(true).build());
+        // CodecRegistry pojoCodecRegistry =
+        // fromProviders(PojoCodecProvider.builder().conventions(asList(Conventions.ANNOTATION_CONVENTION)).register("org.integratedmodelling.klab.rest").automatic(true).build());
+        CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
+        MongoClientSettings clientSettings = MongoClientSettings.builder().applyConnectionString(connectionString)
+                .codecRegistry(codecRegistry).build();
+        MongoClient mongoClient = MongoClients.create(clientSettings);
+        return mongoClient;
+    }
 
-		Reflections reflections = new Reflections(new ConfigurationBuilder()
-		    .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
-		    .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
-		    .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("org.integratedmodelling.klab.rest"))));
-		
-		reflections.getAllTypes();
-		
-		List<ClassModel<?>> cm = new ArrayList<ClassModel<?>>();
-		
-		reflections.getAllTypes().forEach(cls -> {
-			try {
-				Class<?> cl = Class.forName(cls);
-				cm.add(ClassModel.builder(cl).enableDiscriminator(true).build());
-			} catch (ClassNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-		});
-		;
-		//ClassModel.builder(SessionReference.class).enableDiscriminator(true).build();
-		ClassModel<?>[] array = new ClassModel<?>[cm.size()];
-		cm.toArray(array);
-		return array;
-	}
+    private List<Convention> asList(Convention annotationConvention) {
+        List<Convention> convention = new ArrayList<>();
+        convention.add(annotationConvention);
+		convention.add(idConnvention());
+        return convention;
+    }
+
+    public ClassModel< ? >[] getClassModels() {
+        // https://stackoverflow.com/questions/520328/can-you-find-all-classes-in-a-package-using-reflection
+        // magic?
+        List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
+        classLoadersList.add(ClasspathHelper.contextClassLoader());
+        classLoadersList.add(ClasspathHelper.staticClassLoader());
+
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
+                .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
+                .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("org.integratedmodelling.klab.rest"))));
+
+        reflections.getAllTypes();
+
+        List<ClassModel< ? >> cm = new ArrayList<ClassModel< ? >>();
+
+        reflections.getAllTypes().forEach(cls -> {
+            try {
+                Class< ? > cl = Class.forName(cls);
+                ClassModelBuilder< ? > m = ClassModel.builder(cl).conventions(asList(Conventions.USE_GETTERS_FOR_SETTERS));
+                cm.add(m.build());
+            } catch (ClassNotFoundException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+
+        });;
+        // ClassModel.builder(SessionReference.class).enableDiscriminator(true).build();
+        ClassModel< ? >[] array = new ClassModel< ? >[cm.size()];
+        cm.toArray(array);
+        return array;
+    }
+
+    private Convention idConnvention() {
+        return new Convention() {
+            @Override
+            public void apply(final ClassModelBuilder<?> classModelBuilder) {
+                
+                if (classModelBuilder.getDiscriminatorKey() == null) {
+                    classModelBuilder.discriminatorKey("_t");
+                }
+                if (classModelBuilder.getDiscriminator() == null && classModelBuilder.getType() != null) {
+                    classModelBuilder.discriminator(classModelBuilder.getType().getName());
+                }
+                
+                classModelBuilder.enableDiscriminator(true);
+            }
+        };
+    }
+
 }
