@@ -215,9 +215,12 @@ public class VectorEncoder implements IResourceEncoder {
 				if (((com.vividsolutions.jts.geom.Geometry) shape).isEmpty()) {
 					continue;
 				}
-
-				if (resource.getParameters().get("sanitize", false)) {
-					shape = GeometrySanitizer.sanitize((com.vividsolutions.jts.geom.Geometry) shape);
+				
+                if ("true".equals(resource.getParameters().get("sanitize", "false").toString())) {
+//					shape = GeometrySanitizer.sanitize((com.vividsolutions.jts.geom.Geometry) shape);
+	                if (!((com.vividsolutions.jts.geom.Geometry) shape).isValid()) {
+	                    shape = ((com.vividsolutions.jts.geom.Geometry) shape).buffer(0);
+	                }
 				}
 
 				IShape objectShape = Shape.create((com.vividsolutions.jts.geom.Geometry) shape, originalProjection)

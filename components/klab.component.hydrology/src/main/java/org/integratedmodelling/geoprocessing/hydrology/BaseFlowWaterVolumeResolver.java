@@ -1,34 +1,33 @@
 package org.integratedmodelling.geoprocessing.hydrology;
 
-import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
-
-import java.awt.image.DataBuffer;
+import java.util.ArrayList;
 import java.util.List;
 
-import org.geotools.coverage.grid.GridCoordinates2D;
-import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Observations;
-import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
-import org.integratedmodelling.klab.api.knowledge.IObservable;
-import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
-import org.integratedmodelling.klab.api.observations.scale.space.ISpace;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.components.geospace.Geospace;
 import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.utils.Pair;
 
 public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpression {
 
-    String outputId = "baseflow_water_volume";
+    private IState netInfiltratedWaterVolumeState;
+    private IState infiltratedWaterVolumeState;
+    private IState streamPresenceState;
+    private IState flowdirectionState;
+    private IState baseflowWaterVolumeState;
 
     @Override
     public Type getType() {
@@ -38,99 +37,153 @@ public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpres
     @Override
     public IProcess resolve(IProcess baseflowProcess, IContextualizationScope context) throws KlabException {
 
-        String localName = "base_flow_water_volume";
-        IState baseflowVolumeState = context.getArtifact(localName, IState.class);
-        
-//        IState infiltratedWaterVolumeState = context.getArtifact("infiltrated_water_volume", IState.class);
+        netInfiltratedWaterVolumeState = context.getArtifact("net_infiltrated_water_volume", IState.class);
+        infiltratedWaterVolumeState = context.getArtifact("infiltrated_water_volume", IState.class);
+        streamPresenceState = context.getArtifact("presence_of_stream", IState.class);
+        flowdirectionState = context.getArtifact("flow_directions_d8", IState.class);
 
-//        Grid baseflowGrid = Space.extractGrid(baseflowVolumeState);
-//        if (baseflowGrid == null) {
-//            throw new KlabValidationException("Baseflow must be computed on a grid extent");
-//        }
-        
-        
-//        for(ILocator locator : context.getScale()) {
-//            long ts = System.currentTimeMillis();
-//            baseflowVolumeState.set(locator, ts);        
-//        }
-        for(ILocator locator : context.getScale()) {
-            Cell cell = locator.as(Cell.class);
-            Double baseFlow = baseflowVolumeState.get(locator, Double.class);
-            boolean isValid = Observations.INSTANCE.isData(baseFlow);
-            if (isValid) {
-//                Double infiltration = infiltratedWaterVolumeState.get(locator, Double.class);
-                double[] center = cell.getCenter();
-                baseFlow = baseFlow + center[0];// + baseFlow * center[1]; // DUMMY test formula
+        baseflowWaterVolumeState = context.getArtifact("base_flow_water_volume", IState.class);
 
-//                infiltration = infiltration * baseFlow; // DUMMY test formula
-            } else {
-                baseFlow = 0.0;
+        if (objsNotNull(infiltratedWaterVolumeState, streamPresenceState, flowdirectionState)) {
+
+            Grid infiltratedGrid = Space.extractGrid(infiltratedWaterVolumeState);
+            Grid streamGrid = Space.extractGrid(streamPresenceState);
+            Grid flowGrid = Space.extractGrid(flowdirectionState);
+
+            if (!objsNotNull(infiltratedGrid, streamGrid, flowGrid)) {
+                throw new KlabValidationException("Input states must be computed on a grid extent");
             }
-            baseflowVolumeState.set(locator, baseFlow);
-            
-//            Double baseFlowPost = baseflowVolumeState.get(locator, Double.class);
-//            boolean isValid2 = Observations.INSTANCE.isData(baseFlowPost);
+
+            IScale locator = context.getScale();
+
+            // first collect all basin exits, being it real basins
+            // or just cells with no more downstream cells
+            List<Cell> exitCells = new ArrayList<>();
+            List<Cell> sourceCells = new ArrayList<>();
+            long xCells = infiltratedGrid.getXCells();
+            long yCells = infiltratedGrid.getYCells();
+            for(int y = 0; y < yCells; y++) {
+                for(int x = 0; x < xCells; x++) {
+                    // get exit cells
+                    Cell cell = locator.as(Cell.class);
+                    Pair<Cell, Orientation> downstreamCellWithOrientation = Geospace.getDownstreamCellWithOrientation(cell,
+                            flowdirectionState);
+                    if (downstreamCellWithOrientation == null || downstreamCellWithOrientation.getFirst() == null) {
+                        exitCells.add(cell);
+                    }
+                    // get source cells
+                    List<Cell> upstreamCells = Geospace.getUpstreamCells(cell, flowdirectionState, null);
+                    if (upstreamCells.isEmpty()) {
+                        sourceCells.add(cell);
+                    }
+                }
+            }
+
+            // calculate matrix of cumulated infiltration
+            double[][] lSumMatrix = new double[(int) yCells][(int) xCells];
+            calculateLsumMatrix(sourceCells, lSumMatrix);
+
+            // calculate matrix of cumulated baseflow
+            double[][] bSumMatrix = new double[(int) yCells][(int) xCells];
+            for(Cell exitCell : exitCells) {
+                walkUpAndProcess(exitCell, bSumMatrix, lSumMatrix);
+            }
         }
-
-//        GridCoverage2D infiltratedWaterVolumeGC = GeotoolsUtils.INSTANCE.stateToCoverage(infiltratedWaterVolumeState,
-//                context.getScale(), DataBuffer.TYPE_FLOAT, floatNovalue, false);
-//
-//        double[] values = new double[1];
-//        infiltratedWaterVolumeGC.evaluate(new GridCoordinates2D(0, 0), values);
-//        context.getMonitor().info("Got infiltrated with value in 0,0:  " + values[0]);
-
-//        IState baseflowState = null;
-//
-//        IModel model = context.getModel();
-//        List<IObservable> observables = model.getObservables();
-//        for(int i = 1; i < observables.size(); i++) {
-//
-//            if (outputId.equals(context.getModel().getObservables().get(i).getName())) {
-//                IState state = context.getArtifact(outputId, IState.class);
-//                if (state == null) {
-//                    context.getMonitor().warn("cannot find state for " + outputId);
-//                } else {
-//                    baseflowState = state;
-//                }
-//                break;
-//            }
-//        }
-//
-//        if (baseflowState == null) {
-//            return baseflowProcess;
-//        }
-//
-//        Grid grid = Space.extractGrid(baseflowState);
-//
-//        if (grid == null) {
-//            throw new KlabValidationException("Baseflow must be computed on a grid extent");
-//        }
-
-        // DUMMY PLACEHOLDER OPERATION
-        context.getMonitor().info("Processing Baseflow with dummy formulae.");
 
         return baseflowProcess;
     }
 
-    private IState getBaseFlowState(IContextualizationScope context) {
-        String localName = "base_flow_water_volume";
-        IState baseflowVolumeState = context.getArtifact(localName, IState.class);
-        if (baseflowVolumeState == null) {
-            IModel model = context.getModel();
-            List<IObservable> observables = model.getObservables();
-            for(int i = 1; i < observables.size(); i++) {
-                if (localName.equals(context.getModel().getObservables().get(i).getName())) {
-                    IState state = context.getArtifact(localName, IState.class);
-                    if (state == null) {
-                        context.getMonitor().warn("cannot find state for " + localName);
-                    } else {
-                        baseflowVolumeState = state;
+    private void calculateLsumMatrix(List<Cell> sourceCells, double[][] lSumMatrix) {
+        for(Cell sourceCell : sourceCells) {
+            Double li = infiltratedWaterVolumeState.get(sourceCell, Double.class);
+            int x = (int) sourceCell.getX();
+            int y = (int) sourceCell.getY();
+            lSumMatrix[y][x] = li; // no upstream contribution
+
+            // go downstream
+            Pair<Cell, Orientation> downCell = Geospace.getDownstreamCellWithOrientation(sourceCell, flowdirectionState);
+            while (downCell != null) {
+                Cell cell = downCell.getFirst();
+
+                List<Cell> upstreamCells = Geospace.getUpstreamCells(cell, flowdirectionState, null);
+                // check if all upstream have a value
+                boolean canProcess = true;
+                for(Cell upstreamCell : upstreamCells) {
+                    Double upstreamLi = infiltratedWaterVolumeState.get(upstreamCell, Double.class);
+                    if (!Observations.INSTANCE.isData(upstreamLi)) {
+                        // stop, we still need the other upstream values
+                        canProcess = false;
+                        break;
                     }
+                }
+
+                if (canProcess) {
+
+                    Double currentCellLi = infiltratedWaterVolumeState.get(cell, Double.class);
+
+                    if (Observations.INSTANCE.isData(currentCellLi)) {
+
+                        double lSumCurrentCell = 0.0;
+                        for(Cell upstreamCell : upstreamCells) {
+                            int subX = (int) upstreamCell.getX();
+                            int subY = (int) upstreamCell.getY();
+
+                            lSumCurrentCell += lSumMatrix[subY][subX];
+                        }
+                        lSumMatrix[y][x] = currentCellLi + lSumCurrentCell;
+                    }
+                    downCell = Geospace.getDownstreamCellWithOrientation(cell, flowdirectionState);
+                } else {
                     break;
                 }
             }
         }
-        return baseflowVolumeState;
+    }
+
+    private void walkUpAndProcess(Cell cell, double[][] bSumMatrix, double[][] lSumMatrix) {
+        // process current cell
+        Boolean isStream = streamPresenceState.get(cell, Boolean.class);
+
+        double bSum = 0.0;
+        int x = (int) cell.getX();
+        int y = (int) cell.getY();
+
+        Pair<Cell, Orientation> downCellPair = Geospace.getDownstreamCellWithOrientation(cell, flowdirectionState);
+        if (downCellPair == null || isStream) {
+            // is it is and outlet or on the stream
+            bSum = lSumMatrix[y][x];
+        } else {
+            Cell downstreamCell = downCellPair.getFirst();
+            int downY = (int) downstreamCell.getY();
+            int downX = (int) downstreamCell.getX();
+            double downBSum = bSumMatrix[downY][downX];
+            double downLSum = lSumMatrix[downY][downX];
+            Double downLi = infiltratedWaterVolumeState.get(downstreamCell, Double.class);
+            Double downLAvailable = netInfiltratedWaterVolumeState.get(downstreamCell, Double.class);
+
+            if (downLSum != 0 && downLSum - downLi != 0) {
+                bSum = lSumMatrix[y][x] * (1 - (downLAvailable / downLSum) * downBSum / (downLSum - downLi));
+            } else {
+                bSum = lSumMatrix[y][x];
+            }
+        }
+        bSumMatrix[y][x] = bSum;
+        baseflowWaterVolumeState.set(cell, bSum);
+
+        // recursively move to upstream cells
+        List<Cell> upstreamCells = Geospace.getUpstreamCells(cell, flowdirectionState, null);
+        for(Cell upCell : upstreamCells) {
+            walkUpAndProcess(upCell, bSumMatrix, lSumMatrix);
+        }
+    }
+
+    private boolean objsNotNull(Object... objs) {
+        for(Object obj : objs) {
+            if (obj == null) {
+                return false;
+            }
+        }
+        return true;
     }
 
     @Override

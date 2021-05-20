@@ -733,7 +733,7 @@ public enum Actors implements IActorsService {
         public void setWarned() {
             this.warned = true;
         }
-        
+
         @Override
         public boolean isWarned() {
             return warned;
@@ -924,11 +924,6 @@ public enum Actors implements IActorsService {
         case EXPRESSION:
         case NUMBER:
         case OBSERVABLE:
-        case STRING:
-            if (Urns.INSTANCE.isUrn(iterable.getStatedValue().toString())) {
-                return iterateResource(iterable.getStatedValue().toString(), scope.getMonitor());
-            }
-            return Collections.singletonList(((KActorsValue) iterable).evaluate(scope, identity, false));
         case OBJECT:
         case IDENTIFIER:
         case LIST:
@@ -936,9 +931,16 @@ public enum Actors implements IActorsService {
             Object o = ((KActorsValue) iterable).evaluate(scope, identity, false);
             if (o instanceof Iterable) {
                 return (Iterable<Object>) o;
+            } else if (o instanceof String && Urns.INSTANCE.isUrn(o.toString())) {
+                return iterateResource(o.toString(), scope.getMonitor());
             } else {
                 return Collections.singletonList(o);
             }
+        case STRING:
+            if (Urns.INSTANCE.isUrn(iterable.getStatedValue().toString())) {
+                return iterateResource(iterable.getStatedValue().toString(), scope.getMonitor());
+            }
+            return Collections.singletonList(((KActorsValue) iterable).evaluate(scope, identity, false));
         case MAP:
             break;
         case NODATA:
@@ -1065,5 +1067,5 @@ public enum Actors implements IActorsService {
         }
         return true;
     }
-    
+
 }

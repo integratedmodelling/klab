@@ -29,6 +29,7 @@ import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.Metadata;
+import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Range;
 
 public class Behavior implements IBehavior {
@@ -60,7 +61,7 @@ public class Behavior implements IBehavior {
         public IKActorsValue getValue() {
             return value;
         }
-        
+
         private boolean notMatch(Object value) {
             return value == null || value instanceof Throwable || (value instanceof Boolean && !((Boolean) value));
         }
@@ -74,7 +75,7 @@ public class Behavior implements IBehavior {
          */
         public boolean isImplicit() {
             return value == null || value.getStatedValue() == null || value.getType() == IKActorsValue.Type.OBSERVABLE
-                    || value.getType() == IKActorsValue.Type.ANNOTATION;
+                    || value.getType() == IKActorsValue.Type.ANNOTATION || value.getType() == IKActorsValue.Type.TYPE;
         }
 
         // Call only if isIdentifier() returns true
@@ -164,7 +165,8 @@ public class Behavior implements IBehavior {
             case QUANTITY:
                 break;
             case RANGE:
-                return value instanceof Number && ((Range) (this.value.getStatedValue())).contains(((Number) value).doubleValue());
+                return value instanceof Number
+                        && ((Range) (this.value.getStatedValue())).contains(((Number) value).doubleValue());
             case REGEXP:
                 break;
             case STRING:
@@ -172,7 +174,8 @@ public class Behavior implements IBehavior {
             case TABLE:
                 break;
             case TYPE:
-                break;
+                return value != null && (this.value.getStatedValue().equals(value.getClass().getCanonicalName())
+                        || this.value.getStatedValue().equals(Path.getLast(value.getClass().getCanonicalName(), '.')));
             case URN:
                 break;
             case ERROR:
@@ -191,8 +194,8 @@ public class Behavior implements IBehavior {
                         || (value instanceof String && ((String) value).isEmpty())
                         || (value instanceof IConcept && ((IConcept) value).is(IKimConcept.Type.NOTHING))
                         || (value instanceof IObservable && ((IObservable) value).is(IKimConcept.Type.NOTHING))
-                        || (value instanceof IArtifact && !(value instanceof IObservationGroup) && ((IArtifact) value).isEmpty()) 
-                        || (value instanceof IObservation && ((Observation)value).getObservable().is(IKimConcept.Type.NOTHING));
+                        || (value instanceof IArtifact && !(value instanceof IObservationGroup) && ((IArtifact) value).isEmpty())
+                        || (value instanceof IObservation && ((Observation) value).getObservable().is(IKimConcept.Type.NOTHING));
             case OBJECT:
                 break;
             default:
@@ -316,5 +319,5 @@ public class Behavior implements IBehavior {
     public String getProject() {
         return projectId;
     }
-    
+
 }

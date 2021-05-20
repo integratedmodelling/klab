@@ -90,9 +90,12 @@ public class State extends Observation implements IState, IKeyHolder {
     public State(Observable observable, Scale scale, IRuntimeScope context, IDataStorage<?> data) {
         super(observable, scale, context);
         this.storage = data;
-        data.addContextualizationListener(new StateListener());
+        if (data != null) {
+            // can be null in some special-purpose mergers
+            data.addContextualizationListener(new StateListener());
+            this.layers.put(data.getType(), data);
+        }
         this.timeCoverage = new LinkedHashSet<>();
-        this.layers.put(data.getType(), data);
         if (data instanceof AbstractAdaptiveStorage) {
             ((AbstractAdaptiveStorage<?>) data).setState(this);
             ((AbstractAdaptiveStorage<?>) data).setWatches(this.watches);
@@ -151,7 +154,7 @@ public class State extends Observation implements IState, IKeyHolder {
 
     @Override
     public IArtifact.Type getType() {
-        return isArchetype() ? IArtifact.Type.VOID : storage.getType();
+        return isArchetype() ? IArtifact.Type.VOID : (storage == null ? getObservable().getArtifactType() : storage.getType());
     }
 
     @Override
