@@ -32,6 +32,7 @@ import de.bwaldvogel.mongo.ServerVersion;
 import de.bwaldvogel.mongo.backend.memory.MemoryBackend;
 
 import org.bson.codecs.pojo.ClassModel;
+import org.bson.codecs.pojo.ClassModelBuilder;
 import org.bson.codecs.pojo.Convention;
 import org.bson.codecs.pojo.Conventions;
 
@@ -48,52 +49,70 @@ public class MongoSyncConfig {
 	@Bean(destroyMethod="close")
 	public MongoClient mongoClient() {
 	    ConnectionString connectionString = new ConnectionString("mongodb://" + HOSTNAME + ":" + PORT);
-	    CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().conventions(asList(Conventions.ANNOTATION_CONVENTION)).register(getClassModels()).automatic(true).build());
-	    //CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().conventions(asList(Conventions.ANNOTATION_CONVENTION)).register("org.integratedmodelling.klab.rest").automatic(true).build());
-	    CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
-	    MongoClientSettings clientSettings = MongoClientSettings.builder()
-	                                                            .applyConnectionString(connectionString)
-	                                                            .codecRegistry(codecRegistry)
-	                                                            .build();
-	    MongoClient mongoClient = MongoClients.create(clientSettings);
-	    return mongoClient;
+        CodecRegistry pojoCodecRegistry = fromProviders(PojoCodecProvider.builder().register(getClassModels()).automatic(true).build());
+        // CodecRegistry pojoCodecRegistry =
+        // fromProviders(PojoCodecProvider.builder().conventions(asList(Conventions.ANNOTATION_CONVENTION)).register("org.integratedmodelling.klab.rest").automatic(true).build());
+        CodecRegistry codecRegistry = fromRegistries(MongoClientSettings.getDefaultCodecRegistry(), pojoCodecRegistry);
+        MongoClientSettings clientSettings = MongoClientSettings.builder().applyConnectionString(connectionString)
+                .codecRegistry(codecRegistry).build();
+        MongoClient mongoClient = MongoClients.create(clientSettings);
+        return mongoClient;
 	}
 
-	private List<Convention> asList(Convention annotationConvention) {
-		List<Convention> convention = new ArrayList<>();
-		convention.add(annotationConvention);
-		return convention;
-	}
-	
-	public ClassModel<?>[] getClassModels(){
-		//https://stackoverflow.com/questions/520328/can-you-find-all-classes-in-a-package-using-reflection magic?
-		List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
-		classLoadersList.add(ClasspathHelper.contextClassLoader());
-		classLoadersList.add(ClasspathHelper.staticClassLoader());
+    private List<Convention> asList(Convention annotationConvention) {
+        List<Convention> convention = new ArrayList<>();
+        convention.add(annotationConvention);
+        convention.add(idConnvention());
+        return convention;
+    }
 
-		Reflections reflections = new Reflections(new ConfigurationBuilder()
-		    .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
-		    .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
-		    .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("org.integratedmodelling.klab.rest"))));
-		
-		reflections.getAllTypes();
-		
-		List<ClassModel<?>> cm = new ArrayList<ClassModel<?>>();
-		
-		reflections.getAllTypes().forEach(cls -> {
-			try {
-				Class<?> cl = Class.forName(cls);
-				cm.add(ClassModel.builder(cl).enableDiscriminator(true).build());
-			} catch (ClassNotFoundException e1) {
-				// TODO Auto-generated catch block
-				e1.printStackTrace();
-			}
-			
-		});
-		;
-		//ClassModel.builder(SessionReference.class).enableDiscriminator(true).build();
-		ClassModel<?>[] array = new ClassModel<?>[cm.size()];
-		cm.toArray(array);
-		return array;
-	}
+    public ClassModel< ? >[] getClassModels() {
+        // https://stackoverflow.com/questions/520328/can-you-find-all-classes-in-a-package-using-reflection
+        // magic?
+        List<ClassLoader> classLoadersList = new LinkedList<ClassLoader>();
+        classLoadersList.add(ClasspathHelper.contextClassLoader());
+        classLoadersList.add(ClasspathHelper.staticClassLoader());
+
+        Reflections reflections = new Reflections(new ConfigurationBuilder()
+                .setScanners(new SubTypesScanner(false /* don't exclude Object.class */), new ResourcesScanner())
+                .setUrls(ClasspathHelper.forClassLoader(classLoadersList.toArray(new ClassLoader[0])))
+                .filterInputsBy(new FilterBuilder().include(FilterBuilder.prefix("org.integratedmodelling.klab.rest"))));
+
+        reflections.getAllTypes();
+
+        List<ClassModel< ? >> cm = new ArrayList<ClassModel< ? >>();
+
+        reflections.getAllTypes().forEach(cls -> {
+            try {
+                Class< ? > cl = Class.forName(cls);
+                ClassModelBuilder< ? > m = ClassModel.builder(cl).conventions(asList(Conventions.USE_GETTERS_FOR_SETTERS));
+                cm.add(m.build());
+            } catch (ClassNotFoundException e1) {
+                // TODO Auto-generated catch block
+                e1.printStackTrace();
+            }
+
+        });;
+        // ClassModel.builder(SessionReference.class).enableDiscriminator(true).build();
+        ClassModel< ? >[] array = new ClassModel< ? >[cm.size()];
+        cm.toArray(array);
+        return array;
+    }
+
+    private Convention idConnvention() {
+        return new Convention() {
+            @Override
+            public void apply(final ClassModelBuilder<?> classModelBuilder) {
+                
+                if (classModelBuilder.getDiscriminatorKey() == null) {
+                    classModelBuilder.discriminatorKey("_t");
+                }
+                if (classModelBuilder.getDiscriminator() == null && classModelBuilder.getType() != null) {
+                    classModelBuilder.discriminator(classModelBuilder.getType().getName());
+                }
+                
+                classModelBuilder.enableDiscriminator(true);
+            }
+        };
+    }
 }

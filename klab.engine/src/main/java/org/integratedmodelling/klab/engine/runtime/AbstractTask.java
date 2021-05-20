@@ -80,6 +80,8 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 	String[] scenarios;
 	AbstractTask<T> parentTask = null;
 	TaskReference descriptor;
+	Long start;
+	Long end;
 
 	@Override
 	public boolean isChildTask() {
@@ -110,6 +112,7 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 	}
 
 	public void notifyStart() {
+	    this.start = System.currentTimeMillis();
 		session.registerTask(this);
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 				IMessage.Type.TaskStarted, getReference()));
@@ -124,6 +127,8 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 			this.descriptor.setContextId(this.context == null ? null : this.context.getId());
 			this.descriptor.setRootContextId(
 					this.context == null ? null : this.context.getScope().getRootSubject().getId());
+			this.descriptor.setStart(this.start);
+			this.descriptor.setEnd(this.end);
 		}
 		return this.descriptor;
 	}
@@ -131,8 +136,10 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 	protected abstract String getTaskDescription();
 
 	public void notifyEnd() {
+	    this.end = System.currentTimeMillis();
 		session.unregisterTask(this);
 		getReference().setStatus(Status.Finished);
+		getReference().setEnd(this.end);
 		session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle,
 				IMessage.Type.TaskFinished, getReference()));
 	}
@@ -145,6 +152,7 @@ public abstract class AbstractTask<T extends IArtifact> implements ITaskTree<T> 
 	 * @return
 	 */
 	public KlabTaskException notifyAbort(Throwable e) {
+	    this.end = System.currentTimeMillis();
 		getReference().setError(e.getLocalizedMessage());
 		if (!(e instanceof KlabTaskException || e instanceof InterruptedException)) {
 			monitor.error(e);

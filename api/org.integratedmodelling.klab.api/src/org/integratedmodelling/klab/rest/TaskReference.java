@@ -13,6 +13,8 @@ public class TaskReference implements ITaskReference {
 	private String error;
 	
 	private Status status = Status.Started;
+    private Long start;
+    private Long end;
 
 	public TaskReference() {
 	}
@@ -24,6 +26,8 @@ public class TaskReference implements ITaskReference {
 //		this.description = other.description;
 //		this.error = other.error;
 //		this.rootContextId = other.getRootContextId();
+//      this.start = other.start;
+//      this.end = other.end;
 //	}
 	
 	// TODO provenance info - agent, cause etc
@@ -116,5 +120,21 @@ public class TaskReference implements ITaskReference {
 	public void setStatus(Status status) {
 		this.status = status;
 	}
+
+    public void setStart(Long start) {
+        this.start = start;
+    }
+    
+    public void setEnd(Long end) {
+        this.end = end;
+    }
+
+    public Long getStart() {
+        return start;
+    }
+
+    public Long getEnd() {
+        return end;
+    }
 
 }
