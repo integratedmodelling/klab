@@ -57,6 +57,7 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
         IState streamPresenceState = context.getArtifact("presence_of_stream", IState.class);
         IState flowdirectionState = context.getArtifact("flow_directions_d8", IState.class);
 
+        IState netInfiltratedWaterVolumeState = context.getArtifact("net_infiltrated_water_volume", IState.class);
         IState infiltratedWaterVolumeState = context.getArtifact("infiltrated_water_volume", IState.class);
 
         if (objsNotNull(rainfallVolumeState, streamPresenceState, flowdirectionState)) {
@@ -102,8 +103,14 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
                 if (Observations.INSTANCE.isData(pet) && Observations.INSTANCE.isData(rain)
                         && Observations.INSTANCE.isData(runoff) && Observations.INSTANCE.isData(isStream)) {
 
-                    double lAvailable = calculateLAvailable(lSumAvailable, pet, rain, runoff, isStream);
+                    double aet = 0;
+                    if (!isStream) {
+                        aet = Math.min(pet, rain - runoff + alpha * beta * lSumAvailable);
+                    }
+                    double li = rain - runoff - aet;
+                    double lAvailable = Math.min(gamma * li, li); // TODO Silli check
                     infiltratedWaterVolumeState.set(sourceCell, lAvailable);
+                    netInfiltratedWaterVolumeState.set(sourceCell, li);
 
                     // go downstream
                     Pair<Cell, Orientation> downCell = Geospace.getDownstreamCellWithOrientation(sourceCell, flowdirectionState);
@@ -146,11 +153,15 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
                                 double lSumAvailableCurrentCell = lSumAvailableUpstream + lAvailableUpstream;
 
                                 lSumAvailableMatrix[(int) cell.getY()][(int) cell.getX()] = lSumAvailableCurrentCell;
-
-                                double lAvailableCurrentCell = calculateLAvailable(lSumAvailableCurrentCell, pet, rain, runoff,
-                                        isStream);
-
-                                infiltratedWaterVolumeState.set(cell, lAvailableCurrentCell);
+                                
+                                double aetCC = 0;
+                                if (!isStream) {
+                                    aetCC = Math.min(pet, rain - runoff + alpha * beta * lSumAvailableCurrentCell);
+                                }
+                                double liCC = rain - runoff - aetCC;
+                                double lAvailableCC = Math.min(gamma * liCC, liCC); // TODO Silli check
+                                infiltratedWaterVolumeState.set(cell, lAvailableCC);
+                                netInfiltratedWaterVolumeState.set(cell, liCC);
                             }
 
                             downCell = Geospace.getDownstreamCellWithOrientation(cell, flowdirectionState);
@@ -179,17 +190,6 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
         return infiltratedProcess;
     }
 
-    private double calculateLAvailable(double lSumAvailable, Double pet, Double rain, Double runoff, Boolean isStream) {
-        double aet = 0;
-        if (!isStream) {
-            aet = Math.min(pet, rain - runoff + alpha * beta * lSumAvailable);
-        }
-
-        double li = rain - runoff - aet;
-        double lAvailable = Math.min(gamma * li, li); // TODO Silli check
-
-        return lAvailable;
-    }
 
     private boolean objsNotNull(Object... objs) {
         for(Object obj : objs) {

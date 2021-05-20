@@ -279,7 +279,6 @@ public class RasterImporter extends AbstractFilesetImporter {
         StateSummary stateSummary = Observations.INSTANCE.getStateSummary(state, locator);
         
         Colormap colorMap = stateSummary.getColormap();
-        
         List<Double> range = stateSummary.getRange();
         
         double min = range.get(0);

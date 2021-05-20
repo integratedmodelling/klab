@@ -837,6 +837,8 @@ public enum Observables implements IObservableService {
             }
         }
 
+        String originalName = observable.getName();
+
         /*
          * Direct observables can be contextualized to anything and to nothing, so just check
          * compatibility.
@@ -845,7 +847,8 @@ public enum Observables implements IObservableService {
             return (Observable) observable;
         }
 
-        return (Observable) new ObservableBuilder((Observable) observable, monitor).within(newContext).buildObservable();
+        return (Observable) new ObservableBuilder((Observable) observable, monitor).within(newContext).named(originalName)
+                .buildObservable();
     }
 
     public String getDisplayName(IObservable observable) {

@@ -325,8 +325,17 @@ export process baseflowcalc
 	"Calculates the baseflow."
 	label 'Calculate Baseflow Water Volume'
 {
+	import number net_infiltrated_water_volume
+		"The net infiltrated water volume."
+
 	import number infiltrated_water_volume
 		"The infiltrated water volume."
+
+	import boolean presence_of_stream
+		"The marker of stream network presence." 
+		
+	import number flow_directions_d8
+		"The D8 numeric code for flow direction"
 		
 	export number base_flow_water_volume
 		"TODO"
@@ -368,6 +377,9 @@ export process infiltratedcalc
 	import number flow_directions_d8
 		"The D8 numeric code for flow direction"
 
+	export number net_infiltrated_water_volume
+		"TODO"
+	
 	export number infiltrated_water_volume
 		"TODO"
 		

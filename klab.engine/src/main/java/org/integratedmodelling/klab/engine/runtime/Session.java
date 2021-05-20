@@ -75,6 +75,7 @@ import org.integratedmodelling.klab.api.services.IIndexingService.Match;
 import org.integratedmodelling.klab.auth.EngineUser;
 import org.integratedmodelling.klab.cli.CommandConsole;
 import org.integratedmodelling.klab.cli.DebuggerConsole;
+import org.integratedmodelling.klab.common.Urns;
 import org.integratedmodelling.klab.common.monitoring.TicketManager;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
@@ -197,6 +198,12 @@ public class Session extends GroovyObjectSupport
      * or a ITask.
      */
     Map<String, Future<?>> tasks = Collections.synchronizedMap(new HashMap<>());
+    
+    /*
+     * Tasks completed in this session. Allows for tracking completed tasks on the remote engine.
+     * Content may be a IScript or a ITask.
+     */    
+    Map<String, Future<?>> completedTasks = new HashMap<>();
 
     /*
      * The contexts for all root observations built in this session, up to the configured number,
@@ -451,8 +458,20 @@ public class Session extends GroovyObjectSupport
      */
     public void unregisterTask(Future<?> task) {
         this.tasks.remove(task instanceof ITask ? ((ITask<?>) task).getId() : ((IScript) task).getId());
+        storeCompletedTask(task);
     }
-
+    
+    /**
+     * Store a completed task. It may be a ITask or a IScript, which only have the Future identity in
+     * common.
+     * 
+     * @param task
+     */
+    public void storeCompletedTask(Future<?> task) {
+        String id = task instanceof ITask ? ((ITask<?>) task).getId() : ((IScript) task).getId();
+        this.completedTasks.putIfAbsent(id, task);
+    }
+    
     /**
      * Register the runtime context of a new observation. If needed, dispose of the oldest
      * observation made.
@@ -500,10 +519,29 @@ public class Session extends GroovyObjectSupport
     }
 
     @MessageHandler(messageClass = IMessage.MessageClass.Authorization, type = IMessage.Type.NetworkStatus)
-    private void handleNetworkStatusRequest(String dummy) {
+    private void handleNetworkStatusRequest(String urnOrDummy, IMessage message) {
+
         /*
-         * send back a network descriptor with all nodes we can publish to at the moment of the
-         * call.
+         * If message contains a URN, check on the status of the correspondent resource
+         */
+        if (Urns.INSTANCE.isUrn(urnOrDummy)) {
+            IResource ref = Resources.INSTANCE.resolveResource(urnOrDummy);
+            if (ref != null) {
+                boolean online = Resources.INSTANCE.isResourceOnline(ref);
+                monitor.send(Message.create(this.token, IMessage.MessageClass.ResourceLifecycle,
+                        online ? IMessage.Type.ResourceOnline : IMessage.Type.ResourceOffline, ((Resource) ref).getReference())
+                        .inResponseTo(message));
+            } else {
+                monitor.send(Message
+                        .create(this.token, IMessage.MessageClass.ResourceLifecycle, IMessage.Type.ResourceUnknown, urnOrDummy)
+                        .inResponseTo(message));
+            }
+            return;
+        }
+
+        /*
+         * if message didn't contain a URN, send back a network descriptor with all nodes we can
+         * publish to at the moment of the call.
          */
         NetworkReference ret = new NetworkReference();
         ret.setHub(Network.INSTANCE.getHub());
@@ -987,13 +1025,13 @@ public class Session extends GroovyObjectSupport
                             if (request.getQueryString().equals("(")) {
 
                                 // TODO open submatch with empty head of list
-//                                System.out.println("OPEN PARENTHESIS");
+                                // System.out.println("OPEN PARENTHESIS");
                                 literalMatch = true;
 
                             } else if (request.getQueryString().equals("(")) {
 
                                 // TODO close submatch and collapse meaning
-//                                System.out.println("OPEN PARENTHESIS");
+                                // System.out.println("OPEN PARENTHESIS");
                                 literalMatch = true;
 
                             } else {
@@ -1607,6 +1645,10 @@ public class Session extends GroovyObjectSupport
                 interruptTask(((AbstractTask<?>) task).getToken(), true);
             }
         }
+    }
+    
+    public Map<String, Future< ? >> getCompletedTasks() {
+        return this.completedTasks;
     }
 
 }
