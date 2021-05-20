@@ -15,7 +15,6 @@ import org.integratedmodelling.klab.api.knowledge.IWorkspace;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
-import org.integratedmodelling.klab.rest.ResourceReference;
 import org.integratedmodelling.klab.utils.FileUtils;
 
 public abstract class AbstractWorkspace implements IWorkspace {
@@ -51,13 +50,12 @@ public abstract class AbstractWorkspace implements IWorkspace {
             if (resourceDir.exists() && resourceDir.isDirectory()) {
                 for (File rdir : resourceDir.listFiles()) {
                     if (rdir.isDirectory()) {
-                        ResourceReference resource = Resources.INSTANCE.synchronize(rdir);
+                        /* ResourceReference resource = */Resources.INSTANCE.synchronize(rdir);
 //                        Logging.INSTANCE.info("read resource " + resource.getUrn());
                     }
                 }
             }
         }
-
     }
     
     protected void readProjects() {
