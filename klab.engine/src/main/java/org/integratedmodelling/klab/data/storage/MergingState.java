@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.integratedmodelling.klab.Annotations;
+import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.api.data.Aggregation;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
@@ -40,6 +42,9 @@ public class MergingState extends State {
     STRtree spatialIndex;
     List<IState> states = new ArrayList<>();
     private boolean indexBuilt;
+    // if false (default), expect multiple data in one point to be the same result, and average
+    // instead of aggregating according to semantics.
+    private boolean aggregate = false;
 
     class StateLocator {
         public IShape shape;
@@ -146,7 +151,10 @@ public class MergingState extends State {
 
     public Object get(ILocator index) {
 
-        Aggregator aggregator = new Aggregator(delegate.getObservable(), delegate.getMonitor());
+        Aggregator aggregator = null;
+        if (aggregate) {
+            aggregator = new Aggregator(delegate.getObservable(), delegate.getMonitor());
+        }
 
         if (!(index instanceof IScale)) {
             throw new KlabIllegalArgumentException("MergingState: cannot merge states unless the locator is a scale");
@@ -169,12 +177,17 @@ public class MergingState extends State {
                 OffsetIterator iterator = new OffsetIterator(state.getScale(), exts);
                 while(iterator.hasNext()) {
                     Offset offset = iterator.next();
-                    aggregator.add(state.get(offset), state.getObservable(), index);
+                    Object value = state.get(offset);
+                    if (aggregate) {
+                        aggregator.add(value, state.getObservable(), index);
+                    } else if (Observations.INSTANCE.isData(value)) {
+                        return value;
+                    }
                 }
             }
         }
 
-        return aggregator.aggregate();
+        return aggregate ? aggregator.aggregate() : null;
     }
 
     public long set(ILocator index, Object value) {
