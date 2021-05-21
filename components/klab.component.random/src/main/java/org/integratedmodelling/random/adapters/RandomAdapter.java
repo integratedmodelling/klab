@@ -346,7 +346,7 @@ public class RandomAdapter implements IUrnAdapter {
 		return getDistribution(tokens.toArray(new String[tokens.size()]));
 	}
 
-	private synchronized Object getDistribution(String[] tokens) {
+	public synchronized Object getDistribution(String[] tokens) {
 
 		String signature = Arrays.toString(tokens);
 		if (distributions.containsKey(signature)) {
