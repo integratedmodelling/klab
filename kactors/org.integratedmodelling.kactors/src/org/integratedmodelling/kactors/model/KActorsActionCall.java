@@ -14,6 +14,7 @@ import org.integratedmodelling.kactors.kactors.MessageCall;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Triple;
 
 public class KActorsActionCall extends KActorsStatement implements Call {
 
@@ -22,6 +23,8 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 		// validation).
 		KActorsValue match;
 		KActorsStatement action;
+		// provided with 'as', may be null
+		String matchName;
 		
         public void visit(IKActorsAction action2, IKActorsStatement kActorsActionCall, Visitor visitor) {
             visitor.visitValue(match, kActorsActionCall, action2);
@@ -70,12 +73,14 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 				action.match = new KActorsValue(messageCall.getActions().getMatch(), this);
 				action.action = new KActorsConcurrentGroup(
 						Collections.singletonList(messageCall.getActions().getMatch().getBody()), this);
+				action.matchName = messageCall.getActions().getMatch().getFormalName();
 				actions.add(action);
 			} else if (messageCall.getActions().getMatches() != null) {
 				for (Match match : messageCall.getActions().getMatches()) {
 					ActionDescriptor action = new ActionDescriptor();
 					action.match = new KActorsValue(match, this);
 					action.action = new KActorsConcurrentGroup(Collections.singletonList(match.getBody()), this);
+					action.matchName = match.getFormalName();
 					actions.add(action);
 				}
 			}
@@ -105,10 +110,10 @@ public class KActorsActionCall extends KActorsStatement implements Call {
 	}
 
 	@Override
-	public List<Pair<IKActorsValue, IKActorsStatement>> getActions() {
-		List<Pair<IKActorsValue, IKActorsStatement>> ret = new ArrayList<>();
+	public List<Triple<IKActorsValue, IKActorsStatement, String>> getActions() {
+		List<Triple<IKActorsValue, IKActorsStatement, String>> ret = new ArrayList<>();
 		for (ActionDescriptor ad : actions) {
-			ret.add(new Pair<>(ad.match, ad.action));
+			ret.add(new Triple<>(ad.match, ad.action, ad.matchName));
 		}
 		return ret;
 	}

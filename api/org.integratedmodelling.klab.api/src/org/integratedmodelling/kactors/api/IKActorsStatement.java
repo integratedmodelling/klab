@@ -5,6 +5,7 @@ import java.util.Map;
 
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Triple;
 
 /**
  * Statements have a type according to which each can be casted to the
@@ -146,11 +147,12 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 
 		/**
 		 * Actions with the corresponding pattern to match values fired by the child
-		 * actor.
+		 * actor. The third element is the match ID to associate with the result, which
+		 * may be null (and should be set to "$" if so).
 		 * 
 		 * @return
 		 */
-		List<Pair<IKActorsValue, IKActorsStatement>> getActions();
+		List<Triple<IKActorsValue, IKActorsStatement, String>> getActions();
 
 		/**
 		 * Each instantiation action needs a name to reference the actor, so that the
@@ -215,7 +217,7 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 		 * 
 		 * @return
 		 */
-		List<Pair<IKActorsValue, IKActorsStatement>> getActions();
+		List<Triple<IKActorsValue, IKActorsStatement, String>> getActions();
 
 	}
 

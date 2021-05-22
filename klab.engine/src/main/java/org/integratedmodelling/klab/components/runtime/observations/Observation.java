@@ -9,9 +9,11 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.actors.IBehavior;
 import org.integratedmodelling.klab.api.auth.IEngineSessionIdentity;
 import org.integratedmodelling.klab.api.auth.IIdentity;
+import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -504,5 +506,22 @@ public abstract class Observation extends ObservedArtifact implements IObservati
 	 * @return
 	 */
 	public abstract String dump();
+
+    @Override
+    public IObservation at(ILocator locator) {
+        // TODO Auto-generated method stub
+        return null;
+    }
+
+    @Override
+    public Object getProperty(String property) {
+        switch (property) {
+        case "displayLabel":
+            return Observations.INSTANCE.getDisplayLabel(this);
+        }
+        return super.getProperty(property);
+    }
+	
+	
 
 }

@@ -404,11 +404,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)?
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -435,11 +435,11 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)?
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*
@@ -723,22 +723,22 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 * Constraint:
 	 *     (
 	 *         (id=LOWERCASE_ID body=StatementList) | 
-	 *         (annotation=ANNOTATION_ID body=StatementList) | 
+	 *         (annotation=ANNOTATION_ID formalName=LOWERCASE_ID? body=StatementList) | 
 	 *         (constant=UPPERCASE_ID body=StatementList) | 
 	 *         ((boolean='true' | boolean='false') body=StatementList) | 
-	 *         (type=CAMELCASE_ID body=StatementList) | 
-	 *         (regexp=REGEXP body=StatementList) | 
-	 *         (observable=Observable body=StatementList) | 
+	 *         (type=CAMELCASE_ID formalName=LOWERCASE_ID? body=StatementList) | 
+	 *         (regexp=REGEXP formalName=LOWERCASE_ID? body=StatementList) | 
+	 *         (observable=Observable formalName=LOWERCASE_ID? body=StatementList) | 
 	 *         (literal=Literal body=StatementList) | 
 	 *         (list=List body=StatementList) | 
-	 *         (set=List body=StatementList) | 
+	 *         (set=List formalName=LOWERCASE_ID? body=StatementList) | 
 	 *         (quantity=Quantity body=StatementList) | 
-	 *         (expr=EXPR body=StatementList) | 
+	 *         (expr=EXPR formalName=LOWERCASE_ID? body=StatementList) | 
 	 *         (nodata='unknown' body=StatementList) | 
 	 *         (star?='*' body=StatementList) | 
 	 *         (anything?='#' body=StatementList) | 
 	 *         (empty?='empty' body=StatementList) | 
-	 *         (exception?='exception' body=StatementList)
+	 *         (exception?='exception' formalName=LOWERCASE_ID? body=StatementList)
 	 *     )
 	 */
 	protected void sequence_Match(ISerializationContext context, Match semanticObject) {

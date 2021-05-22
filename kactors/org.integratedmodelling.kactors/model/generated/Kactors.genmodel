@@ -177,6 +177,7 @@
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Match/id"/>
       <genFeatures property="None" children="true" createChild="true" ecoreFeature="ecore:EReference Kactors.ecore#//Match/body"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Match/annotation"/>
+      <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Match/formalName"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Match/constant"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Match/boolean"/>
       <genFeatures createChild="false" ecoreFeature="ecore:EAttribute Kactors.ecore#//Match/type"/>

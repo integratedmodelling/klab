@@ -17,6 +17,7 @@ import org.eclipse.emf.ecore.EObject;
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getId <em>Id</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getBody <em>Body</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getAnnotation <em>Annotation</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getFormalName <em>Formal Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getConstant <em>Constant</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getBoolean <em>Boolean</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.Match#getType <em>Type</em>}</li>
@@ -105,6 +106,28 @@ public interface Match extends EObject
    * @generated
    */
   void setAnnotation(String value);
+
+  /**
+   * Returns the value of the '<em><b>Formal Name</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Formal Name</em>' attribute.
+   * @see #setFormalName(String)
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMatch_FormalName()
+   * @model
+   * @generated
+   */
+  String getFormalName();
+
+  /**
+   * Sets the value of the '{@link org.integratedmodelling.kactors.kactors.Match#getFormalName <em>Formal Name</em>}' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @param value the new value of the '<em>Formal Name</em>' attribute.
+   * @see #getFormalName()
+   * @generated
+   */
+  void setFormalName(String value);
 
   /**
    * Returns the value of the '<em><b>Constant</b></em>' attribute.

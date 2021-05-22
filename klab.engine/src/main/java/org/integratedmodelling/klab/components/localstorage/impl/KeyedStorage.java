@@ -8,7 +8,6 @@ import java.util.function.Consumer;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.api.data.IGeometry;
 import org.integratedmodelling.klab.api.data.ILocator;
-import org.integratedmodelling.klab.api.data.IStorage;
 import org.integratedmodelling.klab.api.data.classification.IDataKey;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
@@ -25,7 +24,7 @@ import com.google.common.collect.Maps;
 
 public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 
-    private IStorage<Integer> keyStore;
+    private IDataStorage<Integer> keyStore;
     private BiMap<T, Integer> conceptKey = Maps.synchronizedBiMap(HashBiMap.create());
     private IDataKey dataKey = null;
     private Class<? extends T> cls;
@@ -228,6 +227,11 @@ public class KeyedStorage<T> implements IDataStorage<T>, IKeyHolder {
 
     public AbstractAdaptiveStorage<?> getBackend() {
         return (AbstractAdaptiveStorage<?>)keyStore;
+    }
+
+    @Override
+    public long getTemporalOffset(ILocator locator) {
+        return keyStore.getTemporalOffset(locator);
     }
 
 }

@@ -251,22 +251,22 @@ ValueWithMetadataWithoutTree returns Value:
 
 Match:
 	id=LOWERCASE_ID '->' body=StatementList  |
-	annotation=ANNOTATION_ID '->' body=StatementList |
+	annotation=ANNOTATION_ID ('as' formalName=LOWERCASE_ID)? '->' body=StatementList |
 	constant=UPPERCASE_ID '->' body=StatementList  |
 	boolean=('true'|'false') '->' body=StatementList  |
-	type=CAMELCASE_ID '->' body=StatementList |
-	regexp=REGEXP '->' body=StatementList |
-	observable=Observable '->' body=StatementList |
+	type=CAMELCASE_ID ('as' formalName=LOWERCASE_ID)? '->' body=StatementList |
+	regexp=REGEXP ('as' formalName=LOWERCASE_ID)? '->' body=StatementList |
+	observable=Observable ('as' formalName=LOWERCASE_ID)? '->' body=StatementList |
 	literal=Literal '->' body=StatementList |
 	list=List '->' body=StatementList |
-	'in' set=List '->' body=StatementList | 
+	'in' set=List ('as' formalName=LOWERCASE_ID)? '->' body=StatementList | 
 	quantity=Quantity '->' body=StatementList |
-	expr=EXPR '->' body=StatementList |
+	expr=EXPR ('as' formalName=LOWERCASE_ID)? '->' body=StatementList |
 	nodata='unknown' '->' body=StatementList |
 	star?='*' '->' body=StatementList |
 	anything?='#''->' body=StatementList |
 	empty?='empty' '->' body=StatementList |
-	exception?='exception' '->' body=StatementList
+	exception?='exception' ('as' formalName=LOWERCASE_ID)? '->' body=StatementList
 ;
 
 /**

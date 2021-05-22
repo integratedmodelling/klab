@@ -1,12 +1,14 @@
 package org.integratedmodelling.klab.extensions.groovy.model
 
 import org.integratedmodelling.kim.api.IKimConcept.Type
+import org.integratedmodelling.klab.Observations
 import org.integratedmodelling.klab.Roles
 import org.integratedmodelling.klab.Traits
 import org.integratedmodelling.klab.api.knowledge.IConcept
 import org.integratedmodelling.klab.api.knowledge.ISemantic
 import org.integratedmodelling.klab.api.model.IModel
 import org.integratedmodelling.klab.api.observations.IObservation
+import org.integratedmodelling.klab.api.observations.IState
 import org.integratedmodelling.klab.api.observations.scale.IScale
 import org.integratedmodelling.klab.api.observations.scale.time.ITime
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor
@@ -126,6 +128,10 @@ abstract class Observation<T extends IObservation> extends Wrapper<T> {
 		return new DirectObservation(unwrap().context, binding);
 	}
 
+    def getDisplayLabel() {
+        return Observations.INSTANCE.getDisplayLabel(unwrap());
+    }
+    
 	/**
 	 * Used to force non-scalar usage when we need the object as is and
 	 * we have scalar usage in the same expression.

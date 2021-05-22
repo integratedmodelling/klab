@@ -317,7 +317,7 @@ class State extends Observation<IState> {
 	def covers(Observation observation) {
 		return getCoverageOf(observation) > 0;
 	}
-
+    
 	def getCoverageOf(Observation observation) {
 
 		throw new KlabUnimplementedException("groovy.State:aggregateNumbers");

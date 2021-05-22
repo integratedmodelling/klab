@@ -1062,6 +1062,10 @@ public class Time extends Extent implements ITime {
     public Time focus(ITimeInstant focal) {
         Time ret = copy();
         ret.focus = focal;
+        // keep location info
+        ret.locatedOffsets = this.locatedOffsets;
+        ret.locatedExtent = this.locatedExtent;
+        ret.locatedLinearOffset = this.locatedLinearOffset;
         return ret;
     }
 
@@ -1245,39 +1249,49 @@ public class Time extends Extent implements ITime {
                     if (size() <= 1) {
                         return this.focus((ITimeInstant) locators[0]);
                     }
-
-                    if (size() > 1) {
-                        long target = ((ITimeInstant) locators[0]).getMilliseconds();
-                        long tleft = target - start.getMilliseconds();
-                        long n = tleft / resolution.getSpan() + 1;
-                        if (target == end.getMilliseconds()) {
-                            /*
-                             * last extent, located to get the point before the beginning of the
-                             * next period
-                             */
-                            Time ret = (Time) getExtent(size() - 1);
-                            return ret.focus((ITimeInstant) locators[0]);
-
-                        } else if (n >= 0 && n < size()) {
-                            Time ret = (Time) getExtent(n);
-                            long nn = n;
-                            // previous was approximate due to potential irregularity; correct as
-                            // needed
-                            while(nn > 0 && ret.getEnd().isBefore(((ITimeInstant) locators[0]))) {
-                                ret = (Time) getExtent(++nn);
-                            }
-                            nn = n;
-                            while(nn < size() && ret.getStart().isAfter(((ITimeInstant) locators[0]))) {
-                                ret = (Time) getExtent(--nn);
-                            }
-                            return ret.focus((ITimeInstant) locators[0]);
+                    Time last = null;
+                    for (int i = 1; i < size(); i++) {
+                        last = (Time) getExtent(i);
+                        if (last.getStart().getMilliseconds() >= ((ITimeInstant) locators[0]).getMilliseconds()
+                                || last.getEnd().getMilliseconds() > ((ITimeInstant) locators[0]).getMilliseconds()) {
+                            return last.focus((ITimeInstant) locators[0]);
                         }
+                        if (last != null && last.getEnd().getMilliseconds() == ((ITimeInstant) locators[0]).getMilliseconds()) {
+                            // admit a locator focused on the immediate after
+                            return last.focus((ITimeInstant) locators[0]);
+                        }
+                        // long target = ((ITimeInstant) locators[0]).getMilliseconds();
+                        // long tleft = target - start.getMilliseconds();
+                        // long n = tleft / resolution.getSpan() + 1;
+                        // if (target == end.getMilliseconds()) {
+                        // /*
+                        // * last extent, located to get the point before the beginning of the
+                        // * next period
+                        // */
+                        // Time ret = (Time) getExtent(size() - 1);
+                        // return ret.focus((ITimeInstant) locators[0]);
+                        //
+                        // } else if (n >= 0 && n < size()) {
+                        // Time ret = (Time) getExtent(n);
+                        // long nn = n;
+                        // // previous was approximate due to potential irregularity; correct as
+                        // // needed
+                        // while(nn > 0 && ret.getEnd().isBefore(((ITimeInstant) locators[0]))) {
+                        // ret = (Time) getExtent(++nn);
+                        // }
+                        // nn = n;
+                        // while(nn < size() && ret.getStart().isAfter(((ITimeInstant)
+                        // locators[0]))) {
+                        // ret = (Time) getExtent(--nn);
+                        // }
+                        // return ret.focus((ITimeInstant) locators[0]);
+                        // }
                     }
                 }
             }
         }
 
-        throw new KlabException("HOSTIA unhandled time subsetting operation. Call the exorcist.");
+        throw new KlabException("unhandled time subsetting operation. Call an exorcist.");
 
     }
 

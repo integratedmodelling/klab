@@ -104,7 +104,7 @@ public class State extends Observation implements IState, IKeyHolder {
             ((KeyedStorage<?>) data).getBackend().setWatches(this.watches);
         }
     }
-
+    
     @Override
     public IState as(IArtifact.Type type) {
 
