@@ -273,7 +273,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
 
         long timeOffset = trivial ? 0 : offsets.pos[0];
         long sliceOffset = product(offsets.pos, trivial ? 0 : 1);
-
+        
         /*
          * To index the slice, use time end directly unless we're at initialization. Record start,
          * end and offset in state's scale in the slice.
@@ -302,20 +302,20 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
          * requesting scale isn't the same as the native one, or that there have been in-between
          * timestep changes in the state due to processes or events operating at different scales.
          */
-        if (!initialization && sliceOffset >= 0 && slice != null && !slice.isInitialization()
-                && (slice.timestart != timeStart || slice.timeend != timeEnd)) {
-            /*
-             * TODO if needed, aggregate within the boundary of the requesting scale, otherwise keep
-             * the latest value
-             */
-            NavigableMap<Long, Slice> aggregatable = slices.subMap(timeStart, false, timeEnd, true);
-            if (aggregatable.isEmpty()) {
-                Slice theSlice = slices.get(timeStart);
-                // use state before start if existing, otherwise result is NaN
-                return theSlice == null ? (slice == null ? null : slice.getAt(sliceOffset)) : theSlice.getAt(sliceOffset);
-            }
-            return aggregate(aggregatable, sliceOffset);
-        }
+//        if (!initialization && sliceOffset >= 0 && slice != null && !slice.isInitialization()
+//                && (slice.timestart != timeStart || slice.timeend != timeEnd)) {
+//            /*
+//             * TODO if needed, aggregate within the boundary of the requesting scale, otherwise keep
+//             * the latest value
+//             */
+//            NavigableMap<Long, Slice> aggregatable = slices.subMap(timeStart, false, timeEnd, true);
+//            if (aggregatable.isEmpty()) {
+//                Slice theSlice = slices.get(timeStart);
+//                // use state before start if existing, otherwise result is NaN
+//                return theSlice == null ? (slice == null ? null : slice.getAt(sliceOffset)) : theSlice.getAt(sliceOffset);
+//            }
+//            return aggregate(aggregatable, sliceOffset);
+//        }
 
         return slice == null ? null : slice.getAt(sliceOffset);
     }
@@ -403,7 +403,7 @@ public abstract class AbstractAdaptiveStorage<T> implements IDataStorage<T> {
                 // don't store anything until it's different from the previous slice.
                 return trivial ? sliceOffset : (sliceOffset * (timeOffset + 1));
             }
-
+            
             /*
              * if we get here, we need to store in a slice of our own unless we found the exact
              * timestep.
