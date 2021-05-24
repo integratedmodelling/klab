@@ -55,8 +55,6 @@ public class PointsMerge {
 		this.distMerge = distMerge;
 	}
 
-
-
 	/**
      * @return THe number of points in the query structure.
      */

@@ -1085,17 +1085,12 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
          * add additional observables that are created by a process
          */
         if (actuator.getObservable().is(Type.PROCESS) && actuator.getModel() != null) {
-            Collection<IConcept> created = Observables.INSTANCE.getCreatedQualities(actuator.getObservable());
-            if (!created.isEmpty()) {
-                for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
-                    IObservable output = actuator.getModel().getObservables().get(i);
-                    for (IConcept cr : created) {
-                        if (cached_is(output.getType(), cr) && !this.catalog.containsKey(output.getName())) {
-                            targetObservables.put(output.getName(), new Triple<>((Observable) output,
-                                    output.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, false));
-                            break;
-                        }
-                    }
+            for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
+                IObservable output = actuator.getModel().getObservables().get(i);
+                if (Observables.INSTANCE.isCreatedBy(output, actuator.getObservable())
+                        && !this.catalog.containsKey(output.getName())) {
+                    targetObservables.put(output.getName(), new Triple<>((Observable) output,
+                            output.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, false));
                 }
             }
         }

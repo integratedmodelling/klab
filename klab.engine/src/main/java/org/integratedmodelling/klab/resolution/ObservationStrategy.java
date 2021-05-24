@@ -1,6 +1,7 @@
 package org.integratedmodelling.klab.resolution;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -8,7 +9,6 @@ import java.util.Set;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IKimConcept.ObservableRole;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
-import org.integratedmodelling.kim.api.UnarySemanticOperator;
 import org.integratedmodelling.kim.api.ValueOperator;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Observables;
@@ -142,11 +142,25 @@ public class ObservationStrategy {
          * If we're observing change in a quality, ensure we have the initial value as a dependency
          * unless the model is resolved, in which case any needed inputs will have to be explicit,
          * and the model should have the quality as an output.
-         */        
+         */
         if (observable.is(Type.CHANGE) && !model.isResolved()) {
             IConcept dep = Observables.INSTANCE.getDescribedType(observable.getType());
             if (findDependency(dependencies, dep) == null && ((Model) model).findOutput(dep) == null) {
                 ret.add(new ObservationStrategy(Observable.promote(dep), Mode.RESOLUTION));
+            }
+        }
+
+        /**
+         * Add as dependency (for initialization) any concept that is affected by the process but
+         * not created by it.
+         */
+        if (observable.is(Type.PROCESS)) {
+            for (int i = 1; i < model.getObservables().size(); i++) {
+                IObservable output = model.getObservables().get(i);
+                if (output.is(Type.QUALITY) && Observables.INSTANCE.isAffectedBy(output, observable)
+                        && !Observables.INSTANCE.isCreatedBy(output, observable)) {
+                    ret.add(new ObservationStrategy((Observable) observable, Mode.RESOLUTION));
+                }
             }
         }
 

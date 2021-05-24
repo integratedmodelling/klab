@@ -321,12 +321,13 @@ public enum Observables implements IObservableService {
     }
 
     /**
-     * Get all qualities affected by a process, <em>including</em> those created by it.
+     * Get all qualities, processes or events affected by a process, <em>including</em> those
+     * created by it.
      * 
      * @param process
      * @return
      */
-    public Collection<IConcept> getAffectedQualities(ISemantic process) {
+    public Collection<IConcept> getAffected(ISemantic process) {
         Set<IConcept> ret = new HashSet<>();
         for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process.getType(), Concepts.p(NS.AFFECTS_PROPERTY))) {
             if (!Concepts.INSTANCE.isInternal(c)) {
@@ -342,12 +343,12 @@ public enum Observables implements IObservableService {
     }
 
     /**
-     * Get <em>only</em> the qualities created by a process.
+     * Get <em>only</em> the qualities, processes or events created by a process.
      * 
      * @param process
      * @return
      */
-    public Collection<IConcept> getCreatedQualities(ISemantic process) {
+    public Collection<IConcept> getCreated(ISemantic process) {
         Set<IConcept> ret = new HashSet<>();
         for (IConcept c : OWL.INSTANCE.getRestrictedClasses(process.getType(), Concepts.p(NS.CREATES_PROPERTY))) {
             if (!Concepts.INSTANCE.isInternal(c)) {
@@ -874,15 +875,35 @@ public enum Observables implements IObservableService {
     }
 
     /**
-     * True if affecting affects affected. Uses inference when checking.
+     * True if affecting affects affected. Uses inference when checking. . Also true if the concept
+     * is a quality describing anything that is affected.
      * 
      * @param affected
      * @param affecting
-     * @return true if.
+     * @return true if affected.
      */
     public boolean isAffectedBy(ISemantic affected, ISemantic affecting) {
-        for (IConcept c : getAffectedQualities(affecting.getType())) {
-            if (affected.getType().is(c)) {
+        IConcept described = getDescribedType(affected.getType());
+        for (IConcept c : getAffected(affecting.getType())) {
+            if (affected.getType().is(c) || (described != null && described.getType().is(c))) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * True if affecting creates affected. Uses inference when checking. Also true if the concept is
+     * a quality describing anything that is created.
+     * 
+     * @param affected
+     * @param affecting
+     * @return true if created.
+     */
+    public boolean isCreatedBy(ISemantic affected, ISemantic affecting) {
+        IConcept described = getDescribedType(affected.getType());
+        for (IConcept c : getAffected(affecting.getType())) {
+            if (affected.getType().is(c) || (described != null && described.getType().is(c))) {
                 return true;
             }
         }
@@ -961,7 +982,7 @@ public enum Observables implements IObservableService {
             }
         }
 
-        Collection<IConcept> affected = Observables.INSTANCE.getAffectedQualities(concept.getType());
+        Collection<IConcept> affected = Observables.INSTANCE.getAffected(concept.getType());
         if (!affected.isEmpty()) {
             ret += "\nAffects:\n";
             for (IConcept quality : affected) {

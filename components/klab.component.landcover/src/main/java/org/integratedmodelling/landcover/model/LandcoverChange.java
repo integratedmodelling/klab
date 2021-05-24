@@ -928,7 +928,7 @@ public class LandcoverChange {
 		if (target.is(Type.CHANGE)) {
 			target = Observables.INSTANCE.getDescribedType(target);
 		} else {
-			for (IConcept c : Observables.INSTANCE.getAffectedQualities(target)) {
+			for (IConcept c : Observables.INSTANCE.getAffected(target)) {
 				if (scope.getArtifact(target, IState.class) != null) {
 					target = c;
 					break;

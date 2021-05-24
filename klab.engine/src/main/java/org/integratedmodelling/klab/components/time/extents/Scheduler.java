@@ -339,7 +339,7 @@ public class Scheduler implements IScheduler {
 						} else if (computation.target instanceof IProcess) {
 							// report all changed states that were affected or created.
 							for (IConcept affected : Observables.INSTANCE
-									.getAffectedQualities(((IProcess) computation.target).getObservable().getType())) {
+									.getAffected(((IProcess) computation.target).getObservable().getType())) {
 								IState state = scope.getArtifact(affected, IState.class);
 								if (state != null && state.getLastUpdate() > transitionContext.getScale().getTime()
 										.getStart().getMilliseconds()) {

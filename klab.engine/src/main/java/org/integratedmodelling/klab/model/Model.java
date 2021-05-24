@@ -404,11 +404,15 @@ public class Model extends KimObject implements IModel {
              * Add change in any secondary qualities that are affected by the process.
              */
             List<IObservable> toAdd = new ArrayList<>();
-            for (int oo = 1; i < observables.size(); i++) {
+            for (int oo = 1; oo < observables.size(); oo++) {
                 IObservable obs = observables.get(oo);
                 if (obs != null && obs.is(Type.QUALITY) && !changed.contains(obs.getType())) {
                     if (Observables.INSTANCE.isAffectedBy(obs, getMainObservable())) {
                         toAdd.add(obs.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable());
+                    } else {
+                        monitor.error("observable " + obs.getType().getDefinition()
+                                + " output by a process model must be either affected or created by it", getStatement());
+                        setErrors(true);
                     }
                 }
             }
