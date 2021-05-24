@@ -550,6 +550,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                 // annoying.
             }
         } else {
+            
+            this.dataflow.registerResolution(observation, dataflow);
+            
             ret = dataflow.withScope(this.resolutionScope.getDeferredChildScope(observation, mode))
                     .withScopeScale(observation.getScale()).withMetadata(observation.getMetadata())
                     .run(observation.getScale(), (Actuator) this.actuator, task.getMonitor());
@@ -1795,6 +1798,16 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
     @Override
     public void scheduleActions(Actuator actuator) {
+
+        /*
+         * We don't schedule merging observations as they should only merge what's behind them.
+         * Currently attempting to do so will fail for lack of a knowable temporal context. When
+         * the temporal merging logic is finished, we may remove this and allow merging actuators
+         * to exist.
+         */
+        if (actuator.getObservable().isDereified()) {
+            return;
+        }
 
         /*
          * Only occurrents occur. FIXME yes, but they may affect continuants

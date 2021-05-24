@@ -69,7 +69,7 @@ NOTE: The semantic server is in development and is not available to the general 
 
 ### The {kl} logical layers
 
-The set of active, connected nodes and engines at any given time forms what can be seen collectively as a distributed container, where scientific knowledge is found in **three  layers** handling information at increasing levels of abstraction: the _resources_, _semantic_ and _reactivity_ layers. The first can be seen as a data curation platform based on modern linked data concepts and optimized for semantic annotation and deployment. Semantic and reactive content for the platform is developed in the respective layers using two specialized languages, _{kim}_ for semantic resources and _{kact}_ for rective behaviors and applications. The modeler IDE (_{kmod}_) provides drag-and-drop interfaces to build resources and specialized editors for {kl} projects, containing both {kim} and {kact} resources.
+The set of active, connected nodes and engines at any given time forms what can be seen collectively as a distributed container, where scientific knowledge is found in **three layers** handling information at increasing levels of abstraction: the _resources_, _semantic_ and _reactivity_ layers. The first can be seen as a data curation platform based on modern linked data concepts, optimized for generality of the data model, semantic annotation and deployment. Semantic and reactive content for the platform is developed in the respective layers using two specialized languages, _{kim}_ for semantic resources and _{kact}_ for rective behaviors and applications. The modeler IDE (_{kmod}_) provides drag-and-drop interfaces to build resources and specialized editors for {kl} projects, containing both {kim} and {kact} resources.
 
 * The *resources* layer provides a _protocol_ for conventional data and computational resources or services to interoperate at the data level, matching identifiers, data types and metadata through a uniform API. Nodes and client applications include interfaces to manage development and submission of knowledge to the resources layer, to be published and curated either on-site or through hosting providers with full control of licensing and access. 
 * The *semantic* layer provides a _language_ that enables annotating resources through semantically explicit logical expressions, ensuring findability, interoperability and accessibility through purely logical queries, validating consistency and producing mediation strategies through machine reasoning and logical inference. The semantic layer uses the **{kim}** language to specify semantic knowledge (compatible with W3-endorsed https://www.w3.org/TR/owl-guide/[OWL 2]) and models; these specifications, collected into namespaces and projects, can be deployed to {knod}s for the {kl} inference engines to find, rank and use.
@@ -79,7 +79,11 @@ The full separation of concerns and APIs in the three layers maximizes their val
 
 ## Resources 
 
-REMOVE ALL THE SHIT BELOW; JUST USE EXAMPLES FOR EACH LAYER
+URNs (data, computations)
+Adapters (for data, data services, computations, modeling services from WPS to large models)
+I/O: modeler, node web UI
+No semantics at this level: what comes next
+
 
 ## Semantic modeling
 
@@ -87,13 +91,30 @@ Semantic layer must show concepts, models (also learn) and describe resolution a
 
 ### The worldview
 
+Collaborative and shared. +1 possible but we're working on one. Linguistic framework: separation of attributes, traits etc using composition rules. Examples.
+
 #### Authorities
+
+Vocabularies and their usage. 
 
 ### Models
 
-### Machine learning
+Subjects and qualities
+Processes and Change
+Relationships and configurations
+Attributes/identities: classification, identification
+Roles
 
 ### Resolution and contextualization
+
+Main process (figure!)
+Choice of models: the resolver (distributed)
+Scale handling in space and time
+Automatic recontextualization (watershed example)
+
+### Machine learning
+
+Model vs. Learn - produces a computable resource (dataflow) that can be stored with a URN, independent of semantics. This includes "calibration" and "validation". Standard machine learning (show example). Calibration or other model inference. Model for many applications
 
 ## Behaviors and applications
 

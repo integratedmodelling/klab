@@ -198,7 +198,7 @@ public class DataflowCompiler {
          * artifacts can be properly addressed when the actuators are run in order of dependency.
          */
         ret.computeLocalNames();
-        
+
         monitor.debug((scope.isOccurrent() ? "Occurrent" : "Continuant") + " dataflow compiled");
 
         return ret;
@@ -587,8 +587,12 @@ public class DataflowCompiler {
              */
             if (deferredObservables.size() > 0) {
 
+                /*
+                 * remember the dereification so that we don't schedule it, which would require that
+                 * an entire model setup is available for the observable.
+                 */
                 Observable dereified = (Observable) deferredObservables.get(0).getBuilder(monitor).of(observable.getType())
-                        .buildObservable();
+                        .setDereified().buildObservable();
 
                 Actuator outer = Actuator.create(dataflow,
                         dereified.is(IKimConcept.Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
@@ -1209,7 +1213,10 @@ public class DataflowCompiler {
         }
 
         if (Units.INSTANCE.needsUnits(from) && from.getUnit() == null /* && to.getUnit() == null */) {
-            throw new IllegalStateException("Observables need units but have none: " + from + " mediating to " + to);
+            if (!from.is(IKimConcept.Type.NUMEROSITY)) {
+                // FIXME fine for counts to have no units, although this should depend on context
+                throw new IllegalStateException("Observables need units but have none: " + from + " mediating to " + to);
+            }
         }
 
         List<IContextualizable> ret = new ArrayList<>();

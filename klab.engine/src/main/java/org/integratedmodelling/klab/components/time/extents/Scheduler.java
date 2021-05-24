@@ -626,6 +626,9 @@ public class Scheduler implements IScheduler {
 		 * all registrations should be scheduled in order of dependency. As long as
 		 * there is only one resolution this is also the order of registration, but if
 		 * there are successive resolutions for change this no longer holds.
+		 * 
+		 * FIXME these must be computed within the specific dataflow of the registration, which 
+		 * is not necessarily the top-level passed (inherent resolution).
 		 */
 		if (dataflow != null) {
 			regs = computeDynamicDependencyOrder(regs, ((Dataflow) dataflow).getDependencies());

@@ -87,6 +87,9 @@ public class ObservableBuilder implements IObservable.Builder {
     // withDeclaration() and the
     // builder is merely building it.
     private boolean declarationIsComplete = false;
+    
+    // marks the observable to build as dereifying for a resolution of inherents
+    private boolean dereified = false; 
 
     public static ObservableBuilder getBuilder(IObservable observable, IMonitor monitor) {
         return new ObservableBuilder((Observable) observable, monitor);
@@ -184,6 +187,7 @@ public class ObservableBuilder implements IObservable.Builder {
         this.annotations.addAll(other.annotations);
         this.temporalInherent = other.temporalInherent;
         this.statedName = other.statedName;
+        this.dereified = other.dereified;
 
         checkTrivial();
     }
@@ -1962,6 +1966,7 @@ public class ObservableBuilder implements IObservable.Builder {
         ret.setDistributedInherency(distributedInherency);
         ret.setTemporalInherent(temporalInherent);
         ret.setDereifiedAttribute(this.dereifiedAttribute);
+        ret.setDereified(this.dereified);
 
         return ret;
     }
@@ -2017,6 +2022,12 @@ public class ObservableBuilder implements IObservable.Builder {
     @Override
     public boolean axiomsAdded() {
         return this.axiomsAdded;
+    }
+
+    @Override
+    public Builder setDereified() {
+        this.dereified = true;
+        return this;
     }
 
 }

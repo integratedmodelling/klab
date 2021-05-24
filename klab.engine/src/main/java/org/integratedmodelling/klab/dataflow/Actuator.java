@@ -126,7 +126,7 @@ public class Actuator implements IActuator {
     // these are part of graphs so they should behave wrt. equality. Adding an ID
     // for comparison just to ensure that future changes upstream do not affect the
     // logics.
-    private String _actuatorId = NameGenerator.shortUUID();
+    protected String _actuatorId = NameGenerator.shortUUID();
 
     List<Computation> computation = null;
 
