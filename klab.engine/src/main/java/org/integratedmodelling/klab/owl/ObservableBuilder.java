@@ -413,6 +413,8 @@ public class ObservableBuilder implements IObservable.Builder {
         this.type = main.type;
         traits.clear();
         roles.clear();
+        unit = null;
+        currency = null;
         comparison = context = inherent = /* classifier = downTo = */ caused = compresent = inherent = null;
         isTrivial = true;
         // declaration remains the same
