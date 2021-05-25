@@ -742,7 +742,7 @@ public class Actuator implements IActuator {
                                     + Observables.INSTANCE.getDisplayName(deferred) + " within " + object.getName());
                         }
                         ctx.resolve(deferred, (IDirectObservation) object, task,
-                                deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+                                deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, dataflow);
                     }
 
                     if (notificationMode == INotification.Mode.Verbose) {

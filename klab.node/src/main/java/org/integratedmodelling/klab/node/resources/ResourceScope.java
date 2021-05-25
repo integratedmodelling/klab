@@ -17,7 +17,6 @@ import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
-import org.integratedmodelling.klab.api.knowledge.IViewModel;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
@@ -636,7 +635,7 @@ public class ResourceScope extends Parameters<String> implements IRuntimeScope {
     }
 
     @Override
-    public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree< ? > task, Mode mode) {
+    public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree< ? > task, Mode mode, IDataflow<?> dataflow) {
         // TODO Auto-generated method stub
         return null;
     }

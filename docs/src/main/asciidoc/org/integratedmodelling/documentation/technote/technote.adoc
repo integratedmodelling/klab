@@ -1,4 +1,4 @@
-= A semantic web platform for science
+= k.LAB: a semantic web platform for science
 Technical note
 v1.0, 2021-02-20
 :doctype: article
@@ -55,15 +55,15 @@ The open source k.LAB software stack includes five components that support the c
 
 ### The software stack
 
-* *Server* components are deployed by certified _partners_ to publish resources and semantic content (*{knod}*) and/or provide modeling services and applications (*{keng}*) to online users. Published resources can include both static data and dynamic computations, both of which may be hosted in source form at the node or linked to external data (e.g. WCS, WFS, OpenDAP) or computational services (e.g. OpenCPU). The k.Node software is deployed in containers that can be configured to host dedicated instances of Geoserver, PostgreSQL, Hyrax or other services; these are transparently managed through server adapters inside the node, eliminating the need for alphabetization of node administrators.
-* *Client* components are used by contributors to develop, validate and publish resources and semantic content (*k.Modeler*, an Integrated Development Environment (IDE) for semantic modeling), and by end users (*k.Explorer*) to access modeling services and specialized applications built for the platform and delivered through the web. 
+* *Server* components are deployed by certified _partners_ to publish resources and semantic content (*{knod}*) and/or provide modeling services and applications (*{keng}*) to online users. Published resources can include both static data and dynamic computations, both of which may be hosted in source form at the node or linked to external data (e.g. WCS, WFS, OpenDAP) or computational services (e.g. OpenCPU). The k.Node software is deployed in containers that can be configured to host dedicated instances of Geoserver, PostgreSQL, Hyrax or other services; these are transparently managed through server adapters inside the node, virtually eliminating the need for alphabetization of node administrators.
+* *Client* components are used by contributors to develop, validate and publish resources and semantic content (*k.Modeler*, an Integrated Development Environment (IDE) for semantic modeling), and by end users (*k.Explorer*) to access modeling services and specialized applications built for the platform and delivered through the web.
 
-Additional server components serve specific needs on the {kl} network. Among them the following are noteworthy:
+Additional server components serve specific needs on the {kl} network and are of less common application in partner sites. Among them the following are noteworthy:
 
-* The _hub_ server, *k.Hub*, manages authentication and organizes node access for authenticated engines. The Integrated Modeling Partnership manages a set of nodes and a main hub, and releases site certificates that enable nodes to be connected to form the platform.Partners that need to manage users locally may also deploy and connect a hub, although this is not normally required except in large deployments.
-* A _semantic server_ collects and indexes the semantic knowledge from the worldview and all public projects, constantly compiling and revising documentation and use cases to assist users in the semantic annotation process. Users can look up annotations made by others and access hyperlinked, evolving descriptions of each concept and predicate, with on-the-fly logical validation of logical expressions in models being developed and a suggestion service that can find and propose comparisons with use cases extracted from peer-reviewed public projects. Through the use of specialized metadata inserted in {kim} source files, the server can be integrated with the editors so that assistance is available directly, to ease the development of semantic content as much as possible. 
+* The _hub_ server, *k.Hub*, manages authentication and organizes node access for authenticated engines. The Integrated Modeling Partnership manages a set of nodes and a main hub, and releases site certificates that enable nodes to be connected to form the platform. Partners that need to manage users locally may also deploy and connect a hub, although this is normally only convenient in large deployments.
+* A _semantic server_ collects and indexes the semantic knowledge from the worldview and all public projects, constantly compiling and revising documentation and use cases to assist users in the semantic annotation process. Users can look up annotations made by others and access hyperlinked, evolving descriptions of each concept and predicate. The semantic server can be connected to the {kmod} editor to provide inline logical validation of logical expressions in models being developed, and a suggestion service that can find and propose comparisons with use cases extracted from peer-reviewed public projects. Through the use of specialized metadata inserted in {kim} source files, the server can be integrated with the editors so that assistance is available directly, to ease the development of semantic content as much as possible. The semantic server is in development and is not available to the general public yet. 
 
-NOTE: The semantic server is in development and is not available to the general public yet.
+Other, less critical server components are in development and are not discussed here. Among these, a statistics server collects anonymized information from successful and unsuccessful resolutions and processes them using machine learning techniques to improve the resolution algorithm.
 
 **Usage configurations**: [DISCUSS END-USER (+k.Apps) vs MODELER vs SITE ADMINISTRATOR] The k.LAB engine, a server-side component, can also be run at the client side in a local configuration, so that new content can be developed and tested in a sandboxed environment before publishing, with full access to public resources. Such client use is supported and facilitated by a small, downloadable https://integratedmodelling.org/get_started[control center application] that removes the complexities linked to installing, upgrading, starting and stopping the engine or the IDE. The k.LAB distributed paradigm supports and enforces a model where information remains under the ownership of its authoritative sources while maximizing its availability and interoperability, compatibly with both public and commercial services thanks to careful attribution and to state-of-the-art encryption, access control and security.
 
@@ -82,8 +82,8 @@ The full separation of concerns and APIs in the three layers maximizes their val
 URNs (data, computations)
 Adapters (for data, data services, computations, modeling services from WPS to large models)
 I/O: modeler, node web UI
+Lifecycle and rolling peer review. URN or DOIs (eventually)
 No semantics at this level: what comes next
-
 
 ## Semantic modeling
 

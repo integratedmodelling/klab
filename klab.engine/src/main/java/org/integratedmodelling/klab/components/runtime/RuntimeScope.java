@@ -500,7 +500,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation observation, ITaskTree<?> task, Mode mode) {
+    public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation observation, ITaskTree<?> task, Mode mode,
+            IDataflow<?> parentDataflow) {
 
         /*
          * preload all the possible resolvers in the wider scope before specializing the scope to
@@ -533,7 +534,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                     this.resolutionScope.getDeferredChildScope(observation, mode), mode, scale, model);
 
             if (scope.getCoverage().isRelevant()) {
-                dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope, this.dataflow);
+                dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope, (Dataflow)parentDataflow);
                 pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
             }
         }
@@ -548,9 +549,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                 // annoying.
             }
         } else {
-            
+
             this.dataflow.registerResolution(observation, dataflow);
-            
+
             ret = dataflow.withScope(this.resolutionScope.getDeferredChildScope(observation, mode))
                     .withScopeScale(observation.getScale()).withMetadata(observation.getMetadata())
                     .run(observation.getScale(), (Actuator) this.actuator, task.getMonitor());
@@ -1799,9 +1800,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
         /*
          * We don't schedule merging observations as they should only merge what's behind them.
-         * Currently attempting to do so will fail for lack of a knowable temporal context. When
-         * the temporal merging logic is finished, we may remove this and allow merging actuators
-         * to exist.
+         * Currently attempting to do so will fail for lack of a knowable temporal context. When the
+         * temporal merging logic is finished, we may remove this and allow merging actuators to
+         * exist.
          */
         if (actuator.getObservable().isDereified()) {
             return;

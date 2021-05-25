@@ -95,6 +95,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     // this could simply be the "dataflow" in the parent actuator but it's clearer
     // this way.
     private Dataflow parent;
+    private List<IDataflow<IArtifact>> children = new ArrayList<>();
 
     /**
      * Each dataflow used to resolve subjects within this one is recorded here with all the
@@ -162,6 +163,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     public Dataflow(ISession session, Dataflow parent) {
         this.session = session;
         this.parent = parent;
+        if (this.parent != null) {
+            this.parent.children.add(this);
+        }
     }
 
     /**
@@ -874,6 +878,11 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         } else if (!_actuatorId.equals(other._actuatorId))
             return false;
         return true;
+    }
+
+    @Override
+    public List<IDataflow<IArtifact>> getChildren() {
+        return children;
     }
 
 }

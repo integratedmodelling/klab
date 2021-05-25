@@ -332,7 +332,8 @@ public interface IRuntimeScope extends IContextualizationScope {
      * @param task the task to register the resolution to
      * @return a dataflow to resolve the observable, or null if there is no coverage
      */
-    <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task, Mode mode);
+    <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task, Mode mode,
+            IDataflow<?> parentDataflow);
 
     /**
      * Schedule any actions tagged as scheduled in the behavior of the passed observation.
