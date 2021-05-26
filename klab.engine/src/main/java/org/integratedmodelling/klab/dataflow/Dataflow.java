@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IContextualizable.InteractiveParameter;
 import org.integratedmodelling.kim.api.IKimConcept;
@@ -98,8 +99,8 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     private List<IDataflow<IArtifact>> children = new ArrayList<>();
 
     /**
-     * Each dataflow used to resolve subjects within this one is recorded here with all the
-     * subjects it was used for.
+     * Each dataflow used to resolve subjects within this one is recorded here with all the subjects
+     * it was used for.
      */
     Map<Dataflow, List<IDirectObservation>> inherentResolutions = new HashMap<>();
 
@@ -155,6 +156,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     Set<String> dataflowIds = new HashSet<>();
     private ObservationGroup observationGroup;
     private Mode notificationMode = INotification.Mode.Normal;
+
+    /*
+     * primary dataflows are created by first-level observation tasks. They run temporal transitions
+     * with a schedule that also includes their child dataflows.
+     */
+    private boolean primary;
 
     private Dataflow(Dataflow parent) {
         this.parent = parent;
@@ -503,10 +510,14 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
     @Override
     protected String encode(int offset) {
+        return encode(offset, true);
+    }
+
+    private String encode(int offset, boolean encodePreamble) {
 
         String ret = "";
 
-        if (offset == 0) {
+        if (offset == 0 && encodePreamble) {
             ret += "@klab " + Version.CURRENT + "\n";
             ret += "@dataflow " + getName() + "\n";
             ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
@@ -614,7 +625,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
      * @return
      */
     public boolean isPrimary() {
-        return parent == null;
+        return primary;
     }
 
     public String getDescription() {
@@ -837,6 +848,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         }
         actuator.getLocalNames().putAll(hashMap);
     }
+
     /**
      * Record that the passed observation was resolved using the passed dataflow. Scheduling will
      * need to use this information.
@@ -880,9 +892,37 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
         return true;
     }
 
+    /**
+     * Use to quickly compare different dataflows for equality of executable methods. Useful to
+     * group resolution dataflows for multiple objects into the minimum number of distinct ones.
+     * Does not compare preambles.
+     * 
+     * TODO this may skip differences in lookup tables or other parameters that are currently not
+     * printed in full literal form in the code.
+     * 
+     * @return an hex signature that will be equal if the actuator part is equal.
+     */
+    public String getSignature() {
+        return DigestUtils.md5Hex(encode(0, false));
+    }
+
     @Override
     public List<IDataflow<IArtifact>> getChildren() {
         return children;
+    }
+
+    public Dataflow setPrimary(boolean primary) {
+        this.primary = primary;
+        return this;
+    }
+
+    @Override
+    public IDataflow<IArtifact> getRootDataflow() {
+        Dataflow ret = this;
+        while(ret.parent != null) {
+            ret = ret.parent;
+        }
+        return ret;
     }
 
 }

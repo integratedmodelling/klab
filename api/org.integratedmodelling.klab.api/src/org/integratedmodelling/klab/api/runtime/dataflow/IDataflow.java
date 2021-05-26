@@ -82,6 +82,14 @@ public interface IDataflow<T extends IArtifact> extends IActuator {
     List<IDataflow<T>> getChildren();
 
     /**
+     * Each dataflow in the hierarchy must be able to produce the root dataflow, corresponding to the
+     * one that created the root observation.
+     * 
+     * @return
+     */
+    IDataflow<T> getRootDataflow();
+
+    /**
      * The scale of the resolution from which this dataflow was built. It will never be null and
      * will at most encompass the context of resolution.
      * 
