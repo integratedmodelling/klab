@@ -10,6 +10,9 @@ void 'list'
 		"Verbose output: list model details"
 		default false
 	
+	optional text modelpattern
+		"Filter models to match the pattern"
+	
 	class org.integratedmodelling.klab.cli.commands.model.List
 }
 
