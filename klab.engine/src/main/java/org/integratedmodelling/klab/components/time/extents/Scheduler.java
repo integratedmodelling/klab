@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -25,9 +26,9 @@ import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
-import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -481,8 +482,10 @@ public class Scheduler implements IScheduler {
     private int activeRegistrations;
     // registrations scheduled to be run after the last transition. So far only
     // views can do this.
-    private List<Registration> terminationRegistrations = new ArrayList<>();
+    private Map<Dataflow, List<Registration>> terminationRegistrations = new HashMap<>();
     private IRuntimeScope runtimeScope;
+
+    Map<Dataflow, List<Registration>> dataflows;
 
     public Scheduler(IRuntimeScope runtimeScope, String contextId, IResolutionScope scope, IMonitor monitor) {
         this.contextId = contextId;
@@ -607,16 +610,37 @@ public class Scheduler implements IScheduler {
         registrations.add(new Registration(actuator, computations, target, scale, scope, endTime));
     }
 
+    public void schedule() {
+
+        /*
+         * 1. Collect all dataflows from actuators and pair them to their actuators. Preserve order
+         * of registration
+         */
+        dataflows = new LinkedHashMap<>();
+
+        for (Registration registration : registrations) {
+            Dataflow dataflow = registration.actuator.getDataflow();
+            if (!dataflows.containsKey(dataflow)) {
+                dataflows.put(dataflow, new ArrayList<>());
+            }
+            dataflows.get(dataflow).add(registration);
+        }
+
+        for (Dataflow dataflow : dataflows.keySet()) {
+            schedule(dataflow, dataflows.get(dataflow));
+        }
+    }
+
     /*
      * one-shot scheduling, re-entrant
      */
     @SuppressWarnings("unchecked")
-    public void schedule(IDataflow<?> dataflow) {
+    public void schedule(Dataflow dataflow, List<Registration> actions) {
 
         long longest = 0;
 
         List<Number> periods = new ArrayList<>();
-        List<Registration> regs = separateTerminationRegistrations();
+        List<Registration> regs = separateTerminationRegistrations(dataflow, actions);
 
         /*
          * all registrations should be scheduled in order of dependency. As long as there is only
@@ -632,7 +656,7 @@ public class Scheduler implements IScheduler {
          * gets nothing.
          */
         if (dataflow != null) {
-            regs = computeDynamicDependencyOrder(regs, ((Dataflow) dataflow).getDependencies());
+            regs = computeDynamicDependencyOrder(regs, dataflow.getDependencies());
         }
 
         /*
@@ -650,7 +674,10 @@ public class Scheduler implements IScheduler {
         }
 
         if (!periods.isEmpty()) {
-            this.resolution = NumberUtils.gcd(NumberUtils.longArrayFromCollection(periods));
+            long resolution = NumberUtils.gcd(NumberUtils.longArrayFromCollection(periods));
+            if (this.resolution < resolution) {
+                this.resolution = resolution;
+            }
         }
 
         /*
@@ -679,14 +706,14 @@ public class Scheduler implements IScheduler {
 
     }
 
-    private List<Registration> separateTerminationRegistrations() {
+    private List<Registration> separateTerminationRegistrations(Dataflow dataflow, List<Registration> registrations) {
 
         List<Registration> ret = new ArrayList<>();
-        this.terminationRegistrations.clear();
+        this.terminationRegistrations.put(dataflow, new ArrayList<>());
 
         for (Registration registration : registrations) {
             if (registration.runsAtTermination()) {
-                this.terminationRegistrations.add(registration);
+                this.terminationRegistrations.get(dataflow).add(registration);
             } else {
                 ret.add(registration);
             }
@@ -790,13 +817,13 @@ public class Scheduler implements IScheduler {
     }
 
     @Override
-    public void run(IDataflow<?> dataflow, IMonitor monitor) {
+    public void run(IMonitor monitor) {
 
-        if (this.registrations.size() < 1) {
+        if (registrations.size() < 1) {
             return;
         }
 
-        schedule(dataflow);
+        schedule();
 
         if (startTime == 0 && type == Type.REAL_TIME) {
             startTime = DateTime.now().getMillis();
@@ -824,6 +851,7 @@ public class Scheduler implements IScheduler {
 
             if (monitor.isInterrupted()) {
                 this.registrations.clear();
+                this.dataflows.clear();
                 this.finished = true;
                 return;
             }
@@ -871,12 +899,15 @@ public class Scheduler implements IScheduler {
                         if (toRun != null && registration.endsPeriod && changed.size() > 0) {
 
                             Set<ObservedConcept> computed = new HashSet<>();
-                            for (ObservedConcept tracked : ((Dataflow) dataflow).getImplicitlyChangingObservables()) {
+                            for (ObservedConcept tracked : registration.actuator.getDataflow()
+                                    .getImplicitlyChangingObservables()) {
                                 computeImplicitDependents(tracked, changed, computed, toRun, registration.scope,
-                                        registration.actuator.getDataflow().getDependencies(), catalog, dataflow);
+                                        registration.actuator.getDataflow().getDependencies(), catalog,
+                                        registration.actuator.getDataflow());
 
                                 if (monitor.isInterrupted()) {
                                     this.registrations.clear();
+                                    this.dataflows.clear();
                                     this.finished = true;
                                     return;
                                 }
@@ -917,12 +948,15 @@ public class Scheduler implements IScheduler {
          * run anything registered after termination. We don't do anything else as these have access
          * to the entire context.
          */
-        for (Registration registration : terminationRegistrations) {
-            registration.run(monitor);
+        for (Dataflow dataflow : dataflows.keySet()) {
+            for (Registration registration : terminationRegistrations.get(dataflow)) {
+                registration.run(monitor);
+            }
         }
 
         // don't do this again if we make further observations later
         this.registrations.clear();
+        this.dataflows.clear();
 
         this.finished = true;
 

@@ -232,7 +232,7 @@ public class DefaultRuntimeProvider implements IRuntimeProvider {
                     ITaskTree<?> subtask = ((ITaskTree<?>) monitor.getIdentity()).createChild("Temporal contextualization");
                     try {
                         ((AbstractTask<?>) subtask).notifyStart();
-                        runtimeScope.getScheduler().run(dataflow, subtask.getMonitor());
+                        runtimeScope.getScheduler().run(subtask.getMonitor());
                         ((AbstractTask<?>) subtask).notifyEnd();
                     } catch (Throwable e) {
                         throw ((AbstractTask<?>) subtask).notifyAbort(e);
