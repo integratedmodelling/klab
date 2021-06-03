@@ -610,7 +610,7 @@ public class Scheduler implements IScheduler {
         registrations.add(new Registration(actuator, computations, target, scale, scope, endTime));
     }
 
-    public void schedule() {
+    private void schedule() {
 
         /*
          * 1. Collect all dataflows from actuators and pair them to their actuators. Preserve order
