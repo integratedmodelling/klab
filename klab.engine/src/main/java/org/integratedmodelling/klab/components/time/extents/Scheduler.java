@@ -639,7 +639,7 @@ public class Scheduler implements IScheduler {
      * one-shot scheduling, re-entrant
      */
     @SuppressWarnings("unchecked")
-    public void schedule(Dataflow dataflow, List<Registration> actions) {
+    private void schedule(Dataflow dataflow, List<Registration> actions) {
 
         long longest = 0;
 

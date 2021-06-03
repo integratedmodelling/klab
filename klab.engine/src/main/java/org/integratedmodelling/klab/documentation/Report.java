@@ -60,6 +60,7 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -145,8 +146,8 @@ public class Report implements IReport {
 
     private Map<String, DocumentationNode> nodes = new LinkedHashMap<>();
     private ISession session;
-    // private IRuntimeScope context;
-    private Report report;
+//    // private IRuntimeScope context;
+//    private Report report;
     // private List<ReportSection> mainSections = new ArrayList<>();
 
     /*
@@ -184,10 +185,6 @@ public class Report implements IReport {
     public void addTaggedText(IDocumentationProvider.Item item) {
         this.taggedText.put(item.getId(), item);
     }
-
-    // public void addModel(IModel model) {
-    // docTree.addModel(model);
-    // }
 
     public IDocumentationProvider.Item getTaggedText(String tag) {
         return this.taggedText.get(tag);
@@ -335,76 +332,7 @@ public class Report implements IReport {
         Node document = parser.parse(markdown);
         return renderer.render(document);
     }
-
-    // @Override
-    // public String render(Encoding encoding) {
-    //
-    // StringBuffer ret = new StringBuffer(16 * 1024);
-    //
-    // ret.append(getTitleSection());
-    //
-    // Section appendix = mainSections.get(SectionRole.APPENDIX);
-    //
-    // /*
-    // * If we have an appendix, add any tagged documentation coming from contextualizers that has
-    // * not been used in the report.
-    // */
-    // if (appendix != null) {
-    // for (String tag : taggedText.keySet()) {
-    // if (!usedTags.contains(tag)) {
-    // Item item = taggedText.get(tag);
-    // ((DocumentationDirective) appendix).body += "\n\n## " + item.getTitle() + "\n\n" +
-    // item.getMarkdownContents()
-    // + "\n\n";
-    // }
-    // }
-    // }
-    //
-    // /*
-    // * Add anything not explicitly described according to settings; make appendices and
-    // * references
-    // */
-    // int n = 0;
-    // for (Section s : getSections()) {
-    // ret.append(((ReportSection) s).render(0, (++n) + "", this.templateVariables));
-    // }
-    //
-    // /*
-    // * If we have tagged content, no appendix and no sections that may have used it, make an
-    // * appendix and add to it.
-    // */
-    // if (appendix == null && (taggedText.size() - usedTags.size()) > 0) {
-    //
-    // ret.append("\n\n# Appendix\n\n");
-    //
-    // for (String tag : taggedText.keySet()) {
-    // if (!usedTags.contains(tag)) {
-    // Item item = taggedText.get(tag);
-    // ret.append("\n\n## " + item.getTitle() + "\n\n" + item.getMarkdownContents() + "\n\n");
-    // }
-    // }
-    // }
-    //
-    // // TODO these should be configurable
-    // ret.append("\n\n" + "[@ref]: Reference [#]\n" + "[@fig]: Figure [#]\n" + "[@table]: Table
-    // [#]\n"
-    // + "[@footnote]: Footnote [#]\n" + "[@user]: [#]\n" + "[@dataflow]: Dataflow [#]\n");
-    //
-    // // System.out.println(ret.toString());
-    //
-    // switch(encoding) {
-    // case HTML:
-    // return asHTML(ret.toString());
-    // case MARKDOWN:
-    // return ret.toString();
-    // case LATEX:
-    // case PDF:
-    // break;
-    // }
-    //
-    // return "<html><body><p>Unsupported encoding " + encoding + " </p></body></html>";
-    // }
-
+    
     private String getTitleSection() {
         String ret = "# ![Integrated Modelling Partnership](../logos/im64.png){float=left} k.LAB Contextualization report\n\n";
         ret += "---\n";
@@ -860,28 +788,7 @@ public class Report implements IReport {
         ret.setTitle(section.getName() == null
                 ? (section.getRole() == null ? null : StringUtil.capitalize(section.getRole().name().toLowerCase()))
                 : section.getName());
-
-        // for (ReportElement child : section.children) {
-        // ret.getChildren().add
-        // }
-
-        // String body = section.body.toString();
-        // int offset = 0;
-        // for (Element element : section.elements) {
-        // // if (element.startOffset > offset) {
-        // // offset = compileParagraph(body, offset, element.startOffset, element.endOffset, ret,
-        // // format);
-        // // }
-        // DocumentationNode child = compileElement(element, format);
-        // if (child != null) {
-        // ret.getChildren().add(child);
-        // }
-        // }
-
-        // if (body.length() > offset) {
-        // compileParagraph(body, offset, body.length(), 0, ret, format);
-        // }
-
+        
         if (section.role == SectionRole.REFERENCES) {
             for (DocumentationNode node : nodes.values()) {
                 if (node.getType() == Type.Reference) {
@@ -892,20 +799,6 @@ public class Report implements IReport {
 
         return ret;
     }
-
-    // private int compileParagraph(String body, int offset, int start, int end, DocumentationNode
-    // section, String format) {
-    // String paragraph = body.substring(offset, start);
-    // if ("html".equals(format)) {
-    // paragraph = md2html(paragraph);
-    // }
-    // DocumentationNode node = new DocumentationNode();
-    // node.setType(Type.Paragraph);
-    // node.setId("p_" + NameGenerator.shortUUID());
-    // node.setBodyText(paragraph);
-    // section.getChildren().add(node);
-    // return end;
-    // }
 
     private List<DocumentationNode> getModelsView(String format) {
         List<DocumentationNode> ret = new ArrayList<>();
@@ -921,10 +814,30 @@ public class Report implements IReport {
         List<DocumentationNode> ret = new ArrayList<>();
         for (DocumentationNode node : nodes.values()) {
             if (node.getType() == Type.Figure) {
-                ret.add(node);
+                ret.add(checkForUpdate(node));
             }
         }
         return ret;
+    }
+
+    DocumentationNode checkForUpdate(DocumentationNode node) {
+        if (node.getFigure() != null) {
+            /*
+             * recover state
+             */
+            IObservation observation = this.session.getObservation(node.getFigure().getObservationId());
+            if (observation instanceof State) {
+                List<ILocator> locators = ((State) observation).getSliceLocators();
+                if (node.getFigure().getTimeSlices().size() < locators.size()) {
+                    node.getFigure().getTimeSlices().clear();
+                    for (ILocator locator : locators) {
+                        TimesliceLocator sl = (TimesliceLocator) locator;
+                        node.getFigure().getTimeSlices().add(sl.getTimestamp() + "," + sl.getLabel());
+                    }
+                }
+            }
+        }
+        return node;
     }
 
     /**
