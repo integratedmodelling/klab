@@ -89,6 +89,15 @@ No semantics at this level: what comes next
 
 Semantic layer must show concepts, models (also learn) and describe resolution and dataflows. Needs pictures.
 
+In a departure from every other ontology platform, k.LAB does not rely on individual concepts for the description of observables, but on logical expressions that combine predicates, operators and nouns in a fashion reminding the grammar structure of the English language. This is key not only to the usability and parsimony of the underlying knowledge base, but also to the functioning of the machine reasoning underlying the resolution algorithm, which can reason independent on different logical dimensions of a query and infer computations that would require complex (and largely impossible) logical breakdown to function. Each logical dimension of a query can be _resolved_ to a model which handles its specific target; the computations specified by the model are automatically assembled into the _dataflow_ (algorithm) that produces the corresponding scientific artifact. The next example breaks down the process for a complex query.
+
+### An example of semantic resolution
+
+So, a hypothetical query like [EXAMPLE WITH CLASSIFICATION biomass of eucalyptus tree] operated for example in a country context would be hypothetically addressed by the following strategy and models: 
+...
+
+All these models compete and are independently developed and published. The resolution algorithm can use both objective and success-driven heuristics so it can improve with time. Scoping rules allow controlling the selection at each branching point and full transparency is given both of the actual provenance and of the rationale of the choices made, including a log of the alternative paths that were discarded when they were close.
+
 ### The worldview
 
 Collaborative and shared. Defined not by discipline but scale of observation (range thereof). More than 1 possible but we're working on one. Must be shared, can't be owned. Linguistic framework: separation of attributes, traits etc using composition rules. Simplifies acceptance due to clarity coming from separation of concerns and traceability of meaning. Examples.
@@ -118,6 +127,6 @@ Model vs. Learn - produces a computable resource (dataflow) that can be stored w
 
 ## Behaviors and applications
 
-### Applications
+### Applications, Client software 
 
 ## Current status
