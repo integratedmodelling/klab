@@ -26,6 +26,9 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
         IState streamPresenceState = context.getArtifact("presence_of_stream", IState.class);
         IState curveNumberState = context.getArtifact("curve_number", IState.class);
         IState numberOfEventsState = context.getArtifact("number_of_events", IState.class);
+        if (numberOfEventsState == null) {
+            context.getMonitor().warn("No number of events available, default to 0.");
+        }
 
         IState runoffState = context.getArtifact("runoff_water_volume", IState.class);
 
@@ -33,8 +36,10 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
             Double rainfall = rainfallVolumeState.get(locator, Double.class);
             Boolean isStream = streamPresenceState.get(locator, Boolean.class);
             Double curveNumber = curveNumberState.get(locator, Double.class);
-            Integer eventsNum = numberOfEventsState.get(locator, Integer.class);
-
+            Integer eventsNum = 0;
+            if (numberOfEventsState != null) {
+                eventsNum = numberOfEventsState.get(locator, Integer.class);
+            }
             boolean isValid = Observations.INSTANCE.isData(rainfall) && Observations.INSTANCE.isData(isStream)
                     && Observations.INSTANCE.isData(curveNumber) && Observations.INSTANCE.isData(eventsNum);
             double runoff = 0;
