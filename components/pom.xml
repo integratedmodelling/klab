@@ -23,6 +23,7 @@
   	<module>klab.component.noisemodelling</module>
   	<module>klab.component.random</module>
   	<module>klab.component.sdmx</module>
+  	<module>klab.component.amp</module>
   </modules>
   
   <build>

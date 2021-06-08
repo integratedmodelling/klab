@@ -79,17 +79,22 @@ The full separation of concerns and APIs in the three layers maximizes their val
 
 ## Resources 
 
-URNs (data, computations)
-Adapters (for data, data services, computations, modeling services from WPS to large models)
+Resources have URNs (data, computations), geometry, and data type. One or more inputs/outputs and attributes. Simple API encompasses all conventional computations. Main service: resolve URN in context -> return non-semantic artifact. If resource is computed, submitting input values may be necessary and the geometry specifies the form. 
+ 
+Adapters (for data, data services, computations, modeling services from WPS to large models). Current adapters for x....
 I/O: modeler, node web UI
-Lifecycle and rolling peer review. URN or DOIs (eventually)
+Lifecycle and rolling peer review. URN or DOIs (eventually). Clients. Permissions and access.
 No semantics at this level: what comes next
 
 ## Semantic modeling
 
-Semantic layer must show concepts, models (also learn) and describe resolution and dataflows. Needs pictures.
+Semantic layer: provide a shared _worldview_ (a logically organized knowledge base of concepts and relationships) and allow its linking to resource URNs by way of _models_, i.e. semantic annotations that specify the meaning associated with resources and, when applicable, their inputs, outputs and attributes. The pool of models constitutes the semantic layer, which is mined by the resolution algorithm to resolve a logical query to a computed scientific artifact. 
 
-In a departure from every other ontology platform, k.LAB does not rely on individual concepts for the description of observables, but on logical expressions that combine predicates, operators and nouns in a fashion reminding the grammar structure of the English language. This is key not only to the usability and parsimony of the underlying knowledge base, but also to the functioning of the machine reasoning underlying the resolution algorithm, which can reason independent on different logical dimensions of a query and infer computations that would require complex (and largely impossible) logical breakdown to function. Each logical dimension of a query can be _resolved_ to a model which handles its specific target; the computations specified by the model are automatically assembled into the _dataflow_ (algorithm) that produces the corresponding scientific artifact. The next example breaks down the process for a complex query.
+Relies on the k.IM language, is the linguistic framework: separation of attributes, traits etc using composition rules. While the underlying knowledge model is OWL 2.0, k.IM simplifies use and acceptance due to clarity coming from separation of concerns and traceability of meaning. Examples.
+
+In a departure from every other ontology platform, k.LAB does not rely on individual concepts for the description of observables, but on logical expressions that combine predicates, operators and nouns in a fashion reminding the grammar structure of the English language. This is key not only to the usability and parsimony of the underlying knowledge base, but also to the functioning of the machine reasoning underlying the resolution algorithm, which can reason independently on different logical dimensions of a query and infer computations that would require complex (and largely impossible) logical breakdown to function. Each logical dimension of a query can be _resolved_ to a model which handles its specific target; the computations specified by the model are automatically assembled into the _dataflow_ (algorithm) that produces the corresponding scientific artifact. The next example breaks down the process for a complex query.
+
+As seen in the example below, is typical of k.LAB models to be very short, simple and readable. Every model, with few exceptions, is written for _one_ concept, with all inputs stated merely as semantics; each model, by design, can be run and tested independently as a self-contained module. When the model logics require that certain dependencies are satisfied in a specific way, scoping rules can be used to ensure that specific models (or models for a specified subset) are picked to satisfy the desired dependencies. It is also possible to use (libraries of) _non-semantic models_ to refer to specific computations whose semantics is highly technical and not worth exposing (E.G. INDEX OF ...), ensuring linkage with conventionally used quantities without sacrificing modularity. In most situations, models can be written independent of the spatial and temporal context in which they will be run, and often even in ways that are compatible with different interpretations of space and time. Negotiation of inputs, outputs, data format, units/currencies, visualization and contextual validation are by default left to the k.LAB runtime. Writing models this way enforces discipline and maximizes clarity, readability and parsimony: contributors only write the core of the algorithm that leads to one specific observation, leaving every other aspect (including the selection and computation of any inputs) to the resolver and the k.LAB runtime.
 
 ### An example of semantic resolution
 
@@ -100,7 +105,8 @@ All these models compete and are independently developed and published. The reso
 
 ### The worldview
 
-Collaborative and shared. Defined not by discipline but scale of observation (range thereof). More than 1 possible but we're working on one. Must be shared, can't be owned. Linguistic framework: separation of attributes, traits etc using composition rules. Simplifies acceptance due to clarity coming from separation of concerns and traceability of meaning. Examples.
+Collaborative and shared. Meant for _observation_ of reality, not reality itself: therefore, aware of scale and differentiating not only by phenomenological nature but also by the nature of the observation process applicable to them. For example, events vs processes. Scale of observation (range thereof) is key to semantics and to compatibility of worldviews. More than 1 possible but we're working on one, scaled around human observation (wouldn't fit large or small, such as field of application of relativity or quantum physics. Must be shared, can't be owned. 
+
 
 #### Authorities
 
