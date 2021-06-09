@@ -60,7 +60,7 @@ import org.integratedmodelling.klab.api.model.IModel;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
 import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.resolution.IResolutionScope;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -921,7 +921,11 @@ public class Report implements IReport {
         figure.setObservationType(ref.getObservationType());
         figure.getGeometryTypes().addAll(ref.getGeometryTypes());
         figure.setObservableType(ref.getObservableType());
-
+        
+        ITime time = ((IObservation)artifact).getScale().getTime();
+        figure.setStartTime(time == null ? -1 : time.getStart().getMilliseconds());
+        figure.setEndTime(time == null ? -1 : time.getEnd().getMilliseconds());
+        
         if (artifact instanceof State) {
             for (ILocator locator : ((State) artifact).getSliceLocators()) {
                 TimesliceLocator sl = (TimesliceLocator) locator;
