@@ -9,6 +9,7 @@ import org.geotools.coverage.grid.GridCoverage2D;
 import org.hortonmachine.hmachine.modules.geomorphology.flow.OmsLeastCostFlowDirections;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -30,7 +31,6 @@ public class LeastCostFlowDirectionsResolver implements IResolver<IState>, IExpr
 
     @Override
     public IState resolve(IState target, IContextualizationScope context) throws KlabException {
-
         IState dem = context.getArtifact("elevation", IState.class);
 
         OmsLeastCostFlowDirections algorithm = new OmsLeastCostFlowDirections();
@@ -40,7 +40,9 @@ public class LeastCostFlowDirectionsResolver implements IResolver<IState>, IExpr
         algorithm.doSlope = false;
         algorithm.doTca = doTca;
 
-        algorithm.pm = new TaskMonitor(context.getMonitor());
+        TaskMonitor taskMonitor = new TaskMonitor(context.getMonitor());
+        taskMonitor.setTaskName("Least cost d8");
+        algorithm.pm = taskMonitor;
         algorithm.doProcess = true;
         algorithm.doReset = false;
         context.getMonitor().info("computing " + (doTca ? "total contributing area" : "flow directions") + "...");

@@ -1,16 +1,22 @@
 package org.integratedmodelling.geoprocessing.hydrology;
 
+import org.hortonmachine.gears.utils.time.UtcTimeUtilities;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observations;
+import org.integratedmodelling.klab.Time;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.contrib.math.ExponentialIntegrals;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.joda.time.DateTime;
 
 public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
 
@@ -21,6 +27,12 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
 
     @Override
     public IProcess resolve(IProcess runoffProcess, IContextualizationScope context) throws KlabException {
+        if (Configuration.INSTANCE.isEchoEnabled()) {
+            ITime time = context.getScale().getTime();
+            String start = UtcTimeUtilities.toStringWithMinutes(new DateTime( time.getStart().getMilliseconds()));
+            String end = UtcTimeUtilities.toStringWithMinutes(new DateTime( time.getEnd().getMilliseconds()));
+            System.out.println("Enter ScsRunoffResolver at timestep : " + start + " -> " + end);
+        }
 
         IState rainfallVolumeState = context.getArtifact("rainfall_volume", IState.class);
         IState streamPresenceState = context.getArtifact("presence_of_stream", IState.class);
@@ -59,6 +71,9 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
                 runoff = Double.NaN;
             }
             runoffState.set(locator, runoff);
+        }
+        if (Configuration.INSTANCE.isEchoEnabled()) {
+            System.out.println("Exit ScsRunoffResolver.");
         }
         return runoffProcess;
     }

@@ -3,7 +3,9 @@ package org.integratedmodelling.geoprocessing.hydrology;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hortonmachine.gears.utils.time.UtcTimeUtilities;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
@@ -11,6 +13,7 @@ import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -20,6 +23,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
+import org.joda.time.DateTime;
 
 public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExpression {
 
@@ -50,7 +54,12 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
 
     @Override
     public IProcess resolve(IProcess infiltratedProcess, IContextualizationScope context) throws KlabException {
-
+        if (Configuration.INSTANCE.isEchoEnabled()) {
+            ITime time = context.getScale().getTime();
+            String start = UtcTimeUtilities.toStringWithMinutes(new DateTime( time.getStart().getMilliseconds()));
+            String end = UtcTimeUtilities.toStringWithMinutes(new DateTime( time.getEnd().getMilliseconds()));
+            System.out.println("Enter InfiltratedWaterVolumeResolver at timestep : " + start + " -> " + end);
+        }
         IState petState = context.getArtifact("potential_evapotranspired_water_volume", IState.class);
         IState rainfallVolumeState = context.getArtifact("rainfall_volume", IState.class);
         IState runoffVolumeState = context.getArtifact("runoff_water_volume", IState.class);
@@ -176,17 +185,9 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
 
         }
 
-//        boolean isValid = Observations.INSTANCE.isData(infiltrated);
-//        if (isValid) {
-//            infiltrated += rain + stream + flow;
-//        } else {
-//            infiltrated = 0.0;
-//        }
-//        infiltratedWaterVolumeState.set(spl, infiltrated);
-
-        // DUMMY PLACEHOLDER OPERATION
-        context.getMonitor().info("Processing Infiltrated Volume the dummy way. Just a placeholder.");
-
+        if (Configuration.INSTANCE.isEchoEnabled()) {
+            System.out.println("Exit InfiltratedWaterVolumeResolver.");
+        }
         return infiltratedProcess;
     }
 

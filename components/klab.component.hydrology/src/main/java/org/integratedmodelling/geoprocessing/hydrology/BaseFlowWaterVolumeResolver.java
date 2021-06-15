@@ -3,7 +3,9 @@ package org.integratedmodelling.geoprocessing.hydrology;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.hortonmachine.gears.utils.time.UtcTimeUtilities;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
@@ -12,6 +14,7 @@ import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.Orientation;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.components.geospace.Geospace;
@@ -20,6 +23,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
+import org.joda.time.DateTime;
 
 public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpression {
 
@@ -36,7 +40,12 @@ public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpres
 
     @Override
     public IProcess resolve(IProcess baseflowProcess, IContextualizationScope context) throws KlabException {
-
+        if (Configuration.INSTANCE.isEchoEnabled()) {
+            ITime time = context.getScale().getTime();
+            String start = UtcTimeUtilities.toStringWithMinutes(new DateTime( time.getStart().getMilliseconds()));
+            String end = UtcTimeUtilities.toStringWithMinutes(new DateTime( time.getEnd().getMilliseconds()));
+            System.out.println("Enter BaseFlowWaterVolumeResolver at timestep : " + start + " -> " + end);
+        }
         netInfiltratedWaterVolumeState = context.getArtifact("net_infiltrated_water_volume", IState.class);
         infiltratedWaterVolumeState = context.getArtifact("infiltrated_water_volume", IState.class);
         streamPresenceState = context.getArtifact("presence_of_stream", IState.class);
@@ -89,7 +98,9 @@ public class BaseFlowWaterVolumeResolver implements IResolver<IProcess>, IExpres
                 walkUpAndProcess(exitCell, bSumMatrix, lSumMatrix);
             }
         }
-
+        if (Configuration.INSTANCE.isEchoEnabled()) {
+            System.out.println("Exit BaseFlowWaterVolumeResolver.");
+        }
         return baseflowProcess;
     }
 

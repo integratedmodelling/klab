@@ -1,15 +1,19 @@
 package org.integratedmodelling.geoprocessing.hydrology;
 
+import org.hortonmachine.gears.utils.time.UtcTimeUtilities;
 import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.joda.time.DateTime;
 
 public class PotentialEvapotranspiredWaterVolumeResolver implements IResolver<IProcess>, IExpression {
 
@@ -20,6 +24,13 @@ public class PotentialEvapotranspiredWaterVolumeResolver implements IResolver<IP
 
     @Override
     public IProcess resolve(IProcess evapotranspirationProcess, IContextualizationScope context) throws KlabException {
+        if (Configuration.INSTANCE.isEchoEnabled()) {
+            ITime time = context.getScale().getTime();
+            String start = UtcTimeUtilities.toStringWithMinutes(new DateTime( time.getStart().getMilliseconds()));
+            String end = UtcTimeUtilities.toStringWithMinutes(new DateTime( time.getEnd().getMilliseconds()));
+            System.out.println("Enter PotentialEvapotranspiredWaterVolumeResolver at timestep : " + start + " -> " + end);
+        }
+
 
         IState cropCoefficientState = context.getArtifact("crop_coefficient", IState.class);
         IState maxTempState = context.getArtifact("maximum_temperature", IState.class);
@@ -50,7 +61,9 @@ public class PotentialEvapotranspiredWaterVolumeResolver implements IResolver<IP
             }
             petState.set(locator, pet);
         }
-
+        if (Configuration.INSTANCE.isEchoEnabled()) {
+            System.out.println("Exit PotentialEvapotranspiredWaterVolumeResolver");
+        }
         return evapotranspirationProcess;
     }
 
