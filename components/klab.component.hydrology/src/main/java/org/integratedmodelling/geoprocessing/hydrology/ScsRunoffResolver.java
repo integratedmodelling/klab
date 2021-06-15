@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.api.model.contextualization.IResolver;
 import org.integratedmodelling.klab.api.observations.IProcess;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
+import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
@@ -39,11 +40,12 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
         IState curveNumberState = context.getArtifact("curve_number", IState.class);
         IState numberOfEventsState = context.getArtifact("number_of_events", IState.class);
         if (numberOfEventsState == null) {
-            context.getMonitor().warn("No number of events available, default to 0.");
+            context.getMonitor().warn("No number of events available, default to 1.");
         }
 
         IState runoffState = context.getArtifact("runoff_water_volume", IState.class);
 
+        long validCells = 0;
         for(ILocator locator : context.getScale()) {
             Double rainfall = rainfallVolumeState.get(locator, Double.class);
             Boolean isStream = streamPresenceState.get(locator, Boolean.class);
@@ -51,11 +53,21 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
             Integer eventsNum = 0;
             if (numberOfEventsState != null) {
                 eventsNum = numberOfEventsState.get(locator, Integer.class);
+            }else {
+                if(Observations.INSTANCE.isData(rainfall)) {
+                    eventsNum = 1;
+                }
+            }
+            if(!Observations.INSTANCE.isData(curveNumber)) { 
+                // TODO decide if it is better to calculate or set a default value 
+                curveNumber = 70.0;
             }
             boolean isValid = Observations.INSTANCE.isData(rainfall) && Observations.INSTANCE.isData(isStream)
                     && Observations.INSTANCE.isData(curveNumber) && Observations.INSTANCE.isData(eventsNum);
             double runoff = 0;
             if (isValid) {
+                validCells++;
+                
                 if (isStream) {
                     runoff = rainfall;
                 } else {
@@ -67,13 +79,17 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
                                     * Math.exp(0.8 * rainParam) * ExponentialIntegrals.enx(rainParam))//
                             * 25.4;// to mm
                 }
+                Cell cell = locator.as(Cell.class);
+                if(cell.getX() == 500 && cell.getY() == 350) {
+                    System.out.println("CHECK CELL RUNOFF: " + runoff);
+                }
             } else {
                 runoff = Double.NaN;
             }
             runoffState.set(locator, runoff);
         }
         if (Configuration.INSTANCE.isEchoEnabled()) {
-            System.out.println("Exit ScsRunoffResolver.");
+            System.out.println("Exit ScsRunoffResolver. Processed valid cells: " + validCells);
         }
         return runoffProcess;
     }

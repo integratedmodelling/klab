@@ -430,7 +430,7 @@ export process petcalc
 	import number rainfall_volume
 		"The liquid precipitation volume."
 
-	export number evapotranspired_water_volume
+	export number potential_evapotranspired_water_volume
 		"TODO"
 		
 	geometry T1S2
