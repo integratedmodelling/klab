@@ -59,13 +59,18 @@ public class PotentialEvapotranspiredWaterVolumeResolver implements IResolver<IP
                 double referenceET = 0.0013 * 0.408 * solarRad * (tAvg + 17) * Math.pow((tMax - tMin - 0.0123 * rainfall), 0.76);
                 double pet = kc * referenceET;
                 petState.set(locator, pet);
-                
-                Cell cell = locator.as(Cell.class);
-                if(cell.getX() == 500 && cell.getY() == 350) {
-                    System.out.println("CHECK CELL PET: " + pet);
-                }
+//                
+//                Cell cell = locator.as(Cell.class);
+//                if(cell.getX() == 500 && cell.getY() == 350) {
+//                    System.out.println("CHECK CELL PET: " + pet);
+//                }
             }
         }
+        
+        long ts = context.getScale().getTime().getStart().getMilliseconds();
+        SwyDebugUtils.dumpToRaster(ts, context.getScale(), "PetVolumeResolver", context.getMonitor(), cropCoefficientState,
+                maxTempState, minTempState, tempState, solarRadiationState, rainfallState, petState);
+        
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.out.println("Exit PotentialEvapotranspiredWaterVolumeResolver. Processed valid cells: " + validCells);
         }

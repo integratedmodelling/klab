@@ -89,13 +89,13 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
             List<Cell> sourceCells = new ArrayList<>();
             for(ILocator locator : context.getScale()) {
                 Cell cell = locator.as(Cell.class);
-                
-                if(cell.getX() == 500 && cell.getY() == 350) {
-                    Double runoff = runoffVolumeState.get(cell, Double.class);
-                    System.out.println("CHECK CELL RUNOFF INSIDE INFILTRATED: " + runoff);
-                    Double pet = petState.get(cell, Double.class);
-                    System.out.println("CHECK CELL PET INSIDE INFILTRATED: " + pet);
-                }
+
+//                if (cell.getX() == 500 && cell.getY() == 350) {
+//                    Double runoff = runoffVolumeState.get(cell, Double.class);
+//                    System.out.println("CHECK CELL RUNOFF INSIDE INFILTRATED: " + runoff);
+//                    Double pet = petState.get(cell, Double.class);
+//                    System.out.println("CHECK CELL PET INSIDE INFILTRATED: " + pet);
+//                }
 
                 Double d8 = flowdirectionState.get(cell, Double.class);
                 if (Observations.INSTANCE.isData(d8)) {
@@ -107,15 +107,6 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
             }
             long xCells = rainGrid.getXCells();
             long yCells = rainGrid.getYCells();
-//            for(int y = 0; y < yCells; y++) {
-//                for(int x = 0; x < xCells; x++) {
-//                    Cell cell = locator.as(Cell.class);
-//                    List<Cell> upstreamCells = Geospace.getUpstreamCells(cell, flowdirectionState, null);
-//                    if (upstreamCells.isEmpty()) {
-//                        sourceCells.add(cell);
-//                    }
-//                }
-//            }
             double[][] lSumAvailableMatrix = new double[(int) yCells][(int) xCells];
 
             for(Cell sourceCell : sourceCells) {
@@ -128,6 +119,10 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
                 Boolean isStream = streamPresenceState.get(sourceCell, Boolean.class);
 
                 lSumAvailableMatrix[(int) sourceCell.getY()][(int) sourceCell.getX()] = lSumAvailable;
+
+//                System.out.println("X: " + sourceCell.getX() + " Y: " + sourceCell.getY());
+//                System.out.println("CHECK CELL RUNOFF INSIDE INFILTRATED: " + runoff);
+//                System.out.println("CHECK CELL PET INSIDE INFILTRATED: " + pet);
 
                 if (Observations.INSTANCE.isData(pet) && Observations.INSTANCE.isData(rain)
                         && Observations.INSTANCE.isData(runoff) && Observations.INSTANCE.isData(isStream)) {
@@ -206,6 +201,11 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
             }
 
         }
+
+        long ts = context.getScale().getTime().getStart().getMilliseconds();
+        SwyDebugUtils.dumpToRaster(ts, context.getScale(), "InfiltratedWaterVolumeResolver", context.getMonitor(), petState,
+                rainfallVolumeState, runoffVolumeState, streamPresenceState, flowdirectionState, netInfiltratedWaterVolumeState,
+                infiltratedWaterVolumeState);
 
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.out.println("Exit InfiltratedWaterVolumeResolver. Processed valid cells: " + validCells);

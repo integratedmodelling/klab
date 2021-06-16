@@ -15,6 +15,7 @@ import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
 import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact.Type;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
 import org.integratedmodelling.klab.contrib.math.ExponentialIntegrals;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.joda.time.DateTime;
@@ -30,8 +31,8 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
     public IProcess resolve(IProcess runoffProcess, IContextualizationScope context) throws KlabException {
         if (Configuration.INSTANCE.isEchoEnabled()) {
             ITime time = context.getScale().getTime();
-            String start = UtcTimeUtilities.toStringWithMinutes(new DateTime( time.getStart().getMilliseconds()));
-            String end = UtcTimeUtilities.toStringWithMinutes(new DateTime( time.getEnd().getMilliseconds()));
+            String start = UtcTimeUtilities.toStringWithMinutes(new DateTime(time.getStart().getMilliseconds()));
+            String end = UtcTimeUtilities.toStringWithMinutes(new DateTime(time.getEnd().getMilliseconds()));
             System.out.println("Enter ScsRunoffResolver at timestep : " + start + " -> " + end);
         }
 
@@ -53,13 +54,13 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
             Integer eventsNum = 0;
             if (numberOfEventsState != null) {
                 eventsNum = numberOfEventsState.get(locator, Integer.class);
-            }else {
-                if(Observations.INSTANCE.isData(rainfall)) {
+            } else {
+                if (Observations.INSTANCE.isData(rainfall)) {
                     eventsNum = 1;
                 }
             }
-            if(!Observations.INSTANCE.isData(curveNumber)) { 
-                // TODO decide if it is better to calculate or set a default value 
+            if (!Observations.INSTANCE.isData(curveNumber)) {
+                // TODO decide if it is better to calculate or set a default value
                 curveNumber = 70.0;
             }
             boolean isValid = Observations.INSTANCE.isData(rainfall) && Observations.INSTANCE.isData(isStream)
@@ -67,27 +68,39 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
             double runoff = 0;
             if (isValid) {
                 validCells++;
-                
-                if (isStream) {
+                rainfall = (double) Math.round(rainfall);
+                if (rainfall == 0) {
+                    runoff = 0;
+                } else if (isStream) {
                     runoff = rainfall;
                 } else {
                     double sScsCoeff = 1000.0 / curveNumber - 10.0; // TODO check cn unit
                     double meanRainDepth = rainfall / eventsNum / 25.4; // convert to inches
                     double rainParam = sScsCoeff / meanRainDepth;
+                    double p1 = -0.2 * rainParam;
+                    double p2 = 0.8 * rainParam;
+                    double expP1 = Math.exp(p1);
+                    double expP2 = Math.exp(p2);
                     runoff = eventsNum //
-                            * ((meanRainDepth - sScsCoeff) * Math.exp(-0.2 * rainParam) + Math.pow(sScsCoeff, 2.0) / meanRainDepth
-                                    * Math.exp(0.8 * rainParam) * ExponentialIntegrals.enx(rainParam))//
+                            * ((meanRainDepth - sScsCoeff) * expP1 + Math.pow(sScsCoeff, 2.0) / meanRainDepth
+                                    * expP2 * ExponentialIntegrals.enx(rainParam))//
                             * 25.4;// to mm
-                }
-                Cell cell = locator.as(Cell.class);
-                if(cell.getX() == 500 && cell.getY() == 350) {
-                    System.out.println("CHECK CELL RUNOFF: " + runoff);
+
+//                    if (rainfall > 0 && runoff <= 0) {
+//                        Cell cell = locator.as(Cell.class);
+//                        System.out.println("X: " + cell.getX() + " Y: " + cell.getY());
+//                    }
                 }
             } else {
                 runoff = Double.NaN;
             }
             runoffState.set(locator, runoff);
         }
+
+        long ts = context.getScale().getTime().getStart().getMilliseconds();
+        SwyDebugUtils.dumpToRaster(ts, context.getScale(), "ScsRunoffResolver", context.getMonitor(), rainfallVolumeState,
+                streamPresenceState, curveNumberState, numberOfEventsState, runoffState);
+
         if (Configuration.INSTANCE.isEchoEnabled()) {
             System.out.println("Exit ScsRunoffResolver. Processed valid cells: " + validCells);
         }
