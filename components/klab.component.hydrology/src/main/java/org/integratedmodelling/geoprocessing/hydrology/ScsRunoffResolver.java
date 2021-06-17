@@ -98,7 +98,7 @@ public class ScsRunoffResolver implements IResolver<IProcess>, IExpression {
         }
 
         long ts = context.getScale().getTime().getStart().getMilliseconds();
-        SwyDebugUtils.dumpToRaster(ts, context.getScale(), "ScsRunoffResolver", context.getMonitor(), rainfallVolumeState,
+        SwyDebugUtils.dumpToRaster(ts, context, "ScsRunoffResolver", rainfallVolumeState,
                 streamPresenceState, curveNumberState, numberOfEventsState, runoffState);
 
         if (Configuration.INSTANCE.isEchoEnabled()) {

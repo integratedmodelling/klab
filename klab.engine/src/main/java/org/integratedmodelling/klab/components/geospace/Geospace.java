@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.Function;
 
 import org.geotools.factory.Hints;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Version;
 import org.integratedmodelling.klab.api.extensions.Component;
 import org.integratedmodelling.klab.api.extensions.component.Initialize;
@@ -129,6 +130,11 @@ public class Geospace {
     public static List<Cell> getUpstreamCells(Cell cell, IState flowDirectionsD8, Function<Cell, Boolean> check) {
 
         List<Cell> ret = new ArrayList<>();
+        
+        double fd = flowDirectionsD8.get(cell, Double.class);
+        if (Observations.INSTANCE.isNodata(fd)) {
+        	System.out.println("HOLA");
+        }
 
         Cell neighbor = cell.getNeighbor(Orientation.NW);
         if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 8) {

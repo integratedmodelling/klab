@@ -68,7 +68,7 @@ public class PotentialEvapotranspiredWaterVolumeResolver implements IResolver<IP
         }
         
         long ts = context.getScale().getTime().getStart().getMilliseconds();
-        SwyDebugUtils.dumpToRaster(ts, context.getScale(), "PetVolumeResolver", context.getMonitor(), cropCoefficientState,
+        SwyDebugUtils.dumpToRaster(ts, context, "PetVolumeResolver", cropCoefficientState,
                 maxTempState, minTempState, tempState, solarRadiationState, rainfallState, petState);
         
         if (Configuration.INSTANCE.isEchoEnabled()) {

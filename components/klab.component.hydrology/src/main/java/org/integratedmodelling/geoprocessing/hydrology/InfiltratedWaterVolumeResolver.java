@@ -23,6 +23,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
+import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Pair;
 import org.joda.time.DateTime;
 
@@ -109,14 +110,18 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
             long yCells = rainGrid.getYCells();
             double[][] lSumAvailableMatrix = new double[(int) yCells][(int) xCells];
 
+            ITime time = context.getScale().getTime();
+            
             for(Cell sourceCell : sourceCells) {
 
                 double lSumAvailable = 0.0;
 
-                Double pet = petState.get(sourceCell, Double.class);
-                Double rain = rainfallVolumeState.get(sourceCell, Double.class);
-                Double runoff = runoffVolumeState.get(sourceCell, Double.class);
-                Boolean isStream = streamPresenceState.get(sourceCell, Boolean.class);
+                ILocator locator = Scale.create(time, sourceCell);
+                
+                Double pet = petState.get(locator, Double.class);
+                Double rain = rainfallVolumeState.get(locator, Double.class);
+                Double runoff = runoffVolumeState.get(locator, Double.class);
+                Boolean isStream = streamPresenceState.get(locator, Boolean.class);
 
                 lSumAvailableMatrix[(int) sourceCell.getY()][(int) sourceCell.getX()] = lSumAvailable;
 
@@ -124,8 +129,10 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
 //                System.out.println("CHECK CELL RUNOFF INSIDE INFILTRATED: " + runoff);
 //                System.out.println("CHECK CELL PET INSIDE INFILTRATED: " + pet);
 
+                
+                
                 if (Observations.INSTANCE.isData(pet) && Observations.INSTANCE.isData(rain)
-                        && Observations.INSTANCE.isData(runoff) && Observations.INSTANCE.isData(isStream)) {
+						&& Observations.INSTANCE.isData(runoff) && Observations.INSTANCE.isData(isStream)) {
 
                     double aet = 0;
                     if (!isStream) {
@@ -133,14 +140,16 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
                     }
                     double li = rain - runoff - aet;
                     double lAvailable = Math.min(gamma * li, li); // TODO Silli check
-                    infiltratedWaterVolumeState.set(sourceCell, lAvailable);
-                    netInfiltratedWaterVolumeState.set(sourceCell, li);
+                    infiltratedWaterVolumeState.set(locator, lAvailable);
+                    netInfiltratedWaterVolumeState.set(locator, li);
 
                     // go downstream
                     Pair<Cell, Orientation> downCell = Geospace.getDownstreamCellWithOrientation(sourceCell, flowdirectionState);
                     while (downCell != null) {
+                    	
                         Cell cell = downCell.getFirst();
-
+                        ILocator downLocator = Scale.create(time, cell);
+                        
                         List<Cell> upstreamCells = Geospace.getUpstreamCells(cell, flowdirectionState, null);
                         // check if all upstream have a value
                         boolean canProcess = true;
@@ -155,10 +164,10 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
 
                         if (canProcess) {
 
-                            pet = petState.get(cell, Double.class);
-                            rain = rainfallVolumeState.get(cell, Double.class);
-                            runoff = runoffVolumeState.get(cell, Double.class);
-                            isStream = streamPresenceState.get(cell, Boolean.class);
+                            pet = petState.get(downLocator, Double.class);
+                            rain = rainfallVolumeState.get(downLocator, Double.class);
+                            runoff = runoffVolumeState.get(downLocator, Double.class);
+                            isStream = streamPresenceState.get(downLocator, Boolean.class);
 
                             if (Observations.INSTANCE.isData(pet) && Observations.INSTANCE.isData(rain)
                                     && Observations.INSTANCE.isData(runoff) && Observations.INSTANCE.isData(isStream)) {
@@ -186,8 +195,8 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
                                 double lAvailableCC = Math.min(gamma * liCC, liCC); // TODO Silli
                                                                                     // check
                                 validCells++;
-                                infiltratedWaterVolumeState.set(cell, lAvailableCC);
-                                netInfiltratedWaterVolumeState.set(cell, liCC);
+                                infiltratedWaterVolumeState.set(downLocator, lAvailableCC);
+                                netInfiltratedWaterVolumeState.set(downLocator, liCC);
                             }
 
                             downCell = Geospace.getDownstreamCellWithOrientation(cell, flowdirectionState);
@@ -203,7 +212,7 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
         }
 
         long ts = context.getScale().getTime().getStart().getMilliseconds();
-        SwyDebugUtils.dumpToRaster(ts, context.getScale(), "InfiltratedWaterVolumeResolver", context.getMonitor(), petState,
+        SwyDebugUtils.dumpToRaster(ts, context, "InfiltratedWaterVolumeResolver", petState,
                 rainfallVolumeState, runoffVolumeState, streamPresenceState, flowdirectionState, netInfiltratedWaterVolumeState,
                 infiltratedWaterVolumeState);
 
