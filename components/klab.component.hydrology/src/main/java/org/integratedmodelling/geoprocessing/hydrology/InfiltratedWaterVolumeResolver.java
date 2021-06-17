@@ -1,7 +1,9 @@
 package org.integratedmodelling.geoprocessing.hydrology;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.hortonmachine.gears.utils.time.UtcTimeUtilities;
 import org.integratedmodelling.kim.api.IParameters;
@@ -106,7 +108,8 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
 				if (Observations.INSTANCE.isData(d8)) {
 
 					Cell cell = locator.as(Cell.class);
-				List<Cell> upstreamCells = Geospace.getUpstreamCells(cell, flowdirectionState, (c) -> streamPresenceState.get(c) != null );
+					List<Cell> upstreamCells = Geospace.getUpstreamCells(cell, flowdirectionState,
+							(c) -> streamPresenceState.get(c) != null);
 					if (upstreamCells.isEmpty()) {
 						sourceCells.add(locator);
 					}
@@ -117,13 +120,13 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
 			double[][] lSumAvailableMatrix = new double[(int) yCells][(int) xCells];
 
 			int cnt = 0;
-			
+
 			for (ILocator locator : sourceCells) {
 
 				double lSumAvailable = 0.0;
 
 				System.out.println("Sono alla cella " + cnt++ + " di " + sourceCells.size());
-				
+
 				Double pet = petState.get(locator, Double.class);
 				Double runoff = runoffVolumeState.get(locator, Double.class);
 				Double rain = rainfallVolumeState.get(locator, Double.class);
@@ -150,7 +153,9 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
 					// go downstream
 					Pair<Cell, Orientation> downCell = Geospace.getDownstreamCellWithOrientation(sourceCell,
 							flowdirectionState);
-					
+
+					Set<Long> seen = new HashSet<>();
+
 					while (downCell != null) {
 
 						Cell cell = downCell.getFirst();
@@ -207,6 +212,15 @@ public class InfiltratedWaterVolumeResolver implements IResolver<IProcess>, IExp
 							}
 
 							downCell = Geospace.getDownstreamCellWithOrientation(cell, flowdirectionState);
+
+							if (downCell != null) {
+								if (seen.contains(downCell.getFirst().getOffsetInGrid())) {
+									downCell = null;
+								} else {
+									seen.add(downCell.getFirst().getOffsetInGrid());
+								}
+							}
+
 						} else {
 							break;
 						}
