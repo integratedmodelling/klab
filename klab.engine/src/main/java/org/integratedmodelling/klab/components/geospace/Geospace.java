@@ -131,11 +131,6 @@ public class Geospace {
 
         List<Cell> ret = new ArrayList<>();
         
-        double fd = flowDirectionsD8.get(cell, Double.class);
-        if (Observations.INSTANCE.isNodata(fd)) {
-        	System.out.println("HOLA");
-        }
-
         Cell neighbor = cell.getNeighbor(Orientation.NW);
         if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 8) {
             if (check == null || check.apply(neighbor))
