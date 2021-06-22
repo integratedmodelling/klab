@@ -360,6 +360,13 @@ public class ResolutionScope implements IResolutionScope {
             throws KlabException {
         return new ResolutionScope(contextSubject, monitor, scenarios);
     }
+    
+    public static ResolutionScope create(Subject contextSubject, IMonitor monitor, INamespace namespace, Collection<String> scenarios)
+            throws KlabException {
+        ResolutionScope ret = new ResolutionScope(contextSubject, monitor, scenarios);
+        ret.resolutionNamespace = (Namespace)namespace;
+        return ret;
+    }
 
     private ResolutionScope(IMonitor monitor) throws KlabException {
         this.coverage = Coverage.empty(Scale.create());

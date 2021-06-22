@@ -828,6 +828,10 @@ public enum Observables implements IObservableService {
     @Override
     public Observable contextualizeTo(IObservable observable, IConcept newContext, boolean isExplicit, IMonitor monitor) {
 
+    	if (!OWL.INSTANCE.isSemantic(observable)) {
+    		return (Observable)observable;
+    	}
+    	
         IConcept originalContext = getContextType(observable.getType());
         if (originalContext != null && originalContext.equals(newContext)) {
             return (Observable) observable;

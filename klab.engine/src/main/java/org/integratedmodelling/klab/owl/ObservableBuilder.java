@@ -743,7 +743,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.CHANGE.name());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.CHANGE.name(), ((Concept)concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -800,7 +800,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.ASSESSMENT.name());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.ASSESSMENT.name(), ((Concept)concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -851,7 +851,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.COUNT.name());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.COUNT.name(), ((Concept)concept).getTypeSet());
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_COUNT, conceptId));
@@ -897,7 +897,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.DISTANCE.name());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.DISTANCE.name(), ((Concept)concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -943,7 +943,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PRESENCE.name());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PRESENCE.name(), ((Concept)concept).getTypeSet());
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
             ax.add(Axiom.SubClass(NS.CORE_PRESENCE, conceptId));
@@ -990,7 +990,7 @@ public class ObservableBuilder implements IObservable.Builder {
         if (conceptId == null) {
 
             conceptId = ontology.createIdForDefinition(definition);
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OCCURRENCE.name());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OCCURRENCE.name(), ((Concept)concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1038,7 +1038,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OBSERVABILITY.name());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.OBSERVABILITY.name(), ((Concept)concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1084,7 +1084,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.MAGNITUDE.name());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.MAGNITUDE.name(), ((Concept)concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1130,7 +1130,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.LEVEL.name());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.LEVEL.name(), ((Concept)concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1176,7 +1176,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PROBABILITY.name());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.PROBABILITY.name(), ((Concept)concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1217,7 +1217,7 @@ public class ObservableBuilder implements IObservable.Builder {
         if (conceptId == null) {
 
             conceptId = ontology.createIdForDefinition(definition);
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.UNCERTAINTY.name());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.UNCERTAINTY.name(), ((Concept)concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1265,7 +1265,7 @@ public class ObservableBuilder implements IObservable.Builder {
             conceptId = ontology.createIdForDefinition(definition);
 
             EnumSet<Type> newType = Kim.INSTANCE
-                    .getType(isPercentage ? UnarySemanticOperator.PERCENTAGE.name() : UnarySemanticOperator.PROPORTION.name());
+                    .getType(isPercentage ? UnarySemanticOperator.PERCENTAGE.name() : UnarySemanticOperator.PROPORTION.name(), ((Concept)concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1313,7 +1313,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.RATIO.name());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.RATIO.name(), ((Concept)concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1371,7 +1371,7 @@ public class ObservableBuilder implements IObservable.Builder {
             conceptId = ontology.createIdForDefinition(definition);
 
             EnumSet<Type> newType = Kim.INSTANCE
-                    .getType(monetary ? UnarySemanticOperator.MONETARY_VALUE.name() : UnarySemanticOperator.VALUE.name());
+                    .getType(monetary ? UnarySemanticOperator.MONETARY_VALUE.name() : UnarySemanticOperator.VALUE.name(), ((Concept)concept).getTypeSet());
 
             ArrayList<IAxiom> ax = new ArrayList<>();
             ax.add(Axiom.ClassAssertion(conceptId, newType));
@@ -1416,7 +1416,7 @@ public class ObservableBuilder implements IObservable.Builder {
 
             conceptId = ontology.createIdForDefinition(definition);
 
-            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.TYPE.name());
+            EnumSet<Type> newType = Kim.INSTANCE.getType(UnarySemanticOperator.TYPE.name(), ((Concept)classified).getTypeSet());
 
             List<IAxiom> axioms = new ArrayList<>();
             axioms.add(Axiom.ClassAssertion(conceptId, newType));

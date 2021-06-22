@@ -1,0 +1,371 @@
+= Syntax test
+Test
+v1.0, 2021-02-27
+:doctype: article
+:description:
+:kl: k.LAB
+:kmod: k.Modeler
+:kact: k.Actors
+:keng: k.LAB Engine
+:knod: k.LAB Node
+:kim: k.IM
+:ked: k.LAB Resource Editor
+:kex: k.LAB Explorer
+:pex: Project Explorer
+:encoding: utf-8
+:lang: en
+:title-page:
+:toc: left
+:toclevels: 5
+:sectnums:
+:sectnumlevels: 5
+:numbered:
+:experimental:
+:reproducible:
+:icons: font
+:listing-caption: Listing
+:sectnums:
+:autofit-option:
+:mdash: &#8212;
+:language: asciidoc
+:source-highlighter: highlightjs
+:highlightjs-languages: kim, java
+:highlightjs-theme: klab
+// :highlightjs-dir: ./build
+:stem:
+
+<<<
+
+[source,kim,linenums]
+----
+// example with model
+private namespace exportraster;
+
+model local:moovida:moovida.fiddlearound:raster_categories_test
+	as type of im:Relevant landcover:Pastureland biology:Plant
+	 classified into
+	    biology.nomenclature:UlexGallii       if 28,
+	    biology.nomenclature:UlexEuropaeus    if 41,
+	    biology.nomenclature:FestucaRubra	  if 7,
+	    biology.nomenclature:Calluna       	  if 4,
+	    biology.nomenclature:Helictotrichon   if 12,
+	    biology.nomenclature:Senecio   	  if 27,
+	    biology.nomenclature:Carex    	  if 36,
+	    biology.nomenclature:Phragmites       if 15,
+	    biology.nomenclature:Gramineae	  if 37;   
+----
+
+[source,kim,linenums]
+----
+// example as snippet taken from worldview
+namespace geography
+	using im, earth, physical
+	in domain im:Geography
+;
+
+angle Heading
+	"A direction relative to the geographical North of the earth.";
+
+@colormap(name='elevation')
+length Elevation 
+	"Geographical elevation above sea level, as described by a digital
+	 elevation model."
+	is im:Height of earth:Location
+    has children 
+		(LidarElevation 
+			"Elevation at edge of any reflective surface including canopy and buildings"
+		 );
+		 
+length BathymetricDepth
+	"Depth of earth's crust below sea level, as described by a digital bathymetry model."
+	is im:Height of earth:Location
+;
+
+@colormap(values = {0: white, 90: black})
+angle Slope
+	"Inclination of the above-water terrain in a geographical region."
+	is im:Angle of earth:Location;
+
+angle StreamGradient
+	is im:Angle of earth:Stream;
+
+angle BathymetricSlope
+	"Inclination of the below-water terrain in a geographical region."
+	is im:Angle of earth:Location;
+	
+length SlopeLength 
+	""
+	is im:Length of earth:Location
+;
+	
+angle Aspect 
+	"The compass direction that a slope faces. For example, a slope on the
+	 eastern edge of the Rockies toward the Great Plains is described as having 
+	an easterly aspect."
+	is im:Angle of /* physical:MagneticPlanetaryOrientation earth:Terrain within */ earth:Location
+;
+----
+
+[source,kim,linenums]
+----
+// testcase example
+worldview im;
+
+@test(
+    name = "etnasnap",
+    description  = "",
+    observations = ("geography:Elevation"),
+    assertions = ()
+)
+observe earth:Region named etnasnap
+	over space(shape = "EPSG:4326 POLYGON (( 14.8336 37.8513, 14.8336 37.6126, 15.1375 37.6126, 15.1375 37.8513, 14.8336 37.8513 ))" 
+		, grid="1000 m"  
+	)
+;
+----
+
+[source,kim,linenums]
+----
+define IUCN_GLOBAL_ECOSYSTEMS as {{
+		   landcover               		    | aridity	   | mean_annual_temperature | mean_warm_month_temperature | mountain | elevation | ecosystem_type
+	-------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+		landcover:Forest 					| >= 0.65	   |	  >=18				 |   * 					       | false    |  * 		| es.nca:TropicalSubtropicalLowlandRainforest    ,
+		landcover:Forest 					| 0.05 to 0.65 |	  >=18				 |   * 					       | *        |  * 		| es.nca:TropicalSubtropicalDryForestScrub     	 ,
+		landcover:Forest 					| >= 0.65	   |	  >=18				 |   * 					       | true     |  * 		| es.nca:TropicalSubtropicalMontaneRainforest    ,
+		landcover:Forest					| *		 	   |	  0 to 18		     |   *					       | *        |  * 		| es.nca:TemperateForest 						 ,
+		landcover:Forest					| *		 	   |	  <= 0				 |   *					       | *        |  * 		| es.nca:BorealTemperateMontaneForestWoodland 	 ,
+		landcover:ScrubHerbaceousVegetation	| 0.03 to 0.2  |	  0 to 10			 |   * 					       | *        |  * 		| es.nca:CoolDesertSemidesert      				 ,
+		landcover:SeminaturalOpenSpace		| 0.03 to 0.2  |	  0 to 10			 |   * 					       | *        |  * 		| es.nca:CoolDesertSemidesert					 ,
+		landcover:ScrubHerbaceousVegetation	| <= 0.03	   |	  > 0				 |   * 					       | *        |  * 		| es.nca:HyperaridDesert      					 ,
+		landcover:SeminaturalOpenSpace		| <= 0.03	   |	  > 0				 |   * 					       | *        |  * 		| es.nca:HyperaridDesert						 ,
+		landcover:ScrubHerbaceousVegetation	| 0.03 to 0.2  |	  >= 10				 |   * 					       | *        |  * 		| es.nca:OtherDesertSemidesert      			 ,
+		landcover:SeminaturalOpenSpace		| 0.03 to 0.2  |	  >= 10				 |   * 					       | *        |  * 		| es.nca:OtherDesertSemidesert     				 ,
+		landcover:Shrubland 				| > 0.2 	   |	  >=24				 |   * 						   | *        |  * 		| es.nca:SeasonallyDryTropicalShrubland     	 ,
+		landcover:BareArea 					| > 0.2 	   |	  *					 |   >=14				       | *        |  * 		| es.nca:YoungRockyPavementLavaflowScree     	 ,
+		landcover:BareArea 					| > 0.2 	   |	  0 to 13			 |   <14				       | *        |  * 		| es.nca:YoungRockyPavementLavaflowScree     	 ,
+		landcover:LichenMoss 				| > 0.2 	   |	  *					 |   >=14				       | *        |  * 		| es.nca:YoungRockyPavementLavaflowScree      	 ,
+		landcover:LichenMoss 				| > 0.2 	   |	  0 to 13			 |   <14				       | *        |  * 		| es.nca:YoungRockyPavementLavaflowScree      	 ,
+		landcover:SparseVegetation			| > 0.2 	   |	  *					 |   >=14				       | *        |  * 		| es.nca:YoungRockyPavementLavaflowScree      	 ,
+		landcover:SparseVegetation			| > 0.2 	   |	  0 to 13			 |   <14				       | *        |  * 		| es.nca:YoungRockyPavementLavaflowScree      	 ,
+		landcover:ScrubHerbaceousVegetation | > 0.2        |      <=10               |   >=14                      | *        |  *      | es.nca:CoolTemperateHeathland					 ,
+		landcover:ScrubHerbaceousVegetation | > 0.2        |      0 to 10            |   *	                       | *        |  *      | es.nca:CoolTemperateHeathland					 ,
+		landcover:Shrubland 				| > 0.2 	   |	  10 to 24			 |   * 						   | *        |  * 		| es.nca:SeasonallyDryTemperateHeathShrubland    ,
+		landcover:Grassland 				| > 0.2 	   |	  10 to 18			 |   * 					       | *        |  * 		| es.nca:TemperateSubhumidGrassland      		 ,
+		landcover:TransitionalWoodlandScrub | > 0.2 	   |	  10 to 18			 |   * 					       | *        |  * 		| es.nca:TemperateWoodland						 ,
+		landcover:Grassland 				| > 0.2 	   |	  >=18				 |   * 					       | *        |  * 		| es.nca:TropicalSubtropicalSavanna     		 ,
+		landcover:TransitionalWoodlandScrub | > 0.2 	   |	  >=18				 |   * 					       | *        |  * 		| es.nca:TropicalSubtropicalSavanna		      	 ,
+		landcover:ScrubHerbaceousVegetation	| *			   | 	  <= 0				 |  <14 					   | *        |  * 		| es.nca:PolarAlpineTundra      				 ,
+		landcover:LichenMoss				| *			   |	  <= 0				 |  <14 					   | *        |  * 		| es.nca:PolarAlpineTundra      				 ,
+		landcover:SparseVegetation			| *			   |	  <= 0				 |  <14 					   | *        |  * 		| es.nca:PolarAlpineTundra      				 ,
+		landcover:BurnedLand				| *			   |	  <= 0				 |  <14						   | *        |  * 		| es.nca:PolarAlpineTundra      				 ,
+		landcover:BareArea					| *			   |	  <= 0				 |  <14 					   | *        |  * 		| es.nca:PolarAlpineCliffScreeOutcropLavaFlow	 ,
+		landcover:GlacierAndPerpetualSnow 	| *			   |	  *					 |   * 					       | *        |  * 		| es.nca:IceSheetGlacierPermanentSnowfield		 ,
+		landcover:ArtificialSurface 		| * 		   |	  *					 |   * 					       | *        |  * 		| es.nca:UrbanEcosystem			 				 ,
+		landcover:AgriculturalVegetation 	| * 		   |	  *					 |   * 					       | *        |  * 		| es.nca:Cropland				      			 ,
+		landcover:Mangrove 					| *			   |	  *					 |   * 					       | *        |  * 		| es.nca:IntertidalForestShrubland      		 ,
+		landcover:InlandSwamp	 			| *			   |	  >=24				 |   * 					       | *        |  * 		| es.nca:TropicalFloodedForestPeatForest		 ,
+		landcover:InlandSwamp	 			| *			   |	  10 to 24			 |   * 					       | *        |  * 		| es.nca:SubtropicalWarmTemperateForestedWetland ,
+		landcover:InlandSwamp	 			| *			   |	  <=10				 |   * 					       | *        |  * 		| es.nca:BorealCoolTemperatePalustrineWetland	 ,
+		landcover:Wetland                   | >= 0.65	   |	  >10				 |   * 					       | *        |  > 5 	| es.nca:WarmTemperateTropicalMarsh 			 ,
+		landcover:Wetland                   | < 0.65	   |	  >10				 |   * 					       | *        |  > 5 	| es.nca:EpisodicAridFloodplain					 ,
+		landcover:Forest 					| <=0.05	   |	  >=18				 |   * 					       | *        |  * 		| es.nca:EpisodicAridFloodplain			     	 ,
+		landcover:Wetland                   | *			   |	  <=10				 |   * 					       | *        |  > 5 	| es.nca:BorealCoolTemperatePalustrineWetland	 ,
+		landcover:Wetland                   | *			   |	  *					 |   * 					       | *        |  <= 5 	| es.nca:CoastalSaltmarsh						 ,
+		landcover:WaterBody 				| *			   |	  *					 |   * 					       | *        |  * 		| es.nca:Aquatic      					
+}};
+----
+
+[source,java,linenums]
+----
+package org.integratedmodelling.klab.raster.files;
+
+import java.awt.image.DataBuffer;
+import java.io.File;
+import java.io.IOException;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import org.geotools.coverage.grid.GridCoverage2D;
+import org.geotools.gce.geotiff.GeoTiffWriter;
+import org.integratedmodelling.kim.api.IParameters;
+import org.integratedmodelling.klab.Logging;
+import org.integratedmodelling.klab.api.data.IGeometry.Dimension.Type;
+import org.integratedmodelling.klab.api.data.ILocator;
+import org.integratedmodelling.klab.api.data.IResource;
+import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IState;
+import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
+import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.data.adapters.AbstractFilesetImporter;
+import org.integratedmodelling.klab.ogc.RasterAdapter;
+import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Triple;
+
+import it.geosolutions.imageio.plugins.tiff.BaselineTIFFTagSet;
+
+public class RasterImporter extends AbstractFilesetImporter {
+
+    RasterValidator validator = new RasterValidator();
+
+    public RasterImporter() {
+        super(RasterAdapter.fileExtensions.toArray(new String[RasterAdapter.fileExtensions.size()]));
+    }
+
+    @Override
+    protected Builder importFile( File file, IParameters<String> userData, IMonitor monitor ) {
+        try {
+
+            Builder builder = validator.validate(file.toURI().toURL(), userData, monitor);
+
+            if (builder != null) {
+                String layerId = MiscUtilities.getFileBaseName(file).toLowerCase();
+                builder.withLocalName(layerId).setResourceId(layerId);
+                for( File f : validator.getAllFilesForResource(file) ) {
+                    builder.addImportedFile(f);
+                }
+            }
+
+            return builder;
+
+        } catch (MalformedURLException e) {
+            Logging.INSTANCE.error(e);
+            return null;
+        }
+    }
+
+    @Override
+    public Collection<Triple<String, String, String>> getExportCapabilities( IObservation observation ) {
+        List<Triple<String, String, String>> ret = new ArrayList<>();
+
+        if (observation instanceof IState) {
+            if (observation.getScale().getSpace() != null && observation.getScale().getSpace().isRegular()
+                    && observation.getScale().isSpatiallyDistributed()) {
+                ret.add(new Triple<>("tiff", "GeoTIFF raster", "tiff"));
+                ret.add(new Triple<>("png", "PNG image", "png"));
+            }
+        }
+
+        return ret;
+    }
+
+    @Override
+    public File exportObservation( File file, IObservation observation, ILocator locator, String format, IMonitor monitor ) {
+
+        if (observation instanceof IState && observation.getGeometry().getDimension(Type.SPACE) != null) {
+
+            if (observation.getScale().isSpatiallyDistributed() && observation.getScale().getSpace().isRegular()) {
+
+                GridCoverage2D coverage = GeotoolsUtils.INSTANCE.stateToCoverage((IState) observation, locator,
+                        DataBuffer.TYPE_FLOAT, Float.NaN, true);
+
+                if (format.equalsIgnoreCase("tiff")) {
+                    try {
+                        GeoTiffWriter writer = new GeoTiffWriter(file);
+
+                        writer.setMetadataValue(Integer.toString(BaselineTIFFTagSet.TAG_SOFTWARE),
+                                "k.LAB (www.integratedmodelling.org)");
+
+                        writer.write(coverage, null);
+                        return file;
+                    } catch (IOException e) {
+                        return null;
+                    }
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @Override
+    public Map<String, String> getExportCapabilities( IResource resource ) {
+        Map<String, String> ret = new HashMap<>();
+        ret.put("tiff", "GeoTiff");
+        return ret;
+    }
+
+    @Override
+    public boolean exportResource( File file, IResource resource, String format ) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean importIntoResource( URL importLocation, IResource target, IMonitor monitor ) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean resourceCanHandle( IResource resource, String importLocation ) {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+    @Override
+    public boolean acceptsMultiple() {
+        // TODO Auto-generated method stub
+        return false;
+    }
+
+}
+----
+
+[source,kim,linenums]
+----
+@documented(pollination)
+namespace aries.global.pollination
+	using (FLOWERING_PROBABILITY_TABLE, NESTING_PROBABILITY_TABLE) 
+		from aries.global.pollination.tables;
+
+@documented(pollination.nesting-suitability)
+model occurrence of agriculture:Pollinator ecology:Nesting
+	observing landcover:LandCoverType without landcover:WaterBody named landcover
+	lookup (landcover) into NESTING_PROBABILITY_TABLE;
+
+@documented(pollination.flower-availability)
+model probability of ecology:Flowering
+	observing landcover:LandCoverType without landcover:WaterBody named landcover
+	lookup (landcover) into FLOWERING_PROBABILITY_TABLE;
+
+@documented(pollination.insectoccurrence.landscape)	
+model occurrence of agriculture:Pollinator biology:Insect caused by ecology:Landscape named landscape_suitability
+	observing
+	    landcover:LandCoverType named landcover_type,
+		probability of ecology:Flowering named flowering_suitability,
+		occurrence of agriculture:Pollinator ecology:Nesting named nesting_suitability
+	set to [(landcover_type is landcover:WaterBody)? unknown : (
+		     nesting_suitability * flowering_suitability)]; 
+
+@documented(pollination.insectoccurrence.weather)	
+model occurrence of agriculture:Pollinator biology:Insect caused by earth:Weather
+	observing
+		earth:AtmosphericTemperature in Celsius named air_temperature,
+		earth:SolarRadiation in J named solar_radiation
+	set to [0.62 + 1.027 * air_temperature + 0.006 * solar_radiation];
+	
+@documented(pollination.insectoccurrence)	
+model occurrence of agriculture:Pollinator biology:Insect
+	observing 
+		occurrence of agriculture:Pollinator biology:Insect caused by earth:Weather 
+			named insect_activity,
+		occurrence of agriculture:Pollinator biology:Insect caused by ecology:Landscape
+			named landscape_suitability
+	set to [insect_activity/insect_activity.max * landscape_suitability];
+	
+@main		
+@documented(pollination.netbenefit)	
+model im:Net value of ecology:Pollination
+	observing
+		im:Normalized ratio of agriculture:Pollinated agriculture:Yield to agriculture:Yield
+			named pollinated_yield,
+		occurrence of agriculture:Pollinator biology:Insect 
+			named pollinator_occurrence
+	set to [pollinator_occurrence - pollinated_yield];
+----

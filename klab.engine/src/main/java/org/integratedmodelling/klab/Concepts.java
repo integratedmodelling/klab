@@ -382,6 +382,9 @@ public enum Concepts implements IConceptService {
      */
     public Set<IConcept> collectComponents(IConcept observable, Set<Type> types) {
         Set<IConcept> ret = new HashSet<>();
+        if (!OWL.INSTANCE.isSemantic(observable)) {
+        	return ret;
+        }
         IKimConcept peer = declare(observable.getDefinition());
         peer.visit(new DefaultVisitor(){
             @Override
@@ -605,7 +608,7 @@ public enum Concepts implements IConceptService {
         if (ret == null) {
 
             List<IAxiom> axioms = new ArrayList<>();
-            EnumSet<Type> type = Kim.INSTANCE.getType("identity");
+            EnumSet<Type> type = Kim.INSTANCE.getType("identity", null);
             type.add(Type.AUTHORITY_IDENTITY);
 
             // lookup parent if any; otherwise ensure we have a suitable parent

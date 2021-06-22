@@ -77,18 +77,23 @@ The set of active, connected nodes and engines at any given time forms what can 
 
 The full separation of concerns and APIs in the three layers maximizes their value: for example, the resources layer can be seen through different worldviews, therefore serving different purposes in different networks by reinterpreting it through the logical "lens" of a differently configured semantic layer.
 
-## Resources 
+GENERAL ARCHITECTURE: non-semantic resources (data, model components) annotated with semantics to produce _models_ which can be _contextualized_ in a space and time _context_ to produce _observations_ that describe those concepts in the context. These can be potentially provided with _behaviors_. Subito: EXAMPLE OF USE (model x as). Source (model urn as). Internals first: literals (model 1 as), processing (model X as using ....).
 
-Resources have URNs (data, computations), geometry, and data type. One or more inputs/outputs and attributes. Simple API encompasses all conventional computations. Main service: resolve URN in context -> return non-semantic artifact. If resource is computed, submitting input values may be necessary and the geometry specifies the form. 
+## Shared resources 
+
+Shared resources available on the network have URNs (data, computations), geometry, and data type. One or more inputs/outputs and attributes. Simple API encompasses all conventional computations. Main service: resolve URN in context -> return non-semantic artifact. If resource is computed, submitting input values may be necessary and the geometry specifies the form. 
  
 Adapters (for data, data services, computations, modeling services from WPS to large models). Current adapters for x....
 I/O: modeler, node web UI
-Lifecycle and rolling peer review. URN or DOIs (eventually). Clients. Permissions and access.
+Lifecycle and rolling peer review. URN or DOIs (eventually). In special cases handled by the {kim} language, also literals or function calls. Clients. Permissions and access.
+
+Besides data: resources are also "internally" implemented algorithms (from the core software or plug-in extensions) called as functions; literal values; or special URNs handled directly w/o referring to external or imported data (e.g. random). Uniformity with "function calls" makes it possible to insulate all the semantics within the semantic layer. 
+The {kim} language also allows defining "non-semantic models" which are resources.
 No semantics at this level: what comes next
 
 ## Semantic modeling
 
-Semantic layer: provide a shared _worldview_ (a logically organized knowledge base of concepts and relationships) and allow its linking to resource URNs by way of _models_, i.e. semantic annotations that specify the meaning associated with resources and, when applicable, their inputs, outputs and attributes. The pool of models constitutes the semantic layer, which is mined by the resolution algorithm to resolve a logical query to a computed scientific artifact. 
+Semantic modeling enables the _semantic annotation_ of non-semantic resources provide a shared _worldview_ (a logically organized knowledge base of concepts and relationships) and allow its linking to resource URNs by way of _models_, i.e. semantic annotations that specify the meaning associated with resources and, when applicable, their inputs, outputs and attributes. The pool of models constitutes the semantic layer, which is mined by the resolution algorithm to resolve a logical query to a computed scientific artifact. 
 
 Relies on the k.IM language, is the linguistic framework: separation of attributes, traits etc using composition rules. While the underlying knowledge model is OWL 2.0, k.IM simplifies use and acceptance due to clarity coming from separation of concerns and traceability of meaning. Examples.
 
