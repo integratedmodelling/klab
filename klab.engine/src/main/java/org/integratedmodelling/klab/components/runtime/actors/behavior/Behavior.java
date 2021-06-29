@@ -53,9 +53,11 @@ public class Behavior implements IBehavior {
     public static class Match {
 
         KActorsValue value;
+        String matchName;
 
-        public Match(IKActorsValue ikActorsValue) {
+        public Match(IKActorsValue ikActorsValue, String matchName) {
             this.value = (KActorsValue) ikActorsValue;
+            this.matchName = matchName;
         }
 
         public IKActorsValue getValue() {
@@ -64,6 +66,10 @@ public class Behavior implements IBehavior {
 
         private boolean notMatch(Object value) {
             return value == null || value instanceof Throwable || (value instanceof Boolean && !((Boolean) value));
+        }
+        
+        public String getMatchName() {
+            return matchName;
         }
 
         /**

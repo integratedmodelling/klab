@@ -1,0 +1,17 @@
+/**
+ * Interface contextualizers for the morphometry functionalities in JGrasstools / Horton machine.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace klab.random
+
+export process proc
+	"Simulates a process that produces as many random artifacts as configured. Set generating functions as parameters with
+	 the ID of any model outputs."
+	label 'Random process'
+{
+		
+	geometry T1S2
+
+	class org.integratedmodelling.random.services.RandomProcessResolver
+}

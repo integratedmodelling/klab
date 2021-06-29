@@ -96,16 +96,14 @@ public class ReportElement {
             node.setId(((Figure) element).getId());
             node.setFigure((Figure) element);
             node.setType(Type.Figure);
-            report.notify(node);
+            report.notify(report.checkForUpdate(node));
         } else if (element instanceof Table) {
             node.setTable((Table) element);
             node.setType(Type.Table);
             // nodes.put(node.getId(), node);
             report.notify(node);
-        } else {
-            System.out.println("DIOCANE");
         }
-
+        
         return node;
     }
 

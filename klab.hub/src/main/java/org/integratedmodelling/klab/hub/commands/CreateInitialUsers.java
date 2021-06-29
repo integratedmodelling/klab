@@ -98,6 +98,7 @@ public class CreateInitialUsers {
 		GroupEntry im = new GroupEntry(new GetMongoGroupByName("IM", groupRepository).execute());
 		GroupEntry aries = new GroupEntry(new GetMongoGroupByName("ARIES", groupRepository).execute());
 		GroupEntry alice = new GroupEntry(new GetMongoGroupByName("ALICE", groupRepository).execute());
+		GroupEntry seea = new GroupEntry(new GetMongoGroupByName("SEEA", groupRepository).execute(), DateTime.now().plusDays(10));
 		Set<GroupEntry> entries = new HashSet<GroupEntry>();
 		entries.add(im);
 		entries.add(aries);
@@ -146,6 +147,7 @@ public class CreateInitialUsers {
         system.addGroupEntries(aries);
         system.addGroupEntries(im);
         system.addGroupEntries(alice);
+        system.addGroupEntries(seea);
         hades.addGroupEntries(aries);
         hades.addGroupEntries(im);
         developerS.addGroupEntries(aries);

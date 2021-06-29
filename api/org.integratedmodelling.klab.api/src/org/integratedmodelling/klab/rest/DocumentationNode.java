@@ -466,7 +466,7 @@ public class DocumentationNode {
          * make it what we want.
          */
         private String numberFormat;
-        
+
         /**
          * The 'name' attribute in table view specs, used from inside docs for tables pertaining to
          * a group from which one may be present.
@@ -496,14 +496,13 @@ public class DocumentationNode {
         public void setNumberFormat(String numberFormat) {
             this.numberFormat = numberFormat;
         }
-        
+
         public String getDocumentationIdentifier() {
             return documentationIdentifier;
         }
         public void setDocumentationIdentifier(String documentationIdentifier) {
             this.documentationIdentifier = documentationIdentifier;
         }
-
 
     }
 
@@ -523,6 +522,8 @@ public class DocumentationNode {
          * at least one value for initialization).
          */
         private String baseUrl;
+        private long startTime;
+        private long endTime;
 
         /**
          * A label per each of the available timeslices. If empty, image is not an observation but
@@ -606,6 +607,18 @@ public class DocumentationNode {
         }
         public void setOriginalHeight(int originalHeight) {
             this.originalHeight = originalHeight;
+        }
+        public long getEndTime() {
+            return endTime;
+        }
+        public void setEndTime(long endTime) {
+            this.endTime = endTime;
+        }
+        public long getStartTime() {
+            return startTime;
+        }
+        public void setStartTime(long startTime) {
+            this.startTime = startTime;
         }
     }
 

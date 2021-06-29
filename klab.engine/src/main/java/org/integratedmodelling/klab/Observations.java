@@ -155,10 +155,15 @@ public enum Observations implements IObservationService {
         // JUST INDEX BY TIME.START or -1 and set this in the state.
 
         long time = -1;
-        if (locator instanceof IScale && ((IScale) locator).getTime() != null) {
-            time = ((IScale) locator).getTime().getStart().getMilliseconds();
-        } else if (locator instanceof ITime) {
-            time = ((ITime) locator).getStart().getMilliseconds();
+
+        if (state instanceof State) {
+            time = ((State) state).getStorage().getTemporalOffset(locator);
+        } else {
+            if (locator instanceof IScale && ((IScale) locator).getTime() != null) {
+                time = ((IScale) locator).getTime().getStart().getMilliseconds();
+            } else if (locator instanceof ITime) {
+                time = ((ITime) locator).getStart().getMilliseconds();
+            }
         }
 
         StateSummary ret = null;
@@ -867,7 +872,7 @@ public enum Observations implements IObservationService {
                     String outfile = Concepts.INSTANCE.getCodeName(artifact.getObservable().getType()) + "."
                             + format.getExtension();
                     if (locator instanceof TimesliceLocator) {
-                        String timedir = ((TimesliceLocator) locator).getLabel().replaceAll("\\s+", "_").replaceAll(":", "-")
+                        String timedir = ((TimesliceLocator) locator).getLabel().replaceAll("\\s+", "_").replaceAll(":", "-").replaceAll("/", "-")
                                 .toLowerCase();
                         File dir = new File(stagingArea + File.separator + timedir);
                         dir.mkdir();
@@ -878,7 +883,7 @@ public enum Observations implements IObservationService {
                         output = export(artifact, locator, output, format.getValue(), format.getAdapter(), monitor);
                     } else {
                         output = export(artifact, locator, output, format.getValue(), format.getAdapter(), monitor,
-                            IResourceImporter.OPTION_DO_NOT_ZIP_MULTIPLE_FILES, true);
+                                IResourceImporter.OPTION_DO_NOT_ZIP_MULTIPLE_FILES, true);
                     }
                     output.deleteOnExit();
                     exports.add(output);

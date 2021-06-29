@@ -71,11 +71,10 @@ import org.jgrapht.Graph;
 import org.jgrapht.graph.DefaultDirectedGraph;
 
 /**
- * Trivial context that will only build simple hierarchies and observations.
- * Meant for quick visualization of non-semantic structures so far. May need to
- * be completed with all its parts to load previously contextualized
- * observations with relationships and other complex interactions. Borrows
- * observations from the default runtime.
+ * Trivial context that will only build simple hierarchies and observations. Meant for quick
+ * visualization of non-semantic structures so far. May need to be completed with all its parts to
+ * load previously contextualized observations with relationships and other complex interactions.
+ * Borrows observations from the default runtime.
  * 
  * @author ferdinando.villa
  *
@@ -99,7 +98,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     Map<String, IObservable> semantics;
     Map<String, IVariable> symbolTable = new HashMap<>();
 
-    public SimpleRuntimeScope( Actuator actuator ) {
+    public SimpleRuntimeScope(Actuator actuator) {
         this.observable = actuator.getObservable();
         this.scale = actuator.getDataflow().getScale();
         this.structure = new Structure();
@@ -117,7 +116,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
      * @param scale
      * @param monitor
      */
-    public SimpleRuntimeScope( IObservable observable, IScale scale, IMonitor monitor ) {
+    public SimpleRuntimeScope(IObservable observable, IScale scale, IMonitor monitor) {
         this.observable = observable;
         this.scale = scale;
         this.structure = new Structure();
@@ -136,12 +135,12 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     /**
-     * Just meant to carry around a monitor and identity for actors. Useless and
-     * likely to break when used in contextualization!
+     * Just meant to carry around a monitor and identity for actors. Useless and likely to break
+     * when used in contextualization!
      * 
      * @param session
      */
-    public SimpleRuntimeScope( ISession session ) {
+    public SimpleRuntimeScope(ISession session) {
         this.structure = new Structure();
         this.network = new DefaultDirectedGraph<>(Relationship.class);
         this.artifacts = new HashMap<>();
@@ -150,7 +149,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         this.monitor = session.getMonitor();
     }
 
-    public SimpleRuntimeScope( IMonitor monitor ) {
+    public SimpleRuntimeScope(IMonitor monitor) {
         this.structure = new Structure();
         this.network = new DefaultDirectedGraph<>(Relationship.class);
         this.artifacts = new HashMap<>();
@@ -159,7 +158,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         this.monitor = monitor;
     }
 
-    public SimpleRuntimeScope( SimpleRuntimeScope parent ) {
+    public SimpleRuntimeScope(SimpleRuntimeScope parent) {
         this.scale = parent.scale;
         this.structure = parent.structure;
         this.network = parent.network;
@@ -332,7 +331,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
     @Override
     public IDirectObservation getParentOf(IObservation observation) {
-        for(IArtifact source : this.structure.getLogicalParent(observation)) {
+        for (IArtifact source : this.structure.getLogicalParent(observation)) {
             if (source instanceof IDirectObservation) {
                 return (IDirectObservation) source;
             }
@@ -391,11 +390,11 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         this.scale = geometry;
     }
 
-//	@Override
-//	public void processAnnotation(IAnnotation annotation) {
-//		// TODO Auto-generated method stub
-//
-//	}
+    // @Override
+    // public void processAnnotation(IAnnotation annotation) {
+    // // TODO Auto-generated method stub
+    //
+    // }
 
     @Override
     public Provenance getProvenance() {
@@ -412,7 +411,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     @SuppressWarnings("unchecked")
     public <T extends IArtifact> Collection<T> getChildren(IArtifact artifact, Class<T> cls) {
         List<T> ret = new ArrayList<>();
-        for(IArtifact source : this.structure.getLogicalChildren(artifact)) {
+        for (IArtifact source : this.structure.getLogicalChildren(artifact)) {
             if (cls.isAssignableFrom(source.getClass())) {
                 ret.add((T) source);
             }
@@ -420,16 +419,15 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return ret;
     }
 
-//	@Override
-//	public void link(IArtifact parent, IArtifact child) {
-//		this.structure.add(child);
-//		this.structure.link(child, parent);
-//	}
+    // @Override
+    // public void link(IArtifact parent, IArtifact child) {
+    // this.structure.add(child);
+    // this.structure.link(child, parent);
+    // }
 
     /**
-     * Return a child context that can be used to build the observation of the
-     * passed resource in our scale. If the observable is null, create a
-     * non-semantic observable.
+     * Return a child context that can be used to build the observation of the passed resource in
+     * our scale. If the observable is null, create a non-semantic observable.
      * 
      * @param resource
      * @return
@@ -444,8 +442,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
         SimpleRuntimeScope ret = new SimpleRuntimeScope(this);
         if (!resource.getType().isCountable()) {
-            IStorage< ? > data = Klab.INSTANCE.getStorageProvider().createStorage(resource.getType(), getScale());
-            ret.target = new State((Observable) observable, (Scale) scale, this, (IDataStorage< ? >) data);
+            IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(resource.getType(), getScale());
+            ret.target = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>) data);
         } else {
             ret.target = new ObservationGroup((Observable) observable, (Scale) scale, this, resource.getType());
         }
@@ -502,7 +500,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
     @Override
     public Pair<String, IArtifact> findArtifact(IObservable observable) {
-        for(String key : artifacts.keySet()) {
+        for (String key : artifacts.keySet()) {
             IArtifact artifact = artifacts.get(key);
             if (artifact != null && artifact instanceof IObservation
                     && ((Observable) ((IObservation) artifact).getObservable()).resolvesStrictly((Observable) observable)) {
@@ -513,7 +511,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow< ? > dataflow, IResolutionScope scope,
+    public IRuntimeScope createContext(IScale scale, IActuator target, IDataflow<?> dataflow, IResolutionScope scope,
             IMonitor monitor) {
         // TODO Auto-generated method stub
         return null;
@@ -555,15 +553,15 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return null;
     }
 
-//	@Override
-//	public ILocator getCurrentTimeLocator() {
-//		return scale.getTime() == null ? Time.INITIALIZATION : scale.getTime();
-//	}
+    // @Override
+    // public ILocator getCurrentTimeLocator() {
+    // return scale.getTime() == null ? Time.INITIALIZATION : scale.getTime();
+    // }
 
     @Override
     public Collection<IArtifact> getArtifact(IConcept observable) {
         List<IArtifact> ret = new ArrayList<>();
-        for(IArtifact artifact : artifacts.values()) {
+        for (IArtifact artifact : artifacts.values()) {
             if (artifact instanceof IObservation && ((IObservation) artifact).getObservable().getType().is(observable)) {
                 ret.add(artifact);
             }
@@ -578,7 +576,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public IDataflow< ? > getDataflow() {
+    public IDataflow<?> getDataflow() {
         // TODO Auto-generated method stub
         return null;
     }
@@ -606,7 +604,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     public <T extends IArtifact> T getArtifact(IConcept concept, Class<T> cls) {
 
         Set<IArtifact> ret = new HashSet<>();
-        for(IArtifact artifact : artifacts.values()) {
+        for (IArtifact artifact : artifacts.values()) {
             if (artifact instanceof IObservation && ((IObservation) artifact).getObservable().getType().is(concept)) {
                 ret.add(artifact);
             }
@@ -614,7 +612,7 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
 
         Set<IArtifact> chosen = new HashSet<>();
         if (ret.size() > 1) {
-            for(IArtifact artifact : ret) {
+            for (IArtifact artifact : ret) {
                 if (cls.isAssignableFrom(artifact.getClass())) {
                     chosen.add(artifact);
                 }
@@ -665,8 +663,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         IConcept concept = OWL.INSTANCE.getNonsemanticPeer(name, type);
         IObservable observable = Observable.promote(concept);
 
-        IStorage< ? > data = Klab.INSTANCE.getStorageProvider().createStorage(type, scale);
-        IState ret = new State((Observable) observable, (Scale) scale, this, (IDataStorage< ? >) data);
+        IStorage<?> data = Klab.INSTANCE.getStorageProvider().createStorage(type, scale);
+        IState ret = new State((Observable) observable, (Scale) scale, this, (IDataStorage<?>) data);
 
         semantics.put(observable.getName(), observable);
         structure.add(ret);
@@ -683,11 +681,11 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
         return null;
     }
 
-//    @Override
-//    public Collection<IArtifact> getAdditionalOutputs() {
-//        // TODO Auto-generated method stub
-//        return null;
-//    }
+    // @Override
+    // public Collection<IArtifact> getAdditionalOutputs() {
+    // // TODO Auto-generated method stub
+    // return null;
+    // }
 
     @Override
     public IState addState(IDirectObservation target, IObservable observable, Object data) {
@@ -696,7 +694,8 @@ public class SimpleRuntimeScope extends Parameters<String> implements IRuntimeSc
     }
 
     @Override
-    public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree< ? > task, Mode mode) {
+    public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation context, ITaskTree<?> task, Mode mode,
+            IDataflow<?> parentDataflow) {
         // TODO Auto-generated method stub
         return null;
     }

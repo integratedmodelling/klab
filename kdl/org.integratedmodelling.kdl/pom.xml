@@ -219,4 +219,13 @@
 			<optional>true</optional>
 		</dependency>
 	</dependencies>
+	<dependencyManagement>
+		<dependencies>
+			<dependency>
+				<groupId>org.eclipse.platform</groupId>
+				<artifactId>org.eclipse.equinox.common</artifactId>
+				<version>3.14.100</version>
+			</dependency>
+		</dependencies>
+	</dependencyManagement>
 </project>

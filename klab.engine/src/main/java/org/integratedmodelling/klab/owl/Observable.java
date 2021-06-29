@@ -136,6 +136,9 @@ public class Observable extends GroovyObjectSupport implements IObservable {
     private boolean mustContextualize;
     private boolean global;
 
+    // explicitly set in the builder, used to avoid scheduling for now
+    private boolean dereified;
+
     Observable(Concept concept) {
         this.observable = concept;
     }
@@ -247,6 +250,7 @@ public class Observable extends GroovyObjectSupport implements IObservable {
         this.dereifiedAttribute = observable.dereifiedAttribute;
         this.resolvedPredicates.putAll(observable.resolvedPredicates);
         this.resolvedPredicatesContext.putAll(observable.resolvedPredicatesContext);
+        this.dereified = observable.dereified;
     }
 
     public static IObservable replaceComponent(Observable original, Map<IConcept, IConcept> replacements) {
@@ -981,6 +985,15 @@ public class Observable extends GroovyObjectSupport implements IObservable {
             return Concepts.INSTANCE.getCodeName(this.getType());
         }
         return super.getProperty(property);
+    }
+
+    public void setDereified(boolean dereified) {
+        this.dereified = dereified;
+    }
+    
+    @Override
+    public boolean isDereified() {
+        return this.dereified;
     }
 
 }

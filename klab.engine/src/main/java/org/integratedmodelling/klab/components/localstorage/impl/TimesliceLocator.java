@@ -23,7 +23,7 @@ public class TimesliceLocator extends Time {
         super(new TimeInstant(slice.timestart), new TimeInstant(slice.timeend));
         this.sliceIndex = sliceIndex;
         ITime overall = storage.getState().getScale().getTime();
-        boolean years = overall != null && overall.getResolution().getType() == Resolution.Type.YEAR;
+        boolean years = false;// TODO find a better check - this will skip much process output. overall != null && overall.getResolution().getType() == Resolution.Type.YEAR;
 
         String start = "", end = "";
         if (!slice.isInitialization()) {

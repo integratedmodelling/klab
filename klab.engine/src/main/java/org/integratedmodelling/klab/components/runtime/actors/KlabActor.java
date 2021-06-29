@@ -78,6 +78,7 @@ import org.integratedmodelling.klab.utils.MapUtils;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Parameters;
 import org.integratedmodelling.klab.utils.Path;
+import org.integratedmodelling.klab.utils.Triple;
 import org.integratedmodelling.klab.utils.Utils;
 
 import akka.actor.typed.ActorRef;
@@ -119,7 +120,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
     private Map<String, Object> javaReactors = Collections.synchronizedMap(new HashMap<>());
     private List<ActorRef<KlabMessage>> componentActors = Collections.synchronizedList(new ArrayList<>());
     private Layout layout;
-    
+
     /*
      * This is the parent that generated us through a 'new' instruction, if any.
      */
@@ -302,11 +303,12 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             if (match.isIdentifier(ret)) {
                 ret.symbolTable.put(match.getIdentifier(), value);
             } else if (match.isImplicit()) {
-                ret.symbolTable.put("$", value);
+                String matchId = match.getMatchName() == null ? "$" : match.getMatchName();
+                ret.symbolTable.put(matchId, value);
                 if (value instanceof Collection) {
                     int n = 1;
                     for (Object o : ((Collection<?>) value)) {
-                        ret.symbolTable.put("$" + (n++), o);
+                        ret.symbolTable.put(matchId + (n++), o);
                     }
                 }
             }
@@ -690,10 +692,11 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
             if (actionId.startsWith("menu.")) {
                 actionId = actionId.substring(5);
             }
-            
+
             Action actionCode = behavior.getAction(actionId);
             if (actionCode != null) {
-                Scope scope = new Scope(identity, appId, message.scope, this.behavior).withLayout(this.layout).withGlobalSymbols(this.symbolTable);
+                Scope scope = new Scope(identity, appId, message.scope, this.behavior).withLayout(this.layout)
+                        .withGlobalSymbols(this.symbolTable);
                 run(actionCode, scope);
             }
 
@@ -876,8 +879,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
         if (code.getActions().size() > 0) {
 
             MatchActions actions = new MatchActions(scope);
-            for (Pair<IKActorsValue, IKActorsStatement> adesc : code.getActions()) {
-                actions.matches.add(new Pair<Match, IKActorsStatement>(new Match(adesc.getFirst()), adesc.getSecond()));
+            for (Triple<IKActorsValue, IKActorsStatement, String> adesc : code.getActions()) {
+                actions.matches.add(
+                        new Pair<Match, IKActorsStatement>(new Match(adesc.getFirst(), adesc.getThird()), adesc.getSecond()));
             }
             this.componentFireListeners.put(actorName, actions);
         }
@@ -1228,8 +1232,9 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 
             notifyId = nextId.incrementAndGet();
             MatchActions actions = new MatchActions(scope);
-            for (Pair<IKActorsValue, IKActorsStatement> adesc : code.getActions()) {
-                actions.matches.add(new Pair<Match, IKActorsStatement>(new Match(adesc.getFirst()), adesc.getSecond()));
+            for (Triple<IKActorsValue, IKActorsStatement, String> adesc : code.getActions()) {
+                actions.matches.add(
+                        new Pair<Match, IKActorsStatement>(new Match(adesc.getFirst(), adesc.getThird()), adesc.getSecond()));
             }
             this.listeners.put(notifyId, actions);
         }

@@ -7,7 +7,6 @@ import javax.servlet.http.HttpServletResponse;
 
 import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.auth.Roles;
-import org.integratedmodelling.klab.api.documentation.IReport.Encoding;
 import org.integratedmodelling.klab.api.documentation.IReport.View;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.runtime.ISession;
@@ -35,21 +34,6 @@ import org.springframework.web.bind.annotation.RestController;
 @CrossOrigin(origins = "*")
 @Secured(Roles.SESSION)
 public class EngineContextController {
-
-//    /**
-//     * Get the HTML report for the observation.
-//     */
-//    @RequestMapping(value = API.ENGINE.OBSERVATION.REPORT_CONTEXT, method = RequestMethod.GET)
-//    public String getObservationData(Principal principal, @PathVariable String context, HttpServletResponse response)
-//            throws Exception {
-//
-//        ISession session = EngineSessionController.getSession(principal);
-//        IObservation ctx = session.getObservation(context);
-//        if (ctx == null) {
-//            throw new IllegalArgumentException("context " + context + " does not exist");
-//        }
-//        return ((Observation) ctx).getScope().getReport().render(Encoding.HTML);
-//    }
 
     /**
      * Get the HTML report for the observation.

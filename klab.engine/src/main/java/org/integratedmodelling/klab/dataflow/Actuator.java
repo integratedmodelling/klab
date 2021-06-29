@@ -126,7 +126,7 @@ public class Actuator implements IActuator {
     // these are part of graphs so they should behave wrt. equality. Adding an ID
     // for comparison just to ensure that future changes upstream do not affect the
     // logics.
-    private String _actuatorId = NameGenerator.shortUUID();
+    protected String _actuatorId = NameGenerator.shortUUID();
 
     List<Computation> computation = null;
 
@@ -742,7 +742,7 @@ public class Actuator implements IActuator {
                                     + Observables.INSTANCE.getDisplayName(deferred) + " within " + object.getName());
                         }
                         ctx.resolve(deferred, (IDirectObservation) object, task,
-                                deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+                                deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, dataflow);
                     }
 
                     if (notificationMode == INotification.Mode.Verbose) {

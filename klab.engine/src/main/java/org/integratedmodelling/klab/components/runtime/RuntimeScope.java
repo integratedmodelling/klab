@@ -22,7 +22,6 @@ import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Dataflows;
-import org.integratedmodelling.klab.Documentation;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Observables;
@@ -104,7 +103,6 @@ import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.provenance.Provenance;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.resolution.Resolver;
-import org.integratedmodelling.klab.rest.DocumentationNode;
 import org.integratedmodelling.klab.rest.KnowledgeViewReference;
 import org.integratedmodelling.klab.rest.ObservationChange;
 import org.integratedmodelling.klab.scale.Scale;
@@ -502,7 +500,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation observation, ITaskTree<?> task, Mode mode) {
+    public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation observation, ITaskTree<?> task, Mode mode,
+            IDataflow<?> parentDataflow) {
 
         /*
          * preload all the possible resolvers in the wider scope before specializing the scope to
@@ -535,7 +534,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                     this.resolutionScope.getDeferredChildScope(observation, mode), mode, scale, model);
 
             if (scope.getCoverage().isRelevant()) {
-                dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope, this.dataflow);
+                dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope, (Dataflow)parentDataflow);
                 pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
             }
         }
@@ -550,6 +549,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                 // annoying.
             }
         } else {
+
+            this.dataflow.registerResolution(observation, dataflow);
+
             ret = dataflow.withScope(this.resolutionScope.getDeferredChildScope(observation, mode))
                     .withScopeScale(observation.getScale()).withMetadata(observation.getMetadata())
                     .run(observation.getScale(), (Actuator) this.actuator, task.getMonitor());
@@ -1085,17 +1087,12 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
          * add additional observables that are created by a process
          */
         if (actuator.getObservable().is(Type.PROCESS) && actuator.getModel() != null) {
-            Collection<IConcept> created = Observables.INSTANCE.getCreatedQualities(actuator.getObservable());
-            if (!created.isEmpty()) {
-                for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
-                    IObservable output = actuator.getModel().getObservables().get(i);
-                    for (IConcept cr : created) {
-                        if (cached_is(output.getType(), cr) && !this.catalog.containsKey(output.getName())) {
-                            targetObservables.put(output.getName(), new Triple<>((Observable) output,
-                                    output.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, false));
-                            break;
-                        }
-                    }
+            for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
+                IObservable output = actuator.getModel().getObservables().get(i);
+                if (Observables.INSTANCE.isCreatedBy(output, actuator.getObservable())
+                        && !this.catalog.containsKey(output.getName())) {
+                    targetObservables.put(output.getName(), new Triple<>((Observable) output,
+                            output.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, false));
                 }
             }
         }
@@ -1800,6 +1797,16 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
     @Override
     public void scheduleActions(Actuator actuator) {
+
+        /*
+         * We don't schedule merging observations as they should only merge what's behind them.
+         * Currently attempting to do so will fail for lack of a knowable temporal context. When the
+         * temporal merging logic is finished, we may remove this and allow merging actuators to
+         * exist.
+         */
+        if (actuator.getObservable().isDereified()) {
+            return;
+        }
 
         /*
          * Only occurrents occur. FIXME yes, but they may affect continuants

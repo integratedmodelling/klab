@@ -7,7 +7,7 @@
 			"https://bitbucket.org/integratedmodelling/im.git",
 			"https://bitbucket.org/integratedmodelling/im.aries.git"
 		],
-        "iconUrl": "http://integratedmodelling.org/dev/statics/logos/k.lab.png",
+        "iconUrl": "http://integratedmodelling.org/statics/logos/k.lab.png",
 		"worldview": true,
 		"preliminary": true,
         "observables": [],
@@ -19,17 +19,29 @@
 		"projectUrls": [
 			"https://bitbucket.org/integratedmodelling/alice.sandbox.git"
 		],
-        "iconUrl": "http://integratedmodelling.org/dev/statics/logos/ALICE.png",
+        "iconUrl": "http://integratedmodelling.org/statics/logos/ALICE.png",
 		"observables": [],
 		"worldview": false,
 		"roleRequirement" : "ROLE_ADMINISTRATOR",
 		"dependsOn": ["IM"]
 	},
+	"SEEA" : {
+        "name": "SEEA",
+        "description": "SEEA Project",
+		"projectUrls": [
+			"https://bitbucket.org/integratedmodelling/un.seea.aries.git#master"
+		],
+        "iconUrl": "https://integratedmodelling.org/statics/logos/SEEA_logo_512x512.png",
+		"observables": [],
+		"worldview": false,
+		"roleRequirement" : "ROLE_ADMINISTRATOR",
+		"dependsOn": ["IM","ARIES"]
+	},
 	"ARIES": {
 		"name": "ARIES",
 		"description": "ARIES (ARtificial Intelligence for Ecosystem Services)",
 		"sshKey": null,
-        "iconUrl": "http://integratedmodelling.org/dev/statics/logos/ARIES.png",
+        "iconUrl": "http://integratedmodelling.org/statics/logos/ARIES.png",
 		"worldview": false,
 		"roleRequirement" : "ROLE_ADMINISTRATOR",
 		"dependsOn": ["IM"],
