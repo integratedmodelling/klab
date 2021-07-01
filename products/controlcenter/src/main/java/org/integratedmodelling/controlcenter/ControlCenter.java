@@ -13,6 +13,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Timer;
@@ -39,6 +41,7 @@ import org.integratedmodelling.controlcenter.runtime.ModelerInstance;
 import org.integratedmodelling.controlcenter.settings.Settings;
 import org.integratedmodelling.controlcenter.utils.TimerService;
 import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.integratedmodelling.klab.utils.BrowserUtils;
 import org.integratedmodelling.klab.utils.OS;
 import org.joda.time.DateTime;
@@ -297,6 +300,48 @@ public class ControlCenter extends Application {
          */
         this.authentication = new Authentication();
 
+        if (!authentication.getMessages().isEmpty()) {
+            StringBuffer errors = new StringBuffer();
+            StringBuffer warnings = new StringBuffer();
+            StringBuffer infos = new StringBuffer();
+            authentication.getMessages().forEach(m -> {
+               StringBuffer buffer;
+               if (m.getType() == HubNotificationMessage.Type.ERROR) {
+                   buffer = errors;
+               } else if (m.getType() == HubNotificationMessage.Type.WARNING) {
+                   buffer = warnings;
+               } else {
+                   buffer = infos;
+               }
+               switch (m.getMessageClass()) {
+                   case EXPIRED_GROUP:
+                   case EXPIRING_GROUP:
+                       String sDate = (String)(Arrays.asList(m.getInfo())
+                               .stream()
+                               .filter(i -> i.getFirst().equals(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE))
+                               .findFirst().get()).getSecond();
+                       DateTime date = DateTime.parse(sDate);
+                       String group = (String)(Arrays.asList(m.getInfo())
+                               .stream()
+                               .filter(i -> i.getFirst().equals(HubNotificationMessage.ExtendedInfo.GROUP_NAME))
+                               .findFirst().get()).getSecond();
+                       buffer.append("The group ").append(group)
+                       .append(m.getMessageClass().equals(HubNotificationMessage.MessageClass.EXPIRED_GROUP) ? " expired " : " expiring ")
+                       .append("on ").append(DateTimeFormat.forPattern("dd/MM/yyyy").print(date));
+                       break;
+                   default:
+                       buffer.append(m.getMsg());
+                       break;
+               }
+               buffer.append("\n");
+            });
+            if (errors.length() > 0 )
+                new Alert(AlertType.ERROR, errors.toString()).showAndWait();
+            if (warnings.length() > 0 )
+                new Alert(AlertType.WARNING, warnings.toString()).showAndWait();
+            if (infos.length() > 0 )
+                new Alert(AlertType.ERROR, infos.toString()).showAndWait();
+        }
         /*
          * set up listeners
          */

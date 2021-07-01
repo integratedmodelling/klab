@@ -14,13 +14,12 @@ import org.integratedmodelling.klab.rest.AuthenticatedIdentity;
 import org.integratedmodelling.klab.rest.EngineAuthenticationRequest;
 import org.integratedmodelling.klab.rest.EngineAuthenticationResponse;
 import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.joda.time.DateTime;
 
 import kong.unirest.HttpResponse;
-import kong.unirest.JsonNode;
 import kong.unirest.Unirest;
 import kong.unirest.UnirestException;
-import kong.unirest.json.JSONObject;
 
 public class Authentication implements IAuthentication {
 
@@ -31,7 +30,8 @@ public class Authentication implements IAuthentication {
 	String username = "anonymous";
 	String email = "";
 	DateTime expiration;
-	List<Group> groups = new ArrayList<>();
+	List<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
+	List<Group> groups = new ArrayList<Group>();
 
 	private KlabCertificate certificate;
 
@@ -78,6 +78,11 @@ public class Authentication implements IAuthentication {
 		return status;
 	}
 
+    @Override
+    public List<HubNotificationMessage> getMessages() {
+        return messages;
+    }
+
 	public void readCertificate(File file) {
 		this.certificate = new KlabCertificate(file);
 		ControlCenter.INSTANCE.message("Attempting to authenticate...");
@@ -119,6 +124,11 @@ public class Authentication implements IAuthentication {
                     this.authorization = userData.getToken();
 
                     response.getUserData().getGroups().forEach(g -> this.groups.add(g));
+                    
+                    if (response.getMessages() != null) {
+                        response.getMessages().forEach(m -> this.messages.add(m));
+                    }
+                    
 
                     status = this.expiration.isBefore(DateTime.now()) ? Status.EXPIRED : Status.VALID;
 	            } else {
