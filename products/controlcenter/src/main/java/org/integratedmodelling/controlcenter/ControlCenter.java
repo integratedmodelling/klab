@@ -340,7 +340,7 @@ public class ControlCenter extends Application {
             if (warnings.length() > 0 )
                 new Alert(AlertType.WARNING, warnings.toString()).showAndWait();
             if (infos.length() > 0 )
-                new Alert(AlertType.ERROR, infos.toString()).showAndWait();
+                new Alert(AlertType.INFORMATION, infos.toString()).showAndWait();
         }
         /*
          * set up listeners

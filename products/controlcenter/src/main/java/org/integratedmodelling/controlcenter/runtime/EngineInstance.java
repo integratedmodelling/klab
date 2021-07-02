@@ -131,7 +131,7 @@ public class EngineInstance extends Instance {
 	public boolean stop() {
 		if (online.get()) {
 			try {
-				Unirest.get(getInstanceUrl("/engine/admin/shutdown")).asString();
+				Unirest.get(getInstanceUrl("/admin/shutdown")).asString();
 			} catch (UnirestException e) {
 				return false;
 			}
