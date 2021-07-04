@@ -472,7 +472,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 <li><a href="#_learning_models">3.3. Learning models</a></li>
 <li><a href="#_sessions_and_outputs_of_contextualization">3.4. Sessions and outputs of contextualization</a></li>
-<li><a href="#_extension_and_runtime_considerations">3.5. Extension and runtime considerations</a></li>
+<li><a href="#_extending_the_runtime_system">3.5. Extending the runtime system</a></li>
 <li><a href="#_integrating_external_models">3.6. Integrating external models</a>
 <ul class="sectlevel3">
 <li><a href="#_integrating_k_lab_into_existing_models">3.6.1. Integrating k.LAB into existing models</a></li>
@@ -481,7 +481,11 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </li>
 </ul>
 </li>
-<li><a href="#_the_reactivity_layer_behaviors_and_applications">4. The reactivity layer: behaviors and applications</a></li>
+<li><a href="#_the_reactivity_layer_behaviors_and_applications">4. The reactivity layer: behaviors and applications</a>
+<ul class="sectlevel2">
+<li><a href="#_user_side_applications">4.1. User-side applications</a></li>
+</ul>
+</li>
 <li><a href="#_current_status">5. Current status</a></li>
 </ul>
 </div>
@@ -567,7 +571,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_accessing_the_system">1.3. Accessing the system</h3>
 <div class="paragraph">
-<p>The k.LAB system can be accessed through a client (usually an application running within the k.LAB Explorer web platform, or the k.LAB integrated development environment (IDE), k.Modeler) or through its API by software applications. Providers of content may use the IDE or, in the near future, a content provider web interface available on all k.LAB nodes. All users must be authenticated through a valid, secure certificate, which also establishes user permissions for the certificate holder. Permissions may limit access to reserved or private content, which may be made available publicly or linked to specific users or groups thereof by its owners.</p>
+<p>The k.LAB system can be accessed through client software (usually an application running in a browser within the k.LAB Explorer web platform, or the k.LAB integrated development environment (IDE), k.Modeler) or through its API by software applications. Providers of content may use the IDE or, in the near future, a content provider web interface available on all k.LAB nodes, including of course any nodes deployed at the provider&#8217;s end. All users must be authenticated through a valid, secure certificate, which also establishes the semantic <em>worldview</em> of reference and any user permissions for the certificate holder. Permissions may limit access to reserved or private content, which may be made available in public form or be linked to specific users or groups thereof by its owners.</p>
 </div>
 <div class="dlist">
 <dl>
@@ -598,13 +602,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>The resource layer contains or provides access to all "conventional", non-semantic informational assets available to k.LAB: from raw datasets and bridges to external data services to algorithms expressed as mathematical equations or computable code.</p>
 </div>
 <div class="paragraph">
-<p>The aim of the resource layer is to present common conventions and a consistent API for k.LAB to access and manage pre-existing data, models and services of all kinds, as a first layer of interoperability. While the semantic layer specifies a <em>language</em> for interoperability, the resource layer provides a generic <em>protocol</em> that can be adapted to any existing data source or service as well as external computations or even remote k.LAB sessions. Because resources have no semantics associated, it is possible to <em>reinterpret</em> any resources through the desired semantics, enabling complete orthogonality between the resource layer and the semantic layer.</p>
+<p>The aim of the resource layer is to present common conventions and a consistent API for k.LAB to access and manage pre-existing data, models and services of all kinds, as a first layer of interoperability. While the semantic layer specifies a <em>language</em> for interoperability, the resource layer provides a generic <em>protocol</em> that can be adapted to any existing data source or service as well as databases and external computations. Because resources have no semantics associated, it is possible to <em>reinterpret</em> any resources through the desired semantics, enabling complete orthogonality between the resource layer and the semantic layer.</p>
 </div>
 <div class="paragraph">
 <p>Importantly, in k.LAB, <em>computations</em>, from simple equations to large and complex models, can also live in the resource layer. In fact, anything that takes inputs and produces outputs in numeric or other form, with no meaning explicitly attached beyond names and metadata, can be seen as a k.LAB resource. All resources are identified by a Uniform Resource Name (URN) which can be resolved, through the k.LAB API, to an informational record that contains all original metadata along with provenance information, history, and access permissions for the requesting user. Inputs, outputs and (in the case of resources that produce multiple objects) attributes will be similarly identified by a name and a data type.</p>
 </div>
 <div class="paragraph">
-<p>Resources are not used directly by external clients in normal k.LAB usage, although the resource API is open to authorized users and can be used as the base layer of a standard <a href="https://www.w3.org/TR/ldp/"><em>linked data</em></a> platform. The resource URN is, instead, used in semantic models (see the next section) to enable the semantic-driven resolution algorithm at the core of the system. A model that references a URN that the requesting user has no access to is automatically deactivated and does not participate in resolution, allowing the k.LAB resolver to continue resolving through another authorized strategy. Where semantic assets have <em>semantics</em> and <em>scale</em>, all resources have <em>data types</em> (number, text, boolean, or probability distributions thereof) and a <em>geometry</em>, which defines the original representation of space and time, if any, in the resource.</p>
+<p>Resources are not used directly by external clients in normal k.LAB usage, although the resource API is open to authorized users and can be used as the base layer of a standard <a href="https://www.w3.org/TR/ldp/"><em>linked data</em></a> platform. The resource URN is, instead, used in semantic models (see the next section) that in turn populate the search space for the semantically-driven resolution algorithm at the core of the system. A model that references a URN which the requesting user has no access to is automatically deactivated and does not participate in resolution, allowing the k.LAB resolver to continue resolving through another authorized strategy. Where semantic assets have <em>semantics</em> and <em>scale</em>, all resources have <em>data types</em> (number, text, boolean, or probability distributions thereof) and a <em>geometry</em>, which defines the original representation of space and time, if any, in the resource.</p>
 </div>
 <div class="paragraph">
 <p>A resource URN is a fully specified identifier that uniquely references a resource in k.IM namespaces. It consists of 4 parts, separated by colons:</p>
@@ -626,10 +630,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ul>
 </div>
 <div class="paragraph">
-<p>The node name may consist of the reserved word <code>local</code> (identifying an unpublished local resource, see below) or <code>klab</code> to identify a "universal" resource with no network storage associated and handled directly by the engine (e.g. a URN pattern that produces various types of random data for testing). The core resource API, exposed by both k.LAB Engine and k.LAB Node, provides a URN resolution service (URN &#8594; resource metadata), standard Create/Read/Update/Delete (CRUD) operations on the resource layer, and the most important operation, <em>contextualization</em>, which takes as input a resource URN and a geometry specification and returns the data content of the resource adapted to the passed geometry. The contextualization return value is a flexible data structure (based on <a href="https://developers.google.com/protocol-buffers">Google Protobuf</a>) that allows efficient marshalling of zero or more objects, each with an internal structure that admits scalar or distributed values along grids or tessellations, conformant to the request geometry. The result, complete with metadata and provenance information but still devoid of semantics, is passed to the k.LAB runtime to be turned into observations within the execution of a k.LAB <em>dataflow</em>.</p>
+<p>The node name may consist of the reserved word <code>local</code> (identifying an unpublished local resource, see below) or <code>klab</code> to identify a "universal" resource with no network storage associated and handled directly by the engine, where the catalog part of the URN denotes a specific software adapter (e.g. <code>klab:random:</code> would introduce a URN pattern that produces various types of random data for testing, defined by the namespace and identifier). The core resource API, exposed by both k.LAB Engine and k.LAB Node, provides a URN resolution service (URN &#8594; resource metadata), standard Create/Read/Update/Delete (CRUD) operations on the resource layer, and the most important operation, <em>contextualization</em>, which takes as input a resource URN and a geometry specification and returns the data content of the resource adapted to the passed geometry. The contextualization return value is a flexible data structure (based on <a href="https://developers.google.com/protocol-buffers">Google Protobuf</a>) that allows efficient marshalling of zero or more objects, each with an internal structure that admits scalar or distributed values along grids or tessellations, conformant to the request geometry. The result, complete with metadata and provenance information but still devoid of semantics, is passed to the k.LAB runtime to be turned into observations within the execution of a k.LAB <em>dataflow</em>.</p>
 </div>
 <div class="paragraph">
-<p>Not all resources occupy physical storage on k.LAB nodes: in fact, k.LAB extends the notion of the URN to encompass literals (<code>model 100 &#8230;&#8203;.</code> ) and specialized computational service which may simply serve as bridge to online services or computations (e.g. the urn <strong>klab:osm:relations:park</strong> would contextualize to all the parks stored as relations (polygons) in the <a href="https://www.openstreetmap.org">OpenStreetMap</a> service in the queried geometry).</p>
+<p>Not all resources occupy physical storage on k.LAB nodes: in fact, k.LAB extends the notion of the URN to encompass literals (e.g. <code>model 100 as geography:Elevation in m</code>, where <code>100</code> can be seen as a shorthand form of <code>klab:literals:values.parsed:number#value=100</code>) and specialized computational services which may simply serve as bridge to online services or computations (e.g. the urn <code>klab:osm:relations:park</code> would contextualize to all the parks stored as relations (polygons) in the <a href="https://www.openstreetmap.org">OpenStreetMap</a> service in the queried geometry).</p>
 </div>
 <div class="paragraph">
 <p>Diverse, extendible sourcing of information for resources is enabled through the use of <em>adapters</em>, i.e. software plug-ins that adapt a specific data or service format to the API. The adapter identifier and all adapter parameters are specified in the metadata associated to the URN and used to select the methods for contextualization, import, export and indexing. Adapters are made available as k.LAB <em>components</em>, installable in k.LAB Engines and k.LAB Nodes, and can be extended by developers using the Java API to support formats and services not yet available. External APIs (e.g. datacubes) can be supported by deploying a bridge adapter, as long as the original service provides all the information needed for k.LAB to operate. To date, adapters for many file formats (CSV files, spatial rasters and vectors, NetCDF), protocols (WCS, WFS, OpenDAP, SDMX) and specialized services (OpenStreetMap, weather station data bridging to multiple databases and sources) are available and others (such as RDF/SPARQL) are in development. Other adapters enable specialized services, like scale-dependent selection of hierarchially organized datasets such as administrative regions or river basins. URN parameters can be added to the base URN to trigger specialized processing at the node&#8217;s end, such as resolution-dependent simplification of polygons, selection of interpolation methods, or any other adapter-dependent option that will best suit the desired semantics.</p>
@@ -640,10 +644,10 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Resources start their life as <em>local</em> within a user project, imported from files or through a resource editor integrated with the k.Modeler client software. Such local resources go through a process of validation, meant to ensure that every need of the k.LAB system can be satisfied in an integrated scenario of use: for example, spatial data must have proper projections and valid polygons throughout. When a local resource is accepted, it can be used inside the project that contains it or in any other project that shares the same local workspace, but is not visible to other users of the platform. Local resources may be sufficient for the needs of a specific, short-term project; yet, the natural lifecycle of a resource continues with <em>publication</em>, which makes it available across the k.LAB network.</p>
 </div>
 <div class="paragraph">
-<p>Publication of a resource is conditional to further validation; no resources with incomplete metadata or access information is accepted by the software. Successful publication uploads the resource to the staging area of a chosen k.LAB node, where it can be made available for general use and further edited in-place by its owner. Every edit of a published resource creates a new version of the resource and full history is kept. Published resources are independent of projects and obtain a unique URNs that never changes; the hosting k.LAB Node may optimize their data content for faster serving and automatically mirror the resource to other nodes for increased availability. While public resources may be visibile, at the choice of their owner, only to selected users or groups of users, their URLs are universally recognized and can be used in k.IM models without the need for any registration or download, as long as the user is connected to the k.LAB network.</p>
+<p>Publication of a resource is conditional to further validation; no resources with incomplete metadata, licensing or ownership information is accepted by the software. Successful publication uploads the resource to the staging area of a chosen k.LAB node, where it can be made available for general use and further edited in-place by its owner. Every edit of a published resource creates a new version of the resource and full history is kept. Published resources are independent of projects and obtain a unique URNs that never changes; the hosting k.LAB Node may optimize their data content for faster serving and automatically mirror the resource to other nodes for increased availability. While public resources may be visibile, at the choice of their owner, only to selected users or groups of users, their URLs are universally recognized and can be used in k.IM models without the need for any registration or download, as long as the user is connected to the k.LAB network.</p>
 </div>
 <div class="paragraph">
-<p>The staging "tier" of the resource layer is, at the time of this writing, the only one enabled in k.LAB Node software. It is envisioned that an iterative resource review process, operated by willing members of the community, will be used to promote resources to higher-ranking tiers, the level of which may affect the resolution algorithm, also incorporating user feedback and machine-learned statistics as resources get used as part of models. This process may eventually involve the attribution of a DOI to resources, resolved both through standard DOI proxy servers and directly by k.LAB, using the DOI in place of the URN in semantic models.</p>
+<p>The staging "tier" of the resource layer is, at the time of this writing, the only one enabled in k.LAB Node software. It is envisioned that an iterative resource review process, operated by willing members of the community, will be used to promote resources to higher-ranking tiers, the level of which may affect the resolution algorithm, also incorporating user feedback and machine-learned statistics as resources get used as part of models. This process may eventually involve the attribution of a DOI to resources, resolved both through standard DOI proxy servers and directly by k.LAB, enabling use of the DOI in place of the URN in semantic models.</p>
 </div>
 </div>
 </div>
@@ -670,7 +674,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>In a departure from other ontology platforms, k.LAB admits, for the specification of semantics, logical expressions that combine predicates, operators and nouns in a fashion modeled on the grammar of the English language. For example, the k.IM statement <code>im:Net value of ecology:Pollination</code> (an <em>observable expression</em>, or <em>observable</em> in short) contains a predicate (<code>im:Net</code>) and a semantic operator <code>value of</code> which affects the meaning of the process concept <code>ecology:Pollination</code> and transforms it into the concept representing its quantifiable value. This <em>linguistic</em> articulation is key not only to the usability and parsimony of the underlying knowledge base, which can remain small and learnable thanks to the ability to combine and reuse terms and operators, but also to the functioning of the machine reasoning underlying the resolution algorithm, which can reason independently on the different logical dimensions of an observable and infer computations that would otherwise require specialized, <em>ad-hoc</em> modeling. Lacking specific models for a complex observable, each logical dimension of it may be resolved to one or more models which handle that specific component, and the set of models, ranked for best fit to the context before selecting the most appropriate, can be used to assemble the best-case computation to produce the finished observation. The resulting <em>dataflow</em> (algorithm) can, if wished, be saved as a non-semantic resource for future reference and reproducible reuse in k.LAB.</p>
 </div>
 <div class="paragraph">
-<p>The specialized k.IM editor provided with k.Modeler further facilitates the use and recognition of semantics by color-coding the fundamental classes of knowledge represented by concepts (blue for predicates, such as attributes, roles, realms or identities; green for quantifiable or categorizable qualities; red, green/yellow, yellow and brown respectively for processes, events, relationships and subjects) <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>. It is typical of k.LAB models to be very short, simple and easily readable. Every model, with few exceptions, resolves <em>one</em> observable expression, with any required inputs stated merely as semantics; as a result, each model, by design, can be run and tested independently. For example, the model below</p>
+<p>The specialized k.IM editor provided with k.Modeler further facilitates the use and recognition of semantics by color-coding the fundamental classes of knowledge represented by concepts (blue for predicates, such as attributes, roles, realms or identities; green for quantifiable or categorizable qualities; red, green/yellow, yellow and brown respectively for processes, events, relationships and subjects) <sup class="footnote">[<a id="_footnoteref_1" class="footnote" href="#_footnotedef_1" title="View footnote.">1</a>]</sup>. The editor is connected to the inference engine and further assists the modeler by checking the logical consistency of each observable as the user types and reporting any inconsistency as a syntax error. It is typical of k.LAB models to be very short, simple and easily readable. Every model, with few exceptions, resolves <em>one</em> observable expression, with any required inputs stated merely as semantics; as a result, each model, by design, can be run and tested independently. For example, the model below</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -712,13 +716,13 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Locate a model for the original observable, <code>(ecology:AboveGround ecology:Biomass) of biology:Eucalyptus biology:Tree</code>, that is compatible with the context of observation. If found, resolve using it. Otherwise</p>
 </li>
 <li>
-<p>Locate a model of the inherent subject, <code>biology:Eucalyptus biology:Tree</code>; if found, use it to generate an observation for each eucalyptus tree in the region, and for each of them locate a model of <code>(ecology:AboveGround ecology:Biomass)</code>. If an "eucalyptus tree" model cannot be resolved</p>
+<p>Locate a model of the inherent subject, <code>biology:Eucalyptus biology:Tree</code>; if found, accept it as the strategy to instantiate an observation for each eucalyptus tree in the region, so that a model of <code>(ecology:AboveGround ecology:Biomass)</code> can be later resolved in the context of each tree. If an "eucalyptus tree" model cannot be resolved</p>
 </li>
 <li>
 <p>Locate a model capable of instantiating every <code>biology:Tree</code> in the region; if found, locate a classifier model capable of either 1) checking if the tree is eucalyptus or not (<code>model biology:Eucalyptus of biology:Tree</code>), or 2) attributing the abstract identity (<code>biology:Species</code>) of which <code>biology:Eucalyptus</code> is a subclass (<code>model biology:Species of biology:Tree</code>). Such a model would be applied to classify the tree observations, only keeping those that classify as eucalyptus.</p>
 </li>
 <li>
-<p>If eucalyptus trees are resolved successfully, locate a model of <code>(ecology:AboveGround ecology:Biomass)</code> for each tree to compute the biomass in the context of each. If successful, apply a <em>dereifying</em> operation to complete the observation, turning the "above ground biomass" values observed in the context of each tree into the quality "above ground biomass of eucalyptus tree" observed in the context region.</p>
+<p>If eucalyptus trees are resolved successfully through either strategy (2) or (3), locate a model of <code>(ecology:AboveGround ecology:Biomass)</code> for each tree to compute the biomass in the context of each. If successful, insert a <em>dereifying</em> operation to complete the observation, turning the "above ground biomass" values observed in the context of each tree into the quality "above ground biomass of eucalyptus tree" observed in the context region.</p>
 </li>
 </ol>
 </div>
@@ -732,7 +736,16 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>where the 'within' operator mandates a RiverBasin context for the quality, which will trigger the distributed resolution process described whenever ContributingArea is queried in any context where river basins can be observed. The same considerations hold for more complex observables such as processes, which have the ability to affect the value of qualities through time and to generate events or other objects; these, in turn, can be the context for other qualities or processes. The ability to automatically negotiate mediations based on inherency and phenomenological reasoning multiplies the capability of connecting diverse models without error, offering integration possibilities orders of magnitude beyond those allowed by semantic matching alone. Such tasks require specific planning and significant technical expertise and time to perform in conventional ways.</p>
+<p>or, more correctly, leaving the observable unconstrained and defining models as</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kim hljs" data-lang="kim">model earth:Upstream im:Area within hydrology:RiverBasin
+	....;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In both cases the 'within' operator mandates a RiverBasin context for the quality, which will trigger the distributed resolution process described whenever ContributingArea is queried in any context where river basins can be observed. The same considerations hold for more complex observables such as processes, which have the ability to affect the value of qualities through time and to generate events or other objects; these, in turn, can be the context for other qualities or processes. The ability to automatically negotiate mediations based on inherency and phenomenological reasoning multiplies the capability of connecting diverse models without error, offering integration possibilities orders of magnitude beyond those allowed by semantic matching alone. Such tasks require specific planning and significant technical expertise and time to perform in conventional ways.</p>
 </div>
 <div class="paragraph">
 <p>Much of the power of k.LAB comes from the fact that models pertaining to the different sides of a problem may be provided and shared by independent experts, with no need for any coordination besides adhering to the same worldview. Each model can serve multiple potential purposes and does not just <em>add to</em>, but rather <em>multiplies</em> the value of other knowledge on the platform when interacting with it, just like words in natural language. The power of the resulting paradigm shift becomes obvious when the problem area addressed by modeling spans multiple disciplines, expertises and languages, emphasizing the importance of a collaboratively built and endorsed <em>worldview</em>.</p>
@@ -759,7 +772,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect2">
 <h3 id="_learning_models">3.3. Learning models</h3>
 <div class="paragraph">
-<p>An important part of modeling is adapting a computation to known data, so that it can best reproduce a known output from a known set of inputs, in order to increase confidence in predicted results when the model is run with unknown inputs. The main use cases for this activity are <em>machine learning</em>, which iteratively <em>trains</em> a statistical model until it produces the best fit to known data, and <em>model calibration</em> or <em>data assimilation</em>, used to find the optimal parameterization of mechanistic models. No modeling platform would be complete without addressing these "learning" capabilities. In k.LAB, model learning exploits the separation of the resource and semantic layer and the ability to find both inputs and outputs by resolving semantics. Models introduced by the keyword <code>learn</code> instead of <code>model</code> will resolve their outputs as well as their inputs, and produce, using a specialized function, a <em>computable resource</em> with a specified URN, independent of semantics. As an example, a minimal Bayesian suitability model to inform a land cover change models could be built using the following specification:</p>
+<p>An important part of modeling is adapting a computation to known data, so that it can best reproduce a known output from a known set of inputs, in order to increase confidence in predicted results when the model is run with unknown inputs. The main use cases for this activity are <em>machine learning</em>, which iteratively <em>trains</em> a statistical model until it produces the best fit to known data, and <em>model calibration</em> or <em>data assimilation</em>, used to find the optimal parameterization of mechanistic models. No modeling platform would be complete without addressing these "learning" capabilities. In k.LAB, model learning exploits the separation of the resource and semantic layer and the ability to find both inputs and outputs by resolving semantics. Models introduced by the keyword <code>learn</code> instead of <code>model</code> will resolve their outputs as well as their inputs, and produce, using a specialized function, a <em>computable resource</em> with a specified URN, independent of semantics, containing the trained computation for future reuse. As an example, a minimal Bayesian suitability model to inform a land cover change model could be built using the following specification:</p>
 </div>
 <div class="listingblock">
 <div class="content">
@@ -803,47 +816,47 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </div>
 </div>
 <div class="paragraph">
-<p>Similar considerations apply to other learning algorithms such as the rest of the WEKA platform or others such as Google&#8217;s TensorFlow. The resource containing the trained model will link its inputs by name and data type, and can be published to a node for remote execution by any users just like any other resource. Similar considerations apply to prediction of qualities within countable entities (subjects, events, relationships) that are part of the context, training a classifier using each instance and its attributes as a training sample instead of sampling a distributed dataset like in the examples.</p>
+<p>Similar considerations apply to other learning algorithms such as the rest of the WEKA platform or others such as Google&#8217;s TensorFlow. The resource containing the trained model will link its inputs by name and data type, and can be published to a node for remote execution by any users just like any other resource. Similar considerations apply to the prediction of qualities within countable entities (subjects, events, relationships) that are part of the context, training a classifier using each instance and its attributes as a training sample instead of sampling a distributed dataset like in the example above.</p>
 </div>
 <div class="paragraph">
-<p>The problem of <em>calibration</em> or <em>data assimilation</em> of numerical models can be handled in the same fashion, by linking appropriate algorithms to k.LAB. At the time of this writing, an interface to the open source <a href="http://www.openda.org/index.php">OpenDA</a> package is being specified for future integration.</p>
+<p>The problem of <em>calibration</em> or <em>data assimilation</em> of numerical models can be handled in the same fashion, by linking appropriate algorithms to k.LAB. At the time of this writing, an interface to the open source <a href="http://www.openda.org/index.php">OpenDA</a> package is being investigated for future integration.</p>
 </div>
 </div>
 <div class="sect2">
 <h3 id="_sessions_and_outputs_of_contextualization">3.4. Sessions and outputs of contextualization</h3>
 <div class="paragraph">
-<p>Within a k.LAB session, a user or application sets a context and observes as many concepts as desired. Observations that were already made in the context automatically resolve any subsequent query for compatible concepts. A <em>scenario</em> in k.LAB is simply a namespace whose models become "visible" to the system only when it is explicitly activated: when a scenario is active, its models take priority over any others to resolve their observables. Using scenarios, the environment within a context may be interactively defined to reflect specific assumptions. In interactive use (for example with k.LAB Explorer) it is possible to build observation sets that use different scenarios and incrementally define any desired conditions by observing concept after concept under the desired scenarios.</p>
+<p>Within a k.LAB session, a user or application sets a context and observes as many concepts as desired. Observations that were already made in the context automatically resolve any subsequent query for compatible concepts. At any time, the user or application can set or unset one or more <em>scenarios</em> to affect the selection of models. A scenario in k.LAB is simply a namespace whose contained models become "visible" to the system only when it is explicitly activated: when a scenario is active, its models take priority over any others to resolve their observables, potentially using other models to complete observations in case the scenario is only defined to cover a part of the context. Using scenarios, the environment within a context may be interactively defined to reflect specific hypotheses. In interactive use (for example with k.LAB Explorer) it is possible to build observation sets that use different scenarios, incrementally defining a context that reflects any desired conditions.</p>
 </div>
 <div class="paragraph">
-<p>As soon as a context is available, it will contain the complete history of observations made, including the metadata and provenance records for all resources used. As dataflows are resolved and contextualized, the provenance records will be complemented with all logical steps followed to compute the corresponding observations, and remain available within the context. All this information is available interactively to the user in graphical form when using a k.LAB client, and is part of the set of downloadable artifacts accessible within a context. These include:</p>
+<p>A context always contains the complete history of observations made, including the metadata and provenance records for all resources and models used. As dataflows are resolved and contextualized, provenance records stored along with the knowledge will be extended with all logical steps followed to compute the corresponding observations, and remain available within the context to form a complete record of how the information in it has come into existence. All this information is available interactively to the user in graphical form when using a k.LAB client, and becomes part of the set of downloadable artifacts accessible within a context. These include:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>A complete dataflow that includes all the processing steps and resources accessed to compute every observation in the context. The k.LAB runtime uses a specialized language, k.DL, to encode dataflows in a concise and reusable way; the k.DL code can be visualized (as text or as a flowchart-like diagram) and saved to a resource to reproduce the computations as needed. When saving to a resource, the k.LAB engine will compute the intersected spatial and temporal coverage of all resources and models involved, so that the resource can automatically be given a geometry where the computations can be replicated.</p>
+<p>A complete dataflow that includes all the processing steps and resources accessed to compute every observation in the context. The k.LAB runtime uses a specialized language, k.DL, to encode dataflows in a concise and reusable way; the k.DL code can be visualized (as text or as a flowchart-like diagram) and saved to a resource to reproduce the computations as needed. When saving to a resource, the k.LAB engine will compute the intersected spatial and temporal coverage of all resources and models involved, so that the dataflow can be saved along with the detailed geometry where the computations can be replicated.</p>
 </li>
 <li>
-<p>Complete provenance information for all the resource and models used in the context. The k.LAB runtime adheres to the <a href="https://openprovenance.org/opm">Open Provenance Model</a> conventions, which are central to the layout of the internal class structure. An API call to extract the OPM-compatible provenance graph for a context is expected in version 1.0.</p>
+<p>Complete provenance information for all the resource and models used in the context. The k.LAB runtime adheres internally to the <a href="https://openprovenance.org/opm">Open Provenance Model (OPM)</a> conventions, which are central to the layout of the internal class structure. An API call to extract the OPM-compatible provenance graph for a context is expected in version 1.0.</p>
 </li>
 <li>
 <p>A tree of observations, each of which can be downloaded to the file formats supported by the configured adapters according to the spatial and temporal dimensions in the context. For example, an observations of a numerical or categorical quality (<em>state</em>) can be downloaded to a CSV file if scalar or distributed only in time, to a raster map (e.g. GeoTIFF or ArcGIS format) if spatially distributed on a grid, or to an archive file with a map per timestep if distributed in both space and time. Observations of subjects (e.g. the lakes in the context) can be downloaded to database files, including ESRI shapefiles when the objects have a spatial coverage.</p>
 </li>
 <li>
-<p>The user may request, in lieu of individual observations, <em>views</em> that contextualize a specified concept and summarize the result in complex ways, such as tables or graphs. Such views also become part of the context along with all the observations made to compute them. These can be exported as Excel files or other formats. The table generation features in k.LAB enable specification of aggregations using semantics, and allow users or modelers to build sophisticated and complex reports with very short specifications. Tables are prominently used, for example, in Natural Capital Accounting applications such as <a href="https://seea.un.org/content/aries-for-seea">ARIES for SEEA</a>.</p>
+<p>The user may request, in lieu of individual observations, <em>views</em> that contextualize a specified concept and summarize the result in complex ways, such as tables or graphs. Such views also become part of the context along with all the observations made to compute them. These can be exported as spreadsheets or other appropriate formats. The table generation features in k.LAB refer to observables using pure semantics, enable flexible specification of aggregations and allow users or modelers to build sophisticated and complex reports with very short specifications. Tables are prominently used, for example, in Natural Capital Accounting applications such as <a href="https://seea.un.org/content/aries-for-seea">ARIES for SEEA</a>.</p>
 </li>
 <li>
-<p>As models are computed by the system, a readable, structured <em>report</em> is generated and becomes part of the context. The documentation features in k.LAB use a simple template language that can be associated to models and allows modelers to link documentation templates to events that are triggered during contextualization (for example, initialization or termination) and report sections such as introduction, methods, results and discussion. By using the Markdown language along with template directives, figures and tables can be inserted in the generated documentation along with structured text, cross-references and bibliographic citations. The k.LAB engine incrementally assembles the report as new models are contextualized, producing one document that can even be tailored to the actual values obtained using conditional template directives. This feature enables the production of very complete textual reports that can be downloaded as PDF through the clients or the API.</p>
+<p>As models are computed by the system, a user-readable, structured <em>report</em> is generated and incorporated within the context. The documentation features in k.LAB rely on a simple template language that can be associated to models in k.IM code and allows modelers to link documentation templates to events that are triggered during contextualization (for example, initialization or termination) and report sections such as introduction, methods, results and discussion. The k.Modeler IDE contains specialized support for writing and organizing documentation in k.LAB projects. By using the Markdown language supplemented with template directives, structured text can be inserted in the generated documentation along with figures, tables, cross-references and bibliographic citations. The k.LAB engine incrementally assembles the report as new models are contextualized, producing a unified document that can be tailored to the context and to the actual results obtained using conditional template directives and context-aware text substitutions. This feature enables the production of very complete textual reports that can be downloaded as PDF through the clients or the API.</p>
 </li>
 </ul>
 </div>
 <div class="paragraph">
-<p>The set of outputs obtained and visualized during a k.LAB session ensures the complete transparency of the results. In some situations, even the paths <em>not</em> taken by the resolver can be documented, which may be relevant when multiple resources with close rankings are available in resolution. The possibility of producing <em>digitally signed artifacts</em> including the whole set of outputs, reports, dataflows and the full provenance graph, plus (if needed) verifying the provenance and the peer review status of all resources and models involved, opens the way to the production and the verification of <em>endorsed</em> artifacts when the system is used to produce information in official capacities or whose use can have critical consequences in decision-making.</p>
+<p>The set of outputs obtained and visualized during a k.LAB session ensures the transparency and communicability of the results to a degree never seen in a modeling platform. In some situations, even the paths <em>not</em> taken by the resolver can be documented, which may be relevant when multiple resources with close rankings are available in resolution. The possibility of producing <em>digitally signed artifacts</em> including all of outputs, report, dataflow and full provenance graph, plus (if needed) verifying and documenting the provenance and the peer review status of all resources and models involved, opens the way to the production and the verification of <em>endorsed</em> artifacts when the system is used to produce information from official institutional applications, or in situations when use of the result can have critical consequences in decision-making.</p>
 </div>
 </div>
 <div class="sect2">
-<h3 id="_extension_and_runtime_considerations">3.5. Extension and runtime considerations</h3>
+<h3 id="_extending_the_runtime_system">3.5. Extending the runtime system</h3>
 <div class="paragraph">
-<p>The k.LAB engines and nodes can be extended at the software level to provide new adapters, contextualizers, or other functionalities to support new integrations or resource types. A mechanism to produce <em>components</em> that can be used as plug-ins is in place, with points of extension in the Java class structure well-defined and documented. The design of the server components is highly modular, and each existing resource adapter, external package integration (such as the WEKA machine learning software) or functionality extension is written as a component that can be deployed to nodes and services. The contextualization runtime, which executes the resolved dataflows and can load them from a stored k.DL specification, can itself be swapped to an alternative execution runtime to optimized for different runtime platforms (e.g. to run on distributed file systems). The default runtime is parallelized and multi-user, capable of handling concurrent sessions and optimizing the use of RAM in large-scale simulations.</p>
+<p>The k.LAB engines and nodes can be extended at the software level to provide new adapters, contextualizers, or other functionalities to support new integrations or resource types. A mechanism to produce <em>components</em> that can be used as plug-ins uses well-defined and documented points of extension in the Java class structure, and is supported by Maven archetypes for convenient project setup, building and deployment. The design of the server components is highly modular, and each existing resource adapter, external package integration (such as the WEKA machine learning software) or functionality extension is written as a component that can be deployed to nodes and services. The contextualization runtime, which executes the resolved dataflows and can load them from a stored k.DL specification, can itself be swapped with an alternative execution runtime if wished, for example to support different runtime platforms (e.g. to run contextualizations on distributed file systems). The default runtime coming with k.LAB is parallelized and multi-threaded, capable of handling concurrent sessions owned by different users and optimizing the use of RAM to enable large-scale simulations.</p>
 </div>
 </div>
 <div class="sect2">
@@ -874,7 +887,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <p>Wrapping them into web services and connecting them to an API capable of mediating with k.LAB’s data transfer format. The model will be connected using the "remote" k.LAB adapter, which uses a REST API and can therefore be coupled to model services written in any language. This alternative requires little further work on the models themselves, but requires a "bridge" API for the host programming language to facilitate integration with the k.LAB interface. At the time of this writing bridge APIs exist only for Java, but those for other languages will be developed based on demand.</p>
 </li>
 <li>
-<p>Creating a k.LAB "contextualizer" as an extension that gathers input from the k.LAB environment, passes it to the model for computation, and serves the outputs back. This does not require the mediation of a web service and thus entails more direct connections to the model code. The model may be connected at the code level, which is easiest in Java but can be supported by adapters for other languages.  Alternatively, the model may be run as an external application,  requiring no coding besides that needed to prepare inputs and gather outputs (this strategy is likely to be computationally inefficient, particularly for dynamic models that require independent runs over multiple time steps). Running as an external application may prove impossible when internal feedbacks must be connected to boundary conditions handled by the k.LAB environment, and these kinds of solutions tend to have a limited useful life.</p>
+<p>Creating a k.LAB contextualizer as an extension that gathers input from the k.LAB environment, passes it to the model for computation, and serves the outputs back. This does not require the mediation of a web service and thus entails more direct connections to the model code. The model may be connected at the code level, which is easiest in Java but can be supported by adapters for other languages.  Alternatively, the model may be run as an external application,  requiring no coding besides that needed to prepare inputs and gather outputs (this strategy is likely to be computationally inefficient, particularly for dynamic models that require independent runs over multiple time steps). Running as an external application may prove impossible when internal feedbacks must be connected to boundary conditions handled by the k.LAB environment, and while tempting because of the low development barrier, these kinds of solutions tend to have a limited useful life.</p>
 </li>
 <li>
 <p>Isolating the core algorithms in the model and reimplementing them in code as contextualizers using the native k.LAB API. This middle-ground integration strategy neither reuses the original code as-is nor requires a full semantic annotation effort to fully integrate them. This approach is usually the easiest way to bring in existing logics without a major effort. As k.LAB takes care of I/O, data transformation and preparation, data flow, spatial and temporal addressing, and visualization, the rewrite usually only has to cover a small percentage of any original stand-alone model code, normally between 10 and 30%.</p>
@@ -882,7 +895,7 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 </ol>
 </div>
 <div class="paragraph">
-<p>Overall, strategy 1 is the most generalizable solution (i.e., more bridge APIs would facilitate the integration of more external models with k.LAB). Strategy 3 is a practical solution when a smaller number of models are targeted for integration. Strategy 2 is the most ad hoc, with several key limitations; as such it can be seen as a generally less desirable strategy.</p>
+<p>Overall, strategy 1 is the most generalizable solution (i.e., more bridge APIs would facilitate the integration of more external models with k.LAB). Strategy 3 is a practical solution when a smaller number of models are targeted for integration. Strategy 2 is the most <em>ad hoc</em>, with several key limitations; as such it can be seen as a generally less desirable strategy.</p>
 </div>
 </div>
 </div>
@@ -891,34 +904,139 @@ body.book #toc,body.book #preamble,body.book h1.sect0,body.book .sect1>h2{page-b
 <div class="sect1">
 <h2 id="_the_reactivity_layer_behaviors_and_applications">4. The reactivity layer: behaviors and applications</h2>
 <div class="sectionbody">
+<div class="paragraph">
+<p>The semantic modeling approach discussed so far is designed to construct simulated worlds, using the best available data and models, based on their logical description. The observations that compose these worlds can be construed as the outputs of the underlying modeling, and will incorporate any dynamic behavior that can be stated along with the logical description in k.IM models and contextualizers - typically, process models whose behavior is known in advance. While many phenomena can be described satisfactorily within this paradigm, others - namely, those where <em>events</em> triggered by specific conditions cause modifications in the structure of the system - can not. Addressing these aspects of <em>agency</em> and <em>reactivity</em> is the purpose of the k.LAB reactivity layer.</p>
+</div>
+<div class="paragraph">
+<p>The reactivity layer contains a collection of <em>behaviors</em>, i.e. specifications of how any agent (the observations in a context, the context itself, or even the k.LAB session or the user owning it) can react to conditions that come to pass during the course of contextualization. The reactivity layer is key to developing complex, distributed <em>agent-based models</em> that are fully semantically aware, and allows modelers to build interactive visualizations and applications when the behavior is applied to a session. All behaviors take the form of code specified in the k.Actors language, supported by the k.Modeler IDE and used to define behaviors for observations, test cases, batch computations, UI components and interactive applications.</p>
+</div>
+<div class="paragraph">
+<p>The k.Actors language has a simple, minimal syntax that belies a complex and powerful model of execution. Both k.IM and k.Actors draw their syntax from the English language; if the k.IM language is concerned with representing what observations <em>are</em> and how they are computed, k.Actors is concerned with representing how they <em>behave</em>. For this reason, the linguistic realm of k.IM is that of nouns, adjectives and adverbs, while k.Actors deals mostly with <em>verbs</em>. Compared with k.IM, which is optimized to be usable at the simplest levels by modelers without programming experience, k.Actors reads less like English than k.IM and is more suitable to experienced programmers. An annotated example is provided below, with no in-depth discussion, to give a flavor of the language:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kactors hljs" data-lang="kactors">behavior demo.restaurant
+    "Invite a friend to dinner and if accepted, choose a restaurant in the context"
 
+// the main action will be triggered when the behavior is loaded
+action main:
+	invite("friend@email.com"): "OK" -&gt; choose({infrastructure:Restaurant}): reserve($)
+
+action invite(friend):
+	email("Hi, shall we go out for dinner tonight?", address=friend):
+		answer -&gt; sentiment.classify(answer, {im:Outcome}): (
+						{im:Positive} -&gt; email("Great", address=[answer.replyAddress]),  "OK"
+					    {im:Negative} -&gt; email("Sorry", address=[answer.replyAddress]), "NO")</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>In the code above, two <em>actions</em> are defined, each composed of one statement that calls other actions and specifies a chain of events triggered when each of them "responds" (<em>fires</em>). In action <code>main</code>, the verb <code>invite</code> is called, passing an email address as a parameter. The call, defined later in the code, results in an email being sent and its response being processed, eventually firing back a status code ("OK" or "NO") to the calling action. The OK code triggers the choice of a restaurant in the context and its booking when found.</p>
+</div>
+<div class="paragraph">
+<p>In k.Actors&#8217;s concurrent mode of execution, actions may cause events (<em>fire</em>) zero or more times, and those events can be captured by the code that called the action using the <code>:</code> and <code>&#8594;</code> operators. When executing the code, the runtime starts each action and immediately moves on, without waiting for it to fire unless synchronous execution is forced. If the ':' operator follows the call, the actor running the behavior readies itself to process events fired by it, whenever they happen, which may be any time (or never) as long as the actor is "alive". The data associated with the event are matched to the expression that precedes the arrow operator <code>&#8594;</code>, and if the match succeeds the code following the operator is executed.</p>
+</div>
+<div class="paragraph">
+<p>Behaviors written in k.Actors can be, in the simplest cases, bound to the observations created by models using k.IM code:</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kim hljs" data-lang="kim">@bind(city.demo.behavior, select=[self.population &gt; 100000])
+model each klab:osm:point:city as infrastructure:City;</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>which will bind the <code>city.demo.behavior</code> behavior to any city whose population is higher than 100,000. Behaviors can also be bound to observations by actions in other behaviors, based on semantic type or other conditions, or directly from within code specified in k.IM models.</p>
+</div>
+<div class="paragraph">
+<p>In the forthcoming version 1.0 of k.LAB, observations that are part of contexts in remote k.LAB engines will be accessible by prepending the URL of a connected context to the identifier of each observation; this opens the door to <em>distributed real-time simulations</em> whose agents can affect each other remotely. The paradigm of distributed, collaborative modeling enacted through the semantic layer can therefore, through the reactivity layer, extend to one where already initialized simulated worlds can interact with each other, building large-scale, multi-server simulations that can track events happening at each side. Institutions with expertise in tracking and predicting real-world phenomena of a particular category can make their digital "peers" available for other models to use. In the reference k.LAB implementation, the actor facilities utilize open source technical solutions originally developed for the <a href="https://en.wikipedia.org/wiki/Internet_of_things">Internet of Things</a>, capable of handling the functionalities described to build an "internet of observations" in support of real-time, better informed decision.</p>
+</div>
+<div class="sect2">
+<h3 id="_user_side_applications">4.1. User-side applications</h3>
+<div class="paragraph">
+<p>Within the k.LAB runtime, the software "agents" capable of receiving a behavior are not only the observations built within sessions, but also the sessions themselves and the users that own them. This opens the door to the application of behaviors for purposes beyond the modeling of agents within simulations. In particularly, when a behavior is applied to a user session, the session can be seen as an <em>application</em> whose actions are performed through the client software, and the consequences of which can trigger observations or other events. Coupled with the ability of k.Actors to interact with the runtime and use semantics for queries, this feature enables a very intuitive way to build user applications in k.Actors. The web client, k.LAB Explorer, is fully equipped to respond to events triggered by actions by creating user interface components (such as buttons, text fields, lists etc.); users interacting with these components will "fire" events that are sent back to the k.Actors runtime for processing. The resulting interactive application is typically very quick to build. For example, the following code</p>
+</div>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kactors hljs" data-lang="kactors">app example.ui.minimal
+	"A simple demo of UI definition with k.Actors."
+	description "This application demonstrates some basic UI widgets and interaction with the
+				 k.LAB runtime environment. An 'app' is a behavior applied to a k.LAB session."
+	style default with #{
+    	font-size: '0.85em'
+	}
+
+@left
+action main:
+
+	set outputs []
+
+	%%%
+		**Markdown** and HTML text widget between matching percent markers (\%\%\%).
+		Write any *markdown* in this field to put text in the UI. The :scroll and
+		:collapse attributes control the appearance.
+	%%% :scroll :collapse
+
+	/*
+	 * Groups in parentheses become divisions in the UI and can be styled with attributes
+	 */
+	(
+	  button("Set context to France and observe Elevation"):
+	  		context(im.countries.france): france -&gt; france.observe({geography:Elevation}): outputs.add($)
+	  button("Observe vegetation C storage in the current context"):
+	  		submit({ecology:Vegetation chemistry:Carbon im:Mass}): outputs.add($)
+	) :hbox :name "Sample observations (click to observe)"
+
+	/*
+	 * a final button enables downloading all the observations accumulated when pressing the
+	 * buttons above.
+	 */
+	button ("Maps" #mapdownload :tooltip "Download all observations as a zip file"):
+		(
+			mapdownload.waiting
+			pack(outputs): (
+				url -&gt; (
+					mapdownload.reset
+					download(url, filename="data.zip")
+				)
+				error -&gt; mapdownload.error(:timeout 1000)
+			)
+		 )</code></pre>
+</div>
+</div>
+<div class="paragraph">
+<p>creates a demonstrational application that will show a buttons to make observations and collects the results in an array so that the corresponding data can be downloaded in one action. The UI will appear in k.LAB Explorer. Using modular components, interfaces such as the code for the <a href="https://seea.un.org/content/aries-for-seea">ARIES for SEEA</a> application can be build by minimally trained programmers in a short time (the code for the above application at the time of this writing is only about 300 lines long).</p>
+</div>
+<div class="paragraph">
+<p>In addition to these usages, k.Actors is used as a scripting language to automate repetitive tasks (for example to build global high-resolution maps describing a single observable, by computing it in multiple local contexts with fully customized model resolution in each) and to build test suites for all aspects of k.LAB.</p>
+</div>
+</div>
 </div>
 </div>
 <div class="sect1">
 <h2 id="_current_status">5. Current status</h2>
 <div class="sectionbody">
 <div class="paragraph">
-<p>The k.LAB software stack is currently in version 0.11, with no feature or API stability guaranteed until version 1.0 is reached. According to funding and uptake, this state is expected to be reachable in the period 2022 to 2023. The current status can be briefly summarized as follows:</p>
+<p>The k.LAB software stack is currently in version 0.11, and no feature-completion or API stability is guaranteed until version 1.0 is reached. According to funding and community uptake, this state is expected to be reachable in the period 2022 to 2023. The current status can be briefly summarized as follows:</p>
 </div>
 <div class="ulist">
 <ul>
 <li>
-<p>Used currently at production levels for applications such as the general ARIES explorer and specialized apps like ARIES for SEEA. Visualization and reporting at near-feature completion for current uses.</p>
+<p>The software can be considered at production levels for the functions that support applications such as the general k.LAB explorer for the <a href="https://aries.integratedmodelling.org">ARIES project</a> and specialized apps like ARIES for SEEA. Visualization and reporting are at near-feature completion for current uses.</p>
 </li>
 <li>
-<p>Installable containers for nodes and engines but few partner nodes besides the central team and the UN.</p>
+<p>Installable containers for nodes and engines are well-developed and used regularly, although few partner nodes besides the central team and the UN exist, and frequent upgrades are necessary.</p>
 </li>
 <li>
-<p>Functionality completion is about 90%, enough for current applications but still needing work for full-scale agent-based modeling, real-time applications and other types of use. k.LAB still not at version 1.0, predicted in 1+ year after full feature completion and documentation.</p>
+<p>Feature completion vs. the planned set of features is at about 90%, enough for current applications but still needing work for full-scale agent-based modeling, real-time applications and other types of use.</p>
 </li>
 <li>
-<p>Adapters for most important data formats, services and protocols including &#8230;&#8203; (SDMX, OGC, &#8230;&#8203; ). Interfaces to contribute data/models are limited for now to the modeling environment k.Modeler, which is functional but not suitable for non-technical users. More data submission aids to be developed in 2021 to support UN and other applications.</p>
+<p>Resource adapters are available for most important data formats, services and protocols. Assisted user interfaces to contribute data and models are limited for now to the modeling environment k.Modeler, which is functional but not suitable for non-technical users. More data submission methods and interfaces are to be developed in 2021 to support use by countries and institutions involved in ongoing projects.</p>
 </li>
 <li>
-<p>Limited funding for development but with high chance of continuation. Operation through preferred partnership models rather than grants, as continuity and talent retention are more important than large investments in one-off funding.</p>
+<p>Besides an initial grant from the US National Science Foundation, k.LAB has seen a limited but reliable funding stream for its development, with low- to mid-levels of financing but a relatively high stability. The current preference is for a partnership model rather than individual grants, as continuity and talent retention are more important to guarantee ultimate success than large investments and one-off funding.</p>
 </li>
 <li>
-<p>API is optimized for applications and use "within" the system using its own clients based on k.LAB Explorer: more work needed for a stable API to be used independently.</p>
+<p>The REST API is currently optimized for applications and use "within" the system using its own clients based on k.LAB Explorer: more discussion will be needed before a stable API specification, to be used independently, is published.</p>
 </li>
 </ul>
 </div>

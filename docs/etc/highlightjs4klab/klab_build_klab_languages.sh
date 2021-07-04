@@ -11,7 +11,6 @@
 
 node tools/build.js -n java kim
 
-
 # then rename and move the files necessary to compile asciidoctor 
 # documents using this custom installation
 
