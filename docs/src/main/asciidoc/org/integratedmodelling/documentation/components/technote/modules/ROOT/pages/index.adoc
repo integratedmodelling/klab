@@ -29,9 +29,8 @@ Technical note 2021-02-20
 :autofit-option:
 :mdash: &#8212;
 :language: asciidoc
-:title-logo-image: image:resources_handling/imgs/KLAB_LOGO.png[align=center]
-:source-highlighter: highlightjs
-:highlightjs-languages: kim, java
+:source-highlighter: highlight.js
+:highlightjs-languages: kim, kactors
 :highlightjs-theme: klab
 :stem:
 

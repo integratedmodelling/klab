@@ -2,21 +2,27 @@ site:
   title: k.LAB Documentation
   url: https://docs.integratedmodelling.org
   start_page: klab::index.adoc
+  robots: allow
 content:
   sources:
-  - url: https://bitbucket.com/integratedmodelling/klab.git
-    branches: develop
+  - url: ../../
+    branches: HEAD
     edit_url: false
-    start_path: docs/src/asciidoc/org/integratedmodelling/documentation/components/klab
-  - url: https://bitbucket.com/integratedmodelling/klab.git
-    branches: develop
+    start_path: docs/src/main/asciidoc/org/integratedmodelling/documentation/components/klab
+  - url: ../../
+    branches: HEAD
     edit_url: false
-    start_path: docs/src/asciidoc/org/integratedmodelling/documentation/components/tutorials
-  - url: https://bitbucket.com/integratedmodelling/klab.git
-    branches: develop
+    start_path: docs/src/main/asciidoc/org/integratedmodelling/documentation/components/tutorials
+  - url: ../../
+    branches: HEAD
     edit_url: false
-    start_path: docs/src/asciidoc/org/integratedmodelling/documentation/components/technote
+    start_path: docs/src/main/asciidoc/org/integratedmodelling/documentation/components/technote
 ui:
   bundle:
-    url: https://gitlab.com/antora/antora-ui-default/-/jobs/artifacts/master/raw/build/ui-bundle.zip?job=bundle-stable
+    url: ./ui-bundle.zip
     snapshot: true
+output:
+   clean: true
+asciidoc:
+  attributes:
+    source-highlighter: highlight.js
