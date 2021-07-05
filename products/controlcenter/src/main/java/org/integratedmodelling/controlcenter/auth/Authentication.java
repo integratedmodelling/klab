@@ -122,7 +122,8 @@ public class Authentication implements IAuthentication {
                     this.email =  userData.getIdentity().getEmail();
                     this.expiration = DateTime.parse(userData.getExpiry());
                     this.authorization = userData.getToken();
-
+                    this.groups.clear();
+                    this.messages.clear();
                     response.getUserData().getGroups().forEach(g -> this.groups.add(g));
                     
                     if (response.getMessages() != null) {
