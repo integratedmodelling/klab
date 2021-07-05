@@ -37,6 +37,7 @@ import org.codehaus.groovy.antlr.parser.GroovyLexer;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.validation.KimNotification;
 import org.integratedmodelling.klab.Concepts;
+import org.integratedmodelling.klab.Namespaces;
 import org.integratedmodelling.klab.Observables;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.data.IGeometry;
@@ -54,6 +55,7 @@ import org.springframework.util.StringUtils;
 
 import groovyjarjarantlr.Token;
 import groovyjarjarantlr.TokenStreamException;
+import groovyjarjarantlr.TokenStreamRecognitionException;
 
 /**
  * Smarter preprocessor to produce proper Groovy from k.LAB expressions.
@@ -114,7 +116,19 @@ public class GroovyExpressionPreprocessor {
 			// // stop parsing without warning.
 			// return null;
 			// }
-			Token t = super.nextToken();
+		    Token t = null;
+//		    try {
+		        t = super.nextToken();
+//		    } catch (TokenStreamRecognitionException e) {
+//		        if (e.getMessage().contains("unexpected char: '")) {
+//		            // FIXME this is thrown from the template processor when a  $ is found in a triple-quoted string, which should not happen.
+//	                int n = "unexpected char: '".length();
+//		            t = new Token();
+//		            t.setType(GroovyLexer.IDENT);
+//		            t.setText(e.getMessage().substring(n, n+2));
+//		            super.s
+//		        }
+//		    }
 			// cheat Groovy into thinking that it just saw an integer, so that it won't
 			// try
 			// to interpret slashes as string separators.
@@ -124,7 +138,7 @@ public class GroovyExpressionPreprocessor {
 	}
 
 	/*
-	 * what separates Groovy words and not necessarily Thinklab's.
+	 * what separates Groovy words and not necessarily k.LAB's.
 	 */
 	static Set<String> delimiters;
 
@@ -155,6 +169,7 @@ public class GroovyExpressionPreprocessor {
 	 */
 	private Map<String, Set<String>> mapIdentifiers = new HashMap<>();
 	private boolean ignoreContext;
+    private boolean ignored;
 
 	static final int KNOWLEDGE = 1;
 	static final int DEFINE = 2;
@@ -177,6 +192,7 @@ public class GroovyExpressionPreprocessor {
 		this.contextual = contextual;
 		this.recontextualizeAsMap = options.contains(CompilerOption.RecontextualizeAsMap);
 		this.ignoreContext = options.contains(CompilerOption.IgnoreContext);
+		this.ignored = options.contains(CompilerOption.DoNotPreprocess);
 	}
 
 	public Geometry getInferredGeometry() {
@@ -298,15 +314,20 @@ public class GroovyExpressionPreprocessor {
 
 		// substitute all #(...) declarations with ___DECL_n
 		code = preprocessDeclarations(code);
-
 		code = preprocessContextualizations(code);
 
+
+        if (this.ignored) {
+            return code;
+        }
+        
 		List<List<Token>> groups = new ArrayList<>();
 		Lexer lexer = new Lexer(new StringReader(code));
 		lexer.setWhitespaceIncluded(true);
 		// String ret = "";
 		// String remainder = "";
 
+		
 		try {
 			lexer.consume();
 			List<Token> acc = new ArrayList<>();
@@ -319,8 +340,16 @@ public class GroovyExpressionPreprocessor {
 						&& (token.getType() == GroovyLexer.IDENT || delimiters.contains(token.getText()));
 				boolean isEof = token == null || token.getType() == Token.EOF_TYPE;
 				if (!acc.isEmpty() && (!isSpecial || isEof || (isSpecial && !wasSpecial) || isRecognized(acc))) {
-					groups.add(acc);
-					acc = new ArrayList<>();
+				    /*
+				     * if last parsed token is a namespace and this is a colon, keep the same group
+				     * TODO all this must be brought back to some level of sanity with a true state processor.
+				     */
+				    Token last = acc.get(acc.size() - 1);
+				    boolean conceptPrefix = ":".equals(token.getText()) && Namespaces.INSTANCE.getNamespace(last.getText()) != null;
+				    if (!conceptPrefix) {
+				        groups.add(acc);
+				        acc = new ArrayList<>();
+				    }
 				}
 				if (isEof) {
 					break;
@@ -371,7 +400,7 @@ public class GroovyExpressionPreprocessor {
 					}
 				}
 			}
-
+			
 			tokens.add(cls);
 		}
 		analyze();
@@ -692,7 +721,7 @@ public class GroovyExpressionPreprocessor {
 
 	private String translateParameter(String currentToken, boolean isScalar) {
 		boolean isMapIdentifier = mapIdentifiers.containsKey(currentToken);
-		boolean includeLiterally = this.ignoreContext && !this.context.getStateIdentifiers().contains(currentToken);
+		boolean includeLiterally = this.ignoreContext && (this.context == null || !this.context.getStateIdentifiers().contains(currentToken));
 		return (isScalar || isMapIdentifier || includeLiterally) ? currentToken : "_p.get(\"" + currentToken + "\")";
 	}
 

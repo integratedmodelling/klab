@@ -14,12 +14,14 @@ import org.integratedmodelling.klab.engine.configs.ConsulConfig;
 import org.integratedmodelling.klab.engine.events.GenericUserEvent;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.event.EventListener;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
 
@@ -27,14 +29,15 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Service
 public class AgentServiceCheck {
+    
+    @Value("${engine.agent.port:8999}")
+    private int port;
+    
+    private Map<HubUserProfile, Session> users = new HashMap<>();
 
 	//to be set from config
-	int port = 6666;
 	int weight = 100;
 	int overload = 0;
-
-	@Autowired
-	ConsulConfig consul;
 	
 	@Autowired
 	RestTemplate template;
@@ -97,42 +100,50 @@ public class AgentServiceCheck {
 	void handleLogin(GenericUserEvent<HubUserProfile, Session> event) {
 		HubUserProfile profile = event.getProfile();
 		Session session = event.getSession();
-		removeServiceWeight(profile);
-		addUserToStore(profile, session);		
+		users.putIfAbsent(profile, session);
+		removeServiceWeight(profile);	
 	}
 	
 	@EventListener(condition = "#event.type == T(org.integratedmodelling.klab.engine.events.UserEventType).LOGOUT")
-	  void handleLogout(GenericUserEvent<HubUserProfile, Session> event) {
-		removeUserFromStore(event.getProfile().getName());
-		addServiceWeight(event.getProfile());
-	  }
+	void handleLogout(GenericUserEvent<HubUserProfile, Session> event) {
+	    if(event.getProfile() != null) {
+	        addServiceWeight(event.getProfile());
+	    } else {
+	        HubUserProfile profile = users.entrySet()
+	            .stream()
+	            .filter(sesh -> sesh.getValue().getId().equals(event.getSession().getId()))
+	            .map(Map.Entry::getKey)
+	            .findFirst().get();
+	        addServiceWeight(profile);
+	    }
+    }
 	
 	
-	private boolean addUserToStore(HubUserProfile profile, Session session) {
-		Map<String,List<Object>> payload = new HashMap<>();
-		List<Object> details = new ArrayList<Object>();
-		details.add(profile);
-		details.add(session.getSessionReference());
-		payload.put(profile.getName(), details);
-		payload.put("engine", Arrays.asList(consul.getId()));
-
-		HttpEntity<?> requestUpdate = new HttpEntity<>(payload, getHeaders());
-		ResponseEntity<Boolean> success = template.exchange(consul.getStoreUrl() + "/" + profile.getName(),
-				HttpMethod.PUT, requestUpdate, Boolean.class);
-		return success.getBody();
-	}
-	
-	private boolean removeUserFromStore(String username) {
-		HttpEntity<?> delete = new HttpEntity<>(getHeaders());
-		ResponseEntity<Boolean> success = template.exchange(consul.getStoreUrl() + "/" + username,
-				HttpMethod.DELETE, delete, Boolean.class);
-		return success.getBody();
-	}
-	
-	private HttpHeaders getHeaders() {
-		HttpHeaders headers = new HttpHeaders();
-		headers.setContentType(MediaType.APPLICATION_JSON);
-		return headers;
-	}
+//	private boolean addUserToStore(HubUserProfile profile, Session session) {
+//		Map<String,List<Object>> payload = new HashMap<>();
+//		List<Object> details = new ArrayList<Object>();
+//		details.add(profile);
+//		details.add(session.getSessionReference());
+//		payload.put(profile.getName(), details);
+//		payload.put("engine", Arrays.asList(consul.getId()));
+//
+//		HttpEntity<?> requestUpdate = new HttpEntity<>(payload, getHeaders());
+//		ResponseEntity<Boolean> success = template.exchange(consul.getStoreUrl() + "/" + profile.getName(),
+//				HttpMethod.PUT, requestUpdate, Boolean.class);
+//		return success.getBody();
+//	}
+//	
+//	private boolean removeUserFromStore(String username) {
+//		HttpEntity<?> delete = new HttpEntity<>(getHeaders());
+//		ResponseEntity<Boolean> success = template.exchange(consul.getStoreUrl() + "/" + username,
+//				HttpMethod.DELETE, delete, Boolean.class);
+//		return success.getBody();
+//	}
+//	
+//	private HttpHeaders getHeaders() {
+//		HttpHeaders headers = new HttpHeaders();
+//		headers.setContentType(MediaType.APPLICATION_JSON);
+//		return headers;
+//	}
 	
 }

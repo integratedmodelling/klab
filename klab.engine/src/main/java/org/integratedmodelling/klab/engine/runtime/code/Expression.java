@@ -226,11 +226,11 @@ public abstract class Expression implements IExpression {
 			return null;
 		}
 
-		@Override
-		public Collection<IArtifact> getAdditionalOutputs() {
-			// TODO Auto-generated method stub
-			return null;
-		}
+//		@Override
+//		public Collection<IArtifact> getAdditionalOutputs() {
+//			// TODO Auto-generated method stub
+//			return null;
+//		}
 
 		@Override
 		public ISubject getRootSubject() {

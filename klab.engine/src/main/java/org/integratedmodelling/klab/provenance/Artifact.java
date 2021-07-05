@@ -22,6 +22,8 @@ import org.integratedmodelling.klab.data.Metadata;
 
 import com.google.common.collect.Lists;
 
+import groovy.lang.GroovyObjectSupport;
+
 /**
  * All the provenance-related functions of IArtifact. Can be used as delegate
  * for those within any runtime provider that produces artifacts.
@@ -33,7 +35,7 @@ import com.google.common.collect.Lists;
  * @author ferdinando.villa
  *
  */
-public abstract class Artifact implements IArtifact {
+public abstract class Artifact extends GroovyObjectSupport implements IArtifact {
 
 	List<IAnnotation> annotations = new ArrayList<>();
 	private List<IActivity> activities = new ArrayList<>();
@@ -209,7 +211,7 @@ public abstract class Artifact implements IArtifact {
 	
 	@Override
 	public void release() {
-		System.out.println("RELEASING ARTIFACT - UNIMPLEMENTED!");
+//		System.out.println("RELEASING ARTIFACT - UNIMPLEMENTED!");
 	}
 
 	public Activity getGenerator() {

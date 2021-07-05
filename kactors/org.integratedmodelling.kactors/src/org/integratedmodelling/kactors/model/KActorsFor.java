@@ -1,8 +1,10 @@
 package org.integratedmodelling.kactors.model;
 
+import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.For;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
 import org.integratedmodelling.kactors.kactors.ForStatement;
 
 public class KActorsFor extends KActorsStatement implements For {
@@ -33,4 +35,11 @@ public class KActorsFor extends KActorsStatement implements For {
         return this.iterable;
     }
 
+    @Override
+    protected void visit(IKActorsAction action, Visitor visitor) {
+        visitor.visitValue(iterable, this, action);
+        ((KActorsStatement)body).visit(action, visitor);
+        super.visit(action, visitor);
+    }
+    
 }

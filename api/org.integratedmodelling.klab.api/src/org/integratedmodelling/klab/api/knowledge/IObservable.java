@@ -328,6 +328,14 @@ public interface IObservable extends ISemantic, IResolvable {
          */
         boolean axiomsAdded();
 
+        /**
+         * Set the dereified status to true, so that the observable can be recognized as being
+         * "virtual" and not linked to a model.
+         * 
+         * @return
+         */
+        Builder setDereified();
+
     }
 
     /**
@@ -589,5 +597,14 @@ public interface IObservable extends ISemantic, IResolvable {
      * @return
      */
     Map<IConcept, IConcept> getResolvedPredicates();
+
+    /**
+     * If true, the observable is for a dereifying observation, which just merges the results of
+     * observations of inherent sub-contexts (e.g. runoff of watershed, within region). Actuators
+     * for those observations aren't scheduled and may be treated differently.
+     * 
+     * @return true if dereified
+     */
+    boolean isDereified();
 
 }

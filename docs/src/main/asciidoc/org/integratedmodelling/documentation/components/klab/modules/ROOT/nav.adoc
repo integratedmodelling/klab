@@ -1,0 +1,3 @@
+* External Resources
+** https://hub.integratedmodelling.org[k.LAB Hub]
+** https://www.integratedmodelling.org[IM partnership]

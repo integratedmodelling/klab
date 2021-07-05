@@ -66,6 +66,7 @@
 		<module>kim</module>
 		<module>kactors</module>
 		<module>klab.engine</module>
+		<module>klab.stats</module>
 		<module>adapters</module>
 		<module>klab.modeler</module>
 		<module>client</module>
@@ -102,6 +103,7 @@
 		<tycho-version>1.0.0</tycho-version>
 		<xtextVersion>2.18.0</xtextVersion>
 		<mweVersion>2.10.0</mweVersion>
+		<googleJibVersion>2.7.1</googleJibVersion>
 
 		<!-- the five below go together. Never change one without checking the 
 			others. Spring security latest is currently requiring 5.0.4, implying boot 
@@ -132,6 +134,11 @@
 						<target>${maven.compiler.target}</target>
 					</configuration>
 				</plugin>
+		        <plugin>
+		        	<groupId>com.google.cloud.tools</groupId>
+		        	<artifactId>jib-maven-plugin</artifactId>
+		        	<version>${googleJibVersion}</version>
+		        </plugin>
 			</plugins>
 		</pluginManagement>
 	</build>

@@ -451,8 +451,20 @@ public class TableCompiler {
                 IObservation observation = catalog.get(target);
                 if (observation instanceof IState) {
                     if (((IState) observation).getDataKey() != null && classifier.isConcept()) {
-                        if (!((IState) observation).getDataKey().getConcepts().contains(classifier.getConcept())) {
-                            return false;
+                        if (classifier.getConceptResolution() == IObservable.Resolution.Only) {
+                            if (!((IState) observation).getDataKey().getConcepts().contains(classifier.getConcept())) {
+                                return false;
+                            } else if (classifier.getConceptResolution() == IObservable.Resolution.Any) {
+                                if (((IState) observation).getDataKey().getConcepts().contains(classifier.getConcept())) {
+                                    return true;
+                                }
+                                for (IConcept child : classifier.getConcept().getChildren()) {
+                                    if (((IState) observation).getDataKey().getConcepts().contains(child)) {
+                                        return true;
+                                    }
+                                }
+                                return false;
+                            }
                         }
                     }
                 }
@@ -695,6 +707,12 @@ public class TableCompiler {
         List<TargetOperation> targetOperation = new ArrayList<>();
 
         /**
+         * Gets to the view in case a column wants to specify a number format. Ignored in rows for
+         * now.
+         */
+        String numberformat = null;
+
+        /**
          * This tells us if we're scanning the actual values of the target or only the associated
          * context metrics such as area occupied per category or counts.
          */
@@ -732,9 +750,14 @@ public class TableCompiler {
         List<Filter> classifiers;
 
         /**
-         * Aggregation type, if any.
+         * Aggregation type, if any. (UNUSED)
          */
         AggregationType aggregation = null;
+
+        /**
+         * This takes over the type of aggregator if specified with 'aggregation'.
+         */
+        ComputationType forcedAggregation = null;
 
         /**
          * Computation type may require the use of specific formulas or defer calculation to a
@@ -782,6 +805,7 @@ public class TableCompiler {
             this.computation = dim.computation;
             this.expression = dim.expression;
             this.dimensionType = dim.dimensionType;
+            this.forcedAggregation = dim.forcedAggregation;
             this.computationType = dim.computationType;
             if (dim.filters != null) {
                 for (Filter filter : dim.filters) {
@@ -832,16 +856,18 @@ public class TableCompiler {
 
                 // register row and column names unless the rows/colums are aggregations
                 for (Dimension dimension : rows.values()) {
-                    if (dimension.computationType == null || !dimension.computationType.isAggregation()) {
-                        // FIXME IDs for all siblings, getName() for others
-                        context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
-                    }
+                    // if (dimension.computationType == null ||
+                    // !dimension.computationType.isAggregation()) {
+                    // FIXME IDs for all siblings, getName() for others
+                    context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
+                    // }
                 }
                 for (Dimension dimension : columns.values()) {
-                    if (dimension.computationType == null || !dimension.computationType.isAggregation()) {
-                        // FIXME IDs for all siblings, getName() for others
-                        context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
-                    }
+                    // if (dimension.computationType == null ||
+                    // !dimension.computationType.isAggregation()) {
+                    // FIXME IDs for all siblings, getName() for others
+                    context.addKnownIdentifier(dimension.id, IKimConcept.Type.QUALITY);
+                    // }
                 }
 
                 context.addKnownIdentifier("cell", Type.COUNTABLE);
@@ -1064,6 +1090,7 @@ public class TableCompiler {
             ret.computationType = this.computationType;
             ret.expression = this.expression;
             ret.dimensionType = this.dimensionType;
+            ret.forcedAggregation = this.forcedAggregation;
             if (this.filters != null) {
                 for (Filter filter : this.filters) {
                     if (filter.objectFilter == null) {
@@ -1108,6 +1135,10 @@ public class TableCompiler {
         public Object getDefault() {
             // TODO Auto-generated method stub
             return 0;
+        }
+
+        public Aggregation getForcedAggregation() {
+            return this.forcedAggregation == null ? null : this.forcedAggregation.getAggregation();
         }
 
         // public void retarget(ObservedConcept target) {
@@ -1170,6 +1201,11 @@ public class TableCompiler {
     private IObservable targetObservable;
 
     private Map<?, ?> timelabels;
+
+    private String numberFormat = null;
+
+    // tied to the "name" spec and initialized to the table's model name if unspecified.
+    private String identifier;
 
     /**
      * Return the passed dimensions in order of dependency. If circular dependencies are detected
@@ -1287,6 +1323,8 @@ public class TableCompiler {
 
         this.activeColumns = parseDimension(definition.get("columns"), colList, DimensionType.COLUMN, null);
         this.activeRows = parseDimension(definition.get("rows"), rowList, DimensionType.ROW, null);
+        this.numberFormat = definition.containsKey("numberformat") ? definition.get("numberformat").toString() : null;
+
         for (Dimension row : rowList) {
             String id = rename.containsKey(row.getName()) ? rename.get(row.getName()) : row.getName();
             row.id = id.substring(row.parent == null ? 0 : row.parent.getName().length());
@@ -1299,6 +1337,7 @@ public class TableCompiler {
         }
         this.title = definition.containsKey("title") ? definition.get("title").toString() : null;
         this.label = definition.containsKey("label") ? definition.get("label").toString() : null;
+        this.identifier = definition.containsKey("name") ? definition.get("name").toString() : this.name;
         this.namespace = namespace;
         this.definition = definition;
         if (definition.get("timelabels") instanceof Map) {
@@ -1441,7 +1480,8 @@ public class TableCompiler {
         for (Pair<ObservedConcept, TargetType> target : parseTarget(map.get("target"))) {
             Object classifiers = map.containsKey("filter") ? map.get("filter") : map.get("classifier");
             boolean isClassifier = map.containsKey("classifier");
-            Pair<Collection<List<Filter>>, String> clss = expandClassifier(target.getFirst(), target.getSecond(), classifiers);
+            Pair<Collection<List<Filter>>, String> clss = expandClassifier(target.getFirst(), target.getSecond(), classifiers,
+                    map);
             for (List<Filter> filters : clss.getFirst()) {
                 Dimension dimension = newDimension(target.getFirst(), target.getSecond(), filters, map, type, dimensions.size(),
                         isClassifier, clss.getSecond(), parent, dimensions);
@@ -1564,6 +1604,7 @@ public class TableCompiler {
         ret.dimensionType = type;
         ret.parent = parent;
         ret.filterClassId = filterClassId;
+        ret.numberformat = definition.get("numberformat") != null ? definition.get("numberformat").toString() : null;
 
         if (parent != null) {
             ret.parent.children.add(ret);
@@ -1688,7 +1729,32 @@ public class TableCompiler {
                 ret.computationType = ComputationType.Max;
                 break;
             default:
-                throw new KlabValidationException("unrecognized symbol in computation: " + definition.get("compute"));
+                throw new KlabValidationException("unrecognized symbol in summarization: " + definition.get("summarize"));
+            }
+        }
+
+        if (definition.containsKey("aggregation")) {
+            switch(definition.get("aggregation").toString()) {
+            case "sum":
+                ret.forcedAggregation = ComputationType.Sum;
+                break;
+            case "average":
+                ret.forcedAggregation = ComputationType.Average;
+                break;
+            case "variance":
+                ret.forcedAggregation = ComputationType.Variance;
+                break;
+            case "std":
+                ret.forcedAggregation = ComputationType.Std;
+                break;
+            case "min":
+                ret.forcedAggregation = ComputationType.Min;
+                break;
+            case "max":
+                ret.forcedAggregation = ComputationType.Max;
+                break;
+            default:
+                throw new KlabValidationException("unrecognized symbol in aggregation: " + definition.get("aggregation"));
             }
         }
 
@@ -1747,7 +1813,7 @@ public class TableCompiler {
     }
 
     private Pair<Collection<List<Filter>>, String> expandClassifier(ObservedConcept target, TargetType targetType,
-            Object declaration) {
+            Object declaration, Map<?, ?> dimensionDeclaration) {
 
         List<List<Filter>> ret = new ArrayList<>();
         String classId = null;
@@ -1760,25 +1826,26 @@ public class TableCompiler {
         if (declaration instanceof Map) {
             for (Entry<?, ?> entry : ((Map<?, ?>) declaration).entrySet()) {
                 if ("default".equals(entry.getKey())) {
-                    expandClassifiers(target, targetType, declaration, ret);
+                    expandClassifiers(target, targetType, declaration, ret, dimensionDeclaration);
                 } else {
                     List<Pair<ObservedConcept, TargetType>> classifierTarget = parseTarget(entry.getKey());
                     if (classifierTarget.size() > 1) {
                         throw new KlabValidationException("Only one specific target is admitted in a classifier");
                     } else if (classifierTarget.size() > 0) {
                         expandClassifiers(classifierTarget.get(0).getFirst(), classifierTarget.get(0).getSecond(), declaration,
-                                ret);
+                                ret, dimensionDeclaration);
                     }
                 }
             }
         } else {
-            expandClassifiers(target, targetType, declaration, ret);
+            expandClassifiers(target, targetType, declaration, ret, dimensionDeclaration);
         }
 
         return new Pair<>(ret, classId);
     }
 
-    private void expandClassifiers(ObservedConcept target, TargetType targetType, Object declaration, List<List<Filter>> ret) {
+    private void expandClassifiers(ObservedConcept target, TargetType targetType, Object declaration, List<List<Filter>> ret,
+            Map<?, ?> dimensionDeclaration) {
         Map<Integer, List<Object>> sorted = new HashMap<>();
 
         /*
@@ -1806,7 +1873,25 @@ public class TableCompiler {
                 if (observable.is(IKimConcept.Type.COUNTABLE)) {
                     categorize(OBJECT, new ObservedConcept(observable, Mode.INSTANTIATION), sorted, null);
                 } else if (observable.is(IKimConcept.Type.CLASS)) {
-                    for (ObservedConcept category : expandCategory(observable)) {
+
+                    List<IObservable> keep = null;
+                    if (dimensionDeclaration.containsKey("keep")) {
+                        keep = new ArrayList<>();
+                        Object z = dimensionDeclaration.get("keep");
+                        if (z instanceof List) {
+                            for (Object zz : ((List<?>) z)) {
+                                keep.add(zz instanceof IKimObservable
+                                        ? Observables.INSTANCE.declare((IKimObservable) zz, monitor)
+                                        : Observable.promote(Concepts.INSTANCE.declare((IKimConcept) zz)));
+                            }
+                        } else {
+                            keep.add(z instanceof IKimObservable
+                                    ? Observables.INSTANCE.declare((IKimObservable) z, monitor)
+                                    : Observable.promote(Concepts.INSTANCE.declare((IKimConcept) z)));
+                        }
+                    }
+
+                    for (ObservedConcept category : expandCategory(observable, keep)) {
                         categorize(CATEGORY, category, sorted, observable);
                     }
                 } else if (observable.is(IKimConcept.Type.PRESENCE)) {
@@ -1886,9 +1971,19 @@ public class TableCompiler {
         list.add(target == null ? value : new Pair<Object, ObservedConcept>(value, new ObservedConcept(target)));
     }
 
-    public List<ObservedConcept> expandCategory(IObservable observable) {
+    public List<ObservedConcept> expandCategory(IObservable observable, List<IObservable> keep) {
         IConcept category = Observables.INSTANCE.getDescribedType(observable.getType());
-        this.observables.add(new ObservedConcept(observable, Mode.RESOLUTION));
+        this.observables
+                .add(new ObservedConcept(Observables.INSTANCE.removeValueOperators(observable, monitor), Mode.RESOLUTION));
+
+        if (keep != null && !keep.isEmpty()) {
+            List<ObservedConcept> ret = new ArrayList<>();
+            for (IObservable k : keep) {
+                ret.add(new ObservedConcept(k));
+            }
+            return ret;
+        }
+
         return expandConcept(category, observable);
     }
 
@@ -2102,6 +2197,9 @@ public class TableCompiler {
                         // bring along the data of computation closest to us
                         ObservedConcept rowTarget = getCellTarget(row, column, columnTarget);
                         TargetType rowTargetType = row.targetType == null ? columnTargetType : row.targetType;
+                        ComputationType forcedAggregation = row.forcedAggregation == null
+                                ? column.forcedAggregation
+                                : row.forcedAggregation;
                         ComputationType rowComputationType = row.computationType == null
                                 ? column.computationType
                                 : row.computationType;
@@ -2120,7 +2218,8 @@ public class TableCompiler {
                             aggregationLevel++;
                         }
 
-                        // ugh
+                        // ugh. This sucks because isAggregation() is WRONG (includes Summarize) but
+                        // if that changes, more gets messed up.
                         boolean inconsistentAggregation = columnComputationType != null && row.computationType != null
                                 && rowComputationType.isAggregation() && column.computationType.isAggregation()
                                 && row.computationType != column.computationType;
@@ -2174,9 +2273,9 @@ public class TableCompiler {
                         }
 
                         if (rowComputationType == null) {
-
+                            
                             ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(), phase,
-                                    column.index, row.index);
+                                    column.index, row.index, forcedAggregation);
 
                             // System.out.println("Accumulating " + val + " of " + rowTarget + " in
                             // " + column + ", " + row
@@ -2194,7 +2293,7 @@ public class TableCompiler {
                             }
 
                             ret.accumulate(val, rowTarget == null ? null : rowTarget.getObservable(), value.getSecond(), phase,
-                                    column.index, row.index);
+                                    column.index, row.index, forcedAggregation);
 
                             if (referencesPhases && phase.isLast()) {
                                 ret.setValue(evaluate(rowExpression, val, rowSymbols, objSymbols, value, ret, column.index,
@@ -2204,7 +2303,15 @@ public class TableCompiler {
                         } else if (!inconsistentAggregation) {
                             // schedule for aggregation after all other cells are computed
                             ret.aggregate(rowComputationType, phase, column.index, row.index, aggregationLevel);
+                        } else if (inconsistentAggregation && (rowComputationType == ComputationType.Summarize
+                                || column.computationType == ComputationType.Summarize)) {
+                            // this mess shouldn't be here. Stems from Summarize being considered
+                            // aggregation when it shouldn't.
+                            ret.aggregate(
+                                    rowComputationType == ComputationType.Summarize ? columnComputationType : rowComputationType,
+                                    phase, column.index, row.index, aggregationLevel);
                         }
+
                     }
                 }
             }
@@ -2310,11 +2417,34 @@ public class TableCompiler {
                 if (rows.containsKey(symbol) || columns.containsKey(symbol)) {
                     parameters.put(symbol, ret.getCurrentValue(columnIndex, rowIndex, symbol, true));
                 } else {
-                    IArtifact artifact = scope.getArtifact(symbol);
-                    if (artifact instanceof IState) {
-                        parameters.put(symbol, ((IState) artifact).get(value.getSecond()));
-                    } else if (artifact != null) {
-                        parameters.put(symbol, artifact);
+
+                    /*
+                     * check with symbol contextualized to group
+                     */
+                    boolean done = false;
+                    if (row.parent != null) {
+                        String csym = row.parent.getName() + symbol;
+                        if (rows.containsKey(csym)) {
+                            parameters.put(symbol, ret.getCurrentValue(columnIndex, rowIndex, csym, true));
+                            done = true;
+                        }
+                    }
+
+                    if (!done && column.parent != null) {
+                        String csym = column.parent.getName() + symbol;
+                        if (columns.containsKey(csym)) {
+                            parameters.put(symbol, ret.getCurrentValue(columnIndex, rowIndex, csym, true));
+                            done = true;
+                        }
+                    }
+
+                    if (!done) {
+                        IArtifact artifact = scope.getArtifact(symbol);
+                        if (artifact instanceof IState) {
+                            parameters.put(symbol, ((IState) artifact).get(value.getSecond()));
+                        } else if (artifact != null) {
+                            parameters.put(symbol, artifact);
+                        }
                     }
                 }
                 break;
@@ -2438,9 +2568,12 @@ public class TableCompiler {
                         filter.objectFilter = observable;
                     } else {
                         /*
-                         * by default concept matches on expanded concepts are exact
+                         * by default concept matches on expanded concepts are exact unless the
+                         * concept is abstract
                          */
-                        IObservable.Resolution resolution = IObservable.Resolution.Only;
+                        IObservable.Resolution resolution = observable.getObservable().getType().isAbstract()
+                                ? IObservable.Resolution.Any
+                                : IObservable.Resolution.Only;
                         if (observable.getObservable().getResolution() != null) {
                             resolution = observable.getObservable().getResolution();
                         }
@@ -2530,12 +2663,20 @@ public class TableCompiler {
         return namespace;
     }
 
+    public String getIdentifier() {
+        return identifier;
+    }
+    
     public TableCompiler contextualize(IRuntimeScope scope) {
         return new TableCompiler(this, scope);
     }
 
     public IObservable getTargetObservable() {
         return this.target == null ? null : this.target.getObservable();
+    }
+
+    public String getNumberFormat() {
+        return numberFormat;
     }
 
 }

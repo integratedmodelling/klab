@@ -75,7 +75,6 @@ import org.integratedmodelling.klab.engine.resources.CoreOntology.NS;
 import org.integratedmodelling.klab.engine.resources.MergedResource;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.owl.Concept;
 import org.integratedmodelling.klab.owl.Observable;
 import org.integratedmodelling.klab.owl.ObservableBuilder;
 import org.integratedmodelling.klab.resolution.ObservationStrategy;
@@ -84,7 +83,7 @@ import org.integratedmodelling.klab.resolution.RankedModel;
 import org.integratedmodelling.klab.resolution.ResolutionScope;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.CollectionUtils;
-import org.integratedmodelling.klab.utils.MiscUtilities;
+import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
 
 public class Model extends KimObject implements IModel {
@@ -161,7 +160,8 @@ public class Model extends KimObject implements IModel {
      * @param monitor
      * @return
      */
-    public static IModel concretize(IModel candidate, Map<IConcept, IConcept> resolvedTraits, IMonitor monitor) {
+    public static IModel concretize(IModel candidate, Map<IConcept, IConcept> resolvedTraits,
+            Map<IConcept, Set<IConcept>> resolvedPredicatesContext, IMonitor monitor) {
 
         if (resolvedTraits.isEmpty()) {
             return candidate;
@@ -187,10 +187,11 @@ public class Model extends KimObject implements IModel {
             }
         }
 
-        return needConcretization ? new Model((Model) model, resolvedTraits, monitor) : candidate;
+        return needConcretization ? new Model((Model) model, resolvedTraits, resolvedPredicatesContext, monitor) : candidate;
     }
 
-    private Model(Model model, Map<IConcept, IConcept> resolvedPredicates, IMonitor monitor ) {
+    private Model(Model model, Map<IConcept, IConcept> resolvedPredicates, Map<IConcept, Set<IConcept>> resolvedPredicatesContext,
+            IMonitor monitor) {
 
         /*
          * easier to recreate from the statement, then fix observables and resources. Any "named"
@@ -210,21 +211,21 @@ public class Model extends KimObject implements IModel {
          * correctly handled in dataflow compilation.
          */
         Collections.sort(preds);
-        
+
         this.id = this.id + "_" + Utils.join(preds, "_");
         this.observables.clear();
         this.dependencies.clear();
 
         for (IObservable observable : model.observables) {
-            this.observables.add(Observable.concretize(observable, resolvedPredicates));
+            this.observables.add(Observable.concretize(observable, resolvedPredicates, resolvedPredicatesContext));
         }
         for (IObservable dependency : model.dependencies) {
-            this.dependencies.add(Observable.concretize(dependency, resolvedPredicates));
+            this.dependencies.add(Observable.concretize(dependency, resolvedPredicates, resolvedPredicatesContext));
         }
 
     }
 
-    private Model(IKimModel model, Namespace namespace, IMonitor monitor ) {
+    private Model(IKimModel model, Namespace namespace, IMonitor monitor) {
 
         super(model);
 
@@ -403,11 +404,15 @@ public class Model extends KimObject implements IModel {
              * Add change in any secondary qualities that are affected by the process.
              */
             List<IObservable> toAdd = new ArrayList<>();
-            for (int oo = 1; i < observables.size(); i++) {
+            for (int oo = 1; oo < observables.size(); oo++) {
                 IObservable obs = observables.get(oo);
                 if (obs != null && obs.is(Type.QUALITY) && !changed.contains(obs.getType())) {
                     if (Observables.INSTANCE.isAffectedBy(obs, getMainObservable())) {
                         toAdd.add(obs.getBuilder(monitor).as(UnarySemanticOperator.CHANGE).buildObservable());
+                    } else {
+                        monitor.error("observable " + obs.getType().getDefinition()
+                                + " output by a process model must be either affected or created by it", getStatement());
+                        setErrors(true);
                     }
                 }
             }
@@ -500,6 +505,11 @@ public class Model extends KimObject implements IModel {
         validateTypechain(monitor);
 
         /*
+         * validate required inputs from resources
+         */
+        validateInputs(monitor);
+
+        /*
          * actions
          */
 
@@ -559,6 +569,51 @@ public class Model extends KimObject implements IModel {
 
     private IObservable getMainObservable() {
         return observables.size() > 0 && observables.get(0) != null ? observables.get(0) : null;
+    }
+
+    private void validateInputs(IMonitor monitor) {
+
+        Map<String, IArtifact.Type> required = new HashMap<>();
+
+        for (IContextualizable resource : resources) {
+            if (resource.getUrn() != null) {
+                IResource res = Resources.INSTANCE.resolveResource(resource.getUrn());
+                if (res != null) {
+                    for (Pair<String, IArtifact.Type> input : resource.getInputs()) {
+                        required.put(input.getFirst(), input.getSecond());
+                    }
+                }
+            } else if (resource.getServiceCall() != null) {
+                IPrototype prototype = resource.getServiceCall().getPrototype();
+                if (prototype != null) {
+                    for (Argument arg : prototype.listImports()) {
+                        if (arg.isArtifact() && !arg.isOptional()) {
+                            required.put(arg.getName(), arg.getType());
+                        }
+                    }
+                }
+            } else if (resource.getLookupTable() != null) {
+                // TODO
+            }
+        }
+
+        for (String s : required.keySet()) {
+            boolean ok = false;
+            for (IObservable dependency : dependencies) {
+                if (s.equals(dependency.getName()) && dependency.getArtifactType() == required.get(s)) {
+                    ok = true;
+                    break;
+                }
+            }
+
+            if (!ok) {
+                monitor.error("a dependency named " + s + " of type " + required.get(s) + " is required by a resource",
+                        this.getStatement());
+                setErrors(true);
+            }
+
+        }
+
     }
 
     private void validateTypechain(IMonitor monitor) {
@@ -869,7 +924,7 @@ public class Model extends KimObject implements IModel {
      * @param candidateObservable
      * @param scope
      */
-    public Model(Observable mainObservable, ObservationStrategy candidateObservable, ResolutionScope scope ) {
+    public Model(Observable mainObservable, ObservationStrategy candidateObservable, ResolutionScope scope) {
         super(null);
         this.derived = true;
 
@@ -885,7 +940,7 @@ public class Model extends KimObject implements IModel {
         for (String s : pdescs) {
             preds += (preds.isEmpty() ? "" : "_") + s;
         }
-        
+
         this.id = mainObservable.getName() + (preds.isEmpty() ? "" : ("_" + preds)) + "_derived";
         this.namespace = scope.getResolutionNamespace();
         this.contextualization = new Contextualization(null, this);
@@ -911,7 +966,7 @@ public class Model extends KimObject implements IModel {
      * @param resource
      * @param scope
      */
-    public Model(IObservable mainObservable, MergedResource resource, IModel originalModel, ResolutionScope scope ) {
+    public Model(IObservable mainObservable, MergedResource resource, IModel originalModel, ResolutionScope scope) {
         super(null);
         if (originalModel instanceof RankedModel) {
             // computables must be validated by the original model. This is pretty ugly of
@@ -936,7 +991,7 @@ public class Model extends KimObject implements IModel {
         }
     }
 
-    public Model(IObservable mainObservable, String resolvedChangingObservationName, ResolutionScope scope ) {
+    public Model(IObservable mainObservable, String resolvedChangingObservationName, ResolutionScope scope) {
         super(null);
         this.derived = true;
         this.id = mainObservable.getName() + "_resolved_change";
@@ -947,12 +1002,13 @@ public class Model extends KimObject implements IModel {
         this.resources.add(Klab.INSTANCE.getRuntimeProvider().getChangeResolver(mainObservable, resolvedChangingObservationName));
     }
 
-    public Model(IViewModel view ) {
+    public Model(IViewModel view) {
         super(null);
         // Observable is the void concept (non-semantic artifact); all the independent
         // observables in the view as dependencies, the view compilation as code
         this.derived = true;
         this.viewModel = view;
+        this.getAnnotations().addAll(view.getAnnotations());
         this.namespace = (Namespace) view.getNamespace();
         this.observables.add(Observable.promote(Concepts.c(NS.CORE_VOID)));
         this.id = view.getId() + "_resolver";
@@ -1652,6 +1708,12 @@ public class Model extends KimObject implements IModel {
             }
         }
         return abstractTraits_;
+    }
+
+    public org.integratedmodelling.klab.rest.DocumentationNode.Model getBean() {
+        org.integratedmodelling.klab.rest.DocumentationNode.Model ret = new org.integratedmodelling.klab.rest.DocumentationNode.Model();
+        // TODO
+        return ret;
     }
 
 }

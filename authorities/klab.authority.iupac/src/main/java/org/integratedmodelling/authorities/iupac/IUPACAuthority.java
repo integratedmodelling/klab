@@ -187,10 +187,14 @@ public class IUPACAuthority implements IAuthority {
     }
 
     public String getIUPACName(String identity) {
-        HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + UrlEscape.escapeurl(identity) + "/" + "iupac_name")
-                .asString();
-        if (response.isSuccess()) {
-            return response.getBody();
+        try {
+            HttpResponse<String> response = Unirest.get(RESOLVER_URL + "/" + UrlEscape.escapeurl(identity) + "/" + "iupac_name")
+                    .asString();
+            if (response.isSuccess()) {
+                return response.getBody();
+            }
+        } catch (Throwable t) {
+            Logging.INSTANCE.error("IUPAC: name call to IUPAC authority caused exception: " + t.getMessage());
         }
         return null;
     }
@@ -199,17 +203,20 @@ public class IUPACAuthority implements IAuthority {
 
         String ret = null;
         String url = RESOLVER_URL + "/" + UrlEscape.escapeurl(query) + "/" + "stdinchikey";
-        HttpResponse<String> response = Unirest.get(url).asString();
-        if (response.isSuccess()) {
-            ret = response.getBody();
-            if (ret.contains("=")) {
-                int idx = ret.indexOf('=');
-                ret = ret.substring(idx + 1);
+        try {
+            HttpResponse<String> response = Unirest.get(url).asString();
+            if (response.isSuccess()) {
+                ret = response.getBody();
+                if (ret.contains("=")) {
+                    int idx = ret.indexOf('=');
+                    ret = ret.substring(idx + 1);
+                }
+            } else {
+                Logging.INSTANCE.error("IUPAC: call to " + url + " returned status code " + response.getStatus());
             }
-        } else {
-            Logging.INSTANCE.error("IUPAC: call to " + url + " returned status code " + response.getStatus());
+        } catch (Throwable t) {
+            Logging.INSTANCE.error("IUPAC: call to " + url + " caused exception: " + t.getMessage());
         }
-
         return ret;
     }
 

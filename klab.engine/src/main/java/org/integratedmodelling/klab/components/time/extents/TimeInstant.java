@@ -3,6 +3,8 @@ package org.integratedmodelling.klab.components.time.extents;
 import org.integratedmodelling.klab.api.observations.scale.time.ITimeInstant;
 import org.joda.time.DateTime;
 import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 /**
  * TODO switch to Java8 dates
@@ -41,7 +43,7 @@ public class TimeInstant implements ITimeInstant {
 	}
 	
 	public String toString() {
-		return time.toString();
+		return DateTimeFormat.shortDateTime().print(time);
 	}
 
 	@Override
@@ -64,5 +66,10 @@ public class TimeInstant implements ITimeInstant {
 		// TODO Auto-generated method stub
 		return "todo";
 	}
+
+    @Override
+    public int getYear() {
+        return this.time.getYear();
+    }
 	
 }

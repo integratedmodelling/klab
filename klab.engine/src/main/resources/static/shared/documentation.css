@@ -1,0 +1,56 @@
+/* For new documentation */
+.dv-content {
+  background-color: #fff;
+  padding: 2em;
+}
+.dv-content h1,
+.dv-content h2,
+.dv-content h3,
+.dv-content h4,
+.dv-content h5,
+.dv-content h6 {
+  font-weight: bold;
+  color:   rgb(17, 170, 187);
+}
+
+.dv-content h1 {
+  font-size: 2em;
+  margin: 0.6em 0;
+}
+.dv-content h2 {
+  font-size: 1.5em;
+  margin: 0.5em 0;
+}
+.dv-content h3 {
+  font-size: 1.4em;
+  margin: 0.4em 0;
+}
+.dv-content h4 {
+  font-size: 1.3em;
+  margin: 0.3em 0;
+}
+.dv-content h5 {
+  font-size: 1.2em;
+  margin: 0.2em 0;
+}
+.dv-content h6 {
+  font-size: 1.1em;
+  margin: 0.1em 0;
+}
+.dv-content table {
+  border-spacing: 10px 5px;
+}
+.dv-content p {
+  text-align: justify;
+}
+/*
+.dv-content [id] {
+  transition: .3s ease;
+  border-radius: 10px;
+}
+.dv-content [id].dv-selected {
+  box-shadow: 0 2px 6px rgba(17, 170, 187, .5);
+  transform: translateY(10px) scale(1.02);
+  padding: 5px 10px;
+}
+*/

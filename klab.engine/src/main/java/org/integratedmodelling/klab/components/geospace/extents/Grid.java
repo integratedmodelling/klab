@@ -130,6 +130,8 @@ public class Grid extends Area implements IGrid {
 
 	}
 
+    private static final double EQUATOR_LENGTH_METERS = 40075000;
+
 	/**
 	 * Directions accessible from each corner
 	 */
@@ -194,6 +196,7 @@ public class Grid extends Area implements IGrid {
 		super(shape);
 		this.linearResolutionMeters = resolutionInMeters;
 		adjustEnvelope(shape, resolutionInMeters);
+//		setAdjustedEnvelope(shape, resolutionInMeters);
 		mask = createMask(shape);
 	}
 
@@ -239,7 +242,95 @@ public class Grid extends Area implements IGrid {
 		return "<GRID [" + xCells + "," + yCells + "] " + envelope + ">";
 	}
 	
-	
+	/**
+	 * Set the envelope from shape.
+	 * 
+	 * @param shape
+	 *            could be in any CRS.
+	 * @param squareSize
+	 *            should be in meters
+	 * @throws KlabException
+	 */
+	private void setAdjustedEnvelope(Shape shape, double squareSize) {
+		long x = 0, y = 0;
+		// double dx = 0, dy = 0;
+		Envelope env = shape.getEnvelope();
+
+		// Case one: both CRS and square size are in meters.
+		if (shape.getProjection().isMeters()) {
+
+			double height = env.getHeight();
+			double width = env.getWidth();
+
+			x = (long) Math.ceil(width / squareSize);
+			y = (long) Math.ceil(height / squareSize);
+
+			// dx = (x * squareSize) - width;
+			// dy = (y * squareSize) - height;
+
+			// ReferencedEnvelope envelop_ = new ReferencedEnvelope(env.getMinX() - dx,
+			// env.getMaxX() + dx,
+			// env.getMinY() - dy, env.getMaxY() + dy,
+			// shape.getProjection().getCoordinateReferenceSystem());
+
+			// After doing the calculations in the original CRS,
+			// shape and envelope is transformed to default.
+
+			// this.shape = shape.transform(Projection.getDefault());
+			// try {
+			// this.envelope = Envelope
+			// .create(envelop_.transform(Projection.getDefault().getCoordinateReferenceSystem(),
+			// true));
+			// } catch (Exception e) {
+			// // shouldn't happen
+			// throw new KlabValidationException(e);
+			// }
+			// this.projection = Projection.getDefault();
+
+		}
+		// Case 2: CRS uses degrees
+		else {
+			// get height and width in meters
+			double height = Projection.distance(env.getMinY(), env.getMinX(), env.getMaxY(), env.getMinX());
+			double width = Projection.distance(env.getMinY(), env.getMinX(), env.getMinY(), env.getMaxX());
+			x = (long) Math.ceil(width / squareSize);
+			y = (long) Math.ceil(height / squareSize);
+
+			// Here I tried to adjust further dx and dy based on the size of the
+			// grid cell
+			// at the center of the Grid. Possibly not right either, so I left
+			// it out.
+			// double centralX = (env.getMaxX() + env.getMinX())/2;
+			// double stepX = (env.getMaxX() - env.getMinX())/x;
+			//
+			// double centralY = (env.getMaxY() + env.getMinY())/2;
+			// double stepY = (env.getMaxY() - env.getMinY())/x;
+			//
+			// double actualStepWidth = Grid.haversine(centralY,centralX,
+			// centralY,centralX+stepX);
+			//
+			// double actualStepHeight = Grid.haversine(centralY, centralX,
+			// centralY+stepY,centralX);
+			// dx = stepX * (squareSize/actualStepWidth) / 2;
+			// dy = stepY * (squareSize/actualStepHeight) / 2;
+
+		}
+
+		// if (!this.projection.equals(Projection.getDefault())) {
+		// this.shape = this.shape.transform(Projection.getDefault());
+		// try {
+		// this.envelope = this.envelope.transform(Projection.getDefault(), true);
+		// } catch (Exception e) {
+		// // TODO: Shouldn't happen
+		// e.printStackTrace();
+		// }
+		// this.projection = Projection.getDefault();
+		// }
+
+		this.setResolution(x, y);
+
+		// activationLayer = Rasterizer.createMask(shape, this);
+	}
     /**
      * Adjust the envelope if necessary. 
      * 
@@ -274,7 +365,7 @@ public class Grid extends Area implements IGrid {
                 GeodeticCalculator gc = new GeodeticCalculator(crs);
                 gc.setStartingGeographicPoint(minX, minY);
                 gc.setDestinationGeographicPoint(maxX, minY);
-                double width = gc.getOrthodromicDistance();
+                double width = (minX == -180 && maxX == 180) ? EQUATOR_LENGTH_METERS : gc.getOrthodromicDistance();
                 gc = new GeodeticCalculator(crs);
                 gc.setStartingGeographicPoint(minX, minY);
                 gc.setDestinationGeographicPoint(minX, maxY);
@@ -316,7 +407,8 @@ public class Grid extends Area implements IGrid {
                 GeodeticCalculator gc = new GeodeticCalculator(crs);
                 gc.setStartingGeographicPoint(minX, minY);
                 gc.setDestinationGeographicPoint(maxX, minY);
-                double width = gc.getOrthodromicDistance();
+                // yes, we mean the other way around
+                double width = (minX == -180 && maxX == 180) ? EQUATOR_LENGTH_METERS : gc.getOrthodromicDistance();
                 gc = new GeodeticCalculator(crs);
                 gc.setStartingGeographicPoint(minX, minY);
                 gc.setDestinationGeographicPoint(minX, maxY);
@@ -711,6 +803,11 @@ public class Grid extends Area implements IGrid {
 		public <T extends ILocator> T as(Class<T> cls) {
 
 			Cell focus = this;
+			
+			if (Cell.class.isAssignableFrom(cls)) {
+			    return (T)this;
+			}
+			
 			if (Grid.this instanceof Subgrid) {
 				focus = ((Subgrid) Grid.this).getOriginalCell(focus);
 			}

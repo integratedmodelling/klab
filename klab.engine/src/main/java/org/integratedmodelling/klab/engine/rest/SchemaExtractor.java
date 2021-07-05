@@ -17,6 +17,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.kjetland.jackson.jsonSchema.JsonSchemaConfig;
 import com.kjetland.jackson.jsonSchema.JsonSchemaGenerator;
 
 /**
@@ -36,7 +37,7 @@ public class SchemaExtractor {
 		// avoid all f'ing transient fields.
 		mapper.configure(MapperFeature.PROPAGATE_TRANSIENT_MARKER, true);
 		mapper.enable(SerializationFeature.INDENT_OUTPUT);
-		schemaGen = new JsonSchemaGenerator(mapper);
+		schemaGen = new JsonSchemaGenerator(mapper, JsonSchemaConfig.vanillaJsonSchemaDraft4().withFailOnUnknownProperties(false));
 	}
 
 	/**

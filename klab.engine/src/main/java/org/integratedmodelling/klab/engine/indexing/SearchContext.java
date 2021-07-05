@@ -91,7 +91,7 @@ public class SearchContext implements IIndexingService.Context {
 					this.boundary = true;
 					break;
 				case PREFIX_OPERATOR:
-					Set<IKimConcept.Type> type = Kim.INSTANCE.getType(match.unaryOperator);
+					Set<IKimConcept.Type> type = Kim.INSTANCE.getType(match.unaryOperator, null);
 					// we don't have an observable
 					type.remove(IKimConcept.Type.OBSERVABLE);
 					if (type != null) {
@@ -631,7 +631,7 @@ public class SearchContext implements IIndexingService.Context {
 		 */
 		Meaning meaning = collectMeaning();
 
-		System.out.println("Meaning before accepting: " + meaning);
+//		System.out.println("Meaning before accepting: " + meaning);
 
 		if (match.getUnaryOperator() != null) {
 			ret.allow(Constraint.with(match.getUnaryOperator().getAllowedOperandTypes()));

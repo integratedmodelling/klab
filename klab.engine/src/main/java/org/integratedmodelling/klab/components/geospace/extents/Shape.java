@@ -91,7 +91,15 @@ public class Shape extends AbstractExtent implements IShape {
     Projection projection;
     IMetadata metadata;
     // to avoid multiple rounds of simplification
-    boolean simplified = false;
+    private boolean simplified = false;
+
+    public boolean isSimplified() {
+        return simplified;
+    }
+
+    public void setSimplified(boolean simplified) {
+        this.simplified = simplified;
+    }
 
     // these are used to speed up repeated point-in-polygon operations like
     // those that RasterActivationLayer does.
@@ -285,6 +293,14 @@ public class Shape extends AbstractExtent implements IShape {
         return create(fix(shapeGeometry).intersection(fix(((Shape) other).shapeGeometry)), projection);
     }
 
+    public Shape fixInvalid() {
+        /*
+         * TODO use next-level JTS functions now available when we can upgrade
+         */
+        Geometry geom = this.shapeGeometry.buffer(0);
+        return create(geom, projection);
+    }
+    
     @Override
     public Shape union(IShape other) {
         if ((projection != null || other.getProjection() != null) && !projection.equals(other.getProjection())) {
@@ -674,7 +690,9 @@ public class Shape extends AbstractExtent implements IShape {
     }
 
     public Shape getSimplified(IQuantity resolution) {
-        
+        if (this.simplified) {
+            return this;
+        }
         Unit unit = Unit.create(resolution.getUnit());
         if (unit == null || !Units.INSTANCE.METERS.isCompatible(unit)) {
             throw new KlabIllegalArgumentException("Can't use a non-length unit to simplify a shape");
@@ -688,6 +706,7 @@ public class Shape extends AbstractExtent implements IShape {
         
         Geometry geom = TopologyPreservingSimplifier.simplify(shapeGeometry, simplifyFactor);
         Shape ret = create(geom, this.projection);
+        ret.simplified = true;
         return ret;
     }
 

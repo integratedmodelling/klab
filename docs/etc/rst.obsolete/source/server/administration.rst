@@ -1,2 +1,0 @@
-Installation, connection and administration
-===========================================

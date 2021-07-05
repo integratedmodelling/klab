@@ -1,0 +1,28 @@
+/**
+ * This file defines the contract for all commands recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace list
+
+/*
+ * TODO
+     projects
+     namespaces
+     namespace X
+     ontologies
+     concepts
+     properties
+     contexts [current session or other]
+     sessions
+     
+     all -verbose
+ */
+
+//void 'contexts'
+//	"Show the structure graph for the named context observation."
+//{
+//	class org.integratedmodelling.klab.clitool.console.commands.list.List
+//}

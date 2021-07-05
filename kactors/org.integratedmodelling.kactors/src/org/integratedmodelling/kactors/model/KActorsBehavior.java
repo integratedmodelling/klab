@@ -27,7 +27,8 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 
 	private String name;
 	private Version version;
-	private String observable;
+	private String versionString;
+	private Object observable;
 	private Type type = Type.BEHAVIOR;
 	private Platform platform = Platform.ANY;
 	private File file;
@@ -77,13 +78,14 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		this.description = preamble.getDescription();
 		this.logo = preamble.getLogo();
 		this.isPublic = preamble.isPublic();
+		this.versionString = preamble.getVersionString();
 
 		if (preamble.getInlineStyle() != null) {
 			this.styleSpecs = new LinkedHashMap<>();
 			Map<KActorsValue, KActorsValue> map = KActorsValue.parseMap(preamble.getInlineStyle(), this);
 			// turn into a string map for later serialization
 			for (Entry<KActorsValue, KActorsValue> entry : map.entrySet()) {
-				this.styleSpecs.put(entry.getKey().getValue().toString(), entry.getValue().getValue().toString());
+				this.styleSpecs.put(entry.getKey().getStatedValue().toString(), entry.getValue().getStatedValue().toString());
 			}
 		}
 
@@ -177,7 +179,7 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		return logo;
 	}
 
-	public String getObservable() {
+	public Object getObservable() {
 		return observable;
 	}
 
@@ -221,5 +223,24 @@ public class KActorsBehavior extends KActorCodeStatement implements IKActorsBeha
 		ret.setPlatform(this.platform);
 		return ret;
 	}
+
+    @Override
+    public String getVersionString() {
+        return this.versionString;
+    }
+
+    @Override
+    public void visit(Visitor visitor) {
+        // TODO Auto-generated method stub
+        /*
+         * visit preamble
+         */
+        
+        for (IKActorsAction action : getActions()) {
+            visitor.visitAction(action);
+            ((KActorsStatement)action.getCode()).visit(action, visitor); 
+        }
+        
+    }
 
 }

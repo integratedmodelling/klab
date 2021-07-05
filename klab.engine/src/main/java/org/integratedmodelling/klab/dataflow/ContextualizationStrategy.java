@@ -59,7 +59,7 @@ public class ContextualizationStrategy extends DefaultDirectedGraph<Dataflow, De
     }
 
     public static String getElkGraph(Dataflow dataflow) {
-    	ContextualizationStrategy strategy =new ContextualizationStrategy();
+    	ContextualizationStrategy strategy = new ContextualizationStrategy();
     	strategy.add(dataflow);
     	return strategy.getElkGraph();
     }

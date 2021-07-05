@@ -44,6 +44,7 @@ public class Node implements INodeIdentity {
 	private long lastCheck = System.currentTimeMillis();
 	private Map<String, IAuthority.Capabilities> authorities = new HashMap<>();
 	IParameters<String> globalState = Parameters.create();
+	private long uptime;
 
 	@Override
 	public IParameters<String> getState() {
@@ -234,6 +235,8 @@ public class Node implements INodeIdentity {
 		this.namespaceIds.addAll(nodeCapabilities.getResourceNamespaces());
 		this.resourceUrls.clear();
 		this.resourceUrls.addAll(nodeCapabilities.getResourceUrns());
+		// FIXME use a proper field
+		this.uptime = nodeCapabilities.getRefreshFrequencyMillis();
 	}
 
 	@Override
@@ -262,5 +265,13 @@ public class Node implements INodeIdentity {
 	public void setAuthorities(Map<String, IAuthority.Capabilities> authorities) {
 		this.authorities = authorities;
 	}
+
+    public long getUptime() {
+        return uptime;
+    }
+
+    public void setUptime(long uptime) {
+        this.uptime = uptime;
+    }
 
 }

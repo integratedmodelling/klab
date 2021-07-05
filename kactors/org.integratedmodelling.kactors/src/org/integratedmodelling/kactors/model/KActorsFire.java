@@ -1,7 +1,9 @@
 package org.integratedmodelling.kactors.model;
 
 import org.integratedmodelling.kactors.api.IKActorsStatement.FireValue;
+import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
 import org.integratedmodelling.kactors.kactors.Value;
 
 public class KActorsFire extends KActorsStatement implements FireValue {
@@ -23,4 +25,13 @@ public class KActorsFire extends KActorsStatement implements FireValue {
 		return value;
 	}
 
+
+    @Override
+    protected void visit(IKActorsAction action, Visitor visitor) {
+        if (this.value != null) {
+            visitor.visitValue(value, this, action);
+        }
+        super.visit(action, visitor);
+    }
+    
 }

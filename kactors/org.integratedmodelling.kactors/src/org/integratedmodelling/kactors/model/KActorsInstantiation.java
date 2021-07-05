@@ -4,15 +4,18 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.integratedmodelling.kactors.api.IKActorsAction;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
-import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsStatement.Instantiation;
+import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Match;
 import org.integratedmodelling.kactors.model.KActorsActionCall.ActionDescriptor;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.utils.NameGenerator;
 import org.integratedmodelling.klab.utils.Pair;
+import org.integratedmodelling.klab.utils.Triple;
 
 public class KActorsInstantiation extends KActorsStatement implements Instantiation {
 
@@ -84,10 +87,10 @@ public class KActorsInstantiation extends KActorsStatement implements Instantiat
     }
 
     @Override
-    public List<Pair<IKActorsValue, IKActorsStatement>> getActions() {
-        List<Pair<IKActorsValue, IKActorsStatement>> ret = new ArrayList<>();
+    public List<Triple<IKActorsValue, IKActorsStatement, String>> getActions() {
+        List<Triple<IKActorsValue, IKActorsStatement, String>> ret = new ArrayList<>();
         for (ActionDescriptor ad : actions) {
-            ret.add(new Pair<>(ad.match, ad.action));
+            ret.add(new Triple<>(ad.match, ad.action, ad.matchName));
         }
         return ret;
     }
@@ -95,5 +98,15 @@ public class KActorsInstantiation extends KActorsStatement implements Instantiat
     public void setActorBaseName(String actorBaseName) {
         this.actorBaseName = actorBaseName;
     }
+    
+
+    @Override
+    protected void visit(IKActorsAction action, Visitor visitor) {
+        for (ActionDescriptor ad : actions) {
+            ad.visit(action, this, visitor);
+        }
+        super.visit(action, visitor);
+    }
+    
 
 }

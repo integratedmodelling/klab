@@ -297,4 +297,11 @@ public class StringUtil {
         return ret;
     }
 
+    public static String abbreviate(String string, int n) {
+        if (string.length() <= n) {
+            return string;
+        }
+        return string.substring(0, n-3) + "...";
+    }
+
 }

@@ -9,11 +9,11 @@ import org.apache.groovy.util.Maps;
 import org.integratedmodelling.contrib.jgrapht.Graph;
 import org.integratedmodelling.contrib.jgrapht.graph.DefaultEdge;
 import org.integratedmodelling.kactors.api.IKActorsValue;
-import org.integratedmodelling.kactors.model.KActorsConcurrentGroup;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kactors.model.KActorsValue.Constructor;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Version;
+import org.integratedmodelling.klab.api.API;
 import org.integratedmodelling.klab.api.extensions.actors.Action;
 import org.integratedmodelling.klab.api.extensions.actors.Behavior;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
@@ -206,7 +206,7 @@ public class ViewBehavior {
          */
         protected abstract ViewComponent createViewComponent(Scope scope);
 
-        public Object getFiredValue(ViewAction action) {
+        public Object getFiredValue(ViewAction action, Scope scope) {
             Object ret = onViewAction(action, scope);
             session.getState().updateView(this.component);
             return ret;
@@ -271,7 +271,7 @@ public class ViewBehavior {
             message.setContent(this.evaluateArgument(0, scope, "Confirm"));
             message.getAttributes().putAll(getMetadata(arguments, scope));
             session.getMonitor().post((msg) -> {
-                fire(msg.getPayload(ViewAction.class).isBooleanValue(), true, scope.semaphore, scope.getSymbols(identity));
+                fire(msg.getPayload(ViewAction.class).isBooleanValue(), scope);
             }, IMessage.MessageClass.ViewActor, IMessage.Type.CreateViewComponent, message);
         }
     }
@@ -295,6 +295,35 @@ public class ViewBehavior {
 
         @Override
         protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+            this.component.getAttributes().putAll(getMetadata(message.arguments, scope));
+            if ("update".equals(message.message)) {
+                this.component.setName(getDefaultAsString(message.arguments, this, scope));
+            } else if ("waiting".equals(message.message)) {
+                this.component.getAttributes().remove("error");
+                this.component.getAttributes().remove("done");
+                this.component.getAttributes().remove("computing");
+                this.component.getAttributes().put("waiting", "true");
+            } else if ("error".equals(message.message)) {
+                this.component.getAttributes().remove("waiting");
+                this.component.getAttributes().remove("done");
+                this.component.getAttributes().remove("computing");
+                this.component.getAttributes().put("error", "true");
+            } else if ("done".equals(message.message)) {
+                this.component.getAttributes().remove("waiting");
+                this.component.getAttributes().remove("error");
+                this.component.getAttributes().remove("computing");
+                this.component.getAttributes().put("done", "true");
+            } else if ("computing".equals(message.message)) {
+                this.component.getAttributes().remove("waiting");
+                this.component.getAttributes().remove("error");
+                this.component.getAttributes().remove("done");
+                this.component.getAttributes().put("computing", "true");
+            } else if ("reset".equals(message.message)) {
+                this.component.getAttributes().remove("waiting");
+                this.component.getAttributes().remove("error");
+                this.component.getAttributes().remove("done");
+                this.component.getAttributes().remove("computing");
+            }
             return this.component;
         }
 
@@ -364,7 +393,6 @@ public class ViewBehavior {
             }
             return action.isBooleanValue();
         }
-
     }
 
     @Action(id = "radiobutton")
@@ -477,9 +505,85 @@ public class ViewBehavior {
 
     }
 
+    public static String getStaticPath(String resourceId, Scope scope) {
+        if (resourceId.startsWith("http")) {
+            return resourceId;
+        }
+        String projectId = scope.getBehavior() == null ? null : scope.getBehavior().getProject();
+        return API.ENGINE.RESOURCE.GET_PROJECT_RESOURCE.replace(API.ENGINE.RESOURCE.P_PROJECT, projectId).replace("**",
+                resourceId);
+    }
+
+    @Action(id = "html")
+    public static class Html extends KlabWidgetActionExecutor {
+
+        public Html(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+        @Override
+        public ViewComponent createViewComponent(Scope scope) {
+            ViewComponent message = new ViewComponent();
+            message.setType(Type.Browser);
+            message.setContent(getStaticPath(this.evaluateArgument(0, scope, (String) null), scope));
+            message.getAttributes().putAll(getMetadata(arguments, scope));
+            return message;
+        }
+
+        @Override
+        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+            if ("update".equals(message.message)) {
+                this.component.setContent(getDefaultAsString(message.arguments, this, scope));
+            }
+            return this.component;
+        }
+
+        @Override
+        protected Object onViewAction(ViewAction action, Scope scope) {
+            this.component.setContent(action.getStringValue());
+            return action.getStringValue();
+        }
+
+    }
+
+    @Action(id = "image")
+    public static class Image extends KlabWidgetActionExecutor {
+
+        public Image(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+        @Override
+        public ViewComponent createViewComponent(Scope scope) {
+            ViewComponent message = new ViewComponent();
+            message.setType(Type.Image);
+            message.setContent(getStaticPath(this.evaluateArgument(0, scope, (String) null), scope));
+            message.getAttributes().putAll(getMetadata(arguments, scope));
+            return message;
+        }
+
+        @Override
+        protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
+            if ("update".equals(message.message)) {
+                this.component.setContent(getDefaultAsString(message.arguments, this, scope));
+            }
+            return this.component;
+        }
+
+        @Override
+        protected Object onViewAction(ViewAction action, Scope scope) {
+            return true;
+        }
+
+    }
+
     /**
      * Recover an id, a label and a value from a value passed as an item for a tree, combo or list
      * component.
+     * 
+     * TODO use the scope!
      * 
      * @param value
      * @return
@@ -490,12 +594,12 @@ public class ViewBehavior {
         String label = null;
         IKActorsValue val = value;
         if (((KActorsValue) value).getType() == IKActorsValue.Type.LIST) {
-            List<?> list = (List<?>) ((KActorsValue) value).getValue();
+            List<?> list = (List<?>) ((KActorsValue) value).getStatedValue();
             if (list.size() == 2) {
                 if (id == null) {
-                    id = ((KActorsValue) list.get(0)).getValue().toString();
+                    id = ((KActorsValue) list.get(0)).getStatedValue().toString();
                 } else {
-                    label = ((KActorsValue) list.get(0)).getValue().toString();
+                    label = ((KActorsValue) list.get(0)).getStatedValue().toString();
                 }
                 val = ((KActorsValue) list.get(1));
             }
@@ -575,7 +679,10 @@ public class ViewBehavior {
         protected ViewComponent setComponent(KActorsMessage message, Scope scope) {
 
             if ("add".equals(message.message) && message.arguments.getUnnamedArguments().size() > 0) {
-                Object arg = KlabActor.evaluate(message.arguments.getUnnamedArguments().get(0), scope);
+                Object arg = message.arguments.getUnnamedArguments().get(0);
+                if (arg instanceof KActorsValue) {
+                    arg = ((KActorsValue) arg).evaluate(scope, identity, false);
+                }
                 if (arg instanceof Constructor) {
                     this.sender.tell(new AddComponentToGroup(group, ((Constructor) arg).getComponent(),
                             ((Constructor) arg).getArguments(), scope));
@@ -591,8 +698,8 @@ public class ViewBehavior {
 
         @Override
         public void onMessage(KlabMessage message, Scope scope) {
-            
-            if (message instanceof KActorsMessage && "reset".equals(((KActorsMessage)message).message)) {
+
+            if (message instanceof KActorsMessage && "reset".equals(((KActorsMessage) message).message)) {
                 KActorsMessage mess = (KActorsMessage) message;
                 this.group = copyComponent(this.originalGroup);
                 ViewAction action = new ViewAction(this.originalGroup);
@@ -691,7 +798,11 @@ public class ViewBehavior {
                 for (String choice : action.getListValue()) {
                     String[] split = choice.split("\\-");
                     // TODO review the split[1] with Enrico - should be split[0] or maybe not.
-                    ret.add(KlabActor.evaluate(values.get(split[1]), scope));
+                    Object val = values.get(split[1]);
+                    if (val instanceof KActorsValue) {
+                        val = ((KActorsValue) val).evaluate(scope, identity, false);
+                    }
+                    ret.add(val);
                 }
             }
             return ret;
@@ -744,9 +855,12 @@ public class ViewBehavior {
         }
     }
 
+    /*
+     * TODO use the scope!
+     */
     public static ViewComponent.Tree getTree(KActorsValue tree, Map<String, IKActorsValue> values) {
         @SuppressWarnings("unchecked")
-        Graph<KActorsValue, DefaultEdge> graph = (Graph<KActorsValue, DefaultEdge>) tree.getValue();
+        Graph<KActorsValue, DefaultEdge> graph = (Graph<KActorsValue, DefaultEdge>) tree.getStatedValue();
         ViewComponent.Tree ret = new ViewComponent.Tree();
         String rootId = "";
         Map<KActorsValue, String> ids = new HashMap<>();
@@ -772,7 +886,7 @@ public class ViewBehavior {
             Object a = arguments.get(arguments.getUnnamedKeys().iterator().next());
             if (a != null) {
                 if (a instanceof KActorsValue) {
-                    a = action.evaluateInContext((KActorsValue) a, scope);
+                    a = ((KActorsValue) a).evaluate(scope, scope.getIdentity(), true);
                 }
                 if (a != null) {
                     ret = a.toString();
@@ -785,7 +899,7 @@ public class ViewBehavior {
     public static String processTemplate(Object value, Scope scope) {
         String template = value instanceof String ? (String) value : null;
         if (template == null && value instanceof KActorsValue) {
-            template = ((KActorsValue) value).getValue().toString();
+            template = ((KActorsValue) value).getStatedValue().toString();
         }
         /*
          * TODO engage the template system to merge with the runtime context
@@ -810,7 +924,7 @@ public class ViewBehavior {
             for (String key : arguments.getNamedKeys()) {
                 Object o = arguments.get(key);
                 if (o instanceof KActorsValue) {
-                    o = ((KActorsValue) o).getValue();
+                    o = ((KActorsValue) o).evaluate(scope, scope.getIdentity(), true);
                 }
                 if (o == null) {
                     ret.put(key, "null");

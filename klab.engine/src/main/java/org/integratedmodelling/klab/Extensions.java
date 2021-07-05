@@ -16,10 +16,12 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.integratedmodelling.kim.api.IContextualizable;
+import org.integratedmodelling.kim.api.IKimExpression;
 import org.integratedmodelling.kim.api.IKimSymbolDefinition;
 import org.integratedmodelling.kim.api.IPrototype;
 import org.integratedmodelling.kim.api.IPrototype.Argument;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.kim.model.KimExpression;
 import org.integratedmodelling.klab.api.data.adapters.IResourceAdapter;
 import org.integratedmodelling.klab.api.data.adapters.IUrnAdapter;
 import org.integratedmodelling.klab.api.data.general.IExpression;
@@ -518,5 +520,10 @@ public enum Extensions implements IExtensionService {
 
 		return ret.toArray(new CompilerOption[ret.size()]);
 	}
+
+    @Override
+    public IKimExpression parse(String expression) {
+        return new KimExpression(expression);
+    }
 
 }

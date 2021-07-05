@@ -126,6 +126,28 @@ public interface API {
         public static final String TEMPLATE = "/kim/template";
 
     }
+    
+    public static interface KACTORS {
+
+        /**
+         * k.Actors descriptor endppoint. Returns info on the language supported, including the version,
+         * build, list of keywords and other useful statistics.
+         * 
+         * <p>
+         * <b>Protocol:</b> GET <br/>
+         * <b>Response type:</b> Json <br/>
+         * <b>Response:</b> {@code org.integratedmodelling.klab.rest.KimCapabilities} <br/>
+         * <b>Authentication:</b> open
+         */
+        public static final String CAPABILITIES = "/kactors/capabilities";
+
+        /**
+         * Substitute keywords and concepts into the posted template and return it as text.
+         * 
+         */
+        public static final String TEMPLATE = "/kactors/template";
+
+    }
 
     /**
      * Read-only ticket API, implemented in the Node and maybe later in the Hub. Engines have ticket
@@ -785,13 +807,18 @@ public interface API {
         public interface RESOURCE {
 
             public static final String P_PROJECT = "{project}";
-            public static final String P_RESOURCEPATH = "{resourcepath}";
+            // public static final String P_RESOURCEPATH = "{resourcepath}";
 
             /**
-             * Get a project resource as is (image, file or otherwise) by passing the path in the
-             * form
+             * Get a project resource as is (image, file or otherwise) by passing the path as the
+             * trailing end of the URL. Also accepts : as path separator.
              */
-            public static final String GET_PROJECT_RESOURCE = "/engine/project/resource/get/" + P_PROJECT + "/" + P_RESOURCEPATH;
+            public static final String GET_PROJECT_RESOURCE = "/engine/project/resource/get/" + P_PROJECT + "/**";
+
+            /**
+             * For visualization, create an image of the spatial coverage of the resource and return it.
+             */
+            public static final String GET_RESOURCE_SPATIAL_IMAGE = "/engine/project/resource/spaceimg/" + P_URN;
 
         }
 
@@ -805,6 +832,8 @@ public interface API {
 
             /** The Constant P_CONTEXT. */
             public static final String P_CONTEXT = "{context}";
+
+            public static final String P_VIEW = "{view}";
 
             /**
              * Create new context from the URN of its definition or remote computation. Return task
@@ -831,6 +860,13 @@ public interface API {
              * Format contextualization report as per request and return it.
              */
             public static final String REPORT_CONTEXT = "/engine/session/observation/report/" + P_CONTEXT;
+
+            /**
+             * Return structured documentation view (with view being one of report, figures, tables,
+             * resources, models or provenance)
+             */
+            public static final String DOCUMENTATION_VIEW_CONTEXT = "/engine/session/observation/documentation/" + P_VIEW + "/"
+                    + P_CONTEXT;
 
             /**
              * Endpoints to access tasks.
@@ -880,6 +916,28 @@ public interface API {
                 public static final String GET_DATA_OBSERVATION = "/engine/session/view/data/" + P_OBSERVATION;
 
             }
+
+        }
+
+    }
+
+    /**
+     * Endpoints for the stats server.
+     * 
+     * @author steven wohl
+     *
+     */
+    public interface STATS {
+        public static final String API_BASE = "/api/v2";
+
+        public static final String STATS_BASE = API_BASE + "/stats";
+
+        public interface PARAMETERS {
+            public static final String TYPE = "type";
+
+            public static final String PAGE = "page";
+
+            public static final String LIMIT = "limit";
 
         }
 

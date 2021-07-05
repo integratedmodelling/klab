@@ -67,8 +67,9 @@ public interface ITableView extends IDocumentationView {
 	 * 
 	 * @param cell
 	 * @param content
+	 * @param value if value is a number, pass the number, otherwise pass NaN
 	 * @param options
 	 */
-	void write(int cell, Object content, Object... options);
+	void write(int cell, Object content, double value, Object... options);
 
 }

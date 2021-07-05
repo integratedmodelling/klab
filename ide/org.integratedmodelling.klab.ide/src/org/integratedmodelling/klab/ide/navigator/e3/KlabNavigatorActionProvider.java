@@ -77,6 +77,8 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				(namespace) -> KlabNavigatorActions.deleteScript(namespace, wSite.getPage()));
 		action("Delete behavior", "Delete the selected behavior", "cog_delete.png", EActorBehavior.class,
 				(namespace) -> KlabNavigatorActions.deleteBehavior(namespace, wSite.getPage()));
+        action("Localization...", "Edit localized strings", "cog_delete.png", EActorBehavior.class,
+                (namespace) -> KlabNavigatorActions.editLocalization(namespace, wSite.getPage()));
 		action("Delete script", "Delete the selected script", "script.gif", EScript.class,
 				(namespace) -> KlabNavigatorActions.deleteScript(namespace, wSite.getPage()));
 		action("Delete test case", "Delete the selected test case", "test.gif", ETestCase.class,
@@ -87,7 +89,9 @@ public class KlabNavigatorActionProvider extends CommonActionProvider {
 				EResourceFolder.class, (folder) -> KlabNavigatorActions.importResources(folder));
 		action("Copy URN", "Copy the resource's URN to the clipboard", "copy.gif", EResource.class,
 				(resource) -> Eclipse.INSTANCE.copyToClipboard(resource.getResource().getUrn())).activate();
-		action("Copy shape", "Copy the resource's bounding box to the clipboard", "copy.gif", EResource.class,
+        action("Copy URN", "Copy the model's URN to the clipboard", "copy.gif", EModel.class,
+                (model) -> Eclipse.INSTANCE.copyToClipboard(model.getId())).activate();
+        action("Copy shape", "Copy the resource's bounding box to the clipboard", "copy.gif", EResource.class,
 				(resource) -> Eclipse.INSTANCE
 						.copyToClipboard(ResourceUtils.extractShapeSpecification(resource.getResource()))).activate();
 		action("Edit resource", "Edit the selected resource", "resource.gif", EResource.class,

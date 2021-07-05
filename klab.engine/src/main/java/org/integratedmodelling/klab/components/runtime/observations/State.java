@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITime;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.components.localstorage.impl.AbstractAdaptiveStorage;
 import org.integratedmodelling.klab.components.localstorage.impl.KeyedStorage;
+import org.integratedmodelling.klab.components.localstorage.impl.TimesliceLocator;
 import org.integratedmodelling.klab.data.storage.DataIterator;
 import org.integratedmodelling.klab.data.storage.LocatedState;
 import org.integratedmodelling.klab.data.storage.MediatingState;
@@ -41,317 +42,334 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Utils;
 
 /**
- * A state is simply an Observation wrapper for one (or more)
- * {@link IDataArtifact}s.
+ * A state is simply an Observation wrapper for one (or more) {@link IDataArtifact}s.
  * 
  * @author Ferd
  *
  */
 public class State extends Observation implements IState, IKeyHolder {
 
-	public static final String STATE_SUMMARY_METADATA_KEY = "metadata.keys.state_summary_";
+    public static final String STATE_SUMMARY_METADATA_KEY = "metadata.keys.state_summary_";
 
-	Set<Pair<Long, Long>> timeCoverage;
-	public class StateListener implements Consumer<ILocator> {
+    Set<Pair<Long, Long>> timeCoverage;
+    public class StateListener implements Consumer<ILocator> {
 
-		@Override
-		public void accept(ILocator t) {
-			ITime time = t instanceof ITime ? (ITime) t : null;
-			if (t instanceof IScale) {
-				time = ((IScale) t).getTime();
-			}
-			if (time != null && time.getStart() != null && time.getEnd() != null) {
-				long tstart = time.getStart().getMilliseconds();
-				long tend = time.getEnd().getMilliseconds();
-				if (time.getTimeType() == ITime.Type.INITIALIZATION) {
-					tend = tstart;
-					tstart = 0;
-				}
-				timeCoverage.add(new Pair<>(tstart, tend));
-			}
-		}
+        @Override
+        public void accept(ILocator t) {
+            ITime time = t instanceof ITime ? (ITime) t : null;
+            if (t instanceof IScale) {
+                time = ((IScale) t).getTime();
+            }
+            if (time != null && time.getStart() != null && time.getEnd() != null) {
+                long tstart = time.getStart().getMilliseconds();
+                long tend = time.getEnd().getMilliseconds();
+                if (time.getTimeType() == ITime.Type.INITIALIZATION) {
+                    tend = tstart;
+                    tstart = 0;
+                }
+                timeCoverage.add(new Pair<>(tstart, tend));
+            }
+        }
 
-	}
+    }
 
-	IDataStorage<?> storage;
-	IDataKey dataKey;
-	Map<IArtifact.Type, IStorage<?>> layers = new HashMap<>();
-	IStructuredTable<Number> table;
+    IDataStorage<?> storage;
+    IDataKey dataKey;
+    Map<IArtifact.Type, IStorage<?>> layers = new HashMap<>();
+    IStructuredTable<Number> table;
 
-	public static State newArchetype(Observable observable, Scale scale, IRuntimeScope context) {
-		return new State(observable, scale, context);
-	}
+    public static State newArchetype(Observable observable, Scale scale, IRuntimeScope context) {
+        return new State(observable, scale, context);
+    }
 
-	private State(Observable observable, Scale scale, IRuntimeScope context) {
-		super(observable, scale, context);
-		this.setArchetype(true);
-	}
+    private State(Observable observable, Scale scale, IRuntimeScope context) {
+        super(observable, scale, context);
+        this.setArchetype(true);
+    }
 
-	public State(Observable observable, Scale scale, IRuntimeScope context, IDataStorage<?> data) {
-		super(observable, scale, context);
-		this.storage = data;
-		data.addContextualizationListener(new StateListener());
-		this.timeCoverage = new LinkedHashSet<>();
-		this.layers.put(data.getType(), data);
-		if (data instanceof AbstractAdaptiveStorage) {
-			((AbstractAdaptiveStorage<?>)data).setState(this);
-			((AbstractAdaptiveStorage<?>)data).setWatches(this.watches);
-		}
-	}
+    public State(Observable observable, Scale scale, IRuntimeScope context, IDataStorage<?> data) {
+        super(observable, scale, context);
+        this.storage = data;
+        if (data != null) {
+            // can be null in some special-purpose mergers
+            data.addContextualizationListener(new StateListener());
+            this.layers.put(data.getType(), data);
+        }
+        this.timeCoverage = new LinkedHashSet<>();
+        if (data instanceof AbstractAdaptiveStorage) {
+            ((AbstractAdaptiveStorage<?>) data).setState(this);
+            ((AbstractAdaptiveStorage<?>) data).setWatches(this.watches);
+        } else if (data instanceof KeyedStorage) {
+            ((KeyedStorage<?>) data).getBackend().setState(this);
+            ((KeyedStorage<?>) data).getBackend().setWatches(this.watches);
+        }
+    }
+    
+    @Override
+    public IState as(IArtifact.Type type) {
 
-	@Override
-	public IState as(IArtifact.Type type) {
+        if (isArchetype() || type == storage.getType() || type == IArtifact.Type.VALUE) {
+            return this;
+        }
 
-		if (isArchetype() || type == storage.getType() || type == IArtifact.Type.VALUE) {
-			return this;
-		}
+        IStorage<?> layer = layers.get(type);
+        if (layer == null) {
+            layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale());
+            ((IDataStorage<?>) layer).addContextualizationListener(new StateListener());
+            if (layer instanceof AbstractAdaptiveStorage) {
+                ((AbstractAdaptiveStorage<?>) layer).setWatches(this.watches);
+            }
 
-		IStorage<?> layer = layers.get(type);
-		if (layer == null) {
-			layer = Klab.INSTANCE.getStorageProvider().createStorage(type, getScale());
-			((IDataStorage<?>)layer).addContextualizationListener(new StateListener());
-			if (layer instanceof AbstractAdaptiveStorage) {
-				((AbstractAdaptiveStorage<?>)layer).setWatches(this.watches);
-			}
+            layers.put(type, layer);
+        }
 
-			layers.put(type,layer);
-		}
+        IState ret = new StateLayer(this, (IDataStorage<?>) layer);
+        if (layer instanceof AbstractAdaptiveStorage) {
+            ((AbstractAdaptiveStorage<?>) layer).setState(ret);
+        }
 
-		IState ret = new StateLayer(this, (IDataStorage<?>) layer);
-		if (layer instanceof AbstractAdaptiveStorage) {
-			((AbstractAdaptiveStorage<?>)layer).setState(ret);
-		}
-		
-		return ret;
-	}
-	
+        return ret;
+    }
 
-	public Object get(ILocator index) {
-		return storage.get(index);
-	}
+    public Object get(ILocator index) {
+        return storage.get(index);
+    }
 
-	public long set(ILocator index, Object value) {
-		touch();
-		if (dataKey != null && value != null) {
-			dataKey.include(value);
-		}
-		return storage.putObject(value, index);
-	}
+    public long set(ILocator index, Object value) {
+        touch();
+        if (dataKey != null && value != null) {
+            dataKey.include(value);
+        }
+        return storage.putObject(value, index);
+    }
 
-	public long size() {
-		return getGeometry().size();
-	}
+    public long size() {
+        return getGeometry().size();
+    }
 
-	@Override
-	public <T> T get(ILocator index, Class<T> cls) {
-		return Utils.asType(get(index), cls);
-	}
+    @Override
+    public <T> T get(ILocator index, Class<T> cls) {
+        return Utils.asType(get(index), cls);
+    }
 
-	@Override
-	public IArtifact.Type getType() {
-		return isArchetype() ? IArtifact.Type.VOID : storage.getType();
-	}
+    @Override
+    public IArtifact.Type getType() {
+        return isArchetype() ? IArtifact.Type.VOID : (storage == null ? getObservable().getArtifactType() : storage.getType());
+    }
 
-	@Override
-	public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
-		return DataIterator.create(this, getScale().at(index), cls);
-	}
+    @Override
+    public <T> Iterator<T> iterator(ILocator index, Class<? extends T> cls) {
+        return DataIterator.create(this, getScale().at(index), cls);
+    }
 
-	@Override
-	public IDataKey getDataKey() {
-		if (dataKey == null && getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
-			// may result from merging more states: build the datakey from the storage
-			dataKey = storage instanceof IKeyHolder ? ((IKeyHolder) storage).getDataKey() : null;
-		}
-		return dataKey;
-	}
+    @Override
+    public IDataKey getDataKey() {
+        if (dataKey == null && getObservable().getArtifactType() == IArtifact.Type.CONCEPT) {
+            // may result from merging more states: build the datakey from the storage
+            dataKey = storage instanceof IKeyHolder ? ((IKeyHolder) storage).getDataKey() : null;
+        }
+        return dataKey;
+    }
 
-	@Override
-	public void setDataKey(IDataKey key) {
-		this.dataKey = key;
-		if (this.storage instanceof IKeyHolder) {
-			((IKeyHolder) this.storage).setDataKey(key);
-		}
-	}
+    @Override
+    public void setDataKey(IDataKey key) {
+        this.dataKey = key;
+        if (this.storage instanceof IKeyHolder) {
+            ((IKeyHolder) this.storage).setDataKey(key);
+        }
+    }
 
-	@Override
-	public IState at(ILocator locator) {
+    @Override
+    public IState at(ILocator locator) {
 
-		if (locator instanceof ITime && Observations.INSTANCE.occurs(this)) {
+        if (locator instanceof ITime && Observations.INSTANCE.occurs(this)) {
 
-			/*
-			 * TODO accumulating/subsetting wrapper based on observable semantics if this
-			 * state "occurs", i.e. it belongs to an event or is created by a process. This
-			 * will review the input based on the difference between the passed time and
-			 * ours
-			 */
+            /*
+             * TODO accumulating/subsetting wrapper based on observable semantics if this state
+             * "occurs", i.e. it belongs to an event or is created by a process. This will review
+             * the input based on the difference between the passed time and ours
+             */
 
-		} else if (locator instanceof Scale) {
+        } else if (locator instanceof Scale) {
 
-			/*
-			 * if the locator is a scale, this should not modify it at all, otherwise locate
-			 * the scale to the passed object.
-			 */
-			Scale scale = (Scale) getScale().at(locator);
+            /*
+             * if the locator is a scale, this should not modify it at all, otherwise locate the
+             * scale to the passed object.
+             */
+            Scale scale = (Scale) getScale().at(locator);
 
-			/*
-			 * if the located scale is conformant (i.e. points to whole dimensions or unique
-			 * points on them), return a located instance of this, otherwise create a
-			 * rescaled instance.
-			 */
-			return scale.isConformant(getScale()) ? new LocatedState(this, (Scale) scale, getScope())
-					: new RescalingState(this, (Scale) scale, getScope());
+            /*
+             * if the located scale is conformant (i.e. points to whole dimensions or unique points
+             * on them), return a located instance of this, otherwise create a rescaled instance.
+             */
+            return scale.isConformant(getScale())
+                    ? new LocatedState(this, (Scale) scale, getScope())
+                    : new RescalingState(this, (Scale) scale, getScope());
 
-		}
+        }
 
-		return this;
-	}
-	
-	public String getUpdateDescription() {
-		String ret = "";
-		for (Pair<Long,Long> ll : timeCoverage) {
-			ret += (ret.isEmpty() ? "" : "; ");
-			ret += ll.getFirst() == 0 ? "" : new Date(ll.getFirst());
-			if (ll.getSecond() > 0 ) {
-				ret += (ll.getFirst() == 0 ? "" : " to ") + new Date(ll.getSecond());
-			}
-		}
-		return ret;
-	}
-	
-	@Override
-	public long getLastUpdate() {
-		
-		if (this.replayingTime != null && this.replayingTime.getEnd() != null) {
-			long ret = -1;
-			for (long l : getUpdateTimestamps()) {
-				if (l > this.replayingTime.getEnd().getMilliseconds()) {
-					break;
-				}
-				if (l > ret) {
-					ret = l;
-				}
-			}
-			if (ret >= 0) {
-				return ret;
-			}
-		}
-		
-		if (this.timeCoverage.size() > 0) {
-			long ret = -1;
-			for (Pair<Long,Long> ll : timeCoverage) {
-				ret = ll.getSecond() > 0 ? ll.getSecond() : ll.getFirst();
-			}
-			if (ret > 0) {
-				return ret;
-			}
-		}
-		return super.getLastUpdate();
-	}
+        return this;
+    }
 
-	@Override
-	public long[] getUpdateTimestamps() {
-		List<Long> list = new ArrayList<>();
-		if (this.timeCoverage.size() > 0) {
-			for (Pair<Long,Long> ll : timeCoverage) {
-				long lo = ll.getSecond() > 0 ? ll.getSecond() : ll.getFirst();
-				if (lo > 0) {
-					list.add(lo);
-				}
-			}
-		}
-		return Utils.toLongArray(list);
-	}
+    public String getUpdateDescription() {
+        String ret = "";
+        for (Pair<Long, Long> ll : timeCoverage) {
+            ret += (ret.isEmpty() ? "" : "; ");
+            ret += ll.getFirst() == 0 ? "" : new Date(ll.getFirst());
+            if (ll.getSecond() > 0) {
+                ret += (ll.getFirst() == 0 ? "" : " to ") + new Date(ll.getSecond());
+            }
+        }
+        return ret;
+    }
 
-	@Override
-	public IState in(IValueMediator mediator) {
-		return MediatingState.getMediator(this, mediator);
-	}
+    @Override
+    public long getLastUpdate() {
 
-	@Override
-	public IStructuredTable<Number> getTable() {
-		return table;
-	}
+        if (this.replayingTime != null && this.replayingTime.getEnd() != null) {
+            long ret = -1;
+            for (long l : getUpdateTimestamps()) {
+                if (l > this.replayingTime.getEnd().getMilliseconds()) {
+                    break;
+                }
+                if (l > ret) {
+                    ret = l;
+                }
+            }
+            if (ret >= 0) {
+                return ret;
+            }
+        }
 
-	public void setTable(IStructuredTable<Number> table) {
-		this.table = table;
-	}
+        if (this.timeCoverage.size() > 0) {
+            long ret = -1;
+            for (Pair<Long, Long> ll : timeCoverage) {
+                ret = ll.getSecond() > 0 ? ll.getSecond() : ll.getFirst();
+            }
+            if (ret > 0) {
+                return ret;
+            }
+        }
+        return super.getLastUpdate();
+    }
 
-	public ISubjectiveState reinterpret(IDirectObservation observer) {
-		return new SubjectiveState(this, observer);
-	}
+    @Override
+    public long[] getUpdateTimestamps() {
+        List<Long> list = new ArrayList<>();
+        if (this.timeCoverage.size() > 0) {
+            for (Pair<Long, Long> ll : timeCoverage) {
+                long lo = ll.getSecond() > 0 ? ll.getSecond() : ll.getFirst();
+                if (lo > 0) {
+                    list.add(lo);
+                }
+            }
+        }
+        return Utils.toLongArray(list);
+    }
 
-	public void distributeScalar(Object pod) {
-		for (ILocator locator : getScale()) {
-			set(locator, pod);
-		}
-	}
+    @Override
+    public IState in(IValueMediator mediator) {
+        return MediatingState.getMediator(this, mediator);
+    }
 
-	public IDataStorage<?> getStorage() {
-		return storage;
-	}
+    @Override
+    public IStructuredTable<Number> getTable() {
+        return table;
+    }
 
-	@Override
-	public <T> T aggregate(ILocator geometry, Class<? extends T> cls) {
-		Object o = aggregate(geometry);
-		return Utils.asType(o, cls);
-	}
+    public void setTable(IStructuredTable<Number> table) {
+        this.table = table;
+    }
 
-	@Override
-	public Object aggregate(ILocator... locators) {
-		if (getScale().size() == 1) {
-			return get(getScale().initialization(), Utils.getClassForType(getType()));
-		}
-		if (locators == null) {
-			List<Object> values = new ArrayList<>();
-			for (ILocator locator : getScale()) {
-				values.add(get(locator));
-			}
-			AggregationUtils.aggregate(values, AggregationUtils.getAggregation(getObservable()),
-					getScope().getMonitor());
-		}
-		throw new KlabUnimplementedException(
-				"aggregation of rescaled states is unimplemented - please submit a request");
-	}
+    public ISubjectiveState reinterpret(IDirectObservation observer) {
+        return new SubjectiveState(this, observer);
+    }
 
-	@Override
-	public void fill(Object value) {
-		for (ILocator locator : getScale()) {
-			set(locator, value);
-		}
-	}
+    public void distributeScalar(Object pod) {
+        for (ILocator locator : getScale()) {
+            set(locator, pod);
+        }
+    }
 
-	@Override
-	public void finalizeTransition(IScale scale) {
+    public IDataStorage<?> getStorage() {
+        return storage;
+    }
 
-		Observations.INSTANCE.getStateSummary(this, scale);
-		setContextualized(true);
-		if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
-			setDynamic(true);
-			if (scale.getTime().getEnd() != null) {
-				if (updateTimestamps.size() == 0 || updateTimestamps.get(updateTimestamps.size() - 1) < scale.getTime()
-						.getEnd().getMilliseconds()) {
-					updateTimestamps.add(scale.getTime().getEnd().getMilliseconds());
-				}
-			}
-		} else if (this.updateTimestamps.size() == 0) {
-			updateTimestamps.add(0L);
-		}
-	}
-	
-	@Override
-	public String dump() {
-		return "";
-	}
+    @Override
+    public <T> T aggregate(ILocator geometry, Class<? extends T> cls) {
+        Object o = aggregate(geometry);
+        return Utils.asType(o, cls);
+    }
 
-	// for debugging: return all values in all slices, ignoring time in the passed locator.
-	public Object[] getTimeseries(ILocator locator) {
-		if (getStorage() instanceof AbstractAdaptiveStorage) {
-			return ((AbstractAdaptiveStorage<?>)getStorage()).getTimeseries(locator);
-		} else if (getStorage() instanceof KeyedStorage) {
-			return ((KeyedStorage<?>)getStorage()).getTimeseries(locator);
-		}
-		return new Object[] {};
-	}
+    @Override
+    public Object aggregate(ILocator... locators) {
+        if (getScale().size() == 1) {
+            return get(getScale().initialization(), Utils.getClassForType(getType()));
+        }
+        if (locators == null) {
+            List<Object> values = new ArrayList<>();
+            for (ILocator locator : getScale()) {
+                values.add(get(locator));
+            }
+            AggregationUtils.aggregate(values, AggregationUtils.getAggregation(getObservable()), getScope().getMonitor());
+        }
+        throw new KlabUnimplementedException("aggregation of rescaled states is unimplemented - please submit a request");
+    }
+
+    @Override
+    public void fill(Object value) {
+        for (ILocator locator : getScale()) {
+            set(locator, value);
+        }
+    }
+
+    @Override
+    public void finalizeTransition(IScale scale) {
+
+        Observations.INSTANCE.getStateSummary(this, scale);
+        setContextualized(true);
+        if (scale.getTime() != null && scale.getTime().getTimeType() != ITime.Type.INITIALIZATION) {
+            setDynamic(true);
+            if (scale.getTime().getEnd() != null) {
+                if (updateTimestamps.size() == 0
+                        || updateTimestamps.get(updateTimestamps.size() - 1) < scale.getTime().getEnd().getMilliseconds()) {
+                    updateTimestamps.add(scale.getTime().getEnd().getMilliseconds());
+                }
+            }
+        } else if (this.updateTimestamps.size() == 0) {
+            updateTimestamps.add(0L);
+        }
+    }
+
+    @Override
+    public String dump() {
+        return "";
+    }
+
+    // for debugging: return all values in all slices, ignoring time in the passed locator.
+    public Object[] getTimeseries(ILocator locator) {
+        if (getStorage() instanceof AbstractAdaptiveStorage) {
+            return ((AbstractAdaptiveStorage<?>) getStorage()).getTimeseries(locator);
+        } else if (getStorage() instanceof KeyedStorage) {
+            return ((KeyedStorage<?>) getStorage()).getTimeseries(locator);
+        }
+        return new Object[]{};
+    }
+
+    /**
+     * Get a list of time locators that point to all the temporal states where there are new data.
+     * At minimum it should return initialization; bound to the specific implementations so on
+     * non-typical states it may return an empty list.
+     * 
+     * @return
+     */
+    public List<ILocator> getSliceLocators() {
+        if (getStorage() instanceof AbstractAdaptiveStorage) {
+            return ((AbstractAdaptiveStorage<?>) getStorage()).getTimesliceLocators();
+        } else if (getStorage() instanceof KeyedStorage) {
+            return ((KeyedStorage<?>) getStorage()).getTimesliceLocators();
+        }
+        return new ArrayList<>();
+    }
 
 }

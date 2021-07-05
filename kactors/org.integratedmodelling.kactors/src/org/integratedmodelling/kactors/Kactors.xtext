@@ -27,17 +27,19 @@ Preamble: {Preamble}
 			behavior?=('behavior'|'behaviour')
 		) name=PathName
 	)?
-	label=STRING?
+	label=(STRING|LOCALIZED_STRING_REFERENCE)?
 	(
 		('import' imports+=PathName (',' imports+=PathName)*)? &
 		('worldview' worldview=PathName)? &
 		('observable' (observable=Observable | observables=List))? &
-		('description' description=STRING)? &
-		('permissions' permissions=STRING)? &
-		('author' authors+=STRING)* &
+		('description' description=(STRING|LOCALIZED_STRING_REFERENCE))? &
+		('permissions' permissions=(STRING|LOCALIZED_STRING_REFERENCE))? &
+		('author' authors+=(STRING|LOCALIZED_STRING_REFERENCE))* &
 		('style' (style=PathName ('with' inlineStyle=Map)? | inlineStyle=Map)?)? &
-		('logo' logo=(Path|STRING))? &
+		('logo' logo=(Path|(STRING|LOCALIZED_STRING_REFERENCE)))? &
 		('version' version=VersionNumber)? & 
+		('versionstring' versionString=STRING)? & 
+		('locale' locale=LOCALE)? & 
 		('created' created=Date (createcomment=STRING)?)? &
 		('modified' modified=Date (modcomment=STRING)?)? 
 	)
@@ -165,7 +167,7 @@ Actions:
 
 
 Value:
-	(tree=Tree |
+	(deferred?='`')? (tree=Tree |
 	empty?='empty' |
 	argvalue=ARGVALUE |
 	urn=UrnId | 
@@ -181,7 +183,7 @@ Value:
 ;
 
 ValueWithConstructor returns Value:
-	(constructor=Constructor |
+	(deferred?='`')? (constructor=Constructor |
 	tree=Tree |
 	empty?='empty' |
 	argvalue=ARGVALUE |
@@ -204,7 +206,7 @@ Constructor:
 ;
 
 ValueWithMetadata returns Value:
-	(tree=Tree |
+	(deferred?='`')? (tree=Tree |
 	 argvalue=ARGVALUE |
 	 literal=Literal |
 	 urn=UrnId | 
@@ -233,7 +235,7 @@ ValueWithMetadata returns Value:
 //	;
 //	
 ValueWithMetadataWithoutTree returns Value:
-	(argvalue=ARGVALUE |
+	(deferred?='`')? ((argvalue=ARGVALUE |
 	literal=Literal |
 	id=PathName |
 	urn=UrnId | 
@@ -242,29 +244,29 @@ ValueWithMetadataWithoutTree returns Value:
 	observable=Observable | 
 	expression=EXPR |
 	table=LookupTable |
-	quantity=Quantity) 
+	quantity=Quantity)) ('?' then=Value ':' else=Value)? 
 	(metadata=Metadata)?
 	;
 
 
 Match:
 	id=LOWERCASE_ID '->' body=StatementList  |
-	annotation=ANNOTATION_ID '->' body=StatementList |
+	annotation=ANNOTATION_ID ('as' formalName=LOWERCASE_ID)? '->' body=StatementList |
 	constant=UPPERCASE_ID '->' body=StatementList  |
 	boolean=('true'|'false') '->' body=StatementList  |
-	type=CAMELCASE_ID '->' body=StatementList |
-	regexp=REGEXP '->' body=StatementList |
-	observable=Observable '->' body=StatementList |
+	type=CAMELCASE_ID ('as' formalName=LOWERCASE_ID)? '->' body=StatementList |
+	regexp=REGEXP ('as' formalName=LOWERCASE_ID)? '->' body=StatementList |
+	observable=Observable ('as' formalName=LOWERCASE_ID)? '->' body=StatementList |
 	literal=Literal '->' body=StatementList |
 	list=List '->' body=StatementList |
-	'in' set=List '->' body=StatementList | 
+	'in' set=List ('as' formalName=LOWERCASE_ID)? '->' body=StatementList | 
 	quantity=Quantity '->' body=StatementList |
-	expr=EXPR '->' body=StatementList |
+	expr=EXPR ('as' formalName=LOWERCASE_ID)? '->' body=StatementList |
 	nodata='unknown' '->' body=StatementList |
 	star?='*' '->' body=StatementList |
 	anything?='#''->' body=StatementList |
 	empty?='empty' '->' body=StatementList |
-	exception?='exception' '->' body=StatementList
+	exception?='exception' ('as' formalName=LOWERCASE_ID)? '->' body=StatementList
 ;
 
 /**
@@ -326,7 +328,7 @@ Table:
 	(headers=HeaderRow SEPARATOR)? rows+=TableRow (',' rows+=TableRow)*;
 
 HeaderRow:
-	elements+=(LOWERCASE_ID|STRING) ('|' elements+=(LOWERCASE_ID|STRING))*
+	elements+=(LOWERCASE_ID|(STRING|LOCALIZED_STRING_REFERENCE)) ('|' elements+=(LOWERCASE_ID|(STRING|LOCALIZED_STRING_REFERENCE)))*
 ;
 
 TableRow:
@@ -355,7 +357,7 @@ Annotation:
 	name=ANNOTATION_ID ('(' parameters=ParameterList? ')')?;
 	
 Literal:
-	number=Number | from=Number 'to' to=Number | string=STRING | date=Date | boolean=('true' | 'false');
+	number=Number | from=Number 'to' to=Number | string=(STRING|LOCALIZED_STRING_REFERENCE) | date=Date | boolean=('true' | 'false');
 	
 ParameterList:
 	pairs+=KeyValuePair (=> (',')? pairs+=KeyValuePair)*;
@@ -546,6 +548,9 @@ terminal KEY:
 terminal TAG:
 	('#')('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
 
+terminal LOCALIZED_STRING_REFERENCE:
+	('#')('A'..'Z') ('A'..'Z' | '0'..'9'| '_')*;
+
 terminal UPPERCASE_ID:
 	('A'..'Z') ('A'..'Z' | '_')*;
 
@@ -560,6 +565,10 @@ VersionNumber:
 
 terminal LOWERCASE_ID:
 	('a'..'z') ('a'..'z' | '0'..'9'| '_')*;
+
+terminal LOCALE:
+	('a'..'z')('a'..'z')('-' ('A'..'Z')('A'..'Z'))*
+;
 
 terminal QUOTED_LOWERCASE_ID:
 	('`')('a'..'z')('a'..'z' | '0'..'9'| '_')*;

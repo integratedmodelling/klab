@@ -25,6 +25,14 @@
 	<build>
 		<defaultGoal>process-resources</defaultGoal>
 		<plugins>
+	  		<plugin>
+	  			<groupId>com.google.cloud.tools</groupId>
+	  			<artifactId>jib-maven-plugin</artifactId>
+	  			<configuration>
+	  				<!-- we don't want jib to execute on this module -->
+	  				<skip>true</skip>
+	  			</configuration>
+	      	</plugin>
 			<plugin>
 				<groupId>org.asciidoctor</groupId>
 				<artifactId>asciidoctor-maven-plugin</artifactId>

@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.engine.runtime;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -38,6 +39,7 @@ import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.model.IObserver;
 import org.integratedmodelling.klab.api.monitoring.IMessage;
+import org.integratedmodelling.klab.api.observations.IKnowledgeView;
 import org.integratedmodelling.klab.api.observations.IObservation;
 import org.integratedmodelling.klab.api.observations.ISubject;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
@@ -56,9 +58,11 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.geocoding.Geocoder;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserAction;
+import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.UserMenuAction;
 import org.integratedmodelling.klab.components.runtime.observations.Subject;
 import org.integratedmodelling.klab.data.Metadata;
 import org.integratedmodelling.klab.data.encoding.VisitingDataBuilder;
+import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabContextualizationException;
@@ -66,6 +70,7 @@ import org.integratedmodelling.klab.model.Observer;
 import org.integratedmodelling.klab.owl.OWL;
 import org.integratedmodelling.klab.rest.DataflowState;
 import org.integratedmodelling.klab.rest.LoadApplicationRequest;
+import org.integratedmodelling.klab.rest.MenuAction;
 import org.integratedmodelling.klab.rest.ObservationRequest;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
@@ -128,6 +133,7 @@ public class SessionState extends Parameters<String> implements ISessionState {
     private ScaleReference scaleOfInterest;
     private ISubject context;
     private String geocodingStrategy;
+    private Map<String, File> stagingArea = Collections.synchronizedMap(new HashMap<>());
 
     private class ListenerWrapper {
 
@@ -233,14 +239,16 @@ public class SessionState extends Parameters<String> implements ISessionState {
                 activity.setEnd(System.currentTimeMillis());
                 activity.setStatus(DataflowState.Status.FINISHED);
 
-                if (activity.getActivityId().equals(this.currentActivity.getActivityId())) {
+                if (this.currentActivity != null && activity.getActivityId().equals(this.currentActivity.getActivityId())) {
                     this.currentActivity.setContextId(observation.getId());
                     this.historyByContext.put(observation.getId(), activity);
                 }
 
                 for (ListenerWrapper listener : listeners.values()) {
-                    listener.listener.historyChanged(this.currentActivity,
-                            activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
+                    if (this.currentActivity != null) {
+                        listener.listener.historyChanged(this.currentActivity,
+                                activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
+                    }
                 }
             }
         });
@@ -255,8 +263,10 @@ public class SessionState extends Parameters<String> implements ISessionState {
             activity.setStackTrace(ExceptionUtils.getStackTrace(error));
 
             for (ListenerWrapper listener : listeners.values()) {
-                listener.listener.historyChanged(this.currentActivity,
-                        activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
+                if (this.currentActivity != null) {
+                    listener.listener.historyChanged(this.currentActivity,
+                            activity.getActivityId().equals(this.currentActivity.getActivityId()) ? null : activity);
+                }
             }
 
         });
@@ -339,7 +349,8 @@ public class SessionState extends Parameters<String> implements ISessionState {
         if (this.scaleOfInterest.getEast() == 0 && this.scaleOfInterest.getWest() == 0) {
             return null;
         }
-        return Geometry.create(this.scaleOfInterest);
+
+        return Geometry.create(Geocoder.INSTANCE.finalizeShape(this.scaleOfInterest, session.getMonitor()));
     }
 
     @Override
@@ -528,6 +539,18 @@ public class SessionState extends Parameters<String> implements ISessionState {
                     new UserAction(action, action.getComponent().getApplicationId(), new SimpleRuntimeScope(this.session)));
         }
     }
+    
+    public void register(MenuAction action) {
+
+        @SuppressWarnings("unchecked")
+        IActorIdentity<KlabMessage> receiver = Authentication.INSTANCE.getIdentity(action.getIdentity(),
+                IActorIdentity.class);
+        if (receiver != null) {
+            receiver.getActor().tell(
+                    // TODO consider having a scope in the state
+                    new UserMenuAction(action, action.getApplicationId(), new SimpleRuntimeScope(this.session)));
+        }
+    }
 
     @Override
     public void resetContext() {
@@ -706,6 +729,9 @@ public class SessionState extends Parameters<String> implements ISessionState {
             IShape shape = Geocoder.INSTANCE.geocodeToShape(extent, this.geocodingStrategy, session.getMonitor());
             if (shape != null) {
                 this.scaleOfInterest.setName(shape.getMetadata().get(IMetadata.DC_DESCRIPTION, String.class));
+                if (shape.getMetadata().containsKey(IMetadata.IM_FEATURE_URN)) {
+                    this.scaleOfInterest.setFeatureUrn(shape.getMetadata().get(IMetadata.IM_FEATURE_URN, String.class));
+                }
                 if (!(shape.getMetadata().containsKey(IMetadata.IM_GEOGRAPHIC_AREA)
                         && !shape.getMetadata().get(IMetadata.IM_GEOGRAPHIC_AREA, Boolean.FALSE))) {
                     this.scaleOfInterest.setShape(((Shape) shape).getJTSGeometry().toString());
@@ -767,12 +793,11 @@ public class SessionState extends Parameters<String> implements ISessionState {
     public void removeListener(String listenerId) {
         this.listeners.remove(listenerId);
     }
-    
+
     @Override
     public void removeGlobalListener(String listenerId) {
         this.globalListeners.remove(listenerId);
     }
-
 
     public String getGeocodingStrategy() {
         return geocodingStrategy;
@@ -938,6 +963,35 @@ public class SessionState extends Parameters<String> implements ISessionState {
     @Override
     public Map<IConcept, Collection<IConcept>> getRoles() {
         return this.roles;
+    }
+
+    /**
+     * Return all the table artifacts produced in this state.
+     * 
+     * @return
+     */
+    public Collection<TableArtifact> getTables() {
+        List<TableArtifact> ret = new ArrayList<>();
+        if (this.context != null) {
+            for (IKnowledgeView view : ((IRuntimeScope) ((Subject) context).getScope()).getViews()) {
+                if (view instanceof TableArtifact) {
+                    ret.add((TableArtifact) view);
+                }
+            }
+        }
+        return ret;
+    }
+
+    @Override
+    public String stageDownload(File file) {
+        String id = NameGenerator.shortUUID();
+        this.stagingArea.put(id, file);
+        return id;
+    }
+
+    @Override
+    public File getStagedFile(String id) {
+        return this.stagingArea.remove(id);
     }
 
 }

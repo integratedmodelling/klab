@@ -14,7 +14,7 @@ import org.integratedmodelling.klab.utils.StringUtil;
 public class Resolve implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 		String authority = null;
 		List<String> identities = new ArrayList<>();
 		for (Object arg : call.getParameters().get("arguments", java.util.List.class)) {

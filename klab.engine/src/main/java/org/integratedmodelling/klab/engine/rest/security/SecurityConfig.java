@@ -63,7 +63,9 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 	        response.sendError(HttpServletResponse.SC_UNAUTHORIZED);
 		}
     	  
-      });
+      })
+      .and()
+      .headers().frameOptions().disable();
   }
 
 	@Bean

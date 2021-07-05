@@ -95,6 +95,14 @@
 		</plugins>
 		<pluginManagement>
 			<plugins>
+		  		<plugin>
+		  			<groupId>com.google.cloud.tools</groupId>
+		  			<artifactId>jib-maven-plugin</artifactId>
+		  			<configuration>
+		  				<!-- we don't want jib to execute on this module -->
+		  				<skip>true</skip>
+		  			</configuration>
+		      	</plugin>
 				<plugin>
 					<groupId>org.eclipse.m2e</groupId>
 					<artifactId>lifecycle-mapping</artifactId>

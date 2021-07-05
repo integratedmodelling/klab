@@ -1,0 +1,80 @@
+/**
+ * This file defines the contract for all commands recognized in k.IM. Those with a
+ * 'class' specification also have handlers that perform specific tasks when the annotations
+ * are encountered.
+ */
+@klab 0.10.0
+@version 0.10.0
+@namespace reason
+
+void children
+	"List the asserted or inferred hierarchy of a concept."
+{
+	class org.integratedmodelling.klab.cli.commands.reason.ShowChildren
+}
+
+void parents
+	"List the semantic closure of a concept."
+{
+	class org.integratedmodelling.klab.cli.commands.reason.ShowParents
+}
+
+void type
+	"List the enum types for a concept."
+{
+	class org.integratedmodelling.klab.cli.commands.reason.ShowType
+}
+
+void traits
+	"List the traits for a concept."
+{
+	class org.integratedmodelling.klab.cli.commands.reason.ShowTraits
+}
+
+void restrictions
+	"List the OWL restrictions for a concept."
+{
+	class org.integratedmodelling.klab.cli.commands.reason.ShowRestrictions
+}
+
+void compare
+	"Cross-compare a set of concepts for specificity and compatibility. List concepts to
+	 compare as arguments; for complex declarations, use 'to' as separator."
+{
+	optional boolean context 
+		"Use the currently set context type for logical contextualization"
+		
+	class org.integratedmodelling.klab.cli.commands.reason.Compare
+}
+
+void contextualize
+	"Recontextualize a concept to another and describe it. Use 'to' as separator."
+{
+	class org.integratedmodelling.klab.cli.commands.reason.Contextualize
+}
+
+void reload
+	"Reload one or more namespaces."
+{
+	class org.integratedmodelling.klab.cli.commands.reason.Reload
+}
+
+void 'export'
+	"Export one or more namespaces."
+{
+	class org.integratedmodelling.klab.cli.commands.reason.Export
+}
+
+void info
+	"Print information about a concept."
+{
+	class org.integratedmodelling.klab.cli.commands.reason.ShowInfo
+}
+
+//void align
+//	"Compute and print the alignment mappings for each pair of the passed ontologies."
+//{
+//	class org.integratedmodelling.klab.cli.commands.reason.Align
+//}
+
+

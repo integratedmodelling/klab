@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -35,6 +36,7 @@ import org.integratedmodelling.klab.api.data.artifacts.IDataArtifact;
 import org.integratedmodelling.klab.api.data.artifacts.IObjectArtifact;
 import org.integratedmodelling.klab.api.data.general.IExpression.Context;
 import org.integratedmodelling.klab.api.documentation.IReport;
+import org.integratedmodelling.klab.api.documentation.IReport.View;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
@@ -202,8 +204,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         this.artifactType = Observables.INSTANCE.getObservableType(actuator.getObservable(), true);
         this.dataflow = actuator.getDataflow();
         this.watchedObservations = Collections.synchronizedSet(new HashSet<>());
-        this.views = new HashMap<>();
-        this.viewsByUrn = new HashMap<>();
+        this.views = new LinkedHashMap<>();
+        this.viewsByUrn = new LinkedHashMap<>();
         this.concreteIdentities = new HashMap<>();
 
         // cache for groovy IS operator in this context
@@ -498,7 +500,8 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
     @SuppressWarnings("unchecked")
     @Override
-    public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation observation, ITaskTree<?> task, Mode mode) {
+    public <T extends IArtifact> T resolve(IObservable observable, IDirectObservation observation, ITaskTree<?> task, Mode mode,
+            IDataflow<?> parentDataflow) {
 
         /*
          * preload all the possible resolvers in the wider scope before specializing the scope to
@@ -531,7 +534,7 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                     this.resolutionScope.getDeferredChildScope(observation, mode), mode, scale, model);
 
             if (scope.getCoverage().isRelevant()) {
-                dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope, this.dataflow);
+                dataflow = Dataflows.INSTANCE.compile("local:task:" + session.getId() + ":" + task.getId(), scope, (Dataflow)parentDataflow);
                 pairs.add(new Pair<>(dataflow.getCoverage(), dataflow));
             }
         }
@@ -546,6 +549,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                 // annoying.
             }
         } else {
+
+            this.dataflow.registerResolution(observation, dataflow);
+
             ret = dataflow.withScope(this.resolutionScope.getDeferredChildScope(observation, mode))
                     .withScopeScale(observation.getScale()).withMetadata(observation.getMetadata())
                     .run(observation.getScale(), (Actuator) this.actuator, task.getMonitor());
@@ -1078,6 +1084,20 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         }
 
         /*
+         * add additional observables that are created by a process
+         */
+        if (actuator.getObservable().is(Type.PROCESS) && actuator.getModel() != null) {
+            for (int i = 1; i < actuator.getModel().getObservables().size(); i++) {
+                IObservable output = actuator.getModel().getObservables().get(i);
+                if (Observables.INSTANCE.isCreatedBy(output, actuator.getObservable())
+                        && !this.catalog.containsKey(output.getName())) {
+                    targetObservables.put(output.getName(), new Triple<>((Observable) output,
+                            output.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, false));
+                }
+            }
+        }
+
+        /*
          * will be pre-existing only if: (i) it's an existing observation group and the observable
          * does not determine a new view; or (ii) we're resolving an attribute through a dataflow,
          * which will be added by this.
@@ -1309,11 +1329,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
                     session.getMonitor().send(Message.create(session.getId(), IMessage.MessageClass.ObservationLifecycle,
                             IMessage.Type.NewObservation, descriptor));
 
-                    
                     session.getState().notifyObservation(observation);
-                    
-                    
-                    report.include(descriptor);
+
+                    report.include(descriptor, observation);
 
                     notifiedObservations.add(observation.getId());
                 }
@@ -1577,7 +1595,9 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
     @Override
     public void setModel(Model model) {
         this.model = model;
-        ((Report)report).addModel(model);
+        if (model != null) {
+            ((Report) report).addModel(model);
+        }
     }
 
     @Override
@@ -1779,6 +1799,16 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
     public void scheduleActions(Actuator actuator) {
 
         /*
+         * We don't schedule merging observations as they should only merge what's behind them.
+         * Currently attempting to do so will fail for lack of a knowable temporal context. When the
+         * temporal merging logic is finished, we may remove this and allow merging actuators to
+         * exist.
+         */
+        if (actuator.getObservable().isDereified()) {
+            return;
+        }
+
+        /*
          * Only occurrents occur. FIXME yes, but they may affect continuants
          */
         boolean isOccurrent = actuator.getType().isOccurrent();
@@ -1909,19 +1939,19 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         return ret;
     }
 
-    @Override
-    public Collection<IArtifact> getAdditionalOutputs() {
-        List<IArtifact> ret = new ArrayList<>();
-        if (this.model != null) {
-            for (int i = 0; i < model.getObservables().size(); i++) {
-                IArtifact out = findArtifact(model.getObservables().get(i)).getSecond();
-                if (out != null) {
-                    ret.add(out);
-                }
-            }
-        }
-        return ret;
-    }
+    // @Override
+    // public Collection<IArtifact> getAdditionalOutputs() {
+    // List<IArtifact> ret = new ArrayList<>();
+    // if (this.model != null) {
+    // for (int i = 0; i < model.getObservables().size(); i++) {
+    // IArtifact out = findArtifact(model.getObservables().get(i)).getSecond();
+    // if (out != null) {
+    // ret.add(out);
+    // }
+    // }
+    // }
+    // return ret;
+    // }
 
     @Override
     public Collection<IObservable> getDependents(IObservable observable, Mode resolutionMode) {
@@ -2018,19 +2048,28 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
         this.viewsByUrn.put(view.getUrn(), view);
         this.views.put(view.getId(), view);
 
+        IReport.View type = null;
+        switch(view.getViewClass()) {
+        case "table":
+            type = View.TABLES;
+            break;
+        }
+
         /*
          * send directly to clients. If view can export, keep view and send URL to export service.
          */
         KnowledgeViewReference descriptor = new KnowledgeViewReference();
         descriptor.setContextId(monitor.getIdentity().getParentIdentity(ITaskTree.class).getContextId());
         descriptor.setBody(view.getCompiledView("text/html").getText());
-        descriptor.setViewClass(view.getViewClass());
+        descriptor.setViewClass(type);
         descriptor.setTitle(view.getTitle());
         descriptor.setViewId(view.getId());
         descriptor.getExportFormats().addAll(view.getExportFormats());
         descriptor.setLabel(view.getLabel() == null
                 ? (StringUtil.capitalize(view.getViewClass()) + " " + (views.size() + 1))
                 : view.getLabel());
+
+        report.addView(view, descriptor);
 
         ISession session = monitor.getIdentity().getParentIdentity(ISession.class);
         session.getMonitor().send(
@@ -2153,6 +2192,14 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
     public IConcept localizePredicate(IConcept predicate) {
         IConcept ret = resolvedPredicates.get(predicate);
         return ret == null ? predicate : ret;
+    }
+
+    @Override
+    public Collection<IKnowledgeView> getViews() {
+        if (this.views == null) {
+            return new ArrayList<IKnowledgeView>();
+        }
+        return this.views.values();
     }
 
 }

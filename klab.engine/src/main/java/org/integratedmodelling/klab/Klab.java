@@ -591,12 +591,12 @@ public enum Klab implements IRuntimeService {
 		for (ITicket open : ticketManager.get(ITicket.Status.OPEN)) {
 			if (open.getData().containsKey("node")) {
 				// check with node
-				System.out.println("Checking open ticket " + open.getId() + "...");
+//				System.out.println("Checking open ticket " + open.getId() + "...");
 				INodeIdentity node = Network.INSTANCE.getNode(open.getData().get("node"));
 				if (node != null && open.getData().get("ticket") != null) {
 					TicketResponse.Ticket response = node.getClient().get(API.TICKET.INFO, TicketResponse.Ticket.class,
 							"ticket", open.getData().get("ticket"));
-					System.out.println("GOT " + response);
+//					System.out.println("GOT " + response);
 					if (response.getStatus() != Status.OPEN) {
 						open.resolve(response);
 					}
@@ -680,7 +680,6 @@ public enum Klab implements IRuntimeService {
 									receiver = Authentication.INSTANCE.getIdentity(identity, IIdentity.class);
 								}
 								if (receiver instanceof IRuntimeIdentity) {
-									System.out.println("SUCK MY DICK");
 									EngineEvent message = new EngineEvent();
 									message.setStarted(false);
 									message.setTimestamp(System.currentTimeMillis());

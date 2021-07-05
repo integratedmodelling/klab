@@ -9,6 +9,16 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## Unreleased
 ### Added
+- Improve the engine "content extraction" endpoint to use actual paths so that
+  relative links will work.
+- Add support for "raw" content from apps and the 'html' and 'image' view verbs to 
+  access it from k.Actors. Also 'setui' explorer verb can pass various global settings.
+- New structured report logics recognizes doc sections, paragraphs, figures, tables,
+  resources, models and bibliographic entries as independent nodes that can be arranged
+  into doc trees.
+- Backtick operator in k.Actors enables deferred evaluation of values, so that "closures"
+  of sorts can be passed as arguments to components or actions for evaluation in their
+  scopes of execution.. Scoped evaluation API straightened out and simplified.
 - Categories are now exported along with geotiffs when requested, supporting both ArcGIS 
   and QGIS conventions. With QGIS, colormap is preserved.
 - 'new' verb enables creating components as values in k.Actors, to pass as parameters 

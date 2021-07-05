@@ -361,4 +361,12 @@ public interface IObservableService {
 	 * @return
 	 */
 	IConcept getDescribedType(IConcept concept);
+
+	/**
+	 * Parse a string declaration into the correspondent syntactic observable.
+	 * 
+	 * @param declaration
+	 * @return
+	 */
+    IKimObservable parseDeclaration(String declaration);
 }

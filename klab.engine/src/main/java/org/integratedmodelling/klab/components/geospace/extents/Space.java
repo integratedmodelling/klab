@@ -82,7 +82,11 @@ public class Space extends Extent implements ISpace {
     public static Space create(Dimension dimension) {
         return create(dimension, null);
     }
-    
+
+    public static Space create(IShape shape, IQuantity resolution) {
+        return create((Shape) shape, org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(resolution));
+    }
+
     public static Space create(Dimension dimension, IQuantity resolution) {
 
         double[] bbox = dimension.getParameters().get(Geometry.PARAMETER_SPACE_BOUNDINGBOX, double[].class);
@@ -92,7 +96,8 @@ public class Space extends Extent implements ISpace {
         String shapeSpec = dimension.getParameters().get(Geometry.PARAMETER_SPACE_SHAPE, String.class);
         long[] dims = dimension.shape();
         boolean generic = false;
-
+        boolean simplified = Boolean.parseBoolean(dimension.getParameters().get("simplified", "false"));
+        
         Projection projection = null;
         Shape shape = null;
 
@@ -115,11 +120,13 @@ public class Space extends Extent implements ISpace {
         }
 
         if (shape != null) {
+
+            shape.setSimplified(simplified);
             
-            if (resolution != null) {
+            if (resolution != null && !simplified) {
                 shape = shape.getSimplified(resolution);
             }
-            
+
             if (gridres != null) {
                 return create(shape, org.integratedmodelling.klab.components.geospace.services.Space.parseResolution(gridres));
             } else if (dims.length > 1) {
@@ -254,7 +261,7 @@ public class Space extends Extent implements ISpace {
 
     private Space(Shape shape, Grid grid) {
 
-        if (grid.getXCells() * grid.getYCells() > 1000) {
+        if (!shape.isSimplified() && grid.getXCells() * grid.getYCells() > 1000) {
             shape = shape.getSimplified(Math.max(grid.getCellHeight(), grid.getCellWidth()));
         }
         this.projection = shape.getProjection();
@@ -1047,7 +1054,12 @@ public class Space extends Extent implements ISpace {
 
     @Override
     protected IExtent contextualizeTo(IExtent other, IAnnotation constraint) {
-        // TODO Auto-generated method stub
+        if (other instanceof Space) {
+            // check for trivial 1x1 grid, which may come from networked objects
+            if (((Space)other).getGrid() != null && (this.grid == null || (this.grid.getCellCount() == 1))) {
+                return create(this.shape, ((Space)other).grid, true);
+            }
+        }
         return this;
     }
 

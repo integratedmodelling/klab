@@ -5,9 +5,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.integratedmodelling.kactors.api.IKActorsAction;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.api.IKActorsStatement.ConcurrentGroup;
 import org.integratedmodelling.kactors.api.IKActorsValue;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
 import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Statement;
 import org.integratedmodelling.kactors.kactors.StatementGroup;
@@ -92,4 +94,16 @@ public class KActorsConcurrentGroup extends KActorsStatement implements Concurre
 		return ret;
 	}
 
+
+    @Override
+    protected void visit(IKActorsAction action, Visitor visitor) {
+        for (IKActorsStatement statement : sequences) {
+            ((KActorsStatement)statement).visit(action, visitor);
+        }
+        for (ActionDescriptor a : actions) {
+            a.visit(action, this, visitor);
+        }
+        super.visit(action, visitor);
+    }
+    
 }

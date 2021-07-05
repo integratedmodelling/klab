@@ -105,7 +105,12 @@ public class RasterEncoder implements IResourceEncoder {
         RenderedImage image = coverage.getRenderedImage();
         RandomIter iterator = RandomIterFactory.create(image, null);
         Dimension space = geometry.getDimension(Type.SPACE);
-        int band = resource.getParameters().get("band", 0);
+        int band = 0;
+        if (urnParameters.containsKey("band")) {
+            band = Integer.parseInt(urnParameters.get("band"));
+        } else {
+            resource.getParameters().get("band", 0);
+        }
         Set<Double> nodata = getNodata(resource, coverage, band);
         GroovyShell shell = null;
         Binding binding = null;

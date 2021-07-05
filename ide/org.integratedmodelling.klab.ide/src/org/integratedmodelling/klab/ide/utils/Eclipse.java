@@ -810,7 +810,7 @@ public enum Eclipse {
 		if (Activator.session() != null) {
 			try (InputStream is = Activator.client().with(Activator.session().getIdentity())
 					.get(API.ENGINE.RESOURCE.GET_PROJECT_RESOURCE.replace(API.ENGINE.RESOURCE.P_PROJECT, projectId)
-							.replace(API.ENGINE.RESOURCE.P_RESOURCEPATH, resourceId.replace("/", ":")))) {
+							.replace("**", resourceId.replace("/", ":")))) {
 				return new Image(Display.getCurrent(), is);
 			} catch (Throwable t) {
 				handleException(t);

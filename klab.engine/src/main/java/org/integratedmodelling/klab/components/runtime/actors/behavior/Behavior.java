@@ -15,18 +15,21 @@ import org.integratedmodelling.kactors.api.IKActorsBehavior.Type;
 import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.model.KActorsBehavior;
 import org.integratedmodelling.kactors.model.KActorsValue;
+import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.klab.Annotations;
 import org.integratedmodelling.klab.api.actors.IBehavior;
+import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.knowledge.IMetadata;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.IAnnotation;
 import org.integratedmodelling.klab.api.model.IKimObject;
 import org.integratedmodelling.klab.api.observations.IObservation;
+import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
-import org.integratedmodelling.klab.components.runtime.actors.KlabActor;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
+import org.integratedmodelling.klab.components.runtime.observations.Observation;
 import org.integratedmodelling.klab.data.Metadata;
-import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
+import org.integratedmodelling.klab.utils.Path;
 import org.integratedmodelling.klab.utils.Range;
 
 public class Behavior implements IBehavior {
@@ -50,30 +53,40 @@ public class Behavior implements IBehavior {
     public static class Match {
 
         KActorsValue value;
+        String matchName;
 
-        public Match(IKActorsValue ikActorsValue) {
+        public Match(IKActorsValue ikActorsValue, String matchName) {
             this.value = (KActorsValue) ikActorsValue;
+            this.matchName = matchName;
+        }
+
+        public IKActorsValue getValue() {
+            return value;
         }
 
         private boolean notMatch(Object value) {
             return value == null || value instanceof Throwable || (value instanceof Boolean && !((Boolean) value));
         }
+        
+        public String getMatchName() {
+            return matchName;
+        }
 
         /**
          * If true, no match value was given and the values will be set into system variables $ for
          * the entire match, plus $1..$n if multiple values. This is crucial as some matchers will
-         * just imply but not contain the matched value. TODO CHECK this - 
+         * just imply but not contain the matched value. TODO CHECK this -
          * 
          * @return
          */
         public boolean isImplicit() {
-            return value == null || value.getValue() == null || value.getType() == IKActorsValue.Type.OBSERVABLE
-                    || value.getType() == IKActorsValue.Type.ANNOTATION;
+            return value == null || value.getStatedValue() == null || value.getType() == IKActorsValue.Type.OBSERVABLE
+                    || value.getType() == IKActorsValue.Type.ANNOTATION || value.getType() == IKActorsValue.Type.TYPE;
         }
 
         // Call only if isIdentifier() returns true
         public String getIdentifier() {
-            return this.value.getValue().toString();
+            return this.value.getStatedValue().toString();
         }
 
         /**
@@ -84,14 +97,15 @@ public class Behavior implements IBehavior {
          * @return
          */
         public boolean isIdentifier(Scope scope) {
-            return this.value.getType() == IKActorsValue.Type.IDENTIFIER && !scope.containsKey(this.value.getValue());
+            return this.value.getType() == IKActorsValue.Type.IDENTIFIER
+                    && !scope.getSymbolTable().containsKey(this.value.getStatedValue());
         }
 
         public boolean matches(Object value, Scope scope) {
             switch(this.value.getType()) {
             case ANNOTATION:
                 for (IAnnotation annotation : Annotations.INSTANCE.collectAnnotations(value)) {
-                    if (annotation.getName().equals(this.value.getValue())) {
+                    if (annotation.getName().equals(this.value.getStatedValue())) {
                         scope.symbolTable.put(annotation.getName(), annotation);
                         return true;
                     }
@@ -114,7 +128,7 @@ public class Behavior implements IBehavior {
                 // }
                 return ret;
             case BOOLEAN:
-                return value instanceof Boolean && value.equals(this.value.getValue());
+                return value instanceof Boolean && value.equals(this.value.getStatedValue());
             case CLASS:
                 break;
             case DATE:
@@ -123,8 +137,8 @@ public class Behavior implements IBehavior {
                 System.out.println("ACH AN EXPRESSION");
                 break;
             case IDENTIFIER:
-                if (scope.symbolTable.containsKey(this.value.getValue())) {
-                    return this.value.getValue().equals(scope.symbolTable.get(value));
+                if (scope.symbolTable.containsKey(this.value.getStatedValue())) {
+                    return this.value.getStatedValue().equals(scope.symbolTable.get(value));
                 }
                 if (!notMatch(value)) {
                     // NO - if defined in scope, match to its value, else just return true.
@@ -143,11 +157,11 @@ public class Behavior implements IBehavior {
             case NODATA:
                 return value == null || value instanceof Number && Double.isNaN(((Number) value).doubleValue());
             case NUMBER:
-                return value instanceof Number && value.equals(this.value.getValue());
+                return value instanceof Number && value.equals(this.value.getStatedValue());
             case NUMBERED_PATTERN:
                 break;
             case OBSERVABLE:
-                Object obj = KlabActor.evaluateInScope(this.value, scope, (IActorIdentity<?>) scope.getIdentity());
+                Object obj = this.value.evaluate(scope, scope.getIdentity(), true);
                 if (obj instanceof IObservable) {
                     if (value instanceof IObservation) {
                         return ((IObservation) value).getObservable().resolves((IObservable) obj, null);
@@ -157,15 +171,17 @@ public class Behavior implements IBehavior {
             case QUANTITY:
                 break;
             case RANGE:
-                return value instanceof Number && ((Range) (this.value.getValue())).contains(((Number) value).doubleValue());
+                return value instanceof Number
+                        && ((Range) (this.value.getStatedValue())).contains(((Number) value).doubleValue());
             case REGEXP:
                 break;
             case STRING:
-                return value instanceof String && value.equals(this.value.getValue());
+                return value instanceof String && value.equals(this.value.getStatedValue());
             case TABLE:
                 break;
             case TYPE:
-                break;
+                return value != null && (this.value.getStatedValue().equals(value.getClass().getCanonicalName())
+                        || this.value.getStatedValue().equals(Path.getLast(value.getClass().getCanonicalName(), '.')));
             case URN:
                 break;
             case ERROR:
@@ -177,12 +193,15 @@ public class Behavior implements IBehavior {
             case TREE:
                 break;
             case CONSTANT:
-                return (value instanceof Enum && ((Enum<?>) value).name().toUpperCase().equals(this.value.getValue()))
-                        || (value instanceof String && ((String) value).equals(this.value.getValue()));
+                return (value instanceof Enum && ((Enum<?>) value).name().toUpperCase().equals(this.value.getStatedValue()))
+                        || (value instanceof String && ((String) value).equals(this.value.getStatedValue()));
             case EMPTY:
                 return value == null || (value instanceof Collection && ((Collection<?>) value).isEmpty())
                         || (value instanceof String && ((String) value).isEmpty())
-                        || (value instanceof IArtifact && ((IArtifact) value).isEmpty());
+                        || (value instanceof IConcept && ((IConcept) value).is(IKimConcept.Type.NOTHING))
+                        || (value instanceof IObservable && ((IObservable) value).is(IKimConcept.Type.NOTHING))
+                        || (value instanceof IArtifact && !(value instanceof IObservationGroup) && ((IArtifact) value).isEmpty())
+                        || (value instanceof IObservation && ((Observation) value).getObservable().is(IKimConcept.Type.NOTHING));
             case OBJECT:
                 break;
             default:

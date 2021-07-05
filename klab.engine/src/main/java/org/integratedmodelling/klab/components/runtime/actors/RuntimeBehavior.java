@@ -1,5 +1,6 @@
 package org.integratedmodelling.klab.components.runtime.actors;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -14,8 +15,11 @@ import org.integratedmodelling.kactors.api.IKActorsValue;
 import org.integratedmodelling.kactors.api.IKActorsValue.Type;
 import org.integratedmodelling.kactors.model.KActorsValue;
 import org.integratedmodelling.kim.api.IKimConcept;
+import org.integratedmodelling.kim.api.IKimObservable;
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.kim.model.KimQuantity;
+import org.integratedmodelling.klab.Actors;
+import org.integratedmodelling.klab.Observables;
+import org.integratedmodelling.klab.Observations;
 import org.integratedmodelling.klab.Units;
 import org.integratedmodelling.klab.Urn;
 import org.integratedmodelling.klab.Version;
@@ -33,14 +37,15 @@ import org.integratedmodelling.klab.api.observations.scale.time.ITimePeriod;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.ISession;
 import org.integratedmodelling.klab.api.runtime.ISessionState;
-import org.integratedmodelling.klab.common.mediation.Quantity;
 import org.integratedmodelling.klab.common.mediation.Unit;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.SystemBehavior.AppReset;
 import org.integratedmodelling.klab.components.runtime.actors.extensions.Artifact;
+import org.integratedmodelling.klab.documentation.extensions.table.TableArtifact;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.integratedmodelling.klab.engine.runtime.SessionState;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
+import org.integratedmodelling.klab.exceptions.KlabActorException;
 import org.integratedmodelling.klab.rest.DataflowState.Status;
 import org.integratedmodelling.klab.rest.ScaleReference;
 import org.integratedmodelling.klab.rest.SessionActivity;
@@ -83,9 +88,15 @@ public class RuntimeBehavior {
         @Override
         void run(KlabActor.Scope scope) {
 
+            if (arguments.get("interrupt") instanceof IKActorsValue) {
+                KActorsValue interrupt = arguments.get("interrupt", KActorsValue.class);
+                if (Actors.INSTANCE.asBooleanValue(interrupt.evaluate(scope, identity, true))) {
+                    scope.getMonitor().getIdentity().getParentIdentity(ISession.class).interruptAllTasks();
+                }
+            }
             if (arguments.get("reset") instanceof IKActorsValue) {
                 KActorsValue reset = arguments.get("reset", KActorsValue.class);
-                if (reset.getType() == Type.BOOLEAN && ((Boolean) reset.getValue())) {
+                if (Actors.INSTANCE.asBooleanValue(reset.evaluate(scope, identity, true))) {
                     scope.getMonitor().getIdentity().getParentIdentity(ISession.class).getState().resetContext();
                 }
             } else if (arguments.getUnnamedKeys().isEmpty()) {
@@ -93,7 +104,7 @@ public class RuntimeBehavior {
                         .addApplicationListener(new ISessionState.Listener(){
                             @Override
                             public void newContext(ISubject observation) {
-                                fire(observation, false, scope.semaphore, scope.getSymbols(identity));
+                                fire(observation, scope );
                             }
 
                             @Override
@@ -115,9 +126,10 @@ public class RuntimeBehavior {
                 if (arg instanceof Urn) {
                     try {
                         Future<IArtifact> future = ((Session) identity).getState().submit(((Urn) arg).getUrn());
-                        fire(future.get(), true, scope.semaphore, scope.getSymbols(identity));
+                        IArtifact result = future.get();
+                        fire(result, scope);
                     } catch (Throwable e) {
-                        fail(scope.semaphore);
+                        fail(scope);
                     }
                 } else {
 
@@ -134,7 +146,7 @@ public class RuntimeBehavior {
                     // more: shapes, time res, time spans, etc
                     for (Object o : arguments.getUnnamedArguments()) {
                         if (o instanceof KActorsValue) {
-                            o = evaluateInContext((KActorsValue) o, scope);
+                            o = ((KActorsValue) o).evaluate(scope, identity, true);
                         }
                         if (o instanceof Artifact) {
                             artifact = ((Artifact) o).getObjectArtifact();
@@ -146,6 +158,8 @@ public class RuntimeBehavior {
                             } // TODO
                         } else if (o instanceof IObservable) {
                             observable = (IObservable) o;
+                        } else if (o instanceof IKimObservable) {
+                            observable = Observables.INSTANCE.declare((IKimObservable)o, identity.getMonitor());
                         }
 
                         // TODO date, year - these should be keyed values
@@ -174,12 +188,12 @@ public class RuntimeBehavior {
                         try {
                             Future<IArtifact> future = ((Session) identity).getState().submit(observable.getDefinition());
                             IArtifact result = future.get();
-                            fire(result, true, scope.semaphore, scope.getSymbols(identity));
+                            fire(result, scope);
                         } catch (Throwable e) {
-                            fail();
+                            fail(scope);
                         }
                     } else {
-
+                        fire(new KlabActorException("improper observable passed to context"), scope);
                     }
 
                 }
@@ -216,22 +230,26 @@ public class RuntimeBehavior {
         void run(KlabActor.Scope scope) {
 
             if (!arguments.getUnnamedKeys().isEmpty()) {
-                fire(Status.WAITING, false, scope.semaphore, scope.getSymbols(identity));
-                identity.getParentIdentity(Session.class).getState().submit(
-                        getUrnValue(KlabActor.evaluate(arguments.get(arguments.getUnnamedKeys().get(0)), scope)),
-                        (task, observation) -> {
+                fire(Status.WAITING, scope);
+                identity.getParentIdentity(Session.class).getState()
+                        .submit(getUrnValue(arguments.get(arguments.getUnnamedKeys().get(0)), scope), (task, observation) -> {
                             if (observation == null) {
-                                fire(Status.STARTED, false, scope.semaphore, scope.getSymbols(identity));
+                                fire(Status.STARTED, scope);
+                            } else if (task.getMonitor().isInterrupted()) {
+                                fire(Status.INTERRUPTED, scope);
                             } else {
-                                fire(observation, false, scope.semaphore, scope.getSymbols(identity));
+                                fire(observation, scope);
                             }
                         }, (task, exception) -> {
-                            fire(Status.ABORTED, false, scope.semaphore, scope.getSymbols(identity));
+                            fire(Status.ABORTED, scope);
                         });
             }
         }
 
-        private String getUrnValue(Object object) {
+        private String getUrnValue(Object object, KlabActor.Scope scope) {
+            if (object instanceof KActorsValue) {
+                object = ((KActorsValue) object).evaluate(scope, identity, true);
+            }
             if (object instanceof IConcept) {
                 return ((IConcept) object).getDefinition();
             } else if (object instanceof IObservable) {
@@ -267,7 +285,7 @@ public class RuntimeBehavior {
             Set<IConcept> observables = new HashSet<>();
 
             for (Object arg : arguments.getUnnamedArguments()) {
-                Object value = KlabActor.evaluate(arg, scope);
+                Object value = arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg;
                 if (value instanceof IObservable) {
                     IConcept c = ((IObservable) value).getType();
                     if (c.is(IKimConcept.Type.ROLE)) {
@@ -320,7 +338,7 @@ public class RuntimeBehavior {
         void run(KlabActor.Scope scope) {
             Set<String> scenarios = new HashSet<>();
             for (String key : arguments.getUnnamedKeys()) {
-                scenarios.add(KlabActor.evaluate((IKActorsValue) arguments.get(key), scope).toString());
+                scenarios.add(((IKActorsValue) arguments.get(key)).evaluate(scope, identity, true).toString());
             }
             session.getState().setActiveScenarios(scenarios);
         }
@@ -359,7 +377,7 @@ public class RuntimeBehavior {
                                 ret.put("unit", scale.getSpaceUnit());
                                 ret.put("envelope",
                                         new double[]{scale.getWest(), scale.getSouth(), scale.getEast(), scale.getNorth()});
-                                fire(ret, false, scope.semaphore, scope.getSymbols(identity));
+                                fire(ret, scope);
                             }
 
                             @Override
@@ -414,10 +432,10 @@ public class RuntimeBehavior {
         @Override
         void run(KlabActor.Scope scope) {
             if (random.nextDouble() < probability) {
-                fire(fired == null ? DEFAULT_FIRE : fired, true, scope.semaphore, scope.getSymbols(identity));
+                fire(fired == null ? DEFAULT_FIRE : fired, scope);
             } else {
                 // fire anyway so that anything that's waiting can continue
-                fire(false, true, scope.semaphore, scope.getSymbols(identity));
+                fire(false, scope);
             }
         }
     }
@@ -448,7 +466,7 @@ public class RuntimeBehavior {
         void run(KlabActor.Scope scope) {
             List<Object> args = new ArrayList<>();
             for (Object arg : arguments.values()) {
-                args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg, scope) : arg);
+                args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
             scope.runtimeScope.getMonitor().info(args.toArray());
         }
@@ -466,7 +484,7 @@ public class RuntimeBehavior {
         void run(KlabActor.Scope scope) {
             List<Object> args = new ArrayList<>();
             for (Object arg : arguments.values()) {
-                args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg, scope) : arg);
+                args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
             scope.runtimeScope.getMonitor().warn(args.toArray());
         }
@@ -484,7 +502,7 @@ public class RuntimeBehavior {
         void run(KlabActor.Scope scope) {
             List<Object> args = new ArrayList<>();
             for (Object arg : arguments.values()) {
-                args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg, scope) : arg);
+                args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
             scope.runtimeScope.getMonitor().error(args.toArray());
         }
@@ -502,9 +520,62 @@ public class RuntimeBehavior {
         void run(KlabActor.Scope scope) {
             List<Object> args = new ArrayList<>();
             for (Object arg : arguments.values()) {
-                args.add(arg instanceof KActorsValue ? evaluateInContext((KActorsValue) arg, scope) : arg);
+                args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
             }
             scope.runtimeScope.getMonitor().debug(args.toArray());
+        }
+    }
+
+    @Action(id = "pack", fires = IKActorsValue.Type.URN, description = "Prepares a downloadable payload and fires the URL to it when ready")
+    public static class Pack extends KlabActionExecutor {
+
+        public Pack(IActorIdentity<KlabMessage> identity, IParameters<String> arguments, KlabActor.Scope scope,
+                ActorRef<KlabMessage> sender, String callId) {
+            super(identity, arguments, scope, sender, callId);
+        }
+
+        @Override
+        void run(final KlabActor.Scope scope) {
+            final List<Object> args = new ArrayList<>();
+            boolean tables = false;
+            if (arguments.containsKey("tables")) {
+                // jeez
+                Object tab = arguments.get("tables") instanceof KActorsValue
+                        ? ((KActorsValue) arguments.get("tables")).evaluate(scope, identity, true)
+                        : arguments.get("tables");
+                tables = tab instanceof Boolean && ((Boolean) tab);
+            }
+            final boolean dtabs = tables;
+            if (!tables) {
+                for (Object arg : arguments.values()) {
+                    args.add(arg instanceof KActorsValue ? ((KActorsValue) arg).evaluate(scope, identity, true) : arg);
+                }
+            }
+            new Thread(){
+
+                @Override
+                public void run() {
+
+                    try {
+                        File file = null;
+                        if (dtabs) {
+                            file = TableArtifact.exportMultiple(identity.getParentIdentity(Session.class).getState().getTables(),
+                                    file);
+                        } else {
+                            file = Observations.INSTANCE.packObservations(args, identity.getMonitor());
+                        }
+
+                        if (file != null) {
+                            fire(file, scope);
+                        } else {
+                            fail(scope);
+                        }
+                    } catch (Throwable t) {
+                        fail(scope, t);
+                    }
+                }
+
+            }.start();
         }
     }
 
@@ -535,7 +606,7 @@ public class RuntimeBehavior {
                             /*
                              * Needs to intercept observations in any context. Not sure this works.
                              */
-                            fire(observation, false, scope.semaphore, scope.getSymbols(identity));
+                            fire(observation, scope);
                         }
 
                         @Override

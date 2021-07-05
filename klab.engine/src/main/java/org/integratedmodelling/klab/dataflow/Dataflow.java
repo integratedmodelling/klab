@@ -5,12 +5,15 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.integratedmodelling.kim.api.IContextualizable;
 import org.integratedmodelling.kim.api.IContextualizable.InteractiveParameter;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IServiceCall;
+import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Interaction;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Version;
@@ -93,6 +96,13 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     // this could simply be the "dataflow" in the parent actuator but it's clearer
     // this way.
     private Dataflow parent;
+    private List<IDataflow<IArtifact>> children = new ArrayList<>();
+
+    /**
+     * Each dataflow used to resolve subjects within this one is recorded here with all the subjects
+     * it was used for.
+     */
+    Map<Dataflow, List<IDirectObservation>> inherentResolutions = new HashMap<>();
 
     /*
      * if true, we observe occurrents and we may need to upgrade a generic T context to a specific
@@ -147,6 +157,12 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     private ObservationGroup observationGroup;
     private Mode notificationMode = INotification.Mode.Normal;
 
+    /*
+     * primary dataflows are created by first-level observation tasks. They run temporal transitions
+     * with a schedule that also includes their child dataflows.
+     */
+    private boolean primary;
+
     private Dataflow(Dataflow parent) {
         this.parent = parent;
     }
@@ -154,6 +170,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
     public Dataflow(ISession session, Dataflow parent) {
         this.session = session;
         this.parent = parent;
+        if (this.parent != null) {
+            this.parent.children.add(this);
+        }
     }
 
     /**
@@ -361,7 +380,9 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
                     .send(Message.create(session.getId(), IMessage.MessageClass.TaskLifecycle, IMessage.Type.DataflowCompiled,
                             new DataflowReference(session.getMonitor().getIdentity().getId(), getKdlCode(),
                                     ContextualizationStrategy.getElkGraph(this))));
-            System.out.println(rootDataflow.getKdlCode());
+            if (Configuration.INSTANCE.isEchoEnabled()) {
+                System.out.println(rootDataflow.getKdlCode());
+            }
         }
 
         if (!trivial && parentComputation != null && monitor.getIdentity() instanceof AbstractTask) {
@@ -489,10 +510,14 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
     @Override
     protected String encode(int offset) {
+        return encode(offset, true);
+    }
+
+    private String encode(int offset, boolean encodePreamble) {
 
         String ret = "";
 
-        if (offset == 0) {
+        if (offset == 0 && encodePreamble) {
             ret += "@klab " + Version.CURRENT + "\n";
             ret += "@dataflow " + getName() + "\n";
             ret += "@author 'k.LAB resolver " + creationTime + "'" + "\n";
@@ -600,7 +625,7 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
      * @return
      */
     public boolean isPrimary() {
-        return parent == null;
+        return primary;
     }
 
     public String getDescription() {
@@ -809,19 +834,95 @@ public class Dataflow extends Actuator implements IDataflow<IArtifact> {
 
     private void computeLocalNames(Actuator actuator, HashMap<String, String> hashMap) {
 
-        for (IActuator a : actuator.getSortedChildren(actuator,false)) {
+        for (IActuator a : actuator.getSortedChildren(actuator, false)) {
             /*
              * TODO CHECK: unsure if the names should propagate downstream, but I think they're just
              * local to each actuator and re-imported at all levels if need be. If this changes, we
              * should pass hashMap instead.
              */
             computeLocalNames((Actuator) a, /* hashMap */ new HashMap<>());
-            ((Actuator)a).getLocalNames().putAll(hashMap);
+            ((Actuator) a).getLocalNames().putAll(hashMap);
             if (a.getAlias() != null && !a.getAlias().equals(a.getName())) {
                 hashMap.put(a.getName(), a.getAlias());
             }
         }
         actuator.getLocalNames().putAll(hashMap);
+    }
+
+    /**
+     * Record that the passed observation was resolved using the passed dataflow. Scheduling will
+     * need to use this information.
+     * 
+     * @param observation
+     * @param dataflow
+     */
+    public void registerResolution(IDirectObservation observation, Dataflow dataflow) {
+        List<IDirectObservation> obs = inherentResolutions.get(dataflow);
+        if (obs == null) {
+            obs = new ArrayList<>();
+            inherentResolutions.put(dataflow, obs);
+        }
+        if (!obs.contains(observation)) {
+            obs.add(observation);
+        }
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = super.hashCode();
+        result = prime * result + ((_actuatorId == null) ? 0 : _actuatorId.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj)
+            return true;
+        if (!super.equals(obj))
+            return false;
+        if (getClass() != obj.getClass())
+            return false;
+        Dataflow other = (Dataflow) obj;
+        if (_actuatorId == null) {
+            if (other._actuatorId != null)
+                return false;
+        } else if (!_actuatorId.equals(other._actuatorId))
+            return false;
+        return true;
+    }
+
+    /**
+     * Use to quickly compare different dataflows for equality of executable methods. Useful to
+     * group resolution dataflows for multiple objects into the minimum number of distinct ones.
+     * Does not compare preambles.
+     * 
+     * TODO this may skip differences in lookup tables or other parameters that are currently not
+     * printed in full literal form in the code.
+     * 
+     * @return an hex signature that will be equal if the actuator part is equal.
+     */
+    public String getSignature() {
+        return DigestUtils.md5Hex(encode(0, false));
+    }
+
+    @Override
+    public List<IDataflow<IArtifact>> getChildren() {
+        return children;
+    }
+
+    public Dataflow setPrimary(boolean primary) {
+        this.primary = primary;
+        return this;
+    }
+
+    @Override
+    public IDataflow<IArtifact> getRootDataflow() {
+        Dataflow ret = this;
+        while(ret.parent != null) {
+            ret = ret.parent;
+        }
+        return ret;
     }
 
 }

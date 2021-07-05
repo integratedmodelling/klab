@@ -167,4 +167,10 @@ public class DebugStorage<T> implements IDataStorage<T> {
 		
 	}
 
+    @Override
+    public long getTemporalOffset(ILocator locator) {
+        // TODO Auto-generated method stub
+        return 0;
+    }
+
 }

@@ -10,7 +10,7 @@ import org.integratedmodelling.klab.api.runtime.ISession;
 public class GetProperty implements ICommand {
 
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		String ret = "";
 		if (((List<?>) call.getParameters().get("arguments")).size() > 0) {

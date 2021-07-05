@@ -16,17 +16,17 @@ public class WorldWidget extends Canvas {
 
     SpatialExtent geometry;
 
-    public void setExtent( SpatialExtent geometry ) {
+    public void setExtent(SpatialExtent geometry) {
         if (geometry != null) {
             this.geometry = geometry.normalize();
         }
         redraw();
     }
 
-    public WorldWidget( Composite parent, int style ) {
+    public WorldWidget(Composite parent, int style) {
         super(parent, style);
         addPaintListener(new PaintListener(){
-            public void paintControl( PaintEvent e ) {
+            public void paintControl(PaintEvent e) {
                 Point size = getSize();
                 int deltaX = (size.x - 360) / 2;
 

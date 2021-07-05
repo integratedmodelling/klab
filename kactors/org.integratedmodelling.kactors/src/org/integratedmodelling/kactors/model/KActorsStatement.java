@@ -1,6 +1,8 @@
 package org.integratedmodelling.kactors.model;
 
 import org.eclipse.emf.ecore.EObject;
+import org.integratedmodelling.kactors.api.IKActorsAction;
+import org.integratedmodelling.kactors.api.IKActorsBehavior.Visitor;
 import org.integratedmodelling.kactors.api.IKActorsStatement;
 import org.integratedmodelling.kactors.kactors.MetadataPair;
 import org.integratedmodelling.kactors.kactors.Statement;
@@ -100,5 +102,9 @@ public abstract class KActorsStatement extends KActorCodeStatement implements IK
 	public Type getType() {
 		return type;
 	}
+
+    protected void visit(IKActorsAction action, Visitor visitor) {
+        visitor.visitStatement(action, this);
+    }
 
 }

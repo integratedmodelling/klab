@@ -24,6 +24,7 @@ import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.data.IResource;
 import org.integratedmodelling.klab.api.data.IResource.Builder;
+import org.integratedmodelling.klab.api.data.adapters.IResourceImporter;
 import org.integratedmodelling.klab.api.observations.IObservationGroup;
 import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IObservation;
@@ -56,6 +57,11 @@ public class VectorImporter extends AbstractFilesetImporter {
     }
 
     @Override
+    public IResourceImporter withOption(String option, Object value) {
+        return this;
+    }
+    
+    @Override
     protected Builder importFile(File file, IParameters<String> userData, IMonitor monitor) {
         try {
 
@@ -77,7 +83,7 @@ public class VectorImporter extends AbstractFilesetImporter {
     }
 
     @Override
-    public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+    public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
         List<Triple<String, String, String>> ret = new ArrayList<>();
         if (observation instanceof IObservationGroup) {
             observation = ((IObservationGroup) observation).groupSize() > 0

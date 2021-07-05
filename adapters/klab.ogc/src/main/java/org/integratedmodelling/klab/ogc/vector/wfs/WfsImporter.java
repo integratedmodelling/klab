@@ -30,6 +30,11 @@ public class WfsImporter implements IResourceImporter {
 
 	WfsValidator validator = new WfsValidator();
 
+    @Override
+    public IResourceImporter withOption(String option, Object value) {
+        return this;
+    }
+
 	@Override
 	public Collection<Builder> importResources(String importLocation, IParameters<String> userData, IMonitor monitor) {
 
@@ -105,7 +110,7 @@ public class WfsImporter implements IResourceImporter {
 
 
     @Override
-    public Collection<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
+    public List<Triple<String, String, String>> getExportCapabilities(IObservation observation) {
         List<Triple<String, String, String>> ret = new ArrayList<>();
         return ret;
     }

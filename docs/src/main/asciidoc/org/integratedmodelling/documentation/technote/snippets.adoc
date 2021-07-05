@@ -121,6 +121,10 @@ From a technical perspective, this innovation can be reached by using well-estab
 
 #### Worldview tiers
 
+Collaborative and shared. Meant for _observation_ of reality, not reality itself: therefore, aware of scale and differentiating not only by phenomenological nature but also by the nature of the observation process applicable to them. For example, events vs processes. Scale of observation (range thereof) is key to semantics and to compatibility of worldviews. More than 1 possible but we're working on one, scaled around human observation (wouldn't fit large or small, such as field of application of relativity or quantum physics. Must be shared, can't be owned. 
+
+Key feature, implemented in k.IM language, is the linguistic framework: separation of attributes, traits etc using composition rules. While the underlying knowledge model is OWL 2.0, k.IM simplifies use and acceptance due to clarity coming from separation of concerns and traceability of meaning. Examples.
+
 #### Resource content
 
 #### Semantic content

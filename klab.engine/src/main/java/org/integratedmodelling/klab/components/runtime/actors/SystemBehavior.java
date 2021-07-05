@@ -5,18 +5,13 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.integratedmodelling.kim.api.IParameters;
-import org.integratedmodelling.klab.api.extensions.actors.Action;
-import org.integratedmodelling.klab.api.observations.IObservation;
-import org.integratedmodelling.klab.api.observations.ISubject;
-import org.integratedmodelling.klab.api.runtime.ISession;
-import org.integratedmodelling.klab.api.runtime.ISessionState;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.KlabMessage;
 import org.integratedmodelling.klab.components.runtime.actors.KlabActor.Scope;
 import org.integratedmodelling.klab.engine.runtime.api.IActorIdentity;
 import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabIllegalStateException;
-import org.integratedmodelling.klab.rest.ScaleReference;
-import org.integratedmodelling.klab.rest.SessionActivity;
+import org.integratedmodelling.klab.rest.MenuAction;
 import org.integratedmodelling.klab.rest.ViewAction;
 import org.integratedmodelling.klab.rest.ViewComponent;
 import org.integratedmodelling.klab.utils.Parameters;
@@ -72,7 +67,7 @@ public class SystemBehavior {
             this.behavior = behavior;
             this.forwardApplicationId = appId;
             this.identity = identity;
-            this.scope = new Scope(identity, appId, scope);
+            this.scope = new Scope(identity, appId, scope, Actors.INSTANCE.getBehavior(behavior));
         }
 
         /**
@@ -178,6 +173,30 @@ public class SystemBehavior {
     }
 
     /**
+     * Notify a user action from a view to the actor that must process it as a message.
+     * 
+     * @author Ferd
+     *
+     */
+    public static class UserMenuAction extends AbstractKlabMessage {
+
+        MenuAction action;
+        IRuntimeScope scope;
+        String appId;
+
+        public UserMenuAction(MenuAction action, String appId, IRuntimeScope scope) {
+            this.action = action;
+            this.appId = appId;
+            this.scope = scope;
+        }
+
+        @Override
+        public UserMenuAction direct() {
+            return new UserMenuAction(action, null, scope);
+        }
+    }
+    
+    /**
      * Bind an action's notification ID to the ID of a component in the associated view, so that
      * matches can be triggered from the view even if the view was built before the action existed.
      * 
@@ -274,16 +293,16 @@ public class SystemBehavior {
     public static class Fire extends AbstractKlabMessage {
 
         Object value;
-        boolean finalize;
+//        boolean finalize;
         Long listenerId;
         String appId;
         Semaphore semaphore;
         Map<String, Object> scopeVars;
 
-        public Fire(Long listenerId, Object firedValue, boolean isFinal, String appId, Semaphore semaphore,
+        public Fire(Long listenerId, Object firedValue/* , boolean isFinal */, String appId, Semaphore semaphore,
                 Map<String, Object> scopeVars) {
             this.value = firedValue;
-            this.finalize = isFinal;
+//            this.finalize = isFinal;
             this.listenerId = listenerId;
             this.appId = appId;
             this.semaphore = semaphore;
@@ -297,7 +316,7 @@ public class SystemBehavior {
 
         @Override
         public Fire direct() {
-            return new Fire(listenerId, value, finalize, null, semaphore, scopeVars);
+            return new Fire(listenerId, value/* , finalize */, null, semaphore, scopeVars);
         }
 
     }

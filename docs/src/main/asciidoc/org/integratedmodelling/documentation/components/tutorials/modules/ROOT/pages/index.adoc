@@ -1,0 +1,3 @@
+= Tutorial resources
+
+The available tutorial modules for k.LAB are described below. Start each tutorial from its link in the navigation bar.

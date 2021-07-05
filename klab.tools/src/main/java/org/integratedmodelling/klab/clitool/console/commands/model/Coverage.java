@@ -32,7 +32,7 @@ public class Coverage implements ICommand {
 	 */
 	
 	@Override
-	public Object execute(IServiceCall call, ISession session) throws Exception {
+	public Object execute(IServiceCall call, ISession session) {
 
 		String ret = "";
 		String declaration = StringUtils.join((List<?>) call.getParameters().get("arguments"), ' ').trim();

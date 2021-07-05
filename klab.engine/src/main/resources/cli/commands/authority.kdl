@@ -1,0 +1,22 @@
+// Authority-related commands
+@klab 0.10.0
+@version 0.10.0
+@namespace authority
+
+void 'resolve'
+	"Resolve an authority identity to the authority descriptor and print it."
+{
+	optional boolean remote 
+		"If true, try to resolve remotely on all nodes supporting the authority."
+	
+	class org.integratedmodelling.klab.cli.commands.authority.Resolve
+}
+
+void 'setup'
+	"Call a local or remote authority's 'setup' method with the passed options and print the result."
+{
+	optional text node 
+		"The node to access."
+	
+	class org.integratedmodelling.klab.cli.commands.authority.Setup
+}

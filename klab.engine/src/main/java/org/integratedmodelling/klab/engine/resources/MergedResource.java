@@ -524,9 +524,10 @@ public class MergedResource implements IResource {
 			}
 		} else {
 
-			Entry<Long, ResourceSet> set = scale.getTime().is(ITime.Type.INITIALIZATION)
-					? resources.ceilingEntry(locator)
-					: resources.floorEntry(locator);
+            Entry<Long, ResourceSet> set = /*
+                                            * scale.getTime().is(ITime.Type.INITIALIZATION) ?
+                                            * resources.ceilingEntry(locator) :
+                                            */resources.floorEntry(locator);
 
 			/*
 			 * lenient check for unsuccessful initialization
@@ -534,6 +535,9 @@ public class MergedResource implements IResource {
 			if (set == null && scale.getTime().is(ITime.Type.INITIALIZATION)) {
 				locator = resolutionTime.getEnd().getMilliseconds();
 				set = resources.floorEntry(locator);
+				if (set == null) {
+	                set = resources.ceilingEntry(locator);
+				}
 			}
 
 			if (set != null) {
@@ -615,6 +619,16 @@ public class MergedResource implements IResource {
     public Collection<String> getCategorizables() {
         // TODO shouldn't be called as it's only for the editor
         return null;
+    }
+
+    public List<IResource> getResources() {
+        List<IResource> ret = new ArrayList<>();
+        for (ResourceSet rs: resources.values()) {
+            for (Pair<IResource, Map<String, String>> pr : rs.resources) {
+                ret.add(pr.getFirst());
+            }
+        }
+        return ret;
     }
 
 }

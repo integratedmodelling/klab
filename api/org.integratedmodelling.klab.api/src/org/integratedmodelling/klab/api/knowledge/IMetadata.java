@@ -218,6 +218,11 @@ public interface IMetadata extends IParameters<String> {
 	public static final String IM_MAX_TEMPORAL_SCALE = "im:max-temporal-scale";
 	
 	/**
+	 * unique URN to a feature returned by a service
+	 */
+	public static final String IM_FEATURE_URN = "im:feature-urn";
+	
+	/**
 	 * 
 	 */
 	public static final String IM_NOTES = "im:notes";

@@ -3,6 +3,7 @@ package org.integratedmodelling.kim.model;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.integratedmodelling.kim.api.IKimClassifier;
 import org.integratedmodelling.kim.api.IKimLookupTable;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.api.IKimTable;
@@ -22,6 +23,7 @@ public class KimLookupTable extends KimStatement implements IKimLookupTable {
     boolean twoWay = false;
 
     public KimLookupTable(IKimTable table, List<LookupTableArgument> arguments, boolean twoWay, IKimStatement parent) {
+        
         super(((KimStatement) table).getEObject(), parent);
         this.table = table;
         this.twoWay = twoWay;
@@ -44,6 +46,7 @@ public class KimLookupTable extends KimStatement implements IKimLookupTable {
         int ncols = -1;
         // pad any needed argument with the most likely implied
         if (!twoWay) {
+            
             while(arguments.size() < ncols) {
                 Argument arg = new Argument();
                 arg.id = (ncols == 2 && arguments.size() == 1 && !haveSearch) ? "?" : "*";
@@ -96,6 +99,21 @@ public class KimLookupTable extends KimStatement implements IKimLookupTable {
     @Override
     public int getLookupColumnIndex() {
         return searchColumn;
+    }
+
+    @Override
+    public boolean isTwoWay() {
+        return twoWay;
+    }
+
+    @Override
+    public List<IKimClassifier> getRowClassifiers() {
+        return table.getRowClassifiers();
+    }
+
+    @Override
+    public List<IKimClassifier> getColumnClassifiers() {
+        return table.getColumnClassifiers();
     }
 
 }

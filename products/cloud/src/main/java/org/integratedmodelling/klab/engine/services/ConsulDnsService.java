@@ -7,6 +7,8 @@ import org.integratedmodelling.klab.engine.configs.ConsulAgentService;
 import org.integratedmodelling.klab.engine.configs.ConsulConfig;
 import org.integratedmodelling.klab.engine.runtime.Session;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
+import org.springframework.context.annotation.Profile;
 import org.springframework.http.HttpMethod;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,6 +18,10 @@ import org.springframework.web.client.RestTemplate;
 import com.google.common.base.Splitter;
 
 @Component
+@ConditionalOnProperty(
+        value="spring.cloud.consul.enabled", 
+        havingValue = "true", 
+        matchIfMissing = false)
 public class ConsulDnsService {
 	
 	@Autowired

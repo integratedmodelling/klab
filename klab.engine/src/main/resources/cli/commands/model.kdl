@@ -1,0 +1,71 @@
+@klab 0.10.0
+@version 0.10.0
+@namespace model
+
+void 'list'
+	"List the models in the local kbox."
+{
+	
+	optional boolean verbose
+		"Verbose output: list model details"
+		default false
+	
+	optional text modelpattern
+		"Filter models to match the pattern"
+	
+	class org.integratedmodelling.klab.cli.commands.model.List
+}
+
+void 'compatible'
+	"List the available observables that resolve the passed observable."
+{
+	
+	optional boolean verbose
+		"Verbose output: list model details"
+		default false
+		
+	optional text context 
+		"The context of resolution"
+		
+	class org.integratedmodelling.klab.cli.commands.model.Compatible
+}
+
+void 'coverage'
+	"List the coverage of either a model or all the models that resolve a concept."
+{
+	
+	optional boolean verbose
+		"Verbose output: list model details"
+		default false
+	
+	class org.integratedmodelling.klab.cli.commands.model.Coverage
+}
+
+void 'info'
+	"Print detailed information about a model and its observables."
+{
+	class org.integratedmodelling.klab.cli.commands.model.Info
+}
+
+void 'strategy'
+	"Compute all observation strategies for the passed observable and print them."
+{
+		
+	optional text context 
+		"The context of resolution"
+
+	class org.integratedmodelling.klab.cli.commands.model.Compute
+}
+
+void 'resolve'
+	"Compute all observation strategies for the passed observable and print them."
+{
+		
+	optional boolean context 
+		"Use the current context in resolution"
+
+	optional text namespace 
+		"Resolution namespace"
+
+	class org.integratedmodelling.klab.cli.commands.model.Resolve
+}

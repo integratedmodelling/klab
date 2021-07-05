@@ -52,7 +52,12 @@ public interface IExpression {
          * execution. This is passed when compiling expressions outside of a contextualization
          * dataflow, which handles this automatically with caching to prevent bottlenecks.
          */
-        WrapParameters
+        WrapParameters,
+        
+        /**
+         * Skip k.LAB preprocessing altogether. 
+         */
+        DoNotPreprocess
     }
 
     /**

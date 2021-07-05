@@ -1,28 +1,46 @@
 package org.integratedmodelling.klab.components.geospace.utils;
 
 import java.awt.Color;
+import java.awt.Rectangle;
+import java.awt.RenderingHints;
 import java.awt.image.ComponentSampleModel;
 import java.awt.image.DataBuffer;
 import java.awt.image.Raster;
 import java.awt.image.RenderedImage;
 import java.awt.image.SampleModel;
 import java.awt.image.WritableRaster;
+import java.io.File;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
 
+import javax.media.jai.ImageLayout;
+import javax.media.jai.JAI;
+import javax.media.jai.ParameterBlockJAI;
 import javax.media.jai.RasterFactory;
+import javax.media.jai.RenderedOp;
 import javax.media.jai.iterator.RandomIter;
 import javax.media.jai.iterator.RandomIterFactory;
+import javax.media.jai.iterator.RectIterFactory;
+import javax.media.jai.iterator.WritableRectIter;
 
 import org.geotools.coverage.Category;
 import org.geotools.coverage.CoverageFactoryFinder;
 import org.geotools.coverage.GridSampleDimension;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.coverage.grid.GridCoverageFactory;
+import org.geotools.coverage.grid.io.AbstractGridCoverageWriter;
+import org.geotools.coverage.grid.io.AbstractGridFormat;
+import org.geotools.coverage.grid.io.imageio.GeoToolsWriteParams;
+import org.geotools.gce.geotiff.GeoTiffFormat;
+import org.geotools.gce.geotiff.GeoTiffWriteParams;
+import org.geotools.gce.geotiff.GeoTiffWriter;
 import org.geotools.geometry.Envelope2D;
+import org.geotools.geometry.jts.ReferencedEnvelope;
+import org.geotools.referencing.CRS;
 import org.geotools.styling.ColorMapEntry;
 import org.geotools.styling.RasterSymbolizer;
+import org.geotools.swing.data.JFileDataStoreChooser;
 import org.integratedmodelling.klab.api.data.ILocator;
 import org.integratedmodelling.klab.api.knowledge.IConcept;
 import org.integratedmodelling.klab.api.observations.IState;
@@ -36,9 +54,12 @@ import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.components.geospace.visualization.raster.FloatRasterWrapper;
 import org.integratedmodelling.klab.components.geospace.visualization.raster.ReadonlyStateFloatBuffer;
+import org.integratedmodelling.klab.exceptions.KlabIllegalArgumentException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.Pair;
+import org.jaitools.tiledimage.DiskMemImage;
 import org.opengis.filter.expression.Literal;
+import org.opengis.parameter.ParameterValueGroup;
 import org.opengis.referencing.crs.CoordinateReferenceSystem;
 
 public enum GeotoolsUtils {
@@ -57,8 +78,8 @@ public enum GeotoolsUtils {
      * @param transformation optional data transformation object.
      * @return the wrapped {@link GridCoverage2D}.
      */
-    public GridCoverage2D wrapStateInFloatCoverage( IState state, ILocator locator, Float noDataValue,
-            Function<Object, Object> transformation ) {
+    public GridCoverage2D wrapStateInFloatCoverage(IState state, ILocator locator, Float noDataValue,
+            Function<Object, Object> transformation) {
         IGrid grid = ((Space) state.getSpace()).getGrid();
         int width = (int) grid.getXCells();
         int height = (int) grid.getYCells();
@@ -79,24 +100,47 @@ public enum GeotoolsUtils {
         return coverage;
     }
 
-    public GridCoverage2D stateToCoverage( IState state, ILocator locator, boolean addKey ) {
+    public GridCoverage2D stateToCoverage(IState state, ILocator locator, boolean addKey) {
         return stateToCoverage(state, locator, DataBuffer.TYPE_FLOAT, Float.NaN, addKey);
     }
 
-    public GridCoverage2D stateToCoverage( IState state, ILocator locator, int type, Float noDataValue, boolean addKey ) {
+    public GridCoverage2D stateToCoverage(IState state, ILocator locator, int type, Float noDataValue, boolean addKey) {
         return stateToCoverage(state, locator, type, noDataValue, addKey, null);
     }
 
     /**
-     * Turn a state into a grid coverage. Assumes the state is scaled so that all
-     * the values will be spatial.
+     * Make a coverage from a k.LAB grid space.
+     * 
+     * @param name a name for the coverage
+     * @param space any grid space
+     * @param type use {@link DataBuffer} constants
+     * @return the opened coverage ready for writing into
+     */
+    public GridCoverage2D makeCoverage(String name, ISpace space, int type) {
+        /*
+         * build a coverage.
+         * 
+         * TODO use a raster of the appropriate type - for now there is apparently a bug in geotools
+         * that makes it work only with float.
+         */
+        if (!(space instanceof Space) || ((Space) space).getGrid() == null) {
+            throw new KlabIllegalArgumentException("cannot build a coverage from a non-grid space");
+        }
+
+        Grid grid = (Grid) ((Space) space).getGrid();
+        WritableRaster raster = RasterFactory.createBandedRaster(type, (int) grid.getXCells(), (int) grid.getYCells(), 1, null);
+        return rasterFactory.create(name, raster, ((Space) space).getShape().getJTSEnvelope());
+    }
+
+    /**
+     * Turn a state into a grid coverage. Assumes the state is scaled so that all the values will be
+     * spatial.
      * 
      * @return a Geotools grid coverage
-     * @throws IllegalArgumentException if the state is not suitable for a raster
-     *                                  representation.
+     * @throws IllegalArgumentException if the state is not suitable for a raster representation.
      */
-    public GridCoverage2D stateToCoverage( IState state, ILocator locator, int type, Float noDataValue, boolean addKey,
-            Function<Object, Object> transformation ) {
+    public GridCoverage2D stateToCoverage(IState state, ILocator locator, int type, Float noDataValue, boolean addKey,
+            Function<Object, Object> transformation) {
 
         ISpace space = state.getScale().getSpace();
         if (!(space instanceof Space) || ((Space) space).getGrid() == null) {
@@ -107,26 +151,29 @@ public enum GeotoolsUtils {
         /*
          * build a coverage.
          * 
-         * TODO use a raster of the appropriate type - for now there is apparently a bug
-         * in geotools that makes it work only with float.
+         * TODO use a raster of the appropriate type - for now there is apparently a bug in geotools
+         * that makes it work only with float.
          */
         WritableRaster raster = RasterFactory.createBandedRaster(type, (int) grid.getXCells(), (int) grid.getYCells(), 1, null);
 
         /*
          * pre-fill with nodata (the thing is filled with 0s).
          */
-        for( int x = 0; x < grid.getXCells(); x++ ) {
-            for( int y = 0; y < grid.getYCells(); y++ ) {
+        for (int x = 0; x < grid.getXCells(); x++) {
+            for (int y = 0; y < grid.getYCells(); y++) {
                 raster.setSample(x, y, 0, noDataValue);
             }
         }
 
         /*
-         * only go through active cells. State should have been located through a proxy
-         * for other extents.
+         * only go through active cells. State should have been located through a proxy for other
+         * extents.
          */
-        for( ILocator position : locator ) {
+        for (ILocator position : locator) {
             Cell cell = position.as(Cell.class);
+            if (cell == null) {
+                continue;
+            }
             Object o = state.get(position);
             if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
                 raster.setSample((int) cell.getX(), (int) cell.getY(), 0, noDataValue);
@@ -157,7 +204,7 @@ public enum GeotoolsUtils {
                 Category[] categories = new Category[symbolizer.getColorMap().getColorMapEntries().length];
                 int i = 0;
 
-                for( ColorMapEntry entry : symbolizer.getColorMap().getColorMapEntries() ) {
+                for (ColorMapEntry entry : symbolizer.getColorMap().getColorMapEntries()) {
 
                     Category category = null;
                     Object value = null;
@@ -171,7 +218,6 @@ public enum GeotoolsUtils {
                     if (value instanceof Number) {
                         category = new Category(label, color, ((Number) value).doubleValue());
                     } else {
-                        System.out.println("CIOIOCIOIOI");
                         pork = true;
                     }
 
@@ -193,8 +239,8 @@ public enum GeotoolsUtils {
 
     }
 
-    public GridCoverage2D stateToIntCoverage( IState state, ILocator locator, Integer noDataValue,
-            Function<Object, Object> transformation ) {
+    public GridCoverage2D stateToIntCoverage(IState state, ILocator locator, Integer noDataValue,
+            Function<Object, Object> transformation) {
 
         ISpace space = state.getScale().getSpace();
         if (!(space instanceof Space) || ((Space) space).getGrid() == null) {
@@ -205,11 +251,15 @@ public enum GeotoolsUtils {
         WritableRaster raster = createWritableRaster((int) grid.getXCells(), (int) grid.getYCells(), Integer.class, null,
                 noDataValue);
 
+        if (!(locator instanceof IScale)) {
+            locator = state.getScale().at(locator);
+        }
+
         /*
-         * only go through active cells. State should have been located through a proxy
-         * for other extents.
+         * only go through active cells. State should have been located through a proxy for other
+         * extents.
          */
-        for( ILocator position : locator ) {
+        for (ILocator position : locator) {
             Cell cell = position.as(Cell.class);
             Object o = state.get(position);
             if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
@@ -237,11 +287,11 @@ public enum GeotoolsUtils {
 
     }
 
-    public void coverageToState( GridCoverage2D layer, IState state ) {
+    public void coverageToState(GridCoverage2D layer, IState state) {
         coverageToState(layer, state, null, null);
     }
 
-    public void coverageToState( GridCoverage2D layer, IState state, IScale locator, Function<Double, Double> transformation ) {
+    public void coverageToState(GridCoverage2D layer, IState state, IScale locator, Function<Double, Double> transformation) {
         coverageToState(layer, state, locator, transformation, null);
     }
 
@@ -249,8 +299,8 @@ public enum GeotoolsUtils {
      * Dump the data from a coverage into a pre-existing state.
      * 
      */
-    public void coverageToState( GridCoverage2D layer, IState state, IScale locator, Function<Double, Double> transformation,
-            Function<long[], Boolean> coordinateChecker ) {
+    public void coverageToState(GridCoverage2D layer, IState state, IScale locator, Function<Double, Double> transformation,
+            Function<long[], Boolean> coordinateChecker) {
 
         ISpace ext = state.getScale().getSpace();
 
@@ -258,12 +308,12 @@ public enum GeotoolsUtils {
             throw new KlabValidationException("cannot write a gridded state from a non-gridded extent");
         }
 
-//		Geometry geometry = ((Scale) state.getGeometry()).asGeometry();
+        // Geometry geometry = ((Scale) state.getGeometry()).asGeometry();
         IGrid grid = ((Space) ext).getGrid();
         RenderedImage image = layer.getRenderedImage();
         RandomIter itera = RandomIterFactory.create(image, null);
 
-        for( int i = 0; i < grid.getCellCount(); i++ ) {
+        for (int i = 0; i < grid.getCellCount(); i++) {
             long[] xy = grid.getXYOffsets(i);
             Double value = itera.getSampleDouble((int) xy[0], (int) xy[1], 0);
             ILocator spl = locator.at(ISpace.class, xy[0], xy[1]);
@@ -275,26 +325,28 @@ public enum GeotoolsUtils {
                     value = Double.NaN;
                 }
             }
-            for( ILocator spp : spl ) {
+            for (ILocator spp : spl) {
                 state.set(spp, value);
             }
         }
     }
 
     /**
+     * FIXME remove - snippet for later
+     * 
      * Creates a {@link WritableRaster writable raster}.
      * 
      * @param width width of the raster to create.
      * @param height height of the raster to create.
      * @param dataClass data type for the raster. If <code>null</code>, defaults to double.
-     * @param sampleModel the samplemodel to use. If <code>null</code>, defaults to 
-     *                  <code>new ComponentSampleModel(dataType, width, height, 1, width, new int[]{0});</code>.
-     * @param value value to which to set the raster to. If null, the default of the raster creation is 
-     *                  used, which is 0.
+     * @param sampleModel the samplemodel to use. If <code>null</code>, defaults to
+     *        <code>new ComponentSampleModel(dataType, width, height, 1, width, new int[]{0});</code>.
+     * @param value value to which to set the raster to. If null, the default of the raster creation
+     *        is used, which is 0.
      * @return a {@link WritableRaster writable raster}.
      */
-    public static WritableRaster createWritableRaster( int width, int height, Class< ? > dataClass, SampleModel sampleModel,
-            Object value ) {
+    public static WritableRaster createWritableRaster(int width, int height, Class<?> dataClass, SampleModel sampleModel,
+            Object value) {
         int dataType = DataBuffer.TYPE_DOUBLE;
         if (dataClass != null) {
             if (dataClass.isAssignableFrom(Integer.class)) {
@@ -319,11 +371,11 @@ public enum GeotoolsUtils {
                 Double valueObj = (Double) value;
                 double v = valueObj;
                 double[] dArray = new double[sampleModel.getNumBands()];
-                for( int i = 0; i < dArray.length; i++ ) {
+                for (int i = 0; i < dArray.length; i++) {
                     dArray[i] = v;
                 }
-                for( int y = 0; y < height; y++ ) {
-                    for( int x = 0; x < width; x++ ) {
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
                         raster.setPixel(x, y, dArray);
                     }
                 }
@@ -331,11 +383,11 @@ public enum GeotoolsUtils {
                 Integer valueObj = (Integer) value;
                 int v = valueObj;
                 int[] dArray = new int[sampleModel.getNumBands()];
-                for( int i = 0; i < dArray.length; i++ ) {
+                for (int i = 0; i < dArray.length; i++) {
                     dArray[i] = v;
                 }
-                for( int y = 0; y < height; y++ ) {
-                    for( int x = 0; x < width; x++ ) {
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
                         raster.setPixel(x, y, dArray);
                     }
                 }
@@ -343,22 +395,22 @@ public enum GeotoolsUtils {
                 Float valueObj = (Float) value;
                 float v = valueObj;
                 float[] dArray = new float[sampleModel.getNumBands()];
-                for( int i = 0; i < dArray.length; i++ ) {
+                for (int i = 0; i < dArray.length; i++) {
                     dArray[i] = v;
                 }
-                for( int y = 0; y < height; y++ ) {
-                    for( int x = 0; x < width; x++ ) {
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
                         raster.setPixel(x, y, dArray);
                     }
                 }
             } else {
                 double v = ((Number) value).doubleValue();
                 double[] dArray = new double[sampleModel.getNumBands()];
-                for( int i = 0; i < dArray.length; i++ ) {
+                for (int i = 0; i < dArray.length; i++) {
                     dArray[i] = v;
                 }
-                for( int y = 0; y < height; y++ ) {
-                    for( int x = 0; x < width; x++ ) {
+                for (int y = 0; y < height; y++) {
+                    for (int x = 0; x < width; x++) {
                         raster.setPixel(x, y, dArray);
                     }
                 }
@@ -368,36 +420,163 @@ public enum GeotoolsUtils {
         return raster;
     }
 
-//	public Range getRange(IState state) {
-//
-//		Range ret = new Range();
-//
-//		Space space = (Space) state.getScale().getSpace();
-//		if (space == null || space.getGrid() != null) {
-//			throw new IllegalArgumentException("cannot make a raster coverage from a non-gridded state");
-//		}
-//		Grid grid = (Grid) space.getGrid();
-//
-//		/*
-//		 * TODO raster should be pre-filled with a chosen nodata value TODO use
-//		 * activation layer
-//		 */
-//		// IGrid.Mask act = space.requireActivationLayer(true);
-//
-//		for (Cell cell : grid) {
-//			Object o = state.get(cell);
-//			if (o == null || (o instanceof Double && Double.isNaN((Double) o))) {
-//				// screw it
-//			} else if (o instanceof Number) {
-//				ret.adapt(((Number) o).doubleValue());
-//			} else if (o instanceof Boolean) {
-//				ret.adapt(((Boolean) o) ? 1. : 0.);
-//			} else if (o instanceof IConcept) {
-//				ret.adapt((double) state.getDataKey().reverseLookup((IConcept) o));
-//			}
-//		}
-//
-//		return ret;
-//	}
+    /**
+     * FIXME remove - snippet for later
+     * @param file
+     */
+    public void createBigTiff(File file) {
+
+        /*
+         * I first decide if tiling must be used and which size must be used (borrowed from
+         * ArcGridsImageReader), then I create the image, then I fill all the image with some
+         * useless values, and finally try to create a coverage and write this to disk by using
+         * GeoTiffWriter.
+         */
+
+        /** Minimum size of a certain file source that neds tiling. */
+        final int MIN_SIZE_NEED_TILING = 5242880; // 5 MByte
+        /** Defaul tile size. */
+        final int DEFAULT_TILE_SIZE = 1048576 / 2; // 1 MByte
+
+        // if the imageSize is bigger than MIN_SIZE_NEED_TILING
+        // we proceed to image tiling
+        boolean isTiled = false;
+
+        /**
+         * Tile width for the underlying raster.
+         */
+        int tileWidth = -1;
+
+        /**
+         * Tile height for the underlying raster.
+         */
+        int tileHeight = -1;
+
+        /** Image Size */
+        long imageSize = -1;
+
+        try {
+            CoordinateReferenceSystem crs = CRS.decode("EPSG:3035");
+            int width = 30000, height = 28000;
+            int sampleSizeByte = DataBuffer.getDataTypeSize(DataBuffer.TYPE_FLOAT);
+            imageSize = (long) width * (long) height * (long) sampleSizeByte;
+
+            /**
+             * Setting Tile Dimensions (If Tiling is supported)
+             */
+            // if the Image Size is greater than a certain dimension
+            // (MIN_SIZE_NEED_TILING), the image needs to be tiled
+            if (imageSize >= MIN_SIZE_NEED_TILING) {
+                isTiled = true;
+
+                // This implementation supposes that tileWidth is
+                // equal to the width
+                // of the whole image
+                tileWidth = width;
+
+                // actually (need improvements) tileHeight is given by
+                // the default tile size divided by the tileWidth
+                // multiplied by the
+                // sample size (in byte)
+                tileHeight = DEFAULT_TILE_SIZE / (tileWidth * sampleSizeByte);
+
+                // if computed tileHeight is zero, it is setted to 1
+                // as precaution
+                if (tileHeight < 1) {
+                    tileHeight = 1;
+                }
+
+            } else {
+                // If no Tiling needed, I set the tile sizes equal to the image
+                // sizes
+                tileWidth = width;
+                tileHeight = height;
+            }
+
+            Envelope2D envelope = new Envelope2D(crs, 0, 0, width, height);
+            SampleModel sampleModel = new ComponentSampleModel(DataBuffer.TYPE_FLOAT, tileWidth, tileHeight, 1, tileWidth,
+                    new int[]{0});
+            DiskMemImage img = new DiskMemImage(width, height, sampleModel);
+
+            WritableRectIter iter = RectIterFactory.createWritable(img, null);
+            do {
+                int x = 0;
+                do {
+                    iter.setSample(x / tileWidth);
+                } while(!iter.nextPixelDone());
+            } while(!iter.nextLineDone());
+
+            GridCoverageFactory factory = CoverageFactoryFinder.getGridCoverageFactory(null);
+
+            GridCoverage2D gc = factory.create("bigtif", img, envelope);
+
+            GeoTiffFormat fmt = new GeoTiffFormat();
+            // getting the write parameters
+            final GeoTiffWriteParams wp = new GeoTiffWriteParams();
+
+            // setting compression to Deflate
+            wp.setCompressionMode(GeoTiffWriteParams.MODE_EXPLICIT);
+            wp.setCompressionType("Deflate");
+            wp.setCompressionQuality(0.75F);
+
+            // setting the tile size to 256X256
+            wp.setTilingMode(GeoToolsWriteParams.MODE_EXPLICIT);
+            wp.setTiling(256, 256);
+
+            // setting the write parameters for this geotiff
+            final ParameterValueGroup[] params = {fmt.getWriteParameters()};
+
+            params[0].parameter(AbstractGridFormat.GEOTOOLS_WRITE_PARAMS.getName().toString()).setValue(wp);
+
+            AbstractGridCoverageWriter writer = new GeoTiffWriter(file);
+            writer.write(gc/* .view(ViewType.GEOPHYSICS) */, params);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+    }
+
+}
+
+class BigCoverage {
+
+    private static final int IMAGE_WIDTH = 10000;
+    private static final int IMAGE_HEIGHT = 10000;
+
+    public static void main(String[] args) throws Exception {
+        JFileDataStoreChooser chooser = new JFileDataStoreChooser("tif");
+        chooser.setDialogTitle("Create GeoTiff file");
+
+        File file = null;
+        if (chooser.showSaveDialog(null) == JFileDataStoreChooser.APPROVE_OPTION) {
+            file = chooser.getSelectedFile();
+        }
+
+        if (file == null) {
+            return;
+        }
+
+        ParameterBlockJAI pb = new ParameterBlockJAI("Constant");
+        pb.setParameter("width", (float) IMAGE_WIDTH);
+        pb.setParameter("height", (float) IMAGE_HEIGHT);
+        pb.setParameter("bandValues", new Double[]{0.0d});
+
+        final int tileWidth = 512;
+
+        ImageLayout layout = new ImageLayout();
+        layout.setTileWidth(tileWidth);
+        layout.setTileHeight(tileWidth);
+
+        RenderingHints hints = new RenderingHints(JAI.KEY_IMAGE_LAYOUT, layout);
+
+        RenderedOp image = JAI.create("Constant", pb, hints);
+
+        GeoTiffWriter writer = new GeoTiffWriter(file, null);
+        GridCoverageFactory factory = new GridCoverageFactory();
+        ReferencedEnvelope env = new ReferencedEnvelope(new Rectangle(0, 0, IMAGE_WIDTH, IMAGE_HEIGHT), null);
+        GridCoverage2D coverage = factory.create("coverage", image, env);
+        writer.write(coverage, null);
+    }
 
 }

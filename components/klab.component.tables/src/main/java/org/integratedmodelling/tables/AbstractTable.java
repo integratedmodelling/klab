@@ -147,8 +147,8 @@ public abstract class AbstractTable<T> implements ITable<T> {
                             if (matcher.groupCount() > 0) {
                                 this.matched = matcher.group(1);
                             }
-                            System.out.println(
-                                    "MATCHED " + cname + " with value " + this.matched + " and INDEX = " + attr.getIndex());
+//                            System.out.println(
+//                                    "MATCHED " + cname + " with value " + this.matched + " and INDEX = " + attr.getIndex());
                             return true;
                         }
                     }
@@ -547,7 +547,7 @@ public abstract class AbstractTable<T> implements ITable<T> {
                 throw new KlabIllegalStateException("filtered table produces multiple values but no aggregator is specified");
             }
 
-            System.out.println("GOT " + ret);
+//            System.out.println("GOT " + ret);
 
             return ret.isEmpty() ? null : (ret.size() == 1 ? ret.get(0) : (aggregator.aggregate(ret)));
         }
@@ -638,8 +638,11 @@ public abstract class AbstractTable<T> implements ITable<T> {
         if (target == Filter.Type.NO_RESULTS) {
             ret.empty = true;
         }
-        ret.filters.add(new FilterDescriptor(target, locators));
-        validateFilters();
+        FilterDescriptor filter = new FilterDescriptor(target, locators);
+        if (!filters.contains(filter)) {
+            ret.filters.add(filter);
+            validateFilters();
+        }
         return ret;
     }
 

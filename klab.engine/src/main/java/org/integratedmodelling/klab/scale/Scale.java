@@ -455,7 +455,7 @@ public class Scale implements IScale {
 
         ScaleIterator() {
             if (size() == 0) {
-                System.out.println("FOCK SIZE ZERO");
+                // System.out.println("FOCK SIZE ZERO");
             }
         }
 
@@ -1645,20 +1645,25 @@ public class Scale implements IScale {
 
             Scale other = (Scale) contextScale;
             Scale ret = new Scale();
-            ArrayList<IExtent> common = new ArrayList<>();
+//            ArrayList<IExtent> common = new ArrayList<>();
             HashSet<Dimension.Type> commonConcepts = new HashSet<>();
 
             for (IExtent e : ((Scale) scale).extents) {
                 if (other.getDimension(e.getType()) != null) {
-                    common.add(e);
+//                    common.add(e);
                     commonConcepts.add(e.getType());
                 }
             }
 
-            for (IExtent e : common) {
-                IExtent oext = other.getDimension(e.getType());
-                IExtent merged = ((AbstractExtent) e).contextualizeTo(oext, getConstraint(annotations, e.getType()));
-                ret.mergeExtent(merged);
+            for (IExtent e : other.getExtents()) {
+                if (commonConcepts.contains(e.getType())) {
+//                    IExtent oext = other.getDimension(e.getType());
+                    IExtent merged = ((AbstractExtent) ((Scale) scale).getExtent(e.getType())).contextualizeTo(e,
+                            getConstraint(annotations, e.getType()));
+                    ret.mergeExtent(merged);
+                } else {
+                    ret.mergeExtent(e);
+                }
             }
 
             return ret;

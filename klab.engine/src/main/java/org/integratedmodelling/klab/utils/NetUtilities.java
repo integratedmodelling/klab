@@ -41,7 +41,6 @@ public class NetUtilities {
      */
     static public boolean isServerAlive(String host) {
 
-        System.out.println("hostieging " + host);
         try {
             if (InetAddress.getByName(host + ":80").isReachable(200)) {
                 return true;

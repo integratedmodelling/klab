@@ -126,7 +126,7 @@ public class Actuator implements IActuator {
     // these are part of graphs so they should behave wrt. equality. Adding an ID
     // for comparison just to ensure that future changes upstream do not affect the
     // logics.
-    private String _actuatorId = NameGenerator.shortUUID();
+    protected String _actuatorId = NameGenerator.shortUUID();
 
     List<Computation> computation = null;
 
@@ -219,7 +219,7 @@ public class Actuator implements IActuator {
     }
 
     public void addDocumentation(IDocumentation documentation) {
-        this.documentation.add(documentation);
+        this.getDocumentation().add(documentation);
     }
 
     /**
@@ -323,7 +323,7 @@ public class Actuator implements IActuator {
         this.currentContext = runtimeContext;
         this.status.set(1);
         this.startComputation.set(System.currentTimeMillis());
-        
+
         /*
          * poor-man attempt at reentrancy in case this has to get called more than once for any
          * reason later.
@@ -502,7 +502,7 @@ public class Actuator implements IActuator {
             /*
              * include the computed resource in the report
              */
-            ((Report) context.getReport()).include(contextualizer.getSecond());
+            ((Report) context.getReport()).include(contextualizer.getSecond(), this);
         }
 
         if (runtimeContext.getMonitor().isInterrupted()) {
@@ -742,7 +742,7 @@ public class Actuator implements IActuator {
                                     + Observables.INSTANCE.getDisplayName(deferred) + " within " + object.getName());
                         }
                         ctx.resolve(deferred, (IDirectObservation) object, task,
-                                deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION);
+                                deferred.is(Type.COUNTABLE) ? Mode.INSTANTIATION : Mode.RESOLUTION, dataflow);
                     }
 
                     if (notificationMode == INotification.Mode.Verbose) {
@@ -932,7 +932,7 @@ public class Actuator implements IActuator {
         }
 
         for (IActuator input : getActuators()) {
-            
+
             /*
              * TODO check: is this ever right?
              */
@@ -1497,10 +1497,11 @@ public class Actuator implements IActuator {
         /*
          * when all is computed, reuse the context to render the documentation templates.
          */
-        for (IDocumentation doc : documentation) {
-            doc.instrumentReport(context.getReport(), observable, context);
+        for (IDocumentation doc : getDocumentation()) {
             for (IDocumentation.Template template : doc.get(Trigger.DEFINITION)) {
-                ((Report) context.getReport()).include(template, context);
+                if (doc.instrumentReport(context.getReport(), template, Trigger.DEFINITION, this, context)) {
+                    ((Report) context.getReport()).include(template, context, doc);
+                }
             }
         }
 
@@ -1632,8 +1633,12 @@ public class Actuator implements IActuator {
     public boolean isTrivial() {
         return actuators.isEmpty() && computationStrategy.isEmpty() && mediationStrategy.isEmpty();
     }
-    
+
     public Map<String, String> getLocalNames() {
         return this.localNames;
+    }
+
+    public List<IDocumentation> getDocumentation() {
+        return documentation;
     }
 }

@@ -23,6 +23,7 @@ import java.util.Map;
 import org.geotools.data.DataStore;
 import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
+import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.factory.CommonFactoryFinder;
 import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureCollection;
@@ -51,7 +52,6 @@ import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.processing.GeometrySanitizer;
 import org.integratedmodelling.klab.components.geospace.processing.Rasterizer;
-import org.integratedmodelling.klab.data.resources.Resource;
 import org.integratedmodelling.klab.exceptions.KlabIOException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -95,9 +95,11 @@ public class VectorEncoder implements IResourceEncoder {
 			throw new KlabResourceNotFoundException("vector resource " + resource.getUrn() + " cannot be accessed");
 		}
 
-		Map<String, Object> map = new HashMap<>();
+		Map<Object, Object> map = new HashMap<>();
 		try {
 			map.put("url", mainFile.toURI().toURL().toString());
+            // TODO check and honor any charset in the resource. This could be the default.
+			map.put(ShapefileDataStoreFactory.DBFCHARSET, "UTF-8");
 			DataStore dataStore = DataStoreFinder.getDataStore(map);
 			String typeName = dataStore.getTypeNames()[0];
 			return dataStore.getFeatureSource(typeName);
@@ -165,9 +167,9 @@ public class VectorEncoder implements IResourceEncoder {
 				&& (context.getTargetSemantics().is(Type.QUALITY) || context.getTargetSemantics().is(Type.TRAIT))))
 				&& requestScale.getSpace() instanceof Space && ((Space) requestScale.getSpace()).getGrid() != null;
 
-		if (resource.getParameters().contains("filter")) {
+		if (resource.getParameters().contains("filter") && !resource.getParameters().get("filter").toString().trim().isEmpty()) {
 			try {
-				Filter pfilter = ECQL.toFilter(resource.getParameters().get("filter", String.class));
+				Filter pfilter = ECQL.toFilter(resource.getParameters().get("filter", String.class).trim());
 				filter = filter == null ? pfilter : ff.and(filter, pfilter);
 			} catch (CQLException e) {
 				// shouldn't happen as filter was validated previously
@@ -213,9 +215,12 @@ public class VectorEncoder implements IResourceEncoder {
 				if (((com.vividsolutions.jts.geom.Geometry) shape).isEmpty()) {
 					continue;
 				}
-
-				if (resource.getParameters().get("sanitize", false)) {
-					shape = GeometrySanitizer.sanitize((com.vividsolutions.jts.geom.Geometry) shape);
+				
+                if ("true".equals(resource.getParameters().get("sanitize", "false").toString())) {
+//					shape = GeometrySanitizer.sanitize((com.vividsolutions.jts.geom.Geometry) shape);
+	                if (!((com.vividsolutions.jts.geom.Geometry) shape).isValid()) {
+	                    shape = ((com.vividsolutions.jts.geom.Geometry) shape).buffer(0);
+	                }
 				}
 
 				IShape objectShape = Shape.create((com.vividsolutions.jts.geom.Geometry) shape, originalProjection)
@@ -290,7 +295,7 @@ public class VectorEncoder implements IResourceEncoder {
 		if (rasterize) {
 			final Builder stateBuilder = builder;
 			rasterizer.finish((b, xy) -> {
-				stateBuilder.add(b, requestScale.at(ISpace.class, xy/* [0], xy[1] */));
+				stateBuilder.add(b, requestScale.at(ISpace.class, xy));
 			});
 			builder = builder.finishState();
 		}

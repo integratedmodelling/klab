@@ -1,0 +1,28 @@
+site:
+  title: k.LAB Documentation
+  url: https://docs.integratedmodelling.org
+  start_page: klab::index.adoc
+  robots: allow
+content:
+  sources:
+  - url: ../../
+    branches: HEAD
+    edit_url: false
+    start_path: docs/src/main/asciidoc/org/integratedmodelling/documentation/components/klab
+  - url: ../../
+    branches: HEAD
+    edit_url: false
+    start_path: docs/src/main/asciidoc/org/integratedmodelling/documentation/components/tutorials
+  - url: ../../
+    branches: HEAD
+    edit_url: false
+    start_path: docs/src/main/asciidoc/org/integratedmodelling/documentation/components/technote
+ui:
+  bundle:
+    url: ./ui-bundle.zip
+    snapshot: true
+output:
+   clean: true
+asciidoc:
+  attributes:
+    source-highlighter: highlight.js
