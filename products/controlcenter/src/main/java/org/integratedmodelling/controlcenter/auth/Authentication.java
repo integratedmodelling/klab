@@ -124,8 +124,8 @@ public class Authentication implements IAuthentication {
                     this.authorization = userData.getToken();
                     this.groups.clear();
                     this.messages.clear();
-                    response.getUserData().getGroups().forEach(g -> this.groups.add(g));
                     
+                    response.getUserData().getGroups().forEach(g -> this.groups.add(g));
                     if (response.getMessages() != null) {
                         response.getMessages().forEach(m -> this.messages.add(m));
                     }

@@ -331,7 +331,7 @@ public class ControlCenter extends Application {
                                .stream()
                                .filter(i -> i.getFirst().equals(HubNotificationMessage.ExtendedInfo.GROUP_NAME))
                                .findFirst().get()).getSecond();
-                       buffer.append("The group ").append(group);
+                       buffer.append("Subscription to group ").append(group);
                        if (m.getMessageClass().equals(HubNotificationMessage.MessageClass.EXPIRED_GROUP)) {
                            buffer.append(" has expired");
                        } else {
