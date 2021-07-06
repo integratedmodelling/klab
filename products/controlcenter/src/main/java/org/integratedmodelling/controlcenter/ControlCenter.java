@@ -13,6 +13,9 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.Properties;
 import java.util.Queue;
 import java.util.Timer;
@@ -39,6 +42,7 @@ import org.integratedmodelling.controlcenter.runtime.ModelerInstance;
 import org.integratedmodelling.controlcenter.settings.Settings;
 import org.integratedmodelling.controlcenter.utils.TimerService;
 import org.integratedmodelling.klab.rest.Group;
+import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.integratedmodelling.klab.utils.BrowserUtils;
 import org.integratedmodelling.klab.utils.OS;
 import org.joda.time.DateTime;
@@ -55,6 +59,7 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -64,6 +69,8 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
@@ -78,6 +85,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
+import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import kong.unirest.JacksonObjectMapper;
@@ -99,6 +107,7 @@ public class ControlCenter extends Application {
     private static final String DEFAULT_JRE_DOWNLOAD_URL = "http://www.integratedmodelling.org/downloads";
     private static final String IM_EULA_URL = "http://integratedmodelling.org/statics/terms/terms.html";
     private static final String IM_SUPPORT_URL = "https://integratedmodelling.org/confluence/questions";
+    private static final String RENEW_GROUP_URL = "https://integratedmodelling.org/hub/#/profile/view";
 
     private static final String CONTROLCENTER_DATE_PROPERTY = "klab.controlcenter.latest";
     private static final String CONTROLCENTER_TIMESTAMP_PROPERTY = "klab.controlcenter.timestamp";
@@ -297,6 +306,51 @@ public class ControlCenter extends Application {
          */
         this.authentication = new Authentication();
 
+        if (!authentication.getMessages().isEmpty()) {
+            StringBuffer errors = new StringBuffer();
+            StringBuffer warnings = new StringBuffer();
+            StringBuffer infos = new StringBuffer();
+            authentication.getMessages().forEach(m -> {
+               StringBuffer buffer;
+               if (m.getType() == HubNotificationMessage.Type.ERROR) {
+                   buffer = errors;
+               } else if (m.getType() == HubNotificationMessage.Type.WARNING) {
+                   buffer = warnings;
+               } else {
+                   buffer = infos;
+               }
+               switch (m.getMessageClass()) {
+                   case EXPIRED_GROUP:
+                   case EXPIRING_GROUP:
+                       String sDate = (String)(Arrays.asList(m.getInfo())
+                               .stream()
+                               .filter(i -> i.getFirst().equals(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE))
+                               .findFirst().get()).getSecond();
+                       DateTime date = DateTime.parse(sDate);
+                       String group = (String)(Arrays.asList(m.getInfo())
+                               .stream()
+                               .filter(i -> i.getFirst().equals(HubNotificationMessage.ExtendedInfo.GROUP_NAME))
+                               .findFirst().get()).getSecond();
+                       buffer.append("Subscription to group ").append(group);
+                       if (m.getMessageClass().equals(HubNotificationMessage.MessageClass.EXPIRED_GROUP)) {
+                           buffer.append(" has expired");
+                       } else {
+                           buffer.append(" will expire on ").append(DateTimeFormat.forPattern("dd/MM/yyyy").print(date));
+                       }
+                       break;
+                   default:
+                       buffer.append(m.getMsg());
+                       break;
+               }
+               buffer.append("\n");
+            });
+            if (errors.length() > 0 )
+                showAlert(AlertType.ERROR, errors, true);
+            if (warnings.length() > 0 )
+                showAlert(AlertType.WARNING, warnings, true);
+            if (infos.length() > 0 )
+                showAlert(AlertType.INFORMATION, infos, false);
+        }
         /*
          * set up listeners
          */
@@ -536,6 +590,18 @@ public class ControlCenter extends Application {
                     i++;
                 }
             }
+        }
+
+    }
+    
+    private void showAlert(AlertType type, StringBuffer message, boolean withLink) {
+        Alert alert = new Alert(type);
+        alert.setHeaderText(message.toString());
+        ButtonType renewal = new ButtonType("Ask for renewal", ButtonData.CANCEL_CLOSE);
+        alert.getButtonTypes().add(renewal);
+        Optional<ButtonType> option = alert.showAndWait();
+        if (option.get() == renewal) {
+            BrowserUtils.startBrowser(RENEW_GROUP_URL);
         }
 
     }
