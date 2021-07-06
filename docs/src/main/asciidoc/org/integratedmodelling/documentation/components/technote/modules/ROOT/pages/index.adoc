@@ -29,7 +29,7 @@ Technical note 2021-02-20
 :autofit-option:
 :mdash: &#8212;
 :language: asciidoc
-:source-highlighter: highlight.js
+:source-highlighter: highlightjs
 :highlightjs-languages: kim, kactors
 :highlightjs-theme: klab
 :stem:

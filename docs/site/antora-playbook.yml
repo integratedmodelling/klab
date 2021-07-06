@@ -25,4 +25,4 @@ output:
    clean: true
 asciidoc:
   attributes:
-    source-highlighter: highlight.js
+    source-highlighter: highlightjs

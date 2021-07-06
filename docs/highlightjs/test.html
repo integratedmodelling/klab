@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<title>Minimal HTML test</title>
+<link rel="stylesheet" href="build/styles/klab.min.css">
+</head>
+<body class="article">
+<h1>Syntax test</h1>
+<div class="listingblock">
+<div class="content">
+<pre class="highlightjs highlight"><code class="language-kim hljs" data-lang="kim">// example with model
+private namespace exportraster;
+
+model local:moovida:moovida.fiddlearound:raster_categories_test
+	as type of im:Relevant landcover:Pastureland biology:Plant
+	 classified into
+	    biology.nomenclature:UlexGallii       if 28,
+	    biology.nomenclature:UlexEuropaeus    if 41,
+	    biology.nomenclature:FestucaRubra	  if 7,
+	    biology.nomenclature:Calluna       	  if 4,
+	    biology.nomenclature:Helictotrichon   if 12,
+	    biology.nomenclature:Senecio   	  if 27,
+	    biology.nomenclature:Carex    	  if 36,
+	    biology.nomenclature:Phragmites       if 15,
+	    biology.nomenclature:Gramineae	  if 37;</code></pre>
+</div>
+</div>
+<script src="build/highlight.js"></script>
+<script>
+if (!hljs.initHighlighting.called) {
+  hljs.initHighlighting.called = true
+  ;[].slice.call(document.querySelectorAll('pre.highlight > code')).forEach(function (el) { hljs.highlightBlock(el) })
+}
+</script> 
+</body>
+</html>
