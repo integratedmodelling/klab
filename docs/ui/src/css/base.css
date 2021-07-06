@@ -40,7 +40,7 @@ a:active {
 code,
 kbd,
 pre {
-  font-family: var(--monospace-font-family);
+  font-family: var(--monospace-font-family); font-size: smaller;
 }
 
 b,
