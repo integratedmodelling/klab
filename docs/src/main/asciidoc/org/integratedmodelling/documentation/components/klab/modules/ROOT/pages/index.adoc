@@ -1,4 +1,9 @@
 = Welcome to the k.LAB documentation site
 
-This site will contain the most current documentation for k.LAB. 
+This site will contain the most current documentation for {kl}, a semantic web software platform for science, as it is developed.
 
+NOTE: At the time of this writing, no documentation has been publicly released. The xref:technote:ROOT:index.adoc[Technical note] available on this site is the best source of information to learn about {kl}'s features and architecture.
+
+The {kl} software stack powers platforms such as https://aries.integratedmodelling.org[ARIES] and applications such as https://seea.un.org/content/aries-for-seea[ARIES for SEEA]. The https://integratedmodelling.org[Integrated Modelling Partnership] maintains {kl} and the majority of the projects based on it. 
+
+Inquiries about {kl} should be addressed to info@integratedmodelling.org.

@@ -4,20 +4,9 @@ Technical note 2021-02-20
 :url-repo: https://docs.integratedmodelling.org/technote.html
 :doctype: article
 :description: High-level technical description of k.LAB for technical partners
-:kl: k.LAB
-:kmod: k.Modeler
-:kact: k.Actors
-:keng: k.LAB Engine
-:knod: k.LAB Node
-:kim: k.IM
-:ked: k.LAB Resource Editor
-:pex: Project Explorer
-:kex: k.LAB Explorer
-:encoding: utf-8
-:lang: en
 :title-page:
-:toc: left
-:toclevels: 5
+//:toc: left
+//:toclevels: 5
 :sectnums:
 :sectnumlevels: 5
 :numbered:
@@ -35,6 +24,10 @@ Technical note 2021-02-20
 :stem:
 
 <<<
+
+NOTE: This document is a comprehensive, stand-alone technical introduction to the {kl} platform, targeted to a technically savy readership. It does not substitute the {kl} documentation and it cannot be used to learn how to _use_ {kl}, either from an end user or a developer perspective.
+
+## Introduction
 
 *Integrated modeling* is a practice meant to maximize the value of scientific information by ensuring its  _modularity_, _reusability_, _interoperability_ and _traceability_ throughout the scientific process. The k.LAB software, discussed here, is a full-stack solution for integrated modelling, supporting the production, curation, linking and deployment of scientific artifacts such as datasets, data services, modular model components and distributed computational services. The purpose of k.LAB is to ensure -- by _design_ rather than intention -- that the pool of such artifacts constitutes a seamless _knowledge commons_, readily actionable (by humans or machines) through a full realization of the _linked data_ paradigm augmented with semantics and powered by artificial intelligence. This design enables automation of a wide range of modeling tasks that were previously only performable by experts and on an ad-hoc basis.
 
@@ -175,7 +168,7 @@ area ContributingArea
 	is earth:Upstream im:Area within hydrology:RiverBasin;
 ----
 
-or, more correctly, leaving the observable unconstrained and defining models as 
+or, more correctly if the `RiverBasin` context is required by the _modeling_ but not necessarily by the _semantics_, leaving the observable unconstrained and defining any models as 
 
 [source,kim]
 ----
@@ -183,7 +176,7 @@ model earth:Upstream im:Area within hydrology:RiverBasin
 	....;
 ----
 
-In both cases the 'within' operator mandates a RiverBasin context for the quality, which will trigger the distributed resolution process described whenever ContributingArea is queried in any context where river basins can be observed. The same considerations hold for more complex observables such as processes, which have the ability to affect the value of qualities through time and to generate events or other objects; these, in turn, can be the context for other qualities or processes. The ability to automatically negotiate mediations based on inherency and phenomenological reasoning multiplies the capability of connecting diverse models without error, offering integration possibilities orders of magnitude beyond those allowed by semantic matching alone. Such tasks require specific planning and significant technical expertise and time to perform in conventional ways.
+In both cases, the `within` operator mandates a `RiverBasin` context for the `Upstream Area` quality, which will trigger the distributed resolution process described previously whenever the observable is queried in any context where river basins can be observed. The same considerations hold for more complex observables such as processes, which have the ability to affect the value of qualities through time and to generate events or other objects; these, in turn, can be the context for other qualities or processes. The ability to automatically negotiate mediations based on inherency and phenomenological reasoning multiplies the capability of connecting diverse models without error, offering integration possibilities orders of magnitude beyond those allowed by semantic matching alone. Such tasks require specific planning and significant technical expertise and time to perform in conventional ways.
 
 Much of the power of {kl} comes from the fact that models pertaining to the different sides of a problem may be provided and shared by independent experts, with no need for any coordination besides adhering to the same worldview. Each model can serve multiple potential purposes and does not just _add to_, but rather _multiplies_ the value of other knowledge on the platform when interacting with it, just like words in natural language. The power of the resulting paradigm shift becomes obvious when the problem area addressed by modeling spans multiple disciplines, expertises and languages, emphasizing the importance of a collaboratively built and endorsed _worldview_. 
 
@@ -232,7 +225,7 @@ model luc.suitability as landcover:LandCoverType
 		earth:AtmosphericTemperature in Celsius;
 ----
 
-The above model uses the trained Bayesian classifier to produce probabilistic predictions of land cover type. With probabilistic resources such as this, an uncertainty map can also be obtained by adding the uncertainty concept if desired:
+The above model uses the trained Bayesian classifier to produce probabilistic predictions of land cover type. With probabilistic resources such as this, an uncertainty map can also be obtained by adding the uncertainty concept correspondent to the main output (using the `uncertainty of` semantic operator) as a secondary output if desired:
 
 [source,kim]
 ----
@@ -297,18 +290,17 @@ The {kact} language has a simple, minimal syntax that belies a complex and power
 [source,kactors]
 ----
 behavior demo.restaurant
-    "Invite a friend to dinner and if accepted, choose a restaurant in the context"
+  "Invite a friend to dinner and if accepted, choose a restaurant in the context"
 
 // the main action will be triggered when the behavior is loaded
 action main:
-	invite("friend@email.com"): "OK" -> choose({infrastructure:Restaurant}): reserve($)
+  invite("friend@email.com"): "OK" -> choose({infrastructure:Restaurant}): reserve($)
 	
 action invite(friend):
-	email("Hi, shall we go out for dinner tonight?", address=friend):
-		answer -> sentiment.classify(answer, {im:Outcome}): (
-						{im:Positive} -> email("Great", address=[answer.replyAddress]),  "OK"
-					    {im:Negative} -> email("Sorry", address=[answer.replyAddress]), "NO")
-					   
+  email("Hi, shall we go out for dinner tonight?", address=friend):
+    answer -> sentiment.classify(answer, {im:Outcome}): (
+        {im:Positive} -> email("Great", address=[answer.replyAddress]), "OK"
+        {im:Negative} -> email("Sorry", address=[answer.replyAddress]), "NO")				   
 ----
 
 In the code above, two _actions_ are defined, each composed of one statement that calls other actions and specifies a chain of events triggered when each of them "responds" (_fires_). In action `main`, the verb `invite` is called, passing an email address as a parameter. The call, defined later in the code, results in an email being sent and its response being processed, eventually firing back a status code ("OK" or "NO") to the calling action. The OK code triggers the choice of a restaurant in the context and its booking when found. 
@@ -329,64 +321,64 @@ In the forthcoming version 1.0 of {kl}, observations that are part of contexts i
  
 ### User-side applications
 
-Within the {kl} runtime, the software "agents" capable of receiving a behavior are not only the observations built within sessions, but also the sessions themselves and the users that own them. This opens the door to the application of behaviors for purposes beyond the modeling of agents within simulations. In particularly, when a behavior is applied to a user session, the session can be seen as an _application_ whose actions are performed through the client software, and the consequences of which can trigger observations or other events. Coupled with the ability of {kact} to interact with the runtime and use semantics for queries, this feature enables a very intuitive way to build user applications in {kact}. The web client, {kex}, is fully equipped to respond to events triggered by actions by creating user interface components (such as buttons, text fields, lists etc.); users interacting with these components will "fire" events that are sent back to the {kact} runtime for processing. The resulting interactive application is typically very quick to build. For example, the following code
+Within the {kl} runtime, the software "agents" capable of receiving a behavior are not only the observations built within sessions, but also the sessions themselves and the users that own them. This opens the door to the application of behaviors for purposes beyond the modeling of agents within simulations. In particularly, when a behavior is applied to a user session, the session can be seen as an _application_ whose actions are initiated by users through client software, and the consequences of which can trigger observations or other events as required by the application logic. Coupled with the ability of {kact} to interact with the runtime and use semantics for queries, this feature enables fast and intuitive building of user applications in {kact}. The web client, {kex}, is equipped to respond to specialized action verbs by creating user interface components (such as buttons, text fields, lists etc.); users interacting with these components will "fire" events that are sent back to the {kact} runtime for processing. The resulting interactive application is typically very quick to build. For example, the following code
 
 [source,kactors]
 ----
 app example.ui.minimal
-	"A simple demo of UI definition with k.Actors."
-	description "This application demonstrates some basic UI widgets and interaction with the 
-				 k.LAB runtime environment. An 'app' is a behavior applied to a k.LAB session." 
-	style default with #{
-    	font-size: '0.85em'
-	}
+  "A simple demo of UI definition with k.Actors."
+   description "This application demonstrates some basic UI widgets and interaction with the 
+                k.LAB runtime environment. An 'app' is a behavior applied to a k.LAB session." 
+  style default with #{
+    font-size: '0.85em'
+  }
 
 @left
 action main: 
-	
-	set outputs []
 
-	%%% 
-		**Markdown** and HTML text widget between matching percent markers (\%\%\%).  
-		Write any *markdown* in this field to put text in the UI. The :scroll and
-		:collapse attributes control the appearance.
-	%%% :scroll :collapse
+  set outputs []
 
-	/*
-	 * Groups in parentheses become divisions in the UI and can be styled with layout
-	 * attributes, titles and other properties through metadata 
-	 */
-	(
-	  button("Set context to France and observe Elevation in it" #fr): 
-	  		context(im.countries.france): 
-			  	france -> france.observe({geography:Elevation}): (
-					outputs.add($)
-					fr.disable
-				)
-	  button("Observe vegetation C storage in the current context" #veg):  
-	  		submit({ecology:Vegetation chemistry:Carbon im:Mass}): (
-			  	outputs.add($)
-				veg.disable
-			)
-	) :hbox :name "Sample observations (click to observe)"
+  %%% 
+    **Markdown** and HTML text widget between matching percent markers (\%\%\%).  
+    Write any *markdown* in this field to show formatted text in the UI. The :scroll
+    and :collapse attributes control the appearance.
+  %%% :scroll :collapse
+
+  /*
+   * Groups in parentheses become divisions in the UI and can be styled with layout
+   * attributes, titles and other properties through metadata 
+   */
+  (
+    button("Set context to France and observe Elevation in it" #fr): 
+      context(im.countries.france): 
+        france -> france.observe({geography:Elevation}): (
+          outputs.add($)
+          fr.disable
+        )
+    button("Observe vegetation C storage in the current context" #veg):  
+      submit({ecology:Vegetation chemistry:Carbon im:Mass}): (
+        outputs.add($)
+        veg.disable
+      )
+    ) :hbox :name "Sample observations (click to observe)"
 	
-	/*
-	 * a final button enables downloading all the observations accumulated when pressing the 
-	 * buttons above.
-	 */
-	button ("Maps" #mapdownload :tooltip "Download all observations as a zip file"): (
-		mapdownload.waiting
-		pack(outputs): ( 
-			url -> (
-				mapdownload.reset 
-				download(url, filename="data.zip")
-			)
-			error -> mapdownload.error(:timeout 1000)
-		)
-	)
+  /*
+   * a final button enables downloading all the observations accumulated when pressing the 
+   * buttons above.
+   */
+  button ("Maps" #mapdownload :tooltip "Download all observations as a zip file"): (
+    mapdownload.waiting
+    pack(outputs): ( 
+      url -> (
+        mapdownload.reset 
+        download(url, filename="data.zip")
+      )
+      error -> mapdownload.error(:timeout 1000)
+    )
+  )
 ----
 
-creates a demonstrational application that will show a buttons to make observations and collects the results in an array so that the corresponding data can be downloaded in one action. The UI will appear in {kex}. Using modular UI components also defined in {kact}, interfaces such as the code for the https://seea.un.org/content/aries-for-seea[ARIES for SEEA] application can be build by minimally trained programmers in a short time (the code for the ARIES for SEEA application at the time of this writing is only about 300 lines long), making sophisticated modeling services immediately available to users and decision makers with very little effort.
+creates a demonstrational application, not explained in detail here, that will show buttons to make observations and collects the results in an array so that the corresponding data can be downloaded in one action. The UI will appear in {kex}. Using modular UI components also defined in {kact}, interfaces such as the code for the https://seea.un.org/content/aries-for-seea[ARIES for SEEA] application can be build by minimally trained programmers in a short time (the code for the ARIES for SEEA application at the time of this writing is only about 300 lines long), making sophisticated modeling services immediately available to users and decision makers with very little effort.
 
 In addition to these usages, {kact} is used as a scripting language to automate repetitive tasks (for example to build global high-resolution maps describing a single observable, by computing it in multiple local contexts with fully customized model resolution in each) and to build test suites for all aspects of {kl}.
 

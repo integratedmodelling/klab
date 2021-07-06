@@ -1,3 +1,5 @@
 = Tutorial resources
 
 The available tutorial modules for k.LAB are described below. Start each tutorial from its link in the navigation bar.
+
+NOTE: There are no publicly available tutorials at this time. New tutorials are in development and will be added as they become available.
