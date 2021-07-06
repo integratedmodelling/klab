@@ -1,0 +1,14 @@
+@klab 0.10.0
+@version 0.10.0
+@namespace cdm
+
+void info
+	"Open a OpenDAP URL or local NetCDF file and report on its contents."
+{
+	
+	optional boolean verbose
+		"Verbose output: list model details"
+		default false
+	
+	class org.integratedmodelling.tables.commands.cdm.List
+}

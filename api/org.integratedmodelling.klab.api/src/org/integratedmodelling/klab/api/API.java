@@ -126,6 +126,28 @@ public interface API {
         public static final String TEMPLATE = "/kim/template";
 
     }
+    
+    public static interface KACTORS {
+
+        /**
+         * k.Actors descriptor endppoint. Returns info on the language supported, including the version,
+         * build, list of keywords and other useful statistics.
+         * 
+         * <p>
+         * <b>Protocol:</b> GET <br/>
+         * <b>Response type:</b> Json <br/>
+         * <b>Response:</b> {@code org.integratedmodelling.klab.rest.KimCapabilities} <br/>
+         * <b>Authentication:</b> open
+         */
+        public static final String CAPABILITIES = "/kactors/capabilities";
+
+        /**
+         * Substitute keywords and concepts into the posted template and return it as text.
+         * 
+         */
+        public static final String TEMPLATE = "/kactors/template";
+
+    }
 
     /**
      * Read-only ticket API, implemented in the Node and maybe later in the Hub. Engines have ticket

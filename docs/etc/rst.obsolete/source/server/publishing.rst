@@ -1,2 +1,0 @@
-Publishing data and computations
-================================
