@@ -14,5 +14,4 @@ node tools/build.js -n java kim
 
 cp build/highlight.js ../ui/src/js/vendor/highlight.bundle.js
 cp build/styles/klab.min.css ../ui/src/css/klab.css
-#mv build/styles/github.css build/styles/github.min.css
-#cp klab.min.css build/styles/
+

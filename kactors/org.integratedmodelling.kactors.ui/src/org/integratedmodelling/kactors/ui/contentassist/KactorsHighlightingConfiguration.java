@@ -56,6 +56,17 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 	public static final String USER_VERB_ID = "userverb";
 	public static final String AMBIGUOUS_VERB_ID = "ambiguousverb";
 
+	public static final RGB UNKNOWN_VERB_COLOR = new RGB(100, 100, 100);
+	public static final RGB VIEW_VERB_COLOR = new RGB(63, 8, 165);
+	public static final RGB SESSION_VERB_COLOR = new RGB(204, 68, 10);
+	public static final RGB EXPLORER_VERB_COLOR = new RGB(218,165,32);
+	public static final RGB LOCAL_VERB_COLOR = new RGB(20, 20, 20);
+	public static final RGB IMPORTED_VERB_COLOR = new RGB(20, 20, 20);
+	public static final RGB OBJECT_VERB_COLOR = new RGB(127, 62, 6);
+	public static final RGB STATE_VERB_COLOR = new RGB(6, 127, 16);
+	public static final RGB USER_VERB_COLOR = new RGB(57, 69, 127);
+	public static final RGB AMBIGUOUS_VERB_COLOR = new RGB(252, 60, 12);
+
 	@Override
 	public void configure(IHighlightingConfigurationAcceptor acceptor) {
 
@@ -262,70 +273,70 @@ public class KactorsHighlightingConfiguration extends DefaultHighlightingConfigu
 
 	protected TextStyle unknownVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(100, 100, 100));
+		textStyle.setColor(UNKNOWN_VERB_COLOR);
 		textStyle.setStyle(SWT.ITALIC | SWT.BOLD);
 		return textStyle;
 	}
 
 	protected TextStyle stateVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(6, 127, 16));
+		textStyle.setColor(STATE_VERB_COLOR);
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 
 	protected TextStyle objectVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(127, 62, 6));
+		textStyle.setColor(OBJECT_VERB_COLOR);
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 
 	protected TextStyle userVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(57, 69, 127));
+		textStyle.setColor(USER_VERB_COLOR);
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 	
 	protected TextStyle ambiguousVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(252, 60, 12));
+		textStyle.setColor(AMBIGUOUS_VERB_COLOR);
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 
 	protected TextStyle viewVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(63, 8, 165));
+		textStyle.setColor(VIEW_VERB_COLOR);
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 
 	protected TextStyle sessionVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(204, 68, 10));
+		textStyle.setColor(SESSION_VERB_COLOR);
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 	
 	protected TextStyle explorerVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(218,165,32));
+		textStyle.setColor(EXPLORER_VERB_COLOR);
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 
 	protected TextStyle localVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(20, 20, 20));
+		textStyle.setColor(LOCAL_VERB_COLOR);
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}
 
 	protected TextStyle importedVerbTextStyle() {
 		TextStyle textStyle = defaultTextStyle().copy();
-		textStyle.setColor(new RGB(20, 20, 20));
+		textStyle.setColor(IMPORTED_VERB_COLOR);
 		textStyle.setStyle(SWT.BOLD);
 		return textStyle;
 	}

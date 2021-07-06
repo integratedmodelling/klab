@@ -1,7 +1,5 @@
 /*
-Support for k.IM. Lots to do. 
-Minimal list:
-	- highlight URNs (at least the normal patterns)
+* Support for k.Actors. Lots to do.
 */
 
 import { NUMERIC } from "./lib/java.js";
@@ -40,8 +38,8 @@ export default function(hljs) {
   const NUMBER = NUMERIC;
 
   return {
-    name: 'Kim',
-    aliases: ['kim'],
+    name: 'KActors',
+    aliases: ['kactors'],
     keywords: {
 		  // admits ns.subns:Concept notation
 		  $pattern: /\b[a-z\.]+(:[A-Z][A-z]+)?\b/,

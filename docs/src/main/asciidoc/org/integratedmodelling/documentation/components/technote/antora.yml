@@ -1,3 +1,4 @@
 name: technote
-version: ~
+version: master
+display_version: Latest
 title: Technical note
