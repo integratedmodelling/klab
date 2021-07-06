@@ -39,11 +39,3 @@ The use of `gulp-uglify` in gulp.d/build.js had to be switched to gulp-uglify-es
 correctly handle highlight.js, and a much more permissive lint configuration was required 
 to handle it. Eventually I also commented out the pipe(uglify()) calls so that the code 
 remains readable (with no change functionally).
-
-Main problem at the moment is that the script in each file (the technote is the one 
-to try with) complains about `hljs is not defined` despite highlight.js being read correctly 
-and everything else being defined. Even when I somehow managed (once) to eliminate that 
-error, the highlighting was done but no colors appeared in the code (only keywords and 
-other rules). Wasn't able to get back to that situation, which I got to by manually 
-copying the contents of highlight.js into the one in the built site, but currently the 
-same operation doesn't change anything.
