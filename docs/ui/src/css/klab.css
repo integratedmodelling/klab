@@ -104,6 +104,10 @@
     color:rgb(20, 20, 20);
     font-weight:700
 }
+.hljs-textblock,.hljs-selector-tag,.hljs-subst{
+    color:rgb(0, 120, 120);
+    font-weight:400
+}
 .hljs-literal,.hljs-number,.hljs-tag .hljs-attr,.hljs-template-variable,.hljs-variable{
     color:teal
 }

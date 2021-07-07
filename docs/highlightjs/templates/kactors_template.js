@@ -4,6 +4,29 @@
 
 import { NUMERIC } from "./lib/java.js";
 
+/**
+ * performs a shallow merge of multiple objects into one
+ *
+ * @template T
+ * @param {T} original
+ * @param {Record<string,any>[]} objects
+ * @returns {T} a single new object
+ */
+ function inherit(original, ...objects) {
+  /** @type Record<string,any> */
+  const result = Object.create(null);
+
+  for (const key in original) {
+    result[key] = original[key];
+  }
+  objects.forEach(function(obj) {
+    for (const key in obj) {
+      result[key] = obj[key];
+    }
+  });
+  return /** @type {T} */ (result);
+}
+
 export default function(hljs) {
   var JAVA_IDENT_RE = '[\u00C0-\u02B8a-zA-Z_$][\u00C0-\u02B8a-zA-Z_$0-9]*';
   var GENERIC_IDENT_RE = JAVA_IDENT_RE + '(<' + JAVA_IDENT_RE + '(\\s*,\\s*' + JAVA_IDENT_RE + ')*>)?';
@@ -45,7 +68,7 @@ export default function(hljs) {
   const NUMBER = NUMERIC;
 
   const TEXTBLOCK = function(begin, end, modeOptions = {}) {
-    const mode = inherit(
+    const mode = hljs.inherit(
       {
         className: 'textblock',
         begin,

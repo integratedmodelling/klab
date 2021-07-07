@@ -1,5 +1,5 @@
 /*
-  Highlight.js 10.6.0 (2eab09db)
+  Highlight.js 10.6.0 (f9ae495d)
   License: BSD-3-Clause
   Copyright (c) 2006-2021, Ivan Sagalaev
 */
@@ -2990,6 +2990,19 @@ hljs.registerLanguage('kactors', function () {
     };
     const NUMBER = NUMERIC;
 
+    const TEXTBLOCK = function(begin, end, modeOptions = {}) {
+      const mode = hljs.inherit(
+        {
+          className: 'textblock',
+          begin,
+          end,
+          contains: []
+        },
+        modeOptions
+      );
+      return mode;
+    };
+
     return {
       name: 'KActors',
       aliases: ['kactors'],
@@ -3048,6 +3061,7 @@ hljs.registerLanguage('kactors', function () {
         hljs.C_BLOCK_COMMENT_MODE,
         hljs.APOS_STRING_MODE,
         hljs.QUOTE_STRING_MODE,
+        TEXTBLOCK('%%%', '%%%'),
         // {
         //   className: 'class',
         //   beginKeywords: 'class interface enum', end: /[{;=]/, excludeEnd: true,
