@@ -8,11 +8,13 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.integratedmodelling.kactors.model.KActors;
+import org.integratedmodelling.kactors.model.KActors.CodeAssistant.BehaviorId;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.kim.api.IKimConceptStatement;
 import org.integratedmodelling.kim.api.IKimNamespace;
 import org.integratedmodelling.kim.api.IKimStatement;
 import org.integratedmodelling.kim.model.Kim;
+import org.integratedmodelling.klab.Actors;
 import org.integratedmodelling.klab.Concepts;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.API;
@@ -46,11 +48,39 @@ public enum KActorsTemplateProcessor {
 						String conceptId = namespace.getName() + ":" + ((IKimConceptStatement) statement).getName();
 						IConcept concept = Concepts.INSTANCE.getConcept(conceptId);
 						if (concept != null) {
-						    // passing the conceptId captures 'equals' and authority concepts
-						    classify(concept, conceptId);
+							// passing the conceptId captures 'equals' and authority concepts
+							classify(concept, conceptId);
 						}
 					}
 				}
+			}
+		}
+		
+		Map<String, Set<String>> verbs = Actors.INSTANCE.getKnownVerbs();
+
+		for (String behavior : verbs.keySet()) {
+			switch (Actors.INSTANCE.classifyBehavior(behavior)) {
+			case EXPLORER:
+				data.put(Section.EXPLORER_VERBS, verbs.get(behavior));
+				break;
+			case OBJECT:
+				data.put(Section.OBJECT_VERBS, verbs.get(behavior));
+				break;
+			case SESSION:
+				data.put(Section.SESSION_VERBS, verbs.get(behavior));
+				break;
+			case STATE:
+				data.put(Section.STATE_VERBS, verbs.get(behavior));
+				break;
+			case USER:
+				data.put(Section.USER_VERBS, verbs.get(behavior));
+				break;
+			case VIEW:
+				data.put(Section.VIEW_VERBS, verbs.get(behavior));
+				break;
+			default:
+				data.put(Section.IMPORTED_VERBS, verbs.get(behavior));
+				break;
 			}
 		}
 		
@@ -77,10 +107,10 @@ public enum KActorsTemplateProcessor {
 		} else if (concept.is(Type.PREDICATE)) {
 			section.add(Section.PREDICATES);
 			section.add(concept.is(Type.ABSTRACT) ? Section.ABSTRACT_PREDICATES : Section.CONCRETE_PREDICATES);
-		}  else if (concept.is(Type.CONFIGURATION)) {
-            section.add(Section.CONFIGURATIONS);
-            section.add(concept.is(Type.ABSTRACT) ? Section.ABSTRACT_CONFIGURATIONS : Section.CONCRETE_CONFIGURATIONS);
-        }
+		} else if (concept.is(Type.CONFIGURATION)) {
+			section.add(Section.CONFIGURATIONS);
+			section.add(concept.is(Type.ABSTRACT) ? Section.ABSTRACT_CONFIGURATIONS : Section.CONCRETE_CONFIGURATIONS);
+		}
 
 		for (Section sec : section) {
 			Set<String> set = data.get(sec);
@@ -96,7 +126,8 @@ public enum KActorsTemplateProcessor {
 		KEYWORDS, QUALITIES, RELATIONSHIPS, SUBJECTS, EVENTS, PREDICATES, CONFIGURATIONS, PROCESSES, CONCRETE_QUALITIES,
 		CONCRETE_RELATIONSHIPS, CONCRETE_SUBJECTS, CONCRETE_EVENTS, CONCRETE_PREDICATES, CONCRETE_CONFIGURATIONS,
 		CONCRETE_PROCESSES, ABSTRACT_QUALITIES, ABSTRACT_RELATIONSHIPS, ABSTRACT_SUBJECTS, ABSTRACT_EVENTS,
-		ABSTRACT_PREDICATES, ABSTRACT_CONFIGURATIONS, ABSTRACT_PROCESSES
+		ABSTRACT_PREDICATES, ABSTRACT_CONFIGURATIONS, ABSTRACT_PROCESSES, VIEW_VERBS, USER_VERBS, OBJECT_VERBS,
+		STATE_VERBS, SESSION_VERBS, EXPLORER_VERBS, IMPORTED_VERBS
 	}
 
 	private Map<Section, Set<String>> data = new HashMap<>();

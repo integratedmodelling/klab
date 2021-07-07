@@ -15,6 +15,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.io.IOUtils;
+import org.integratedmodelling.kactors.model.KActors;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.klab.Authentication;
@@ -32,6 +33,7 @@ import org.integratedmodelling.klab.common.Geometry;
 import org.integratedmodelling.klab.components.geospace.visualization.Renderer;
 import org.integratedmodelling.klab.engine.Engine;
 import org.integratedmodelling.klab.engine.runtime.Session;
+import org.integratedmodelling.klab.kactors.KActorsTemplateProcessor;
 import org.integratedmodelling.klab.kim.KimTemplateProcessor;
 import org.integratedmodelling.klab.rest.Capabilities;
 import org.integratedmodelling.klab.rest.EngineStatus;
@@ -126,6 +128,26 @@ public class KlabController {
     public String kimGenerateTemplate(@RequestBody String template) {
         // TODO pass separator in optional query parameter
         return KimTemplateProcessor.INSTANCE.process(template, " ");
+    }
+    
+    @RequestMapping(value = API.KACTORS.CAPABILITIES, method = RequestMethod.GET, produces = "application/json")
+    @ResponseBody
+    public KimCapabilities kActorsCapabilities(Principal user, HttpServletRequest request) {
+    	// TODO use k.Actors-specific object
+    	KimCapabilities ret = new KimCapabilities();
+        // TODO this will have its own independent version
+        ret.setBuild(Version.VERSION_BUILD);
+        // TODO this will have its own independent version
+        ret.setVersion(Version.CURRENT);
+        ret.getKeywords().addAll(KActors.INSTANCE.getKeywords());
+        return ret;
+    }
+
+    @RequestMapping(value = API.KACTORS.TEMPLATE, method = RequestMethod.POST, consumes = "text/plain", produces = "text/plain")
+    @ResponseBody
+    public String kActorsGenerateTemplate(@RequestBody String template) {
+        // TODO pass separator in optional query parameter
+        return KActorsTemplateProcessor.INSTANCE.process(template, " ");
     }
 
     @RequestMapping(value = API.ENGINE.STATUS, method = RequestMethod.GET, produces = "application/json")

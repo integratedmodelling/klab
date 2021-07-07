@@ -7,11 +7,11 @@
 # TODO add kactors
 
 
-node tools/build.js -n java kim
+node tools/build.js -n java kim kactors json
 
 # then rename and move the files necessary to compile asciidoctor 
 # documents within the customized Antora UI
 
-cp build/highlight.js ../ui/src/js/vendor/highlight.bundle.js
-cp build/styles/klab.min.css ../ui/src/css/klab.css
+cp build/highlight.js ../ui/src/js/vendor/highlight.js
+cp templates/klab.css ../ui/src/css/klab.css
 

@@ -23,6 +23,13 @@ export default function(hljs) {
   var ABSTRACT_EVENTS = '__ABSTRACT_EVENTS__';
   var CONFIGURATIONS = "__CONCRETE_CONFIGURATIONS__";
   var ABSTRACT_CONFIGURATIONS = "__ABSTRACT_CONFIGURATIONS__";
+  var VIEW_VERBS = "__VIEW_VERBS__";
+  var USER_VERBS = "__USER_VERBS__";
+  var OBJECT_VERBS = "__USER_VERBS__";
+  var STATE_VERBS = "__STATE_VERBS__";
+  var SESSION_VERBS = "__SESSION_VERBS__";
+  var EXPLORER_VERBS = "__EXPLORER_VERBS__";
+  var IMPORTED_VERBS = "__IMPORTED_VERBS__";
 
  var ANNOTATION = {
     className: 'meta',
@@ -37,6 +44,19 @@ export default function(hljs) {
   };
   const NUMBER = NUMERIC;
 
+  const TEXTBLOCK = function(begin, end, modeOptions = {}) {
+    const mode = inherit(
+      {
+        className: 'textblock',
+        begin,
+        end,
+        contains: []
+      },
+      modeOptions
+    );
+    return mode;
+  };
+
   return {
     name: 'KActors',
     aliases: ['kactors'],
@@ -44,20 +64,27 @@ export default function(hljs) {
 		  // admits ns.subns:Concept notation
 		  $pattern: /\b[a-z\.]+(:[A-Z][A-z]+)?\b/,
 		  keyword: KEYWORDS,
-      quality: QUALITIES,
+		  viewverb: VIEW_VERBS,
+		  userverb: USER_VERBS,
+		  objectverb: OBJECT_VERBS,
+		  stateverb: STATE_VERBS,
+		  sessionverb: SESSION_VERBS,
+		  explorerverb: EXPLORER_VERBS,
+		  importedverb: IMPORTED_VERBS,
+      	  quality: QUALITIES,
 		  predicate: PREDICATES,
 		  subject: SUBJECTS,
 		  process: PROCESSES,
-      event: EVENTS,
+          event: EVENTS,
 		  relationship: RELATIONSHIPS,
-      configuration: CONFIGURATIONS,
+          configuration: CONFIGURATIONS,
 		  aquality: ABSTRACT_QUALITIES,
 		  apredicate: ABSTRACT_PREDICATES,
 		  asubject: ABSTRACT_SUBJECTS,
 		  aprocess: ABSTRACT_PROCESSES,
 		  arelationship: ABSTRACT_RELATIONSHIPS,
 		  aevent: ABSTRACT_EVENTS,
-      aconfiguration: ABSTRACT_CONFIGURATIONS
+          aconfiguration: ABSTRACT_CONFIGURATIONS
 	  },
     illegal: /<\/|#/,
     contains: [
@@ -84,10 +111,11 @@ export default function(hljs) {
       //   keywords: "namespace",
       //   relevance: 2
       // },
-      // hljs.C_LINE_COMMENT_MODE,
-      // hljs.C_BLOCK_COMMENT_MODE,
-      // hljs.APOS_STRING_MODE,
-      // hljs.QUOTE_STRING_MODE,
+      hljs.C_LINE_COMMENT_MODE,
+      hljs.C_BLOCK_COMMENT_MODE,
+      hljs.APOS_STRING_MODE,
+      hljs.QUOTE_STRING_MODE,
+      TEXTBLOCK('%%%', '%%%'),
       // {
       //   className: 'class',
       //   beginKeywords: 'class interface enum', end: /[{;=]/, excludeEnd: true,

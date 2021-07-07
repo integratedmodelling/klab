@@ -1,4 +1,4 @@
-== Getting started with {kl}
+= Getting started with {kl}
 
 The {kl} technology and all the projects built with it (such as ARIES) serve the needs of both users and producers of integrated data and model content. Data and model producers need specialized tools to import, annotate, and publish data and models on the k.LAB semantic web, which makes them easier to share, reuse, and link. Meanwhile, users will want to produce assessments and explore scenarios, which can be done using a web-accessible application we call k.Explorer. Therefore, the only tool users need to access k.LAB's linked data and models is a modern web browser, such as Chrome or Firefox.
 
@@ -12,9 +12,9 @@ The k.LAB Control Center manages the authentication, download, update and execut
 
 To download, install, and launch the Control Center:
 
-Windows:: Download the Windows installer and run it. The installer only writes to the user's AppData directory, so it should not require administrator permissions to run. After installation, k.LAB will be available in your application menu.
-Linux:: Download the Debian package or sh installer and run it as normal user. The k.LAB Control Center will be available in your application menu. If your system cannot handle a Debian package or sh, proceed using the zip or tar file as described below.
-MacOSX:: Download the  MacOS installer, mount it and drag the k.LAB icon into the Applications folder. The k.LAB Control Center will be available in your applications folder.
+Windows:: Download the https://integratedmodelling.org/downloads/products/master/controlcenter/latest/klab_windows-x64.exe[Windows installer] and run it. The installer only writes to the user's AppData directory, so it should not require administrator permissions to run. After installation, k.LAB will be available in your application menu.
+Linux:: Download the https://integratedmodelling.org/downloads/products/master/controlcenter/latest/klab_linux.deb[Debian package] or the  https://integratedmodelling.org/downloads/products/master/controlcenter/latest/klab_unix.sh[installer shell script] and run it as normal user. The k.LAB Control Center will be available in your application menu. If your system cannot handle a Debian package or sh, proceed using the zip or tar file method as described below.
+MacOSX:: Download the https://integratedmodelling.org/downloads/products/master/controlcenter/latest/klab_macos.dmg[MacOS installer], mount it and drag the k.LAB icon into the Applications folder. The k.LAB Control Center will be available in your applications folder.
 
 If the Windows/Linux/MacOSX installers cannot be used for any reason:
 
@@ -22,6 +22,8 @@ If the Windows/Linux/MacOSX installers cannot be used for any reason:
 - Download and unpack the tar.gz archive.
 - Change directory to where you unzipped the archive and either run java -cp libs -jar klab.controlcenter.jar from a terminal or double-click the jar file.
 - If the zip version is used on Linux or MacOSX, file permissions are lost on unzip, so you will need to run chmod +x klab.controlcenter.jar in a terminal.
+
+## Launch the Control Center
 
 Once installed, you can open the Control Center, which will show a small window with all the commands you need. The picture below serves as both illustration and quick reference manual for the Control Center:
 
@@ -33,8 +35,7 @@ The main operations in the Control Center are authentication and synchronization
 
 In order to authenticate as a user of the {kl} software stack, you need a _certificate_ that you can drag and drop onto the Control Center's authentication area.
 
-Obtain a valid IM certificate at the https://integratedmodelling.org/hub[Integrated Modelling Hub]. This step will eventually be incorporated in the Control Center as well. **You can only download a certificate for individual and non-profit use as explained in our End User License Agreement (EULA)**, which you will have to accept before downloading: we welcome other uses, including for-profit businesses and consultants under ad hoc EULAs. Please write us at info (at) integratedmodelling.org for details.
-With the Control Center open, drag the certificate file over the certificate area. The certificate will be validated and installed in the k.LAB work directory. This operation is only necessary once per certificate life span (certificates are good for one year and can be renewed as described in your EULA).
+Obtain a valid IM certificate at the https://integratedmodelling.org/hub[Integrated Modelling Hub]. This step will eventually be incorporated in the Control Center as well. **You can only download a certificate for individual and non-profit use as explained in our End User License Agreement (EULA)**, which you will have to accept before downloading: we welcome other uses, including for-profit businesses and consultants under ad hoc EULAs. If you are in the latter situation, please write us at info (at) integratedmodelling.org for details. Otherwise, with the Control Center open, drag your non-profit certificate file over the certificate area. The certificate will be validated and installed in the k.LAB work directory. This operation is only necessary once per certificate life span (certificates are good for one year and can be renewed as described in your EULA).
 
 Unless you received a custom registration link to access a project, ensure that you belong to the user groups that give access to the resources (data and models) you are interested in using on the k.LAB network. Specifically, using the ARIES project requires membership in the ARIES group (you should see the ARIES logo in the Control Center next to your certification information). If you do not see the logo, or do not see the ARIES pre-defined queries when pressing the space bar in k.Explorer's search bar, ask to be added at info (at) integratedmodelling.org. 
 

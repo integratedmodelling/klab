@@ -1,1 +1,1 @@
-* xref:get_started:index.adoc[Getting started]
+* xref:get_started:index.adoc[Get started]
