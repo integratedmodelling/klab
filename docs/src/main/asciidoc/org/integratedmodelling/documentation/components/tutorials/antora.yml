@@ -2,3 +2,5 @@ name: tutorials
 version: master
 display_version: Latest
 title: Tutorials
+nav: 
+- modules/ROOT/nav.adoc
