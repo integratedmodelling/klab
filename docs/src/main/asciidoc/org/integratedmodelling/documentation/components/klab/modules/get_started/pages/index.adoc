@@ -27,7 +27,7 @@ If the Windows/Linux/MacOSX installers cannot be used for any reason:
 
 Once installed, you can open the Control Center, which will show a small window with all the commands you need. The picture below serves as both illustration and quick reference manual for the Control Center:
 
-image::_images/ControlCenterInfographics.png[align="center"]
+image::ControlCenterInfographics.png[align="center"]
 
 The main operations in the Control Center are authentication and synchronization of the k.LAB software and execution of the k.LAB Engine (and possibly the Modeler). You usually authenticate only once. You should download all updates that become available: while k.LAB is under active development and in pre-release status, the software will change quickly and compatibility between software builds is likely but not guaranteed. Once all updates are downloaded, you can launch or stop the k.Explorer or k.Modeler products as needed.
 
