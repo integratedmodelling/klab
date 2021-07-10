@@ -382,7 +382,7 @@ action main:
   )
 ----
 
-creates a demonstrational application, not explained in detail here, that will show buttons to make observations and collects the results in an array so that the corresponding data can be downloaded in one action. The UI will appear in {kex}. Using modular UI components also defined in {kact}, interfaces such as the code for the https://seea.un.org/content/aries-for-seea[ARIES for SEEA] application can be build by minimally trained programmers in a short time (the code for the ARIES for SEEA application at the time of this writing is only about 300 lines long), making sophisticated modeling services immediately available to users and decision makers with very little effort.
+creates a demonstrational application, not explained in detail here, that will show buttons to make observations and collects the results in an array so that the corresponding data can be downloaded in one action. The UI will appear in {kex}. Using modular UI components also defined in {kact}, interfaces such as https://seea.un.org/content/aries-for-seea[ARIES for SEEA] can be build by minimally trained programmers in a short time (the code for the ARIES for SEEA application at the time of this writing is only about 300 lines long), making sophisticated modeling services immediately available to users and decision makers with very little effort.
 
 In addition to these usages, {kact} is used as a scripting language to automate repetitive tasks (for example to build global high-resolution map outputs describing a single observable, by computing it in multiple local contexts with fully customized model resolution in each) and to build test suites for all aspects of {kl}.
 
