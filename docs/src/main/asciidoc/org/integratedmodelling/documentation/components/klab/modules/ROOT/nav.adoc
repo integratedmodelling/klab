@@ -11,7 +11,7 @@
 ** Subjects and qualities
 ** Predicates
 ** Occurrence: when time changes
-*** Processes
+*** Processes and change
 *** Events
 ** Relationships
 ** Configurations
@@ -19,22 +19,40 @@
 ** Projects and namespaces
 ** The worldview
 ** Writing models
+*** Models and observations
+*** Scoping and non-semantic models
+*** Learning models
+*** The expression language
+** Documenting models
 ** Views: tables and graphs
 ** Publishing projects
 * The {kact} language
 ** Agent-based modeling
-** Sessions, users and applications
+** Types of behaviors
+** Actor reference
+*** The runtime actor
+*** The user actor
+*** The view actor
+*** The explorer actor
+** Scripts and test cases
 * The {kl} runtime
 ** The {kl} engine
 ** Resolution and contextualization
 ** The dataflow
 ** Artifacts
-** Documentation
+** Report generation
+** Component reference
+*** Basic runtime services
+*** The OGC component
+*** The ML component
+*** The MCA component
+*** The Geoprocessing component
+*** The Weather component
 * The {kl} API
 ** Authentication
 ** Engine API
 ** Node API
-* Setting up a {kl} site
+* Deploying a {kl} site
 ** Nodes and engines
 ** Certification
 * For developers
@@ -45,3 +63,4 @@
 *** Resource adapters
 *** Contextualizers
 *** Other extension points
+* Get support or collaborate

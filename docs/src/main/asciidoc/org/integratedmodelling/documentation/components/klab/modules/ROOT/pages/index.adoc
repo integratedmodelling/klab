@@ -1,8 +1,8 @@
-= Welcome to the k.LAB documentation site
+= Welcome to the k.LAB documentation
 
 image::KLAB_LOGO.png[align=center]
 
-This site will contain the most current documentation for {kl}, a semantic web software platform for science, as it is developed. At the time of this writing, no documentation has been publicly released. The links in the navigation bar offer a perspective on what this site will eventually contain, but most links are not functional yet.
+This site will contain the most current documentation for {kl}, a semantic web software platform for science, as it is developed. At the time of this writing, no documentation has been publicly released. The links in the navigation bar offer a perspective on what this site will eventually contain, but most links are not functional yet. With the exception of the xref:get_started:index.adoc[] page, even functional links may contain incomplete information and should not be relied upon until this note is removed.
 
 IMPORTANT: The xref:technote:ROOT:index.adoc[Technical note] available on this site is, at the moment, the best source of information to independently learn about {kl}'s features and architecture.
 

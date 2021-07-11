@@ -1522,6 +1522,11 @@ public class ResolutionScope implements IResolutionScope {
     public boolean isResolving(IObservable observable, Mode mode) {
         return this.resolving.contains(new ObservedConcept(observable, mode));
     }
+    
+    public ResolutionScope resolving(IObservable observable) {
+    	this.resolving.add(new ObservedConcept(observable));
+    	return this;
+    }
 
     public Map<IConcept, Set<IConcept>> getResolvedPredicatesContext() {
         return this.resolvedPredicatesContext;
