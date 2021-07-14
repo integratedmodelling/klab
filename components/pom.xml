@@ -24,6 +24,7 @@
   	<module>klab.component.random</module>
   	<module>klab.component.sdmx</module>
   	<module>klab.component.amp</module>
+  	<module>klab.component.stats</module>
   </modules>
   
   <build>

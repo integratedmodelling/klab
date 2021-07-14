@@ -1,3 +1,14 @@
 = Tutorial resources
 
 The available tutorial modules for k.LAB are described below. Start each tutorial from its link in the navigation bar.
+
+NOTE: The number of publicly available tutorials at this time is limited, and all should be considered a work in progress. New tutorials are in development and will be added as they become available.
+
+.Available tutorials
+[width="100%",cols="<20h,<~,<~",frame="topbot",options="header,footer"]
+|==========================
+|Topic    |Description | Level
+|xref:resources:index.adoc[Resources tutorial] |A basic tutorial on resources and their creation in the {kmod}.  | Suitable for beginners, with a section for Java developers.
+|==========================
+
+Please submit any feedback or suggestions for more tutorials to info@integratedmodelling.org.

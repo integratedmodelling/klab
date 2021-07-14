@@ -203,7 +203,7 @@ public class Resolver {
 							+ Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
 					ResolutionScope cscope = resolve((Observable) toResolve,
-							parentScope.acceptResolutions(ret, observable.getScope().getResolutionNamespace()),
+							parentScope.acceptResolutions(ret, observable.getScope().getResolutionNamespace()).resolving(toResolve),
 							Mode.RESOLUTION);
 
 					if (cscope.getCoverage().isRelevant()) {

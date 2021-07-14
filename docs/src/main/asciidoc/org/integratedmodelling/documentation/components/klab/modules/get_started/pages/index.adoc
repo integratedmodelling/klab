@@ -1,0 +1,75 @@
+= Getting started with {kl}
+
+The {kl} technology and all the projects built with it (such as ARIES) serve the needs of both users and producers of integrated data and model content. Data and model producers need specialized tools to import, annotate, and publish data and models on the k.LAB semantic web, which makes them easier to share, reuse, and link. Meanwhile, users will want to produce assessments and explore scenarios, which can be done using a web-accessible application we call k.Explorer. Therefore, the only tool users need to access k.LAB's linked data and models is a modern web browser, such as Chrome or Firefox.
+
+For modelers, content providers, and advanced users we distribute a small software package called the k.LAB Control Center, which simplifies and manages the installation, update, and execution of a dedicated modeling engine on the user's machine. The engine provides the network-accessible k.Explorer for each user who runs it; you can connect to it through a local link in your web browser. To support the needs of students, academics, modelers, and others interested in producing and customizing data and models, the control center also provides access to k.Modeler, our integrated development environment for k.LAB content.
+
+## Downloading and installing the Control Center.
+
+CAUTION: This software, like the rest of k.LAB, is a preview release intended for demonstration and use in courses or collaborations. In this early phase it is important that all updates be applied as soon as they become available. 
+
+The k.LAB Control Center manages the authentication, download, update and execution of all k.LAB products (described below), including the k.LAB engine (with its web-based user interface, k.Explorer) and the modeler's user interface (k.Modeler). On systems where you can use a Control Center installer (shown below), it is not necessary to have Java installed, as the Control Center can download it transparently if needed.
+
+To download, install, and launch the Control Center:
+
+Windows:: Download the https://integratedmodelling.org/downloads/products/master/controlcenter/latest/klab_windows-x64.exe[Windows installer] and run it. The installer only writes to the user's AppData directory, so it should not require administrator permissions to run. After installation, k.LAB will be available in your application menu.
+Linux:: Download the https://integratedmodelling.org/downloads/products/master/controlcenter/latest/klab_linux.deb[Debian package] or the  https://integratedmodelling.org/downloads/products/master/controlcenter/latest/klab_unix.sh[installer shell script] and run it as normal user. The k.LAB Control Center will be available in your application menu. If your system cannot handle a Debian package or sh, proceed using the zip or tar file method as described below.
+MacOSX:: Download the https://integratedmodelling.org/downloads/products/master/controlcenter/latest/klab_macos.dmg[MacOS installer], mount it and drag the k.LAB icon into the Applications folder. The k.LAB Control Center will be available in your applications folder.
+
+If the Windows/Linux/MacOSX installers cannot be used for any reason:
+
+- Ensure that Java version 1.8 (or higher) is installed on your machine. A 64-bit architecture and Java virtual machine (JVM) are required. The system currently runs on Java 8; version 9 or higher will create problems for some important functionalities. We plan to make k.LAB Java 11-compliant in near future.
+- Download and unpack the tar.gz archive.
+- Change directory to where you unzipped the archive and either run java -cp libs -jar klab.controlcenter.jar from a terminal or double-click the jar file.
+- If the zip version is used on Linux or MacOSX, file permissions are lost on unzip, so you will need to run chmod +x klab.controlcenter.jar in a terminal.
+
+## Launch the Control Center
+
+Once installed, you can open the Control Center, which will show a small window with all the commands you need. The picture below serves as both illustration and quick reference manual for the Control Center:
+
+image::ControlCenterInfographics.png[align="center"]
+
+The main operations in the Control Center are authentication and synchronization of the k.LAB software and execution of the k.LAB Engine (and possibly the Modeler). You usually authenticate only once. You should download all updates that become available: while k.LAB is under active development and in pre-release status, the software will change quickly and compatibility between software builds is likely but not guaranteed. Once all updates are downloaded, you can launch or stop the k.Explorer or k.Modeler products as needed.
+
+## Authentication
+
+In order to authenticate as a user of the {kl} software stack, you need a _certificate_ that you can drag and drop onto the Control Center's authentication area.
+
+Obtain a valid IM certificate at the https://integratedmodelling.org/hub[Integrated Modelling Hub]. This step will eventually be incorporated in the Control Center as well. **You can only download a certificate for individual and non-profit use as explained in our End User License Agreement (EULA)**, which you will have to accept before downloading: we welcome other uses, including for-profit businesses and consultants under ad hoc EULAs. If you are in the latter situation, please write us at info (at) integratedmodelling.org for details. Otherwise, with the Control Center open, drag your non-profit certificate file over the certificate area. The certificate will be validated and installed in the k.LAB work directory. This operation is only necessary once per certificate life span (certificates are good for one year and can be renewed as described in your EULA).
+
+Unless you received a custom registration link to access a project, ensure that you belong to the user groups that give access to the resources (data and models) you are interested in using on the k.LAB network. Specifically, using the ARIES project requires membership in the ARIES group (you should see the ARIES logo in the Control Center next to your certification information). If you do not see the logo, or do not see the ARIES pre-defined queries when pressing the space bar in k.Explorer's search bar, ask to be added at info (at) integratedmodelling.org. 
+
+## Downloading and using {kl} products
+
+You can download or update a k.LAB Engine and k.Modeler by clicking on the download button as long as it is selectable (which happens when you are online, not already running an engine, and there is a build to download). The engine is around 600MB and k.Modeler around 150MB, so the first download will be a long one (one to many minutes, depending on your internet connection speed). After the first download, future downloads will be much smaller, i.e., only including files that have changed (usually < 1MB in size), so will be much quicker.
+
+The system gives access to previous software builds, so you can run a previous version if there is any problem with the current one. You can configure the number of builds kept on your disk locally, as well as the download locations and other settings using the "settings" button (see below).
+
+Once a suitable k.LAB distribution has been downloaded, the launch buttons will become active. The launch will take several minutes. When the engine and/or k.Modeler are active, the button will become green and clicking it again will stop the products and revert to launchable status. When an engine is running, most of the Control Center functions are disabled and the engine messaging area shows real-time memory consumption and other data from the live engine.
+
+Once the engine is active, you can open k.Explorer through a browser window using one of the two buttons in the lower left of the Control Center. If Internet Explorer is your default browser, open a new Chrome or Firefox window, press "Copy k.Explorer link to clipboard," and paste the copied link into the browser window (k.Explorer will not work with Internet Explorer; Safari will run it but errors may occur). 
+
+## Updating {kl}
+
+When a new update becomes available, the Control Center will show a yellow notice. The Control Center checks for updates regularly when connected to a network (you can change the interval in the settings; the default is every minute). Before starting a download, you must stop the Engine. You can run older software builds (at your risk) by selecting them from the drop-down menu.
+
+It is possible to switch to the develop branch of the software builds in the settings. Doing so will change the database from which the builds are taken. You should only do so when instructed or if you are very comfortable with k.LAB and computers in general, as the develop builds are less stable and occur more often.
+
+## Configuration
+
+The "Settings" tab in the Control Center gives access to many configuration options for the k.LAB Engine, including the use and control of large/distributed memory and multi-processing. Many of the settings are currently inactive; those that work may create instabilities if used without careful consideration. This document will be updated when new settings become available and stable. For now, we advise only the use of the "Engine->Memory" setting as needed, which allows the k.LAB Engine to use more RAM memory for large modeling tasks. The default memory setting is 2048 (2GB), and is the maximum memory that can be used by the engine. We often set it to larger values (within the RAM limits of your machine) for large machine learning tasks or very high-resolution modeling. For casual use of k.LAB within recommended parameters, the default memory setting should work for most users.
+
+## Caveats and possible stumbling blocks
+
+K.LAB is a complex software package, and is most reliably installed on network servers by trained professionals. We try our best to ease its installation and use through the Control Center, but it is very difficult to forecast all possible installation problems that may occur on a wide variety of PCs. Most installations go smoothly on a modern, 64-bit machine running Windows or Linux; MacOSX is supported, but the experience may be less smooth for the time being. In our experience, the following problems are the most commonly seen:
+
+Architecture:: You need a 64-bit machine with a fair amount of RAM, disk space, and power to run k.LAB. We consider 8GB of RAM a minimum, with 16 preferred.
+Java. The software runs on the 64-bit Java virtual machine (JVM) version 8. The Control Center will check for the existence of a suitable JVM on startup and will offer to install one locally, just for k.LAB use, if a suitable version is not present. Yet, some machines have outdated or broken Java installations that may confuse the system. Such issues may be difficult to detect and you will simply have a non-functional installation. If this happens, let us know using the question/answer link in the Control Center.
+Firewall:: The k.LAB engine is a network server and, although its use is limited to local connections when installed by the Control Center, the Windows firewall may cause limitations or restrictions. These usually manifest as the engine starting and seemingly blocking before a connection is established, with the Control Center remaining in "wait" state forever. In these situations Windows usually shows a dialog box asking you to accept the connection the first time. If this happens, it is safe to accept and continue. In some installations, the window may not appear and the firewall may need to be configured manually. The engine communicates on port 8283, which can be changed in the settings.
+Antivirus:: Some antivirus software, usually on Windows, may decide that k.LAB is not a "typical" (i.e., commercial) program and decide to either block it or scan it for a long time (10 minutes or more). The details depend on the individual antivirus software; some offer clear notifications, while others create annoying blockages that look exactly like the firewall problem and are very difficult to debug. The difference in this situation is that the engine will eventually start after the check is finished, but often after more time than the user has patience for. In all situations the solution is to add exceptions to the antivirus software; unfortunately some of the blocked files are written to the temporary directory so they are difficult to spot. We are working to compile a list of known exceptions and antivirus software causing instllation problems, to make this go more smoothly in the future.
+MacOSX:: The MacOSX distribution is functional but the team has little access to Macs for testing, and little knowledge of the OS itself. As a result MacOSX stability is lagging behind that of other systems. Many Mac users have successfully used k.LAB but they usually have needed some help. For the time being let us know and we will respond when we can.
+Alpha status:: Again, the system is in pre-release state and is delivered without warranty and for demonstration purposes only. There will be many updates and changes in the months ahead that should improve system stability, functionality, and documentation.
+
+## Support
+
+We are setting up a real-time support chat with our developers, but cannot guarantee immediate response (the developer team is small and constantly overworked). For now, please use the question/answer link in the Control Center or, failing that, write to support (at) integratedmodelling.org address.
