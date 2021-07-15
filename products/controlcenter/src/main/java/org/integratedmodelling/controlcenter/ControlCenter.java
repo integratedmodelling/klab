@@ -13,7 +13,6 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.file.Files;
 import java.nio.file.StandardOpenOption;
-import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.Properties;
@@ -59,7 +58,6 @@ import javafx.application.Platform;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.concurrent.WorkerStateEvent;
-import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -85,7 +83,6 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.VBox;
 import javafx.scene.paint.Paint;
 import javafx.scene.text.Font;
-import javafx.scene.web.WebView;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import kong.unirest.JacksonObjectMapper;
@@ -916,6 +913,7 @@ public class ControlCenter extends Application {
                                     public void transferFinished() {
                                         Platform.runLater(() -> {
                                             engineCurrentFileLabel.setText("k.Engine download complete");
+                                            engine.cleanOldBuilds();
                                         });
                                     }
 
@@ -1012,6 +1010,7 @@ public class ControlCenter extends Application {
                                         }
                                         Platform.runLater(() -> {
                                             modelerCurrentFileLabel.setText("k.Modeler download complete");
+                                            modeler.cleanOldBuilds();
                                         });
                                     }
 
