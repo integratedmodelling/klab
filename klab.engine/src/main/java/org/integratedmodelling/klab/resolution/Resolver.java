@@ -195,7 +195,12 @@ public class Resolver {
 							.as(UnarySemanticOperator.CHANGE).buildObservable();
 
 					if (parentScope.getResolvedObservable(toResolve, Mode.RESOLUTION) != null
-							|| ret.getImplicitlyChangingObservables().contains(observable)) {
+							|| ret.getImplicitlyChangingObservables().contains(observable)
+							|| ret.hasResolved(toResolve)) {
+						if (!ret.hasResolvedSuccessfully(toResolve)) {
+							// needed for downstream resolutions to register implicit changes
+							ret.getImplicitlyChangingObservables().add(observable);
+						}
 						continue;
 					}
 
@@ -203,7 +208,7 @@ public class Resolver {
 							+ Concepts.INSTANCE.getDisplayName(toResolve.getType()));
 
 					ResolutionScope cscope = resolve((Observable) toResolve,
-							parentScope.acceptResolutions(ret, observable.getScope().getResolutionNamespace()).resolving(toResolve),
+							parentScope.acceptResolutions(ret, observable.getScope().getResolutionNamespace()),
 							Mode.RESOLUTION);
 
 					if (cscope.getCoverage().isRelevant()) {
