@@ -76,6 +76,38 @@
     font-weight:500;
     font-style:italic
 }
+.hljs-viewverb,.hljs-selector-tag,.hljs-subst{
+    color: rgb(63, 8, 165);
+    font-weight:700
+}
+.hljs-userverb,.hljs-selector-tag,.hljs-subst{
+    color:rgb(57, 69, 127);
+    font-weight:700
+}
+.hljs-objectverb,.hljs-selector-tag,.hljs-subst{
+    color:rgb(127, 62, 6);
+    font-weight:700
+}
+.hljs-stateverb,.hljs-selector-tag,.hljs-subst{
+    color:rgb(6, 127, 16);
+    font-weight:700
+}
+.hljs-sessionverb,.hljs-selector-tag,.hljs-subst{
+    color:rgb(204, 68, 10);
+    font-weight:700
+}
+.hljs-explorerverb,.hljs-selector-tag,.hljs-subst{
+    color:rgb(218, 165, 32);
+    font-weight:700
+}
+.hljs-importedverb,.hljs-selector-tag,.hljs-subst{
+    color:rgb(20, 20, 20);
+    font-weight:700
+}
+.hljs-textblock,.hljs-selector-tag,.hljs-subst{
+    color:rgb(0, 120, 120);
+    font-weight:400
+}
 .hljs-literal,.hljs-number,.hljs-tag .hljs-attr,.hljs-template-variable,.hljs-variable{
     color:teal
 }
@@ -108,7 +140,7 @@
 }
 .hljs-meta{
     color:#999;
-    font-weight:700
+    font-weight:400
 }
 .hljs-deletion{
     background:#fdd

@@ -1,4 +1,6 @@
 name: technote
-version: 0.11
+version: master
+display_version: Latest
 title: Technical note
-
+nav: 
+   - modules/ROOT/nav.adoc

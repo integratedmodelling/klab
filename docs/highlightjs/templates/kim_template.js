@@ -1,8 +1,7 @@
 /*
-Language: Java
-Author: Vsevolod Solovyov <vsevolod.solovyov@gmail.com>
-Category: common, enterprise
-Website: https://www.java.com/
+Support for k.IM. Lots to do. 
+Minimal list:
+	- highlight URNs (at least the normal patterns)
 */
 
 import { NUMERIC } from "./lib/java.js";
@@ -47,20 +46,20 @@ export default function(hljs) {
 		  // admits ns.subns:Concept notation
 		  $pattern: /\b[a-z\.]+(:[A-Z][A-z]+)?\b/,
 		  keyword: KEYWORDS,
-      quality: QUALITIES,
+          quality: QUALITIES,
 		  predicate: PREDICATES,
 		  subject: SUBJECTS,
 		  process: PROCESSES,
-      event: EVENTS,
+          event: EVENTS,
 		  relationship: RELATIONSHIPS,
-      configuration: CONFIGURATIONS,
+          configuration: CONFIGURATIONS,
 		  aquality: ABSTRACT_QUALITIES,
 		  apredicate: ABSTRACT_PREDICATES,
 		  asubject: ABSTRACT_SUBJECTS,
 		  aprocess: ABSTRACT_PROCESSES,
 		  arelationship: ABSTRACT_RELATIONSHIPS,
 		  aevent: ABSTRACT_EVENTS,
-      aconfiguration: ABSTRACT_CONFIGURATIONS
+          aconfiguration: ABSTRACT_CONFIGURATIONS
 	  },
     illegal: /<\/|#/,
     contains: [
@@ -87,10 +86,10 @@ export default function(hljs) {
       //   keywords: "namespace",
       //   relevance: 2
       // },
-      // hljs.C_LINE_COMMENT_MODE,
-      // hljs.C_BLOCK_COMMENT_MODE,
-      // hljs.APOS_STRING_MODE,
-      // hljs.QUOTE_STRING_MODE,
+      hljs.C_LINE_COMMENT_MODE,
+      hljs.C_BLOCK_COMMENT_MODE,
+      hljs.APOS_STRING_MODE,
+      hljs.QUOTE_STRING_MODE,
       // {
       //   className: 'class',
       //   beginKeywords: 'class interface enum', end: /[{;=]/, excludeEnd: true,

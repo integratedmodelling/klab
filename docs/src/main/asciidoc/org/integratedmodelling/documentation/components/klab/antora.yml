@@ -1,4 +1,6 @@
 name: klab
-version: 0.11
+version: master
 title: k.LAB Documentation
-#nav: modules/ROOT/nav.adoc
+display_version: Latest
+nav: 
+   - modules/ROOT/nav.adoc

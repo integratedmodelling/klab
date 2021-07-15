@@ -25,4 +25,16 @@ output:
    clean: true
 asciidoc:
   attributes:
-    source-highlighter: highlight.js
+    source-highlighter: highlightjs
+    kl: k.LAB
+    kmod: k.Modeler
+    kact: k.Actors
+    keng: k.LAB Engine
+    knod: k.LAB Node
+    kim: k.IM
+    ked: k.LAB Resource Editor
+    pex: Project Explorer
+    kex: k.LAB Explorer
+    encoding: utf-8
+    lang: en
+
