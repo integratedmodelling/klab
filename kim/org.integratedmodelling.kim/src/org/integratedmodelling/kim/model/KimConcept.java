@@ -1332,9 +1332,9 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			ret += "-of-" + inherent.getCodeName();
 		}
 
-		if (context != null) {
-			ret += "-within-" + context.getCodeName();
-		}
+//		if (context != null) {
+//			ret += "-within-" + context.getCodeName();
+//		}
 
 		if (causant != null) {
 			ret += "-caused-by-" + causant.getCodeName();
