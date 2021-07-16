@@ -922,6 +922,7 @@ public class ControlCenter extends Application {
                                             } else {
                                                 engineCurrentFileLabel.setTextFill(originalLabelColor);
                                                 engineCurrentFileLabel.setText("k.Engine download complete");
+                                                engine.cleanOldBuilds();
                                             }
                                         });
                                     }
@@ -1037,6 +1038,7 @@ public class ControlCenter extends Application {
                                             Platform.runLater(() -> {
                                                 modelerCurrentFileLabel.setTextFill(originalLabelColor);
                                                 modelerCurrentFileLabel.setText("k.Modeler download complete");
+                                                modeler.cleanOldBuilds();
                                             });
                                         }
                                     }
