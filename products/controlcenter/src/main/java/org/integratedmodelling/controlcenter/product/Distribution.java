@@ -302,12 +302,13 @@ public class Distribution {
 				// ignore
 			} catch (IOException e) {
 			    listener.notifyError(e);
+			    break;
 			} catch (KlabException e) {
 			    listener.notifyError(e);
 			    if (e.getCause() instanceof KlabIOException) {
 			        downloadError = e;
-	                break;
 			    }
+			    break;
 			}
 		}
 		if (downloadError == null) {

@@ -74,7 +74,12 @@ public class Downloader {
 		try (OutputStream os = new FileOutputStream(file); InputStream is = url.openStream()) {
 			DownloadCountingOutputStream dcount = new DownloadCountingOutputStream(os);
 			dcount.setListener(progressListener);
-			this.totalLength = Integer.parseInt(url.openConnection().getHeaderField("Content-Length"));
+			String contentLength = url.openConnection().getHeaderField("Content-Length");
+			if (contentLength == null) {
+			    dcount.close();
+			    throw new KlabIOException("Content lenght is null");
+			}
+			this.totalLength = Integer.parseInt(contentLength);
 			IOUtils.copy(is, dcount);
 			if (checksum != null) {
 			    String md5 = org.apache.commons.codec.digest.DigestUtils.md5Hex(new FileInputStream(file));
