@@ -82,6 +82,7 @@ public class ObservableBuilder implements IObservable.Builder {
     private boolean distributedInherency = false;
     private KimConcept declaration;
     private boolean axiomsAdded = false;
+    private String referenceName = null;
 
     // this gets set to true if a finished declaration is set using
     // withDeclaration() and the
@@ -1959,6 +1960,9 @@ public class ObservableBuilder implements IObservable.Builder {
         if (name != null) {
             ret.setName(name);
         }
+        if (referenceName != null) {
+        	ret.setReferenceName(referenceName);
+        }
 
         ret.setStatedName(this.statedName);
         ret.setTargetPredicate(targetPredicate);
@@ -2031,5 +2035,11 @@ public class ObservableBuilder implements IObservable.Builder {
         this.dereified = true;
         return this;
     }
+
+	@Override
+	public Builder named(String name, String referenceName) {
+		this.referenceName = referenceName;
+		return named(name);
+	}
 
 }
