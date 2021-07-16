@@ -1368,5 +1368,10 @@ public class ControlCenter extends Application {
             Platform.runLater(() -> setupUI());
         }
     }
+    
+    public void cleanOldFiles() {
+        this.engine.cleanOldBuilds();
+        this.modeler.cleanOldBuilds();
+    }
 
 }
