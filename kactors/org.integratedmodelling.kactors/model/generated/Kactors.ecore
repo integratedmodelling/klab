@@ -122,6 +122,8 @@
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="while" eType="#//WhileStatement"
         containment="true"/>
+    <eStructuralFeatures xsi:type="ecore:EReference" name="assert" eType="#//AssertStatement"
+        containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="do" eType="#//DoStatement"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EReference" name="for" eType="#//ForStatement"
@@ -129,6 +131,10 @@
     <eStructuralFeatures xsi:type="ecore:EReference" name="value" eType="#//Value"
         containment="true"/>
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="tag" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>
+  </eClassifiers>
+  <eClassifiers xsi:type="ecore:EClass" name="AssertStatement">
+    <eStructuralFeatures xsi:type="ecore:EReference" name="methodCalls" upperBound="-1"
+        eType="#//MessageCall" containment="true"/>
   </eClassifiers>
   <eClassifiers xsi:type="ecore:EClass" name="Assignment">
     <eStructuralFeatures xsi:type="ecore:EAttribute" name="recipient" eType="ecore:EDataType http://www.eclipse.org/emf/2002/Ecore#//EString"/>

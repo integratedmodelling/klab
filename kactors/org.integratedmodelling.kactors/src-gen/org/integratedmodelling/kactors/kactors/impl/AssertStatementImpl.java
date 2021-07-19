@@ -17,41 +17,41 @@ import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
 import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
+import org.integratedmodelling.kactors.kactors.AssertStatement;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
-import org.integratedmodelling.kactors.kactors.List;
-import org.integratedmodelling.kactors.kactors.ListElement;
+import org.integratedmodelling.kactors.kactors.MessageCall;
 
 /**
  * <!-- begin-user-doc -->
- * An implementation of the model object '<em><b>List</b></em>'.
+ * An implementation of the model object '<em><b>Assert Statement</b></em>'.
  * <!-- end-user-doc -->
  * <p>
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.ListImpl#getContents <em>Contents</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.AssertStatementImpl#getMethodCalls <em>Method Calls</em>}</li>
  * </ul>
  *
  * @generated
  */
-public class ListImpl extends MinimalEObjectImpl.Container implements List
+public class AssertStatementImpl extends MinimalEObjectImpl.Container implements AssertStatement
 {
   /**
-   * The cached value of the '{@link #getContents() <em>Contents</em>}' containment reference list.
+   * The cached value of the '{@link #getMethodCalls() <em>Method Calls</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getContents()
+   * @see #getMethodCalls()
    * @generated
    * @ordered
    */
-  protected EList<ListElement> contents;
+  protected EList<MessageCall> methodCalls;
 
   /**
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    */
-  protected ListImpl()
+  protected AssertStatementImpl()
   {
     super();
   }
@@ -64,7 +64,7 @@ public class ListImpl extends MinimalEObjectImpl.Container implements List
   @Override
   protected EClass eStaticClass()
   {
-    return KactorsPackage.Literals.LIST;
+    return KactorsPackage.Literals.ASSERT_STATEMENT;
   }
 
   /**
@@ -73,13 +73,13 @@ public class ListImpl extends MinimalEObjectImpl.Container implements List
    * @generated
    */
   @Override
-  public EList<ListElement> getContents()
+  public EList<MessageCall> getMethodCalls()
   {
-    if (contents == null)
+    if (methodCalls == null)
     {
-      contents = new EObjectContainmentEList<ListElement>(ListElement.class, this, KactorsPackage.LIST__CONTENTS);
+      methodCalls = new EObjectContainmentEList<MessageCall>(MessageCall.class, this, KactorsPackage.ASSERT_STATEMENT__METHOD_CALLS);
     }
-    return contents;
+    return methodCalls;
   }
 
   /**
@@ -92,8 +92,8 @@ public class ListImpl extends MinimalEObjectImpl.Container implements List
   {
     switch (featureID)
     {
-      case KactorsPackage.LIST__CONTENTS:
-        return ((InternalEList<?>)getContents()).basicRemove(otherEnd, msgs);
+      case KactorsPackage.ASSERT_STATEMENT__METHOD_CALLS:
+        return ((InternalEList<?>)getMethodCalls()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -108,8 +108,8 @@ public class ListImpl extends MinimalEObjectImpl.Container implements List
   {
     switch (featureID)
     {
-      case KactorsPackage.LIST__CONTENTS:
-        return getContents();
+      case KactorsPackage.ASSERT_STATEMENT__METHOD_CALLS:
+        return getMethodCalls();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -125,9 +125,9 @@ public class ListImpl extends MinimalEObjectImpl.Container implements List
   {
     switch (featureID)
     {
-      case KactorsPackage.LIST__CONTENTS:
-        getContents().clear();
-        getContents().addAll((Collection<? extends ListElement>)newValue);
+      case KactorsPackage.ASSERT_STATEMENT__METHOD_CALLS:
+        getMethodCalls().clear();
+        getMethodCalls().addAll((Collection<? extends MessageCall>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -143,8 +143,8 @@ public class ListImpl extends MinimalEObjectImpl.Container implements List
   {
     switch (featureID)
     {
-      case KactorsPackage.LIST__CONTENTS:
-        getContents().clear();
+      case KactorsPackage.ASSERT_STATEMENT__METHOD_CALLS:
+        getMethodCalls().clear();
         return;
     }
     super.eUnset(featureID);
@@ -160,10 +160,10 @@ public class ListImpl extends MinimalEObjectImpl.Container implements List
   {
     switch (featureID)
     {
-      case KactorsPackage.LIST__CONTENTS:
-        return contents != null && !contents.isEmpty();
+      case KactorsPackage.ASSERT_STATEMENT__METHOD_CALLS:
+        return methodCalls != null && !methodCalls.isEmpty();
     }
     return super.eIsSet(featureID);
   }
 
-} //ListImpl
+} //AssertStatementImpl

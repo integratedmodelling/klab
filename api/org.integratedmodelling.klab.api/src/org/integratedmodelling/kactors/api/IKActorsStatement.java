@@ -18,7 +18,7 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 
 	public enum Type {
 		ACTION_CALL, IF_STATEMENT, FOR_STATEMENT, DO_STATEMENT, WHILE_STATEMENT, TEXT_BLOCK, FIRE_VALUE, ASSIGNMENT,
-		CONCURRENT_GROUP, SEQUENCE, INSTANTIATION
+		CONCURRENT_GROUP, SEQUENCE, INSTANTIATION, ASSERT_STATEMENT
 	}
 
 	public interface If extends IKActorsStatement {
@@ -68,6 +68,12 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 		IKActorsValue getCondition();
 
 		IKActorsStatement getBody();
+
+	}
+	
+	public interface Assert extends IKActorsStatement {
+
+		List<Call> getCalls();
 
 	}
 
