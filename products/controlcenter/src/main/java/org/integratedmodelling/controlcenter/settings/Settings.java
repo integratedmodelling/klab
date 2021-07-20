@@ -251,7 +251,7 @@ public class Settings {
 							if (isActionReady())
 								ControlCenter.INSTANCE.changeStack(b);
 						})),
-						Setting.of("Synchronize project branch with runtime", swichBranches).validate(new Action<Boolean>((b) -> {
+						Setting.of("Synchronize workspace branch with runtime", swichBranches).validate(new Action<Boolean>((b) -> {
                             if (isActionReady())
                                 preferencesFx.saveSettings();
                         })),
