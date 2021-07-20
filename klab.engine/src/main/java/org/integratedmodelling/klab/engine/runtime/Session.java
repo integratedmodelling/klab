@@ -1398,7 +1398,7 @@ public class Session extends GroovyObjectSupport
 
     @MessageHandler
     private void handleRecontextualizationRequest(ContextualizationRequest request) {
-        System.out.println(request);
+       this.globalState.recontextualize(request);
     }
 
     @MessageHandler

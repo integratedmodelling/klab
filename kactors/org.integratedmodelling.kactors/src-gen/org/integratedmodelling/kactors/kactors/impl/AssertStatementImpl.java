@@ -18,8 +18,8 @@ import org.eclipse.emf.ecore.util.EObjectContainmentEList;
 import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kactors.kactors.AssertStatement;
+import org.integratedmodelling.kactors.kactors.Assertion;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
-import org.integratedmodelling.kactors.kactors.MessageCall;
 
 /**
  * <!-- begin-user-doc -->
@@ -29,7 +29,7 @@ import org.integratedmodelling.kactors.kactors.MessageCall;
  * The following features are implemented:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.impl.AssertStatementImpl#getMethodCalls <em>Method Calls</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.AssertStatementImpl#getAssertions <em>Assertions</em>}</li>
  * </ul>
  *
  * @generated
@@ -37,14 +37,14 @@ import org.integratedmodelling.kactors.kactors.MessageCall;
 public class AssertStatementImpl extends MinimalEObjectImpl.Container implements AssertStatement
 {
   /**
-   * The cached value of the '{@link #getMethodCalls() <em>Method Calls</em>}' containment reference list.
+   * The cached value of the '{@link #getAssertions() <em>Assertions</em>}' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @see #getMethodCalls()
+   * @see #getAssertions()
    * @generated
    * @ordered
    */
-  protected EList<MessageCall> methodCalls;
+  protected EList<Assertion> assertions;
 
   /**
    * <!-- begin-user-doc -->
@@ -73,13 +73,13 @@ public class AssertStatementImpl extends MinimalEObjectImpl.Container implements
    * @generated
    */
   @Override
-  public EList<MessageCall> getMethodCalls()
+  public EList<Assertion> getAssertions()
   {
-    if (methodCalls == null)
+    if (assertions == null)
     {
-      methodCalls = new EObjectContainmentEList<MessageCall>(MessageCall.class, this, KactorsPackage.ASSERT_STATEMENT__METHOD_CALLS);
+      assertions = new EObjectContainmentEList<Assertion>(Assertion.class, this, KactorsPackage.ASSERT_STATEMENT__ASSERTIONS);
     }
-    return methodCalls;
+    return assertions;
   }
 
   /**
@@ -92,8 +92,8 @@ public class AssertStatementImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case KactorsPackage.ASSERT_STATEMENT__METHOD_CALLS:
-        return ((InternalEList<?>)getMethodCalls()).basicRemove(otherEnd, msgs);
+      case KactorsPackage.ASSERT_STATEMENT__ASSERTIONS:
+        return ((InternalEList<?>)getAssertions()).basicRemove(otherEnd, msgs);
     }
     return super.eInverseRemove(otherEnd, featureID, msgs);
   }
@@ -108,8 +108,8 @@ public class AssertStatementImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case KactorsPackage.ASSERT_STATEMENT__METHOD_CALLS:
-        return getMethodCalls();
+      case KactorsPackage.ASSERT_STATEMENT__ASSERTIONS:
+        return getAssertions();
     }
     return super.eGet(featureID, resolve, coreType);
   }
@@ -125,9 +125,9 @@ public class AssertStatementImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case KactorsPackage.ASSERT_STATEMENT__METHOD_CALLS:
-        getMethodCalls().clear();
-        getMethodCalls().addAll((Collection<? extends MessageCall>)newValue);
+      case KactorsPackage.ASSERT_STATEMENT__ASSERTIONS:
+        getAssertions().clear();
+        getAssertions().addAll((Collection<? extends Assertion>)newValue);
         return;
     }
     super.eSet(featureID, newValue);
@@ -143,8 +143,8 @@ public class AssertStatementImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case KactorsPackage.ASSERT_STATEMENT__METHOD_CALLS:
-        getMethodCalls().clear();
+      case KactorsPackage.ASSERT_STATEMENT__ASSERTIONS:
+        getAssertions().clear();
         return;
     }
     super.eUnset(featureID);
@@ -160,8 +160,8 @@ public class AssertStatementImpl extends MinimalEObjectImpl.Container implements
   {
     switch (featureID)
     {
-      case KactorsPackage.ASSERT_STATEMENT__METHOD_CALLS:
-        return methodCalls != null && !methodCalls.isEmpty();
+      case KactorsPackage.ASSERT_STATEMENT__ASSERTIONS:
+        return assertions != null && !assertions.isEmpty();
     }
     return super.eIsSet(featureID);
   }

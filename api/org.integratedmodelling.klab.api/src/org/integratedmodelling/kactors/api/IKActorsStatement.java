@@ -70,23 +70,38 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 		IKActorsStatement getBody();
 
 	}
-	
+
+	/**
+	 * Assertions have either a (chain of) method calls or one expression to be
+	 * evaluated in context.
+	 * 
+	 * @author Ferd
+	 *
+	 */
 	public interface Assert extends IKActorsStatement {
 
-		List<Call> getCalls();
+		public interface Assertion {
+
+			List<Call> getCalls();
+
+			IKActorsValue getExpression();
+		}
+
+		List<Assertion> getAssertions();
 
 	}
 
 	/**
 	 * for variable in iterable (body)
+	 * 
 	 * @author Ferd
 	 *
 	 */
 	public interface For extends IKActorsStatement {
-	    
-	    String getVariable();
-	    
-	    IKActorsValue getIterable();
+
+		String getVariable();
+
+		IKActorsValue getIterable();
 
 		IKActorsStatement getBody();
 

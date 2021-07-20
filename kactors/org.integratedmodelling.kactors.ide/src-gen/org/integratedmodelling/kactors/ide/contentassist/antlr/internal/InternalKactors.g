@@ -432,6 +432,31 @@ finally {
 	restoreStackSize(stackSize);
 }
 
+// Entry rule entryRuleAssertion
+entryRuleAssertion
+:
+{ before(grammarAccess.getAssertionRule()); }
+	 ruleAssertion
+{ after(grammarAccess.getAssertionRule()); } 
+	 EOF 
+;
+
+// Rule Assertion
+ruleAssertion 
+	@init {
+		int stackSize = keepStackSize();
+	}
+	:
+	(
+		{ before(grammarAccess.getAssertionAccess().getAlternatives()); }
+		(rule__Assertion__Alternatives)
+		{ after(grammarAccess.getAssertionAccess().getAlternatives()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
 // Entry rule entryRuleNextStatement
 entryRuleNextStatement
 :
@@ -2207,6 +2232,27 @@ rule__Statement__Alternatives_0
 		{ before(grammarAccess.getStatementAccess().getValueAssignment_0_10()); }
 		(rule__Statement__ValueAssignment_0_10)
 		{ after(grammarAccess.getStatementAccess().getValueAssignment_0_10()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assertion__Alternatives
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getAssertionAccess().getExpressionAssignment_0()); }
+		(rule__Assertion__ExpressionAssignment_0)
+		{ after(grammarAccess.getAssertionAccess().getExpressionAssignment_0()); }
+	)
+	|
+	(
+		{ before(grammarAccess.getAssertionAccess().getGroup_1()); }
+		(rule__Assertion__Group_1__0)
+		{ after(grammarAccess.getAssertionAccess().getGroup_1()); }
 	)
 ;
 finally {
@@ -7589,9 +7635,9 @@ rule__AssertStatement__Group__1__Impl
 	}
 :
 (
-	{ before(grammarAccess.getAssertStatementAccess().getGroup_1()); }
-	(rule__AssertStatement__Group_1__0)*
-	{ after(grammarAccess.getAssertStatementAccess().getGroup_1()); }
+	{ before(grammarAccess.getAssertStatementAccess().getAssertionsAssignment_1()); }
+	(rule__AssertStatement__AssertionsAssignment_1)
+	{ after(grammarAccess.getAssertStatementAccess().getAssertionsAssignment_1()); }
 )
 ;
 finally {
@@ -7615,9 +7661,9 @@ rule__AssertStatement__Group__2__Impl
 	}
 :
 (
-	{ before(grammarAccess.getAssertStatementAccess().getMethodCallsAssignment_2()); }
-	(rule__AssertStatement__MethodCallsAssignment_2)
-	{ after(grammarAccess.getAssertStatementAccess().getMethodCallsAssignment_2()); }
+	{ before(grammarAccess.getAssertStatementAccess().getGroup_2()); }
+	(rule__AssertStatement__Group_2__0)*
+	{ after(grammarAccess.getAssertStatementAccess().getGroup_2()); }
 )
 ;
 finally {
@@ -7625,53 +7671,161 @@ finally {
 }
 
 
-rule__AssertStatement__Group_1__0
+rule__AssertStatement__Group_2__0
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
-	rule__AssertStatement__Group_1__0__Impl
-	rule__AssertStatement__Group_1__1
+	rule__AssertStatement__Group_2__0__Impl
+	rule__AssertStatement__Group_2__1
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__AssertStatement__Group_1__0__Impl
+rule__AssertStatement__Group_2__0__Impl
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 (
-	{ before(grammarAccess.getAssertStatementAccess().getMethodCallsAssignment_1_0()); }
-	(rule__AssertStatement__MethodCallsAssignment_1_0)
-	{ after(grammarAccess.getAssertStatementAccess().getMethodCallsAssignment_1_0()); }
+	{ before(grammarAccess.getAssertStatementAccess().getCommaKeyword_2_0()); }
+	','
+	{ after(grammarAccess.getAssertStatementAccess().getCommaKeyword_2_0()); }
 )
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__AssertStatement__Group_1__1
+rule__AssertStatement__Group_2__1
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
-	rule__AssertStatement__Group_1__1__Impl
+	rule__AssertStatement__Group_2__1__Impl
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__AssertStatement__Group_1__1__Impl
+rule__AssertStatement__Group_2__1__Impl
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 (
-	{ before(grammarAccess.getAssertStatementAccess().getFullStopKeyword_1_1()); }
+	{ before(grammarAccess.getAssertStatementAccess().getAssertionsAssignment_2_1()); }
+	(rule__AssertStatement__AssertionsAssignment_2_1)
+	{ after(grammarAccess.getAssertStatementAccess().getAssertionsAssignment_2_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__Assertion__Group_1__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__Assertion__Group_1__0__Impl
+	rule__Assertion__Group_1__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assertion__Group_1__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getAssertionAccess().getGroup_1_0()); }
+	(rule__Assertion__Group_1_0__0)*
+	{ after(grammarAccess.getAssertionAccess().getGroup_1_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assertion__Group_1__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__Assertion__Group_1__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assertion__Group_1__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getAssertionAccess().getMethodCallsAssignment_1_1()); }
+	(rule__Assertion__MethodCallsAssignment_1_1)
+	{ after(grammarAccess.getAssertionAccess().getMethodCallsAssignment_1_1()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+
+rule__Assertion__Group_1_0__0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__Assertion__Group_1_0__0__Impl
+	rule__Assertion__Group_1_0__1
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assertion__Group_1_0__0__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getAssertionAccess().getMethodCallsAssignment_1_0_0()); }
+	(rule__Assertion__MethodCallsAssignment_1_0_0)
+	{ after(grammarAccess.getAssertionAccess().getMethodCallsAssignment_1_0_0()); }
+)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assertion__Group_1_0__1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	rule__Assertion__Group_1_0__1__Impl
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assertion__Group_1_0__1__Impl
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+(
+	{ before(grammarAccess.getAssertionAccess().getFullStopKeyword_1_0_1()); }
 	'.'
-	{ after(grammarAccess.getAssertStatementAccess().getFullStopKeyword_1_1()); }
+	{ after(grammarAccess.getAssertionAccess().getFullStopKeyword_1_0_1()); }
 )
 ;
 finally {
@@ -22663,30 +22817,75 @@ finally {
 	restoreStackSize(stackSize);
 }
 
-rule__AssertStatement__MethodCallsAssignment_1_0
+rule__AssertStatement__AssertionsAssignment_1
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getAssertStatementAccess().getMethodCallsMethodCallParserRuleCall_1_0_0()); }
-		ruleMethodCall
-		{ after(grammarAccess.getAssertStatementAccess().getMethodCallsMethodCallParserRuleCall_1_0_0()); }
+		{ before(grammarAccess.getAssertStatementAccess().getAssertionsAssertionParserRuleCall_1_0()); }
+		ruleAssertion
+		{ after(grammarAccess.getAssertStatementAccess().getAssertionsAssertionParserRuleCall_1_0()); }
 	)
 ;
 finally {
 	restoreStackSize(stackSize);
 }
 
-rule__AssertStatement__MethodCallsAssignment_2
+rule__AssertStatement__AssertionsAssignment_2_1
 	@init {
 		int stackSize = keepStackSize();
 	}
 :
 	(
-		{ before(grammarAccess.getAssertStatementAccess().getMethodCallsMethodCallWithActionsParserRuleCall_2_0()); }
+		{ before(grammarAccess.getAssertStatementAccess().getAssertionsAssertionParserRuleCall_2_1_0()); }
+		ruleAssertion
+		{ after(grammarAccess.getAssertStatementAccess().getAssertionsAssertionParserRuleCall_2_1_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assertion__ExpressionAssignment_0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getAssertionAccess().getExpressionEXPRTerminalRuleCall_0_0()); }
+		RULE_EXPR
+		{ after(grammarAccess.getAssertionAccess().getExpressionEXPRTerminalRuleCall_0_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assertion__MethodCallsAssignment_1_0_0
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getAssertionAccess().getMethodCallsMethodCallParserRuleCall_1_0_0_0()); }
+		ruleMethodCall
+		{ after(grammarAccess.getAssertionAccess().getMethodCallsMethodCallParserRuleCall_1_0_0_0()); }
+	)
+;
+finally {
+	restoreStackSize(stackSize);
+}
+
+rule__Assertion__MethodCallsAssignment_1_1
+	@init {
+		int stackSize = keepStackSize();
+	}
+:
+	(
+		{ before(grammarAccess.getAssertionAccess().getMethodCallsMethodCallWithActionsParserRuleCall_1_1_0()); }
 		ruleMethodCallWithActions
-		{ after(grammarAccess.getAssertStatementAccess().getMethodCallsMethodCallWithActionsParserRuleCall_2_0()); }
+		{ after(grammarAccess.getAssertionAccess().getMethodCallsMethodCallWithActionsParserRuleCall_1_1_0()); }
 	)
 ;
 finally {

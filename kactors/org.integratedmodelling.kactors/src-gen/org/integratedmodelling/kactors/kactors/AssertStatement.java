@@ -16,7 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
- *   <li>{@link org.integratedmodelling.kactors.kactors.AssertStatement#getMethodCalls <em>Method Calls</em>}</li>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.AssertStatement#getAssertions <em>Assertions</em>}</li>
  * </ul>
  *
  * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getAssertStatement()
@@ -26,15 +26,15 @@ import org.eclipse.emf.ecore.EObject;
 public interface AssertStatement extends EObject
 {
   /**
-   * Returns the value of the '<em><b>Method Calls</b></em>' containment reference list.
-   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.MessageCall}.
+   * Returns the value of the '<em><b>Assertions</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.Assertion}.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the value of the '<em>Method Calls</em>' containment reference list.
-   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getAssertStatement_MethodCalls()
+   * @return the value of the '<em>Assertions</em>' containment reference list.
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getAssertStatement_Assertions()
    * @model containment="true"
    * @generated
    */
-  EList<MessageCall> getMethodCalls();
+  EList<Assertion> getAssertions();
 
 } // AssertStatement

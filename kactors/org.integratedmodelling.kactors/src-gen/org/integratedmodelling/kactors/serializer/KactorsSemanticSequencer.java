@@ -19,6 +19,7 @@ import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.AssertStatement;
+import org.integratedmodelling.kactors.kactors.Assertion;
 import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Concept;
@@ -95,6 +96,9 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 				return; 
 			case KactorsPackage.ASSERT_STATEMENT:
 				sequence_AssertStatement(context, (AssertStatement) semanticObject); 
+				return; 
+			case KactorsPackage.ASSERTION:
+				sequence_Assertion(context, (Assertion) semanticObject); 
 				return; 
 			case KactorsPackage.ASSIGNMENT:
 				sequence_Assignment(context, (Assignment) semanticObject); 
@@ -341,9 +345,21 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *     AssertStatement returns AssertStatement
 	 *
 	 * Constraint:
-	 *     (methodCalls+=MethodCall* methodCalls+=MethodCallWithActions)
+	 *     (assertions+=Assertion assertions+=Assertion*)
 	 */
 	protected void sequence_AssertStatement(ISerializationContext context, AssertStatement semanticObject) {
+		genericSequencer.createSequence(context, semanticObject);
+	}
+	
+	
+	/**
+	 * Contexts:
+	 *     Assertion returns Assertion
+	 *
+	 * Constraint:
+	 *     (expression=EXPR | (methodCalls+=MethodCall* methodCalls+=MethodCallWithActions))
+	 */
+	protected void sequence_Assertion(ISerializationContext context, Assertion semanticObject) {
 		genericSequencer.createSequence(context, semanticObject);
 	}
 	
@@ -432,10 +448,10 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
 	 *     )
@@ -463,10 +479,10 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
 	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
-	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
 	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
+	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)? 
+	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
 	 *         (operators+='or' operands+=Factor)*

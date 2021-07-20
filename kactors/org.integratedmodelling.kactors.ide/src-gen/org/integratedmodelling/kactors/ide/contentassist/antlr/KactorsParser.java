@@ -45,6 +45,7 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getPreambleAccess().getLogoAlternatives_3_7_1_0_1(), "rule__Preamble__LogoAlternatives_3_7_1_0_1");
 			builder.put(grammarAccess.getMessageCallAccess().getAlternatives_0(), "rule__MessageCall__Alternatives_0");
 			builder.put(grammarAccess.getStatementAccess().getAlternatives_0(), "rule__Statement__Alternatives_0");
+			builder.put(grammarAccess.getAssertionAccess().getAlternatives(), "rule__Assertion__Alternatives");
 			builder.put(grammarAccess.getNextStatementAccess().getAlternatives_1(), "rule__NextStatement__Alternatives_1");
 			builder.put(grammarAccess.getIfStatementAccess().getAlternatives_1(), "rule__IfStatement__Alternatives_1");
 			builder.put(grammarAccess.getElseIfStatementBodyAccess().getAlternatives_0(), "rule__ElseIfStatementBody__Alternatives_0");
@@ -161,7 +162,9 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getMethodCallWithActionsAccess().getGroup_1(), "rule__MethodCallWithActions__Group_1__0");
 			builder.put(grammarAccess.getMethodCallWithActionsAccess().getGroup_2(), "rule__MethodCallWithActions__Group_2__0");
 			builder.put(grammarAccess.getAssertStatementAccess().getGroup(), "rule__AssertStatement__Group__0");
-			builder.put(grammarAccess.getAssertStatementAccess().getGroup_1(), "rule__AssertStatement__Group_1__0");
+			builder.put(grammarAccess.getAssertStatementAccess().getGroup_2(), "rule__AssertStatement__Group_2__0");
+			builder.put(grammarAccess.getAssertionAccess().getGroup_1(), "rule__Assertion__Group_1__0");
+			builder.put(grammarAccess.getAssertionAccess().getGroup_1_0(), "rule__Assertion__Group_1_0__0");
 			builder.put(grammarAccess.getNextStatementAccess().getGroup(), "rule__NextStatement__Group__0");
 			builder.put(grammarAccess.getAssignmentAccess().getGroup(), "rule__Assignment__Group__0");
 			builder.put(grammarAccess.getAssignmentAccess().getGroup_1(), "rule__Assignment__Group_1__0");
@@ -411,8 +414,11 @@ public class KactorsParser extends AbstractContentAssistParser {
 			builder.put(grammarAccess.getMethodCallWithActionsAccess().getNameAssignment_0(), "rule__MethodCallWithActions__NameAssignment_0");
 			builder.put(grammarAccess.getMethodCallWithActionsAccess().getParametersAssignment_1_1(), "rule__MethodCallWithActions__ParametersAssignment_1_1");
 			builder.put(grammarAccess.getMethodCallWithActionsAccess().getActionsAssignment_2_1(), "rule__MethodCallWithActions__ActionsAssignment_2_1");
-			builder.put(grammarAccess.getAssertStatementAccess().getMethodCallsAssignment_1_0(), "rule__AssertStatement__MethodCallsAssignment_1_0");
-			builder.put(grammarAccess.getAssertStatementAccess().getMethodCallsAssignment_2(), "rule__AssertStatement__MethodCallsAssignment_2");
+			builder.put(grammarAccess.getAssertStatementAccess().getAssertionsAssignment_1(), "rule__AssertStatement__AssertionsAssignment_1");
+			builder.put(grammarAccess.getAssertStatementAccess().getAssertionsAssignment_2_1(), "rule__AssertStatement__AssertionsAssignment_2_1");
+			builder.put(grammarAccess.getAssertionAccess().getExpressionAssignment_0(), "rule__Assertion__ExpressionAssignment_0");
+			builder.put(grammarAccess.getAssertionAccess().getMethodCallsAssignment_1_0_0(), "rule__Assertion__MethodCallsAssignment_1_0_0");
+			builder.put(grammarAccess.getAssertionAccess().getMethodCallsAssignment_1_1(), "rule__Assertion__MethodCallsAssignment_1_1");
 			builder.put(grammarAccess.getNextStatementAccess().getAssignmentAssignment_1_0(), "rule__NextStatement__AssignmentAssignment_1_0");
 			builder.put(grammarAccess.getNextStatementAccess().getVerbAssignment_1_1(), "rule__NextStatement__VerbAssignment_1_1");
 			builder.put(grammarAccess.getNextStatementAccess().getGroupAssignment_1_2(), "rule__NextStatement__GroupAssignment_1_2");

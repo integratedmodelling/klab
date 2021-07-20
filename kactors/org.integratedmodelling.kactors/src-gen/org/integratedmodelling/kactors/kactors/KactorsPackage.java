@@ -909,13 +909,13 @@ public interface KactorsPackage extends EPackage
   int ASSERT_STATEMENT = 12;
 
   /**
-   * The feature id for the '<em><b>Method Calls</b></em>' containment reference list.
+   * The feature id for the '<em><b>Assertions</b></em>' containment reference list.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int ASSERT_STATEMENT__METHOD_CALLS = 0;
+  int ASSERT_STATEMENT__ASSERTIONS = 0;
 
   /**
    * The number of structural features of the '<em>Assert Statement</em>' class.
@@ -927,6 +927,43 @@ public interface KactorsPackage extends EPackage
   int ASSERT_STATEMENT_FEATURE_COUNT = 1;
 
   /**
+   * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.AssertionImpl <em>Assertion</em>}' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see org.integratedmodelling.kactors.kactors.impl.AssertionImpl
+   * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getAssertion()
+   * @generated
+   */
+  int ASSERTION = 13;
+
+  /**
+   * The feature id for the '<em><b>Expression</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ASSERTION__EXPRESSION = 0;
+
+  /**
+   * The feature id for the '<em><b>Method Calls</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ASSERTION__METHOD_CALLS = 1;
+
+  /**
+   * The number of structural features of the '<em>Assertion</em>' class.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int ASSERTION_FEATURE_COUNT = 2;
+
+  /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.AssignmentImpl <em>Assignment</em>}' class.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
@@ -934,7 +971,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getAssignment()
    * @generated
    */
-  int ASSIGNMENT = 13;
+  int ASSIGNMENT = 14;
 
   /**
    * The feature id for the '<em><b>Recipient</b></em>' attribute.
@@ -980,7 +1017,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getIfStatement()
    * @generated
    */
-  int IF_STATEMENT = 14;
+  int IF_STATEMENT = 15;
 
   /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
@@ -1053,7 +1090,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getElseIfStatementBody()
    * @generated
    */
-  int ELSE_IF_STATEMENT_BODY = 15;
+  int ELSE_IF_STATEMENT_BODY = 16;
 
   /**
    * The feature id for the '<em><b>Literal</b></em>' containment reference.
@@ -1108,7 +1145,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getStatementBody()
    * @generated
    */
-  int STATEMENT_BODY = 16;
+  int STATEMENT_BODY = 17;
 
   /**
    * The feature id for the '<em><b>Verb</b></em>' containment reference.
@@ -1154,7 +1191,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getWhileStatement()
    * @generated
    */
-  int WHILE_STATEMENT = 17;
+  int WHILE_STATEMENT = 18;
 
   /**
    * The feature id for the '<em><b>Expression</b></em>' attribute.
@@ -1191,7 +1228,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getDoStatement()
    * @generated
    */
-  int DO_STATEMENT = 18;
+  int DO_STATEMENT = 19;
 
   /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
@@ -1228,7 +1265,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getForStatement()
    * @generated
    */
-  int FOR_STATEMENT = 19;
+  int FOR_STATEMENT = 20;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1274,7 +1311,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getActions()
    * @generated
    */
-  int ACTIONS = 20;
+  int ACTIONS = 21;
 
   /**
    * The feature id for the '<em><b>Match</b></em>' containment reference.
@@ -1329,7 +1366,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getValue()
    * @generated
    */
-  int VALUE = 21;
+  int VALUE = 22;
 
   /**
    * The feature id for the '<em><b>Deferred</b></em>' attribute.
@@ -1537,7 +1574,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getConstructor()
    * @generated
    */
-  int CONSTRUCTOR = 22;
+  int CONSTRUCTOR = 23;
 
   /**
    * The feature id for the '<em><b>Path</b></em>' attribute.
@@ -1583,7 +1620,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getMatch()
    * @generated
    */
-  int MATCH = 23;
+  int MATCH = 24;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -1773,7 +1810,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getList()
    * @generated
    */
-  int LIST = 24;
+  int LIST = 25;
 
   /**
    * The feature id for the '<em><b>Contents</b></em>' containment reference list.
@@ -1801,7 +1838,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getListElement()
    * @generated
    */
-  int LIST_ELEMENT = 25;
+  int LIST_ELEMENT = 26;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -1838,7 +1875,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getMap()
    * @generated
    */
-  int MAP = 26;
+  int MAP = 27;
 
   /**
    * The feature id for the '<em><b>Entries</b></em>' containment reference list.
@@ -1866,7 +1903,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTree()
    * @generated
    */
-  int TREE = 27;
+  int TREE = 28;
 
   /**
    * The feature id for the '<em><b>Root</b></em>' containment reference.
@@ -1903,7 +1940,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getMapEntry()
    * @generated
    */
-  int MAP_ENTRY = 28;
+  int MAP_ENTRY = 29;
 
   /**
    * The feature id for the '<em><b>Classifier</b></em>' containment reference.
@@ -1940,7 +1977,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getClassifier()
    * @generated
    */
-  int CLASSIFIER = 29;
+  int CLASSIFIER = 30;
 
   /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
@@ -2094,7 +2131,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getObservable()
    * @generated
    */
-  int OBSERVABLE = 30;
+  int OBSERVABLE = 31;
 
   /**
    * The feature id for the '<em><b>Observable</b></em>' containment reference.
@@ -2122,7 +2159,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getLookupTable()
    * @generated
    */
-  int LOOKUP_TABLE = 31;
+  int LOOKUP_TABLE = 32;
 
   /**
    * The feature id for the '<em><b>Table</b></em>' containment reference.
@@ -2150,7 +2187,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTable()
    * @generated
    */
-  int TABLE = 32;
+  int TABLE = 33;
 
   /**
    * The feature id for the '<em><b>Headers</b></em>' containment reference.
@@ -2187,7 +2224,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getHeaderRow()
    * @generated
    */
-  int HEADER_ROW = 33;
+  int HEADER_ROW = 34;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' attribute list.
@@ -2215,7 +2252,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTableRow()
    * @generated
    */
-  int TABLE_ROW = 34;
+  int TABLE_ROW = 35;
 
   /**
    * The feature id for the '<em><b>Elements</b></em>' containment reference list.
@@ -2243,7 +2280,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getTableClassifier()
    * @generated
    */
-  int TABLE_CLASSIFIER = 35;
+  int TABLE_CLASSIFIER = 36;
 
   /**
    * The feature id for the '<em><b>Boolean</b></em>' attribute.
@@ -2415,7 +2452,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getQuantity()
    * @generated
    */
-  int QUANTITY = 36;
+  int QUANTITY = 37;
 
   /**
    * The feature id for the '<em><b>Value</b></em>' containment reference.
@@ -2470,7 +2507,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getAnnotation()
    * @generated
    */
-  int ANNOTATION = 37;
+  int ANNOTATION = 38;
 
   /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
@@ -2507,7 +2544,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getLiteral()
    * @generated
    */
-  int LITERAL = 38;
+  int LITERAL = 39;
 
   /**
    * The feature id for the '<em><b>Number</b></em>' containment reference.
@@ -2580,7 +2617,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getParameterList()
    * @generated
    */
-  int PARAMETER_LIST = 39;
+  int PARAMETER_LIST = 40;
 
   /**
    * The feature id for the '<em><b>Pairs</b></em>' containment reference list.
@@ -2608,7 +2645,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getKeyValuePair()
    * @generated
    */
-  int KEY_VALUE_PAIR = 40;
+  int KEY_VALUE_PAIR = 41;
 
   /**
    * The feature id for the '<em><b>Tag</b></em>' attribute.
@@ -2672,7 +2709,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUnitElement()
    * @generated
    */
-  int UNIT_ELEMENT = 41;
+  int UNIT_ELEMENT = 42;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2709,7 +2746,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUnit()
    * @generated
    */
-  int UNIT = 42;
+  int UNIT = 43;
 
   /**
    * The feature id for the '<em><b>Root</b></em>' containment reference.
@@ -2755,7 +2792,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getCurrency()
    * @generated
    */
-  int CURRENCY = 43;
+  int CURRENCY = 44;
 
   /**
    * The feature id for the '<em><b>Id</b></em>' attribute.
@@ -2801,7 +2838,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getREL_OPERATOR()
    * @generated
    */
-  int REL_OPERATOR = 44;
+  int REL_OPERATOR = 45;
 
   /**
    * The feature id for the '<em><b>Gt</b></em>' attribute.
@@ -2874,7 +2911,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getNumber()
    * @generated
    */
-  int NUMBER = 45;
+  int NUMBER = 46;
 
   /**
    * The feature id for the '<em><b>Negative</b></em>' attribute.
@@ -2965,7 +3002,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getDate()
    * @generated
    */
-  int DATE = 46;
+  int DATE = 47;
 
   /**
    * The feature id for the '<em><b>Year</b></em>' attribute.
@@ -3056,7 +3093,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getObservableSemantics()
    * @generated
    */
-  int OBSERVABLE_SEMANTICS = 47;
+  int OBSERVABLE_SEMANTICS = 48;
 
   /**
    * The feature id for the '<em><b>Declaration</b></em>' containment reference.
@@ -3147,7 +3184,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getValueOperator()
    * @generated
    */
-  int VALUE_OPERATOR = 48;
+  int VALUE_OPERATOR = 49;
 
   /**
    * The feature id for the '<em><b>Modifier</b></em>' attribute.
@@ -3247,7 +3284,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getConceptDeclaration()
    * @generated
    */
-  int CONCEPT_DECLARATION = 49;
+  int CONCEPT_DECLARATION = 50;
 
   /**
    * The feature id for the '<em><b>Main</b></em>' containment reference list.
@@ -3446,7 +3483,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getConcept()
    * @generated
    */
-  int CONCEPT = 50;
+  int CONCEPT = 51;
 
   /**
    * The feature id for the '<em><b>Negated</b></em>' attribute.
@@ -3708,7 +3745,7 @@ public interface KactorsPackage extends EPackage
    * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getUnitOp()
    * @generated
    */
-  int UNIT_OP = 51;
+  int UNIT_OP = 52;
 
 
   /**
@@ -4590,15 +4627,47 @@ public interface KactorsPackage extends EPackage
   EClass getAssertStatement();
 
   /**
-   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.AssertStatement#getMethodCalls <em>Method Calls</em>}'.
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.AssertStatement#getAssertions <em>Assertions</em>}'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
-   * @return the meta object for the containment reference list '<em>Method Calls</em>'.
-   * @see org.integratedmodelling.kactors.kactors.AssertStatement#getMethodCalls()
+   * @return the meta object for the containment reference list '<em>Assertions</em>'.
+   * @see org.integratedmodelling.kactors.kactors.AssertStatement#getAssertions()
    * @see #getAssertStatement()
    * @generated
    */
-  EReference getAssertStatement_MethodCalls();
+  EReference getAssertStatement_Assertions();
+
+  /**
+   * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Assertion <em>Assertion</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for class '<em>Assertion</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Assertion
+   * @generated
+   */
+  EClass getAssertion();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Assertion#getExpression <em>Expression</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Expression</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Assertion#getExpression()
+   * @see #getAssertion()
+   * @generated
+   */
+  EAttribute getAssertion_Expression();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.Assertion#getMethodCalls <em>Method Calls</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Method Calls</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Assertion#getMethodCalls()
+   * @see #getAssertion()
+   * @generated
+   */
+  EReference getAssertion_MethodCalls();
 
   /**
    * Returns the meta object for class '{@link org.integratedmodelling.kactors.kactors.Assignment <em>Assignment</em>}'.
@@ -8196,12 +8265,38 @@ public interface KactorsPackage extends EPackage
     EClass ASSERT_STATEMENT = eINSTANCE.getAssertStatement();
 
     /**
+     * The meta object literal for the '<em><b>Assertions</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference ASSERT_STATEMENT__ASSERTIONS = eINSTANCE.getAssertStatement_Assertions();
+
+    /**
+     * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.AssertionImpl <em>Assertion</em>}' class.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @see org.integratedmodelling.kactors.kactors.impl.AssertionImpl
+     * @see org.integratedmodelling.kactors.kactors.impl.KactorsPackageImpl#getAssertion()
+     * @generated
+     */
+    EClass ASSERTION = eINSTANCE.getAssertion();
+
+    /**
+     * The meta object literal for the '<em><b>Expression</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute ASSERTION__EXPRESSION = eINSTANCE.getAssertion_Expression();
+
+    /**
      * The meta object literal for the '<em><b>Method Calls</b></em>' containment reference list feature.
      * <!-- begin-user-doc -->
      * <!-- end-user-doc -->
      * @generated
      */
-    EReference ASSERT_STATEMENT__METHOD_CALLS = eINSTANCE.getAssertStatement_MethodCalls();
+    EReference ASSERTION__METHOD_CALLS = eINSTANCE.getAssertion_MethodCalls();
 
     /**
      * The meta object literal for the '{@link org.integratedmodelling.kactors.kactors.impl.AssignmentImpl <em>Assignment</em>}' class.

@@ -17,6 +17,7 @@ import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.AssertStatement;
+import org.integratedmodelling.kactors.kactors.Assertion;
 import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Concept;
@@ -131,6 +132,7 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
       case KactorsPackage.STATEMENT_LIST: return createStatementList();
       case KactorsPackage.STATEMENT: return createStatement();
       case KactorsPackage.ASSERT_STATEMENT: return createAssertStatement();
+      case KactorsPackage.ASSERTION: return createAssertion();
       case KactorsPackage.ASSIGNMENT: return createAssignment();
       case KactorsPackage.IF_STATEMENT: return createIfStatement();
       case KactorsPackage.ELSE_IF_STATEMENT_BODY: return createElseIfStatementBody();
@@ -362,6 +364,18 @@ public class KactorsFactoryImpl extends EFactoryImpl implements KactorsFactory
   {
     AssertStatementImpl assertStatement = new AssertStatementImpl();
     return assertStatement;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public Assertion createAssertion()
+  {
+    AssertionImpl assertion = new AssertionImpl();
+    return assertion;
   }
 
   /**

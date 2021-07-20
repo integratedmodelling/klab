@@ -13,6 +13,7 @@ import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.AssertStatement;
+import org.integratedmodelling.kactors.kactors.Assertion;
 import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Concept;
@@ -211,6 +212,13 @@ public class KactorsSwitch<T> extends Switch<T>
       {
         AssertStatement assertStatement = (AssertStatement)theEObject;
         T result = caseAssertStatement(assertStatement);
+        if (result == null) result = defaultCase(theEObject);
+        return result;
+      }
+      case KactorsPackage.ASSERTION:
+      {
+        Assertion assertion = (Assertion)theEObject;
+        T result = caseAssertion(assertion);
         if (result == null) result = defaultCase(theEObject);
         return result;
       }
@@ -688,6 +696,22 @@ public class KactorsSwitch<T> extends Switch<T>
    * @generated
    */
   public T caseAssertStatement(AssertStatement object)
+  {
+    return null;
+  }
+
+  /**
+   * Returns the result of interpreting the object as an instance of '<em>Assertion</em>'.
+   * <!-- begin-user-doc -->
+   * This implementation returns null;
+   * returning a non-null result will terminate the switch.
+   * <!-- end-user-doc -->
+   * @param object the target of the switch.
+   * @return the result of interpreting the object as an instance of '<em>Assertion</em>'.
+   * @see #doSwitch(org.eclipse.emf.ecore.EObject) doSwitch(EObject)
+   * @generated
+   */
+  public T caseAssertion(Assertion object)
   {
     return null;
   }

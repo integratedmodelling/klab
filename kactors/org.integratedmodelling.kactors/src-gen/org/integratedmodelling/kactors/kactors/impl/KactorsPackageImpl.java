@@ -16,6 +16,7 @@ import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.AssertStatement;
+import org.integratedmodelling.kactors.kactors.Assertion;
 import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Concept;
@@ -162,6 +163,13 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   private EClass assertStatementEClass = null;
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  private EClass assertionEClass = null;
 
   /**
    * <!-- begin-user-doc -->
@@ -1396,9 +1404,42 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EReference getAssertStatement_MethodCalls()
+  public EReference getAssertStatement_Assertions()
   {
     return (EReference)assertStatementEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EClass getAssertion()
+  {
+    return assertionEClass;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EAttribute getAssertion_Expression()
+  {
+    return (EAttribute)assertionEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EReference getAssertion_MethodCalls()
+  {
+    return (EReference)assertionEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -4462,7 +4503,11 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEAttribute(statementEClass, STATEMENT__TAG);
 
     assertStatementEClass = createEClass(ASSERT_STATEMENT);
-    createEReference(assertStatementEClass, ASSERT_STATEMENT__METHOD_CALLS);
+    createEReference(assertStatementEClass, ASSERT_STATEMENT__ASSERTIONS);
+
+    assertionEClass = createEClass(ASSERTION);
+    createEAttribute(assertionEClass, ASSERTION__EXPRESSION);
+    createEReference(assertionEClass, ASSERTION__METHOD_CALLS);
 
     assignmentEClass = createEClass(ASSIGNMENT);
     createEAttribute(assignmentEClass, ASSIGNMENT__RECIPIENT);
@@ -4896,7 +4941,11 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEAttribute(getStatement_Tag(), ecorePackage.getEString(), "tag", null, 0, 1, Statement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(assertStatementEClass, AssertStatement.class, "AssertStatement", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
-    initEReference(getAssertStatement_MethodCalls(), this.getMessageCall(), null, "methodCalls", null, 0, -1, AssertStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getAssertStatement_Assertions(), this.getAssertion(), null, "assertions", null, 0, -1, AssertStatement.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+
+    initEClass(assertionEClass, Assertion.class, "Assertion", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEAttribute(getAssertion_Expression(), ecorePackage.getEString(), "expression", null, 0, 1, Assertion.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEReference(getAssertion_MethodCalls(), this.getMessageCall(), null, "methodCalls", null, 0, -1, Assertion.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(assignmentEClass, Assignment.class, "Assignment", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEAttribute(getAssignment_Recipient(), ecorePackage.getEString(), "recipient", null, 0, 1, Assignment.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

@@ -15,6 +15,7 @@ import org.integratedmodelling.kactors.kactors.ActorInstantiation;
 import org.integratedmodelling.kactors.kactors.Annotation;
 import org.integratedmodelling.kactors.kactors.ArgumentDeclaration;
 import org.integratedmodelling.kactors.kactors.AssertStatement;
+import org.integratedmodelling.kactors.kactors.Assertion;
 import org.integratedmodelling.kactors.kactors.Assignment;
 import org.integratedmodelling.kactors.kactors.Classifier;
 import org.integratedmodelling.kactors.kactors.Concept;
@@ -189,6 +190,11 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
       public Adapter caseAssertStatement(AssertStatement object)
       {
         return createAssertStatementAdapter();
+      }
+      @Override
+      public Adapter caseAssertion(Assertion object)
+      {
+        return createAssertionAdapter();
       }
       @Override
       public Adapter caseAssignment(Assignment object)
@@ -593,6 +599,21 @@ public class KactorsAdapterFactory extends AdapterFactoryImpl
    * @generated
    */
   public Adapter createAssertStatementAdapter()
+  {
+    return null;
+  }
+
+  /**
+   * Creates a new adapter for an object of class '{@link org.integratedmodelling.kactors.kactors.Assertion <em>Assertion</em>}'.
+   * <!-- begin-user-doc -->
+   * This default implementation returns null so that we can easily ignore cases;
+   * it's useful to ignore a case when inheritance will catch all the cases anyway.
+   * <!-- end-user-doc -->
+   * @return the new adapter.
+   * @see org.integratedmodelling.kactors.kactors.Assertion
+   * @generated
+   */
+  public Adapter createAssertionAdapter()
   {
     return null;
   }

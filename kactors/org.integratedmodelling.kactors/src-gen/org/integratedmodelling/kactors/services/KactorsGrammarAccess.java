@@ -1212,40 +1212,88 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.AssertStatement");
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Keyword cAssertKeyword_0 = (Keyword)cGroup.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Assignment cMethodCallsAssignment_1_0 = (Assignment)cGroup_1.eContents().get(0);
-		private final RuleCall cMethodCallsMethodCallParserRuleCall_1_0_0 = (RuleCall)cMethodCallsAssignment_1_0.eContents().get(0);
-		private final Keyword cFullStopKeyword_1_1 = (Keyword)cGroup_1.eContents().get(1);
-		private final Assignment cMethodCallsAssignment_2 = (Assignment)cGroup.eContents().get(2);
-		private final RuleCall cMethodCallsMethodCallWithActionsParserRuleCall_2_0 = (RuleCall)cMethodCallsAssignment_2.eContents().get(0);
+		private final Assignment cAssertionsAssignment_1 = (Assignment)cGroup.eContents().get(1);
+		private final RuleCall cAssertionsAssertionParserRuleCall_1_0 = (RuleCall)cAssertionsAssignment_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cCommaKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Assignment cAssertionsAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cAssertionsAssertionParserRuleCall_2_1_0 = (RuleCall)cAssertionsAssignment_2_1.eContents().get(0);
 		
 		//AssertStatement:
-		//	'assert' (methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions;
+		//	'assert'
+		//	assertions+=Assertion (',' assertions+=Assertion)*;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//'assert' (methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions
+		//'assert' assertions+=Assertion (',' assertions+=Assertion)*
 		public Group getGroup() { return cGroup; }
 		
 		//'assert'
 		public Keyword getAssertKeyword_0() { return cAssertKeyword_0; }
 		
-		//(methodCalls+=MethodCall '.')*
+		//assertions+=Assertion
+		public Assignment getAssertionsAssignment_1() { return cAssertionsAssignment_1; }
+		
+		//Assertion
+		public RuleCall getAssertionsAssertionParserRuleCall_1_0() { return cAssertionsAssertionParserRuleCall_1_0; }
+		
+		//(',' assertions+=Assertion)*
+		public Group getGroup_2() { return cGroup_2; }
+		
+		//','
+		public Keyword getCommaKeyword_2_0() { return cCommaKeyword_2_0; }
+		
+		//assertions+=Assertion
+		public Assignment getAssertionsAssignment_2_1() { return cAssertionsAssignment_2_1; }
+		
+		//Assertion
+		public RuleCall getAssertionsAssertionParserRuleCall_2_1_0() { return cAssertionsAssertionParserRuleCall_2_1_0; }
+	}
+	public class AssertionElements extends AbstractParserRuleElementFinder {
+		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.Assertion");
+		private final Alternatives cAlternatives = (Alternatives)rule.eContents().get(1);
+		private final Assignment cExpressionAssignment_0 = (Assignment)cAlternatives.eContents().get(0);
+		private final RuleCall cExpressionEXPRTerminalRuleCall_0_0 = (RuleCall)cExpressionAssignment_0.eContents().get(0);
+		private final Group cGroup_1 = (Group)cAlternatives.eContents().get(1);
+		private final Group cGroup_1_0 = (Group)cGroup_1.eContents().get(0);
+		private final Assignment cMethodCallsAssignment_1_0_0 = (Assignment)cGroup_1_0.eContents().get(0);
+		private final RuleCall cMethodCallsMethodCallParserRuleCall_1_0_0_0 = (RuleCall)cMethodCallsAssignment_1_0_0.eContents().get(0);
+		private final Keyword cFullStopKeyword_1_0_1 = (Keyword)cGroup_1_0.eContents().get(1);
+		private final Assignment cMethodCallsAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
+		private final RuleCall cMethodCallsMethodCallWithActionsParserRuleCall_1_1_0 = (RuleCall)cMethodCallsAssignment_1_1.eContents().get(0);
+		
+		//Assertion:
+		//	expression=EXPR | (methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions;
+		@Override public ParserRule getRule() { return rule; }
+		
+		//expression=EXPR | (methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions
+		public Alternatives getAlternatives() { return cAlternatives; }
+		
+		//expression=EXPR
+		public Assignment getExpressionAssignment_0() { return cExpressionAssignment_0; }
+		
+		//EXPR
+		public RuleCall getExpressionEXPRTerminalRuleCall_0_0() { return cExpressionEXPRTerminalRuleCall_0_0; }
+		
+		//(methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions
 		public Group getGroup_1() { return cGroup_1; }
 		
+		//(methodCalls+=MethodCall '.')*
+		public Group getGroup_1_0() { return cGroup_1_0; }
+		
 		//methodCalls+=MethodCall
-		public Assignment getMethodCallsAssignment_1_0() { return cMethodCallsAssignment_1_0; }
+		public Assignment getMethodCallsAssignment_1_0_0() { return cMethodCallsAssignment_1_0_0; }
 		
 		//MethodCall
-		public RuleCall getMethodCallsMethodCallParserRuleCall_1_0_0() { return cMethodCallsMethodCallParserRuleCall_1_0_0; }
+		public RuleCall getMethodCallsMethodCallParserRuleCall_1_0_0_0() { return cMethodCallsMethodCallParserRuleCall_1_0_0_0; }
 		
 		//'.'
-		public Keyword getFullStopKeyword_1_1() { return cFullStopKeyword_1_1; }
+		public Keyword getFullStopKeyword_1_0_1() { return cFullStopKeyword_1_0_1; }
 		
 		//methodCalls+=MethodCallWithActions
-		public Assignment getMethodCallsAssignment_2() { return cMethodCallsAssignment_2; }
+		public Assignment getMethodCallsAssignment_1_1() { return cMethodCallsAssignment_1_1; }
 		
 		//MethodCallWithActions
-		public RuleCall getMethodCallsMethodCallWithActionsParserRuleCall_2_0() { return cMethodCallsMethodCallWithActionsParserRuleCall_2_0; }
+		public RuleCall getMethodCallsMethodCallWithActionsParserRuleCall_1_1_0() { return cMethodCallsMethodCallWithActionsParserRuleCall_1_1_0; }
 	}
 	public class NextStatementElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.NextStatement");
@@ -6544,6 +6592,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	private final MethodCallElements pMethodCall;
 	private final MethodCallWithActionsElements pMethodCallWithActions;
 	private final AssertStatementElements pAssertStatement;
+	private final AssertionElements pAssertion;
 	private final NextStatementElements pNextStatement;
 	private final AssignmentElements pAssignment;
 	private final IfStatementElements pIfStatement;
@@ -6641,6 +6690,7 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 		this.pMethodCall = new MethodCallElements();
 		this.pMethodCallWithActions = new MethodCallWithActionsElements();
 		this.pAssertStatement = new AssertStatementElements();
+		this.pAssertion = new AssertionElements();
 		this.pNextStatement = new NextStatementElements();
 		this.pAssignment = new AssignmentElements();
 		this.pIfStatement = new IfStatementElements();
@@ -6907,13 +6957,24 @@ public class KactorsGrammarAccess extends AbstractGrammarElementFinder {
 	}
 	
 	//AssertStatement:
-	//	'assert' (methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions;
+	//	'assert'
+	//	assertions+=Assertion (',' assertions+=Assertion)*;
 	public AssertStatementElements getAssertStatementAccess() {
 		return pAssertStatement;
 	}
 	
 	public ParserRule getAssertStatementRule() {
 		return getAssertStatementAccess().getRule();
+	}
+	
+	//Assertion:
+	//	expression=EXPR | (methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions;
+	public AssertionElements getAssertionAccess() {
+		return pAssertion;
+	}
+	
+	public ParserRule getAssertionRule() {
+		return getAssertionAccess().getRule();
 	}
 	
 	//NextStatement Statement:

@@ -116,7 +116,12 @@ MethodCallWithActions returns MessageCall:
 ;
 
 AssertStatement:
-	'assert' (methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions
+	'assert' 
+		assertions+=Assertion (',' assertions+=Assertion)*;
+
+Assertion:
+		(expression=EXPR | 
+		(methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions)
 ;
 
 NextStatement returns Statement:

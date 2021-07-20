@@ -158,6 +158,12 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         this.type = Type.BOOLEAN;
         this.value = value;
     }
+    
+    public KActorsValue(String expression, KActorCodeStatement parent) {
+        super(null, parent);
+        this.type = Type.EXPRESSION;
+        parseExpression(expression);
+    }
 
     public KActorsValue(Literal value, KActorCodeStatement parent) {
         super(value, parent);
@@ -601,6 +607,7 @@ public class KActorsValue extends KActorCodeStatement implements IKActorsValue {
         case ANYVALUE:
         case BOOLEAN:
         case CLASS:
+        case COMPONENT:
         case DATE:
         case ERROR:
         case EXPRESSION:

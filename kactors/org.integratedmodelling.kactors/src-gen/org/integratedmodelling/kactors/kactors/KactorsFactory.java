@@ -141,6 +141,15 @@ public interface KactorsFactory extends EFactory
   AssertStatement createAssertStatement();
 
   /**
+   * Returns a new object of class '<em>Assertion</em>'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return a new object of class '<em>Assertion</em>'.
+   * @generated
+   */
+  Assertion createAssertion();
+
+  /**
    * Returns a new object of class '<em>Assignment</em>'.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
