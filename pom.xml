@@ -100,7 +100,7 @@
 		<h2gis.version>1.5.0</h2gis.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
-		<tycho-version>1.0.0</tycho-version>
+		<tycho-version>2.1.0</tycho-version>
 		<xtextVersion>2.18.0</xtextVersion>
 		<mweVersion>2.10.0</mweVersion>
 		<googleJibVersion>2.7.1</googleJibVersion>
@@ -108,8 +108,8 @@
 		<!-- the five below go together. Never change one without checking the 
 			others. Spring security latest is currently requiring 5.0.4, implying boot 
 			2.0.0 -->
-		<spring-boot-version>2.0.1.RELEASE</spring-boot-version>
-		<spring-version>5.0.5.RELEASE</spring-version>
+		<spring-boot-version>2.1.0.RELEASE</spring-boot-version>
+		<spring-version>5.1.10.RELEASE</spring-version>
 		<junit-version>4.12</junit-version>
 		<jackson-version>2.9.5</jackson-version>
 		<!-- end versions that need to be in lock-step to avoid multiple Spring 
