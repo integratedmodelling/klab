@@ -35,10 +35,10 @@ package org.noise_planet.noisemodelling.propagation;
 
 import java.util.List;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Polygon;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Polygon;
 
 /*
  * This interface aims to link the acoustic module with many delaunay library,

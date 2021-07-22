@@ -9,6 +9,7 @@ import java.util.List;
 import org.integratedmodelling.kim.api.IKimLoader;
 import org.integratedmodelling.kim.api.IKimProject;
 import org.integratedmodelling.kim.model.KimWorkspace;
+import org.integratedmodelling.klab.Logging;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.api.knowledge.IProject;
 import org.integratedmodelling.klab.api.knowledge.IWorkspace;
@@ -50,8 +51,9 @@ public abstract class AbstractWorkspace implements IWorkspace {
             if (resourceDir.exists() && resourceDir.isDirectory()) {
                 for (File rdir : resourceDir.listFiles()) {
                     if (rdir.isDirectory()) {
+//                    	Logging.INSTANCE.info("read resource " + rdir);
                         /* ResourceReference resource = */Resources.INSTANCE.synchronize(rdir);
-//                        Logging.INSTANCE.info("read resource " + resource.getUrn());
+                        
                     }
                 }
             }

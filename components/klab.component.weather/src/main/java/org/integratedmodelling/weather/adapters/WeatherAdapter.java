@@ -161,7 +161,7 @@ public class WeatherAdapter implements IUrnAdapter {
             Scale eventScale = Scale.create(
                     Time.create((long) event.asData().get(WeatherEvent.START_LONG),
                             (long) event.asData().get(WeatherEvent.START_LONG)),
-                    Shape.create((com.vividsolutions.jts.geom.Geometry) event.asData().get(WeatherEvent.BOUNDING_BOX),
+                    Shape.create((org.locationtech.jts.geom.Geometry) event.asData().get(WeatherEvent.BOUNDING_BOX),
                             Projection.getLatLon()));
 
             Builder ob = builder.startObject("result", "storm_" + event.asData().get(WeatherEvent.ID), eventScale.asGeometry());

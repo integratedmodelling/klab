@@ -3,9 +3,9 @@
 //import org.integratedmodelling.common.vocabulary.GeoNS;
 //import org.integratedmodelling.engine.geospace.layers.SpatialNetwork.IndexedLine;
 //
-//import com.vividsolutions.jts.geom.Point;
-//import com.vividsolutions.jts.linearref.LinearLocation;
-//import com.vividsolutions.jts.linearref.LocationIndexedLine;
+//import org.locationtech.jts.geom.Point;
+//import org.locationtech.jts.linearref.LinearLocation;
+//import org.locationtech.jts.linearref.LocationIndexedLine;
 //
 ///**
 // * Represents the insertion or exit from a known route. 

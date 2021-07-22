@@ -35,9 +35,9 @@ package org.noise_planet.noisemodelling.propagation;
 
 import java.util.Iterator;
 
-import com.vividsolutions.jts.geom.Envelope;
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.index.strtree.STRtree;
+import org.locationtech.jts.geom.Envelope;
+import org.locationtech.jts.geom.Geometry;
+import org.locationtech.jts.index.strtree.STRtree;
 
 /**
  * Connector for RTree.

@@ -33,7 +33,7 @@ import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Parameters;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public class PointInstantiator implements IExpression, IInstantiator {
 

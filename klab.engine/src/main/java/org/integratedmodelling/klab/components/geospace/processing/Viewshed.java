@@ -2,7 +2,7 @@ package org.integratedmodelling.klab.components.geospace.processing;
 
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
 
-import com.vividsolutions.jts.geom.GeometryFactory;
+import org.locationtech.jts.geom.GeometryFactory;
 
 /**
  * 

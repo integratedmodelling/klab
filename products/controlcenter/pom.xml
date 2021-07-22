@@ -177,12 +177,14 @@
 			<version>4.3.6</version> </dependency> <dependency> <groupId>org.json</groupId> 
 			<artifactId>json</artifactId> <version>20140107</version> </dependency> -->
 		<dependency>
-			<groupId>com.oracle</groupId>
-			<artifactId>javafx</artifactId>
-			<version>8.0</version>
-			<systemPath>${java.home}/lib/ext/jfxrt.jar</systemPath>
-			<!-- <systemPath>C:\Program Files\Java\jdk1.8.0_181/jre/lib/ext/jfxrt.jar</systemPath> -->
-			<scope>system</scope>
+		    <groupId>org.openjfx</groupId>
+		    <artifactId>javafx-controls</artifactId>
+		    <version>11</version>
+		</dependency>
+		<dependency>
+		    <groupId>org.openjfx</groupId>
+		    <artifactId>javafx-fxml</artifactId>
+		    <version>11</version>
 		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>

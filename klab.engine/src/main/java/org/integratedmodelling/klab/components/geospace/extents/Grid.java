@@ -1026,9 +1026,9 @@ public class Grid extends Area implements IGrid {
 	 */
 	public IGrid cutToShape(Shape shape) throws KlabException {
 
-		com.vividsolutions.jts.geom.Envelope genv = Envelope.create(getEast(), getWest(), getSouth(), getNorth(),
+		org.locationtech.jts.geom.Envelope genv = Envelope.create(getEast(), getWest(), getSouth(), getNorth(),
 				projection).envelope;
-		com.vividsolutions.jts.geom.Envelope senv = shape.shapeGeometry.getEnvelope().getEnvelopeInternal();
+		org.locationtech.jts.geom.Envelope senv = shape.shapeGeometry.getEnvelope().getEnvelopeInternal();
 
 		if (!genv.covers(senv)) {
 			return null;

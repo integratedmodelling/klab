@@ -25,11 +25,11 @@ import org.geotools.data.DataStoreFinder;
 import org.geotools.data.FeatureSource;
 import org.geotools.data.shapefile.ShapefileDataStoreFactory;
 import org.geotools.factory.CommonFactoryFinder;
-import org.geotools.factory.GeoTools;
 import org.geotools.feature.FeatureCollection;
 import org.geotools.feature.FeatureIterator;
 import org.geotools.filter.text.cql2.CQLException;
 import org.geotools.filter.text.ecql.ECQL;
+import org.geotools.util.factory.GeoTools;
 import org.integratedmodelling.kim.api.IKimConcept.Type;
 import org.integratedmodelling.klab.Resources;
 import org.integratedmodelling.klab.Urn;
@@ -95,11 +95,11 @@ public class VectorEncoder implements IResourceEncoder {
 			throw new KlabResourceNotFoundException("vector resource " + resource.getUrn() + " cannot be accessed");
 		}
 
-		Map<Object, Object> map = new HashMap<>();
+		Map<String, Object> map = new HashMap<>();
 		try {
-			map.put("url", mainFile.toURI().toURL().toString());
+			map.put("url", mainFile.toURI().toURL());
             // TODO check and honor any charset in the resource. This could be the default.
-			map.put(ShapefileDataStoreFactory.DBFCHARSET, "UTF-8");
+			map.put(ShapefileDataStoreFactory.DBFCHARSET.key, "UTF-8");
 			DataStore dataStore = DataStoreFinder.getDataStore(map);
 			String typeName = dataStore.getTypeNames()[0];
 			return dataStore.getFeatureSource(typeName);
@@ -210,20 +210,20 @@ public class VectorEncoder implements IResourceEncoder {
 
 			SimpleFeature feature = it.next();
 			Object shape = feature.getDefaultGeometryProperty().getValue();
-			if (shape instanceof com.vividsolutions.jts.geom.Geometry) {
+			if (shape instanceof org.locationtech.jts.geom.Geometry) {
 
-				if (((com.vividsolutions.jts.geom.Geometry) shape).isEmpty()) {
+				if (((org.locationtech.jts.geom.Geometry) shape).isEmpty()) {
 					continue;
 				}
 				
                 if ("true".equals(resource.getParameters().get("sanitize", "false").toString())) {
-//					shape = GeometrySanitizer.sanitize((com.vividsolutions.jts.geom.Geometry) shape);
-	                if (!((com.vividsolutions.jts.geom.Geometry) shape).isValid()) {
-	                    shape = ((com.vividsolutions.jts.geom.Geometry) shape).buffer(0);
+//					shape = GeometrySanitizer.sanitize((org.org.locationtecheom.Geometry) shape);
+	                if (!((org.locationtech.jts.geom.Geometry) shape).isValid()) {
+	                    shape = ((org.locationtech.jts.geom.Geometry) shape).buffer(0);
 	                }
 				}
 
-				IShape objectShape = Shape.create((com.vividsolutions.jts.geom.Geometry) shape, originalProjection)
+				IShape objectShape = Shape.create((org.locationtech.jts.geom.Geometry) shape, originalProjection)
 						.transform(requestScale.getSpace().getProjection());
 
 				if (intersect) {

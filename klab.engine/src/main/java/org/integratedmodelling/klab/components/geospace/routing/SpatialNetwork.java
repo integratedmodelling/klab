@@ -22,23 +22,23 @@
 //import org.jgrapht.alg.DijkstraShortestPath;
 //import org.jgrapht.graph.DefaultDirectedGraph;
 //
-//import com.vividsolutions.jts.geom.Coordinate;
-//import com.vividsolutions.jts.geom.Envelope;
-//import com.vividsolutions.jts.geom.Geometry;
-//import com.vividsolutions.jts.geom.GeometryFactory;
-//import com.vividsolutions.jts.geom.LineString;
-//import com.vividsolutions.jts.geom.MultiLineString;
-//import com.vividsolutions.jts.geom.MultiPoint;
-//import com.vividsolutions.jts.geom.MultiPolygon;
-//import com.vividsolutions.jts.geom.Point;
-//import com.vividsolutions.jts.geom.Polygon;
-//import com.vividsolutions.jts.index.strtree.STRtree;
-//import com.vividsolutions.jts.linearref.LinearLocation;
-//import com.vividsolutions.jts.linearref.LocationIndexedLine;
-//import com.vividsolutions.jts.operation.linemerge.LineMergeEdge;
-//import com.vividsolutions.jts.operation.linemerge.LineMergeGraph;
-//import com.vividsolutions.jts.planargraph.DirectedEdge;
-//import com.vividsolutions.jts.planargraph.Node;
+//import org.locationtech.jts.geom.Coordinate;
+//import org.locationtech.jts.geom.Envelope;
+//import org.locationtech.jts.geom.Geometry;
+//import org.locationtech.jts.geom.GeometryFactory;
+//import org.locationtech.jts.geom.LineString;
+//import org.locationtech.jts.geom.MultiLineString;
+//import org.locationtech.jts.geom.MultiPoint;
+//import org.locationtech.jts.geom.MultiPolygon;
+//import org.locationtech.jts.geom.Point;
+//import org.locationtech.jts.geom.Polygon;
+//import org.locationtech.jts.index.strtree.STRtree;
+//import org.locationtech.jts.linearref.LinearLocation;
+//import org.locationtech.jts.linearref.LocationIndexedLine;
+//import org.locationtech.jts.operation.linemerge.LineMergeEdge;
+//import org.locationtech.jts.operation.linemerge.LineMergeGraph;
+//import org.locationtech.jts.planargraph.DirectedEdge;
+//import org.locationtech.jts.planargraph.Node;
 //
 ///**
 // * Pseudograph is undirected and allows loops and multiple edges. Not sure this is the way

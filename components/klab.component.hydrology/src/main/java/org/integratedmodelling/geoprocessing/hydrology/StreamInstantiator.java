@@ -25,9 +25,9 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.scale.Scale;
 
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineString;
-import com.vividsolutions.jts.geom.Point;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LineString;
+import org.locationtech.jts.geom.Point;
 
 public class StreamInstantiator implements IInstantiator, IExpression {
 
@@ -35,7 +35,7 @@ public class StreamInstantiator implements IInstantiator, IExpression {
 
 	double threshold = Double.NaN;
 	Map<Cell, List<Coordinate>> segments = new HashMap<>();
-	List<com.vividsolutions.jts.geom.Geometry> lines = new ArrayList<>();
+	List<org.locationtech.jts.geom.Geometry> lines = new ArrayList<>();
 
 	@Override
 	public Type getType() {
@@ -90,7 +90,7 @@ public class StreamInstantiator implements IInstantiator, IExpression {
 		List<IObjectArtifact> ret = new ArrayList<>();
 
 		if (lines.size() > 0) {
-			com.vividsolutions.jts.geom.Geometry shape = Geospace.gFactory.buildGeometry(lines);
+			org.locationtech.jts.geom.Geometry shape = Geospace.gFactory.buildGeometry(lines);
 			ret.add(context.newObservation(semantics, "stream_network",
 					Scale.substituteExtent(context.getScale(), Shape.create(shape, grid.getProjection())),
 					/* TODO send useful metadata */null));

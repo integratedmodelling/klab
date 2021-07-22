@@ -16,10 +16,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.jxpath.JXPathContext;
-import org.geotools.wcs.WCSConfiguration;
-import org.geotools.xml.Parser;
+import org.geotools.wcs.v2_0.WCSConfiguration;
+import org.geotools.xsd.Parser;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Klab;
 import org.integratedmodelling.klab.Logging;

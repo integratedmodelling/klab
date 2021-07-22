@@ -31,7 +31,8 @@ import org.integratedmodelling.klab.utils.Escape;
 import org.integratedmodelling.klab.utils.Parameters;
 
 import com.google.common.util.concurrent.RateLimiter;
-import com.vividsolutions.jts.geom.Geometry;
+
+import org.locationtech.jts.geom.Geometry;
 
 import de.topobyte.osm4j.core.access.OsmIterator;
 import de.topobyte.osm4j.core.dataset.InMemoryMapDataSet;

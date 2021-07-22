@@ -25,8 +25,8 @@ import org.geotools.data.shapefile.ShapefileDataStore;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
 import org.geotools.data.simple.SimpleFeatureSource;
-import org.geotools.factory.Hints;
 import org.geotools.jdbc.JDBCDataStore;
+import org.geotools.util.factory.Hints;
 import org.integratedmodelling.klab.Configuration;
 import org.integratedmodelling.klab.Extensions;
 import org.integratedmodelling.klab.Klab;
@@ -55,8 +55,8 @@ import org.opengis.feature.simple.SimpleFeatureType;
 import org.opengis.feature.type.AttributeDescriptor;
 import org.postgresql.util.PGobject;
 
-import com.vividsolutions.jts.geom.Geometry;
-import com.vividsolutions.jts.io.WKBReader;
+import  org.locationtech.jts.geom.Geometry;
+import  org.locationtech.jts.io.WKBReader;
 
 public class Postgis {
 
@@ -763,7 +763,8 @@ public class Postgis {
                 st.execute("DROP TABLE IF EXISTS " + table + ";");
             }
 
-            Map<Object, Object> map = new HashMap<>();
+            //steve changed this without understanding what it could mean further down
+            Map<String, String> map = new HashMap<>();
             map.put("url", resource.toURI().toURL().toString());
             DataStore dataStore = DataStoreFinder.getDataStore(map);
             if (dataStore instanceof ShapefileDataStore) {

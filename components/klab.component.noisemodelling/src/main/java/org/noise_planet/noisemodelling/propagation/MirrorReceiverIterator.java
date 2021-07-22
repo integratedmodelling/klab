@@ -39,9 +39,9 @@ import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 
-import com.vividsolutions.jts.algorithm.CGAlgorithms;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.geom.LineSegment;
+import org.locationtech.jts.algorithm.CGAlgorithms;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.geom.LineSegment;
 
 /**
  * Iterator through mirrored receiver

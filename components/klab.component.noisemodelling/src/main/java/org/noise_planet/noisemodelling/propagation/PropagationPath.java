@@ -39,9 +39,9 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.vividsolutions.jts.algorithm.CGAlgorithms3D;
-import com.vividsolutions.jts.geom.Coordinate;
-import com.vividsolutions.jts.math.Vector3D;
+import org.locationtech.jts.algorithm.CGAlgorithms3D;
+import org.locationtech.jts.geom.Coordinate;
+import org.locationtech.jts.math.Vector3D;
 
 /**
  * PropagationPath

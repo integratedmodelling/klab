@@ -35,7 +35,7 @@ import org.integratedmodelling.klab.rest.ModelReference;
 import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 
-import com.vividsolutions.jts.geom.Geometry;
+import org.locationtech.jts.geom.Geometry;
 
 public class Prioritizer implements IPrioritizer<ModelReference> {
 

@@ -49,7 +49,7 @@ public class OSMUrnAdapter implements IUrnAdapter {
 
 			if (data.containsKey(Geocoder.GEOMETRY_FIELD)) {
 				Shape shape = Shape.create(
-						data.get(Geocoder.GEOMETRY_FIELD, com.vividsolutions.jts.geom.Geometry.class),
+						data.get(Geocoder.GEOMETRY_FIELD, org.locationtech.jts.geom.Geometry.class),
 						Projection.getLatLon());
 				// TODO adjust, parameterize for power users
 				shape.simplifyIfNecessary(1000, 2000);
