@@ -21,7 +21,6 @@ import org.eclipse.xtext.ui.editor.syntaxcoloring.IHighlightingConfiguration;
 import org.eclipse.xtext.ui.resource.IResourceSetProvider;
 import org.eclipse.xtext.ui.resource.SimpleResourceSetProvider;
 import org.eclipse.xtext.ui.shared.Access;
-import org.integratedmodelling.kim.ui.AbstractKimUiModule;
 import org.integratedmodelling.kim.ui.contentassist.KimDocumentationProvider;
 import org.integratedmodelling.kim.ui.contentassist.KimHoverProvider;
 import org.integratedmodelling.kim.ui.contentassist.KimNatureAddingEditorCallback;
@@ -101,7 +100,7 @@ public class KimUiModule extends AbstractKimUiModule {
     return KimDocumentationProvider.class;
   }
   
-  public KimUiModule(final AbstractUIPlugin arg0) {
-    super(arg0);
+  public KimUiModule(final AbstractUIPlugin plugin) {
+    super(plugin);
   }
 }

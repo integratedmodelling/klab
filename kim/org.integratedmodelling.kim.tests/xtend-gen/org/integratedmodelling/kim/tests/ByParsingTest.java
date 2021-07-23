@@ -13,7 +13,6 @@ import org.eclipse.xtext.xbase.lib.InputOutput;
 import org.integratedmodelling.kim.kim.Model;
 import org.integratedmodelling.kim.model.Kim;
 import org.integratedmodelling.kim.model.KimObservable;
-import org.integratedmodelling.kim.tests.KimInjectorProvider;
 import org.junit.Assert;
 import org.junit.Test;
 import org.junit.runner.RunWith;

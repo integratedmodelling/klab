@@ -3,7 +3,7 @@ package org.integratedmodelling.klab.node.controllers;
 import java.io.File;
 import java.util.Map;
 
-import javax.ws.rs.QueryParam;
+//import javax.ws.rs.QueryParam;
 
 import org.integratedmodelling.klab.Authorities;
 import org.integratedmodelling.klab.Configuration;
@@ -23,6 +23,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
@@ -46,7 +47,7 @@ public class AdminController {
 	}
 
 	@PutMapping(value = API.NODE.ADMIN.SET_PROPERTY)
-	public void setProperty(@PathVariable String property, @QueryParam(value = "value") String value) {
+	public void setProperty(@PathVariable String property, @RequestParam(value = "value") String value) {
 		Configuration.INSTANCE.getProperties().setProperty(property, value);
 		Configuration.INSTANCE.save();
 	}

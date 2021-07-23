@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kactors.ui.contentassist;
 
-import org.integratedmodelling.kactors.ui.contentassist.AbstractKactorsProposalProvider;
-
 /**
  * See https://www.eclipse.org/Xtext/documentation/304_ide_concepts.html#content-assist
  * on how to customize the content assistant.

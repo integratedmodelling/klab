@@ -9,7 +9,6 @@ import org.eclipse.xtext.util.Modules2;
 import org.integratedmodelling.kdl.KdlRuntimeModule;
 import org.integratedmodelling.kdl.KdlStandaloneSetup;
 import org.integratedmodelling.kdl.ide.KdlIdeModule;
-import org.integratedmodelling.kdl.web.KdlWebModule;
 
 /**
  * Initialization support for running Xtext languages in web applications.

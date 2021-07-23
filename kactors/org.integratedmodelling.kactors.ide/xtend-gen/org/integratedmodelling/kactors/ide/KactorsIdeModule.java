@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kactors.ide;
 
-import org.integratedmodelling.kactors.ide.AbstractKactorsIdeModule;
-
 /**
  * Use this class to register ide components.
  */

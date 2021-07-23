@@ -3,8 +3,6 @@
  */
 package org.integratedmodelling.kactors;
 
-import org.integratedmodelling.kactors.KactorsStandaloneSetupGenerated;
-
 /**
  * Initialization support for running Xtext languages without Equinox extension registry.
  */

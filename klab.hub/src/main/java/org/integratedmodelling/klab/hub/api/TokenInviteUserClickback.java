@@ -2,10 +2,12 @@ package org.integratedmodelling.klab.hub.api;
 
 import java.util.Set;
 
+import javax.validation.constraints.NotNull;
+
 import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.springframework.data.annotation.TypeAlias;
 
-import com.sun.istack.NotNull;
+//import com.sun.istack.NotNull;
 
 @TypeAlias("InviteUser")
 public class TokenInviteUserClickback extends TokenClickback{

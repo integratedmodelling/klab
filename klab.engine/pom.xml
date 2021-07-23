@@ -341,7 +341,7 @@
 
 		<!-- Open Provenance toolkit. Older stuff, must exclude gson to avoid messing 
 			up Spring. -->
-		<dependency>
+<!-- 		<dependency>
 			<groupId>org.openprovenance.prov</groupId>
 			<artifactId>prov-model</artifactId>
 			<version>0.7.3</version>
@@ -363,7 +363,7 @@
 				</exclusion>
 			</exclusions>
 		</dependency>
-
+ -->
 		<!-- Lucene for indexing -->
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
