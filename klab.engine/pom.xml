@@ -88,12 +88,8 @@
 			<version>1.9.4</version> </dependency> -->
 
 		<!-- for tests. Remove at will. -->
-<!-- 		<dependency>
-			<groupId>de.javatux.jfortune</groupId>
-			<artifactId>jfortune</artifactId>
-			<version>0.5</version>
-		</dependency>
- -->
+		<!-- <dependency> <groupId>de.javatux.jfortune</groupId> <artifactId>jfortune</artifactId> 
+			<version>0.5</version> </dependency> -->
 
 		<!-- xChart for the charting extension of the table view -->
 		<dependency>
@@ -202,6 +198,10 @@
 					<groupId>javax.measure</groupId>
 					<artifactId>jsr-275</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.locationtech.jts</groupId>
+					<artifactId>jts-core</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -220,6 +220,10 @@
 				<exclusion>
 					<groupId>javax.measure</groupId>
 					<artifactId>jsr-275</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.locationtech.jts</groupId>
+					<artifactId>jts-core</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -244,6 +248,10 @@
 					<groupId>javax.measure</groupId>
 					<artifactId>jsr-275</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.locationtech.jts</groupId>
+					<artifactId>jts-core</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -266,6 +274,10 @@
 				<exclusion>
 					<groupId>javax.measure</groupId>
 					<artifactId>jsr-275</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>org.locationtech.jts</groupId>
+					<artifactId>jts-core</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -540,8 +552,12 @@
 			<groupId>org.orbisgis</groupId>
 			<artifactId>h2gis</artifactId>
 			<version>1.5.1-20210618.020712-276</version>
-			<!-- <exclusions> <exclusion> <groupId>org.locationtech</groupId> <artifactId>jts</artifactId> 
-				</exclusion> </exclusions> -->
+			<exclusions>
+				<exclusion>
+					<groupId>org.locationtech.jts</groupId>
+					<artifactId>jts-core</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/args4j/args4j startup options parser -->

@@ -96,7 +96,7 @@
 			 -->
 		<geotools.version>23.0</geotools.version>
 		<hortonmachine.version>0.10.1</hortonmachine.version>
-		<jts.version>1.17.1</jts.version>
+		<jts.version>1.16.1</jts.version>
 		<h2gis.version>1.5.0</h2gis.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
