@@ -11,42 +11,33 @@
 
 	<!-- wanted by jgrasstools and osm4j. Would be lovely to avoid these. -->
 	<repositories>
-		<!-- <repository> <id>simulation</id> <url>http://www.simulation.tudelft.nl/maven</url> 
-			</repository> <repository> <id>sk-3</id> <url>http://simulation.tudelft.nl/maven</url> 
-			</repository> -->
-		<repository>
-			<id>topobyte</id>
-			<url>http://mvn.topobyte.de</url>
-		</repository>
 		<repository>
 			<id>slimjars</id>
 			<url>http://mvn.slimjars.com</url>
 		</repository>
-		<!--  Another old library hosting its news builds on its own repo-->
-        <repository>
-            <id>orbisgis-nexus-snapshot</id>
-            <name>OrbisGIS nexus snapshot repository</name>
-            <url>https://nexus.orbisgis.org/repository/orbisgis-snapshot/</url>
-        </repository>
+		<!-- Another old library hosting its news builds on its own repo -->
+		<repository>
+			<id>orbisgis-nexus-snapshot</id>
+			<name>OrbisGIS nexus snapshot repository</name>
+			<url>https://nexus.orbisgis.org/repository/orbisgis-snapshot/</url>
+		</repository>
+		<repository>
+			<id>topobyte</id>
+			<url>http://mvn.topobyte.de</url>
+		</repository>
 	</repositories>
 
 	<build>
 		<pluginManagement>
 			<plugins>
-		  		<plugin>
-		  			<groupId>com.google.cloud.tools</groupId>
-		  			<artifactId>jib-maven-plugin</artifactId>
-		  			<configuration>
-		  				<!-- we don't want jib to execute on this module -->
-		  				<skip>true</skip>
-		  			</configuration>
-		      	</plugin>
-				<!-- <plugin> <artifactId>kotlin-maven-plugin</artifactId> <groupId>org.jetbrains.kotlin</groupId> 
-					<version>${kotlin.version}</version> <executions> <execution> <id>compile</id> 
-					<goals> <goal>compile</goal> </goals> <configuration> <sourceDirs> <sourceDir>${project.basedir}/src/main/java</sourceDir> 
-					</sourceDirs> </configuration> </execution> <execution> <id>test-compile</id> 
-					<goals> <goal>test-compile</goal> </goals> <configuration> <sourceDirs> <sourceDir>${project.basedir}/src/test/java</sourceDir> 
-					</sourceDirs> </configuration> </execution> </executions> </plugin> -->
+				<plugin>
+					<groupId>com.google.cloud.tools</groupId>
+					<artifactId>jib-maven-plugin</artifactId>
+					<configuration>
+						<!-- we don't want jib to execute on this module -->
+						<skip>true</skip>
+					</configuration>
+				</plugin>
 				<plugin>
 					<groupId>org.apache.maven.plugins</groupId>
 					<artifactId>maven-compiler-plugin</artifactId>
@@ -55,7 +46,7 @@
 					<configuration>
 						<compilerId>groovy-eclipse-compiler</compilerId>
 						<compilerArguments>
-							<indy/><!-- optional; supported by batch 2.4.12-04+ -->
+							<indy /><!-- optional; supported by batch 2.4.12-04+ -->
 						</compilerArguments>
 					</configuration>
 					<dependencies>
@@ -79,40 +70,30 @@
 				</plugin>
 			</plugins>
 		</pluginManagement>
-		<plugins>
-			<!-- <plugin> <groupId>org.apache.maven.plugins</groupId> <artifactId>maven-jar-plugin</artifactId> 
-				<version>2.4</version> <executions> <execution> <phase>process-classes</phase> 
-				<goals> <goal>jar</goal> </goals> <configuration> <archive> <manifestEntries> 
-				<premain-class>org.javabenchmark.instrumentation.Agent</premain-class> </manifestEntries> 
-				</archive> </configuration> </execution> </executions> </plugin> <plugin> 
-				<groupId>org.apache.maven.plugins</groupId> <artifactId>maven-surefire-plugin</artifactId> 
-				<version>2.14</version> <configuration> <argline>-javaagent:target/${project.build.finalName}.jar</argline> 
-				</configuration> </plugin> -->
-		</plugins>
 	</build>
 	<dependencies>
 
-<!-- 		<dependency>
-			<groupId>org.beryx</groupId>
-			<artifactId>text-io</artifactId>
-			<version>3.4.1</version>
-		</dependency> -->
-
- 		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils 
- 				<dependency>
-			<groupId>commons-beanutils</groupId>
-			<artifactId>commons-beanutils</artifactId>
-			<version>1.9.4</version>
+		<!-- https://mvnrepository.com/artifact/javax.measure/jsr-275 -->
+		<dependency>
+			<groupId>net.java.dev.jsr-275</groupId>
+			<artifactId>jsr-275</artifactId>
+			<version>1.0-beta-2</version>
 		</dependency>
- -->
+
+		<!-- <dependency> <groupId>org.beryx</groupId> <artifactId>text-io</artifactId> 
+			<version>3.4.1</version> </dependency> -->
+
+		<!-- https://mvnrepository.com/artifact/commons-beanutils/commons-beanutils 
+			<dependency> <groupId>commons-beanutils</groupId> <artifactId>commons-beanutils</artifactId> 
+			<version>1.9.4</version> </dependency> -->
 
 		<!-- for tests. Remove at will. -->
-		<dependency>
+<!-- 		<dependency>
 			<groupId>de.javatux.jfortune</groupId>
 			<artifactId>jfortune</artifactId>
 			<version>0.5</version>
 		</dependency>
-
+ -->
 
 		<!-- xChart for the charting extension of the table view -->
 		<dependency>
@@ -124,16 +105,16 @@
 		<!-- Unirest, while redundant with Spring templates, removes a lot of pain 
 			when doing quick REST interactions -->
 		<dependency>
-		    <groupId>com.konghq</groupId>
-		    <artifactId>unirest-java</artifactId>
-		    <version>3.11.09</version>
-		    <classifier>standalone</classifier>
+			<groupId>com.konghq</groupId>
+			<artifactId>unirest-java</artifactId>
+			<version>3.11.09</version>
+			<classifier>standalone</classifier>
 		</dependency>
 		<dependency>
 			<groupId>com.konghq</groupId>
 			<artifactId>unirest-objectmapper-jackson</artifactId>
-		    <version>3.11.09</version>
-		    <classifier>standalone</classifier>
+			<version>3.11.09</version>
+			<classifier>standalone</classifier>
 		</dependency>
 
 		<!-- POI for Excel -->
@@ -217,6 +198,10 @@
 					<groupId>com.google.guava</groupId>
 					<artifactId>guava</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>javax.measure</groupId>
+					<artifactId>jsr-275</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -231,6 +216,10 @@
 				<exclusion>
 					<groupId>com.google.guava</groupId>
 					<artifactId>guava</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.measure</groupId>
+					<artifactId>jsr-275</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -251,6 +240,10 @@
 					<groupId>org.locationtech</groupId>
 					<artifactId>jts</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>javax.measure</groupId>
+					<artifactId>jsr-275</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
@@ -269,6 +262,10 @@
 				<exclusion>
 					<groupId>org.locationtech</groupId>
 					<artifactId>jts</artifactId>
+				</exclusion>
+				<exclusion>
+					<groupId>javax.measure</groupId>
+					<artifactId>jsr-275</artifactId>
 				</exclusion>
 			</exclusions>
 		</dependency>
@@ -341,29 +338,12 @@
 
 		<!-- Open Provenance toolkit. Older stuff, must exclude gson to avoid messing 
 			up Spring. -->
-<!-- 		<dependency>
-			<groupId>org.openprovenance.prov</groupId>
-			<artifactId>prov-model</artifactId>
-			<version>0.7.3</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.code.gson</groupId>
-					<artifactId>gson</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
-		<dependency>
-			<groupId>org.openprovenance.prov</groupId>
-			<artifactId>prov-interop</artifactId>
-			<version>0.7.3</version>
-			<exclusions>
-				<exclusion>
-					<groupId>com.google.code.gson</groupId>
-					<artifactId>gson</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
- -->
+		<!-- <dependency> <groupId>org.openprovenance.prov</groupId> <artifactId>prov-model</artifactId> 
+			<version>0.7.3</version> <exclusions> <exclusion> <groupId>com.google.code.gson</groupId> 
+			<artifactId>gson</artifactId> </exclusion> </exclusions> </dependency> <dependency> 
+			<groupId>org.openprovenance.prov</groupId> <artifactId>prov-interop</artifactId> 
+			<version>0.7.3</version> <exclusions> <exclusion> <groupId>com.google.code.gson</groupId> 
+			<artifactId>gson</artifactId> </exclusion> </exclusions> </dependency> -->
 		<!-- Lucene for indexing -->
 		<dependency>
 			<groupId>org.apache.lucene</groupId>
@@ -560,12 +540,8 @@
 			<groupId>org.orbisgis</groupId>
 			<artifactId>h2gis</artifactId>
 			<version>1.5.1-20210618.020712-276</version>
-<!-- 			<exclusions>
-				<exclusion>
-					<groupId>org.locationtech</groupId>
-					<artifactId>jts</artifactId>
-				</exclusion>
-			</exclusions> -->
+			<!-- <exclusions> <exclusion> <groupId>org.locationtech</groupId> <artifactId>jts</artifactId> 
+				</exclusion> </exclusions> -->
 		</dependency>
 
 		<!-- https://mvnrepository.com/artifact/args4j/args4j startup options parser -->
@@ -595,6 +571,12 @@
 			<groupId>org.geotools</groupId>
 			<artifactId>gt-referencing</artifactId>
 			<version>${geotools.version}</version>
+			<exclusions>
+				<exclusion>
+					<groupId>javax</groupId>
+					<artifactId>javaee-api</artifactId>
+				</exclusion>
+			</exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.geotools</groupId>
@@ -771,40 +753,18 @@
 		<!-- https://mvnrepository.com/artifact/org.integratedmodelling/jscience -->
 		<!-- TODO find a way to use the official Maven package, which contains 
 			OGC implementations incompatible with Geotool's -->
-<!-- 		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>jscience</artifactId>
-			<version>4.3.1</version>
-		</dependency> -->
+		<!-- <dependency> <groupId>org.integratedmodelling</groupId> <artifactId>jscience</artifactId> 
+			<version>4.3.1</version> </dependency> -->
 		<!-- https://mvnrepository.com/artifact/org.jscience/jscience -->
-<!-- 		<dependency>
-		    <groupId>org.jscience</groupId>
-		    <artifactId>jscience</artifactId>
-		    <version>4.3.1</version>
-			<exclusions>
-				<exclusion>
-					<groupId>org.locationtech</groupId>
-					<artifactId>jts</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency> -->
-<!-- https://mvnrepository.com/artifact/javax.measure/unit-api -->
-<!-- 		<dependency>
-		  <groupId>tech.units</groupId>
-		  <artifactId>indriya</artifactId>
-		  <version>2.1.2</version>
-		</dependency>
- -->
-<!-- 		 <dependency>
-		  <groupId>systems.uom</groupId>
-		  <artifactId>systems-ucum</artifactId>
-		  <version>2.1</version>
-		</dependency>
-		<dependency>
-		  <groupId>systems.uom</groupId>
-		  <artifactId>systems-quantity</artifactId>
-		  <version>2.1</version>
-		</dependency> -->
-		 
+		<!-- <dependency> <groupId>org.jscience</groupId> <artifactId>jscience</artifactId> 
+			<version>4.3.1</version> <exclusions> <exclusion> <groupId>org.locationtech</groupId> 
+			<artifactId>jts</artifactId> </exclusion> </exclusions> </dependency> -->
+		<!-- https://mvnrepository.com/artifact/javax.measure/unit-api -->
+		<!-- <dependency> <groupId>tech.units</groupId> <artifactId>indriya</artifactId> 
+			<version>2.1.2</version> </dependency> -->
+		<!-- <dependency> <groupId>systems.uom</groupId> <artifactId>systems-ucum</artifactId> 
+			<version>2.1</version> </dependency> <dependency> <groupId>systems.uom</groupId> 
+			<artifactId>systems-quantity</artifactId> <version>2.1</version> </dependency> -->
+
 	</dependencies>
 </project>

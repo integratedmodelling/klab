@@ -94,8 +94,8 @@
 			Next step: gt 20.0, horton 0.9.6, jts 1.16 (with different namespaces) - that should
 			allow Java upgrade to 1.13
 			 -->
-		<geotools.version>24.0</geotools.version>
-		<hortonmachine.version>0.9.6</hortonmachine.version>
+		<geotools.version>23.0</geotools.version>
+		<hortonmachine.version>0.10.1</hortonmachine.version>
 		<jts.version>1.17.1</jts.version>
 		<h2gis.version>1.5.0</h2gis.version>
 		<maven.compiler.source>1.8</maven.compiler.source>
