@@ -42,7 +42,7 @@ endif::[]
 
 The k.Actors language, one of the three languages supported in k.LAB, is used to specify reactive _behaviors_ for the different agents created during a k.LAB session, including observations of all kinds. By extending the notion of _agent_ to k.LAB users and sessions, k.Actors also enables the definition of _applications_ that implement custom user interfaces and support specialized workflows on top of the <<chapter-explorer,k.Explorer>> view component. Applications can also encode complex batch computations and test cases, intended as behaviors for the k.LAB runtime.
 
-The k.Actors language has a very simple, minimal syntax that belies a complex and powerful model of execution. Both k.IM and k.Actors draw their syntax from the English language; if the k.IM language is concerned with representing what observations _are_ and how they are computed, k.Actors is concerned with representing how they _behave_. For this reason, the linguistic realm of k.IM is that of nouns, adjectives and adverbs, while k.Actors deals mostly with _verbs_. Each behavior file is introduced by a _preamble_ that identifies and describes the behavior, followed by a sequence of _action declarations_; each action declaration, in turn, consists of a series of (zero or more) _statements_ which ends when another action is defined, or when the file ends. Whitespace is not significant in k.Actors, so short behaviors may be specified as single-line actions, while longer ones should be indented for readability. The most intuitive way to understand the main principles of k.Actors is probably through an annotated example.
+The k.Actors language has a simple, minimal syntax that belies a complex and powerful model of execution. Both k.IM and k.Actors draw their syntax from the English language; if the k.IM language is concerned with representing what observations _are_ and how they are computed, k.Actors is concerned with representing how they _behave_. For this reason, the linguistic realm of k.IM is that of nouns, adjectives and adverbs, while k.Actors deals mostly with _verbs_. Each behavior file is introduced by a _preamble_ that identifies and describes the behavior, followed by a sequence of _action declarations_; each action declaration, in turn, consists of a series of (zero or more) _statements_ which ends when another action is defined, or when the file ends. Whitespace is not significant in k.Actors, so short behaviors may be specified as single-line actions, while longer ones should be indented for readability. The most intuitive way to understand the main principles of k.Actors is probably through an annotated example.
 
 ## An annotated example
 
@@ -61,7 +61,7 @@ action invite(friend): <2>
 	email("Hi, shall we go out for dinner tonight?", address=friend):
 		answer -> sentiment.classify(answer, {im:Outcome}): (
 						{im:Positive} -> email("Great", address=[answer.replyAddress]),  "OK"
-					    {im:Negative} -> email("Sorry", address=[answer.replyAddress]), "NOPE")
+					    {im:Negative} -> email("Sorry", address=[answer.replyAddress]), "NO")
 					   
 ----
 

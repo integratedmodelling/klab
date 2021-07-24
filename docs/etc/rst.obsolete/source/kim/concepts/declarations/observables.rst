@@ -1,2 +1,0 @@
-Specifying observation semantics
-================================

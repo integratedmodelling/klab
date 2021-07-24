@@ -360,6 +360,13 @@ public class ResolutionScope implements IResolutionScope {
             throws KlabException {
         return new ResolutionScope(contextSubject, monitor, scenarios);
     }
+    
+    public static ResolutionScope create(Subject contextSubject, IMonitor monitor, INamespace namespace, Collection<String> scenarios)
+            throws KlabException {
+        ResolutionScope ret = new ResolutionScope(contextSubject, monitor, scenarios);
+        ret.resolutionNamespace = (Namespace)namespace;
+        return ret;
+    }
 
     private ResolutionScope(IMonitor monitor) throws KlabException {
         this.coverage = Coverage.empty(Scale.create());
@@ -1515,9 +1522,26 @@ public class ResolutionScope implements IResolutionScope {
     public boolean isResolving(IObservable observable, Mode mode) {
         return this.resolving.contains(new ObservedConcept(observable, mode));
     }
+    
+//    public ResolutionScope resolving(IObservable observable) {
+//    	this.resolving.add(new ObservedConcept(observable));
+//    	return this;
+//    }
 
     public Map<IConcept, Set<IConcept>> getResolvedPredicatesContext() {
         return this.resolvedPredicatesContext;
     }
+
+	public boolean hasResolved(IObservable toResolve) {
+		return resolutions.containsKey(new ObservedConcept(toResolve));
+	}
+
+	public boolean hasResolvedSuccessfully(IObservable toResolve) {
+		ObservedConcept obs = new ObservedConcept(toResolve);
+		if (resolutions.containsKey(obs)) {
+			return !resolutions.get(obs).isEmpty();
+		}
+		return false;
+	}
 
 }

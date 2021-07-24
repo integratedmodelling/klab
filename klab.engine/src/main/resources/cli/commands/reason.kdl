@@ -41,6 +41,9 @@ void compare
 	"Cross-compare a set of concepts for specificity and compatibility. List concepts to
 	 compare as arguments; for complex declarations, use 'to' as separator."
 {
+	optional boolean context 
+		"Use the currently set context type for logical contextualization"
+		
 	class org.integratedmodelling.klab.cli.commands.reason.Compare
 }
 

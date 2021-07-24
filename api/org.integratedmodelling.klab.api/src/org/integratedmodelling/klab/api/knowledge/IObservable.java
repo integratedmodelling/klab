@@ -336,6 +336,15 @@ public interface IObservable extends ISemantic, IResolvable {
          */
         Builder setDereified();
 
+        /**
+         * Set both the name and the reference name, to preserve a previous setting
+         * 
+         * @param name
+         * @param referenceName
+         * @return
+         */
+		Builder named(String name, String referenceName);
+
     }
 
     /**

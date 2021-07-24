@@ -98,12 +98,30 @@ Statement:
 	 text=EMBEDDEDTEXT (metadata=Metadata)? |
 	 if=IfStatement |
 	 while=WhileStatement |
+	 assert=AssertStatement |
 	 do=DoStatement |
 	 for=ForStatement |
 	 // this means "fire this" 
 	 value=ValueWithMetadata) 
 	 // all statement may be tagged for reference
 	 (tag=TAG)?
+;
+
+MethodCall returns MessageCall:
+	name=ArgPathName ('(' (parameters=ParameterList)? ')')?
+;
+
+MethodCallWithActions returns MessageCall:
+	name=ArgPathName ('(' (parameters=ParameterList)? ')')? (':' actions=Actions)?
+;
+
+AssertStatement:
+	'assert' 
+		assertions+=Assertion (',' assertions+=Assertion)*;
+
+Assertion:
+		(expression=EXPR | 
+		(methodCalls+=MethodCall '.')* methodCalls+=MethodCallWithActions)
 ;
 
 NextStatement returns Statement:

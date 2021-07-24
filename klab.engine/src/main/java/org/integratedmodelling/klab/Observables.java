@@ -828,6 +828,10 @@ public enum Observables implements IObservableService {
     @Override
     public Observable contextualizeTo(IObservable observable, IConcept newContext, boolean isExplicit, IMonitor monitor) {
 
+    	if (!OWL.INSTANCE.isSemantic(observable)) {
+    		return (Observable)observable;
+    	}
+    	
         IConcept originalContext = getContextType(observable.getType());
         if (originalContext != null && originalContext.equals(newContext)) {
             return (Observable) observable;
@@ -839,6 +843,7 @@ public enum Observables implements IObservableService {
         }
 
         String originalName = observable.getName();
+        String originalReferenceName = observable.getReferenceName();
 
         /*
          * Direct observables can be contextualized to anything and to nothing, so just check
@@ -848,7 +853,7 @@ public enum Observables implements IObservableService {
             return (Observable) observable;
         }
 
-        return (Observable) new ObservableBuilder((Observable) observable, monitor).within(newContext).named(originalName)
+        return (Observable) new ObservableBuilder((Observable) observable, monitor).within(newContext).named(originalName, originalReferenceName)
                 .buildObservable();
     }
 

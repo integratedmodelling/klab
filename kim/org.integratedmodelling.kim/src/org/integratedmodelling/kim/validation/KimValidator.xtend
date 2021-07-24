@@ -1554,7 +1554,7 @@ class KimValidator extends AbstractKimValidator {
 						ret.addAll(ext)
 					}
 				} else if (concept.name.type !== null) {
-					ret.addAll(Kim.INSTANCE.getType(concept.name.type))
+					ret.addAll(Kim.INSTANCE.getType(concept.name.type, null))
 				}
 
 			} else {
@@ -1641,6 +1641,10 @@ class KimValidator extends AbstractKimValidator {
 							KimPackage.CONCEPT__CONCEPT)
 					}
 					operator.add(Type.RATE)
+					// the change rate of a physical property is an intensive property that needs units
+					if (flags.contains(Type.EXTENSIVE_PROPERTY) || flags.contains(Type.INTENSIVE_PROPERTY)) {
+						operator.add(Type.INTENSIVE_PROPERTY);
+					}
 				} else if (concept.isChanged) {
 					if (!flags.contains(Type.QUALITY)) {
 						error("Change events can only be defined for qualities", concept.concept, null,
@@ -1745,7 +1749,7 @@ class KimValidator extends AbstractKimValidator {
 			ok = false;
 		}
 
-		var EnumSet<Type> type = Kim.INSTANCE.getType(statement.concept)
+		var EnumSet<Type> type = Kim.INSTANCE.getType(statement.concept, null)
 
 		if (statement.isAbstract) {
 			type.add(Type.ABSTRACT)
@@ -1875,7 +1879,7 @@ class KimValidator extends AbstractKimValidator {
 					error = true
 				} else {
 					var coreconcept = concept.parents.get(0).main.get(0).name.name
-					var corectype = Kim.INSTANCE.getType((concept.eContainer as ConceptStatement).concept)
+					var corectype = Kim.INSTANCE.getType((concept.eContainer as ConceptStatement).concept, null)
 					var a = Kim.intersection(type, IKimConcept.DECLARABLE_TYPES);
 					var b = Kim.intersection(corectype, IKimConcept.DECLARABLE_TYPES);
 					if (a.size() != 1 || b.size() != 1 || a.get(0) != b.get(0)) {

@@ -606,7 +606,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 						ret.type.addAll(ret.validParent.type);
 					}
 				} else {
-					ret.type.addAll(Kim.INSTANCE.getType(concept.getName().getType()));
+					ret.type.addAll(Kim.INSTANCE.getType(concept.getName().getType(), ret.type));
 				}
 
 			} else {
@@ -624,7 +624,7 @@ public class KimConcept extends KimStatement implements IKimConcept {
 						term = term.substring(1, term.length() - 1);
 					}
 					ret.authorityTerm = term;
-					ret.type.addAll(Kim.INSTANCE.getType("identity"));
+					ret.type.addAll(Kim.INSTANCE.getType("identity", null));
 
 				} else {
 
@@ -1332,9 +1332,9 @@ public class KimConcept extends KimStatement implements IKimConcept {
 			ret += "-of-" + inherent.getCodeName();
 		}
 
-		if (context != null) {
-			ret += "-within-" + context.getCodeName();
-		}
+//		if (context != null) {
+//			ret += "-within-" + context.getCodeName();
+//		}
 
 		if (causant != null) {
 			ret += "-caused-by-" + causant.getCodeName();

@@ -1,0 +1,24 @@
+{
+  "extends": "standard",
+  "rules": {
+    "arrow-parens": "off",
+    "max-len": "off",
+    "spaced-comment": "off",
+    "no-tabs": "off",
+    "no-unreachable": "off",
+    "no-useless-escape": "off",
+    "no-trailing-spaces": "off",
+    "space-before-function-paren": "off",
+    "object-curly-newline": "off",
+    "object-property-newline": "off",
+    "eqeqeq": "off",
+    "no-multiple-empty-lines": "off",
+    "wrap-iife": "off",
+    "indent": "off",
+    "semi": "off",
+    "padded-blocks": "off",
+    "comma-dangle": "off",
+    "quotes": "off",
+    "no-mixed-spaces-and-tabs": "off"
+  }
+}

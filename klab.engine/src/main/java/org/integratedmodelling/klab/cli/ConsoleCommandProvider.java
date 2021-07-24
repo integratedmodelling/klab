@@ -48,7 +48,7 @@ public enum ConsoleCommandProvider {
 
         ResourcePatternResolver patternResolver = new PathMatchingResourcePatternResolver();
         try {
-            for (Resource res : patternResolver.getResources("cli/commands/*.kdl")) {
+            for (Resource res : patternResolver.getResources("classpath*:cli/commands/*.kdl")) {
                 try (InputStream input = res.getInputStream()) {
                     IKdlDataflow declaration = Dataflows.INSTANCE.declare(input);
                     String namespace = declaration.getPackageName();

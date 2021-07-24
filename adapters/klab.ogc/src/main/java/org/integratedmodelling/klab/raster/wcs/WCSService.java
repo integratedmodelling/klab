@@ -575,7 +575,7 @@ public class WCSService {
 		}
 	}
 
-	public URL buildRetrieveUrl(WCSLayer layer, Version version, IGeometry geometry) {
+    public URL buildRetrieveUrl(WCSLayer layer, Version version, IGeometry geometry, String interpolation) {
 
 		Dimension space = geometry.getDimension(IGeometry.Dimension.Type.SPACE);
 		URL url = null;
@@ -642,9 +642,12 @@ public class WCSService {
 			throw new KlabUnsupportedFeatureException("WCS version " + version + " is not supported");
 		}
 
-		/*
-		 * ACHTUNG this is a 2.0 only request
-		 */
+        /*
+         * ACHTUNG this is a 2.0 only request
+         */
+        if (interpolation != null) {
+        	s += "&interpolation=" + interpolation;
+        }
 
 		try {
 			url = new URL(s);

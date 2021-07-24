@@ -128,7 +128,7 @@ public class Geospace {
     public static List<Cell> getUpstreamCells(Cell cell, IState flowDirectionsD8, Function<Cell, Boolean> check) {
 
         List<Cell> ret = new ArrayList<>();
-
+        
         Cell neighbor = cell.getNeighbor(Orientation.NW);
         if (neighbor != null && flowDirectionsD8.get(neighbor, Double.class) == 8) {
             if (check == null || check.apply(neighbor))
