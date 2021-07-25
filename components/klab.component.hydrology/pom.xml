@@ -18,10 +18,8 @@
 			<artifactId>hm-hmachine</artifactId>
 			<version>${hortonmachine.version}</version>
 			<exclusions>
-				<exclusion>
-					<groupId>org.codehaus.groovy</groupId>
-					<artifactId>groovy-all</artifactId>
-				</exclusion>
+				<!-- <exclusion> <groupId>org.codehaus.groovy</groupId> <artifactId>groovy</artifactId> 
+					</exclusion> -->
 				<exclusion>
 					<groupId>javax.measure</groupId>
 					<artifactId>jsr-275</artifactId>
@@ -33,10 +31,8 @@
 			<artifactId>hm-lesto</artifactId>
 			<version>${hortonmachine.version}</version>
 			<exclusions>
-				<exclusion>
-					<groupId>org.codehoaus.groovy</groupId>
-					<artifactId>groovy-all</artifactId>
-				</exclusion>
+				<!-- <exclusion> <groupId>org.codehaus.groovy</groupId> <artifactId>groovy</artifactId> 
+					</exclusion> -->
 				<exclusion>
 					<groupId>javax.measure</groupId>
 					<artifactId>jsr-275</artifactId>

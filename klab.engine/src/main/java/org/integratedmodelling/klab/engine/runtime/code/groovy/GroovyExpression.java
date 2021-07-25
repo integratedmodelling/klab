@@ -66,7 +66,8 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 	protected IModel model;
 	protected boolean isNull = false;
 	protected boolean isTrue = false;
-
+	protected boolean fubar = false;
+	
 	private Set<String> defineIfAbsent = new HashSet<>();
 	private Set<String> overridingIds = new HashSet<>();
 	private Object[] overriding = null;
@@ -123,11 +124,20 @@ public class GroovyExpression extends Expression implements ILanguageExpression 
 	}
 
 	private void compile(String code) {
-		this.sclass = shell.parseToClass(code);
+		try {
+			this.sclass = shell.parseToClass(code);
+		} catch (Throwable t) {
+			System.err.println("Groovy code won't parse: " + code);
+			this.fubar = true;
+		}
 	}
 
 	public Object eval(IParameters<String> parameters, IContextualizationScope scope) {
 
+		if (fubar) {
+			return null;
+		}
+		
 		if (isTrue) {
 			return true;
 		}
