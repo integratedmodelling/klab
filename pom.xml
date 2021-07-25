@@ -101,8 +101,8 @@
 		<maven.compiler.source>1.8</maven.compiler.source>
 		<maven.compiler.target>1.8</maven.compiler.target>
 		<tycho-version>2.1.0</tycho-version>
-		<xtextVersion>2.18.0</xtextVersion>
-		<mweVersion>2.10.0</mweVersion>
+		<xtextVersion>2.25.0</xtextVersion>
+		<mweVersion>2.12.1</mweVersion>
 		<googleJibVersion>2.7.1</googleJibVersion>
 
 		<!-- the five below go together. Never change one without checking the 
