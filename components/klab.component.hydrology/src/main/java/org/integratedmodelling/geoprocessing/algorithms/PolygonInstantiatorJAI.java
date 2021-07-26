@@ -1,15 +1,9 @@
 package org.integratedmodelling.geoprocessing.algorithms;
 
-import java.awt.geom.Point2D;
-import java.awt.image.RenderedImage;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import javax.media.jai.iterator.RandomIter;
-import javax.media.jai.iterator.RandomIterFactory;
 
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.integratedmodelling.kim.api.IKimExpression;
@@ -25,34 +19,18 @@ import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
-import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
-import org.integratedmodelling.klab.api.observations.scale.space.IShape;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid.Cell;
+import org.integratedmodelling.klab.api.observations.scale.space.IProjection;
 import org.integratedmodelling.klab.api.provenance.IArtifact;
 import org.integratedmodelling.klab.api.runtime.IContextualizationScope;
 import org.integratedmodelling.klab.api.runtime.monitoring.IMonitor;
-import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
-import org.integratedmodelling.klab.engine.runtime.code.groovy.GroovyExpression;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
-import org.integratedmodelling.klab.scale.Scale;
 import org.integratedmodelling.klab.utils.Parameters;
-
-import org.locationtech.jts.geom.Coordinate;
-import org.locationtech.jts.geom.Geometry;
 import org.locationtech.jts.geom.GeometryFactory;
-import org.locationtech.jts.geom.LinearRing;
-import org.locationtech.jts.geom.Polygon;
-import org.locationtech.jts.geom.impl.CoordinateArraySequence;
-
-import ij.IJ;
-import ij.ImagePlus;
-import ij.blob.Blob;
-import ij.blob.ManyBlobs;
-import ij.process.ImageProcessor;
 
 /**
  * 

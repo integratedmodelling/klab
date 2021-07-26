@@ -746,7 +746,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                                       								if (current==null) {
                                       									current = createModelElement(grammarAccess.getPreambleRule());
                                       								}
-                                      								setWithLastConsumed(current, "public", true, "public");
+                                      								setWithLastConsumed(current, "public", lv_public_1_0 != null, "public");
                                       							
                                     }
 
@@ -799,7 +799,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                                       									if (current==null) {
                                       										current = createModelElement(grammarAccess.getPreambleRule());
                                       									}
-                                      									setWithLastConsumed(current, "mobile", true, "mobile");
+                                      									setWithLastConsumed(current, "mobile", lv_mobile_2_0 != null, "mobile");
                                       								
                                     }
 
@@ -831,7 +831,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                                       									if (current==null) {
                                       										current = createModelElement(grammarAccess.getPreambleRule());
                                       									}
-                                      									setWithLastConsumed(current, "desktop", true, "desktop");
+                                      									setWithLastConsumed(current, "desktop", lv_desktop_3_0 != null, "desktop");
                                       								
                                     }
 
@@ -863,7 +863,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                                       									if (current==null) {
                                       										current = createModelElement(grammarAccess.getPreambleRule());
                                       									}
-                                      									setWithLastConsumed(current, "web", true, "web");
+                                      									setWithLastConsumed(current, "web", lv_web_4_0 != null, "web");
                                       								
                                     }
 
@@ -895,7 +895,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getPreambleRule());
                               								}
-                              								setWithLastConsumed(current, "app", true, "app");
+                              								setWithLastConsumed(current, "app", lv_app_5_0 != null, "app");
                               							
                             }
 
@@ -930,7 +930,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getPreambleRule());
                               							}
-                              							setWithLastConsumed(current, "test", true, "testcase");
+                              							setWithLastConsumed(current, "test", lv_test_6_0 != null, "testcase");
                               						
                             }
 
@@ -962,7 +962,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getPreambleRule());
                               							}
-                              							setWithLastConsumed(current, "script", true, "script");
+                              							setWithLastConsumed(current, "script", lv_script_7_0 != null, "script");
                               						
                             }
 
@@ -994,7 +994,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getPreambleRule());
                               							}
-                              							setWithLastConsumed(current, "task", true, "task");
+                              							setWithLastConsumed(current, "task", lv_task_8_0 != null, "task");
                               						
                             }
 
@@ -1026,7 +1026,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getPreambleRule());
                               							}
-                              							setWithLastConsumed(current, "component", true, "component");
+                              							setWithLastConsumed(current, "component", lv_component_9_0 != null, "component");
                               						
                             }
 
@@ -1058,7 +1058,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getPreambleRule());
                               							}
-                              							setWithLastConsumed(current, "user", true, "user");
+                              							setWithLastConsumed(current, "user", lv_user_10_0 != null, "user");
                               						
                             }
 
@@ -1111,7 +1111,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                                       								if (current==null) {
                                       									current = createModelElement(grammarAccess.getPreambleRule());
                                       								}
-                                      								setWithLastConsumed(current, "library", true, null);
+                                      								setWithLastConsumed(current, "library", lv_library_11_1 != null, null);
                                       							
                                     }
 
@@ -1131,7 +1131,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                                       								if (current==null) {
                                       									current = createModelElement(grammarAccess.getPreambleRule());
                                       								}
-                                      								setWithLastConsumed(current, "library", true, null);
+                                      								setWithLastConsumed(current, "library", lv_library_11_2 != null, null);
                                       							
                                     }
 
@@ -1190,7 +1190,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                                       								if (current==null) {
                                       									current = createModelElement(grammarAccess.getPreambleRule());
                                       								}
-                                      								setWithLastConsumed(current, "behavior", true, null);
+                                      								setWithLastConsumed(current, "behavior", lv_behavior_12_1 != null, null);
                                       							
                                     }
 
@@ -1210,7 +1210,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                                       								if (current==null) {
                                       									current = createModelElement(grammarAccess.getPreambleRule());
                                       								}
-                                      								setWithLastConsumed(current, "behavior", true, null);
+                                      								setWithLastConsumed(current, "behavior", lv_behavior_12_2 != null, null);
                                       							
                                     }
 
@@ -9309,7 +9309,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getValueRule());
                       					}
-                      					setWithLastConsumed(current, "deferred", true, "`");
+                      					setWithLastConsumed(current, "deferred", lv_deferred_0_0 != null, "`");
                       				
                     }
 
@@ -9386,7 +9386,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getValueRule());
                       						}
-                      						setWithLastConsumed(current, "empty", true, "empty");
+                      						setWithLastConsumed(current, "empty", lv_empty_2_0 != null, "empty");
                       					
                     }
 
@@ -10087,7 +10087,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getValueWithConstructorRule());
                       					}
-                      					setWithLastConsumed(current, "deferred", true, "`");
+                      					setWithLastConsumed(current, "deferred", lv_deferred_0_0 != null, "`");
                       				
                     }
 
@@ -10205,7 +10205,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getValueWithConstructorRule());
                       						}
-                      						setWithLastConsumed(current, "empty", true, "empty");
+                      						setWithLastConsumed(current, "empty", lv_empty_3_0 != null, "empty");
                       					
                     }
 
@@ -10676,7 +10676,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       							if (current==null) {
                       								current = createModelElement(grammarAccess.getValueWithConstructorRule());
                       							}
-                      							setWithLastConsumed(current, "component", true, "new");
+                      							setWithLastConsumed(current, "component", lv_component_15_0 != null, "new");
                       						
                     }
 
@@ -11279,7 +11279,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getValueWithMetadataRule());
                       					}
-                      					setWithLastConsumed(current, "deferred", true, "`");
+                      					setWithLastConsumed(current, "deferred", lv_deferred_0_0 != null, "`");
                       				
                     }
 
@@ -11957,7 +11957,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getValueWithMetadataWithoutTreeRule());
                       					}
-                      					setWithLastConsumed(current, "deferred", true, "`");
+                      					setWithLastConsumed(current, "deferred", lv_deferred_0_0 != null, "`");
                       				
                     }
 
@@ -14181,7 +14181,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getMatchRule());
                       						}
-                      						setWithLastConsumed(current, "star", true, "*");
+                      						setWithLastConsumed(current, "star", lv_star_52_0 != null, "*");
                       					
                     }
 
@@ -14260,7 +14260,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getMatchRule());
                       						}
-                      						setWithLastConsumed(current, "anything", true, "#");
+                      						setWithLastConsumed(current, "anything", lv_anything_55_0 != null, "#");
                       					
                     }
 
@@ -14339,7 +14339,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getMatchRule());
                       						}
-                      						setWithLastConsumed(current, "empty", true, "empty");
+                      						setWithLastConsumed(current, "empty", lv_empty_58_0 != null, "empty");
                       					
                     }
 
@@ -14418,7 +14418,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getMatchRule());
                       						}
-                      						setWithLastConsumed(current, "exception", true, "exception");
+                      						setWithLastConsumed(current, "exception", lv_exception_61_0 != null, "exception");
                       					
                     }
 
@@ -17074,7 +17074,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getClassifierRule());
                       					}
-                      					setWithLastConsumed(current, "star", true, "*");
+                      					setWithLastConsumed(current, "star", lv_star_19_0 != null, "*");
                       				
                     }
 
@@ -19021,7 +19021,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getTableClassifierRule());
                       					}
-                      					setWithLastConsumed(current, "star", true, "*");
+                      					setWithLastConsumed(current, "star", lv_star_20_0 != null, "*");
                       				
                     }
 
@@ -19053,7 +19053,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getTableClassifierRule());
                       					}
-                      					setWithLastConsumed(current, "anything", true, "#");
+                      					setWithLastConsumed(current, "anything", lv_anything_21_0 != null, "#");
                       				
                     }
 
@@ -19226,7 +19226,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getQuantityRule());
                       						}
-                      						setWithLastConsumed(current, "over", true, "/");
+                      						setWithLastConsumed(current, "over", lv_over_1_0 != null, "/");
                       					
                     }
 
@@ -20448,7 +20448,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                                       								if (current==null) {
                                       									current = createModelElement(grammarAccess.getKeyValuePairRule());
                                       								}
-                                      								setWithLastConsumed(current, "interactive", true, "?=");
+                                      								setWithLastConsumed(current, "interactive", lv_interactive_2_0 != null, "?=");
                                       							
                                     }
 
@@ -21468,7 +21468,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "gt", true, ">");
+                      					setWithLastConsumed(current, "gt", lv_gt_0_0 != null, ">");
                       				
                     }
 
@@ -21500,7 +21500,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "lt", true, "<");
+                      					setWithLastConsumed(current, "lt", lv_lt_1_0 != null, "<");
                       				
                     }
 
@@ -21532,7 +21532,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "eq", true, "=");
+                      					setWithLastConsumed(current, "eq", lv_eq_2_0 != null, "=");
                       				
                     }
 
@@ -21564,7 +21564,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "ne", true, "!=");
+                      					setWithLastConsumed(current, "ne", lv_ne_3_0 != null, "!=");
                       				
                     }
 
@@ -21596,7 +21596,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "le", true, "<=");
+                      					setWithLastConsumed(current, "le", lv_le_4_0 != null, "<=");
                       				
                     }
 
@@ -21628,7 +21628,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getREL_OPERATORRule());
                       					}
-                      					setWithLastConsumed(current, "ge", true, ">=");
+                      					setWithLastConsumed(current, "ge", lv_ge_5_0 != null, ">=");
                       				
                     }
 
@@ -21774,7 +21774,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getNumberRule());
                       						}
-                      						setWithLastConsumed(current, "negative", true, "-");
+                      						setWithLastConsumed(current, "negative", lv_negative_1_0 != null, "-");
                       					
                     }
 
@@ -21844,7 +21844,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       					if (current==null) {
                       						current = createModelElement(grammarAccess.getNumberRule());
                       					}
-                      					setWithLastConsumed(current, "long", true, "l");
+                      					setWithLastConsumed(current, "long", lv_long_3_0 != null, "l");
                       				
                     }
 
@@ -21895,7 +21895,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       							if (current==null) {
                       								current = createModelElement(grammarAccess.getNumberRule());
                       							}
-                      							setWithLastConsumed(current, "decimal", true, ".");
+                      							setWithLastConsumed(current, "decimal", lv_decimal_4_0 != null, ".");
                       						
                     }
 
@@ -21998,7 +21998,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getNumberRule());
                               								}
-                              								setWithLastConsumed(current, "exponential", true, null);
+                              								setWithLastConsumed(current, "exponential", lv_exponential_6_1 != null, null);
                               							
                             }
 
@@ -22018,7 +22018,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getNumberRule());
                               								}
-                              								setWithLastConsumed(current, "exponential", true, null);
+                              								setWithLastConsumed(current, "exponential", lv_exponential_6_2 != null, null);
                               							
                             }
 
@@ -22076,7 +22076,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                               								if (current==null) {
                               									current = createModelElement(grammarAccess.getNumberRule());
                               								}
-                              								setWithLastConsumed(current, "expNegative", true, "-");
+                              								setWithLastConsumed(current, "expNegative", lv_expNegative_8_0 != null, "-");
                               							
                             }
 
@@ -22320,7 +22320,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getDateRule());
                       						}
-                      						setWithLastConsumed(current, "bc", true, "BC");
+                      						setWithLastConsumed(current, "bc", lv_bc_3_0 != null, "BC");
                       					
                     }
 
@@ -24022,7 +24022,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
             	              											if (current==null) {
             	              												current = createModelElement(grammarAccess.getObservableSemanticsRule());
             	              											}
-            	              											setWithLastConsumed(current, "optional", true, "optional");
+            	              											setWithLastConsumed(current, "optional", lv_optional_9_0 != null, "optional");
             	              										
             	            }
 
@@ -25214,7 +25214,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                     	              												if (current==null) {
                     	              													current = createModelElement(grammarAccess.getConceptDeclarationRule());
                     	              												}
-                    	              												setWithLastConsumed(current, "distributedOfInherency", true, "each");
+                    	              												setWithLastConsumed(current, "distributedOfInherency", lv_distributedOfInherency_3_0 != null, "each");
                     	              											
                     	            }
 
@@ -25338,7 +25338,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                     	              												if (current==null) {
                     	              													current = createModelElement(grammarAccess.getConceptDeclarationRule());
                     	              												}
-                    	              												setWithLastConsumed(current, "distributedForInherency", true, "each");
+                    	              												setWithLastConsumed(current, "distributedForInherency", lv_distributedForInherency_6_0 != null, "each");
                     	              											
                     	            }
 
@@ -25966,7 +25966,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                     	              												if (current==null) {
                     	              													current = createModelElement(grammarAccess.getConceptDeclarationRule());
                     	              												}
-                    	              												setWithLastConsumed(current, "distributedTemporalInherency", true, "each");
+                    	              												setWithLastConsumed(current, "distributedTemporalInherency", lv_distributedTemporalInherency_24_0 != null, "each");
                     	              											
                     	            }
 
@@ -26090,7 +26090,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                     	              												if (current==null) {
                     	              													current = createModelElement(grammarAccess.getConceptDeclarationRule());
                     	              												}
-                    	              												setWithLastConsumed(current, "distributedWithinInherency", true, "each");
+                    	              												setWithLastConsumed(current, "distributedWithinInherency", lv_distributedWithinInherency_27_0 != null, "each");
                     	              											
                     	            }
 
@@ -26991,7 +26991,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                                       							if (current==null) {
                                       								current = createModelElement(grammarAccess.getConceptRule());
                                       							}
-                                      							setWithLastConsumed(current, "negated", true, null);
+                                      							setWithLastConsumed(current, "negated", lv_negated_0_1 != null, null);
                                       						
                                     }
 
@@ -27011,7 +27011,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                                       							if (current==null) {
                                       								current = createModelElement(grammarAccess.getConceptRule());
                                       							}
-                                      							setWithLastConsumed(current, "negated", true, null);
+                                      							setWithLastConsumed(current, "negated", lv_negated_0_2 != null, null);
                                       						
                                     }
 
@@ -27092,7 +27092,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getConceptRule());
                               							}
-                              							setWithLastConsumed(current, "authConcept", true, "identified");
+                              							setWithLastConsumed(current, "authConcept", lv_authConcept_2_0 != null, "identified");
                               						
                             }
 
@@ -27435,7 +27435,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "presence", true, "presence");
+                      						setWithLastConsumed(current, "presence", lv_presence_8_0 != null, "presence");
                       					
                     }
 
@@ -27514,7 +27514,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "count", true, "count");
+                      						setWithLastConsumed(current, "count", lv_count_11_0 != null, "count");
                       					
                     }
 
@@ -27593,7 +27593,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "distance", true, "distance");
+                      						setWithLastConsumed(current, "distance", lv_distance_14_0 != null, "distance");
                       					
                     }
 
@@ -27711,7 +27711,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "probability", true, "probability");
+                      						setWithLastConsumed(current, "probability", lv_probability_18_0 != null, "probability");
                       					
                     }
 
@@ -27790,7 +27790,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "assessment", true, "assessment");
+                      						setWithLastConsumed(current, "assessment", lv_assessment_21_0 != null, "assessment");
                       					
                     }
 
@@ -27920,7 +27920,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                                       									if (current==null) {
                                       										current = createModelElement(grammarAccess.getConceptRule());
                                       									}
-                                      									setWithLastConsumed(current, "change", true, "in");
+                                      									setWithLastConsumed(current, "change", lv_change_25_0 != null, "in");
                                       								
                                     }
 
@@ -27955,7 +27955,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                                       										if (current==null) {
                                       											current = createModelElement(grammarAccess.getConceptRule());
                                       										}
-                                      										setWithLastConsumed(current, "rate", true, "rate");
+                                      										setWithLastConsumed(current, "rate", lv_rate_26_0 != null, "rate");
                                       									
                                     }
 
@@ -28005,7 +28005,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                               							if (current==null) {
                               								current = createModelElement(grammarAccess.getConceptRule());
                               							}
-                              							setWithLastConsumed(current, "change", true, "changed");
+                              							setWithLastConsumed(current, "change", lv_change_28_0 != null, "changed");
                               						
                             }
 
@@ -28084,7 +28084,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "uncertainty", true, "uncertainty");
+                      						setWithLastConsumed(current, "uncertainty", lv_uncertainty_30_0 != null, "uncertainty");
                       					
                     }
 
@@ -28163,7 +28163,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "magnitude", true, "magnitude");
+                      						setWithLastConsumed(current, "magnitude", lv_magnitude_33_0 != null, "magnitude");
                       					
                     }
 
@@ -28242,7 +28242,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "level", true, "level");
+                      						setWithLastConsumed(current, "level", lv_level_36_0 != null, "level");
                       					
                     }
 
@@ -28321,7 +28321,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "type", true, "type");
+                      						setWithLastConsumed(current, "type", lv_type_39_0 != null, "type");
                       					
                     }
 
@@ -28400,7 +28400,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "observability", true, "observability");
+                      						setWithLastConsumed(current, "observability", lv_observability_42_0 != null, "observability");
                       					
                     }
 
@@ -28479,7 +28479,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "proportion", true, "proportion");
+                      						setWithLastConsumed(current, "proportion", lv_proportion_45_0 != null, "proportion");
                       					
                     }
 
@@ -28626,7 +28626,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "percentage", true, "percentage");
+                      						setWithLastConsumed(current, "percentage", lv_percentage_50_0 != null, "percentage");
                       					
                     }
 
@@ -28773,7 +28773,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "ratio", true, "ratio");
+                      						setWithLastConsumed(current, "ratio", lv_ratio_55_0 != null, "ratio");
                       					
                     }
 
@@ -28907,7 +28907,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                               						if (current==null) {
                               							current = createModelElement(grammarAccess.getConceptRule());
                               						}
-                              						setWithLastConsumed(current, "monetary", true, "monetary");
+                              						setWithLastConsumed(current, "monetary", lv_monetary_60_0 != null, "monetary");
                               					
                             }
 
@@ -28936,7 +28936,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "value", true, "value");
+                      						setWithLastConsumed(current, "value", lv_value_61_0 != null, "value");
                       					
                     }
 
@@ -29083,7 +29083,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "occurrence", true, "occurrence");
+                      						setWithLastConsumed(current, "occurrence", lv_occurrence_66_0 != null, "occurrence");
                       					
                     }
 
@@ -29162,7 +29162,7 @@ public class InternalKactorsParser extends AbstractInternalAntlrParser {
                       						if (current==null) {
                       							current = createModelElement(grammarAccess.getConceptRule());
                       						}
-                      						setWithLastConsumed(current, "authConcept", true, "identity");
+                      						setWithLastConsumed(current, "authConcept", lv_authConcept_69_0 != null, "identity");
                       					
                     }
 

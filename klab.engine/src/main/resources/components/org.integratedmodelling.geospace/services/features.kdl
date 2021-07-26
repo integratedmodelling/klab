@@ -11,7 +11,17 @@ export object extract
 		 producing a mask that will be vectorized into spatial contexts for the objects. Use quality
 		 dependency names to refer to their state in each point."
 	    default ""
+
+	optional boolean expression categorize
+		"Pass an expression that will return a value per each point in the spatial context. 
+		 Polygons with contiguous, equal values will be extracted. If 'semantics' is passed,
+		 add that value as a state to each object produced."
+	    default ""
 	    
+	optional concept semantics
+		"The observable that will describe the values that we categorized on in each extracted
+		 object."
+
 	optional boolean simplify
 		"If true, the polygons resulting from vectorization will be simplified before they are
 	     returned to k.LAB."
@@ -30,7 +40,7 @@ export object extract
 	 */
 	geometry #s2
 	
-	class org.integratedmodelling.klab.components.geospace.processing.PolygonInstantiator
+	class org.integratedmodelling.klab.components.geospace.processing.PolygonInstantiatorJAI
 
 }
 

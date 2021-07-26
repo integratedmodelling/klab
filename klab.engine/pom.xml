@@ -13,7 +13,7 @@
 	<repositories>
 		<repository>
 			<id>slimjars</id>
-			<url>http://mvn.slimjars.com</url>
+			<url>https://mvn.slimjars.com</url>
 		</repository>
 		<!-- Another old library hosting its news builds on its own repo -->
 		<repository>
@@ -23,7 +23,7 @@
 		</repository>
 		<repository>
 			<id>topobyte</id>
-			<url>http://mvn.topobyte.de</url>
+			<url>https://mvn.topobyte.de</url>
 		</repository>
 	</repositories>
 
@@ -501,12 +501,12 @@
 			<version>${joda-time-version}</version>
 		</dependency>
 
-		<!-- ijblob - feature extractor for spatial rasters -->
+		<!-- ijblob - feature extractor for spatial rasters 
 		<dependency>
 			<groupId>de.biomedical-imaging.ij</groupId>
 			<artifactId>ij_blob</artifactId>
 			<version>1.4.9</version>
-		</dependency>
+		</dependency> -->
 
 		<!-- classpath scanning; this can be removed in favor of Spring's PathMatchingResourcePatternResolver, 
 			but Spring shouldn't be needed in the embedded engine and the API is better 
@@ -617,6 +617,17 @@
 			<artifactId>gt-brewer</artifactId>
 			<version>${geotools.version}</version>
 		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-process</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		<dependency>
+			<groupId>org.geotools</groupId>
+			<artifactId>gt-process-raster</artifactId>
+			<version>${geotools.version}</version>
+		</dependency>
+		
 		<!-- GEOTOOLS mess ends -->
 
 		<!-- NO2 database (for local storage of file metadata and URN metadata 
