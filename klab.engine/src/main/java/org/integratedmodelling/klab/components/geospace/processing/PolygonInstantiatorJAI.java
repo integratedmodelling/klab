@@ -136,11 +136,6 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 			throws KlabException {
 
 		List<IObjectArtifact> ret = new ArrayList<>();
-
-		/*
-		 * build a storage-based coverage according to the result of the expression
-		 */
-
 		Name n = new NameImpl("ras", "PolygonExtraction");
 		Map<String, Object> params = new HashMap<>();
 
