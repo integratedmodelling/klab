@@ -501,13 +501,6 @@
 			<version>${joda-time-version}</version>
 		</dependency>
 
-		<!-- ijblob - feature extractor for spatial rasters 
-		<dependency>
-			<groupId>de.biomedical-imaging.ij</groupId>
-			<artifactId>ij_blob</artifactId>
-			<version>1.4.9</version>
-		</dependency> -->
-
 		<!-- classpath scanning; this can be removed in favor of Spring's PathMatchingResourcePatternResolver, 
 			but Spring shouldn't be needed in the embedded engine and the API is better 
 			here. -->

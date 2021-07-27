@@ -107,6 +107,11 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 					.describe(expression.toString(), context.getExpressionContext(), CompilerOption.ForcedScalar);
 		}
 
+		if (parameters.contains("semantics")) {
+			this.attributeSemantics = Observables.INSTANCE.parseObservable(parameters.get("semantics"),
+					context.getMonitor());
+		}
+
 		IScale scale = context.getScale();
 		if (!(scale.isSpatiallyDistributed() && scale.getDimension(Type.SPACE).size() > 1
 				&& scale.getDimension(Type.SPACE).isRegular())) {
@@ -161,13 +166,15 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 						IObjectArtifact object = scope.newObservation(semantics, baseName + "_" + (created + 1),
 								instanceScale, /* TODO send useful metadata */null);
 
-						if (this.categorizeExprDescriptor != null && this.attributeSemantics != null && shape.getMetadata().get("value") != null) {
+						if (this.categorizeExprDescriptor != null && this.attributeSemantics != null
+								&& shape.getMetadata().get("value") != null) {
 							/*
 							 * add the state
 							 */
-							((IRuntimeScope)scope).addState((IDirectObservation)object, attributeSemantics, shape.getMetadata().get("value"));
+							((IRuntimeScope) scope).addState((IDirectObservation) object, attributeSemantics,
+									shape.getMetadata().get("value"));
 						}
-						
+
 						ret.add(object);
 						created++;
 
@@ -315,7 +322,7 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 				} else {
 					raster.setSample((int) cell.getX(), (int) cell.getY(), 0, ((Number) value).intValue());
 				}
-				
+
 				ret = true;
 
 			}
@@ -325,7 +332,7 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 		if (raster == null) {
 			return false;
 		}
-		
+
 		GridCoverage2D coverage = GeotoolsUtils.INSTANCE.makeCoverage("polygons", raster, scope.getScale());
 
 		params.put("data", coverage);
@@ -384,10 +391,16 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 		}
 
 		/*
-		 * TODO attributes as shape metadata
+		 * value attribute as shape metadata. Will only get used if we categorize.
 		 */
+		Object value = feature.getAttribute("value");
+		Shape ret = Shape.create(polygon, this.grid.getProjection());
 
-		return Shape.create(polygon, this.grid.getProjection());
+		if (value != null) {
+			ret.getMetadata().put("value", value);
+		}
+
+		return ret;
 	}
 
 	@Override
