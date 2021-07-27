@@ -26,6 +26,7 @@ import org.integratedmodelling.klab.api.data.general.IExpression;
 import org.integratedmodelling.klab.api.extensions.ILanguageProcessor.Descriptor;
 import org.integratedmodelling.klab.api.knowledge.IObservable;
 import org.integratedmodelling.klab.api.model.contextualization.IInstantiator;
+import org.integratedmodelling.klab.api.observations.IDirectObservation;
 import org.integratedmodelling.klab.api.observations.IState;
 import org.integratedmodelling.klab.api.observations.scale.IScale;
 import org.integratedmodelling.klab.api.observations.scale.space.IGrid;
@@ -38,6 +39,7 @@ import org.integratedmodelling.klab.components.geospace.extents.Grid;
 import org.integratedmodelling.klab.components.geospace.extents.Shape;
 import org.integratedmodelling.klab.components.geospace.extents.Space;
 import org.integratedmodelling.klab.components.geospace.utils.GeotoolsUtils;
+import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabResourceNotFoundException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
@@ -64,7 +66,6 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 	boolean intersect = false;
 	private boolean createPointFeatures;
 	private boolean computeConvexHull;
-	private boolean ignoreHoles;
 	// if this is given, the value we use to vectorize ends up in the objects with
 	// this semantics
 	IObservable attributeSemantics;
@@ -115,7 +116,6 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 
 		this.grid = ((Space) scale.getSpace()).getGrid();
 		this.boundingBox = (Shape) scale.getSpace().getShape();
-		this.ignoreHoles = !parameters.get("holes", Boolean.TRUE);
 		this.createPointFeatures = parameters.get("points", Boolean.FALSE);
 
 		// TODO these are obviously still unfeasible dimensions for an in-memory image.
@@ -161,6 +161,13 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 						IObjectArtifact object = scope.newObservation(semantics, baseName + "_" + (created + 1),
 								instanceScale, /* TODO send useful metadata */null);
 
+						if (this.categorizeExprDescriptor != null && this.attributeSemantics != null && shape.getMetadata().get("value") != null) {
+							/*
+							 * add the state
+							 */
+							((IRuntimeScope)scope).addState((IDirectObservation)object, attributeSemantics, shape.getMetadata().get("value"));
+						}
+						
 						ret.add(object);
 						created++;
 
@@ -189,7 +196,7 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 		Map<IState, String> stateIdentifiers = new HashMap<>();
 		Set<IState> sourceStates = new LinkedHashSet<IState>();
 
-		GridCoverage2D coverage = null;
+		WritableRaster raster = null;
 		IExpression selectExpression = null;
 		IExpression categorizeExpression = null;
 
@@ -259,33 +266,37 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 				}
 				selected = (Boolean) val;
 			}
-			if (selected && categorizeExpression != null) {
-				value = categorizeExpression.eval(parameters, scope);
-				if (Observations.INSTANCE.isData(value) && !(value instanceof Number || value instanceof Boolean)) {
-					if (!valueHash.containsKey(value)) {
-						valueHash.put(value, nextValue);
-						value = nextValue;
-						nextValue++;
-					} else {
-						value = valueHash.get(value);
+			if (selected) {
+				if (categorizeExpression != null) {
+					value = categorizeExpression.eval(parameters, scope);
+					if (Observations.INSTANCE.isData(value) && !(value instanceof Number || value instanceof Boolean)) {
+						if (!valueHash.containsKey(value)) {
+							valueHash.put(value, nextValue);
+							value = nextValue;
+							nextValue++;
+						} else {
+							value = valueHash.get(value);
+						}
 					}
+				} else {
+					value = 1;
 				}
 			}
 
 			if (Observations.INSTANCE.isData(value)) {
 
-				if (coverage == null) {
+				if (raster == null) {
 
 					if (categorizeExpression != null) {
 
 						if (value instanceof Integer) {
-							coverage = GeotoolsUtils.INSTANCE.makeCoverage("polygons", scope.getScale().getSpace(),
-									DataBuffer.TYPE_INT);
+							raster = GeotoolsUtils.INSTANCE.makeRaster(scope.getScale().getSpace(), DataBuffer.TYPE_INT,
+									0);
 							noDataValues.add(0);
 						} else if (value instanceof Double) {
 							isfloat = true;
-							coverage = GeotoolsUtils.INSTANCE.makeCoverage("polygons", scope.getScale().getSpace(),
-									DataBuffer.TYPE_FLOAT);
+							raster = GeotoolsUtils.INSTANCE.makeRaster(scope.getScale().getSpace(),
+									DataBuffer.TYPE_FLOAT, Float.NaN);
 							noDataValues.add(Float.NaN);
 						} else {
 							throw new KlabValidationException("polygon instantiator: raster value is unsupported: "
@@ -293,39 +304,29 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 						}
 
 					} else if (selected) {
-						value = 1;
-						coverage = GeotoolsUtils.INSTANCE.makeCoverage("polygons", scope.getScale().getSpace(),
-								DataBuffer.TYPE_INT);
+						raster = GeotoolsUtils.INSTANCE.makeRaster(scope.getScale().getSpace(), DataBuffer.TYPE_INT, 0);
 						noDataValues.add(0);
-					}
-
-					for (int x = 0; x < grid.getXCells(); x++) {
-						for (int y = 0; y < grid.getYCells(); y++) {
-							if (isfloat) {
-								((WritableRaster) coverage.getRenderedImage().getData()).setSample(x, y, 0, Float.NaN);
-							} else {
-								((WritableRaster) coverage.getRenderedImage().getData()).setSample(x, y, 0, 0);
-							}
-						}
 					}
 
 				}
 
 				if (isfloat) {
-					((WritableRaster) coverage.getRenderedImage().getData()).setSample((int) cell.getX(),
-							(int) cell.getY(), 0, Float.NaN);
+					raster.setSample((int) cell.getX(), (int) cell.getY(), 0, ((Number) value).floatValue());
 				} else {
-					((WritableRaster) coverage.getRenderedImage().getData()).setSample((int) cell.getX(),
-							(int) cell.getY(), 0, 0);
+					raster.setSample((int) cell.getX(), (int) cell.getY(), 0, ((Number) value).intValue());
 				}
+				
+				ret = true;
 
 			}
 
 		}
 
-		if (coverage == null) {
+		if (raster == null) {
 			return false;
 		}
+		
+		GridCoverage2D coverage = GeotoolsUtils.INSTANCE.makeCoverage("polygons", raster, scope.getScale());
 
 		params.put("data", coverage);
 		params.put("nodata", noDataValues);
