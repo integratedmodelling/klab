@@ -83,7 +83,7 @@
 	        <dependency>
 	            <groupId>org.springframework.cloud</groupId>
 	            <artifactId>spring-cloud-dependencies</artifactId>
-	            <version>Greenwich.RELEASE</version>
+	            <version>${spring-cloud-version}</version>
 	            <type>pom</type>
 	            <scope>import</scope>
 	        </dependency>
@@ -109,12 +109,6 @@
 		    <artifactId>spring-boot-starter-test</artifactId>
 		    <version>${spring-boot-version}</version>
 		    <scope>test</scope>
-		    <exclusions>
-                <exclusion>
-                    <groupId>junit</groupId>
-                    <artifactId>junit</artifactId>
-                </exclusion>
-            </exclusions>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
@@ -134,63 +128,32 @@
 		    <artifactId>mongo-java-server</artifactId>
 		    <version>1.36.0</version>
 		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.hibernate/hibernate-validator -->
-		<dependency>
-		    <groupId>org.hibernate</groupId>
-		    <artifactId>hibernate-validator</artifactId>
-		    <version>6.1.6.Final</version>
-		</dependency>	
-		<!-- https://mvnrepository.com/artifact/org.glassfish/javax.el -->
-		<dependency>
-		    <groupId>org.glassfish</groupId>
-		    <artifactId>javax.el</artifactId>
-		    <version>3.0.0</version>
-		</dependency>
-				<!-- JSON schema extraction -->
-		<dependency>
-			<groupId>com.fasterxml.jackson.module</groupId>
-			<artifactId>jackson-module-jsonSchema</artifactId>
-			<version>2.9.5</version>
-			<exclusions>
-				<exclusion>
-					<!-- uses 1.1.0, which messes up Spring -->
-					<groupId>javax.validation</groupId>
-					<artifactId>validation-api</artifactId>
-				</exclusion>
-			</exclusions>
-		</dependency>
 		
 	    <dependency>
 	        <groupId>org.mongodb</groupId>
 	        <artifactId>mongodb-driver-sync</artifactId>
-	        <version>4.2.0</version>
+	        <version>4.2.3</version>
 	    </dependency>
 	    
-       <dependency>
-            <groupId>org.mockito</groupId>
-            <artifactId>mockito-junit-jupiter</artifactId>
-            <version>3.2.4</version>
-            <scope>test</scope>
-        </dependency>
-		<dependency>
-		    <groupId>org.junit.jupiter</groupId>
-		    <artifactId>junit-jupiter-engine</artifactId>
-		    <version>5.7.0</version>
-		    <scope>test</scope>
-		</dependency>
-		<dependency>
-		  	<groupId>org.junit</groupId>
-		    <artifactId>junit-bom</artifactId>
-		    <version>5.7.0</version>
-		    <type>pom</type>
-		</dependency>
-		<!-- https://mvnrepository.com/artifact/org.junit.platform/junit-platform-launcher -->
-		<dependency>
-		    <groupId>org.junit.platform</groupId>
-		    <artifactId>junit-platform-launcher</artifactId>
-		    <version>1.7.0</version>
-		    <scope>test</scope>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 		    <groupId>org.junit.jupiter</groupId> -->
+<!-- 		    <artifactId>junit-jupiter-engine</artifactId> -->
+<!-- 		    <version>5.7.0</version> -->
+<!-- 		    <scope>test</scope> -->
+<!-- 		</dependency> -->
+<!-- 		<dependency> -->
+<!-- 		  	<groupId>org.junit</groupId> -->
+<!-- 		    <artifactId>junit-bom</artifactId> -->
+<!-- 		    <version>5.7.0</version> -->
+<!-- 		    <type>pom</type> -->
+<!-- 		</dependency> -->
+		
+<!-- 		<dependency> -->
+<!-- 		    <groupId>org.junit.platform</groupId> -->
+<!-- 		    <artifactId>junit-platform-launcher</artifactId> -->
+<!-- 		    <version>1.7.0</version> -->
+<!-- 		    <scope>test</scope> -->
+<!-- 		</dependency> -->
 		
 		<dependency>
 		    <groupId>net.oneandone.reflections8</groupId>

@@ -25,8 +25,8 @@ import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
+import org.reflections8.Reflections;
+import org.reflections8.scanners.ResourcesScanner;
 
 /**
  * Test cases with local resources. Will create a project and load/validate

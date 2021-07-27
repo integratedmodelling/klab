@@ -109,12 +109,12 @@
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.tools</artifactId>
-			<version>0.10.0-SNAPSHOT</version>
+			<version>${klab.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.modeler</artifactId>
-			<version>0.10.0-SNAPSHOT</version>
+			<version>${klab.version}</version>
 		</dependency>
 		<!-- Command line tool dependencies -->
 		<dependency>

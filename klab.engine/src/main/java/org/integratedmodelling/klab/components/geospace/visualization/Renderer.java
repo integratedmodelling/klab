@@ -57,8 +57,8 @@ import org.integratedmodelling.klab.utils.Pair;
 import org.integratedmodelling.klab.utils.Range;
 import org.integratedmodelling.klab.utils.Triple;
 import org.opengis.style.ContrastMethod;
-import org.reflections.Reflections;
-import org.reflections.scanners.ResourcesScanner;
+import org.reflections8.Reflections;
+import org.reflections8.scanners.ResourcesScanner;
 
 import akka.event.Logging;
 import akka.event.jul.Logger;
