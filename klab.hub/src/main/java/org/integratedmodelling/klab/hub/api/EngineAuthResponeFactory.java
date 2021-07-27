@@ -28,7 +28,9 @@ import org.integratedmodelling.klab.rest.Group;
 import org.integratedmodelling.klab.rest.HubNotificationMessage;
 import org.integratedmodelling.klab.rest.HubReference;
 import org.integratedmodelling.klab.rest.IdentityReference;
+import org.integratedmodelling.klab.rest.HubNotificationMessage.ExtendedInfo;
 import org.integratedmodelling.klab.utils.IPUtils;
+import org.integratedmodelling.klab.utils.Pair;
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 
@@ -91,7 +93,8 @@ public class EngineAuthResponeFactory {
 		return null;
 	}
 	
-	private EngineAuthenticationResponse remoteEngine(ProfileResource profile,
+	@SuppressWarnings("unchecked")
+    private EngineAuthenticationResponse remoteEngine(ProfileResource profile,
 			String cipher, LicenseConfiguration config) throws NoSuchProviderException, IOException, PGPException {
 		Properties engineProperties = PropertiesFactory.fromProfile(profile, config).getProperties();
 		Properties cipherProperties = new CipherProperties().getCipherProperties(config, cipher);
@@ -103,7 +106,9 @@ public class EngineAuthResponeFactory {
 		if(!expires.isAfter(DateTime.now().plusDays(30))) {
 		    
 		    HubNotificationMessage msg = HubNotificationMessage.MessageClass
-		            .EXPIRING_CERTIFICATE.build("License set to expire on: " + expires.toString());
+		            .EXPIRING_CERTIFICATE.build("License set to expire on: " + expires.toString(), (Pair<ExtendedInfo, Object>[])(new Pair[] {
+		                    new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, expires)
+		                  }));
 		    
 		            //EXPIRING_CERTIFICATE.get( "License set to expire on: " + expires.toString());
 //		    HubNotificationMessage msg = new HubNotificationMessage.
@@ -124,20 +129,26 @@ public class EngineAuthResponeFactory {
 	    		AuthenticatedIdentity authenticatedIdentity = new AuthenticatedIdentity(userIdentity, engine.getGroups(),
 	    				DateTime.now().plusDays(90).toString(), engine.getId());
 	    		
-	    		ArrayList<String> expired = profile.expiredGroupEntries();
-	    		ArrayList<String> expiring = profile.expiringGroupEntries();
+	    		ArrayList<GroupEntry> expired = profile.expiredGroupEntries();
+	    		ArrayList<GroupEntry> expiring = profile.expiringGroupEntries();
 	    		
 	    		if(!expired.isEmpty()) {
 	    		    expired.forEach(grp -> {
 	    		        messages.add(
-	    		                HubNotificationMessage.MessageClass.EXPIRED_GROUP.build("The group " + grp + " has expired."));
+	    		                HubNotificationMessage.MessageClass.EXPIRED_GROUP.build("The group " + grp.getGroupName() + " has expired.", (Pair<ExtendedInfo, Object>[])(new Pair[] {
+	    		                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExperation()),
+	    		                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
+	                            })));
 	    		    });
 	    		}
 	    		
 	            if(!expiring.isEmpty()) {
 	                expiring.forEach(grp -> {
 	                    messages.add(
-	                            HubNotificationMessage.MessageClass.EXPIRING_GROUP.build("The group " + grp + " is expiring."));
+	                            HubNotificationMessage.MessageClass.EXPIRING_GROUP.build("The group " + grp.getGroupName() + " is expiring.", (Pair<ExtendedInfo, Object>[])(new Pair[] {
+                                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExperation()),
+                                        new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
+                                })));
 	                 });
 	            }
 	    		
@@ -160,25 +171,42 @@ public class EngineAuthResponeFactory {
 	}
 	
 
-	private EngineAuthenticationResponse localEngine(EngineAuthenticationRequest request) {
+	@SuppressWarnings("unchecked")
+    private EngineAuthenticationResponse localEngine(EngineAuthenticationRequest request) {
 		DateTime now = DateTime.now();
 		DateTime tomorrow = now.plusDays(90);
 		
-		List<MongoGroup> mongoGroups = groupRepository.findAll();
-		Set<Group> groups = new HashSet<>();
-		
 		ProfileResource profile = null;
 		
-		if(request.getName().equalsIgnoreCase("system")) {	
-			profile = profileService.getRawUserProfile(request.getName());
-		} else {
+		profile = profileService.getRawUserProfile(request.getName());
+		if (profile == null) {
 			profile = profileService.getRawUserProfile("hades");
 		}
+		ArrayList<HubNotificationMessage> messages = new ArrayList<HubNotificationMessage>();
+		ArrayList<GroupEntry> expired = profile.expiredGroupEntries();
+        ArrayList<GroupEntry> expiring = profile.expiringGroupEntries();
+        
+        if(!expired.isEmpty()) {
+            expired.forEach(grp -> {
+                messages.add(
+                        HubNotificationMessage.MessageClass.EXPIRED_GROUP.build("The group " + grp.getGroupName() + " has expired.", (Pair<ExtendedInfo, Object>[])(new Pair[] {
+                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExperation()),
+                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
+                        })));
+            });
+        }
+        
+        if(!expiring.isEmpty()) {
+            expiring.forEach(grp -> {
+                messages.add(
+                        HubNotificationMessage.MessageClass.EXPIRING_GROUP.build("The group " + grp.getGroupName() + " is expiring.", (Pair<ExtendedInfo, Object>[])(new Pair[] {
+                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.EXPIRATION_DATE, grp.getExperation()),
+                                new Pair<ExtendedInfo, Object>(HubNotificationMessage.ExtendedInfo.GROUP_NAME, grp.getGroupName())
+                        })));
+             });
+        }
 		
-		mongoGroups.forEach(
-				mongoGroup -> groups.add(new MongoGroupAdapter(mongoGroup).convertGroup()));
-		
-		EngineUser engine = localEngineUser(profile, groups);
+		EngineUser engine = localEngineUser(profile);
 		
 		IdentityReference userIdentity = new IdentityReference(engine.getUsername(), engine.getEmailAddress(),
 				now.toString());
@@ -190,16 +218,20 @@ public class EngineAuthResponeFactory {
 
 		Logging.INSTANCE.info("Local Engine Run on hub with User: " + engine.getUsername());
 		HubReference hub = new GenerateHubReference().execute();
-		return new EngineAuthenticationResponse(authenticatedIdentity, hub,
-				NodeNetworkManager.INSTANCE.getNodeReferences());
+		EngineAuthenticationResponse resp = new EngineAuthenticationResponse(authenticatedIdentity, hub,
+                NodeNetworkManager.INSTANCE.getNodeReferences());;
+		if (!messages.isEmpty()) {
+            resp.setMessages(messages);
+        }
+		return resp;
 	}
 	
-	private EngineUser localEngineUser(ProfileResource profile, Set<Group> groups) {
+	private EngineUser localEngineUser(ProfileResource profile) {
 		EngineUser engine = new EngineUser(profile.getUsername(), null);
 		String token = new JwtToken().createEngineJwtToken(profile);
 		engine.setEmailAddress(profile.getEmail());
 		engine.setToken(token);
-		engine.getGroups().addAll(groups);
+		engine.getGroups().addAll(profile.getGroupsList());
 		return engine;
 	}
 	
