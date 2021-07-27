@@ -115,11 +115,17 @@ public class Distribution {
 		 * @param deleteFileCount
 		 */
 		void notifyDownloadCount(int downloadFilecount, int deleteFileCount);
+		
+		/**
+		 * Notify an error
+ 		 * @param e an exception
+		 */
+		void notifyError(Exception e);
 
 		/**
 		 * 
 		 */
-		void transferFinished();
+		void transferFinished(Exception e);
 	}
 
 	/**
@@ -238,7 +244,7 @@ public class Distribution {
 	 */
 	public boolean sync() throws KlabException {
 
-		ArrayList<String> toDownload = new ArrayList<String>();
+	    HashMap<String, String> toDownload = new HashMap<String, String>();
 		ArrayList<File> toRemove = new ArrayList<File>();
 
 		HashMap<String, String> remote = new HashMap<String, String>();
@@ -258,10 +264,10 @@ public class Distribution {
 		for (String s : remote.keySet()) {
 			if (!local.containsKey(s) || !local.get(s).equals(remote.get(s)) || !getDestinationFile(s).exists()) {
 				if (!s.equals("filelist.txt"))
-					toDownload.add(s);
+					toDownload.put(s, remote.get(s));
 			}
 		}
-		toDownload.add("filelist.txt");
+		toDownload.put("filelist.txt", null);
 
 		/*
 		 * TODO scan workspace and schedule anything that isn't in the file list for
@@ -274,19 +280,19 @@ public class Distribution {
 		}
 
 		workspace.mkdirs();
-
-		for (String f : toDownload) {
+		Exception downloadError = null;
+		
+		for (String f : toDownload.keySet()) {
 			if (listener != null) {
 				listener.beforeDownload(f);
 			}
 			try {
-
 				new Downloader(new URL(remoteURL + "/" + f), getDestinationFile(f), (sofar, total) -> {
 					if (listener != null) {
 						listener.notifyFileProgress(f, sofar, total);
 					}
-				}).download();
-
+				}, toDownload.get(f)).download();
+				
 				if (f.endsWith(".sh")) {
 					// bit of a hack, but that should make things work on Linux
 					// and MacOS.
@@ -295,19 +301,26 @@ public class Distribution {
 			} catch (UnsupportedOperationException e) {
 				// ignore
 			} catch (IOException e) {
-				throw new KlabIOException(e);
+			    listener.notifyError(e);
+			    break;
+			} catch (KlabException e) {
+			    listener.notifyError(e);
+			    if (e.getCause() instanceof KlabIOException) {
+			        downloadError = e;
+			    }
+			    break;
 			}
 		}
-
-		for (File f : toRemove) {
-			if (listener != null) {
-				listener.beforeDelete(f);
-			}
-			FileUtils.deleteQuietly(f);
+		if (downloadError == null) {
+    		for (File f : toRemove) {
+    			if (listener != null) {
+    				listener.beforeDelete(f);
+    			}
+    			FileUtils.deleteQuietly(f);
+    		}
 		}
-
 		if (listener != null) {
-			listener.transferFinished();
+			listener.transferFinished(downloadError);
 		}
 
 		return true;
@@ -374,8 +387,11 @@ public class Distribution {
 			}
 
 			@Override
-			public void transferFinished() {
+			public void transferFinished(Exception e) {
 				System.out.println("transferred " + _sofar + " files");
+				if (e != null) {
+				    System.err.println("error: " + e);
+				}
 			}
 
 			@Override
@@ -394,6 +410,11 @@ public class Distribution {
 				// TODO Auto-generated method stub
 
 			}
+
+            @Override
+            public void notifyError( Exception e ) {
+                System.err.println(e);
+            }
 		});
 
 		tl.sync();
