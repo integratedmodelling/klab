@@ -124,8 +124,8 @@
 		<!-- end versions that need to be in lock-step to avoid multiple Spring 
 			issues -->
 	
-<!--     	<scala.version>2.13.1</scala.version>
- -->		<joda-time-version>2.3</joda-time-version>
+<!--     	<scala.version>2.13.1</scala.version>-->
+		<joda-time-version>2.3</joda-time-version>
 		<javax.mail-api.version>1.5.2</javax.mail-api.version>
 		<jung.version>2.1.1</jung.version>
 		
@@ -254,22 +254,5 @@
 			</build>
 		</profile>
 	</profiles>
-
-	<repositories>
-		<repository>
-	      	<id>osgeo</id>
-	     	<name>OSGeo Release Repository</name>
-	     	<url>https://repo.osgeo.org/repository/release/</url>
-	     	<snapshots><enabled>false</enabled></snapshots>
-	    	<releases><enabled>true</enabled></releases>
-	  	</repository>
-		<repository>
-		  	<id>osgeo-snapshot</id>
-		  	<name>OSGeo Snapshot Repository</name>
-		  	<url>https://repo.osgeo.org/repository/snapshot/</url>
-		 	 <snapshots><enabled>true</enabled></snapshots>
-		  	<releases><enabled>false</enabled></releases>
-		</repository>
-	</repositories>
 
 </project>

@@ -27,9 +27,8 @@ import org.integratedmodelling.klab.api.services.ILoggingService;
 import org.integratedmodelling.klab.monitoring.Message;
 import org.integratedmodelling.klab.utils.NotificationUtils;
 import org.integratedmodelling.klab.utils.Pair;
+import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import ch.qos.logback.classic.Logger;
 
 /**
  * The Enum Logging.

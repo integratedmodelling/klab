@@ -47,12 +47,4 @@
 
 	</dependencies>
 
-	<repositories>
-		<repository>
-			<id>unidata-all</id>
-			<name>Unidata All</name>
-			<url>https://artifacts.unidata.ucar.edu/repository/unidata-all/</url>
-		</repository>
-	</repositories>
-
 </project>

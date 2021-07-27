@@ -25,6 +25,20 @@
 			<id>topobyte</id>
 			<url>https://mvn.topobyte.de</url>
 		</repository>
+		<repository>
+	      	<id>osgeo</id>
+	     	<name>OSGeo Release Repository</name>
+	     	<url>https://repo.osgeo.org/repository/release/</url>
+	     	<snapshots><enabled>false</enabled></snapshots>
+	    	<releases><enabled>true</enabled></releases>
+	  	</repository>
+		<repository>
+		  	<id>osgeo-snapshot</id>
+		  	<name>OSGeo Snapshot Repository</name>
+		  	<url>https://repo.osgeo.org/repository/snapshot/</url>
+		 	 <snapshots><enabled>true</enabled></snapshots>
+		  	<releases><enabled>false</enabled></releases>
+		</repository>
 	</repositories>
 
 	<build>
@@ -450,6 +464,12 @@
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-security</artifactId>
+			<exclusions>
+			    <exclusion>
+			        <groupId>org.springframework.boot</groupId>
+			        <artifactId>spring-boot-starter-logging</artifactId>
+			    </exclusion>
+			</exclusions>
 			<version>${spring-boot-version}</version>
 		</dependency>
 		<dependency>
@@ -549,7 +569,7 @@
 		<dependency>
 			<groupId>org.orbisgis</groupId>
 			<artifactId>h2gis</artifactId>
-			<version>1.5.1-20210618.020712-276</version>
+			<version>1.5.1-20210726.033654-392</version>
 			<exclusions>
 				<exclusion>
 					<groupId>org.locationtech.jts</groupId>

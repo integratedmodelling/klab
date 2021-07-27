@@ -9,6 +9,22 @@
 	</parent>
 	<artifactId>klab.ogc</artifactId>
 	<name>OGC and GIS data adapters for k.LAB (files, WCS and WFS) </name>
+	<repositories>
+		<repository>
+	      	<id>osgeo</id>
+	     	<name>OSGeo Release Repository</name>
+	     	<url>https://repo.osgeo.org/repository/release/</url>
+	     	<snapshots><enabled>false</enabled></snapshots>
+	    	<releases><enabled>true</enabled></releases>
+	  	</repository>
+		<repository>
+		  	<id>osgeo-snapshot</id>
+		  	<name>OSGeo Snapshot Repository</name>
+		  	<url>https://repo.osgeo.org/repository/snapshot/</url>
+		 	 <snapshots><enabled>true</enabled></snapshots>
+		  	<releases><enabled>false</enabled></releases>
+		</repository>
+	</repositories>
 	<dependencies>
 		<!-- <dependency> <groupId>org.postgresql</groupId> <artifactId>postgresql</artifactId> 
 			<version>42.2.10</version> </dependency> https://mvnrepository.com/artifact/net.postgis/postgis-jdbc 
