@@ -5,7 +5,6 @@ import org.integratedmodelling.klab.api.auth.ICertificate;
 public class EngineAuthenticationRequest extends AuthenticationRequest {
 
 	private String userType;
-	private ICertificate.Level level = ICertificate.Level.USER;
 
 	public EngineAuthenticationRequest(String name, String key, String userType, String certificate,
 			ICertificate.Level level) {
@@ -26,6 +25,7 @@ public class EngineAuthenticationRequest extends AuthenticationRequest {
 	}
 
 	public EngineAuthenticationRequest() {
+	    this.setLevel(ICertificate.Level.USER);
 	}
 
 	public String getKey() {
