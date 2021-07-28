@@ -28,12 +28,12 @@
 		</dependency> </dependencies> </plugin> </plugins> </pluginManagement> </build> -->
 
 	<dependencies>
-		<dependency>
-			<groupId>org.integratedmodelling</groupId>
-			<artifactId>klab.hub</artifactId>
-			<version>${klab.version}</version>
-			<scope>test</scope>
-		</dependency>
+<!-- 		<dependency> -->
+<!-- 			<groupId>org.integratedmodelling</groupId> -->
+<!-- 			<artifactId>klab.hub</artifactId> -->
+<!-- 			<version>${klab.version}</version> -->
+<!-- 			<scope>test</scope> -->
+<!-- 		</dependency> -->
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>
 			<artifactId>klab.ogc</artifactId>
