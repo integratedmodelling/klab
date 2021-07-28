@@ -105,7 +105,8 @@ public enum GeotoolsUtils {
 	}
 
 	/**
-	 * Get a float coverage matching the grid found in the passed scale, using file-mapped storage.
+	 * Get a float coverage matching the grid found in the passed scale, using
+	 * file-mapped storage.
 	 * 
 	 * @param state
 	 * @return
@@ -136,7 +137,8 @@ public enum GeotoolsUtils {
 	}
 
 	/**
-	 * Get an integer coverage matching the grid found in the passed scale, using file-mapped storage.
+	 * Get an integer coverage matching the grid found in the passed scale, using
+	 * file-mapped storage.
 	 * 
 	 * @param state
 	 * @return
@@ -182,7 +184,7 @@ public enum GeotoolsUtils {
 	 * @param type  use {@link DataBuffer} constants
 	 * @return the opened coverage ready for writing into
 	 */
-	public GridCoverage2D makeCoverage(String name, ISpace space, int type) {
+	public GridCoverage2D makeCoverage(String name, ISpace space, int type, Object noDataValue) {
 		/*
 		 * build a coverage.
 		 * 
@@ -196,7 +198,94 @@ public enum GeotoolsUtils {
 		Grid grid = (Grid) ((Space) space).getGrid();
 		WritableRaster raster = RasterFactory.createBandedRaster(type, (int) grid.getXCells(), (int) grid.getYCells(),
 				1, null);
+
+		if (noDataValue instanceof Integer) {
+			int ii = (Integer) noDataValue;
+			for (int x = 0; x < grid.getXCells(); x++) {
+				for (int y = 0; y < grid.getYCells(); y++) {
+					raster.setSample(x, y, 0, ii);
+				}
+			}
+		} else if (noDataValue instanceof Float) {
+			float ii = (Float) noDataValue;
+			for (int x = 0; x < grid.getXCells(); x++) {
+				for (int y = 0; y < grid.getYCells(); y++) {
+					raster.setSample(x, y, 0, ii);
+				}
+			}
+		} else if (noDataValue instanceof Double) {
+			double ii = (Double) noDataValue;
+			for (int x = 0; x < grid.getXCells(); x++) {
+				for (int y = 0; y < grid.getYCells(); y++) {
+					raster.setSample(x, y, 0, ii);
+				}
+			}
+		}
+
 		return rasterFactory.create(name, raster, ((Space) space).getShape().getJTSEnvelope());
+	}
+
+	/**
+	 * Make an initialized raster image to write on, return it so that
+	 * {@link #makeCoverage(String, WritableRaster, IScale)} can later be called.
+	 * 
+	 * @param name
+	 * @param space
+	 * @param type
+	 * @param noDataValue
+	 * @return
+	 */
+	public WritableRaster makeRaster(ISpace space, int type, Object noDataValue) {
+		/*
+		 * build a coverage.
+		 * 
+		 * TODO use a raster of the appropriate type - for now there is apparently a bug
+		 * in geotools that makes it work only with float.
+		 */
+		if (!(space instanceof Space) || ((Space) space).getGrid() == null) {
+			throw new KlabIllegalArgumentException("cannot build a coverage from a non-grid space");
+		}
+
+		Grid grid = (Grid) ((Space) space).getGrid();
+		WritableRaster raster = RasterFactory.createBandedRaster(type, (int) grid.getXCells(), (int) grid.getYCells(),
+				1, null);
+
+		if (noDataValue instanceof Integer) {
+			int ii = (Integer) noDataValue;
+			for (int x = 0; x < grid.getXCells(); x++) {
+				for (int y = 0; y < grid.getYCells(); y++) {
+					raster.setSample(x, y, 0, ii);
+				}
+			}
+		} else if (noDataValue instanceof Float) {
+			float ii = (Float) noDataValue;
+			for (int x = 0; x < grid.getXCells(); x++) {
+				for (int y = 0; y < grid.getYCells(); y++) {
+					raster.setSample(x, y, 0, ii);
+				}
+			}
+		} else if (noDataValue instanceof Double) {
+			double ii = (Double) noDataValue;
+			for (int x = 0; x < grid.getXCells(); x++) {
+				for (int y = 0; y < grid.getYCells(); y++) {
+					raster.setSample(x, y, 0, ii);
+				}
+			}
+		}
+
+		return raster;
+	}
+
+	/**
+	 * Make a coverage from a previously created raster.
+	 * 
+	 * @param name
+	 * @param raster
+	 * @param scale
+	 * @return
+	 */
+	public GridCoverage2D makeCoverage(String name, WritableRaster raster, IScale scale) {
+		return rasterFactory.create(name, raster, ((Space) scale.getSpace()).getShape().getJTSEnvelope());
 	}
 
 	/**

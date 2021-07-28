@@ -4,7 +4,7 @@
     -fx-font-size: 14px;
 }
 
-#round-button {
+.round-button {
     -fx-background-color: #fff;
     -fx-background-radius: 16em;
     -fx-background-insets: 0;

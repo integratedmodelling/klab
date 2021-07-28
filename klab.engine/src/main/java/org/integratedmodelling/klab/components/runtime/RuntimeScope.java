@@ -93,6 +93,7 @@ import org.integratedmodelling.klab.engine.runtime.api.IRuntimeScope;
 import org.integratedmodelling.klab.engine.runtime.api.ITaskTree;
 import org.integratedmodelling.klab.engine.runtime.code.ExpressionContext;
 import org.integratedmodelling.klab.exceptions.KlabException;
+import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.extensions.groovy.model.Concept;
 import org.integratedmodelling.klab.model.Model;
 import org.integratedmodelling.klab.monitoring.Message;
@@ -1045,7 +1046,19 @@ public class RuntimeScope extends Parameters<String> implements IRuntimeScope {
 
     @Override
     public IState addState(IDirectObservation target, IObservable observable, Object data) {
-        return null;
+    	
+    	if (!observable.is(Type.QUALITY)) {
+    		throw new KlabValidationException("klab: API usage: adding a state with a non-quality observable");
+    	}
+    	IObservation ret = DefaultRuntimeProvider.createObservation(observable, target.getScale(), this, false);
+    	if (data != null) {
+    		((IState)ret).fill(data);
+    	}
+    	
+    	this.structure.link(ret, target);
+    	notifyListeners(ret);
+
+    	return (IState)ret;
     }
 
     /**

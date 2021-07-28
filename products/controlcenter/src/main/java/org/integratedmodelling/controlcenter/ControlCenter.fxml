@@ -30,7 +30,7 @@
                <children>
                   <HBox prefHeight="100.0" prefWidth="200.0">
                      <children>
-                        <Button id="round-button" fx:id="launchExplorerButton" disable="true" mnemonicParsing="false" onAction="#launchExplorer" stylesheets="@css/application.css">
+                        <Button styleClass="round-button" fx:id="launchExplorerButton" disable="true" mnemonicParsing="false" onAction="#launchExplorer" stylesheets="@css/application.css">
                            <graphic>
                               <FontIcon iconColor="#11bd11" iconLiteral="dashicons-admin-site-alt" />
                            </graphic>
@@ -38,7 +38,7 @@
                               <Tooltip text="Launch k.Explorer in default browser" />
                            </tooltip>
                         </Button>
-                        <Button id="round-button" fx:id="copyExplorerLinkButton" disable="true" mnemonicParsing="false" onAction="#copyExplorerLink">
+                        <Button styleClass="round-button" fx:id="copyExplorerLinkButton" disable="true" mnemonicParsing="false" onAction="#copyExplorerLink">
                            <graphic>
                               <FontIcon iconColor="#676767" iconLiteral="dashicons-admin-links" />
                            </graphic>
@@ -62,7 +62,7 @@
                         <Insets top="2.0" />
                      </padding>
                   </HBox>
-                  <Button id="round-button" fx:id="showEULAButton" mnemonicParsing="false" onAction="#showEULA">
+                  <Button styleClass="round-button" fx:id="showEULAButton" mnemonicParsing="false" onAction="#showEULA">
                      <graphic>
                         <FontIcon iconColor="#5f9ed2" iconLiteral="fa-legal" />
                      </graphic>
@@ -73,7 +73,7 @@
                         <Tooltip text="End user license agreement (opens browser)" />
                      </tooltip>
                   </Button>
-                  <Button id="round-button" fx:id="supportButton" mnemonicParsing="false" onAction="#launchSupport">
+                  <Button styleClass="round-button" fx:id="supportButton" mnemonicParsing="false" onAction="#launchSupport">
                      <graphic>
                         <FontIcon iconColor="#0697ff" iconLiteral="fa-commenting-o" />
                      </graphic>
@@ -84,7 +84,7 @@
                         <Tooltip text="Ask a question (opens browser)" />
                      </tooltip>
                   </Button>
-                  <Button id="round-button" fx:id="buttonSettings" alignment="CENTER" mnemonicParsing="false" onAction="#buttonSettingsClicked" textAlignment="CENTER">
+                  <Button styleClass="round-button" fx:id="buttonSettings" alignment="CENTER" mnemonicParsing="false" onAction="#buttonSettingsClicked" textAlignment="CENTER">
                      <graphic>
                         <FontIcon iconColor="#747474" iconLiteral="dashicons-admin-tools" wrappingWidth="12.685677528381348" />
                      </graphic>
@@ -135,7 +135,7 @@
                                     <Insets left="4.0" right="4.0" />
                                  </padding>
                               </Separator>
-                              <Label text="© 2021 Integrated Modelling Partnership" textFill="#797979" >
+                              <Label text="© 2021 Integrated Modelling Partnership" textFill="#777777" >
                                  <font>
                                     <Font name="Open Sans Light" size="11.0" />
                                  </font>
@@ -229,7 +229,7 @@
                               </VBox>
                               <StackPane>
                                  <children>
-                                    <ChoiceBox id="round-button" fx:id="buildChoiceBox" prefWidth="22.0" StackPane.alignment="CENTER">
+                                    <ChoiceBox styleClass="round-button" fx:id="buildChoiceBox" prefWidth="22.0" StackPane.alignment="CENTER">
                                        <padding>
                                           <Insets right="-4.0" />
                                        </padding>
@@ -239,7 +239,7 @@
                                     <FontIcon fx:id="downloadIcon" iconColor="RED" iconLiteral="fa-cloud-download" iconSize="18" visible="false" />
                                  </children>
                               </StackPane>
-                              <Button id="round-button" fx:id="downloadButton" mnemonicParsing="false" onAction="#downloadButtonClicked" GridPane.columnIndex="2">
+                              <Button styleClass="round-button" fx:id="downloadButton" mnemonicParsing="false" onAction="#downloadButtonClicked" GridPane.columnIndex="2">
                                  <graphic>
                                     <FontIcon iconColor="#0073c5" iconLiteral="fa-download" />
                                  </graphic>
@@ -256,7 +256,7 @@
                                                 <HBox alignment="CENTER_LEFT">
                                                    <children>
                                                       <ProgressBar fx:id="engineProgressBarOverall" maxHeight="12.0" minHeight="10.0" prefHeight="10.0" prefWidth="172.0" progress="0.0" style="-fx-text-box-border: #28c41d; -fx-background-insets: 0;" />
-                                                      <Label fx:id="engineProgressLabelTotal" text="Copying local files" textFill="#797979">
+                                                      <Label fx:id="engineProgressLabelTotal" text="Copying local files" textFill="#777777">
                                                          <font>
                                                             <Font name="Open Sans Regular"  size="10.0" />
                                                          </font>
@@ -279,7 +279,7 @@
                                                       </Label>
                                                    </children>
                                                 </HBox>
-                                                <Label fx:id="engineCurrentFileLabel" text="Preparing k.Engine incremental download.." textFill="#797777">
+                                                <Label fx:id="engineCurrentFileLabel" text="Preparing k.Engine incremental download.." textFill="#777777">
                                                    <font>
                                                       <Font name="Open Sans Regular"  size="10.0" />
                                                    </font>
@@ -295,7 +295,7 @@
                                                 <HBox alignment="CENTER_LEFT">
                                                    <children>
                                                       <ProgressBar fx:id="modelerProgressBarOverall" maxHeight="12.0" minHeight="10.0" prefHeight="10.0" prefWidth="172.0" progress="0.0" style="-fx-text-box-border: #dfb300; -fx-background-insets: 0;" />
-                                                      <Label fx:id="modelerProgressLabelTotal" text="Copying local files" textFill="#797979">
+                                                      <Label fx:id="modelerProgressLabelTotal" text="Copying local files" textFill="#777777">
                                                          <font>
                                                             <Font name="Open Sans Regular"  size="10.0" />
                                                          </font>
@@ -318,7 +318,7 @@
                                                       </Label>
                                                    </children>
                                                 </HBox>
-                                                <Label fx:id="modelerCurrentFileLabel" text="Preparing k.Modeler incremental download..." textFill="#717171">
+                                                <Label fx:id="modelerCurrentFileLabel" text="Preparing k.Modeler incremental download..." textFill="#777777">
                                                    <font>
                                                       <Font name="Open Sans Regular"  size="10.0" />
                                                    </font>

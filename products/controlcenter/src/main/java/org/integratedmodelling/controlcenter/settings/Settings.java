@@ -48,6 +48,7 @@ public class Settings {
 
 	private BooleanProperty startWithCLI = new SimpleBooleanProperty(true);
 	private BooleanProperty useDevelop = new SimpleBooleanProperty(false);
+	private BooleanProperty swichBranches = new SimpleBooleanProperty(false);
 	private BooleanProperty detectLocalHub = new SimpleBooleanProperty(false);
 	// TODO implement install4j integration
 	// private BooleanProperty checkForCCUpdates = new SimpleBooleanProperty(true);
@@ -113,6 +114,10 @@ public class Settings {
 	 */
 	public boolean useDevelop() {
 		return useDevelop.get();
+	}
+	
+	public boolean swichBranches() {
+	    return swichBranches.get();
 	}
 
 	public File getCertificateFile() {
@@ -245,7 +250,12 @@ public class Settings {
 						Setting.of("Use developer stack", useDevelop).validate(new Action<Boolean>((b) -> {
 							if (isActionReady())
 								ControlCenter.INSTANCE.changeStack(b);
-						})), Setting.of("Number of builds to keep", buildsToKeep),
+						})),
+						Setting.of("Synchronize workspace branch with runtime", swichBranches).validate(new Action<Boolean>((b) -> {
+                            if (isActionReady())
+                                preferencesFx.saveSettings();
+                        })),
+						Setting.of("Number of builds to keep", buildsToKeep),
 						// TODO: check if we need to implement in install4j
 						// Setting.of("Check for Control Center updates on launch", checkForCCUpdates),
 						Setting.of("Check interval for k.LAB updates (minutes)", checkIntervalKlabUpdates),
