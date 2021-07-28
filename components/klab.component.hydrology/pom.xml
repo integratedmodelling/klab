@@ -24,6 +24,10 @@
 					<groupId>javax.measure</groupId>
 					<artifactId>jsr-275</artifactId>
 				</exclusion>
+				<exclusion>
+					<groupId>org.mongodb</groupId>
+					<artifactId>mongo-java-driver</artifactId>
+				</exclusion>
 			</exclusions>
 		</dependency>
 		<dependency>
