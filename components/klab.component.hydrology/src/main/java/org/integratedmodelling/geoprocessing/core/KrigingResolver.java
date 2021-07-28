@@ -1,7 +1,6 @@
 package org.integratedmodelling.geoprocessing.core;
 
 import static org.hortonmachine.gears.libs.modules.HMConstants.doubleNovalue;
-import static org.hortonmachine.gears.libs.modules.HMConstants.floatNovalue;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -11,10 +10,11 @@ import org.apache.commons.math3.stat.descriptive.moment.StandardDeviation;
 import org.geotools.feature.DefaultFeatureCollection;
 import org.geotools.feature.simple.SimpleFeatureBuilder;
 import org.geotools.feature.simple.SimpleFeatureTypeBuilder;
+import org.hortonmachine.gears.libs.modules.HMConstants;
 import org.hortonmachine.gears.utils.coverage.CoverageUtilities;
 import org.hortonmachine.gears.utils.math.matrixes.MatrixException;
+import org.hortonmachine.hmachine.modules.statistics.kriging.old.OmsKriging;
 import org.integratedmodelling.geoprocessing.TaskMonitor;
-import org.integratedmodelling.geoprocessing.algorithms.OmsKriging;
 import org.integratedmodelling.kim.api.IKimConcept;
 import org.integratedmodelling.kim.api.IParameters;
 import org.integratedmodelling.klab.Concepts;
@@ -37,9 +37,8 @@ import org.integratedmodelling.klab.exceptions.KlabException;
 import org.integratedmodelling.klab.exceptions.KlabUnimplementedException;
 import org.integratedmodelling.klab.exceptions.KlabValidationException;
 import org.integratedmodelling.klab.utils.NumberUtils;
-import org.opengis.feature.simple.SimpleFeatureType;
-
 import org.locationtech.jts.geom.Point;
+import org.opengis.feature.simple.SimpleFeatureType;
 
 public class KrigingResolver implements IResolver<IState>, IExpression {
 
@@ -206,7 +205,7 @@ public class KrigingResolver implements IResolver<IState>, IExpression {
 
 		if (!context.getMonitor().isInterrupted()) {
 			GeotoolsUtils.INSTANCE.coverageToState(kriging.outGrid, target, context.getScale(), (a) -> {
-				if (a == (double) floatNovalue) {
+				if (a == (double) HMConstants.floatNovalue) {
 					return Double.NaN;
 				}
 				return a;
