@@ -5,7 +5,7 @@
 	<parent>
 		<groupId>org.integratedmodelling</groupId>
 		<artifactId>klab</artifactId>
-		<version>0.10.0-SNAPSHOT</version>
+		<version>0.11.0-SNAPSHOT</version>
 	</parent>
 	<artifactId>kactors</artifactId>
 	<packaging>pom</packaging>

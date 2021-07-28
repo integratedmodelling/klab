@@ -4,7 +4,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>org.integratedmodelling</groupId>
 	<artifactId>klab</artifactId>
-	<version>0.10.0-SNAPSHOT</version>
+	<version>0.11.0-SNAPSHOT</version>
 	<packaging>pom</packaging>
 
 	<licenses>
@@ -92,7 +92,7 @@
 
 	<properties>
 
-		<klab.version>0.10.0-SNAPSHOT</klab.version>
+		<klab.version>0.11.0-SNAPSHOT</klab.version>
 
 		<project.build.sourceEncoding>utf-8</project.build.sourceEncoding>
 		<project.reporting.outputEncoding>utf-8</project.reporting.outputEncoding>

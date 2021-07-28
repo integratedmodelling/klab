@@ -3,7 +3,7 @@
   <parent>
     <groupId>org.integratedmodelling</groupId>
     <artifactId>components</artifactId>
-    <version>0.10.0-SNAPSHOT</version>
+    <version>0.11.0-SNAPSHOT</version>
   </parent>
   <artifactId>klab.component.stats</artifactId>
   <description>If the site exposes a stats server, provide access to it through resource URNs</description>

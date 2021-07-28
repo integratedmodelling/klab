@@ -2,7 +2,7 @@ Manifest-Version: 1.0
 Bundle-ManifestVersion: 2
 Bundle-Name: k.LAB SDK
 Bundle-SymbolicName: org.integratedmodelling.klab.client
-Bundle-Version: 0.10.0.qualifier
+Bundle-Version: 0.11.0.qualifier
 Automatic-Module-Name: org.integratedmodelling.klab.ide.sdk
 Bundle-RequiredExecutionEnvironment: JavaSE-11
 Bundle-ClassPath: .,

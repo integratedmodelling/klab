@@ -447,10 +447,10 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)*
@@ -478,10 +478,10 @@ public class KactorsSemanticSequencer extends AbstractDelegatingSemanticSequence
 	 *                 contained=SimpleConceptDeclaration | 
 	 *                 caused=SimpleConceptDeclaration
 	 *             )? 
-	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
-	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
-	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (distributedOfInherency?='each'? inherency=SimpleConceptDeclaration)? 
+	 *             (distributedForInherency?='each'? motivation=SimpleConceptDeclaration)? 
+	 *             (distributedWithinInherency?='each'? context=SimpleConceptDeclaration)? 
+	 *             (distributedTemporalInherency?='each'? during=SimpleConceptDeclaration)? 
 	 *             (relationshipSource=SimpleConceptDeclaration relationshipTarget=SimpleConceptDeclaration)?
 	 *         )+ 
 	 *         ((operators+='and' | operators+='follows') operands+=Term)* 
