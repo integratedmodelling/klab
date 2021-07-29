@@ -579,13 +579,22 @@ public interface KactorsPackage extends EPackage
   int MESSAGE_CALL = 6;
 
   /**
+   * The feature id for the '<em><b>Method Calls</b></em>' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int MESSAGE_CALL__METHOD_CALLS = 0;
+
+  /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int MESSAGE_CALL__NAME = 0;
+  int MESSAGE_CALL__NAME = 1;
 
   /**
    * The feature id for the '<em><b>Parameters</b></em>' containment reference.
@@ -594,7 +603,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MESSAGE_CALL__PARAMETERS = 1;
+  int MESSAGE_CALL__PARAMETERS = 2;
 
   /**
    * The feature id for the '<em><b>Group</b></em>' containment reference.
@@ -603,7 +612,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MESSAGE_CALL__GROUP = 2;
+  int MESSAGE_CALL__GROUP = 3;
 
   /**
    * The feature id for the '<em><b>Actions</b></em>' containment reference.
@@ -612,7 +621,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MESSAGE_CALL__ACTIONS = 3;
+  int MESSAGE_CALL__ACTIONS = 4;
 
   /**
    * The number of structural features of the '<em>Message Call</em>' class.
@@ -621,7 +630,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int MESSAGE_CALL_FEATURE_COUNT = 4;
+  int MESSAGE_CALL_FEATURE_COUNT = 5;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.StatementGroupImpl <em>Statement Group</em>}' class.
@@ -4310,6 +4319,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EClass getMessageCall();
+
+  /**
+   * Returns the meta object for the containment reference list '{@link org.integratedmodelling.kactors.kactors.MessageCall#getMethodCalls <em>Method Calls</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the containment reference list '<em>Method Calls</em>'.
+   * @see org.integratedmodelling.kactors.kactors.MessageCall#getMethodCalls()
+   * @see #getMessageCall()
+   * @generated
+   */
+  EReference getMessageCall_MethodCalls();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.MessageCall#getName <em>Name</em>}'.
@@ -8031,6 +8051,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EClass MESSAGE_CALL = eINSTANCE.getMessageCall();
+
+    /**
+     * The meta object literal for the '<em><b>Method Calls</b></em>' containment reference list feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EReference MESSAGE_CALL__METHOD_CALLS = eINSTANCE.getMessageCall_MethodCalls();
 
     /**
      * The meta object literal for the '<em><b>Name</b></em>' attribute feature.

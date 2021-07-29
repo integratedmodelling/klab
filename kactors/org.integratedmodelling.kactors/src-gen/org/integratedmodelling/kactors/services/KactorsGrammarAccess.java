@@ -896,74 +896,90 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	public class MessageCallElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.MessageCall");
 		private final Group cGroup = (Group)rule.eContents().get(1);
-		private final Alternatives cAlternatives_0 = (Alternatives)cGroup.eContents().get(0);
-		private final Group cGroup_0_0 = (Group)cAlternatives_0.eContents().get(0);
-		private final Assignment cNameAssignment_0_0_0 = (Assignment)cGroup_0_0.eContents().get(0);
-		private final RuleCall cNameArgPathNameParserRuleCall_0_0_0_0 = (RuleCall)cNameAssignment_0_0_0.eContents().get(0);
-		private final Group cGroup_0_0_1 = (Group)cGroup_0_0.eContents().get(1);
-		private final Keyword cLeftParenthesisKeyword_0_0_1_0 = (Keyword)cGroup_0_0_1.eContents().get(0);
-		private final Assignment cParametersAssignment_0_0_1_1 = (Assignment)cGroup_0_0_1.eContents().get(1);
-		private final RuleCall cParametersParameterListParserRuleCall_0_0_1_1_0 = (RuleCall)cParametersAssignment_0_0_1_1.eContents().get(0);
-		private final Keyword cRightParenthesisKeyword_0_0_1_2 = (Keyword)cGroup_0_0_1.eContents().get(2);
-		private final Assignment cGroupAssignment_0_1 = (Assignment)cAlternatives_0.eContents().get(1);
-		private final RuleCall cGroupStatementGroupParserRuleCall_0_1_0 = (RuleCall)cGroupAssignment_0_1.eContents().get(0);
-		private final Group cGroup_1 = (Group)cGroup.eContents().get(1);
-		private final Keyword cColonKeyword_1_0 = (Keyword)cGroup_1.eContents().get(0);
-		private final Assignment cActionsAssignment_1_1 = (Assignment)cGroup_1.eContents().get(1);
-		private final RuleCall cActionsActionsParserRuleCall_1_1_0 = (RuleCall)cActionsAssignment_1_1.eContents().get(0);
+		private final Group cGroup_0 = (Group)cGroup.eContents().get(0);
+		private final Assignment cMethodCallsAssignment_0_0 = (Assignment)cGroup_0.eContents().get(0);
+		private final RuleCall cMethodCallsMethodCallParserRuleCall_0_0_0 = (RuleCall)cMethodCallsAssignment_0_0.eContents().get(0);
+		private final Keyword cFullStopKeyword_0_1 = (Keyword)cGroup_0.eContents().get(1);
+		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
+		private final Group cGroup_1_0 = (Group)cAlternatives_1.eContents().get(0);
+		private final Assignment cNameAssignment_1_0_0 = (Assignment)cGroup_1_0.eContents().get(0);
+		private final RuleCall cNameArgPathNameParserRuleCall_1_0_0_0 = (RuleCall)cNameAssignment_1_0_0.eContents().get(0);
+		private final Group cGroup_1_0_1 = (Group)cGroup_1_0.eContents().get(1);
+		private final Keyword cLeftParenthesisKeyword_1_0_1_0 = (Keyword)cGroup_1_0_1.eContents().get(0);
+		private final Assignment cParametersAssignment_1_0_1_1 = (Assignment)cGroup_1_0_1.eContents().get(1);
+		private final RuleCall cParametersParameterListParserRuleCall_1_0_1_1_0 = (RuleCall)cParametersAssignment_1_0_1_1.eContents().get(0);
+		private final Keyword cRightParenthesisKeyword_1_0_1_2 = (Keyword)cGroup_1_0_1.eContents().get(2);
+		private final Assignment cGroupAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
+		private final RuleCall cGroupStatementGroupParserRuleCall_1_1_0 = (RuleCall)cGroupAssignment_1_1.eContents().get(0);
+		private final Group cGroup_2 = (Group)cGroup.eContents().get(2);
+		private final Keyword cColonKeyword_2_0 = (Keyword)cGroup_2.eContents().get(0);
+		private final Assignment cActionsAssignment_2_1 = (Assignment)cGroup_2.eContents().get(1);
+		private final RuleCall cActionsActionsParserRuleCall_2_1_0 = (RuleCall)cActionsAssignment_2_1.eContents().get(0);
 		
 		//MessageCall:
-		//    (name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
+		//    (methodCalls+=MethodCall '.')* (name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
 		//;
 		@Override public ParserRule getRule() { return rule; }
 		
-		//(name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
+		//(methodCalls+=MethodCall '.')* (name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
 		public Group getGroup() { return cGroup; }
 		
+		//(methodCalls+=MethodCall '.')*
+		public Group getGroup_0() { return cGroup_0; }
+		
+		//methodCalls+=MethodCall
+		public Assignment getMethodCallsAssignment_0_0() { return cMethodCallsAssignment_0_0; }
+		
+		//MethodCall
+		public RuleCall getMethodCallsMethodCallParserRuleCall_0_0_0() { return cMethodCallsMethodCallParserRuleCall_0_0_0; }
+		
+		//'.'
+		public Keyword getFullStopKeyword_0_1() { return cFullStopKeyword_0_1; }
+		
 		//(name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup)
-		public Alternatives getAlternatives_0() { return cAlternatives_0; }
+		public Alternatives getAlternatives_1() { return cAlternatives_1; }
 		
 		//name=ArgPathName ('(' (parameters=ParameterList)? ')')?
-		public Group getGroup_0_0() { return cGroup_0_0; }
+		public Group getGroup_1_0() { return cGroup_1_0; }
 		
 		//name=ArgPathName
-		public Assignment getNameAssignment_0_0_0() { return cNameAssignment_0_0_0; }
+		public Assignment getNameAssignment_1_0_0() { return cNameAssignment_1_0_0; }
 		
 		//ArgPathName
-		public RuleCall getNameArgPathNameParserRuleCall_0_0_0_0() { return cNameArgPathNameParserRuleCall_0_0_0_0; }
+		public RuleCall getNameArgPathNameParserRuleCall_1_0_0_0() { return cNameArgPathNameParserRuleCall_1_0_0_0; }
 		
 		//('(' (parameters=ParameterList)? ')')?
-		public Group getGroup_0_0_1() { return cGroup_0_0_1; }
+		public Group getGroup_1_0_1() { return cGroup_1_0_1; }
 		
 		//'('
-		public Keyword getLeftParenthesisKeyword_0_0_1_0() { return cLeftParenthesisKeyword_0_0_1_0; }
+		public Keyword getLeftParenthesisKeyword_1_0_1_0() { return cLeftParenthesisKeyword_1_0_1_0; }
 		
 		//(parameters=ParameterList)?
-		public Assignment getParametersAssignment_0_0_1_1() { return cParametersAssignment_0_0_1_1; }
+		public Assignment getParametersAssignment_1_0_1_1() { return cParametersAssignment_1_0_1_1; }
 		
 		//ParameterList
-		public RuleCall getParametersParameterListParserRuleCall_0_0_1_1_0() { return cParametersParameterListParserRuleCall_0_0_1_1_0; }
+		public RuleCall getParametersParameterListParserRuleCall_1_0_1_1_0() { return cParametersParameterListParserRuleCall_1_0_1_1_0; }
 		
 		//')'
-		public Keyword getRightParenthesisKeyword_0_0_1_2() { return cRightParenthesisKeyword_0_0_1_2; }
+		public Keyword getRightParenthesisKeyword_1_0_1_2() { return cRightParenthesisKeyword_1_0_1_2; }
 		
 		//group=StatementGroup
-		public Assignment getGroupAssignment_0_1() { return cGroupAssignment_0_1; }
+		public Assignment getGroupAssignment_1_1() { return cGroupAssignment_1_1; }
 		
 		//StatementGroup
-		public RuleCall getGroupStatementGroupParserRuleCall_0_1_0() { return cGroupStatementGroupParserRuleCall_0_1_0; }
+		public RuleCall getGroupStatementGroupParserRuleCall_1_1_0() { return cGroupStatementGroupParserRuleCall_1_1_0; }
 		
 		//(':' actions=Actions)?
-		public Group getGroup_1() { return cGroup_1; }
+		public Group getGroup_2() { return cGroup_2; }
 		
 		//':'
-		public Keyword getColonKeyword_1_0() { return cColonKeyword_1_0; }
+		public Keyword getColonKeyword_2_0() { return cColonKeyword_2_0; }
 		
 		//actions=Actions
-		public Assignment getActionsAssignment_1_1() { return cActionsAssignment_1_1; }
+		public Assignment getActionsAssignment_2_1() { return cActionsAssignment_2_1; }
 		
 		//Actions
-		public RuleCall getActionsActionsParserRuleCall_1_1_0() { return cActionsActionsParserRuleCall_1_1_0; }
+		public RuleCall getActionsActionsParserRuleCall_2_1_0() { return cActionsActionsParserRuleCall_2_1_0; }
 	}
 	public class StatementGroupElements extends AbstractParserRuleElementFinder {
 		private final ParserRule rule = (ParserRule) GrammarUtil.findRuleForName(getGrammar(), "org.integratedmodelling.kactors.Kactors.StatementGroup");
@@ -1135,7 +1151,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//     assert=AssertStatement |
 		//     do=DoStatement |
 		//     for=ForStatement |
-		//     // this means "fire this"
+		//     // this means "fire this" or "return this"
 		//     value=ValueWithMetadata)
 		//     // all statement may be tagged for reference
 		//     (tag=TAG)?
@@ -1152,7 +1168,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		// assert=AssertStatement |
 		// do=DoStatement |
 		// for=ForStatement |
-		// // this means "fire this"
+		// // this means "fire this" or "return this"
 		// value=ValueWithMetadata)
 		// // all statement may be tagged for reference
 		// (tag=TAG)?
@@ -1168,7 +1184,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		// assert=AssertStatement |
 		// do=DoStatement |
 		// for=ForStatement |
-		// // this means "fire this"
+		// // this means "fire this" or "return this"
 		// value=ValueWithMetadata)
 		public Alternatives getAlternatives_0() { return cAlternatives_0; }
 		
@@ -1241,7 +1257,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//ForStatement
 		public RuleCall getForForStatementParserRuleCall_0_9_0() { return cForForStatementParserRuleCall_0_9_0; }
 		
-		//// this means "fire this"
+		//// this means "fire this" or "return this"
 		//value=ValueWithMetadata
 		public Assignment getValueAssignment_0_10() { return cValueAssignment_0_10; }
 		
@@ -7433,7 +7449,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	}
 	
 	//MessageCall:
-	//    (name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
+	//    (methodCalls+=MethodCall '.')* (name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
 	//;
 	public MessageCallElements getMessageCallAccess() {
 		return pMessageCall;
@@ -7497,7 +7513,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	//     assert=AssertStatement |
 	//     do=DoStatement |
 	//     for=ForStatement |
-	//     // this means "fire this"
+	//     // this means "fire this" or "return this"
 	//     value=ValueWithMetadata)
 	//     // all statement may be tagged for reference
 	//     (tag=TAG)?

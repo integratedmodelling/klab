@@ -3,14 +3,21 @@
  */
 package org.integratedmodelling.kactors.kactors.impl;
 
+import java.util.Collection;
+
 import org.eclipse.emf.common.notify.Notification;
 import org.eclipse.emf.common.notify.NotificationChain;
+
+import org.eclipse.emf.common.util.EList;
 
 import org.eclipse.emf.ecore.EClass;
 import org.eclipse.emf.ecore.InternalEObject;
 
 import org.eclipse.emf.ecore.impl.ENotificationImpl;
 import org.eclipse.emf.ecore.impl.MinimalEObjectImpl;
+
+import org.eclipse.emf.ecore.util.EObjectContainmentEList;
+import org.eclipse.emf.ecore.util.InternalEList;
 
 import org.integratedmodelling.kactors.kactors.Actions;
 import org.integratedmodelling.kactors.kactors.KactorsPackage;
@@ -26,6 +33,7 @@ import org.integratedmodelling.kactors.kactors.StatementGroup;
  * The following features are implemented:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl#getMethodCalls <em>Method Calls</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.impl.MessageCallImpl#getGroup <em>Group</em>}</li>
@@ -36,6 +44,16 @@ import org.integratedmodelling.kactors.kactors.StatementGroup;
  */
 public class MessageCallImpl extends MinimalEObjectImpl.Container implements MessageCall
 {
+  /**
+   * The cached value of the '{@link #getMethodCalls() <em>Method Calls</em>}' containment reference list.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @see #getMethodCalls()
+   * @generated
+   * @ordered
+   */
+  protected EList<MessageCall> methodCalls;
+
   /**
    * The default value of the '{@link #getName() <em>Name</em>}' attribute.
    * <!-- begin-user-doc -->
@@ -105,6 +123,21 @@ public class MessageCallImpl extends MinimalEObjectImpl.Container implements Mes
   protected EClass eStaticClass()
   {
     return KactorsPackage.Literals.MESSAGE_CALL;
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
+  public EList<MessageCall> getMethodCalls()
+  {
+    if (methodCalls == null)
+    {
+      methodCalls = new EObjectContainmentEList<MessageCall>(MessageCall.class, this, KactorsPackage.MESSAGE_CALL__METHOD_CALLS);
+    }
+    return methodCalls;
   }
 
   /**
@@ -292,6 +325,8 @@ public class MessageCallImpl extends MinimalEObjectImpl.Container implements Mes
   {
     switch (featureID)
     {
+      case KactorsPackage.MESSAGE_CALL__METHOD_CALLS:
+        return ((InternalEList<?>)getMethodCalls()).basicRemove(otherEnd, msgs);
       case KactorsPackage.MESSAGE_CALL__PARAMETERS:
         return basicSetParameters(null, msgs);
       case KactorsPackage.MESSAGE_CALL__GROUP:
@@ -312,6 +347,8 @@ public class MessageCallImpl extends MinimalEObjectImpl.Container implements Mes
   {
     switch (featureID)
     {
+      case KactorsPackage.MESSAGE_CALL__METHOD_CALLS:
+        return getMethodCalls();
       case KactorsPackage.MESSAGE_CALL__NAME:
         return getName();
       case KactorsPackage.MESSAGE_CALL__PARAMETERS:
@@ -329,11 +366,16 @@ public class MessageCallImpl extends MinimalEObjectImpl.Container implements Mes
    * <!-- end-user-doc -->
    * @generated
    */
+  @SuppressWarnings("unchecked")
   @Override
   public void eSet(int featureID, Object newValue)
   {
     switch (featureID)
     {
+      case KactorsPackage.MESSAGE_CALL__METHOD_CALLS:
+        getMethodCalls().clear();
+        getMethodCalls().addAll((Collection<? extends MessageCall>)newValue);
+        return;
       case KactorsPackage.MESSAGE_CALL__NAME:
         setName((String)newValue);
         return;
@@ -360,6 +402,9 @@ public class MessageCallImpl extends MinimalEObjectImpl.Container implements Mes
   {
     switch (featureID)
     {
+      case KactorsPackage.MESSAGE_CALL__METHOD_CALLS:
+        getMethodCalls().clear();
+        return;
       case KactorsPackage.MESSAGE_CALL__NAME:
         setName(NAME_EDEFAULT);
         return;
@@ -386,6 +431,8 @@ public class MessageCallImpl extends MinimalEObjectImpl.Container implements Mes
   {
     switch (featureID)
     {
+      case KactorsPackage.MESSAGE_CALL__METHOD_CALLS:
+        return methodCalls != null && !methodCalls.isEmpty();
       case KactorsPackage.MESSAGE_CALL__NAME:
         return NAME_EDEFAULT == null ? name != null : !NAME_EDEFAULT.equals(name);
       case KactorsPackage.MESSAGE_CALL__PARAMETERS:

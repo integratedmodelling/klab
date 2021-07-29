@@ -193,8 +193,8 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 	public interface Call extends IKActorsStatement {
 
 		/**
-		 * Each call statement has a unique ID, so that we can cache its execution
-		 * strategy for repeated executions.
+		 * @Override Each call statement has a unique ID, so that we can cache its
+		 *           execution strategy for repeated executions.
 		 * 
 		 * @return
 		 */
@@ -239,6 +239,14 @@ public interface IKActorsStatement extends IKActorsCodeStatement {
 		 * @return
 		 */
 		List<Triple<IKActorsValue, IKActorsStatement, String>> getActions();
+
+		/**
+		 * The top-level action call in a statement may be preceded by any number of
+		 * chained functional calls that modify the scope for execution.
+		 * 
+		 * @return
+		 */
+		List<Call> getChainedCalls();
 
 	}
 

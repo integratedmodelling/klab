@@ -72,7 +72,7 @@ ActorInstantiation:
 ;
 
 MessageCall:
-	(name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
+	(methodCalls+=MethodCall '.')* (name=ArgPathName ('(' (parameters=ParameterList)? ')')? |  group=StatementGroup) (':' actions=Actions)?
 ;
 
 StatementGroup: {StatementGroup} '(' body=MessageBody? ')' metadata=Metadata? (':' actions=Actions)?
@@ -101,7 +101,7 @@ Statement:
 	 assert=AssertStatement |
 	 do=DoStatement |
 	 for=ForStatement |
-	 // this means "fire this" 
+	 // this means "fire this" or "return this"
 	 value=ValueWithMetadata) 
 	 // all statement may be tagged for reference
 	 (tag=TAG)?

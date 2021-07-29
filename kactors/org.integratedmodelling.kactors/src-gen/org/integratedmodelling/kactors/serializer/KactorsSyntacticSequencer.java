@@ -29,7 +29,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	protected AbstractElementAlias match_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0;
 	protected AbstractElementAlias match_Constructor___LeftParenthesisKeyword_2_0_RightParenthesisKeyword_2_2__q;
 	protected AbstractElementAlias match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q;
-	protected AbstractElementAlias match_MessageCall___LeftParenthesisKeyword_0_0_1_0_RightParenthesisKeyword_0_0_1_2__q;
+	protected AbstractElementAlias match_MessageCall___LeftParenthesisKeyword_1_0_1_0_RightParenthesisKeyword_1_0_1_2__q;
 	protected AbstractElementAlias match_MethodCallWithActions___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q;
 	protected AbstractElementAlias match_MethodCall___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q;
 	protected AbstractElementAlias match_Number_PlusSignKeyword_0_0_q;
@@ -52,7 +52,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 		match_Concept_FromKeyword_3_1_1_or_ToKeyword_3_1_0 = new AlternativeAlias(false, false, new TokenAlias(false, false, grammarAccess.getConceptAccess().getFromKeyword_3_1_1()), new TokenAlias(false, false, grammarAccess.getConceptAccess().getToKeyword_3_1_0()));
 		match_Constructor___LeftParenthesisKeyword_2_0_RightParenthesisKeyword_2_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getConstructorAccess().getLeftParenthesisKeyword_2_0()), new TokenAlias(false, false, grammarAccess.getConstructorAccess().getRightParenthesisKeyword_2_2()));
 		match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q = new AlternativeAlias(false, true, new TokenAlias(false, false, grammarAccess.getDateAccess().getADKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getDateAccess().getCEKeyword_1_1()));
-		match_MessageCall___LeftParenthesisKeyword_0_0_1_0_RightParenthesisKeyword_0_0_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getMessageCallAccess().getLeftParenthesisKeyword_0_0_1_0()), new TokenAlias(false, false, grammarAccess.getMessageCallAccess().getRightParenthesisKeyword_0_0_1_2()));
+		match_MessageCall___LeftParenthesisKeyword_1_0_1_0_RightParenthesisKeyword_1_0_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getMessageCallAccess().getLeftParenthesisKeyword_1_0_1_0()), new TokenAlias(false, false, grammarAccess.getMessageCallAccess().getRightParenthesisKeyword_1_0_1_2()));
 		match_MethodCallWithActions___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getMethodCallWithActionsAccess().getLeftParenthesisKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getMethodCallWithActionsAccess().getRightParenthesisKeyword_1_2()));
 		match_MethodCall___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q = new GroupAlias(false, true, new TokenAlias(false, false, grammarAccess.getMethodCallAccess().getLeftParenthesisKeyword_1_0()), new TokenAlias(false, false, grammarAccess.getMethodCallAccess().getRightParenthesisKeyword_1_2()));
 		match_Number_PlusSignKeyword_0_0_q = new TokenAlias(false, true, grammarAccess.getNumberAccess().getPlusSignKeyword_0_0());
@@ -103,8 +103,8 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 				emit_Constructor___LeftParenthesisKeyword_2_0_RightParenthesisKeyword_2_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_Date___ADKeyword_1_0_or_CEKeyword_1_1__q.equals(syntax))
 				emit_Date___ADKeyword_1_0_or_CEKeyword_1_1__q(semanticObject, getLastNavigableState(), syntaxNodes);
-			else if (match_MessageCall___LeftParenthesisKeyword_0_0_1_0_RightParenthesisKeyword_0_0_1_2__q.equals(syntax))
-				emit_MessageCall___LeftParenthesisKeyword_0_0_1_0_RightParenthesisKeyword_0_0_1_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
+			else if (match_MessageCall___LeftParenthesisKeyword_1_0_1_0_RightParenthesisKeyword_1_0_1_2__q.equals(syntax))
+				emit_MessageCall___LeftParenthesisKeyword_1_0_1_0_RightParenthesisKeyword_1_0_1_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_MethodCallWithActions___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q.equals(syntax))
 				emit_MethodCallWithActions___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q(semanticObject, getLastNavigableState(), syntaxNodes);
 			else if (match_MethodCall___LeftParenthesisKeyword_1_0_RightParenthesisKeyword_1_2__q.equals(syntax))
@@ -218,7 +218,7 @@ public class KactorsSyntacticSequencer extends AbstractSyntacticSequencer {
 	 *     name=ArgPathName (ambiguity) ':' actions=Actions
 	 *     name=ArgPathName (ambiguity) (rule end)
 	 */
-	protected void emit_MessageCall___LeftParenthesisKeyword_0_0_1_0_RightParenthesisKeyword_0_0_1_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
+	protected void emit_MessageCall___LeftParenthesisKeyword_1_0_1_0_RightParenthesisKeyword_1_0_1_2__q(EObject semanticObject, ISynNavigable transition, List<INode> nodes) {
 		acceptNodes(transition, nodes);
 	}
 	

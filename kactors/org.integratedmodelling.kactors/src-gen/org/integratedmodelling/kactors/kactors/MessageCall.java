@@ -3,6 +3,8 @@
  */
 package org.integratedmodelling.kactors.kactors;
 
+import org.eclipse.emf.common.util.EList;
+
 import org.eclipse.emf.ecore.EObject;
 
 /**
@@ -14,6 +16,7 @@ import org.eclipse.emf.ecore.EObject;
  * The following features are supported:
  * </p>
  * <ul>
+ *   <li>{@link org.integratedmodelling.kactors.kactors.MessageCall#getMethodCalls <em>Method Calls</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.MessageCall#getName <em>Name</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.MessageCall#getParameters <em>Parameters</em>}</li>
  *   <li>{@link org.integratedmodelling.kactors.kactors.MessageCall#getGroup <em>Group</em>}</li>
@@ -26,6 +29,18 @@ import org.eclipse.emf.ecore.EObject;
  */
 public interface MessageCall extends EObject
 {
+  /**
+   * Returns the value of the '<em><b>Method Calls</b></em>' containment reference list.
+   * The list contents are of type {@link org.integratedmodelling.kactors.kactors.MessageCall}.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the value of the '<em>Method Calls</em>' containment reference list.
+   * @see org.integratedmodelling.kactors.kactors.KactorsPackage#getMessageCall_MethodCalls()
+   * @model containment="true"
+   * @generated
+   */
+  EList<MessageCall> getMethodCalls();
+
   /**
    * Returns the value of the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->

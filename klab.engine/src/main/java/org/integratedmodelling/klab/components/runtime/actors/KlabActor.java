@@ -277,6 +277,14 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		Parameters<String> metadata;
 		IBehavior behavior;
 
+		/**
+		 * The scope is functional if an action that is declared as 'function' is
+		 * called, or if the executing action is part of a contextual chain
+		 * (a1().a2().a3: ...). In this case any "fire" statement does not fire a value
+		 * but "returns" it, setting it in the scope and breaking the execution.
+		 */
+		boolean functional = false;
+
 		/*
 		 * the following two support chaining of actions, with the ones before the last
 		 * "returning" values (may be defined using 'function' or be system actions)

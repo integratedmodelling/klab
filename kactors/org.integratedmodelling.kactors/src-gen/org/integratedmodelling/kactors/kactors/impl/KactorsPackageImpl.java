@@ -1074,9 +1074,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EReference getMessageCall_MethodCalls()
+  {
+    return (EReference)messageCallEClass.getEStructuralFeatures().get(0);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EAttribute getMessageCall_Name()
   {
-    return (EAttribute)messageCallEClass.getEStructuralFeatures().get(0);
+    return (EAttribute)messageCallEClass.getEStructuralFeatures().get(1);
   }
 
   /**
@@ -1087,7 +1098,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getMessageCall_Parameters()
   {
-    return (EReference)messageCallEClass.getEStructuralFeatures().get(1);
+    return (EReference)messageCallEClass.getEStructuralFeatures().get(2);
   }
 
   /**
@@ -1098,7 +1109,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getMessageCall_Group()
   {
-    return (EReference)messageCallEClass.getEStructuralFeatures().get(2);
+    return (EReference)messageCallEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -1109,7 +1120,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getMessageCall_Actions()
   {
-    return (EReference)messageCallEClass.getEStructuralFeatures().get(3);
+    return (EReference)messageCallEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -4478,6 +4489,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     createEReference(actorInstantiationEClass, ACTOR_INSTANTIATION__METADATA);
 
     messageCallEClass = createEClass(MESSAGE_CALL);
+    createEReference(messageCallEClass, MESSAGE_CALL__METHOD_CALLS);
     createEAttribute(messageCallEClass, MESSAGE_CALL__NAME);
     createEReference(messageCallEClass, MESSAGE_CALL__PARAMETERS);
     createEReference(messageCallEClass, MESSAGE_CALL__GROUP);
@@ -4917,6 +4929,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
     initEReference(getActorInstantiation_Metadata(), this.getMetadata(), null, "metadata", null, 0, 1, ActorInstantiation.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
 
     initEClass(messageCallEClass, MessageCall.class, "MessageCall", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
+    initEReference(getMessageCall_MethodCalls(), this.getMessageCall(), null, "methodCalls", null, 0, -1, MessageCall.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getMessageCall_Name(), ecorePackage.getEString(), "name", null, 0, 1, MessageCall.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMessageCall_Parameters(), this.getParameterList(), null, "parameters", null, 0, 1, MessageCall.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getMessageCall_Group(), this.getStatementGroup(), null, "group", null, 0, 1, MessageCall.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
