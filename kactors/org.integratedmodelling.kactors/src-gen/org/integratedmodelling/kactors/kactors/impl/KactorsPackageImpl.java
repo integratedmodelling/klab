@@ -920,7 +920,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
-  public EAttribute getDefinition_Name()
+  public EAttribute getDefinition_Function()
   {
     return (EAttribute)definitionEClass.getEStructuralFeatures().get(1);
   }
@@ -931,9 +931,20 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
    * @generated
    */
   @Override
+  public EAttribute getDefinition_Name()
+  {
+    return (EAttribute)definitionEClass.getEStructuralFeatures().get(2);
+  }
+
+  /**
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   */
+  @Override
   public EReference getDefinition_Arguments()
   {
-    return (EReference)definitionEClass.getEStructuralFeatures().get(2);
+    return (EReference)definitionEClass.getEStructuralFeatures().get(3);
   }
 
   /**
@@ -944,7 +955,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
   @Override
   public EReference getDefinition_Body()
   {
-    return (EReference)definitionEClass.getEStructuralFeatures().get(3);
+    return (EReference)definitionEClass.getEStructuralFeatures().get(4);
   }
 
   /**
@@ -4449,6 +4460,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     definitionEClass = createEClass(DEFINITION);
     createEReference(definitionEClass, DEFINITION__ANNOTATIONS);
+    createEAttribute(definitionEClass, DEFINITION__FUNCTION);
     createEAttribute(definitionEClass, DEFINITION__NAME);
     createEReference(definitionEClass, DEFINITION__ARGUMENTS);
     createEReference(definitionEClass, DEFINITION__BODY);
@@ -4887,6 +4899,7 @@ public class KactorsPackageImpl extends EPackageImpl implements KactorsPackage
 
     initEClass(definitionEClass, Definition.class, "Definition", !IS_ABSTRACT, !IS_INTERFACE, IS_GENERATED_INSTANCE_CLASS);
     initEReference(getDefinition_Annotations(), this.getAnnotation(), null, "annotations", null, 0, -1, Definition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
+    initEAttribute(getDefinition_Function(), ecorePackage.getEBoolean(), "function", null, 0, 1, Definition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEAttribute(getDefinition_Name(), ecorePackage.getEString(), "name", null, 0, 1, Definition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, !IS_UNSETTABLE, !IS_ID, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getDefinition_Arguments(), this.getArgumentDeclaration(), null, "arguments", null, 0, 1, Definition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);
     initEReference(getDefinition_Body(), this.getMessageBody(), null, "body", null, 0, 1, Definition.class, !IS_TRANSIENT, !IS_VOLATILE, IS_CHANGEABLE, IS_COMPOSITE, !IS_RESOLVE_PROXIES, !IS_UNSETTABLE, IS_UNIQUE, !IS_DERIVED, IS_ORDERED);

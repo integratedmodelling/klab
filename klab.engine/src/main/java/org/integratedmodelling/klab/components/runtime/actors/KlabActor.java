@@ -277,6 +277,16 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		Parameters<String> metadata;
 		IBehavior behavior;
 
+		/*
+		 * the following two support chaining of actions, with the ones before the last
+		 * "returning" values (may be defined using 'function' or be system actions)
+		 * which end up in the scope passed to the next. Because null is a legitimate
+		 * return value, we also use a boolean to check if the scope contains a
+		 * "context" result from a previous function.
+		 */
+		boolean hasFunctionResult = false;
+		Object functionResult = null;
+
 		/**
 		 * Only instantiated in tests.
 		 */
@@ -812,17 +822,18 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 		}
 
 		try {
-			
+
 			execute(action.getStatement().getCode(), scope);
-			
+
 		} catch (Throwable t) {
 
-			scope.getMonitor().error("action " + action.getBehavior() + ":" + action.getName() + " threw exception: " + t.getMessage());
+			scope.getMonitor().error(
+					"action " + action.getBehavior() + ":" + action.getName() + " threw exception: " + t.getMessage());
 
 			if (scope.testScope != null) {
 				scope.testScope.onException(t);
 			}
-			
+
 			if (scope.sender != null) {
 				scope.sender.tell(
 						new Fire(scope.listenerId, t, scope.appId, scope.semaphore, scope.getSymbols(this.identity)));
@@ -1095,7 +1106,7 @@ public class KlabActor extends AbstractBehavior<KlabActor.KlabMessage> {
 			execute(code.getBody(), scope.withValue(code.getVariable(), o));
 		}
 	}
-	
+
 	private void executeAssert(Assert code, Scope scope) {
 		System.out.println("ASSERT!");
 	}

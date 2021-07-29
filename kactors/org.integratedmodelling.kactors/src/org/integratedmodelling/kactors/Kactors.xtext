@@ -56,7 +56,7 @@ Preamble: {Preamble}
  */
 Definition:
 	annotations+=Annotation*
-	 'action' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
+	 ('action' | function?='function') name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
 
 ArgumentDeclaration: {ArgumentDeclaration}
 	'(' (ids+=LOWERCASE_ID (',' ids+=LOWERCASE_ID)*)? ')'

@@ -9,6 +9,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.collections4.BidiMap;
+import org.apache.commons.collections4.bidimap.DualHashBidiMap;
 import org.geotools.coverage.grid.GridCoverage2D;
 import org.geotools.data.simple.SimpleFeatureCollection;
 import org.geotools.data.simple.SimpleFeatureIterator;
@@ -69,6 +71,7 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 	// if this is given, the value we use to vectorize ends up in the objects with
 	// this semantics
 	IObservable attributeSemantics;
+	private BidiMap<Object, Integer> valueHash;
 
 	public PolygonInstantiatorJAI() {
 	}
@@ -167,7 +170,9 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 							 * add the state
 							 */
 							((IRuntimeScope) scope).addState((IDirectObservation) object, attributeSemantics,
-									shape.getMetadata().get("value"));
+									this.valueHash == null ? shape.getMetadata().get("value")
+											: (shape.getMetadata().get("value") == null ? null
+													: this.valueHash.getKey(shape.getMetadata().get("value"))));
 						}
 
 						ret.add(object);
@@ -201,6 +206,7 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 		WritableRaster raster = null;
 		IExpression selectExpression = null;
 		IExpression categorizeExpression = null;
+		this.valueHash = null;
 
 		if (selectExprDescriptor != null) {
 			// check inputs and see if the expr is worth anything in this context
@@ -238,7 +244,6 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 			sourceStates.add(sourceState);
 		}
 
-		Map<Object, Integer> valueHash = new HashMap<>();
 		int nextValue = 1;
 		boolean ret = false;
 
@@ -272,6 +277,9 @@ public class PolygonInstantiatorJAI implements IExpression, IInstantiator {
 				if (categorizeExpression != null) {
 					value = categorizeExpression.eval(parameters, scope);
 					if (Observations.INSTANCE.isData(value) && !(value instanceof Number || value instanceof Boolean)) {
+						if (this.valueHash == null) {
+							this.valueHash = new DualHashBidiMap<>();
+						}
 						if (!valueHash.containsKey(value)) {
 							valueHash.put(value, nextValue);
 							value = nextValue;
