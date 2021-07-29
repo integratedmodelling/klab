@@ -11,6 +11,7 @@ import org.integratedmodelling.klab.hub.commands.DeleteAuthenticationToken;
 import org.integratedmodelling.klab.hub.config.LinkConfig;
 import org.integratedmodelling.klab.hub.repository.TokenRepository;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.preauth.PreAuthenticatedAuthenticationToken;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -67,7 +68,8 @@ public class RegistrationTokenServiceImpl implements RegistrationTokenService {
 		return false;
 	}
 	private TokenAuthentication setAuthentication(TokenAuthentication token) {
-		SecurityContextHolder.getContext().setAuthentication(token);
+		PreAuthenticatedAuthenticationToken secureToken = new PreAuthenticatedAuthenticationToken(token.getPrincipal(),token.getCredentials(),token.getAuthorities());
+		SecurityContextHolder.getContext().setAuthentication(secureToken);
 		return token;
 	}
 

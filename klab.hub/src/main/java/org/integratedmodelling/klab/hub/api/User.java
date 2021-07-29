@@ -2,7 +2,6 @@ package org.integratedmodelling.klab.hub.api;
 
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.Set;
 import org.joda.time.DateTime;
@@ -17,7 +16,6 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.validation.constraints.NotNull;
 
 @Document(collection="Users")
 @TypeAlias("MongoUser")
@@ -27,6 +25,7 @@ import javax.validation.constraints.NotNull;
                    def = "{'name' : 1, 'username' : 1}")
 })
 public class User extends IdentityModel implements UserDetails{
+	
 	public static final String GLOBAL_GROUP = "REGISTERED";
 
     private static final long serialVersionUID = -6213593655742083476L;
@@ -64,12 +63,12 @@ public class User extends IdentityModel implements UserDetails{
 
     boolean sendUpdates = true;
 
-    final Set<Role> roles = new HashSet<>(); // LDAP security roles
+    private Set<Role> roles = new HashSet<>();;
 
     @Reference
     private Set<GroupEntry> groupEntries =  new HashSet<>(); // research groups, etc. in web tool
 
-    final Set<String> applications = new HashSet<>();
+    private Set<String> applications = new HashSet<>();
 
     AccountStatus accountStatus = AccountStatus.pendingActivation;
 

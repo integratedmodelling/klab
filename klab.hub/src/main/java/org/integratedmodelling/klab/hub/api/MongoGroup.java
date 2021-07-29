@@ -5,8 +5,6 @@ import java.util.List;
 
 import javax.persistence.EnumType;
 import javax.persistence.Enumerated;
-import javax.validation.constraints.NotNull;
-
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.TypeAlias;
