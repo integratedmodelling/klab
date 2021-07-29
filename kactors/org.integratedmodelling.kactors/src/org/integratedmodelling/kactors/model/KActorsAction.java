@@ -13,10 +13,12 @@ public class KActorsAction extends KActorCodeStatement implements IKActorsAction
 	private String name;
 	private KActorsConcurrentGroup code;
 	private List<String> argumentNames = new ArrayList<>();
+	private boolean function;
 	
 	public KActorsAction(Definition definition, KActorsBehavior parent) {
 		super(definition, parent);
 		this.name = definition.getName();
+		this.function = definition.isFunction();
 		if (definition.getAnnotations() != null) {
 			for (Annotation annotation : definition.getAnnotations()) {
 				this.getAnnotations().add(new KActorsAnnotation(annotation));
@@ -41,6 +43,11 @@ public class KActorsAction extends KActorCodeStatement implements IKActorsAction
 	@Override
 	public List<String> getArgumentNames() {
 		return argumentNames;
+	}
+	
+	@Override
+	public boolean isFunction() {
+		return function;
 	}
 
 }

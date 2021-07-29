@@ -1145,15 +1145,32 @@ ruleDefinition returns [EObject current=null]
 				}
 			)
 		)*
-		otherlv_1='action'
-		{
-			newLeafNode(otherlv_1, grammarAccess.getDefinitionAccess().getActionKeyword_1());
-		}
+		(
+			otherlv_1='action'
+			{
+				newLeafNode(otherlv_1, grammarAccess.getDefinitionAccess().getActionKeyword_1_0());
+			}
+			    |
+			(
+				(
+					lv_function_2_0='function'
+					{
+						newLeafNode(lv_function_2_0, grammarAccess.getDefinitionAccess().getFunctionFunctionKeyword_1_1_0());
+					}
+					{
+						if ($current==null) {
+							$current = createModelElement(grammarAccess.getDefinitionRule());
+						}
+						setWithLastConsumed($current, "function", lv_function_2_0 != null, "function");
+					}
+				)
+			)
+		)
 		(
 			(
-				lv_name_2_0=RULE_LOWERCASE_ID
+				lv_name_3_0=RULE_LOWERCASE_ID
 				{
-					newLeafNode(lv_name_2_0, grammarAccess.getDefinitionAccess().getNameLOWERCASE_IDTerminalRuleCall_2_0());
+					newLeafNode(lv_name_3_0, grammarAccess.getDefinitionAccess().getNameLOWERCASE_IDTerminalRuleCall_2_0());
 				}
 				{
 					if ($current==null) {
@@ -1162,7 +1179,7 @@ ruleDefinition returns [EObject current=null]
 					setWithLastConsumed(
 						$current,
 						"name",
-						lv_name_2_0,
+						lv_name_3_0,
 						"org.integratedmodelling.kactors.Kactors.LOWERCASE_ID");
 				}
 			)
@@ -1172,7 +1189,7 @@ ruleDefinition returns [EObject current=null]
 				{
 					newCompositeNode(grammarAccess.getDefinitionAccess().getArgumentsArgumentDeclarationParserRuleCall_3_0());
 				}
-				lv_arguments_3_0=ruleArgumentDeclaration
+				lv_arguments_4_0=ruleArgumentDeclaration
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getDefinitionRule());
@@ -1180,22 +1197,22 @@ ruleDefinition returns [EObject current=null]
 					set(
 						$current,
 						"arguments",
-						lv_arguments_3_0,
+						lv_arguments_4_0,
 						"org.integratedmodelling.kactors.Kactors.ArgumentDeclaration");
 					afterParserOrEnumRuleCall();
 				}
 			)
 		)?
-		otherlv_4=':'
+		otherlv_5=':'
 		{
-			newLeafNode(otherlv_4, grammarAccess.getDefinitionAccess().getColonKeyword_4());
+			newLeafNode(otherlv_5, grammarAccess.getDefinitionAccess().getColonKeyword_4());
 		}
 		(
 			(
 				{
 					newCompositeNode(grammarAccess.getDefinitionAccess().getBodyMessageBodyParserRuleCall_5_0());
 				}
-				lv_body_5_0=ruleMessageBody
+				lv_body_6_0=ruleMessageBody
 				{
 					if ($current==null) {
 						$current = createModelElementForParent(grammarAccess.getDefinitionRule());
@@ -1203,7 +1220,7 @@ ruleDefinition returns [EObject current=null]
 					set(
 						$current,
 						"body",
-						lv_body_5_0,
+						lv_body_6_0,
 						"org.integratedmodelling.kactors.Kactors.MessageBody");
 					afterParserOrEnumRuleCall();
 				}

@@ -20,10 +20,18 @@ public interface IKActorsAction extends IKActorsCodeStatement {
 	IKActorsStatement getCode();
 
 	/**
-	 * Any formal argument names declared for the action, to be matched to
-	 * actual parameters.
+	 * Any formal argument names declared for the action, to be matched to actual
+	 * parameters.
 	 * 
 	 * @return
 	 */
 	List<String> getArgumentNames();
+
+	/**
+	 * If this returns true, the action was declared as 'function' and is expected
+	 * to return a value and exit, instead of firing it and continuing.
+	 * 
+	 * @return
+	 */
+	boolean isFunction();
 }

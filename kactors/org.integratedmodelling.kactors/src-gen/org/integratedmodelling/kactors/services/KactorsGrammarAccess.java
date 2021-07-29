@@ -678,7 +678,10 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		private final Group cGroup = (Group)rule.eContents().get(1);
 		private final Assignment cAnnotationsAssignment_0 = (Assignment)cGroup.eContents().get(0);
 		private final RuleCall cAnnotationsAnnotationParserRuleCall_0_0 = (RuleCall)cAnnotationsAssignment_0.eContents().get(0);
-		private final Keyword cActionKeyword_1 = (Keyword)cGroup.eContents().get(1);
+		private final Alternatives cAlternatives_1 = (Alternatives)cGroup.eContents().get(1);
+		private final Keyword cActionKeyword_1_0 = (Keyword)cAlternatives_1.eContents().get(0);
+		private final Assignment cFunctionAssignment_1_1 = (Assignment)cAlternatives_1.eContents().get(1);
+		private final Keyword cFunctionFunctionKeyword_1_1_0 = (Keyword)cFunctionAssignment_1_1.eContents().get(0);
 		private final Assignment cNameAssignment_2 = (Assignment)cGroup.eContents().get(2);
 		private final RuleCall cNameLOWERCASE_IDTerminalRuleCall_2_0 = (RuleCall)cNameAssignment_2.eContents().get(0);
 		private final Assignment cArgumentsAssignment_3 = (Assignment)cGroup.eContents().get(3);
@@ -698,11 +701,11 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		// */
 		//Definition:
 		//    annotations+=Annotation*
-		//     'action' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
+		//     ('action' | function?='function') name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
 		@Override public ParserRule getRule() { return rule; }
 		
 		//annotations+=Annotation*
-		// 'action' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody
+		// ('action' | function?='function') name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody
 		public Group getGroup() { return cGroup; }
 		
 		//annotations+=Annotation*
@@ -711,8 +714,17 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 		//Annotation
 		public RuleCall getAnnotationsAnnotationParserRuleCall_0_0() { return cAnnotationsAnnotationParserRuleCall_0_0; }
 		
+		//('action' | function?='function')
+		public Alternatives getAlternatives_1() { return cAlternatives_1; }
+		
 		//'action'
-		public Keyword getActionKeyword_1() { return cActionKeyword_1; }
+		public Keyword getActionKeyword_1_0() { return cActionKeyword_1_0; }
+		
+		//function?='function'
+		public Assignment getFunctionAssignment_1_1() { return cFunctionAssignment_1_1; }
+		
+		//'function'
+		public Keyword getFunctionFunctionKeyword_1_1_0() { return cFunctionFunctionKeyword_1_1_0; }
 		
 		//name=LOWERCASE_ID
 		public Assignment getNameAssignment_2() { return cNameAssignment_2; }
@@ -7377,7 +7389,7 @@ public class KactorsGrammarAccess extends AbstractElementFinder.AbstractGrammarE
 	// */
 	//Definition:
 	//    annotations+=Annotation*
-	//     'action' name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
+	//     ('action' | function?='function') name=LOWERCASE_ID (arguments=ArgumentDeclaration)? ':' body=MessageBody;
 	public DefinitionElements getDefinitionAccess() {
 		return pDefinition;
 	}

@@ -413,13 +413,22 @@ public interface KactorsPackage extends EPackage
   int DEFINITION__ANNOTATIONS = 0;
 
   /**
+   * The feature id for the '<em><b>Function</b></em>' attribute.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @generated
+   * @ordered
+   */
+  int DEFINITION__FUNCTION = 1;
+
+  /**
    * The feature id for the '<em><b>Name</b></em>' attribute.
    * <!-- begin-user-doc -->
    * <!-- end-user-doc -->
    * @generated
    * @ordered
    */
-  int DEFINITION__NAME = 1;
+  int DEFINITION__NAME = 2;
 
   /**
    * The feature id for the '<em><b>Arguments</b></em>' containment reference.
@@ -428,7 +437,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEFINITION__ARGUMENTS = 2;
+  int DEFINITION__ARGUMENTS = 3;
 
   /**
    * The feature id for the '<em><b>Body</b></em>' containment reference.
@@ -437,7 +446,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEFINITION__BODY = 3;
+  int DEFINITION__BODY = 4;
 
   /**
    * The number of structural features of the '<em>Definition</em>' class.
@@ -446,7 +455,7 @@ public interface KactorsPackage extends EPackage
    * @generated
    * @ordered
    */
-  int DEFINITION_FEATURE_COUNT = 4;
+  int DEFINITION_FEATURE_COUNT = 5;
 
   /**
    * The meta object id for the '{@link org.integratedmodelling.kactors.kactors.impl.ArgumentDeclarationImpl <em>Argument Declaration</em>}' class.
@@ -4151,6 +4160,17 @@ public interface KactorsPackage extends EPackage
    * @generated
    */
   EReference getDefinition_Annotations();
+
+  /**
+   * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Definition#isFunction <em>Function</em>}'.
+   * <!-- begin-user-doc -->
+   * <!-- end-user-doc -->
+   * @return the meta object for the attribute '<em>Function</em>'.
+   * @see org.integratedmodelling.kactors.kactors.Definition#isFunction()
+   * @see #getDefinition()
+   * @generated
+   */
+  EAttribute getDefinition_Function();
 
   /**
    * Returns the meta object for the attribute '{@link org.integratedmodelling.kactors.kactors.Definition#getName <em>Name</em>}'.
@@ -7891,6 +7911,14 @@ public interface KactorsPackage extends EPackage
      * @generated
      */
     EReference DEFINITION__ANNOTATIONS = eINSTANCE.getDefinition_Annotations();
+
+    /**
+     * The meta object literal for the '<em><b>Function</b></em>' attribute feature.
+     * <!-- begin-user-doc -->
+     * <!-- end-user-doc -->
+     * @generated
+     */
+    EAttribute DEFINITION__FUNCTION = eINSTANCE.getDefinition_Function();
 
     /**
      * The meta object literal for the '<em><b>Name</b></em>' attribute feature.
