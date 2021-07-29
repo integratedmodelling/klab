@@ -3,12 +3,13 @@ package org.integratedmodelling.klab.hub.api;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import org.integratedmodelling.klab.rest.ObservableReference;
 import org.springframework.data.annotation.Reference;
 import org.springframework.data.annotation.TypeAlias;
 import org.springframework.data.mongodb.core.mapping.Document;
+
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 @Document(collection = "Groups")
 @TypeAlias("MongoGroup")

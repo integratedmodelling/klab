@@ -3,8 +3,6 @@ package org.integratedmodelling.klab.hub.api;
 import java.util.ArrayList;
 import java.util.List;
 
-import javax.persistence.EnumType;
-import javax.persistence.Enumerated;
 import javax.servlet.http.HttpServletRequest;
 
 import org.joda.time.DateTime;
@@ -15,6 +13,9 @@ import org.springframework.data.mongodb.core.mapping.Document;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 
 @Document(collection = "Tasks")
 public abstract class Task {

@@ -1,9 +1,9 @@
 package org.integratedmodelling.klab.hub.tests;
 
-import static org.junit.Assert.assertThat;
+
 import static org.junit.Assert.assertEquals;
 import static org.hamcrest.Matchers.equalTo;
-
+import static org.hamcrest.MatcherAssert.assertThat;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -12,9 +12,11 @@ import javax.validation.ConstraintViolationException;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.integratedmodelling.klab.hub.api.MongoGroup;
+import org.integratedmodelling.klab.hub.commands.CreateMongoGroup;
 import org.integratedmodelling.klab.hub.config.dev.DevMongoModelsConfig;
 import org.integratedmodelling.klab.hub.config.dev.MongoConfigDev;
 import org.integratedmodelling.klab.hub.exception.GroupDoesNotExistException;
+import org.integratedmodelling.klab.hub.exception.GroupExistException;
 import org.integratedmodelling.klab.hub.groups.services.GroupServiceImpl;
 import org.integratedmodelling.klab.hub.listeners.HubEventPublisher;
 import org.integratedmodelling.klab.hub.listeners.RemoveGroup;
@@ -52,7 +54,7 @@ public class GroupServiceTests {
 	public void test_01_fail_create_without_name() {
 		MongoGroup group = new MongoGroup();
 		group.setWorldview(false);
-		groupService.create(group);
+		new CreateMongoGroup(group, groupRepo).execute();
 	}
 	
 	@Test
@@ -65,7 +67,7 @@ public class GroupServiceTests {
 		assertEquals(newGroup.getName().equals(group.getName()), true);
 	}
 	
-	@Test(expected = DuplicateKeyException.class)
+	@Test(expected = GroupExistException.class)
 	public void test_03_fail_create_group_with_same_name() {
 		MongoGroup group = new MongoGroup();
 		group.setName("Test");
