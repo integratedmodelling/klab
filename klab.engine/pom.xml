@@ -433,12 +433,12 @@
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-websocket</artifactId>
-			<version>${spring-version}</version>
+			<version>${spring.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework</groupId>
 			<artifactId>spring-messaging</artifactId>
-			<version>${spring-version}</version>
+			<version>${spring.version}</version>
 		</dependency>
 
 		<!-- Kotlin support <dependency> <groupId>org.jetbrains.kotlin</groupId> 
@@ -470,17 +470,17 @@
 			        <artifactId>spring-boot-starter-logging</artifactId>
 			    </exclusion>
 			</exclusions>
-			<version>${spring-boot-version}</version>
+			<version>${spring-boot.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-web</artifactId>
-			<version>${spring-boot-version}</version>
+			<version>${spring-boot.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-actuator</artifactId>
-			<version>${spring-boot-version}</version>
+			<version>${spring-boot.version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.integratedmodelling</groupId>

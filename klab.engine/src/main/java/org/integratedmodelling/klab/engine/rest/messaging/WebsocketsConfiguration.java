@@ -65,7 +65,7 @@ public class WebsocketsConfiguration implements WebSocketMessageBrokerConfigurer
     		}
     		return map;
     	});
-        registry.addEndpoint(API.MESSAGE).setAllowedOrigins("*").withSockJS();
+        registry.addEndpoint(API.MESSAGE).setAllowedOriginPatterns("*").withSockJS();
     }
 
     @Override

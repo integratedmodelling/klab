@@ -51,7 +51,7 @@
 			<plugin>
 				<groupId>org.springframework.boot</groupId>
 				<artifactId>spring-boot-maven-plugin</artifactId>
-				<version>${spring-boot-version}</version>
+				<version>${spring-boot.version}</version>
 				<configuration>
 					<fork>true</fork>
 					<mainClass>org.integratedmodelling.klab.node.NodeApplication</mainClass>
@@ -71,7 +71,7 @@
 			<dependency>
 				<groupId>org.springframework.cloud</groupId>
 				<artifactId>spring-cloud-dependencies</artifactId>
-				<version>${spring-cloud-version}</version>
+				<version>${spring-cloud.version}</version>
 				<type>pom</type>
 				<scope>import</scope>
 			</dependency>
@@ -89,6 +89,7 @@
 		<dependency>
 			<groupId>org.springframework.cloud</groupId>
 			<artifactId>spring-cloud-starter-kubernetes-all</artifactId>
+			<version>1.1.10.RELEASE</version>
 		</dependency>
 
 		<dependency>

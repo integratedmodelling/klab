@@ -114,11 +114,12 @@
 		<!-- the five below go together. Never change one without checking the 
 			others. Spring security latest is currently requiring 5.0.4, implying boot 
 			2.0.0 -->
-		<spring-boot-version>2.3.12.RELEASE</spring-boot-version>
-		<spring-version> 5.2.11.RELEASE</spring-version>
-		<spring-cloud-version>Hoxton.SR11</spring-cloud-version>
+		<spring-boot.version>2.5.3</spring-boot.version>
+		<spring.version>5.3.9</spring.version>
+		<spring-security.version>5.5.1</spring-security.version>
+		<spring-cloud.version>2020.0.3</spring-cloud.version>
 		<junit-version>5.6.3</junit-version>
-		<jackson-version>2.11.4</jackson-version>
+		<jackson-version>2.12.4</jackson-version>
 		<!-- end versions that need to be in lock-step to avoid multiple Spring 
 			issues -->
 	
